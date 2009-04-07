@@ -22,11 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileHandler.java,v 1.9 2008-06-25 05:43:36 qcheng Exp $
+ * $Id: FileHandler.java,v 1.10 2009-04-07 23:16:58 hvijay Exp $
  *
  */
-
-
 package com.sun.identity.log.handlers;
 
 import java.io.BufferedOutputStream;
@@ -71,7 +69,7 @@ import com.sun.identity.log.spi.Debug;
  * handler is closed which makes reading impossible)
  */
 public class FileHandler extends java.util.logging.Handler {
-    
+
     private LogManager lmanager = LogManagerUtil.getLogManager();
     private OutputStream output;
     private Writer writer;
@@ -83,7 +81,7 @@ public class FileHandler extends java.util.logging.Handler {
     private String location;
     private Formatter formatter;
     private static SimpleDateFormat simpleDateFormat =
-        new SimpleDateFormat("HHmmss.ddMMyyyy");
+            new SimpleDateFormat("HHmmss.ddMMyyyy");
     private Date date;
     private String currentFileName;
     private String fileName;
@@ -92,15 +90,17 @@ public class FileHandler extends java.util.logging.Handler {
     private TimeBufferingTask bufferTask;
     private boolean timeBufferingEnabled = false;
     private static String headerString = null;
-    
+
     private class MeteredStream extends OutputStream {
+
         OutputStream out;
         int written;
-        
+
         MeteredStream(OutputStream out, int written) {
             this.out = out;
             this.written = written;
         }
+
         /**
          * writes a single integer to the outputstream and increments 
          * the number of bytes written by one.
@@ -109,18 +109,20 @@ public class FileHandler extends java.util.logging.Handler {
          */
         public void write(int b) throws IOException {
             out.write(b);
-            written ++;
+            written++;
         }
+
         /**
          * Writes the array of bytes to the output stream and increments 
          * the number of bytes written by the size of the array.
          * @param b the byte array to be written. 
          * @throws IOException if it fails to write out.
          */
-        public void write(byte [] b) throws IOException {
+        public void write(byte[] b) throws IOException {
             out.write(b);
             written += b.length;
         }
+
         /**
          * Writes the array of bytes to the output stream and increments 
          * the number of bytes written by the size of the array.
@@ -129,11 +131,12 @@ public class FileHandler extends java.util.logging.Handler {
          * @param length the length of bytes to be written. 
          * @throws IOException if it fails to write out.
          */
-        public void write(byte [] b, int offset, int length)
-        throws IOException {
+        public void write(byte[] b, int offset, int length)
+                throws IOException {
             out.write(b, offset, length);
             written += length;
         }
+
         /**
          * Flush any buffered messages.
          * @throws IOException if it fails to write out.
@@ -141,6 +144,7 @@ public class FileHandler extends java.util.logging.Handler {
         public void flush() throws IOException {
             out.flush();
         }
+
         /**
          * close the current output stream.
          * @throws IOException if it fails to close output stream.
@@ -149,14 +153,13 @@ public class FileHandler extends java.util.logging.Handler {
             out.close();
         }
     }
-    
+
     /**
      * sets the output stream to the specified output stream ..picked up from
      * StreamHandler.
      */
     private void setOutputStream(OutputStream out) throws SecurityException,
-        UnsupportedEncodingException
-    {
+            UnsupportedEncodingException {
         if (out == null) {
             if (Debug.warningEnabled()) {
                 Debug.warning(fileName + ":FileHandler: OutputStream is null");
@@ -176,8 +179,7 @@ public class FileHandler extends java.util.logging.Handler {
             }
         }
     }
-    
-    
+
     /**
      * Set (or change) the character encoding used by this <tt>Handler</tt>.
      * The encoding should be set before any <tt>LogRecords</tt> are written
@@ -192,8 +194,7 @@ public class FileHandler extends java.util.logging.Handler {
      *           not supported.
      */
     public void setEncoding(String encoding) throws SecurityException,
-        UnsupportedEncodingException
-    {
+            UnsupportedEncodingException {
         super.setEncoding(encoding);
         if (output == null) {
             return;
@@ -206,54 +207,52 @@ public class FileHandler extends java.util.logging.Handler {
             writer = new OutputStreamWriter(output, encoding);
         }
     }
-    
+
     /**
      * This method is used for getting the properties from LogManager
      * and setting the private variables count, maxFileSize etc.
      */
-    private void configure() 
-        throws NullLocationException, FormatterInitException
-    {
+    private void configure()
+            throws NullLocationException, FormatterInitException {
         String bufferSize = lmanager.getProperty(LogConstants.BUFFER_SIZE);
         if (bufferSize != null && bufferSize.length() > 0) {
             try {
                 recCountLimit = Integer.parseInt(bufferSize);
             } catch (NumberFormatException nfe) {
-                Debug.warning(fileName + 
-                    ":FileHandler: NumberFormatException ", nfe);
+                Debug.warning(fileName +
+                        ":FileHandler: NumberFormatException ", nfe);
                 if (Debug.messageEnabled()) {
-                    Debug.message(fileName + 
-                        ":FileHandler: Setting buffer size to 1");
+                    Debug.message(fileName +
+                            ":FileHandler: Setting buffer size to 1");
                 }
                 recCountLimit = 1;
             }
         } else {
-            Debug.warning(fileName + 
-                ":FileHandler: Invalid buffer size: " + bufferSize);
+            Debug.warning(fileName +
+                    ":FileHandler: Invalid buffer size: " + bufferSize);
             if (Debug.messageEnabled()) {
-                Debug.message(fileName + 
-                    ":FileHandler: Setting buffer size to 1");
+                Debug.message(fileName +
+                        ":FileHandler: Setting buffer size to 1");
             }
             recCountLimit = 1;
         }
-        
+
         String status = lmanager.getProperty(
-            LogConstants.TIME_BUFFERING_STATUS);
-         
-        if ( status != null && status.equalsIgnoreCase("ON")) 
-        {
+                LogConstants.TIME_BUFFERING_STATUS);
+
+        if (status != null && status.equalsIgnoreCase("ON")) {
             timeBufferingEnabled = true;
         }
-        
+
         String strCount = lmanager.getProperty(LogConstants.NUM_HISTORY_FILES);
         if ((strCount == null) || (strCount.length() == 0)) {
             count = 0;
         } else {
             count = Integer.parseInt(strCount);
         }
-        
+
         String strMaxFileSize = lmanager.getProperty(
-            LogConstants.MAX_FILE_SIZE);
+                LogConstants.MAX_FILE_SIZE);
         if ((strMaxFileSize == null) || (strMaxFileSize.length() == 0)) {
             maxFileSize = 0;
         } else {
@@ -262,7 +261,7 @@ public class FileHandler extends java.util.logging.Handler {
         location = lmanager.getProperty(LogConstants.LOG_LOCATION);
         if ((location == null) || (location.length() == 0)) {
             throw new NullLocationException(
-                "Location Not Specified"); //localize
+                    "Location Not Specified"); //localize
         }
         if (!location.endsWith(File.separator)) {
             location += File.separator;
@@ -273,24 +272,24 @@ public class FileHandler extends java.util.logging.Handler {
             formatter = (Formatter) clz.newInstance();
         } catch (Exception e) {
             throw new FormatterInitException(
-                "Unable to initialize Formatter Class" + e);
+                    "Unable to initialize Formatter Class" + e);
         }
     }
-    
+
     private void openFiles(String fileName) throws IOException {
         // making sure that we have correct count and maxFileSize
         if (count < 0) {
-            Debug.error(fileName + 
-                ":FileHandler: no. of history files negative " + count);
+            Debug.error(fileName +
+                    ":FileHandler: no. of history files negative " + count);
             count = 0;
         }
         if (maxFileSize < 0) {
-            Debug.error(fileName + 
-                ":FileHandler: maxFileSize cannot be negative");
+            Debug.error(fileName +
+                    ":FileHandler: maxFileSize cannot be negative");
             maxFileSize = 0;
         }
         files = new File[count + 1]; // count is the number of history files
-        for (int i = 0; i < count + 1; i ++) {
+        for (int i = 0; i < count + 1; i++) {
             if (i != 0) {
                 files[i] = new File(fileName + "-" + i);
             } else {
@@ -299,7 +298,7 @@ public class FileHandler extends java.util.logging.Handler {
         }
         open(files[0], true);
     }
-    
+
     /** 
      * Algorithm: Check how many bytes have already been written to to that file
      * Get an instance of MeteredStream and assign it as the output stream. 
@@ -308,15 +307,15 @@ public class FileHandler extends java.util.logging.Handler {
     private void open(File fileName, boolean append) throws IOException {
         String filename = fileName.toString();
         int len = 0;
-        len = (int)fileName.length();
+        len = (int) fileName.length();
         FileOutputStream fout = new FileOutputStream(filename, append);
-        
+
         BufferedOutputStream bout = new BufferedOutputStream(fout);
         meteredStream = new MeteredStream(bout, len);
         setOutputStream(meteredStream);
         checkForHeaderWritten(fileName.toString());
     }
-    
+
     /**
      * Creates a new FileHandler. It takes a string parameter which represents
      * file name. When this constructor is called a new file to be created.
@@ -333,39 +332,39 @@ public class FileHandler extends java.util.logging.Handler {
         } catch (NullLocationException nle) {
             Debug.error(fileName + ":FileHandler: Location not specified", nle);
         } catch (FormatterInitException fie) {
-            Debug.error(fileName + 
-                ":FileHandler: could not instantiate Formatter", fie);
+            Debug.error(fileName +
+                    ":FileHandler: could not instantiate Formatter", fie);
         }
         fileName = location + fileName;
-        Logger logger = (Logger)Logger.getLogger(this.fileName);
+        Logger logger = (Logger) Logger.getLogger(this.fileName);
         if (logger.getLevel() != Level.OFF) {
             try {
                 openFiles(fileName);
             } catch (IOException ioe) {
                 Debug.error(fileName + ":FileHandler: Unable to open Files",
-                    ioe);
+                        ioe);
             }
         }
         logger.setCurrentFile(this.fileName);
-        
+
         recordBuffer = new ArrayList();
-        
+
         if (timeBufferingEnabled) {
             startTimeBufferingThread();
         }
     }
-    
+
     private void cleanup() {
         if (writer != null) {
             try {
                 writer.flush();
             } catch (Exception ex) {
-                Debug.error(fileName + 
-                    ":FileHandler: Couldnot Flush Output", ex);
+                Debug.error(fileName +
+                        ":FileHandler: Couldnot Flush Output", ex);
             }
         }
     }
-    
+
     /**
      * Flush any buffered messages and Close all the files.
      */
@@ -375,12 +374,12 @@ public class FileHandler extends java.util.logging.Handler {
             try {
                 writer.close();
             } catch (IOException e) {
-                Debug.error(fileName + ":FileHandler: Error closing writer",e);
+                Debug.error(fileName + ":FileHandler: Error closing writer", e);
             }
         }
         stopBufferTimer();
     }
-    
+
     /**
      * Format and publish a LogRecord.
      * <p>
@@ -399,12 +398,12 @@ public class FileHandler extends java.util.logging.Handler {
             return;
         }
         String message = getFormatter().format(lrecord);
-        synchronized(recordBuffer) {
+        synchronized (recordBuffer) {
             recordBuffer.add(message);
         }
         if (recordBuffer.size() >= recCountLimit) {
             if (Debug.messageEnabled()) {
-                Debug.message(fileName + ":FileHandler.publish(): got " + 
+                Debug.message(fileName + ":FileHandler.publish(): got " +
                         recordBuffer.size() + " records, writing all");
             }
             flush();
@@ -415,41 +414,41 @@ public class FileHandler extends java.util.logging.Handler {
         if (headerString == null) {
             headerString = getFormatter().getHead(this);
         }
-        return headerString;        
+        return headerString;
     }
+
     /**
      * Flush any buffered messages.
      */
     public synchronized void flush() {
         if (recordBuffer.size() <= 0) {
             if (Debug.messageEnabled()) {
-                Debug.message(fileName + 
-                    ":FileHandler.flush: no records in buffer to write");
+                Debug.message(fileName +
+                        ":FileHandler.flush: no records in buffer to write");
             }
             return;
         }
         if (writer == null) {
             Debug.error(fileName + ":FileHandler: Writer is null");
-            synchronized(recordBuffer) {
+            synchronized (recordBuffer) {
                 recordBuffer.clear();
             }
             return;
         }
         if (Debug.messageEnabled()) {
             Debug.message(fileName + ":FileHandler.flush: writing " +
-                            "buffered records (" +
-                            recordBuffer.size() + " records)");
+                    "buffered records (" +
+                    recordBuffer.size() + " records)");
         }
-        synchronized(recordBuffer) {
+        synchronized (recordBuffer) {
             int rbsz = recordBuffer.size();
-            for (int i=0; i < rbsz; ++i) {
-                String message = (String)recordBuffer.remove(0);
-                if ((message.length() > 0 ) &&
-                    ((meteredStream.written + message.length()) >= maxFileSize))
-                {
+            for (int i = 0; i < rbsz; ++i) {
+                String message = (String) recordBuffer.remove(0);
+                if ((message.length() > 0) &&
+                        ((meteredStream.written + message.length()) >= maxFileSize)) {
                     if (Debug.messageEnabled()) {
                         Debug.message(fileName +
-                            ":FileHandler: Rotation condition reached");
+                                ":FileHandler: Rotation condition reached");
                     }
                     rotate();
                 }
@@ -461,13 +460,13 @@ public class FileHandler extends java.util.logging.Handler {
                     writer.write(message);
                 } catch (IOException ex) {
                     Debug.error(fileName +
-                        ":FileHandler: could not write to file: ", ex);
+                            ":FileHandler: could not write to file: ", ex);
                 }
                 cleanup();
             }
         }
     }
-    
+
     private void rotate() {
         if (writer != null) {
             try {
@@ -475,26 +474,28 @@ public class FileHandler extends java.util.logging.Handler {
                 writer.close();
             } catch (Exception ex) {
                 Debug.error(fileName + ":FileHandler: " +
-                                "Error closing writer", ex);
+                        "Error closing writer", ex);
             }
         }
         //
         //  delete file<n>; file<n-1> becomes file<n>; and so on.
         //
-        for (int i = count-2; i >= 0; i--) {
+        for (int i = count - 2; i >= 0; i--) {
             File f1 = files[i];
-            File f2 = files[i+1];
+            File f2 = files[i + 1];
             if (f1.exists()) {
                 if (f2.exists()) {
                     try {
                         f2.delete();
                     } catch (SecurityException secex) {
                         Debug.error(fileName +
-                            ":FileHandler: could not delete file. msg = " +
-                            secex.getMessage());
+                                ":FileHandler: could not delete file. msg = " +
+                                secex.getMessage());
                     }
                 }
+                
                 boolean renameSuccess = f1.renameTo(f2);
+                
                 // In case renaming fails, copy the contents of source file
                 // to destination file.
                 if (!renameSuccess) {
@@ -508,38 +509,66 @@ public class FileHandler extends java.util.logging.Handler {
             Debug.error(fileName + ":FileHandler: error opening file" + ix);
         }
     }
-    
+
     private void copyFile(String input, String output) {
         if (Debug.messageEnabled()) {
             Debug.message(fileName + ":FileHandler: CopyFile Method called");
         }
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+
         try {
             //input file
-            FileInputStream fis = new FileInputStream(input);
+            fis = new FileInputStream(input);
             int s;
             //output file
-            FileOutputStream fos = new FileOutputStream(output);
-            while ((s = fis.read()) > -1 ) {
+            fos = new FileOutputStream(output);
+            while ((s = fis.read()) > -1) {
                 fos.write(s);
             }
-        } catch(FileNotFoundException fnfe) {
-            Debug.error(fileName + ":FileHandler: copyFile: File not found: ", 
-                fnfe);
-        } catch(IOException ioex) {
-            Debug.error(fileName + ":FileHandler: copyFile: IOException", 
-                ioex);
+        } catch (FileNotFoundException fnfe) {
+            Debug.error(fileName + ":FileHandler: copyFile: File not found: ",
+                    fnfe);
+        } catch (IOException ioex) {
+            Debug.error(fileName + ":FileHandler: copyFile: IOException",
+                    ioex);
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException ex) {
+                Debug.error(fileName + 
+                    ":FileHandler: copyFile: IOException while closing file",
+                    ex);
+            }
         }
     }
-    
+
     private void checkForHeaderWritten(String fileName) {
-        byte [] bytes = new byte[1024];
+        byte[] bytes = new byte[1024];
+        FileInputStream fins = null;
         try {
-            FileInputStream fins = new FileInputStream(new File(fileName));
+            fins = new FileInputStream(new File(fileName));
             fins.read(bytes);
         } catch (IOException ioe) {
-            Debug.error(fileName + ":FileHandler: couldnot read file content", 
-                ioe);
+            Debug.error(fileName + ":FileHandler: couldnot read file content",
+                    ioe);
+        } finally {
+            if (fins != null) {
+                try {
+                    fins.close();
+                } catch (IOException ex) {
+                    Debug.error(fileName +
+                            ":FileHandler: could not close file.", ex);
+                }
+            }
         }
+
         String fileContent = new String(bytes);
         fileContent = fileContent.trim();
         if (fileContent.startsWith("#Version")) {
@@ -548,80 +577,77 @@ public class FileHandler extends java.util.logging.Handler {
             headerWritten = false;
         }
     }
-    
+
     private class TimeBufferingTask extends GeneralTaskRunnable {
-        
+
         private long runPeriod;
-        
+
         public TimeBufferingTask(long runPeriod) {
             this.runPeriod = runPeriod;
         }
-        
+
         /**
          * The method which implements the GeneralTaskRunnable.
          */
         public void run() {
             if (Debug.messageEnabled()) {
-                Debug.message(fileName + 
-                    ":FileHandler:TimeBufferingTask.run() called");
+                Debug.message(fileName +
+                        ":FileHandler:TimeBufferingTask.run() called");
             }
             flush();
         }
-        
+
         /**
          *  Methods that need to be implemented from GeneralTaskRunnable.
          */
-        
         public boolean isEmpty() {
             return true;
         }
-        
+
         public boolean addElement(Object obj) {
             return false;
         }
-        
+
         public boolean removeElement(Object obj) {
             return false;
         }
-        
+
         public long getRunPeriod() {
             return runPeriod;
         }
-        
     }
-    
+
     private void startTimeBufferingThread() {
         String period = lmanager.getProperty(LogConstants.BUFFER_TIME);
         long interval;
-        if((period != null) || (period.length() != 0)) {
+        if ((period != null) || (period.length() != 0)) {
             interval = Long.parseLong(period);
         } else {
             interval = LogConstants.BUFFER_TIME_DEFAULT;
         }
         interval *= 1000;
-        if(bufferTask == null){
+        if (bufferTask == null) {
             bufferTask = new TimeBufferingTask(interval);
             try {
-                SystemTimer.getTimer().schedule(bufferTask, new Date(((
-                    System.currentTimeMillis() + interval) / 1000) * 1000));
+                SystemTimer.getTimer().schedule(bufferTask, new Date(((System.currentTimeMillis() + interval) / 1000) * 1000));
             } catch (IllegalArgumentException e) {
-                Debug.error (fileName + ":FileHandler:BuffTimeArg: " +
-                    e.getMessage());
+                Debug.error(fileName + ":FileHandler:BuffTimeArg: " +
+                        e.getMessage());
             } catch (IllegalStateException e) {
                 if (Debug.messageEnabled()) {
-                    Debug.message (fileName + ":FileHandler:BuffTimeState: " +
-                        e.getMessage());
+                    Debug.message(fileName + ":FileHandler:BuffTimeState: " +
+                            e.getMessage());
                 }
             }
             if (Debug.messageEnabled()) {
-                Debug.message(fileName + 
-                    ":FileHandler: Time Buffering Thread Started");
+                Debug.message(fileName +
+                        ":FileHandler: Time Buffering Thread Started");
             }
         }
     }
 
     private void stopBufferTimer() {
-        if(bufferTask != null) {
+        if (bufferTask != null) {
             bufferTask.cancel();
             bufferTask = null;
             if (Debug.messageEnabled()) {
