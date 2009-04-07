@@ -124,6 +124,48 @@
             <value>/admin/image/or.gif</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>andSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.AndSubjectType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>and</value>
+        </managed-property>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>true</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-and.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/and.gif</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>notSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.NotSubjectType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>not</value>
+        </managed-property>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>true</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-not.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/not.gif</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
         <managed-bean-name>subjectTypes</managed-bean-name>
@@ -133,6 +175,8 @@
             <value>#{userSubjectType}</value>
             <value>#{roleSubjectType}</value>
             <value>#{orSubjectType}</value>
+            <value>#{andSubjectType}</value>
+            <value>#{notSubjectType}</value>
         </list-entries>
     </managed-bean>
     <managed-bean>
@@ -141,6 +185,8 @@
         <managed-bean-scope>session</managed-bean-scope>
         <list-entries>
             <value>#{orSubjectType}</value>
+            <value>#{andSubjectType}</value>
+            <value>#{notSubjectType}</value>
         </list-entries>
     </managed-bean>
     <!-- subject types -->

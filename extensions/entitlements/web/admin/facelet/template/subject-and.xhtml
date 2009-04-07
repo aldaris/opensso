@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
+    <c:if test="#{viewSubject != null &amp;&amp; viewSubject.subjectType.name == 'and'}">
+        <ice:outputText value="AND of the following subjects:"/>
+        <ice:panelGroup
+            styleClass="conditions">
+            <c:forEach
+                var="vs"
+                items="#{viewSubject.viewSubjects}">
+                <o:subjectpanel
+                    viewSubject="#{vs}"/>
+            </c:forEach>
+        </ice:panelGroup>
+        <ice:panelGroup
+            styleClass="drop-target"
+            dropTarget="true"
+            dropValue="#{viewSubject}"
+            dropListener="#{policyCreateWizardHandler.subjectDropListener}">
+            Drop ANDed subjects here ...
+        </ice:panelGroup>
+    </c:if>
+</span>
