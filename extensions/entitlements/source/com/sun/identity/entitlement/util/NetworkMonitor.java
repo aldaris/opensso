@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NetworkMonitor.java,v 1.1 2009-04-03 21:38:09 arviranga Exp $
+ * $Id: NetworkMonitor.java,v 1.2 2009-04-07 03:52:58 arviranga Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -49,6 +49,10 @@ public class NetworkMonitor extends HttpServlet {
     // Instance variables
     int maxHistory = 600; // 10 minutes
     LinkedList<StatsData> history = new LinkedList<StatsData>();
+
+    // Current stats
+    float throughput;
+    float totalResponseTime;
     
     /**
      * @return the collectStats
@@ -84,8 +88,10 @@ public class NetworkMonitor extends HttpServlet {
     public void end(long start) {
         if (isCollectStats()) {
             long rs = 0;
+            throughput++;
             if (start != 0) {
                 rs = System.currentTimeMillis() - start;
+                totalResponseTime += rs;
             }
             StatsData sd = getNewStats(rs);
             if (history.isEmpty()) {
@@ -109,6 +115,11 @@ public class NetworkMonitor extends HttpServlet {
                 }
             }
         }
+    }
+
+    public void reset() {
+        throughput = 0;
+        totalResponseTime = 0;
     }
 
     private StatsData getNewStats(long responsetime) {
@@ -157,6 +168,13 @@ public class NetworkMonitor extends HttpServlet {
     }
 
     public float responseTime() {
+        if (throughput > 0) {
+            return (totalResponseTime/throughput);
+        }
+        return (0);
+    }
+
+    public float getLastHistoryResponseTime() {
         StatsData sd = history.getLast();
         if (sd != null) {
             float ans = sd.getResponseTimes();
@@ -166,6 +184,10 @@ public class NetworkMonitor extends HttpServlet {
     }
 
     public float throughput() {
+        return (throughput);
+    }
+
+    public float getLastHistoryThroughput() {
         StatsData sd = history.getLast();
         if (sd != null) {
             return ((float) sd.getCount());

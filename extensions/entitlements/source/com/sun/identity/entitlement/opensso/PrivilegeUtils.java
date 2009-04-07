@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.2 2009-04-07 03:52:58 arviranga Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -87,7 +87,7 @@ public class PrivilegeUtils {
     static {
         try {
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+                AdminTokenAction.getInstance());
             svcTypeManager = new ServiceTypeManager(adminToken);
         } catch (SSOException ex) {
             //TOFIX
@@ -108,15 +108,13 @@ public class PrivilegeUtils {
      */
     public static Privilege policyToPrivilege(Policy policy)
             throws PolicyException, EntitlementException {
-        //TODO: split a policy to multiple prrivileges if the rules have different
-        // acation values
+        //TODO: split a policy to multiple prrivileges if the rules have
+        // different acation values
         if (policy == null) {
             return null;
         }
 
         String policyName = policy.getName();
-
-
         Set ruleNames = policy.getRuleNames();
         Set<Rule> rules = new HashSet<Rule>();
         for (Object ruleNameObj : ruleNames) {
@@ -126,7 +124,7 @@ public class PrivilegeUtils {
         }
         Entitlement entitlement = null;
         try {
-        entitlement = rulesToEntitlement(rules);
+            entitlement = rulesToEntitlement(rules);
         } catch (SSOException e) {
             //TODO: record, wrap and propogate the exception
         }
@@ -136,7 +134,6 @@ public class PrivilegeUtils {
         for (Object subjectNameObj : subjectNames) {
             String subjectName = (String) subjectNameObj;
             Subject subject = policy.getSubject(subjectName);
-            Set subjectValues = subject.getValues();
             boolean exclusive = policy.isSubjectExclusive(subjectName);
             Object[] nqSubject = new Object[3];
             nqSubject[0] = subjectName;
@@ -145,7 +142,6 @@ public class PrivilegeUtils {
             nqSubjects.add(nqSubject);
         }
         EntitlementSubject eSubject = nqSubjectsToESubject(nqSubjects);
-
 
         Set conditionNames = policy.getConditionNames();
         Set nConditions = new HashSet();
@@ -169,7 +165,8 @@ public class PrivilegeUtils {
             nrp[1] = rp;
             nrps.add(nrp);
         }
-        Set<ResourceAttributes> resourceAttributesSet = nrpsToResourceAttributes(nrps);
+        Set<ResourceAttributes> resourceAttributesSet =
+            nrpsToResourceAttributes(nrps);
 
         Privilege privilege = new OpenSSOPrivilege(policyName, entitlement,
             eSubject, eCondition, resourceAttributesSet);
@@ -215,8 +212,6 @@ public class PrivilegeUtils {
         EntitlementSubject es = null;
         for (Object nqSubjectObj : nqSubjects) {
             Object[] nqSubject = (Object[]) nqSubjectObj;
-            Set orSubjects = new HashSet();
-            String subjectName = (String) nqSubject[0];
             Subject subject = (Subject) nqSubject[1];
             if (subject instanceof com.sun.identity.policy.plugins.AMIdentitySubject) {
                 es = mapAMIdentitySubjectToESubject(nqSubject);
@@ -304,7 +299,6 @@ public class PrivilegeUtils {
         EntitlementCondition ec = null;
         for (Object nConditionObj : nConditons) {
             Object[] nCondition = (Object[]) nConditionObj;
-            String conditionName = (String) nCondition[0];
             Condition condition = (Condition) nCondition[1];
             if (condition instanceof com.sun.identity.policy.plugins.IPCondition) {
                 ec = mapIPPConditionToIPECondition(nCondition);
@@ -579,8 +573,8 @@ public class PrivilegeUtils {
     private static Object[] policyESubjectToPSubject(PolicyESubject ps)
             throws PolicyException, SSOException {
         Subject subject = null; //stm.getSubject("AMIdentitySubject");
-        Set<String> values = new HashSet<String>();
         /*
+        Set<String> values = new HashSet<String>();
         values.add(rs.getRole());
         subject.setValues(values);
         String pSubjectName = rs.getPSubjectName();
