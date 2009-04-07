@@ -22,109 +22,33 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DenyOverride.java,v 1.2 2009-04-01 00:21:29 dillidorai Exp $
+ * $Id: DenyOverride.java,v 1.3 2009-04-07 10:25:08 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
  *
  * @author dennis
  */
-public class DenyOverride implements EntitlementCombiner {
-
-    public Entitlement combines(
-        Entitlement e1,
-        Entitlement e2
-    ) {
-        Entitlement result = null;
-        if (e1.getApplicationName().equals(e2.getApplicationName())) {
-            result = new Entitlement(e1.getApplicationName(),
-                e1.getResourceNames(), mergeActionValues(e1, e2)); //TODO: recheck
-            result.setAdvices(mergeAdvices(e1, e2));
-            result.setAttributes(mergeAttributes(e1, e2));
-        }
-        return result;
-
+public class DenyOverride extends EntitlementCombiner {
+    @Override
+    protected boolean combine(Boolean b1, Boolean b2) {
+        return b1.booleanValue() & b2.booleanValue();
     }
 
-    private Map<String, Boolean> mergeActionValues(
-        Entitlement e1,
-        Entitlement e2
-    ) {
-        Map<String, Boolean> result = new HashMap<String, Boolean>();
-        Map<String, Boolean> a1 = e1.getActionValues();
-        Map<String, Boolean> a2 = e2.getActionValues();
-
-        Set<String> actionNames = new HashSet<String>();
-        actionNames.addAll(a1.keySet());
-        actionNames.addAll(a2.keySet());
-
-        for (String n : actionNames) {
-            Boolean b1 = a1.get(n);
-            Boolean b2 = a2.get(n);
-
-            if (b1 == null) {
-                result.put(n, b2);
-            } else if (b2 == null) {
-                result.put(n, b1);
-            } else {
-                Boolean b = Boolean.valueOf(
-                    b1.booleanValue() & b2.booleanValue());
-                result.put(n, b);
+    @Override
+    protected boolean isCompleted() {
+        Entitlement e = getRootE();
+        Set<String> actions = getActions();
+        for (String a : actions) {
+            Boolean result = e.getActionValue(a);
+            if ((result == null) || result.booleanValue()) {
+                return false;
             }
         }
-        return result;
-    }
-
-    private Map<String, String> mergeAdvices(Entitlement e1, Entitlement e2) {
-        Map<String, String> result = new HashMap<String, String>();
-        Map<String, String> a1 = e1.getAdvices();
-        Map<String, String> a2 = e2.getAdvices();
-
-        Set<String> names = new HashSet<String>();
-        for (String n : names) {
-            String advice1 = a1.get(n);
-            String advice2 = a2.get(n);
-
-            if (advice1 == null) {
-                result.put(n, advice2);
-            } else {
-                result.put(n, advice1);
-            }
-        }
-        return result;
-    }
-
-    private Map<String, Set<String>> mergeAttributes(
-        Entitlement e1,
-        Entitlement e2
-    ) {
-        Map<String, Set<String>> result = new HashMap<String, Set<String>>();
-        Map<String, Set<String>> a1 = e1.getAttributes();
-        Map<String, Set<String>> a2 = e2.getAttributes();
-
-        Set<String> names = new HashSet<String>();
-        for (String n : names) {
-            Set<String> attr1 = a1.get(n);
-            Set<String> attr2 = a2.get(n);
-
-            if (attr1 == null) {
-                result.put(n, attr2);
-            } else if (attr2 == null) {
-                result.put(n, attr1);
-            } else {
-                Set<String> combined = new HashSet<String>();
-                combined.addAll(attr1);
-                combined.addAll(attr2);
-                result.put(n, combined);
-            }
-        }
-        return result;
+        return true;
     }
 }

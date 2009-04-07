@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPrivilege.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
+ * $Id: OpenSSOPrivilege.java,v 1.2 2009-04-07 10:25:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -34,7 +34,8 @@ import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeType;
 import com.sun.identity.entitlement.ResourceAttributes;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,13 +82,27 @@ public class OpenSSOPrivilege extends Privilege {
     }
 
     @Override
-    public List<Entitlement> getEntitlements(
+    public List<Entitlement> evaluate(
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment,
         boolean recursive
     ) throws EntitlementException {
-        return Collections.EMPTY_LIST;
+        List<Entitlement> results = new ArrayList<Entitlement>();
+        //TOFIX: Subject match
+
+        Map<String, Set<String>> advices = new HashMap<String, Set<String>>();
+        if (doesConditionMatch(advices, subject, resourceName, environment)) {
+            Set<String> resources = getMatchingResources(resourceName);
+            Entitlement origE = getEntitlement();
+            for (String r : resources) {
+                Entitlement e = new Entitlement(origE.getApplicationName(),
+                    r, origE.getActionValues());
+                results.add(e);
+            }
+        }
+
+        return results;
     }
 
 }

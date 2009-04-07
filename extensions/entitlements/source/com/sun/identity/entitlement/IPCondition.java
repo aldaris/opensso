@@ -22,24 +22,75 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPCondition.java,v 1.3 2009-03-27 16:29:10 veiming Exp $
+ * $Id: IPCondition.java,v 1.4 2009-04-07 10:25:08 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import javax.security.auth.Subject;
 import org.json.JSONObject;
 import org.json.JSONException;
 
 /**
  * EntitlementCondition to represent IP, DNS name based  constraint
- * @author dorai
- */
+  */
 public class IPCondition implements EntitlementCondition {
     private static final long serialVersionUID = -403250971215465050L;
+
+    /** Key that is used in an <code>IPCondition</code> to define the  DNS
+     * name values for which a policy applies. The value corresponding to the
+     * key has to be a <code>Set</code> where each element is a <code>String
+     * </code> that conforms to the patterns described here.
+     *
+     * The patterns is :
+     * <pre>
+     * ccc.ccc.ccc.ccc
+     * *.ccc.ccc.ccc</pre>
+     * where c is any valid character for DNS domain/host name.
+     * There could be any number of <code>.ccc</code> components.
+     * Some sample values are:
+     * <pre>
+     * www.sun.com
+     * finace.yahoo.com
+     * *.yahoo.com
+     * </pre>
+     *
+     * @see #setProperties(Map)
+     */
+    public static final String DNS_NAME = "DnsName";
+
+
+    /** Key that is used to define request IP address that is passed in
+     * the <code>env</code> parameter while invoking
+     * <code>getConditionDecision</code> method of an <code>IPCondition</code>.
+     * Value for the key should be a <code>String</code> that is a string
+     * representation of IP of the client, in the form n.n.n.n where n is a
+     * value between 0 and 255 inclusive.
+     *
+     * @see #getConditionDecision(SSOToken, Map)
+     * @see #REQUEST_DNS_NAME
+     */
+    public static final String REQUEST_IP = "requestIp";
+
+    /** Key that is used to define request DNS name that is passed in
+     * the <code>env</code> parameter while invoking
+     * <code>getConditionDecision</code> method of an <code>IPCondition</code>.
+     * Value for the key should be a set of strings representing the
+     * DNS names of the client, in the form <code>ccc.ccc.ccc</code>.
+     * If the <code>env</code> parameter is null or does not
+     * define value for <code>REQUEST_DNS_NAME</code>,  the
+     * value for <code>REQUEST_DNS_NAME</code> is obtained
+     * from the single sign on token of the user
+     *
+     * @see #getConditionDecision(SSOToken, Map)
+     */
+    public static final String REQUEST_DNS_NAME = "requestDnsName";
 
     private String startIp;
     private String endIp;
@@ -119,11 +170,89 @@ public class IPCondition implements EntitlementCondition {
      * of any error
      */
     public ConditionDecision evaluate(
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return null;
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
+        boolean allowed = true;
+        Set<String> setIP = environment.get(REQUEST_IP);
+        String ip = ((setIP != null) && !setIP.isEmpty()) ?
+            setIP.iterator().next() : null;
+        Set reqDnsNames = (Set)environment.get(REQUEST_DNS_NAME);
+
+        if ((ip != null) && !isAllowedByIp(ip)) {
+            allowed = false;
+        } else if ((reqDnsNames != null) && !reqDnsNames.isEmpty()) {
+            for (Iterator names = reqDnsNames.iterator();
+                names.hasNext() && allowed; ) {
+                allowed = isAllowedByDns((String)names.next());
+            }
+        }
+        return new ConditionDecision(allowed, Collections.EMPTY_MAP);
+    }
+
+    private boolean isAllowedByIp(String ip)
+        throws EntitlementException {
+        long requestIp = stringToIp(ip);
+        long startIpNum = stringToIp(startIp);
+        long endIpNum = stringToIp(endIp);
+        return ((requestIp >= startIpNum) && (requestIp <= endIpNum));
+    }
+
+    private long stringToIp(String ip) throws EntitlementException {
+        StringTokenizer st = new StringTokenizer(ip, ".");
+        int tokenCount = st.countTokens();
+        if ( tokenCount != 4 ) {
+            String args[] = { "ip", ip };
+            throw new EntitlementException(400, args);
+        }
+        long ipValue = 0L;
+        while ( st.hasMoreElements()) {
+            String s = st.nextToken();
+            short ipElement = 0;
+            try {
+                ipElement = Short.parseShort(s);
+            } catch(Exception e) {
+                String args[] = { "ip", ip };
+                throw new EntitlementException(400, args);
+            }
+            if ( ipElement < 0 || ipElement > 255 ) {
+                String args[] = { "ipElement", s };
+                throw new EntitlementException(400, args);
+            }
+            ipValue = ipValue * 256L + ipElement;
+        }
+        return ipValue;
+    }
+
+    private boolean isAllowedByDns(String dnsName)
+        throws EntitlementException {
+        return true;
+//        boolean allowed = false;
+//        dnsName = dnsName.toLowerCase();
+//        Iterator dnsNames = dnsList.iterator();
+//        while ( dnsNames.hasNext() ) {
+//            String dnsPattern = (String)dnsNames.next();
+//            if (dnsPattern.equals("*")) {
+//                // single '*' matches everything
+//                allowed = true;
+//                break;
+//            }
+//            int starIndex = dnsPattern.indexOf("*");
+//            if (starIndex != -1 ) {
+//                // the dnsPattern is a string like *.ccc.ccc
+//                String dnsWildSuffix = dnsPattern.substring(1);
+//                if (dnsName.endsWith(dnsWildSuffix)) {
+//                    allowed = true;
+//                    break;
+//                }
+//            }
+//            else if (dnsPattern.equalsIgnoreCase(dnsName)) {
+//                    allowed = true;
+//                    break;
+//            }
+//        }
+//        return allowed;
     }
 
     /**
@@ -206,12 +335,9 @@ public class IPCondition implements EntitlementCondition {
      * @param obj object to check for equality
      * @return  <code>true</code> if the passed in object is equal to this object
      */
+    @Override
     public boolean equals(Object obj) {
-        boolean equalled = true;
-        if (obj == null) {
-            return false;
-        }
-        if (!getClass().equals(obj.getClass())) {
+        if ((obj == null) || !getClass().equals(obj.getClass())) {
             return false;
         }
         IPCondition object = (IPCondition) obj;
@@ -251,13 +377,14 @@ public class IPCondition implements EntitlementCondition {
                 return false;
             }
         }
-        return equalled;
+        return true;
     }
 
     /**
      * Returns hash code of the object
      * @return hash code of the object
      */
+    @Override
     public int hashCode() {
         int code = 0;
         if (domainNameMask != null) {
@@ -279,6 +406,7 @@ public class IPCondition implements EntitlementCondition {
      * Returns string representation of the object
      * @return string representation of the object
      */
+    @Override
     public String toString() {
         String s = null;
         try {

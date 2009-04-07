@@ -22,13 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.4 2009-03-31 05:52:16 veiming Exp $
+ * $Id: Application.java,v 1.5 2009-04-07 10:25:07 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.EntitlementCombiner;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
+import com.sun.identity.entitlement.interfaces.ResourceName;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,9 +44,10 @@ public class Application {
     private Set<String> actions;
     private Set<String> conditions;
     private Set<String> resources;
-    private EntitlementCombiner entitlementCombiner;
+    private Class entitlementCombiner;
     private ISearchIndex searchIndex;
     private ISaveIndex saveIndex;
+    private ResourceName resourceComparator;
 
     public Application(String name, ApplicationType applicationType) {
         this.name = name;
@@ -71,7 +74,14 @@ public class Application {
     }
 
     public EntitlementCombiner getEntitlementCombiner() {
-        return entitlementCombiner;
+        try {
+            return (EntitlementCombiner)entitlementCombiner.newInstance();
+        } catch (InstantiationException ex) {
+            //TOFIX
+        } catch (IllegalAccessException ex) {
+            //TOFIX
+        }
+        return null;
     }
 
     public String getName() {
@@ -98,8 +108,12 @@ public class Application {
         this.resources = resources;
     }
 
-    public void setEntitlementCombiner(EntitlementCombiner entitlementCombiner){
+    public void setEntitlementCombiner(Class entitlementCombiner){
         this.entitlementCombiner = entitlementCombiner;
+    }
+
+    public void setResourceComparator(ResourceName resourceComparator) {
+        this.resourceComparator = resourceComparator;
     }
 
     public ResourceSearchIndexes getResourceSearchIndex(
@@ -114,4 +128,10 @@ public class Application {
             applicationType.getResourceSaveIndex(resource) :
             saveIndex.getIndexes(resource);
     }
+
+    public ResourceName getResourceComparator() {
+        return (resourceComparator == null) ?
+            applicationType.getResourceComparator() : resourceComparator;
+    }
+
 }

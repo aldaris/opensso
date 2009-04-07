@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
+ * $Id: EntitlementService.java,v 1.2 2009-04-07 10:25:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -60,6 +60,7 @@ public class EntitlementService implements IPolicyConfig {
         "entitlementCombiner";
     private static final String CONFIG_SEARCH_INDEX_IMPL = "searchIndexImpl";
     private static final String CONFIG_SAVE_INDEX_IMPL = "saveIndexImpl";
+    private static final String CONFIG_RESOURCE_COMP_IMPL = "resourceComparator";
     private static final String CONFIG_APPLICATION_TYPES = "applicationTypes";
 
     public EntitlementService() {
@@ -109,8 +110,11 @@ public class EntitlementService implements IPolicyConfig {
                         CONFIG_SAVE_INDEX_IMPL);
                     String searchIndexImpl = getAttribute(data,
                         CONFIG_SEARCH_INDEX_IMPL);
+                    String resourceComp = getAttribute(data,
+                        CONFIG_RESOURCE_COMP_IMPL);
                     results.add(new ApplicationTypeInfo(
-                        name, actions, saveIndexImpl, searchIndexImpl));
+                        name, actions, saveIndexImpl, searchIndexImpl,
+                        resourceComp));
                 }
             }
         } catch (SMSException ex) {
@@ -156,11 +160,13 @@ public class EntitlementService implements IPolicyConfig {
                         CONFIG_SAVE_INDEX_IMPL);
                     String searchIndexImpl = getAttribute(data,
                         CONFIG_SEARCH_INDEX_IMPL);
+                    String resourceComp = getAttribute(data,
+                        CONFIG_RESOURCE_COMP_IMPL);
 
                     results.add(new ApplicationInfo(
                         name, actions, resources, entitlementCombiner,
                         conditionClassNames, applicationType, saveIndexImpl,
-                        searchIndexImpl));
+                        searchIndexImpl, resourceComp));
                 }
             }
         } catch (SMSException ex) {

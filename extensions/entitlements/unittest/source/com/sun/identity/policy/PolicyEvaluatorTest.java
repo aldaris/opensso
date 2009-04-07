@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.14 2009-04-02 22:13:42 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.15 2009-04-07 10:25:12 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -114,7 +114,7 @@ public class PolicyEvaluatorTest {
         identities.add(testGroup);
         amir.deleteIdentities(identities);
     }
-    
+
     @Test
     public void testIsAllowed() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -132,7 +132,7 @@ public class PolicyEvaluatorTest {
                 "http://www.sun.com:8080/public evaluation failed");
         }
     }
-    
+
     @Test
     public void testResourceSelf() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -156,7 +156,7 @@ public class PolicyEvaluatorTest {
                 "http://www.sun.com:8080/private evaluation failed");
         }
     }
-    
+ 
     @Test
     public void testResourceSubTree() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(

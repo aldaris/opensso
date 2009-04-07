@@ -22,16 +22,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeCondition.java,v 1.3 2009-03-27 16:29:10 veiming Exp $
+ * $Id: TimeCondition.java,v 1.4 2009-04-07 10:25:09 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TimeZone;
 import javax.security.auth.Subject;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -42,6 +50,38 @@ import org.json.JSONException;
 public class TimeCondition implements EntitlementCondition {
     private static final long serialVersionUID = -403250971215465050L;
 
+    /**
+     * Key that is used to define current time that is passed in the
+     *  <code>env</code> parameter while invoking <code>getConditionDecision
+     *  </code> method of the <code>SimpleTimeCondition</code>. Value for the
+     *  key should be a <code>Long</code> object whose value is time in
+     *  milliseconds since epoch. If no value is given for this, it is assumed
+     *  to be the current system time
+     *
+     *  @see #getConditionDecision(SSOToken, Map)
+     *  @see #ENFORCEMENT_TIME_ZONE
+     */
+    public static final String REQUEST_TIME = "requestTime";
+
+    /**
+     * Key that is used to define the time zone that is passed in
+     *  the <code>env</code> parameter while invoking
+     *  <code>getConditionDecision</code> method of a
+     *  <code>SimpleTimeCondition</code>
+     *  Value for the key should be a <code>TimeZone</code> object. This
+     *  would be used only if the <code>ENFORCEMENT_TIME_ZONE</code> is not
+     *  defined for the <code>SimpleTimeCondition</code>
+     *
+     *  @see #getConditionDecision(SSOToken, Map)
+     *  @see #ENFORCEMENT_TIME_ZONE
+     *  @see java.util.TimeZone
+     */
+    public static final String REQUEST_TIME_ZONE = "requestTimeZone";
+    
+    private static final String DATE_FORMAT = "yyyy:MM:dd";
+    private static final String[] DAYS_OF_WEEK = { "", "sun", "mon", "tue",
+        "wed", "thu", "fri", "sat"};
+
     private String startTime;
     private String endTime;
     private String startDay;
@@ -50,6 +90,8 @@ public class TimeCondition implements EntitlementCondition {
     private String endDate;
     private String enforcementTimeZone;
     private String pConditionName;
+    transient private int startDateArray[] = {-1,0,0};
+    transient private int endDateArray[] = {-1,0,0};
 
     /**
      * Constructs an TimeCondition
@@ -110,11 +152,55 @@ public class TimeCondition implements EntitlementCondition {
      * of any error
      */
     public ConditionDecision evaluate(
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return null;
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment)
+        throws EntitlementException {
+        boolean allowed = false;
+        long currentGmt = System.currentTimeMillis();
+        TimeZone timeZone = TimeZone.getDefault();
+        if (environment != null) {
+            String time = getProperty(environment, REQUEST_TIME);
+            if (time != null) {
+                try {
+                    currentGmt = Long.parseLong(time);
+                } catch (NumberFormatException e) {
+                    //TOFIX
+                }
+            }
+
+            String tZone = getProperty(environment, REQUEST_TIME_ZONE);
+            if (tZone != null) {
+                timeZone = TimeZone.getTimeZone(enforcementTimeZone);
+            }
+        }
+
+        long[] effectiveRange = getEffectiveRange(currentGmt, timeZone);
+        long timeToLive = Long.MAX_VALUE;
+        if ( (currentGmt >= effectiveRange[0])
+                && ( currentGmt <= effectiveRange[1]) ) {
+            allowed = true;
+            timeToLive = effectiveRange[1];
+        } else if ( currentGmt < effectiveRange[0] ) {
+            timeToLive = effectiveRange[0];
+        }
+        String sTimeToLove = Long.toString(timeToLive);
+        Set<String> setAdvice = new HashSet<String>();
+        setAdvice.add(sTimeToLove);
+        Map<String, Set<String>> advices = new HashMap<String, Set<String>>();
+        advices.put(ConditionDecision.TIME_TO_LIVE, setAdvice);
+
+        return new ConditionDecision(allowed, advices);
+
+
+    }
+
+    private static String getProperty(
+        Map<String, Set<String>> environment,
+        String name
+    ) {
+        Set<String> set = environment.get(name);
+        return ((set != null) && !set.isEmpty()) ? set.iterator().next() :null;
     }
 
     /**
@@ -257,8 +343,8 @@ public class TimeCondition implements EntitlementCondition {
      * @param obj object to check for equality
      * @return  <code>true</code> if the passed in object is equal to this object
      */
+    @Override
     public boolean equals(Object obj) {
-        boolean equalled = true;
         if (obj == null) {
             return false;
         }
@@ -322,18 +408,39 @@ public class TimeCondition implements EntitlementCondition {
                 return false;
             }
         }
-        return equalled;
+        return true;
     }
 
     /**
      * Returns hash code of the object
      * @return hash code of the object
      */
+    @Override
     public int hashCode() {
         int code = 0;
-        //TODO: add logic for all the fields
-        if (getPConditionName() != null) {
-            code += getPConditionName().hashCode();
+        if (startTime != null) {
+            code += startTime.hashCode();
+        }
+        if (startDate != null) {
+            code += startDate.hashCode();
+        }
+        if (startDay != null) {
+            code += startDay.hashCode();
+        }
+        if (endTime != null) {
+            code += endTime.hashCode();
+        }
+        if (endDate != null) {
+            code += endDate.hashCode();
+        }
+        if (endDay != null) {
+            code += endDay.hashCode();
+        }
+        if (enforcementTimeZone != null) {
+            code += enforcementTimeZone.hashCode();
+        }
+        if (pConditionName != null) {
+            code += pConditionName.hashCode();
         }
         return code;
     }
@@ -342,6 +449,7 @@ public class TimeCondition implements EntitlementCondition {
      * Returns string representation of the object
      * @return string representation of the object
      */
+    @Override
     public String toString() {
         String s = null;
         try {
@@ -353,4 +461,251 @@ public class TimeCondition implements EntitlementCondition {
         }
         return s;
     }
+
+    /**
+     * Using the start and end times and dates get the effective
+     * start and end date in the <code>timeZone</code> specified
+     * using the current time in GMT ( <code>currentGmt</code>).
+     * @return long[] Array of <code>long</code> of size 2 where
+     * end range.
+     */
+    private long[] getEffectiveRange(long currentGmt, TimeZone timeZone)
+        throws EntitlementException {
+        long[] effectiveRange = new long[2];
+
+        Calendar calendar = new GregorianCalendar(timeZone);
+        calendar.setTime( new Date(currentGmt) );
+
+        long timeStart = Long.MIN_VALUE;
+        int startT = parseTimeString(startTime);
+        int startHour = (startT != -1) ? startT /60 : -1;
+
+        if ( startHour != -1 ) {
+            int startMinute = startT - startHour * 60;
+            calendar.set(Calendar.HOUR_OF_DAY, startHour);
+            calendar.set(Calendar.MINUTE, startMinute);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            timeStart = calendar.getTime().getTime();
+        }
+
+        long timeEnd = Long.MAX_VALUE;
+        int endT = parseTimeString(endTime);
+        int endHour = (endT != -1) ? endT /60 : -1;
+        if ( endHour != -1 ) {
+            int endMinute = endT - endHour * 60;
+            calendar.set(Calendar.HOUR_OF_DAY, endHour);
+            calendar.set(Calendar.MINUTE, endMinute);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            timeEnd = calendar.getTime().getTime();
+        }
+        if( timeEnd < timeStart) {
+            Calendar cal = new GregorianCalendar(timeZone);
+            if ( currentGmt < timeStart) {
+                cal.setTime(new Date(timeStart));
+                cal.roll(Calendar.DAY_OF_YEAR, false);
+                timeStart = cal.getTime().getTime();
+            } else {
+                cal.setTime(new Date(timeEnd));
+                cal.roll(Calendar.DAY_OF_YEAR, true);
+                timeEnd = cal.getTime().getTime();
+            }
+        }
+
+        long dayStart = Long.MIN_VALUE;
+        /* need to set the date again on the calendar object
+        Reason was discovered to be the fact that when HOUR_OF_DAY etc
+        are set on the calendar the WEEK_OF_MONTH, DAY_OF_THE_WEEK
+        gets initialized to "?" , and once that happens the below
+        calendar.set(Calendar.DAY_OF_WEEK, startDay) does not seem
+        to set the DAY_OF_WEEK, since the fields which it needs to set
+        on the basis of like WEEK_OF_MONTH, WEEK_OF_YEAR are lost  too.
+          Setting the date again reinitializes all the necessary fields
+        to be able to set "DAY_OF_WEEK" correctly below.
+        */
+
+        calendar.setTime( new Date(currentGmt) );
+        int startD = parseDayString(startDay);
+        if (startD != -1) {
+            calendar.set(Calendar.DAY_OF_WEEK, startD);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            dayStart = calendar.getTime().getTime();
+        }
+
+        long dayEnd = Long.MAX_VALUE;
+        int endD = parseDayString(endDay);
+        if (endD != -1) {
+            calendar.set(Calendar.DAY_OF_WEEK, endD);
+            calendar.set(Calendar.HOUR_OF_DAY, 24);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            dayEnd = calendar.getTime().getTime();
+        }
+        if( dayEnd <= dayStart) {
+            Calendar cal = new GregorianCalendar(timeZone);
+            if ( currentGmt < dayStart) {
+                cal.setTime(new Date(dayStart));
+                cal.roll(Calendar.WEEK_OF_YEAR, false);
+                dayStart = cal.getTime().getTime();
+            } else {
+                cal.setTime(new Date(dayEnd));
+                cal.roll(Calendar.WEEK_OF_YEAR, true);
+                dayEnd = cal.getTime().getTime();
+            }
+        }
+
+        long dateStart = Long.MIN_VALUE;
+        validateDates(startDate, endDate);
+        if ( startDateArray[0] != -1 ) {
+            calendar.set(Calendar.YEAR, startDateArray[0]);
+            calendar.set(Calendar.MONTH, startDateArray[1]);
+            calendar.set(Calendar.DAY_OF_MONTH, startDateArray[2]);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            dateStart = calendar.getTime().getTime();
+        }
+
+        long dateEnd = Long.MAX_VALUE;
+        if ( endDateArray[0] != -1 ) {
+            calendar.set(Calendar.YEAR, endDateArray[0]);
+            calendar.set(Calendar.MONTH, endDateArray[1]);
+            calendar.set(Calendar.DAY_OF_MONTH, endDateArray[2]);
+            calendar.set(Calendar.HOUR_OF_DAY, 24);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            dateEnd = calendar.getTime().getTime();
+        }
+
+        long rangeStart = Long.MIN_VALUE;
+        if ( timeStart > rangeStart ) {
+            rangeStart = timeStart;
+        }
+        if ( dayStart > rangeStart ) {
+            rangeStart = dayStart;
+        }
+        if ( dateStart > rangeStart ) {
+            rangeStart = dateStart;
+        }
+
+        long rangeEnd = Long.MAX_VALUE;
+        if ( timeEnd < rangeEnd ) {
+            rangeEnd = timeEnd;
+        }
+        if ( dayEnd < rangeEnd )  {
+            rangeEnd = dayEnd;
+        }
+        if ( dateEnd < rangeEnd ) {
+            rangeEnd = dateEnd;
+        }
+
+        effectiveRange[0] = rangeStart;
+        effectiveRange[1] = rangeEnd;
+
+        return effectiveRange;
+    }
+
+    /**
+     * Converts time in <code>String</code> format to an int.
+     * @exception PolicyException for invalid data.
+     */
+    private static int parseTimeString(String timeString)
+        throws EntitlementException {
+        if (timeString == null) {
+            return -1;
+        }
+        StringTokenizer st = new StringTokenizer(timeString, ":");
+        if ( st.countTokens() != 2 ) {
+            String[] args = { "time", timeString };
+            throw new EntitlementException(400, args);
+        }
+        String token1 = st.nextToken();
+        String token2 = st.nextToken();
+        int hour = -1;
+        int minute = -1;
+        try {
+            hour = Integer.parseInt(token1);
+            minute = Integer.parseInt(token2);
+        } catch ( Exception e) {
+            String[] args = { "time", timeString };
+            throw new EntitlementException(400, args);
+        }
+        if ( (hour < 0) || (hour > 24) || (minute < 0) || (minute > 59) ) {
+            String[] args = { "time", timeString };
+            throw new EntitlementException(400, args);
+        }
+        return hour * 60 + minute;
+    }
+
+    /**
+     * Converts day in <code>String</code> format to an int.
+     * based on the <code>DAYS_OF_WEEK</code>
+     * @exception PolicyException for invalid data.
+     * @see #DAYS_OF_WEEK
+     */
+    private static int parseDayString(String dayString) throws EntitlementException {
+        int day = -1;
+        String dayStringLc = dayString.toLowerCase();
+        for ( int i = 1; i < 8; i++ ) {
+            if ( DAYS_OF_WEEK[i].equals(dayStringLc ) ) {
+                day = i;
+                break;
+            }
+        }
+        if ( day == -1 ) {
+            String[] args = { "day", dayString };
+            throw new EntitlementException(400, args);
+        }
+        return day;
+    }
+
+    /**
+     * extracts <code>startDate</code> and <code>endDate</code> from the
+     * respective <code>Set</code>, throws Exception for invalid data
+     * like startDate > endDate or format.
+     * @see #START_DATE
+     * @see #END_DATE
+     */
+    private boolean validateDates(String startDate, String endDate)
+        throws EntitlementException {
+        DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+        df.setLenient(false);
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date date1 = null;
+        Date date2= null;
+        try {
+            date1 = df.parse(startDate);
+        } catch (Exception e) {
+            String[] args = {  startDate };
+            throw new EntitlementException(401, args, e);
+        }
+        try {
+            date2 = df.parse(endDate);
+        } catch (Exception e) {
+            String[] args = { endDate };
+            throw new EntitlementException(401, args, e);
+        }
+        if ( date1.getTime() > date2.getTime() ) {
+            String[] args = { startDate, endDate };
+            throw new EntitlementException(402, args);
+        }
+        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        cal.setTime(date1);
+        startDateArray[0] = cal.get(Calendar.YEAR);
+        startDateArray[1] = cal.get(Calendar.MONTH);
+        startDateArray[2] = cal.get(Calendar.DAY_OF_MONTH);
+        cal.setTime(date2);
+        endDateArray[0] = cal.get(Calendar.YEAR);
+        endDateArray[1] = cal.get(Calendar.MONTH);
+        endDateArray[2] = cal.get(Calendar.DAY_OF_MONTH);
+        return true;
+    }
+
 }

@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.6 2009-04-02 22:13:38 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.7 2009-04-07 10:25:07 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
+import com.sun.identity.entitlement.interfaces.ResourceName;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -73,14 +74,11 @@ public final class ApplicationManager {
         Set<String> conditions = info.getConditionClassNames();
         String searchIndexClassName = info.getSearchIndexImpl();
         String saveIndexClassName = info.getSaveIndexImpl();
+        String resourceComp = info.getResourceComparator();
 
         ApplicationType appType = ApplicationTypeManager.get(appTypeName);
         Application app = new Application(name, appType);
-        EntitlementCombiner combiner = getEntitlementCombiner(
-            info.getEntitlementCombiner());
-        if (combiner == null) {
-            combiner = new DenyOverride();
-        }
+        Class combiner = getEntitlementCombiner(info.getEntitlementCombiner());
         app.setEntitlementCombiner(combiner);
 
         if (actions != null) {
@@ -97,35 +95,31 @@ public final class ApplicationManager {
             searchIndexClassName);
         ISaveIndex saveIndex = ApplicationTypeManager.getSaveIndex(
             saveIndexClassName);
-
+        ResourceName resComp = ApplicationTypeManager.getResourceComparator(
+            resourceComp);
         if (searchIndex != null) {
             app.setSearchIndex(searchIndex);
         }
         if (saveIndex != null) {
             app.setSaveIndex(saveIndex);
         }
+        if (resComp != null) {
+            app.setResourceComparator(resComp);
+        }
         addApplication(app);
     }
 
-     private static EntitlementCombiner getEntitlementCombiner(String className)
+     private static Class getEntitlementCombiner(String className)
      {
         if (className == null) {
             return null;
         }
         try {
-            Class clazz = Class.forName(className);
-            Object o = clazz.newInstance();
-            if (o instanceof EntitlementCombiner) {
-                return (EntitlementCombiner) o;
-            }
-        } catch (InstantiationException ex) {
-            //TOFIX debug error
-        } catch (IllegalAccessException ex) {
-            //TOFIX debug error
+            return Class.forName(className);
         } catch (ClassNotFoundException ex) {
             //TOFIX debug error
         }
-        return null;
+        return com.sun.identity.entitlement.DenyOverride.class;
     }
 
     public static void addApplication(Application application) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.2 2009-04-07 03:52:58 arviranga Exp $
+ * $Id: PrivilegeUtils.java,v 1.3 2009-04-07 10:25:11 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -188,7 +188,9 @@ public class PrivilegeUtils {
             String resourceName = rule.getResourceName();
             Set excludedResourceNames1 = rule.getExcludedResourceNames();
             resourceNames.add(resourceName);
-            excludedResourceNames.addAll(excludedResourceNames);
+            if (excludedResourceNames1 != null) {
+                excludedResourceNames.addAll(excludedResourceNames1);
+            }
 
         }
         String serviceName = lrule.getServiceTypeName();

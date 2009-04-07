@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeManager.java,v 1.2 2009-04-02 22:13:38 veiming Exp $
+ * $Id: ApplicationTypeManager.java,v 1.3 2009-04-07 10:25:07 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -30,6 +30,7 @@ package com.sun.identity.entitlement;
 import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
+import com.sun.identity.entitlement.interfaces.ResourceName;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -60,13 +61,16 @@ public class ApplicationTypeManager {
         Set<String> actions = info.getActions();
         String searchIndexClassName = info.getSearchIndexImpl();
         String saveIndexClassName = info.getSaveIndexImpl();
+        String resourceComp = info.getResourceComp();
 
         ISearchIndex searchIndex = ApplicationTypeManager.getSearchIndex(
             searchIndexClassName);
         ISaveIndex saveIndex = ApplicationTypeManager.getSaveIndex(
             saveIndexClassName);
+        ResourceName resourceComparator =
+            ApplicationTypeManager.getResourceComparator(resourceComp);
         applicationTypes.put(name, new ApplicationType(name, actions,
-            searchIndex, saveIndex));
+            searchIndex, saveIndex, resourceComparator));
     }
 
     public static ApplicationType get(String name) {
@@ -112,4 +116,25 @@ public class ApplicationTypeManager {
         }
         return null;
     }
+
+    static ResourceName getResourceComparator(String className) {
+        if (className == null) {
+            return null;
+        }
+        try {
+            Class clazz = Class.forName(className);
+            Object o = clazz.newInstance();
+            if (o instanceof ResourceName) {
+                return (ResourceName) o;
+            }
+        } catch (InstantiationException ex) {
+            //TOFIX debug error
+        } catch (IllegalAccessException ex) {
+            //TOFIX debug error
+        } catch (ClassNotFoundException ex) {
+            //TOFIX debug error
+        }
+        return null;
+    }
+
 }

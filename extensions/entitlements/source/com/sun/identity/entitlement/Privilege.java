@@ -22,12 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.5 2009-04-02 22:13:38 veiming Exp $
+ * $Id: Privilege.java,v 1.6 2009-04-07 10:25:09 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.ResourceName;
+import com.sun.identity.policy.ResourceMatch;
 import com.sun.identity.shared.debug.Debug;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -151,11 +154,11 @@ public abstract class Privilege implements Serializable {
      *         and environment.
      * @throws EntitlementException if the result cannot be determined.
      */
-    public abstract List<Entitlement> getEntitlements(
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment,
-            boolean recursive) throws EntitlementException;
+    public abstract List<Entitlement> evaluate(
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment,
+        boolean recursive) throws EntitlementException;
 
     /**
      * Returns string representation of the object
@@ -321,5 +324,47 @@ public abstract class Privilege implements Serializable {
             code += eResourceAttributes.hashCode();
         }
         return code;
+    }
+
+    protected Set<String> getMatchingResources(String resourceName) {
+        Set<String> matched = new HashSet<String>();
+        ResourceName resComparator = entitlement.getResourceComparator();
+
+        for (String r : entitlement.getResourceNames()) {
+            ResourceMatch match = resComparator.compare(resourceName, r, true);
+            if (match.equals(ResourceMatch.EXACT_MATCH) ||
+                match.equals(ResourceMatch.WILDCARD_MATCH)) {
+                matched.add(r);
+            }
+        }
+
+        for (String r : entitlement.getExcludedResourceNames()) {
+            ResourceMatch match = resComparator.compare(resourceName, r, true);
+            if (match.equals(ResourceMatch.EXACT_MATCH) ||
+                match.equals(ResourceMatch.WILDCARD_MATCH)) {
+                matched.remove(r);
+            }
+        }
+
+        return matched;
+    }
+
+    protected boolean doesConditionMatch(
+        Map<String, Set<String>> resultAdvices,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
+        if (eCondition == null) {
+            return true;
+        }
+
+        ConditionDecision decision = eCondition.evaluate(
+            subject, resourceName, environment);
+        if (decision.isSatisfied()) {
+            resultAdvices.putAll(decision.getAdvices());
+            return true;
+        }
+        return false;
     }
 }

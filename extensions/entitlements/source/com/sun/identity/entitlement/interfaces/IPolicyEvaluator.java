@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyEvaluator.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
+ * $Id: IPolicyEvaluator.java,v 1.2 2009-04-07 10:25:09 veiming Exp $
  *
  */
 
@@ -72,7 +72,7 @@ public interface IPolicyEvaluator {
      * @return list of entitlements granted to a subject.
      * @throws EntitlementException if the result cannot be determined.
      */
-    List<Entitlement> getEntitlements(
+    List<Entitlement> evaluate(
         Subject adminSubject,
         Subject subject,
         String serviceTypeName,

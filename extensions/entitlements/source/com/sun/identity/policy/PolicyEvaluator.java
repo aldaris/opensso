@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.3 2009-04-02 22:13:40 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.4 2009-04-07 10:25:11 veiming Exp $
  *
  */
 
@@ -36,7 +36,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Collections;
 import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.sdk.AMUser;
@@ -48,17 +47,20 @@ import com.sun.identity.shared.stats.Stats;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenListener;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.authentication.internal.server.AuthSPrincipal;
+import com.sun.identity.entitlement.Entitlement;
+import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.Evaluator;
+import com.sun.identity.entitlement.PolicyEvaluatorFactory;
+import com.sun.identity.entitlement.interfaces.IPolicyEvaluator;
 import com.sun.identity.policy.interfaces.PolicyListener;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.shared.ldap.util.DN;
-
-import com.sun.identity.authentication.internal.server.AuthSPrincipal;
-import com.sun.identity.entitlement.Entitlement;
-import com.sun.identity.entitlement.Evaluator;
-import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
 import java.security.Principal;
+import java.util.List;
 import javax.security.auth.Subject;
 
 /**
@@ -122,12 +124,19 @@ public class PolicyEvaluator {
      */
     public static final String SUN_AM_POLICY_CONFIG = "sun.am.policyConfig";
 
-    public static final String RESULTS_CACHE_MAX_SIZE 
-            = "com.sun.identity.policy.resultsCacheMaxSize";
+    public static final String RESULTS_CACHE_SESSION_CAP 
+            = "com.sun.identity.policy.resultsCacheSessionCap";
 
-    public static int DEFAULT_RESULTS_CACHE_MAX_SIZE = 10000;
+    public static int DEFAULT_RESULTS_CACHE_SESSION_CAP = 1000;
 
-    public static int resultsCacheMaxSize = DEFAULT_RESULTS_CACHE_MAX_SIZE;
+    public static int resultsCacheSessionCap = DEFAULT_RESULTS_CACHE_SESSION_CAP;
+
+    public static final String RESULTS_CACHE_RESOURCE_CAP 
+            = "com.sun.identity.policy.resultsCacheResourceCap";
+
+    public static int DEFAULT_RESULTS_CACHE_RESOURCE_CAP = 100;
+
+    public static int resultsCacheResourceCap = DEFAULT_RESULTS_CACHE_RESOURCE_CAP;
 
     private static final Debug DEBUG = PolicyManager.debug;
     private static final boolean USE_POLICY_CACHE = true;
@@ -244,8 +253,6 @@ public class PolicyEvaluator {
      */
     private static Map resourceNamesMap = new HashMap(); 
 
-    private final static int RESOURCE_NAMES_CACHE_SIZE = 1000;
-
     /**
      * Constant key for passing organization name in the environment map during
      * policy evaluation. The value for the key would be a <code>Set</code> 
@@ -337,33 +344,62 @@ public class PolicyEvaluator {
         this.serviceTypeNames.add(serviceTypeName);
         resourceIndexManager = policyManager.getResourceIndexManager();
 
-        String resultsCacheMaxSizeString 
-                = SystemProperties.get(RESULTS_CACHE_MAX_SIZE);
-        if (resultsCacheMaxSizeString != null) {
+        String resultsCacheSessionCapString 
+                = SystemProperties.get(RESULTS_CACHE_SESSION_CAP);
+        if (resultsCacheSessionCapString != null) {
             try {
-                resultsCacheMaxSize 
-                        = Integer.parseInt(resultsCacheMaxSizeString);
+                resultsCacheSessionCap 
+                        = Integer.parseInt(resultsCacheSessionCapString);
             } catch (NumberFormatException nfe) {
                 if (PolicyManager.debug.warningEnabled()) {
                     PolicyManager.debug.warning("PolicyEvaluator:"
                             + "number format exception: "
-                            + "defaulting resultsCacheMaxSize to "
-                            + DEFAULT_RESULTS_CACHE_MAX_SIZE);
+                            + "defaulting resultsCacheSessionCap to "
+                            + DEFAULT_RESULTS_CACHE_SESSION_CAP);
                 }
-                resultsCacheMaxSize = DEFAULT_RESULTS_CACHE_MAX_SIZE;
+                resultsCacheSessionCap = DEFAULT_RESULTS_CACHE_SESSION_CAP;
             }
         } else {
             if (PolicyManager.debug.warningEnabled()) {
                 PolicyManager.debug.warning("PolicyEvaluator:"
-                        + "resultsCacheMaxSize not specified, "
-                        + "defaulting resultsCacheMaxSize to "
-                        + DEFAULT_RESULTS_CACHE_MAX_SIZE);
+                        + "resultsCacheSessionCap not specified, "
+                        + "defaulting resultsCacheSessionCap to "
+                        + DEFAULT_RESULTS_CACHE_SESSION_CAP);
             }
-            resultsCacheMaxSize = DEFAULT_RESULTS_CACHE_MAX_SIZE;
+            resultsCacheSessionCap = DEFAULT_RESULTS_CACHE_SESSION_CAP;
         }
         if (PolicyManager.debug.messageEnabled()) {
             PolicyManager.debug.message("PolicyEvaluator:"
-                    + "resultsCacheMaxSize=" + resultsCacheMaxSize);
+                    + "resultsCacheSessionCap=" + resultsCacheSessionCap);
+        }
+
+        String resultsCacheResourceCapString 
+                = SystemProperties.get(RESULTS_CACHE_RESOURCE_CAP);
+        if (resultsCacheResourceCapString != null) {
+            try {
+                resultsCacheResourceCap 
+                        = Integer.parseInt(resultsCacheResourceCapString);
+            } catch (NumberFormatException nfe) {
+                if (PolicyManager.debug.warningEnabled()) {
+                    PolicyManager.debug.warning("PolicyEvaluator:"
+                            + "number format exception: "
+                            + "defaulting resultsCacheResourceCap to "
+                            + DEFAULT_RESULTS_CACHE_RESOURCE_CAP);
+                }
+                resultsCacheResourceCap = DEFAULT_RESULTS_CACHE_RESOURCE_CAP;
+            }
+        } else {
+            if (PolicyManager.debug.warningEnabled()) {
+                PolicyManager.debug.warning("PolicyEvaluator:"
+                        + "resultsCacheResourceCap not specified, "
+                        + "defaulting resultsCacheResourceCap to "
+                        + DEFAULT_RESULTS_CACHE_RESOURCE_CAP);
+            }
+            resultsCacheResourceCap = DEFAULT_RESULTS_CACHE_RESOURCE_CAP;
+        }
+        if (PolicyManager.debug.messageEnabled()) {
+            PolicyManager.debug.message("PolicyEvaluator:"
+                    + "resultsCacheResourceCap=" + resultsCacheResourceCap);
         }
 
     }        
@@ -416,8 +452,39 @@ public class PolicyEvaluator {
             String actionName, Map envParameters) throws SSOException,
             PolicyException {
 
+        String falseValue = getActionFalseBooleanValue(actionName);
+        String trueValue = getActionTrueBooleanValue(actionName);
         ActionSchema schema = serviceType.getActionSchema(actionName);
         
+        if (!AttributeSchema.Syntax.BOOLEAN.equals(schema.getSyntax())) {
+            String objs[] = {actionName};
+            throw new PolicyException(
+                    ResBundleUtils.rbName,
+                    "action_does_not_have_boolean_syntax", objs, null);
+        }
+
+        HashSet actions = new HashSet(2);
+        actions.add(actionName);
+        SSOToken adminSSOToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+
+        try {
+            IPolicyEvaluator eval =
+                PolicyEvaluatorFactory.getInstance().getEvaluator();
+            Entitlement entitlement = new Entitlement(serviceTypeName,
+                resourceName, actions);
+            return eval.hasEntitlement(createSubject(adminSSOToken),
+                createSubject(token), serviceTypeName, entitlement,
+                envParameters);
+        } catch (EntitlementException e) {
+            throw new PolicyException(e);
+        }
+    }
+
+    private String getActionFalseBooleanValue(String actionName)
+        throws InvalidNameException {
+        ActionSchema schema = serviceType.getActionSchema(actionName);
+
         // Cache the false values for the action names
         if (booleanActionNameFalseValues == null) {
             booleanActionNameFalseValues = new HashMap(10);
@@ -429,7 +496,12 @@ public class PolicyEvaluator {
             // Add it to the cache
             booleanActionNameFalseValues.put(actionName, falseValue);
         }
+        return falseValue;
+    }
 
+    private String getActionTrueBooleanValue(String actionName)
+        throws InvalidNameException {
+        ActionSchema schema = serviceType.getActionSchema(actionName);
 
         // Cache the true values for the action names
         if (booleanActionNameTrueValues == null) {
@@ -438,71 +510,12 @@ public class PolicyEvaluator {
 
         String trueValue = null;
         if ((trueValue = (String)
-                booleanActionNameTrueValues.get(actionName)) == null) {
+            booleanActionNameTrueValues.get(actionName)) == null) {
             trueValue = schema.getTrueValue();
-            // Add it to the cache
             booleanActionNameTrueValues.put(actionName, trueValue);
         }
 
-        if (!AttributeSchema.Syntax.BOOLEAN.equals(schema.getSyntax())) {
-            String objs[] = {actionName};
-            throw new PolicyException(
-                    ResBundleUtils.rbName,
-                    "action_does_not_have_boolean_syntax", objs, null);
-        }
-
-        boolean actionAllowed = false;
-        HashSet actionNames = new HashSet(2);
-        actionNames.add(actionName);
-        PolicyDecision policyDecision = getPolicyDecision(token, resourceName,
-                                   actionNames, envParameters);
-        ActionDecision actionDecision = 
-                (ActionDecision) policyDecision.getActionDecisions()
-                .get(actionName);
-
-        if ( actionDecision != null ) {
-            Set set = (Set) actionDecision.getValues();
-            if ( (set != null) ) {
-                if ( set.contains(falseValue) ) {
-                    actionAllowed = false;
-                } else if ( set.contains(trueValue) ) {
-                    actionAllowed = true;
-                }
-            }
-        }
-
-        return actionAllowed;
-/*
-        Map actionValues = new HashMap();
-        Set set = new HashSet();
-        set.add(trueValue);
-        actionValues.put(actionName, set);
-        try {
-            Entitlement entitlement = new Entitlement(serviceTypeName,
-                resourceName, actionValues);
-
-            SSOToken adminSSOToken = (SSOToken)AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-            Principal adminP = new AuthSPrincipal(
-                adminSSOToken.getTokenID().toString());
-            Set principals = new HashSet(2);
-            principals.add(adminP);
-            Subject adminSubject = new Subject(true, principals,
-                Collections.EMPTY_SET, Collections.EMPTY_SET);
-
-            Evaluator policyEval = new Evaluator(adminSubject, serviceTypeName);
-
-            Principal userP = new AuthSPrincipal(token.getTokenID().toString());
-            Set userPrincipals = new HashSet(2);
-            userPrincipals.add(userP);
-            Subject userSubject = new Subject(true, userPrincipals,
-                Collections.EMPTY_SET, Collections.EMPTY_SET);
-            return policyEval.hasEntitlement(userSubject, entitlement,
-                envParameters);
-        } catch (Exception e) {
-            e.printStackTrace(); //TOFIX
-        }
-        return false; */
+        return trueValue;
     }
 
     /**
@@ -627,25 +640,165 @@ public class PolicyEvaluator {
         Set actions = new HashSet();
         actions.addAll(actionNames);
 
-        try {
-            SSOToken adminSSOToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-            Subject adminSubject = createSubject(adminSSOToken);
-            Evaluator policyEval = new Evaluator(adminSubject, serviceTypeName);
+        PolicyDecision mergedPolicyDecision = null;
+        Set policyNameSet = null;
+        Set toRemovePolicyNameSet = null;
+        policyNameSet = resourceIndexManager.getPolicyNames(
+                serviceType, resourceName, INCLUDE_SUPER_RESOURCE_POLCIES);
+        if ( DEBUG.messageEnabled() ) {
+            String tokenPrincipal = 
+                    (token != null) ? token.getPrincipal().getName()
+                    : PolicyUtils.EMPTY_STRING;
+            DEBUG.message(new StringBuffer("at PolicyEvaluator")
+                .append(".getPolicyDecision()")
+                .append(" principal, resource name, ")
+                .append("action names, policy names,")
+                .append(" orgName =")
+                .append(tokenPrincipal) .append(",  ")
+                .append(resourceName) .append(",  ")
+                .append(actionNames) .append(",  ")
+                .append(policyNameSet).append(",  ")
+                .append(orgName).toString());
+        }
+        Iterator policyIter = policyNameSet.iterator();
+        while ( policyIter.hasNext() ) {
+            String policyName = (String) policyIter.next();
+            Policy policy = policyManager.getPolicy(policyName, 
+                USE_POLICY_CACHE);
+            if ( policy != null && policy.isActive()) { 
+                //policy might have been removed or inactivated
+                PolicyDecision policyDecision = policy.getPolicyDecision(token, 
+                       serviceTypeName, resourceName, actions, envParameters);
+                if (!policy.isReferralPolicy() && policyDecision.hasAdvices()) {
+                    addAdvice(policyDecision, ADVICING_ORGANIZATION, orgName);
+                }
 
-            Subject userSubject = createSubject(token);
-            List entitlements = policyEval.getEntitlements(userSubject,
-                resourceName, envParameters, false);
-            if ((entitlements != null) && !entitlements.isEmpty()) {
-                return EntitlementToPolicyDecision((Entitlement)
-                    entitlements.iterator().next());
+                // Let us log all policy evaluation results
+                if (PolicyUtils.logStatus && (token != null)) {
+                    String decision = policyDecision.toString();
+                    if (decision != null && decision.length() != 0) {
+                        String[] objs = { policyName, orgName, serviceTypeName, 
+                                        resourceName, actionNames.toString(), 
+                                        decision };
+                            PolicyUtils.logAccessMessage("POLICY_EVALUATION",
+                                                objs, token, serviceTypeName);
+                    }
+                }
+                if ( mergedPolicyDecision == null ) {
+                    mergedPolicyDecision = policyDecision;
+                } else {
+                    mergePolicyDecisions(serviceType, policyDecision, 
+                           mergedPolicyDecision);
+                }
+
+                if (!PolicyConfig.continueEvaluationOnDenyDecision()) {
+                    actions.removeAll(getFinalizedActions(serviceType, 
+                            mergedPolicyDecision));
+                }
+
+                if ( actions.isEmpty() ) {
+                    break;
+                }
+            } else { // add policy names to toRemovePolicyNameSet
+                if (toRemovePolicyNameSet == null) {
+                    toRemovePolicyNameSet = new HashSet();
+                }
+                toRemovePolicyNameSet.add(policyName);
+                if ( DEBUG.messageEnabled() ) {
+                    DEBUG.message("PolicyEvaluator.getPolicyDecision():"
+                        +policyName+ " is inactive or non-existent");
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace(); //TOFIX
         }
 
-        return new PolicyDecision();
+        // remove inactive/missing policies from policyNameSet
+        if (toRemovePolicyNameSet != null) {
+            policyNameSet.removeAll(toRemovePolicyNameSet);
+        }
+
+        Set orgsToVisit = getOrgsToVisit(policyNameSet);
+
+        if (PolicyConfig.orgAliasMappedResourcesEnabled()
+                    && PolicyManager.WEB_AGENT_SERVICE.equalsIgnoreCase(
+                    serviceTypeName)) {
+            String orgAlias = policyManager.getOrgAliasWithResource(
+                    resourceName); 
+            if (orgAlias != null) {
+                String orgWithAlias = policyManager.getOrgNameWithAlias(
+                        orgAlias);
+                if (orgWithAlias != null) {
+                    if ( DEBUG.messageEnabled() ) {
+                        DEBUG.message("PolicyEvaluator.getPolicyDecision():"
+                                + "adding orgWithAlias to orgsToVisit="
+                                + orgWithAlias);
+                    }
+                    orgsToVisit.add(orgWithAlias);
+                }
+            }
+        }
+
+        if ( DEBUG.messageEnabled() ) {
+            DEBUG.message(new StringBuffer("at PolicyEvaluator")
+                .append(".getPolicyDecision()")
+                .append(" orgsToVist=").append(orgsToVisit.toString())
+                .toString());
+        }
+        orgsToVisit.removeAll(visitedOrgs);
+        if ( DEBUG.messageEnabled() ) {
+            DEBUG.message(new StringBuffer("at PolicyEvaluator")
+                .append(".getPolicyDecision()")
+                .append(" orgsToVist(after removing already visited orgs=")
+                .append(orgsToVisit.toString())
+                .toString() );
+        }
+        while ( !orgsToVisit.isEmpty() && !actions.isEmpty() ) {
+            String orgToVisit = (String) orgsToVisit.iterator().next();
+            orgsToVisit.remove(orgToVisit);
+            visitedOrgs.add(orgToVisit);
+            try {
+                // need to use admin sso token here. Need all privileges to
+                // check for the organzation
+                policyManager.verifyOrgName(orgToVisit);
+            } catch (NameNotFoundException nnfe) {
+                if( DEBUG.warningEnabled()) {
+                    DEBUG.warning("Organization does not exist - "
+                            + "skipping referral to " + orgToVisit);
+                }
+                continue;
+            }
+            PolicyEvaluator pe = new PolicyEvaluator(orgToVisit, 
+                    serviceTypeName);
+            /**
+             * save policy config before passing control down to
+             * sub realm
+             */
+	    Map savedPolicyConfig =(Map)envParameters.get(SUN_AM_POLICY_CONFIG);
+	    // Update env to point to the realm policy config data.
+	    envParameters.put(SUN_AM_POLICY_CONFIG, PolicyConfig.
+	        getPolicyConfig(orgToVisit));
+            PolicyDecision policyDecision 
+                    = pe.getPolicyDecision(token, resourceName, actionNames,
+                    envParameters,visitedOrgs); 
+	    // restore back the policy config data for the parent realm
+	    envParameters.put(SUN_AM_POLICY_CONFIG, savedPolicyConfig);
+            if ( mergedPolicyDecision == null ) {
+                mergedPolicyDecision = policyDecision;
+            } else {
+                mergePolicyDecisions(serviceType, policyDecision, 
+                       mergedPolicyDecision);
+            }
+            if (!PolicyConfig.continueEvaluationOnDenyDecision()) {
+                actions.removeAll(getFinalizedActions(serviceType, 
+                        mergedPolicyDecision));
+            }
+        }
+
+        if ( mergedPolicyDecision == null ) {
+            mergedPolicyDecision = new PolicyDecision();
+        }
+        return mergedPolicyDecision;
     }
+
 
     /**
      * Gets protected resources for a user identified by single sign on token
@@ -1010,13 +1163,13 @@ public class PolicyEvaluator {
 
         if (ResourceResult.SUBTREE_SCOPE.equals(scope)) {
             subTreeSearch = true;
-            //resultsSet = getResourceResultTree(token, resourceName, scope, 
-            //                            envParameters).getResourceResults(); 
-        } else if (ResourceResult.STRICT_SUBTREE_SCOPE.equals(scope) 
+            //resultsSet = getResourceResultTree(token, resourceName, scope,
+            //                            envParameters).getResourceResults();
+        } else if (ResourceResult.STRICT_SUBTREE_SCOPE.equals(scope)
                    || ResourceResult.SELF_SCOPE.equals(scope)) {
             /*
-            ResourceResult result = getResourceResultTree(token, resourceName, 
-                                         scope, envParameters); 
+            ResourceResult result = getResourceResultTree(token, resourceName,
+                                         scope, envParameters);
             resultsSet = new HashSet();
             resultsSet.add(result);*/
         } else {
@@ -1031,11 +1184,13 @@ public class PolicyEvaluator {
         Subject adminSubject = createSubject(adminSSOToken);
 
         try {
-            Evaluator policyEval = new Evaluator(adminSubject, serviceTypeName);
             Subject userSubject = createSubject(token);
+            IPolicyEvaluator eval =
+                PolicyEvaluatorFactory.getInstance().getEvaluator();
 
-            List entitlements = policyEval.getEntitlements(
-                userSubject, resourceName, envParameters, subTreeSearch);
+            List entitlements = eval.evaluate(adminSubject,
+                userSubject, serviceTypeName, resourceName, envParameters,
+                subTreeSearch);
             resultsSet = new HashSet();
 
             if (!entitlements.isEmpty()) {
@@ -1058,8 +1213,43 @@ public class PolicyEvaluator {
         } catch (Exception e) {
             throw new PolicyException(e.getMessage()); //TOFIX
         }
-         
+
         return resultsSet;
+    }
+    
+    private ResourceResult EntitlementToResourceResult(
+        Entitlement entitlement
+    ) throws PolicyException {
+        return new ResourceResult(
+            entitlement.getResourceName(),
+            EntitlementToPolicyDecision(entitlement));
+    }
+    
+    private PolicyDecision EntitlementToPolicyDecision(
+        Entitlement entitlement
+    ) throws PolicyException {
+        PolicyDecision pd = new PolicyDecision();
+        Map actionValues = entitlement.getActionValues();
+
+
+        for (Iterator i = actionValues.keySet().iterator(); i.hasNext(); ) {
+            String actionName = (String)i.next();
+            Boolean values = (Boolean)actionValues.get(actionName);
+
+
+            Set set = new HashSet();
+            if (values.booleanValue()) {
+                set.add(getActionTrueBooleanValue(actionName));
+            } else {
+                set.add(getActionFalseBooleanValue(actionName));
+            }
+            ActionDecision ad = new ActionDecision(actionName, set);
+            ad.setAdvices(entitlement.getAdvices());
+            pd.addActionDecision(ad, serviceType);
+        }
+
+        pd.setResponseAttributes(entitlement.getAttributes());
+        return pd;
     }
 
     /**
@@ -1188,13 +1378,13 @@ public class PolicyEvaluator {
         // policyResultsCache: 
         // serviceType -> resource -> sessionId -> scope -> result
         synchronized(policyResultsCache) {
-            // rscCache: resource -> sessionId -> scope -> result
-            Map rscCache = (HashMap)policyResultsCache.get(serviceTypeName);
+            // rscCACHE: resource -> sessionId -> scope -> result
+            Map rscCache = (Map)policyResultsCache.get(serviceTypeName);
             if (rscCache != null) {
-                // resultCache: sessionId -> scope -> resourceResult
-                Cache resultsCache = (Cache)rscCache.get(resourceName);
+                // resultCACHE: sessionId -> scope -> resourceResult
+                Map resultsCache = (Map)rscCache.get(resourceName);
                 if (resultsCache != null) {
-                    Map results = (HashMap)resultsCache.get(userSSOTokenIDStr);
+                    Map results = (Map)resultsCache.get(userSSOTokenIDStr);
                     if (results != null) {
                         resourceResult = (ResourceResult)results.get(scope);
                         if (resourceResult != null) {
@@ -1258,10 +1448,10 @@ public class PolicyEvaluator {
 
         if (ResourceResult.SUBTREE_SCOPE.equals(scope)
                 || ResourceResult.STRICT_SUBTREE_SCOPE.equals(scope)) {
-            Cache resourceNamesCache    
-                    = (Cache)resourceNamesMap.get(serviceTypeName);
+            Map resourceNamesCache    
+                    = (Map)resourceNamesMap.get(serviceTypeName);
             if (resourceNamesCache == null) {
-                resourceNamesCache = new Cache(RESOURCE_NAMES_CACHE_SIZE);
+                resourceNamesCache = new Cache(resultsCacheResourceCap);
                 resourceNamesMap.put(serviceTypeName, resourceNamesCache);
             }
             Set resourceNames = (Set)resourceNamesCache.get(resourceName);
@@ -1306,18 +1496,18 @@ public class PolicyEvaluator {
             // add the evaluation result to the result cache
             Map scopeElem = null;
             //cacheElem: sessionId -> scope -> resourceResult
-            Cache cacheElem = null;
+            Map cacheElem = null;
             Map rscElem = null;
             // serviceType -> resourceName -> sessionId -> scope -> resourceResult
             synchronized(policyResultsCache) { 
-                // rscElem: resourceName -> sessionId -> scope -> resourceResult
-                rscElem = (HashMap)policyResultsCache.get(
+                // rscElemCACHE: resourceName -> sessionId -> scope -> resourceResult
+                rscElem = (Map)policyResultsCache.get(
                                                 serviceTypeName);
                 if (rscElem != null) { // serviceType has been seen earlier
-                    //cacheElem: sessionId -> scope -> resourceResult
-                    cacheElem = (Cache)rscElem.get(resourceName);
+                    //CACHEElem: sessionId -> scope -> resourceResult
+                    cacheElem = (Map)rscElem.get(resourceName);
                     if (cacheElem != null) { // resource seen earlier
-                        scopeElem = (HashMap)cacheElem.get(
+                        scopeElem = (Map)cacheElem.get(
                                                 userSSOTokenIDStr);
                         if (scopeElem == null) { // seeing sessionId first time
                             scopeElem = new HashMap();
@@ -1331,13 +1521,13 @@ public class PolicyEvaluator {
                                 + ", sessionId=" + userSSOTokenIDStr
                                 + ", scope=" + scope);
                         }
-                        cacheElem = new Cache(resultsCacheMaxSize); 
+                        cacheElem = new Cache(resultsCacheSessionCap); 
                         scopeElem = new HashMap();
                     }
                 } else { // seeing service for first time
-                    // rscElem: resourceName -> sessionId -> scope -> resourceResult
-                    rscElem = new HashMap();
-                    //cacheElem: sessionId -> scope -> resourceResult
+                    // rscElemCACHE: resourceName -> sessionId -> scope -> resourceResult
+                    rscElem = new Cache(resultsCacheResourceCap);
+                    //CACHEElem: sessionId -> scope -> resourceResult
                     if (PolicyManager.debug.messageEnabled()) {
                             PolicyManager.debug.message(
                                 "PolicyEvaluator.getResourceResultTree()"
@@ -1347,7 +1537,7 @@ public class PolicyEvaluator {
                                 + ", scope=" + scope
                                 + ", serviceType=" + serviceTypeName);
                     }
-                    cacheElem = new Cache(resultsCacheMaxSize);
+                    cacheElem = new Cache(resultsCacheSessionCap);
                     scopeElem = new HashMap();
                 }
                 scopeElem.put(scope, resourceResult);
@@ -2034,32 +2224,6 @@ public class PolicyEvaluator {
                 + resourceNamesMap.size());
     }
 
-    private ResourceResult EntitlementToResourceResult(
-        Entitlement entitlement
-    ) throws PolicyException {
-        return new ResourceResult(
-            entitlement.getResourceName(),
-            EntitlementToPolicyDecision(entitlement));
-    }
-
-    private PolicyDecision EntitlementToPolicyDecision(
-        Entitlement entitlement
-    ) throws PolicyException {
-        PolicyDecision pd = new PolicyDecision();
-        Map actionValues = entitlement.getActionValues();
-        
-        for (Iterator i = actionValues.keySet().iterator(); i.hasNext(); ) {
-            String actionName = (String)i.next();
-            Set values = (Set)actionValues.get(actionName);
-            ActionDecision ad = new ActionDecision(actionName, values);
-            ad.setAdvices(entitlement.getAdvices());
-            pd.addActionDecision(ad, serviceType);
-        }
-        
-        pd.setResponseAttributes(entitlement.getAttributes());
-        return pd;
-    }
-
     private Subject createSubject(SSOToken token) {
         Principal userP = new AuthSPrincipal(token.getTokenID().toString());
         Set userPrincipals = new HashSet(2);
@@ -2067,4 +2231,5 @@ public class PolicyEvaluator {
         return new Subject(true, userPrincipals,
                 Collections.EMPTY_SET, Collections.EMPTY_SET);
     }
+
 }

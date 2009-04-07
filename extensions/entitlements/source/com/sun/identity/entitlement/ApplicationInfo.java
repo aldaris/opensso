@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationInfo.java,v 1.1 2009-04-02 22:13:38 veiming Exp $
+ * $Id: ApplicationInfo.java,v 1.2 2009-04-07 10:25:07 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -42,6 +42,7 @@ public class ApplicationInfo {
     private String applicationType;
     private String searchIndexImpl;
     private String saveIndexImpl;
+    private String resourceComp;
 
     public ApplicationInfo(
         String name,
@@ -51,7 +52,8 @@ public class ApplicationInfo {
         Set<String> conditionClassNames,
         String applicationType,
         String saveIndexImpl,
-        String searchIndexImpl) {
+        String searchIndexImpl,
+        String resourceComp) {
         this.name = name;
         this.actions = actions;
         this.resources = resources;
@@ -60,6 +62,7 @@ public class ApplicationInfo {
         this.applicationType = applicationType;
         this.saveIndexImpl = saveIndexImpl;
         this.searchIndexImpl = searchIndexImpl;
+        this.resourceComp = resourceComp;
     }
 
     public Set<String> getActions() {
@@ -96,5 +99,9 @@ public class ApplicationInfo {
 
     public String getEntitlementCombiner() {
         return entitlementCombiner;
+    }
+
+    public String getResourceComparator() {
+        return resourceComp;
     }
 }

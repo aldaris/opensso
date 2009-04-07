@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.2 2009-03-31 05:52:17 veiming Exp $
+   $Id: entitlement.xml,v 1.3 2009-04-07 10:25:12 veiming Exp $
 
 -->
 
@@ -77,6 +77,10 @@
                             type="single"
                             syntax="string"
                             i18nKey="" />
+                        <AttributeSchema name="resourceComparator"
+                            type="single"
+                            syntax="string"
+                            i18nKey="" />
                     </SubSchema>
                 </SubSchema>
             </Global>
@@ -111,6 +115,10 @@
                             type="single"
                             syntax="string"
                             i18nKey="" />
+                        <AttributeSchema name="resourceComparator"
+                            type="single"
+                            syntax="string"
+                            i18nKey="" />
                     </SubSchema>
                 </SubSchema>
             </Organization>
@@ -133,6 +141,10 @@
                             <Attribute name="saveIndexImpl" />
                             <Value>com.sun.identity.entitlement.util.ResourceNameIndexGenerator</Value>
                         </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resourceComparator" />
+                            <Value>com.sun.identity.entitlement.URLResourceName</Value>
+                        </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="sunAMDelegationService"
                         id="applicationType">
@@ -149,6 +161,10 @@
                         <AttributeValuePair>
                             <Attribute name="saveIndexImpl" />
                             <Value>com.sun.identity.entitlement.util.ResourceNameIndexGenerator</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resourceComparator" />
+                            <Value>com.sun.identity.entitlement.URLResourceName</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>

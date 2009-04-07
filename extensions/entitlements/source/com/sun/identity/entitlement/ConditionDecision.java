@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionDecision.java,v 1.2 2009-02-17 21:42:30 dillidorai Exp $
+ * $Id: ConditionDecision.java,v 1.3 2009-04-07 10:25:08 veiming Exp $
  */
 package com.sun.identity.entitlement;
 import java.util.Map;
@@ -32,36 +32,35 @@ import java.util.Set;
  * Class to represent condition result and advices
  */
 public class ConditionDecision {
+    private boolean satisfied;
+    private Map<String, Set<String>> advices;
+    public static final String TIME_TO_LIVE = "timeToLive";
 
-        private boolean satisfied;
-        private Map<String, Set<String>> advices;
-        
-        /**
-         * Constructs an instance of <code>ConditionDecision</code>
-         * @param satisfied boolean result of condition decision
-         * @param advices advice map of condition decision
-         */
-        public ConditionDecision(
-                boolean satisfied,
-                Map<String, Set<String>> advices ) {
-            this.satisfied = satisfied;
-            this.advices = advices;
-        }
+    /**
+     * Constructs an instance of <code>ConditionDecision</code>
+     * @param satisfied boolean result of condition decision
+     * @param advices advice map of condition decision
+     */
+    public ConditionDecision(
+        boolean satisfied,
+        Map<String, Set<String>> advices) {
+        this.satisfied = satisfied;
+        this.advices = advices;
+    }
 
-        /**
-         * Returns boolean result of condition decsion
-         * @return boolean result of condiiton decision
-         */
-        boolean isSatisfied() {
-            return satisfied;
-        }
+    /**
+     * Returns boolean result of condition decsion
+     * @return boolean result of condiiton decision
+     */
+    public boolean isSatisfied() {
+        return satisfied;
+    }
 
-         /**
-         * Returns advices of condition decsion
-         * @return advices of condiiton decision
-         */
-        Map<String, Set<String>> getAdvices() {
-            return advices;
-        }
-
+    /**
+     * Returns advices of condition decsion
+     * @return advices of condiiton decision
+     */
+    public Map<String, Set<String>> getAdvices() {
+        return advices;
+    }
 }

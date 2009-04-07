@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.5 2009-04-02 22:13:38 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.6 2009-04-07 10:25:09 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IPolicyEvaluator;
 import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,16 +43,37 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
     private Subject adminSubject;
     private Subject subject;
     private String applicationName;
-    private Entitlement entitlement;
+    private String resourceName;
     private Map<String, Set<String>> envParameters;
     private ResourceSearchIndexes indexes;
-    private List<Entitlement> resultQ = new LinkedList<Entitlement>();
-    private List<Entitlement> mergedResults = new ArrayList<Entitlement>();
+    private List<List<Entitlement>> resultQ = new
+        LinkedList<List<Entitlement>>();
     private Application application;
     private int counter;
     private int maxCounter = -1;
     private EntitlementCombiner entitlementCombiner;
     private boolean subTree;
+
+    private void init(
+        Subject adminSubject,
+        Subject subject,
+        String applicationName,
+        String resourceName,
+        Set<String> actionValues,
+        Map<String, Set<String>> envParameters,
+        boolean subTree
+    ) throws EntitlementException {
+        this.adminSubject = adminSubject;
+        this.subject = subject;
+        this.applicationName = applicationName;
+        this.resourceName = resourceName;
+        this.envParameters = envParameters;
+        entitlementCombiner = getApplication().getEntitlementCombiner();
+        entitlementCombiner.init(applicationName, resourceName,
+            actionValues, subTree);
+        this.subTree = subTree;
+
+    }
 
     public boolean hasEntitlement(
         Subject adminSubject,
@@ -62,49 +82,24 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
         Entitlement entitlement,
         Map<String, Set<String>> envParameters
     ) throws EntitlementException {
-        this.adminSubject = adminSubject;
-        this.subject = subject;
-        this.applicationName = applicationName;
-        this.entitlement = entitlement;
-        this.envParameters = envParameters;
-        entitlementCombiner = getApplication().getEntitlementCombiner();
-        this.subTree = false;
+        init(adminSubject, subject, applicationName,
+            entitlement.getResourceName(), 
+            entitlement.getActionValues().keySet(), envParameters, false);
 
         //separate threads, PIP
         indexes = entitlement.getResourceSearchIndexes();
-        ThreadPool.submit(new EvaluationTask(this, false));
-
-        synchronized (this) {
-            while ((maxCounter == -1) && (maxCounter != counter)) {
-                while (!resultQ.isEmpty()) {
-                    mergeEntitlement(resultQ.remove(0));
-                    counter++;
-                    //combine entitlement;
-                }
-                try {
-                    wait();
-                } catch (InterruptedException ex) {
-                    //TOFIX
-                }
+        List<Entitlement> results = getEntitlements();
+        Entitlement result = results.get(0);
+        for (String action : entitlement.getActionValues().keySet()) {
+            Boolean b = result.getActionValue(action);
+            if ((b == null) || !b.booleanValue()) {
+                return false;
             }
         }
-
-        //TOFIX
-        return false;
+        return true;
     }
 
-    private void mergeEntitlement(Entitlement ent) {
-        
-    }
-    
-    private Application getApplication() {
-        if (application == null) {
-            ApplicationManager.getApplication(applicationName);
-        }
-        return application;
-    }
-
-    public List<Entitlement> getEntitlements(
+    public List<Entitlement> evaluate(
         Subject adminSubject,
         Subject subject,
         String applicationName,
@@ -112,7 +107,45 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
         Map<String, Set<String>> envParameters,
         boolean recursive
     ) throws EntitlementException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        init(adminSubject, subject, applicationName,
+            resourceName, null, envParameters, recursive);
+
+        //separate threads, PIP
+        indexes = ApplicationManager.getApplication(applicationName).
+            getResourceSearchIndex(resourceName);
+
+        return getEntitlements();
+    }
+
+    private List<Entitlement> getEntitlements() {
+        ThreadPool.submit(new EvaluationTask(this, subTree));
+
+        synchronized (this) {
+            boolean isDone = false;
+            while ((maxCounter == -1) || ((maxCounter != counter) && !isDone)) {
+                while (!resultQ.isEmpty() && !isDone) {
+                    entitlementCombiner.add(resultQ.remove(0));
+                    isDone = entitlementCombiner.isDone();
+                    counter++;
+                }
+                if ((maxCounter != counter) && !isDone) {
+                    try {
+                        wait();
+                    } catch (InterruptedException ex) {
+                        //TOFIX
+                    }
+                }
+            }
+        }
+        return entitlementCombiner.getResults();
+    }
+
+    
+    private Application getApplication() {
+        if (application == null) {
+            application = ApplicationManager.getApplication(applicationName);
+        }
+        return application;
     }
 
     class EvaluationTask implements Runnable {
@@ -132,7 +165,8 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
                 for (Iterator<Privilege> i = ds.search(parent.indexes,
                     bSubTree); i.hasNext();
                 ) {
-                    ThreadPool.submit(new PrivilegeTask(parent, i.next())); //TOFIX
+                    ThreadPool.submit(new PrivilegeTask(parent, i.next()));
+                    //TOFIX: ThreadPool?
                     count++;
                 }
                 parent.maxCounter = count;
@@ -156,11 +190,11 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
 
         public void run() {
             try {
-                List<Entitlement> entitlements = privilege.getEntitlements(
-                    parent.subject, parent.applicationName,
+                List<Entitlement> entitlements = privilege.evaluate(
+                    parent.subject, parent.resourceName,
                     parent.envParameters, parent.subTree);
                 synchronized(parent) {
-                    parent.resultQ.addAll(entitlements);
+                    parent.resultQ.add(entitlements);
                     parent.notify();
                 }
             } catch (EntitlementException ex) {

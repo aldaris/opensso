@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.23 2009-04-01 00:21:29 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.24 2009-04-07 10:25:08 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.shared.debug.Debug;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -68,9 +69,10 @@ public class Entitlement implements Serializable {
     private Set<String> resourceNames;
     private Set<String> excludedResourceNames;
     private Map<String, Boolean> actionValues;
-    private Map<String, String> advices;
+    private Map<String, Set<String>> advices;
     private Map<String, Set<String>> attributes;
     transient private Application application;
+    transient private ResourceName resourceComparator;
 
     /**
      * Creates an entitlement object with default service name.
@@ -283,7 +285,12 @@ public class Entitlement implements Serializable {
      * @param actionValues Action values.
      */
     public void setActionValues(Map<String, Boolean> actionValues) {
-        this.actionValues = actionValues;
+        this.actionValues = new HashMap<String, Boolean>();
+        for (String s : actionValues.keySet()) {
+            Boolean b = (actionValues.get(s).booleanValue()) ?
+                Boolean.TRUE : Boolean.FALSE;
+            this.actionValues.put(s, b);
+        }
     }
 
     /**
@@ -327,7 +334,7 @@ public class Entitlement implements Serializable {
      *
      * @param advices Advices.
      */
-    public void setAdvices(Map<String, String> advices) {
+    public void setAdvices(Map<String, Set<String>> advices) {
         this.advices = advices;
     }
 
@@ -336,7 +343,7 @@ public class Entitlement implements Serializable {
      *
      * @return Advices.
      */
-    public Map<String, String> getAdvices() {
+    public Map<String, Set<String>> getAdvices() {
         return advices;
     }
 
@@ -564,10 +571,14 @@ public class Entitlement implements Serializable {
                 resourceNames.iterator().next()); //TODO: recheck
     }
 
-    private Application getApplication() {
+    Application getApplication() {
         if (application == null) {
             application = ApplicationManager.getApplication(applicationName);
         }
         return application;
+    }
+
+    ResourceName getResourceComparator() {
+        return getApplication().getResourceComparator();
     }
 }

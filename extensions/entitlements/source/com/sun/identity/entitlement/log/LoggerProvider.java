@@ -22,27 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyConfig.java,v 1.2 2009-04-07 10:25:09 veiming Exp $
+ * $Id: LoggerProvider.java,v 1.1 2009-04-07 10:25:10 veiming Exp $
  */
 
-package com.sun.identity.entitlement.interfaces;
+package com.sun.identity.entitlement.log;
 
-import com.sun.identity.entitlement.ApplicationInfo;
-import com.sun.identity.entitlement.ApplicationTypeInfo;
-import java.util.Set;
+import java.util.logging.Logger;
 
 /**
- *
- * @author dennis
+ * Adaptor to OpenSSO logger class
  */
-public interface IPolicyConfig {
-    String POLICY_THREAD_SIZE = "threadSize";
-    String POLICY_CACHE_SIZE = "policyCacheSize";
-    String INDEX_CACHE_SIZE = "indexCacheSize";
-    String RESOURCE_COMPARATOR = "resourceComparator";
+public class LoggerProvider implements ILoggerProvider {
 
-    Set<ApplicationInfo> getApplications(String realm);
-    Set<ApplicationTypeInfo> getApplicationTypes();
-    String getAttributeValue(String attributeName);
-    Set<String> getAttributeValues(String attributeName);
+    public Logger getLogger(String name) {
+        return com.sun.identity.log.Logger.getLogger(name);
+    }
 }

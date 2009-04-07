@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.10 2009-04-02 22:13:38 veiming Exp $
+ * $Id: Evaluator.java,v 1.11 2009-04-07 10:25:08 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -91,7 +91,7 @@ public class Evaluator {
     public boolean hasEntitlement(Subject subject, Entitlement e) 
         throws EntitlementException {
         //TOFIX: need a swtich choosing opensso or XACML 
-        return hasEntitlement(subject, e, Collections.EMPTY_MAP);
+        return evaluate(subject, e, Collections.EMPTY_MAP);
     }
     
     /**
@@ -106,7 +106,7 @@ public class Evaluator {
      *         entitlement.
      * @throws EntitlementException if the result cannot be determined.
      */
-    public boolean hasEntitlement(
+    public boolean evaluate(
         Subject subject, 
         Entitlement e,
         Map<String, Set<String>> envParameters
@@ -130,7 +130,7 @@ public class Evaluator {
      *         and environment.
      * @throws EntitlementException if the result cannot be determined.
      */
-    public List<Entitlement> getEntitlements(
+    public List<Entitlement> evaluate(
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment,
@@ -138,7 +138,7 @@ public class Evaluator {
     ) throws EntitlementException {
         IPolicyEvaluator evaluator = 
             PolicyEvaluatorFactory.getInstance().getEvaluator();
-        return evaluator.getEntitlements(adminSubject, subject, applicationName,
+        return evaluator.evaluate(adminSubject, subject, applicationName,
             resourceName, environment, recursive);
     }
 

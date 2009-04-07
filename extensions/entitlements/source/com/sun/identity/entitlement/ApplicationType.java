@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationType.java,v 1.3 2009-03-31 01:16:10 veiming Exp $
+ * $Id: ApplicationType.java,v 1.4 2009-04-07 10:25:07 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
+import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
 import java.util.Set;
@@ -41,12 +42,14 @@ public class ApplicationType {
     private Set<String> actions;
     private ISearchIndex searchIndex;
     private ISaveIndex saveIndex;
+    private ResourceName resourceComp;
 
     public ApplicationType(
         String name,
         Set<String> actions,
         ISearchIndex searchIndex,
-        ISaveIndex saveIndex
+        ISaveIndex saveIndex,
+        ResourceName resourceComp
     ) {
         this.name = name;
         this.actions = actions;
@@ -60,6 +63,11 @@ public class ApplicationType {
             this.saveIndex = new ResourceNameIndexGenerator();
         } else {
             this.saveIndex = saveIndex;
+        }
+        if (resourceComp == null) {
+            this.resourceComp = new URLResourceName();
+        } else {
+            this.resourceComp = resourceComp;
         }
     }
 
@@ -85,6 +93,10 @@ public class ApplicationType {
 
     public ResourceSaveIndexes getResourceSaveIndex(String resource) {
         return saveIndex.getIndexes(resource);
+    }
+
+    public ResourceName getResourceComparator() {
+        return resourceComp;
     }
 
 }
