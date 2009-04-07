@@ -7,10 +7,10 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
     <c:forEach
-        var="subjectContainerType"
-        items="#{subjectContainerTypes}">
-        <ui:include src="#{subjectContainerType.template}">
-            <ui:param name="subjectContainer" value="#{subjectContainer}"/>
+        var="subjectType"
+        items="#{subjectTypes}">
+        <ui:include src="#{subjectType.template}">
+            <ui:param name="viewSubject" value="#{viewSubject}"/>
         </ui:include>
     </c:forEach>
 </span>

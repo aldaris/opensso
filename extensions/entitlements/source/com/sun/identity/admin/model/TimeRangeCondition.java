@@ -5,7 +5,7 @@ import com.sun.identity.entitlement.TimeCondition;
 import java.io.Serializable;
 
 public class TimeRangeCondition 
-    extends BaseViewCondition
+    extends ViewCondition
     implements Serializable {
 
     private int startHour;

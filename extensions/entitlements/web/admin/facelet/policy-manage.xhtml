@@ -18,7 +18,18 @@
             <o:box>
                 <ui:define name="body">
                     <div class="section-inner">
-                        table
+                        <ice:dataTable
+                            var="privilegeBean"
+                            value="#{policyManageHandler.policyManageBean.privilegeBeans}">
+                            <ice:column>
+                                <f:facet name="header">
+                                    <ice:outputText
+                                        value="Name"/>
+                                </f:facet>
+                                <ice:outputText
+                                    value="#{privilegeBean.name}"/>
+                            </ice:column>
+                        </ice:dataTable>
                     </div>
                 </ui:define>
             </o:box>

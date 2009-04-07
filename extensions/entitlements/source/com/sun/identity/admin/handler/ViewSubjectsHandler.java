@@ -6,20 +6,21 @@ import com.icesoft.faces.context.effects.SlideDown;
 import com.icesoft.faces.context.effects.SlideUp;
 import com.sun.identity.admin.model.MultiPanelBean;
 import com.sun.identity.admin.model.PhaseEventAction;
+import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.QueuedActionBean;
-import com.sun.identity.admin.model.SubjectContainer;
+import com.sun.identity.admin.model.Tree;
+import com.sun.identity.admin.model.ViewSubject;
 import java.io.Serializable;
-import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 
-public class SubjectContainersHandler implements MultiPanelHandler, Serializable {
+public class ViewSubjectsHandler implements MultiPanelHandler, Serializable {
 
-    private List<SubjectContainer> subjectContainers;
+    private PrivilegeBean privilegeBean;
     private QueuedActionBean queuedActionBean;
 
     public void expandListener(ActionEvent event) {
-        MultiPanelBean mpb = (SubjectContainer) event.getComponent().getAttributes().get("bean");
+        MultiPanelBean mpb = (ViewSubject) event.getComponent().getAttributes().get("bean");
         assert (mpb != null);
 
         Effect e;
@@ -35,41 +36,40 @@ public class SubjectContainersHandler implements MultiPanelHandler, Serializable
     }
 
     public void removeListener(ActionEvent event) {
-        SubjectContainer subjectContainer = (SubjectContainer) event.getComponent().getAttributes().get("bean");
-        assert (subjectContainer != null);
+        ViewSubject viewSubject = (ViewSubject) event.getComponent().getAttributes().get("bean");
+        assert (viewSubject != null);
 
         Effect e = new Fade();
         e.setSubmit(true);
         e.setTransitory(false);
-        subjectContainer.setPanelEffect(e);
+        viewSubject.setPanelEffect(e);
 
-        addRemoveAction(subjectContainer);
+        addRemoveAction(viewSubject);
     }
 
-    public void handleRemove(SubjectContainer sc) {
-        subjectContainers.remove(sc);
+    public void handleRemove(ViewSubject vs) {
+        Tree subjectTree = new Tree(privilegeBean.getViewSubject());
+        ViewSubject rootVs = (ViewSubject)subjectTree.remove(vs);
+        privilegeBean.setViewSubject(rootVs);
+
     }
 
-    private void addRemoveAction(SubjectContainer sc) {
+    private void addRemoveAction(ViewSubject vs) {
         PhaseEventAction pea = new PhaseEventAction();
         pea.setDoBeforePhase(false);
         pea.setPhaseId(PhaseId.RENDER_RESPONSE);
-        pea.setAction("#{subjectContainersHandler.handleRemove}");
-        pea.setParameters(new Class[] { SubjectContainer.class });
-        pea.setArguments(new Object[] { sc });
+        pea.setAction("#{viewSubjectsHandler.handleRemove}");
+        pea.setParameters(new Class[] { ViewSubject.class });
+        pea.setArguments(new Object[] { vs });
 
         queuedActionBean.getPhaseEventActions().add(pea);
     }
 
-    public List<SubjectContainer> getSubjectContainers() {
-        return subjectContainers;
-    }
-
-    public void setSubjectContainers(List<SubjectContainer> subjectContainers) {
-        this.subjectContainers = subjectContainers;
-    }
-
     public void setQueuedActionBean(QueuedActionBean queuedActionBean) {
         this.queuedActionBean = queuedActionBean;
+    }
+
+    public void setPrivilegeBean(PrivilegeBean privilegeBean) {
+        this.privilegeBean = privilegeBean;
     }
 }

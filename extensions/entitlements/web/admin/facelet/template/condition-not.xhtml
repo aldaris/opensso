@@ -6,8 +6,25 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-    <ice:panelGroup
-        rendered="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'not'}">
-        NOT of next condition
-    </ice:panelGroup>
+    <c:if test="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'not'}">
+        <ice:outputText 
+            value="NOT of the following condition:"/>
+        <ice:panelGroup
+            styleClass="conditions">
+            <c:forEach
+                var="vc"
+                items="#{viewCondition.viewConditions}">
+                <o:conditionpanel
+                    viewCondition="#{vc}"/>
+            </c:forEach>
+        </ice:panelGroup>
+        <ice:panelGroup
+            rendered="#{viewCondition.viewConditionsSize &lt; 1}"
+            styleClass="drop-target"
+            dropTarget="true"
+            dropValue="#{viewCondition}"
+            dropListener="#{policyCreateWizardHandler.conditionDropListener}">
+            Drop NOTed condition here ...
+        </ice:panelGroup>
+    </c:if>
 </span>

@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net"
+    xmlns:f="http://java.sun.com/jsf/core">
+    <ice:panelGroup
+        styleClass="condition-panel"
+        rendered="#{viewCondition != null}">
+        <o:multipanel
+            collapsible="true"
+            removeable="#{true}"
+            visible="#{viewCondition.visible}"
+            expanded="#{viewCondition.expanded}"
+            bean="#{viewCondition}"
+            handler="#{viewConditionsHandler}">
+            <ui:define name="panel-title">
+                <ice:panelGrid columns="2">
+                    <ice:graphicImage
+                        value="#{viewCondition.conditionType.conditionIconUri}"/>
+                    <ice:outputText
+                        style="font-weight: bold"
+                        value="#{viewCondition.title}"/>
+                </ice:panelGrid>
+            </ui:define>
+            <ui:define name="panel-body">
+                <ui:include
+                    src="/admin/facelet/template/condition-template-includer.xhtml">
+                    <ui:param name="viewCondition" value="#{viewCondition}"/>
+                </ui:include>
+            </ui:define>
+        </o:multipanel>
+    </ice:panelGroup>
+</ui:composition>

@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateRangeCondition 
-    extends BaseViewCondition
+    extends ViewCondition
     implements Serializable {
 
     private Date startDate;

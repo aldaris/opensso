@@ -11,7 +11,7 @@ import java.util.Set;
 import javax.faces.model.SelectItem;
 
 public class DaysOfWeekCondition
-    extends BaseViewCondition
+    extends ViewCondition
     implements Serializable {
 
     private String[] days = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };

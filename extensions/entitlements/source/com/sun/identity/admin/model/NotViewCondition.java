@@ -2,25 +2,23 @@ package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.EntitlementCondition;
 import java.io.Serializable;
-import java.util.List;
 
 public class NotViewCondition
-    extends BaseViewCondition
+    extends ContainerViewCondition
     implements Serializable {
 
-    private ViewCondition notCondition;
+    public NotViewCondition() {
+        super();
+    }
 
     public EntitlementCondition getEntitlementCondition() {
         // TODO
         return null;
     }
 
-    public ViewCondition getNotCondition() {
-        return notCondition;
+    @Override
+    public void addViewCondition(ViewCondition vc) {
+        assert(getViewConditionsSize() < 1);
+        super.addViewCondition(vc);
     }
-
-    public void setNotCondition(ViewCondition notCondition) {
-        this.notCondition = notCondition;
-    }
-
 }

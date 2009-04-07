@@ -42,6 +42,14 @@ body {
     text-align: right;
 }
 
+.condition-panel {
+}
+
+.condition-panel .conditions {
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
 .condition-section-head {
     font-weight: bold;
     border-bottom: 1px solid;
@@ -333,11 +341,15 @@ div.button-wrapper a.button img.left {
     margin: 16px;
 }
 
+.draggable {
+    cursor: pointer;
+}
+
 .multipanel {
 }
 
 .multipanel-header {
-    border: 1px solid #dddddd;
+    border: 1px solid #bbb;
     padding: 2px;
 }
 
@@ -355,7 +367,9 @@ div.button-wrapper a.button img.left {
 }
 
 .multipanel-body {
-    border: 1px solid #dddddd;
+    border-bottom: 1px solid #bbb;
+    border-left: 1px solid #bbb;
+    border-right: 1px solid #bbb;
     background: #efefef;
     position: relative;
     padding: 4px;

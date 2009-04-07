@@ -78,62 +78,6 @@ public class PolicyCreateWizardBean
         this.dropSubjectContainerEffect = dropSubjectContainerEffect;
     }
 
-    public boolean isOrConditionDraggable() {
-        ViewCondition lastCondition = privilegeBean.getLastViewCondition();
-
-        if (lastCondition == null) {
-            return false;
-        }
-        if (lastCondition.getConditionType().isExpression()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public boolean isAndConditionDraggable() {
-        ViewCondition lastCondition = privilegeBean.getLastViewCondition();
-
-        if (lastCondition == null) {
-            return false;
-        }
-        if (lastCondition.getConditionType().isExpression()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public boolean isNotConditionDraggable() {
-        ViewCondition lastCondition = privilegeBean.getLastViewCondition();
-
-        if (lastCondition == null) {
-            return true;
-        }
-        if (lastCondition instanceof NotViewCondition) {
-            return false;
-        }
-        if (lastCondition instanceof AndViewCondition || lastCondition instanceof OrViewCondition) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean isConditionTypesDraggable() {
-        ViewCondition lastCondition = privilegeBean.getLastViewCondition();
-
-        if (lastCondition == null) {
-            return true;
-        }
-        if (lastCondition.getConditionType().isExpression()) {
-            return true;
-        }
-
-        return false;
-
-    }
-
     public PolicyCreateSummary getPolicyCreateSummary() {
         return policyCreateSummary;
     }

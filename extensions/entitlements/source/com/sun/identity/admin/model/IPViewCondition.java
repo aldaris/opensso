@@ -5,7 +5,7 @@ import com.sun.identity.entitlement.IPCondition;
 import java.io.Serializable;
 
 public class IPViewCondition
-    extends BaseViewCondition
+    extends ViewCondition
     implements Serializable {
 
     private int[] startIp = new int[4];

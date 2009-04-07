@@ -4,12 +4,10 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
     <ice:panelGroup
-        rendered="#{subjectContainer != null &amp;&amp; subjectContainer.subjectContainerType.name == 'role'}"
-        styleClass="subject-chooser">
-        <o:subjectchooser
-            chooserSubjectContainer="#{subjectContainer}"
-            chooserSubjectHandler="#{subjectContainer.chooserSubjectHandler}"/>
+        rendered="#{viewSubject != null &amp;&amp; viewSubject.subjectType.name == 'role'}">
+            #{viewSubject.name}
     </ice:panelGroup>
 </span>

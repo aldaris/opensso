@@ -5,19 +5,19 @@ import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.Fade;
 import com.icesoft.faces.context.effects.SlideDown;
 import com.icesoft.faces.context.effects.SlideUp;
+import com.sun.identity.admin.model.Tree;
 import com.sun.identity.admin.model.MultiPanelBean;
-import com.sun.identity.admin.model.NotViewCondition;
 import com.sun.identity.admin.model.PhaseEventAction;
+import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.ViewCondition;
 import java.io.Serializable;
-import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 
 public class ViewConditionsHandler
         implements MultiPanelHandler, Serializable {
 
-    private List<ViewCondition> viewConditions;
+    private PrivilegeBean privilegeBean;
     private QueuedActionBean queuedActionBean;
 
     public void expandListener(ActionEvent event) {
@@ -48,43 +48,13 @@ public class ViewConditionsHandler
 
         ViewCondition vc = (ViewCondition) mpb;
         addRemoveAction(vc);
-
-        ViewCondition next = getNextCondition(vc);
-        ViewCondition previous = getPreviousCondition(vc);
-
-        if (next != null) {
-            e = new Fade();
-            e.setSubmit(false);
-            e.setTransitory(false);
-            next.setPanelEffect(e);
-
-            addRemoveAction(next);
-        }
-
-        if (next instanceof NotViewCondition) {
-            next = getNextCondition(next);
-            if (next != null) {
-                e = new Fade();
-                e.setSubmit(true);
-                e.setTransitory(false);
-                next.setPanelEffect(e);
-
-                addRemoveAction(next);
-            }
-        }
-
-        if (previous instanceof NotViewCondition) {
-            e = new Fade();
-            e.setSubmit(true);
-            e.setTransitory(false);
-            previous.setPanelEffect(e);
-
-            addRemoveAction(previous);
-        }
     }
 
     public void handleRemove(ViewCondition vc) {
-        viewConditions.remove(vc);
+        Tree ct = new Tree(privilegeBean.getViewCondition());
+        ViewCondition rootVc = (ViewCondition)ct.remove(vc);
+        privilegeBean.setViewCondition(rootVc);
+
     }
 
     private void addRemoveAction(ViewCondition vc) {
@@ -98,35 +68,11 @@ public class ViewConditionsHandler
         queuedActionBean.getPhaseEventActions().add(pea);
     }
 
-    public void setViewConditions(List<ViewCondition> viewConditions) {
-        this.viewConditions = viewConditions;
-    }
-
-    private ViewCondition getNextCondition(ViewCondition viewCondition) {
-        int i = viewConditions.indexOf(viewCondition);
-        assert (i != -1);
-
-        for (int j = i + 1; j < viewConditions.size(); j++) {
-            return viewConditions.get(j);
-
-        }
-
-        return null;
-    }
-
-    private ViewCondition getPreviousCondition(ViewCondition viewCondition) {
-        int i = viewConditions.indexOf(viewCondition);
-        assert (i != -1);
-
-        for (int j = i - 1; j >= 0; j--) {
-            return viewConditions.get(j);
-
-        }
-
-        return null;
-    }
-
     public void setQueuedActionBean(QueuedActionBean queuedActionBean) {
         this.queuedActionBean = queuedActionBean;
+    }
+
+    public void setPrivilegeBean(PrivilegeBean privilegeBean) {
+        this.privilegeBean = privilegeBean;
     }
 }

@@ -3,15 +3,17 @@ package com.sun.identity.admin.handler;
 import com.icesoft.faces.component.dragdrop.DndEvent;
 import com.icesoft.faces.component.dragdrop.DropEvent;
 import com.icesoft.faces.context.effects.Effect;
-import com.icesoft.faces.context.effects.Appear;
+import com.icesoft.faces.context.effects.Highlight;
 import com.sun.identity.admin.model.Application;
 import com.sun.identity.admin.model.ConditionType;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
+import com.sun.identity.admin.model.ContainerViewCondition;
+import com.sun.identity.admin.model.ContainerViewSubject;
 import com.sun.identity.admin.model.PolicyCreateWizardBean;
-import com.sun.identity.admin.model.SubjectContainer;
-import com.sun.identity.admin.model.SubjectContainerType;
+import com.sun.identity.admin.model.SubjectType;
 import com.sun.identity.admin.model.ViewCondition;
+import com.sun.identity.admin.model.ViewSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import java.io.Serializable;
@@ -34,8 +36,8 @@ public class PolicyCreateWizardHandler
     @Override
     public String finishAction() {
         PolicyCreateWizardBean pcwb = getPolicyCreateWizardBean();
-        Privilege privilege = pcwb.getPrivilegeBean().toPrivilige();
- 
+        Privilege privilege = pcwb.getPrivilegeBean().toPrivilege();
+
         // TODO: add SSO token to public credentials
         Subject authSubject = new Subject();
         PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
@@ -68,33 +70,56 @@ public class PolicyCreateWizardHandler
     public void conditionDropListener(DropEvent dropEvent) {
         int type = dropEvent.getEventType();
         if (type == DndEvent.DROPPED) {
-            ConditionType ct = (ConditionType) dropEvent.getTargetDragValue();
+            ConditionType dragValue = (ConditionType) dropEvent.getTargetDragValue();
+            ContainerViewCondition dropValue = (ContainerViewCondition) dropEvent.getTargetDropValue();
 
             // TODO: implicit or?
 
-            ViewCondition vc = ct.newViewCondition();
-            getPolicyCreateWizardBean().getPrivilegeBean().getViewConditions().add(vc);
+            ViewCondition vc = dragValue.newViewCondition();
+            if (dropValue == null) {
+                getPolicyCreateWizardBean().getPrivilegeBean().setViewCondition(vc);
+            } else {
+                dropValue.addViewCondition(vc);
+            }
 
-            Effect e = new Appear();
+            Effect e;
+
+            e = new Highlight();
             e.setTransitory(false);
             e.setSubmit(true);
             getPolicyCreateWizardBean().setDropConditionEffect(e);
         }
     }
 
-    public void subjectContainerDropListener(DropEvent dropEvent) {
+    public void subjectDropListener(DropEvent dropEvent) {
         int type = dropEvent.getEventType();
         if (type == DndEvent.DROPPED) {
-            SubjectContainerType sct = (SubjectContainerType) dropEvent.getTargetDragValue();
-            assert (sct != null);
+            Object dragValue = dropEvent.getTargetDragValue();
+            assert(dragValue != null);
+            ContainerViewSubject dropValue = (ContainerViewSubject) dropEvent.getTargetDropValue();
 
-            SubjectContainer sc = sct.newSubjectContainer();
-            getPolicyCreateWizardBean().getPrivilegeBean().getSubjectContainers().add(sc);
+            SubjectType st = null;
+            ViewSubject vs = null;
 
-            Effect e = new Appear();
+            if (dragValue instanceof SubjectType) {
+                st = (SubjectType)dragValue;
+                vs = st.newViewSubject();
+            } else {
+                vs = (ViewSubject)dragValue;
+            }
+
+            if (dropValue == null) {
+                getPolicyCreateWizardBean().getPrivilegeBean().setViewSubject(vs);
+            } else {
+                dropValue.addViewSubject(vs);
+            }
+
+            Effect e;
+
+            e = new Highlight();
             e.setTransitory(false);
             e.setSubmit(true);
-            getPolicyCreateWizardBean().setDropSubjectContainerEffect(e);
+            getPolicyCreateWizardBean().setDropConditionEffect(e);
         }
     }
 
@@ -141,7 +166,7 @@ public class PolicyCreateWizardHandler
 
             e = new InputFieldErrorEffect();
             getPolicyCreateWizardBean().setPolicyNameInputEffect(e);
-            
+
             e = new MessageErrorEffect();
             getPolicyCreateWizardBean().setPolicyNameMessageEffect(e);
 

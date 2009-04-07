@@ -23,34 +23,59 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
-    <!-- subject container dao's -->
+
     <managed-bean>
-        <managed-bean-name>userSubjectContainerDao</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.dao.UserSubjectContainerDao</managed-bean-class>
+        <managed-bean-name>conditionTypePanelBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.BasicMultiPanelBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
-        <managed-bean-name>roleSubjectContainerDao</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.dao.RoleSubjectContainerDao</managed-bean-class>
+        <managed-bean-name>conditionExpressionPanelBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.BasicMultiPanelBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>basicMultiPanelHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.BasicMultiPanelHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
-    <!-- subject container types -->
+    <!-- subject dao's -->
     <managed-bean>
-        <managed-bean-name>userSubjectContainerType</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.UserSubjectContainerType</managed-bean-class>
+        <managed-bean-name>userSubjectDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.UserSubjectDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{userSubjectType}</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>roleSubjectDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.RoleSubjectDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{roleSubjectType}</value>
+        </managed-property>
+    </managed-bean>
+
+    <!-- subject types -->
+    <managed-bean>
+        <managed-bean-name>userSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.UserSubjectType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>name</property-name>
             <value>user</value>
         </managed-property>
         <managed-property>
-            <property-name>template</property-name>
-            <value>/admin/facelet/template/subject-chooser-user.xhtml</value>
+            <property-name>expression</property-name>
+            <value>false</value>
         </managed-property>
         <managed-property>
-            <property-name>subjectContainerDao</property-name>
-            <value>#{userSubjectContainerDao}</value>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-user.xhtml</value>
         </managed-property>
         <managed-property>
             <property-name>subjectIconUri</property-name>
@@ -58,37 +83,107 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
-        <managed-bean-name>roleSubjectContainerType</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.RoleSubjectContainerType</managed-bean-class>
+        <managed-bean-name>roleSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.RoleSubjectType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>name</property-name>
             <value>role</value>
         </managed-property>
         <managed-property>
-            <property-name>template</property-name>
-            <value>/admin/facelet/template/subject-chooser-role.xhtml</value>
+            <property-name>expression</property-name>
+            <value>false</value>
         </managed-property>
         <managed-property>
-            <property-name>subjectContainerDao</property-name>
-            <value>#{roleSubjectContainerDao}</value>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-role.xhtml</value>
         </managed-property>
         <managed-property>
             <property-name>subjectIconUri</property-name>
             <value>/admin/image/role.png</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>orSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.OrSubjectType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>or</value>
+        </managed-property>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>true</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-or.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/or.gif</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>subjectContainerTypes</managed-bean-name>
+        <managed-bean-name>subjectTypes</managed-bean-name>
         <managed-bean-class>java.util.ArrayList</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <list-entries>
-            <value>#{userSubjectContainerType}</value>
-            <value>#{roleSubjectContainerType}</value>
+            <value>#{userSubjectType}</value>
+            <value>#{roleSubjectType}</value>
+            <value>#{orSubjectType}</value>
         </list-entries>
     </managed-bean>
-    <!-- subject container types -->
+    <managed-bean>
+        <managed-bean-name>expressionSubjectTypes</managed-bean-name>
+        <managed-bean-class>java.util.ArrayList</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <list-entries>
+            <value>#{orSubjectType}</value>
+        </list-entries>
+    </managed-bean>
+    <!-- subject types -->
+
+    <!-- subject containers -->
+    <managed-bean>
+        <managed-bean-name>userSubjectContainer</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SubjectContainer</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{userSubjectType}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectDao</property-name>
+            <value>#{userSubjectDao}</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>roleSubjectContainer</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SubjectContainer</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{roleSubjectType}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectDao</property-name>
+            <value>#{roleSubjectDao}</value>
+        </managed-property>
+    </managed-bean>
+
+
+    <managed-bean>
+        <managed-bean-name>subjectContainers</managed-bean-name>
+        <managed-bean-class>java.util.ArrayList</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <list-entries>
+            <value>#{userSubjectContainer}</value>
+            <value>#{roleSubjectContainer}</value>
+        </list-entries>
+    </managed-bean>
+    <!-- subject containers -->
 
     <!-- application types -->
     <managed-bean>
@@ -190,7 +285,7 @@
         </managed-property>
         <managed-property>
             <property-name>conditionIconUri</property-name>
-            <value>/admin/image/user.png</value>
+            <value>/admin/image/network.png</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -364,8 +459,22 @@
         <managed-bean-class>com.sun.identity.admin.handler.ViewConditionsHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
-            <property-name>viewConditions</property-name>
-            <value>#{policyCreateWizardBean.privilegeBean.viewConditions}</value>
+            <property-name>privilegeBean</property-name>
+            <value>#{policyCreateWizardBean.privilegeBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>viewSubjectsHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.ViewSubjectsHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>privilegeBean</property-name>
+            <value>#{policyCreateWizardBean.privilegeBean}</value>
         </managed-property>
         <managed-property>
             <property-name>queuedActionBean</property-name>
@@ -391,20 +500,6 @@
     <!-- url resource chooser -->
 
     <managed-bean>
-        <managed-bean-name>subjectContainersHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.SubjectContainersHandler</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>subjectContainers</property-name>
-            <value>#{policyCreateWizardBean.privilegeBean.subjectContainers}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>queuedActionBean</property-name>
-            <value>#{queuedActionBean}</value>
-        </managed-property>
-    </managed-bean>
-
-    <managed-bean>
         <managed-bean-name>policyCreateWizardBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.PolicyCreateWizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -426,7 +521,7 @@
 
     <managed-bean>
         <managed-bean-name>policyManageBean</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.PolicyManageWizardBean</managed-bean-class>
+        <managed-bean-class>com.sun.identity.admin.model.PolicyManageBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 

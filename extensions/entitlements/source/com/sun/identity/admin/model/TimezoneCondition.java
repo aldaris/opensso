@@ -10,7 +10,7 @@ import java.util.TimeZone;
 import javax.faces.model.SelectItem;
 
 public class TimezoneCondition
-    extends BaseViewCondition
+    extends ViewCondition
     implements Serializable {
 
     private String timezoneId;

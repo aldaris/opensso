@@ -1,15 +1,12 @@
 package com.sun.identity.admin.model;
 
-import java.io.Serializable;
-import com.sun.identity.admin.dao.SubjectContainerDao;
-
-public abstract class SubjectContainerType implements Serializable {
+public abstract class SubjectType {
     private String name;
     private String template;
-    private SubjectContainerDao subjectContainerDao;
     private String subjectIconUri;
+    private boolean expression;
 
-    public abstract SubjectContainer newSubjectContainer();
+    public abstract ViewSubject newViewSubject();
 
     public String getName() {
         return name;
@@ -27,12 +24,12 @@ public abstract class SubjectContainerType implements Serializable {
         this.template = template;
     }
 
-    public SubjectContainerDao getSubjectContainerDao() {
-        return subjectContainerDao;
+    public boolean isExpression() {
+        return expression;
     }
 
-    public void setSubjectContainerDao(SubjectContainerDao subjectContainerDao) {
-        this.subjectContainerDao = subjectContainerDao;
+    public void setExpression(boolean expression) {
+        this.expression = expression;
     }
 
     public String getSubjectIconUri() {

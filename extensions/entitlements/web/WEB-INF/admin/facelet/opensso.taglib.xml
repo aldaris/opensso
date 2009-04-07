@@ -27,23 +27,19 @@
         <source>tag/wstep.xhtml</source>
     </tag>
     <tag>
-        <tag-name>subjectchooser</tag-name>
-        <source>tag/subjectchooser.xhtml</source>
-    </tag>
-    <tag>
-        <tag-name>menupanel</tag-name>
-        <source>tag/menupanel.xhtml</source>
-    </tag>
-    <tag>
         <tag-name>multipanel</tag-name>
         <source>tag/multipanel.xhtml</source>
     </tag>
     <tag>
-        <tag-name>round</tag-name>
-        <source>tag/round.xhtml</source>
-    </tag>
-    <tag>
         <tag-name>box</tag-name>
         <source>tag/box.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>conditionpanel</tag-name>
+        <source>tag/conditionpanel.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>subjectpanel</tag-name>
+        <source>tag/subjectpanel.xhtml</source>
     </tag>
 </facelet-taglib>
