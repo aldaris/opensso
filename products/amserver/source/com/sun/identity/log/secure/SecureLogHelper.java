@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureLogHelper.java,v 1.5 2008-06-25 05:43:38 qcheng Exp $
+ * $Id: SecureLogHelper.java,v 1.6 2009-04-07 23:24:33 hvijay Exp $
  *
  */
 
@@ -551,24 +551,31 @@ public abstract class SecureLogHelper {
      * @return true if logger is already initialized
      */
     boolean isInitialized(String filename, AMPassword password){
+        boolean isInitialized = false;
         try{
             byte[] k0 = null;
             FileInputStream infile=null;
             infile = new FileInputStream(filename);
             k0 = readFromSecretStore( filename, currentKey, password);
             if(k0 != null) {
-                return true;
+                isInitialized = true;
             }
             else {
-                return false;
+                isInitialized = false;
             }
+            infile.close();
         }catch(Exception e) {
+            //If the exception occurs before infile.close, isInitialized will be
+            //false. If it occurs at infile.close, the flag will already have
+            //been set by that time. Hence just return isInitialized as it is in
+            //the end.
             if(Debug.messageEnabled()) {
                 Debug.message("SecureLogHelper.isInitialized() : " + 
                     e.getMessage() +
                     " : returning false");
             }
-            return  false;
         }
+        
+        return isInitialized;
     }
 }

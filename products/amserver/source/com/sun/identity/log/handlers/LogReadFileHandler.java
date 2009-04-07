@@ -22,12 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogReadFileHandler.java,v 1.7 2008-10-30 04:11:41 bigfatrat Exp $
+ * $Id: LogReadFileHandler.java,v 1.8 2009-04-07 23:21:01 hvijay Exp $
  *
  */
-
-
-
 package com.sun.identity.log.handlers;
 
 import java.io.BufferedReader;
@@ -55,24 +52,25 @@ import com.sun.identity.log.util.LogRecordSorter;
  * caller (LogReader), it also exports a method that returns archived filename
  * present in current set.
  **/
-public class LogReadFileHandler implements LogReadHandler  {
+public class LogReadFileHandler implements LogReadHandler {
     // private attributes
-    private String    logFileName;
-    private com.sun.identity.log.LogQuery  queryChriteria = null;
+
+    private String logFileName;
+    private com.sun.identity.log.LogQuery queryChriteria = null;
     private int maxNoOfRecs = LogQuery.MOST_RECENT_MAX_RECORDS;
-    private String    version = "#Version:";
-    private String    fieldName = "#Fields: ";
-    private LogRecordSorter sorter =  null;
-    private String [][] queryResult;    // will hold the return value
+    private String version = "#Version:";
+    private String fieldName = "#Fields: ";
+    private LogRecordSorter sorter = null;
+    private String[][] queryResult;    // will hold the return value
     // internal storage for records
     private ArrayList listOfValidRecords = new ArrayList();
-
     private ArrayList columnIndices = null;
 
     /** constructor does nothing
      **/
-    public LogReadFileHandler() {}
-    
+    public LogReadFileHandler() {
+    }
+
     /**
      * LogReader calls this method method. It collects header, records,
      * applies query (if any), sorts (if asked) the records on field, checks
@@ -89,11 +87,11 @@ public class LogReadFileHandler implements LogReadHandler  {
      * @throws RuntimeException if it fails to retrieve log record.
      * @throws Exception if it fails any of operation.
      */
-    public String [][]logRecRead(String fileName, LogQuery logQuery,
-    boolean sourceData)
-    throws IOException, NoSuchFieldException,
-    IllegalArgumentException, RuntimeException,
-    Exception {
+    public String[][] logRecRead(String fileName, LogQuery logQuery,
+            boolean sourceData)
+            throws IOException, NoSuchFieldException,
+            IllegalArgumentException, RuntimeException,
+            Exception {
         // if the object is persistence use it otherwise don't
         this.cleaner();
         this.logFileName = fileName;
@@ -118,15 +116,13 @@ public class LogReadFileHandler implements LogReadHandler  {
             // caller has to handle what is MOST_RECENT_MAX_RECORDS
             // this class has no idea about the value
             if ((logQuery.getNumRecordsWanted() ==
-            LogQuery.MOST_RECENT_MAX_RECORDS) ||
-            (logQuery.getNumRecordsWanted() <  LogQuery.ALL_RECORDS)) {
+                    LogQuery.MOST_RECENT_MAX_RECORDS) ||
+                    (logQuery.getNumRecordsWanted() < LogQuery.ALL_RECORDS)) {
                 this.maxNoOfRecs = 1;
-            }
-            else {
+            } else {
                 this.maxNoOfRecs = logQuery.getNumRecordsWanted();
             }
-        }
-        else {
+        } else {
             this.maxNoOfRecs = 1;// can't be 0, headers will be returned
         }
         try {
@@ -144,21 +140,21 @@ public class LogReadFileHandler implements LogReadHandler  {
         } catch (Exception e) {
             throw e; // catch & rethrow it else it cud be caught in other place
         }
-        
+
         int recSize = listOfValidRecords.size();
         // checks whether it has got any record or not
         if (recSize <= 0) {
             // if no record found return null
             return null;
         }
-        
+
         // if Sorting is specified
         if (queryChriteria != null) {
             String sortByField = queryChriteria.getSortingField();
             if (sortByField != null) {
                 try {
                     this.sorter = new LogRecordSorter(sortByField,
-                    listOfValidRecords);
+                            listOfValidRecords);
                     queryResult = this.sorter.getSortedRecords();
                     return (queryResult);
                 } catch (NoSuchFieldException e) {
@@ -169,17 +165,16 @@ public class LogReadFileHandler implements LogReadHandler  {
                     throw e;// catch & rethrow else cud be caught in other place
                 } catch (Exception e) {
                     throw e;// catch & rethrow else cud be caught in other place
-                    // don't do any processing
+                // don't do any processing
                 }
             }
         }
         queryResult = new String[recSize][];
         for (int i = 0; i < recSize; i++) {
-            queryResult[i] = (String [])listOfValidRecords.get(i);
+            queryResult[i] = (String[]) listOfValidRecords.get(i);
         }
         return queryResult;
     }
-
 
     /**
      * LogReader calls this method method. It collects header, records,
@@ -197,26 +192,24 @@ public class LogReadFileHandler implements LogReadHandler  {
      * @throws RuntimeException if it fails to retrieve log record.
      * @throws Exception if it fails any of operation.
      */
-    public String [][]logRecRead(
-        Set fileNames,
-        LogQuery logQuery,
-        boolean sourceData
-    ) throws IOException, NoSuchFieldException, IllegalArgumentException,
-        RuntimeException, Exception
-    {
+    public String[][] logRecRead(
+            Set fileNames,
+            LogQuery logQuery,
+            boolean sourceData) throws IOException, NoSuchFieldException, IllegalArgumentException,
+            RuntimeException, Exception {
         // if the object is persistence use it otherwise don't
         this.cleaner();
 
         Set fNames = new HashSet();
         boolean isFirstFile = true;
-        for (Iterator it = fileNames.iterator(); it.hasNext(); ) {
-            String ss = (String)it.next();
+        for (Iterator it = fileNames.iterator(); it.hasNext();) {
+            String ss = (String) it.next();
             fNames.add(ss);
             this.logFileName = ss;
 
             if (Debug.messageEnabled()) {
-                Debug.message ("File:logRecRead/2: processing file " + ss +
-                    ", sourceData = " + sourceData);
+                Debug.message("File:logRecRead/2: processing file " + ss +
+                        ", sourceData = " + sourceData);
             }
 
             boolean hdrExist = false;
@@ -253,9 +246,8 @@ public class LogReadFileHandler implements LogReadHandler  {
                 // caller has to handle what is MOST_RECENT_MAX_RECORDS
                 // this class has no idea about the value
                 if ((logQuery.getNumRecordsWanted() ==
-                    LogQuery.MOST_RECENT_MAX_RECORDS) ||
-                    (logQuery.getNumRecordsWanted() <  LogQuery.ALL_RECORDS))
-                {
+                        LogQuery.MOST_RECENT_MAX_RECORDS) ||
+                        (logQuery.getNumRecordsWanted() < LogQuery.ALL_RECORDS)) {
                     this.maxNoOfRecs = 1;
                 } else {
                     this.maxNoOfRecs = logQuery.getNumRecordsWanted();
@@ -284,7 +276,7 @@ public class LogReadFileHandler implements LogReadHandler  {
                 throw e; // catch & rethrow
             }
         } // end of for loop for all files
-        
+
         int recSize = listOfValidRecords.size();
 
         // checks whether it has got any record or not
@@ -292,14 +284,14 @@ public class LogReadFileHandler implements LogReadHandler  {
             // if no record found return null
             return null;
         }
-        
+
         // if Sorting is specified
         if (queryChriteria != null) {
             String sortByField = queryChriteria.getSortingField();
             if (sortByField != null) {
                 try {
                     this.sorter = new LogRecordSorter(sortByField,
-                    listOfValidRecords);
+                            listOfValidRecords);
                     queryResult = this.sorter.getSortedRecords();
                     return (queryResult);
                 } catch (NoSuchFieldException e) {
@@ -310,29 +302,27 @@ public class LogReadFileHandler implements LogReadHandler  {
                     throw e;// catch & rethrow else cud be caught in other place
                 } catch (Exception e) {
                     throw e;// catch & rethrow else cud be caught in other place
-                    // don't do any processing
+                // don't do any processing
                 }
             }
         }
         queryResult = new String[recSize][];
         for (int i = 0; i < recSize; i++) {
-            queryResult[i] = (String [])listOfValidRecords.get(i);
+            queryResult[i] = (String[]) listOfValidRecords.get(i);
         }
         return queryResult;
     }
-    
+
     // This method collects all the ELF header fields.
     private boolean getFieldNames(boolean addFields, LogQuery logQry)
-        throws IOException,
-        RuntimeException, Exception
-    {
+            throws IOException,
+            RuntimeException, Exception {
         String fieldBuffer;
         boolean foundHeader = false;
         try {
-            BufferedReader fileReader = new
-            BufferedReader(new FileReader(this.logFileName));
-            
-            while((fieldBuffer = fileReader.readLine()) != null) {
+            BufferedReader fileReader = new BufferedReader(new FileReader(this.logFileName));
+
+            while ((fieldBuffer = fileReader.readLine()) != null) {
                 if (fieldBuffer.trim().length() <= 0) {
                     continue;  // invalid, so ignore
                 }
@@ -344,27 +334,27 @@ public class LogReadFileHandler implements LogReadHandler  {
                     if (foundHeader == true) {
                         break; // this is error.
                     }
-                    ArrayList tmpList = getFields(hdrStr,true);
-                    String [] spltHdrStr = null;
+                    ArrayList tmpList = getFields(hdrStr, true);
+                    String[] spltHdrStr = null;
 
                     ArrayList al = null;
                     if (logQry != null) {
                         al = logQry.getColumns();
                         if (al != null) {
                             columnIndices = new ArrayList();
-                            spltHdrStr = new String [al.size()];
+                            spltHdrStr = new String[al.size()];
                         } else {
-                            spltHdrStr = new String [tmpList.size()];
+                            spltHdrStr = new String[tmpList.size()];
                         }
                     } else {
-                        spltHdrStr = new String [tmpList.size()];
+                        spltHdrStr = new String[tmpList.size()];
                     }
 
                     int j = 0;
                     int tmpListSz = tmpList.size();
 
                     for (int i = 0; i < tmpListSz; i++) {
-                        String tmps = (String)tmpList.get(i);
+                        String tmps = (String) tmpList.get(i);
                         if (al != null) {
                             if (al.contains(tmps)) {
                                 columnIndices.add(j, Integer.toString(i));
@@ -374,7 +364,7 @@ public class LogReadFileHandler implements LogReadHandler  {
                             spltHdrStr[j++] = tmps;
                         }
                     }
-                    
+
                     //
                     //  don't add Field names "record" if not first file
                     //
@@ -402,10 +392,10 @@ public class LogReadFileHandler implements LogReadHandler  {
         }
         return (foundHeader);
     }
-    
+
     // reads file, splits into fields, validates field values and collects it.
     private boolean getRecords(boolean isSourceData)
-    throws IOException, RuntimeException {
+            throws IOException, RuntimeException {
         String bufferedStr;
         String dummyStr = null;
         StringBuffer dummySbuf = new StringBuffer(" ");
@@ -421,14 +411,14 @@ public class LogReadFileHandler implements LogReadHandler  {
         }
         dummyStr = dummySbuf.toString();
 
+        BufferedReader flRead = null;
         try {
-            BufferedReader flRead = new
-            BufferedReader(new FileReader(logFileName));
-            while((bufferedStr = flRead.readLine()) != null) {
+            flRead = new BufferedReader(new FileReader(logFileName));
+            while ((bufferedStr = flRead.readLine()) != null) {
                 if (bufferedStr.trim().length() <= 0) {
                     if (LogReader.isLogSecure()) {
                         Debug.error("LogReadFileHandler.getRecords: " +
-                            "Blank line in secure log");
+                                "Blank line in secure log");
                         bufferedStr = dummyStr;
                     } else {
                         continue; // no field value, so ignore
@@ -442,29 +432,28 @@ public class LogReadFileHandler implements LogReadHandler  {
                 }
                 // temporary field holder
                 ArrayList listOfFields = new ArrayList();
-                listOfFields = this.getFields(bufferedStr,isSourceData);
+                listOfFields = this.getFields(bufferedStr, isSourceData);
 
-                String [] spltStrArr = null;
+                String[] spltStrArr = null;
                 if (columnIndices != null) {
-                    spltStrArr = new String [columnIndices.size()];
+                    spltStrArr = new String[columnIndices.size()];
                 } else {
-                    spltStrArr = new String [listOfFields.size()];
+                    spltStrArr = new String[listOfFields.size()];
                 }
 
                 int j = 0;
                 for (int i = 0; i < listOfFields.size(); i++) {
                     if (columnIndices != null) {
                         if (columnIndices.contains(Integer.toString(i))) {
-                            spltStrArr[j++] = (String)listOfFields.get(i);
+                            spltStrArr[j++] = (String) listOfFields.get(i);
                         }
                     } else {
-                        spltStrArr[i] = (String)listOfFields.get(i);
+                        spltStrArr[i] = (String) listOfFields.get(i);
                     }
                 }
                 if (queryChriteria == null) {
                     this.collect(spltStrArr);
-                }
-                else if (this.applyQuery(spltStrArr) == true) {
+                } else if (this.applyQuery(spltStrArr) == true) {
                     this.collect(spltStrArr);
                 }
                 continue;
@@ -475,11 +464,13 @@ public class LogReadFileHandler implements LogReadHandler  {
         } catch (Exception e) {
             String msg = "Problem in reading " + logFileName;
             throw new RuntimeException(msg);
+        } finally {
+            flRead.close();
         }
+
         return true;
     }
-    
-    
+
     //
     // reads file, splits into fields, validates field values and collects it.
     // this version is for the multi-file read.
@@ -487,16 +478,14 @@ public class LogReadFileHandler implements LogReadHandler  {
     // collect the records locally, then add them to the global
     // listOfValueRecords
     //
-    private boolean getRecordsMulti (boolean isSourceData)
-        throws IOException, RuntimeException
-    {
+    private boolean getRecordsMulti(boolean isSourceData)
+            throws IOException, RuntimeException {
         String bufferedStr;
         int localNumRecs = 0;
         ArrayList localListOfValidRecords = new ArrayList();
         try {
-            BufferedReader flRead = new
-            BufferedReader(new FileReader(logFileName));
-            while((bufferedStr = flRead.readLine()) != null) {
+            BufferedReader flRead = new BufferedReader(new FileReader(logFileName));
+            while ((bufferedStr = flRead.readLine()) != null) {
                 if (bufferedStr.trim().length() <= 0) {
                     continue; // no field value, so ignore
                 }
@@ -508,13 +497,13 @@ public class LogReadFileHandler implements LogReadHandler  {
                 }
                 // temporary field holder
                 ArrayList listOfFields = new ArrayList();
-                listOfFields = this.getFields(bufferedStr,isSourceData);
-                String [] spltStrArr = null;
+                listOfFields = this.getFields(bufferedStr, isSourceData);
+                String[] spltStrArr = null;
 
                 if (columnIndices != null) {
-                    spltStrArr = new String [columnIndices.size()];
+                    spltStrArr = new String[columnIndices.size()];
                 } else {
-                    spltStrArr = new String [listOfFields.size()];
+                    spltStrArr = new String[listOfFields.size()];
                 }
 
                 int j = 0;
@@ -522,18 +511,17 @@ public class LogReadFileHandler implements LogReadHandler  {
                 for (int i = 0; i < listOfFields.size(); i++) {
                     if (columnIndices != null) {
                         if (columnIndices.contains(Integer.toString(i))) {
-                            spltStrArr[j++] = (String)listOfFields.get(i);
+                            spltStrArr[j++] = (String) listOfFields.get(i);
                         }
                     } else {
-                        spltStrArr[i] = (String)listOfFields.get(i);
+                        spltStrArr[i] = (String) listOfFields.get(i);
                     }
                 }
 
                 int rec_size = localListOfValidRecords.size();
 
                 if ((queryChriteria == null) ||
-                    (this.applyQuery(spltStrArr) == true))
-                {
+                        (this.applyQuery(spltStrArr) == true)) {
                     if (this.maxNoOfRecs != LogQuery.ALL_RECORDS) {
                         if (localNumRecs > this.maxNoOfRecs) {
                             localListOfValidRecords.remove(1);
@@ -551,9 +539,9 @@ public class LogReadFileHandler implements LogReadHandler  {
                 localNumRecs = this.maxNoOfRecs;
             }
 
-            String [] tmpxx = null;
+            String[] tmpxx = null;
             for (int i = 0; i < localNumRecs; i++) {
-                tmpxx = (String [])localListOfValidRecords.get(i);
+                tmpxx = (String[]) localListOfValidRecords.get(i);
                 listOfValidRecords.add(tmpxx);
             }
 
@@ -569,10 +557,10 @@ public class LogReadFileHandler implements LogReadHandler  {
 
         return true;
     }
-    
+
     // applies query to find out whether the record matches or not
-    private boolean applyQuery(String [] recordToBeQueried) {
-        ArrayList queries = (ArrayList)queryChriteria.getQueries();
+    private boolean applyQuery(String[] recordToBeQueried) {
+        ArrayList queries = (ArrayList) queryChriteria.getQueries();
         if (queries == null) {
             return (true);
         }
@@ -584,15 +572,15 @@ public class LogReadFileHandler implements LogReadHandler  {
         boolean isMatch = false;
         for (int i = 0; i < qrySz; i++) {
             isMatch = false;
-            isMatch = doMatch(recordToBeQueried,(QueryElement)queries.get(i));
+            isMatch = doMatch(recordToBeQueried, (QueryElement) queries.get(i));
 
             if (queryCondition ==
-            com.sun.identity.log.LogQuery.MATCH_ALL_CONDITIONS) {
+                    com.sun.identity.log.LogQuery.MATCH_ALL_CONDITIONS) {
                 if (isMatch == false) {
                     return (isMatch);
                 }
             } else if (queryCondition ==
-            com.sun.identity.log.LogQuery.MATCH_ANY_CONDITION) {
+                    com.sun.identity.log.LogQuery.MATCH_ANY_CONDITION) {
                 if (isMatch == true) {
                     return (isMatch);
                 }
@@ -600,17 +588,17 @@ public class LogReadFileHandler implements LogReadHandler  {
         }
         return (isMatch);
     }
-    
+
     // checks whether record is a match or not
-    private boolean doMatch(String [] record, QueryElement elem) {
-        boolean  isFound = false;
+    private boolean doMatch(String[] record, QueryElement elem) {
+        boolean isFound = false;
         int fieldPos = -1;
-        String [] fields = (String [])listOfValidRecords.get(0);
+        String[] fields = (String[]) listOfValidRecords.get(0);
         int fieldNo = fields.length;
         String fldName = elem.getFieldName();
         String fldValue = elem.getFieldValue();
         // find the field position first
-        for (int i = 0; i < fieldNo; i ++) {
+        for (int i = 0; i < fieldNo; i++) {
             if (fldName.compareTo(fields[i]) == 0) {
                 fieldPos = i;
                 break;
@@ -622,7 +610,7 @@ public class LogReadFileHandler implements LogReadHandler  {
         int result = 0;
         int rel = elem.getRelation();
 
-        switch(rel) {
+        switch (rel) {
             case QueryElement.CN:  // contains
                 return (record[fieldPos].indexOf(fldValue) != -1);
             case QueryElement.SW:  // starts with
@@ -633,46 +621,46 @@ public class LogReadFileHandler implements LogReadHandler  {
                 result = record[fieldPos].compareTo(fldValue);
         }
 
-        switch(rel) {
-            case QueryElement.EQ :
+        switch (rel) {
+            case QueryElement.EQ:
                 if (result == 0) {
                     return (true);
                 }
                 break;
-            case QueryElement.LT :
+            case QueryElement.LT:
                 if (result < 0) {
                     return (true);
                 }
                 break;
-            case QueryElement.GT :
+            case QueryElement.GT:
                 if (result > 0) {
                     return (true);
                 }
                 break;
-            case QueryElement.LE :
+            case QueryElement.LE:
                 if (result <= 0) {
                     return (true);
                 }
                 break;
-            case QueryElement.GE :
+            case QueryElement.GE:
                 if (result >= 0) {
                     return (true);
                 }
                 break;
-            case QueryElement.NE :
+            case QueryElement.NE:
                 if (result != 0) {
                     return (true);
                 }
                 break;
-            default :
+            default:
                 break;
         }
         return (false);
     }
-    
+
     // It collects the records into the internal list
     // takes care of storing latest result, pushing earliest out.
-    private void collect(String [] recordValues) {
+    private void collect(String[] recordValues) {
         int rec_size = listOfValidRecords.size();
         if (this.maxNoOfRecs != LogQuery.ALL_RECORDS) {
             if (rec_size > this.maxNoOfRecs) {
@@ -681,12 +669,12 @@ public class LogReadFileHandler implements LogReadHandler  {
         }
         appendRecord(recordValues);
     }
-    
+
     // this method appends the record to the internal data
-    private void appendRecord(String [] record) {
+    private void appendRecord(String[] record) {
         listOfValidRecords.add(record);
     }
-    
+
     // removes oldest or 1st record and shifts rest of the records upward
     private void shiftRecordsUpward() {
         if (listOfValidRecords.size() <= 1) {
@@ -694,13 +682,13 @@ public class LogReadFileHandler implements LogReadHandler  {
         }
         listOfValidRecords.remove(1);
     }
-    
+
     // method to split ELF formatted line into fields
     private ArrayList getFields(String bufferedStr,
-    boolean source) {
+            boolean source) {
         String str = bufferedStr.trim();
         ArrayList fields = new ArrayList();
-        
+
         char quote = '"';
         char new_line = '\n';
         char cr_return = '\r';
@@ -709,19 +697,19 @@ public class LogReadFileHandler implements LogReadHandler  {
         String tmpStr = new String();
         int str_len = str.length();
         char read_char;
-        
-        while(current_position < str_len) {
+
+        while (current_position < str_len) {
             read_char = str.charAt(current_position);
             if (read_char == quote) {
                 /* Assumptions::
-                   1st character is a quote. i.e. Substrings starts with quote.
-                   There could be quote within the desired sub string.
-                   If the sub string contains a quote,
-                      it will be precceded with another quote. i.e. the
-                      substring can contain even number of quotes,
-                      not odd numbere of quotes.
-                   The ending position of the substring will be a single quote
-                      i.e. a detached quote, no quote to follow immediately.
+                1st character is a quote. i.e. Substrings starts with quote.
+                There could be quote within the desired sub string.
+                If the sub string contains a quote,
+                it will be precceded with another quote. i.e. the
+                substring can contain even number of quotes,
+                not odd numbere of quotes.
+                The ending position of the substring will be a single quote
+                i.e. a detached quote, no quote to follow immediately.
                  */
                 String sub_str = str.substring(current_position);
                 int current_sub_position = 1;
@@ -735,12 +723,12 @@ public class LogReadFileHandler implements LogReadHandler  {
                 while (current_sub_position < str_len) {
                     ch = sub_str.charAt(current_sub_position);
                     if ((ch != quote) && (ch != new_line) &&
-                    (ch != cr_return)){
+                            (ch != cr_return)) {
                         buffer += ch;
                         ++current_sub_position;
                         continue;
                     }
-                    if (current_sub_position == (sub_str.length() -1)) {
+                    if (current_sub_position == (sub_str.length() - 1)) {
                         if (source == false) {
                             buffer += ch;
                         } else {
@@ -754,9 +742,9 @@ public class LogReadFileHandler implements LogReadHandler  {
                         quotedFieldAdded = true;
                         break;
                     }
-                    if ((sub_str.charAt(current_sub_position+1) != quote) &&
-                    (sub_str.charAt(current_sub_position+1) != new_line) &&
-                    (sub_str.charAt(current_sub_position+1) != cr_return)) {
+                    if ((sub_str.charAt(current_sub_position + 1) != quote) &&
+                            (sub_str.charAt(current_sub_position + 1) != new_line) &&
+                            (sub_str.charAt(current_sub_position + 1) != cr_return)) {
                         if (source == false) {
                             buffer += ch;
                         }
@@ -783,16 +771,16 @@ public class LogReadFileHandler implements LogReadHandler  {
                     }
                     ++current_sub_position;
                 }
-                if( quotedFieldAdded != true) {
+                if (quotedFieldAdded != true) {
                     fields.add(buffer);
                     current_position += current_sub_position;
                 }
                 continue;
-            } else if ((read_char == ' ')   ||
-            (read_char == '\t')   ||
-            (read_char == '\f')   ||
-            (read_char == '\r')   ||
-            (read_char == '\n')) {
+            } else if ((read_char == ' ') ||
+                    (read_char == '\t') ||
+                    (read_char == '\f') ||
+                    (read_char == '\r') ||
+                    (read_char == '\n')) {
                 if (isNewField == true) {
                     // fields are seperated by whitespace(s)
                     // only String can contain whitespace(s)
@@ -803,7 +791,7 @@ public class LogReadFileHandler implements LogReadHandler  {
                     ++current_position;
                     continue;
                 }
-                
+
                 isNewField = true;
                 ++current_position;
                 continue;
@@ -811,7 +799,7 @@ public class LogReadFileHandler implements LogReadHandler  {
                 if (isNewField == true) {
                     tmpStr += read_char;
                     ++current_position;
-                    if(current_position == str_len) {
+                    if (current_position == str_len) {
                         fields.add(tmpStr);
                     }
                     continue;
@@ -820,9 +808,9 @@ public class LogReadFileHandler implements LogReadHandler  {
         }
         return fields;
     }
-    
+
     // below method reset previous readings and prepare for new one.
-    private    void cleaner() {
+    private void cleaner() {
         this.logFileName = null;
         this.queryChriteria = null;
         this.listOfValidRecords.clear();

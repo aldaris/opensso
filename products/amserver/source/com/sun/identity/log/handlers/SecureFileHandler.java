@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureFileHandler.java,v 1.9 2008-11-10 22:56:56 veiming Exp $
+ * $Id: SecureFileHandler.java,v 1.10 2009-04-07 23:22:48 hvijay Exp $
  *
  */
 
@@ -567,13 +567,24 @@ public class SecureFileHandler extends java.util.logging.Handler {
     
     private void checkForHeaderWritten(String fileName) {
         byte [] bytes = new byte[1024];
+        FileInputStream fins = null;
         try {
-            FileInputStream fins = new FileInputStream(new File(fileName));
+            fins = new FileInputStream(new File(fileName));
             fins.read(bytes);
         } catch (IOException ioe) {
             Debug.error(logName +
                 ":SecureFileHandler: could not read file content", ioe);
+        } finally {
+            if(fins != null){
+                try{
+                    fins.close();
+                } catch(IOException ex) {
+                Debug.error(logName +
+                    ":SecureFileHandler: IOException while closing file", ex);
+                }
+            }
         }
+
         String fileContent = new String(bytes);
         fileContent = fileContent.trim();
         if (fileContent.startsWith("#Version")) {
