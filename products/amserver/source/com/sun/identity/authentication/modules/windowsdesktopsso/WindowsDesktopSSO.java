@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WindowsDesktopSSO.java,v 1.5 2009-03-06 05:20:31 222713 Exp $
+ * $Id: WindowsDesktopSSO.java,v 1.6 2009-04-07 22:55:13 beomsuk Exp $
  *
  */
 
@@ -537,9 +537,13 @@ public class WindowsDesktopSSO extends AMLoginModule {
         }
 
         if (!(new File(keyTabFile)).exists()) {
-            throw new AuthLoginException(amAuthWindowsDesktopSSO, 
+            // ibm jdk needs to skip "file://" part in parameter
+            if (!(new File(keyTabFile.substring(7))).exists()) {
+                throw new AuthLoginException(amAuthWindowsDesktopSSO, 
                 "nokeytab", null);
+            }
         }
+        
         try {
             setAuthLevel(Integer.parseInt(authLevel));
         } catch (Exception e) {

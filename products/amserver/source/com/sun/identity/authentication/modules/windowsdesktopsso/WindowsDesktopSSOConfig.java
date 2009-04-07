@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WindowsDesktopSSOConfig.java,v 1.2 2008-06-25 05:42:03 qcheng Exp $
+ * $Id: WindowsDesktopSSOConfig.java,v 1.3 2009-04-07 22:55:13 beomsuk Exp $
  *
  */
 
@@ -33,11 +33,18 @@ import java.util.HashMap;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 
+import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.Constants;
+
 public class WindowsDesktopSSOConfig extends Configuration {
     public static final String defaultAppName = 
         "com.sun.identity.authentication.windowsdesktopsso";
-    private static final String kerberosModuleName =
-        "com.sun.security.auth.module.Krb5LoginModule";
+    private static final String kerberosModuleName = 
+        SystemProperties.get(Constants.KRB5_LOGINMODULE, 
+            Constants.DEFAULT_KRB5_LOGINMODULE);    
+    private static final String credsType = 
+        SystemProperties.get(Constants.KRB5_CREDENTIAL_TYPE, "acceptor");
+                    
     private Configuration config = null;
     private String servicePrincipal = null;
     private String keytab = null;
@@ -87,12 +94,18 @@ public class WindowsDesktopSSOConfig extends Configuration {
     public AppConfigurationEntry[] getAppConfigurationEntry(String appName){
         if (appName.equals(defaultAppName)) {
             HashMap hashmap = new HashMap();
-            hashmap.put("storeKey", "true");
             hashmap.put("principal", servicePrincipal);
-            hashmap.put("useKeyTab", "true");
-            hashmap.put("keyTab", keytab);
-            hashmap.put("doNotPrompt", "true");
-            hashmap.put("refreshKrb5Config", refreshConf);
+            if (kerberosModuleName.equalsIgnoreCase("com.ibm.security.auth.module.Krb5LoginModule")) {
+                hashmap.put("useKeytab", keytab);
+                hashmap.put("credsType", credsType);
+                hashmap.put("refreshKrb5Config", "false");
+            } else {
+                hashmap.put("storeKey", "true");
+                hashmap.put("useKeyTab", "true");
+                hashmap.put("keyTab", keytab);
+                hashmap.put("doNotPrompt", "true");
+                hashmap.put("refreshKrb5Config", refreshConf);
+            }
 
             AppConfigurationEntry appConfigurationEntry =
                 new AppConfigurationEntry(

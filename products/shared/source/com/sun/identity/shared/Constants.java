@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.44 2009-03-14 03:44:47 manish_rustagi Exp $
+ * $Id: Constants.java,v 1.45 2009-04-07 22:55:14 beomsuk Exp $
  *
  */
 
@@ -955,5 +955,15 @@ public interface Constants {
      */
     public static final String DISTAUTH_CLUSTER = 
         "com.sun.identity.distauth.cluster";
+
+    /**
+     * property string for Krb5LoginModule class name
+     */
+    public static final String KRB5_LOGINMODULE = 
+     "com.sun.identity.authentication.module.WindowsDesktopSSO.Krb5LoginModule";
+    public static final String DEFAULT_KRB5_LOGINMODULE = 
+        "com.sun.security.auth.module.Krb5LoginModule";
+    public static final String KRB5_CREDENTIAL_TYPE =
+        "com.sun.identity.authentication.module.WindowsDesktopSSO.credsType";
 
 }
