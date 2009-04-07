@@ -23,7 +23,7 @@ REM with the fields enclosed by brackets [] replaced by
 REM your own identifying information:
 REM "Portions Copyrighted [year] [name of copyright owner]"
 REM
-REM $Id: agentadmin.bat,v 1.3 2008-08-13 20:59:41 huacui Exp $
+REM $Id: agentadmin.bat,v 1.4 2009-04-07 17:20:17 leiming Exp $
 REM
 REM
 
@@ -35,7 +35,7 @@ if "%JAVA_VM%"=="" set JAVA_VM=java.exe
 
 set AGENT_CLASSPATH=%AGENT_HOME%\lib\opensso-installtools-launcher.jar
 
-"%JAVA_VM%" -classpath %AGENT_CLASSPATH% com.sun.identity.install.tools.launch.AdminToolLauncher %*
+"%JAVA_VM%" -classpath "%AGENT_CLASSPATH%" com.sun.identity.install.tools.launch.AdminToolLauncher %*
 
 set JAVA_VM=
 set AGENT_CLASSPATH=

@@ -22,16 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminToolLauncher.java,v 1.4 2008-06-25 05:51:27 qcheng Exp $
+ * $Id: AdminToolLauncher.java,v 1.5 2009-04-07 17:18:37 leiming Exp $
  *
  */
 
 package com.sun.identity.install.tools.launch;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -51,6 +53,9 @@ public class AdminToolLauncher {
             throw new Exception("Failed to locate resource: " + classFileName);
         }
         String urlString = url.toString();
+        // This urlString is URL-encoded, decode it.
+        urlString = URLDecoder.decode(urlString, "UTF-8");
+        
         String jarFileName = null;
         String jarFilePath = null;
         if (urlString.startsWith(STR_JAR_FILE_URL_PREFIX)) {
@@ -81,7 +86,15 @@ public class AdminToolLauncher {
         String relativePath = STR_LIB_DIR_PREFIX + jarFileName;
         String productHome = jarFilePath.substring(0, jarFilePath.length()
                 - relativePath.length());
+        debug("product home=" + productHome);
 
+        // Detect some commonly used special characters, which are not
+        // allowed in Agent deployment directory.
+        if (productHome.matches(".*[% #+].*")) {
+            throw new IOException(
+                "Agent deployment directory may have special " +
+                "character(% #+), rename it to a new directory name.");
+        }
         // Product home must exist
         setProductHomeDir(getRequiredDirectory(productHome, false));
 
@@ -160,9 +173,16 @@ public class AdminToolLauncher {
         Thread.currentThread().setContextClassLoader(loader);
         debug("Context thread loader has been set.");
 
-        Class toolsConfiguration = loader
-                .loadClass(STR_TOOLS_CONFIGURATION_CLASSNAME);
-
+        Class toolsConfiguration = null;
+        try {
+            toolsConfiguration = loader
+                    .loadClass(STR_TOOLS_CONFIGURATION_CLASSNAME);
+        } catch (Exception ex) {
+            System.out.println(
+                    "Error: the Exception might be caused by " +
+                    "special character in Agent deployment directory.");
+            throw ex;
+        }
         // Passing null for parameterTypes because there are no arguments and
         // it is a static method - hence no instance of class.
         Class[] parameterTypes = {};

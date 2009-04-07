@@ -24,7 +24,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: agentadmin,v 1.4 2008-06-25 05:51:34 qcheng Exp $
+# $Id: agentadmin,v 1.5 2009-04-07 17:19:09 leiming Exp $
 #
 #
 
@@ -49,4 +49,4 @@ fi
 
 AGENT_CLASSPATH=${AGENT_HOME}/lib/opensso-installtools-launcher.jar
 
-$JAVA_VM -classpath $AGENT_CLASSPATH  $AGENT_OPTS com.sun.identity.install.tools.launch.AdminToolLauncher $*
+$JAVA_VM -classpath "$AGENT_CLASSPATH"  $AGENT_OPTS com.sun.identity.install.tools.launch.AdminToolLauncher $*
