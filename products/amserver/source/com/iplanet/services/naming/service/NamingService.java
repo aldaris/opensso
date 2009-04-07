@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingService.java,v 1.12 2009-01-23 22:08:36 beomsuk Exp $
+ * $Id: NamingService.java,v 1.13 2009-04-07 22:30:07 beomsuk Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.common.configuration.SiteConfiguration;
+import com.sun.identity.common.FQDNUtils;
 import com.sun.identity.security.AdminDNAction;
 import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.shared.Constants;
@@ -588,6 +589,8 @@ public class NamingService implements RequestHandler, ServiceListener {
                 namingDebug.error("NamingService.registFQDNMapping", ex);
             }
         }
+        
+        FQDNUtils.getInstance().init();
     }
 
     private static Set getSites(Map platformAttrs) throws Exception {
