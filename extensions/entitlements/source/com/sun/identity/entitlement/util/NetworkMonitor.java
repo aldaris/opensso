@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NetworkMonitor.java,v 1.2 2009-04-07 03:52:58 arviranga Exp $
+ * $Id: NetworkMonitor.java,v 1.3 2009-04-07 03:55:35 arviranga Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -198,7 +198,7 @@ public class NetworkMonitor extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
-        samples();
+        // samples();
         NetworkMonitor sm = null;
         String path = req.getRequestURI();
         if (path.endsWith("/")) {
@@ -229,20 +229,20 @@ public class NetworkMonitor extends HttpServlet {
         }
     }
 
-    private static long sampleCount = 10;
-    private void samples() {
-        NetworkMonitor sm = NetworkMonitor.getInstance("Evaluator");
-        long s = sm.start();
-        try {
-            Thread.sleep(sampleCount++);
-        } catch(InterruptedException ie) {
-
-        }
-        if (sampleCount > 50) {
-            sampleCount = 10;
-        }
-        sm.end(s);
-    }
+//    private static long sampleCount = 10;
+//    private void samples() {
+//        NetworkMonitor sm = NetworkMonitor.getInstance("Evaluator");
+//        long s = sm.start();
+//        try {
+//            Thread.sleep(sampleCount++);
+//        } catch(InterruptedException ie) {
+//
+//        }
+//        if (sampleCount > 50) {
+//            sampleCount = 10;
+//        }
+//        sm.end(s);
+//    }
 
     public class StatsData {
         private String time;
