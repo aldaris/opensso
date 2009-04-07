@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.5 2009-04-02 22:13:42 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.6 2009-04-07 19:00:48 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -31,10 +31,10 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
-import com.sun.identity.entitlement.IPCondition;
 import com.sun.identity.entitlement.TimeCondition;
 import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.AndCondition;
+import com.sun.identity.entitlement.DNSNameCondition;
 import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.NotSubject;
 import com.sun.identity.entitlement.Privilege;
@@ -49,10 +49,8 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.policy.interfaces.Subject;
-import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.unittest.UnittestLog;
-import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -73,112 +71,99 @@ public class PrivilegeManagerTest {
 
     @BeforeClass
     public void setup() throws PolicyException, SSOException, IdRepoException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-        PrivilegeManager prm = PrivilegeManager.getInstance(null);
-        try {
-            // remove the policy
-            prm.removePrivilege(PRIVILEGE_NAME);
-        } catch (Exception e) {
-            // supress exception, privilege may not exist
-            throw new PolicyException(e);
-        }
+        removePrivilege();
     }
 
     @AfterClass
     public void cleanup() throws PolicyException, SSOException, IdRepoException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+        removePrivilege();
+    }
+
+    private void removePrivilege() {
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
-        // not cleaning up to allow inspection using console
-        //prm.removePrivilege(PRIVILIGE_NAME);
+        try {
+            prm.removePrivilege(PRIVILEGE_NAME);
+        } catch (Exception e) {
+            // supress exception, privilege may not exist
+            // ignore
+        }
     }
 
     @Test
     public void testAddPrivilege() throws Throwable {
         try {
-        Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
-        actionValues.put("POST", Boolean.TRUE);
-        Set<String> resourceNames = new HashSet<String>();
-        resourceNames.add("http://www.sun.com");
-        resourceNames.add("http://www.ibm.com");
-        Entitlement entitlement = new Entitlement(SERVICE_NAME,
+            Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
+            actionValues.put("POST", Boolean.TRUE);
+            Set<String> resourceNames = new HashSet<String>();
+            resourceNames.add("http://www.sun.com");
+            resourceNames.add("http://www.ibm.com");
+            Entitlement entitlement = new Entitlement(SERVICE_NAME,
                 resourceNames, actionValues);
 
-        String user11 = "id=user11,ou=user," + ServiceManager.getBaseDN();
-        String user12 = "id=user12,ou=user," + ServiceManager.getBaseDN();
-        UserSubject ua1 = new UserSubject(user11);
-        UserSubject ua2 = new UserSubject(user12);
-        Set<EntitlementSubject> subjects = new HashSet<EntitlementSubject>();
-        subjects.add(ua1);
-        subjects.add(ua2);
-        OrSubject os = new OrSubject(subjects);
-        NotSubject ns = new NotSubject(os);
+            String user11 = "id=user11,ou=user," + ServiceManager.getBaseDN();
+            String user12 = "id=user12,ou=user," + ServiceManager.getBaseDN();
+            UserSubject ua1 = new UserSubject(user11);
+            UserSubject ua2 = new UserSubject(user12);
+            Set<EntitlementSubject> subjects = new HashSet<EntitlementSubject>();
+            subjects.add(ua1);
+            subjects.add(ua2);
+            OrSubject os = new OrSubject(subjects);
+            NotSubject ns = new NotSubject(os);
 
-        IPCondition ic = new IPCondition("*.sun.com");
-        ic.setPConditionName("ic");
-        TimeCondition tc = new TimeCondition("08:00", "16:00", "mon", "fri");
-        tc.setPConditionName("tc");
-        Set<EntitlementCondition> conditions = new HashSet<EntitlementCondition>();
-        conditions.add(ic);
-        conditions.add(tc);
-        OrCondition oc = new OrCondition(conditions);
-        AndCondition ac = new AndCondition(conditions);
+            DNSNameCondition dnsc = new DNSNameCondition("*.sun.com");
+            dnsc.setPConditionName("ic");
+            TimeCondition tc = new TimeCondition("08:00", "16:00", "mon", "fri");
+            tc.setPConditionName("tc");
+            Set<EntitlementCondition> conditions = new HashSet<EntitlementCondition>();
+            conditions.add(dnsc);
+            conditions.add(tc);
+            OrCondition oc = new OrCondition(conditions);
+            AndCondition ac = new AndCondition(conditions);
 
-        StaticAttributes sa = new StaticAttributes();
-        Map<String, Set<String>> attrValues = new HashMap<String, Set<String>>();
-        Set<String> aValues = new HashSet<String>();
-        aValues.add("a10");
-        aValues.add("a20");
-        Set<String> bValues = new HashSet<String>();
-        bValues.add("b10");
-        bValues.add("b20");
-        attrValues.put("a", aValues);
-        attrValues.put("b", bValues);
-        sa.setProperties(attrValues);
-        sa.setPResponseProviderName("sa");
+            StaticAttributes sa = new StaticAttributes();
+            Map<String, Set<String>> attrValues = new HashMap<String, Set<String>>();
+            Set<String> aValues = new HashSet<String>();
+            aValues.add("a10");
+            aValues.add("a20");
+            Set<String> bValues = new HashSet<String>();
+            bValues.add("b10");
+            bValues.add("b20");
+            attrValues.put("a", aValues);
+            attrValues.put("b", bValues);
+            sa.setProperties(attrValues);
+            sa.setPResponseProviderName("sa");
 
-        UserAttributes ua = new UserAttributes();
-        attrValues = new HashMap<String, Set<String>>();
-        Set<String> mailAliases = new HashSet<String>();
-        mailAliases.add("email1");
-        mailAliases.add("email2");
-        attrValues.put("mail", mailAliases);
-        attrValues.put("uid", null);
-        ua.setProperties(attrValues);
-        ua.setPResponseProviderName("ua");
+            UserAttributes ua = new UserAttributes();
+            attrValues = new HashMap<String, Set<String>>();
+            Set<String> mailAliases = new HashSet<String>();
+            mailAliases.add("email1");
+            mailAliases.add("email2");
+            attrValues.put("mail", mailAliases);
+            attrValues.put("uid", null);
+            ua.setProperties(attrValues);
+            ua.setPResponseProviderName("ua");
 
-        Set<ResourceAttributes> ra = new HashSet<ResourceAttributes>();
-        ra.add(sa);
-        ra.add(ua);
+            Set<ResourceAttributes> ra = new HashSet<ResourceAttributes>();
+            ra.add(sa);
+            ra.add(ua);
 
-        Privilege privilege = new OpenSSOPrivilege(
-                PRIVILEGE_NAME,
-                entitlement,
-                os,
-                oc,
-                ra);
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAPrivlege():"
-                + "saving privilege=" + privilege);
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-        PrivilegeManager prm = PrivilegeManager.getInstance(null);
-        prm.addPrivilege(privilege);
+            Privilege privilege = new OpenSSOPrivilege(
+                PRIVILEGE_NAME, entitlement, os, oc, ra);
+            UnittestLog.logMessage(
+                "PrivilegeManagerTest.testAPrivlege():" + "saving privilege=" +
+                privilege);
+            PrivilegeManager prm = PrivilegeManager.getInstance(null);
+            prm.addPrivilege(privilege);
         } catch (Throwable t) {
-               UnittestLog.logError(
-                "PrivilegeManagerTest.testAPrivlege():"
-                + "saving privilege threw exception:", t);
-               t.printStackTrace();
-               throw t;
+            UnittestLog.logError("PrivilegeManagerTest.testAPrivlege():" +
+                "saving privilege threw exception:", t);
+            t.printStackTrace();
+            throw t;
         }
-
     }
 
     @Test(dependsOnMethods={"testAddPrivilege"})
     public void testGetPrivilege() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
         UnittestLog.logMessage(

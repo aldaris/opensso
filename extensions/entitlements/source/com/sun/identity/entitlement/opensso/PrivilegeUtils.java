@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.3 2009-04-07 10:25:11 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.4 2009-04-07 19:00:47 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -39,6 +39,7 @@ import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.NotSubject;
 import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.AndCondition;
+import com.sun.identity.entitlement.DNSNameCondition;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.ResourceAttributes;
@@ -348,21 +349,43 @@ public class PrivilegeUtils {
         return ec;
     }
 
-    private static IPCondition mapIPPConditionToIPECondition(
+    private static EntitlementCondition mapIPPConditionToIPECondition(
             Object[] nCondition) {
         String pConditionName = (String) nCondition[0];
         com.sun.identity.policy.plugins.IPCondition pipc =
                 (com.sun.identity.policy.plugins.IPCondition) nCondition[1];
         Map props = pipc.getProperties();
-        IPCondition ipc = new IPCondition(
-            getCpValue(props, 
-                com.sun.identity.policy.plugins.IPCondition.DNS_NAME),
-            getCpValue(props, 
-                com.sun.identity.policy.plugins.IPCondition.START_IP),
-            getCpValue(props,
-                com.sun.identity.policy.plugins.IPCondition.END_IP));
-        ipc.setPConditionName(pConditionName);
-        return ipc;
+        String dnsName = getCpValue(props,
+                com.sun.identity.policy.plugins.IPCondition.DNS_NAME);
+        String startIP = getCpValue(props,
+                com.sun.identity.policy.plugins.IPCondition.START_IP);
+        String endIP = getCpValue(props,
+            com.sun.identity.policy.plugins.IPCondition.END_IP);
+
+        IPCondition ipCondition = ((startIP != null) || (endIP != null)) ?
+            new IPCondition(startIP, endIP) : null;
+        DNSNameCondition dnsCondition = (dnsName != null) ?
+            new DNSNameCondition(dnsName) : null;
+
+        Set<EntitlementCondition> conditions = new
+            HashSet<EntitlementCondition>();
+        if (ipCondition != null) {
+            ipCondition.setPConditionName(pConditionName);
+            conditions.add(ipCondition);
+        }
+        if (dnsCondition != null) {
+            dnsCondition.setPConditionName(pConditionName);
+            conditions.add(dnsCondition);
+        }
+
+        if (conditions.size() > 1) {
+            AndCondition andC = new AndCondition();
+            andC.setEConditions(conditions);
+            andC.setPConditionName(pConditionName);
+            return andC;
+        } else {
+            return conditions.iterator().next();
+        }
     }
 
     private static TimeCondition mapSimpleTimeConditionToTimeCondition(
@@ -688,6 +711,11 @@ public class PrivilegeUtils {
             ncondition[0] = ((IPCondition) ec).getPConditionName();
             ncondition[1] = ipConditionToPCondition((IPCondition) ec);
             conditions.add(ncondition);
+        } else if (ec instanceof DNSNameCondition) {
+            Object[] ncondition = new Object[2];
+            ncondition[0] = ((DNSNameCondition) ec).getPConditionName();
+            ncondition[1] = dnsNameConditionToPCondition((DNSNameCondition) ec);
+            conditions.add(ncondition);
         } else if (ec instanceof TimeCondition) {
             Object[] ncondition = new Object[2];
             ncondition[0] = ((TimeCondition) ec).getPConditionName();
@@ -715,10 +743,6 @@ public class PrivilegeUtils {
         com.sun.identity.policy.plugins.IPCondition ipCondition =
             new com.sun.identity.policy.plugins.IPCondition();
         Map props = new HashMap();
-        if (ipc.getDomainNameMask() != null) {
-            props.put(com.sun.identity.policy.plugins.IPCondition.DNS_NAME,
-                toSet(ipc.getDomainNameMask()));
-        }
         if (ipc.getStartIp() != null) {
             props.put(com.sun.identity.policy.plugins.IPCondition.START_IP,
                 toSet(ipc.getStartIp()));
@@ -726,6 +750,19 @@ public class PrivilegeUtils {
         if (ipc.getEndIp() != null) {
             props.put(com.sun.identity.policy.plugins.IPCondition.END_IP,
                 toSet(ipc.getEndIp()));
+        }
+        ipCondition.setProperties(props);
+        return ipCondition;
+    }
+
+    private static Condition dnsNameConditionToPCondition(DNSNameCondition dnsc)
+            throws PolicyException, SSOException {
+        com.sun.identity.policy.plugins.IPCondition ipCondition =
+            new com.sun.identity.policy.plugins.IPCondition();
+        Map props = new HashMap();
+        if (dnsc.getDomainNameMask() != null) {
+            props.put(com.sun.identity.policy.plugins.IPCondition.DNS_NAME,
+                toSet(dnsc.getDomainNameMask()));
         }
         ipCondition.setProperties(props);
         return ipCondition;
@@ -787,6 +824,12 @@ public class PrivilegeUtils {
                     arr[0] = ipc.getPConditionName();
                     arr[1] = ipConditionToPCondition(ipc);
                     list.add(arr);
+                } else if (nc instanceof DNSNameCondition) {
+                    DNSNameCondition dnsc = (DNSNameCondition) nc;
+                    Object[] arr = new Object[2];
+                    arr[0] = dnsc.getPConditionName();
+                    arr[1] = dnsNameConditionToPCondition(dnsc);
+                    list.add(arr);
                 } else if (nc instanceof TimeCondition) {
                     TimeCondition tc = (TimeCondition) nc;
                     Object[] arr = new Object[2];
@@ -824,6 +867,12 @@ public class PrivilegeUtils {
                     Object[] arr = new Object[2];
                     arr[0] = ipc.getPConditionName();
                     arr[1] = ipConditionToPCondition(ipc);
+                    list.add(arr);
+                } else if (nc instanceof DNSNameCondition) {
+                    DNSNameCondition dnsc = (DNSNameCondition) nc;
+                    Object[] arr = new Object[2];
+                    arr[0] = dnsc.getPConditionName();
+                    arr[1] = dnsNameConditionToPCondition(dnsc);
                     list.add(arr);
                 } else if (nc instanceof TimeCondition) {
                     TimeCondition tc = (TimeCondition) nc;

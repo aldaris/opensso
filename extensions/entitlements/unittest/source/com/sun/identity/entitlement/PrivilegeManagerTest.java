@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.5 2009-04-02 22:13:42 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.6 2009-04-07 19:00:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -105,12 +105,12 @@ public class PrivilegeManagerTest {
         OrSubject os = new OrSubject(subjects);
         NotSubject ns = new NotSubject(os);
 
-        IPCondition ic = new IPCondition("*.sun.com");
-        ic.setPConditionName("ic");
+        DNSNameCondition dnsc = new DNSNameCondition("*.sun.com");
+        dnsc.setPConditionName("dnsc");
         TimeCondition tc = new TimeCondition("08:00", "16:00", "mon", "fri");
         tc.setPConditionName("tc");
         Set<EntitlementCondition> conditions = new HashSet<EntitlementCondition>();
-        conditions.add(ic);
+        conditions.add(dnsc);
         conditions.add(tc);
         OrCondition oc = new OrCondition(conditions);
         AndCondition ac = new AndCondition(conditions);
@@ -150,8 +150,6 @@ public class PrivilegeManagerTest {
                 ra);
         UnittestLog.logMessage(
                 "PrivilegeManagerTest.testAPrivlege():" + "saving privilege=" + privilege);
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
         prm.addPrivilege(privilege);
 

@@ -22,16 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPCondition.java,v 1.5 2009-04-07 19:00:47 veiming Exp $
+ * $Id: DNSNameCondition.java,v 1.1 2009-04-07 19:00:47 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import javax.security.auth.Subject;
 import org.json.JSONObject;
 import org.json.JSONException;
@@ -39,39 +39,63 @@ import org.json.JSONException;
 /**
  * EntitlementCondition to represent IP, DNS name based  constraint
   */
-public class IPCondition implements EntitlementCondition {
+public class DNSNameCondition implements EntitlementCondition {
     private static final long serialVersionUID = -403250971215465050L;
 
-    /** Key that is used to define request IP address that is passed in
+    /** Key that is used in an <code>DNSNameCondition</code> to define the DNS
+     * name values for which a policy applies. The value corresponding to the
+     * key has to be a <code>Set</code> with at most one element is a
+     * <code>String</code> that conforms to the patterns described here.
+     *
+     * The patterns is :
+     * <pre>
+     * ccc.ccc.ccc.ccc
+     * *.ccc.ccc.ccc</pre>
+     * where c is any valid character for DNS domain/host name.
+     * There could be any number of <code>.ccc</code> components.
+     * Some sample values are:
+     * <pre>
+     * www.sun.com
+     * finace.yahoo.com
+     * *.yahoo.com
+     * </pre>
+     *
+     * @see #setProperties(Map)
+     */
+    public static final String DNS_NAME = "DnsName";
+
+    /** Key that is used to define request DNS name that is passed in
      * the <code>env</code> parameter while invoking
-     * <code>getConditionDecision</code> method of an <code>IPCondition</code>.
-     * Value for the key should be a <code>String</code> that is a string
-     * representation of IP of the client, in the form n.n.n.n where n is a
-     * value between 0 and 255 inclusive.
+     * <code>getConditionDecision</code> method of an 
+     * <code>DNSNameCondition</code>.
+     * Value for the key should be a set of strings representing the
+     * DNS names of the client, in the form <code>ccc.ccc.ccc</code>.
+     * If the <code>env</code> parameter is null or does not
+     * define value for <code>REQUEST_DNS_NAME</code>,  the
+     * value for <code>REQUEST_DNS_NAME</code> is obtained
+     * from the single sign on token of the user
      *
      * @see #getConditionDecision(SSOToken, Map)
-     * @see #REQUEST_DNS_NAME
      */
-    public static final String REQUEST_IP = "requestIp";
+    public static final String REQUEST_DNS_NAME = "requestDnsName";
 
-    private String startIp;
-    private String endIp;
+    private String domainNameMask;
     private String pConditionName;
 
     /**
-     * Constructs an IPCondition
+     * Constructs an DNSNameCondition
      */
-    public IPCondition() {
+    public DNSNameCondition() {
     }
 
     /**
-     * Constructs IPCondition object:w
-     * @param startIp starting ip of a range for example 121.122.123.124
-     * @param endIp ending ip of a range, for example 221.222.223.224
+     * Constructs DNSNameCondition object
+     * 
+     * @param domainNameMask domain name mask, for example *.example.com,
+     * only wild card allowed is *
      */
-    public IPCondition(String startIp, String endIp) {
-        this.startIp = startIp;
-        this.endIp = endIp;
+    public DNSNameCondition(String domainNameMask) {
+        this.domainNameMask = domainNameMask.toLowerCase();
     }
 
     /**
@@ -89,10 +113,10 @@ public class IPCondition implements EntitlementCondition {
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
-            startIp = jo.optString("startIp");
-            endIp = jo.optString("endIp");
+            domainNameMask = jo.optString("domainNameMask");
             pConditionName = jo.optString("pConditionName");
         } catch (JSONException joe) {
+            //TOFIX
         }
     }
 
@@ -112,75 +136,52 @@ public class IPCondition implements EntitlementCondition {
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
-        Set<String> setIP = environment.get(REQUEST_IP);
-        String ip = ((setIP != null) && !setIP.isEmpty()) ?
-            setIP.iterator().next() : null;
+        boolean allowed = true;
+        Set reqDnsNames = (Set)environment.get(REQUEST_DNS_NAME);
 
-        boolean allowed = (ip == null) || isAllowedByIp(ip);
-        //TOFIX Would retrun true if no ip was specified in the request. This does not look right. 
+        if ((reqDnsNames != null) && !reqDnsNames.isEmpty()) {
+            for (Iterator names = reqDnsNames.iterator();
+                names.hasNext() && allowed; ) {
+                allowed = isAllowedByDns((String)names.next());
+            }
+        }
         return new ConditionDecision(allowed, Collections.EMPTY_MAP);
     }
 
-    private boolean isAllowedByIp(String ip)
+    private boolean isAllowedByDns(String dnsName)
         throws EntitlementException {
-        long requestIp = stringToIp(ip);
-        long startIpNum = stringToIp(startIp);
-        long endIpNum = stringToIp(endIp);
-        return ((requestIp >= startIpNum) && (requestIp <= endIpNum));
-    }
-
-    private long stringToIp(String ip) throws EntitlementException {
-        StringTokenizer st = new StringTokenizer(ip, ".");
-        int tokenCount = st.countTokens();
-        if ( tokenCount != 4 ) {
-            String args[] = { "ip", ip };
-            throw new EntitlementException(400, args);
-        }
-        long ipValue = 0L;
-        while ( st.hasMoreElements()) {
-            String s = st.nextToken();
-            short ipElement = 0;
-            try {
-                ipElement = Short.parseShort(s);
-            } catch(Exception e) {
-                String args[] = { "ip", ip };
-                throw new EntitlementException(400, args);
+        boolean allowed = false;
+        dnsName = dnsName.toLowerCase();
+        if (domainNameMask.equals("*")) {
+            allowed = true;
+        } else {
+            int starIndex = domainNameMask.indexOf("*");
+            if (starIndex != -1) {
+                // the dnsPattern is a string like *.ccc.ccc
+                String dnsWildSuffix = domainNameMask.substring(1);
+                if (dnsName.endsWith(dnsWildSuffix)) {
+                    allowed = true;
+                }
+            } else if (domainNameMask.equalsIgnoreCase(dnsName)) {
+                allowed = true;
             }
-            if ( ipElement < 0 || ipElement > 255 ) {
-                String args[] = { "ipElement", s };
-                throw new EntitlementException(400, args);
-            }
-            ipValue = ipValue * 256L + ipElement;
         }
-        return ipValue;
+        return allowed;
+    }
+
+
+    /**
+     * @return the domainNameMask
+     */
+    public String getDomainNameMask() {
+        return domainNameMask;
     }
 
     /**
-     * @return the startIp
+     * @param domainNameMask the domainNameMask to set
      */
-    public String getStartIp() {
-        return startIp;
-    }
-
-    /**
-     * @param startIp the startIp to set
-     */
-    public void setStartIp(String startIp) {
-        this.startIp = startIp;
-    }
-
-    /**
-     * @return the endIp
-     */
-    public String getEndIp() {
-        return endIp;
-    }
-
-    /**
-     * @param endIp the endIp to set
-     */
-    public void setEndIp(String endIp) {
-        this.endIp = endIp;
+    public void setDomainNameMask(String domainNameMask) {
+        this.domainNameMask = domainNameMask.toLowerCase();
     }
 
     /**
@@ -209,8 +210,7 @@ public class IPCondition implements EntitlementCondition {
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
-        jo.put("startIp", startIp);
-        jo.put("endIp", endIp);
+        jo.put("domainNameMask", domainNameMask);
         jo.put("pConditionName", pConditionName);
         return jo;
     }
@@ -225,22 +225,13 @@ public class IPCondition implements EntitlementCondition {
         if ((obj == null) || !getClass().equals(obj.getClass())) {
             return false;
         }
-        IPCondition object = (IPCondition) obj;
-        if (getStartIp() == null) {
-            if (object.getStartIp() != null) {
+        DNSNameCondition object = (DNSNameCondition) obj;
+        if (getDomainNameMask() == null) {
+            if (object.getDomainNameMask() != null) {
                 return false;
             }
         } else {
-            if (!startIp.equals(object.getStartIp())) {
-                return false;
-            }
-        }
-        if (getEndIp() == null) {
-            if (object.getEndIp() != null) {
-                return false;
-            }
-        } else {
-            if (!endIp.equals(object.getEndIp())) {
+            if (!domainNameMask.equals(object.getDomainNameMask())) {
                 return false;
             }
         }
@@ -263,11 +254,8 @@ public class IPCondition implements EntitlementCondition {
     @Override
     public int hashCode() {
         int code = 0;
-        if (startIp != null) {
-            code += startIp.hashCode();
-        }
-        if (endIp != null) {
-            code += endIp.hashCode();
+        if (domainNameMask != null) {
+            code += domainNameMask.hashCode();
         }
         if (pConditionName != null) {
             code += pConditionName.hashCode();
@@ -286,7 +274,7 @@ public class IPCondition implements EntitlementCondition {
             s = toJSONObject().toString(2);
         } catch (JSONException joe) {
             Debug debug = Debug.getInstance("Entitlement");
-            debug.error("IPCondiiton.toString(), JSONException:" +
+            debug.error("DNSNameCondition.toString(), JSONException:" +
                     joe.getMessage());
         }
         return s;

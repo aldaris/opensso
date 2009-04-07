@@ -22,17 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrSubjectTest.java,v 1.1 2009-03-14 14:31:55 dillidorai Exp $
+ * $Id: OrSubjectTest.java,v 1.2 2009-04-07 19:00:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.unittest.UnittestLog;
 
-import com.sun.identity.entitlement.GroupSubject;
-import com.sun.identity.entitlement.NotSubject;
-import com.sun.identity.entitlement.OrSubject;
-import com.sun.identity.entitlement.RoleSubject;
-import com.sun.identity.entitlement.UserSubject;
 import java.util.Date;
 
 import java.util.HashSet;

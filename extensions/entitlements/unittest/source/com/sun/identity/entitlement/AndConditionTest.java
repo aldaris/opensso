@@ -22,17 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndConditionTest.java,v 1.2 2009-03-30 18:58:59 dillidorai Exp $
+ * $Id: AndConditionTest.java,v 1.3 2009-04-07 19:00:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.unittest.UnittestLog;
 
-import com.sun.identity.entitlement.IPCondition;
-import com.sun.identity.entitlement.AndCondition;
-import com.sun.identity.entitlement.TimeCondition;
 import java.util.Date;
-
 import java.util.HashSet;
 import java.util.Set;
 import org.testng.annotations.Test;
@@ -46,13 +42,10 @@ public class AndConditionTest {
     @Test
     public void testConstruction() throws Exception {
 
-        IPCondition ipc = new IPCondition("*.sun.com",
-                "100.100.100.100", "200.200.200.200");
+        IPCondition ipc = new IPCondition("100.100.100.100", "200.200.200.200");
         ipc.setPConditionName("ip1");
-        UnittestLog.logMessage(
-                "AndConditionTest.testConstruction():" + "ipc.toString()="
-                + ipc.toString());
-
+        DNSNameCondition dnsc = new DNSNameCondition("*.sun.com");
+        dnsc.setPConditionName("ip2");
         TimeCondition tc = new TimeCondition("08:00", "16:00",
                 "mon", "fri");
         tc.setStartDate("01/01/2001");
@@ -66,6 +59,7 @@ public class AndConditionTest {
         Set<EntitlementCondition> conditions
                 = new HashSet<EntitlementCondition>();
         conditions.add(ipc);
+        conditions.add(dnsc);
         conditions.add(tc);
         AndCondition ac = new AndCondition(conditions);
         UnittestLog.logMessage(

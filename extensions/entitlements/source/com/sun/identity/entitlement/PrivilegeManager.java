@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.4 2009-04-02 22:13:38 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.5 2009-04-07 19:00:47 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -67,57 +67,61 @@ public abstract class PrivilegeManager {
     public abstract void initialize(Subject subject);
 
     /**
-     * Returns a privilege
+     * Returns a privilege.
+     *
      * @param privilegeName name for the privilege to be returned
-     * @throws com.sun.identity.entitlement.EntitlementException if there is
-     * privilege could not be
+     * @throws EntitlementException if privilege is not found.
      */
     public abstract Privilege getPrivilege(String privilegeName)
             throws EntitlementException;
 
     /**
-     * Adds a privilege
+     * Adds a privilege.
+     *
      * @param privilege privilege to be added
-     * @throws com.sun.identity.entitlement.EntitlementException if the 
-     * privilege could not be added
+     * @throws EntitlementException if the privilege could not be added
      */
     public void addPrivilege(Privilege privilege)
-            throws EntitlementException {
+        throws EntitlementException {
     }
 
     /**
-     * Removes a privilege
+     * Removes a privilege.
+     *
      * @param privilegeName name of the privilege to be removed
-     * @throws com.sun.identity.entitlement.EntitlementException
+     * @throws EntitlementException if privilege cannot be removed.
      */
     public void removePrivilege(String privilegeName)
-            throws EntitlementException {
+        throws EntitlementException {
     }
 
     /**
-     * Modifies a privilege
+     * Modifies a privilege.
+     *
      * @param privilege the privilege to be modified
-     * @throws com.sun.identity.entitlement.EntitlementException
+     * @throws EntitlementException if privilege cannot be modified.
      */
     public void modifyPrivilege(Privilege privilege)
-            throws EntitlementException {
+        throws EntitlementException {
     }
 
     /**
-     * Returns privilege names
-     * @return privilege names
-     * @throws com.sun.identity.entitlement.EntitlementException if there
-     * is an error
+     * Returns privilege names.
+     *
+     * @return privilege names.
+     * @throws EntitlementException if there are errors obtaining privilege
+     *         names.
      */
     public abstract Set<String> getPrivilegeNames() throws EntitlementException;
 
-        /**
-     * Returns privilege names matching the pattern
-     * @param pattern pattern to match the privilege names
-     * @return privilege names matching the pattern
-     * @throws com.sun.identity.entitlement.EntitlementException if there
-     * is an error
+    /**
+     * Returns privilege names matching the pattern.
+     *
+     * @param pattern pattern to match the privilege names.
+     * @return privilege names matching the pattern.
+     * @throws EntitlementException if there are errors obtaining privilege
+     *         names.
      */
     public abstract Set<String> getPrivilegeNames(String pattern)
-            throws EntitlementException;
+        throws EntitlementException;
 }

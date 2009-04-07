@@ -22,13 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.4 2009-04-02 22:13:42 veiming Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.5 2009-04-07 19:00:49 veiming Exp $
  */
 package com.sun.identity.policy;
 
 import com.sun.identity.entitlement.opensso.PrivilegeUtils;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.AndCondition;
+import com.sun.identity.entitlement.DNSNameCondition;
 import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
@@ -75,12 +77,21 @@ public class PrivilegeUtilsTest {
         subjects.add(us1);
         subjects.add(us2);
         OrSubject os = new OrSubject(subjects);
-        EntitlementCondition ipc = new IPCondition("*.sun.com");
+        EntitlementCondition dnsc = new DNSNameCondition("*.sun.com");
+        EntitlementCondition ipc = new IPCondition("100.100.100.100",
+            "200.200.200.200");
+        Set<EntitlementCondition> setConditions = new
+            HashSet<EntitlementCondition>();
+        setConditions.add(dnsc);
+        setConditions.add(ipc);
+        AndCondition andCondition = new AndCondition();
+        andCondition.setEConditions(setConditions);
+
         Privilege privilege = new OpenSSOPrivilege(
                 "TestPrivilege",
                 entitlement,
                 us1, //orSubject
-                ipc, //entitlementCondition
+                andCondition, //entitlementCondition
                 null); //attributes
 
         UnittestLog.logMessage(

@@ -22,18 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPConditionTest.java,v 1.1 2009-03-14 03:07:59 dillidorai Exp $
+ * $Id: IPConditionTest.java,v 1.2 2009-04-07 19:00:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.unittest.UnittestLog;
 
-import com.sun.identity.entitlement.IPCondition;
 import java.util.Date;
-
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
 
 /**
  *
@@ -43,21 +39,23 @@ public class IPConditionTest {
 
     @Test
     public void testConstruction() throws Exception {
-        IPCondition ipc = new IPCondition("*.sun.com",
-                "100.100.100.100", "200.200.200.200");
-        //ipc.setPConditionName("ip1");
-        UnittestLog.logMessage(
-                "IPConditionTest.testConstruction():" + "ipc.toString()=" + ipc.toString());
+        IPCondition ipc = new IPCondition("100.100.100.100", "200.200.200.200");
+        ipc.setPConditionName("ip1");
+        DNSNameCondition dnsc = new DNSNameCondition("*.sun.com");
+        dnsc.setPConditionName("ip2");
 
         IPCondition ipc1 = new IPCondition();
         ipc1.setState(ipc.getState());
         UnittestLog.logMessage(
-                "IPConditionTest.testConstruction():" + "ipc1.toString()=" + ipc1.toString());
-
-
+            "IPConditionTest.testConstruction():" + "ipc1.toString()=" +
+            ipc1.toString());
         UnittestLog.logMessage(
-                "IPConditionTest.testConstruction():" + "resetting dns mask, startIp, endIp");
-        ipc1.setDomainNameMask("*.red.iplanet.com");
+            "IPConditionTest.testConstruction():" + 
+            "resetting startIp, endIp");
+        DNSNameCondition dnsc1 = new DNSNameCondition();
+        dnsc1.setState(dnsc.getState());
+
+        dnsc1.setDomainNameMask("*.red.iplanet.com");
         ipc1.setStartIp("101.101.101.101");
         ipc1.setEndIp("201.201.201.201");
         UnittestLog.logMessage(

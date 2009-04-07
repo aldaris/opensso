@@ -16,7 +16,7 @@ public class IPViewCondition
     public EntitlementCondition getEntitlementCondition() {
         IPCondition ipc = new IPCondition();
 
-        ipc.setDomainNameMask(getDomainNameMask());
+//TOFIX: use DNSNameCondition        ipc.setDomainNameMask(getDomainNameMask());
         ipc.setStartIp(getStartIpString());
         ipc.setEndIp(getEndIpString());
 
