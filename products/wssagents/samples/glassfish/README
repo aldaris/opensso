@@ -1,7 +1,7 @@
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
-   Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+   Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
   
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
@@ -22,44 +22,227 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.13 2008-12-20 01:30:45 mallas Exp $
+   $Id: README,v 1.14 2009-04-07 01:01:21 madan_ranganath Exp $
 
 -->
 
-README
-=======
-
-This README explains the steps for web services security using glassfish
-security agents. 
-
-Before you begin:
+=================
+README.glassfish
 =================
 
-The web services security for JAX-WS based web services is achieved using
-JSR196 providers. Before you begin, follow the README.glassfish from the 
-install directory of the zip file. 
+This README contains instructions on how to secure web services using 
+OpenSSO WSS providers on Glassfish V2 or SUN Application Server 9.1
 
-General Description: 
+
+General Description:
 ====================
 
 The samples provided here are JAX-WS based web service, a web services
-client and a standalone client. 
+client and a standalone client.
 The sample demonstrates a simple stock quote service where given
 a stock ticker symbol it obtains stock data. The secure communication
 between stock quote web services client is achieved using Federation
 OpenSSO web services security agents. The web services security
 agents profile configuation is stored in backend repository information
-like regular OpenSSO agents.  
+like regular OpenSSO agents.
 
-Deployment of samples:
-======================
+Deployment Scenario 1:
+=====================
 
-To configure for web services security, essentially there are two steps
-besides configuring the providers as mentioned above (Before you begin
-section).
- 
+This is a simple deployment scenario where the profiles of WSC and WSP are
+all hosted on a single OpenSSO instance
 
-I. Deploy the samples
+                GF1                             GF2
+               _________                      ___________
+              |        |                     |          |
+              |        |                     |          |
+              | WSC    |<------------------->|  WSP     |
+              |        |                     |          |
+              |        |<----      --------->|          |
+              |________|    |      |         |__________|
+                            |      |
+               Machine 1    |      |           Machine 2
+                            V______V__
+                            |        |
+                            |        | Machine 3
+                            | OpenSSO| 
+                            |________|
+
+Sections:
+I.   Installing Glassfish and OpenSSO
+II.  Add Java Security Permissions
+III. WSS Agent installation steps
+IV.  Building and Deploying the samples
+V.   Creating the WSC and WSP profiles
+VI.  Testing the sample.
+
+Section I.
+
+1. Install Glassfish that hosts the Web Services Client (WSC). 
+2. Install Glassfish that hosts the Web Services Provider (WSP). 
+3. Install Glassfish and deploy OpenSSO on this Glassfish instance. Create the 
+WSC and WSP profiles on this OpenSSO instance.
+4. Note that the OpenSSO server need not be deployed on Glassfish. They can 
+be deployed on any container. Only the WSC and WSP need to be on Glassfish.
+
+Section II
+
+Add Java security permissions 
+
+Please perform the below steps on OpenSSO instances if it is deployed on
+Glassfish
+
+Edit domain.xml in the glassfish domain where OpenSSO will be deployed to:
+1. Change jvm-options from "-client" to "-server"
+2. Change jvm-options from -Xmx512m to -Xmx1024m
+3. If the Security Manager is "on", add the following as Java security permissions to the server.policy file of the Glassfish V2/Application Server 9.1
+
+Each Application Server domain has its own standard J2SE policy file named server.policy. It is located in the /ApplicationServer-install/domains/<domain-name>/config directory. 
+More information can be found in The server.policy File in Sun Java System Application Server 9 .1 Developer's Guide.
+
+// ADDITIONS FOR OpenSSO
+grant {
+
+permission java.net.SocketPermission "*", "listen,connect,accept,resolve";
+permission java.util.PropertyPermission "*", "read, write";
+permission java.lang.RuntimePermission "modifyThreadGroup";
+permission java.lang.RuntimePermission "setFactory";
+permission java.lang.RuntimePermission "accessClassInPackage.*";
+permission java.util.logging.LoggingPermission "control";
+permission java.lang.RuntimePermission "shutdownHooks";
+permission javax.security.auth.AuthPermission "getLoginConfiguration";
+permission javax.security.auth.AuthPermission "setLoginConfiguration";
+permission javax.security.auth.AuthPermission "modifyPrincipals";
+permission javax.security.auth.AuthPermission "modifyPrivateCredentials";
+permission javax.security.auth.PrivateCredentialPermission "com.iplanet.sso.providers.dpro.SSOTokenImpl * \"*\"","read";
+permission javax.security.auth.AuthPermission "createLoginContext.*";
+permission java.io.FilePermission "<<ALL FILES>>", "read,write,execute,delete";
+permission java.util.PropertyPermission "java.util.logging.config.class", "write";
+permission java.security.SecurityPermission "removeProvider.SUN";
+permission java.security.SecurityPermission "insertProvider.SUN";
+permission javax.security.auth.AuthPermission "doAs";
+permission java.util.PropertyPermission "java.security.krb5.realm", "write";
+permission java.util.PropertyPermission "java.security.krb5.kdc", "write";
+permission java.util.PropertyPermission "java.security.auth.login.config", "write";
+permission java.util.PropertyPermission "user.language", "write";
+permission javax.security.auth.kerberos.ServicePermission "*", "accept";
+permission javax.net.ssl.SSLPermission "setHostnameVerifier";
+permission java.security.SecurityPermission "putProviderProperty.IAIK";
+permission java.security.SecurityPermission "removeProvider.IAIK";
+permission java.security.SecurityPermission "insertProvider.IAIK";
+permission java.lang.RuntimePermission "setDefaultUncaughtExceptionHandler";
+permission javax.management.MBeanServerPermission "newMBeanServer";
+permission javax.management.MBeanPermission "*", "registerMBean";
+permission java.lang.RuntimePermission "createClassLoader";
+permission java.lang.RuntimePermission "accessDeclaredMembers";
+permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+permission javax.security.auth.AuthPermission "getSubject";
+
+permission javax.management.MBeanTrustPermission "register";
+permission java.lang.management.ManagementPermission "monitor";
+permission javax.management.MBeanServerPermission "createMBeanServer";
+permission java.util.PropertyPermission "javax.xml.soap.MetaFactory", "write";
+permission java.util.PropertyPermission "javax.xml.soap.MessageFactory", "write";
+permission java.util.PropertyPermission "javax.xml.soap.SOAPConnectionFactory", "write";
+permission java.util.PropertyPermission "javax.xml.soap.SOAPFactory", "write";
+permission java.net.NetPermission "getProxySelector";
+permission java.security.SecurityPermission "getProperty.authconfigprovider.factory";
+permission java.security.SecurityPermission "setProperty.authconfigprovider.factory";
+permission javax.security.auth.AuthPermission "doAsPrivileged";
+permission javax.security.auth.AuthPermission "modifyPublicCredentials";
+permission java.security.SecurityPermission "insertProvider.XMLDSig";
+permission java.security.SecurityPermission "putProviderProperty.WSS_TRANSFORM";
+permission java.security.SecurityPermission "insertProvider.WSS_TRANSFORM";
+
+};
+// END OF ADDITIONS FOR OpenSSO
+   
+
+III. WSS Agent installation steps
+
+Repeat steps 1-4 on the machines where WSC and WSP are installed:
+
+1. Unzip openssowssproviders.zip to a desired directory, 
+say <unzip_dir_of_openssowssproviders.zip>
+
+2. The automated scripts to configure the providers are located in 
+<unzip_dir_of_openssowssproviders.zip>/config directory. 
+A. To run the automated scripts, please follow the steps mentioned in README.config in <unzip_dir_of_openssowssproviders.zip>/config directory
+B. To configure the providers manually, follow the steps starting from 3 in this README.
+
+3. Modify <unzip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties as follows: (Also please keep the rest of the setting as it is)
+
+# OpenSSO Server Information (where WSC or WSP profile is located resp)
+# Protocol can be either http or https
+com.iplanet.am.server.protocol=openssoserver_protocol
+com.iplanet.am.server.host=openssoserver_host
+com.iplanet.am.server.port=openssoserver_port
+com.iplanet.am.services.deploymentDescriptor=openssoserver_deploy_uri
+
+# Application username and password
+com.sun.identity.agents.app.username=agentAuth
+com.iplanet.am.service.password=changeit
+
+am.encryption.pwd=<empty or null value>
+
+com.iplanet.am.naming.url=openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/namingservice
+
+# Debug information
+com.iplanet.services.debug.level=message
+com.iplanet.services.debug.directory=/tmp/wssclient
+
+# Cookie information
+com.iplanet.am.cookie.name=iPlanetDirectoryPro
+
+# SAML xml signature keystore file, keystore password file,
+# key password file and Liberty trusted CA aliases.
+com.sun.identity.saml.xmlsig.keystore=<unzip_dir_of_openssowssproviders.zip>/resources/keystore.jks
+com.sun.identity.saml.xmlsig.storepass=<unzip_dir_of_openssowssproviders.zip>/resources/.storepass
+com.sun.identity.saml.xmlsig.keypass=<unzip_dir_of_openssowssproviders.zip>/resources/.keypass
+com.sun.identity.liberty.ws.trustedca.certaliases=test:<openssoserver_host>
+
+# Login URL and Authentication service URL for Liberty use case
+com.sun.identity.loginurl=openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/UI/Login
+com.sun.identity.liberty.authnsvc.url=openssoserver://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/Liberty/authnsvc
+
+NOTE : The directory specified as a value for DEBUG_DIR in AMConfig.properties should be different than the one specified as the value for BASE_DIR (or CONFIG_DIR) in Installing OpenSSO.
+
+4. Copy files
+
+a. Copy <unzip_dir_of_openssowssproviders.zip>/lib/webservices-rt.jar to
+   /<WSC or WSP>-ApplicationServer-install/lib
+b. Copy <unzip_dir_of_openssowssproviders.zip>/lib/webservices-tools.jar to
+   /<WSC or WSP>-ApplicationServer-install/lib
+c. Copy <unzip_dir_of_openssowssproviders.zip>/lib/webservices-api.jar to
+   /<WSC or WSP>-ApplicationServer-install/lib/endorsed
+d. Create /<WSC or WSP>-ApplicationServer-install/addons/opensso directory if 
+   not already present.
+e. Copy <unzip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties 
+   to /<WSC or WSP>-ApplicationServer-install/addons/opensso
+f. Copy all jar files from <unizip_dir_of_openssowssproviders.zip>/lib/ 
+   directory to /<WSC or WSP>-ApplicationServer-install/addons/opensso
+g. Add the /<WSC or WSP>-ApplicationServer-install/addons/opensso/openssowssproviders.jar 
+    path in classpath suffix (global JVM settings) for Application server.
+    You can do this step (9) via Application Server's Admin Console -
+    For GF V2 : Application Server -> JVM Settings tab -> Path Settings tab
+    For AS 9.1 : Configurations -> server-config -> JVM Settings -> Path Settings tab
+
+5. Perform the below step on the WSC Admin console only. 
+
+   a. Login into Application Server's Administration Console   
+   b. For GF V2 : Expand Configuration -> Security -> Click on Message Security -> New
+      For AS 9.1 : Expand Configurations -> server-config -> Security -> Click on Message Security -> New 
+   c. Choose Authentication layer as "HttpServlet", enter Provider Type as 
+      "Server", ProviderID as "FAMHttpProvider", Class Name as
+      "com.sun.identity.wssagents.common.provider.FAMHttpAuthModule"
+   d. Save the configuration.
+   e. The stock quote client sample already has the required configuration
+     (sun-web.xml, web.xml) Essentially the client requires a J2EE constraint 
+     and the FAMHttpProvider id.      
+
+6. Restart the Application Servers on both WSC and WSP
+
+IV.  Building and Deploying the samples
 
    The samples here are provided with convenient "ant" build script to
    build and deploy the samples. This sample comes with two directories
@@ -67,170 +250,511 @@ I. Deploy the samples
    and web service respectively. Also, it has a file name called as 
    glassfish.properties. 
 
+   Repeat the steps on WSC and WSP machines:
+
    1. Open glassfish.properties and edit for properties
-       glassfish.home = <Glassfish installation directory>
-       glassfish.host = <Host where glassfish is installed>
-       glasfish.passwordfile = <Password file for the glassfish adminpassword>
+       glassfish.home = <WSC/WSP Glassfish installation directory>
+       glassfish.host = <WSC/WSP Host where glassfish is installed>
+       glasfish.passwordfile = </tmp/app_passwd>
+       
+       Note: For the glassfish password file, make sure the password file
+       is like this, and has read permissions
+       AS_ADMIN_password=<password>
+
        The properties build.class.path and jaxws.endorsed.dir are not
        used for the stock samples, but for advanced samples.
        
-
    2. Make sure that JAVA_HOME is set to JDK1.5 installation and similarly
       make sure java and javac are in the PATH before executing the samples.
 
-   3. Use the ant command from <ApplicationServer-install>/lib/ant/bin/ant
+   3. Use the ant command from <WSC/WSP-ApplicationServer-install>/lib/ant/bin/ant
 
-   4. cd StockService and run "ant -f build.xml". This will build
-      and deploy the StockService onto glassfish container.
-
-   5. The StockQuoteClient Sample assumes the web service (StockService)
+   4. The StockQuoteClient Sample assumes the web service (StockService)
       is deployed on localhost and port 8080. However, if they are different
       edit and replace localhost and 8080 in the following files: 
+
       StockQuoteClient/src/java/com/samples/GetQuote.java
       StockQuoteClient/src/java/com/samples/SOAPMessage.java
 
-   6. cd StockQuoteClient and run "ant -f build.xml". This will build
-      and deploy the StockQuoteClient onto glassfish container.
+   5. cd StockQuoteClient and run "ant all". This will build
+      and deploy the StockQuoteClient onto glassfish container. Please make
+      sure you run this on a WSC instance.
 
-   7. cd StockService and run "ant -f build.xml". This will build
-      and deploy the StockService onto glassfish container.
+   6. cd StockService and run "ant all". This will build
+      and deploy the StockQuoteService onto glassfish container. Please make
+      sure you run this on a WSP instance
 
+Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the OpenSSO Console.
 
-II. Configure the web services client for "StockService".
+V.  Creating the WSC and WSP profiles on OpenSSO (Machine 3)
 
-1.  Login into the OpenSSO Console with user amadmin and <amadmin password>
+Login into the OpenSSO Console with user amadmin and <amadmin password>
 
-    openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
+    openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/UI/Login
 
-    Note: If you have logged in as any other user, click Logout on the
-    console page and Login again and make sure that you access the OpenSSO
-    Console.
+The profiles for WSC ("wsc") and WSP ("wsp") and STS (sts) are created by 
+default, when OpenSSO is configured. Please make sure these profiles are 
+present. If not, continue with the below steps else skip to Step VI.
 
-    Create agent profiles for "StockService" WSC : 
-    The "StockService" is the client profile name. This name should match with
-    the service name in the WSDL file. For e.g. if we have CalendarService,
-    the name should match with whatever is there in the WSDL.
+a) Configure WSC profile 
 
-    Go to Access Control -> Default realm -> Agents ->
+1.  Create Agent profiles for WSC (if not created out of box, by default it 
+    is created) :
 
-        a) Create "WSC" profile for "StockService"
-        Select Web Service Client -> under Agent, click "new" -> 
-        enter name as "StockService" and other required fields -> Save.
-        Click on above saved profile to edit -> Select required Security 
-        Mechanism, "Preserve Security Headers in Message" as
-        true (checked) and "Is Request Signed" as true (checked).
-        Save changes.
+      Go to Access Control -> Default realm -> Agents -> Web Service Client
 
+       a) Click "New" -> enter name as "wsc" and other required fields -> Save.
+       b) Click on above saved profile to edit -> Select required 
+        "Security Mechanism" (for eg:X509Token)
+        Note : If the required or selected Security Mechanism is "STSSecurity", 
+               then select STS Configuration as "SecurityTokenService" and
+               perform Step 2. 
+               
         The security mechanism could be "STSSecurity" and what it means is
         that the WSC is requesting STS (WS-Trust) Service to generate the token
-        so that it can secure the request to the WSP.
+        so that it can secure the request to the WSP
+       c) "Is Request Signed" as true (checked).
+       d) "Preserve Security Headers in Message" as true (checked).
+       e) Specify "http://<wsp-host-name:portnumber>/StockService/StockService"
+          as Web Service End Point 
+       f) Save changes.
 
-        If the required or selected Security Mechanism is STSSecurity,
-        then select STS Configuration as "SecurityTokenService" and 
-        Web Service End Point as "default". Ideally, this endpoint
-        should match with how the WSP registers with STS preferably
-        an endpoint of the Web Service Provider. However, out of the box
-        it is just "default" since we dont know the endpoint.
+2.  Create Agent profiles for STS Client (if not created out of box, 
+    by default it is created) :
 
-        The following is required to allow the WSC to read it's configuration
-        from OpenSSO.
-        Add the "StockService" agent profile to the AgentAuthenticator by
-        going into AgentAuthenticator->agentAuth->Add the StockService to
-        Agent Profiles allowed to Read and save the configuration.
-       
+      Go to Access Control -> Default realm -> Agents -> STS Client
+      a) Click "New" -> enter name as "SecurityTokenService" and other 
+         required fields -> Save.
+      b) Click on above saved profile to edit -> Select required 
+        "Security Mechanism" (for eg:SAML2-HolderOfKey or SAML2-SenderVouches)
+      c) Select "http://<openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/sts" as
+         Security Token Service End Point
+      d) Select "http://<openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/sts/mex" as
+         Security Token Service MEX End Point
+      e) Save changes.
+      
+b) Configure WSP profile 
 
-        b) Create "WSP" profile (if not already created)
-        Select Web Service Provider -> under Agent, 
-        click "new" -> enter name as "wsp" and other required fields -> Save.
-        Click on above saved profile to edit -> Select all Security Mechanisms.
-        Select Web Service End Point as default and 
-        "Is Request Signature Verified" as true (checked).
-        Save changes.
+    Create Agent profiles for WSP (if not created out of box, by default it 
+    is created) :
 
-2.  Logout of OpenSSO Administration console.
+      Go to Access Control -> Default realm -> Agents -> Web Service Provider
 
-III. Run the samples
+     a) Select Web Service Provider -> under Agent, click "new" -> enter name as "wsp" and other required fields -> Save.
+     b) Click on above saved profile to edit -> Select all Security Mechanisms.
+     c) Is Request Signature Verified" as true (checked).
+     d)"Preserve Security Headers in Message" as true (checked).
+     e) Specify "http://<wsp-host-name:portnumber>/StockService/StockService"
+        as Web Service End Point 
+     f) Save changes.
 
-  a) Web Service Client sample :
+c). Also make sure that the Agent profiles for wsc, wsp, SecurityTokenService
+   are under "Selected" text area (if not add them)
+      Go to Access Control -> Default realm -> Agents -> Agent Authenticator ->
+            agentAuth
+      
+3. Logout of OpenSSO Administration console.
 
-    For StockQuoteClient to honor the "User Authentication Required" 
-    configuration at wsc ("StockService" agent here), 
-    you need to add following configuration at HTTP provider in Glassfish :
 
-    GF admin console - Expand Configuration -> Security -> Click on 
-    Message Security -> HttpSevlet -> Providers tab -> click on FAMHttpProvider
-    click on "Add Property" -> give name as "providername" and 
-    value as "StockService" (since we are using "StockService" agent profile here). 
-    Save changes and logout.
-
-    I) With this when "User Authentication Required" flag is checked at 
-      "StockService" agent profile, SAML token with end user's identity/token
-    will be generated and you can use either SAML 1.1 or SAML 2.0 SenderVouches 
-    at "wsp" profile. 
-    
-    Here, the flow will be as follows :
+VI.  Testing the sample.
 
     1. Access the stock quote client page.
 
-       http://<host>:<port>/StockQuoteClient/index.jsp
+       http://<wsc-host-name:portnumber>/StockQuoteClient/index.jsp
 
     2. You will be redirected to OpenSSO's Authentication service
        for end user login. Enter any existing OpenSSO user with
-       its password. Upon successful end user authentication, you will be redirected
-       back to http://<host>:<port>/StockQuoteClient/ page.
+       its password. Upon successful end user authentication, 
+       you will be redirected back to 
+         http://<host>:<port>/StockQuoteClient/ page.
 
     3. Enter "JAVA" as stock ticker symbol and click "Get Quote".
 
     4. If successful, this will display the stock values.
 
-    II) When "User Authentication Required" flag is not checked at 
-       "StockService" agent profile, 
-    SAML token with WSC's identity (WSC's cert) will be generated and 
-    you can use either SAML 1.1 or SAML 2.0 HolderOfKey at "wsp" profile.
- 
-    Here, the flow will be as follows :
+
+Deployment Scenario 2:
+=====================
+
+This is an advanced deployment scenario where the WSC profile is stored on
+one instance of OpenSSO server, WSP profile on another instance of OpenSSO
+server and the STS is present on a third instance of OpenSSO server
+
+                GF1                       GF2
+               _________                      ___________
+      Domain1 | WSC    |             Domain1 |   WSP    |
+              |________|<------------------->|__________|
+      Domain2 |        |                     |          |
+              | OpenSSO|<----        Domain2 |  OpenSSO |
+              |________|    |      --------->|__________|
+                            |      |
+               Machine 1    |      |           Machine 2
+                            V______V__
+                            |        |
+                            |  STS   | Machine 3
+                            | OpenSSO| Domain 1 
+                            |________|
+
+Sections:
+I.   Installing Glassfish and OpenSSO
+II.  Add Java Security Permissions
+III. WSS Agent installation steps
+IV.  Building and Deploying the samples
+V.   Creating the WSC, WSP, STS profiles
+VI.  Testing the sample.
+
+Section I.
+
+1. Install Glassfish that hosts the Web Services Client (WSC) in Domain1 
+and OpenSSO Server in Domain2. WSC profile will be created in this OpenSSO 
+instance. STS Profile creation is optional.
+2. Install Glassfish that hosts the Web Services Provider (WSP) in Domain1
+and OpenSSO Server in Domain2. WSP profile will created in this OpenSSO 
+instance. STS Profile creation is optional.
+3. An optional STS (Secure Token Services) can be installed along with OpenSSO 
+on a different domain or a new instance of Glassfish or on any other 
+container.
+4. Also note that OpenSSO servers need not be deployed on Glassfish. They can 
+be deployed on any container. Only the WSC and WSP need to be on Glassfish.
+
+Section II
+
+Add Java security permissions 
+
+Please perform the below steps on OpenSSO instances if it is deployed on
+Glassfish
+
+Edit domain.xml in the glassfish domain where OpenSSO will be deployed to:
+1. Change jvm-options from "-client" to "-server"
+2. Change jvm-options from -Xmx512m to -Xmx1024m
+3. If the Security Manager is "on", add the following as Java security permissions to the server.policy file of the Application Server 9.1/Glassfish V2
+
+Each Application Server domain has its own standard J2SE policy file named server.policy. It is located in the /ApplicationServer-install/domains/<domain-name>/config directory. 
+More information can be found in The server.policy File in Sun Java System Application Server 9 .1 Developer's Guide.
+
+// ADDITIONS FOR OpenSSO
+grant {
+
+permission java.net.SocketPermission "*", "listen,connect,accept,resolve";
+permission java.util.PropertyPermission "*", "read, write";
+permission java.lang.RuntimePermission "modifyThreadGroup";
+permission java.lang.RuntimePermission "setFactory";
+permission java.lang.RuntimePermission "accessClassInPackage.*";
+permission java.util.logging.LoggingPermission "control";
+permission java.lang.RuntimePermission "shutdownHooks";
+permission javax.security.auth.AuthPermission "getLoginConfiguration";
+permission javax.security.auth.AuthPermission "setLoginConfiguration";
+permission javax.security.auth.AuthPermission "modifyPrincipals";
+permission javax.security.auth.AuthPermission "modifyPrivateCredentials";
+permission javax.security.auth.PrivateCredentialPermission "com.iplanet.sso.providers.dpro.SSOTokenImpl * \"*\"","read";
+permission javax.security.auth.AuthPermission "createLoginContext.*";
+permission java.io.FilePermission "<<ALL FILES>>", "read,write,execute,delete";
+permission java.util.PropertyPermission "java.util.logging.config.class", "write";
+permission java.security.SecurityPermission "removeProvider.SUN";
+permission java.security.SecurityPermission "insertProvider.SUN";
+permission javax.security.auth.AuthPermission "doAs";
+permission java.util.PropertyPermission "java.security.krb5.realm", "write";
+permission java.util.PropertyPermission "java.security.krb5.kdc", "write";
+permission java.util.PropertyPermission "java.security.auth.login.config", "write";
+permission java.util.PropertyPermission "user.language", "write";
+permission javax.security.auth.kerberos.ServicePermission "*", "accept";
+permission javax.net.ssl.SSLPermission "setHostnameVerifier";
+permission java.security.SecurityPermission "putProviderProperty.IAIK";
+permission java.security.SecurityPermission "removeProvider.IAIK";
+permission java.security.SecurityPermission "insertProvider.IAIK";
+permission java.lang.RuntimePermission "setDefaultUncaughtExceptionHandler";
+permission javax.management.MBeanServerPermission "newMBeanServer";
+permission javax.management.MBeanPermission "*", "registerMBean";
+permission java.lang.RuntimePermission "createClassLoader";
+permission java.lang.RuntimePermission "accessDeclaredMembers";
+permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+permission javax.security.auth.AuthPermission "getSubject";
+
+permission javax.management.MBeanTrustPermission "register";
+permission java.lang.management.ManagementPermission "monitor";
+permission javax.management.MBeanServerPermission "createMBeanServer";
+permission java.util.PropertyPermission "javax.xml.soap.MetaFactory", "write";
+permission java.util.PropertyPermission "javax.xml.soap.MessageFactory", "write";
+permission java.util.PropertyPermission "javax.xml.soap.SOAPConnectionFactory", "write";
+permission java.util.PropertyPermission "javax.xml.soap.SOAPFactory", "write";
+permission java.net.NetPermission "getProxySelector";
+permission java.security.SecurityPermission "getProperty.authconfigprovider.factory";
+permission java.security.SecurityPermission "setProperty.authconfigprovider.factory";
+permission javax.security.auth.AuthPermission "doAsPrivileged";
+permission javax.security.auth.AuthPermission "modifyPublicCredentials";
+permission java.security.SecurityPermission "insertProvider.XMLDSig";
+permission java.security.SecurityPermission "putProviderProperty.WSS_TRANSFORM";
+permission java.security.SecurityPermission "insertProvider.WSS_TRANSFORM";
+
+};
+// END OF ADDITIONS FOR OpenSSO
+   
+
+III. WSS Agent installation steps
+
+Repeat steps 1-4 on the machines where WSC and WSP are installed:
+
+1. Unzip openssowssproviders.zip to a desired directory, 
+say <unzip_dir_of_openssowssproviders.zip>
+
+2. The automated scripts to configure the providers are located in 
+<unzip_dir_of_openssowssproviders.zip>/config directory. 
+A. To run the automated scripts, please follow the steps mentioned in README.config in <unzip_dir_of_openssowssproviders.zip>/config directory
+B. To configure the providers manually, follow the steps starting from 3 in this README.
+
+3. Modify <unzip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties as follows: (Also please keep the rest of the setting as it is)
+
+# OpenSSO Server Information (where WSC or WSP profile is located resp)
+# Protocol can be either http or https
+com.iplanet.am.server.protocol=openssoserver_protocol
+com.iplanet.am.server.host=openssoserver_host
+com.iplanet.am.server.port=openssoserver_port
+com.iplanet.am.services.deploymentDescriptor=openssoserver_deploy_uri
+
+# Application username and password
+com.sun.identity.agents.app.username=agentAuth
+com.iplanet.am.service.password=changeit
+
+am.encryption.pwd=<empty or null value>
+
+com.iplanet.am.naming.url=openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/namingservice
+
+# Debug information
+com.iplanet.services.debug.level=message
+com.iplanet.services.debug.directory=/tmp/wssclient
+
+# Cookie information
+com.iplanet.am.cookie.name=iPlanetDirectoryPro
+
+# SAML xml signature keystore file, keystore password file,
+# key password file and Liberty trusted CA aliases.
+com.sun.identity.saml.xmlsig.keystore=<unzip_dir_of_openssowssproviders.zip>/resources/keystore.jks
+com.sun.identity.saml.xmlsig.storepass=<unzip_dir_of_openssowssproviders.zip>/resources/.storepass
+com.sun.identity.saml.xmlsig.keypass=<unzip_dir_of_openssowssproviders.zip>/resources/.keypass
+com.sun.identity.liberty.ws.trustedca.certaliases=test:<openssoserver_host>
+
+# Login URL and Authentication service URL for Liberty use case
+com.sun.identity.loginurl=openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/UI/Login
+com.sun.identity.liberty.authnsvc.url=openssoserver://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/Liberty/authnsvc
+
+NOTE : The directory specified as a value for DEBUG_DIR in AMConfig.properties should be different than the one specified as the value for BASE_DIR (or CONFIG_DIR) in Installing OpenSSO.
+
+4. Copy files
+
+a. Copy <unzip_dir_of_openssowssproviders.zip>/lib/webservices-rt.jar to
+   /<WSC or WSP>-ApplicationServer-install/lib
+b. Copy <unzip_dir_of_openssowssproviders.zip>/lib/webservices-tools.jar to
+   /<WSC or WSP>-ApplicationServer-install/lib
+c. Copy <unzip_dir_of_openssowssproviders.zip>/lib/webservices-api.jar to
+   /<WSC or WSP>-ApplicationServer-install/lib/endorsed
+d. Create /<WSC or WSP>-ApplicationServer-install/addons/opensso directory if 
+   not already present.
+e. Copy <unzip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties 
+   to /<WSC or WSP>-ApplicationServer-install/addons/opensso
+f. Copy all jar files from <unizip_dir_of_openssowssproviders.zip>/lib/ 
+   directory to /<WSC or WSP>-ApplicationServer-install/addons/opensso
+g. Add the /<WSC or WSP>-ApplicationServer-install/addons/opensso/openssowssproviders.jar 
+    path in classpath suffix (global JVM settings) for Application server.
+    You can do this step (9) via Application Server's Admin Console -
+    For GF V2 : Application Server -> JVM Settings tab -> Path Settings tab
+    For AS 9.1 : Configurations -> server-config -> JVM Settings -> Path Settings tab
+
+5. Perform the below step on the WSC Admin console only. 
+
+   a. Login into Application Server's Administration Console   
+   b. For GF V2 : Expand Configuration -> Security -> Click on Message Security -> New
+      For AS 9.1 : Expand Configurations -> server-config -> Security -> Click on Message Security -> New 
+   c. Choose Authentication layer as "HttpServlet", enter Provider Type as 
+      "Server", ProviderID as "FAMHttpProvider", Class Name as
+      "com.sun.identity.wssagents.common.provider.FAMHttpAuthModule"
+   d. Save the configuration.
+   e. The stock quote client sample already has the required configuration
+     (sun-web.xml, web.xml) Essentially the client requires a J2EE constraint 
+     and the FAMHttpProvider id.      
+
+6. Restart the Application Servers on both WSC and WSP
+
+IV.  Building and Deploying the samples
+
+   The samples here are provided with convenient "ant" build script to
+   build and deploy the samples. This sample comes with two directories
+   StockQuoteClient and StockService which are for the web services client
+   and web service respectively. Also, it has a file name called as 
+   glassfish.properties. 
+
+   Repeat the steps on WSC and WSP machines:
+
+   1. Open glassfish.properties and edit for properties
+       glassfish.home = <WSC/WSP Glassfish installation directory>
+       glassfish.host = <WSC/WSP Host where glassfish is installed>
+       glasfish.passwordfile = </tmp/app_passwd>
+       
+       Note: For the glassfish password file, make sure the password file
+       is like this, and has read permissions
+       AS_ADMIN_password=<password>
+
+       The properties build.class.path and jaxws.endorsed.dir are not
+       used for the stock samples, but for advanced samples.
+       
+   2. Make sure that JAVA_HOME is set to JDK1.5 installation and similarly
+      make sure java and javac are in the PATH before executing the samples.
+
+   3. Use the ant command from <WSC/WSP-ApplicationServer-install>/lib/ant/bin/ant
+
+   4. The StockQuoteClient Sample assumes the web service (StockService)
+      is deployed on localhost and port 8080. However, if they are different
+      edit and replace localhost and 8080 in the following files: 
+
+      StockQuoteClient/src/java/com/samples/GetQuote.java
+      StockQuoteClient/src/java/com/samples/SOAPMessage.java
+
+   5. cd StockQuoteClient and run "ant all". This will build
+      and deploy the StockQuoteClient onto glassfish container. Please make
+      sure you run this on a WSC instance.
+
+   6. cd StockService and run "ant all". This will build
+      and deploy the StockQuoteService onto glassfish container. Please make
+      sure you run this on a WSP instance
+
+Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the OpenSSO Console.
+
+V.  Creating the WSC, WSP, STS profiles
+
+Profiles should be created on the following machines:
+a) Configure WSC profile on OpenSSO Server (Machine 1, Domain2)
+b) Configure WSP profile on OpenSSO Server (Machine 2, Domain2)
+c) Configure STS profile on OpenSSO Server (Machine 3, Domain1, Optional)
+
+a) Configure WSC profile on OpenSSO Server (Machine 1, Domain2)
+
+1.  Login into the OpenSSO Console with user amadmin and <amadmin password>
+
+    openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/UI/Login
+
+    Create Agent profiles for WSC (if not created out of box, by default it 
+    is created) :
+
+      Go to Access Control -> Default realm -> Agents -> Web Service Client
+
+       a) Click "New" -> enter name as "wsc" and other required fields -> Save.
+       b) Click on above saved profile to edit -> Select required 
+        "Security Mechanism" (for eg:X509Token)
+        Note : If the required or selected Security Mechanism is "STSSecurity", 
+               then select STS Configuration as "SecurityTokenService" and
+               perform Step 2. 
+               
+        The security mechanism could be "STSSecurity" and what it means is
+        that the WSC is requesting STS (WS-Trust) Service to generate the token
+        so that it can secure the request to the WSP
+       c) "Is Request Signed" as true (checked).
+       d) "Preserve Security Headers in Message" as true (checked).
+       e) Specify "http://<wsp-host-name:portnumber>/StockService/StockService"
+          as Web Service End Point 
+       f) Save changes.
+
+2.  Create Agent profiles for STS Client (if not created out of box, 
+    by default it is created) :
+
+      Go to Access Control -> Default realm -> Agents -> STS Client
+      a) Click "New" -> enter name as "SecurityTokenService" and other 
+         required fields -> Save.
+      b) Click on above saved profile to edit -> Select required 
+        "Security Mechanism" (for eg:SAML2-HolderOfKey or SAML2-SenderVouches)
+      c) Select "http://<sts-host-name:portnumber>/opensso/sts" as
+         Security Token Service End Point
+      d) Select "http://<sts-host-name:portnumber>/opensso/sts/mex" as
+         Security Token Service MEX End Point
+      e) Save changes.
+
+3. Also make sure that the Agent profiles for wsc, wsp, SecurityTokenService
+   are under "Selected" text area (if not add them)
+      Go to Access Control -> Default realm -> Agents -> Agent Authenticator ->
+            agentAuth
+      
+4. No need to create/change the WSP Agent profile
+
+5. Logout of OpenSSO Administration console.
+
+b) Configure WSP profile on OpenSSO Server (Machine 2, Domain2)
+
+1.  Login into the OpenSSO Console with user amadmin and <amadmin password>
+
+    openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/UI/Login
+
+    Create Agent profiles for WSP (if not created out of box, by default it 
+    is created) :
+
+      Go to Access Control -> Default realm -> Agents -> Web Service Provider
+
+     a) Select Web Service Provider -> under Agent, click "new" -> enter name as "wsp" and other required fields -> Save.
+     b) Click on above saved profile to edit -> Select all Security Mechanisms.
+     c) Is Request Signature Verified" as true (checked).
+     d)"Preserve Security Headers in Message" as true (checked).
+     e) Specify "http://<wsp-host-name:portnumber>/StockService/StockService"
+        as Web Service End Point 
+     f) Save changes.
+
+2. No need to create/change the WSC or STS Agent profile
+
+3. Also make sure that the Agent profiles for wsc, wsp, SecurityTokenService
+   are under "Selected" text area (if not add them)
+      Go to Access Control -> Default realm -> Agents -> Agent Authenticator ->
+            agentAuth
+      
+4. Logout of OpenSSO Administration console.
+
+c) Configure STS profile on OpenSSO Server (Machine 3, Domain1)
+
+If WSC is using SecurityTokenService, you need to perform this step.
+
+1.  Login into the OpenSSO Console with user amadmin and <amadmin password>
+
+    openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/UI/Login
+
+    a) Under Configuration-> Global -> Security Token Service->Security->
+       Security Mechanism
+       Select SAML2-HolderOfKey, SAML2-SenderVouches
+    b) End point is specified as:
+       http://<sts-host-name:portnumber>/opensso/sts
+    c) Is Request Signature verify (checked)
+    d) Save
+
+2. Create Agent profiles for WSP (if not created out of box, by default it 
+    is created) :
+
+      Go to Access Control -> Default realm -> Agents -> Web Service Provider
+
+     a) Select Web Service Provider -> under Agent, click "new" -> enter name as "wsp" and other required fields -> Save.
+     b) Click on above saved profile to edit -> Select all Security Mechanisms.
+        (or you can just select SAML2-HolderOfKey, SAML2-SenderVouches)
+     c) Is Request Signature Verified" as true (checked).
+     d)"Preserve Security Headers in Message" as true (checked).
+     e) Specify "http://<wsp-host-name:portnumber>/StockService/StockService"
+        as Web Service End Point 
+     f) Save changes.
+
+3. No need to change WSC or STS Agent profile
+
+4. Also make sure that the Agent profiles for wsc, wsp, SecurityTokenService
+   are under "Selected" text area (if not add them)
+      Go to Access Control -> Default realm -> Agents -> Agent Authenticator ->
+            agentAuth
+      
+6. Logout of OpenSSO Administration console.
+
+VI.  Testing the sample.
 
     1. Access the stock quote client page.
 
-       http://<host>:<port>/StockQuoteClient/index.jsp
+       http://<wsc-host-name:portnumber>/StockQuoteClient/index.jsp
 
-    2. Enter "JAVA" as stock ticker symbol and click "Get Quote".
+    2. You will be redirected to OpenSSO's Authentication service
+       for end user login. Enter any existing OpenSSO user with
+       its password. Upon successful end user authentication, 
+       you will be redirected back to 
+         http://<host>:<port>/StockQuoteClient/ page.
 
-    3. If successful, this will display the stock values.
+    3. Enter "JAVA" as stock ticker symbol and click "Get Quote".
 
-  b) Standalone Client sample :
-
-  The standlone client demonstrates running the plain SOAP based web service
-  client that can use the OpenSSO ClientSDK API to secure the web service requests.
-
-    1. Login into the OpenSSO Console with user amadmin and <amadmin password>
-
-    openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
-
-    Note: If you have logged in as any other user, click Logout on the console page and Login
-    again and make sure that you access the OpenSSO Console.
-
-      Go to Access Control -> Default realm -> Agents ->
-
-        a) Create "WSP" profile 
-        Select Web Service Provider -> under Agent, click "new" -> 
-        enter name as "StockServiceWSP" and other required fields -> Save.
-        Click on above saved profile to edit -> Select all Security Mechanisms.
-        Select Web Service End Point as the actual StockService end point url 
-        (default is "http://localhost:8080/StockService/StockService") and 
-        "Is Request Signature Verified" as true (checked).
-        Save changes.
-    
-        a) Modify "WSC" profile
-        Select Web Service Client -> under Agent, click on "wsc" profile to edit.
-        Enter Web Service End Point as the actual StockService end point url 
-        (default is "http://localhost:8080/StockService/StockService").
-        Save changes.
-        Note : If the required or selected Security Mechanism is "STSSecurity",
-        then select STS Configuration as "SecurityTokenService".
-
-    2. cd StandAloneStockClient directory
-
-    3. run "ant -f build.xml". 
-    This will build and run the Standalone client sample.
+    4. If successful, this will display the stock values.
 
