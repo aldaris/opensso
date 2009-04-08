@@ -10,7 +10,7 @@ import javax.faces.model.SelectItem;
 
 public class PolicyCreateWizardBean
         extends WizardBean
-        implements ResourceChooserClient, Serializable {
+        implements Serializable {
 
     private PrivilegeBean privilegeBean = new PrivilegeBean();
     
@@ -22,17 +22,16 @@ public class PolicyCreateWizardBean
     private Effect policyNameMessageEffect;
     private PolicyCreateSummary policyCreateSummary = new PolicyCreateSummary();
     private int advancedTabsetIndex = 0;
+    private List<Resource> availableResources;
 
     public PolicyCreateWizardBean() {
         policyCreateSummary.setPolicyCreateWizardBean(this);
     }
 
-    public List<Resource> getSelectedResources() {
-        return getPrivilegeBean().getResources();
-    }
-
-    public List<Resource> getAvailableResources() {
-        return application.getDefaultResources();
+    @Override
+    public void reset() {
+        super.reset();
+        privilegeBean = new PrivilegeBean();
     }
 
     public Application getApplication() {
@@ -42,6 +41,7 @@ public class PolicyCreateWizardBean
     public void setApplication(Application application) {
         this.application = application;
         getPrivilegeBean().setActions(new DeepCloneableArrayList<Action>(application.getDefaultActions()).deepClone());
+        availableResources = new DeepCloneableArrayList<Resource>(application.getDefaultResources()).deepClone();
     }
 
     public List<SelectItem> getApplicationItems() {
@@ -108,5 +108,13 @@ public class PolicyCreateWizardBean
 
     public void setPolicyNameInputEffect(Effect policyNameInputEffect) {
         this.policyNameInputEffect = policyNameInputEffect;
+    }
+
+    public List<Resource> getAvailableResources() {
+        return availableResources;
+    }
+
+    public void setAvailableResources(List<Resource> availableResources) {
+        this.availableResources = availableResources;
     }
 }

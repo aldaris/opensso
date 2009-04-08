@@ -9,7 +9,7 @@
         styleClass="popup-modal"
         modal="true"
         draggable="false"
-        visible="#{urlResourceChooserBean.addVisible}"
+        visible="#{urlResourcesBean.addPopupVisible}"
         autoCentre="true">
         <f:facet name="header">
             <ice:panelGrid>
@@ -19,26 +19,38 @@
             </ice:panelGrid>
         </f:facet>
         <f:facet name="body">
-            <ice:panelGrid>
-                <ice:outputText
+            <ice:panelGroup>
+                <ice:panelGrid
+                    columns="2">
+                    <ice:outputText
                     value="URL Resource"/>
-                <ice:inputText
-                    value="#{urlResourceChooserBean.addPattern}"/>
+                    <ice:inputText
+                        value="#{urlResourcesBean.addPopupName}"/>
+                </ice:panelGrid>
                 <ice:panelGrid
                     styleClass="button-group"
                     columns="2">
                     <o:button
                         type="ok"
                         bean="#{resourceChooserClient}"
-                        handler="#{urlResourceChooserHandler}"
-                        listenerMethod="addOkListener"/>
+                        handler="#{urlResourcesHandler}"
+                        listenerMethod="addPopupOkListener">
+                        <ui:define name="attributes">
+                            <f:attribute
+                                name="availableResources"
+                                value="#{availableResources}"/>
+                            <f:attribute
+                                name="viewEntitlement"
+                                value="#{viewEntitlement}"/>
+                        </ui:define>
+                    </o:button>
                     <o:button
                         type="cancel"
                         bean="#{resourceChooserClient}"
-                        handler="#{urlResourceChooserHandler}"
-                        listenerMethod="addCancelListener"/>
+                        handler="#{urlResourcesHandler}"
+                        listenerMethod="addPopupCancelListener"/>
                 </ice:panelGrid>
-            </ice:panelGrid>
+            </ice:panelGroup>
         </f:facet>
     </ice:panelPopup>
 </span>

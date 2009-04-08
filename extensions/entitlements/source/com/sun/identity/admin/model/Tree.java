@@ -47,7 +47,7 @@ public class Tree {
                 size += sizer(childTn, size);
             }
         } else {
-            size++;
+            return 1;
         }
 
         return size;

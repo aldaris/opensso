@@ -1,6 +1,8 @@
 package com.sun.identity.admin.model;
 
-public class PolicyCreateSummary {
+import java.io.Serializable;
+
+public class PolicyCreateSummary implements Serializable {
     private PolicyCreateWizardBean policyCreateWizardBean;
 
     public PolicyCreateWizardBean getPolicyCreateWizardBean() {
@@ -12,7 +14,7 @@ public class PolicyCreateSummary {
     }
 
     public int getResourceCount() {
-        return policyCreateWizardBean.getPrivilegeBean().getResources().size();
+        return policyCreateWizardBean.getPrivilegeBean().getViewEntitlement().getResources().size();
     }
 
     public int getViewConditionSize() {
@@ -25,10 +27,9 @@ public class PolicyCreateSummary {
         return policyCreateWizardBean.getPrivilegeBean().getActions().size();
     }
 
-    public int getSubjectCount() {
-        int count = 0;
-
-        // TODO: SubjectTree.size()
+    public int getViewSubjectSize() {
+        Tree subjectTree = new Tree(policyCreateWizardBean.getPrivilegeBean().getViewSubject());
+        int count = subjectTree.size();
 
         return count;
     }

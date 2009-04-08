@@ -7,14 +7,13 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class PrivilegeBean implements Serializable {
-    private String name = null;
+    private String name = "myPolicy" + System.currentTimeMillis();
     private String description = null;
-    private List<Resource> resources = new ArrayList<Resource>();
+    private ViewEntitlement viewEntitlement = new ViewEntitlement();
     private ViewCondition viewCondition = null;
     private ViewSubject viewSubject = null;
     private List<Action> actions;
@@ -84,10 +83,6 @@ public class PrivilegeBean implements Serializable {
         return privilege;
     }
 
-    public List<Resource> getResources() {
-        return resources;
-    }
-
     public ViewCondition getViewCondition() {
         return viewCondition;
     }
@@ -102,5 +97,9 @@ public class PrivilegeBean implements Serializable {
 
     public void setViewSubject(ViewSubject viewSubject) {
         this.viewSubject = viewSubject;
+    }
+
+    public ViewEntitlement getViewEntitlement() {
+        return viewEntitlement;
     }
 }

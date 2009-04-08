@@ -242,7 +242,7 @@
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>template/url-resources.xhtml</value>
+            <value>template/resources-url.xhtml</value>
         </managed-property>
     </managed-bean>
     <!-- application types -->
@@ -530,17 +530,17 @@
 
     <!-- url resource chooser -->
     <managed-bean>
-        <managed-bean-name>urlResourceChooserBean</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.UrlResourceChooserBean</managed-bean-class>
+        <managed-bean-name>urlResourcesBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.UrlResourcesBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
-        <managed-bean-name>urlResourceChooserHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.UrlResourceChooserHandler</managed-bean-class>
+        <managed-bean-name>urlResourcesHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.UrlResourcesHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
-            <property-name>urlResourceChooserBean</property-name>
-            <value>#{urlResourceChooserBean}</value>
+            <property-name>urlResourcesBean</property-name>
+            <value>#{urlResourcesBean}</value>
         </managed-property>
     </managed-bean>
     <!-- url resource chooser -->

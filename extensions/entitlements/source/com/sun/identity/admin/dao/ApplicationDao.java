@@ -44,11 +44,11 @@ public class ApplicationDao implements Serializable {
         resources = new ArrayList<Resource>();
 
         urlr = new UrlResource();
-        urlr.setPattern("http://paycheck.central.sun.com/*");
+        urlr.setName("http://paycheck.central.sun.com/*");
         resources.add(urlr);
 
         urlr = new UrlResource();
-        urlr.setPattern("https://paycheck.central.sun.com/private");
+        urlr.setName("https://paycheck.central.sun.com/private");
         resources.add(urlr);
 
         a.setDefaultResources(resources);
@@ -62,11 +62,11 @@ public class ApplicationDao implements Serializable {
         resources = new ArrayList<Resource>();
 
         urlr = new UrlResource();
-        urlr.setPattern("http://namefinder.central.sun.com");
+        urlr.setName("http://namefinder.central.sun.com");
         resources.add(urlr);
 
         urlr = new UrlResource();
-        urlr.setPattern("https://namefinder.central.sun.com/private/*");
+        urlr.setName("https://namefinder.central.sun.com/private/*");
         resources.add(urlr);
 
         a.setDefaultResources(resources);

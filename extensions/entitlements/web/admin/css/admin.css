@@ -32,14 +32,18 @@ body {
 
 .section-title {
     float: left;
-    width: 70%;
     clear: left;
 }
 
 .section-links {
-    float: left;
-    width: 30%;
+    float: right;
     text-align: right;
+}
+
+.section-input {
+    margin: 0;
+    padding: 0;
+    margin-left: 5px;
 }
 
 .condition-panel {
@@ -221,14 +225,20 @@ div.button-wrapper a.button img.left {
     width: 90%;
 }
 
-.url-resource-excepted {
-    width: 100%;
-    position: relative;
-    left: 16px;
+.url-resource-tableCol1 {
+    width: 20px;
 }
 
+.url-resource-tableCol2 {
+    width: 50%;
+}
+
+.url-resource-tableCol3 {
+    width: 50%;
+}
+
+
 .popup-modal {
-    width: 300px;
 }
 
 .popup-modalBody {

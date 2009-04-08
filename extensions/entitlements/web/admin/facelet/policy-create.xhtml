@@ -33,8 +33,11 @@
                         <ui:include
                             src="#{policyCreateWizardBean.application.applicationType.template}">
                                 <ui:param
-                                    name="resourceChooserClient"
-                                    value="#{policyCreateWizardBean}"/>
+                                    name="availableResources"
+                                    value="#{policyCreateWizardBean.availableResources}"/>
+                                <ui:param
+                                    name="viewEntitlement"
+                                    value="#{policyCreateWizardBean.privilegeBean.viewEntitlement}"/>
                         </ui:include>
                     </ui:define>
                 </o:wstep>

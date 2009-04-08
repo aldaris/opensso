@@ -3,6 +3,7 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
@@ -27,8 +28,8 @@
                         <ice:panelGroup>
                             <ice:inputText
                                 id="policyNameInput"
-                                partialSubmit="true"
                                 required="true"
+                                partialSubmit="true"
                                 value="#{policyCreateWizardBean.privilegeBean.name}"
                                 effect="#{policyCreateWizardBean.policyNameInputEffect}"
                                 validator="#{policyCreateWizardHandler.validatePolicyName}"/>

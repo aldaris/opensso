@@ -11,8 +11,9 @@
         partialSubmit="true"
         styleClass="command-link">
         <f:attribute name="bean" value="#{bean}"/>
+        <ui:insert name="attributes"/>
         <img src="../image/add.png"/>
-        <ice:outputText value="Add"/>
+        <ice:outputText value="#{linkLabel != null ? linkLabel : 'Add'}"/>
     </ice:commandLink>
     <ice:commandLink
         actionListener="#{handler[listenerMethod]}"
@@ -21,7 +22,19 @@
         partialSubmit="true"
         styleClass="command-link">
         <f:attribute name="bean" value="#{bean}"/>
+        <ui:insert name="attributes"/>
         <img src="../image/search.png"/>
-        <ice:outputText value="Search"/>
+        <ice:outputText value="#{linkLabel != null ? linkLabel : 'Search'}"/>
+    </ice:commandLink>
+    <ice:commandLink
+        actionListener="#{handler[listenerMethod]}"
+        bean="#{bean}"
+        rendered="#{type == 'remove'}"
+        partialSubmit="true"
+        styleClass="command-link">
+        <f:attribute name="bean" value="#{bean}"/>
+        <ui:insert name="attributes"/>
+        <img src="../image/remove.png"/>
+        <ice:outputText value="#{linkLabel != null ? linkLabel : 'Remove'}"/>
     </ice:commandLink>
 </ui:composition>

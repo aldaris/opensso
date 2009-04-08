@@ -16,6 +16,8 @@ public class DeepCloneableArrayList<T> extends ArrayList<T> implements DeepClone
         DeepCloneableArrayList clone = new DeepCloneableArrayList();
 
         for (Object o: this) {
+            assert(o instanceof DeepCloneable);
+
             DeepCloneable dc = (DeepCloneable)o;
             DeepCloneable dc2 = dc.deepClone();
             clone.add(dc2);
