@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.6 2009-04-07 10:25:09 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.7 2009-04-08 17:42:16 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -111,8 +111,7 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
             resourceName, null, envParameters, recursive);
 
         //separate threads, PIP
-        indexes = ApplicationManager.getApplication(applicationName).
-            getResourceSearchIndex(resourceName);
+        indexes = getApplication().getResourceSearchIndex(resourceName); //TOFIX
 
         return getEntitlements();
     }
@@ -143,7 +142,8 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
     
     private Application getApplication() {
         if (application == null) {
-            application = ApplicationManager.getApplication(applicationName);
+            application = ApplicationManager.getApplication(
+                "/", applicationName); //TOFIX
         }
         return application;
     }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.7 2009-04-07 10:25:07 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.8 2009-04-08 17:42:16 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -30,23 +30,24 @@ import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 /**
- *
- * @author dennis
+ * Application Manager handles addition, deletion and listing of applications
+ * for each realm.
  */
 public final class ApplicationManager {
-    private static Map<String, Application> applications =
-        new HashMap<String, Application>();
+    private static Map<String, Map<String, Application>> applications =
+        new HashMap<String, Map<String, Application>>();
 
     static {
         IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
         Set<ApplicationInfo> info = policyConfig.getApplications("/");
         for (ApplicationInfo i : info) {
-            addApplication(i);
+            addApplication("/", i); //TOFIX
         }
     }
 
@@ -54,19 +55,32 @@ public final class ApplicationManager {
     }
 
     /**
-     * TODO
-     * create application
-     * delete application
-     * list applications
+     * Returns the application names in a realm.
+     *
+     * @param realm Realm name.
+     * @return application names in a realm.
      */
-    public static Application getApplication(String name) {
+    public static Set<String> getApplicationNames(String realm) {
+        Map<String, Application> map = applications.get(realm);
+        return (map == null) ? Collections.EMPTY_SET : map.keySet();
+    }
+
+    /**
+     * Returns application.
+     *
+     * @param realm Realm name.
+     * @param name Name of Application.
+     * @return application.
+     */
+    public static Application getApplication(String realm, String name) {
         if ((name == null) || (name.length() == 0)) {
             name = ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
         }
-        return applications.get(name);
+        Map<String, Application> map = applications.get(realm);
+        return (map == null) ? null : map.get(name);
     }
 
-    private static void addApplication(ApplicationInfo info) {
+    private static void addApplication(String realm, ApplicationInfo info) {
         String name = info.getName();
         String appTypeName = info.getApplicationType();
         Set<String> actions = info.getActions();
@@ -106,11 +120,10 @@ public final class ApplicationManager {
         if (resComp != null) {
             app.setResourceComparator(resComp);
         }
-        addApplication(app);
+        addApplication(realm, app);
     }
 
-     private static Class getEntitlementCombiner(String className)
-     {
+     private static Class getEntitlementCombiner(String className) {
         if (className == null) {
             return null;
         }
@@ -122,11 +135,37 @@ public final class ApplicationManager {
         return com.sun.identity.entitlement.DenyOverride.class;
     }
 
-    public static void addApplication(Application application) {
-        applications.put(application.getName(), application);
+    /**
+     * Adds application.
+     *
+     * @param realm Realm name.
+     * @param application Application object.
+     */
+    public synchronized static void addApplication(
+        String realm,
+        Application application
+    ) {
+        Map<String, Application> map = applications.get(realm);
+        if (map == null) {
+            map = new HashMap<String, Application>();
+            applications.put(realm, map);
+        }
+        map.put(application.getName(), application);
     }
 
-    public static void deleteApplication(String name) {
-        applications.remove(name);
+    /**
+     * Removes application.
+     *
+     * @param realm Realm Name.
+     * @param name Application Name.
+     */
+    public synchronized  static void deleteApplication(
+        String realm,
+        String name
+    ) {
+        Map<String, Application> map = applications.get(realm);
+        if (map != null) {
+            map.remove(name);
+        }
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeManager.java,v 1.3 2009-04-07 10:25:07 veiming Exp $
+ * $Id: ApplicationTypeManager.java,v 1.4 2009-04-08 17:42:16 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -36,8 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
- * @author dennis
+ * Application Type manager.
  */
 public class ApplicationTypeManager {
     public static final String URL_APPLICATION_TYPE_NAME =
@@ -56,7 +55,16 @@ public class ApplicationTypeManager {
         }
     }
 
-    public static void addApplicationType(ApplicationTypeInfo info) {
+    /**
+     * Returns application type names.
+     *
+     * @return application type names.
+     */
+    public static Set<String> getApplicationTypeNames() {
+        return applicationTypes.keySet();
+    }
+
+    private static void addApplicationType(ApplicationTypeInfo info) {
         String name = info.getName();
         Set<String> actions = info.getActions();
         String searchIndexClassName = info.getSearchIndexImpl();
@@ -73,6 +81,12 @@ public class ApplicationTypeManager {
             searchIndex, saveIndex, resourceComparator));
     }
 
+    /**
+     * Returns application type.
+     *
+     * @param name Name of application type.
+     * @return application type.
+     */
     public static ApplicationType get(String name) {
         return applicationTypes.get(name);
     }
