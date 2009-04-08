@@ -41,7 +41,9 @@ public class Tree {
     }
 
     private int sizer(TreeNode currentTn, int size) {
-        if (currentTn instanceof ContainerTreeNode) {
+        if (currentTn == null) {
+            return 0;
+        } else if (currentTn instanceof ContainerTreeNode) {
             ContainerTreeNode ctn = (ContainerTreeNode)currentTn;
             for (TreeNode childTn: ctn.getTreeNodes()) {
                 size += sizer(childTn, size);

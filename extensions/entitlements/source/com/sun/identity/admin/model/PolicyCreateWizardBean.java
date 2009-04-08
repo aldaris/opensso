@@ -40,7 +40,7 @@ public class PolicyCreateWizardBean
 
     public void setApplication(Application application) {
         this.application = application;
-        getPrivilegeBean().setActions(new DeepCloneableArrayList<Action>(application.getDefaultActions()).deepClone());
+        getPrivilegeBean().getViewEntitlement().setActions(new DeepCloneableArrayList<Action>(application.getDefaultActions()).deepClone());
         availableResources = new DeepCloneableArrayList<Resource>(application.getDefaultResources()).deepClone();
     }
 

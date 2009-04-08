@@ -335,6 +335,27 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>dnsNameConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.DnsNameConditionType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>dnsName</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-dns-name.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/network.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>timeRangeConditionType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.TimeRangeConditionType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -489,6 +510,7 @@
         <list-entries>
             <value>#{activeSessionTimeConditionType}</value>
             <value>#{ipConditionType}</value>
+            <value>#{dnsNameConditionType}</value>
             <value>#{timeRangeConditionType}</value>
             <value>#{dateRangeConditionType}</value>
             <value>#{timezoneConditionType}</value>

@@ -6,8 +6,8 @@ import java.io.Serializable;
 public class BasicMultiPanelBean implements MultiPanelBean, Serializable {
     private Effect expandEffect;
     private Effect panelEffect;
-    private boolean expanded;
-    private boolean visible;
+    private boolean expanded = true;
+    private boolean visible = true;
 
     public Effect getExpandEffect() {
         return expandEffect;

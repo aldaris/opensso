@@ -23,8 +23,8 @@ public class PolicyCreateSummary implements Serializable {
         return count;
     }
 
-    public int getActionCount() {
-        return policyCreateWizardBean.getPrivilegeBean().getActions().size();
+    public int getActionsSize() {
+        return policyCreateWizardBean.getPrivilegeBean().getViewEntitlement().getActions().size();
     }
 
     public int getViewSubjectSize() {

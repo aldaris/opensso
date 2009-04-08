@@ -7,7 +7,6 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 public class PrivilegeBean implements Serializable {
@@ -16,7 +15,6 @@ public class PrivilegeBean implements Serializable {
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
     private ViewCondition viewCondition = null;
     private ViewSubject viewSubject = null;
-    private List<Action> actions;
 
     public PrivilegeBean() {
         // empty
@@ -45,27 +43,18 @@ public class PrivilegeBean implements Serializable {
         this.description = description;
     }
 
-    public List<Action> getActions() {
-        return actions;
-    }
-
-    public void setActions(List<Action> actions) {
-        this.actions = actions;
-    }
-
     public Privilege toPrivilege() {
         // subjects
         // TODO
         EntitlementSubject eSubject = null;
 
         // resources / actions
-        // TODO
-        Entitlement entitlement = null;
+        Entitlement entitlement = viewEntitlement.getEntitlement();
 
         // conditions
-        EntitlementCondition eCondition = null;
+        EntitlementCondition condition = null;
         if (getViewCondition() != null) {
-            eCondition = getViewCondition().getEntitlementCondition();
+            condition = getViewCondition().getEntitlementCondition();
         }
 
         // resource attrs
@@ -75,9 +64,9 @@ public class PrivilegeBean implements Serializable {
 
         Privilege privilege = new OpenSSOPrivilege(
                 name,
-                entitlement, //TODO: use scalar entitlement
+                entitlement, 
                 eSubject,
-                eCondition,
+                condition,
                 attrs);
 
         return privilege;
