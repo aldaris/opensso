@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.25 2009-04-08 17:42:16 veiming Exp $
+ * $Id: Entitlement.java,v 1.26 2009-04-09 23:35:41 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -472,7 +472,8 @@ public class Entitlement implements Serializable {
         }
 
         if (excludedResourceNames == null) {
-            if (object.getExcludedResourceNames() != null) {
+            if ((object.getExcludedResourceNames() != null) &&
+                    !object.getExcludedResourceNames().isEmpty()) {
                 return false;
             }
         } else { // excludedResourceNames not null
@@ -486,7 +487,8 @@ public class Entitlement implements Serializable {
         }
 
         if (actionValues == null) {
-            if (object.getActionValues() != null) {
+            if ((object.getActionValues() != null) &&
+                !object.getActionValues().isEmpty()) {
                 return false;
             }
         } else { // actionValues not null
@@ -500,7 +502,8 @@ public class Entitlement implements Serializable {
         }
 
         if (advices == null) {
-            if (object.getAdvices() != null) {
+            if ((object.getAdvices() != null) &&
+                !object.getAdvices().isEmpty()) {
                 return false;
             }
         } else { // advices not null
@@ -514,7 +517,8 @@ public class Entitlement implements Serializable {
         }
 
         if (attributes == null) {
-            if (object.getAttributes() != null) {
+            if ((object.getAttributes() != null) &&
+                !object.getAttributes().isEmpty()) {
                 return false;
             }
         } else { // attributes not null
