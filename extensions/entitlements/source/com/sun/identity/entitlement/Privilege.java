@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.7 2009-04-09 13:15:02 veiming Exp $
+ * $Id: Privilege.java,v 1.8 2009-04-09 23:37:55 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -231,72 +231,74 @@ public abstract class Privilege implements Serializable {
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
-            equalled = false;
+            return false;
         }
         if (!getClass().equals(obj.getClass())) {
-            equalled = false;
+            return false;
         }
         Privilege object = (Privilege) obj;
 
         if (name == null) {
             if (object.getName() != null) {
-                equalled = false;
+                return false;
             }
         } else { // name not null
 
             if ((object.getName()) == null) {
-                equalled = false;
+                return false;
             } else if (!name.equals(object.getName())) {
-                equalled = false;
+                return false;
             }
         }
         if (entitlement == null) {
             if (object.getEntitlement() != null) {
-                equalled = false;
+                return false;
             }
         } else { // name not null
 
             if ((object.getEntitlement()) == null) {
-                equalled = false;
+                return false;
             } else if (!entitlement.equals(object.getEntitlement())) {
-                equalled = false;
+                return false;
             }
         }
+
         if (eSubject == null) {
             if (object.getSubject() != null) {
-                equalled = false;
+                return false;
             }
         } else { // name not null
-
             if ((object.getSubject()) == null) {
-                equalled = false;
+                return false;
             } else if (!eSubject.equals(object.getSubject())) {
-                equalled = false;
+                return false;
             }
         }
+
         if (eCondition == null) {
             if (object.getCondition() != null) {
-                equalled = false;
+                return false;
             }
         } else { // name not null
 
             if ((object.getCondition()) == null) {
-                equalled = false;
+                return false;
             } else if (!eCondition.equals(object.getCondition())) {
-                equalled = false;
+                return false;
             }
         }
+
         if (eResourceAttributes == null) {
             if (object.getResourceAttributes() != null) {
-                equalled = false;
+                return false;
             }
         } else { // name not null
 
             if ((object.getResourceAttributes()) == null) {
-                equalled = false;
+                return false;
             } else if (!eResourceAttributes.equals(
                 object.getResourceAttributes())) {
-                equalled = false;
+                return false;
             }
         }
         return equalled;
