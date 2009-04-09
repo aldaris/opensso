@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationType.java,v 1.5 2009-04-09 13:15:01 veiming Exp $
+ * $Id: ApplicationType.java,v 1.6 2009-04-09 15:18:33 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -96,6 +96,15 @@ public class ApplicationType {
      */
     public Map<String, Boolean> getActions() {
         return actions;
+    }
+
+    /**
+     * Sets supported action names and its default values.
+     *
+     * @param actions supported action names and its default values.
+     */
+    public void setActions(Map<String, Boolean> actions) {
+        this.actions = actions;
     }
 
     /**
