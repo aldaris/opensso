@@ -42,4 +42,9 @@
         <tag-name>subjectpanel</tag-name>
         <source>tag/subjectpanel.xhtml</source>
     </tag>
+    <function>
+        <function-name>indexOf</function-name>
+        <function-class>com.sun.identity.admin.Functions</function-class>
+        <function-signature>java.lang.String indexOf(java.util.List, java.lang.Object)</function-signature>
+    </function>
 </facelet-taglib>

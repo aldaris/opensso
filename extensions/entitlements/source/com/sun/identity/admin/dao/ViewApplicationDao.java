@@ -1,5 +1,7 @@
 package com.sun.identity.admin.dao;
 
+import com.sun.identity.admin.model.Action;
+import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.Resource;
 import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewApplicationType;
@@ -59,7 +61,15 @@ public class ViewApplicationDao implements Serializable {
             va.setResources(resources);
 
             // actions
-            // TODO
+            List<Action> actions = new ArrayList<Action>();
+            for (String actionName: a.getActions().keySet()) {
+                Boolean value = a.getActions().get(actionName);
+                BooleanAction ba = new BooleanAction();
+                ba.setName(actionName);
+                ba.setAllow(value.booleanValue());
+                actions.add(ba);
+            }
+            va.setActions(actions);
 
             // conditions
             // TODO

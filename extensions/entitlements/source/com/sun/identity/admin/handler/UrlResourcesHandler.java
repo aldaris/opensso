@@ -35,15 +35,16 @@ public class UrlResourcesHandler implements Serializable {
     }
 
     public void selectListener(ValueChangeEvent event) {
-        Boolean b = (Boolean) event.getNewValue();
-        boolean selected = b.booleanValue();
-        UrlResource ur = getUrlResource(event);
-        ur.setSelected(selected);
+        List<String> resourceNames = (List<String>) event.getNewValue();
+
         ViewEntitlement ve = getViewEntitlement(event);
-        if (selected) {
-            ve.getResources().add(ur);
-        } else {
-            ve.getResources().remove(ur);
+        ve.getResources().clear();
+        List<Resource> ar = getAvailableResources(event);
+
+        for (String resourceName: resourceNames) {
+            Resource r = new UrlResource();
+            r.setName(resourceName);
+            ve.getResources().add(r);
         }
     }
 
@@ -72,7 +73,7 @@ public class UrlResourcesHandler implements Serializable {
         String prefix = urlResourcesBean.getAddExceptionPopupResource().getExceptionPrefix();
 
         UrlResource ur = new UrlResource();
-        ur.setName(prefix+"/"+name);
+        ur.setName(prefix+name);
         ur.setSelected(true);
 
         ViewEntitlement ve = getViewEntitlement(event);

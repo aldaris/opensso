@@ -64,6 +64,9 @@ public class PolicyCreateWizardHandler
 
         int step = getStep(event);
         switch (step) {
+            // resources
+            case 1:
+                break;
         }
     }
 

@@ -24,10 +24,11 @@ public class ViewApplicationTypeDao implements Serializable {
             ViewApplicationType vat = viewApplicationTypes.get(name);
             ApplicationType at = ApplicationTypeManager.get(vat.getName());
             List<Action> actions = new ArrayList<Action>();
-            for (String actionString: at.getActions()) {
+            for (String actionName: at.getActions().keySet()) {
+                Boolean value = at.getActions().get(actionName);
                 BooleanAction ba = new BooleanAction();
-                ba.setName(actionString);
-                ba.setAllow(false);
+                ba.setName(actionName);
+                ba.setAllow(value.booleanValue());
                 actions.add(ba);
             }
             vat.setActions(actions);

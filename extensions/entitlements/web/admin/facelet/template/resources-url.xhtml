@@ -50,32 +50,35 @@
                         </span>
                     </span>
                     <div class="clear"></div>
+                    <ice:selectManyCheckbox
+                        id="resource-select"
+                        value="#{viewEntitlement.resources}"
+                        layout="spread"
+                        valueChangeListener="#{urlResourcesHandler.selectListener}"
+                        partialSubmit="true">
+                        <f:attribute
+                            name="viewEntitlement"
+                            value="#{viewEntitlement}"/>
+                        <f:attribute
+                            name="availableResources"
+                            value="#{availableResources}"/>
+                        <f:selectItems
+                            value="#{policyCreateWizardBean.availableResourceItems}"/>
+                    </ice:selectManyCheckbox>
                     <ice:panelSeries
                         styleClass="url-resource"
                         var="urlResource"
                         value="#{availableResources}">
                         <ice:panelGrid
-                            columns="3"
+                            columns="2"
                             visible="#{urlResource.visible}"
-                            columnClasses="url-resource-tableCol1,url-resource-tableCol2,url-resource-tableCol3"
+                            columnClasses="url-resource-tableCol1,url-resource-tableCol2"
                             scrollHeight="200px">
-                            <ice:selectBooleanCheckbox
-                                id="resource-checkbox"
-                                value="#{urlResource.selected}"
-                                valueChangeListener="#{urlResourcesHandler.selectListener}"
-                                partialSubmit="true">
-                                <f:attribute
-                                    name="urlResource"
-                                    value="#{urlResource}"/>
-                                <f:attribute
-                                    name="viewEntitlement"
-                                    value="#{viewEntitlement}"/>
-                                <f:attribute
-                                    name="availableResources"
-                                    value="#{availableResources}"/>
-                            </ice:selectBooleanCheckbox>
-                            <ice:outputText
-                                value="#{urlResource.name}"/>
+                            <ice:checkbox
+                                styleClass="url-resource-checkbox"
+                                for="resource-select"
+                                index="#{o:indexOf(availableResources,urlResource)}">
+                            </ice:checkbox>
                             <ice:panelGrid
                                 columns="1">
                                 <ice:panelGroup
@@ -116,9 +119,8 @@
                             var="urlResource"
                             value="#{viewEntitlement.exceptions}">
                             <ice:panelGrid
-                                columnClasses="url-resource-tableCol1,url-resource-tableCol2,url-resource-tableCol3"
-                                columns="3">
-                                <ice:panelGroup style="width: 20px"/>
+                                columnClasses="url-resource-tableCol1,url-resource-tableCol2"
+                                columns="2">
                                 <ice:outputText
                                     value="#{urlResource.name}"/>
                                 <ice:panelGrid

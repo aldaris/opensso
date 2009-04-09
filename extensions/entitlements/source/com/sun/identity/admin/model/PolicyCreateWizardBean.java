@@ -43,6 +43,16 @@ public class PolicyCreateWizardBean
         return items;
     }
 
+    public List<SelectItem> getAvailableResourceItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+
+        for (Resource r: availableResources) {
+            items.add(new SelectItem(r, r.getName()));
+        }
+
+        return items;
+    }
+
     public Effect getDropConditionEffect() {
         return dropConditionEffect;
     }
