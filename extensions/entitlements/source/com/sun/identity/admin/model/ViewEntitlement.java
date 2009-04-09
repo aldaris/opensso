@@ -13,6 +13,7 @@ public class ViewEntitlement implements Serializable {
     private List<Resource> resources = new ArrayList<Resource>();
     private List<Resource> exceptions = new ArrayList<Resource>();
     private List<Action> actions = new ArrayList<Action>();
+    private ViewApplication viewApplication;
 
     public List<Resource> getResources() {
         return resources;
@@ -32,7 +33,8 @@ public class ViewEntitlement implements Serializable {
         e.setResourceNames(getResourceSet());
         e.setExcludedResourceNames(getExceptionSet());
         e.setActionValues(getActionMap());
-
+        e.setApplicationName(viewApplication.getName());
+        
         return e;
     }
 
@@ -72,5 +74,13 @@ public class ViewEntitlement implements Serializable {
 
     public void setActions(List<Action> actions) {
         this.actions = actions;
+    }
+
+    public ViewApplication getViewApplication() {
+        return viewApplication;
+    }
+
+    public void setViewApplication(ViewApplication viewApplication) {
+        this.viewApplication = viewApplication;
     }
 }

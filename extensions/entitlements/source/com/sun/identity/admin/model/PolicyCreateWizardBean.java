@@ -2,10 +2,10 @@ package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.DeepCloneableArrayList;
+import com.sun.identity.admin.dao.ViewApplicationDao;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javax.faces.model.SelectItem;
 
 public class PolicyCreateWizardBean
@@ -14,8 +14,7 @@ public class PolicyCreateWizardBean
 
     private PrivilegeBean privilegeBean = new PrivilegeBean();
     
-    private Application application;
-    private Map<String, Application> applications;
+    private ViewApplicationDao viewApplicationDao;
     private Effect dropConditionEffect;
     private Effect dropSubjectContainerEffect;
     private Effect policyNameInputEffect;
@@ -34,32 +33,14 @@ public class PolicyCreateWizardBean
         privilegeBean = new PrivilegeBean();
     }
 
-    public Application getApplication() {
-        return application;
-    }
-
-    public void setApplication(Application application) {
-        this.application = application;
-        getPrivilegeBean().getViewEntitlement().setActions(new DeepCloneableArrayList<Action>(application.getDefaultActions()).deepClone());
-        availableResources = new DeepCloneableArrayList<Resource>(application.getDefaultResources()).deepClone();
-    }
-
-    public List<SelectItem> getApplicationItems() {
+    public List<SelectItem> getViewApplicationItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
 
-        for (Application a : getApplications().values()) {
-            items.add(new SelectItem(a, a.getName()));
+        for (ViewApplication va : getViewApplicationDao().getViewApplications().values()) {
+            items.add(new SelectItem(va.getName()));
         }
 
         return items;
-    }
-
-    public Map<String, Application> getApplications() {
-        return applications;
-    }
-
-    public void setApplications(Map<String, Application> applications) {
-        this.applications = applications;
     }
 
     public Effect getDropConditionEffect() {
@@ -116,5 +97,24 @@ public class PolicyCreateWizardBean
 
     public void setAvailableResources(List<Resource> availableResources) {
         this.availableResources = availableResources;
+    }
+
+    public ViewApplication getViewApplication() {
+        return privilegeBean.getViewEntitlement().getViewApplication();
+    }
+
+    public void setViewApplication(ViewApplication viewApplication) {
+        privilegeBean.getViewEntitlement().setViewApplication(viewApplication);
+
+        getPrivilegeBean().getViewEntitlement().setActions(new DeepCloneableArrayList<Action>(viewApplication.getActions()).deepClone());
+        availableResources = new DeepCloneableArrayList<Resource>(viewApplication.getResources()).deepClone();
+    }
+
+    public ViewApplicationDao getViewApplicationDao() {
+        return viewApplicationDao;
+    }
+
+    public void setViewApplicationDao(ViewApplicationDao viewApplicationDao) {
+        this.viewApplicationDao = viewApplicationDao;
     }
 }

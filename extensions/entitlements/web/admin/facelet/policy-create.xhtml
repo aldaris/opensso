@@ -31,7 +31,7 @@
                     label="Step 2: Select or add a resource to protect">
                     <ui:define name="wizard-step-body">
                         <ui:include
-                            src="#{policyCreateWizardBean.application.applicationType.template}">
+                            src="#{policyCreateWizardBean.viewApplication.viewApplicationType.resourceTemplate}">
                                 <ui:param
                                     name="availableResources"
                                     value="#{policyCreateWizardBean.availableResources}"/>

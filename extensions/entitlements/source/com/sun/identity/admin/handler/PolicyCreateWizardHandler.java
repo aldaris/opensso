@@ -4,7 +4,6 @@ import com.icesoft.faces.component.dragdrop.DndEvent;
 import com.icesoft.faces.component.dragdrop.DropEvent;
 import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.Highlight;
-import com.sun.identity.admin.model.Application;
 import com.sun.identity.admin.model.ConditionType;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
@@ -12,6 +11,7 @@ import com.sun.identity.admin.model.ContainerViewCondition;
 import com.sun.identity.admin.model.ContainerViewSubject;
 import com.sun.identity.admin.model.PolicyCreateWizardBean;
 import com.sun.identity.admin.model.SubjectType;
+import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewCondition;
 import com.sun.identity.admin.model.ViewSubject;
 import com.sun.identity.entitlement.Privilege;
@@ -125,8 +125,8 @@ public class PolicyCreateWizardHandler
 
     public void applicationChanged(ValueChangeEvent event) {
         String name = (String) event.getNewValue();
-        Application a = getPolicyCreateWizardBean().getApplications().get(name);
-        getPolicyCreateWizardBean().setApplication(a);
+        ViewApplication va = getPolicyCreateWizardBean().getViewApplicationDao().getViewApplications().get(name);
+        getPolicyCreateWizardBean().setViewApplication(va);
     }
 
     private PolicyCreateWizardBean getPolicyCreateWizardBean() {

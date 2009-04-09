@@ -23,7 +23,61 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
+    <!-- application types -->
+    <managed-bean>
+        <managed-bean-name>iPlanetAMWebAgentService</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ViewApplicationType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>iPlanetAMWebAgentService</value>
+        </managed-property>
+        <managed-property>
+            <property-name>resourceTemplate</property-name>
+            <value>template/resources-url.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>resourceClassName</property-name>
+            <value>com.sun.identity.admin.model.UrlResource</value>
+        </managed-property>
+    </managed-bean>
 
+    <managed-bean>
+        <managed-bean-name>viewApplicationTypes</managed-bean-name>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <map-entries>
+            <map-entry>
+                <key>iPlanetAMWebAgentService</key>
+                <value>#{iPlanetAMWebAgentService}</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>viewApplicationTypeDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.ViewApplicationTypeDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>viewApplicationTypes</property-name>
+            <value>#{viewApplicationTypes}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- application types -->
+
+    <!-- applications -->
+    <managed-bean>
+        <managed-bean-name>viewApplicationDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.ViewApplicationDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>viewApplicationTypeDao</property-name>
+            <value>#{viewApplicationTypeDao}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- applications -->
+
+    <!-- various panel beans -->
     <managed-bean>
         <managed-bean-name>conditionTypePanelBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.BasicMultiPanelBean</managed-bean-class>
@@ -39,6 +93,7 @@
         <managed-bean-class>com.sun.identity.admin.handler.BasicMultiPanelHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
+    <!-- various panel beans -->
 
     <!-- subject dao's -->
     <managed-bean>
@@ -230,66 +285,6 @@
         </list-entries>
     </managed-bean>
     <!-- subject containers -->
-
-    <!-- application types -->
-    <managed-bean>
-        <managed-bean-name>urlApplicationType</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.ApplicationType</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>name</property-name>
-            <value>url</value>
-        </managed-property>
-        <managed-property>
-            <property-name>template</property-name>
-            <value>template/resources-url.xhtml</value>
-        </managed-property>
-    </managed-bean>
-    <!-- application types -->
-
-    <managed-bean>
-        <managed-bean-name>applicationTypes</managed-bean-name>
-        <managed-bean-class>java.util.HashMap</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <map-entries>
-            <map-entry>
-                <key>#{urlApplicationType.name}</key>
-                <value>#{urlApplicationType}</value>
-            </map-entry>
-        </map-entries>
-    </managed-bean>
-
-    <!-- applications -->
-    <managed-bean>
-        <managed-bean-name>applications</managed-bean-name>
-        <managed-bean-class>java.util.HashMap</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
-    <!-- applications -->
-
-    <managed-bean>
-        <managed-bean-name>applicationDao</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.dao.ApplicationDao</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>applicationTypes</property-name>
-            <value>#{applicationTypes}</value>
-        </managed-property>
-    </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>applicationHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.ApplicationHandler</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>applications</property-name>
-            <value>#{applications}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>applicationDao</property-name>
-            <value>#{applicationDao}</value>
-        </managed-property>
-    </managed-bean>
 
     <!-- condition types -->
     <managed-bean>
@@ -572,8 +567,8 @@
         <managed-bean-class>com.sun.identity.admin.model.PolicyCreateWizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
-            <property-name>applications</property-name>
-            <value>#{applicationHandler.applications}</value>
+            <property-name>viewApplicationDao</property-name>
+            <value>#{viewApplicationDao}</value>
         </managed-property>
     </managed-bean>
 
