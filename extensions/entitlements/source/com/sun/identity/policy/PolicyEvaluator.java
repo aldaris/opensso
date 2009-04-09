@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.4 2009-04-07 10:25:11 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.5 2009-04-09 13:15:04 veiming Exp $
  *
  */
 
@@ -50,9 +50,9 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.Evaluator;
 import com.sun.identity.entitlement.PolicyEvaluatorFactory;
 import com.sun.identity.entitlement.interfaces.IPolicyEvaluator;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.policy.interfaces.PolicyListener;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.AttributeSchema;
@@ -473,8 +473,9 @@ public class PolicyEvaluator {
                 PolicyEvaluatorFactory.getInstance().getEvaluator();
             Entitlement entitlement = new Entitlement(serviceTypeName,
                 resourceName, actions);
-            return eval.hasEntitlement(createSubject(adminSSOToken),
-                createSubject(token), serviceTypeName, entitlement,
+            return eval.hasEntitlement(
+                SubjectUtils.createSubject(adminSSOToken),
+                SubjectUtils.createSubject(token), serviceTypeName, entitlement,
                 envParameters);
         } catch (EntitlementException e) {
             throw new PolicyException(e);
@@ -1181,10 +1182,10 @@ public class PolicyEvaluator {
 
         SSOToken adminSSOToken = (SSOToken)AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        Subject adminSubject = createSubject(adminSSOToken);
+        Subject adminSubject = SubjectUtils.createSubject(adminSSOToken);
 
         try {
-            Subject userSubject = createSubject(token);
+            Subject userSubject = SubjectUtils.createSubject(token);
             IPolicyEvaluator eval =
                 PolicyEvaluatorFactory.getInstance().getEvaluator();
 
@@ -2223,13 +2224,4 @@ public class PolicyEvaluator {
                 + " resourceNames cache: " 
                 + resourceNamesMap.size());
     }
-
-    private Subject createSubject(SSOToken token) {
-        Principal userP = new AuthSPrincipal(token.getTokenID().toString());
-        Set userPrincipals = new HashSet(2);
-        userPrincipals.add(userP);
-        return new Subject(true, userPrincipals,
-                Collections.EMPTY_SET, Collections.EMPTY_SET);
-    }
-
 }

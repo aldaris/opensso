@@ -22,13 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleSubject.java,v 1.4 2009-04-06 23:46:08 arviranga Exp $
+ * $Id: RoleSubject.java,v 1.5 2009-04-09 13:15:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.idm.IdType;
 import com.sun.identity.shared.debug.Debug;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -133,12 +136,23 @@ public class RoleSubject implements EntitlementSubject {
      * of any error
      */
     public SubjectDecision evaluate(
-            SubjectAttributesManager mgr,
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return null;
+        SubjectAttributesManager mgr,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment)
+        throws EntitlementException {
+        boolean satified = false;
+        Set publicCreds = subject.getPublicCredentials();
+        if ((publicCreds != null) && !publicCreds.isEmpty()) {
+            Map<String, Set<String>> attributes = (Map<String, Set<String>>)
+                publicCreds.iterator().next();
+            Set<String> values = attributes.get(
+                SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
+                    IdType.ROLE.getName());
+            satified = (values != null) ? values.contains(role) : false;
+        }
+        
+        return new SubjectDecision(satified, Collections.EMPTY_MAP);
     }
 
     /**
@@ -228,10 +242,16 @@ public class RoleSubject implements EntitlementSubject {
     }
 
     public Map<String, String> getSearchIndexAttributes() {
-        return (Collections.EMPTY_MAP);
+        Map<String, String> map = new HashMap<String, String>(2);
+        map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
+            IdType.ROLE.getName(), role);
+        return map;
     }
 
     public Set<String> getRequiredAttributeNames() {
-        return(Collections.EMPTY_SET);
+        Set<String> set = new HashSet<String>(2);
+        set.add(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
+            IdType.ROLE.getName());
+        return set;
     }
 }

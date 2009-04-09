@@ -22,13 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.4 2009-04-06 23:46:09 arviranga Exp $
+ * $Id: GroupSubject.java,v 1.5 2009-04-09 13:15:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.idm.IdType;
 import com.sun.identity.shared.debug.Debug;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -133,12 +135,15 @@ public class GroupSubject implements EntitlementSubject {
      * of any error
      */
     public SubjectDecision evaluate(
-            SubjectAttributesManager mgr,
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return null;
+        SubjectAttributesManager mgr,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment)
+        throws EntitlementException {
+        boolean satified = mgr.hasAttribute(subject,
+            SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
+            IdType.GROUP.getName(), group);
+        return new SubjectDecision(satified, Collections.EMPTY_MAP);
     }
 
     /**
@@ -228,7 +233,12 @@ public class GroupSubject implements EntitlementSubject {
     }
 
     public Map<String, String> getSearchIndexAttributes() {
-        return (Collections.EMPTY_MAP);
+        Map<String, String> map = new HashMap<String, String>(2);
+        map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
+            IdType.GROUP.getName(), group);
+        map.put(SubjectAttributesCollector.NAMESPACE_IDENTITY,
+            SubjectAttributesCollector.ATTR_NAME_ALL_ENTITIES);
+        return map;
     }
 
     public Set<String> getRequiredAttributeNames() {

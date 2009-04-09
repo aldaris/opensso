@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISearchIndex.java,v 1.1 2009-03-31 01:16:11 veiming Exp $
+ * $Id: ISearchIndex.java,v 1.2 2009-04-09 13:15:02 veiming Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
@@ -30,9 +30,15 @@ package com.sun.identity.entitlement.interfaces;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 
 /**
- *
- * @author dennis
+ * Search index interface defines the method required for generating indexes
+ * for search datastore for privileges.
  */
 public interface ISearchIndex {
+    /**
+     * Returns search indexes for a given resource.
+     *
+     * @param resource Resource for generating the indexes.
+     * @return search indexes for a given resource.
+     */
     ResourceSearchIndexes getIndexes(String resource);
 }

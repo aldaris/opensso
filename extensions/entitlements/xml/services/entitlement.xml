@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.3 2009-04-07 10:25:12 veiming Exp $
+   $Id: entitlement.xml,v 1.4 2009-04-09 13:15:05 veiming Exp $
 
 -->
 
@@ -85,6 +85,10 @@
                 </SubSchema>
             </Global>
             <Organization>
+                <AttributeSchema name="subjectAttributeNames" 
+                    type="list"
+                    syntax="string"
+                    i18nKey="" />
                 <SubSchema name="applications" inheritance="multiple">
                     <SubSchema name="application" inheritance="multiple">
                         <AttributeSchema name="applicationType"
@@ -130,8 +134,8 @@
                         id="applicationType">
                         <AttributeValuePair>
                             <Attribute name="actions" />
-                            <Value>GET</Value>
-                            <Value>POST</Value>
+                            <Value>GET=true</Value>
+                            <Value>POST=true</Value>
                         </AttributeValuePair>
                     <AttributeValuePair>
                             <Attribute name="searchIndexImpl" />
@@ -150,9 +154,9 @@
                         id="applicationType">
                         <AttributeValuePair>
                             <Attribute name="actions" />
-                            <Value>READ</Value>
-                            <Value>MODIFY</Value>
-                            <Value>DELEGATE</Value>
+                            <Value>READ=true</Value>
+                            <Value>MODIFY=true</Value>
+                            <Value>DELEGATE=true</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="searchIndexImpl" />

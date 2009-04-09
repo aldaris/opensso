@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.8 2009-04-08 17:42:16 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.9 2009-04-09 13:15:01 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -83,7 +83,7 @@ public final class ApplicationManager {
     private static void addApplication(String realm, ApplicationInfo info) {
         String name = info.getName();
         String appTypeName = info.getApplicationType();
-        Set<String> actions = info.getActions();
+        Map<String, Boolean> actions = info.getActions();
         Set<String> resources = info.getResources();
         Set<String> conditions = info.getConditionClassNames();
         String searchIndexClassName = info.getSearchIndexImpl();

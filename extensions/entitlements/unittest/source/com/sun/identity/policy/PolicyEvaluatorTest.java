@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.15 2009-04-07 10:25:12 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.16 2009-04-09 13:15:05 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -44,6 +45,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 import org.testng.annotations.BeforeClass;
@@ -63,13 +67,20 @@ public class PolicyEvaluatorTest {
     private static String URL_RESOURCE3 = "http://www.ibm.com:8080/private";
     private static String URL_RESOURCE4 = "http://*.com:8080/private";
     private static String TEST_GRP_NAME = "policyTestGroup";
+    private static String TEST_USER_NAME = "policyTestUser";
 
     private AMIdentity testGroup;
+    private AMIdentity testUser;
+    private SSOToken userSSOToken;
+    private AuthContext lc;
 
     @BeforeClass
-    public void setup() throws PolicyException, SSOException, IdRepoException {
+    public void setup() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
+        createUser(adminToken);
+        userSSOToken = login();
+
         PolicyManager pm = new PolicyManager(adminToken, "/");
         Policy policy = new Policy(POLICY_NAME1, "test1 - discard",
             false, true);
@@ -96,10 +107,17 @@ public class PolicyEvaluatorTest {
         policy.addSubject("group4", createGroupSubject(pm));
         policy.addCondition("condition4", createIPCondition(pm));
         pm.addPolicy(policy);
+
+
     }
     
     @AfterClass
     public void cleanup() throws PolicyException, SSOException, IdRepoException{
+        try {
+            lc.logout();
+        } catch (Exception e) {
+            //ignore
+        }
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
@@ -112,22 +130,20 @@ public class PolicyEvaluatorTest {
             adminToken, "/");
         Set<AMIdentity> identities = new HashSet<AMIdentity>();
         identities.add(testGroup);
+        identities.add(testUser);
         amir.deleteIdentities(identities);
     }
 
     @Test
     public void testIsAllowed() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-
         PolicyEvaluator pe = new PolicyEvaluator("iPlanetAMWebAgentService");
-        if (!pe.isAllowed(adminToken, "http://www.sun.com:8080/private", "GET")){
+        if (!pe.isAllowed(userSSOToken, "http://www.sun.com:8080/private", "GET")){
             throw new Exception("testIsAllowed" +
                 "http://www.sun.com:8080/private evaluation failed");
         }
         
         //negative test
-        if (pe.isAllowed(adminToken, "http://www.sun.com:8080/public", "GET")){
+        if (pe.isAllowed(userSSOToken, "http://www.sun.com:8080/public", "GET")){
             throw new Exception("testIsAllowed" +
                 "http://www.sun.com:8080/public evaluation failed");
         }
@@ -135,11 +151,8 @@ public class PolicyEvaluatorTest {
 
     @Test
     public void testResourceSelf() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-
         PolicyEvaluator pe = new PolicyEvaluator("iPlanetAMWebAgentService");
-        Set<ResourceResult> resResults = pe.getResourceResults(adminToken, 
+        Set<ResourceResult> resResults = pe.getResourceResults(userSSOToken,
             "http://www.sun.com:8080/private",
             ResourceResult.SELF_SCOPE, Collections.EMPTY_MAP);
         ResourceResult resResult = resResults.iterator().next();
@@ -159,14 +172,11 @@ public class PolicyEvaluatorTest {
  
     @Test
     public void testResourceSubTree() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-
         PolicyEvaluator pe = new PolicyEvaluator("iPlanetAMWebAgentService");
-        Set<ResourceResult> resResults = pe.getResourceResults(adminToken, 
-            "http://www.sun.com:8080/private",
+        Set<ResourceResult> resResults = pe.getResourceResults(userSSOToken,
+            "http://www.sun.com:8080/",
             ResourceResult.SUBTREE_SCOPE, Collections.EMPTY_MAP);
-        if (resResults.size() != 3) {
+        if (resResults.size() != 2) {
             throw new Exception("testResourceSubTree: failed");
         }
     }
@@ -320,8 +330,9 @@ public class PolicyEvaluatorTest {
 
     private Subject createSubject(PolicyManager pm) throws PolicyException {
         SubjectTypeManager mgr = pm.getSubjectTypeManager();
-        Subject subject = mgr.getSubject("AuthenticatedUsers");
+        Subject subject = mgr.getSubject("AMIdentitySubject");
         Set<String> set = new HashSet<String>();
+        set.add(testUser.getUniversalId());
         subject.setValues(set);
         return subject;
     }
@@ -356,6 +367,22 @@ public class PolicyEvaluatorTest {
             Collections.EMPTY_MAP);
     }
 
+    private void createUser(SSOToken adminToken)
+        throws IdRepoException, SSOException {
+        AMIdentityRepository amir = new AMIdentityRepository(
+            adminToken, "/");
+        Map<String, Set<String>> attrValues =new HashMap<String, Set<String>>();
+        Set<String> set = new HashSet<String>();
+        set.add(TEST_USER_NAME);
+        attrValues.put("givenname", set);
+        attrValues.put("sn", set);
+        attrValues.put("cn", set);
+        attrValues.put("userpassword", set);
+
+        testUser = amir.createIdentity(IdType.USER, TEST_USER_NAME,
+            attrValues);
+    }
+
     private javax.security.auth.Subject createSubject(SSOToken token) {
         Principal userP = new AuthSPrincipal(token.getTokenID().toString());
         Set userPrincipals = new HashSet(2);
@@ -363,5 +390,37 @@ public class PolicyEvaluatorTest {
         return new javax.security.auth.Subject(true, userPrincipals,
             Collections.EMPTY_SET, Collections.EMPTY_SET);
     }
+
+    private SSOToken login()
+        throws Exception {
+        lc = new AuthContext("/");
+        AuthContext.IndexType indexType = AuthContext.IndexType.MODULE_INSTANCE;
+        lc.login(indexType, "DataStore");
+        Callback[] callbacks = null;
+
+        // get information requested from module
+        while (lc.hasMoreRequirements()) {
+            callbacks = lc.getRequirements();
+            if (callbacks != null) {
+                addLoginCallbackMessage(callbacks);
+                lc.submitRequirements(callbacks);
+            }
+        }
+
+        return (lc.getStatus() == AuthContext.Status.SUCCESS) ?
+            lc.getSSOToken() : null;
+    }
+
+    private void addLoginCallbackMessage(Callback[] callbacks) {
+        for (int i = 0; i < callbacks.length; i++) {
+            if (callbacks[i] instanceof NameCallback) {
+                ((NameCallback) callbacks[i]).setName(TEST_USER_NAME);
+            } else if (callbacks[i] instanceof PasswordCallback) {
+                ((PasswordCallback) callbacks[i]).setPassword(
+                    TEST_USER_NAME.toCharArray());
+            }
+        }
+    }
+
 
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.2 2009-04-07 10:25:11 veiming Exp $
+ * $Id: EntitlementService.java,v 1.3 2009-04-09 13:15:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -40,6 +40,7 @@ import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.security.AccessController;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +52,8 @@ import java.util.Set;
 public class EntitlementService implements IPolicyConfig {
     public static final String SERVICE_NAME = "openssoEntitlement";
 
+    private static final String ATTR_NAME_SUBJECT_ATTR_NAMES =
+        "subjectAttributeNames";
     private static final String CONFIG_APPLICATIONS = "registeredApplications";
     private static final String CONFIG_APPLICATIONTYPE = "applicationType";
     private static final String CONFIG_ACTIONS = "actions";
@@ -105,7 +108,7 @@ public class EntitlementService implements IPolicyConfig {
                 for (String name : names) {
                     ServiceConfig appType = conf.getSubConfig(name);
                     Map<String, Set<String>> data = appType.getAttributes();
-                    Set<String> actions = data.get(CONFIG_ACTIONS);
+                    Map<String, Boolean> actions = getActions(data);
                     String saveIndexImpl = getAttribute(data,
                         CONFIG_SAVE_INDEX_IMPL);
                     String searchIndexImpl = getAttribute(data,
@@ -121,6 +124,23 @@ public class EntitlementService implements IPolicyConfig {
             // TOFIX
         } catch (SSOException ex) {
             //TOFIX
+        }
+        return results;
+    }
+
+    private Map<String, Boolean> getActions(Map<String, Set<String>> data) {
+        Map<String, Boolean> results = new HashMap<String, Boolean>();
+        Set<String> actions = data.get(CONFIG_ACTIONS);
+        for (String a : actions) {
+            int index = a.indexOf('=');
+            String name = a;
+            Boolean defaultVal = Boolean.TRUE;
+
+            if (index != -1) {
+                name = a.substring(0, index);
+                defaultVal = Boolean.parseBoolean(a.substring(index+1));
+            }
+            results.put(name, defaultVal);
         }
         return results;
     }
@@ -148,7 +168,7 @@ public class EntitlementService implements IPolicyConfig {
                 for (String name : names) {
                     ServiceConfig appType = conf.getSubConfig(name);
                     Map<String, Set<String>> data = appType.getAttributes();
-                    Set<String> actions = data.get(CONFIG_ACTIONS);
+                    Map<String, Boolean> actions = getActions(data);
                     Set<String> resources = data.get(CONFIG_RESOURCES);
                     String entitlementCombiner = getAttribute(data,
                         CONFIG_ENTITLEMENT_COMBINER);
@@ -177,6 +197,52 @@ public class EntitlementService implements IPolicyConfig {
         return results;
     }
 
+    public Set<String> getSubjectAttributeNames(String realm) {
+        try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+            ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
+                adminToken);
+            ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
+            if (orgConfig != null) {
+                return (Set<String>)orgConfig.getAttributesForRead().get(
+                    ATTR_NAME_SUBJECT_ATTR_NAMES);
+            }
+        } catch (SMSException ex) {
+            //TOFIX
+        } catch (SSOException ex) {
+            //TOFIX
+        }
+        return Collections.EMPTY_SET;
+    }
 
-
+    public void addSubjectAttributeNames(String realm, Set<String> names) {
+        if ((names == null) || names.isEmpty()) {
+            return;
+        }
+        
+        try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+            ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
+                adminToken);
+            ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
+            if (orgConfig != null) {
+                Set<String> orig = (Set<String>)
+                    orgConfig.getAttributes().get(ATTR_NAME_SUBJECT_ATTR_NAMES);
+                if ((orig == null) || orig.isEmpty()) {
+                    orig = new HashSet<String>();
+                }
+                orig.addAll(names);
+                Map<String, Set<String>> map = new
+                    HashMap<String, Set<String>>();
+                map.put(ATTR_NAME_SUBJECT_ATTR_NAMES, orig);
+                orgConfig.setAttributes(map);
+            }
+        } catch (SMSException ex) {
+            //TOFIX
+        } catch (SSOException ex) {
+            //TOFIX
+        }
+    }
 }

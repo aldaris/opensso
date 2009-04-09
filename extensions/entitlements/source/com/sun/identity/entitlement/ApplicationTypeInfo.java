@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeInfo.java,v 1.2 2009-04-07 10:25:07 veiming Exp $
+ * $Id: ApplicationTypeInfo.java,v 1.3 2009-04-09 13:15:01 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,14 +36,14 @@ import java.util.Set;
  */
 public class ApplicationTypeInfo {
     private String name;
-    private Set<String> actions;
+    private Map<String, Boolean> actions;
     private String searchIndexImpl;
     private String saveIndexImpl;
     private String resourceComp;
 
     public ApplicationTypeInfo(
         String name,
-        Set<String> actions,
+        Map<String, Boolean> actions,
         String saveIndexImpl,
         String searchIndexImpl,
         String resourceComp) {
@@ -53,7 +54,7 @@ public class ApplicationTypeInfo {
         this.resourceComp = resourceComp;
     }
 
-    public Set<String> getActions() {
+    public Map<String, Boolean> getActions() {
         return actions;
     }
 

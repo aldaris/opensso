@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyDataStore.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
+ * $Id: IPolicyDataStore.java,v 1.2 2009-04-09 13:15:02 veiming Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
@@ -31,6 +31,7 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * This interface defines the methods required to store policy indexes
@@ -45,6 +46,7 @@ public interface IPolicyDataStore {
 
     Iterator<Privilege> search(
         ResourceSearchIndexes indexes,
+        Set<String> subjectIndexes,
         boolean bSubTree)
         throws EntitlementException;
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.6 2009-04-07 10:25:09 veiming Exp $
+ * $Id: Privilege.java,v 1.7 2009-04-09 13:15:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -31,6 +31,7 @@ import com.sun.identity.policy.ResourceMatch;
 import com.sun.identity.shared.debug.Debug;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -326,7 +327,10 @@ public abstract class Privilege implements Serializable {
         return code;
     }
 
-    protected Set<String> getMatchingResources(String resourceName) {
+    protected Set<String> getMatchingResources(
+        String resourceName,
+        boolean recursive
+    ) {
         Set<String> matched = new HashSet<String>();
         ResourceName resComparator = entitlement.getResourceComparator();
 
@@ -335,18 +339,49 @@ public abstract class Privilege implements Serializable {
             if (match.equals(ResourceMatch.EXACT_MATCH) ||
                 match.equals(ResourceMatch.WILDCARD_MATCH)) {
                 matched.add(r);
+            } else if (recursive && match.equals(
+                ResourceMatch.SUB_RESOURCE_MATCH)) {
+                matched.add(r);
             }
         }
 
-        for (String r : entitlement.getExcludedResourceNames()) {
-            ResourceMatch match = resComparator.compare(resourceName, r, true);
-            if (match.equals(ResourceMatch.EXACT_MATCH) ||
-                match.equals(ResourceMatch.WILDCARD_MATCH)) {
-                matched.remove(r);
+        for (Iterator<String> i = matched.iterator(); i.hasNext(); ) {
+            String r = i.next();
+            for (String e : entitlement.getExcludedResourceNames()) {
+                ResourceMatch match = resComparator.compare(r, e, true);
+                if (match.equals(ResourceMatch.EXACT_MATCH) ||
+                    match.equals(ResourceMatch.WILDCARD_MATCH)) {
+                    i.remove();
+                    break;
+                } else if (recursive && match.equals(
+                    ResourceMatch.SUB_RESOURCE_MATCH)) {
+                    i.remove();
+                    break;
+                }
             }
         }
 
         return matched;
+    }
+
+    protected boolean doesSubjectMatch(
+        Map<String, Set<String>> resultAdvices,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
+        SubjectAttributesManager mgr =
+            SubjectAttributesManager.getInstance(subject);
+        SubjectDecision sDecision = getSubject().evaluate(
+            mgr, subject, resourceName, environment);
+        if (sDecision.isSatisfied()) {
+            Map<String, Set<String>> advices = sDecision.getAdvices();
+            if (advices != null) {
+                resultAdvices.putAll(advices);
+            }
+            return true;
+        }
+        return false;
     }
 
     protected boolean doesConditionMatch(
@@ -362,7 +397,10 @@ public abstract class Privilege implements Serializable {
         ConditionDecision decision = eCondition.evaluate(
             subject, resourceName, environment);
         if (decision.isSatisfied()) {
-            resultAdvices.putAll(decision.getAdvices());
+            Map<String, Set<String>> advices = decision.getAdvices();
+            if (advices != null) {
+                resultAdvices.putAll(advices);
+            }
             return true;
         }
         return false;

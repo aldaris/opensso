@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
+ * $Id: DataStore.java,v 1.2 2009-04-09 13:15:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -33,6 +33,7 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
+import com.sun.identity.entitlement.SubjectAttributesManager;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.shared.encode.Base64;
@@ -66,10 +67,13 @@ public class DataStore {
     private static final String START_DN_TEMPLATE =
          "ou=default,ou=GlobalConfig,ou=1.0,ou=" + SERVICE_NAME +
          ",ou=services,{0}";
+    private static final String SUBJECT_INDEX_KEY = "subjectindex";
     private static final String HOST_INDEX_KEY = "hostindex";
     private static final String PATH_INDEX_KEY = "pathindex";
     private static final String PATH_PARENT_INDEX_KEY = "pathparentindex";
     private static final String SERIALIZABLE_INDEX_KEY = "serializable";
+    private static final String SUBJECT_FILTER_TEMPLATE =
+        "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + SUBJECT_INDEX_KEY + "={0})";
     private static final String HOST_FILTER_TEMPLATE =
         "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + HOST_INDEX_KEY + "={0})";
     private static final String PATH_FILTER_TEMPLATE =
@@ -142,8 +146,13 @@ public class DataStore {
         return count;
     }
 
-    public String add(ResourceSaveIndexes indexes, Privilege p)
+    public String add(Privilege p)
         throws EntitlementException {
+        ResourceSaveIndexes indexes =
+            p.getEntitlement().getResourceSaveIndexes();
+        Set<String> subjectIndexes =
+            SubjectAttributesManager.getSubjectSearchIndexes(p);
+
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         String dn = getDistinguishedName(p.getName());
@@ -162,6 +171,9 @@ public class DataStore {
             }
             for (String i : indexes.getParentPath()) {
                 searchable.add(PATH_PARENT_INDEX_KEY + "=" + i);
+            }
+            for (String i : subjectIndexes) {
+                searchable.add(SUBJECT_INDEX_KEY + "=" + i);
             }
 
             Set<String> set = new HashSet<String>(2);
@@ -207,11 +219,12 @@ public class DataStore {
     public Set<Privilege> search(
         BufferedIterator iterator,
         ResourceSearchIndexes indexes,
+        Set<String> subjectIndexes,
         boolean bSubTree,
         Set<String> excludeDNs
     ) throws EntitlementException {
         Set<Privilege> results = new HashSet<Privilege>();
-        String filter = getFilter(indexes, bSubTree);
+        String filter = getFilter(indexes, subjectIndexes, bSubTree);
         if (filter != null) {
 
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -235,8 +248,19 @@ public class DataStore {
         return results;
     }
 
-    private String getFilter(ResourceSearchIndexes indexes, boolean bSubTree) {
+    private String getFilter(
+        ResourceSearchIndexes indexes,
+        Set<String> subjectIndexes,
+        boolean bSubTree
+    ) {
         StringBuffer filter = new StringBuffer();
+        filter.append("(|");
+        for (String i : subjectIndexes) {
+            Object[] o = {i};
+            filter.append(MessageFormat.format(SUBJECT_FILTER_TEMPLATE, o));
+        }
+        filter.append(")");
+
         Set<String> hostIndexes = indexes.getHostIndexes();
         if ((hostIndexes != null) && !hostIndexes.isEmpty()) {
             filter.append("(|");

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.2 2009-04-09 13:15:03 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -31,6 +31,7 @@ import com.sun.identity.entitlement.PolicyConfigFactory;
 import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
+import com.sun.identity.entitlement.SubjectAttributesManager;
 import com.sun.identity.entitlement.ThreadPool;
 import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.shared.BufferedIterator;
@@ -67,8 +68,11 @@ public class PolicyDataStore implements IPolicyDataStore {
 
 
     public void add(Privilege p)
-            throws EntitlementException {
-        dataStore.add(p.getEntitlement().getResourceSaveIndexes(), p);
+        throws EntitlementException {
+        dataStore.add(p);
+        IPolicyConfig config = PolicyConfigFactory.getPolicyConfig();
+        config.addSubjectAttributeNames("/",
+            SubjectAttributesManager.getRequiredAttributeNames(p)); //TOFIX realm
     }
 
     public void delete(Privilege p)
@@ -93,6 +97,7 @@ public class PolicyDataStore implements IPolicyDataStore {
 
     public Iterator<Privilege> search(
             ResourceSearchIndexes indexes,
+            Set<String> subjectIndexes,
             boolean bSubTree)
             throws EntitlementException {
         BufferedIterator iterator = new BufferedIterator();
@@ -106,8 +111,8 @@ public class PolicyDataStore implements IPolicyDataStore {
                 i.remove();
             }
         }
-        ThreadPool.submit(new SearchTask(this, iterator, indexes, bSubTree,
-                setDNs));
+        ThreadPool.submit(new SearchTask(this, iterator, indexes, 
+            subjectIndexes, bSubTree, setDNs));
         return iterator;
     }
 
@@ -116,18 +121,22 @@ public class PolicyDataStore implements IPolicyDataStore {
         private PolicyDataStore parent;
         private BufferedIterator iterator;
         private ResourceSearchIndexes indexes;
+        private Set<String> subjectIndexes;
         private boolean bSubTree;
         private Set<String> excludeDNs;
 
         public SearchTask(
-                PolicyDataStore parent,
-                BufferedIterator iterator,
-                ResourceSearchIndexes indexes,
-                boolean bSubTree,
-                Set<String> excludeDNs) {
+            PolicyDataStore parent,
+            BufferedIterator iterator,
+            ResourceSearchIndexes indexes,
+            Set<String> subjectIndexes,
+            boolean bSubTree,
+            Set<String> excludeDNs
+        ) {
             this.parent = parent;
             this.iterator = iterator;
             this.indexes = indexes;
+            this.subjectIndexes = subjectIndexes;
             this.bSubTree = bSubTree;
             this.excludeDNs = excludeDNs;
         }
@@ -135,7 +144,8 @@ public class PolicyDataStore implements IPolicyDataStore {
         public void run() {
             try {
                 Set<Privilege> results = parent.dataStore.search(
-                        iterator, indexes, bSubTree, excludeDNs);
+                        iterator, indexes, subjectIndexes, bSubTree,
+                        excludeDNs);
                 for (Privilege p : results) {
                     parent.cache(p);
                 }

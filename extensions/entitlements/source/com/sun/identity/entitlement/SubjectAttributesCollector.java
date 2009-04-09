@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesCollector.java,v 1.1 2009-04-06 23:46:08 arviranga Exp $
+ * $Id: SubjectAttributesCollector.java,v 1.2 2009-04-09 13:15:02 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -37,6 +37,25 @@ import javax.security.auth.Subject;
  * attributes and memberships.
  */
 public interface SubjectAttributesCollector {
+    /**
+     * Attribute Namespace.
+     */
+    String NAMESPACE_ATTR = "attribute:";
+
+    /**
+     * Membership Namespace.
+     */
+    String NAMESPACE_MEMBERSHIP = "membership:";
+
+    /**
+     * Identity Namespace
+     */
+    String NAMESPACE_IDENTITY = "identity:";
+
+    /**
+     * All Entities.
+     */
+    String ATTR_NAME_ALL_ENTITIES = "all";
 
     /**
      * Returns the attribute values of the given user represented by
@@ -46,7 +65,7 @@ public interface SubjectAttributesCollector {
      * @return a map of attribute names and their values
      * @throws com.sun.identity.entitlement.EntitlementException
      */
-    public Map<String, Set> getAttributes(Subject subject,
+    Map<String, Set<String>> getAttributes(Subject subject,
         Set<String> attrNames) throws EntitlementException;
 
     /**
@@ -58,6 +77,6 @@ public interface SubjectAttributesCollector {
      * @return
      * @throws com.sun.identity.entitlement.EntitlementException
      */
-    public boolean hasAttribute(Subject subject, String attrName,
+    boolean hasAttribute(Subject subject, String attrName,
         String attrValue) throws EntitlementException;
 }

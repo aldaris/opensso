@@ -22,11 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.1 2009-04-06 23:46:08 arviranga Exp $
+ * $Id: SubjectAttributesManager.java,v 1.2 2009-04-09 13:15:02 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.IPolicyConfig;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -39,41 +42,97 @@ import javax.security.auth.Subject;
  * memberships.
  */
 public class SubjectAttributesManager {
+    private String realmName;
+    private SubjectAttributesCollector attrCollector;
+    private static final String DEFAULT_IMPL =
+        "com.sun.identity.entitlement.opensso.OpenSSOSubjectAttributesCollector";
+    private static Class DEFAULT_IMPL_CLASS;
+    private static Map<String, SubjectAttributesManager> instances =
+        new HashMap<String, SubjectAttributesManager>();
 
-    String realmName;
+    static {
+        try {
+            DEFAULT_IMPL_CLASS = Class.forName(DEFAULT_IMPL);
+        } catch (ClassNotFoundException ex) {
+            //TOFIX
+        }
+    }
 
-    private SubjectAttributesManager() {
-        realmName = "/";
+    private SubjectAttributesManager(String realmName) {
+        this.realmName = realmName;
+        if (DEFAULT_IMPL_CLASS != null) {
+            try {
+                this.attrCollector = (SubjectAttributesCollector)
+                    DEFAULT_IMPL_CLASS.newInstance();
+            } catch (InstantiationException ex) {
+                //TOFIX
+            } catch (IllegalAccessException ex) {
+                //TOFIX
+            }
+        }
     }
 
     public static SubjectAttributesManager getInstance() {
-        return (new SubjectAttributesManager());
+        return getInstance("/");
     }
 
-    public static SubjectAttributesManager getInstance(String realmName) {
-        SubjectAttributesManager sam = new SubjectAttributesManager();
-        sam.realmName = realmName;
-        return (null);
+    public static SubjectAttributesManager getInstance(Subject subject) {
+        //TOFIX get realm from subject;
+        return getInstance("/");
+    }
+
+    public synchronized static SubjectAttributesManager getInstance(
+        String realmName) {
+        SubjectAttributesManager sam = instances.get(realmName);
+        if (sam == null) {
+            sam = new SubjectAttributesManager(realmName);
+            instances.put(realmName, sam);
+        }
+        return sam;
     }
 
     public static Set<String> getSubjectSearchIndexes(Privilege privilege)
         throws EntitlementException {
         Set searchIndexes = new HashSet();
         EntitlementSubject es = privilege.getSubject();
-        Map<String, String> sis = es.getSearchIndexAttributes();
-        for (String attrName : sis.keySet()) {
-            String attrValue = sis.get(attrName);
-            searchIndexes.add(attrName + "=" + attrValue);
+        if (es != null) {
+            Map<String, String> sis = es.getSearchIndexAttributes();
+            for (String attrName : sis.keySet()) {
+                String attrValue = sis.get(attrName);
+                searchIndexes.add(attrName + "=" + attrValue);
+            }
         }
         return (searchIndexes);
     }
 
     public static Set<String> getRequiredAttributeNames(Privilege privilege) {
-        return (privilege.getSubject().getRequiredAttributeNames());
+        EntitlementSubject e = privilege.getSubject();
+        return (e != null) ? e.getRequiredAttributeNames() :
+            Collections.EMPTY_SET;
     }
 
-    public static Set<String> getSubjectSearchFilter(Subject subject) {
-        return (null);
+    public static Set<String> getSubjectSearchFilter(Subject subject)
+        throws EntitlementException {
+        Set<String> results = new HashSet<String>();
+        results.add(SubjectAttributesCollector.NAMESPACE_IDENTITY + "=" +
+            SubjectAttributesCollector.ATTR_NAME_ALL_ENTITIES);
+        String realm = "/"; //TOFIX
+        if (subject != null) {
+            IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
+            Set<String> names = pc.getSubjectAttributeNames(realm);
+            SubjectAttributesManager sam = SubjectAttributesManager.getInstance(
+                realm);
+            Map<String, Set<String>> values = sam.getAttributes(subject, names);
+
+            if (values != null) {
+                for (String k : values.keySet()) {
+                    for (String v : values.get(k)) {
+                        results.add(k + "=" + v);
+                    }
+                }
+            }
+        }
+        return results;
     }
 
     /**
@@ -84,22 +143,29 @@ public class SubjectAttributesManager {
      * @return a map of attribute names and their values
      * @throws com.sun.identity.entitlement.EntitlementException
      */
-    public Map<String, Set> getAttributes(Subject subject,
-        Set<String> attrNames) throws EntitlementException {
-        return (null);
+    public Map<String, Set<String>> getAttributes(
+        Subject subject,
+        Set<String> attrNames
+    ) throws EntitlementException {
+        return attrCollector.getAttributes(subject, attrNames);
     }
 
     /**
-     * Checks the presence of attribute value for the given user
-     * represented by <class>Subject</class> object.
+     * Returns <code>true</code> if attribute value for the given user
+     * represented by <class>Subject</class> object is present.
+     *
      * @param subject identity of the user
      * @param attrName attribute name to check
      * @param attrValue attribute value to check
-     * @return
+     * @return <code>true</code> if attribute value for the given user
+     * represented by <class>Subject</class> object is present.
      * @throws com.sun.identity.entitlement.EntitlementException
      */
-    public boolean hasAttribute(Subject subject, String attrName,
-        String attrValue) throws EntitlementException {
-        return (false);
+    public boolean hasAttribute(
+        Subject subject,
+        String attrName,
+        String attrValue
+    ) throws EntitlementException {
+        return attrCollector.hasAttribute(subject, attrName, attrValue);
     }
 }

@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.11 2009-04-02 22:13:42 veiming Exp $
+ * $Id: PolicyIndexTest.java,v 1.12 2009-04-09 13:15:05 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -37,6 +37,7 @@ import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -94,7 +95,9 @@ public class PolicyIndexTest {
                 hostIndexes, pathIndexes, parentPathIndexes);
         IPolicyDataStore pStore =
                 PolicyDataStoreFactory.getInstance().getDataStore();
-        for (Iterator<Privilege> i = pStore.search(indexes, false); i.hasNext();) {
+        for (Iterator<Privilege> i = pStore.search(indexes,
+            Collections.EMPTY_SET, false); i.hasNext();
+        ) {
             Privilege p = i.next();
             if (!p.getEntitlement().getResourceName().equals(URL_RESOURCE)) {
                 throw new Exception("incorrect deserialized policy");
@@ -122,7 +125,7 @@ public class PolicyIndexTest {
 
     private Subject createSubject(PolicyManager pm) throws PolicyException {
         SubjectTypeManager mgr = pm.getSubjectTypeManager();
-        Subject subject = mgr.getSubject("LDAPGroups");
+        Subject subject = mgr.getSubject("AMIdentitySubject");
         Set<String> set = new HashSet<String>();
         set.add("testgroup");
         subject.setValues(set);

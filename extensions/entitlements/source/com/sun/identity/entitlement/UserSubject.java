@@ -22,13 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSubject.java,v 1.4 2009-04-06 23:46:09 arviranga Exp $
+ * $Id: UserSubject.java,v 1.5 2009-04-09 13:15:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
 
+import java.security.Principal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -131,12 +133,13 @@ public class UserSubject implements EntitlementSubject {
      * of any error
      */
     public SubjectDecision evaluate(
-            SubjectAttributesManager mgr,
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return null;
+        SubjectAttributesManager mgr,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment)
+        throws EntitlementException {
+        boolean satified = hasPrincipal(subject, user);
+        return new SubjectDecision(satified, Collections.EMPTY_MAP);
     }
 
     /**
@@ -226,10 +229,22 @@ public class UserSubject implements EntitlementSubject {
     }
 
     public Map<String, String> getSearchIndexAttributes() {
-        return (Collections.EMPTY_MAP);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(SubjectAttributesCollector.NAMESPACE_IDENTITY, user);
+        return map;
     }
 
     public Set<String> getRequiredAttributeNames() {
         return(Collections.EMPTY_SET);
+    }
+
+    private static boolean hasPrincipal(Subject subject, String uuid) {
+        Set<Principal> userPrincipals = subject.getPrincipals();
+        for (Principal p : userPrincipals) {
+            if (p.getName().equals(uuid)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

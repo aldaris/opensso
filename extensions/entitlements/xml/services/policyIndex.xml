@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policyIndex.xml,v 1.6 2009-03-31 01:16:10 veiming Exp $
+   $Id: policyIndex.xml,v 1.7 2009-04-09 13:15:05 veiming Exp $
 
 -->
 
@@ -45,6 +45,8 @@
                     syntax="string"
                     i18nKey="" />
                 <SubSchema name="index" inheritance="multiple">
+                    <AttributeSchema name="subjectindex"
+                        type="list"  isSearchable="yes" />
                     <AttributeSchema name="hostindex"
                         type="list"  isSearchable="yes" />
                     <AttributeSchema name="pathindex"

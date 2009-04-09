@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPrivilege.java,v 1.2 2009-04-07 10:25:11 veiming Exp $
+ * $Id: OpenSSOPrivilege.java,v 1.3 2009-04-09 13:15:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -89,11 +89,14 @@ public class OpenSSOPrivilege extends Privilege {
         boolean recursive
     ) throws EntitlementException {
         List<Entitlement> results = new ArrayList<Entitlement>();
-        //TOFIX: Subject match
 
         Map<String, Set<String>> advices = new HashMap<String, Set<String>>();
-        if (doesConditionMatch(advices, subject, resourceName, environment)) {
-            Set<String> resources = getMatchingResources(resourceName);
+
+        if (doesSubjectMatch(advices, subject, resourceName, environment) &&
+            doesConditionMatch(advices, subject, resourceName, environment)
+        ) {
+            Set<String> resources = getMatchingResources(resourceName,
+                recursive);
             Entitlement origE = getEntitlement();
             for (String r : resources) {
                 Entitlement e = new Entitlement(origE.getApplicationName(),
