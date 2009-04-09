@@ -22,15 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRemoteSP.java,v 1.8 2008-06-25 05:50:01 qcheng Exp $
+ * $Id: CreateRemoteSP.java,v 1.9 2009-04-09 06:53:43 asyhuang Exp $
  *
  */
-
 package com.sun.identity.workflow;
 
 import com.sun.identity.cot.COTException;
 import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.jaxb.entityconfig.AttributeType;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
@@ -46,8 +47,8 @@ import javax.xml.bind.JAXBException;
  * Creates Remote Service Provider.
  */
 public class CreateRemoteSP
-    extends Task
-{
+        extends Task {
+
     public CreateRemoteSP() {
     }
 
@@ -58,25 +59,22 @@ public class CreateRemoteSP
      * @param params Map of creation parameters.
      */
     public String execute(Locale locale, Map params)
-        throws WorkflowException {
+            throws WorkflowException {
         validateParameters(params);
         String realm = getString(params, ParameterKeys.P_REALM);
         String metadataFile = getString(params, ParameterKeys.P_META_DATA);
         String metadata = getContent(metadataFile, locale);
         String extendedMeta = null;
         List attrMapping = getAttributeMapping(params);
-        
+
         if (!attrMapping.isEmpty()) {
             try {
-                EntityDescriptorElement e = 
-                    ImportSAML2MetaData.getEntityDescriptorElement(metadata);
-                String eId = e.getEntityID();
-                String metaAlias = generateMetaAliasForSP(realm);
-                Map map = new HashMap();
-                map.put(MetaTemplateParameters.P_SP, metaAlias);
-                extendedMeta = 
-                   CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
-                    eId, map, null, false);
+                EntityDescriptorElement e =
+                        ImportSAML2MetaData.getEntityDescriptorElement(metadata);
+                String eId = e.getEntityID();                                           
+                extendedMeta =
+                        createExtendedDataTemplate(
+                        eId, false);
             } catch (SAML2MetaException ex) {
                 throw new WorkflowException(ex.getMessage());
             } catch (JAXBException ex) {
@@ -85,7 +83,7 @@ public class CreateRemoteSP
         }
 
         String[] results = ImportSAML2MetaData.importData(
-            realm, metadata, extendedMeta);
+                realm, metadata, extendedMeta);
         String entityId = results[1];
         String cot = getString(params, ParameterKeys.P_COT);
         if ((cot != null) && (cot.length() > 0)) {
@@ -100,17 +98,23 @@ public class CreateRemoteSP
             if (!attrMapping.isEmpty()) {
                 SAML2MetaManager manager = new SAML2MetaManager();
                 EntityConfigElement config =
-                    manager.getEntityConfig(realm, entityId);
+                        manager.getEntityConfig(realm, entityId);
                 SPSSOConfigElement ssoConfig =
-                    manager.getSPSSOConfig(realm, entityId);
+                        manager.getSPSSOConfig(realm, entityId);
 
-                Map attribConfig = SAML2MetaUtils.getAttributes(ssoConfig);
-                List mappedAttributes = (List) attribConfig.get(
-                    SAML2Constants.ATTRIBUTE_MAP);
-                mappedAttributes.addAll(attrMapping);
+                if (ssoConfig != null) {
+                    ObjectFactory objFactory = new ObjectFactory();
+                    AttributeType avp = objFactory.createAttributeElement();
+                    String key = SAML2Constants.ATTRIBUTE_MAP;
+                    avp.setName(key);
+                    avp.getValue().addAll(attrMapping);
+                    ssoConfig.getAttribute().add(avp);
+                }
                 manager.setEntityConfig(realm, config);
             }
         } catch (SAML2MetaException e) {
+            throw new WorkflowException(e.getMessage());
+        } catch (JAXBException e) {
             throw new WorkflowException(e.getMessage());
         }
 
@@ -118,7 +122,7 @@ public class CreateRemoteSP
     }
 
     private void validateParameters(Map params)
-        throws WorkflowException {
+            throws WorkflowException {
         String metadata = getString(params, ParameterKeys.P_META_DATA);
         if ((metadata == null) || (metadata.trim().length() == 0)) {
             throw new WorkflowException("meta-data-required", null);
@@ -127,5 +131,22 @@ public class CreateRemoteSP
         if ((realm == null) || (realm.trim().length() == 0)) {
             throw new WorkflowException("missing-realm", null);
         }
+    }
+
+    private String createExtendedDataTemplate(
+            String entityID,          
+            boolean hosted) {
+
+        StringBuffer buff = new StringBuffer();
+        String strHosted = (hosted) ? "1" : "0";
+        buff.append(
+                "<EntityConfig xmlns=\"urn:sun:fm:SAML:2.0:entityconfig\"\n" +
+                "    xmlns:fm=\"urn:sun:fm:SAML:2.0:entityconfig\"\n" +
+                "    hosted=\"" + strHosted + "\"\n" +
+                "    entityID=\"" + entityID + "\">\n\n" +
+                "    <SPSSOConfig>\n" +
+                "    </SPSSOConfig>\n" +
+                "</EntityConfig>\n");
+        return buff.toString();
     }
 }
