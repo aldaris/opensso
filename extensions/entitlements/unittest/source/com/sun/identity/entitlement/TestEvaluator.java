@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestEvaluator.java,v 1.2 2009-04-10 22:40:01 veiming Exp $
+ * $Id: TestEvaluator.java,v 1.3 2009-04-10 23:36:06 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -48,14 +48,13 @@ import java.util.Set;
 import javax.security.auth.Subject;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 public class TestEvaluator {
     private static final String PRIVILEGE1_NAME = "entitlementPrivilege1";
-    private static final String PRIVILEGE2_NAME = "entitlementPrivilege2";
     private static final String USER1_NAME = "privilegeEvalTestUser1";
     private static final String USER2_NAME = "privilegeEvalTestUser2";
     private static final String URL1 = "http://www.sun.com:80/private";
-    private static final String URL2 = "http://www.sun.com:80/public";
 
     
     private AMIdentity user1;
@@ -81,14 +80,6 @@ public class TestEvaluator {
         Privilege privilege = new OpenSSOPrivilege(
             PRIVILEGE1_NAME, ent, eSubject, null, Collections.EMPTY_SET);
         pm.addPrivilege(privilege);
-/*
-        eSubject = new AndSubject(esSet);
-        ent = new Entitlement(
-            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME, URL2, actions);
-        privilege = new OpenSSOPrivilege(
-            PRIVILEGE2_NAME, ent, eSubject, null, Collections.EMPTY_SET);
-        pm.addPrivilege(privilege);
-*/
     }
 
     @AfterClass
@@ -98,7 +89,7 @@ public class TestEvaluator {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         pm.removePrivilege(PRIVILEGE1_NAME);
-        pm.removePrivilege(PRIVILEGE2_NAME);
+        //pm.removePrivilege(PRIVILEGE2_NAME);
 
         AMIdentityRepository amir = new AMIdentityRepository(
             adminToken, "/");
@@ -108,19 +99,11 @@ public class TestEvaluator {
         amir.deleteIdentities(identities);
     }
 
-    
+    @Test
     public void postiveTest()
         throws Exception {
         if (!evaluate(URL1)) {
             throw new Exception("TestEvaluator.postiveTest failed");
-        }
-    }
-
-    //TOFIX: AND subject need to be fixed to pass this test
-    public void negativeTest()
-        throws Exception {
-        if (evaluate(URL2)) {
-            throw new Exception("TestEvaluator.nagativeTest failed");
         }
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.2 2009-04-09 13:15:03 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.3 2009-04-10 23:36:06 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -101,7 +101,8 @@ public class PolicyDataStore implements IPolicyDataStore {
             boolean bSubTree)
             throws EntitlementException {
         BufferedIterator iterator = new BufferedIterator();
-        Set<String> setDNs = indexCache.getMatchingEntries(indexes, bSubTree);
+        Set<String> setDNs = indexCache.getMatchingEntries(indexes,
+            subjectIndexes, bSubTree);
         for (Iterator i = setDNs.iterator(); i.hasNext();) {
             String dn = (String) i.next();
             Privilege p = policyCache.getPolicy(dn);

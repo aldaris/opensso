@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
+ * $Id: IndexCache.java,v 1.2 2009-04-10 23:36:05 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -39,6 +39,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class IndexCache {
     private int size = 1000000;
+    private Cache subjectIndexCache;
     private Cache hostIndexCache;
     private Cache pathIndexCache;
     private Cache parentPathIndexCache;
@@ -54,6 +55,7 @@ public class IndexCache {
      * Caches indexes.
      */
     public void cache(ResourceSaveIndexes indexes, String dn) {
+        cache(dn, indexes.getHostIndexes(), subjectIndexCache);
         cache(dn, indexes.getHostIndexes(), hostIndexCache);
         cache(dn, indexes.getPathIndexes(), pathIndexCache);
         cache(dn, indexes.getParentPath(), parentPathIndexCache);
@@ -76,6 +78,7 @@ public class IndexCache {
     }
 
     public void clear(ResourceSaveIndexes indexes, String dn) {
+        clear(dn, indexes.getHostIndexes(), subjectIndexCache);
         clear(dn, indexes.getHostIndexes(), hostIndexCache);
         clear(dn, indexes.getPathIndexes(), pathIndexCache);
         clear(dn, indexes.getParentPath(), parentPathIndexCache);
@@ -98,6 +101,7 @@ public class IndexCache {
     private synchronized void clearCaches() {
         rwlock.writeLock().lock();
         try {
+            subjectIndexCache = new Cache(size);
             hostIndexCache = new Cache(size);
             pathIndexCache = new Cache(size);
             parentPathIndexCache = new Cache(size);
@@ -108,46 +112,72 @@ public class IndexCache {
 
     public Set<String> getMatchingEntries(
         ResourceSearchIndexes indexes,
+        Set<String> subjectIndexes,
         boolean bSubTree
     ) {
         rwlock.readLock().lock();
         try {
             Set<String> results = new HashSet<String>();
-            Set<String> hostIndexes = indexes.getHostIndexes();
 
+            boolean hasSubjectIndexes = (subjectIndexes != null) &&
+                !subjectIndexes.isEmpty();
 
-            for (String i : hostIndexes) {
-                Set<String> r = (Set<String>)hostIndexCache.get(i);
-                if (r != null) {
-                    results.addAll(r);
+            if (hasSubjectIndexes) {
+                for (String i : subjectIndexes) {
+                    Set<String> r = (Set<String>)subjectIndexCache.get(i);
+                    if (r != null) {
+                        results.addAll(r);
+                    }
                 }
+                results.retainAll(getHostIndexes(indexes));
+            } else {
+                results.addAll(getHostIndexes(indexes));
             }
 
             if (bSubTree) {
-                Set<String> parentPathIndexes = indexes.getParentPathIndexes();
-                Set<String> tmp = new HashSet<String>();
-                for (String i : parentPathIndexes) {
-                    Set<String> r = (Set<String>) parentPathIndexCache.get(i);
-                    if (r != null) {
-                        tmp.addAll(r);
-                    }
-                }
-                results.retainAll(tmp);
+                results.retainAll(getPathParentIndexes(indexes));
             } else {
-                Set<String> pathIndexes = indexes.getPathIndexes();
-                Set<String> tmp = new HashSet<String>();
-                for (String i : pathIndexes) {
-                    Set<String> r = (Set<String>)pathIndexCache.get(i);
-                    if (r != null) {
-                        tmp.addAll(r);
-                    }
-                }
-                results.retainAll(tmp);
+                results.retainAll(getPathIndexes(indexes));
             }
 
             return results;
         } finally {
             rwlock.readLock().unlock();
         }
+    }
+
+    private Set<String> getPathParentIndexes(ResourceSearchIndexes indexes) {
+        Set<String> parentPathIndexes = indexes.getParentPathIndexes();
+        Set<String> results = new HashSet<String>();
+        for (String i : parentPathIndexes) {
+            Set<String> r = (Set<String>) parentPathIndexCache.get(i);
+            if (r != null) {
+                results.addAll(r);
+            }
+        }
+        return results;
+    }
+
+    private Set<String> getPathIndexes(ResourceSearchIndexes indexes) {
+        Set<String> pathIndexes = indexes.getPathIndexes();
+        Set<String> results = new HashSet<String>();
+        for (String i : pathIndexes) {
+            Set<String> r = (Set<String>) pathIndexCache.get(i);
+            if (r != null) {
+                results.addAll(r);
+            }
+        }return results;
+    }
+
+    private Set<String> getHostIndexes(ResourceSearchIndexes indexes) {
+        Set<String> results = new HashSet<String>();
+        Set<String> hostIndexes = indexes.getHostIndexes();
+        for (String i : hostIndexes) {
+            Set<String> r = (Set<String>) hostIndexCache.get(i);
+            if (r != null) {
+                results.addAll(r);
+            }
+        }
+        return results;
     }
 }
