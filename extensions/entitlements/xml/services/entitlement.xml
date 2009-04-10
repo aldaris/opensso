@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.4 2009-04-09 13:15:05 veiming Exp $
+   $Id: entitlement.xml,v 1.5 2009-04-10 22:40:02 veiming Exp $
 
 -->
 
@@ -184,8 +184,11 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="conditions" />
-                            <Value>com.sun.identity.entitlement.IPCondition</Value>
-                            <Value>com.sun.identity.entitlement.TimeCondition</Value>
+                            <Value>IPCondition</Value>
+                            <Value>DNSNameCondition</Value>
+                            <Value>DateCondition</Value>
+                            <Value>DayCondition</Value>
+                            <Value>TimeCondition</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />

@@ -22,59 +22,144 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestEvaluator.java,v 1.1 2008-12-19 09:37:01 veiming Exp $
+ * $Id: TestEvaluator.java,v 1.2 2009-04-10 22:40:01 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import com.sun.identity.unittest.UnittestLog;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.authentication.internal.server.AuthSPrincipal;
+import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
+import com.sun.identity.entitlement.opensso.PolicyPrivilegeManager;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.security.AdminTokenAction;
+import java.security.AccessController;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
-import org.testng.annotations.Test;
-import org.testng.annotations.DataProvider;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
 public class TestEvaluator {
-    @DataProvider(name = "provideURLs")
-    public Object[][] provideURLs() {
-        return new Object[][] {
-            {"htp://www.sun.com:8080/test", ""},
-            {"http://:8080/", ""},
-            {"http://:8080/test", ""},
-            {"http://www.sun.com/", ""},
-            {"http://www.sun.com/test", ""},
-            {"http://www.sun.com/test.html", ""},
-            {"http://www.sun.com:8080/test/", ""},
-            {"http://www.sun.com:8080/test/banner.html", ""},
-            {"http://www.sun.com:8080/test/banner.htm", ""},
-            {"http://www.sun.com:8080/?q1=1", ""},
-            {"http://www.sun.com:8080/test?q1=1", ""},
-            {"http://www.sun.com:8080/test.jsp?q1=1", ""},
-            {"http://www.sun.com:8080/test?q1=1+2", ""},
-            {"http://www.sun.com:8080/test?q1=1*2", ""},
-            {"http://www.sun.com:8080/test?q1=1%202", ""},
-            {"http://www.sun.com:8080/test?q1=1&q2=2", ""},
-            {"http://www.sun.com:8080/test?q1=&q2=2&q3=sun", ""},
-            {"http://helium.r*.iplanet.com:80/*.html", ""},
-            {"http://helium.red.iplanet.com:8*/*.html", ""},
-            {"http*://helium.red.iplanet.com:8*/*.html", ""},
-            {"http://dummygoogle.red.iplanet.com:80/a/b/-*-/f/index.html", ""},
-            {"http://dummygoogle.red.iplanet.com:80/a/b/bc/f/index.html", ""},
-            {"http://dummygoogle.red.iplanet.com:80/a/b/c/d/f/index.html", ""},
-            {"http://dummyyahoo.red.iplanet.com:80/a/b/-*-/f/-*-/g/index.html",
-                 ""}
-        };
-    } 
+    private static final String PRIVILEGE1_NAME = "entitlementPrivilege1";
+    private static final String PRIVILEGE2_NAME = "entitlementPrivilege2";
+    private static final String USER1_NAME = "privilegeEvalTestUser1";
+    private static final String USER2_NAME = "privilegeEvalTestUser2";
+    private static final String URL1 = "http://www.sun.com:80/private";
+    private static final String URL2 = "http://www.sun.com:80/public";
 
-    @Test(dataProvider = "provideURLs")
-    public boolean evaluate(String url, String dummy) 
+    
+    private AMIdentity user1;
+    private AMIdentity user2;
+
+    @BeforeClass
+    public void setup() throws Exception {
+        PrivilegeManager pm = new PolicyPrivilegeManager();
+        pm.initialize(null);
+        Map<String, Boolean> actions = new HashMap<String, Boolean>();
+        actions.put("GET", Boolean.TRUE);
+        Entitlement ent = new Entitlement(
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME, URL1, actions);
+        user1 = createUser(USER1_NAME);
+        user2 = createUser(USER2_NAME);
+        Set<EntitlementSubject> esSet = new HashSet<EntitlementSubject>();
+        EntitlementSubject es1 = new UserSubject(user1.getUniversalId());
+        EntitlementSubject es2 = new UserSubject(user2.getUniversalId());
+        esSet.add(es1);
+        esSet.add(es2);
+
+        EntitlementSubject eSubject = new OrSubject(esSet);
+        Privilege privilege = new OpenSSOPrivilege(
+            PRIVILEGE1_NAME, ent, eSubject, null, Collections.EMPTY_SET);
+        pm.addPrivilege(privilege);
+/*
+        eSubject = new AndSubject(esSet);
+        ent = new Entitlement(
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME, URL2, actions);
+        privilege = new OpenSSOPrivilege(
+            PRIVILEGE2_NAME, ent, eSubject, null, Collections.EMPTY_SET);
+        pm.addPrivilege(privilege);
+*/
+    }
+
+    @AfterClass
+    public void cleanup() throws Exception {
+        PrivilegeManager pm = new PolicyPrivilegeManager();
+        pm.initialize(null);
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        pm.removePrivilege(PRIVILEGE1_NAME);
+        pm.removePrivilege(PRIVILEGE2_NAME);
+
+        AMIdentityRepository amir = new AMIdentityRepository(
+            adminToken, "/");
+        Set<AMIdentity> identities = new HashSet<AMIdentity>();
+        identities.add(user1);
+        identities.add(user2);
+        amir.deleteIdentities(identities);
+    }
+
+    
+    public void postiveTest()
+        throws Exception {
+        if (!evaluate(URL1)) {
+            throw new Exception("TestEvaluator.postiveTest failed");
+        }
+    }
+
+    //TOFIX: AND subject need to be fixed to pass this test
+    public void negativeTest()
+        throws Exception {
+        if (evaluate(URL2)) {
+            throw new Exception("TestEvaluator.nagativeTest failed");
+        }
+    }
+
+    private boolean evaluate(String res)
         throws EntitlementException {
-        UnittestLog.logMessage("TestEvaluator.evaluate: " + url);
+        Subject subject = createSubject(user1.getUniversalId());
         Set actions = new HashSet();
         actions.add("GET");
-        Evaluator evaluator = new Evaluator(new Subject());
-        return evaluator.hasEntitlement(new Subject(), 
-            new Entitlement(url, actions));
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        Evaluator evaluator = new Evaluator(
+            SubjectUtils.createSubject(adminToken),
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
+        return evaluator.hasEntitlement(subject,
+            new Entitlement(res, actions));
     }
+
     
+    private AMIdentity createUser(String name)
+        throws SSOException, IdRepoException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        AMIdentityRepository amir = new AMIdentityRepository(
+            adminToken, "/");
+        Map<String, Set<String>> attrValues =new HashMap<String, Set<String>>();
+        Set<String> set = new HashSet<String>();
+        set.add(name);
+        attrValues.put("givenname", set);
+        attrValues.put("sn", set);
+        attrValues.put("cn", set);
+        attrValues.put("userpassword", set);
+        return amir.createIdentity(IdType.USER, name, attrValues);
+    }
+
+    public static Subject createSubject(String uuid) {
+        Set<Principal> userPrincipals = new HashSet<Principal>(2);
+        userPrincipals.add(new AuthSPrincipal(uuid));
+        return new Subject(false, userPrincipals, new HashSet(),
+            new HashSet());
+    }
+
 }

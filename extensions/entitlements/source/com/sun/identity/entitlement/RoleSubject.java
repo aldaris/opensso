@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleSubject.java,v 1.5 2009-04-09 13:15:02 veiming Exp $
+ * $Id: RoleSubject.java,v 1.6 2009-04-10 22:40:01 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -241,10 +241,12 @@ public class RoleSubject implements EntitlementSubject {
         return code;
     }
 
-    public Map<String, String> getSearchIndexAttributes() {
-        Map<String, String> map = new HashMap<String, String>(2);
+    public Map<String, Set<String>> getSearchIndexAttributes() {
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>(2);
+        Set<String> set = new HashSet<String>();
+        set.add(role);
         map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
-            IdType.ROLE.getName(), role);
+            IdType.ROLE.getName(), set);
         return map;
     }
 

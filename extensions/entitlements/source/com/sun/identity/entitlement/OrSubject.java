@@ -22,23 +22,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrSubject.java,v 1.4 2009-04-06 23:46:08 arviranga Exp $
+ * $Id: OrSubject.java,v 1.5 2009-04-10 22:40:01 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
-import org.json.JSONObject;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
- * EntitlementSubject wrapper on a set of EntitlementSubject(s) to provide boolean OR logic
- * Membership is of OrSubject is satisfied if the user is a member of any
- * of the wrapped EntitlementSubject
- * @author dorai
+ * EntitlementSubject wrapper on a set of EntitlementSubject(s) to provide 
+ * boolean OR logic Membership is of OrSubject is satisfied if the user is
+ * a member of any of the wrapped EntitlementSubject
  */
 public class OrSubject implements EntitlementSubject {
     private static final long serialVersionUID = -403250971215465050L;
@@ -91,21 +92,34 @@ public class OrSubject implements EntitlementSubject {
     /**
      * Returns <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation
+     * 
      * @param subject EntitlementSubject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
      * @return <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation
-     * @throws com.sun.identity.entitlement,  EntitlementException in case
+     * @throws EntitlementException in case
      * of any error
      */
     public SubjectDecision evaluate(
-            SubjectAttributesManager mgr,
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return null;
+        SubjectAttributesManager mgr,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
+        Set<EntitlementSubject> subjects = getESubjects();
+        if ((subjects != null) && !subjects.isEmpty()) {
+            for (EntitlementSubject e : subjects) {
+                SubjectDecision decision =
+                    e.evaluate(mgr, subject, resourceName, environment);
+                if (decision.isSatisfied()) {
+                    return decision;
+                }
+            }
+            return new SubjectDecision(false, Collections.EMPTY_MAP);
+        } else {
+            return new SubjectDecision(false, Collections.EMPTY_MAP);
+        }
     }
 
     /**
@@ -165,6 +179,7 @@ public class OrSubject implements EntitlementSubject {
      * Returns string representation of the object
      * @return string representation of the object
      */
+    @Override
     public String toString() {
         String s = null;
         try {
@@ -183,6 +198,7 @@ public class OrSubject implements EntitlementSubject {
      * @param obj object to check for equality
      * @return  <code>true</code> if the passed in object is equal to this object
      */
+    @Override
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
@@ -221,6 +237,7 @@ public class OrSubject implements EntitlementSubject {
      * Returns hash code of the object
      * @return hash code of the object
      */
+    @Override
     public int hashCode() {
         int code = 0;
         if (eSubjects != null) {
@@ -234,11 +251,29 @@ public class OrSubject implements EntitlementSubject {
         return code;
     }
 
-    public Map<String, String> getSearchIndexAttributes() {
-        return (Collections.EMPTY_MAP);
+    public Map<String, Set<String>> getSearchIndexAttributes() {
+        Map<String, Set<String>> results = new HashMap<String, Set<String>>();
+        for (EntitlementSubject e : eSubjects) {
+            Map<String, Set<String>> map = e.getSearchIndexAttributes();
+            if ((map != null) && !map.isEmpty()) {
+                for (String s : map.keySet()) {
+                    Set<String> set = results.get(s);
+                    if (set == null) {
+                        set = new HashSet<String>();
+                        results.put(s, set);
+                    }
+                    set.addAll(map.get(s));
+                }
+            }
+        }
+        return results;
     }
 
     public Set<String> getRequiredAttributeNames() {
-        return(Collections.EMPTY_SET);
+        Set<String> results = new HashSet<String>();
+        for (EntitlementSubject e : eSubjects) {
+            results.addAll(e.getRequiredAttributeNames());
+        }
+        return results;
     }
 }

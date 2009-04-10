@@ -51,7 +51,7 @@ public class PolicyESubject implements EntitlementSubject {
         this.nqSubjects = nqSubjects;
     }
 
-    public Map<String, String> getSearchIndexAttributes() {
+    public Map<String, Set<String>> getSearchIndexAttributes() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

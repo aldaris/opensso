@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSubject.java,v 1.5 2009-04-09 13:15:02 veiming Exp $
+ * $Id: UserSubject.java,v 1.6 2009-04-10 22:40:01 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -31,6 +31,7 @@ import com.sun.identity.shared.debug.Debug;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -228,9 +229,11 @@ public class UserSubject implements EntitlementSubject {
         return code;
     }
 
-    public Map<String, String> getSearchIndexAttributes() {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(SubjectAttributesCollector.NAMESPACE_IDENTITY, user);
+    public Map<String, Set<String>> getSearchIndexAttributes() {
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        Set<String> set = new HashSet<String>();
+        set.add(user);
+        map.put(SubjectAttributesCollector.NAMESPACE_IDENTITY, set);
         return map;
     }
 

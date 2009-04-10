@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectUtils.java,v 1.1 2009-04-09 13:15:03 veiming Exp $
+ * $Id: SubjectUtils.java,v 1.2 2009-04-10 22:40:01 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -46,9 +46,7 @@ public class SubjectUtils {
 
     public static Subject createSubject(SSOToken token) {
         try {
-            Principal userP = new AuthSPrincipal(token.getTokenID().toString());
             Set<Principal> userPrincipals = new HashSet<Principal>(2);
-            userPrincipals.add(userP);
             String uuid = token.getProperty(Constants.UNIVERSAL_IDENTIFIER);
             userPrincipals.add(new AuthSPrincipal(uuid));
 
@@ -61,9 +59,9 @@ public class SubjectUtils {
         }
     }
 
-    public static SSOToken getSSOToken(Subject subject) {
-        Set privCreds = subject.getPrivateCredentials();
-        return ((privCreds != null) && !privCreds.isEmpty()) ?
-            (SSOToken)privCreds.iterator().next() : null;
+    public static String getPrincipalId(Subject subject) {
+        Set<Principal> userPrincipals = subject.getPrincipals();
+        return ((userPrincipals != null) && !userPrincipals.isEmpty()) ?
+            userPrincipals.iterator().next().getName() : null;
     }
 }

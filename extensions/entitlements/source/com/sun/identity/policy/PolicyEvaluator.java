@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.5 2009-04-09 13:15:04 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.6 2009-04-10 22:40:01 veiming Exp $
  *
  */
 
@@ -47,7 +47,6 @@ import com.sun.identity.shared.stats.Stats;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenListener;
 import com.iplanet.sso.SSOException;
-import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PolicyEvaluatorFactory;
@@ -59,7 +58,6 @@ import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.shared.ldap.util.DN;
 import java.security.AccessController;
-import java.security.Principal;
 import java.util.List;
 import javax.security.auth.Subject;
 

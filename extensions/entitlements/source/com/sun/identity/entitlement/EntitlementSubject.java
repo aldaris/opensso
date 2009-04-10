@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementSubject.java,v 1.5 2009-04-06 23:46:08 arviranga Exp $
+ * $Id: EntitlementSubject.java,v 1.6 2009-04-10 22:40:00 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -57,7 +57,7 @@ public interface EntitlementSubject extends Serializable {
      * @return a maps of key-value pairs that will be used for indexing the
      * entitlements that contain this <class>EntitlementSubject</class>
      */
-    Map<String, String> getSearchIndexAttributes();
+    Map<String, Set<String>> getSearchIndexAttributes();
 
     /**
      * Returns a set of attribute names that are used for evaluation.

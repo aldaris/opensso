@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOSubjectAttributesCollector.java,v 1.1 2009-04-09 13:15:03 veiming Exp $
+ * $Id: OpenSSOSubjectAttributesCollector.java,v 1.2 2009-04-10 22:40:01 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -36,7 +36,6 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.Constants;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,13 +55,12 @@ public class OpenSSOSubjectAttributesCollector
         Subject subject,
         Set<String> attrNames
     ) throws EntitlementException {
-        SSOToken ssoToken = SubjectUtils.getSSOToken(subject);
+        String uuid = SubjectUtils.getPrincipalId(subject);
         try {
             Map<String, Set<String>> results = new
                 HashMap<String, Set<String>>();
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-            String uuid = ssoToken.getProperty(Constants.UNIVERSAL_IDENTIFIER);
             AMIdentity amid = new AMIdentity(adminToken, uuid);
 
             Set<String> set = new HashSet<String>(2);
@@ -126,9 +124,11 @@ public class OpenSSOSubjectAttributesCollector
         String attrName,
         String attrValue
     ) throws EntitlementException {
-        SSOToken ssoToken = SubjectUtils.getSSOToken(subject);
+        String uuid = SubjectUtils.getPrincipalId(subject);
         try {
-            AMIdentity amid = new AMIdentity(ssoToken);
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            AMIdentity amid = new AMIdentity(adminToken, uuid);
             if (attrName.startsWith(NAMESPACE_ATTR)) {
                 Set<String> values = amid.getAttribute(attrName.substring(
                     NAMESPACE_ATTR.length()));
@@ -137,8 +137,6 @@ public class OpenSSOSubjectAttributesCollector
                 IdType type = IdUtils.getType(attrName.substring(
                     NAMESPACE_MEMBERSHIP.length()));
                 if (type != null) {
-                    SSOToken adminToken = (SSOToken) AccessController.
-                        doPrivileged(AdminTokenAction.getInstance());
                     AMIdentity parent = new AMIdentity(adminToken,
                         attrValue); //TOFIX: realm
                     if (parent.getType().equals(type)) {

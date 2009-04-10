@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.16 2009-04-09 13:15:05 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.17 2009-04-10 22:40:02 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -107,8 +107,6 @@ public class PolicyEvaluatorTest {
         policy.addSubject("group4", createGroupSubject(pm));
         policy.addCondition("condition4", createIPCondition(pm));
         pm.addPolicy(policy);
-
-
     }
     
     @AfterClass

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.26 2009-04-09 23:35:41 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.27 2009-04-10 22:40:00 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -65,7 +65,8 @@ public class Entitlement implements Serializable {
     private static final long serialVersionUID = -403250971215465050L;
 
     private String name;
-    private String applicationName;
+    private String applicationName =
+        ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
     private Set<String> resourceNames;
     private Set<String> excludedResourceNames;
     private Map<String, Boolean> actionValues;

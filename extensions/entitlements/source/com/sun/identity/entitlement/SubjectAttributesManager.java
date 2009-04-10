@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.2 2009-04-09 13:15:02 veiming Exp $
+ * $Id: SubjectAttributesManager.java,v 1.3 2009-04-10 22:40:01 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -96,10 +96,12 @@ public class SubjectAttributesManager {
         Set searchIndexes = new HashSet();
         EntitlementSubject es = privilege.getSubject();
         if (es != null) {
-            Map<String, String> sis = es.getSearchIndexAttributes();
+            Map<String, Set<String>> sis = es.getSearchIndexAttributes();
             for (String attrName : sis.keySet()) {
-                String attrValue = sis.get(attrName);
-                searchIndexes.add(attrName + "=" + attrValue);
+                Set<String> attrValues = sis.get(attrName);
+                for (String v : attrValues) {
+                    searchIndexes.add(attrName + "=" + v);
+                }
             }
         }
         return (searchIndexes);
