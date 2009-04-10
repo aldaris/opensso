@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestConfigUtil.java,v 1.11 2008-06-26 20:03:45 rmisra Exp $
+ * $Id: AuthTestConfigUtil.java,v 1.12 2009-04-10 01:47:43 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -483,11 +483,15 @@ public class AuthTestConfigUtil extends TestCommon {
     }
     
     /**
-     * Verify if a Unix or NT authentication module will be used on Windows.
+     * Verify if a Unix or NT authentication module test will be executed.
+     * Unix authentication tests should be skipped on Windows and AIX.
+     * NT authentication tests should be skipped on Windows.
      * moduleType - a String containing the module type 
      * (e.g. LDAP, AD, NT, etc.) that will be used in the test
-     * @return false if the module type is unix or nt and the operating system
-     * of the FAM deployment is not Windows based or true otherwise.
+     * @return false if the module type is unix and the operating system
+     * of the OpenSSO deployment is not Windows or AIX or if the module type
+     * is NT and the operating system of the OpenSSO deployment is 
+     * Windows.  Return true otherwise.
      */
     public boolean isValidModuleTest(String moduleType) 
     throws Exception {
@@ -496,7 +500,13 @@ public class AuthTestConfigUtil extends TestCommon {
                 moduleType.equalsIgnoreCase("nt")) {
             webClient = new WebClient();
             String osType = getServerConfigValue(webClient, "Operating System");
-            validTest = !osType.toLowerCase().contains("windows");
+            if (moduleType.equalsIgnoreCase("unix")) {
+                validTest = !osType.toLowerCase().contains("windows") &&
+                        !osType.toLowerCase().contains("aix");
+            }
+            if (moduleType.equalsIgnoreCase("nt")) {
+                validTest = !osType.toLowerCase().contains("windows"); 
+            }
         }
         return validTest;
     }
