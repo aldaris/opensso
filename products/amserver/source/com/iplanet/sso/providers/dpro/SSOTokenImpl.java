@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenImpl.java,v 1.5 2009-01-16 10:45:01 manish_rustagi Exp $
+ * $Id: SSOTokenImpl.java,v 1.6 2009-04-10 17:57:07 manish_rustagi Exp $
  *
  */
 
@@ -364,16 +364,7 @@ class SSOTokenImpl implements SSOToken {
         }
     }
 
-    /**
-     * Returns the property stored in this token.
-     * 
-     * @param name
-     *            The property name.
-     * @return The property value in String format.
-     * @throws SSOException if the SSOToken is not VALID or if
-     *         there are errors in getting the property value.
-     */
-    public String getProperty(String name)
+    private String getPropertyInternal(String name, boolean logError)
             throws SSOException {
 
         String property = null;
@@ -387,13 +378,34 @@ class SSOTokenImpl implements SSOToken {
                 try {
                     property = SSOSession.getProperty(name);
                 } catch (Exception e) {
-                    SSOProviderImpl.debug.error("Can't get property: " + name);
+                    if(logError){
+                	    SSOProviderImpl.debug.error("Can't get property: " + name);	
+                    }else{
+                        if (SSOProviderImpl.debug.messageEnabled()) {
+                            SSOProviderImpl.debug.message("Can't get property: " + name);
+                        }
+                    }
                     throw new SSOException(e);
                 }
             }
         }
         return property;
     }
+    
+    
+    /**
+     * Returns the property stored in this token.
+     * 
+     * @param name
+     *            The property name.
+     * @return The property value in String format.
+     * @throws SSOException if the SSOToken is not VALID or if
+     *         there are errors in getting the property value.
+     */
+    public String getProperty(String name)
+            throws SSOException {
+        return getPropertyInternal(name, true);
+    }    
 
     /**
      * Returns the property stored in this token.
@@ -415,7 +427,7 @@ class SSOTokenImpl implements SSOToken {
                 SSOProviderImpl.debug.message("SSOTokenImpl.getProperty():" +
                         " Calling getProperty(name)");
             }
-            property = getProperty(name);
+            property = getPropertyInternal(name, false);
 	    } catch (SSOException e) {
             if(ignoreState) {
                 if (SSOProviderImpl.debug.messageEnabled()) {
