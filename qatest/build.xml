@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: build.xml,v 1.5 2009-02-14 03:23:56 inthanga Exp $
+ $Id: build.xml,v 1.6 2009-04-10 01:44:01 inthanga Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -120,7 +120,7 @@
 		</then>
             </elseif>
             <else>
-                <property name="test.output.file" value="${TEST_MODULE}"/>
+                <property name="test.output.file" value="${TEST_MODULE}_${EXECUTION_MODE}"/>
             </else>
        </if>
        <property name="test.env.outfile" value="./${SERVER_DIR}/test_env.txt"/>
