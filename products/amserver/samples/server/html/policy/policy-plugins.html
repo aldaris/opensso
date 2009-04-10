@@ -38,7 +38,7 @@
  UNIX est une marque déposée aux Etats-Unis et dans d'autres pays et 
  licenciée exlusivement par X/Open Company, Ltd.
 
- $Id: policy-plugins.html,v 1.1 2008-08-13 21:40:48 dillidorai Exp $
+ $Id: policy-plugins.html,v 1.2 2009-04-10 22:58:32 mrudul_uchil Exp $
 -->
 
 <HTML>
@@ -72,7 +72,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-plugins.html,v 1.1 2008-08-13 21:40:48 dillidorai Exp $
+   $Id: policy-plugins.html,v 1.2 2009-04-10 22:58:32 mrudul_uchil Exp $
 
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -118,9 +118,9 @@
 				<LI><P>Write java source java files implementing Subject,
 				Condition, Referral or ResponseProvider interface. See the sample
 				files: <A HREF="../../source/com/sun/identity/samples/policy/SampleSubject.java">SampleSubject.java</A>,
-				<A HREF="http://ammu.red.iplanet.com:3080/opensso/source/com/sun/identity/samples/policy/SampleCondition.java">SampleCondition.java</A>,
-				<A HREF="http://ammu.red.iplanet.com:3080/opensso/source/com/sun/identity/samples/policy/SampleReferral.java">SampleReferral.java</A>,
-				<A HREF="http://ammu.red.iplanet.com:3080/opensso/source/com/sun/identity/samples/policy/SampleResponseProvider.java">SampleResponseProvider.java</A></P>
+				<A HREF="../../source/com/sun/identity/samples/policy/SampleCondition.java">SampleCondition.java</A>,
+				<A HREF="../../source/com/sun/identity/samples/policy/SampleReferral.java">SampleReferral.java</A>,
+				<A HREF="../../source/com/sun/identity/samples/policy/SampleResponseProvider.java">SampleResponseProvider.java</A></P>
 				<LI><P>Compile the source files to create class files. You would
 				have to include opensso.jar and opesnsso-sharedlib.jar in
 				classpath at compilation time.</P>
@@ -134,10 +134,14 @@
                                 to the the java package of the plugin classes.
 				</P>
 				<LI><P>Update WEB-INF/classes/amPolicy.properties to add l10n
-				values for the new i18n keys used by iPlanetAMPolicyService.</P>
+				values for the new i18n keys used by iPlanetAMPolicyService.
+                                </P><P>Note : The new i18n keys and their respective values refered here 
+                                are the ones you would be using in "amPolicy_mod.xml" at step 9.</P>
 				<LI><P>Update WEB-INF/classes/amPolicyConfig.properties to add
 				l10n values for the new i18n keys used by
-				iPlanetAMPolicyConfigService.</P>
+				iPlanetAMPolicyConfigService.
+                                </P><P>Note : The new i18n keys and their respective values refered here 
+                                are the ones you would be using at step 10.</P>
 				<LI><P>Recreate the war file and redeploy the war file. </P>
 				<P>Steps 1
 				through 8 have been already taken care of for the sample
@@ -216,7 +220,8 @@
                                 sample plugins from explosed opensso.war,
                                 WEB-INF/classes/com/sun/identity/samples/policy.
                                 This is required if you would use ssoadm to export or 
-                                add policies.
+                            add policies. </P><P>Note : &lt;TOOLS_HOME&gt; is the ssoadm home directory
+                                from where you would be running ssoadm CLI tool.
                                 </P>
 			</OL>
 			<P><BR>
