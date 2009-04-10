@@ -28,6 +28,18 @@
 
 OS_ARCH := $(shell uname -s)
 
+ifeq ($(strip $(findstring WOW64,$(OS_ARCH))), WOW64)
+    CYGWIN_ARCH := WOW64
+endif
+ifeq ($(strip $(patsubst CYGWIN_NT%, CYGWIN_NT, $(OS_ARCH))), CYGWIN_NT)
+    OS_ARCH := WINNT
+    OS_IS_CYGWIN := true
+endif
+ifeq ($(OS_ARCH), Windows_NT)
+    OS_ARCH := WINNT
+endif
+
+
 ifndef AM_INCLUDE_DIR
 	AM_INCLUDE_DIR := ../include
 endif
@@ -67,12 +79,20 @@ CC = g++
 else
 CC = cc
 endif
+ifeq ($(OS_ARCH), WINNT)
+CC=cl
+LINK=link
+endif
 
 #
 # Libs to be used
 #
 ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+LIBS = amsdk.lib libxml2.lib ssl3.lib nss3.lib libplc4.lib libplds4.lib libnspr4.lib
+else
 LIBS = -lamsdk -llibxml2 -lssl3 -lnss3 -llibplc4 -llibplds4 -llibnspr4
+endif
 else
 ifeq ($(OS_ARCH), Linux)
 LIBS = -lamsdk -lxml2 -lssl3 -lnss3 -lplc4 -lplds4 -lnspr4
@@ -95,6 +115,9 @@ CFLAGS = -I$(AM_INCLUDE_DIR)
 LDFLAGS = -L$(AM_LIB_DIR) $(LIBS) 
 ifeq ($(OS_ARCH), WINNT)
 CFLAGS += -DWINNT
+ifdef   OS_IS_CYGWIN
+	LDFLAGS = -LIBPATH:$(AM_LIB_DIR) $(LIBS) 
+endif
 else
 ifeq ($(OS_ARCH), Linux)
 CFLAGS += -g -Wall -DLINUX
@@ -111,6 +134,12 @@ endif
 # Make C programs
 #
 MAKE_C_PROGRAM = $(LINK.c) $(OUTPUT_OPTION) $^ 
+
+ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
+MAKE_C_PROGRAM = $(LINK) $(LDFLAGS) $^ $(LIBS)
+endif
+endif
 
 ifeq ($(OS_ARCH), WINNT)
 EXE_EXT := .exe

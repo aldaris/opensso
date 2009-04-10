@@ -69,6 +69,9 @@ int main(int argc, char **argv)
     resName = argv[4];
     action = argv[5];
 
+    am_web_init(argv[1], argv[2]);
+
+    am_agent_init(&agentInitialized);
     
     status = am_properties_create(&properties);
     fail_on_error(status, "am_properties_create");
@@ -97,10 +100,6 @@ int main(int argc, char **argv)
     am_map_create(&env);
     am_map_create(&response);
 
-
-    am_web_init(argv[1], argv[2]);
-
-    am_agent_init(&agentInitialized);
 
 
     /*

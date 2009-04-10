@@ -99,11 +99,16 @@ endif
 
 ifeq ($(OS_ARCH), SunOS)
 ZIP_DIR:=$(DEST_PACKAGE_SCRATCH_DIR)/is_csdk
-ZIP_SUB_DIRS:=lib include config samples
+ZIP_SUB_DIRS:=lib include config samples bin
 EXTRA_PACKAGE_FILES += prototype $(USERX_ROOT)/am/source/prototype \
 	copyright pkginfo request preinstall postinstall preremove \
 	comlib \
 	$(LIBXML_LIB_DIR)/libxml2.so.2 \
+	$(NSPR_LIB_DIR)/libnspr4.so \
+	$(NSPR_LIB_DIR)/libplc4.so \
+	$(NSPR_LIB_DIR)/libplds4.so \
+	$(NSS_LIB_DIR)/libnss3.so \
+	$(NSS_LIB_DIR)/libssl3.so \
 	$(DEST_LIB_DIR)/libamsdk.so.$(AGENT_MAJOR_VER)
 
 all: $(DEST_PACKAGE_SCRATCH_DIR) $(DEST_PACKAGE_SCRATCH_DIR)/$(ZIP_DIR)
@@ -112,8 +117,15 @@ $(DEST_PACKAGE_SCRATCH_DIR)/$(ZIP_DIR): $(DEST_PACKAGE_SCRATCH_DIR) $(EXPORTED_H
 	$(RM) -r $(ZIP_DIR)
 	$(MKDIR) $(patsubst %, $(ZIP_DIR)/%, $(ZIP_SUB_DIRS))
 	$(CP) $(filter %$(SO_EXT).$(AGENT_MAJOR_VER), $^) $(ZIP_DIR)/lib
+	$(CP) $(LIBXML_LIB_DIR)/libxml2.so.2 $(ZIP_DIR)/lib
+	$(CP) $(NSPR_LIB_DIR)/libnspr4.so $(ZIP_DIR)/lib
+	$(CP) $(NSPR_LIB_DIR)/libplc4.so $(ZIP_DIR)/lib
+	$(CP) $(NSPR_LIB_DIR)/libplds4.so $(ZIP_DIR)/lib
+	$(CP) $(NSS_LIB_DIR)/libnss3.so $(ZIP_DIR)/lib
+	$(CP) $(NSS_LIB_DIR)/libssl3.so $(ZIP_DIR)/lib
 	$(CP) $(USERX_ROOT)/conf/OpenSSOAgentBootstrap.template $(ZIP_DIR)/config/OpenSSOAgentBootstrap.template.orig
 	$(CP) $(USERX_ROOT)/conf/OpenSSOAgentConfiguration.template $(ZIP_DIR)/config/OpenSSOAgentConfiguration.template.orig
+	$(CP) $(USERX_ROOT)/am/source/crypt_util $(ZIP_DIR)/bin
 	$(CP) $(filter %.h, $^) $(ZIP_DIR)/include
 	$(CP) $(filter %THIRD_PARTY_LICENSE.TXT, $^) $(ZIP_DIR)
 	$(CP) $(filter %README.TXT, $^) $(ZIP_DIR)/samples

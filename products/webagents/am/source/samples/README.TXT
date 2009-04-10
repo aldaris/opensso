@@ -119,6 +119,23 @@ Building Sample Program on Windows
 Executing the Sample Program
 ----------------------------
 
+   From version 3.0, the c-sdk requires a configurable key to encrypt the 
+   agent profile password. The key has to be a minimum 7-letter(characters between 
+   a-z, numbers 0-9) word. Please specify this key for the property below in the
+   OpenSSOAgentBootstrap.properties file:
+       com.sun.identity.agents.config.key
+
+   The encryption utility, crypt_util(in Unix) and cryptit.exe(in Windows) can 
+   generate the encrypted password using this key. 
+   It can be found in the bin folder of C-SDK bundle. The usage is :
+     a)in Unix :
+          ./cryptutil <password> <key>  
+     b)in Windows :
+          cryptit.exe <password> <key>
+   Please specify this password for the property below in the
+   OpenSSOAgentBootstrap.properties file:
+       com.sun.identity.agents.config.password
+
    The sample programs operate in a command line mode and demonstrate
    the use of C API for policy, auth and sso . Usage of sample programs
    are as follows:
