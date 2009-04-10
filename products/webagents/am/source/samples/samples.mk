@@ -79,7 +79,7 @@ CC = g++
 else
 CC = cc
 endif
-ifeq ($(OS_ARCH), WINNT)
+ifdef   OS_IS_CYGWIN
 CC=cl
 LINK=link
 endif
