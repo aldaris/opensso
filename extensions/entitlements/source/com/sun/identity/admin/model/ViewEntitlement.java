@@ -3,6 +3,7 @@ package com.sun.identity.admin.model;
 import com.sun.identity.entitlement.Entitlement;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +26,14 @@ public class ViewEntitlement implements Serializable {
 
     public void setResources(List<Resource> resources) {
         this.resources = resources;
+    }
+
+    public Resource[] getResourceArray() {
+        return resources.toArray(new Resource[0]);
+    }
+
+    public void setResourceArray(Resource[] resourceArray) {
+        resources = Arrays.asList(resourceArray);
     }
 
     public Entitlement getEntitlement() {

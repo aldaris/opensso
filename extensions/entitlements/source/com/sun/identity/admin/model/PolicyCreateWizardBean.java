@@ -47,7 +47,7 @@ public class PolicyCreateWizardBean
         List<SelectItem> items = new ArrayList<SelectItem>();
 
         for (Resource r: availableResources) {
-            items.add(new SelectItem(r.getName()));
+            items.add(new SelectItem(r, r.getName()));
         }
 
         return items;

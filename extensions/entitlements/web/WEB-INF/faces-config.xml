@@ -16,7 +16,14 @@
             com.sun.identity.admin.Messages
         </message-bundle>
     </application>
-
+    <converter>
+        <converter-id>
+                    urlResourceConverter
+        </converter-id>
+        <converter-class>
+                    com.sun.identity.admin.model.UrlResourceConverter
+        </converter-class>
+    </converter>
     <managed-bean>
         <managed-bean-name>queuedActionBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.QueuedActionBean</managed-bean-class>

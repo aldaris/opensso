@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 public class PrivilegeBean implements Serializable {
+
     private String name = "myPolicy" + System.currentTimeMillis();
     private String description = null;
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
@@ -24,7 +25,7 @@ public class PrivilegeBean implements Serializable {
         name = p.getName();
         description = null; // TODO
 
-        // TODO: populate other fields from privilege
+    // TODO: populate other fields from privilege
     }
 
     public String getName() {
@@ -45,7 +46,10 @@ public class PrivilegeBean implements Serializable {
 
     public Privilege toPrivilege() {
         // subjects
-        EntitlementSubject eSubject = viewSubject.getEntitlementSubject();
+        EntitlementSubject eSubject = null;
+        if (viewSubject != null) {
+            eSubject = viewSubject.getEntitlementSubject();
+        }
 
         // resources / actions
         Entitlement entitlement = viewEntitlement.getEntitlement();
@@ -63,7 +67,7 @@ public class PrivilegeBean implements Serializable {
 
         Privilege privilege = new OpenSSOPrivilege(
                 name,
-                entitlement, 
+                entitlement,
                 eSubject,
                 condition,
                 attrs);

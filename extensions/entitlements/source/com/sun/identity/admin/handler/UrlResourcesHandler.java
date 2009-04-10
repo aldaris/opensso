@@ -35,18 +35,14 @@ public class UrlResourcesHandler implements Serializable {
     }
 
     public void selectListener(ValueChangeEvent event) {
-        String[] resourceNames = (String[]) event.getNewValue();
-
         ViewEntitlement ve = getViewEntitlement(event);
-        ve.getResources().clear();
-        List<Resource> ar = getAvailableResources(event);
-
-        for (String resourceName: resourceNames) {
-            Resource r = new UrlResource();
-            r.setName(resourceName);
-            ve.getResources().add(r);
-        }
-    }
+        /*
+        List<Resource> resources = (List<Resource>) event.getNewValue();
+        ve.setResources(resources);
+        */
+        Resource[] resourceArray = (Resource[]) event.getNewValue();
+        ve.setResourceArray(resourceArray);
+   }
 
     public void addListener(ActionEvent event) {
         urlResourcesBean.setAddPopupVisible(true);
@@ -56,7 +52,6 @@ public class UrlResourcesHandler implements Serializable {
         String name = urlResourcesBean.getAddPopupName();
         UrlResource ur = new UrlResource();
         ur.setName(name);
-        ur.setSelected(true);
 
         ViewEntitlement ve = getViewEntitlement(event);
         List<Resource> ar = getAvailableResources(event);
@@ -74,7 +69,6 @@ public class UrlResourcesHandler implements Serializable {
 
         UrlResource ur = new UrlResource();
         ur.setName(prefix+name);
-        ur.setSelected(true);
 
         ViewEntitlement ve = getViewEntitlement(event);
         ve.getExceptions().add(ur);

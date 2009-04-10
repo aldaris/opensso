@@ -22,4 +22,18 @@ public abstract class Resource implements Serializable, DeepCloneable {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Resource) {
+            return ((Resource)o).getName().equals(name);
+        }
+
+        return false;
+    }
 }
