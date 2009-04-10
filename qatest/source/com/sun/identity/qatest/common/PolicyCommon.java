@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.17 2008-12-24 22:42:56 arunav Exp $
+ * $Id: PolicyCommon.java,v 1.18 2009-04-10 01:49:10 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1121,6 +1121,8 @@ public class PolicyCommon extends TestCommon {
             throw e;
         } finally {
             consoleLogout(webClient, logoutURL);
+        // Added sleep so the realm creation can be self notified to the server
+            Thread.sleep(notificationSleepTime);
         }
     }
     
@@ -1232,6 +1234,7 @@ public class PolicyCommon extends TestCommon {
             throw e;
         } finally {
             consoleLogout(webClient, logoutURL);
+            Thread.sleep(notificationSleepTime);
         }
     }
     
@@ -1280,6 +1283,8 @@ public class PolicyCommon extends TestCommon {
             throw e;
         } finally {
             consoleLogout(webClient, logoutURL);
+        // Added sleep so the realm creation can be self notified to the server
+            Thread.sleep(notificationSleepTime);
         }
     }
     

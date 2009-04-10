@@ -107,7 +107,9 @@ public class PolicyEvaluationTest extends TestCommon {
                 
                 //now create identities and policies needed for all the tests
                 pc. createIds(mapIdentity);
+                Thread.sleep(notificationSleepTime);
                 pc. createPolicy(scenarioname);
+                Thread.sleep(notificationSleepTime);
             }
         }catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage(), null);
@@ -155,14 +157,18 @@ public class PolicyEvaluationTest extends TestCommon {
                     "Service");
             Set actions = new HashSet();
             actions.add((String)mapExecute.get("action"));
+            Thread.sleep(notificationSleepTime);
             boolean expectedResult = Boolean.valueOf((String)mapExecute.
                     get("result"));
+            Thread.sleep(notificationSleepTime);
             boolean pResult = pe.isAllowed(usertoken, (String)mapExecute.
                     get("resourcename"), (String)mapExecute.get("action"),
                     mapEnvParams);
+            Thread.sleep(notificationSleepTime);
             PolicyDecision pd = pe.getPolicyDecision(usertoken,
                     (String)mapExecute.get("resourcename"), actions,
                     mapEnvParams);
+            Thread.sleep(notificationSleepTime);
             log(logLevel, "evaluatePolicy", "decision" + pResult);
             log(logLevel, "evaluatePolicy", pd.toXML());
             assert (pResult == expectedResult);

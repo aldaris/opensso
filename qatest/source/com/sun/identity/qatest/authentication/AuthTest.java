@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.18 2009-02-03 19:54:20 cmwesley Exp $
+ * $Id: AuthTest.java,v 1.19 2009-04-10 01:49:39 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -267,6 +267,7 @@ public class AuthTest extends TestCommon {
         } finally {
             if (isValidTest) {
                 consoleLogout(webClient, logoutURL);
+            Thread.sleep(notificationSleepTime);
             }
         } 
         exiting("setup");

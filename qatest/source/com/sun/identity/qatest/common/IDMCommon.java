@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.14 2008-08-29 20:40:21 nithyas Exp $
+ * $Id: IDMCommon.java,v 1.15 2009-04-10 01:49:10 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -828,6 +828,7 @@ public class IDMCommon extends TestCommon {
         deleteIdentity(ssoToken, realmName, newidTypeList, idNameList);
         Iterator iterN = idNameList.iterator();
         Iterator iterT = newidTypeList.iterator();
+        Thread.sleep(notificationSleepTime);
         while (iterN.hasNext()) {
             if (doesIdentityExists((String)iterN.next(),
                     (IdType)iterT.next(), ssoToken, realmName)) {
