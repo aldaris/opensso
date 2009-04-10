@@ -94,4 +94,12 @@ public class PrivilegeBean implements Serializable {
     public ViewEntitlement getViewEntitlement() {
         return viewEntitlement;
     }
+
+    public String getViewSubjectAsString() {
+        return viewSubject.toString();
+    }
+
+    public String getViewConditionAsString() {
+        return viewCondition.toString();
+    }
 }

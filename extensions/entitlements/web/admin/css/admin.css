@@ -418,6 +418,10 @@ div.button-wrapper a.button img.left {
     padding-right: 10px;
 }
 
+.summary-strings {
+    padding-left: 10px;
+}
+
 .round {
     background: #ddd;
     color: #fff;

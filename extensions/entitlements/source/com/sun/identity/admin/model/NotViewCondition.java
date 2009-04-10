@@ -21,4 +21,17 @@ public class NotViewCondition
         assert(getViewConditionsSize() < 1);
         super.addViewCondition(vc);
     }
+
+
+    @Override
+    public String toString() {
+        StringBuffer b = new StringBuffer();
+        b.append("NOT (");
+        if (getViewConditions().size() > 0) {
+            b.append(getViewConditions().get(0).toString());
+        }
+        b.append(")");
+
+        return b.toString();
+    }
 }

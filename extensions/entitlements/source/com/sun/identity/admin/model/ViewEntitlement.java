@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,5 +92,19 @@ public class ViewEntitlement implements Serializable {
 
     public void setViewApplication(ViewApplication viewApplication) {
         this.viewApplication = viewApplication;
+    }
+
+    public String getResourcesAsString() {
+        StringBuffer b = new StringBuffer();
+
+        for (Iterator<Resource> i = resources.iterator(); i.hasNext();) {
+            b.append(i.next());
+            if (i.hasNext()) {
+                b.append(",");
+            }
+
+        }
+
+        return b.toString();
     }
 }

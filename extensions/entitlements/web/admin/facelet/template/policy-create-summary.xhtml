@@ -75,7 +75,8 @@
                     columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
                     columns="3">
                     <ice:outputText value="Resources"/>
-                    <ice:outputText value="#{policyCreateWizardBean.policyCreateSummary.resourceCount}"/>
+                    <ice:outputText
+                        value="#{o:size(policyCreateWizardBean.privilegeBean.viewEntitlement.resources)}"/>
                     <ice:commandLink
                         actionListener="#{policyCreateWizardHandler.gotoStepListener}"
                         partialSubmit="true"
@@ -89,6 +90,12 @@
                             style="margin-left: 2px"
                             value="Edit"/>
                     </ice:commandLink>
+                </ice:panelGrid>
+                <ice:panelGrid
+                    styleClass="summary-strings"
+                    visible="#{o:size(policyCreateWizardBean.privilegeBean.viewEntitlement.resources) > 0}">
+                    <ice:outputText
+                        value="#{o:truncate(policyCreateWizardBean.privilegeBean.viewEntitlement.resourcesAsString, 40)}"/>
                 </ice:panelGrid>
             </ui:define>
         </o:box>
@@ -116,6 +123,12 @@
                             value="Edit"/>
                     </ice:commandLink>
                 </ice:panelGrid>
+                <ice:panelGrid
+                    styleClass="summary-strings"
+                    visible="#{policyCreateWizardBean.policyCreateSummary.viewSubjectSize > 0}">
+                    <ice:outputText
+                        value="#{o:truncate(policyCreateWizardBean.privilegeBean.viewSubjectAsString, 40)}"/>
+                </ice:panelGrid>
             </ui:define>
         </o:box>
     </div>
@@ -142,6 +155,12 @@
                             style="margin-left: 2px"
                             value="Edit"/>
                     </ice:commandLink>
+                </ice:panelGrid>
+                <ice:panelGrid
+                    styleClass="summary-strings"
+                    visible="#{policyCreateWizardBean.policyCreateSummary.viewConditionSize > 0}">
+                    <ice:outputText
+                        value="#{o:truncate(policyCreateWizardBean.privilegeBean.viewConditionAsString, 40)}"/>
                 </ice:panelGrid>
             </ui:define>
         </o:box>

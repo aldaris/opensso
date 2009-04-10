@@ -73,4 +73,9 @@ public abstract class ViewSubject implements MultiPanelBean, TreeNode {
     public String getTitle() {
         return getName();
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

@@ -96,6 +96,11 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>subjectExpressionPanelBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.BasicMultiPanelBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>basicMultiPanelHandler</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.handler.BasicMultiPanelHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -247,7 +252,7 @@
         <managed-bean-scope>session</managed-bean-scope>
         <list-entries>
             <value>#{orSubjectType}</value>
-            <value>#{andSubjectType}</value>
+            <!--<value>#{andSubjectType}</value>-->
             <value>#{notSubjectType}</value>
         </list-entries>
     </managed-bean>
@@ -280,7 +285,6 @@
             <value>#{roleSubjectDao}</value>
         </managed-property>
     </managed-bean>
-
 
     <managed-bean>
         <managed-bean-name>subjectContainers</managed-bean-name>

@@ -47,4 +47,14 @@
         <function-class>com.sun.identity.admin.Functions</function-class>
         <function-signature>java.lang.String indexOf(java.util.List, java.lang.Object)</function-signature>
     </function>
+    <function>
+        <function-name>truncate</function-name>
+        <function-class>com.sun.identity.admin.Functions</function-class>
+        <function-signature>java.lang.String truncate(java.lang.String, int)</function-signature>
+    </function>
+    <function>
+        <function-name>size</function-name>
+        <function-class>com.sun.identity.admin.Functions</function-class>
+        <function-signature>int size(java.util.Collection)</function-signature>
+    </function>
 </facelet-taglib>

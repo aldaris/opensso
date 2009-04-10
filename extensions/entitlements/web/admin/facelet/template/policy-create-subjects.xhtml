@@ -73,8 +73,10 @@
                             </ice:panelSeries>
                             <o:multipanel
                                 visible="true"
-                                expanded="true"
-                                collapsible="false"
+                                expanded="#{subjectExpressionPanelBean.expanded}"
+                                bean="#{subjectExpressionPanelBean}"
+                                handler="#{basicMultiPanelHandler}"
+                                collapsible="true"
                                 removeable="false">
                                 <ui:define name="panel-title">
                                     <ice:panelGroup>

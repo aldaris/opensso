@@ -15,4 +15,17 @@ public class NotViewSubject extends ContainerViewSubject implements Serializable
 
         return ns;
     }
+
+    @Override
+    public String toString() {
+        StringBuffer b = new StringBuffer();
+        b.append("NOT (");
+        if (getViewSubjects().size() > 0) {
+            b.append(getViewSubjects().get(0).toString());
+        }
+        b.append(")");
+
+        return b.toString();
+    }
+
 }
