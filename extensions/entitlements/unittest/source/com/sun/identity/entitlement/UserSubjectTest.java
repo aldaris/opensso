@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSubjectTest.java,v 1.2 2009-03-30 18:59:00 dillidorai Exp $
+ * $Id: UserSubjectTest.java,v 1.3 2009-04-10 00:51:04 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -65,10 +65,29 @@ public class UserSubjectTest {
                 "UserSubjectTest.testConstruction(): equality test for false:"
                 + us.equals(us3));
         us3.setPSubjectName("u1");
+        boolean result = us.equals(us3);
         UnittestLog.logMessage(
                 "UserSubjectTest.testConstruction(): equality test for true:"
-                + us.equals(us3));
+                + result);
+        if (!result) {
+             UnittestLog.logMessage(
+                "UserSubjectTest.testConstruction(): equality test for true failed");
+             throw new Exception(
+                     "UserSubjectTest.testConstruction(): equality test for true failed");
+        }
 
+        result = us1.equals(us3);
+        UnittestLog.logMessage(
+                "UserSubjectTest.testConstruction(): equality test for false:"
+                + result);
+        if (result) {
+             UnittestLog.logMessage(
+                "UserSubjectTest.testConstruction(): "
+                + " equality test for false failed");
+             throw new Exception(
+                     "UserSubjectTest.testConstruction(): "
+                     +  "equality test for false failed");
+        }
     }
 
     public static void main(String[] args) throws Exception {
