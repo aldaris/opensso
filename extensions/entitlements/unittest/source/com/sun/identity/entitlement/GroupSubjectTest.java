@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubjectTest.java,v 1.1 2009-03-14 03:07:59 dillidorai Exp $
+ * $Id: GroupSubjectTest.java,v 1.2 2009-04-10 00:58:59 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -43,22 +43,47 @@ public class GroupSubjectTest {
 
     @Test
     public void testConstruction() throws Exception {
-        GroupSubject group = new GroupSubject("grouper1");
-        group.setPSubjectName("g1");
+        GroupSubject group1 = new GroupSubject("grouper1");
+        group1.setPSubjectName("g1");
         UnittestLog.logMessage(
-                "GroupSubjectTest.testConstruction():" + "group.toString()=" + group.toString());
+                "GroupSubjectTest.testConstruction():" + "group.toString()=" 
+                + group1.toString());
 
-        GroupSubject group1 = new GroupSubject();
-        group1.setState(group.getState());
+        GroupSubject group11 = new GroupSubject();
+        group11.setState(group1.getState());
         UnittestLog.logMessage(
-                "GroupSubject.testConstruction():" + "group1.toString()=" + group1.toString());
-
+                "GroupSubject.testConstruction():" + "group11.toString()="
+                + group11.toString());
+         boolean result = group11.equals(group1);
+         UnittestLog.logMessage(
+                "GroupSubject.testConstruction():" + "equals test for true:"
+                + result);
+         if (!result) {
+             UnittestLog.logMessage(
+                "GroupSubject.testConstruction():"
+                    + "equals test for true failed");
+              throw new Exception("GroupSubject.testConstruction():"
+                    + "equals test for true failed");
+         }
 
         UnittestLog.logMessage(
-                "GroupSubjectTest.testConstruction():" + "resetting grouper name");
+                "GroupSubjectTest.testConstruction():"
+                + "resetting grouper name");
         group1.setGroup("group1");
         UnittestLog.logMessage(
-                "GroupSubjectTest.testConstruction():" + "group1.toString()=" + group1.toString());
+                "GroupSubjectTest.testConstruction():" + "group1.toString()="
+                + group1.toString());
+        result = group11.equals(group1);
+        UnittestLog.logMessage(
+                "GroupSubject.testConstruction():" + "equals test for false:" 
+                + result);
+        if (result) {
+             UnittestLog.logMessage(
+                "GroupSubject.testConstruction():"
+                    + "equals test for false failed");
+              throw new Exception("GroupSubject.testConstruction():"
+                    + "equals test for false failed");
+         }
     }
 
     public static void main(String[] args) throws Exception {
