@@ -45,8 +45,7 @@ public class PrivilegeBean implements Serializable {
 
     public Privilege toPrivilege() {
         // subjects
-        // TODO
-        EntitlementSubject eSubject = null;
+        EntitlementSubject eSubject = viewSubject.getEntitlementSubject();
 
         // resources / actions
         Entitlement entitlement = viewEntitlement.getEntitlement();

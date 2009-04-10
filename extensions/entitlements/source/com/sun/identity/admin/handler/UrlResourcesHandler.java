@@ -35,7 +35,7 @@ public class UrlResourcesHandler implements Serializable {
     }
 
     public void selectListener(ValueChangeEvent event) {
-        List<String> resourceNames = (List<String>) event.getNewValue();
+        String[] resourceNames = (String[]) event.getNewValue();
 
         ViewEntitlement ve = getViewEntitlement(event);
         ve.getResources().clear();
