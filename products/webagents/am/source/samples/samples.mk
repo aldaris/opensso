@@ -81,7 +81,6 @@ CC = cc
 endif
 ifdef   OS_IS_CYGWIN
 CC=cl
-LINK=link
 endif
 
 #
