@@ -365,7 +365,6 @@ div.button-wrapper a.button img.left {
 }
 
 .multipanel-header {
-    border: 1px solid #bbb;
     padding: 2px;
 }
 
@@ -383,9 +382,7 @@ div.button-wrapper a.button img.left {
 }
 
 .multipanel-body {
-    border-bottom: 1px solid #bbb;
-    border-left: 1px solid #bbb;
-    border-right: 1px solid #bbb;
+    border-top: 1px solid #bbb;
     background: #efefef;
     position: relative;
     padding: 4px;

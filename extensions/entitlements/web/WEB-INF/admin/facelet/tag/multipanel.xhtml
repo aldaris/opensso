@@ -2,64 +2,69 @@
 <ui:composition 
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:o="http://opensso.dev.java.net"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
     <ice:panelGroup
         visible="#{visible}"
         effect="#{bean.panelEffect}"
         styleClass="multipanel">
-        <ice:panelGroup
-            styleClass="multipanel-header">
-            <ice:panelGrid
-                style="width: 100%"
-                columns="2">
+        <o:box>
+            <ui:define name="body">
                 <ice:panelGroup
-                    styleClass="multipanel-title">
-                    <ui:insert name="panel-title"/>
+                    styleClass="multipanel-header">
+                    <ice:panelGrid
+                        style="width: 100%"
+                        columns="2">
+                        <ice:panelGroup
+                            styleClass="multipanel-title">
+                            <ui:insert name="panel-title"/>
+                        </ice:panelGroup>
+                        <ice:panelGroup
+                            styleClass="multipanel-controls">
+                            <ice:commandLink
+                                rendered="#{collapsible == true}"
+                                actionListener="#{handler.expandListener}"
+                                partialSubmit="true"
+                                styleClass="command-link">
+                                <img
+                                    style="vertical-align: middle"
+                                    src="#{bean.expanded ? '../image/hide.png' : '../image/show.png'}"/>
+                                <ice:outputText
+                                    style="margin-left: 2px"
+                                    value="#{bean.expanded ? 'Hide' : 'Show'}"/>
+                                <f:attribute
+                                    name="bean"
+                                    value="#{bean}"/>
+                            </ice:commandLink>
+                            <ice:outputText
+                                rendered="#{collapsible == true &amp;&amp; removeable == true}"
+                                value="|"/>
+                            <ice:commandLink
+                                rendered="#{removeable == true}"
+                                actionListener="#{handler.removeListener}"
+                                partialSubmit="true"
+                                styleClass="command-link">
+                                <img
+                                    style="vertical-align: middle"
+                                    src="../image/remove.png"/>
+                                <ice:outputText
+                                    style="margin-left: 2px"
+                                    value="Remove"/>
+                                <f:attribute
+                                    name="bean"
+                                    value="#{bean}"/>
+                            </ice:commandLink>
+                        </ice:panelGroup>
+                    </ice:panelGrid>
                 </ice:panelGroup>
                 <ice:panelGroup
-                    styleClass="multipanel-controls">
-                    <ice:commandLink
-                        rendered="#{collapsible == true}"
-                        actionListener="#{handler.expandListener}"
-                        partialSubmit="true"
-                        styleClass="command-link">
-                        <img
-                            style="vertical-align: middle"
-                            src="#{bean.expanded ? '../image/hide.png' : '../image/show.png'}"/>
-                        <ice:outputText
-                            style="margin-left: 2px"
-                            value="#{bean.expanded ? 'Hide' : 'Show'}"/>
-                        <f:attribute
-                            name="bean"
-                            value="#{bean}"/>
-                    </ice:commandLink>
-                    <ice:outputText
-                        rendered="#{collapsible == true &amp;&amp; removeable == true}"
-                        value="|"/>
-                    <ice:commandLink
-                        rendered="#{removeable == true}"
-                        actionListener="#{handler.removeListener}"
-                        partialSubmit="true"
-                        styleClass="command-link">
-                        <img
-                            style="vertical-align: middle"
-                            src="../image/remove.png"/>
-                        <ice:outputText
-                            style="margin-left: 2px"
-                            value="Remove"/>
-                        <f:attribute
-                            name="bean"
-                            value="#{bean}"/>
-                    </ice:commandLink>
+                    visible="#{expanded}"
+                    effect="#{bean.expandEffect}"
+                    styleClass="multipanel-body">
+                    <ui:insert name="panel-body"/>
                 </ice:panelGroup>
-            </ice:panelGrid>
-        </ice:panelGroup>
-        <ice:panelGroup
-            visible="#{expanded}"
-            effect="#{bean.expandEffect}"
-            styleClass="multipanel-body">
-            <ui:insert name="panel-body"/>
-        </ice:panelGroup>
+            </ui:define>
+        </o:box>
     </ice:panelGroup>
 </ui:composition>
