@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigValidator.java,v 1.1 2008-11-22 02:41:22 ak138937 Exp $
+ * $Id: ServerConfigValidator.java,v 1.2 2009-04-13 23:57:29 ak138937 Exp $
  *
  */
 
@@ -145,6 +145,7 @@ public class ServerConfigValidator extends ServerConfigBase {
                 }
                 Properties sProps = ServerConfiguration.getServerInstance(
                     ssoToken, server);
+                SystemProperties.initializeProperties(sProps, false);
                 validateProperties(sProps, changedProp, defProp, server);
             }
         } catch (Exception e) {
@@ -432,6 +433,7 @@ public class ServerConfigValidator extends ServerConfigBase {
             Debug.getInstance(DEBUG_NAME).error(
                 "ServerConfigValidator.urlExistsInSite: " +
                 "SMS Exception", sms);
+            valid = false;
         }
         return valid;
     }
