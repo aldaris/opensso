@@ -7,6 +7,7 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 public class PrivilegeBean implements Serializable {
@@ -16,16 +17,25 @@ public class PrivilegeBean implements Serializable {
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
     private ViewCondition viewCondition = null;
     private ViewSubject viewSubject = null;
+    private boolean resourcePopupVisible = false;
 
     public PrivilegeBean() {
         // empty
     }
 
-    public PrivilegeBean(Privilege p) {
+    public PrivilegeBean(Privilege p, Map<String,ViewApplication> viewApplications) {
         name = p.getName();
         description = null; // TODO
 
-    // TODO: populate other fields from privilege
+        // entitlement
+        viewEntitlement = new ViewEntitlement(p.getEntitlement(), viewApplications);
+
+        // subjects
+        // TODO
+
+        // conditions
+        // TODO
+
     }
 
     public String getName() {
@@ -107,5 +117,13 @@ public class PrivilegeBean implements Serializable {
             return "";
         }
         return viewCondition.toString();
+    }
+
+    public boolean isResourcePopupVisible() {
+        return resourcePopupVisible;
+    }
+
+    public void setResourcePopupVisible(boolean resourcePopupVisible) {
+        this.resourcePopupVisible = resourcePopupVisible;
     }
 }

@@ -255,6 +255,29 @@ div.button-wrapper a.button img.left {
     font-weight: bold;
 }
 
+.popup-info {
+    z-index: 999;
+    position: absolute;
+    background: #FFFFFF;
+    max-width: 300px;
+}
+
+.popup-info .icon {
+    padding-left: 5px;
+}
+
+.popup-info .title {
+    font-weight: bold;
+}
+
+.popup-info .close {
+    padding-right: 5px;
+}
+
+.popup-infoBody {
+    padding: 5px;
+}
+
 #menu-separator {
     width: 100%;
     border-top: 1px solid #DDDDDD;

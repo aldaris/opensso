@@ -12,10 +12,18 @@ public class Functions {
         if (length >= s.length()) {
             return s;
         }
-        return s.substring(0, length-1)+"...";
+        return s.substring(0, length-1);
     }
 
     public static int size(Collection c) {
         return c.size();
+    }
+
+    public static int length(Object[] oa) {
+        return oa.length;
+    }
+
+    public static int length(String s) {
+        return s.length();
     }
 }

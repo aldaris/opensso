@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:o="http://opensso.dev.java.net"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component">
+    <ice:panelPopup
+        styleClass="popup-info"
+        draggable="false"
+        autoCentre="true"
+        visible="#{visible}">
+        <f:facet name="header">
+            <ice:panelGrid
+                width="100%"
+                cellpadding="0"
+                cellspacing="0"
+                columns="3"
+                columnClasses="icon,title,close">
+                <ice:graphicImage
+                    value="../image/info.png" />
+                <ice:outputText
+                    value="#{title}"/>
+                <ice:commandButton
+                    type="button"
+                    image="../image/close.gif"
+                    actionListener="#{handler[closeListenerMethod]}"
+                    style="cursor: pointer;">
+                    <ui:insert name="attributes"/>
+                </ice:commandButton>
+            </ice:panelGrid>
+        </f:facet>
+        <f:facet name="body">
+            <ice:panelGroup
+                styleClass="body">
+                <ui:insert name="body"/>
+            </ice:panelGroup>
+        </f:facet>
+    </ice:panelPopup>
+</ui:composition>

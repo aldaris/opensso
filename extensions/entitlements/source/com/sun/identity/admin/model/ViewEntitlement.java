@@ -12,10 +12,44 @@ import java.util.Map;
 import java.util.Set;
 
 public class ViewEntitlement implements Serializable {
+
     private List<Resource> resources = new ArrayList<Resource>();
     private List<Resource> exceptions = new ArrayList<Resource>();
     private List<Action> actions = new ArrayList<Action>();
     private ViewApplication viewApplication;
+
+    public ViewEntitlement() {
+        // nothing
+    }
+
+    public ViewEntitlement(Entitlement e, Map<String, ViewApplication> viewApplications) {
+        // application
+        viewApplication = viewApplications.get(e.getApplicationName());
+
+        // resources
+        for (String rs : e.getResourceNames()) {
+            String resourceClassName = viewApplication.getViewApplicationType().getResourceClassName();
+            Resource r;
+            try {
+                r = (Resource) Class.forName(resourceClassName).newInstance();
+            } catch (ClassNotFoundException cnfe) {
+                throw new RuntimeException(cnfe);
+            } catch (InstantiationException ie) {
+                throw new RuntimeException(ie);
+            } catch (IllegalAccessException iae) {
+                throw new RuntimeException(iae);
+            }
+            r.setName(rs);
+            resources.add(r);
+        }
+
+        // exceptions
+        // TODO
+
+        // actions
+        // TODO
+
+    }
 
     public List<Resource> getResources() {
         return resources;
@@ -44,14 +78,14 @@ public class ViewEntitlement implements Serializable {
         e.setExcludedResourceNames(getExceptionSet());
         e.setActionValues(getActionMap());
         e.setApplicationName(viewApplication.getName());
-        
+
         return e;
     }
 
     private Set<String> getResourceSet() {
         Set<String> resourceSet = new HashSet<String>();
 
-        for (Resource r: resources) {
+        for (Resource r : resources) {
             resourceSet.add(r.getName());
         }
 
@@ -61,17 +95,17 @@ public class ViewEntitlement implements Serializable {
     private Set<String> getExceptionSet() {
         Set<String> exceptionSet = new HashSet<String>();
 
-        for (Resource r: exceptions) {
+        for (Resource r : exceptions) {
             exceptionSet.add(r.getName());
         }
 
         return exceptionSet;
     }
 
-    private Map<String,Boolean> getActionMap() {
-        Map<String,Boolean> actionMap = new HashMap<String,Boolean>();
+    private Map<String, Boolean> getActionMap() {
+        Map<String, Boolean> actionMap = new HashMap<String, Boolean>();
 
-        for (Action a: actions) {
+        for (Action a : actions) {
             actionMap.put(a.getName(), a.getValue());
         }
 
@@ -101,6 +135,20 @@ public class ViewEntitlement implements Serializable {
             b.append(i.next());
             if (i.hasNext()) {
                 b.append(",");
+            }
+
+        }
+
+        return b.toString();
+    }
+
+    public String getResourcesAsFormattedString() {
+        StringBuffer b = new StringBuffer();
+
+        for (Iterator<Resource> i = resources.iterator(); i.hasNext();) {
+            b.append(i.next());
+            if (i.hasNext()) {
+                b.append("\n");
             }
 
         }

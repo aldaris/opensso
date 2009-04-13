@@ -14,7 +14,7 @@ public class PolicyCreateWizardBean
 
     private PrivilegeBean privilegeBean = new PrivilegeBean();
     
-    private ViewApplicationDao viewApplicationDao;
+    private ViewApplicationsBean viewApplicationsBean;
     private Effect dropConditionEffect;
     private Effect dropSubjectContainerEffect;
     private Effect policyNameInputEffect;
@@ -36,7 +36,7 @@ public class PolicyCreateWizardBean
     public List<SelectItem> getViewApplicationItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
 
-        for (ViewApplication va : getViewApplicationDao().getViewApplications().values()) {
+        for (ViewApplication va : getViewApplicationsBean().getViewApplications().values()) {
             items.add(new SelectItem(va.getName()));
         }
 
@@ -120,11 +120,11 @@ public class PolicyCreateWizardBean
         availableResources = new DeepCloneableArrayList<Resource>(viewApplication.getResources()).deepClone();
     }
 
-    public ViewApplicationDao getViewApplicationDao() {
-        return viewApplicationDao;
+    public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
+        this.viewApplicationsBean = viewApplicationsBean;
     }
 
-    public void setViewApplicationDao(ViewApplicationDao viewApplicationDao) {
-        this.viewApplicationDao = viewApplicationDao;
+    public ViewApplicationsBean getViewApplicationsBean() {
+        return viewApplicationsBean;
     }
 }

@@ -128,7 +128,7 @@ public class PolicyCreateWizardHandler
 
     public void applicationChanged(ValueChangeEvent event) {
         String name = (String) event.getNewValue();
-        ViewApplication va = getPolicyCreateWizardBean().getViewApplicationDao().getViewApplications().get(name);
+        ViewApplication va = getPolicyCreateWizardBean().getViewApplicationsBean().getViewApplications().get(name);
         getPolicyCreateWizardBean().setViewApplication(va);
     }
 
