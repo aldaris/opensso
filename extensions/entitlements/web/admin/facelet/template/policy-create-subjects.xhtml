@@ -26,7 +26,7 @@
                                 viewSubject="#{policyCreateWizardBean.privilegeBean.viewSubject}"/>
                             <ice:panelGroup
                                 visible="#{policyCreateWizardBean.privilegeBean.viewSubject == null}"
-                            styleClass="drop-target"
+                                styleClass="drop-target"
                                 dropTarget="true"
                                 dropListener="#{policyCreateWizardHandler.subjectDropListener}">
                                 <ice:outputText
@@ -70,6 +70,9 @@
                                         </ice:panelSeries>
                                     </ui:define>
                                 </o:multipanel>
+                                <ice:panelGroup
+                                    style="height: 10px;">
+                                </ice:panelGroup>
                             </ice:panelSeries>
                             <o:multipanel
                                 visible="true"

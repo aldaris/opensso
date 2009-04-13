@@ -96,10 +96,16 @@ public class PrivilegeBean implements Serializable {
     }
 
     public String getViewSubjectAsString() {
+        if (viewSubject == null) {
+            return "";
+        }
         return viewSubject.toString();
     }
 
     public String getViewConditionAsString() {
+        if (viewCondition == null) {
+            return "";
+        }
         return viewCondition.toString();
     }
 }

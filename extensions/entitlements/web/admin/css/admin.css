@@ -14,11 +14,11 @@ body {
 }
 
 .section-outer {
-    margin: 10px;
+    padding: 10px;
 }
 
 .section-inner {
-    margin: 10px;
+    padding: 10px;
 }
 
 .section-head {
@@ -458,15 +458,15 @@ div.button-wrapper a.button img.left {
 
 .box b.tc, .box b.bc,.box b.tc b.L1, .box b.tc b.L2, .box b.tc b.L3,.box b.bc b.L1, .box b.bc b.L2, .box b.bc b.L3{ font-size:0px;padding:0;display:block; }
 
-.box b.tc b.L1,.box b.tc b.L2,.box b.bc b.L1,.box b.bc b.L2 { height:1px; line-height:1px; overflow:hidden; }
+.box b.tc b.L1,.box b.tc b.L2,.box b.bc b.L1,.box b.bc b.L2 { height:1px; line-height:1px; overflow:visible; }
 
 .box b.tc b.L1,.box b.bc b.L1 { margin: 0 4px; }
 
 .box b.tc b.L2,.box b.bc b.L2 { margin: 0 2px; border-width:0 2px; border-style:solid; }
 
-.box b.tc b.L3,.box b.bc b.L3 {margin: 0 1px; border-width:0 1px;    border-style:solid; height:2px; overflow:hidden; }
+.box b.tc b.L3,.box b.bc b.L3 {margin: 0 1px; border-width:0 1px;    border-style:solid; height:2px; overflow:visible; }
 
-.box .content { border-left-style:solid; border-left-width:1px;    border-right-style: solid;border-right-width:1px;    margin:0; overflow:hidden; }
+.box .content { border-left-style:solid; border-left-width:1px;    border-right-style: solid;border-right-width:1px;    margin:0; overflow:visible; }
 
 /* Left-side border color */.box .content { border-left-color:#aaa; border-right-color:#aaa; }
 
