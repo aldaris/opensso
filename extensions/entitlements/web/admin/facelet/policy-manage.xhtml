@@ -28,7 +28,7 @@
                 </ui:define>
                 <ui:define name="body">
                     <ice:outputText
-                        value="#{privilegeBean.viewEntitlement.resourcesAsFormattedString}"/>
+                        value="#{privilegeBean.viewEntitlement.resourcesToFormattedString}"/>
                 </ui:define>
             </o:infopopup>
         </ui:repeat>
@@ -55,10 +55,10 @@
                                 <ice:panelGrid
                                     columns="2">
                                     <ice:outputText
-                                        value="#{o:truncate(privilegeBean.viewEntitlement.resourcesAsString, 40)}"/>
+                                        value="#{o:truncate(privilegeBean.viewEntitlement.resourcesToString, 40)}"/>
                                     <ice:panelGroup
                                         columns="2"
-                                        visible="#{o:length(privilegeBean.viewEntitlement.resourcesAsString) > 40}">
+                                        visible="#{o:length(privilegeBean.viewEntitlement.resourcesToString) > 40}">
                                         <ice:commandLink
                                             styleClass="command-link"
                                             actionListener="#{policyManageHandler.viewResourcesPopupListener}">
@@ -66,7 +66,7 @@
                                                 name="privilegeBean"
                                                 value="#{privilegeBean}"/>
                                             <ice:outputText
-                                                visible="#{o:length(privilegeBean.viewEntitlement.resourcesAsString) > 40}"
+                                                visible="#{o:length(privilegeBean.viewEntitlement.resourcesToString) > 40}"
                                                 value="...View (#{o:size(privilegeBean.viewEntitlement.resources)} total)"/>
                                         </ice:commandLink>
                                     </ice:panelGroup>

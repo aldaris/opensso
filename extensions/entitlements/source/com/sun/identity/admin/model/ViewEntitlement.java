@@ -128,7 +128,7 @@ public class ViewEntitlement implements Serializable {
         this.viewApplication = viewApplication;
     }
 
-    public String getResourcesAsString() {
+    public String resourcesToString() {
         StringBuffer b = new StringBuffer();
 
         for (Iterator<Resource> i = resources.iterator(); i.hasNext();) {
@@ -142,7 +142,7 @@ public class ViewEntitlement implements Serializable {
         return b.toString();
     }
 
-    public String getResourcesAsFormattedString() {
+    public String resourcesToFormattedString() {
         StringBuffer b = new StringBuffer();
 
         for (Iterator<Resource> i = resources.iterator(); i.hasNext();) {
