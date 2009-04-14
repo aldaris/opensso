@@ -3,6 +3,7 @@ package com.sun.identity.admin.handler;
 import com.sun.identity.admin.model.PolicyManageBean;
 import com.sun.identity.admin.model.PrivilegeBean;
 import java.io.Serializable;
+import java.util.Collections;
 import javax.faces.event.ActionEvent;
 
 public class PolicyManageHandler implements Serializable {
@@ -25,6 +26,10 @@ public class PolicyManageHandler implements Serializable {
     public void viewResourcesPopupListener(ActionEvent event) {
         PrivilegeBean pb = getPrivilegeBean(event);
         pb.setResourcePopupVisible(!pb.isResourcePopupVisible());
+    }
+
+    public void sortTableListener(ActionEvent event) {
+        policyManageBean.getPolicyManageTableBean().sort();
     }
 }
 

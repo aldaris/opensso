@@ -7,10 +7,30 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
 public class PrivilegeBean implements Serializable {
+
+    public static class NameComparator implements Comparator {
+        private boolean ascending;
+
+        public NameComparator(boolean ascending) {
+            this.ascending = ascending;
+        }
+
+        public int compare(Object o1, Object o2) {
+            PrivilegeBean pb1 = (PrivilegeBean)o1;
+            PrivilegeBean pb2 = (PrivilegeBean)o2;
+
+            if (ascending) {
+                return pb1.getName().compareTo(pb2.getName());
+            } else {
+                return pb2.getName().compareTo(pb1.getName());
+            }
+        }
+    }
 
     private String name = "myPolicy" + System.currentTimeMillis();
     private String description = null;
