@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.8 2009-04-09 13:15:02 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.9 2009-04-14 00:24:18 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IPolicyEvaluator;
 import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
+import com.sun.identity.entitlement.interfaces.IThreadPool;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +37,8 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 /**
- *
- * @author dennis
+ * This class evaluates entitlements of a subject for a given resource
+ * and a environment paramaters.
  */
 class PrivilegeEvaluator implements IPolicyEvaluator {
     private Subject adminSubject;
@@ -52,16 +53,31 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
     private int counter;
     private int maxCounter = -1;
     private EntitlementCombiner entitlementCombiner;
-    private boolean subTree;
+    private boolean recursive;
+    private IThreadPool threadPool;
+    private EntitlementException eException;
 
+    /**
+     * Initializes the evaluator.
+     *
+     * @param adminSubject Administrator subject which is used for evcaluation.
+     * @param subject Subject to be evaluated.
+     * @param applicationName Application Name.
+     * @param resourceName Rsource name.
+     * @param actions Action names.
+     * @param envParameters Environment parameters.
+     * @param recursive <code>true</code> for sub tree evaluation
+     * @throws com.sun.identity.entitlement.EntitlementException if
+     * initialization fails.
+     */
     private void init(
         Subject adminSubject,
         Subject subject,
         String applicationName,
         String resourceName,
-        Set<String> actionValues,
+        Set<String> actions,
         Map<String, Set<String>> envParameters,
-        boolean subTree
+        boolean recursive
     ) throws EntitlementException {
         this.adminSubject = adminSubject;
         this.subject = subject;
@@ -70,11 +86,25 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
         this.envParameters = envParameters;
         entitlementCombiner = getApplication().getEntitlementCombiner();
         entitlementCombiner.init(applicationName, resourceName,
-            actionValues, subTree);
-        this.subTree = subTree;
-
+            actions, recursive);
+        this.recursive = recursive;
+        threadPool = new ThreadPool(); //TOFIX
     }
 
+    /**
+     * Returrns <code>true</code> if the subject has privilege to have the
+     * given entitlement.
+     *
+     * @param adminSubject Administrator subject which is used for evcaluation.
+     * @param subject Subject to be evaluated.
+     * @param applicationName Application Name.
+     * @param entitlement Entitlement to be evaluated.
+     * @param envParameters Environment parameters.
+     * @return <code>true</code> if the subject has privilege to have the
+     * given entitlement.
+     * @throws com.sun.identity.entitlement.EntitlementException if
+     * evaluation fails.
+     */
     public boolean hasEntitlement(
         Subject adminSubject,
         Subject subject,
@@ -86,9 +116,8 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
             entitlement.getResourceName(), 
             entitlement.getActionValues().keySet(), envParameters, false);
 
-        //separate threads, PIP
         indexes = entitlement.getResourceSearchIndexes();
-        List<Entitlement> results = getEntitlements();
+        List<Entitlement> results = evaluate();
         Entitlement result = results.get(0);
         for (String action : entitlement.getActionValues().keySet()) {
             Boolean b = result.getActionValue(action);
@@ -99,6 +128,20 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
         return true;
     }
 
+    /**
+     * Returrns list of entitlements which is entitled to a subject.
+     *
+     * @param adminSubject Administrator subject which is used for evcaluation.
+     * @param subject Subject to be evaluated.
+     * @param applicationName Application Name.
+     * @param resourceName Resource name.
+     * @param envParameters Environment parameters.
+     * @param recursive <code>true</code> for sub tree evaluation.
+     * @return <code>true</code> if the subject has privilege to have the
+     * given entitlement.
+     * @throws com.sun.identity.entitlement.EntitlementException if
+     * evaluation fails.
+     */
     public List<Entitlement> evaluate(
         Subject adminSubject,
         Subject subject,
@@ -109,18 +152,16 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
     ) throws EntitlementException {
         init(adminSubject, subject, applicationName,
             resourceName, null, envParameters, recursive);
-
-        //separate threads, PIP
-        indexes = getApplication().getResourceSearchIndex(resourceName); //TOFIX
-
-        return getEntitlements();
+        indexes = getApplication().getResourceSearchIndex(resourceName);
+        return evaluate();
     }
 
-    private List<Entitlement> getEntitlements() {
-        ThreadPool.submit(new EvaluationTask(this, subTree));
+    private List<Entitlement> evaluate()
+        throws EntitlementException {
+        threadPool.submit(new EvaluationTask(this, recursive));
 
         synchronized (this) {
-            boolean isDone = false;
+            boolean isDone = (eException != null);
             while ((maxCounter == -1) || ((maxCounter != counter) && !isDone)) {
                 while (!resultQ.isEmpty() && !isDone) {
                     entitlementCombiner.add(resultQ.remove(0));
@@ -131,9 +172,14 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
                     try {
                         wait();
                     } catch (InterruptedException ex) {
-                        //TOFIX
+                        PolicyEvaluatorFactory.debug.error(
+                            "PrivilegeEvaluator.evaluate", ex);
                     }
                 }
+            }
+
+            if (eException != null) {
+                throw eException;
             }
         }
         return entitlementCombiner.getResults();
@@ -164,10 +210,9 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
                     PolicyDataStoreFactory.getInstance().getDataStore();
                 for (Iterator<Privilege> i = ds.search(parent.indexes,
                     SubjectAttributesManager.getSubjectSearchFilter(
-                        parent.subject), bSubTree); i.hasNext();
+                        parent.subject), bSubTree, threadPool); i.hasNext();
                 ) {
-                    ThreadPool.submit(new PrivilegeTask(parent, i.next()));
-                    //TOFIX: ThreadPool?
+                    threadPool.submit(new PrivilegeTask(parent, i.next()));
                     count++;
                 }
                 parent.maxCounter = count;
@@ -175,7 +220,10 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
                     parent.notify();
                 }
             } catch (EntitlementException ex) {
-                //TOFIX
+                parent.eException = ex;
+                synchronized (parent) {
+                    parent.notify();
+                }
             }
         }
     }
@@ -193,16 +241,17 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
             try {
                 List<Entitlement> entitlements = privilege.evaluate(
                     parent.subject, parent.resourceName,
-                    parent.envParameters, parent.subTree);
+                    parent.envParameters, parent.recursive);
                 synchronized(parent) {
                     parent.resultQ.add(entitlements);
                     parent.notify();
                 }
             } catch (EntitlementException ex) {
-                //TOFIX
+                parent.eException = ex;
+                synchronized (parent) {
+                    parent.notify();
+                }
             }
         }
     }
-
-
 }

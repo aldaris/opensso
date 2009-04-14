@@ -22,18 +22,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeType.java,v 1.1 2009-04-02 22:13:38 veiming Exp $
+ * $Id: PrivilegeType.java,v 1.2 2009-04-14 00:24:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 /**
- *
- * @author dennis
+ * Privilege types that are supported by the product.
  */
 public class PrivilegeType {
-    public static final PrivilegeType OPENSSO = new PrivilegeType();
-    public static final PrivilegeType UNKNOWN = new PrivilegeType();
-    private PrivilegeType() {
+    /**
+     * OpenSSO privilege.
+     */
+    public static final PrivilegeType OPENSSO = new PrivilegeType("opensso");
+
+    /**
+     * Unknown type.
+     */
+    public static final PrivilegeType UNKNOWN = new PrivilegeType("unknown");
+
+    private String name;
+
+    private PrivilegeType(String name) {
+        this.name = name;
     }
 }

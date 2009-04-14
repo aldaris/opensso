@@ -22,17 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeInfo.java,v 1.3 2009-04-09 13:15:01 veiming Exp $
+ * $Id: ApplicationTypeInfo.java,v 1.4 2009-04-14 00:24:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
- *
- * @author dennis
+ * Application type information that is required for creating
+ * <code>ApplicationType</code> object.
  */
 public class ApplicationTypeInfo {
     private String name;

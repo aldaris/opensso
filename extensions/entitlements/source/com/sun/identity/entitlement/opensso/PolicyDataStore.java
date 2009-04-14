@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.3 2009-04-10 23:36:06 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.4 2009-04-14 00:24:19 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -32,8 +32,8 @@ import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
-import com.sun.identity.entitlement.ThreadPool;
 import com.sun.identity.entitlement.interfaces.IPolicyConfig;
+import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.shared.BufferedIterator;
 import java.util.Iterator;
 import java.util.Set;
@@ -96,10 +96,11 @@ public class PolicyDataStore implements IPolicyDataStore {
     }
 
     public Iterator<Privilege> search(
-            ResourceSearchIndexes indexes,
-            Set<String> subjectIndexes,
-            boolean bSubTree)
-            throws EntitlementException {
+        ResourceSearchIndexes indexes,
+        Set<String> subjectIndexes,
+        boolean bSubTree,
+        IThreadPool threadPool
+    ) throws EntitlementException {
         BufferedIterator iterator = new BufferedIterator();
         Set<String> setDNs = indexCache.getMatchingEntries(indexes,
             subjectIndexes, bSubTree);
@@ -112,7 +113,7 @@ public class PolicyDataStore implements IPolicyDataStore {
                 i.remove();
             }
         }
-        ThreadPool.submit(new SearchTask(this, iterator, indexes, 
+        threadPool.submit(new SearchTask(this, iterator, indexes,
             subjectIndexes, bSubTree, setDNs));
         return iterator;
     }

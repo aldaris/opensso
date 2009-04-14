@@ -22,21 +22,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyConfigFactory.java,v 1.1 2009-04-02 22:13:38 veiming Exp $
+ * $Id: PolicyConfigFactory.java,v 1.2 2009-04-14 00:24:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IPolicyConfig;
+import com.sun.identity.entitlement.util.DebugFactory;
+import com.sun.identity.shared.debug.IDebug;
 
 /**
- *
- * @author dennis
+ * This factory is responsible for providing the policy configuration object.
  */
 public final class PolicyConfigFactory {
     private static final PolicyConfigFactory instance = new 
         PolicyConfigFactory();
     private IPolicyConfig policyConfig;
+    public static IDebug debug = DebugFactory.getDebug("entitlementConfig");
 
     private PolicyConfigFactory() {
         try {
@@ -44,16 +46,20 @@ public final class PolicyConfigFactory {
             Class clazz = Class.forName(
                 "com.sun.identity.entitlement.opensso.EntitlementService");
             policyConfig = (IPolicyConfig)clazz.newInstance();
-        } catch (InstantiationException ex) {
-            //TOFIX
-        } catch (IllegalAccessException ex) {
-            //TOFIX
-        } catch (ClassNotFoundException ex) {
-            //TOFIX
+        } catch (InstantiationException e) {
+            debug.error("PolicyConfigFactory.<init>", e);
+        } catch (IllegalAccessException e) {
+            debug.error("PolicyConfigFactory.<init>", e);
+        } catch (ClassNotFoundException e) {
+            debug.error("PolicyConfigFactory.<init>", e);
         }
-
     }
 
+    /**
+     * Returns the policy configuration object.
+     * 
+     * @return the policy configuration object.
+     */
     public static IPolicyConfig getPolicyConfig() {
         return instance.policyConfig;
     }

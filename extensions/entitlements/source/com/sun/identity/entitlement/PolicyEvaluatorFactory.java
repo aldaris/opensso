@@ -22,41 +22,58 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorFactory.java,v 1.5 2009-04-07 10:25:08 veiming Exp $
+ * $Id: PolicyEvaluatorFactory.java,v 1.6 2009-04-14 00:24:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IPolicyEvaluator;
+import com.sun.identity.entitlement.util.DebugFactory;
+import com.sun.identity.shared.debug.IDebug;
 
+/**
+ * This class returns the privilege evaluator object.
+ */
 public final class PolicyEvaluatorFactory {
     private static final PolicyEvaluatorFactory instance =
         new PolicyEvaluatorFactory();
     private static Class defaultImpl;
+    public static IDebug debug = DebugFactory.getDebug(
+        "entitlementEvaluation");
     
     static {
         try {
             defaultImpl = Class.forName(
                 "com.sun.identity.entitlement.PrivilegeEvaluator");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            debug.error("PolicyEvaluationFactory.static<init>", e);
         }
     }
     
     private PolicyEvaluatorFactory() {
     }
 
+    /**
+     * Returns an instance of this factory.
+     *
+     * @return an instance of this factory.
+     */
     public static PolicyEvaluatorFactory getInstance() {
         return instance;
     }
-    
+
+    /**
+     * Returns a NEW instance of the privilege evaluation.
+     * 
+     * @return a NEW instance of the privilege evaluation.
+     */
     public IPolicyEvaluator getEvaluator() {
         try {
             return (IPolicyEvaluator)defaultImpl.newInstance();
         } catch (InstantiationException e) {
-            e.printStackTrace();
+            debug.error("PolicyEvaluatorFactory.getEvaluator", e);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            debug.error("PolicyEvaluatorFactory.getEvaluator", e);
         }
         return null;
     }

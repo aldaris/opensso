@@ -22,27 +22,32 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.1 2009-03-25 06:42:52 veiming Exp $
+ * $Id: ThreadPool.java,v 1.2 2009-04-14 00:24:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.IThreadPool;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * TOFIX
- * @author dennis
+ * Thread Pool for multi thread various tasks in the privilege evaluation
+ * process.
  */
-public final class ThreadPool {
-    private static ThreadPool instance = new ThreadPool();
+public final class ThreadPool implements IThreadPool {
     private ExecutorService exeService;
 
-    private ThreadPool() {
+    public ThreadPool() {
         exeService = Executors.newCachedThreadPool();
     }
 
-    public static void submit(Runnable r) {
-        instance.exeService.submit(r);
+    /**
+     * Submits a task to the thread pool.
+     *
+     * @param r Runnable task.
+     */
+    public void submit(Runnable r) {
+        exeService.submit(r);
     }
 }

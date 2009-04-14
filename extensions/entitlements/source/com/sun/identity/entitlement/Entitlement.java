@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.27 2009-04-10 22:40:00 veiming Exp $
+ * $Id: Entitlement.java,v 1.28 2009-04-14 00:24:18 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -111,9 +111,10 @@ public class Entitlement implements Serializable {
      * @param actionNames Set of action names.
      */
     public Entitlement(
-            String applicationName,
-            String resourceName,
-            Set<String> actionNames) {
+        String applicationName,
+        String resourceName,
+        Set<String> actionNames
+    ) {
         setApplicationName(applicationName);
         setResourceName(resourceName);
         setActionNames(actionNames);
@@ -126,8 +127,9 @@ public class Entitlement implements Serializable {
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
-            String resourceName,
-            Map<String, Boolean> actionValues) {
+        String resourceName,
+        Map<String, Boolean> actionValues
+    ) {
         setResourceName(resourceName);
         setActionValues(actionValues);
     }
@@ -140,9 +142,10 @@ public class Entitlement implements Serializable {
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
-            String applicationName,
-            String resourceName,
-            Map<String, Boolean> actionValues) {
+        String applicationName,
+        String resourceName,
+        Map<String, Boolean> actionValues
+    ) {
         setApplicationName(applicationName);
         setResourceName(resourceName);
         setActionValues(actionValues);
@@ -156,9 +159,10 @@ public class Entitlement implements Serializable {
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
-            String applicationName,
-            Set<String> resourceNames,
-            Map<String, Boolean> actionValues) {
+        String applicationName,
+        Set<String> resourceNames,
+        Map<String, Boolean> actionValues
+    ) {
         setApplicationName(applicationName);
         setResourceNames(resourceNames);
         setActionValues(actionValues);
@@ -227,7 +231,7 @@ public class Entitlement implements Serializable {
      * @param excludedResourceNames excluded resource names.
      */
     public void setExcludedResourceNames(
-            Set<String> excludedResourceNames) {
+        Set<String> excludedResourceNames) {
         this.excludedResourceNames = excludedResourceNames;
     }
 
@@ -376,11 +380,11 @@ public class Entitlement implements Serializable {
      * @throws com.sun.identity.entitlement.EntitlementException
      */
     public boolean evaluate(
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return false;
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment)
+        throws EntitlementException {
+        return false; //TOFIX ?? REMOVE?
     }
 
     /**

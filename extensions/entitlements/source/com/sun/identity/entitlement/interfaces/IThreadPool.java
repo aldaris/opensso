@@ -22,34 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DenyOverride.java,v 1.4 2009-04-14 00:24:18 veiming Exp $
+ * $Id: IThreadPool.java,v 1.1 2009-04-14 00:24:19 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
-
-import java.util.Set;
+package com.sun.identity.entitlement.interfaces;
 
 /**
- *
- * Deny Override combine entitlement with <code>false</code> override
- * <code>true</code>.
+ * This interface defines the method for thread pool class which is
+ * needed by privilege evaluation to handle multi thread tasks.
  */
-public class DenyOverride extends EntitlementCombiner {
-    @Override
-    protected boolean combine(Boolean b1, Boolean b2) {
-        return b1.booleanValue() & b2.booleanValue();
-    }
-
-    @Override
-    protected boolean isCompleted() {
-        Entitlement e = getRootE();
-        Set<String> actions = getActions();
-        for (String a : actions) {
-            Boolean result = e.getActionValue(a);
-            if ((result == null) || result.booleanValue()) {
-                return false;
-            }
-        }
-        return true;
-    }
+public interface IThreadPool {
+    /**
+     * Submits a task to the thread pool.
+     *
+     * @param r Runnable task.
+     */
+    void submit(Runnable r);
 }

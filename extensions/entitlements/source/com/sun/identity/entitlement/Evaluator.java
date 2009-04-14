@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.11 2009-04-07 10:25:08 veiming Exp $
+ * $Id: Evaluator.java,v 1.12 2009-04-14 00:24:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IPolicyEvaluator;
+import com.sun.identity.entitlement.util.NetworkMonitor;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,15 @@ import javax.security.auth.Subject;
  */
 public class Evaluator {
     private Subject adminSubject;
-    private String applicationName; //TOFIX: need a default for this.
+    private String applicationName =
+        ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
+    private static final NetworkMonitor HAS_ENTITLEMENT_MONITOR =
+        NetworkMonitor.getInstance("hasEntitltmentMonitor");
+    private static final NetworkMonitor EVAL_SINGLE_LEVEL_MONITOR =
+        NetworkMonitor.getInstance("evalSingleLevelMonitor");
+    private static final NetworkMonitor EVAL_SUB_TREE_MONITOR =
+        NetworkMonitor.getInstance("evalSubTreeMonitor");
+
     
     /**
      * Constructor to create an evaluator of default service type.
@@ -90,8 +99,10 @@ public class Evaluator {
      */
     public boolean hasEntitlement(Subject subject, Entitlement e) 
         throws EntitlementException {
-        //TOFIX: need a swtich choosing opensso or XACML 
-        return evaluate(subject, e, Collections.EMPTY_MAP);
+        long start = HAS_ENTITLEMENT_MONITOR.start();
+        boolean result = evaluate(subject, e, Collections.EMPTY_MAP);
+        HAS_ENTITLEMENT_MONITOR.end(start);
+        return result;
     }
     
     /**
@@ -136,10 +147,19 @@ public class Evaluator {
         Map<String, Set<String>> environment,
         boolean recursive
     ) throws EntitlementException {
+        long start = (recursive) ? EVAL_SUB_TREE_MONITOR.start() :
+            EVAL_SINGLE_LEVEL_MONITOR.start();
         IPolicyEvaluator evaluator = 
             PolicyEvaluatorFactory.getInstance().getEvaluator();
-        return evaluator.evaluate(adminSubject, subject, applicationName,
-            resourceName, environment, recursive);
+        List<Entitlement> results = evaluator.evaluate(adminSubject, subject,
+            applicationName, resourceName, environment, recursive);
+
+        if (recursive) {
+            EVAL_SUB_TREE_MONITOR.end(start);
+        } else {
+            EVAL_SINGLE_LEVEL_MONITOR.end(start);
+        }
+        return results;
     }
 
     public String getApplicationName() {

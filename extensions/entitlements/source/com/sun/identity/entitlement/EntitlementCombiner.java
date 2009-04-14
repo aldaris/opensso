@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCombiner.java,v 1.5 2009-04-09 13:15:01 veiming Exp $
+ * $Id: EntitlementCombiner.java,v 1.6 2009-04-14 00:24:18 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -37,8 +37,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * This is the base class for entitlement combiner. >code>DenyOverride</code>
+ * extends this class.
  *
- * @author dennis
+ * <code>init</code> needs to be called after it is created.
+ *
  */
 public abstract class EntitlementCombiner {
     private String resourceName;
@@ -46,9 +49,23 @@ public abstract class EntitlementCombiner {
     private boolean isDone;
     private boolean isRecursive;
     private List<Entitlement> results = new ArrayList<Entitlement>();
-    private Entitlement rootE;
     private ResourceName resourceComparator;
 
+    /**
+     * root entitlement is the root entitlement when we are doing sub tree
+     * evaluation (recursive = true); and is the entitlement decision for
+     * single node evaluation (recursive = false).
+     */
+    private Entitlement rootE;
+
+    /**
+     * Initializes the combiner.
+     *
+     * @param applicationName Application Name.
+     * @param resourceName Resource name to be evaluated.
+     * @param actions Action names to be evaluated.
+     * @param isRecursive <code>true<</code> for sub stree evaluation.
+     */
     public void init(
         String applicationName,
         String resourceName,
@@ -78,6 +95,12 @@ public abstract class EntitlementCombiner {
 
     }
 
+    /**
+     * Adds a set of entitlements to the overall entitlement decision. These
+     * entitlements will be combined with existing decision.
+     *
+     * @param entitlements Set of entitlements.
+     */
     public void add(List<Entitlement> entitlements) {
         if (!isRecursive) {
             for (Entitlement e : entitlements) {
@@ -113,6 +136,13 @@ public abstract class EntitlementCombiner {
         }
     }
 
+    /**
+     * Merges action values. The action values of the second entitlement
+     * is merged to first entitlement.
+     *
+     * @param e1 Entitlement.
+     * @param e2 Entitlement.
+     */
     protected void mergeActionValues(Entitlement e1, Entitlement e2) {
         Map<String, Boolean> result = new HashMap<String, Boolean>();
         Map<String, Boolean> a1 = e1.getActionValues();
@@ -139,6 +169,13 @@ public abstract class EntitlementCombiner {
         isDone = isCompleted();
     }
 
+    /**
+     * Merges advices. The advices of the second entitlement
+     * is merged to first entitlement.
+     *
+     * @param e1 Entitlement
+     * @param e2 Entitlement
+     */
     protected void mergeAdvices(Entitlement e1, Entitlement e2) {
         Map<String, Set<String>> result = new HashMap<String, Set<String>>();
         Map<String, Set<String>> a1 = e1.getAdvices();
@@ -165,6 +202,13 @@ public abstract class EntitlementCombiner {
         e1.setAdvices(result);
     }
 
+    /**
+     * Merges attributes. The attributes of the second entitlement
+     * is merged to first entitlement.
+     *
+     * @param e1 Entitlement
+     * @param e2 Entitlement
+     */
     protected void mergeAttributes(Entitlement e1, Entitlement e2) {
         Map<String, Set<String>> result = new HashMap<String, Set<String>>();
         Map<String, Set<String>> a1 = e1.getAttributes();
@@ -191,31 +235,78 @@ public abstract class EntitlementCombiner {
         e1.setAttributes(result);
     }
 
+    /**
+     * Returns action names.
+     *
+     * @return action names.
+     */
     protected Set<String> getActions() {
         return actions;
     }
 
+    /**
+     * Returns <code>trie</code> if this entitlement combiner is working
+     * on sub tree evaluation.
+     *
+     * @return <code>trie</code> if this entitlement combiner is working
+     * on sub tree evaluation.
+     */
     protected boolean isRecursive() {
         return isRecursive;
     }
 
+    /**
+     * Returns root entitltlement.
+     *
+     * @return root entitltlement.
+     */
     protected Entitlement getRootE() {
         return rootE;
     }
 
+    /**
+     * Returns the resource comparator.
+     *
+     * @return resource comparator.
+     */
     protected ResourceName getResourceComparator() {
         return resourceComparator;
     }
 
+    /**
+     * Returns <code>true</code> if policy decision can also be determined.
+     *
+     * @return <code>true</code> if policy decision can also be determined.
+     */
     public boolean isDone() {
         return isDone;
     }
 
+    /**
+     * Returns entitlements which is the result of combining a set of
+     * entitlement.
+     *
+     * @return entitlement results.
+     */
     public List<Entitlement> getResults() {
         return results;
     }
 
+    /**
+     * Returns the result of combining two entitlement decisions.
+     *
+     * @param b1 entitlement decision.
+     * @param b2 entitlement decision.
+     * @return result of combining two entitlement decisions.
+     */
     protected abstract boolean combine(Boolean b1, Boolean b2);
-    protected abstract boolean isCompleted();
 
+    /**
+     * Returns <code>true</code> if policy decision can also be determined.
+     * This method is called by dervived classed. #isDone method shall be
+     * set if this returns true.
+     *
+     * @return <code>true</code> if policy decision can also be determined.
+     */
+    protected abstract boolean isCompleted();
 }

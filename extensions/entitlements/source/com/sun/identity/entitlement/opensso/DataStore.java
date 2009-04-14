@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.3 2009-04-10 22:40:01 veiming Exp $
+ * $Id: DataStore.java,v 1.4 2009-04-14 00:24:19 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -34,6 +34,7 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
+import com.sun.identity.entitlement.util.NetworkMonitor;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.shared.encode.Base64;
@@ -82,6 +83,9 @@ public class DataStore {
         "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + PATH_PARENT_INDEX_KEY + "={0})";
     private static String PRIVILEGE_DN;
     private static String BASE_DN;
+
+    private static final NetworkMonitor DB_MONITOR =
+        NetworkMonitor.getInstance("dbLookup");
 
     static {
         Object[] p = {SMSEntry.getRootSuffix()};
@@ -225,8 +229,9 @@ public class DataStore {
     ) throws EntitlementException {
         Set<Privilege> results = new HashSet<Privilege>();
         String filter = getFilter(indexes, subjectIndexes, bSubTree);
-        if (filter != null) {
 
+        if (filter != null) {
+            long start = DB_MONITOR.start();
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
             try {
@@ -244,6 +249,7 @@ public class DataStore {
                 Object[] arg = {BASE_DN};
                 throw new EntitlementException(52, arg, e);
             }
+            DB_MONITOR.end(start);
         }
         return results;
     }

@@ -22,12 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStoreFactory.java,v 1.2 2009-04-02 22:13:38 veiming Exp $
+ * $Id: PolicyDataStoreFactory.java,v 1.3 2009-04-14 00:24:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
+import com.sun.identity.entitlement.util.DebugFactory;
+import com.sun.identity.shared.debug.IDebug;
 
 /**
  * This factory returns the implementation class that implements
@@ -37,6 +39,7 @@ public final class PolicyDataStoreFactory {
     private static PolicyDataStoreFactory instance =
         new PolicyDataStoreFactory();
     private static IPolicyDataStore defaultImpl;
+    public static IDebug debug = DebugFactory.getDebug("entitlementDatastore");
     
     static {
         try {
@@ -44,21 +47,31 @@ public final class PolicyDataStoreFactory {
                 "com.sun.identity.entitlement.opensso.PolicyDataStore");
             defaultImpl = (IPolicyDataStore)clazz.newInstance();
         } catch (ClassNotFoundException e) {
-            //TODO
+            debug.error("PolicyDataStoreFactory.static<init>", e);
         } catch (InstantiationException e) {
-            //TODO
+            debug.error("PolicyDataStoreFactory.static<init>", e);
         } catch (IllegalAccessException e) {
-            //TODO
+            debug.error("PolicyDataStoreFactory.static<init>", e);
         }
     }
     
     private PolicyDataStoreFactory() {
     }
-    
+
+    /**
+     * Returns an instance of the factory.
+     *
+     * @return an instance of the factory.
+     */
     public static PolicyDataStoreFactory getInstance() {
         return instance;
     }
-    
+
+    /**
+     * Returns the data store object.
+     * 
+     * @return the data store object.
+     */
     public IPolicyDataStore getDataStore() {
         return defaultImpl; //TODO allow overwritting default impl;
     }

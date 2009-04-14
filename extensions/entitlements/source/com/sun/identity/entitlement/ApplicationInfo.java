@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationInfo.java,v 1.3 2009-04-09 13:15:01 veiming Exp $
+ * $Id: ApplicationInfo.java,v 1.4 2009-04-14 00:24:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
- * @author dennis
+ * Application information required for creating <code>Application</code>
+ * object.
  */
 public class ApplicationInfo {
     private String name;
