@@ -7,7 +7,9 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
     <ice:panelGroup
-        rendered="#{viewSubject != null &amp;&amp; viewSubject.subjectType.name == 'role'}">
-            #{viewSubject.name}
+        rendered="#{viewSubject != null &amp;&amp; viewSubject.subjectType.name == 'idRepoRole'}">
+        <ice:panelGroup>
+            <ice:outputText value="#{viewSubject.name}"/>
+        </ice:panelGroup>
     </ice:panelGroup>
 </span>

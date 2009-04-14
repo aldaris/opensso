@@ -2,15 +2,14 @@ package com.sun.identity.admin.model;
 
 import java.io.Serializable;
 
-public class RoleSubjectType
+public class IdRepoRoleSubjectType
     extends SubjectType
     implements Serializable {
 
     public ViewSubject newViewSubject() {
-        ViewSubject vs = new RoleViewSubject();
+        ViewSubject vs = new IdRepoRoleViewSubject();
         vs.setSubjectType(this);
 
         return vs;
     }
-
 }

@@ -12,23 +12,35 @@
             <supported-locale>en</supported-locale>
             <supported-locale>en_US</supported-locale>
         </locale-config>
-        <message-bundle>
-            com.sun.identity.admin.Messages
-        </message-bundle>
+        <message-bundle>com.sun.identity.admin.Messages</message-bundle>
     </application>
     <converter>
-        <converter-id>
-                    urlResourceConverter
-        </converter-id>
-        <converter-class>
-                    com.sun.identity.admin.model.UrlResourceConverter
-        </converter-class>
+        <converter-id>urlResourceConverter</converter-id>
+        <converter-class>com.sun.identity.admin.model.UrlResourceConverter</converter-class>
     </converter>
     <managed-bean>
         <managed-bean-name>queuedActionBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.QueuedActionBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
+
+    <!-- subject class mapper -->
+    <managed-bean>
+        <managed-bean-name>subjectClasses</managed-bean-name>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <map-entries>
+            <map-entry>
+                <key>com.sun.identity.entitlement.OrSubject</key>
+                <value>com.sun.identity.entitlement.OrViewSubject</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.NotSubject</key>
+                <value>com.sun.identity.entitlement.NotViewSubject</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+    <!-- subject class mapper -->
 
     <!-- application types -->
     <managed-bean>
@@ -117,34 +129,14 @@
     </managed-bean>
     <!-- various panel beans -->
 
-    <!-- subject dao's -->
-    <managed-bean>
-        <managed-bean-name>userSubjectDao</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.dao.UserSubjectDao</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>subjectType</property-name>
-            <value>#{userSubjectType}</value>
-        </managed-property>
-    </managed-bean>
-    <managed-bean>
-        <managed-bean-name>roleSubjectDao</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.dao.RoleSubjectDao</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>subjectType</property-name>
-            <value>#{roleSubjectType}</value>
-        </managed-property>
-    </managed-bean>
-
     <!-- subject types -->
     <managed-bean>
-        <managed-bean-name>userSubjectType</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.UserSubjectType</managed-bean-class>
+        <managed-bean-name>idRepoUserSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.IdRepoUserSubjectType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>name</property-name>
-            <value>user</value>
+            <value>idRepoUser</value>
         </managed-property>
         <managed-property>
             <property-name>expression</property-name>
@@ -152,7 +144,7 @@
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>/admin/facelet/template/subject-user.xhtml</value>
+            <value>/admin/facelet/template/subject-idrepo-user.xhtml</value>
         </managed-property>
         <managed-property>
             <property-name>subjectIconUri</property-name>
@@ -160,12 +152,12 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
-        <managed-bean-name>roleSubjectType</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.RoleSubjectType</managed-bean-class>
+        <managed-bean-name>idRepoRoleSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.IdRepoRoleSubjectType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>name</property-name>
-            <value>role</value>
+            <value>idRepoRole</value>
         </managed-property>
         <managed-property>
             <property-name>expression</property-name>
@@ -173,7 +165,7 @@
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>/admin/facelet/template/subject-role.xhtml</value>
+            <value>/admin/facelet/template/subject-idrepo-role.xhtml</value>
         </managed-property>
         <managed-property>
             <property-name>subjectIconUri</property-name>
@@ -249,8 +241,8 @@
         <managed-bean-class>java.util.ArrayList</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <list-entries>
-            <value>#{userSubjectType}</value>
-            <value>#{roleSubjectType}</value>
+            <value>#{idRepoUserSubjectType}</value>
+            <value>#{idRepoRoleSubjectType}</value>
             <value>#{orSubjectType}</value>
             <value>#{andSubjectType}</value>
             <value>#{notSubjectType}</value>
@@ -268,31 +260,72 @@
     </managed-bean>
     <!-- subject types -->
 
-    <!-- subject containers -->
+    <!-- subject dao's -->
     <managed-bean>
-        <managed-bean-name>userSubjectContainer</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.SubjectContainer</managed-bean-class>
+        <managed-bean-name>idRepoUserSubjectDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.IdRepoUserSubjectDao</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>subjectType</property-name>
-            <value>#{userSubjectType}</value>
+            <value>#{idRepoUserSubjectType}</value>
         </managed-property>
         <managed-property>
-            <property-name>subjectDao</property-name>
-            <value>#{userSubjectDao}</value>
+            <property-name>limit</property-name>
+            <value>100</value>
+        </managed-property>
+        <managed-property>
+            <property-name>timeout</property-name>
+            <value>5</value>
+        </managed-property>
+        <managed-property>
+            <property-name>namingAttribute</property-name>
+            <value>uid</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
-        <managed-bean-name>roleSubjectContainer</managed-bean-name>
+        <managed-bean-name>idRepoRoleSubjectDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.IdRepoRoleSubjectDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{idRepoRoleSubjectType}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>limit</property-name>
+            <value>100</value>
+        </managed-property>
+        <managed-property>
+            <property-name>timeout</property-name>
+            <value>5</value>
+        </managed-property>
+    </managed-bean>
+    <!-- subject dao's -->
+
+    <!-- subject containers -->
+    <managed-bean>
+        <managed-bean-name>idRepoUserSubjectContainer</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.SubjectContainer</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>subjectType</property-name>
-            <value>#{roleSubjectType}</value>
+            <value>#{idRepoUserSubjectType}</value>
         </managed-property>
         <managed-property>
             <property-name>subjectDao</property-name>
-            <value>#{roleSubjectDao}</value>
+            <value>#{idRepoUserSubjectDao}</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>idRepoRoleSubjectContainer</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SubjectContainer</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{idRepoRoleSubjectType}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectDao</property-name>
+            <value>#{idRepoRoleSubjectDao}</value>
         </managed-property>
     </managed-bean>
 
@@ -301,8 +334,8 @@
         <managed-bean-class>java.util.ArrayList</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <list-entries>
-            <value>#{userSubjectContainer}</value>
-            <value>#{roleSubjectContainer}</value>
+            <value>#{idRepoUserSubjectContainer}</value>
+            <!--<value>#{idRepoRoleSubjectContainer}</value>-->
         </list-entries>
     </managed-bean>
     <!-- subject containers -->
