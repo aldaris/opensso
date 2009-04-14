@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: ssopre80upgrade,v 1.2 2009-02-02 18:39:32 goodearth Exp $
+# $Id: ssopre80upgrade,v 1.3 2009-04-14 21:25:08 ww203982 Exp $
 #
 #
 
@@ -71,7 +71,6 @@ if [ $OS = "Linux" ]; then
     LDAPMODIFY=/opt/sun/private/bin/ldapmodify
     LDAPDELETE=/opt/sun/private/bin/ldapdelete
     LDAPLIBS=/opt/sun/share/lib
-    LDAPJDK=/opt/sun/share/lib/ldapjdk.jar
 else 
     SORT=/usr/bin/sort
     GREP=/usr/bin/grep
@@ -99,7 +98,6 @@ else
     LDAPMODIFY=/usr/sfw/bin/ldapmodify
     LDAPDELETE=/usr/sfw/bin/ldapdelete
     LDAPLIBS=/usr/share/lib:/usr/lib/mps/secv1
-    LDAPJDK=/usr/share/lib/ldapjdk.jar
 fi
 ### HP-UX is not supported
 ### this is redundant for now.
@@ -114,7 +112,6 @@ if [ $OS = "HP-UX" ]; then
 	LDAPMODIFY=/opt/sun/private/bin/ldapmodify
     LDAPDELETE=/opt/sun/private/bin/ldapdelete
     LDAPLIBS=/opt/sun/private/lib
-    LDAPJDK=/opt/sun/share/lib/ldapjdk.jar
 fi	
 
 OPTIONS='-DinstallTime=true'

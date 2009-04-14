@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2008-08-13 18:56:42 mrudul_uchil Exp $
+   $Id: build.xml,v 1.6 2009-04-14 21:25:08 ww203982 Exp $
 
 -->
 
@@ -58,7 +58,6 @@
         <java classname="com.samples.SecuringWS" fork="true">
             <classpath>
                 <pathelement location="${glassfish.home}/addons/opensso/openssowssproviders.jar"/>
-                <pathelement location="${glassfish.home}/addons/opensso/ldapjdk.jar"/>
                 <pathelement location="${glassfish.home}/addons/opensso/webservices-rt.jar"/>
                 <pathelement location="${glassfish.home}/addons/opensso/openssoclientsdk.jar"/>
                 <pathelement location="${glassfish.home}/addons/opensso/xalan.jar"/>
