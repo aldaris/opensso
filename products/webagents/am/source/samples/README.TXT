@@ -65,7 +65,7 @@ Building Sample Program on UNIX platforms
       3.76 or higher.
 
    2. Make sure you have gcc or any other compliant C compiler program
-      available.
+      available on Linux and Sun Studio 11 C/C++ compiler on Solaris.
 
    3. Under install directory>/is_csdk/lib, please do the following
 
@@ -103,11 +103,12 @@ Building Sample Program on Windows
    On Windows platform, the sample programs can be built using 
    Microsoft Visual Studio 7.0.  Be sure to do the following: 
        - Define WINNT in the compile flags.
-       - Run vcvars32.bat which will set the all the required path,include
-         libraries required to compile the samples
-       - Add ../bin as an additional path. 
-       - Add ../include as an additional include path. 
-       - Add ../lib as an additional lib path. 
+       - On 32-bit Windows machine, run vcvars32.bat which will 
+         set the all the required path,include libraries required to compile the samples.
+         For setting these variables in 64-bit Windows, it is explained below.
+       - Add ../bin as an additional PATH environment variable. 
+       - Add ../include as an additional INCLUDE environment variable. 
+       - Add ../bin as an additional LIB environment variable. 
        - Link with all libraries in the ../lib directory. 
 
    If gmake and MKS toolkit are installed on the system, the default 
@@ -115,6 +116,21 @@ Building Sample Program on Windows
    gmake on the command. For example: 
   
        C:\samples>gmake
+
+   On a 64-bit windows machine, install Visual Studio 2008 and cygwin 
+   to build the samples. Then set the PATH,INCLUDE and LIB environment variables 
+   with that of the Visual Studio compiler tools. Please note that while using 
+   cygwin to build the samples, PATH, INCLUDE and LIB environment variables have to be set manually. 
+   You can start a Visual Studio 2008 x64 Win64 command prompt and run echo %PATH%, 
+   echo %LIB% and echo %INCLUDE% to get the values. You can then set them either by 
+   using export in cygwin shell or through the system properties of Windows. 
+   you can then run gmake in the cygwin shell and build the samples. For example:
+   
+       $ cd /cygdrive/<path to samples folder>/ 
+       $ gmake
+   
+   While executing the sample programs, execute from a Windows command prompt and not from
+   the cygwin shell.
 
 Executing the Sample Program
 ----------------------------
