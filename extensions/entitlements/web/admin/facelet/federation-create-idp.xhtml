@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition
+    template="template/page.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+    <ice:panelGroup>
+        <ice:selectOneRadio
+            valueChangeListener="#{federationCreateIdpHandler.localRemoteListener}">
+            <f:selectItem itemValue="true" itemLabel="Local"/>
+            <f:selectItem itemValue="false" itemLabel="Remote"/>
+        </ice:selectOneRadio>
+    </ice:panelGroup>
+    <ui:define name="panel-title">
+        <ice:outputText value="Create IDP" />
+    </ui:define>
+    <ui:define name="panel-details">
+        <ice:outputText value="Blah, blah blah" />
+    </ui:define>
+    <ui:define name="panel-body">
+        <ice:panelGroup
+            visible="#{federationCreateIdpBean.local}">
+            Local
+            <ice:panelGroup
+                visible="#{federationCreateIdpBean.meta}">
+                Meta
+            </ice:panelGroup>
+            <ice:panelGroup
+                visible="#{!federationCreateIdpBean.meta}">
+                No meta
+            </ice:panelGroup>
+        </ice:panelGroup>
+        <ice:panelGroup
+            visible="#{!federationCreateIdpBean.local}">
+            Remote
+            <ice:panelGroup
+                visible="#{federationCreateIdpBean.meta}">
+                Meta
+            </ice:panelGroup>
+            <ice:panelGroup
+                visible="#{!federationCreateIdpBean.meta}">
+                No meta
+            </ice:panelGroup>
+        </ice:panelGroup>
+    </ui:define>
+</ui:composition>
