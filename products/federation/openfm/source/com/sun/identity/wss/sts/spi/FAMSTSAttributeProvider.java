@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.17 2008-08-19 19:12:28 veiming Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.18 2009-04-16 17:30:10 mrudul_uchil Exp $
  *
  */
 
@@ -153,11 +153,13 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
            Set<Principal> principals = subject.getPrincipals();
            if (principals != null){
                final Iterator iterator = principals.iterator();
-               while (iterator.hasNext()){
+               while (iterator.hasNext()){                   
                     String cnName = principals.iterator().next().getName();
-                    int pos = cnName.indexOf("=");
-                    if (pos != -1) {
-                        subjectName = cnName.substring(pos+1);
+                    String[] cnNameParts = cnName.split(",");
+                    if ((cnNameParts.length == 1) && 
+                        (cnNameParts[0].indexOf("=") != -1)) {
+                        int pos = cnNameParts[0].indexOf("=");
+                        subjectName = cnNameParts[0].substring(pos+1);
                     } else {
                         subjectName = cnName;
                     }
