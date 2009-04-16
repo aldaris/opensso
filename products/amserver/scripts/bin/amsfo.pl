@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amsfo.pl,v 1.4 2008-06-25 05:41:16 qcheng Exp $
+# $Id: amsfo.pl,v 1.5 2009-04-16 15:35:59 subashvarma Exp $
 #
 
 ### To Debug this script set AMDEBUG to true ####
@@ -239,8 +239,20 @@ if ($ARGV[1] eq 'start') {
         sleep(10);
         stop_jmq();
     }
+}elsif($ARGV[1] eq 'start-jmq') {
+         start_jmq();
+         sleep(10);
+}elsif($ARGV[1] eq 'stop-jmq') {
+         stop_jmq();
+         sleep(10);
+}elsif($ARGV[1] eq 'start-amsdb') {
+         start_am();
+         sleep(10);
+}elsif($ARGV[1] eq 'stop-amsdb') {
+         stop_am();
+         sleep(10);
 }else {
-	print "Usage: amsfo.pl <configuration file name> start|stop";
+	print "Usage: amsfo.pl <configuration file name> start|stop|start-jmq|stop-jmq|start-amsdb|stop-amsdb";
         print "\n";
         print "\n";
         print "Example Usage: amsfo.pl c:/sun/AccessManager/lib/amsfo.conf start";
