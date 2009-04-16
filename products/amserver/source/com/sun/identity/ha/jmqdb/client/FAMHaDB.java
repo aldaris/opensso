@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMHaDB.java,v 1.5 2008-08-01 22:24:46 hengming Exp $
+ * $Id: FAMHaDB.java,v 1.6 2009-04-16 15:37:49 subashvarma Exp $
  *
  */
  
@@ -70,6 +70,7 @@ public class FAMHaDB implements Runnable {
     static FAMHaDB dbs;
     /* Operations */
     static boolean debug = true;
+    static boolean shutdownStatus = false;
     
     static public final String READ = "READ";
     static public final String WRITE = "WRITE";
@@ -305,8 +306,10 @@ public class FAMHaDB implements Runnable {
         localNodeID = (new SecureRandom()).nextLong();
         localStartTime = System.currentTimeMillis();
         nodeStatusSender = new Thread(new NodeStatusSender());        
+        nodeStatusSender.setDaemon(true); 
         nodeStatusSender.start();
         nodeStatusReceiver = new Thread(new NodeStatusReceiver());
+        nodeStatusReceiver.setDaemon(true); 
         nodeStatusReceiver.start();
         if(verbose) {
             System.out.println(bundle.getString("waitfornodechecking"));
@@ -326,6 +329,8 @@ public class FAMHaDB implements Runnable {
     
     private void Shutdown() {
         try {
+            shutdownStatus = true;
+            Thread.sleep(3000); 
             haDbEnv.close();
         } catch (Exception e) {
             System.out.println("e.getMessage");
@@ -720,7 +725,7 @@ public class FAMHaDB implements Runnable {
         long startTime = System.currentTimeMillis();
         long epoch = startTime;
         totalTrans = 0;
-        while (true) {
+        while (!shutdownStatus) {
             try {
                 if (isServerUp) {
                     int ret = process();
@@ -743,10 +748,10 @@ public class FAMHaDB implements Runnable {
                      * interval of 1 minute and cleans sessions 5 times the
                      * numCleanSessions value from the Database.
                      */
+                    Thread.sleep(sleepTime);
                     long curTime = System.currentTimeMillis()/1000;
                     int cleanCount = numCleanSessions * 5;
                     deleteByDate(curTime, cleanCount);
-                    Thread.sleep(sleepTime);
 
                     if(verbose) {
                         System.out.println(bundle.getString("reconnecttobroker"));
@@ -1172,7 +1177,7 @@ public class FAMHaDB implements Runnable {
         }
         
         public void run() {
-            while (true) {
+            while (!shutdownStatus) {
                 
                 try {
                     if (isServerUp) {
@@ -1238,7 +1243,7 @@ public class FAMHaDB implements Runnable {
         }
         
         public void run() {
-            while (true) {
+            while (!shutdownStatus) {
                 try {
                     if (isServerUp) {
                         BytesMessage msg = (BytesMessage) dbNodeStatusSub
