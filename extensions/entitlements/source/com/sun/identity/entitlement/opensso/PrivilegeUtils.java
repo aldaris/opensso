@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.6 2009-04-10 22:40:01 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.7 2009-04-16 18:13:25 dillidorai Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -418,8 +418,16 @@ public class PrivilegeUtils {
             return null;
         }
         Object valueObj = props.get(name);
-        if (valueObj == null) {
+        if (valueObj == null ) {
             return null;
+        }
+        if (valueObj instanceof Set) {
+            Set valueSet = (Set)valueObj;
+            if (valueSet.isEmpty()) {
+                return null;
+            } else {
+                return valueSet.iterator().next().toString();
+            }
         }
         return valueObj.toString();
     }
