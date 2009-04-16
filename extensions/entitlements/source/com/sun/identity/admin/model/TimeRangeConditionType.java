@@ -37,8 +37,6 @@ public class TimeRangeConditionType
 
     private Time parseTime(String timeString) {
         assert(timeString != null);
-        timeString = timeString.substring(1, timeString.length()-1);
-
         Time t = new Time();
 
         String[] timeArray = timeString.split(":");

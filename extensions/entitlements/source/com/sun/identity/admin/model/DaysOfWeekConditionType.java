@@ -27,7 +27,6 @@ public class DaysOfWeekConditionType
         List<String> selectedDays = new ArrayList<String>();
 
         String startDay = tc.getStartDay();
-        startDay = startDay.substring(1, startDay.length()-1);
         String endDay = tc.getEndDay();
         endDay = endDay.substring(1, endDay.length()-1);
 

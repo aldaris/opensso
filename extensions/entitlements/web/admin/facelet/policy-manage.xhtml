@@ -81,20 +81,17 @@
                                     columns="2">
                                     <ice:outputText
                                         value="#{o:truncate(privilegeBean.viewEntitlement.resourcesToString, policyManageBean.policyManageTableBean.cellWidth)}"/>
-                                    <ice:panelGroup
-                                        columns="2"
+                                    <ice:commandLink
+                                        styleClass="command-link"
+                                        actionListener="#{policyManageHandler.viewResourcesPopupListener}"
                                         visible="#{o:length(privilegeBean.viewEntitlement.resourcesToString) > policyManageBean.policyManageTableBean.cellWidth}">
-                                        <ice:commandLink
-                                            styleClass="command-link"
-                                            actionListener="#{policyManageHandler.viewResourcesPopupListener}">
-                                            <f:attribute
-                                                name="privilegeBean"
-                                                value="#{privilegeBean}"/>
-                                            <ice:outputText
-                                                visible="#{o:length(privilegeBean.viewEntitlement.resourcesToString) > policyManageBean.policyManageTableBean.cellWidth}"
-                                                value="...View (#{o:size(privilegeBean.viewEntitlement.resources)} total)"/>
-                                        </ice:commandLink>
-                                    </ice:panelGroup>
+                                        <f:attribute
+                                            name="privilegeBean"
+                                            value="#{privilegeBean}"/>
+                                        <ice:outputText
+                                            visible="#{o:length(privilegeBean.viewEntitlement.resourcesToString) > policyManageBean.policyManageTableBean.cellWidth}"
+                                            value="...View (#{o:size(privilegeBean.viewEntitlement.resources)} total)"/>
+                                    </ice:commandLink>
                                 </ice:panelGrid>
                             </ice:column>
                             <ice:column>
@@ -110,22 +107,21 @@
                                     <ice:outputText
                                         value="Conditions"/>
                                 </f:facet>
-                                <ice:outputText
-                                    value="#{o:truncate(privilegeBean.viewCondition.toString, policyManageBean.policyManageTableBean.cellWidth)}"/>
-                                    <ice:panelGroup
-                                        columns="2"
-                                        visible="#{o:length(privilegeBean.viewCondition.toString) > policyManageBean.policyManageTableBean.cellWidth}">
-                                        <ice:commandLink
-                                            styleClass="command-link"
-                                            actionListener="#{policyManageHandler.viewConditionPopupListener}">
-                                            <f:attribute
-                                                name="privilegeBean"
-                                                value="#{privilegeBean}"/>
-                                            <ice:outputText
-                                                visible="#{o:length(privilegeBean.viewCondition.toString) > policyManageBean.policyManageTableBean.cellWidth}"
-                                                value="...View (#{privilegeBean.viewCondition.size} total)"/>
-                                        </ice:commandLink>
-                                    </ice:panelGroup>
+                                <ice:panelGrid
+                                    columns="2">
+                                    <ice:outputText
+                                        value="#{o:truncate(privilegeBean.viewCondition.toString, policyManageBean.policyManageTableBean.cellWidth)}"/>
+                                    <ice:commandLink
+                                        visible="#{o:length(privilegeBean.viewCondition.toString) > policyManageBean.policyManageTableBean.cellWidth}"
+                                        styleClass="command-link"
+                                        actionListener="#{policyManageHandler.viewConditionPopupListener}">
+                                        <f:attribute
+                                            name="privilegeBean"
+                                            value="#{privilegeBean}"/>
+                                        <ice:outputText
+                                            value="...View (#{privilegeBean.viewCondition.size} total)"/>
+                                    </ice:commandLink>
+                                </ice:panelGrid>
                             </ice:column>
                         </ice:dataTable>
                     </div>

@@ -26,7 +26,6 @@ public class IPConditionType
     }
 
     private int[] parseIp(String ipString) {
-        ipString = ipString.substring(1, ipString.length()-1);
         String[] ips = ipString.split("\\.");
         assert(ips.length == 4);
 

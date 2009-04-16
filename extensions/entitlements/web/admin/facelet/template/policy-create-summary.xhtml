@@ -127,7 +127,7 @@
                     styleClass="summary-strings"
                     visible="#{policyCreateWizardBean.policyCreateSummary.viewSubjectSize > 0}">
                     <ice:outputText
-                        value="#{o:truncate(policyCreateWizardBean.privilegeBean.viewSubjectAsString, 40)}"/>
+                        value="#{o:truncate(policyCreateWizardBean.privilegeBean.viewSubject.toString, 40)}"/>
                 </ice:panelGrid>
             </ui:define>
         </o:box>
@@ -160,7 +160,7 @@
                     styleClass="summary-strings"
                     visible="#{policyCreateWizardBean.policyCreateSummary.viewConditionSize > 0}">
                     <ice:outputText
-                        value="#{o:truncate(policyCreateWizardBean.privilegeBean.viewConditionAsString, 40)}"/>
+                        value="#{o:truncate(policyCreateWizardBean.privilegeBean.viewCondition.toString, 40)}"/>
                 </ice:panelGrid>
             </ui:define>
         </o:box>

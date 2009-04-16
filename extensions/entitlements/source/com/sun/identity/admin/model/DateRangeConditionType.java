@@ -39,7 +39,6 @@ public class DateRangeConditionType
 
     private Date parseDate(String dateString) {
         assert(dateString != null);
-        dateString = dateString.substring(1, dateString.length()-1);
         Date d = new Date();
 
         String[] dateArray = dateString.split("-");
