@@ -24,23 +24,55 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
-    <!-- subject class mapper -->
+    <!-- subject class maps -->
     <managed-bean>
-        <managed-bean-name>subjectClasses</managed-bean-name>
+        <managed-bean-name>eSubjectToViewSubjectMap</managed-bean-name>
         <managed-bean-class>java.util.HashMap</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <map-entries>
             <map-entry>
                 <key>com.sun.identity.entitlement.OrSubject</key>
-                <value>com.sun.identity.entitlement.OrViewSubject</value>
+                <value>com.sun.identity.admin.model.OrViewSubject</value>
             </map-entry>
             <map-entry>
                 <key>com.sun.identity.entitlement.NotSubject</key>
-                <value>com.sun.identity.entitlement.NotViewSubject</value>
+                <value>com.sun.identity.admin.model.NotViewSubject</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.IdRepoUserSubject</key>
+                <value>com.sun.identity.admin.model.IdRepoUserViewSubject</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.IdRepoRoleSubject</key>
+                <value>com.sun.identity.admin.model.IdRepoRoleViewSubject</value>
             </map-entry>
         </map-entries>
     </managed-bean>
-    <!-- subject class mapper -->
+
+    <managed-bean>
+        <managed-bean-name>viewSubjectToSubjectDaoMap</managed-bean-name>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <map-entries>
+            <map-entry>
+                <key>com.sun.identity.admin.model.OrViewSubject</key>
+                <value>com.sun.identity.admin.dao.ExpressionSubjectDao</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.OrViewSubject</key>
+                <value>com.sun.identity.admin.dao.ExpressionSubjectDao</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.IdRepoUserViewSubject</key>
+                <value>com.sun.identity.admin.dao.IdRepoUserSubjectDao</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.IdRepoRoleViewSubject</key>
+                <value>com.sun.identity.admin.dao.IdRepoRoleSubjectDao</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+    <!-- subject class maps -->
 
     <!-- application types -->
     <managed-bean>
@@ -553,21 +585,96 @@
     </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>conditionTypes</managed-bean-name>
-        <managed-bean-class>java.util.ArrayList</managed-bean-class>
+        <managed-bean-name>viewConditionToConditionTypeMap</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.BeanHashMap</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
-        <list-entries>
-            <value>#{activeSessionTimeConditionType}</value>
-            <value>#{ipConditionType}</value>
-            <value>#{dnsNameConditionType}</value>
-            <value>#{timeRangeConditionType}</value>
-            <value>#{dateRangeConditionType}</value>
-            <value>#{timezoneConditionType}</value>
-            <value>#{daysOfWeekConditionType}</value>
-            <value>#{orConditionType}</value>
-            <value>#{andConditionType}</value>
-            <value>#{notConditionType}</value>
-        </list-entries>
+        <map-entries>
+            <map-entry>
+                <key>com.sun.identity.admin.model.ActiveSessionTimeCondition</key>
+                <value>#{activeSessionTimeConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.IPViewCondition</key>
+                <value>#{ipConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.DnsNameViewCondition</key>
+                <value>#{dnsNameConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.TimeRangeCondition</key>
+                <value>#{timeRangeConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.DateRangeCondition</key>
+                <value>#{dateRangeConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.TimezoneCondition</key>
+                <value>#{timezoneConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.DaysOfWeekCondition</key>
+                <value>#{daysOfWeekConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.OrViewCondition</key>
+                <value>#{orConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.AndViewCondition</key>
+                <value>#{andConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.NotViewCondition</key>
+                <value>#{notConditionType}</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>entitlementConditionToConditionTypeMap</managed-bean-name>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <map-entries>
+            <map-entry>
+                <key>com.sun.identity.entitlement.OrCondition</key>
+                <value>#{orConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.AndCondition</key>
+                <value>#{andConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.NotCondition</key>
+                <value>#{notConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.TimeCondition</key>
+                <value>#{dateRangeConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.DNSNameCondition</key>
+                <value>#{dnsNameConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.IPCondition</key>
+                <value>#{ipConditionType}</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>conditionTypeFactory</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ConditionTypeFactory</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>entitlementConditionToConditionTypeMap</property-name>
+            <value>#{entitlementConditionToConditionTypeMap}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>viewConditionToConditionTypeMap</property-name>
+            <value>#{viewConditionToConditionTypeMap}</value>
+        </managed-property>
     </managed-bean>
     <!-- condition types -->
 
@@ -644,6 +751,10 @@
         <managed-property>
             <property-name>viewApplicationsBean</property-name>
             <value>#{viewApplicationsBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionTypeFactory</property-name>
+            <value>#{conditionTypeFactory}</value>
         </managed-property>
     </managed-bean>
 

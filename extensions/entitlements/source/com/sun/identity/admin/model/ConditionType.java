@@ -1,5 +1,7 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.entitlement.EntitlementCondition;
+
 public abstract class ConditionType {
     private String name;
     private String template;
@@ -7,6 +9,7 @@ public abstract class ConditionType {
     private boolean expression;
 
     public abstract ViewCondition newViewCondition();
+    public abstract ViewCondition newViewCondition(EntitlementCondition ec, ConditionTypeFactory conditionTypeFactory);
 
     public String getName() {
         return name;

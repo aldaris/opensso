@@ -14,7 +14,7 @@ public class DaysOfWeekCondition
     extends ViewCondition
     implements Serializable {
 
-    private String[] days = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
+    public static String[] DAYS = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
     private String[] selectedDays = new String[7];
 
     public EntitlementCondition getEntitlementCondition() {
@@ -34,7 +34,7 @@ public class DaysOfWeekCondition
     public List<SelectItem> getDayItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
 
-        for (String day: days) {
+        for (String day: DAYS) {
             // TODO, localize day name
             SelectItem si = new SelectItem(day);
             items.add(si);

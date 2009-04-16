@@ -16,6 +16,9 @@ public class Functions {
     }
 
     public static int size(Collection c) {
+        if (c == null) {
+            return 0;
+        }
         return c.size();
     }
 

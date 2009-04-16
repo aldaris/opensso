@@ -11,12 +11,9 @@ public class IPViewCondition
     private int[] startIp = new int[4];
     private int[] endIp = new int[4];
 
-    private String domainNameMask;
-
     public EntitlementCondition getEntitlementCondition() {
         IPCondition ipc = new IPCondition();
 
-//TOFIX: use DNSNameCondition        ipc.setDomainNameMask(getDomainNameMask());
         ipc.setStartIp(getStartIpString());
         ipc.setEndIp(getEndIpString());
 
@@ -39,14 +36,6 @@ public class IPViewCondition
 
     public void setEndIp(int[] endIp) {
         this.endIp = endIp;
-    }
-
-    public String getDomainNameMask() {
-        return domainNameMask;
-    }
-
-    public void setDomainNameMask(String domainNameMask) {
-        this.domainNameMask = domainNameMask;
     }
 
     public int[] getStartIp() {

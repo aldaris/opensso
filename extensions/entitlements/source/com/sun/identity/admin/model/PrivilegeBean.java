@@ -13,7 +13,16 @@ import java.util.Set;
 
 public class PrivilegeBean implements Serializable {
 
+    public boolean isConditionPopupVisible() {
+        return conditionPopupVisible;
+    }
+
+    public void setConditionPopupVisible(boolean conditionPopupVisible) {
+        this.conditionPopupVisible = conditionPopupVisible;
+    }
+
     public static class NameComparator implements Comparator {
+
         private boolean ascending;
 
         public NameComparator(boolean ascending) {
@@ -21,8 +30,8 @@ public class PrivilegeBean implements Serializable {
         }
 
         public int compare(Object o1, Object o2) {
-            PrivilegeBean pb1 = (PrivilegeBean)o1;
-            PrivilegeBean pb2 = (PrivilegeBean)o2;
+            PrivilegeBean pb1 = (PrivilegeBean) o1;
+            PrivilegeBean pb2 = (PrivilegeBean) o2;
 
             if (ascending) {
                 return pb1.getName().compareTo(pb2.getName());
@@ -31,31 +40,34 @@ public class PrivilegeBean implements Serializable {
             }
         }
     }
-
     private String name = "myPolicy" + System.currentTimeMillis();
     private String description = null;
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
     private ViewCondition viewCondition = null;
     private ViewSubject viewSubject = null;
     private boolean resourcePopupVisible = false;
+    private boolean conditionPopupVisible = false;
 
     public PrivilegeBean() {
         // empty
     }
 
-    public PrivilegeBean(Privilege p, Map<String,ViewApplication> viewApplications) {
+    public PrivilegeBean(
+                Privilege p,
+                Map<String,ViewApplication> viewApplications,
+                ConditionTypeFactory conditionTypeFactory) {
+
         name = p.getName();
         description = null; // TODO
 
-        // entitlement
+        // entitlement (TODO: exceptions and actions)
         viewEntitlement = new ViewEntitlement(p.getEntitlement(), viewApplications);
 
         // subjects
         // TODO
 
         // conditions
-        // TODO
-
+        viewCondition = conditionTypeFactory.getViewCondition(p.getCondition());
     }
 
     public String getName() {
@@ -125,18 +137,11 @@ public class PrivilegeBean implements Serializable {
         return viewEntitlement;
     }
 
-    public String getViewSubjectAsString() {
+    public String getViewSubjectToString() {
         if (viewSubject == null) {
             return "";
         }
         return viewSubject.toString();
-    }
-
-    public String getViewConditionAsString() {
-        if (viewCondition == null) {
-            return "";
-        }
-        return viewCondition.toString();
     }
 
     public boolean isResourcePopupVisible() {

@@ -9,6 +9,10 @@ import java.util.Map;
 
 public class PolicyManageTableBean implements Serializable {
 
+    public int getCellWidth() {
+        return cellWidth;
+    }
+
     public static class SortKey implements Serializable {
         private boolean ascending = false;
         private String column = "name";
@@ -62,6 +66,7 @@ public class PolicyManageTableBean implements Serializable {
     private SortKey sortKey = new SortKey();
     private List<PrivilegeBean> privilegeBeans;
     private static Map<SortKey,Comparator> comparators = new HashMap<SortKey,Comparator>();
+    private int cellWidth = 20;
 
     static {
         comparators.put(new SortKey("name", true), new PrivilegeBean.NameComparator(true));

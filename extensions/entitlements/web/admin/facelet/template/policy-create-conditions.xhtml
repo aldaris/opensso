@@ -50,7 +50,7 @@
                                 </ui:define>
                                 <ui:define name="panel-body">
                                     <ice:panelSeries
-                                        value="#{conditionTypes}"
+                                        value="#{conditionTypeFactory.conditionTypes}"
                                         var="conditionType">
                                         <ice:panelGroup
                                             styleClass="draggable"
@@ -85,7 +85,7 @@
                                 </ui:define>
                                 <ui:define name="panel-body">
                                     <ice:panelSeries
-                                        value="#{conditionTypes}"
+                                        value="#{conditionTypeFactory.conditionTypes}"
                                         var="conditionType">
                                         <ice:panelGroup
                                             styleClass="draggable"

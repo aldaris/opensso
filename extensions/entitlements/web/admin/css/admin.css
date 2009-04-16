@@ -272,6 +272,7 @@ div.button-wrapper a.button img.left {
 
 .popup-info .close {
     padding-right: 5px;
+    float:  right;
 }
 
 .popup-infoBody {

@@ -24,6 +24,11 @@ public class NotViewCondition
 
 
     @Override
+    public String getToString() {
+        return toString();
+    }
+
+    @Override
     public String toString() {
         StringBuffer b = new StringBuffer();
         b.append("NOT (");

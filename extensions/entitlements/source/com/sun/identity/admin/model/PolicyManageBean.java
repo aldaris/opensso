@@ -3,6 +3,7 @@ package com.sun.identity.admin.model;
 import com.sun.identity.admin.dao.PolicyDao;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public class PolicyManageBean implements Serializable {
     private List<PrivilegeBean> privilegeBeans;
@@ -22,5 +23,4 @@ public class PolicyManageBean implements Serializable {
     public PolicyManageTableBean getPolicyManageTableBean() {
         return policyManageTableBean;
     }
-
 }

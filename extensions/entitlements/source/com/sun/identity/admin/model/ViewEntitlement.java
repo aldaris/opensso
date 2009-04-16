@@ -48,7 +48,6 @@ public class ViewEntitlement implements Serializable {
 
         // actions
         // TODO
-
     }
 
     public List<Resource> getResources() {

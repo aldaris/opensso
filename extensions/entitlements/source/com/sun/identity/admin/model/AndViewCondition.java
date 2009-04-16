@@ -29,6 +29,11 @@ public class AndViewCondition
     }
 
     @Override
+    public String getToString() {
+        return toString();
+    }
+
+    @Override
     public String toString() {
         StringBuffer b = new StringBuffer();
         b.append("AND (");

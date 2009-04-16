@@ -3,6 +3,7 @@ package com.sun.identity.admin.model;
 import com.icesoft.faces.context.effects.Appear;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.entitlement.EntitlementCondition;
+import javax.naming.OperationNotSupportedException;
 
 public abstract class ViewCondition implements MultiPanelBean, TreeNode {
     private ConditionType conditionType;
@@ -74,8 +75,22 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
         return getName();
     }
 
+    public String getToFormattedString() {
+        // TODO
+        return toString();
+    }
+
+    public String getToString() {
+        return toString();
+    }
+
     @Override
     public String toString() {
         return getName();
+    }
+
+    public int getSize() {
+        Tree t = new Tree(this);
+        return t.size();
     }
 }

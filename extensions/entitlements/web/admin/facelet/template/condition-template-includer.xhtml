@@ -8,7 +8,7 @@
     xmlns:o="http://opensso.dev.java.net">
     <c:forEach
         var="conditionType"
-        items="#{conditionTypes}">
+        items="#{conditionTypeFactory.conditionTypes}">
         <ui:include src="#{conditionType.template}">
             <ui:param name="viewCondition" value="#{viewCondition}"/>
         </ui:include>
