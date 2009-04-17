@@ -13,14 +13,6 @@ import java.util.Set;
 
 public class PrivilegeBean implements Serializable {
 
-    public boolean isConditionPopupVisible() {
-        return conditionPopupVisible;
-    }
-
-    public void setConditionPopupVisible(boolean conditionPopupVisible) {
-        this.conditionPopupVisible = conditionPopupVisible;
-    }
-
     public static class NameComparator implements Comparator {
 
         private boolean ascending;
@@ -45,8 +37,6 @@ public class PrivilegeBean implements Serializable {
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
     private ViewCondition viewCondition = null;
     private ViewSubject viewSubject = null;
-    private boolean resourcePopupVisible = false;
-    private boolean conditionPopupVisible = false;
 
     public PrivilegeBean() {
         // empty
@@ -142,13 +132,5 @@ public class PrivilegeBean implements Serializable {
             return "";
         }
         return viewSubject.toString();
-    }
-
-    public boolean isResourcePopupVisible() {
-        return resourcePopupVisible;
-    }
-
-    public void setResourcePopupVisible(boolean resourcePopupVisible) {
-        this.resourcePopupVisible = resourcePopupVisible;
     }
 }

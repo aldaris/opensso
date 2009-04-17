@@ -6,27 +6,7 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-    <ui:repeat
-        var="viewCondition"
-        value="#{policyCreateWizardBean.privilegeBean.viewCondition.asList}">
-        <o:infopopup
-            visible="#{viewCondition.titlePopupVisible}"
-            handler="#{viewConditionsHandler}"
-            closeListenerMethod="titlePopupListener"
-            title="#{viewCondition.name}: #{viewCondition.size} conditions">
-            <ui:define name="attributes">
-                <f:attribute
-                    name="viewCondition"
-                    value="#{viewCondition}"/>
-            </ui:define>
-            <ui:define name="body">
-                <pre>
-                    <ice:outputText
-                        value="#{viewCondition.toFormattedString}"/>
-                </pre>
-            </ui:define>
-        </o:infopopup>
-    </ui:repeat>
+
     <div class="section-outer">
         <o:box>
             <ui:define name="body">

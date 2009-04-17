@@ -46,6 +46,10 @@
         <tag-name>infopopup</tag-name>
         <source>tag/infopopup.xhtml</source>
     </tag>
+    <tag>
+        <tag-name>tooltip</tag-name>
+        <source>tag/tooltip.xhtml</source>
+    </tag>
     <function>
         <function-name>indexOf</function-name>
         <function-class>com.sun.identity.admin.Functions</function-class>

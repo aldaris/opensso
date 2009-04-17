@@ -217,13 +217,28 @@ div.button-wrapper a.button img.left {
     color: white;
 }
 
-.tooltip-info {
-    position: relative;
-    z-index: 999;
+.tooltip .icon {
+    padding-left: 5px;
 }
-.tooltip-error {
-    position: relative;
-    z-index: 999;
+
+.tooltip .title {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.tooltipHdr {
+    font-weight: bold;
+}
+.tooltipBody {
+    padding: 10px;
+}
+
+.tooltip {
+}
+
+.tooltip pre span {
+    font-family: monospace;
+    font-size: larger;
 }
 
 .clear {
@@ -398,12 +413,12 @@ div.button-wrapper a.button img.left {
     cursor: pointer;
 }
 
-.multipanel * {
-    white-space: nowrap;
+.multipanel {
 }
 
 .multipanel-header {
     padding: 2px;
+    white-space: nowrap;
 }
 
 .multipanel-title {
@@ -423,7 +438,6 @@ div.button-wrapper a.button img.left {
 .multipanel-body {
     border-top: 1px solid #bbb;
     background: #efefef;
-    position: relative;
     padding: 4px;
 }
 

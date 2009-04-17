@@ -22,16 +22,6 @@ public class PolicyManageHandler implements Serializable {
         this.policyManageBean = policyManageBean;
     }
 
-    public void viewResourcesPopupListener(ActionEvent event) {
-        PrivilegeBean pb = getPrivilegeBean(event);
-        pb.setResourcePopupVisible(!pb.isResourcePopupVisible());
-    }
-
-    public void viewConditionPopupListener(ActionEvent event) {
-        PrivilegeBean pb = getPrivilegeBean(event);
-        pb.setConditionPopupVisible(!pb.isConditionPopupVisible());
-    }
-
     public void sortTableListener(ActionEvent event) {
         policyManageBean.getPolicyManageTableBean().sort();
     }

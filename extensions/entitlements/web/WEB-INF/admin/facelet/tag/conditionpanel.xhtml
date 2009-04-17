@@ -6,6 +6,7 @@
     xmlns:o="http://opensso.dev.java.net"
     xmlns:f="http://java.sun.com/jsf/core">
 
+    <f:subview>
     <ice:panelGroup
         styleClass="condition-panel"
         rendered="#{viewCondition != null}">
@@ -19,24 +20,27 @@
             handler="#{viewConditionsHandler}">
 
             <ui:define name="panel-title">
-                <ice:panelGrid
-                    columns="3">
-                    <ice:graphicImage
-                        value="#{viewCondition.conditionType.conditionIconUri}"/>
-                    <ice:outputText
-                        style="font-weight: bold"
-                        value="#{o:truncate(viewCondition,viewCondition.titleWidth)}"/>
-                    <ice:commandLink
-                        styleClass="command-link"
-                        actionListener="#{viewConditionsHandler.titlePopupListener}"
-                        visible="#{o:length(viewCondition) > viewCondition.titleWidth}">
-                        <f:attribute
-                            name="viewCondition"
-                            value="#{viewCondition}"/>
+                <ice:panelGroup
+                    panelTooltip="titleTooltip">
+                    <ice:panelGrid
+                        columns="2">
+                        <ice:graphicImage
+                            value="#{viewCondition.conditionType.conditionIconUri}"/>
                         <ice:outputText
-                            value="View (#{viewCondition.size} total)"/>
-                    </ice:commandLink>
-                </ice:panelGrid>
+                            style="font-weight: bold"
+                            value="#{o:truncate(viewCondition,viewCondition.titleWidth)}"/>
+                    </ice:panelGrid>
+                </ice:panelGroup>
+                <o:tooltip
+                    tooltipId="titleTooltip"
+                    title="#{viewCondition.name} (#{viewCondition.size})">
+                    <ui:define name="body">
+                        <pre>
+                            <ice:outputText
+                                value="#{viewCondition.toFormattedString}"/>
+                        </pre>
+                    </ui:define>
+                </o:tooltip>
             </ui:define>
             <ui:define name="panel-body">
                 <ui:include
@@ -46,4 +50,5 @@
             </ui:define>
         </o:multipanel>
     </ice:panelGroup>
+    </f:subview>
 </ui:composition>

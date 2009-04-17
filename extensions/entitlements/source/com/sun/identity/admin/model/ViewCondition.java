@@ -13,7 +13,6 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
     private Effect expandEffect;
     private Effect panelEffect;
     private boolean visible = false;
-    private boolean titlePopupVisible = false;
     private int titleWidth = 40;
 
     public ViewCondition() {
@@ -107,14 +106,6 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
         }
 
         return indent;
-    }
-
-    public boolean isTitlePopupVisible() {
-        return titlePopupVisible;
-    }
-
-    public void setTitlePopupVisible(boolean titlePopupVisible) {
-        this.titlePopupVisible = titlePopupVisible;
     }
 
     public List<TreeNode> asList() {

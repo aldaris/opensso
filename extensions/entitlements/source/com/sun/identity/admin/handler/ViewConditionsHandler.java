@@ -82,10 +82,4 @@ public class ViewConditionsHandler
 
         return vc;
     }
-
-    public void titlePopupListener(ActionEvent event) {
-        ViewCondition vc = getViewCondition(event);
-        vc.setTitlePopupVisible(!vc.isTitlePopupVisible());
-    }
-
 }
