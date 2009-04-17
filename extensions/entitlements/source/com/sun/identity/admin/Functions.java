@@ -12,7 +12,7 @@ public class Functions {
         if (length >= s.length()) {
             return s;
         }
-        return s.substring(0, length-1);
+        return s.substring(0, length-1)+"...";
     }
 
     public static int size(Collection c) {

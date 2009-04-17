@@ -9,16 +9,15 @@ public class TimeRangeCondition
         extends ViewCondition
         implements Serializable {
 
-    private int startHour;
-    private int startMinute;
-    private String startPeriod;
-    private int endHour;
-    private int endMinute;
-    private String endPeriod;
+    private int startHour = 0;
+    private int startMinute = 0;
+    private String startPeriod = "AM";
+    private int endHour = 0;
+    private int endMinute = 0;
+    private String endPeriod = "AM";
 
     public EntitlementCondition getEntitlementCondition() {
         TimeCondition tc = new TimeCondition();
-
 
         String startETime = getETimeString(startHour, startMinute, startPeriod);
         tc.setStartTime(startETime);

@@ -5,9 +5,11 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net"
     xmlns:f="http://java.sun.com/jsf/core">
+
     <ice:panelGroup
         styleClass="condition-panel"
         rendered="#{viewCondition != null}">
+
         <o:multipanel
             collapsible="true"
             removeable="true"
@@ -15,13 +17,25 @@
             expanded="#{viewCondition.expanded}"
             bean="#{viewCondition}"
             handler="#{viewConditionsHandler}">
+
             <ui:define name="panel-title">
-                <ice:panelGrid columns="2">
+                <ice:panelGrid
+                    columns="3">
                     <ice:graphicImage
                         value="#{viewCondition.conditionType.conditionIconUri}"/>
                     <ice:outputText
                         style="font-weight: bold"
-                        value="#{viewCondition.title}"/>
+                        value="#{o:truncate(viewCondition,viewCondition.titleWidth)}"/>
+                    <ice:commandLink
+                        styleClass="command-link"
+                        actionListener="#{viewConditionsHandler.titlePopupListener}"
+                        visible="#{o:length(viewCondition) > viewCondition.titleWidth}">
+                        <f:attribute
+                            name="viewCondition"
+                            value="#{viewCondition}"/>
+                        <ice:outputText
+                            value="View (#{viewCondition.size} total)"/>
+                    </ice:commandLink>
                 </ice:panelGrid>
             </ui:define>
             <ui:define name="panel-body">

@@ -20,7 +20,7 @@
                 visible="#{privilegeBean.resourcePopupVisible}"
                 handler="#{policyManageHandler}"
                 closeListenerMethod="viewResourcesPopupListener"
-                title="#{privilegeBean.name}: Resources">
+                title="#{privilegeBean.name}: #{o:size(privilegeBean.viewEntitlement.resources)} resources">
                 <ui:define name="attributes">
                     <f:attribute
                         name="privilegeBean"
@@ -37,7 +37,7 @@
                 visible="#{privilegeBean.conditionPopupVisible}"
                 handler="#{policyManageHandler}"
                 closeListenerMethod="viewConditionPopupListener"
-                title="#{privilegeBean.name}: Conditions">
+                title="#{privilegeBean.name}: #{viewCondition.size} conditions">
                 <ui:define name="attributes">
                     <f:attribute
                         name="privilegeBean"
@@ -89,8 +89,7 @@
                                             name="privilegeBean"
                                             value="#{privilegeBean}"/>
                                         <ice:outputText
-                                            visible="#{o:length(privilegeBean.viewEntitlement.resourcesToString) > policyManageBean.policyManageTableBean.cellWidth}"
-                                            value="...View (#{o:size(privilegeBean.viewEntitlement.resources)} total)"/>
+                                            value="View (#{o:size(privilegeBean.viewEntitlement.resources)} total)"/>
                                     </ice:commandLink>
                                 </ice:panelGrid>
                             </ice:column>

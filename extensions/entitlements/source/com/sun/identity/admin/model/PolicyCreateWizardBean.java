@@ -2,7 +2,6 @@ package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.DeepCloneableArrayList;
-import com.sun.identity.admin.dao.ViewApplicationDao;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

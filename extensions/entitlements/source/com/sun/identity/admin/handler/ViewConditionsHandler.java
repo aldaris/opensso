@@ -75,4 +75,17 @@ public class ViewConditionsHandler
     public void setPrivilegeBean(PrivilegeBean privilegeBean) {
         this.privilegeBean = privilegeBean;
     }
+
+    public ViewCondition getViewCondition(ActionEvent event) {
+        ViewCondition vc = (ViewCondition) event.getComponent().getAttributes().get("viewCondition");
+        assert(vc != null);
+
+        return vc;
+    }
+
+    public void titlePopupListener(ActionEvent event) {
+        ViewCondition vc = getViewCondition(event);
+        vc.setTitlePopupVisible(!vc.isTitlePopupVisible());
+    }
+
 }

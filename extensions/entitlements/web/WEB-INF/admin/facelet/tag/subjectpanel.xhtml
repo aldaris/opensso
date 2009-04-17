@@ -21,7 +21,7 @@
                         value="#{viewSubject.subjectType.subjectIconUri}"/>
                     <ice:outputText
                         style="font-weight: bold"
-                        value="#{viewSubject.subjectType.name}:#{viewSubject.title}"/>
+                        value="#{o:truncate(viewSubject,40)}"/>
                 </ice:panelGrid>
             </ui:define>
             <ui:define name="panel-body">

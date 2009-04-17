@@ -1,5 +1,9 @@
 package com.sun.identity.admin.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Tree {
     private TreeNode rootNode;
 
@@ -44,6 +48,7 @@ public class Tree {
         if (currentTn == null) {
             return 0;
         } else if (currentTn instanceof ContainerTreeNode) {
+            size++;
             ContainerTreeNode ctn = (ContainerTreeNode)currentTn;
             for (TreeNode childTn: ctn.getTreeNodes()) {
                 size += sizer(childTn, size);
@@ -53,5 +58,29 @@ public class Tree {
         }
 
         return size;
+    }
+
+    public List<TreeNode> asList() {
+        return asListr(rootNode);
+    }
+
+    private List<TreeNode> asListr(TreeNode currentTn) {
+        if (currentTn == null) {
+            return null;
+        } else if (currentTn instanceof ContainerTreeNode) {
+            ContainerTreeNode ctn = (ContainerTreeNode)currentTn;
+            List<TreeNode> nodes = new ArrayList<TreeNode>();
+            nodes.add(currentTn);
+            for (TreeNode childTn: ctn.getTreeNodes()) {
+                nodes.addAll(asListr(childTn));
+            }
+            return nodes;
+        } else {
+            return Collections.singletonList(currentTn);
+        }
+    }
+
+    public List<TreeNode> getAsList() {
+        return asList();
     }
 }

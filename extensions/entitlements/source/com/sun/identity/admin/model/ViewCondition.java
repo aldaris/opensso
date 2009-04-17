@@ -3,7 +3,7 @@ package com.sun.identity.admin.model;
 import com.icesoft.faces.context.effects.Appear;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.entitlement.EntitlementCondition;
-import javax.naming.OperationNotSupportedException;
+import java.util.List;
 
 public abstract class ViewCondition implements MultiPanelBean, TreeNode {
 
@@ -13,6 +13,8 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
     private Effect expandEffect;
     private Effect panelEffect;
     private boolean visible = false;
+    private boolean titlePopupVisible = false;
+    private int titleWidth = 40;
 
     public ViewCondition() {
         panelEffect = new Appear();
@@ -105,5 +107,25 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
         }
 
         return indent;
+    }
+
+    public boolean isTitlePopupVisible() {
+        return titlePopupVisible;
+    }
+
+    public void setTitlePopupVisible(boolean titlePopupVisible) {
+        this.titlePopupVisible = titlePopupVisible;
+    }
+
+    public List<TreeNode> asList() {
+        return new Tree(this).asList();
+    }
+
+    public List<TreeNode> getAsList() {
+        return asList();
+    }
+
+    public int getTitleWidth() {
+        return titleWidth;
     }
 }

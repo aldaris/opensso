@@ -217,10 +217,13 @@ div.button-wrapper a.button img.left {
     color: white;
 }
 
+.tooltip-info {
+    position: relative;
+    z-index: 999;
+}
 .tooltip-error {
-    background: #990000;
-    color: #ffffff;
-    font-weight: bold;
+    position: relative;
+    z-index: 999;
 }
 
 .clear {
@@ -265,6 +268,11 @@ div.button-wrapper a.button img.left {
     position: absolute;
     background: #FFFFFF;
     max-width: 300px;
+}
+
+.popup-info pre span {
+    font-family: monospace;
+    font-size: larger;
 }
 
 .popup-info .icon {
@@ -390,7 +398,8 @@ div.button-wrapper a.button img.left {
     cursor: pointer;
 }
 
-.multipanel {
+.multipanel * {
+    white-space: nowrap;
 }
 
 .multipanel-header {
@@ -401,6 +410,7 @@ div.button-wrapper a.button img.left {
     font-size: 11px;
     margin-left: 0px;
     font-weight: bold;
+    white-space: normal;
 }
 
 .multipanel-controls {
@@ -422,7 +432,7 @@ div.button-wrapper a.button img.left {
 }
 
 .summary-items {
-    width: 40%;
+    width: 60%;
     margin: 4px;
 }
 
@@ -451,61 +461,86 @@ div.button-wrapper a.button img.left {
     padding-left: 10px;
 }
 
-.round {
-    background: #ddd;
-    color: #fff;
-    margin-bottom: 4px;
-    width: 40%;
+.box, .box b.tc, .box b.bc {
+    background-color: transparent;
 }
 
-.round span {
-}
-
-.round div {
-}
-
-.rtop, .rbottom {
+.box b.tc, .box b.bc,.box b.tc b.L1, .box b.tc b.L2, .box b.tc b.L3,.box b.bc b.L1, .box b.bc b.L2, .box b.bc b.L3 {
+    font-size: 0px;
+    padding: 0;
     display: block;
-    background: #f5f5f5;
 }
 
-.rtop *, .rbottom *{
-    display: block;
+.box b.tc b.L1,.box b.tc b.L2,.box b.bc b.L1,.box b.bc b.L2 { 
     height: 1px;
-    overflow: hidden;
-    background: #ddd;
+    line-height: 1px;
+    overflow: visible;
 }
-.r1{margin: 0 5px}
-.r2{margin: 0 3px}
-.r3{margin: 0 2px}
-.r4{
+
+.box b.tc b.L1,.box b.bc b.L1 { 
+    margin: 0 4px;
+}
+
+.box b.tc b.L2,.box b.bc b.L2 { 
+    margin: 0 2px;
+    border-width:0 2px;
+    border-style:solid;
+}
+
+.box b.tc b.L3,.box b.bc b.L3 {
     margin: 0 1px;
-    height: 2px
+    border-width:0 1px;
+    border-style: solid;
+    height: 2px;
+    overflow: visible;
 }
 
-.box, .box b.tc, .box b.bc{ background-color:transparent; }
+.box .content { 
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-right-style: solid;
+    border-right-width: 1px;
+    margin: 0; overflow: visible;
+}
 
-.box b.tc, .box b.bc,.box b.tc b.L1, .box b.tc b.L2, .box b.tc b.L3,.box b.bc b.L1, .box b.bc b.L2, .box b.bc b.L3{ font-size:0px;padding:0;display:block; }
+.box .content { 
+    border-left-color: #aaa;
+    border-right-color: #aaa;
+}
 
-.box b.tc b.L1,.box b.tc b.L2,.box b.bc b.L1,.box b.bc b.L2 { height:1px; line-height:1px; overflow:visible; }
+.box b.tc b.L1 { 
+    background-color: #aaa;
+}
 
-.box b.tc b.L1,.box b.bc b.L1 { margin: 0 4px; }
+.box b.tc b.L2,.box b.tc b.L3 { 
+    border-color:#aaa;
+}
 
-.box b.tc b.L2,.box b.bc b.L2 { margin: 0 2px; border-width:0 2px; border-style:solid; }
+.box b.bc b.L1 { 
+    background-color: #aaa;
+}
 
-.box b.tc b.L3,.box b.bc b.L3 {margin: 0 1px; border-width:0 1px;    border-style:solid; height:2px; overflow:visible; }
+.box b.bc b.L2,.box b.bc b.L3 { 
+    border-color:#aaa;
+}
 
-.box .content { border-left-style:solid; border-left-width:1px;    border-right-style: solid;border-right-width:1px;    margin:0; overflow:visible; }
+.box .content { 
+    background: #eee;
+}
 
-/* Left-side border color */.box .content { border-left-color:#aaa; border-right-color:#aaa; }
+.box b b.L2, .box b b.L3 {
+    background-color:#eee;
+}
 
-/* Top border color */.box b.tc b.L1 { background-color:#aaa; }.box b.tc b.L2,.box b.tc b.L3 { border-color:#aaa;}
+.box {
+    margin: 0px;
+    width: 100%;
 
-/* bottom border color */.box b.bc b.L1 { background-color:#aaa; }.box b.bc b.L2,.box b.bc b.L3 { border-color:#aaa;}
+}
 
-/* -- Default params for where content is ---- */.box .content { background:#eee; }.box b b.L2, .box b b.L3 {background-color:#eee;}
-
-.box { margin: 0px; width: 100%; }.box .content { padding: 0px; }
+.box .content { 
+    padding: 0px;
+}
 
 /*
 #homeTabContent {

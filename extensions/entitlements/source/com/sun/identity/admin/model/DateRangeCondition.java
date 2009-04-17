@@ -11,8 +11,8 @@ public class DateRangeCondition
     extends ViewCondition
     implements Serializable {
 
-    private Date startDate;
-    private Date endDate;
+    private Date startDate = new Date();
+    private Date endDate = new Date();
 
     public EntitlementCondition getEntitlementCondition() {
         TimeCondition tc = new TimeCondition();
