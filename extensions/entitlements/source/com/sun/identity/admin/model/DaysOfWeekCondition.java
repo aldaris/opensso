@@ -50,4 +50,21 @@ public class DaysOfWeekCondition
     public void setSelectedDays(String[] selectedDays) {
         this.selectedDays = selectedDays;
     }
+
+    @Override
+    public String toString() {
+        StringBuffer b = new StringBuffer();
+        b.append(super.toString());
+        b.append(":{");
+
+        for (int i = 0; i < selectedDays.length; i++) {
+            b.append(selectedDays[i]);
+            if (i < selectedDays.length-1) {
+                b.append(",");
+            }
+        }
+        b.append("}");
+
+        return b.toString();
+    }
 }

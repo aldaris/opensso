@@ -23,20 +23,7 @@ public class NotViewCondition
     }
 
 
-    @Override
-    public String getToString() {
-        return toString();
-    }
-
-    @Override
-    public String toString() {
-        StringBuffer b = new StringBuffer();
-        b.append("NOT (");
-        if (getViewConditions().size() > 0) {
-            b.append(getViewConditions().get(0).toString());
-        }
-        b.append(")");
-
-        return b.toString();
+    protected String getOperatorString() {
+        return "NOT";
     }
 }

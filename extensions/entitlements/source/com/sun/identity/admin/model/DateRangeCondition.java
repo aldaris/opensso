@@ -5,6 +5,7 @@ import com.sun.identity.entitlement.TimeCondition;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Formatter;
 
 public class DateRangeCondition 
     extends ViewCondition
@@ -16,31 +17,25 @@ public class DateRangeCondition
     public EntitlementCondition getEntitlementCondition() {
         TimeCondition tc = new TimeCondition();
 
-        StringBuffer start = new StringBuffer();
-        Calendar startCal = Calendar.getInstance();
-        startCal.setTime(startDate);
+        String startDateString = getEDateString(startDate);
+        tc.setStartDate(startDateString);
 
-        start.append(startCal.get(Calendar.YEAR));
-        start.append("-");
-        start.append(startCal.get(Calendar.MONTH));
-        start.append("-");
-        start.append(startCal.get(Calendar.DAY_OF_MONTH));
-
-        tc.setStartDate(start.toString());
-
-        StringBuffer end = new StringBuffer();
-        Calendar endCal = Calendar.getInstance();
-        endCal.setTime(endDate);
-
-        start.append(endCal.get(Calendar.YEAR));
-        start.append("-");
-        start.append(endCal.get(Calendar.MONTH));
-        start.append("-");
-        start.append(endCal.get(Calendar.DAY_OF_MONTH));
-
-        tc.setEndDate(start.toString());
+        String endDateString = getEDateString(endDate);
+        tc.setEndDate(endDateString);
 
         return tc;
+    }
+
+    private String getEDateString(Date date) {
+        StringBuffer b = new StringBuffer();
+        Formatter f = new Formatter(b);
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+        f.format("%4d-%02d-%02d", c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+
+        return b.toString();
     }
 
     public Date getStartDate() {
@@ -59,4 +54,8 @@ public class DateRangeCondition
         this.endDate = endDate;
     }
 
+    @Override
+    public String toString() {
+        return super.getName() + ":{" + getEDateString(startDate) + " > " + getEDateString(endDate) + "}";
+    }
 }

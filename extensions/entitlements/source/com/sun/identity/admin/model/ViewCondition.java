@@ -6,6 +6,7 @@ import com.sun.identity.entitlement.EntitlementCondition;
 import javax.naming.OperationNotSupportedException;
 
 public abstract class ViewCondition implements MultiPanelBean, TreeNode {
+
     private ConditionType conditionType;
     private boolean expanded = true;
     private String name;
@@ -36,7 +37,7 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
     }
 
     public String getName() {
-        return (name == null) ? conditionType.getName(): name;
+        return (name == null) ? conditionType.getName() : name;
     }
 
     public void setName(String name) {
@@ -76,8 +77,11 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
     }
 
     public String getToFormattedString() {
-        // TODO
         return toString();
+    }
+
+    String getToFormattedString(int i) {
+        return getIndentString(i) + toString();
     }
 
     public String getToString() {
@@ -92,5 +96,14 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
     public int getSize() {
         Tree t = new Tree(this);
         return t.size();
+    }
+
+    String getIndentString(int i) {
+        String indent = "";
+        for (int j = 0; j < i; j++) {
+            indent += " ";
+        }
+
+        return indent;
     }
 }

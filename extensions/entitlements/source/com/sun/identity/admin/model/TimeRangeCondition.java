@@ -3,10 +3,11 @@ package com.sun.identity.admin.model;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.TimeCondition;
 import java.io.Serializable;
+import java.util.Formatter;
 
-public class TimeRangeCondition 
-    extends ViewCondition
-    implements Serializable {
+public class TimeRangeCondition
+        extends ViewCondition
+        implements Serializable {
 
     private int startHour;
     private int startMinute;
@@ -18,28 +19,36 @@ public class TimeRangeCondition
     public EntitlementCondition getEntitlementCondition() {
         TimeCondition tc = new TimeCondition();
 
-        StringBuffer startTime = new StringBuffer();
-        if (startPeriod.equals("AM")) {
-            startTime.append(startHour);
-        } else {
-            startTime.append(startHour+12);
-        }
-        startTime.append(":");
-        startTime.append(startMinute);
 
-        StringBuffer endTime = new StringBuffer();
-        if (endPeriod.equals("AM")) {
-            endTime.append(endHour);
-        } else {
-            endTime.append(endHour+12);
-        }
-        endTime.append(":");
-        endTime.append(endMinute);
-
-        tc.setStartTime(startTime.toString());
-        tc.setEndTime(endTime.toString());
+        String startETime = getETimeString(startHour, startMinute, startPeriod);
+        tc.setStartTime(startETime);
+        String endETime = getETimeString(endHour, endMinute, endPeriod);
+        tc.setEndTime(endETime);
 
         return tc;
+    }
+
+    private String getETimeString(int hour, int min, String period) {
+        StringBuffer time = new StringBuffer();
+        Formatter f = new Formatter(time);
+        int hour24;
+        if (period.equals("AM")) {
+            hour24 = hour;
+        } else {
+            hour24 = hour+12;
+        }
+
+        f.format("%02d:%02d", hour24, min);
+        return time.toString();
+
+    }
+
+    @Override
+    public String toString() {
+        String startETime = getETimeString(startHour, startMinute, startPeriod);
+        String endETime = getETimeString(endHour, endMinute, endPeriod);
+
+        return super.toString() + ":{" + startETime + ">" + endETime + "}";
     }
 
     public int getStartHour() {

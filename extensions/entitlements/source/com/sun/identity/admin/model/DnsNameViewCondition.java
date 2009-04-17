@@ -24,4 +24,9 @@ public class DnsNameViewCondition
     public void setDomainNameMask(String domainNameMask) {
         this.domainNameMask = domainNameMask;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + ":{" + domainNameMask + "}";
+    }
 }

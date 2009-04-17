@@ -14,19 +14,14 @@ public class IPViewCondition
     public EntitlementCondition getEntitlementCondition() {
         IPCondition ipc = new IPCondition();
 
-        ipc.setStartIp(getStartIpString());
-        ipc.setEndIp(getEndIpString());
+        ipc.setStartIp(getIpString(startIp));
+        ipc.setEndIp(getIpString(endIp));
 
         return ipc;
     }
 
-    public String getStartIpString() {
-        String s = startIp[0]+"."+startIp[1]+"."+startIp[2]+"."+startIp[3];
-        return s;
-    }
-
-    public String getEndIpString() {
-        String s = endIp[0]+"."+endIp[1]+"."+endIp[2]+"."+endIp[3];
+    private String getIpString(int[] parts) {
+        String s = parts[0]+"."+parts[1]+"."+parts[2]+"."+parts[3];
         return s;
     }
 
@@ -44,5 +39,10 @@ public class IPViewCondition
 
     public void setStartIp(int[] startIp) {
         this.startIp = startIp;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + ":{" + getIpString(startIp) + ">" + getIpString(endIp) + "}";
     }
 }

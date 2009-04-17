@@ -2,7 +2,6 @@ package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.EntitlementCondition;
 import java.io.Serializable;
-import java.util.List;
 
 public class ActiveSessionTimeCondition 
     extends ViewCondition
@@ -39,4 +38,5 @@ public class ActiveSessionTimeCondition
     public void setTimeMultiplier(int timeMultiplier) {
         this.timeMultiplier = timeMultiplier;
     }
+
 }
