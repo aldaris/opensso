@@ -60,39 +60,48 @@
                         <f:selectItems
                             value="#{policyCreateWizardBean.availableResourceItems}"/>
                     </ice:selectManyCheckbox>
-                    <ice:panelSeries
-                        styleClass="url-resource"
-                        var="urlResource"
-                        value="#{availableResources}">
-                        <ice:panelGrid
-                            columns="2"
-                            visible="#{urlResource.visible}"
-                            columnClasses="url-resource-tableCol1,url-resource-tableCol2"
-                            scrollHeight="200px">
-                            <ice:checkbox
-                                styleClass="url-resource-checkbox"
-                                for="resource-select"
-                                index="#{o:indexOf(availableResources,urlResource)}">
-                            </ice:checkbox>
-                            <ice:panelGrid
-                                columns="1">
-                                <ice:panelGroup
-                                    rendered="#{urlResource.exceptable}">
-                                    <o:clink
-                                        type="add"
-                                        linkLabel="Add Exception"
-                                        handler="#{urlResourcesHandler}"
-                                        listenerMethod="addExceptionListener">
-                                        <ui:define name="attributes">
-                                            <f:attribute
-                                                name="urlResource"
-                                                value="#{urlResource}"/>
-                                        </ui:define>
-                                    </o:clink>
-                                </ice:panelGroup>
-                            </ice:panelGrid>
-                        </ice:panelGrid>
-                    </ice:panelSeries>
+                    <ice:panelGroup
+                        scrollHeight="200px">
+                        <ice:panelSeries
+                            var="urlResource"
+                            value="#{availableResources}">
+                            <ice:panelGroup
+                                styleClass="url-resource-outer"
+                                visible="#{urlResource.visible}">
+                                <o:box>
+                                    <ui:define name="body">
+                                        <ice:panelGrid
+                                            columns="2"
+                                            styleClass="url-resource"
+                                            columnClasses="url-resource-tableCol1,url-resource-tableCol2">
+                                            <ice:checkbox
+                                                styleClass="url-resource-checkbox"
+                                                for="resource-select"
+                                                index="#{o:indexOf(availableResources,urlResource)}">
+                                            </ice:checkbox>
+                                            <ice:panelGrid
+                                                columns="1">
+                                                <ice:panelGroup
+                                                    rendered="#{urlResource.exceptable}">
+                                                    <o:clink
+                                                        type="add"
+                                                        linkLabel="Add Exception"
+                                                        handler="#{urlResourcesHandler}"
+                                                        listenerMethod="addExceptionListener">
+                                                        <ui:define name="attributes">
+                                                            <f:attribute
+                                                                name="urlResource"
+                                                                value="#{urlResource}"/>
+                                                        </ui:define>
+                                                    </o:clink>
+                                                </ice:panelGroup>
+                                            </ice:panelGrid>
+                                        </ice:panelGrid>
+                                    </ui:define>
+                                </o:box>
+                            </ice:panelGroup>
+                        </ice:panelSeries>
+                    </ice:panelGroup>
                 </div>
             </ui:define>
         </o:box>
@@ -110,31 +119,39 @@
                     <ice:panelGroup
                         scrollHeight="100px">
                         <ice:panelSeries
-                            styleClass="url-resource"
                             var="urlResource"
                             value="#{viewEntitlement.exceptions}">
-                            <ice:panelGrid
-                                columnClasses="url-resource-tableCol1,url-resource-tableCol2"
-                                columns="2">
-                                <ice:outputText
-                                    value="#{urlResource.name}"/>
-                                <ice:panelGrid
-                                    columns="1">
-                                    <o:clink
-                                        type="remove"
-                                        handler="#{urlResourcesHandler}"
-                                        listenerMethod="removeExceptionListener">
-                                        <ui:define name="attributes">
-                                            <f:attribute
-                                                name="urlResource"
-                                                value="#{urlResource}"/>
-                                            <f:attribute
-                                                name="viewEntitlement"
-                                                value="#{viewEntitlement}"/>
-                                        </ui:define>
-                                    </o:clink>
-                                </ice:panelGrid>
-                            </ice:panelGrid>
+                            <ice:panelGroup
+                                styleClass="url-resource-outer"
+                                visible="#{urlResource.visible}">
+                                <o:box>
+                                    <ui:define name="body">
+                                        <ice:panelGrid
+                                            styleClass="url-resource"
+                                            columnClasses="url-resource-tableCol1,url-resource-tableCol2"
+                                            columns="2">
+                                            <ice:outputText
+                                                value="#{urlResource.name}"/>
+                                            <ice:panelGrid
+                                                columns="1">
+                                                <o:clink
+                                                    type="remove"
+                                                    handler="#{urlResourcesHandler}"
+                                                    listenerMethod="removeExceptionListener">
+                                                    <ui:define name="attributes">
+                                                        <f:attribute
+                                                            name="urlResource"
+                                                            value="#{urlResource}"/>
+                                                        <f:attribute
+                                                            name="viewEntitlement"
+                                                            value="#{viewEntitlement}"/>
+                                                    </ui:define>
+                                                </o:clink>
+                                            </ice:panelGrid>
+                                        </ice:panelGrid>
+                                    </ui:define>
+                                </o:box>
+                            </ice:panelGroup>
                         </ice:panelSeries>
                     </ice:panelGroup>
                 </div>
