@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.7 2009-04-09 23:34:40 dillidorai Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.8 2009-04-17 19:12:52 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -108,6 +108,10 @@ public class PrivilegeManagerTest {
         OrSubject os = new OrSubject(subjects);
         NotSubject ns = new NotSubject(os);
 
+        String startIp = "100.100.100.100";
+        String endIp = "200.200.200.200";
+        IPCondition ipc = new IPCondition(startIp, endIp);
+        ipc.setPConditionName("ipc");
         DNSNameCondition dnsc = new DNSNameCondition("*.sun.com");
         dnsc.setPConditionName("dnsc");
         TimeCondition tc = new TimeCondition("08:00", "16:00", "mon", "fri");
@@ -149,7 +153,7 @@ public class PrivilegeManagerTest {
                 PRIVILEGE_NAME,
                 entitlement,
                 os,
-                oc,
+                ipc,
                 ra);
         UnittestLog.logMessage(
                 "PrivilegeManagerTest.testAddPrivlege():" + "saving privilege="
@@ -158,6 +162,29 @@ public class PrivilegeManagerTest {
         prm.addPrivilege(privilege);
 
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
+        IPCondition ipc1 = (IPCondition)p.getCondition();
+        UnittestLog.logMessage(
+                "PrivilegeManagerTest.testAddPrivlege():" + "READ startIp="
+                + ipc1.getStartIp());
+        if (!ipc1.getStartIp().equals(startIp)) {
+            UnittestLog.logMessage(
+                "PrivilegeManagerTest.testAddPrivlege():" + "READ startIp "
+                + " does not equal set startIp");
+            throw new Exception(
+                "PrivilegeManagerTest.testAddPrivlege():" + "READ startIp "
+                + " does not equal set startIp");
+        }
+        UnittestLog.logMessage(
+                "PrivilegeManagerTest.testAddPrivlege():" + "READ endIp="
+                + ipc1.getEndIp());
+        if (!ipc1.getEndIp().equals(endIp)) {
+            UnittestLog.logMessage(
+                "PrivilegeManagerTest.testAddPrivlege():" + "READ endIp "
+                + " does not equal set endIp");
+            throw new Exception(
+                "PrivilegeManagerTest.testAddPrivlege():" + "READ endIp "
+                + " does not equal set endIp");
+        }
         UnittestLog.logMessage(
                 "PrivilegeManagerTest.testAddPrivlege():" + "read privilege="
                 + p);
