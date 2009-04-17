@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrSubjectTest.java,v 1.2 2009-04-07 19:00:48 veiming Exp $
+ * $Id: OrSubjectTest.java,v 1.3 2009-04-17 23:57:54 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -65,7 +65,27 @@ public class OrSubjectTest {
         subjects.add(ns1);
         OrSubject os = new OrSubject(subjects);
         UnittestLog.logMessage(
-                "OrSubjectTest.testConstruction():" + "os.toString()=" + os.toString());
+                "OrSubjectTest.testConstruction():" + "os.toString()=" 
+                + os.toString());
+        OrSubject os1 = new OrSubject();
+        os1.setState(os.getState());
+        UnittestLog.logMessage(
+                "OrSubjectTest.testConstruction():" + "os1.toString()="
+                + os1.toString());
+        boolean result = os.equals(os1);
+        UnittestLog.logMessage(
+               "OrSubjectTest.testConstruction():" + "OrSubject with setState "
+               +  "equals OrSubject with getState():" + result);
+        if (!result) {
+            UnittestLog.logMessage(
+                    "OrSubjectTest.testConstruction():" + "OrSubject with setState="
+                    +  "does not equal OrSubject with getState()");
+            
+            throw new Exception("OrSubjectTest.testConstruction():"
+                    + "OrSubject with setState="
+                    +  "does not equal OrSubject with getState()");
+             
+        }
     }
 
     public static void main(String[] args) throws Exception {
