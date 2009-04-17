@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotSubject.java,v 1.5 2009-04-10 22:40:01 veiming Exp $
+ * $Id: NotSubject.java,v 1.6 2009-04-17 23:55:31 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -44,8 +44,8 @@ import org.json.JSONException;
  * @author dorai
  */
 public class NotSubject implements EntitlementSubject {
-    private static final long serialVersionUID = -403250971215465050L;
 
+    private static final long serialVersionUID = -403250971215465050L;
     private EntitlementSubject eSubject;
     private String pSubjectName;
 
@@ -80,7 +80,26 @@ public class NotSubject implements EntitlementSubject {
      * @param state State of the object encoded as string
      */
     public void setState(String state) {
-        //TODO
+        try {
+            JSONObject jo = new JSONObject(state);
+            JSONObject memberSubject = jo.optJSONObject("memberESubject");
+            if (memberSubject != null) {
+                String className = memberSubject.getString("className");
+                Class cl = Class.forName(className);
+                eSubject = (EntitlementSubject) cl.newInstance();
+                eSubject.setState(memberSubject.getString("state"));
+
+            }
+            pSubjectName = jo.optString("pSubjectName");
+        } catch (JSONException joe) {
+            //TODO: record exception, propogate exception?
+        } catch (InstantiationException inse) {
+            //TODO: record exception, propogate exception?
+        } catch (ClassNotFoundException inse) {
+            //TODO: record exception, propogate exception?
+        } catch (IllegalAccessException inse) {
+            //TODO: record exception, propogate exception?
+        }
     }
 
     /**
@@ -158,7 +177,7 @@ public class NotSubject implements EntitlementSubject {
         JSONObject subjo = new JSONObject();
         subjo.put("className", eSubject.getClass().getName());
         subjo.put("state", eSubject.getState());
-        jo.append("memberESubject", subjo);
+        jo.put("memberESubject", subjo);
         return jo;
     }
 
@@ -238,6 +257,6 @@ public class NotSubject implements EntitlementSubject {
     }
 
     public Set<String> getRequiredAttributeNames() {
-        return(Collections.EMPTY_SET);
+        return (Collections.EMPTY_SET);
     }
 }
