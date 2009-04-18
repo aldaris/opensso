@@ -14,9 +14,23 @@
                         <span class="section-title">
                             <ice:outputText value="New Policy Actions"/>
                         </span>
+                        <span class="section-links">
+                            <ice:panelGrid
+                                columns="1">
+                                <o:clink
+                                    type="add"/>
+                            </ice:panelGrid>
+                        </span>
                     </span>
                     <div class="clear"></div>
+                    <ice:panelGroup
+                        visible="#{o:size(policyCreateWizardBean.privilegeBean.viewEntitlement.actions) == 0}">
+                        <ice:outputText
+                            value="No actions"/>
+                    </ice:panelGroup>
                     <ice:dataTable
+                        visible="#{o:size(policyCreateWizardBean.privilegeBean.viewEntitlement.actions) > 0}"
+                        styleClass="actions"
                         value="#{policyCreateWizardBean.privilegeBean.viewEntitlement.actions}"
                         var="booleanAction">
                         <ice:column>
@@ -29,7 +43,7 @@
                         </ice:column>
                         <ice:column>
                             <f:facet name="header">
-                                <ice:outputText value="Permissions"/>
+                                <ice:outputText value="Permission"/>
                             </f:facet>
                             <ice:panelGroup>
                                 <ice:selectOneRadio
@@ -39,6 +53,21 @@
                                     <f:selectItem itemValue="true" itemLabel="Allow"/>
                                     <f:selectItem itemValue="false" itemLabel="Deny"/>
                                 </ice:selectOneRadio>
+                            </ice:panelGroup>
+                        </ice:column>
+                        <ice:column>
+                            <f:facet name="header">
+                                <ice:outputText value="Remove"/>
+                            </f:facet>
+                            <ice:panelGroup>
+                                <ice:commandLink
+                                    actionListener="#{policyCreateWizardHandler.booleanActionsHandler.actionRemoveListener}">
+                                    <f:attribute
+                                        name="booleanAction"
+                                        value="#{booleanAction}"/>
+                                    <ice:graphicImage
+                                        value="../image/remove-16.png"/>
+                                </ice:commandLink>
                             </ice:panelGroup>
                         </ice:column>
                     </ice:dataTable>

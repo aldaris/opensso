@@ -8,10 +8,10 @@
     xmlns:o="http://opensso.dev.java.net">
     <ice:panelTabSet
         selectedIndex="#{policyCreateWizardBean.advancedTabsetIndex}">
-        <ice:panelTab label="Actions">
+        <ice:panelTab label="Actions (#{o:size(policyCreateWizardBean.privilegeBean.viewEntitlement.actions)})">
             <ui:include src="policy-create-actions.xhtml"/>
         </ice:panelTab>
-        <ice:panelTab label="Conditions">
+        <ice:panelTab label="Conditions (#{policyCreateWizardBean.privilegeBean.viewCondition == null ? 0 : policyCreateWizardBean.privilegeBean.viewCondition.size})">
             <ui:include src="policy-create-conditions.xhtml"/>
         </ice:panelTab>
         <ice:panelTab label="User Attributes">
