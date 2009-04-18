@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.3 2009-04-10 22:40:01 veiming Exp $
+ * $Id: SubjectAttributesManager.java,v 1.4 2009-04-18 00:05:10 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -72,15 +72,32 @@ public class SubjectAttributesManager {
         }
     }
 
+    /**
+     * Returns an instance of <code>SubjectAttributesManager</code>.
+     *
+     * @return an instance of <code>SubjectAttributesManager</code>.
+     */
     public static SubjectAttributesManager getInstance() {
         return getInstance("/");
     }
 
+    /**
+     * Returns the <code>SubjectAttributesManager</code> of a given subject.
+     *
+     * @param subject Subject
+     * @return <code>SubjectAttributesManager</code> of a given subject.
+     */
     public static SubjectAttributesManager getInstance(Subject subject) {
         //TOFIX get realm from subject;
         return getInstance("/");
     }
 
+    /**
+     * Returns the <code>SubjectAttributesManager</code> of a given realm.
+     * 
+     * @param realmName Name of realm.
+     * @return <code>SubjectAttributesManager</code> of a given realm.
+     */
     public synchronized static SubjectAttributesManager getInstance(
         String realmName) {
         SubjectAttributesManager sam = instances.get(realmName);
@@ -91,6 +108,14 @@ public class SubjectAttributesManager {
         return sam;
     }
 
+    /**
+     * Returns the subject search indexes for a given privilege.
+     *
+     * @param privilege Privilege object.
+     * @return the subject search indexes for a given privilege.
+     * @throws com.sun.identity.entitlement.EntitlementException if indexes
+     * cannot be obtained.
+     */
     public static Set<String> getSubjectSearchIndexes(Privilege privilege)
         throws EntitlementException {
         Set searchIndexes = new HashSet();
@@ -107,12 +132,26 @@ public class SubjectAttributesManager {
         return (searchIndexes);
     }
 
+    /**
+     * Returns the required attribute name for a given privilege.
+     *
+     * @param privilege Privilege object.
+     * @return the required attribute name for a given privilege.
+     */
     public static Set<String> getRequiredAttributeNames(Privilege privilege) {
         EntitlementSubject e = privilege.getSubject();
         return (e != null) ? e.getRequiredAttributeNames() :
             Collections.EMPTY_SET;
     }
 
+    /**
+     * Returns the subject search filter for a given subject.
+     *
+     * @param subject Subject object.
+     * @return subject search filter for a given subject.
+     * @throws com.sun.identity.entitlement.EntitlementException if search
+     * filter cannot be obtained.
+     */
     public static Set<String> getSubjectSearchFilter(Subject subject)
         throws EntitlementException {
         Set<String> results = new HashSet<String>();
@@ -128,7 +167,8 @@ public class SubjectAttributesManager {
 
             if (values != null) {
                 for (String k : values.keySet()) {
-                    for (String v : values.get(k)) {
+                    Set<String> set = values.get(k);
+                    for (String v : set) {
                         results.add(k + "=" + v);
                     }
                 }
@@ -140,10 +180,11 @@ public class SubjectAttributesManager {
     /**
      * Returns the attribute values of the given user represented by
      * <class>Subject</class> object.
-     * @param subject identity of the user
-     * @param attrNames requested attribute names
-     * @return a map of attribute names and their values
-     * @throws com.sun.identity.entitlement.EntitlementException
+     * @param subject identity of the user.
+     * @param attrNames requested attribute names.
+     * @return a map of attribute names and their values.
+     * @throws com.sun.identity.entitlement.EntitlementException if attribute
+     * values cannot be obtained.
      */
     public Map<String, Set<String>> getAttributes(
         Subject subject,

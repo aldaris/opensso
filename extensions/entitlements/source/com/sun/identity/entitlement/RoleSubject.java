@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleSubject.java,v 1.6 2009-04-10 22:40:01 veiming Exp $
+ * $Id: RoleSubject.java,v 1.7 2009-04-18 00:05:10 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -112,6 +112,7 @@ public class RoleSubject implements EntitlementSubject {
      * Returns string representation of the object
      * @return string representation of the object
      */
+    @Override
     public String toString() {
         String s = null;
         try {
@@ -196,6 +197,7 @@ public class RoleSubject implements EntitlementSubject {
      * @param obj object to check for equality
      * @return  <code>true</code> if the passed in object is equal to this object
      */
+    @Override
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
@@ -227,9 +229,11 @@ public class RoleSubject implements EntitlementSubject {
     }
 
     /**
-     * Returns hash code of the object
-     * @return hash code of the object
+     * Returns hash code of the object.
+     *
+     * @return hash code of the object.
      */
+    @Override
     public int hashCode() {
         int code = 0;
         if (role != null) {

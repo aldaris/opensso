@@ -22,13 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.6 2009-04-10 22:40:01 veiming Exp $
+ * $Id: GroupSubject.java,v 1.7 2009-04-18 00:05:09 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 
+import java.security.AccessController;
+import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -112,6 +120,7 @@ public class GroupSubject implements EntitlementSubject {
      * Returns string representation of the object
      * @return string representation of the object
      */
+    @Override
     public String toString() {
         String s = null;
         try {
@@ -141,10 +150,50 @@ public class GroupSubject implements EntitlementSubject {
         String resourceName,
         Map<String, Set<String>> environment)
         throws EntitlementException {
-        boolean satified = mgr.hasAttribute(subject,
-            SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
-            IdType.GROUP.getName(), group);
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        boolean satified = false;
+
+        try {
+            AMIdentity idGroup = IdUtils.getIdentity(adminToken, group);
+            Set<IdType> supportedType = IdType.GROUP.canHaveMembers();
+            for (IdType type : supportedType) {
+                if (isMember(subject, type, idGroup)) {
+                    satified = true;
+                    break;
+                }
+            }
+        } catch (IdRepoException e) {
+            PolicyEvaluatorFactory.debug.error("GroupSubject.evaluate", e);
+        } catch (SSOException e) {
+            PolicyEvaluatorFactory.debug.error("GroupSubject.evaluate", e);
+        }
+
         return new SubjectDecision(satified, Collections.EMPTY_MAP);
+    }
+    
+    private static boolean isMember(
+        Subject subject,
+        IdType type, 
+        AMIdentity idGroup
+    ) throws IdRepoException, SSOException {
+        Set<AMIdentity> members = idGroup.getMembers(type);
+        for (AMIdentity amid : members) {
+            if (hasPrincipal(subject, amid.getUniversalId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasPrincipal(Subject subject, String uuid) {
+        Set<Principal> userPrincipals = subject.getPrincipals();
+        for (Principal p : userPrincipals) {
+            if (p.getName().equals(uuid)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

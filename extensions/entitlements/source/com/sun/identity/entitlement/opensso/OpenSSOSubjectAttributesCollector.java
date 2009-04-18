@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOSubjectAttributesCollector.java,v 1.2 2009-04-10 22:40:01 veiming Exp $
+ * $Id: OpenSSOSubjectAttributesCollector.java,v 1.3 2009-04-18 00:05:10 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -85,10 +85,17 @@ public class OpenSSOSubjectAttributesCollector
             if (!membershipAttrNames.isEmpty()) {
                 for (String m : membershipAttrNames) {
                     IdType type = IdUtils.getType(m);
+
                     if (type != null) {
-                        Set<String> memberships = amid.getMembers(type);
+                        Set<AMIdentity> memberships = amid.getMemberships(type);
+
                         if (memberships != null) {
-                            results.put(NAMESPACE_MEMBERSHIP + m, memberships);
+                            Set<String> setMemberships = new HashSet<String>();
+                            for (AMIdentity a : memberships) {
+                                setMemberships.add(a.getUniversalId());
+                            }
+                            results.put(NAMESPACE_MEMBERSHIP + m,
+                                setMemberships);
                         }
                     }
                 }

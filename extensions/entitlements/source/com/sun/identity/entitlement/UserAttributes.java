@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAttributes.java,v 1.3 2009-03-27 16:29:10 veiming Exp $
+ * $Id: UserAttributes.java,v 1.4 2009-04-18 00:05:10 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -98,8 +97,9 @@ public class UserAttributes implements ResourceAttributes {
     }
 
     /**
-     * Returns JSONObject mapping of the object
-     * @return JSONObject mapping  of the object
+     * Returns JSONObject mapping of the object.
+     *
+     * @return JSONObject mapping of the object.
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
@@ -109,9 +109,11 @@ public class UserAttributes implements ResourceAttributes {
     }
 
     /**
-     * Returns string representation of the object
-     * @return string representation of the object
+     * Returns string representation of the object.
+     *
+     * @return string representation of the object.
      */
+    @Override
     public String toString() {
         String s = null;
         try {
@@ -123,11 +125,12 @@ public class UserAttributes implements ResourceAttributes {
         }
         return s;
     }
-        /**
+
+    /**
      * Sets OpenSSO policy response provider name of the object
-     * @param pResponseProviderName response provider name as used in OpenSSO policy,
-     * this is releavant only when UserAttributes was created from
-     * OpenSSO policy Subject
+     * @param pResponseProviderName response provider name as used in OpenSSO 
+     * policy, this is releavant only when UserAttributes was created from
+     * OpenSSO policy Subject.
      */
     public void setPResponseProviderName(String pResponseProviderName) {
         this.pResponseProviderName = pResponseProviderName;
@@ -145,11 +148,12 @@ public class UserAttributes implements ResourceAttributes {
 
     /**
      * Returns <code>true</code> if the passed in object is equal to this object
-     * @param obj object to check for equality
-     * @return  <code>true</code> if the passed in object is equal to this object
+     * 
+     * @param obj object to check for equality.
+     * @return <code>true</code> if the passed in object is equal to this object
      */
+    @Override
     public boolean equals(Object obj) {
-        boolean equalled = true;
         if (obj == null) {
             return false;
         }
@@ -176,13 +180,15 @@ public class UserAttributes implements ResourceAttributes {
                 return false;
             }
         }
-        return equalled;
+        return true;
     }
 
     /**
-     * Returns hash code of the object
-     * @return hash code of the object
+     * Returns hash code of the object.
+     * 
+     * @return hash code of the object.
      */
+    @Override
     public int hashCode() {
         int code = 0;
         if (properties != null) {
