@@ -7,6 +7,7 @@ import com.icesoft.faces.context.effects.Highlight;
 import com.sun.identity.admin.model.ConditionType;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
+import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.ContainerViewCondition;
 import com.sun.identity.admin.model.ContainerViewSubject;
 import com.sun.identity.admin.model.PolicyCreateWizardBean;
@@ -14,6 +15,7 @@ import com.sun.identity.admin.model.SubjectType;
 import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewCondition;
 import com.sun.identity.admin.model.ViewSubject;
+import com.sun.identity.admin.model.WizardBean;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import java.io.Serializable;
@@ -32,6 +34,13 @@ public class PolicyCreateWizardHandler
         implements Serializable {
 
     private Pattern POLICY_NAME_PATTERN = Pattern.compile("[0-9a-zA-Z]+");
+    private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();
+
+    @Override
+    public void setWizardBean(WizardBean wizardBean) {
+        super.setWizardBean(wizardBean);
+        getBooleanActionsHandler().setActions(getPolicyCreateWizardBean().getPrivilegeBean().getViewEntitlement().getActions());
+    }
 
     @Override
     public String finishAction() {
@@ -143,6 +152,13 @@ public class PolicyCreateWizardHandler
         return index;
     }
 
+    protected BooleanAction getBooleanAction(ActionEvent event) {
+        BooleanAction ba = (BooleanAction) event.getComponent().getAttributes().get("booleanAction");
+        assert(ba != null);
+
+        return ba;
+    }
+
     @Override
     public void gotoStepListener(ActionEvent event) {
         super.gotoStepListener(event);
@@ -152,6 +168,10 @@ public class PolicyCreateWizardHandler
             int i = getGotoAdvancedTabIndex(event);
             getPolicyCreateWizardBean().setAdvancedTabsetIndex(i);
         }
+    }
+
+    public void actionRemoveListener(ActionEvent event) {
+        BooleanAction ba = getBooleanAction(event);
     }
 
     public void validatePolicyName(FacesContext context, UIComponent component, Object value) throws ValidatorException {
@@ -175,5 +195,9 @@ public class PolicyCreateWizardHandler
 
             throw new ValidatorException(msg);
         }
+    }
+
+    public BooleanActionsHandler getBooleanActionsHandler() {
+        return booleanActionsHandler;
     }
 }

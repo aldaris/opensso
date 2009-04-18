@@ -4,58 +4,64 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
-    <ice:panelGroup
-        styleClass="button-wrapper"
-        rendered="#{type == 'add'}">
-        <ice:commandLink
-            styleClass="button"
-            actionListener="#{handler[listenerMethod]}"
-            partialSubmit="true">
-            <f:attribute name="bean" value="#{bean}"/>
-            <ui:insert name="attributes"/>
+    <ice:commandLink
+        rendered="#{type == 'add'}"
+        actionListener="#{handler[listenerMethod]}"
+        partialSubmit="true">
+
+        <f:attribute name="bean" value="#{bean}"/>
+        <ui:insert name="attributes"/>
+
+        <ice:panelGroup
+            styleClass="button">
             <img class="left" src="../image/add.png"/>
-            Add
-        </ice:commandLink>
-    </ice:panelGroup>
-    <ice:panelGroup
-        styleClass="button-wrapper"
-        rendered="#{type == 'finish'}">
-        <ice:commandLink
-            styleClass="button"
-            actionListener="#{handler[listenerMethod]}"
-            partialSubmit="true">
-            <f:attribute name="bean" value="#{bean}"/>
-            <ui:insert name="attributes"/>
+            <ice:outputText
+                value="Add"/>
+        </ice:panelGroup>
+    </ice:commandLink>
+    <ice:commandLink
+        rendered="#{type == 'finish'}"
+        actionListener="#{handler[listenerMethod]}"
+        partialSubmit="true">
+
+        <f:attribute name="bean" value="#{bean}"/>
+        <ui:insert name="attributes"/>
+
+        <ice:panelGroup
+            styleClass="button-wrapper">
             <img class="left" src="../image/execute.png"/>
-            Finish
-        </ice:commandLink>
-    </ice:panelGroup>
-    <ice:panelGroup
-        styleClass="button-wrapper"
-        partialSubmit="true"
-        rendered="#{type == 'ok'}">
-        <ice:commandLink
-            actionListener="#{handler[listenerMethod]}"
-            styleClass="button"
-            partialSubmit="true">
-            <f:attribute name="bean" value="#{bean}"/>
-            <ui:insert name="attributes"/>
+            <ice:outputText
+                value="Finish"/>
+        </ice:panelGroup>
+    </ice:commandLink>
+    <ice:commandLink
+        rendered="#{type == 'ok'}"
+        actionListener="#{handler[listenerMethod]}"
+        styleClass="button"
+        partialSubmit="true">
+
+        <f:attribute name="bean" value="#{bean}"/>
+        <ui:insert name="attributes"/>
+
+        <ice:panelGroup
+            styleClass="button-wrapper">
             <img class="left" src="../image/execute.png"/>
             Ok
-        </ice:commandLink>
-    </ice:panelGroup>
-    <ice:panelGroup
-        styleClass="button-wrapper"
+        </ice:panelGroup>
+    </ice:commandLink>
+    <ice:commandLink
         rendered="#{type == 'cancel'}"
+        actionListener="#{handler[listenerMethod]}"
+        styleClass="button"
         partialSubmit="true">
-        <ice:commandLink
-            actionListener="#{handler[listenerMethod]}"
-            styleClass="button"
-            partialSubmit="true">
-            <f:attribute name="bean" value="#{bean}"/>
-            <ui:insert name="attributes"/>
+        
+        <f:attribute name="bean" value="#{bean}"/>
+        <ui:insert name="attributes"/>
+
+        <ice:panelGroup
+            styleClass="button-wrapper">
             <img class="left" src="../image/cancel.png"/>
             Cancel
-        </ice:commandLink>
-    </ice:panelGroup>
+        </ice:panelGroup>
+    </ice:commandLink>
 </ui:composition>

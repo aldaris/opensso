@@ -101,7 +101,7 @@ textarea.policy-description {
 }
 
 
-div.button-wrapper {
+div.button {
     border: 1px solid #999999;
     border-top-color: #CCCCCC;
     border-left-color: #CCCCCC;
@@ -111,29 +111,29 @@ div.button-wrapper {
     background-repeat: repeat-x;
 }
 
-div.button-wrapper a.button {
+div.button span {
     color: #333333;
     font-size: 100%;
     font-weight: bold;
     font-family: Verdana, Helvetica, Arial, sans-serif;
 }
 
-div.button-wrapper:active {
+div.button:active {
     border: 1px solid #CCCCCC;
     border-top-color: #999999;
     border-left-color: #999999;
 }
 
-div.button-wrapper a.button img.right {
+div.button img.right {
     position: relative;
     left: 3px;
     top: 3px;
     margin-right: 3px;
 }
 
-div.button-wrapper a.button img.left {
+div.button img.left {
     position: relative;
-    left: 0px;
+    left: -3px;
     top: 3px;
 }
 
@@ -411,6 +411,10 @@ div.button-wrapper a.button img.left {
 
 .draggable {
     cursor: pointer;
+}
+
+table.actions tr td {
+    text-align: center;
 }
 
 .multipanel {

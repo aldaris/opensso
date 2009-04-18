@@ -4,57 +4,63 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
-    <ice:panelGroup
-        styleClass="button-wrapper"
-        rendered="#{type == 'next' &amp;&amp; step &lt; steps-1}">
-        <ice:commandLink
-            styleClass="button"
-            partialSubmit="true"
-            actionListener="#{handler.nextListener}">
-            <f:attribute name="step" value="#{step}"/>
-            <f:attribute name="steps" value="#{steps}"/>
-            Next
+    <ice:commandLink
+        rendered="#{type == 'next' &amp;&amp; step &lt; steps-1}"
+        partialSubmit="true"
+        actionListener="#{handler.nextListener}">
+
+        <f:attribute name="step" value="#{step}"/>
+        <f:attribute name="steps" value="#{steps}"/>
+
+        <ice:panelGroup
+            styleClass="button">
+            <ice:outputText
+                value="Next"/>
             <img class="right" src="../image/go-next.png"/>
-        </ice:commandLink>
-    </ice:panelGroup>
-    <ice:panelGroup
-        styleClass="button-wrapper"
-        rendered="#{type == 'previous' &amp;&amp; step != 0}">
-        <ice:commandLink
-            styleClass="button"
-            partialSubmit="true"
-            actionListener="#{handler.previousListener}">
-            <f:attribute name="step" value="#{step}"/>
-            <f:attribute name="steps" value="#{steps}"/>
+        </ice:panelGroup>
+    </ice:commandLink>
+    <ice:commandLink
+        rendered="#{type == 'previous' &amp;&amp; step != 0}"
+        partialSubmit="true"
+        actionListener="#{handler.previousListener}">
+
+        <f:attribute name="step" value="#{step}"/>
+        <f:attribute name="steps" value="#{steps}"/>
+
+        <ice:panelGroup
+            styleClass="button">
             <img class="left" src="../image/go-previous.png"/>
-            Previous
-        </ice:commandLink>
-    </ice:panelGroup>
-    <ice:panelGroup
-        styleClass="button-wrapper"
-        rendered="#{type == 'cancel'}">
-        <ice:commandLink
-            styleClass="button"
-            partialSubmit="true"
-            immediate="true"
-            action="#{handler.cancelAction}">
-            <f:attribute name="step" value="#{step}"/>
-            <f:attribute name="steps" value="#{steps}"/>
+            <ice:outputText
+                value="Previous"/>
+        </ice:panelGroup>
+    </ice:commandLink>
+    <ice:commandLink
+        rendered="#{type == 'cancel'}"
+        partialSubmit="true"
+        immediate="true"
+        action="#{handler.cancelAction}">
+
+        <f:attribute name="step" value="#{step}"/>
+        <f:attribute name="steps" value="#{steps}"/>
+
+        <ice:panelGroup
+            styleClass="button">
             <img class="left" src="../image/cancel.png"/>
-            Cancel
-        </ice:commandLink>
-    </ice:panelGroup>
-    <ice:panelGroup
-        styleClass="button-wrapper"
-        rendered="#{type == 'finish' &amp;&amp; step == steps-1}">
-        <ice:commandLink
-            styleClass="button"
-            partialSubmit="true"
-            action="#{handler.finishAction}">
-            <f:attribute name="step" value="#{step}"/>
-            <f:attribute name="steps" value="#{steps}"/>
+            <ice:outputText
+                value="Cancel"/>
+        </ice:panelGroup>
+    </ice:commandLink>
+    <ice:commandLink
+        rendered="#{type == 'finish' &amp;&amp; step == steps-1}"
+        partialSubmit="true"
+        action="#{handler.finishAction}">
+        <f:attribute name="step" value="#{step}"/>
+        <f:attribute name="steps" value="#{steps}"/>
+        <ice:panelGroup
+            styleClass="button">
             <img class="left" src="../image/execute.png"/>
-            Finish
-        </ice:commandLink>
-    </ice:panelGroup>
+            <ice:outputText
+                value="Finish"/>
+        </ice:panelGroup>
+    </ice:commandLink>
 </ui:composition>

@@ -105,7 +105,7 @@ public class ViewEntitlement implements Serializable {
         Map<String, Boolean> actionMap = new HashMap<String, Boolean>();
 
         for (Action a : actions) {
-            actionMap.put(a.getName(), a.getValue());
+            actionMap.put(a.getName(), (Boolean)a.getValue());
         }
 
         return actionMap;
@@ -113,10 +113,6 @@ public class ViewEntitlement implements Serializable {
 
     public List<Action> getActions() {
         return actions;
-    }
-
-    public void setActions(List<Action> actions) {
-        this.actions = actions;
     }
 
     public ViewApplication getViewApplication() {

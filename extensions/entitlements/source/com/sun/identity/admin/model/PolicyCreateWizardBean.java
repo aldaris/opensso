@@ -115,7 +115,7 @@ public class PolicyCreateWizardBean
     public void setViewApplication(ViewApplication viewApplication) {
         privilegeBean.getViewEntitlement().setViewApplication(viewApplication);
 
-        getPrivilegeBean().getViewEntitlement().setActions(new DeepCloneableArrayList<Action>(viewApplication.getActions()).deepClone());
+        getPrivilegeBean().getViewEntitlement().getActions().addAll(new DeepCloneableArrayList<Action>(viewApplication.getActions()).deepClone());
         availableResources = new DeepCloneableArrayList<Resource>(viewApplication.getResources()).deepClone();
     }
 

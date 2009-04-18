@@ -5,8 +5,8 @@ import com.sun.identity.admin.handler.BooleanActionHandler;
 import java.io.Serializable;
 
 public class BooleanAction
-        extends BaseAction
-        implements Action, Serializable {
+        extends Action
+        implements Serializable {
 
     private boolean allow = false;
     private BooleanActionHandler booleanActionHandler;
@@ -42,5 +42,23 @@ public class BooleanAction
 
     public void setAllow(boolean allow) {
         this.allow = allow;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof BooleanAction)) {
+            return false;
+        }
+        BooleanAction other = (BooleanAction)o;
+
+        if (!getName().equals(other.getName())) {
+            return false;
+        }
+
+        if (!getValue().equals(other.getValue())) {
+            return false;
+        }
+
+        return true;
     }
 }
