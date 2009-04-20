@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: web_agent.c,v 1.5 2009-03-03 23:23:47 dknab Exp $
+ * $Id: web_agent.c,v 1.6 2009-04-20 20:48:53 subbae Exp $
  *
  *
  */
@@ -859,10 +859,6 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 
     agent_config = am_web_get_agent_configuration();
 
-    status = get_request_url(sn, rq, &request_url, agent_config);
-    am_web_log_debug("validate_session_policy(): "
-                     "request_url=\"%s\"", request_url);
-
     // Construct request url
     if (uri != NULL && *uri == '/') {
         char *temp = NULL;
@@ -1217,6 +1213,9 @@ add_agent_header(pblock *param, Session *sn, Request *rq)
                                   requestResult);
         } else {
             am_web_log_max_debug("%s: Host replace failed", thisfunc);
+        }
+        if(host_name != NULL) {
+            free(host_name);
         }
     } else {
         am_web_log_error ("%s: Header not found.", thisfunc);
