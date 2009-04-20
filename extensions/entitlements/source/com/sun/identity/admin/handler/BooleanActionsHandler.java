@@ -1,15 +1,14 @@
 package com.sun.identity.admin.handler;
 
-import com.sun.identity.admin.model.Action;
 import com.sun.identity.admin.model.BooleanAction;
+import com.sun.identity.admin.model.BooleanActionsBean;
 import java.io.Serializable;
-import java.util.List;
 import javax.faces.event.ActionEvent;
 
 public class BooleanActionsHandler
         implements Serializable {
 
-    private List<Action> actions;
+    private BooleanActionsBean booleanActionsBean;
 
     protected BooleanAction getBooleanAction(ActionEvent event) {
         BooleanAction ba = (BooleanAction) event.getComponent().getAttributes().get("booleanAction");
@@ -18,12 +17,29 @@ public class BooleanActionsHandler
         return ba;
     }
 
-    public void actionRemoveListener(ActionEvent event) {
+    public void removeListener(ActionEvent event) {
         BooleanAction ba = getBooleanAction(event);
-        actions.remove(ba);
+        booleanActionsBean.getActions().remove(ba);
     }
 
-    public void setActions(List<Action> actions) {
-        this.actions = actions;
+    public void addListener(ActionEvent event) {
+        booleanActionsBean.setAddPopupVisible(!booleanActionsBean.isAddPopupVisible());
+    }
+
+    public void addPopupOkListener(ActionEvent event) {
+        BooleanAction ba = new BooleanAction();
+        ba.setName(booleanActionsBean.getAddPopupName());
+        booleanActionsBean.getActions().add(ba);
+        booleanActionsBean.setAddPopupName(null);
+        booleanActionsBean.setAddPopupVisible(false);
+    }
+
+    public void addPopupCancelListener(ActionEvent event) {
+        booleanActionsBean.setAddPopupName(null);
+        booleanActionsBean.setAddPopupVisible(false);
+    }
+
+    public void setBooleanActionsBean(BooleanActionsBean booleanActionsBean) {
+        this.booleanActionsBean = booleanActionsBean;
     }
 }

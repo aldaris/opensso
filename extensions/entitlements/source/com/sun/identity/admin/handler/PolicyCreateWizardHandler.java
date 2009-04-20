@@ -39,7 +39,7 @@ public class PolicyCreateWizardHandler
     @Override
     public void setWizardBean(WizardBean wizardBean) {
         super.setWizardBean(wizardBean);
-        getBooleanActionsHandler().setActions(getPolicyCreateWizardBean().getPrivilegeBean().getViewEntitlement().getActions());
+        getBooleanActionsHandler().setBooleanActionsBean(getPolicyCreateWizardBean().getBooleanActionsBean());
     }
 
     @Override

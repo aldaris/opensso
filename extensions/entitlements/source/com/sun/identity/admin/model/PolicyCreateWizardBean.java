@@ -21,9 +21,11 @@ public class PolicyCreateWizardBean
     private PolicyCreateSummary policyCreateSummary = new PolicyCreateSummary();
     private int advancedTabsetIndex = 0;
     private List<Resource> availableResources;
+    private BooleanActionsBean booleanActionsBean = new BooleanActionsBean();
 
     public PolicyCreateWizardBean() {
         policyCreateSummary.setPolicyCreateWizardBean(this);
+        booleanActionsBean.setActions(privilegeBean.getViewEntitlement().getActions());
     }
 
     @Override
@@ -125,5 +127,9 @@ public class PolicyCreateWizardBean
 
     public ViewApplicationsBean getViewApplicationsBean() {
         return viewApplicationsBean;
+    }
+
+    public BooleanActionsBean getBooleanActionsBean() {
+        return booleanActionsBean;
     }
 }

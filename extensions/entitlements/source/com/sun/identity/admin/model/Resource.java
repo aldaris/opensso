@@ -24,6 +24,11 @@ public abstract class Resource implements Serializable, DeepCloneable {
     }
 
     @Override
+    public String toString() {
+        return getName();
+    }
+
+    @Override
     public int hashCode() {
         return name.hashCode();
     }

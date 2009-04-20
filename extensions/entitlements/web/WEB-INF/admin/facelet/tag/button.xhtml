@@ -28,7 +28,7 @@
         <ui:insert name="attributes"/>
 
         <ice:panelGroup
-            styleClass="button-wrapper">
+            styleClass="button">
             <img class="left" src="../image/execute.png"/>
             <ice:outputText
                 value="Finish"/>
@@ -44,9 +44,10 @@
         <ui:insert name="attributes"/>
 
         <ice:panelGroup
-            styleClass="button-wrapper">
+            styleClass="button">
             <img class="left" src="../image/execute.png"/>
-            Ok
+            <ice:outputText
+                value="Ok"/>
         </ice:panelGroup>
     </ice:commandLink>
     <ice:commandLink
@@ -59,9 +60,10 @@
         <ui:insert name="attributes"/>
 
         <ice:panelGroup
-            styleClass="button-wrapper">
+            styleClass="button">
             <img class="left" src="../image/cancel.png"/>
-            Cancel
+            <ice:outputText
+                value="Cancel"/>
         </ice:panelGroup>
     </ice:commandLink>
 </ui:composition>

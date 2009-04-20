@@ -7,7 +7,7 @@ import javax.faces.convert.Converter;
 public class UrlResourceConverter implements Converter {
 
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-    UrlResource urlResource = new UrlResource();
+        UrlResource urlResource = new UrlResource();
         urlResource.setName(value);
 
         return urlResource;

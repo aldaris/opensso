@@ -21,14 +21,14 @@
             <ui:define name="wizard-steps">
                 <o:wstep
                     step="0"
-                    label="Step 1: Getting started">
+                    label="Step 1: Name, Description, and Application">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-create-name.xhtml"/>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="1"
-                    label="Step 2: Select or add a resource to protect">
+                    label="Step 2: Resources (#{o:size(policyCreateWizardBean.privilegeBean.viewEntitlement.resources)})">
                     <ui:define name="wizard-step-body">
                         <ui:include
                             src="#{policyCreateWizardBean.viewApplication.viewApplicationType.resourceTemplate}">
@@ -43,21 +43,21 @@
                 </o:wstep>
                 <o:wstep
                     step="2"
-                    label="Step 3: Select or add the users that this policy applies to">
+                    label="Step 3: Subjects (#{policyCreateWizardBean.privilegeBean.viewSubject != null ? policyCreateWizardBean.privilegeBean.viewSubject : 0})">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-create-subjects.xhtml"/>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="3"
-                    label="Step 4: Advanced settings">
+                    label="Step 4: Advanced">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-create-advanced.xhtml"/>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="4"
-                    label="Step 5: Review and complete">
+                    label="Step 5: Review">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-create-summary.xhtml"/>
                     </ui:define>

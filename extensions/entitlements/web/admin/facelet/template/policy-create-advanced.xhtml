@@ -9,7 +9,14 @@
     <ice:panelTabSet
         selectedIndex="#{policyCreateWizardBean.advancedTabsetIndex}">
         <ice:panelTab label="Actions (#{o:size(policyCreateWizardBean.privilegeBean.viewEntitlement.actions)})">
-            <ui:include src="policy-create-actions.xhtml"/>
+            <ui:include src="actions.xhtml">
+                <ui:param
+                    name="booleanActionsBean"
+                    value="#{policyCreateWizardBean.booleanActionsBean}"/>
+                <ui:param
+                    name="booleanActionsHandler"
+                    value="#{policyCreateWizardHandler.booleanActionsHandler}"/>
+            </ui:include>
         </ice:panelTab>
         <ice:panelTab label="Conditions (#{policyCreateWizardBean.privilegeBean.viewCondition == null ? 0 : policyCreateWizardBean.privilegeBean.viewCondition.size})">
             <ui:include src="policy-create-conditions.xhtml"/>

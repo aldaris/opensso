@@ -7,8 +7,10 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
+
     <ui:include src="resources-url-add-popup.xhtml"/>
     <ui:include src="resources-url-add-exception-popup.xhtml"/>
+    
     <div class="section-outer">
         <o:box>
             <ui:define name="body">
@@ -54,7 +56,7 @@
                     <ice:selectManyCheckbox
                         id="resource-select"
                         layout="spread"
-                        partialSubmit="false"
+                        partialSubmit="true"
                         value="#{viewEntitlement.resources}"
                         converter="urlResourceConverter">
                         <f:selectItems

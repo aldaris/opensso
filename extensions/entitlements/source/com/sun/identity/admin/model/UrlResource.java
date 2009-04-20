@@ -18,11 +18,6 @@ public class UrlResource extends Resource implements Serializable {
         return ur;
     }
 
-    @Override
-    public String toString() {
-        return getName();
-    }
-
     public static UrlResource valueOf(String s) {
         UrlResource ur = new UrlResource();
         ur.setName(s);
