@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.17 2009-01-28 05:34:56 ww203982 Exp $
+ * $Id: LDAPConnectionPool.java,v 1.18 2009-04-21 01:42:25 hengming Exp $
  *
  */
 
@@ -524,8 +524,8 @@ public class LDAPConnectionPool {
         }
         // Do manual failover to the secondary server, if ldap error code is
         // 80 or 81 or 91.
-        if (retryErrorCodes.contains(Integer.toString(errCode))) {
-            failOver(ld);
+        if (retryErrorCodes.contains(Integer.toString(errCode)) &&
+            failOver(ld)) {
             if ( (LDAPConnPoolUtils.connectionPoolsStatus != null)
                 && (!LDAPConnPoolUtils.connectionPoolsStatus.isEmpty()) ) {
                 // Initiate the fallback to primary server by invoking a
@@ -975,6 +975,12 @@ public class LDAPConnectionPool {
      */
     public boolean failOver(LDAPConnection ld) {
 
+        // no need to do failover if there is only one host
+        int size = hostArrList.size();
+        if (size <= 1) {
+            return false;
+        }
+
         /* Since we are supporting fallback in FallBackManager class,
          * do the failover here, instead of relying on
          * jdk's failover mechanism.
@@ -999,7 +1005,6 @@ public class LDAPConnectionPool {
             }
         }
 
-        int size = hostArrList.size();
         for (int i = 0; i < size; i++) {
             String hpName = (String) hostArrList.get(i);
             StringTokenizer stn = new StringTokenizer(hpName,":");
