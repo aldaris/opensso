@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.20 2009-03-31 23:55:35 babysunil Exp $
+ * $Id: AgentsModelImpl.java,v 1.21 2009-04-21 18:09:01 veiming Exp $
  *
  */
 
@@ -820,7 +820,7 @@ public class AgentsModelImpl
         String universalId, 
         String groupName
     ) throws AMConsoleException {
-        String[] param = {realmName, universalId};
+        String[] param = {universalId};
         logEvent("ATTEMPT_SET_AGENT_ATTRIBUTE_VALUE", param);
 
         try {
