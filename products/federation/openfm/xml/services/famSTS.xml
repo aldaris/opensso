@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.14 2009-01-24 01:32:05 mallas Exp $
+   $Id: famSTS.xml,v 1.15 2009-04-21 17:49:10 mallas Exp $
                                                                                 
 -->
 
@@ -381,6 +381,20 @@
                      type="single"
                      syntax="boolean"
                      i18nKey="a134">
+                     <BooleanValues>
+                         <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                     </BooleanValues>
+                     <DefaultValues>
+                         <Value>true</Value>
+                     </DefaultValues>
+               </AttributeSchema>
+
+               <AttributeSchema
+                     name="DetectMessageReplay"
+                     type="single"
+                     syntax="boolean"
+                     i18nKey="a135">
                      <BooleanValues>
                          <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
                          <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
