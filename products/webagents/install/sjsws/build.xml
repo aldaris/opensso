@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2008-06-25 05:54:39 qcheng Exp $
+   $Id: build.xml,v 1.8 2009-04-21 23:39:37 subbae Exp $
 
 -->
 
@@ -134,6 +134,7 @@
         <copy todir="${container.web_agent.lib.dir}">
             <fileset dir="${webagents.sjsws.src.dir}">
                     <include name="ames6.dll"/>
+                    <include name="ames6.pdb"/>
             </fileset>
         </copy>
 

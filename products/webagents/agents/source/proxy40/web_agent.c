@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: web_agent.c,v 1.6 2009-04-20 20:48:53 subbae Exp $
+ * $Id: web_agent.c,v 1.7 2009-04-21 23:39:36 subbae Exp $
  *
  *
  */
@@ -75,16 +75,6 @@ static CRITICAL initLock;
 const char getMethod[] = "GET";
 
 void init_at_request();
-
-/*
-typedef struct agent_info {
-    am_properties_t conf_params;
-} agent_info_t;
-
-static agent_info_t agent_info = {
-    AM_PROPERTIES_NULL
-};
- */
 
 int send_data(const char *msg, Session *sn, Request *rq) {
     int len = msg != NULL?strlen(msg):0;
@@ -270,6 +260,7 @@ NSAPI_PUBLIC int process_notification(pblock *param, Session *sn, Request *rq)
     void* agent_config = NULL;
     agent_config = am_web_get_agent_configuration();
     process_new_notification(param,sn,rq,agent_config);
+    am_web_delete_agent_configuration(agent_config);
     return REQ_PROCEED;
 }
 
@@ -756,30 +747,6 @@ char *replace_host_port(const char *request_url, const char *agent_host,
         }
    }
    return modified_url;
-}
-
-am_status_t get_request_url(Session *sn, Request *rq, char **request_url,
-                            void* agent_config) {
-    am_status_t retVal = AM_SUCCESS;
-    const char *protocol = "HTTP";
-    const char *host_hdr = pblock_findval(HOST_HDR, rq->headers);
-    const char *query = pblock_findval(REQUEST_QUERY, rq->reqpb);
-    const char *uri = pblock_findval(REQUEST_URI, rq->reqpb);
-
-    if (security_active) {
-        protocol = "HTTPS";
-    }
-    retVal = am_web_get_request_url(host_hdr, protocol, server_hostname,
-                                    server_portnum, uri, query,
-                                    request_url, agent_config);
-    if (retVal == AM_SUCCESS) {
-        am_web_log_debug("get_request_url(): "
-                         "request_url=\"%s\"", *request_url);
-    } else {
-        am_web_log_error("get_request_url(): Failed with error: %s.",
-                         am_status_to_string(retVal));
-    }
-    return retVal;
 }
 
 /*

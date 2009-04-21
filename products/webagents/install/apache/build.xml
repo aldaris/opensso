@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2009-01-05 19:54:32 subbae Exp $
+   $Id: build.xml,v 1.8 2009-04-21 23:39:36 subbae Exp $
 
 -->
 
@@ -137,6 +137,7 @@
         <copy todir="${container.web_agent.lib.dir}">
             <fileset dir="${webagents.apache.src.dir}">
                     <include name="libamapc2.dll"/>
+                    <include name="libamapc2.pdb"/>
             </fileset>
         </copy>
     </target>
