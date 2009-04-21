@@ -6,7 +6,7 @@ import com.sun.identity.entitlement.RoleSubject;
 public class IdRepoRoleViewSubject extends ViewSubject {
     public EntitlementSubject getEntitlementSubject() {
         RoleSubject roleSubject = new RoleSubject();
-        roleSubject.setRole(getName());
+        roleSubject.setID(getName());
 
         return roleSubject;
     }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSubjectTest.java,v 1.3 2009-04-10 00:51:04 dillidorai Exp $
+ * $Id: UserSubjectTest.java,v 1.4 2009-04-21 13:08:03 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -55,7 +55,7 @@ public class UserSubjectTest {
 
         UnittestLog.logMessage(
                 "UserSubjectTest.testConstruction():" + "resetting user name");
-        us1.setUser("user2");
+        us1.setID("user2");
         UnittestLog.logMessage(
                 "UserSubjectTest.testConstruction():" + "us1.toString()="
                 + us1.toString());

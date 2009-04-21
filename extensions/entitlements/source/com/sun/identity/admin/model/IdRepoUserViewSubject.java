@@ -8,7 +8,7 @@ public class IdRepoUserViewSubject extends ViewSubject {
 
     public EntitlementSubject getEntitlementSubject() {
         UserSubject userSubject = new UserSubject();
-        userSubject.setUser(getName());
+        userSubject.setID(getName());
 
         return userSubject;
     }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.7 2009-04-16 18:13:25 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.8 2009-04-21 13:08:02 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -555,7 +555,7 @@ public class PrivilegeUtils {
             throws PolicyException, SSOException {
         Subject subject = new com.sun.identity.policy.plugins.AMIdentitySubject();
         Set<String> values = new HashSet<String>();
-        values.add(us.getUser());
+        values.add(us.getID());
         subject.setValues(values);
         String pSubjectName = us.getPSubjectName();
         if (pSubjectName == null) {
@@ -572,7 +572,7 @@ public class PrivilegeUtils {
             throws PolicyException, SSOException {
         Subject subject = new com.sun.identity.policy.plugins.AMIdentitySubject();
         Set<String> values = new HashSet<String>();
-        values.add(gs.getGroup());
+        values.add(gs.getID());
         subject.setValues(values);
         String pSubjectName = gs.getPSubjectName();
         if (pSubjectName == null) {
@@ -589,7 +589,7 @@ public class PrivilegeUtils {
             throws PolicyException, SSOException {
         Subject subject = new com.sun.identity.policy.plugins.AMIdentitySubject();
         Set<String> values = new HashSet<String>();
-        values.add(rs.getRole());
+        values.add(rs.getID());
         subject.setValues(values);
         String pSubjectName = rs.getPSubjectName();
         if (pSubjectName == null) {

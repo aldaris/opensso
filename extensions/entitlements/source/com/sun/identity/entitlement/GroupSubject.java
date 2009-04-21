@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.7 2009-04-18 00:05:09 veiming Exp $
+ * $Id: GroupSubject.java,v 1.8 2009-04-21 13:08:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -33,34 +33,27 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.debug.Debug;
 
 import java.security.AccessController;
-import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
-import org.json.JSONObject;
-import org.json.JSONException;
 
 /**
  * EntitlementSubject to represent group identity for membership check
  * @author dorai
  */
-public class GroupSubject implements EntitlementSubject {
+public class GroupSubject extends EntitlementSubjectImpl {
     private static final long serialVersionUID = -403250971215465050L;
-
-    private String group;
-    private String pSubjectName;
-    boolean openSSOSubject = false;
 
     /**
      * Constructs an GroupSubject
      */
     public GroupSubject() {
+        super();
     }
 
     /**
@@ -68,7 +61,7 @@ public class GroupSubject implements EntitlementSubject {
      * @param group the uuid of the group who is member of the EntitlementSubject
      */
     public GroupSubject(String group) {
-        this.group = group;
+        super(group);
     }
 
     /**
@@ -79,58 +72,7 @@ public class GroupSubject implements EntitlementSubject {
      * OpenSSO policy Subject
      */
     public GroupSubject(String group, String pSubjectName) {
-        this.group = group;
-        this.pSubjectName = pSubjectName;
-    }
-
-    /**
-     * Sets state of the object
-     * @param state State of the object encoded as string
-     */
-    public void setState(String state) {
-        try {
-            JSONObject jo = new JSONObject(state);
-            group = jo.optString("group");
-            pSubjectName = jo.optString("pSubjectName");
-            openSSOSubject = jo.optBoolean("openSSOSubject");
-        } catch (JSONException joe) {
-        }
-    }
-
-    /**
-     * Returns state of the object
-     * @return state of the object encoded as string
-     */
-    public String getState() {
-        return toString();
-    }
-
-    /**
-     * Returns JSONObject mapping of the object
-     * @return JSONObject mapping  of the object
-     */
-    public JSONObject toJSONObject() throws JSONException {
-        JSONObject jo = new JSONObject();
-        jo.put("group", group);
-        jo.put("pSubjectName", pSubjectName);
-        return jo;
-    }
-
-    /**
-     * Returns string representation of the object
-     * @return string representation of the object
-     */
-    @Override
-    public String toString() {
-        String s = null;
-        try {
-            s = toJSONObject().toString(2);
-        } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("GroupESubject.toString(), JSONException:" +
-                    joe.getMessage());
-        }
-        return s;
+        super(group, pSubjectName);
     }
 
     /**
@@ -155,7 +97,7 @@ public class GroupSubject implements EntitlementSubject {
         boolean satified = false;
 
         try {
-            AMIdentity idGroup = IdUtils.getIdentity(adminToken, group);
+            AMIdentity idGroup = IdUtils.getIdentity(adminToken, getID());
             Set<IdType> supportedType = IdType.GROUP.canHaveMembers();
             for (IdType type : supportedType) {
                 if (isMember(subject, type, idGroup)) {
@@ -172,7 +114,7 @@ public class GroupSubject implements EntitlementSubject {
         return new SubjectDecision(satified, Collections.EMPTY_MAP);
     }
     
-    private static boolean isMember(
+    private boolean isMember(
         Subject subject,
         IdType type, 
         AMIdentity idGroup
@@ -186,107 +128,11 @@ public class GroupSubject implements EntitlementSubject {
         return false;
     }
 
-    private static boolean hasPrincipal(Subject subject, String uuid) {
-        Set<Principal> userPrincipals = subject.getPrincipals();
-        for (Principal p : userPrincipals) {
-            if (p.getName().equals(uuid)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Sets the member group of the object
-     * @param group the uuid of the member group
-     */
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    /**
-     * Returns the member group of the object
-     * @return  the uuid of the member group
-     */
-    public String getGroup() {
-        return group;
-    }
-
-    /**
-     * Sets OpenSSO policy subject name of the object
-     * @param pSubjectName subject name as used in OpenSSO policy,
-     * this is releavant only when GroupSubject was created from
-     * OpenSSO policy Subject
-     */
-    public void setPSubjectName(String pSubjectName) {
-        this.pSubjectName = pSubjectName;
-    }
-
-    /**
-     * Returns OpenSSO policy subject name of the object
-     * @return subject name as used in OpenSSO policy,
-     * this is releavant only when GroupSubject was created from
-     * OpenSSO policy Subject
-     */
-    public String getPSubjectName() {
-        return pSubjectName;
-    }
-
-    /**
-     * Returns <code>true</code> if the passed in object is equal to this object
-     * @param obj object to check for equality
-     * @return  <code>true</code> if the passed in object is equal to this object
-     */
-    public boolean equals(Object obj) {
-        boolean equalled = true;
-        if (obj == null) {
-            return false;
-        }
-        if (!getClass().equals(obj.getClass())) {
-            return false;
-        }
-        GroupSubject object = (GroupSubject) obj;
-        if (group == null) {
-            if (object.getGroup() != null) {
-                return false;
-            }
-        } else {
-            if (!group.equals(object.getGroup())) {
-                return false;
-            }
-        }
-        if (pSubjectName == null) {
-            if (object.getPSubjectName() != null) {
-                return false;
-            }
-        } else {
-            if (!pSubjectName.equals(object.getPSubjectName())) {
-                return false;
-            }
-        }
-        return equalled;
-    }
-
-    /**
-     * Returns hash code of the object
-     * @return hash code of the object
-     */
-    public int hashCode() {
-        int code = 0;
-        if (group != null) {
-            code += group.hashCode();
-        }
-        if (pSubjectName != null) {
-            code += pSubjectName.hashCode();
-        }
-        return code;
-    }
-
     public Map<String, Set<String>> getSearchIndexAttributes() {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>(4);
         {
             Set<String> set = new HashSet<String>();
-            set.add(group);
+            set.add(getID());
             map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
                 IdType.GROUP.getName(), set);
         }

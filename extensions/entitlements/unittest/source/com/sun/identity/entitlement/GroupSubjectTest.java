@@ -22,18 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubjectTest.java,v 1.2 2009-04-10 00:58:59 dillidorai Exp $
+ * $Id: GroupSubjectTest.java,v 1.3 2009-04-21 13:08:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.unittest.UnittestLog;
 
-import com.sun.identity.entitlement.GroupSubject;
 import java.util.Date;
 
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
 
 /**
  *
@@ -69,7 +66,7 @@ public class GroupSubjectTest {
         UnittestLog.logMessage(
                 "GroupSubjectTest.testConstruction():"
                 + "resetting grouper name");
-        group1.setGroup("group1");
+        group1.setID("group1");
         UnittestLog.logMessage(
                 "GroupSubjectTest.testConstruction():" + "group1.toString()="
                 + group1.toString());

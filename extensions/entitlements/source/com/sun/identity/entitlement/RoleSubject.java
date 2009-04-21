@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleSubject.java,v 1.7 2009-04-18 00:05:10 veiming Exp $
+ * $Id: RoleSubject.java,v 1.8 2009-04-21 13:08:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.idm.IdType;
-import com.sun.identity.shared.debug.Debug;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,24 +34,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
-import org.json.JSONObject;
-import org.json.JSONException;
 
 /**
  * EntitlementSubject to represent role identity for membership check
  * @author dorai
  */
-public class RoleSubject implements EntitlementSubject {
+public class RoleSubject extends EntitlementSubjectImpl {
     private static final long serialVersionUID = -403250971215465050L;
-
-    private String role;
-    private String pSubjectName;
-    boolean openSSOSubject = false;
 
     /**
      * Constructs an RoleSubject
      */
     public RoleSubject() {
+        super();
     }
 
     /**
@@ -60,7 +54,7 @@ public class RoleSubject implements EntitlementSubject {
      * @param role the uuid of the role who is member of the EntitlementSubject
      */
     public RoleSubject(String role) {
-        this.role = role;
+        super(role);
     }
 
     /**
@@ -71,58 +65,7 @@ public class RoleSubject implements EntitlementSubject {
      * OpenSSO policy Subject
      */
     public RoleSubject(String role, String pSubjectName) {
-        this.role = role;
-        this.pSubjectName = pSubjectName;
-    }
-
-    /**
-     * Sets state of the object
-     * @param state State of the object encoded as string
-     */
-    public void setState(String state) {
-        try {
-            JSONObject jo = new JSONObject(state);
-            role = jo.optString("role");
-            pSubjectName = jo.optString("pSubjectName");
-            openSSOSubject = jo.optBoolean("openSSOSubject");
-        } catch (JSONException joe) {
-        }
-    }
-
-    /**
-     * Returns state of the object
-     * @return state of the object encoded as string
-     */
-    public String getState() {
-        return toString();
-    }
-
-    /**
-     * Returns JSONObject mapping of the object
-     * @return JSONObject mapping  of the object
-     */
-    public JSONObject toJSONObject() throws JSONException {
-        JSONObject jo = new JSONObject();
-        jo.put("role", role);
-        jo.put("pSubjectName", pSubjectName);
-        return jo;
-    }
-
-    /**
-     * Returns string representation of the object
-     * @return string representation of the object
-     */
-    @Override
-    public String toString() {
-        String s = null;
-        try {
-            s = toJSONObject().toString(2);
-        } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("RoleESubject.toString(), JSONException:" +
-                    joe.getMessage());
-        }
-        return s;
+        super(role, pSubjectName);
     }
 
     /**
@@ -150,105 +93,17 @@ public class RoleSubject implements EntitlementSubject {
             Set<String> values = attributes.get(
                 SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
                     IdType.ROLE.getName());
-            satified = (values != null) ? values.contains(role) : false;
+            satified = (values != null) ? values.contains(getID()) : false;
         }
         
         return new SubjectDecision(satified, Collections.EMPTY_MAP);
     }
 
-    /**
-     * Sets the member role of the object
-     * @param role the uuid of the member role
-     */
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    /**
-     * Returns the member role of the object
-     * @return  the uuid of the member role
-     */
-    public String getRole() {
-        return role;
-    }
-
-    /**
-     * Sets OpenSSO policy subject name of the object
-     * @param pSubjectName subject name as used in OpenSSO policy,
-     * this is releavant only when RoleSubject was created from
-     * OpenSSO policy Subject
-     */
-    public void setPSubjectName(String pSubjectName) {
-        this.pSubjectName = pSubjectName;
-    }
-
-    /**
-     * Returns OpenSSO policy subject name of the object
-     * @return subject name as used in OpenSSO policy,
-     * this is releavant only when RoleSubject was created from
-     * OpenSSO policy Subject
-     */
-    public String getPSubjectName() {
-        return pSubjectName;
-    }
-
-    /**
-     * Returns <code>true</code> if the passed in object is equal to this object
-     * @param obj object to check for equality
-     * @return  <code>true</code> if the passed in object is equal to this object
-     */
-    @Override
-    public boolean equals(Object obj) {
-        boolean equalled = true;
-        if (obj == null) {
-            return false;
-        }
-        if (!getClass().equals(obj.getClass())) {
-            return false;
-        }
-        RoleSubject object = (RoleSubject) obj;
-        if (role == null) {
-            if (object.getRole() != null) {
-                return false;
-            }
-        } else {
-            if (!role.equals(object.getRole())) {
-                return false;
-            }
-        }
-        if (pSubjectName == null) {
-            if (object.getPSubjectName() != null) {
-                return false;
-            }
-        } else {
-            if (!pSubjectName.equals(object.getPSubjectName())) {
-                return false;
-            }
-        }
-        return equalled;
-    }
-
-    /**
-     * Returns hash code of the object.
-     *
-     * @return hash code of the object.
-     */
-    @Override
-    public int hashCode() {
-        int code = 0;
-        if (role != null) {
-            code += role.hashCode();
-        }
-        if (pSubjectName != null) {
-            code += pSubjectName.hashCode();
-        }
-        return code;
-    }
 
     public Map<String, Set<String>> getSearchIndexAttributes() {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>(2);
         Set<String> set = new HashSet<String>();
-        set.add(role);
+        set.add(getID());
         map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
             IdType.ROLE.getName(), set);
         return map;
