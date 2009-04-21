@@ -1,16 +1,16 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.subject.IdRepoUserSubject;
 import com.sun.identity.entitlement.EntitlementSubject;
-import com.sun.identity.entitlement.UserSubject;
 
 public class IdRepoUserViewSubject extends ViewSubject {
     private String cn;
 
     public EntitlementSubject getEntitlementSubject() {
-        UserSubject userSubject = new UserSubject();
-        userSubject.setID(getName());
+        IdRepoUserSubject idus = new IdRepoUserSubject();
+        idus.setID(getName());
 
-        return userSubject;
+        return idus;
     }
 
     public String getCn() {

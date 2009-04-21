@@ -16,6 +16,10 @@ public class NotViewSubject extends ContainerViewSubject implements Serializable
         return ns;
     }
 
+    public String getOperatorString() {
+        return "NOT";
+    }
+
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer();

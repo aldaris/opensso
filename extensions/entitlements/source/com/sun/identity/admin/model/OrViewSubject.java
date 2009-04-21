@@ -22,6 +22,10 @@ public class OrViewSubject extends ContainerViewSubject implements Serializable 
         return os;
     }
 
+    public String getOperatorString() {
+        return "OR";
+    }
+    
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer();

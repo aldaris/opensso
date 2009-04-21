@@ -18,4 +18,9 @@ public class IdRepoRoleSubjectDao extends IdRepoSubjectDao implements Serializab
         return rvs;
     }
 
+    public void decorate(ViewSubject vs) {
+        // TODO
+        // any role decoration?
+    }
+
 }

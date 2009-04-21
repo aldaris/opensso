@@ -24,56 +24,6 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
-    <!-- subject class maps -->
-    <managed-bean>
-        <managed-bean-name>eSubjectToViewSubjectMap</managed-bean-name>
-        <managed-bean-class>java.util.HashMap</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <map-entries>
-            <map-entry>
-                <key>com.sun.identity.entitlement.OrSubject</key>
-                <value>com.sun.identity.admin.model.OrViewSubject</value>
-            </map-entry>
-            <map-entry>
-                <key>com.sun.identity.entitlement.NotSubject</key>
-                <value>com.sun.identity.admin.model.NotViewSubject</value>
-            </map-entry>
-            <map-entry>
-                <key>com.sun.identity.entitlement.IdRepoUserSubject</key>
-                <value>com.sun.identity.admin.model.IdRepoUserViewSubject</value>
-            </map-entry>
-            <map-entry>
-                <key>com.sun.identity.entitlement.IdRepoRoleSubject</key>
-                <value>com.sun.identity.admin.model.IdRepoRoleViewSubject</value>
-            </map-entry>
-        </map-entries>
-    </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>viewSubjectToSubjectDaoMap</managed-bean-name>
-        <managed-bean-class>java.util.HashMap</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <map-entries>
-            <map-entry>
-                <key>com.sun.identity.admin.model.OrViewSubject</key>
-                <value>com.sun.identity.admin.dao.ExpressionSubjectDao</value>
-            </map-entry>
-            <map-entry>
-                <key>com.sun.identity.admin.model.OrViewSubject</key>
-                <value>com.sun.identity.admin.dao.ExpressionSubjectDao</value>
-            </map-entry>
-            <map-entry>
-                <key>com.sun.identity.admin.model.IdRepoUserViewSubject</key>
-                <value>com.sun.identity.admin.dao.IdRepoUserSubjectDao</value>
-            </map-entry>
-            <map-entry>
-                <key>com.sun.identity.admin.model.IdRepoRoleViewSubject</key>
-                <value>com.sun.identity.admin.dao.IdRepoRoleSubjectDao</value>
-            </map-entry>
-        </map-entries>
-    </managed-bean>
-    <!-- subject class maps -->
-
     <!-- application types -->
     <managed-bean>
         <managed-bean-name>iPlanetAMWebAgentService</managed-bean-name>
@@ -162,6 +112,69 @@
     <!-- various panel beans -->
 
     <!-- subject types -->
+    <managed-bean>
+        <managed-bean-name>userSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.UserSubjectType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>user</value>
+        </managed-property>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-user.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/user.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>roleSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.RoleSubjectType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>role</value>
+        </managed-property>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-role.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/role.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>groupSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.GroupSubjectType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>group</value>
+        </managed-property>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-group.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/role.png</value>
+        </managed-property>
+    </managed-bean>
     <managed-bean>
         <managed-bean-name>idRepoUserSubjectType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.IdRepoUserSubjectType</managed-bean-class>
@@ -273,13 +286,17 @@
         <managed-bean-class>java.util.ArrayList</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <list-entries>
-            <value>#{idRepoUserSubjectType}</value>
-            <value>#{idRepoRoleSubjectType}</value>
             <value>#{orSubjectType}</value>
-            <value>#{andSubjectType}</value>
+            <!--<value>#{andSubjectType}</value>-->
             <value>#{notSubjectType}</value>
+            <value>#{userSubjectType}</value>
+            <value>#{idRepoUserSubjectType}</value>
+            <value>#{roleSubjectType}</value>
+            <value>#{idRepoRoleSubjectType}</value>
+            <value>#{groupSubjectType}</value>
         </list-entries>
     </managed-bean>
+
     <managed-bean>
         <managed-bean-name>expressionSubjectTypes</managed-bean-name>
         <managed-bean-class>java.util.ArrayList</managed-bean-class>
@@ -289,6 +306,78 @@
             <!--<value>#{andSubjectType}</value>-->
             <value>#{notSubjectType}</value>
         </list-entries>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>entitlementSubjectToSubjectTypeMap</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.BeanHashMap</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <map-entries>
+            <map-entry>
+                <key>com.sun.identity.entitlement.OrSubject</key>
+                <value>#{orSubjectType}</value>
+            </map-entry>
+            <!--
+            <map-entry>
+                <key>com.sun.identity.entitlement.AndSubject</key>
+                <value>#{andSubjectType}</value>
+            </map-entry>
+            -->
+            <map-entry>
+                <key>com.sun.identity.entitlement.NotSubject</key>
+                <value>#{notSubjectType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.UserSubject</key>
+                <value>#{userSubjectType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.RoleSubject</key>
+                <value>#{roleSubjectType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.GroupSubject</key>
+                <value>#{groupSubjectType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.subject.IdRepoUserSubject</key>
+                <value>#{idRepoUserSubjectType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.subject.IdRepoRoleSubject</key>
+                <value>#{idRepoRoleSubjectType}</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>viewSubjectToSubjectDaoMap</managed-bean-name>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <map-entries>
+            <map-entry>
+                <key>com.sun.identity.admin.model.IdRepoUserViewSubject</key>
+                <value>com.sun.identity.admin.dao.IdRepoUserSubjectDao</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.IdRepoRoleViewSubject</key>
+                <value>com.sun.identity.admin.dao.IdRepoRoleSubjectDao</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>subjectFactory</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SubjectFactory</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>entitlementSubjectToSubjectTypeMap</property-name>
+            <value>#{entitlementSubjectToSubjectTypeMap}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>viewSubjectToSubjectDaoMap</property-name>
+            <value>#{viewSubjectToSubjectDapMap}</value>
+        </managed-property>
     </managed-bean>
     <!-- subject types -->
 
@@ -589,10 +678,12 @@
         <managed-bean-class>com.sun.identity.admin.BeanHashMap</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <map-entries>
+            <!--
             <map-entry>
                 <key>com.sun.identity.admin.model.ActiveSessionTimeCondition</key>
                 <value>#{activeSessionTimeConditionType}</value>
             </map-entry>
+            -->
             <map-entry>
                 <key>com.sun.identity.admin.model.IPViewCondition</key>
                 <value>#{ipConditionType}</value>
@@ -751,6 +842,10 @@
         <managed-property>
             <property-name>viewApplicationsBean</property-name>
             <value>#{viewApplicationsBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectFactory</property-name>
+            <value>#{subjectFactory}</value>
         </managed-property>
         <managed-property>
             <property-name>conditionTypeFactory</property-name>

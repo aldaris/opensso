@@ -1,5 +1,7 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.entitlement.EntitlementSubject;
+
 public abstract class SubjectType {
     private String name;
     private String template;
@@ -7,6 +9,7 @@ public abstract class SubjectType {
     private boolean expression;
 
     public abstract ViewSubject newViewSubject();
+    public abstract ViewSubject newViewSubject(EntitlementSubject es, SubjectFactory stf);
 
     public String getName() {
         return name;

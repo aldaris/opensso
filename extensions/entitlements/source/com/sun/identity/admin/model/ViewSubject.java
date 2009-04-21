@@ -78,11 +78,29 @@ public abstract class ViewSubject implements MultiPanelBean, TreeNode {
         return toString();
     }
 
+    public String getToFormattedString() {
+        return toString();
+    }
+
+    String getToFormattedString(int i) {
+        return getIndentString(i) + toString();
+    }
+
     public int getSize() {
         Tree t = new Tree(this);
         return t.size();
     }
-    
+
+
+    String getIndentString(int i) {
+        String indent = "";
+        for (int j = 0; j < i; j++) {
+            indent += " ";
+        }
+
+        return indent;
+    }
+
     @Override
     public String toString() {
         return getName();

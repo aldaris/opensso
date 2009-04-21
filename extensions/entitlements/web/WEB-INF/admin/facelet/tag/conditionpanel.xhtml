@@ -7,48 +7,48 @@
     xmlns:f="http://java.sun.com/jsf/core">
 
     <f:subview>
-    <ice:panelGroup
-        styleClass="condition-panel"
-        rendered="#{viewCondition != null}">
+        <ice:panelGroup
+            styleClass="condition-panel"
+            rendered="#{viewCondition != null}">
 
-        <o:multipanel
-            collapsible="true"
-            removeable="true"
-            visible="#{viewCondition.visible}"
-            expanded="#{viewCondition.expanded}"
-            bean="#{viewCondition}"
-            handler="#{viewConditionsHandler}">
+            <o:multipanel
+                collapsible="true"
+                removeable="true"
+                visible="#{viewCondition.visible}"
+                expanded="#{viewCondition.expanded}"
+                bean="#{viewCondition}"
+                handler="#{viewConditionsHandler}">
 
-            <ui:define name="panel-title">
-                <ice:panelGroup
-                    panelTooltip="titleTooltip">
-                    <ice:panelGrid
-                        columns="2">
-                        <ice:graphicImage
-                            value="#{viewCondition.conditionType.conditionIconUri}"/>
-                        <ice:outputText
-                            style="font-weight: bold"
-                            value="#{o:truncate(viewCondition,viewCondition.titleWidth)}"/>
-                    </ice:panelGrid>
-                </ice:panelGroup>
-                <o:tooltip
-                    tooltipId="titleTooltip"
-                    title="#{viewCondition.name} (#{viewCondition.size})">
-                    <ui:define name="body">
-                        <pre>
+                <ui:define name="panel-title">
+                    <ice:panelGroup
+                        panelTooltip="titleTooltip">
+                        <ice:panelGrid
+                            columns="2">
+                            <ice:graphicImage
+                                value="#{viewCondition.conditionType.conditionIconUri}"/>
+                            <ice:outputText
+                                style="font-weight: bold"
+                                value="#{o:truncate(viewCondition,viewCondition.titleWidth)}"/>
+                        </ice:panelGrid>
+                    </ice:panelGroup>
+                    <o:tooltip
+                        tooltipId="titleTooltip"
+                        title="#{viewCondition.name} (#{viewCondition.size})">
+                        <ui:define name="body">
+                            <pre>
                             <ice:outputText
                                 value="#{viewCondition.toFormattedString}"/>
-                        </pre>
-                    </ui:define>
-                </o:tooltip>
-            </ui:define>
-            <ui:define name="panel-body">
-                <ui:include
-                    src="/admin/facelet/template/condition-template-includer.xhtml">
-                    <ui:param name="viewCondition" value="#{viewCondition}"/>
-                </ui:include>
-            </ui:define>
-        </o:multipanel>
-    </ice:panelGroup>
+                            </pre>
+                        </ui:define>
+                    </o:tooltip>
+                </ui:define>
+                <ui:define name="panel-body">
+                    <ui:include
+                        src="/admin/facelet/template/condition-template-includer.xhtml">
+                        <ui:param name="viewCondition" value="#{viewCondition}"/>
+                    </ui:include>
+                </ui:define>
+            </o:multipanel>
+        </ice:panelGroup>
     </f:subview>
 </ui:composition>

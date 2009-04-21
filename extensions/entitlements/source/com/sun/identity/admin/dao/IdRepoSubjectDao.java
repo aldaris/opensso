@@ -8,16 +8,15 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
-import com.sun.identity.idm.IdSearchOpModifier;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.security.AdminTokenAction;
 import java.io.Serializable;
+import java.security.AccessController;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,12 +38,44 @@ public abstract class IdRepoSubjectDao extends SubjectDao implements Serializabl
         }
     }
 
+    private SSOToken getAdminSSOToken() {
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        return (SSOToken) AccessController.doPrivileged(AdminTokenAction.getInstance());
+    }
+
     protected abstract IdType getIdType();
 
     protected abstract ViewSubject newViewSubject(AMIdentity ami);
 
     public List<ViewSubject> getViewSubjects() {
         return getViewSubjects("*");
+    }
+
+    protected AMIdentity getAMIdentity(String name) {
+        try {
+            return IdUtils.getIdentity(getAdminSSOToken(), name);
+        } catch (IdRepoException idre) {
+            throw new RuntimeException(idre);
+        }
+    }
+
+    protected ViewSubject getViewSubject(String name) {
+        AMIdentity ami = getAMIdentity(name);
+        String uuid = ami.getUniversalId();
+        Map attrs;
+
+        try {
+            attrs = ami.getAttributes();
+        } catch (IdRepoException idre) {
+            attrs = null;
+        } catch (SSOException ssoe) {
+            attrs = null;
+        }
+
+        ViewSubject vs = newViewSubject(ami);
+        vs.setName(uuid);
+
+        return vs;
     }
 
     protected IdSearchControl getIdSearchControl(String pattern) {

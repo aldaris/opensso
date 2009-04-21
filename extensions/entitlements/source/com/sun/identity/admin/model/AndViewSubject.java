@@ -8,4 +8,8 @@ public class AndViewSubject extends ContainerViewSubject implements Serializable
             // TODO
         return null;
     }
+
+    public String getOperatorString() {
+        return "AND";
+    }
 }

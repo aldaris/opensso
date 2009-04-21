@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.entitlement.EntitlementSubject;
 import java.io.Serializable;
 
 public class AndSubjectType 
@@ -12,4 +13,10 @@ public class AndSubjectType
 
         return avs;
     }
+
+    public ViewSubject newViewSubject(EntitlementSubject es, SubjectFactory stf) {
+        // TODO
+        return null;
+    }
+
 }

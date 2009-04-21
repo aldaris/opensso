@@ -45,6 +45,7 @@ public class PrivilegeBean implements Serializable {
     public PrivilegeBean(
                 Privilege p,
                 Map<String,ViewApplication> viewApplications,
+                SubjectFactory subjectFactory,
                 ConditionTypeFactory conditionTypeFactory) {
 
         name = p.getName();
@@ -54,7 +55,7 @@ public class PrivilegeBean implements Serializable {
         viewEntitlement = new ViewEntitlement(p.getEntitlement(), viewApplications);
 
         // subjects
-        // TODO
+        viewSubject = subjectFactory.getViewSubject(p.getSubject());
 
         // conditions
         viewCondition = conditionTypeFactory.getViewCondition(p.getCondition());
