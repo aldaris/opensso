@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSRemoteConfig.java,v 1.3 2009-02-28 00:59:44 mrudul_uchil Exp $
+ * $Id: STSRemoteConfig.java,v 1.4 2009-04-21 17:41:26 mallas Exp $
  */
 
 package com.sun.identity.wss.sts.config;
@@ -72,6 +72,7 @@ public class STSRemoteConfig {
     private String signingRefType = null;
     private String authChain = null;    
     private boolean detectUserTokenReplay = true;
+    private static boolean detectMessageReplay = true;
     
     static final String ISSUER = "stsIssuer";
     static final String SERVICE_NAME = "sunFAMSTSService";
@@ -98,6 +99,7 @@ public class STSRemoteConfig {
     static final String SIGNING_REF_TYPE = "SigningRefType";
     static final String AUTHENTICATION_CHAIN = "AuthenticationChain";    
     static final String USER_TOKEN_DETECT_REPLAY = "DetectUserTokenReplay";
+    static final String MESSAGE_REPLAY_DETECTION = "DetectMessageReplay";
     
     public STSRemoteConfig() {
         
@@ -657,5 +659,21 @@ public class STSRemoteConfig {
      */
     public void setDetectUserTokenReplay(boolean enable) {
         this.detectUserTokenReplay = enable;
+    }
+    
+    /**
+     * Returns true if the message replay detection is enabled.
+     * @return true if the message replay detection is enabled.
+     */
+    public boolean isMessageReplayDetectionEnabled() {
+        return detectMessageReplay;
+    }
+    
+    /**
+     * Enable or disable the message replay detection.
+     * @param enable true if the detection of the message replay is enabled.
+     */
+    public void setMessageReplayDetection(boolean enable) {
+        this.detectMessageReplay = enable;
     }
 }

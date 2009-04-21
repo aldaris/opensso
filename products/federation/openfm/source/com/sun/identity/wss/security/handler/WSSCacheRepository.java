@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSCacheRepository.java,v 1.1 2009-01-24 01:31:26 mallas Exp $
+ * $Id: WSSCacheRepository.java,v 1.2 2009-04-21 17:41:25 mallas Exp $
  */
 
 package com.sun.identity.wss.security.handler;
@@ -45,13 +45,31 @@ public interface WSSCacheRepository {
      * @param timestamp timestamp is the key for the nonce cache.
      * @return the set of previous stored nonces for a given timestamp.
      */
-    public Set retrieveUserTokenNonce(String timestamp);
+    public Set retrieveUserTokenNonce(String timestamp, String wsp);
     
     /**
      * Saves the user name token nonces for a given timestamp.
      * @param timestamp the timestamp is the index for the cache.
      * @param nonces the set of nonces that must be stored.
+     * @param wsp the web services provider name.
      */ 
-    public void saveUserTokenNonce(String timestamp, Set nonces);
+    public void saveUserTokenNonce(String timestamp, Set nonces, String wsp);
+    
+    /**
+     * Returns the message timestamp for a given messageID.
+     * @param messageID the messageID from the SOAP request.
+     * @param wsp the web services provider name.
+     * @return the message timestamp.
+     */
+    public Long retrieveMessageTimestamp(String messageID, String wsp);
+    
+    /**
+     * Saves the message timestamp using the given messageID
+     * @param messageID the messageID used that is used to index.
+     * @param timestamp the timestamp to be stored.
+     * @param wsp the web services provider name
+     */
+    public void saveMessageTimestamp(String messageID, 
+            Long timestamp, String wsp);
 
 }

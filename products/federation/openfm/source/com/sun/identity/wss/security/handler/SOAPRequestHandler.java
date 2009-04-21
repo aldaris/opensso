@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.32 2009-02-28 00:59:43 mrudul_uchil Exp $
+ * $Id: SOAPRequestHandler.java,v 1.33 2009-04-21 17:41:25 mallas Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.security.auth.Subject;
 import java.security.AccessController;
+import java.security.Principal;
 import java.security.PrivilegedAction;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -234,6 +235,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         secureMsg.parseSecurityHeader(
                     (Node)secureMsg.getSecurityHeaderElement());
         
+        String msgID = secureMsg.getMessageID();
+        if(msgID != null) {
+           if(checkForReplay(msgID, config.getProviderName())) {
+              throw new SecurityException(
+                      bundle.getString("replayAttackDetected")); 
+           }  
+        }
+        
         SecurityMechanism securityMechanism =
                 secureMsg.getSecurityMechanism();
         String uri = securityMechanism.getURI();
@@ -290,7 +299,15 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 secureMsg.getSecurityMechanism(),
                 secureMsg.getSecurityToken(),
                 config, secureMsg, false);
-
+        
+        if(msgID == null) {
+           if(checkForReplay(subject, secureMsg.getMessageTimestamp(),
+                   config.getProviderName())) {
+              throw new SecurityException(
+                      bundle.getString("replayAttackDeteced")); 
+           }
+        }
+        
         if(uri.equals(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI) &&
                 (config.isValidateKerberosSignature())){
                 
@@ -1427,6 +1444,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
              pc.setAuthenticationChain(stsConfig.getAuthenticationChain());
              pc.setDetectUserTokenReplay(
                      stsConfig.isUserTokenDetectReplayEnabled());
+             pc.setMessageReplayDetection(
+                     stsConfig.isMessageReplayDetectionEnabled());
              return pc;
              
         } catch (ProviderException pe) {
@@ -1540,5 +1559,45 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }        
         return null;
     }
+     
+    private boolean checkForReplay(String msgID, String wsp) {
         
+        if(msgID == null) {
+           return false; 
+        }
+        Map messageIDMap = WSSCache.messageIDMap;
+        long stale_limit = WSSCache.cacheTimeoutInterval * 1000;
+        WSSCacheRepository cacheRepo = WSSUtils.getWSSCacheRepository();
+        Long prevMsgIDTime = (Long)messageIDMap.get(msgID);
+        if(prevMsgIDTime == null && cacheRepo != null) {
+           prevMsgIDTime = cacheRepo.retrieveMessageTimestamp(msgID, wsp);
+        }
+        long currentTime = System.currentTimeMillis();
+        if((prevMsgIDTime != null) &&
+                ((currentTime - prevMsgIDTime.longValue()) < stale_limit)) {
+            if(WSSUtils.debug.warningEnabled()) {
+               WSSUtils.debug.warning("SOAPRequestHandler.checkForReplay: " +
+                       "replay attack detected");
+            }
+            return true;
+        } else {
+           messageIDMap.put(msgID, new Long(currentTime));
+           if(cacheRepo != null) {
+              cacheRepo.saveMessageTimestamp(msgID, new Long(currentTime), wsp);
+           }
+        }
+        
+        return false;        
+    }
+    
+    private boolean checkForReplay(Subject subject, long msgTimestamp, 
+            String wsp) {
+                        
+        Iterator iter = subject.getPrincipals().iterator();
+        Principal principal = (Principal)iter.next();
+        String replayIndexStr = principal.getName() +
+                                new Long(msgTimestamp).toString();
+        return checkForReplay(replayIndexStr, wsp);
+       
+    }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyght owner]"
  *
- * $Id: AgentProvider.java,v 1.38 2009-02-28 00:59:43 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.39 2009-04-21 17:41:24 mallas Exp $
  *
  */
 
@@ -116,6 +116,8 @@ public class AgentProvider extends ProviderConfig {
      
      private static final String USER_TOKEN_DETECT_REPLAY = 
              "DetectUserTokenReplay";
+     private static final String MESSAGE_REPLAY_DETECTION =
+                                 "DetectMessageReplay";
      private AMIdentityRepository idRepo;
      private static Set agentConfigAttribute;
      private static Debug debug = ProviderUtils.debug;
@@ -163,6 +165,7 @@ public class AgentProvider extends ProviderConfig {
          attrNames.add(ENCRYPTION_STRENGTH);
          attrNames.add(SIGNING_REF_TYPE);         
          attrNames.add(USER_TOKEN_DETECT_REPLAY);
+         attrNames.add(MESSAGE_REPLAY_DETECTION);
      }
 
      public void init (String providerName, 
@@ -461,6 +464,11 @@ public class AgentProvider extends ProviderConfig {
                 this.detectUserTokenReplay = 
                         Boolean.valueOf(value).booleanValue();
             }
+        } else if(attr.equals(MESSAGE_REPLAY_DETECTION)) {
+            if ((value != null) && (value.length() != 0)) {
+                this.detectMessageReplay = 
+                        Boolean.valueOf(value).booleanValue();
+            }
         } else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("AgentProvider.setConfig: Invalid " +
@@ -646,7 +654,9 @@ public class AgentProvider extends ProviderConfig {
         
         if(providerType.equals(WSP)) {
            config.put(USER_TOKEN_DETECT_REPLAY, 
-                Boolean.toString(detectUserTokenReplay));                 
+                Boolean.toString(detectUserTokenReplay));
+           config.put(MESSAGE_REPLAY_DETECTION, 
+                Boolean.toString(detectMessageReplay));
         }
         // Save the entry in Agent's profile
         try {

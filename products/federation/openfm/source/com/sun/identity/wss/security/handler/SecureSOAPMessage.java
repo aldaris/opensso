@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.22 2009-01-24 01:31:26 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.23 2009-04-21 17:41:25 mallas Exp $
  *
  */
 
@@ -114,6 +114,8 @@ public class SecureSOAPMessage {
      private String server_port  =
      SystemConfigurationUtil.getProperty(Constants.AM_SERVER_PORT);
      private List signingIds = new ArrayList();
+     private String messageID = null;
+     private long msgTimestamp = 0;
 
      /**
       * Constructor to create secure SOAP message. 
@@ -210,13 +212,20 @@ public class SecureSOAPMessage {
                  if(currentNode.getNodeType() != Node.ELEMENT_NODE) {
                     continue;
                  }
-                 if((WSSConstants.WSSE_SECURITY_LNAME.equals(
-                       currentNode.getLocalName())) &&
-                    (WSSConstants.WSSE_NS.equals(
-                       currentNode.getNamespaceURI()))) {
+                 
+                 String nodeName = currentNode.getLocalName();
+                 String nodeNS = currentNode.getNamespaceURI();
+                 
+                 if((WSSConstants.WSSE_SECURITY_LNAME.equals(nodeName)) &&                       
+                    (WSSConstants.WSSE_NS.equals(nodeNS))) {                       
                     wsseHeader = (Element) currentNode;
                  }
-             }
+                 
+                 if((WSSConstants.wsaMessageID.equals(nodeName)) &&
+                         (WSSConstants.wsaNS.equals(nodeNS))) {
+                     messageID = XMLUtils.getElementValue((Element)currentNode);       
+                 }
+             }            
          } catch (SOAPException se) {
              debug.error("SecureSOAPMessage.parseSOAPMessage: SOAP" +
              "Exception in parsing the headers.", se);
@@ -836,6 +845,21 @@ public class SecureSOAPMessage {
      }
 
      /**
+      * Returns the messageID from the <wsa:Addressing> header.
+      * @return the messageID from the <wsa:Addressing> header.
+      */
+     public String getMessageID() {
+         return messageID;
+     }
+     
+     /**
+      * Retruns the message timestamp.
+      * @return the message timestamp.
+      */
+     public long getMessageTimestamp() {
+         return msgTimestamp;
+     }
+     /**
       * Verifies the signature of the SOAP message.
       * @return true if the signature verification is successful.
       * @exception SecurityException if there is any failure in validation. 
@@ -1305,9 +1329,9 @@ public class SecureSOAPMessage {
              }
          }
          try {
-             long createdTS = DateUtils.stringToDate(created).getTime();
+             msgTimestamp = DateUtils.stringToDate(created).getTime();
              // Add a time skew for the createdTS for 5 sec.
-             createdTS = createdTS - 5000;
+             long createdTS = msgTimestamp - 5000;
              long expiresTS = DateUtils.stringToDate(expires).getTime();
              long now = new Date().getTime();
              if (created == null ) {

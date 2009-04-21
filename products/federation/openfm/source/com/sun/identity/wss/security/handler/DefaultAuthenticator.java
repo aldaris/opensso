@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.16 2009-01-24 01:31:25 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.17 2009-04-21 17:41:25 mallas Exp $
  *
  */
 
@@ -903,11 +903,12 @@ public class DefaultAuthenticator implements MessageAuthenticator {
     private void cacheNonce (String timeStamp, String nonce) 
              throws SecurityException {
         
-        Set nonces = (Set)WSSCache.nonceCache.get(timeStamp);
-        WSSCacheRepository cacheRepo = getWSSCacheRepository();
+        Set nonces = (Set)WSSCache.nonceCache.get(timeStamp);        
+        WSSCacheRepository cacheRepo = WSSUtils.getWSSCacheRepository();
         if(nonces == null || nonces.isEmpty()) {
            if(cacheRepo != null) {
-              nonces = cacheRepo.retrieveUserTokenNonce(timeStamp);
+              nonces = cacheRepo.retrieveUserTokenNonce(timeStamp, 
+                      config.getProviderName());
            }
         }       
         
@@ -916,7 +917,8 @@ public class DefaultAuthenticator implements MessageAuthenticator {
               nonces.add(nonce);
               WSSCache.nonceCache.put(timeStamp, nonces);
               if(cacheRepo != null) { 
-                 cacheRepo.saveUserTokenNonce(timeStamp, nonces);
+                 cacheRepo.saveUserTokenNonce(timeStamp, nonces, 
+                         config.getProviderName());
               }
         } else {
               if(nonces.contains(nonce)) {
@@ -927,41 +929,10 @@ public class DefaultAuthenticator implements MessageAuthenticator {
               nonces.add(nonce);
               WSSCache.nonceCache.put(timeStamp, nonces);
               if(cacheRepo != null) {
-                 cacheRepo.saveUserTokenNonce(timeStamp, nonces);
+                 cacheRepo.saveUserTokenNonce(timeStamp, nonces, 
+                         config.getProviderName());
               }
         }
         
     }
-    
-    private static WSSCacheRepository getWSSCacheRepository() 
-            throws SecurityException {
-        
-        if (cacheClass == null) {
-            String adapterName =   SystemConfigurationUtil.getProperty(
-                                    WSS_CACHE_PLUGIN);
-            if(adapterName == null || adapterName.length() == 0) {
-               return null;
-            }
-               
-            try {
-                cacheClass = (Thread.currentThread().getContextClassLoader())
-                        .loadClass(adapterName);                      
-            } catch (Exception ex) {
-                 WSSUtils.debug.error("DefaultAuthenticator." +
-                         "getWSSCacheRepository: " +
-                     "Failed in obtaining class", ex);
-                 throw new SecurityException(
-                     WSSUtils.bundle.getString("initializationFailed"));
-            }
-        }
-        try {
-            return ((WSSCacheRepository) cacheClass.newInstance());
-        } catch (Exception ex) {
-             WSSUtils.debug.error("DefaultAuthenticator.getWSSCacheRepository:"+
-                 "Failed in initialization", ex);
-             throw new SecurityException(
-                 WSSUtils.bundle.getString("initializationFailed"));
-        }
-    }
-
 }

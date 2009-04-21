@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.15 2009-02-28 00:59:43 mrudul_uchil Exp $
+ * $Id: WSSUtils.java,v 1.16 2009-04-21 17:41:25 mallas Exp $
  *
  */
 
@@ -94,6 +94,8 @@ import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchOpModifier;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.org.apache.xml.internal.security.keys.content.X509Data;
+import com.sun.identity.wss.security.handler.WSSCacheRepository;
+import com.sun.identity.common.SystemConfigurationUtil;
 
 /**
  * This class provides util methods for the web services security. 
@@ -106,6 +108,9 @@ public class WSSUtils {
      private static XMLEncryptionManager xmlEncManager = null;
      private static final String AGENT_TYPE_ATTR = "AgentType"; 
      private static final String WSP_ENDPOINT = "WSPEndpoint";
+     private static final String WSS_CACHE_REPO_PLUGIN =
+                        "com.sun.identity.wss.security.cacherepository.plugin";
+     private static WSSCacheRepository cacheRepository = null;
      
      static {
             bundle = Locale.getInstallResourceBundle("fmWSSecurity");
@@ -683,5 +688,31 @@ public class WSSUtils {
              debug.error("WSSUtils.getMessageCertificate: exception", se);   
         }
         return null;
+    }
+    
+     public static WSSCacheRepository getWSSCacheRepository() {
+        
+         if (cacheRepository == null) {
+             synchronized (WSSUtils.class) {
+               String adapterName = SystemConfigurationUtil.getProperty(
+                                    WSS_CACHE_REPO_PLUGIN);
+               if(adapterName == null || adapterName.length() == 0) {
+                  return null;
+               }
+               
+               try {
+                   Class cacheClass = 
+                           (Thread.currentThread().getContextClassLoader())
+                                                  .loadClass(adapterName);
+                   cacheRepository = 
+                           ((WSSCacheRepository) cacheClass.newInstance());
+               } catch (Exception ex) {
+                   debug.error("WSSUtils.getWSSCacheRepository: " +
+                         "Failed in obtaining class", ex);
+                   return null;
+               }
+            }
+        }
+        return cacheRepository;
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.29 2009-02-28 00:59:42 mrudul_uchil Exp $
+ * $Id: ProviderConfig.java,v 1.30 2009-04-21 17:41:24 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -124,6 +124,7 @@ public abstract class ProviderConfig {
      protected static SSOToken customAdminToken = null;
     
      protected boolean detectUserTokenReplay = true;
+     protected boolean detectMessageReplay = true;
      private static Class adapterClass;
 
     /**
@@ -261,6 +262,22 @@ public abstract class ProviderConfig {
         this.detectUserTokenReplay = enable;
     }
 
+    /**
+     * Returns true if the message replay detection is enabled.
+     * @return true if the message replay detection is enabled.
+     */
+    public boolean isMessageReplayDetectionEnabled() {
+        return detectMessageReplay;
+    }
+    
+    /**
+     * Enable or disable the message replay detection.
+     * @param enable true if the detection of the message replay is enabled.
+     */
+    public void setMessageReplayDetection(boolean enable) {
+        this.detectMessageReplay = enable;
+    }
+    
     /**
      * Returns the provider type. It will be {@link #WSP} or {@link #WSC}
      *

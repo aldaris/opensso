@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.12 2009-01-24 01:31:25 mallas Exp $
+ * $Id: WSSConstants.java,v 1.13 2009-04-21 17:41:24 mallas Exp $
  *
  */
 
@@ -195,14 +195,15 @@ public class WSSConstants {
     
     public static final String AUTH_METHOD = "AuthMethod";
     
-    /**
-     * The cache clean up interval in seconds for wss cache.
-     */
-    public static final int CACHE_CLEANUP_INTERVAL_DEFAULT = 300;
+    public static final String CACHE_TIMEOUT_INTERVAL = 
+                  "com.sun.identity.wss.security.cache.timeout.interval";
     
     public static final String CACHE_CLEANUP_INTERVAL = 
-                  "com.sun.identity.wss.security.cache.interval";
+                  "com.sun.identity.wss.security.cache.cleanup.interval";
     
-
+    public static final String wsaNS = "http://www.w3.org/2005/08/addressing";
+    
+    public static final String wsaMessageID = "MessageID";
+        
 }
 

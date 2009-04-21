@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSConfiguration.java,v 1.10 2009-01-24 01:31:26 mallas Exp $
+ * $Id: FAMSTSConfiguration.java,v 1.11 2009-04-21 17:41:26 mallas Exp $
  *
  */
 
@@ -89,6 +89,7 @@ public class FAMSTSConfiguration implements
     private static String signingRefType = null;
     private static String authChain = null;    
     private static boolean detectUserTokenReplay = true;
+    private static boolean detectMessageReplay = true;
     
     private CallbackHandler callbackHandler;
     
@@ -137,7 +138,8 @@ public class FAMSTSConfiguration implements
     static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
     static final String SIGNING_REF_TYPE = "SigningRefType";
     static final String AUTHENTICATION_CHAIN = "AuthenticationChain";    
-    static final String USER_TOKEN_DETECT_REPLAY = "DetectUserTokenReplay";                         
+    static final String USER_TOKEN_DETECT_REPLAY = "DetectUserTokenReplay";
+    static final String MESSAGE_REPLAY_DETECTION = "DetectMessageReplay";
 
     private static Debug debug = STSUtils.debug;
     static ConfigurationInstance ci = null;
@@ -416,6 +418,13 @@ public class FAMSTSConfiguration implements
                 Boolean.valueOf((String)values.iterator().next())
                 .booleanValue();
         }
+        values = (Set)attrMap.get(MESSAGE_REPLAY_DETECTION);
+        if (values != null && !values.isEmpty()) {
+            detectMessageReplay = 
+                Boolean.valueOf((String)values.iterator().next())
+                .booleanValue();
+        }
+        
     }
     
     public void addTrustSPMetadata(final TrustSPMetadata data, 
@@ -912,5 +921,21 @@ public class FAMSTSConfiguration implements
      */
     public void setDetectUserTokenReplay(boolean enable) {
         this.detectUserTokenReplay = enable;
+    }
+    
+    /**
+     * Returns true if the message replay detection is enabled.
+     * @return true if the message replay detection is enabled.
+     */
+    public boolean isMessageReplayDetectionEnabled() {
+        return detectMessageReplay;
+    }
+    
+    /**
+     * Enable or disable the message replay detection.
+     * @param enable true if the detection of the message replay is enabled.
+     */
+    public void setMessageReplayDetection(boolean enable) {
+        this.detectMessageReplay = enable;
     }
 }

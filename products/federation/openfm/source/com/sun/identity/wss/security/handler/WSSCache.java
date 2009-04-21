@@ -22,16 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyght owner]"
  *
- * $Id: WSSCache.java,v 1.1 2009-01-24 01:31:26 mallas Exp $
+ * $Id: WSSCache.java,v 1.2 2009-04-21 17:41:25 mallas Exp $
  *
  */
 
 package com.sun.identity.wss.security.handler;
 
+import java.util.Date;
+import java.util.Map;
+
 import com.sun.identity.common.PeriodicCleanUpMap;
 import com.sun.identity.wss.security.WSSConstants;
 import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.common.SystemTimerPool;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 
 /**
  * This class <code>WSSCache</code> is a cache holder for the WSS
@@ -39,18 +45,23 @@ import com.sun.identity.common.SystemConfigurationUtil;
  */
 public class WSSCache {
     
-    public static int interval = WSSConstants.CACHE_CLEANUP_INTERVAL_DEFAULT;
+    
+    static int cacheTimeoutInterval = 300; //sec
+    static int cacheCleanupInterval = 60; //sec
+    static PeriodicCleanUpMap messageIDMap = null;
+    static PeriodicCleanUpMap nonceCache = null;
     
     static {
         String intervalStr = SystemConfigurationUtil.getProperty(
                      WSSConstants.CACHE_CLEANUP_INTERVAL);
+        String tmpStr = SystemConfigurationUtil.getProperty(
+                WSSConstants.CACHE_TIMEOUT_INTERVAL);
         try {
             if (intervalStr != null && intervalStr.length() != 0) {
-                interval = Integer.parseInt(intervalStr);
-                if (interval < 0) {
-                    interval =
-                        WSSConstants.CACHE_CLEANUP_INTERVAL_DEFAULT;
-                }
+                cacheCleanupInterval = Integer.parseInt(intervalStr);
+            }
+            if (tmpStr != null && tmpStr.length() != 0) {
+                cacheTimeoutInterval = Integer.parseInt(tmpStr);
             }
         } catch (NumberFormatException e) {
             if (WSSUtils.debug.messageEnabled()) {
@@ -58,11 +69,18 @@ public class WSSCache {
                     + "invalid cleanup interval. Using default.");
             }
         }
+        
+        nonceCache = new PeriodicCleanUpMap(
+                cacheCleanupInterval * 1000, cacheTimeoutInterval * 1000);
+    
+        messageIDMap = new PeriodicCleanUpMap(
+                cacheCleanupInterval * 1000, cacheTimeoutInterval * 1000);
+        
+        SystemTimerPool.getTimerPool().schedule(nonceCache, 
+                new Date(System.currentTimeMillis() + cacheCleanupInterval));
+    
+        SystemTimerPool.getTimerPool().schedule(messageIDMap,  
+                new Date(System.currentTimeMillis() + cacheCleanupInterval));
     }
-    
-    public static PeriodicCleanUpMap nonceCache = new PeriodicCleanUpMap(
-        interval * 1000, interval * 1000);
-    
-    
 
 }
