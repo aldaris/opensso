@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.30 2009-01-14 16:27:16 sean_brydon Exp $
+   $Id: idRepoService.xml,v 1.31 2009-04-21 20:04:49 sean_brydon Exp $
   
 -->
 
@@ -2162,7 +2162,272 @@
                         i18nKey="a3060">
                     </AttributeSchema>
                 </SubSchema>
-
+                
+                <SubSchema name="Database"
+                    inheritance="multiple"
+                    i18nKey="a4000">
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <!-- The two attributes below, if defined, allow the IdRepo SDK to
+                        map attribute names and to determine entities supported and
+                        operations supported by this plugin. If no mapping is provided,
+                        the assumption is that the attribute names are the same (no
+                        mapping needed. If the list of entities supported is not provided
+                        then the assumption is that no entities are supported -->
+                    <AttributeSchema name="sunIdRepoClass"
+                        type="single"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey="a4010">
+                        <DefaultValues>
+                            <Value>com.sun.identity.idm.plugins.database.DatabaseRepo</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdRepoAttributeMapping"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a20131">
+                            <DefaultValues>
+                              <Value>iplanet-am-user-account-life=iplanet_am_user_account_life</Value>
+                              <Value>iplanet-am-user-auth-config=iplanet_am_user_auth_config</Value>
+                              <Value>iplanet-am-user-alias-list=iplanet_am_user_alias_list</Value>
+                              <Value>iplanet-am-user-success-url=iplanet_am_user_success_url</Value>
+                              <Value>iplanet-am-user-failure-url=iplanet_am_user_failure_url</Value>
+                              <Value>iplanet-am-user-password-resetoptions=iplanet_am_user_password_resetoptions</Value>
+                              <Value>iplanet-am-user-password-reset-question-answer=iplanet_am_user_password_reset_question_answer</Value>
+                              <Value>iplanet-am-user-password-reset-force-reset=iplanet_am_user_password_reset_force_reset</Value>
+                            </DefaultValues>
+                     </AttributeSchema>                  
+                    <AttributeSchema name="sun-opensso-database-sunIdRepoSupportedOperations"
+                        type="list"
+                        syntax="string"
+                        validator="validatatorClass for verifying this list against supported list"
+                        i18nKey="a4014">
+                        <DefaultValues>
+                            <!-- IdRepos can provide the object types
+                               it can manage and the operations that can
+                               be performed on these objects, as a key-value
+                               pair. Object types could be User, Group, Role,
+                               etc., and the operations are limited to create,
+                               read, edit and modify. The values are case
+                               insenstive. -->
+                            <!-- Unlike the other LDAP repos, which specify a 
+                                lot of IdTypes and operations for the property
+                                sunIdRepoSupportedOperations, for now I will
+                                just support allowing read of users data.  
+                             -->
+                             <!--  for read only, still need service to authn
+                                  <Value>user=read,service</Value>
+                             -->
+                             <Value>user=read,create,edit,delete,service</Value>                            
+                             <Value>group=read,create,edit,delete</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-dao-class-name"
+                        type="single"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey="a4016">
+                        <DefaultValues>
+                            <Value>com.sun.identity.idm.plugins.database.JdbcSimpleUserDao</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-dao-JDBCConnectionType"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a4018">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a4018choiceJNDI">JNDI</ChoiceValue> 
+                            <ChoiceValue i18nKey="a4018choiceURL">JDBC</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>JNDI</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-DataSourceJndiName"
+                        type="single"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey="a4020">
+                        <DefaultValues>
+                            <Value>java:comp/env/jdbc/openssousersdb</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-JDBCDriver"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a4022">
+                        <DefaultValues>
+                            <Value>com.mysql.jdbc.Driver</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-JDBCUrl"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a4022JdbcURL">
+                        <DefaultValues>
+                            <Value>jdbc:mysql://127.0.0.1:3306/test</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-JDBCDbuser"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a4022JdbcUserName">
+                        <DefaultValues>
+                            <Value>root</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-JDBCDbpassword"
+                        type="single"
+                        syntax="password"
+                        i18nKey="a4022JdbcPassword">
+                        <DefaultValues>
+                            <Value>password</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-UserTableName"
+                        type="single"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey="a4025">
+                        <DefaultValues>
+                            <Value>opensso_users</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-UserAttrs"
+                        type="list"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey="a4100">
+                        <DefaultValues>                                                        
+                            <Value>uid</Value>
+                            <Value>givenname</Value>
+                            <Value>sn</Value>
+                            <Value>cn</Value>
+                            <Value>userpassword</Value>
+                            <Value>ChangePassword</Value>
+                            <Value>mail</Value>
+                            <Value>employeenumber</Value>
+                            <Value>telephonenumber</Value>
+                            <Value>manager</Value>
+                            <Value>postaladdress</Value>
+                            <Value>inetuserstatus</Value>
+                            <Value>iplanet_am_user_account_life</Value>
+                            <Value>iplanet_am_user_auth_config</Value>
+                            <Value>iplanet_am_user_alias_list</Value>
+                            <Value>preferredlocale</Value>
+                            <Value>iplanet_am_user_success_url</Value>
+                            <Value>iplanet_am_user_failure_url</Value>
+                            <Value>iplanet_am_user_password_resetoptions</Value>
+                            <Value>iplanet_am_user_password_reset_question_answer</Value>
+                            <Value>iplanet_am_user_password_reset_force_reset</Value>
+                            <Value>sunIdentityMSISDNNumber</Value>                            
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-UserPasswordAttr"
+                        type="single"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey="a4105">
+                        <DefaultValues>
+                            <Value>userpassword</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-UserIDAttr"
+                        type="single"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey="a4107">
+                        <DefaultValues>
+                            <Value>uid</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-UserStatusAttr"
+                        type="single"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey="a4110">
+                        <DefaultValues>
+                            <Value>inetuserstatus</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-activeValue"
+                       type="single"
+                       syntax="string"
+                       any="required"
+                       validator="RequiredValueValidator"
+                       i18nKey="a4115">
+                       <DefaultValues>
+                           <Value>Active</Value>
+                       </DefaultValues>
+                   </AttributeSchema>
+                   <AttributeSchema name="sun-opensso-database-inactiveValue"
+                       type="single"
+                       syntax="string"
+                       any="required"
+                       validator="RequiredValueValidator"
+                       i18nKey="a4120">
+                       <DefaultValues>
+                           <Value>Inactive</Value>
+                       </DefaultValues>
+                   </AttributeSchema>
+                   <AttributeSchema name="sun-opensso-database-config-max-result"
+                        type="single"
+                        syntax="number"
+                        i18nKey="a4130">
+                        <DefaultValues>
+                            <Value>1000</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-config-users-search-attribute"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a4134">
+                        <DefaultValues>
+                            <Value>cn</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-MembershipTableName"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a4150">
+                        <DefaultValues>
+                            <Value>groups</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-MembershipIDAttr"
+                        type="single"
+                        syntax="string"
+                        any="required"
+                        validator="RequiredValueValidator"
+                        i18nKey="a4154">
+                        <DefaultValues>
+                            <Value>group_name</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sun-opensso-database-membership-search-attribute"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a4156">
+                        <DefaultValues>
+                            <Value>cn</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                </SubSchema>
+                
                 <OrganizationAttributeSchema>
                     <AttributeSchema name="sunOrganizationStatus"
                         type = "single_choice"
