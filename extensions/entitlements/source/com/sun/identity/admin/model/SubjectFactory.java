@@ -25,10 +25,10 @@ public class SubjectFactory implements Serializable {
         }
         
         SubjectType st = getSubjectType(es);
+        assert(st != null);
         ViewSubject vs = st.newViewSubject(es, this);
 
         return vs;
-
     }
 
     public void setViewSubjectToSubjectDaoMap(Map<String, SubjectDao> viewSubjectToSubjectDaoMap) {

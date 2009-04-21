@@ -217,30 +217,6 @@ div.button img.left {
     color: white;
 }
 
-.tooltip .icon {
-    padding-left: 5px;
-}
-
-.tooltip .title {
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
-.tooltipHdr {
-    font-weight: bold;
-}
-.tooltipBody {
-    padding: 10px;
-}
-
-.tooltip {
-}
-
-.tooltip pre span {
-    font-family: monospace;
-    font-size: larger;
-}
-
 .clear {
     clear: both;
 }
@@ -479,6 +455,50 @@ table.actions tr td {
 
 .summary-strings {
     padding-left: 10px;
+}
+
+.policy-manage {
+    width: 100%;
+}
+
+.policy-manageCol1,
+.policy-manageCol2,
+.policy-manageCol3,
+.policy-manageCol4,
+.policy-manageCol5,
+.policy-manageCol6,
+.policy-manageCol7,
+.policy-manageCol8,
+.policy-manageCol9,
+.policy-manageCol10 {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 100px;
+}
+
+.tooltip .icon {
+    padding-left: 5px;
+}
+
+.tooltip .title {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.tooltipHdr {
+    font-weight: bold;
+}
+.tooltipBody {
+    padding: 10px;
+    max-width: none;
+}
+
+.tooltip {
+}
+
+.tooltip pre span {
+    font-family: monospace;
+    font-size: larger;
 }
 
 .box, .box b.tc, .box b.bc {
