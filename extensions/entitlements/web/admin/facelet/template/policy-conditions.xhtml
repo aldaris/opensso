@@ -24,12 +24,12 @@
                         <ice:panelGroup
                             style="width: 100%">
                             <o:conditionpanel
-                                viewCondition="#{policyCreateWizardBean.privilegeBean.viewCondition}"/>
+                                viewCondition="#{policyConditionsBean.privilegeBean.viewCondition}"/>
                             <ice:panelGroup
-                                visible="#{policyCreateWizardBean.privilegeBean.viewCondition == null}"
+                                visible="#{policyConditionsBean.privilegeBean.viewCondition == null}"
                                 styleClass="drop-target"
                                 dropTarget="true"
-                                dropListener="#{policyCreateWizardHandler.conditionDropListener}">
+                                dropListener="#{policyConditionsHandler.conditionDropListener}">
                                 <ice:outputText
                                     value="Drop condition or expression here ..."/>
                             </ice:panelGroup>
