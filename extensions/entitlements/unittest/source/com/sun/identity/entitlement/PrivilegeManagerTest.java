@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.8 2009-04-17 19:12:52 dillidorai Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.9 2009-04-22 23:33:41 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.admin.subject.IdRepoUserSubject;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.security.AdminTokenAction;
@@ -87,9 +88,7 @@ public class PrivilegeManagerTest {
     @Test
     public void testAddPrivilege() throws Exception {
         Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
-        Set<String> getValues = new HashSet<String>();
         actionValues.put("GET", Boolean.TRUE);
-        Set<String> postValues = new HashSet<String>();
         actionValues.put("POST", Boolean.FALSE);
         // The port is required for passing equals  test
         // opensso policy would add default port if port not specified
@@ -100,13 +99,14 @@ public class PrivilegeManagerTest {
 
         String user11 = "id=user11,ou=user," + ServiceManager.getBaseDN();
         String user12 = "id=user12,ou=user," + ServiceManager.getBaseDN();
-        UserSubject ua1 = new UserSubject(user11);
-        UserSubject ua2 = new UserSubject(user12);
+        UserSubject ua1 = new IdRepoUserSubject();
+        ua1.setID(user11);
+        UserSubject ua2 = new IdRepoUserSubject();
+        ua2.setID(user12);
         Set<EntitlementSubject> subjects = new HashSet<EntitlementSubject>();
         subjects.add(ua1);
         subjects.add(ua2);
         OrSubject os = new OrSubject(subjects);
-        NotSubject ns = new NotSubject(os);
 
         String startIp = "100.100.100.100";
         String endIp = "200.200.200.200";
@@ -149,20 +149,16 @@ public class PrivilegeManagerTest {
         ra.add(sa);
         ra.add(ua);
 
-        privilege = new OpenSSOPrivilege(
-                PRIVILEGE_NAME,
-                entitlement,
-                os,
-                ipc,
-                ra);
+        privilege = new OpenSSOPrivilege(PRIVILEGE_NAME, entitlement, os,
+            ipc, ra);
         UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddPrivlege():" + "saving privilege="
-                + privilege);
+            "PrivilegeManagerTest.testAddPrivlege():" + "saving privilege=" +
+            privilege);
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
         prm.addPrivilege(privilege);
 
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
-        IPCondition ipc1 = (IPCondition)p.getCondition();
+        IPCondition ipc1 = (IPCondition) p.getCondition();
         UnittestLog.logMessage(
                 "PrivilegeManagerTest.testAddPrivlege():" + "READ startIp="
                 + ipc1.getStartIp());
@@ -209,6 +205,22 @@ public class PrivilegeManagerTest {
             */
 
         }
+
+        {
+            EntitlementSubject subjectCollections = privilege.getSubject();
+            if (subjectCollections instanceof OrSubject) {
+                OrSubject orSbj = (OrSubject)subjectCollections;
+                Set<EntitlementSubject> subjs = orSbj.getESubjects();
+                for (EntitlementSubject sbj : subjs) {
+                    if (!sbj.equals(ua1) && !sbj.equals(ua2)) {
+                        throw new Exception(
+            "PrivilegeManagerTest.testAddPrivilege: Subject does not matched.");
+                    }
+                }
+            }
+        }
+
+
         Set privilegeNames = prm.getPrivilegeNames();
         UnittestLog.logMessage(
                 "PrivilegeManagerTest.testAddPrivlege():"
