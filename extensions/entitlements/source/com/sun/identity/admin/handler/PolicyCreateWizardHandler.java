@@ -33,7 +33,7 @@ import javax.security.auth.Subject;
 
 public class PolicyCreateWizardHandler
         extends WizardHandler
-        implements Serializable {
+        implements Serializable, PolicyNameHandler {
 
     private Pattern POLICY_NAME_PATTERN = Pattern.compile("[0-9a-zA-Z]+");
     private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();

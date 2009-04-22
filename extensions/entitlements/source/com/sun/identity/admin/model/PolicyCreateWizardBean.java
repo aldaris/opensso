@@ -9,7 +9,7 @@ import javax.faces.model.SelectItem;
 
 public class PolicyCreateWizardBean
         extends WizardBean
-        implements Serializable {
+        implements Serializable, PolicyNameBean {
 
     private PrivilegeBean privilegeBean = new PrivilegeBean();
     

@@ -23,7 +23,14 @@
                     step="0"
                     label="Step 1: Name, Description, and Application">
                     <ui:define name="wizard-step-body">
-                        <ui:include src="template/policy-create-name.xhtml"/>
+                        <ui:include src="template/policy-name.xhtml">
+                            <ui:param
+                                name="policyNameBean"
+                                value="#{policyCreateWizardBean}"/>
+                            <ui:param
+                                name="policyNameHandler"
+                                value="#{policyCreateWizardHandler}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
