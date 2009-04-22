@@ -6,7 +6,7 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
-        
+
     <ui:define name="panel-title">
         <ice:outputText value="#{msg.policyCreatePanelTitle}" />
     </ui:define>
@@ -39,12 +39,9 @@
                     <ui:define name="wizard-step-body">
                         <ui:include
                             src="#{policyCreateWizardBean.viewApplication.viewApplicationType.resourceTemplate}">
-                                <ui:param
-                                    name="availableResources"
-                                    value="#{policyCreateWizardBean.availableResources}"/>
-                                <ui:param
-                                    name="viewEntitlement"
-                                    value="#{policyCreateWizardBean.privilegeBean.viewEntitlement}"/>
+                            <ui:param
+                                name="policyResourcesBean"
+                                value="#{policyCreateWizardBean}"/>
                         </ui:include>
                     </ui:define>
                 </o:wstep>
