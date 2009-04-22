@@ -6,6 +6,7 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
+
     <ui:define name="panel-title">
         <ice:outputText value="#{msg.policyManagePanelTitle}" />
     </ui:define>
@@ -13,10 +14,26 @@
         <ice:outputText value="#{msg.policyManagePanelDetails}" />
     </ui:define>
     <ui:define name="panel-body">
+        <ui:include src="/admin/facelet/template/policy-manage-view-options-popup.xhtml"/>
         <div class="section-outer">
             <o:box>
                 <ui:define name="body">
                     <div class="section-inner">
+                        <span class="section-head">
+                            <span class="section-title">
+                                <ice:outputText value="Policies (#{o:size(policyManageHandler.policyManageBean.privilegeBeans)})"/>
+                            </span>
+                            <span class="section-links">
+                                <ice:panelGrid
+                                    columns="3">
+                                    <o:clink
+                                        type="view-options"
+                                        handler="#{policyManageHandler}"
+                                        listenerMethod="viewOptionsListener"/>
+                                </ice:panelGrid>
+                            </span>
+                        </span>
+                        <div class="clear"></div>
                         <ice:dataTable
                             id="policyManageTable"
                             var="privilegeBean"
@@ -37,7 +54,8 @@
                                 <ice:outputText
                                     value="#{privilegeBean.name}"/>
                             </ice:column>
-                            <ice:column>
+                            <ice:column
+                                rendered="#{policyManageBean.policyManageTableBean.resourcesColumnVisible}">
                                 <f:facet name="header">
                                     <ice:outputText
                                         value="Resources"/>
@@ -58,7 +76,8 @@
                                     </ui:define>
                                 </o:tooltip>
                             </ice:column>
-                            <ice:column>
+                            <ice:column
+                                rendered="#{policyManageBean.policyManageTableBean.subjectColumnVisible}">
                                 <f:facet name="header">
                                     <ice:outputText
                                         value="Subjects"/>
@@ -80,7 +99,7 @@
                                 </o:tooltip>
                             </ice:column>
                             <ice:column
-                                styleClass="cell">
+                                rendered="#{policyManageBean.policyManageTableBean.conditionColumnVisible}">
                                 <f:facet name="header">
                                     <ice:outputText
                                         value="Conditions"/>

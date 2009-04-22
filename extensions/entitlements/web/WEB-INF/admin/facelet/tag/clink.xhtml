@@ -37,4 +37,15 @@
         <img src="../image/remove.png"/>
         <ice:outputText value="#{linkLabel != null ? linkLabel : 'Remove'}"/>
     </ice:commandLink>
+    <ice:commandLink
+        actionListener="#{handler[listenerMethod]}"
+        bean="#{bean}"
+        rendered="#{type == 'view-options'}"
+        partialSubmit="true"
+        styleClass="command-link">
+        <f:attribute name="bean" value="#{bean}"/>
+        <ui:insert name="attributes"/>
+        <img src="../image/view-options.png"/>
+        <ice:outputText value="#{linkLabel != null ? linkLabel : 'View Options'}"/>
+    </ice:commandLink>
 </ui:composition>

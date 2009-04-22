@@ -1,6 +1,8 @@
 package com.sun.identity.admin.model;
 
+import com.icesoft.faces.component.ext.HtmlSelectManyCheckbox;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,6 +13,14 @@ public class PolicyManageTableBean implements Serializable {
 
     public int getCellWidth() {
         return cellWidth;
+    }
+
+    public List<String> getColumnsVisible() {
+        return columnsVisible;
+    }
+
+    public void setColumnsVisible(List<String> columnsVisible) {
+        this.columnsVisible = columnsVisible;
     }
 
     public static class SortKey implements Serializable {
@@ -67,6 +77,7 @@ public class PolicyManageTableBean implements Serializable {
     private List<PrivilegeBean> privilegeBeans;
     private static Map<SortKey,Comparator> comparators = new HashMap<SortKey,Comparator>();
     private int cellWidth = 20;
+    private List<String> columnsVisible = new ArrayList<String>();
 
     static {
         comparators.put(new SortKey("name", true), new PrivilegeBean.NameComparator(true));
@@ -75,6 +86,10 @@ public class PolicyManageTableBean implements Serializable {
 
     public PolicyManageTableBean(List<PrivilegeBean> privilegeBeans) {
         this.privilegeBeans = privilegeBeans;
+
+        columnsVisible.add("resources");
+        columnsVisible.add("subject");
+        columnsVisible.add("condition");
     }
 
     public SortKey getSortKey() {
@@ -88,5 +103,17 @@ public class PolicyManageTableBean implements Serializable {
     public void sort() {
         Comparator c = comparators.get(sortKey);
         Collections.sort(privilegeBeans, c);
+    }
+
+    public boolean isResourcesColumnVisible() {
+        return getColumnsVisible().contains("resources");
+    }
+
+    public boolean isSubjectColumnVisible() {
+        return getColumnsVisible().contains("subject");
+    }
+
+    public boolean isConditionColumnVisible() {
+        return getColumnsVisible().contains("condition");
     }
 }

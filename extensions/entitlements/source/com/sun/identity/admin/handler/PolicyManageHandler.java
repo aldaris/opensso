@@ -25,5 +25,9 @@ public class PolicyManageHandler implements Serializable {
     public void sortTableListener(ActionEvent event) {
         policyManageBean.getPolicyManageTableBean().sort();
     }
+
+    public void viewOptionsListener(ActionEvent event) {
+        policyManageBean.setViewOptionsPopupVisible(!policyManageBean.isViewOptionsPopupVisible());
+    }
 }
 

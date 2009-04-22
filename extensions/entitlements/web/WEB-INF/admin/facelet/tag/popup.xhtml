@@ -5,10 +5,12 @@
     xmlns:o="http://opensso.dev.java.net"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
+
     <ice:panelPopup
         styleClass="popup-info"
         draggable="false"
         autoCentre="true"
+        modal="#{modal}"
         visible="#{visible}">
         <f:facet name="header">
             <ice:panelGrid

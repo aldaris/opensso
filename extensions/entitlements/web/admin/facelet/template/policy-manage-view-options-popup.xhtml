@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+
+    <o:popup
+        handler="#{policyManageHandler}"
+        modal="true"
+        title="View Options"
+        visible="#{policyManageBean.viewOptionsPopupVisible}"
+        closeListenerMethod="viewOptionsListener">
+        <ui:define name="body">
+            <ice:selectManyCheckbox
+                id="columns-visible"
+                layout="spread"
+                rendered="#{policyManageBean.viewOptionsPopupVisible}"
+                partialSubmit="true"
+                value="#{policyManageBean.policyManageTableBean.columnsVisible}">
+                <f:selectItem itemValue="resources" itemLabel="Resources"/>
+                <f:selectItem itemValue="subject" itemLabel="Subjects"/>
+                <f:selectItem itemValue="condition" itemLabel="Conditions"/>
+            </ice:selectManyCheckbox>
+            <ice:panelGrid
+                columns="2"
+                styleClass="view-options-table">
+                <ice:checkbox for="columns-visible" index="0"/>
+                <ice:checkbox for="columns-visible" index="1"/>
+                <ice:checkbox for="columns-visible" index="2"/>
+            </ice:panelGrid>
+        </ui:define>
+    </o:popup>
+</span>

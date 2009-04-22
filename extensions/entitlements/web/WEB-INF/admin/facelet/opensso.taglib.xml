@@ -43,8 +43,8 @@
         <source>tag/subjectpanel.xhtml</source>
     </tag>
     <tag>
-        <tag-name>infopopup</tag-name>
-        <source>tag/infopopup.xhtml</source>
+        <tag-name>popup</tag-name>
+        <source>tag/popup.xhtml</source>
     </tag>
     <tag>
         <tag-name>tooltip</tag-name>
