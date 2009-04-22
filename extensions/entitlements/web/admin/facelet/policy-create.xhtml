@@ -49,7 +49,14 @@
                     step="2"
                     label="Step 3: Subjects (#{policyCreateWizardBean.privilegeBean.viewSubject != null ? policyCreateWizardBean.privilegeBean.viewSubject.size : 0})">
                     <ui:define name="wizard-step-body">
-                        <ui:include src="template/policy-create-subjects.xhtml"/>
+                        <ui:include src="template/policy-subjects.xhtml">
+                            <ui:param
+                                name="policySubjectsBean"
+                                value="#{policyCreateWizardBean}"/>
+                            <ui:param
+                                name="policySubjectsHandler"
+                                value="#{policyCreateWizardHandler}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
