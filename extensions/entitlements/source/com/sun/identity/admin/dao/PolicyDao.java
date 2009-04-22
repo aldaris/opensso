@@ -48,6 +48,30 @@ public class PolicyDao implements Serializable {
 
     }
 
+    public void removePrivilege(String name) {
+        // TODO: add SSO token to public credentials
+        Subject authSubject = new Subject();
+        PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
+
+        try {
+            pm.removePrivilege(name);
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
+    }
+
+    public void addPrivilege(Privilege p) {
+        // TODO: add SSO token to public credentials
+        Subject authSubject = new Subject();
+        PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
+
+        try {
+            pm.addPrivilege(p);
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
+    }
+
     public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
         this.viewApplicationsBean = viewApplicationsBean;
     }

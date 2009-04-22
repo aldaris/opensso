@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
@@ -12,6 +13,46 @@ import java.util.Map;
 import java.util.Set;
 
 public class PrivilegeBean implements Serializable {
+
+    public Effect getNameCellEffect() {
+        return nameCellEffect;
+    }
+
+    public void setNameCellEffect(Effect nameCellEffect) {
+        this.nameCellEffect = nameCellEffect;
+    }
+
+    public Effect getResourcesCellEffect() {
+        return resourcesCellEffect;
+    }
+
+    public void setResourcesCellEffect(Effect resourcesCellEffect) {
+        this.resourcesCellEffect = resourcesCellEffect;
+    }
+
+    public Effect getSubjectCellEffect() {
+        return subjectCellEffect;
+    }
+
+    public void setSubjectCellEffect(Effect subjectCellEffect) {
+        this.subjectCellEffect = subjectCellEffect;
+    }
+
+    public Effect getConditionCellEffect() {
+        return conditionCellEffect;
+    }
+
+    public void setConditionCellEffect(Effect conditionCellEffect) {
+        this.conditionCellEffect = conditionCellEffect;
+    }
+
+    public Effect getRemoveCellEffect() {
+        return removeCellEffect;
+    }
+
+    public void setRemoveCellEffect(Effect removeCellEffect) {
+        this.removeCellEffect = removeCellEffect;
+    }
 
     public static class NameComparator implements Comparator {
 
@@ -37,6 +78,11 @@ public class PrivilegeBean implements Serializable {
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
     private ViewCondition viewCondition = null;
     private ViewSubject viewSubject = null;
+    private Effect nameCellEffect = null;
+    private Effect resourcesCellEffect = null;
+    private Effect subjectCellEffect = null;
+    private Effect conditionCellEffect = null;
+    private Effect removeCellEffect = null;
 
     public PrivilegeBean() {
         // empty
@@ -133,5 +179,20 @@ public class PrivilegeBean implements Serializable {
             return "";
         }
         return viewSubject.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof PrivilegeBean)) {
+            return false;
+        }
+        PrivilegeBean other = (PrivilegeBean)o;
+
+        return other.getName().equals(name);
     }
 }

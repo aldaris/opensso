@@ -14,6 +14,11 @@ public class PolicyManageBean implements Serializable {
         return privilegeBeans;
     }
 
+    public void reset() {
+        privilegeBeans = policyDao.getPrivilegeBeans();
+        policyManageTableBean = new PolicyManageTableBean(privilegeBeans);
+    }
+
     public void setPolicyDao(PolicyDao policyDao) {
         this.policyDao = policyDao;
         privilegeBeans = policyDao.getPrivilegeBeans();

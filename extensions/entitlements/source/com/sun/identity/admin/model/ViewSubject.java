@@ -103,6 +103,6 @@ public abstract class ViewSubject implements MultiPanelBean, TreeNode {
 
     @Override
     public String toString() {
-        return getName();
+        return subjectType.getName() + ":" + getName();
     }
 }

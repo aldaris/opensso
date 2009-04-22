@@ -34,7 +34,13 @@
                             </span>
                         </span>
                         <div class="clear"></div>
+                        <ice:panelGroup
+                            rendered="#{o:size(policyManageHandler.policyManageBean.privilegeBeans) == 0}">
+                            <ice:outputText
+                                value="No policies"/>
+                        </ice:panelGroup>
                         <ice:dataTable
+                            rendered="#{o:size(policyManageHandler.policyManageBean.privilegeBeans) > 0}"
                             id="policyManageTable"
                             var="privilegeBean"
                             styleClass="policy-manage"
@@ -42,6 +48,7 @@
                             sortColumn="#{policyManageBean.policyManageTableBean.sortKey.column}"
                             sortAscending="#{policyManageBean.policyManageTableBean.sortKey.ascending}"
                             resizable="true">
+
                             <ice:column>
                                 <f:facet name="header">
                                     <ice:commandSortHeader
@@ -52,6 +59,8 @@
                                     </ice:commandSortHeader>
                                 </f:facet>
                                 <ice:outputText
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.nameCellEffect}"
                                     value="#{privilegeBean.name}"/>
                             </ice:column>
                             <ice:column
@@ -61,6 +70,8 @@
                                         value="Resources"/>
                                 </f:facet>
                                 <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.resourcesCellEffect}"
                                     panelTooltip="resourcesTooltip">
                                     <ice:outputText
                                         value="#{privilegeBean.viewEntitlement.resourcesToString}"/>
@@ -83,6 +94,8 @@
                                         value="Subjects"/>
                                 </f:facet>
                                 <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.subjectCellEffect}"
                                     panelTooltip="subjectTooltip">
                                     <ice:outputText
                                         value="#{privilegeBean.viewSubject.toString}"/>
@@ -105,6 +118,8 @@
                                         value="Conditions"/>
                                 </f:facet>
                                 <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.conditionCellEffect}"
                                     panelTooltip="conditionTooltip">
                                     <ice:outputText
                                         value="#{privilegeBean.viewCondition.toString}"/>
@@ -119,6 +134,24 @@
                                         </pre>
                                     </ui:define>
                                 </o:tooltip>
+                            </ice:column>
+                            <ice:column
+                                style="text-align: center">
+                                <f:facet name="header">
+                                    <ice:outputText value="Remove"/>
+                                </f:facet>
+                                <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.removeCellEffect}">
+                                    <ice:commandLink
+                                        actionListener="#{policyManageHandler.removeListener}">
+                                        <f:attribute
+                                            name="privilegeBean"
+                                            value="#{privilegeBean}"/>
+                                        <ice:graphicImage
+                                            value="../image/remove-16.png"/>
+                                    </ice:commandLink>
+                                </ice:panelGroup>
                             </ice:column>
                         </ice:dataTable>
                     </div>

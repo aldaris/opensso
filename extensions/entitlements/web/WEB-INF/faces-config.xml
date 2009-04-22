@@ -832,6 +832,14 @@
             <property-name>wizardBean</property-name>
             <value>#{policyCreateWizardBean}</value>
         </managed-property>
+        <managed-property>
+            <property-name>policyManageBean</property-name>
+            <value>#{policyManageBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>policyDao</property-name>
+            <value>#{policyDao}</value>
+        </managed-property>
     </managed-bean>
 
     <!-- policy manage -->
@@ -870,6 +878,14 @@
         <managed-property>
             <property-name>policyManageBean</property-name>
             <value>#{policyManageBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>policyDao</property-name>
+            <value>#{policyDao}</value>
         </managed-property>
     </managed-bean>
     <!-- policy manage -->

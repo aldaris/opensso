@@ -4,6 +4,7 @@ import com.icesoft.faces.component.dragdrop.DndEvent;
 import com.icesoft.faces.component.dragdrop.DropEvent;
 import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.Highlight;
+import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.ConditionType;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
@@ -11,6 +12,7 @@ import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.ContainerViewCondition;
 import com.sun.identity.admin.model.ContainerViewSubject;
 import com.sun.identity.admin.model.PolicyCreateWizardBean;
+import com.sun.identity.admin.model.PolicyManageBean;
 import com.sun.identity.admin.model.SubjectType;
 import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewCondition;
@@ -35,6 +37,8 @@ public class PolicyCreateWizardHandler
 
     private Pattern POLICY_NAME_PATTERN = Pattern.compile("[0-9a-zA-Z]+");
     private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();
+    private PolicyDao policyDao;
+    private PolicyManageBean policyManageBean;
 
     @Override
     public void setWizardBean(WizardBean wizardBean) {
@@ -50,13 +54,9 @@ public class PolicyCreateWizardHandler
         // TODO: add SSO token to public credentials
         Subject authSubject = new Subject();
         PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
-
-        try {
-            pm.addPrivilege(privilege);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
+        policyDao.addPrivilege(privilege);
+        policyManageBean.reset();
+        
         pcwb.reset();
         return "policy-created";
     }
@@ -199,5 +199,13 @@ public class PolicyCreateWizardHandler
 
     public BooleanActionsHandler getBooleanActionsHandler() {
         return booleanActionsHandler;
+    }
+
+    public void setPolicyDao(PolicyDao policyDao) {
+        this.policyDao = policyDao;
+    }
+
+    public void setPolicyManageBean(PolicyManageBean policyManageBean) {
+        this.policyManageBean = policyManageBean;
     }
 }

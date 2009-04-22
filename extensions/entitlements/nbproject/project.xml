@@ -83,7 +83,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>source</package-root>
-                <classpath mode="compile">extlib/amserver.jar:extlib/opensso-sharedlib.jar:extlib/testng-5.1-jdk15.jar:built/classes:build-lib/el-api-1.0.jar:build-lib/j2ee.jar:built/classes:build-lib/json.jar:war-lib/backport-util-concurrent-2.2.jar:war-lib/commons-beanutils-1.6.jar:war-lib/commons-collections-3.2.jar:war-lib/commons-digester-1.8.jar:war-lib/commons-fileupload-1.2.jar:war-lib/commons-logging-1.1.1.jar:war-lib/commons-logging-api-1.1.jar:war-lib/icefaces-1.7.2.SP1.jar:war-lib/icefaces-comps-1.7.2.SP1.jar:war-lib/icefaces-facelets-1.7.2.SP1.jar:war-lib/jsf-api-1.2_02.jar:war-lib/jsf-impl-1.2-b19.jar</classpath>
+                <classpath mode="compile">extlib/amserver.jar:extlib/opensso-sharedlib.jar:extlib/testng-5.1-jdk15.jar:built/classes:build-lib/el-api-1.0.jar:build-lib/j2ee.jar:built/classes:build-lib/json.jar:war-lib/backport-util-concurrent-2.2.jar:war-lib/commons-beanutils-1.6.jar:war-lib/commons-collections-3.2.jar:war-lib/commons-digester-1.8.jar:war-lib/commons-fileupload-1.2.jar:war-lib/commons-logging-1.1.1.jar:war-lib/commons-logging-api-1.1.jar:war-lib/icefaces-1.8.0.jar:war-lib/icefaces-comps-1.8.0.jar:war-lib/icefaces-facelets-1.8.0.jar:war-lib/jsf-api-1.2_02.jar:war-lib/jsf-impl-1.2-b19.jar:war-lib/jstl.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
