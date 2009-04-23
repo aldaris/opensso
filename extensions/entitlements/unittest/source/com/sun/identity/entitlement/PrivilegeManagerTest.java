@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.9 2009-04-22 23:33:41 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.10 2009-04-23 22:55:21 farble1670 Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.admin.subject.IdRepoUserSubject;
+import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.security.AdminTokenAction;

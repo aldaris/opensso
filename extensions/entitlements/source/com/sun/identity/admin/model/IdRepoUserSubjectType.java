@@ -1,7 +1,7 @@
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.dao.SubjectDao;
-import com.sun.identity.admin.subject.IdRepoUserSubject;
+import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.EntitlementSubject;
 import java.io.Serializable;
 

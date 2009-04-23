@@ -1,6 +1,6 @@
 package com.sun.identity.admin.model;
 
-import com.sun.identity.admin.subject.IdRepoRoleSubject;
+import com.sun.identity.entitlement.IdRepoRoleSubject;
 import com.sun.identity.entitlement.EntitlementSubject;
 
 public class IdRepoRoleViewSubject extends ViewSubject {

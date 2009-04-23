@@ -1,4 +1,4 @@
-package com.sun.identity.admin.subject;
+package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.RoleSubject;
 

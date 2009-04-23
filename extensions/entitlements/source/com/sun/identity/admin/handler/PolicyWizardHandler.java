@@ -54,31 +54,27 @@ public abstract class PolicyWizardHandler
         PolicyWizardBean pwb = getPolicyWizardBean();
         pwb.setFinishPopupVisible(true);
 
-
         Privilege privilege = pwb.getPrivilegeBean().toPrivilege();
         policyDao.setPrivilege(privilege);
-
-        getPolicyManageBean().reset();
-        pwb.reset();
 
         return null;
     }
 
     @Override
     public String cancelAction() {
-        getWizardBean().reset();
         getPolicyWizardBean().setCancelPopupVisible(true);
-
         return null;
     }
 
     public String cancelPopupOkAction() {
-        getPolicyWizardBean().setCancelPopupVisible(false);
+        getWizardBean().reset();
         return getCancelAction();
     }
 
     public String finishPopupOkAction() {
-        getPolicyWizardBean().setFinishPopupVisible(false);
+        getPolicyManageBean().reset();
+        getPolicyWizardBean().reset();
+
         return getFinishAction();
     }
 

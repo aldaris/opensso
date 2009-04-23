@@ -340,11 +340,11 @@
                 <value>#{groupSubjectType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.subject.IdRepoUserSubject</key>
+                <key>com.sun.identity.entitlement.IdRepoUserSubject</key>
                 <value>#{idRepoUserSubjectType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.subject.IdRepoRoleSubject</key>
+                <key>com.sun.identity.entitlement.IdRepoRoleSubject</key>
                 <value>#{idRepoRoleSubjectType}</value>
             </map-entry>
         </map-entries>
@@ -357,11 +357,11 @@
         <map-entries>
             <map-entry>
                 <key>com.sun.identity.admin.model.IdRepoUserViewSubject</key>
-                <value>com.sun.identity.admin.dao.IdRepoUserSubjectDao</value>
+                <value>#{idRepoUserSubjectDao}</value>
             </map-entry>
             <map-entry>
                 <key>com.sun.identity.admin.model.IdRepoRoleViewSubject</key>
-                <value>com.sun.identity.admin.dao.IdRepoRoleSubjectDao</value>
+                <value>#{idRepoRoleSubjectDao}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
@@ -376,7 +376,7 @@
         </managed-property>
         <managed-property>
             <property-name>viewSubjectToSubjectDaoMap</property-name>
-            <value>#{viewSubjectToSubjectDapMap}</value>
+            <value>#{viewSubjectToSubjectDaoMap}</value>
         </managed-property>
     </managed-bean>
     <!-- subject types -->
