@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdServicesImpl.java,v 1.55 2009-01-28 05:35:00 ww203982 Exp $
+* $Id: IdServicesImpl.java,v 1.56 2009-04-23 23:05:55 hengming Exp $
 *
 */
 
@@ -69,6 +69,7 @@ import com.sun.identity.idm.IdServices;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.RepoSearchResults;
+import com.sun.identity.idm.common.IdRepoUtils;
 import com.sun.identity.idm.plugins.internal.SpecialRepo;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.datastruct.OrderedSet;
@@ -775,14 +776,19 @@ public class IdServicesImpl implements IdServices {
                }
                if (getDebug().messageEnabled()) {
                    getDebug().message("IdServicesImpl.getAttributes: " +
-                       "before reverseMapAttributeNames aMap=" + aMap);
+                       "before reverseMapAttributeNames aMap=" +
+                        IdRepoUtils.getAttrMapWithoutPasswordAttrs(aMap, null));
                }
                aMap = reverseMapAttributeNames(aMap, cMap);
                attrMapsSet.add(aMap);
                if (getDebug().messageEnabled()) {
-                   getDebug().message("IdServicesImpl.getAttributes: " +
+                   for(Iterator iter = attrMapsSet.iterator();iter.hasNext();){
+                       Map attrMap = (Map)iter.next();
+                       getDebug().message("IdServicesImpl.getAttributes: " +
                        "after before reverseMapAttributeNames attrMapsSet=" + 
-                       attrMapsSet);
+                       IdRepoUtils.getAttrMapWithoutPasswordAttrs(attrMap,
+                       null));
+                   }
                }
            } catch (IdRepoUnsupportedOpException ide) {
                if (idRepo != null && getDebug().warningEnabled()) {
@@ -821,7 +827,8 @@ public class IdServicesImpl implements IdServices {
        } else {
            Map returnMap = combineAttrMaps(attrMapsSet, true);
            getDebug().warning("IdServicesImpl.getAttributes exit: " +
-               "returnMap=" + returnMap);
+               "returnMap=" + IdRepoUtils.getAttrMapWithoutPasswordAttrs(
+               returnMap, null));
            return returnMap;
        }
    }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.61 2009-01-28 05:34:59 ww203982 Exp $
+ * $Id: LDAPv3Repo.java,v 1.62 2009-04-23 23:05:55 hengming Exp $
  *
  */
 
@@ -98,6 +98,7 @@ import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.idm.IdRepoUnsupportedOpException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.RepoSearchResults;
+import com.sun.identity.idm.common.IdRepoUtils;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.shared.locale.AMResourceBundleCache;
@@ -1607,8 +1608,8 @@ public class LDAPv3Repo extends IdRepo {
         // add missing required atttr and its default value.
         if (debug.messageEnabled()) {
             debug.message("enter addAttrMapping: createUserAttrMap="
-                    + createUserAttrMap);
-            prtAttrMap(attrMap);
+                    + createUserAttrMap + ", attrMap = " +
+                    IdRepoUtils.getAttrMapWithoutPasswordAttrs(attrMap, null));
         }
         if (type.equals(IdType.USER) || type.equals(IdType.AGENT)) {
             Iterator itr = createUserAttrMap.keySet().iterator();
@@ -1645,8 +1646,8 @@ public class LDAPv3Repo extends IdRepo {
         }
 
         if (debug.messageEnabled()) {
-            debug.message("exit addAttrMapping: ");
-            prtAttrMap(attrMap);
+            debug.message("exit addAttrMapping: attrMap = " +
+                IdRepoUtils.getAttrMapWithoutPasswordAttrs(attrMap, null));
         }
         return attrMap;
     }
@@ -1827,8 +1828,10 @@ public class LDAPv3Repo extends IdRepo {
     public String create(SSOToken token, IdType type, String name, Map attrMap)
             throws IdRepoException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("LDAPv3Repo: Create called on " + type + ": " + name);
-            prtAttrMap(attrMap);
+            debug.message("LDAPv3Repo: Create called on " + type + ": " + name +
+            " attrMap = " + IdRepoUtils.getAttrMapWithoutPasswordAttrs(attrMap,
+            null));
+
         }
  
         checkConnPool();
@@ -2234,8 +2237,8 @@ public class LDAPv3Repo extends IdRepo {
             }
         }
         if (debug.messageEnabled()) {
-            debug.message("LDAPv3Repo: getAttributes returns theAttrMap: "
-                    + theAttrMap);
+            debug.message("LDAPv3Repo: getAttributes returns theAttrMap = " +
+            IdRepoUtils.getAttrMapWithoutPasswordAttrs(theAttrMap, null));
         }
         return (theAttrMap);
     }
@@ -3562,8 +3565,8 @@ public class LDAPv3Repo extends IdRepo {
 
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: setAttributes called: " + type + ": "
-                    + name);
-            prtAttrMap(attributes);
+                + name + " attributes = " +
+                IdRepoUtils.getAttrMapWithoutPasswordAttrs(attributes, null));
         }
         if (attributes == null || attributes.isEmpty()) {
             if (debug.messageEnabled()) {
@@ -5448,18 +5451,6 @@ public class LDAPv3Repo extends IdRepo {
                     + createAttrMap);
         }
         return createAttrMap;
-    }
-
-    private void prtAttrMap(Map attrMap) {
-        if (attrMap.containsKey("userpassword")) {
-            AMHashMap removedPasswd = new AMHashMap();
-            removedPasswd.copy(attrMap);
-            removedPasswd.remove("userpassword");
-            removedPasswd.put("userpassword", "xxx...");
-            debug.message("    attrs: " + removedPasswd);
-        } else {
-            debug.message("    attrs: " + attrMap);
-        }
     }
 
     private void setDSType(Map configParams) {

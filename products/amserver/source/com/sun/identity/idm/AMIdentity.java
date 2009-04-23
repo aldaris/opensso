@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.33 2009-01-28 05:34:58 ww203982 Exp $
+ * $Id: AMIdentity.java,v 1.34 2009-04-23 23:05:53 hengming Exp $
  *
  */
 
@@ -35,6 +35,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
+import com.sun.identity.idm.common.IdRepoUtils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSException;
@@ -314,7 +315,8 @@ public final class AMIdentity {
         Map attrs = idServices
                 .getAttributes(token, type, name, orgName, univDN);
         if (debug.messageEnabled()) {
-            debug.message("AMIdentity.getAttributes all: attrs=" + attrs);
+            debug.message("AMIdentity.getAttributes all: attrs=" +
+                IdRepoUtils.getAttrMapWithoutPasswordAttrs(attrs, null));
         }
         return attrs;
     }

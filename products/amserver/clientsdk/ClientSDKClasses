@@ -329,6 +329,7 @@ com/sun/identity/idm/IdUtils$IdUtilsListener.class
 com/sun/identity/idm/RepoSearchResults.class
 com/sun/identity/idm/common/IdCacheBlock.class
 com/sun/identity/idm/common/IdCacheStats.class
+com/sun/identity/idm/common/IdRepoUtils.class
 com/sun/identity/idm/remote/IdRemoteCachedServicesImpl.class
 com/sun/identity/idm/remote/IdRemoteServicesImpl.class
 com/sun/identity/idm/remote/IdRemoteServicesProviderImpl.class
