@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.2 2009-04-10 22:40:01 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.3 2009-04-23 23:29:20 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -60,7 +60,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      */
     public void initialize(Subject subject) {
         SSOToken ssoToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+                AdminTokenAction.getInstance()); //TOFIX subject
         try {
             pm = new PolicyManager(ssoToken);
         } catch (SSOException ssoe) {

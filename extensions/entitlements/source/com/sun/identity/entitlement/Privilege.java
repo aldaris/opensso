@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.8 2009-04-09 23:37:55 dillidorai Exp $
+ * $Id: Privilege.java,v 1.9 2009-04-23 23:29:20 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -376,14 +376,14 @@ public abstract class Privilege implements Serializable {
             SubjectAttributesManager.getInstance(subject);
         SubjectDecision sDecision = getSubject().evaluate(
             mgr, subject, resourceName, environment);
-        if (sDecision.isSatisfied()) {
+        if (!sDecision.isSatisfied()) {
             Map<String, Set<String>> advices = sDecision.getAdvices();
             if (advices != null) {
                 resultAdvices.putAll(advices);
             }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     protected boolean doesConditionMatch(
@@ -398,13 +398,13 @@ public abstract class Privilege implements Serializable {
 
         ConditionDecision decision = eCondition.evaluate(
             subject, resourceName, environment);
-        if (decision.isSatisfied()) {
+        if (!decision.isSatisfied()) {
             Map<String, Set<String>> advices = decision.getAdvices();
             if (advices != null) {
                 resultAdvices.putAll(advices);
             }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 }

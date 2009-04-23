@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.31 2009-04-02 22:13:37 veiming Exp $
+  $Id: build.xml,v 1.32 2009-04-23 23:29:19 veiming Exp $
 
 -->
 
@@ -203,6 +203,8 @@
        <copy todir="${war.package.dir}/WEB-INF/classes">
            <fileset dir="${entitlements.res.dir}/locale" includes="**" />
        </copy>
+       <copy tofile="${war.package.dir}/WEB-INF/classes/amPolicy_en.properties"
+            file="${entitlements.res.dir}/locale/amPolicy.properties" />
    </target>
 
    <target name="merge-libs" depends="unwar,war-lib">

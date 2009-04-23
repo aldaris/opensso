@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitter.java,v 1.7 2009-03-31 01:16:12 veiming Exp $
+ * $Id: ResourceNameSplitter.java,v 1.8 2009-04-23 23:29:21 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -62,17 +62,19 @@ public class ResourceNameSplitter implements ISearchIndex {
             Set<String> pathIndexes = splitPath(url);
             String path = url.getPath();
             if (path.length() == 0) {
-                path ="/";
+                path = "/";
             }
             Set<String> parentPath = new HashSet<String>();
             parentPath.add(path);
             return new ResourceSearchIndexes(hostIndexes, pathIndexes,
                 parentPath);
         } catch (MalformedURLException e) {
-            Set<String> set = new HashSet<String>();
-            set.add(resName);
-            return new ResourceSearchIndexes(set, Collections.EMPTY_SET,
-                Collections.EMPTY_SET);
+            Set<String> setHost = new HashSet<String>();
+            setHost.add(".");
+            Set<String> setPath = splitPath(resName);
+            Set<String> parentPath = new HashSet<String>();
+            parentPath.add(resName);
+            return new ResourceSearchIndexes(setHost, setPath, parentPath);
         }
     }
     
@@ -135,6 +137,20 @@ public class ResourceNameSplitter implements ISearchIndex {
         for (String q : queries) {
             results.add("/?" + q);
         }
+        Set<String> paths = splitPath(url.getPath());
+        results.addAll(paths);
+        for (String p : paths) {
+            for (String q : queries) {
+                results.add(p + "?" + q);
+            }
+        }
+
+        return results;
+    }
+
+    private static Set<String> splitPath(String path) {
+        Set<String> results = new HashSet<String>();
+        path = path.toLowerCase();
 
         if ((path.length() > 0) && !path.equals("/")) {
             String prefix = "";
@@ -143,9 +159,6 @@ public class ResourceNameSplitter implements ISearchIndex {
                 String s = st.nextToken();
                 prefix += "/" + s;
                 results.add(prefix);
-                for (String q : queries) {
-                    results.add(prefix + "?" + q);
-                }
             }
         }
 

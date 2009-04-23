@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.17 2009-04-10 22:40:02 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.18 2009-04-23 23:29:21 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -174,7 +174,7 @@ public class PolicyEvaluatorTest {
         Set<ResourceResult> resResults = pe.getResourceResults(userSSOToken,
             "http://www.sun.com:8080/",
             ResourceResult.SUBTREE_SCOPE, Collections.EMPTY_MAP);
-        if (resResults.size() != 2) {
+        if (resResults.size() != 3) {
             throw new Exception("testResourceSubTree: failed");
         }
     }

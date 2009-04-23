@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexGenerator.java,v 1.10 2009-04-09 13:15:04 veiming Exp $
+ * $Id: ResourceNameIndexGenerator.java,v 1.11 2009-04-23 23:29:21 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -70,9 +70,13 @@ public class ResourceNameIndexGenerator implements ISaveIndex {
                 pathParentIndexes);
         } catch (MalformedURLException e) {
             Set<String> hostIndexes = new HashSet<String>();
-            hostIndexes.add(resName);
-            return new ResourceSaveIndexes(hostIndexes, Collections.EMPTY_SET,
-                Collections.EMPTY_SET);
+            hostIndexes.add(".");
+            Set<String> pathIndexes = new HashSet<String>();
+            String path = getPathIndex(resName, null);
+            pathIndexes.add(path);
+            Set<String> pathParentIndexes = getPathParentIndexes(path);
+            return new ResourceSaveIndexes(hostIndexes, pathIndexes,
+                pathParentIndexes);
         }
     
     }
@@ -88,8 +92,11 @@ public class ResourceNameIndexGenerator implements ISaveIndex {
     }
     
     private static String getPathIndex(URL url) {
-        String path = url.getPath().toLowerCase();
-        String query = url.getQuery();
+        return getPathIndex(url.getPath(), url.getQuery());
+    }
+
+    private static String getPathIndex(String path, String query) {
+        path = path.toLowerCase();
         if (query == null) {
             query = "";
         } else {
@@ -101,6 +108,9 @@ public class ResourceNameIndexGenerator implements ISaveIndex {
             int slashIdx = path.lastIndexOf('/', idx);
             path = path.substring(0, slashIdx + 1);
             query = "";
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() -1);
+            }
         }
 
         if (query.length() > 0) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.10 2009-04-23 22:55:21 farble1670 Exp $
+ * $Id: PrivilegeUtils.java,v 1.11 2009-04-23 23:29:20 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -66,6 +66,7 @@ import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.interfaces.ResponseProvider;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.policy.plugins.IDRepoResponseProvider;
+import com.sun.identity.policy.plugins.PrivilegeCondition;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 import java.security.AccessController;
@@ -315,7 +316,8 @@ public class PrivilegeUtils {
                 ec = mapIPPConditionToIPECondition(nCondition);
             } else if (condition instanceof com.sun.identity.policy.plugins.SimpleTimeCondition) {
                 ec = mapSimpleTimeConditionToTimeCondition(nCondition);
-            } else { //TODO: map to generic eCondition
+            } else {
+                ec = mapGenericCondition(nCondition);
             }
             ecSet.add(ec);
         }
@@ -355,6 +357,33 @@ public class PrivilegeUtils {
             }
         }
         return ec;
+    }
+
+    private static EntitlementCondition mapGenericCondition(
+        Object[] nCondition) {
+        try {
+            Object objCondition = nCondition[1];
+            if (objCondition instanceof
+                com.sun.identity.policy.plugins.PrivilegeCondition) {
+                com.sun.identity.policy.plugins.PrivilegeCondition pipc =
+                    (com.sun.identity.policy.plugins.PrivilegeCondition)
+                    objCondition;
+                Map<String, Set<String>> props = pipc.getProperties();
+                String className = props.keySet().iterator().next();
+                EntitlementCondition ec =
+                    (EntitlementCondition)Class.forName(className).newInstance();
+                Set<String> setValues = props.get(className);
+                ec.setState(setValues.iterator().next());
+                return ec;
+            }
+        } catch (ClassNotFoundException ex) {
+            //TOFIX
+        } catch (InstantiationException ex) {
+            //TOFIX
+        } catch (IllegalAccessException ex) {
+            //TOFIX
+        }
+        return null;
     }
 
     private static EntitlementCondition mapIPPConditionToIPECondition(
@@ -748,8 +777,10 @@ public class PrivilegeUtils {
                 conditions.add(obj);
             }
         } else { // map to EPCondition
-
-            conditions.add(eConditionToEPCondition(ec));
+            Object[] ncondition = new Object[2];
+            ncondition[0] = "tofix";
+            ncondition[1] = eConditionToEPCondition(ec);
+            conditions.add(ncondition);
         }
         return conditions;
     }
@@ -917,13 +948,14 @@ public class PrivilegeUtils {
     }
 
     private static Condition eConditionToEPCondition(EntitlementCondition ec)
-            throws PolicyException, SSOException {
-        return null;
-    }
-
-    private static Condition eConditionToEPCondition(Condition tc)
-            throws PolicyException, SSOException {
-        return null;
+        throws PolicyException, SSOException {
+        PrivilegeCondition pc = new PrivilegeCondition();
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        Set<String> set = new HashSet<String>(2);
+        set.add(ec.getState());
+        map.put(ec.getClass().getName(), set);
+        pc.setProperties(map);
+        return pc;
     }
 
     private static Set<ResourceAttributes> nrpsToResourceAttributes(

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCombiner.java,v 1.6 2009-04-14 00:24:18 veiming Exp $
+ * $Id: EntitlementCombiner.java,v 1.7 2009-04-23 23:29:20 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -146,7 +146,13 @@ public abstract class EntitlementCombiner {
     protected void mergeActionValues(Entitlement e1, Entitlement e2) {
         Map<String, Boolean> result = new HashMap<String, Boolean>();
         Map<String, Boolean> a1 = e1.getActionValues();
+        if (a1 == null) {
+            a1 = Collections.EMPTY_MAP;
+        }
         Map<String, Boolean> a2 = e2.getActionValues();
+        if (a2 == null) {
+            a2 = Collections.EMPTY_MAP;
+        }
 
         Set<String> actionNames = new HashSet<String>();
         actionNames.addAll(a1.keySet());
@@ -179,9 +185,18 @@ public abstract class EntitlementCombiner {
     protected void mergeAdvices(Entitlement e1, Entitlement e2) {
         Map<String, Set<String>> result = new HashMap<String, Set<String>>();
         Map<String, Set<String>> a1 = e1.getAdvices();
+        if (a1 == null) {
+            a1 = Collections.EMPTY_MAP;
+        }
         Map<String, Set<String>> a2 = e2.getAdvices();
+        if (a2 == null) {
+            a2 = Collections.EMPTY_MAP;
+        }
 
         Set<String> names = new HashSet<String>();
+        names.addAll(a1.keySet());
+        names.addAll(a2.keySet());
+
         for (String n : names) {
             Set<String> advice1 = a1.get(n);
             Set<String> advice2 = a2.get(n);
@@ -212,9 +227,18 @@ public abstract class EntitlementCombiner {
     protected void mergeAttributes(Entitlement e1, Entitlement e2) {
         Map<String, Set<String>> result = new HashMap<String, Set<String>>();
         Map<String, Set<String>> a1 = e1.getAttributes();
+        if (a1 == null) {
+            a1 = Collections.EMPTY_MAP;
+        }
         Map<String, Set<String>> a2 = e2.getAttributes();
+        if (a2 == null) {
+            a2 = Collections.EMPTY_MAP;
+        }
 
         Set<String> names = new HashSet<String>();
+        names.addAll(a1.keySet());
+        names.addAll(a2.keySet());
+        
         for (String n : names) {
             Set<String> attr1 = a1.get(n);
             Set<String> attr2 = a2.get(n);
