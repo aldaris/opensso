@@ -6,6 +6,7 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
+
     <span class="section-head">
         <span class="section-title">
             <ice:outputText value="Summary of new policy"/>
@@ -23,9 +24,9 @@
                     columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
                     columns="3">
                     <ice:outputText value="Name"/>
-                    <ice:outputText value="#{policyCreateWizardBean.privilegeBean.name}"/>
+                    <ice:outputText value="#{policySummaryBean.privilegeBean.name}"/>
                     <ice:commandLink
-                        actionListener="#{policyCreateWizardHandler.gotoStepListener}"
+                        actionListener="#{policyCreateWizardHandler.editNameListener}"
                         partialSubmit="true"
                         styleClass="command-link">
                         <f:attribute name="step" value="4"/>
@@ -49,9 +50,9 @@
                     columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
                     columns="3">
                     <ice:outputText value="Description"/>
-                    <ice:outputText value="#{policyCreateWizardBean.privilegeBean.description}"/>
+                    <ice:outputText value="#{policySummaryBean.privilegeBean.description}"/>
                     <ice:commandLink
-                        actionListener="#{policyCreateWizardHandler.gotoStepListener}"
+                        actionListener="#{policyCreateWizardHandler.editNameListener}"
                         partialSubmit="true"
                         styleClass="command-link">
                         <f:attribute name="step" value="4"/>
@@ -78,7 +79,7 @@
                     <ice:outputText
                         value="#{o:size(policyCreateWizardBean.privilegeBean.viewEntitlement.resources)}"/>
                     <ice:commandLink
-                        actionListener="#{policyCreateWizardHandler.gotoStepListener}"
+                        actionListener="#{policyCreateWizardHandler.editResourcesListener}"
                         partialSubmit="true"
                         styleClass="command-link">
                         <f:attribute name="step" value="4"/>
@@ -93,9 +94,9 @@
                 </ice:panelGrid>
                 <ice:panelGrid
                     styleClass="summary-strings"
-                    visible="#{o:size(policyCreateWizardBean.privilegeBean.viewEntitlement.resources) > 0}">
+                    visible="#{o:size(policySummaryBean.privilegeBean.viewEntitlement.resources) > 0}">
                     <ice:outputText
-                        value="#{o:truncate(policyCreateWizardBean.privilegeBean.viewEntitlement.resourcesToString, 40)}"/>
+                        value="#{policySummaryBean.privilegeBean.viewEntitlement.resourcesToString}"/>
                 </ice:panelGrid>
             </ui:define>
         </o:box>
@@ -108,9 +109,9 @@
                     columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
                     columns="3">
                     <ice:outputText value="Subjects"/>
-                    <ice:outputText value="#{policyCreateWizardBean.policyCreateSummary.viewSubjectSize}"/>
+                    <ice:outputText value="#{policySummaryBean.privilegeBean.viewSubject.size}"/>
                     <ice:commandLink
-                        actionListener="#{policyCreateWizardHandler.gotoStepListener}"
+                        actionListener="#{policyCreateWizardHandler.editSubjectsListener}"
                         partialSubmit="true"
                         styleClass="command-link">
                         <f:attribute name="step" value="4"/>
@@ -125,9 +126,9 @@
                 </ice:panelGrid>
                 <ice:panelGrid
                     styleClass="summary-strings"
-                    visible="#{policyCreateWizardBean.policyCreateSummary.viewSubjectSize > 0}">
+                    visible="#{policySummaryBean.privilegeBean.viewSubject.size > 0}">
                     <ice:outputText
-                        value="#{o:truncate(policyCreateWizardBean.privilegeBean.viewSubject.toString, 40)}"/>
+                        value="#{policySummaryBean.privilegeBean.viewSubject.toString}"/>
                 </ice:panelGrid>
             </ui:define>
         </o:box>
@@ -140,9 +141,9 @@
                     columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
                     columns="3">
                     <ice:outputText value="Conditions"/>
-                    <ice:outputText value="#{policyCreateWizardBean.policyCreateSummary.viewConditionSize}"/>
+                    <ice:outputText value="#{policySummaryBean.privilegeBean.viewCondition.size}"/>
                     <ice:commandLink
-                        actionListener="#{policyCreateWizardHandler.gotoStepListener}"
+                        actionListener="#{policyCreateWizardHandler.editConditionsListener}"
                         partialSubmit="true"
                         styleClass="command-link">
                         <f:attribute name="step" value="4"/>
@@ -158,9 +159,9 @@
                 </ice:panelGrid>
                 <ice:panelGrid
                     styleClass="summary-strings"
-                    visible="#{policyCreateWizardBean.policyCreateSummary.viewConditionSize > 0}">
+                    visible="#{policySummaryBean.privilegeBean.viewCondition.size > 0}">
                     <ice:outputText
-                        value="#{o:truncate(policyCreateWizardBean.privilegeBean.viewCondition.toString, 80)}"/>
+                        value="#{policySummaryBean.privilegeBean.viewCondition.toString}"/>
                 </ice:panelGrid>
             </ui:define>
         </o:box>

@@ -467,6 +467,7 @@ table.actions tr td {
 
 .summary-strings {
     padding-left: 10px;
+    overflow: hidden;
 }
 
 .policy-manage {

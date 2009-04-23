@@ -70,7 +70,14 @@
                     step="4"
                     label="Step 5: Review">
                     <ui:define name="wizard-step-body">
-                        <ui:include src="template/policy-create-summary.xhtml"/>
+                        <ui:include src="template/policy-summary.xhtml">
+                            <ui:param
+                                name="policySummaryBean"
+                                value="#{policyCreateWizardBean}"/>
+                            <ui:param
+                                name="policySummaryHandler"
+                                value="#{policyCreateWizardHandler}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
             </ui:define>

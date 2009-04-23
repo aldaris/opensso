@@ -33,7 +33,8 @@ import javax.security.auth.Subject;
 
 public class PolicyCreateWizardHandler
         extends WizardHandler
-        implements Serializable, PolicyNameHandler {
+        implements Serializable, PolicyNameHandler, PolicySubjectsHandler,
+        PolicyConditionsHandler {
 
     private Pattern POLICY_NAME_PATTERN = Pattern.compile("[0-9a-zA-Z]+");
     private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();
@@ -56,7 +57,7 @@ public class PolicyCreateWizardHandler
         PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
         policyDao.addPrivilege(privilege);
         policyManageBean.reset();
-        
+
         pcwb.reset();
         return "policy-created";
     }
@@ -107,17 +108,17 @@ public class PolicyCreateWizardHandler
         int type = dropEvent.getEventType();
         if (type == DndEvent.DROPPED) {
             Object dragValue = dropEvent.getTargetDragValue();
-            assert(dragValue != null);
+            assert (dragValue != null);
             ContainerViewSubject dropValue = (ContainerViewSubject) dropEvent.getTargetDropValue();
 
             SubjectType st = null;
             ViewSubject vs = null;
 
             if (dragValue instanceof SubjectType) {
-                st = (SubjectType)dragValue;
+                st = (SubjectType) dragValue;
                 vs = st.newViewSubject();
             } else {
-                vs = (ViewSubject)dragValue;
+                vs = (ViewSubject) dragValue;
             }
 
             if (dropValue == null) {
@@ -154,9 +155,29 @@ public class PolicyCreateWizardHandler
 
     protected BooleanAction getBooleanAction(ActionEvent event) {
         BooleanAction ba = (BooleanAction) event.getComponent().getAttributes().get("booleanAction");
-        assert(ba != null);
+        assert (ba != null);
 
         return ba;
+    }
+
+    public void editNameListener(ActionEvent event) {
+        gotoStepListener(event);
+    }
+
+    public void editResourcesListener(ActionEvent event) {
+        gotoStepListener(event);
+    }
+
+    public void editSubjectsListener(ActionEvent event) {
+        gotoStepListener(event);
+    }
+
+    public void editConditionsListener(ActionEvent event) {
+        gotoStepListener(event);
+    }
+
+    public void editActionsListener(ActionEvent event) {
+        gotoStepListener(event);
     }
 
     @Override
