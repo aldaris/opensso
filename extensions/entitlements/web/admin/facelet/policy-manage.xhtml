@@ -58,10 +58,20 @@
                                             value="Name"/>
                                     </ice:commandSortHeader>
                                 </f:facet>
-                                <ice:outputText
-                                    visible="#{true}"
+                                <ice:panelGroup
                                     effect="#{privilegeBean.nameCellEffect}"
-                                    value="#{privilegeBean.name}"/>
+                                    visible="#{true}">
+                                        <ice:commandLink
+                                            styleClass="command-link"
+                                            actionListener="#{policyManageHandler.editListener}"
+                                            action="policy-edit">
+                                            <f:attribute
+                                                name="privilegeBean"
+                                                value="#{privilegeBean}"/>
+                                            <ice:outputText
+                                                value="#{privilegeBean.name}"/>
+                                        </ice:commandLink>
+                                </ice:panelGroup>
                             </ice:column>
                             <ice:column
                                 rendered="#{policyManageBean.policyManageTableBean.resourcesColumnVisible}">

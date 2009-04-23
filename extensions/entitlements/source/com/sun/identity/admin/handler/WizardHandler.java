@@ -38,15 +38,9 @@ public class WizardHandler implements Serializable {
     }
 
     public void gotoStepListener(ActionEvent event) {
-        int step = getStep(event);
         int gotoStep = getGotoStep(event);
 
-        WizardStepBean current = getWizardBean().getWizardStepBeans()[step];
-        current.setExpanded(false);
-
-        WizardStepBean next = getWizardBean().getWizardStepBeans()[gotoStep];
-        next.setEnabled(true);
-        next.setExpanded(true);
+        getWizardBean().gotoStep(gotoStep);
     }
 
     public void expandListener(ActionEvent event) {

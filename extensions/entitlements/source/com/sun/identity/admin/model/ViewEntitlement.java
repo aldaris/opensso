@@ -23,6 +23,10 @@ public class ViewEntitlement implements Serializable {
     }
 
     public ViewEntitlement(Entitlement e, Map<String, ViewApplication> viewApplications) {
+        if (e == null) {
+            return;
+        }
+
         // application
         viewApplication = viewApplications.get(e.getApplicationName());
 

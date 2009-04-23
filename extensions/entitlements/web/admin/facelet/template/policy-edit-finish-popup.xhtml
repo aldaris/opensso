@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+
+    <o:popup
+        handler="#{policyManageHandler}"
+        modal="true"
+        title="View Options"
+        visible="#{policyWizardBean.finishPopupVisible}"
+        closeListenerMethod="viewOptionsListener">
+        <ui:define name="body">
+            <ice:panelGroup>
+                <ice:outputText
+                    value="Policy edited."/>
+            </ice:panelGroup>
+            <ice:panelGrid
+                styleClass="button-group"
+                columns="1">
+                <ice:commandLink
+                    action="#{policyWizardHandler.finishPopupOkAction}"
+                    styleClass="button">
+                    <ice:panelGroup
+                        styleClass="button">
+                        <img class="left" src="../image/execute.png"/>
+                        <ice:outputText
+                            value="Ok"/>
+                    </ice:panelGroup>
+                </ice:commandLink>
+            </ice:panelGrid>
+        </ui:define>
+    </o:popup>
+</span>

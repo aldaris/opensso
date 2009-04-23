@@ -3,13 +3,13 @@ package com.sun.identity.admin.model;
 import java.io.Serializable;
 
 public class PolicyCreateSummary implements Serializable {
-    private PolicyCreateWizardBean policyCreateWizardBean;
+    private PolicyWizardBean policyCreateWizardBean;
 
-    public PolicyCreateWizardBean getPolicyCreateWizardBean() {
+    public PolicyWizardBean getPolicyCreateWizardBean() {
         return policyCreateWizardBean;
     }
 
-    public void setPolicyCreateWizardBean(PolicyCreateWizardBean policyCreateWizardBean) {
+    public void setPolicyCreateWizardBean(PolicyWizardBean policyCreateWizardBean) {
         this.policyCreateWizardBean = policyCreateWizardBean;
     }
 

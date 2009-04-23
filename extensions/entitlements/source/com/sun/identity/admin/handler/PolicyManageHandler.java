@@ -5,6 +5,7 @@ import com.icesoft.faces.context.effects.Fade;
 import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.PolicyManageBean;
+import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.QueuedActionBean;
 import java.io.Serializable;
@@ -16,6 +17,7 @@ public class PolicyManageHandler implements Serializable {
     private PolicyManageBean policyManageBean;
     private QueuedActionBean queuedActionBean;
     private PolicyDao policyDao;
+    private PolicyWizardBean policyEditWizardBean;
 
     public PrivilegeBean getPrivilegeBean(ActionEvent event) {
         PrivilegeBean pb = (PrivilegeBean) event.getComponent().getAttributes().get("privilegeBean");
@@ -37,6 +39,14 @@ public class PolicyManageHandler implements Serializable {
 
     public void viewOptionsListener(ActionEvent event) {
         policyManageBean.setViewOptionsPopupVisible(!policyManageBean.isViewOptionsPopupVisible());
+    }
+
+    public void editListener(ActionEvent event) {
+        PrivilegeBean pb = getPrivilegeBean(event);
+        policyEditWizardBean.reset();
+        policyEditWizardBean.setPrivilegeBean(pb);
+        policyEditWizardBean.setAllEnabled(true);
+        policyEditWizardBean.gotoStep(4);
     }
 
     public void removeListener(ActionEvent event) {
@@ -95,6 +105,10 @@ public class PolicyManageHandler implements Serializable {
 
     public void setPolicyDao(PolicyDao policyDao) {
         this.policyDao = policyDao;
+    }
+
+    public void setPolicyEditWizardBean(PolicyWizardBean policyEditWizardBean) {
+        this.policyEditWizardBean = policyEditWizardBean;
     }
 
 }

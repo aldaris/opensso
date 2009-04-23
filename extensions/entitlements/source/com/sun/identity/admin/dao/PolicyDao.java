@@ -48,10 +48,16 @@ public class PolicyDao implements Serializable {
 
     }
 
-    public void removePrivilege(String name) {
+    private PrivilegeManager getPrivilegeManager() {
         // TODO: add SSO token to public credentials
         Subject authSubject = new Subject();
         PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
+
+        return pm;
+    }
+
+    public void removePrivilege(String name) {
+        PrivilegeManager pm = getPrivilegeManager();
 
         try {
             pm.removePrivilege(name);
@@ -60,13 +66,43 @@ public class PolicyDao implements Serializable {
         }
     }
 
+    public boolean privilegeExists(Privilege p) {
+        return privilegeExists(p.getName());
+    }
+
+    public boolean privilegeExists(String name) {
+        PrivilegeManager pm = getPrivilegeManager();
+
+        try {
+            return (pm.getPrivilege(name) != null);
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
+    }
+
+    public void setPrivilege(Privilege p) {
+        if (privilegeExists(p)) {
+            modifyPrivilege(p);
+        } else {
+            addPrivilege(p);
+        }
+    }
+
     public void addPrivilege(Privilege p) {
-        // TODO: add SSO token to public credentials
-        Subject authSubject = new Subject();
-        PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
+        PrivilegeManager pm = getPrivilegeManager();
 
         try {
             pm.addPrivilege(p);
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
+    }
+
+    public void modifyPrivilege(Privilege p) {
+        PrivilegeManager pm = getPrivilegeManager();
+
+        try {
+            pm.modifyPrivilege(p);
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }

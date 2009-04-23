@@ -4,16 +4,17 @@ import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.DeepCloneableArrayList;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import javax.faces.model.SelectItem;
 
-public class PolicyCreateWizardBean
+public class PolicyWizardBean
         extends WizardBean
         implements Serializable, PolicyNameBean, PolicyResourcesBean,
         PolicySubjectsBean, PolicyConditionsBean, PolicySummaryBean {
 
     private PrivilegeBean privilegeBean = new PrivilegeBean();
-    
     private ViewApplicationsBean viewApplicationsBean;
     private Effect dropConditionEffect;
     private Effect dropSubjectContainerEffect;
@@ -23,8 +24,10 @@ public class PolicyCreateWizardBean
     private int advancedTabsetIndex = 0;
     private List<Resource> availableResources;
     private BooleanActionsBean booleanActionsBean = new BooleanActionsBean();
+    private boolean finishPopupVisible = false;
+    private boolean cancelPopupVisible = false;
 
-    public PolicyCreateWizardBean() {
+    public PolicyWizardBean() {
         policyCreateSummary.setPolicyCreateWizardBean(this);
         booleanActionsBean.setActions(privilegeBean.getViewEntitlement().getActions());
     }
@@ -32,7 +35,9 @@ public class PolicyCreateWizardBean
     @Override
     public void reset() {
         super.reset();
-        privilegeBean = new PrivilegeBean();
+        setPrivilegeBean(new PrivilegeBean());
+        finishPopupVisible = false;
+        cancelPopupVisible = false;
     }
 
     public List<SelectItem> getViewApplicationItems() {
@@ -112,11 +117,11 @@ public class PolicyCreateWizardBean
     }
 
     public ViewApplication getViewApplication() {
-        return privilegeBean.getViewEntitlement().getViewApplication();
+        return getPrivilegeBean().getViewEntitlement().getViewApplication();
     }
 
     public void setViewApplication(ViewApplication viewApplication) {
-        privilegeBean.getViewEntitlement().setViewApplication(viewApplication);
+        getPrivilegeBean().getViewEntitlement().setViewApplication(viewApplication);
 
         getPrivilegeBean().getViewEntitlement().getActions().addAll(new DeepCloneableArrayList<Action>(viewApplication.getActions()).deepClone());
         availableResources = new DeepCloneableArrayList<Resource>(viewApplication.getResources()).deepClone();
@@ -124,6 +129,12 @@ public class PolicyCreateWizardBean
 
     public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
         this.viewApplicationsBean = viewApplicationsBean;
+        
+        Map<String,ViewApplication> viewApplicationMap = viewApplicationsBean.getViewApplications();
+        Collection<ViewApplication> viewApplications = (Collection<ViewApplication>)viewApplicationMap.values();
+        if (viewApplications != null && viewApplications.size() > 0) {
+            setViewApplication(viewApplications.iterator().next());
+        }
     }
 
     public ViewApplicationsBean getViewApplicationsBean() {
@@ -132,5 +143,25 @@ public class PolicyCreateWizardBean
 
     public BooleanActionsBean getBooleanActionsBean() {
         return booleanActionsBean;
+    }
+
+    public void setPrivilegeBean(PrivilegeBean privilegeBean) {
+        this.privilegeBean = privilegeBean;
+    }
+
+    public boolean isFinishPopupVisible() {
+        return finishPopupVisible;
+    }
+
+    public void setFinishPopupVisible(boolean finishPopupVisible) {
+        this.finishPopupVisible = finishPopupVisible;
+    }
+
+    public boolean isCancelPopupVisible() {
+        return cancelPopupVisible;
+    }
+
+    public void setCancelPopupVisible(boolean cancelPopupVisible) {
+        this.cancelPopupVisible = cancelPopupVisible;
     }
 }

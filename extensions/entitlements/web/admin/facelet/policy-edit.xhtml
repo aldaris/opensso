@@ -8,100 +8,100 @@
     xmlns:o="http://opensso.dev.java.net">
 
     <ui:define name="panel-title">
-        <ice:outputText value="#{msg.policyCreatePanelTitle}" />
+        <ice:outputText value="#{msg.policyEditPanelTitle}" />
     </ui:define>
     <ui:define name="panel-details">
-        <ice:outputText value="#{msg.policyCreatePanelDetails}" />
+        <ice:outputText value="#{msg.policyEditPanelDetails}" />
     </ui:define>
     <ui:define name="panel-body">
         <ui:include
-            src="/admin/facelet/template/policy-create-cancel-popup.xhtml">
+            src="/admin/facelet/template/policy-edit-cancel-popup.xhtml">
             <ui:param
                 name="policyWizardBean"
-                value="#{policyCreateWizardBean}"/>
+                value="#{policyEditWizardBean}"/>
             <ui:param
                 name="policyWizardHandler"
-                value="#{policyCreateWizardHandler}"/>
+                value="#{policyEditWizardHandler}"/>
         </ui:include>
         <ui:include
-            src="/admin/facelet/template/policy-create-finish-popup.xhtml">
+            src="/admin/facelet/template/policy-edit-finish-popup.xhtml">
             <ui:param
                 name="policyWizardBean"
-                value="#{policyCreateWizardBean}"/>
+                value="#{policyEditWizardBean}"/>
             <ui:param
                 name="policyWizardHandler"
-                value="#{policyCreateWizardHandler}"/>
+                value="#{policyEditWizardHandler}"/>
         </ui:include>
         <o:wizard
             steps="5"
-            wizardHandler="#{policyCreateWizardHandler}"
-            wizardBean="#{policyCreateWizardBean}">
+            wizardHandler="#{policyEditWizardHandler}"
+            wizardBean="#{policyEditWizardBean}">
             <ui:define name="wizard-steps">
                 <o:wstep
                     step="0"
-                    label="Step 1: Name, Description, and Application">
+                    label="Name, Description, and Application">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-name.xhtml">
                             <ui:param
                                 name="policyNameBean"
-                                value="#{policyCreateWizardBean}"/>
+                                value="#{policyEditWizardBean}"/>
                             <ui:param
                                 name="policyNameHandler"
-                                value="#{policyCreateWizardHandler}"/>
+                                value="#{policyEditWizardHandler}"/>
                         </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="1"
-                    label="Step 2: Resources (#{o:size(policyCreateWizardBean.privilegeBean.viewEntitlement.resources)})">
+                    label="Resources (#{o:size(policyEditWizardBean.privilegeBean.viewEntitlement.resources)})">
                     <ui:define name="wizard-step-body">
                         <ui:include
-                            src="#{policyCreateWizardBean.viewApplication.viewApplicationType.resourceTemplate}">
+                            src="#{policyEditWizardBean.viewApplication.viewApplicationType.resourceTemplate}">
                             <ui:param
                                 name="policyResourcesBean"
-                                value="#{policyCreateWizardBean}"/>
+                                value="#{policyEditWizardBean}"/>
                         </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="2"
-                    label="Step 3: Subjects (#{policyCreateWizardBean.privilegeBean.viewSubject != null ? policyCreateWizardBean.privilegeBean.viewSubject.size : 0})">
+                    label="Subjects (#{policyEditWizardBean.privilegeBean.viewSubject != null ? policyEditWizardBean.privilegeBean.viewSubject.size : 0})">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-subjects.xhtml">
                             <ui:param
                                 name="policySubjectsBean"
-                                value="#{policyCreateWizardBean}"/>
+                                value="#{policyEditWizardBean}"/>
                             <ui:param
                                 name="policySubjectsHandler"
-                                value="#{policyCreateWizardHandler}"/>
+                                value="#{policyEditWizardHandler}"/>
                         </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="3"
-                    label="Step 4: Advanced">
+                    label="Advanced">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-create-advanced.xhtml">
                             <ui:param
                                 name="policyWizardBean"
-                                value="#{policyCreateWizardBean}"/>
+                                value="#{policyEditWizardBean}"/>
                             <ui:param
                                 name="policyWizardHandler"
-                                value="#{policyCreateWizardHandler}"/>
+                                value="#{policyEditWizardHandler}"/>
                         </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="4"
-                    label="Step 5: Review">
+                    label="Summary">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-summary.xhtml">
                             <ui:param
                                 name="policySummaryBean"
-                                value="#{policyCreateWizardBean}"/>
+                                value="#{policyEditWizardBean}"/>
                             <ui:param
                                 name="policySummaryHandler"
-                                value="#{policyCreateWizardHandler}"/>
+                                value="#{policyEditWizardHandler}"/>
                         </ui:include>
                     </ui:define>
                 </o:wstep>

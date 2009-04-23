@@ -814,9 +814,10 @@
     </managed-bean>
     <!-- url resource chooser -->
 
+    <!-- policy create -->
     <managed-bean>
         <managed-bean-name>policyCreateWizardBean</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.PolicyCreateWizardBean</managed-bean-class>
+        <managed-bean-class>com.sun.identity.admin.model.PolicyWizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>viewApplicationsBean</property-name>
@@ -841,6 +842,37 @@
             <value>#{policyDao}</value>
         </managed-property>
     </managed-bean>
+    <!-- policy create -->
+
+    <!-- policy edit -->
+    <managed-bean>
+        <managed-bean-name>policyEditWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.PolicyWizardBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>viewApplicationsBean</property-name>
+            <value>#{viewApplicationsBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>policyEditWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.PolicyEditWizardHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{policyEditWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>policyManageBean</property-name>
+            <value>#{policyManageBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>policyDao</property-name>
+            <value>#{policyDao}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- policy create -->
 
     <!-- policy manage -->
     <managed-bean>
@@ -887,6 +919,10 @@
             <property-name>policyDao</property-name>
             <value>#{policyDao}</value>
         </managed-property>
+        <managed-property>
+            <property-name>policyEditWizardBean</property-name>
+            <value>#{policyEditWizardBean}</value>
+        </managed-property>
     </managed-bean>
     <!-- policy manage -->
 
@@ -912,12 +948,12 @@
             <to-view-id>/admin/facelet/policy-create.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
-            <from-outcome>policy-created</from-outcome>
-            <to-view-id>/admin/facelet/policy-created.xhtml</to-view-id>
+            <from-outcome>policy-edit</from-outcome>
+            <to-view-id>/admin/facelet/policy-edit.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
-            <from-outcome>policy-create-canceled</from-outcome>
-            <to-view-id>/admin/facelet/policy-create-canceled.xhtml</to-view-id>
+            <from-outcome>policy-created</from-outcome>
+            <to-view-id>/admin/facelet/policy-created.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>policy-manage</from-outcome>

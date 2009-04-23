@@ -7,25 +7,25 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
     <ice:panelTabSet
-        selectedIndex="#{policyCreateWizardBean.advancedTabsetIndex}">
-        <ice:panelTab label="Actions (#{o:size(policyCreateWizardBean.privilegeBean.viewEntitlement.actions)})">
+        selectedIndex="#{policyWizardBean.advancedTabsetIndex}">
+        <ice:panelTab label="Actions (#{o:size(policyWizardBean.privilegeBean.viewEntitlement.actions)})">
             <ui:include src="policy-actions.xhtml">
                 <ui:param
                     name="booleanActionsBean"
-                    value="#{policyCreateWizardBean.booleanActionsBean}"/>
+                    value="#{policyWizardBean.booleanActionsBean}"/>
                 <ui:param
                     name="booleanActionsHandler"
-                    value="#{policyCreateWizardHandler.booleanActionsHandler}"/>
+                    value="#{policyWizardHandler.booleanActionsHandler}"/>
             </ui:include>
         </ice:panelTab>
-        <ice:panelTab label="Conditions (#{policyCreateWizardBean.privilegeBean.viewCondition == null ? 0 : policyCreateWizardBean.privilegeBean.viewCondition.size})">
+        <ice:panelTab label="Conditions (#{policyWizardBean.privilegeBean.viewCondition == null ? 0 : policyCreateWizardBean.privilegeBean.viewCondition.size})">
             <ui:include src="policy-conditions.xhtml">
                 <ui:param
                     name="policyConditionsBean"
-                    value="#{policyCreateWizardBean}"/>
+                    value="#{policyWizardBean}"/>
                 <ui:param
                     name="policyConditionsHandler"
-                    value="#{policyCreateWizardHandler}"/>
+                    value="#{policyWizardHandler}"/>
             </ui:include>
         </ice:panelTab>
         <ice:panelTab label="User Attributes">

@@ -23,4 +23,25 @@ public class WizardBean implements Serializable {
     public WizardStepBean[] getWizardStepBeans() {
         return wizardStepBeans;
     }
+
+
+    public void gotoStep(int gotoStep) {
+        setAllExpanded(false);
+
+        WizardStepBean next = getWizardStepBeans()[gotoStep];
+        next.setEnabled(true);
+        next.setExpanded(true);
+    }
+
+    public void setAllEnabled(boolean enabled) {
+        for (WizardStepBean wsb: getWizardStepBeans()) {
+            wsb.setEnabled(enabled);
+        }
+    }
+
+    public void setAllExpanded(boolean expaned) {
+        for (WizardStepBean wsb: getWizardStepBeans()) {
+            wsb.setExpanded(expaned);
+        }
+    }
 }

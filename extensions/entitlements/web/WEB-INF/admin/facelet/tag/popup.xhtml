@@ -24,6 +24,7 @@
                 <ice:outputText
                     value="#{title}"/>
                 <ice:commandButton
+                    rendered="#{closeButton}"
                     type="button"
                     image="../image/close.gif"
                     actionListener="#{handler[closeListenerMethod]}"

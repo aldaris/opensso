@@ -294,7 +294,7 @@ div.button img.left {
 }
 
 .popup-infoBody {
-    padding: 5px;
+    padding: 20px;
 }
 
 #menu-separator {
@@ -466,8 +466,17 @@ table.actions tr td {
 }
 
 .summary-strings {
-    padding-left: 10px;
+    padding: 10px;
     overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #000000;
+    margin-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.summary-strings pre span {
+    font-family: monospace;
 }
 
 .policy-manage {
