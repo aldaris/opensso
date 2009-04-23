@@ -10,7 +10,7 @@
 
     <ui:include src="resources-url-add-popup.xhtml"/>
     <ui:include src="resources-url-add-exception-popup.xhtml"/>
-    
+
     <div class="section-outer">
         <o:box>
             <ui:define name="body">
@@ -25,7 +25,13 @@
                                 <o:clink
                                     type="add"
                                     handler="#{urlResourcesHandler}"
-                                    listenerMethod="addListener"/>
+                                    listenerMethod="addListener">
+                                    <ui:define name="attributes">
+                                        <f:attribute
+                                            name="availableResources"
+                                            value="#{policyResourcesBean.availableResources}"/>
+                                    </ui:define>
+                                </o:clink>
                                 <ice:outputText
                                     style="font-weight: bold"
                                     value="|"/>

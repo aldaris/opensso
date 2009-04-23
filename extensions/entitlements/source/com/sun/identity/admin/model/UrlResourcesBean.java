@@ -1,6 +1,9 @@
 package com.sun.identity.admin.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.faces.model.SelectItem;
 
 public class UrlResourcesBean implements Serializable {
     private boolean addPopupVisible = false;
@@ -9,6 +12,7 @@ public class UrlResourcesBean implements Serializable {
     private String searchFilter;
     private boolean addExceptionPopupVisible;
     private UrlResource addExceptionPopupResource;
+    private List<Resource> addPopupAvailableResources;
 
     public boolean isAddPopupVisible() {
         return addPopupVisible;
@@ -56,5 +60,27 @@ public class UrlResourcesBean implements Serializable {
 
     public void setAddExceptionPopupName(String addExceptionPopupName) {
         this.addExceptionPopupName = addExceptionPopupName;
+    }
+
+    public List<Resource> getAddPopupAvailableResources() {
+        return addPopupAvailableResources;
+    }
+
+    public List<SelectItem> getAddPopupAvailableResourceItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        if (addPopupAvailableResources == null) {
+            return items;
+        }
+
+        for (Resource r: addPopupAvailableResources) {
+            SelectItem i = new SelectItem(r, r.getName());
+            items.add(i);
+        }
+
+        return items;
+    }
+
+    public void setAddPopupAvailableResources(List<Resource> addPopupAvailableResources) {
+        this.addPopupAvailableResources = addPopupAvailableResources;
     }
 }

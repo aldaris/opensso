@@ -5,6 +5,7 @@ import com.sun.identity.admin.model.UrlResource;
 import com.sun.identity.admin.model.UrlResourcesBean;
 import com.sun.identity.admin.model.ViewEntitlement;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.FacesEvent;
@@ -46,6 +47,30 @@ public class UrlResourcesHandler implements Serializable {
 
     public void addListener(ActionEvent event) {
         urlResourcesBean.setAddPopupVisible(true);
+        List<Resource> ar = getAvailableResources(event);
+        urlResourcesBean.setAddPopupAvailableResources(ar);
+    }
+
+    public void addPopupUpdateAvailableResourcesListener(ValueChangeEvent event) {
+        List<Resource> ar = getAvailableResources(event);
+        String filter = (String)event.getNewValue();
+
+        List<Resource> filteredResources = filterList(ar, filter);
+        urlResourcesBean.setAddPopupAvailableResources(filteredResources);
+    }
+
+    private List filterList(List l, String f) {
+        if (f == null || f.length() == 0) {
+            return l;
+        }
+        List newList = new ArrayList();
+        for (Object o: l) {
+            if (o.toString().startsWith(f)) {
+                newList.add(o);
+            }
+        }
+
+        return newList;
     }
 
     public void addPopupOkListener(ActionEvent event) {
