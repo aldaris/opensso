@@ -22,15 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.8 2009-04-21 13:08:02 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.9 2009-04-23 17:43:39 dillidorai Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.admin.subject.IdRepoRoleSubject;
+import com.sun.identity.admin.subject.IdRepoUserSubject;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
+import com.sun.identity.entitlement.EntitlementSubjectImpl;
 import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.entitlement.GroupSubject;
 import com.sun.identity.entitlement.IPCondition;
@@ -218,7 +221,7 @@ public class PrivilegeUtils {
             Subject subject = (Subject) nqSubject[1];
             if (subject instanceof com.sun.identity.policy.plugins.AMIdentitySubject) {
                 es = mapAMIdentitySubjectToESubject(nqSubject);
-            } else { // mapt to PolicyESubject
+            } else { //TODO: map to PolicyESubject
             }
             esSet.add(es);
         }
@@ -237,6 +240,7 @@ public class PrivilegeUtils {
         Set<String> values = subject.getValues();
 
         if (values == null || values.isEmpty()) {
+            //no value, return empty UserSubject, should not happen
             EntitlementSubject es = new UserSubject(null, subjectName);
             Boolean exclusive = (Boolean) nqSubject[2];
             return (exclusive) ? new NotSubject(es, subjectName) : es;
@@ -272,13 +276,17 @@ public class PrivilegeUtils {
                 AMIdentity amIdentity = IdUtils.getIdentity(adminToken, value);
                 if (amIdentity != null) {
                     idType = amIdentity.getType();
-                    EntitlementSubject es = null;
+                    EntitlementSubjectImpl es = null;
                     if (IdType.USER.equals(idType)) {
-                        es = new UserSubject(value, subjectName);
+                        es = new IdRepoUserSubject();
+                        es.setID(value);
+                        es.setPSubjectName(subjectName);
                     } else if (IdType.GROUP.equals(idType)) {
                         es = new GroupSubject(value, subjectName);
                     } else if (IdType.ROLE.equals(idType)) {
-                        es = new RoleSubject(value, subjectName);
+                        es = new IdRepoRoleSubject();
+                        es.setID(value);
+                        es.setPSubjectName(subjectName);
                     } else {
                         Debug debug = Debug.getInstance("Entitlement");
                         debug.error(
@@ -527,11 +535,11 @@ public class PrivilegeUtils {
     private static List eSubjectToPSubjects(EntitlementSubject es)
             throws PolicyException, SSOException {
         List subjects = new ArrayList();
-        if (es instanceof UserSubject) {
+        if (es instanceof IdRepoUserSubject) {
             subjects.add(userESubjectToPSubject((UserSubject) es));
         } else if (es instanceof GroupSubject) {
             subjects.add(groupESubjectToPSubject((GroupSubject) es));
-        } else if (es instanceof RoleSubject) {
+        } else if (es instanceof IdRepoRoleSubject) {
             subjects.add(roleESubjectToPSubject((RoleSubject) es));
         } else if (es instanceof PolicyESubject) {
             subjects.add(policyESubjectToPSubject((PolicyESubject) es));
