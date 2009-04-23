@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.14 2009-03-20 21:02:36 qcheng Exp $
+ * $Id: CachedSMSEntry.java,v 1.15 2009-04-23 23:03:28 hengming Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.iplanet.am.util.SystemProperties;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -264,17 +265,22 @@ public class CachedSMSEntry {
                     + "method called: " + dn2Str);
         }
         // Inform the ServiceSchemaManager's of changes to attributes
+        ArrayList tmpServiceObjects = new ArrayList();
         synchronized (serviceObjects) {
-            for (Iterator objs = serviceObjects.iterator(); objs.hasNext();) {
-                try {
-                    Object obj = objs.next();
-                    Method m = obj.getClass().getDeclaredMethod(
-                        method, (Class[]) null);
-                    m.invoke(obj, (Object[]) null);
-                } catch (Throwable e) {
-                    SMSEntry.debug.error("CachedSMSEntry::unable to " +
-                        "deliver notification(" + dn2Str + ")", e);
-                }
+            for(Iterator objs = serviceObjects.iterator(); objs.hasNext();) {
+                tmpServiceObjects.add(objs.next());
+            }
+        }
+
+        for(Iterator objs = tmpServiceObjects.iterator(); objs.hasNext();){
+            try {
+                Object obj = objs.next();
+                Method m = obj.getClass().getDeclaredMethod(
+                    method, (Class[]) null);
+                m.invoke(obj, (Object[]) null);
+            } catch (Throwable e) {
+                SMSEntry.debug.error("CachedSMSEntry::unable to " +
+                    "deliver notification(" + dn2Str + ")", e);
             }
         }
     }
