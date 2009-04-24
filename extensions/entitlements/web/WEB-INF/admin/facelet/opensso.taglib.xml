@@ -50,6 +50,10 @@
         <tag-name>tooltip</tag-name>
         <source>tag/tooltip.xhtml</source>
     </tag>
+    <tag>
+        <tag-name>iframe</tag-name>
+        <source>tag/iframe.xhtml</source>
+    </tag>
     <function>
         <function-name>indexOf</function-name>
         <function-class>com.sun.identity.admin.Functions</function-class>
