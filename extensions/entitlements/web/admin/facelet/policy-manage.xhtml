@@ -146,6 +146,30 @@
                                 </o:tooltip>
                             </ice:column>
                             <ice:column
+                                rendered="#{policyManageBean.policyManageTableBean.actionColumnVisible}">
+                                <f:facet name="header">
+                                    <ice:outputText
+                                        value="Actions"/>
+                                </f:facet>
+                                <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.actionCellEffect}"
+                                    panelTooltip="actionTooltip">
+                                    <ice:outputText
+                                        value="#{privilegeBean.viewEntitlement.booleanActionsBean.actionsToString}"/>
+                                </ice:panelGroup>
+                                <o:tooltip
+                                    tooltipId="actionTooltip"
+                                    title="#{privilegeBean.name}: actions (#{o:size(privilegeBean.viewEntitlement.booleanActionsBean.actions)})">
+                                    <ui:define name="body">
+                                        <pre>
+                                        <ice:outputText
+                                            value="#{privilegeBean.viewEntitlement.booleanActionsBean.actionsToFormattedString}"/>
+                                        </pre>
+                                    </ui:define>
+                                </o:tooltip>
+                            </ice:column>
+                            <ice:column
                                 style="text-align: center">
                                 <f:facet name="header">
                                     <ice:outputText value="Remove"/>

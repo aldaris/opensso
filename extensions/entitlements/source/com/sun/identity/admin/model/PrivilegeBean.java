@@ -54,6 +54,14 @@ public class PrivilegeBean implements Serializable {
         this.removeCellEffect = removeCellEffect;
     }
 
+    public Effect getActionCellEffect() {
+        return actionCellEffect;
+    }
+
+    public void setActionCellEffect(Effect actionCellEffect) {
+        this.actionCellEffect = actionCellEffect;
+    }
+
     public static class NameComparator implements Comparator {
 
         private boolean ascending;
@@ -83,6 +91,7 @@ public class PrivilegeBean implements Serializable {
     private Effect subjectCellEffect = null;
     private Effect conditionCellEffect = null;
     private Effect removeCellEffect = null;
+    private Effect actionCellEffect = null;
 
     public PrivilegeBean() {
         // empty

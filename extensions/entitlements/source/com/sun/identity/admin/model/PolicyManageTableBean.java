@@ -1,6 +1,5 @@
 package com.sun.identity.admin.model;
 
-import com.icesoft.faces.component.ext.HtmlSelectManyCheckbox;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,6 +89,7 @@ public class PolicyManageTableBean implements Serializable {
         columnsVisible.add("resources");
         columnsVisible.add("subject");
         columnsVisible.add("condition");
+        columnsVisible.add("action");
     }
 
     public SortKey getSortKey() {
@@ -115,5 +115,9 @@ public class PolicyManageTableBean implements Serializable {
 
     public boolean isConditionColumnVisible() {
         return getColumnsVisible().contains("condition");
+    }
+
+    public boolean isActionColumnVisible() {
+        return getColumnsVisible().contains("action");
     }
 }
