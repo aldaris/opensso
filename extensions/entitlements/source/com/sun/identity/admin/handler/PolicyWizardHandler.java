@@ -14,7 +14,6 @@ import com.sun.identity.admin.model.ContainerViewSubject;
 import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PolicyManageBean;
 import com.sun.identity.admin.model.SubjectType;
-import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewCondition;
 import com.sun.identity.admin.model.ViewSubject;
 import com.sun.identity.admin.model.WizardBean;
@@ -26,7 +25,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.validator.ValidatorException;
 
 public abstract class PolicyWizardHandler
@@ -35,14 +33,12 @@ public abstract class PolicyWizardHandler
         PolicyConditionsHandler {
 
     private Pattern POLICY_NAME_PATTERN = Pattern.compile("[0-9a-zA-Z]+");
-    private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();
     private PolicyDao policyDao;
     private PolicyManageBean policyManageBean;
 
     @Override
     public void setWizardBean(WizardBean wizardBean) {
         super.setWizardBean(wizardBean);
-        getBooleanActionsHandler().setBooleanActionsBean(getPolicyWizardBean().getBooleanActionsBean());
     }
 
     protected abstract String getFinishAction();
@@ -146,12 +142,6 @@ public abstract class PolicyWizardHandler
         }
     }
 
-    public void applicationChanged(ValueChangeEvent event) {
-        String name = (String) event.getNewValue();
-        ViewApplication va = getPolicyWizardBean().getViewApplicationsBean().getViewApplications().get(name);
-        getPolicyWizardBean().setViewApplication(va);
-    }
-
     private PolicyWizardBean getPolicyWizardBean() {
         return (PolicyWizardBean) getWizardBean();
     }
@@ -226,10 +216,6 @@ public abstract class PolicyWizardHandler
 
             throw new ValidatorException(msg);
         }
-    }
-
-    public BooleanActionsHandler getBooleanActionsHandler() {
-        return booleanActionsHandler;
     }
 
     public void setPolicyDao(PolicyDao policyDao) {

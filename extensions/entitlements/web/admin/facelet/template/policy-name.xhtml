@@ -74,12 +74,12 @@
                                 value="Application Type"/>
                         </ice:panelGroup>
                         <ice:panelGroup>
+                            #{policyWizardBean.viewApplicationNameItems}
                             <ice:selectOneMenu
                                 id="application-type"
-                                partialSubmit="true"
-                                valueChangeListener="#{policyNameHandler.applicationChanged}">
+                                value="#{policyNameBean.viewApplicationName}">
                                 <f:selectItems
-                                    value="#{policyCreateWizardBean.viewApplicationItems}"/>
+                                    value="#{policyNameBean.viewApplicationNameItems}"/>
                             </ice:selectOneMenu>
                         </ice:panelGroup>
                     </ice:panelGrid>

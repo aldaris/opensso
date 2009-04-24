@@ -6,19 +6,20 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
+
     <ice:panelTabSet
         selectedIndex="#{policyWizardBean.advancedTabsetIndex}">
-        <ice:panelTab label="Actions (#{o:size(policyWizardBean.privilegeBean.viewEntitlement.actions)})">
+        <ice:panelTab label="Actions (#{o:size(policyWizardBean.privilegeBean.viewEntitlement.booleanActionsBean.actions)})">
             <ui:include src="policy-actions.xhtml">
                 <ui:param
                     name="booleanActionsBean"
-                    value="#{policyWizardBean.booleanActionsBean}"/>
+                    value="#{policyWizardBean.privilegeBean.viewEntitlement.booleanActionsBean}"/>
                 <ui:param
                     name="booleanActionsHandler"
-                    value="#{policyWizardHandler.booleanActionsHandler}"/>
+                    value="#{policyWizardBean.privilegeBean.viewEntitlement.booleanActionsHandler}"/>
             </ui:include>
         </ice:panelTab>
-        <ice:panelTab label="Conditions (#{policyWizardBean.privilegeBean.viewCondition == null ? 0 : policyCreateWizardBean.privilegeBean.viewCondition.size})">
+        <ice:panelTab label="Conditions (#{policyWizardBean.privilegeBean.viewCondition == null ? 0 : policyWizardBean.privilegeBean.viewCondition.size})">
             <ui:include src="policy-conditions.xhtml">
                 <ui:param
                     name="policyConditionsBean"

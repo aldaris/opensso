@@ -20,16 +20,14 @@ public class PolicyWizardBean
     private Effect dropSubjectContainerEffect;
     private Effect policyNameInputEffect;
     private Effect policyNameMessageEffect;
-    private PolicyCreateSummary policyCreateSummary = new PolicyCreateSummary();
     private int advancedTabsetIndex = 0;
     private List<Resource> availableResources;
-    private BooleanActionsBean booleanActionsBean = new BooleanActionsBean();
     private boolean finishPopupVisible = false;
     private boolean cancelPopupVisible = false;
+    private String viewApplicationName;
 
     public PolicyWizardBean() {
-        policyCreateSummary.setPolicyCreateWizardBean(this);
-        booleanActionsBean.setActions(privilegeBean.getViewEntitlement().getActions());
+        // nothing
     }
 
     @Override
@@ -40,7 +38,7 @@ public class PolicyWizardBean
         cancelPopupVisible = false;
     }
 
-    public List<SelectItem> getViewApplicationItems() {
+    public List<SelectItem> getViewApplicationNameItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
 
         for (ViewApplication va : getViewApplicationsBean().getViewApplications().values()) {
@@ -53,7 +51,7 @@ public class PolicyWizardBean
     public List<SelectItem> getAvailableResourceItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
 
-        for (Resource r: availableResources) {
+        for (Resource r : availableResources) {
             items.add(new SelectItem(r, r.getName()));
         }
 
@@ -74,10 +72,6 @@ public class PolicyWizardBean
 
     public void setDropSubjectContainerEffect(Effect dropSubjectContainerEffect) {
         this.dropSubjectContainerEffect = dropSubjectContainerEffect;
-    }
-
-    public PolicyCreateSummary getPolicyCreateSummary() {
-        return policyCreateSummary;
     }
 
     public int getAdvancedTabsetIndex() {
@@ -120,29 +114,30 @@ public class PolicyWizardBean
         return getPrivilegeBean().getViewEntitlement().getViewApplication();
     }
 
-    public void setViewApplication(ViewApplication viewApplication) {
-        getPrivilegeBean().getViewEntitlement().setViewApplication(viewApplication);
+    public void setViewApplicationName(String viewApplicationName) {
+        if (!viewApplicationName.equals(this.viewApplicationName)) {
+            ViewApplication va = viewApplicationsBean.getViewApplications().get(viewApplicationName);
+            getPrivilegeBean().getViewEntitlement().setViewApplication(va);
 
-        getPrivilegeBean().getViewEntitlement().getActions().addAll(new DeepCloneableArrayList<Action>(viewApplication.getActions()).deepClone());
-        availableResources = new DeepCloneableArrayList<Resource>(viewApplication.getResources()).deepClone();
+            getPrivilegeBean().getViewEntitlement().getBooleanActionsBean().getActions().clear();
+            getPrivilegeBean().getViewEntitlement().getBooleanActionsBean().getActions().addAll(new DeepCloneableArrayList<Action>(va.getActions()).deepClone());
+
+            availableResources = new DeepCloneableArrayList<Resource>(va.getResources()).deepClone();
+        }
     }
 
     public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
         this.viewApplicationsBean = viewApplicationsBean;
-        
-        Map<String,ViewApplication> viewApplicationMap = viewApplicationsBean.getViewApplications();
-        Collection<ViewApplication> viewApplications = (Collection<ViewApplication>)viewApplicationMap.values();
+
+        Map<String, ViewApplication> viewApplicationMap = viewApplicationsBean.getViewApplications();
+        Collection<ViewApplication> viewApplications = (Collection<ViewApplication>) viewApplicationMap.values();
         if (viewApplications != null && viewApplications.size() > 0) {
-            setViewApplication(viewApplications.iterator().next());
+            setViewApplicationName(viewApplications.iterator().next().getName());
         }
     }
 
     public ViewApplicationsBean getViewApplicationsBean() {
         return viewApplicationsBean;
-    }
-
-    public BooleanActionsBean getBooleanActionsBean() {
-        return booleanActionsBean;
     }
 
     public void setPrivilegeBean(PrivilegeBean privilegeBean) {
@@ -163,5 +158,9 @@ public class PolicyWizardBean
 
     public void setCancelPopupVisible(boolean cancelPopupVisible) {
         this.cancelPopupVisible = cancelPopupVisible;
+    }
+
+    public String getViewApplicationName() {
+        return viewApplicationName;
     }
 }

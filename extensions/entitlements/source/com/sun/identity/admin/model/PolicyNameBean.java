@@ -10,5 +10,5 @@ public interface PolicyNameBean {
     public void setPolicyNameInputEffect(Effect e);
     public Effect getPolicyNameMessageEffect();
     public void setPolicyNameMessageEffect(Effect e);
-    public List<SelectItem> getViewApplicationItems();
+    public List<SelectItem> getViewApplicationNameItems();
 }

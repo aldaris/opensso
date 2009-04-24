@@ -61,4 +61,8 @@ public class BooleanAction
 
         return true;
     }
+
+    public String toString() {
+        return getName() + ":" + getValue();
+    }
 }

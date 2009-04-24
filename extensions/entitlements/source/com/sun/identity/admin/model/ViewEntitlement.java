@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.handler.BooleanActionsHandler;
 import com.sun.identity.entitlement.Entitlement;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,14 +16,17 @@ public class ViewEntitlement implements Serializable {
 
     private List<Resource> resources = new ArrayList<Resource>();
     private List<Resource> exceptions = new ArrayList<Resource>();
-    private List<Action> actions = new ArrayList<Action>();
+    private BooleanActionsBean booleanActionsBean = new BooleanActionsBean();
     private ViewApplication viewApplication;
+    private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();;
 
     public ViewEntitlement() {
-        // nothing
+        booleanActionsHandler.setBooleanActionsBean(booleanActionsBean);
     }
 
     public ViewEntitlement(Entitlement e, Map<String, ViewApplication> viewApplications) {
+        this();
+        
         if (e == null) {
             return;
         }
@@ -51,7 +55,13 @@ public class ViewEntitlement implements Serializable {
         // TODO
 
         // actions
-        // TODO
+        for (String actionName: e.getActionValues().keySet()) {
+            Boolean actionValue = e.getActionValues().get(actionName);
+            BooleanAction ba = new BooleanAction();
+            ba.setName(actionName);
+            ba.setAllow(actionValue.booleanValue());
+            booleanActionsBean.getActions().add(ba);
+        }
     }
 
     public List<Resource> getResources() {
@@ -108,15 +118,11 @@ public class ViewEntitlement implements Serializable {
     private Map<String, Boolean> getActionMap() {
         Map<String, Boolean> actionMap = new HashMap<String, Boolean>();
 
-        for (Action a : actions) {
+        for (Action a : booleanActionsBean.getActions()) {
             actionMap.put(a.getName(), (Boolean)a.getValue());
         }
 
         return actionMap;
-    }
-
-    public List<Action> getActions() {
-        return actions;
     }
 
     public ViewApplication getViewApplication() {
@@ -153,5 +159,13 @@ public class ViewEntitlement implements Serializable {
         }
 
         return b.toString();
+    }
+
+    public BooleanActionsBean getBooleanActionsBean() {
+        return booleanActionsBean;
+    }
+
+    public BooleanActionsHandler getBooleanActionsHandler() {
+        return booleanActionsHandler;
     }
 }

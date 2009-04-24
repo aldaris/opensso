@@ -22,4 +22,7 @@ public abstract class Action implements DeepCloneable {
     public int hashCode() {
         return (getName()+getValue()).hashCode();
     }
+
+    @Override
+    public abstract String toString();
 }

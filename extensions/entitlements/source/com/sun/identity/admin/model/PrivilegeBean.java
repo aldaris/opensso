@@ -97,7 +97,7 @@ public class PrivilegeBean implements Serializable {
         name = p.getName();
         description = null; // TODO
 
-        // entitlement (TODO: exceptions and actions)
+        // entitlement (TODO: exceptions)
         viewEntitlement = new ViewEntitlement(p.getEntitlement(), viewApplications);
 
         // subjects
