@@ -286,6 +286,7 @@ div.button img.left {
 
 .popup-info .title {
     font-weight: bold;
+    text-align: center;
 }
 
 .popup-info .close {
@@ -294,7 +295,8 @@ div.button img.left {
 }
 
 .popup-infoBody {
-    padding: 20px;
+    min-width: 200px;
+    text-align: center;
 }
 
 #menu-separator {
