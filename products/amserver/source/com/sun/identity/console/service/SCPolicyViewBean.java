@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCPolicyViewBean.java,v 1.4 2008-12-23 23:17:02 ericow Exp $
+ * $Id: SCPolicyViewBean.java,v 1.5 2009-04-24 01:43:02 ericow Exp $
  *
  */
 
@@ -279,6 +279,7 @@ public class SCPolicyViewBean extends SCServiceProfileViewBean
         try {
             Map values = getAllValues();
             setPageSessionAttribute(PROPERTY_ATTRIBUTE, (HashMap)values);
+            setPageSessionAttribute(SCPolicyViewBean.PAGE_MODIFIED, "1");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());
