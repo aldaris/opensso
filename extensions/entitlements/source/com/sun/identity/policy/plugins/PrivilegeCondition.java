@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeCondition.java,v 1.1 2009-04-23 23:29:19 veiming Exp $
+ * $Id: PrivilegeCondition.java,v 1.2 2009-04-24 17:39:45 veiming Exp $
  */
 
 package com.sun.identity.policy.plugins;
@@ -48,7 +48,8 @@ import java.util.Set;
 
 
 /**
- * TOFIX
+ * A generic condition mapper which map entitlement condition to OpenSSO
+ * condition.
  */
 public class PrivilegeCondition implements Condition {
     private static List propertyNames = new ArrayList(1);
@@ -59,14 +60,33 @@ public class PrivilegeCondition implements Condition {
         propertyNames.add(STATE);
     }
 
+    /**
+     * Returns a list of property names.
+     *
+     * @return a list of property names.
+     */
     public List getPropertyNames() {
         return (new ArrayList(propertyNames));
     }
 
+    /**
+     * Return the syntax for displaying the property value.
+     *
+     * @param property Property name.
+     * @return syntax for displaying the property value.
+     */
     public Syntax getPropertySyntax(String property) {
         return Syntax.ANY;
     }
 
+    /**
+     * Returns the display name of a property.
+     *
+     * @param property Property name.
+     * @param locale Locale.
+     * @return the display name of a property.
+     * @throws PolicyException if display name cannot be provided.
+     */
     public String getDisplayName(String property, Locale locale)
         throws PolicyException {
         ResourceBundle rb = AMResourceBundleCache.getInstance().getResBundle(
@@ -74,10 +94,23 @@ public class PrivilegeCondition implements Condition {
         return com.sun.identity.shared.locale.Locale.getString(rb, property);
     }
 
+    /**
+     * Returns the valid values of a property.
+     *
+     * @param property Property Name.
+     * @return valid values of a property.
+     * @throws PolicyException if valid values cannot be provided.
+     */
     public Set getValidValues(String property) throws PolicyException {
         return Collections.EMPTY_SET;
     }
 
+    /**
+     * Sets the property values to this object.
+     *
+     * @param properties Properties to be set.
+     * @throws PolicyException if property cannot be set.
+     */
     public void setProperties(Map properties) throws PolicyException {
         if ((properties != null) && !properties.isEmpty()) {
             String k = (String)properties.keySet().iterator().next();
@@ -87,6 +120,11 @@ public class PrivilegeCondition implements Condition {
         }
     }
 
+    /**
+     * Returns the property values.
+     *
+     * @return Property values.
+     */
     public Map getProperties() {
         Map map = new HashMap(2);
         if (state != null) {
@@ -98,11 +136,26 @@ public class PrivilegeCondition implements Condition {
         return map;
     }
 
+    /**
+     * Returns condition decision. Returing false.
+     *
+     * @param token Single sign on token of the subject.
+     * @param env Environment map.
+     * @return <code>false</code>.
+     * @throws PolicyException if decision cannot be provided.
+     * @throws com.iplanet.sso.SSOException if single sign on token is invalid
+     *         or has expired.
+     */
     public ConditionDecision getConditionDecision(SSOToken token, Map env)
         throws PolicyException, SSOException {
         return new ConditionDecision(false);
     }
 
+    /**
+     * Returns a clone of this object.
+     * 
+     * @return clone of this object.
+     */
     @Override
     public Object clone() {
         PrivilegeCondition theClone = null;

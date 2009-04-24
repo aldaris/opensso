@@ -22,18 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenProvisioning.java,v 1.1 2009-04-23 23:29:21 veiming Exp $
+ * $Id: OpenProvisioning.java,v 1.2 2009-04-24 17:39:45 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.admin.subject.IdRepoUserSubject;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.entitlement.AttributeLookupCondition;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.UserSubject;
