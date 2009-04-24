@@ -1,10 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<ui:composition
+<span
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core">
-        <iframe
-            width="100%"
-            scrolling="auto"
-            src="#{url}">
-        </iframe>
-</ui:composition>
+
+    <iframe
+        id="ifr"
+        name="ifr"
+        width="100%"
+        height="auto"
+        scrolling="no"
+        onload="resizeFrame(this)"
+        src="../proxy.jsp?url=#{src}">
+    </iframe>
+</span>

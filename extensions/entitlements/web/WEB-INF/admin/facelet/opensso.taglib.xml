@@ -79,4 +79,9 @@
         <function-class>com.sun.identity.admin.Functions</function-class>
         <function-signature>int length(java.lang.String)</function-signature>
     </function>
+    <function>
+        <function-name>scrape</function-name>
+        <function-class>com.sun.identity.admin.Functions</function-class>
+        <function-signature>java.lang.String scrape(java.lang.String)</function-signature>
+    </function>
 </facelet-taglib>

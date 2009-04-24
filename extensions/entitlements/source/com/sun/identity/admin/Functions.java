@@ -1,5 +1,9 @@
 package com.sun.identity.admin;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,5 +32,26 @@ public class Functions {
 
     public static int length(String s) {
         return s.length();
+    }
+
+    public static String scrape(String url) {
+        try {
+            URL u = new URL(url);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                    u.openStream()));
+
+            String inputLine;
+            StringBuffer b = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                b.append(inputLine);
+            }
+
+            in.close();
+            return b.toString();
+        } catch (IOException ioe) {
+            return AdminResourceBundle.getString("scrapeError", url, ioe);
+        }
+
     }
 }

@@ -24,6 +24,16 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
+    <managed-bean>
+        <managed-bean-name>homePageScraperBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ScraperBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>urlKey</property-name>
+            <value>homePageScraperUrl</value>
+        </managed-property>
+    </managed-bean>
+
     <!-- application types -->
     <managed-bean>
         <managed-bean-name>iPlanetAMWebAgentService</managed-bean-name>
