@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrSubject.java,v 1.5 2009-04-10 22:40:01 veiming Exp $
+ * $Id: OrSubject.java,v 1.6 2009-04-24 01:36:26 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,8 +43,8 @@ import org.json.JSONObject;
  * a member of any of the wrapped EntitlementSubject
  */
 public class OrSubject implements EntitlementSubject {
-    private static final long serialVersionUID = -403250971215465050L;
 
+    private static final long serialVersionUID = -403250971215465050L;
     private Set<EntitlementSubject> eSubjects;
     private String pSubjectName;
 
@@ -78,7 +79,35 @@ public class OrSubject implements EntitlementSubject {
      * @param state State of the object encoded as string
      */
     public void setState(String state) {
-        //TODO
+        try {
+            JSONObject jo = new JSONObject(state);
+            JSONArray memberSubjects = jo.optJSONArray("memberESubjects");
+            if(memberSubjects != null) {
+                eSubjects = new HashSet<EntitlementSubject>();
+                int len = memberSubjects.length();
+                for (int i = 0; i < len; i++) {
+                    JSONObject memberSubject = memberSubjects.getJSONObject(i);
+                    String className = memberSubject.getString("className");
+                    Class cl = Class.forName(className);
+                    EntitlementSubject es = (EntitlementSubject)cl.newInstance();
+                    es.setState(memberSubject.getString("state"));
+                    eSubjects.add(es);
+                }
+            }
+            if (jo.optString("pSubjectName").length() > 0) {
+                pSubjectName = jo.optString(pSubjectName);
+            } else {
+                pSubjectName = null;
+            }
+        } catch (JSONException joe) {
+            //TODO: record exception, propogate exception?
+        } catch (InstantiationException inse) {
+            //TODO: record exception, propogate exception?
+        } catch (ClassNotFoundException inse) {
+            //TODO: record exception, propogate exception?
+        } catch (IllegalAccessException inse) {
+            //TODO: record exception, propogate exception?
+        }
     }
 
     /**
@@ -102,16 +131,15 @@ public class OrSubject implements EntitlementSubject {
      * of any error
      */
     public SubjectDecision evaluate(
-        SubjectAttributesManager mgr,
-        Subject subject,
-        String resourceName,
-        Map<String, Set<String>> environment
-    ) throws EntitlementException {
+            SubjectAttributesManager mgr,
+            Subject subject,
+            String resourceName,
+            Map<String, Set<String>> environment) throws EntitlementException {
         Set<EntitlementSubject> subjects = getESubjects();
         if ((subjects != null) && !subjects.isEmpty()) {
             for (EntitlementSubject e : subjects) {
                 SubjectDecision decision =
-                    e.evaluate(mgr, subject, resourceName, environment);
+                        e.evaluate(mgr, subject, resourceName, environment);
                 if (decision.isSatisfied()) {
                     return decision;
                 }
@@ -165,12 +193,17 @@ public class OrSubject implements EntitlementSubject {
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
-        jo.put("pSubjectName", pSubjectName);
+        if (pSubjectName != null) {
+            jo.put("pSubjectName", pSubjectName);
+        }
+        if (eSubjects == null) {
+            return jo;
+        }
         for (EntitlementSubject eSubject : eSubjects) {
             JSONObject subjo = new JSONObject();
             subjo.put("className", eSubject.getClass().getName());
             subjo.put("state", eSubject.getState());
-            jo.append("memberESubject", subjo);
+            jo.append("memberESubjects", subjo);
         }
         return jo;
     }
