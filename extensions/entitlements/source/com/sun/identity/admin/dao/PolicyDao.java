@@ -4,12 +4,15 @@ import com.sun.identity.admin.model.ConditionTypeFactory;
 import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.SubjectFactory;
 import com.sun.identity.admin.model.ViewApplicationsBean;
+import com.sun.identity.entitlement.Application;
+import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -81,6 +84,7 @@ public class PolicyDao implements Serializable {
     }
 
     public void setPrivilege(Privilege p) {
+        validateAction(p.getEntitlement());
         if (privilegeExists(p)) {
             modifyPrivilege(p);
         } else {
@@ -95,6 +99,18 @@ public class PolicyDao implements Serializable {
             pm.addPrivilege(p);
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
+        }
+    }
+
+    private void validateAction(Entitlement e) {
+        Application app = e.getApplication();
+        Set<String> validActionName = app.getActions().keySet();
+
+        Map<String, Boolean> actionValues = e.getActionValues();
+        for (String actionName : actionValues.keySet()) {
+            if (!validActionName.contains(actionName)) {
+                app.addAction(actionName, actionValues.get(actionName));
+            }
         }
     }
 

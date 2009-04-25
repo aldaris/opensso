@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.11 2009-04-23 23:29:20 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.12 2009-04-25 22:41:01 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -54,6 +54,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.policy.ActionSchema;
+import com.sun.identity.policy.InvalidNameException;
 import com.sun.identity.policy.NameNotFoundException;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyConfig;
@@ -1138,20 +1139,24 @@ public class PrivilegeUtils {
         Map av = new HashMap();
         Set<String> keySet = actionValues.keySet();
         for (String action : keySet) {
-            ActionSchema as = st.getActionSchema(action);
-            String trueValue = as.getTrueValue();
-            String falseValue = as.getFalseValue();
-            Boolean value = actionValues.get(action);
-            if (value.equals(Boolean.TRUE)) {
+            try {
+                ActionSchema as = st.getActionSchema(action);
+                String trueValue = as.getTrueValue();
+                String falseValue = as.getFalseValue();
+                Boolean value = actionValues.get(action);
                 Set values = new HashSet();
-                values.add(trueValue);
+                if (value.equals(Boolean.TRUE)) {
+                    values.add(trueValue);
+                } else {
+                    values.add(falseValue);
+                }
                 av.put(action, values);
-            } else {
+            } catch (InvalidNameException e) {
+                Boolean value = actionValues.get(action);
                 Set values = new HashSet();
-                values.add(falseValue);
+                values.add(value.toString());
                 av.put(action, values);
             }
-
         }
         return av;
     }
@@ -1166,13 +1171,24 @@ public class PrivilegeUtils {
         Set keySet = (Set) actionValues.keySet();
         for (Object actionObj : keySet) {
             String action = (String) actionObj;
-            ActionSchema as = st.getActionSchema(action);
-            String trueValue = as.getTrueValue();
             Set values = (Set) actionValues.get(action);
-            if ((values != null) && (values.contains(trueValue))) {
-                av.put(action, Boolean.TRUE);
-            } else {
+            
+            if ((values == null) || values.isEmpty()) {
                 av.put(action, Boolean.FALSE);
+            } else {
+                try {
+                    ActionSchema as = st.getActionSchema(action);
+                    String trueValue = as.getTrueValue();
+
+                    if (values.contains(trueValue)) {
+                        av.put(action, Boolean.TRUE);
+                    } else {
+                        av.put(action, Boolean.FALSE);
+                    }
+                } catch (InvalidNameException e) {
+                    av.put(action, Boolean.parseBoolean(
+                        (String)values.iterator().next()));
+                }
             }
 
         }

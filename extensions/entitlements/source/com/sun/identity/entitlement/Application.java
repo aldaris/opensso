@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.6 2009-04-09 13:15:01 veiming Exp $
+ * $Id: Application.java,v 1.7 2009-04-25 22:40:30 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
@@ -227,4 +228,14 @@ public class Application {
             applicationType.getResourceComparator() : resourceComparator;
     }
 
+    /**
+     * Adds a new action with its default value.
+     *
+     * @param name Action name.
+     * @param val Default value.
+     */
+    public void addAction(String name, boolean val) {
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        policyConfig.addApplicationAction("/" , this.name, name, val); //TOFIX realm
+    }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyConfig.java,v 1.3 2009-04-09 13:15:02 veiming Exp $
+ * $Id: IPolicyConfig.java,v 1.4 2009-04-25 22:40:30 veiming Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
@@ -47,4 +47,18 @@ public interface IPolicyConfig {
     Set<String> getAttributeValues(String attributeName);
     Set<String> getSubjectAttributeNames(String realm);
     void addSubjectAttributeNames(String realm, Set<String> names);
+
+    /**
+     * Adds a new action.
+     *
+     * @param realm Realm name.
+     * @param appName Application name,
+     * @param name Action name.
+     * @param defVal Default value.
+     */
+    void addApplicationAction(
+        String realm,
+        String appName,
+        String name,
+        Boolean defVal);
 }

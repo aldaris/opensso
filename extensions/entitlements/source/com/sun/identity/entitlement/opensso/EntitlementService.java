@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.3 2009-04-09 13:15:03 veiming Exp $
+ * $Id: EntitlementService.java,v 1.4 2009-04-25 22:41:01 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -244,5 +244,69 @@ public class EntitlementService implements IPolicyConfig {
         } catch (SSOException ex) {
             //TOFIX
         }
+    }
+
+    /**
+     * Adds a new action.
+     *
+     * @param realm Realm name.
+     * @param appName application name.
+     * @param name Action name.
+     * @param defVal Default value.
+     */
+    public void addApplicationAction(
+        String realm,
+        String appName,
+        String name,
+        Boolean defVal) {
+        try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
+                adminToken);
+            ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
+            if (orgConfig != null) {
+                ServiceConfig conf = orgConfig.getSubConfig(
+                    CONFIG_APPLICATIONS);
+                if (conf != null) {
+                    ServiceConfig applConf = conf.getSubConfig(appName);
+                    if (applConf != null) {
+                        Map<String, Set<String>> data =
+                            applConf.getAttributes();
+                        Map<String, Set<String>> result =
+                            addAction(data, name, defVal);
+                        if (result != null) {
+                            applConf.setAttributes(result);
+                        }
+                    }
+                }
+            }
+        } catch (SMSException ex) {
+            //TOFIX
+        } catch (SSOException ex) {
+            //TOFIX
+        }
+    }
+
+    private Map<String, Set<String>> addAction(
+        Map<String, Set<String>> data,
+        String name,
+        Boolean defVal
+    ) {
+        Map<String, Set<String>> results = null;
+
+        Map<String, Boolean> actionMap = getActions(data);
+        if (!actionMap.keySet().contains(name)) {
+            Set<String> actions = data.get(CONFIG_ACTIONS);
+            Set<String> cloned = new HashSet<String>();
+            cloned.addAll(actions);
+            cloned.add(name + "=" + defVal.toString());
+            results = new HashMap<String, Set<String>>();
+            results.put(CONFIG_ACTIONS, cloned);
+        } else {
+            //TOFIX
+        }
+
+        return results;
     }
 }
