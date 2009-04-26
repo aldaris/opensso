@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenProvisioning.java,v 1.2 2009-04-24 17:39:45 veiming Exp $
+ * $Id: OpenProvisioning.java,v 1.3 2009-04-26 07:20:44 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -33,6 +33,7 @@ import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.entitlement.AttributeLookupCondition;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.Evaluator;
 import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
@@ -40,8 +41,6 @@ import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.entitlement.opensso.PolicyPrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
-import com.sun.identity.entitlement.PolicyEvaluatorFactory;
-import com.sun.identity.entitlement.interfaces.IPolicyEvaluator;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
@@ -67,7 +66,7 @@ import org.testng.annotations.Test;
 public class OpenProvisioning {
     private static final String APPLICATION ="openProvisioning";
     private static final String PRIVILEGE_NAME = "openProvisioningTestPrivilege";
-    private static final String RESOURCE = "/OP/cropLdap/person/";
+    private static final String RESOURCE = "/OP/cropLdap/person";
     private static final String RESOURCE1 = "/OP/cropLdap/person/johndoe";
 
     private AMIdentity branchMgr;
@@ -161,10 +160,8 @@ public class OpenProvisioning {
 
         Map<String, Set<String>> envParameters =
             new HashMap<String, Set<String>>();
-        IPolicyEvaluator eval =
-            PolicyEvaluatorFactory.getInstance().getEvaluator();
-        List entitlements = eval.evaluate(adminSubject,
-            userSubject, APPLICATION, RESOURCE, envParameters,
+        Evaluator eval = new Evaluator(adminSubject, APPLICATION);
+        List entitlements = eval.evaluate(userSubject, RESOURCE, envParameters,
             false);
         Entitlement e1 = (Entitlement)entitlements.iterator().next();
         if (!e1.getActionValues().isEmpty()) {
@@ -185,9 +182,8 @@ public class OpenProvisioning {
         envParameters.put("/OP/cropLdap/person/johndoe.postaladdress",
             setLocation);
 
-        eval = PolicyEvaluatorFactory.getInstance().getEvaluator();
-        entitlements = eval.evaluate(adminSubject,
-            userSubject, APPLICATION, RESOURCE1, envParameters,
+        eval = new Evaluator(adminSubject, APPLICATION);
+        entitlements = eval.evaluate(userSubject, RESOURCE1, envParameters,
             false);
         e1 = (Entitlement)entitlements.iterator().next();
         if (e1.getActionValues().isEmpty()) {

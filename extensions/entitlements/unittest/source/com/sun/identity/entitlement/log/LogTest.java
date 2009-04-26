@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogTest.java,v 1.1 2009-03-15 07:22:22 veiming Exp $
+ * $Id: LogTest.java,v 1.2 2009-04-26 07:20:44 veiming Exp $
  */
 
 package com.sun.identity.entitlement.log;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
-import com.sun.identity.log.ILogRecord;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
 import java.security.Principal;

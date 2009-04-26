@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementSubjectImpl.java,v 1.1 2009-04-21 13:08:02 veiming Exp $
+ * $Id: EntitlementSubjectImpl.java,v 1.2 2009-04-26 07:20:32 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -76,8 +76,9 @@ public abstract class EntitlementSubjectImpl implements EntitlementSubject {
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
-            uuid = jo.optString("uuid");
-            pSubjectName = jo.optString("pSubjectName");
+            uuid = jo.has("uuid") ? jo.optString("uuid") : null;
+            pSubjectName = jo.has("pSubjectName") ?
+                jo.optString("pSubjectName") : null;
         } catch (JSONException joe) {
             //TOFIX
         }

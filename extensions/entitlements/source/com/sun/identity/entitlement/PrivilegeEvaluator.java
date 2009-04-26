@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.9 2009-04-14 00:24:18 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.10 2009-04-26 07:20:36 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.interfaces.IPolicyEvaluator;
 import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
 import java.util.Iterator;
@@ -40,7 +39,7 @@ import javax.security.auth.Subject;
  * This class evaluates entitlements of a subject for a given resource
  * and a environment paramaters.
  */
-class PrivilegeEvaluator implements IPolicyEvaluator {
+class PrivilegeEvaluator {
     private Subject adminSubject;
     private Subject subject;
     private String applicationName;
@@ -172,8 +171,7 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
                     try {
                         wait();
                     } catch (InterruptedException ex) {
-                        PolicyEvaluatorFactory.debug.error(
-                            "PrivilegeEvaluator.evaluate", ex);
+                        Evaluator.debug.error("PrivilegeEvaluator.evaluate", ex);
                     }
                 }
             }

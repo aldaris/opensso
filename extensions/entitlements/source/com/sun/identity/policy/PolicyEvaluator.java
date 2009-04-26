@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.6 2009-04-10 22:40:01 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.7 2009-04-26 07:20:41 veiming Exp $
  *
  */
 
@@ -49,8 +49,7 @@ import com.iplanet.sso.SSOTokenListener;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.PolicyEvaluatorFactory;
-import com.sun.identity.entitlement.interfaces.IPolicyEvaluator;
+import com.sun.identity.entitlement.Evaluator;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.policy.interfaces.PolicyListener;
 import com.sun.identity.security.AdminTokenAction;
@@ -467,13 +466,12 @@ public class PolicyEvaluator {
             AdminTokenAction.getInstance());
 
         try {
-            IPolicyEvaluator eval =
-                PolicyEvaluatorFactory.getInstance().getEvaluator();
             Entitlement entitlement = new Entitlement(serviceTypeName,
                 resourceName, actions);
+            Evaluator eval = new Evaluator(
+                SubjectUtils.createSubject(adminSSOToken), serviceTypeName);
             return eval.hasEntitlement(
-                SubjectUtils.createSubject(adminSSOToken),
-                SubjectUtils.createSubject(token), serviceTypeName, entitlement,
+                SubjectUtils.createSubject(token), entitlement,
                 envParameters);
         } catch (EntitlementException e) {
             throw new PolicyException(e);
@@ -1184,12 +1182,11 @@ public class PolicyEvaluator {
 
         try {
             Subject userSubject = SubjectUtils.createSubject(token);
-            IPolicyEvaluator eval =
-                PolicyEvaluatorFactory.getInstance().getEvaluator();
+            Evaluator eval = new Evaluator(
+                SubjectUtils.createSubject(adminSSOToken), serviceTypeName);
 
-            List entitlements = eval.evaluate(adminSubject,
-                userSubject, serviceTypeName, resourceName, envParameters,
-                subTreeSearch);
+            List entitlements = eval.evaluate(userSubject, resourceName, 
+                envParameters, subTreeSearch);
             resultsSet = new HashSet();
 
             if (!entitlements.isEmpty()) {

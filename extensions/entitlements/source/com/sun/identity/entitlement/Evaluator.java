@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.12 2009-04-14 00:24:18 veiming Exp $
+ * $Id: Evaluator.java,v 1.13 2009-04-26 07:20:33 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.interfaces.IPolicyEvaluator;
+import com.sun.identity.entitlement.util.DebugFactory;
 import com.sun.identity.entitlement.util.NetworkMonitor;
-import java.util.Collections;
+import com.sun.identity.shared.debug.IDebug;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +49,8 @@ public class Evaluator {
         NetworkMonitor.getInstance("evalSingleLevelMonitor");
     private static final NetworkMonitor EVAL_SUB_TREE_MONITOR =
         NetworkMonitor.getInstance("evalSubTreeMonitor");
-
+    public static IDebug debug = DebugFactory.getDebug(
+        "entitlementEvaluation");
     
     /**
      * Constructor to create an evaluator of default service type.
@@ -86,24 +87,6 @@ public class Evaluator {
         throws EntitlementException {
         adminSubject = subject;
     }
-    /**
-     * Returns <code>true</code> if the subject is granted to an
-     * entitlement.
-     *
-     * @param subject Subject who is under evaluation.
-     * @param e Entitlement object which describes the resource name and 
-     *          actions.
-     * @return <code>true</code> if the subject is granted to an
-     *         entitlement.
-     * @throws EntitlementException if the result cannot be determined.
-     */
-    public boolean hasEntitlement(Subject subject, Entitlement e) 
-        throws EntitlementException {
-        long start = HAS_ENTITLEMENT_MONITOR.start();
-        boolean result = evaluate(subject, e, Collections.EMPTY_MAP);
-        HAS_ENTITLEMENT_MONITOR.end(start);
-        return result;
-    }
     
     /**
      * Returns <code>true</code> if the subject is granted to an
@@ -117,15 +100,17 @@ public class Evaluator {
      *         entitlement.
      * @throws EntitlementException if the result cannot be determined.
      */
-    public boolean evaluate(
+    public boolean hasEntitlement(
         Subject subject, 
         Entitlement e,
         Map<String, Set<String>> envParameters
     ) throws EntitlementException {
-        IPolicyEvaluator evaluator = 
-            PolicyEvaluatorFactory.getInstance().getEvaluator();
-        return evaluator.hasEntitlement(
+        long start = HAS_ENTITLEMENT_MONITOR.start();
+        PrivilegeEvaluator evaluator = new PrivilegeEvaluator();
+        boolean result = evaluator.hasEntitlement(
             adminSubject, subject, applicationName, e, envParameters);
+        HAS_ENTITLEMENT_MONITOR.end(start);
+        return result;
     }
 
     /**
@@ -149,11 +134,9 @@ public class Evaluator {
     ) throws EntitlementException {
         long start = (recursive) ? EVAL_SUB_TREE_MONITOR.start() :
             EVAL_SINGLE_LEVEL_MONITOR.start();
-        IPolicyEvaluator evaluator = 
-            PolicyEvaluatorFactory.getInstance().getEvaluator();
+        PrivilegeEvaluator evaluator = new PrivilegeEvaluator();
         List<Entitlement> results = evaluator.evaluate(adminSubject, subject,
             applicationName, resourceName, environment, recursive);
-
         if (recursive) {
             EVAL_SUB_TREE_MONITOR.end(start);
         } else {
@@ -165,7 +148,5 @@ public class Evaluator {
     public String getApplicationName() {
         return applicationName;
     }
-
-    
 }
 

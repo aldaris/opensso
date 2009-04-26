@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestEvaluator.java,v 1.3 2009-04-10 23:36:06 veiming Exp $
+ * $Id: TestEvaluator.java,v 1.4 2009-04-26 07:20:43 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -118,7 +118,7 @@ public class TestEvaluator {
             SubjectUtils.createSubject(adminToken),
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
         return evaluator.hasEntitlement(subject,
-            new Entitlement(res, actions));
+            new Entitlement(res, actions), Collections.EMPTY_MAP);
     }
 
     

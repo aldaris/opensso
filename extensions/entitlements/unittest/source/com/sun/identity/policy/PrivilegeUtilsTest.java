@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.5 2009-04-07 19:00:49 veiming Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.6 2009-04-26 07:20:47 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -31,13 +31,14 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.AndCondition;
 import com.sun.identity.entitlement.DNSNameCondition;
-import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.IPCondition;
+import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
@@ -71,8 +72,10 @@ public class PrivilegeUtilsTest {
         entitlement.setName("ent1");
         String user11 = "id=user11,ou=user," + BASE_DN;
         String user12 = "id=user12,ou=user," + BASE_DN;
-        EntitlementSubject us1 = new UserSubject(user11);
-        EntitlementSubject us2 = new UserSubject(user12);
+        UserSubject us1 = new IdRepoUserSubject();
+        us1.setID(user11);
+        UserSubject us2 = new IdRepoUserSubject();
+        us2.setID(user12);
         Set<EntitlementSubject> subjects = new HashSet<EntitlementSubject>();
         subjects.add(us1);
         subjects.add(us2);
@@ -90,7 +93,7 @@ public class PrivilegeUtilsTest {
         Privilege privilege = new OpenSSOPrivilege(
                 "TestPrivilege",
                 entitlement,
-                us1, //orSubject
+                os, //orSubject
                 andCondition, //entitlementCondition
                 null); //attributes
 

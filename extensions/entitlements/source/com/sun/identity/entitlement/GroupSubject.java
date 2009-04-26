@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.8 2009-04-21 13:08:02 veiming Exp $
+ * $Id: GroupSubject.java,v 1.9 2009-04-26 07:20:33 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -106,9 +106,9 @@ public class GroupSubject extends EntitlementSubjectImpl {
                 }
             }
         } catch (IdRepoException e) {
-            PolicyEvaluatorFactory.debug.error("GroupSubject.evaluate", e);
+            Evaluator.debug.error("GroupSubject.evaluate", e);
         } catch (SSOException e) {
-            PolicyEvaluatorFactory.debug.error("GroupSubject.evaluate", e);
+            Evaluator.debug.error("GroupSubject.evaluate", e);
         }
 
         return new SubjectDecision(satified, Collections.EMPTY_MAP);
