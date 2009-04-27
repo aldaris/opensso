@@ -59,12 +59,12 @@ public class IdRepoUserSubjectDao extends IdRepoSubjectDao implements Serializab
     }
 
     @Override
-    protected IdSearchResults getIdSearchResults(String pattern) {
+    protected IdSearchResults getIdSearchResults(IdSearchControl idsc, String pattern) {
         if (!pattern.equals("*")) {
             pattern = "*";
         }
 
-        return super.getIdSearchResults(pattern);
+        return super.getIdSearchResults(idsc, pattern);
     }
 
     @Override

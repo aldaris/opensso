@@ -13,6 +13,7 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
     private Effect expandEffect;
     private Effect panelEffect;
     private boolean visible = false;
+    private String filter;
 
     public void setSubjectDao(SubjectDao subjectDao) {
         this.subjectDao = subjectDao;
@@ -62,5 +63,18 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
 
     public SubjectType getSubjectType() {
         return subjectType;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+
+        if (filter == null || filter.length() == 0) {
+            filter = "*";
+        }
+        viewSubjects = subjectDao.getViewSubjects(filter);
     }
 }

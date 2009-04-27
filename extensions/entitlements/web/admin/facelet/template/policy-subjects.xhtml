@@ -52,6 +52,14 @@
                                         </ice:panelGroup>
                                     </ui:define>
                                     <ui:define name="panel-body">
+                                        <ice:panelGrid
+                                            columns="2">
+                                            <ice:graphicImage
+                                                value="../image/search.png"/>
+                                            <ice:inputText
+                                                value="#{subjectContainer.filter}"
+                                                onkeyup="typeSubmit(this);"/>
+                                        </ice:panelGrid>
                                         <ice:panelSeries
                                             value="#{subjectContainer.viewSubjects}"
                                             var="viewSubject">

@@ -87,9 +87,8 @@ public abstract class IdRepoSubjectDao extends SubjectDao implements Serializabl
         return idsc;
     }
 
-    protected IdSearchResults getIdSearchResults(String pattern) {
+    protected IdSearchResults getIdSearchResults(IdSearchControl idsc, String pattern) {
         IdType idType = getIdType();
-        IdSearchControl idsc = getIdSearchControl(pattern);
         String realmName = "/";
 
         try {
@@ -111,7 +110,8 @@ public abstract class IdRepoSubjectDao extends SubjectDao implements Serializabl
             realmName = "/";
         }
 
-        IdSearchResults results = getIdSearchResults(pattern);
+        IdSearchControl idsc = getIdSearchControl(pattern);
+        IdSearchResults results = getIdSearchResults(idsc, pattern);
 
         for (Object o : results.getSearchResults()) {
             AMIdentity ami = (AMIdentity) o;
