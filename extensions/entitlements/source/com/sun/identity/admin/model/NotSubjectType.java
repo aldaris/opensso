@@ -5,7 +5,7 @@ import com.sun.identity.entitlement.NotSubject;
 import java.io.Serializable;
 
 public class NotSubjectType 
-    extends ExpressionSubjectType
+    extends SubjectType
     implements Serializable {
 
     public ViewSubject newViewSubject() {

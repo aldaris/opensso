@@ -5,7 +5,7 @@ import com.sun.identity.entitlement.OrSubject;
 import java.io.Serializable;
 
 public class OrSubjectType 
-    extends ExpressionSubjectType
+    extends SubjectType
     implements Serializable {
 
     public ViewSubject newViewSubject() {
