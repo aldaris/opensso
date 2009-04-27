@@ -56,6 +56,6 @@ public class DateRangeCondition
 
     @Override
     public String toString() {
-        return super.getName() + ":{" + getEDateString(startDate) + " > " + getEDateString(endDate) + "}";
+        return getTitle() + ":{" + getEDateString(startDate) + " > " + getEDateString(endDate) + "}";
     }
 }

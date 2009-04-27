@@ -1,11 +1,13 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.TimeCondition;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 import javax.faces.model.SelectItem;
 
@@ -62,4 +64,14 @@ public class TimezoneCondition
         this.timezoneId = timezoneId;
     }
 
+    @Override
+    public String toString() {
+        Locale l = new Resources().getLocale();
+        String s = getTitle();
+        if (timezoneId != null) {
+            s += ":{" + TimeZone.getTimeZone(timezoneId).getDisplayName(l) + "}";
+        }
+
+        return s;
+    }
 }

@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.TimeCondition;
@@ -35,8 +36,9 @@ public class DaysOfWeekCondition
         List<SelectItem> items = new ArrayList<SelectItem>();
 
         for (String day: DAYS) {
-            // TODO, localize day name
-            SelectItem si = new SelectItem(day);
+            Resources r = new Resources();
+            String label = r.getString(day);
+            SelectItem si = new SelectItem(day, label);
             items.add(si);
         }
 
@@ -54,11 +56,13 @@ public class DaysOfWeekCondition
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer();
-        b.append(super.toString());
+        b.append(getTitle());
         b.append(":{");
 
         for (int i = 0; i < selectedDays.length; i++) {
-            b.append(selectedDays[i]);
+            Resources r = new Resources();
+            String label = r.getString(selectedDays[i]);
+            b.append(label);
             if (i < selectedDays.length-1) {
                 b.append(",");
             }

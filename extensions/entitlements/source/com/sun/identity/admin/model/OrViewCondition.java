@@ -26,9 +26,4 @@ public class OrViewCondition
 
         return oc;
     }
-
-    protected String getOperatorString() {
-        return "OR";
-    }
-
 }

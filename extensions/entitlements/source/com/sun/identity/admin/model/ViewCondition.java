@@ -13,7 +13,6 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
     private Effect expandEffect;
     private Effect panelEffect;
     private boolean visible = false;
-    private int titleWidth = 40;
 
     public ViewCondition() {
         panelEffect = new Appear();
@@ -74,7 +73,7 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
     public abstract EntitlementCondition getEntitlementCondition();
 
     public String getTitle() {
-        return getName();
+        return conditionType.getTitle();
     }
 
     public String getToFormattedString() {
@@ -114,9 +113,5 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
 
     public List<TreeNode> getAsList() {
         return asList();
-    }
-
-    public int getTitleWidth() {
-        return titleWidth;
     }
 }

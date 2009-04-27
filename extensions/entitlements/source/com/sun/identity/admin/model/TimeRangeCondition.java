@@ -47,7 +47,7 @@ public class TimeRangeCondition
         String startETime = getETimeString(startHour, startMinute, startPeriod);
         String endETime = getETimeString(endHour, endMinute, endPeriod);
 
-        return super.toString() + ":{" + startETime + ">" + endETime + "}";
+        return getTitle() + ":{" + startETime + ">" + endETime + "}";
     }
 
     public int getStartHour() {

@@ -27,6 +27,6 @@ public class DnsNameViewCondition
 
     @Override
     public String toString() {
-        return super.toString() + ":{" + domainNameMask + "}";
+        return getTitle() + ":{" + domainNameMask + "}";
     }
 }

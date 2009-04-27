@@ -494,8 +494,8 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
-        <managed-bean-name>ipConditionType</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.IPConditionType</managed-bean-class>
+        <managed-bean-name>ipRangeConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.IpRangeConditionType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>expression</property-name>
@@ -503,11 +503,11 @@
         </managed-property>
         <managed-property>
             <property-name>name</property-name>
-            <value>ip</value>
+            <value>ipRange</value>
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>/admin/facelet/template/condition-ip.xhtml</value>
+            <value>/admin/facelet/template/condition-ip-range.xhtml</value>
         </managed-property>
         <managed-property>
             <property-name>conditionIconUri</property-name>
@@ -695,8 +695,8 @@
             </map-entry>
             -->
             <map-entry>
-                <key>com.sun.identity.admin.model.IPViewCondition</key>
-                <value>#{ipConditionType}</value>
+                <key>com.sun.identity.admin.model.IpRangeViewCondition</key>
+                <value>#{ipRangeConditionType}</value>
             </map-entry>
             <map-entry>
                 <key>com.sun.identity.admin.model.DnsNameViewCondition</key>
@@ -759,7 +759,7 @@
             </map-entry>
             <map-entry>
                 <key>com.sun.identity.entitlement.IPCondition</key>
-                <value>#{ipConditionType}</value>
+                <value>#{ipRangeConditionType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>

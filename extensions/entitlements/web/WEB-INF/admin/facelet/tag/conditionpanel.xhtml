@@ -28,12 +28,12 @@
                                 value="#{viewCondition.conditionType.conditionIconUri}"/>
                             <ice:outputText
                                 style="font-weight: bold"
-                                value="#{o:truncate(viewCondition,viewCondition.titleWidth)}"/>
+                                value="#{viewCondition.title}"/>
                         </ice:panelGrid>
                     </ice:panelGroup>
                     <o:tooltip
                         tooltipId="titleTooltip"
-                        title="#{viewCondition.name} (#{viewCondition.size})">
+                        title="#{viewCondition.title}">
                         <ui:define name="body">
                             <pre>
                             <ice:outputText

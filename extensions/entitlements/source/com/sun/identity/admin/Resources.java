@@ -19,6 +19,10 @@ public class Resources {
         this.locale = locale;
     }
 
+    public Locale getLocale() {
+        return locale;
+    }
+
     public Resources(ServletRequest request) {
         this.locale = getLocaleFromRequest(request);
     }

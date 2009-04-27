@@ -21,9 +21,4 @@ public class NotViewCondition
         assert(getViewConditionsSize() < 1);
         super.addViewCondition(vc);
     }
-
-
-    protected String getOperatorString() {
-        return "NOT";
-    }
 }

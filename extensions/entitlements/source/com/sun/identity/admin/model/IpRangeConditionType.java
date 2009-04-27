@@ -4,11 +4,11 @@ import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.IPCondition;
 import java.io.Serializable;
 
-public class IPConditionType 
+public class IpRangeConditionType
     extends ConditionType
     implements Serializable {
     public ViewCondition newViewCondition() {
-        ViewCondition vc = new IPViewCondition();
+        ViewCondition vc = new IpRangeViewCondition();
         vc.setConditionType(this);
 
         return vc;
@@ -18,7 +18,7 @@ public class IPConditionType
         assert(ec instanceof IPCondition);
         IPCondition ipc = (IPCondition)ec;
 
-        IPViewCondition ipvc = (IPViewCondition)newViewCondition();
+        IpRangeViewCondition ipvc = (IpRangeViewCondition)newViewCondition();
         ipvc.setStartIp(parseIp(ipc.getStartIp()));
         ipvc.setEndIp(parseIp(ipc.getEndIp()));
 

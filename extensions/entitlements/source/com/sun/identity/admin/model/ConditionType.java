@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import com.sun.identity.entitlement.EntitlementCondition;
 
 public abstract class ConditionType {
@@ -41,5 +42,14 @@ public abstract class ConditionType {
 
     public void setExpression(boolean expression) {
         this.expression = expression;
+    }
+
+    public String getTitle() {
+        Resources r = new Resources();
+        String title = r.getString("conditionType."+getName());
+        if (title == null) {
+            title = getName();
+        }
+        return title;
     }
 }

@@ -30,11 +30,9 @@ public abstract class ContainerViewCondition extends ViewCondition implements Co
 
     @Override
     public String getTitle() {
-        return getName() + " (" + getViewConditionsSize() + ")";
+        return super.getTitle() + " (" + getViewConditionsSize() + ")";
 
     }
-
-    protected abstract String getOperatorString();
 
     @Override
     public String getToString() {
@@ -52,7 +50,7 @@ public abstract class ContainerViewCondition extends ViewCondition implements Co
         String indent = getIndentString(i);
 
         b.append(indent);
-        b.append(getOperatorString());
+        b.append(getTitle());
         b.append(" (\n");
 
         if (getViewConditions().size() > 0) {
@@ -73,7 +71,7 @@ public abstract class ContainerViewCondition extends ViewCondition implements Co
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer();
-        b.append(getOperatorString());
+        b.append(getTitle());
         b.append(" (");
 
         if (getViewConditions().size() > 0) {

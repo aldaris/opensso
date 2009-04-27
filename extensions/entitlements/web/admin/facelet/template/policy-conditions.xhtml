@@ -60,9 +60,11 @@
                                             dragValue="#{conditionType}"
                                             dragOptions="dragGhost">
                                             <ice:panelGrid columns="2">
-                                                <ice:graphicImage value="#{conditionType.conditionIconUri}"/>
+                                                <ice:graphicImage
+                                                    value="#{conditionType.conditionIconUri}"/>
                                                 <ice:panelGroup>
-                                                    <ice:outputText value="#{conditionType.name}"/>
+                                                    <ice:outputText 
+                                                        value="#{conditionType.title}"/>
                                                 </ice:panelGroup>
                                             </ice:panelGrid>
                                         </ice:panelGroup>
@@ -97,7 +99,7 @@
                                             <ice:panelGrid columns="2">
                                                 <ice:graphicImage value="#{conditionType.conditionIconUri}"/>
                                                 <ice:panelGroup>
-                                                    <ice:outputText value="#{conditionType.name}"/>
+                                                    <ice:outputText value="#{conditionType.title}"/>
                                                 </ice:panelGroup>
                                             </ice:panelGrid>
                                         </ice:panelGroup>

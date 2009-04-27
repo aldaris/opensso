@@ -26,8 +26,4 @@ public class AndViewCondition
 
         return ac;
     }
-
-    protected String getOperatorString() {
-        return "AND";
-    }
 }

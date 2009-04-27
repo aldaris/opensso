@@ -4,7 +4,7 @@ import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.IPCondition;
 import java.io.Serializable;
 
-public class IPViewCondition
+public class IpRangeViewCondition
     extends ViewCondition
     implements Serializable {
 
@@ -43,6 +43,6 @@ public class IPViewCondition
 
     @Override
     public String toString() {
-        return super.toString() + ":{" + getIpString(startIp) + ">" + getIpString(endIp) + "}";
+        return getTitle() + ":{" + getIpString(startIp) + ">" + getIpString(endIp) + "}";
     }
 }
