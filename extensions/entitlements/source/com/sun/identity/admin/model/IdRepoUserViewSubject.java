@@ -20,4 +20,12 @@ public class IdRepoUserViewSubject extends ViewSubject {
     public void setCn(String cn) {
         this.cn = cn;
     }
+
+    @Override
+    public String getTitle() {
+        if (cn != null) {
+            return cn;
+        }
+        return super.getTitle();
+    }
 }

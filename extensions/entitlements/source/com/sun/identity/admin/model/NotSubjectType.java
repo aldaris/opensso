@@ -21,6 +21,7 @@ public class NotSubjectType
         EntitlementSubject nottedSubject = ns.getESubject();
 
         NotViewSubject nvs = (NotViewSubject)newViewSubject();
+
         ViewSubject nottedViewSubject = stf.getViewSubject(nottedSubject);
         nvs.addViewSubject(nottedViewSubject);
 

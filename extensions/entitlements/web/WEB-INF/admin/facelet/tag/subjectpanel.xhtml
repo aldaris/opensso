@@ -6,31 +6,47 @@
     xmlns:o="http://opensso.dev.java.net"
     xmlns:f="http://java.sun.com/jsf/core">
 
-    <ice:panelGroup
-        styleClass="condition-panel"
-        rendered="#{viewSubject != null}">
-        <o:multipanel
-            collapsible="true"
-            removeable="#{true}"
-            visible="#{viewSubject.visible}"
-            expanded="#{viewSubject.expanded}"
-            bean="#{viewSubject}"
-            handler="#{viewSubjectsHandler}">
-            <ui:define name="panel-title">
-                <ice:panelGrid columns="2">
-                    <ice:graphicImage
-                        value="#{viewSubject.subjectType.subjectIconUri}"/>
-                    <ice:outputText
-                        style="font-weight: bold"
-                        value="#{o:truncate(viewSubject,40)}"/>
-                </ice:panelGrid>
-            </ui:define>
-            <ui:define name="panel-body">
-                <ui:include
-                    src="/admin/facelet/template/subject-template-includer.xhtml">
-                    <ui:param name="viewSubject" value="#{viewSubject}"/>
-                </ui:include>
-            </ui:define>
-        </o:multipanel>
-    </ice:panelGroup>
+    <f:subview>
+        <ice:panelGroup
+            styleClass="condition-panel"
+            rendered="#{viewSubject != null}">
+            <o:multipanel
+                collapsible="true"
+                removeable="#{true}"
+                visible="#{viewSubject.visible}"
+                expanded="#{viewSubject.expanded}"
+                bean="#{viewSubject}"
+                handler="#{viewSubjectsHandler}">
+                <ui:define name="panel-title">
+                    <ice:panelGroup
+                        panelTooltip="titleTooltip">
+                        <ice:panelGrid columns="2">
+                            <ice:graphicImage
+                                value="#{viewSubject.subjectType.subjectIconUri}"/>
+                            <ice:outputText
+                                style="font-weight: bold"
+                                value="#{o:truncate(viewSubject.toString,40)}"/>
+                        </ice:panelGrid>
+                    </ice:panelGroup>
+                    <o:tooltip
+                        tooltipId="titleTooltip"
+                        title="#{viewSubject.title}">
+                        <ui:define name="body">
+                            <pre>
+                            <ice:outputText
+                                value="#{viewSubject.toFormattedString}"/>
+                            </pre>
+                        </ui:define>
+                    </o:tooltip>
+
+                </ui:define>
+                <ui:define name="panel-body">
+                    <ui:include
+                        src="/admin/facelet/template/subject-template-includer.xhtml">
+                        <ui:param name="viewSubject" value="#{viewSubject}"/>
+                    </ui:include>
+                </ui:define>
+            </o:multipanel>
+        </ice:panelGroup>
+    </f:subview>
 </ui:composition>

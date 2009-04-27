@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import com.sun.identity.entitlement.EntitlementSubject;
 
 public abstract class SubjectType {
@@ -41,5 +42,19 @@ public abstract class SubjectType {
 
     public void setSubjectIconUri(String subjectIconUri) {
         this.subjectIconUri = subjectIconUri;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    public String getTitle() {
+        Resources r = new Resources();
+        String title = r.getString("subjectType."+getName());
+        if (title == null) {
+            title = getName();
+        }
+        return title;
     }
 }

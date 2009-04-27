@@ -442,7 +442,6 @@ table.actions tr td {
 }
 
 .summary-items {
-    width: 60%;
     margin: 4px;
 }
 
@@ -515,6 +514,8 @@ table.actions tr td {
 .tooltipBody {
     padding: 10px;
     max-width: none;
+    min-width: 200px;
+    font-size: x-small;
 }
 
 .tooltip {

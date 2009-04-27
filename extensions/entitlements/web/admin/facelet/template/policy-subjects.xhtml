@@ -48,7 +48,7 @@
                                     removeable="false">
                                     <ui:define name="panel-title">
                                         <ice:panelGroup>
-                                            <ice:outputText value="#{subjectContainer.subjectType.name}"/>
+                                            <ice:outputText value="#{subjectContainer.subjectType.title}"/>
                                         </ice:panelGroup>
                                     </ui:define>
                                     <ui:define name="panel-body">
@@ -71,7 +71,7 @@
                                                 <ice:panelGrid columns="2">
                                                     <ice:graphicImage value="#{viewSubject.subjectType.subjectIconUri}"/>
                                                     <ice:panelGroup>
-                                                        <ice:outputText value="#{viewSubject.name}"/>
+                                                        <ice:outputText value="#{viewSubject.title}"/>
                                                     </ice:panelGroup>
                                                 </ice:panelGrid>
                                             </ice:panelGroup>
@@ -106,7 +106,7 @@
                                             <ice:panelGrid columns="2">
                                                 <ice:graphicImage value="#{subjectType.subjectIconUri}"/>
                                                 <ice:panelGroup>
-                                                    <ice:outputText value="#{subjectType.name}"/>
+                                                    <ice:outputText value="#{subjectType.title}"/>
                                                 </ice:panelGroup>
                                             </ice:panelGrid>
                                         </ice:panelGroup>

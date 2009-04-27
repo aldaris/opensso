@@ -29,12 +29,6 @@ public abstract class ContainerViewCondition extends ViewCondition implements Co
     }
 
     @Override
-    public String getTitle() {
-        return super.getTitle() + " (" + getViewConditionsSize() + ")";
-
-    }
-
-    @Override
     public String getToString() {
         return toString();
     }

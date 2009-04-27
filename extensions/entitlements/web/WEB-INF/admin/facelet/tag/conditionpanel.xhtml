@@ -28,7 +28,7 @@
                                 value="#{viewCondition.conditionType.conditionIconUri}"/>
                             <ice:outputText
                                 style="font-weight: bold"
-                                value="#{viewCondition.title}"/>
+                                value="#{o:truncate(viewCondition.toString,40)}"/>
                         </ice:panelGrid>
                     </ice:panelGroup>
                     <o:tooltip

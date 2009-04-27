@@ -13,6 +13,7 @@ public abstract class TimeConditionType extends ConditionType {
         ConditionType ct = conditionTypeFactory.getConditionType(AndViewCondition.class);
         assert (ct != null);
         AndViewCondition avc = (AndViewCondition) ct.newViewCondition();
+        avc.setConditionType(conditionTypeFactory.getConditionType(AndConditionType.class));
 
         TimeConditionType tct;
 

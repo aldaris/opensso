@@ -28,14 +28,6 @@ public abstract class ContainerViewSubject extends ViewSubject implements Contai
     }
 
     @Override
-    public String getTitle() {
-        return getName() + " (" + getViewSubjectsSize() + ")";
-
-    }
-
-    protected abstract String getOperatorString();
-
-    @Override
     public String getToString() {
         return toString();
     }
@@ -45,12 +37,31 @@ public abstract class ContainerViewSubject extends ViewSubject implements Contai
         return getToFormattedString(0);
     }
 
+    @Override
+    public String toString() {
+        StringBuffer b = new StringBuffer();
+        b.append(getTitle() + " (");
+
+        if (getViewSubjects().size() > 0) {
+            for (Iterator<ViewSubject> i = getViewSubjects().iterator(); i.hasNext();) {
+                b.append(i.next().toString());
+                if (i.hasNext()) {
+                    b.append(",");
+                }
+            }
+        }
+        b.append(")");
+
+        return b.toString();
+    }
+
+    @Override
     String getToFormattedString(int i) {
         StringBuffer b = new StringBuffer();
         String indent = getIndentString(i);
 
         b.append(indent);
-        b.append(getOperatorString());
+        b.append(getTitle());
         b.append(" (\n");
 
         if (getViewSubjects().size() > 0) {
@@ -68,4 +79,8 @@ public abstract class ContainerViewSubject extends ViewSubject implements Contai
         return b.toString();
     }
 
+    @Override
+    public String getTitle() {
+        return getSubjectType().getTitle();
+    }
 }
