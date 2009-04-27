@@ -1,6 +1,7 @@
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.DeepCloneable;
+import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.handler.BooleanActionHandler;
 import java.io.Serializable;
 
@@ -63,6 +64,22 @@ public class BooleanAction
     }
 
     public String toString() {
-        return getName() + ":" + getValue();
+        return getTitle() + ": " + getValueTitle();
+    }
+
+    private String getValueTitle() {
+        Resources r = new Resources();
+        String title = r.getString("allow."+allow);
+        return title;
+    }
+
+    @Override
+    public String getTitle() {
+        Resources r = new Resources();
+        String title = r.getString("action."+getName(), getName());
+        if (title == null) {
+            title = getName();
+        }
+        return title;
     }
 }

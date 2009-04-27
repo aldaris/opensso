@@ -2,10 +2,10 @@ package com.sun.identity.admin;
 
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 public class Resources {
 
@@ -44,15 +44,24 @@ public class Resources {
 
     public String getString(String key) {
         ResourceBundle rb = getResourceBundle();
-        return rb.getString(key);
+        try {
+            return rb.getString(key);
+        } catch (MissingResourceException mre) {
+            return null;
+        }
     }
 
     public String getString(String key, Object... params) {
         ResourceBundle rb = getResourceBundle();
-        String msg = rb.getString(key);
-        String fmt = MessageFormat.format(msg, params);
+        String msg;
+        try {
+            msg = rb.getString(key);
+            msg = MessageFormat.format(msg, params);
+        } catch (MissingResourceException mre) {
+            msg = null;
+        }
 
-        return fmt;
+        return msg;
 
     }
 }

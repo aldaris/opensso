@@ -25,4 +25,8 @@ public abstract class Action implements DeepCloneable {
 
     @Override
     public abstract String toString();
+
+    public String getTitle() {
+        return getName();
+    }
 }
