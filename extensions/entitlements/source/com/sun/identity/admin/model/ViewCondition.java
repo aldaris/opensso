@@ -8,11 +8,11 @@ import java.util.List;
 public abstract class ViewCondition implements MultiPanelBean, TreeNode {
 
     private ConditionType conditionType;
-    private boolean expanded = true;
+    private boolean panelExpanded = true;
     private String name;
-    private Effect expandEffect;
+    private Effect panelExpandEffect;
     private Effect panelEffect;
-    private boolean visible = false;
+    private boolean panelVisible = false;
 
     public ViewCondition() {
         panelEffect = new Appear();
@@ -28,12 +28,12 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
         this.conditionType = conditionType;
     }
 
-    public boolean isExpanded() {
-        return expanded;
+    public boolean isPanelExpanded() {
+        return panelExpanded;
     }
 
-    public void setExpanded(boolean expanded) {
-        this.expanded = expanded;
+    public void setPanelExpanded(boolean panelExpanded) {
+        this.panelExpanded = panelExpanded;
     }
 
     public String getName() {
@@ -44,21 +44,21 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
         this.name = name;
     }
 
-    public Effect getExpandEffect() {
-        return expandEffect;
+    public Effect getPanelExpandEffect() {
+        return panelExpandEffect;
     }
 
-    public void setExpandEffect(Effect expandEffect) {
-        this.expandEffect = expandEffect;
+    public void setPanelExpandEffect(Effect panelExpandEffect) {
+        this.panelExpandEffect = panelExpandEffect;
     }
 
-    public boolean isVisible() {
-        return visible;
+    public boolean isPanelVisible() {
+        return panelVisible;
     }
 
-    public void setVisible(boolean visible) {
-        if (!this.visible) {
-            this.visible = visible;
+    public void setPanelVisible(boolean panelVisible) {
+        if (!this.panelVisible) {
+            this.panelVisible = panelVisible;
         }
     }
 

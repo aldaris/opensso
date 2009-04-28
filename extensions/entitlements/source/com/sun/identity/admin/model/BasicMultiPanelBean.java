@@ -4,17 +4,17 @@ import com.icesoft.faces.context.effects.Effect;
 import java.io.Serializable;
 
 public class BasicMultiPanelBean implements MultiPanelBean, Serializable {
-    private Effect expandEffect;
+    private Effect panelExpandEffect;
     private Effect panelEffect;
-    private boolean expanded = true;
-    private boolean visible = true;
+    private boolean panelExpanded = true;
+    private boolean panelVisible = true;
 
-    public Effect getExpandEffect() {
-        return expandEffect;
+    public Effect getPanelExpandEffect() {
+        return panelExpandEffect;
     }
 
-    public void setExpandEffect(Effect expandEffect) {
-        this.expandEffect = expandEffect;
+    public void setPanelExpandEffect(Effect panelExpandEffect) {
+        this.panelExpandEffect = panelExpandEffect;
     }
 
     public Effect getPanelEffect() {
@@ -25,19 +25,19 @@ public class BasicMultiPanelBean implements MultiPanelBean, Serializable {
         this.panelEffect = panelEffect;
     }
 
-    public boolean isExpanded() {
-        return expanded;
+    public boolean isPanelExpanded() {
+        return panelExpanded;
     }
 
-    public void setExpanded(boolean expanded) {
-        this.expanded = expanded;
+    public void setPanelExpanded(boolean panelExpanded) {
+        this.panelExpanded = panelExpanded;
     }
 
-    public boolean isVisible() {
-        return visible;
+    public boolean isPanelVisible() {
+        return panelVisible;
     }
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
+    public void setPanelVisible(boolean panelVisible) {
+        this.panelVisible = panelVisible;
     }
 }

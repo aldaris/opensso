@@ -13,10 +13,10 @@
             <o:multipanel
                 collapsible="true"
                 removeable="#{true}"
-                visible="#{viewSubject.visible}"
-                expanded="#{viewSubject.expanded}"
+                visible="#{viewSubject.panelVisible}"
+                expanded="#{viewSubject.panelExpanded}"
                 bean="#{viewSubject}"
-                handler="#{viewSubjectsHandler}">
+                handler="#{policySubjectsHandler}">
                 <ui:define name="panel-title">
                     <ice:panelGroup
                         panelTooltip="titleTooltip">

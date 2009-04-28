@@ -9,7 +9,6 @@ public abstract class ContainerViewCondition extends ViewCondition implements Co
     public ContainerViewCondition() {
         super();
     }
-
     private List<ViewCondition> viewConditions = new ArrayList<ViewCondition>();
 
     public void addViewCondition(ViewCondition vc) {
@@ -49,13 +48,13 @@ public abstract class ContainerViewCondition extends ViewCondition implements Co
 
         if (getViewConditions().size() > 0) {
             for (Iterator<ViewCondition> iter = getViewConditions().iterator(); iter.hasNext();) {
-                b.append(iter.next().getToFormattedString(i+2));
+                b.append(iter.next().getToFormattedString(i + 2));
                 if (iter.hasNext()) {
-                    b.append(",\n");
+                    b.append(",");
                 }
+                b.append("\n");
             }
         }
-        b.append("\n");
         b.append(indent);
         b.append(")");
 
@@ -80,5 +79,4 @@ public abstract class ContainerViewCondition extends ViewCondition implements Co
 
         return b.toString();
     }
-
 }

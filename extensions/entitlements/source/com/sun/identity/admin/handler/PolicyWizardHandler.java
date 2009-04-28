@@ -3,7 +3,10 @@ package com.sun.identity.admin.handler;
 import com.icesoft.faces.component.dragdrop.DndEvent;
 import com.icesoft.faces.component.dragdrop.DropEvent;
 import com.icesoft.faces.context.effects.Effect;
+import com.icesoft.faces.context.effects.Fade;
 import com.icesoft.faces.context.effects.Highlight;
+import com.icesoft.faces.context.effects.SlideDown;
+import com.icesoft.faces.context.effects.SlideUp;
 import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.ConditionType;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
@@ -11,9 +14,13 @@ import com.sun.identity.admin.effect.MessageErrorEffect;
 import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.ContainerViewCondition;
 import com.sun.identity.admin.model.ContainerViewSubject;
+import com.sun.identity.admin.model.MultiPanelBean;
+import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PolicyManageBean;
+import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.SubjectType;
+import com.sun.identity.admin.model.Tree;
 import com.sun.identity.admin.model.ViewCondition;
 import com.sun.identity.admin.model.ViewSubject;
 import com.sun.identity.admin.model.WizardBean;
@@ -25,6 +32,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.PhaseId;
 import javax.faces.validator.ValidatorException;
 
 public abstract class PolicyWizardHandler
@@ -35,6 +43,8 @@ public abstract class PolicyWizardHandler
     private Pattern POLICY_NAME_PATTERN = Pattern.compile("[0-9a-zA-Z]+");
     private PolicyDao policyDao;
     private PolicyManageBean policyManageBean;
+    private QueuedActionBean queuedActionBean;
+    private String managedBeanName;
 
     @Override
     public void setWizardBean(WizardBean wizardBean) {
@@ -228,5 +238,68 @@ public abstract class PolicyWizardHandler
 
     public PolicyManageBean getPolicyManageBean() {
         return policyManageBean;
+    }
+
+    public void panelExpandListener(ActionEvent event) {
+        MultiPanelBean mpb = (MultiPanelBean) event.getComponent().getAttributes().get("bean");
+        assert (mpb != null);
+
+        Effect e;
+        if (mpb.isPanelExpanded()) {
+            e = new SlideUp();
+        } else {
+            e = new SlideDown();
+        }
+
+        e.setTransitory(false);
+        e.setSubmit(true);
+        mpb.setPanelExpandEffect(e);
+    }
+
+    public void panelRemoveListener(ActionEvent event) {
+        MultiPanelBean mpb = (MultiPanelBean) event.getComponent().getAttributes().get("bean");
+        assert (mpb != null);
+
+        Effect e = new Fade();
+        e.setSubmit(true);
+        e.setTransitory(false);
+        mpb.setPanelEffect(e);
+
+        addPanelRemoveAction(mpb);
+    }
+
+    public void handlePanelRemove(MultiPanelBean mpb) {
+        if (mpb instanceof ViewSubject) {
+            ViewSubject vs = (ViewSubject)mpb;
+            Tree subjectTree = new Tree(getPolicyWizardBean().getPrivilegeBean().getViewSubject());
+            ViewSubject rootVs = (ViewSubject) subjectTree.remove(vs);
+            getPolicyWizardBean().getPrivilegeBean().setViewSubject(rootVs);
+        } else if (mpb instanceof ViewCondition) {
+            ViewCondition vc = (ViewCondition)mpb;
+            Tree conditionTree = new Tree(getPolicyWizardBean().getPrivilegeBean().getViewCondition());
+            ViewCondition rootVc = (ViewCondition) conditionTree.remove(vc);
+            getPolicyWizardBean().getPrivilegeBean().setViewCondition(rootVc);
+        } else {
+            throw new RuntimeException("unhandled multi-panel bean: " + mpb);
+        }
+    }
+
+    private void addPanelRemoveAction(MultiPanelBean mpb) {
+        PhaseEventAction pea = new PhaseEventAction();
+        pea.setDoBeforePhase(false);
+        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+        pea.setAction("#{" + managedBeanName + ".handlePanelRemove}");
+        pea.setParameters(new Class[]{MultiPanelBean.class});
+        pea.setArguments(new Object[]{mpb});
+
+        queuedActionBean.getPhaseEventActions().add(pea);
+    }
+
+    public void setQueuedActionBean(QueuedActionBean queuedActionBean) {
+        this.queuedActionBean = queuedActionBean;
+    }
+
+    public void setManagedBeanName(String managedBeanName) {
+        this.managedBeanName = managedBeanName;
     }
 }

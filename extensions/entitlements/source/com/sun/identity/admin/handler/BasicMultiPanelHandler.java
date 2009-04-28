@@ -13,14 +13,14 @@ public class BasicMultiPanelHandler implements Serializable {
         assert (mpb != null);
 
         Effect e;
-        if (mpb.isExpanded()) {
+        if (mpb.isPanelExpanded()) {
             e = new SlideUp();
         } else {
             e = new SlideDown();
         }
         e.setSubmit(true);
         e.setTransitory(false);
-        mpb.setExpandEffect(e);
+        mpb.setPanelExpandEffect(e);
     }
 
     public void removeListener(ActionEvent event) {

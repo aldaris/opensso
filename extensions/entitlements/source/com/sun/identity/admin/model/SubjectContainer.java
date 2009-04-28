@@ -9,10 +9,10 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
     private SubjectDao subjectDao;
     private SubjectType subjectType;
     private List<ViewSubject> viewSubjects;
-    private boolean expanded = true;
-    private Effect expandEffect;
+    private boolean panelExpanded = true;
+    private Effect panelExpandEffect;
     private Effect panelEffect;
-    private boolean visible = false;
+    private boolean panelVisible = false;
     private String filter;
 
     public void setSubjectDao(SubjectDao subjectDao) {
@@ -27,38 +27,6 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
 
     public List<ViewSubject> getViewSubjects() {
         return viewSubjects;
-    }
-
-    public boolean isExpanded() {
-        return expanded;
-    }
-
-    public void setExpanded(boolean expanded) {
-        this.expanded = expanded;
-    }
-
-    public Effect getExpandEffect() {
-        return expandEffect;
-    }
-
-    public void setExpandEffect(Effect expandEffect) {
-        this.expandEffect = expandEffect;
-    }
-
-    public Effect getPanelEffect() {
-        return panelEffect;
-    }
-
-    public void setPanelEffect(Effect panelEffect) {
-        this.panelEffect = panelEffect;
-    }
-
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
     }
 
     public SubjectType getSubjectType() {
@@ -76,5 +44,37 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
             filter = "*";
         }
         viewSubjects = subjectDao.getViewSubjects(filter);
+    }
+
+    public boolean isPanelExpanded() {
+        return panelExpanded;
+    }
+
+    public void setPanelExpanded(boolean panelExpanded) {
+        this.panelExpanded = panelExpanded;
+    }
+
+    public Effect getPanelExpandEffect() {
+        return panelExpandEffect;
+    }
+
+    public void setPanelExpandEffect(Effect panelExpandEffect) {
+        this.panelExpandEffect = panelExpandEffect;
+    }
+
+    public Effect getPanelEffect() {
+        return panelEffect;
+    }
+
+    public void setPanelEffect(Effect panelEffect) {
+        this.panelEffect = panelEffect;
+    }
+
+    public boolean isPanelVisible() {
+        return panelVisible;
+    }
+
+    public void setPanelVisible(boolean panelVisible) {
+        this.panelVisible = panelVisible;
     }
 }

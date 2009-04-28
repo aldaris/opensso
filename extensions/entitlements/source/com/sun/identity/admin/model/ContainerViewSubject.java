@@ -68,11 +68,11 @@ public abstract class ContainerViewSubject extends ViewSubject implements Contai
             for (Iterator<ViewSubject> iter = getViewSubjects().iterator(); iter.hasNext();) {
                 b.append(iter.next().getToFormattedString(i+2));
                 if (iter.hasNext()) {
-                    b.append(",\n");
+                    b.append(",");
                 }
+                b.append("\n");
             }
         }
-        b.append("\n");
         b.append(indent);
         b.append(")");
 

@@ -4,9 +4,9 @@ import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.OrSubject;
 import java.io.Serializable;
 
-public class OrSubjectType 
-    extends SubjectType
-    implements Serializable {
+public class OrSubjectType
+        extends SubjectType
+        implements Serializable {
 
     public ViewSubject newViewSubject() {
         OrViewSubject ovs = new OrViewSubject();
@@ -16,14 +16,16 @@ public class OrSubjectType
     }
 
     public ViewSubject newViewSubject(EntitlementSubject es, SubjectFactory stf) {
-        assert(es instanceof OrSubject);
-        OrSubject os = (OrSubject)es;
+        assert (es instanceof OrSubject);
+        OrSubject os = (OrSubject) es;
 
-        OrViewSubject ovs = (OrViewSubject)newViewSubject();
+        OrViewSubject ovs = (OrViewSubject) newViewSubject();
 
-        for (EntitlementSubject childEs: os.getESubjects()) {
-            ViewSubject vs = stf.getViewSubject(childEs);
-            ovs.addViewSubject(vs);
+        if (os.getESubjects() != null) {
+            for (EntitlementSubject childEs : os.getESubjects()) {
+                ViewSubject vs = stf.getViewSubject(childEs);
+                ovs.addViewSubject(vs);
+            }
         }
 
         return ovs;

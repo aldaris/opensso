@@ -5,10 +5,10 @@ import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.entitlement.EntitlementSubject;
 
 public abstract class ViewSubject implements MultiPanelBean, TreeNode {
-    private boolean expanded = true;
-    private Effect expandEffect;
+    private boolean panelExpanded = true;
+    private Effect panelExpandEffect;
     private Effect panelEffect;
-    private boolean visible = false;
+    private boolean panelVisible = false;
     private SubjectType subjectType;
     private String name;
 
@@ -20,20 +20,20 @@ public abstract class ViewSubject implements MultiPanelBean, TreeNode {
 
     public abstract EntitlementSubject getEntitlementSubject();
 
-    public boolean isExpanded() {
-        return expanded;
+    public boolean isPanelExpanded() {
+        return panelExpanded;
     }
 
-    public void setExpanded(boolean expanded) {
-        this.expanded = expanded;
+    public void setPanelExpanded(boolean panelExpanded) {
+        this.panelExpanded = panelExpanded;
     }
 
-    public Effect getExpandEffect() {
-        return expandEffect;
+    public Effect getPanelExpandEffect() {
+        return panelExpandEffect;
     }
 
-    public void setExpandEffect(Effect expandEffect) {
-        this.expandEffect = expandEffect;
+    public void setPanelExpandEffect(Effect panelExpandEffect) {
+        this.panelExpandEffect = panelExpandEffect;
     }
 
     public Effect getPanelEffect() {
@@ -44,13 +44,13 @@ public abstract class ViewSubject implements MultiPanelBean, TreeNode {
         this.panelEffect = panelEffect;
     }
 
-    public boolean isVisible() {
-        return visible;
+    public boolean isPanelVisible() {
+        return panelVisible;
     }
 
-    public void setVisible(boolean visible) {
-        if (!this.visible) {
-            this.visible = visible;
+    public void setPanelVisible(boolean panelVisible) {
+        if (!this.panelVisible) {
+            this.panelVisible = panelVisible;
         }
     }
 

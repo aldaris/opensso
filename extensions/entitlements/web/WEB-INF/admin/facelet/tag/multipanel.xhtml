@@ -24,15 +24,15 @@
                             styleClass="multipanel-controls">
                             <ice:commandLink
                                 rendered="#{collapsible == true}"
-                                actionListener="#{handler.expandListener}"
+                                actionListener="#{handler.panelExandListener}"
                                 partialSubmit="true"
                                 styleClass="command-link">
                                 <img
                                     style="vertical-align: middle"
-                                    src="#{bean.expanded ? '../image/hide.png' : '../image/show.png'}"/>
+                                    src="#{bean.panelExpanded ? '../image/hide.png' : '../image/show.png'}"/>
                                 <ice:outputText
                                     style="margin-left: 2px"
-                                    value="#{bean.expanded ? 'Hide' : 'Show'}"/>
+                                    value="#{bean.panelExpanded ? 'Hide' : 'Show'}"/>
                                 <f:attribute
                                     name="bean"
                                     value="#{bean}"/>
@@ -42,7 +42,7 @@
                                 value="|"/>
                             <ice:commandLink
                                 rendered="#{removeable == true}"
-                                actionListener="#{handler.removeListener}"
+                                actionListener="#{handler.panelRemoveListener}"
                                 partialSubmit="true"
                                 styleClass="command-link">
                                 <img
@@ -59,8 +59,8 @@
                     </ice:panelGrid>
                 </ice:panelGroup>
                 <ice:panelGroup
-                    visible="#{expanded}"
-                    effect="#{bean.expandEffect}"
+                    visible="#{bean.panelExpanded}"
+                    effect="#{bean.panelExpandEffect}"
                     styleClass="multipanel-body">
                     <ui:insert name="panel-body"/>
                 </ice:panelGroup>

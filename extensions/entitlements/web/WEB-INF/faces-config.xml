@@ -779,34 +779,6 @@
     </managed-bean>
     <!-- condition types -->
 
-    <managed-bean>
-        <managed-bean-name>viewConditionsHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.ViewConditionsHandler</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>privilegeBean</property-name>
-            <value>#{policyCreateWizardBean.privilegeBean}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>queuedActionBean</property-name>
-            <value>#{queuedActionBean}</value>
-        </managed-property>
-    </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>viewSubjectsHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.ViewSubjectsHandler</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>privilegeBean</property-name>
-            <value>#{policyCreateWizardBean.privilegeBean}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>queuedActionBean</property-name>
-            <value>#{queuedActionBean}</value>
-        </managed-property>
-    </managed-bean>
-
     <!-- url resource chooser -->
     <managed-bean>
         <managed-bean-name>urlResourcesBean</managed-bean-name>
@@ -851,6 +823,14 @@
             <property-name>policyDao</property-name>
             <value>#{policyDao}</value>
         </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>managedBeanName</property-name>
+            <value>policyCreateWizardHandler</value>
+        </managed-property>
     </managed-bean>
     <!-- policy create -->
 
@@ -880,6 +860,14 @@
         <managed-property>
             <property-name>policyDao</property-name>
             <value>#{policyDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>managedBeanName</property-name>
+            <value>policyEditWizardHandler</value>
         </managed-property>
     </managed-bean>
     <!-- policy create -->
