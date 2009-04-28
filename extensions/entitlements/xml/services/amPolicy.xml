@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicy.xml,v 1.1 2009-04-23 23:29:22 veiming Exp $
+    $Id: amPolicy.xml,v 1.2 2009-04-28 00:34:35 veiming Exp $
 
 -->
 
@@ -156,6 +156,12 @@
             i18nFileName="amPolicy"
             i18nKey="SunIdentityServer-subject-AMIdentitySubject-name"
             propertiesViewBeanURL = "../policy/IdentitySubject" />
+        <PluginSchema
+            name="PrivilegeSubject"
+            interfaceName="Subject"
+            className="com.sun.identity.policy.plugins.PrivilegeSubject"
+            i18nFileName="amPolicy"
+            i18nKey="SunIdentityServer-subject-PrivilegeSubject-name" />
         <PluginSchema
             name="AuthRoleCondition"
             interfaceName="Condition" 
