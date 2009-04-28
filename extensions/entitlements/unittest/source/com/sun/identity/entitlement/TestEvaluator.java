@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestEvaluator.java,v 1.4 2009-04-26 07:20:43 veiming Exp $
+ * $Id: TestEvaluator.java,v 1.5 2009-04-28 17:40:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -89,7 +89,6 @@ public class TestEvaluator {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         pm.removePrivilege(PRIVILEGE1_NAME);
-        //pm.removePrivilege(PRIVILEGE2_NAME);
 
         AMIdentityRepository amir = new AMIdentityRepository(
             adminToken, "/");

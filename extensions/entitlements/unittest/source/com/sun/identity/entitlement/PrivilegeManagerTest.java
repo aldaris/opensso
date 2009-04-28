@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.10 2009-04-23 22:55:21 farble1670 Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.11 2009-04-28 17:40:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.security.AdminTokenAction;
@@ -59,30 +58,17 @@ public class PrivilegeManagerTest {
 
     private static String SERVICE_NAME = "iPlanetAMWebAgentService";
     private static String PRIVILEGE_NAME = "TestPrivilege";
-    private static String BASE_DN = ServiceManager.getBaseDN();
     private Privilege privilege;
 
     @BeforeClass
     public void setup() throws SSOException, IdRepoException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-        PrivilegeManager prm = PrivilegeManager.getInstance(null);
-        try {
-            // remove the policy
-            prm.removePrivilege(PRIVILEGE_NAME);
-        } catch (Exception e) {
-            // supress exception, privilege may not exist
-            //throw new PolicyException(e);
-        }
+
     }
 
     @AfterClass
-    public void cleanup() throws SSOException, IdRepoException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+    public void cleanup() throws Exception {
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
-    // not cleaning up to allow inspection using console
-    //prm.removePrivilege(PRIVILIGE_NAME);
+        prm.removePrivilege(PRIVILEGE_NAME);
     }
 
     @Test

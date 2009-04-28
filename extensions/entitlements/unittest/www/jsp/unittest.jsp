@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: unittest.jsp,v 1.3 2009-02-28 01:54:36 veiming Exp $
+   $Id: unittest.jsp,v 1.4 2009-04-28 17:40:15 veiming Exp $
   
 --%>
 
@@ -73,6 +73,17 @@
 </style>
 
 <script language="javascript">
+    function selectAllTests(cb) {
+        var frm = document.forms['test'];
+        var elements = frm.elements;
+        for (var i = 0; i < elements.length; i++) {
+            var elm = elements[i];
+            if ((elm.type) && (elm.type == 'checkbox')) {
+                        elm.checked = cb.checked;
+            }
+        }
+    }
+
     function selectpkg(cb) {
         var name = cb.name;
         var frm = document.forms['test'];
@@ -94,14 +105,15 @@
             }
         }
     }
+
     function expand(name, anchor) {
         var e = document.getElementById(name);
         if (e.style.display == 'none') {
             e.style.display = '';
-            anchor.innerHTML = '<b>[ - ]</b>';
+            anchor.innerHTML = '<b><img border=0 width="11" height="11" src="collapse.gif" /></b>';
         } else {
             e.style.display = 'none';
-            anchor.innerHTML = '<b>[ + ]</b>';
+            anchor.innerHTML = '<b><img border=0 width="11" height="11" src="expand.gif" /></b>';
         }
     }
 
@@ -141,6 +153,9 @@
 <input type="hidden" name="tests" />
 
 <ul>
+    <li><input name="all" type="checkbox" title="Select/unselect the entire set of tests" class="pkg" onClick="selectAllTests(this);" />Select all tests
+    <li>
+    <ul>
 <%
     Map mapPkgNameToClasses = TestHarness.getTests(
         getServletConfig().getServletContext());
@@ -150,8 +165,8 @@
     for (Iterator i = set.iterator(); i.hasNext(); ) {
         String pkgname = (String)i.next();
 %>
-        <li><a href="#" onClick="expand('children.<%= pkgname %>', this); return false;"><b>[ - ]</b></a> <input name="<%= pkgname %>" type="checkbox" title="Select/unselect the entire set of tests under this package" class="pkg" onClick="selectpkg(this);" /> <%= pkgname %> 
-        <ul id='children.<%= pkgname %>'>
+        <li><a href="#" onClick="expand('children.<%= pkgname %>', this); return false;"><img border=0 width="11" height="11" src="expand.gif" /></a> <input name="<%= pkgname %>" type="checkbox" title="Select/unselect the entire set of tests under this package" class="pkg" onClick="selectpkg(this);" /> <%= pkgname %> 
+        <ul id='children.<%= pkgname %>' style="display:none">
 
 <%
         Set tests = (Set)mapPkgNameToClasses.get(pkgname);
@@ -175,6 +190,8 @@
     }
 %>
 
+</ul>
+</li>
 </ul>
 
 </form>

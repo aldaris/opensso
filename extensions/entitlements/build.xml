@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.32 2009-04-23 23:29:19 veiming Exp $
+  $Id: build.xml,v 1.33 2009-04-28 17:40:13 veiming Exp $
 
 -->
 
@@ -261,6 +261,7 @@
        <mkdir dir="${war.package.dir}/unittest" />
        <copy todir="${war.package.dir}/unittest">
            <fileset dir="${unittest.basedir}/www/jsp" includes="**/*.jsp" />
+           <fileset dir="${unittest.basedir}/www/images" includes="**/*.gif" />
        </copy>
        <copy todir="${war.package.dir}/WEB-INF/lib"
            file="${entitlements.extlib.dir}/testng-5.1-jdk15.jar" />
