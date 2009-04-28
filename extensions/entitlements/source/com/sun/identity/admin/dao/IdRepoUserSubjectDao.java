@@ -3,8 +3,6 @@ package com.sun.identity.admin.dao;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.admin.model.IdRepoUserViewSubject;
 import com.sun.identity.admin.model.ViewSubject;
-import com.sun.identity.entitlement.EntitlementSubject;
-import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
@@ -14,7 +12,6 @@ import com.sun.identity.idm.IdType;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

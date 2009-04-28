@@ -39,10 +39,6 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
 
     public void setFilter(String filter) {
         this.filter = filter;
-
-        if (filter == null || filter.length() == 0) {
-            filter = "*";
-        }
         viewSubjects = subjectDao.getViewSubjects(filter);
     }
 

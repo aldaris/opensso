@@ -48,7 +48,7 @@ public abstract class IdRepoSubjectDao extends SubjectDao implements Serializabl
     protected abstract ViewSubject newViewSubject(AMIdentity ami);
 
     public List<ViewSubject> getViewSubjects() {
-        return getViewSubjects("*");
+        return getViewSubjects("");
     }
 
     protected AMIdentity getAMIdentity(String name) {
@@ -102,7 +102,20 @@ public abstract class IdRepoSubjectDao extends SubjectDao implements Serializabl
         }
     }
 
-    public List<ViewSubject> getViewSubjects(String pattern) {
+    protected String getPattern(String filter) {
+        String pattern;
+        if (filter == null || filter.length() == 0) {
+            pattern = "*";
+        } else {
+            pattern = "*" + filter + "*";
+        }
+
+        return pattern;
+    }
+
+    public List<ViewSubject> getViewSubjects(String filter) {
+        String pattern = getPattern(filter);
+
         List<ViewSubject> subjects = new ArrayList<ViewSubject>();
 
         String realmName = null;
