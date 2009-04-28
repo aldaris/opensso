@@ -22,14 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndCondition.java,v 1.3 2009-03-27 16:29:09 veiming Exp $
+ * $Id: AndCondition.java,v 1.4 2009-04-28 20:55:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -76,7 +78,34 @@ public class AndCondition implements EntitlementCondition {
      * @param state State of the object encoded as string
      */
     public void setState(String state) {
-        //TODO
+        try {
+            JSONObject jo = new JSONObject(state);
+            pConditionName = (jo.has("pConditionName")) ?
+                jo.optString("pConditionName") : null;
+            JSONArray memberConditions = jo.optJSONArray("memberECondition");
+            if (memberConditions != null) {
+                eConditions = new HashSet<EntitlementCondition>();
+                int len = memberConditions.length();
+                for (int i = 0; i < len; i++) {
+                    JSONObject memberCondition =
+                        memberConditions.getJSONObject(i);
+                    String className = memberCondition.getString("className");
+                    Class cl = Class.forName(className);
+                    EntitlementCondition ec =
+                        (EntitlementCondition) cl.newInstance();
+                    ec.setState(memberCondition.getString("state"));
+                    eConditions.add(ec);
+                }
+            }
+        } catch (InstantiationException ex) {
+            //TOFIX
+        } catch (IllegalAccessException ex) {
+            //TOFIX
+        } catch (ClassNotFoundException ex) {
+            //TOFIX
+        } catch (JSONException ex) {
+            //TOFIX
+        }
     }
 
     /**
@@ -163,6 +192,7 @@ public class AndCondition implements EntitlementCondition {
      * Returns string representation of the object
      * @return string representation of the object
      */
+    @Override
     public String toString() {
         String s = null;
         try {
@@ -181,6 +211,7 @@ public class AndCondition implements EntitlementCondition {
      * @param obj object to check for equality
      * @return  <code>true</code> if the passed in object is equal to this object
      */
+    @Override
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
@@ -219,6 +250,7 @@ public class AndCondition implements EntitlementCondition {
      * Returns hash code of the object
      * @return hash code of the object
      */
+    @Override
     public int hashCode() {
         int code = 0;
         if (eConditions != null) {
