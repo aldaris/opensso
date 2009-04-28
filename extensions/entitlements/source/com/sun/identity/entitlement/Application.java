@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.7 2009-04-25 22:40:30 veiming Exp $
+ * $Id: Application.java,v 1.8 2009-04-28 16:58:49 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -32,6 +32,7 @@ import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -163,7 +164,32 @@ public class Application {
      * @param resources resource names
      */
     public void setResources(Set<String> resources) {
-        this.resources = resources;
+        this.resources = new HashSet<String>();
+        this.resources.addAll(resources);
+    }
+
+    /**
+     * Adds resource names.
+     *
+     * @param resources resource names to be added.
+     */
+    public void addResources(Set<String> resources) {
+        if (this.resources == null) {
+            this.resources = new HashSet<String>();
+        }
+        this.resources.addAll(resources);
+
+    }
+
+    /**
+     * Removes resource names.
+     *
+     * @param resources resource names to be removed.
+     */
+    public void removeResources(Set<String> resources) {
+        if (this.resources != null) {
+            this.resources.removeAll(resources);
+        }
     }
 
     /**
