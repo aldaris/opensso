@@ -1,5 +1,6 @@
 package com.sun.identity.admin.handler;
 
+import com.icesoft.faces.context.Resource;
 import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.Fade;
 import com.sun.identity.admin.dao.PolicyDao;
@@ -9,8 +10,10 @@ import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.QueuedActionBean;
 import java.io.Serializable;
+import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
+import javax.faces.event.ValueChangeEvent;
 
 public class PolicyManageHandler implements Serializable {
 
@@ -88,7 +91,7 @@ public class PolicyManageHandler implements Serializable {
         addRemoveAction(pb);
     }
 
-    public void handleRemove(PrivilegeBean pb) {
+    public void handlePolicyRemove(PrivilegeBean pb) {
         policyManageBean.getPrivilegeBeans().remove(pb);
         policyDao.removePrivilege(pb.getName());
     }
@@ -97,7 +100,7 @@ public class PolicyManageHandler implements Serializable {
         PhaseEventAction pea = new PhaseEventAction();
         pea.setDoBeforePhase(false);
         pea.setPhaseId(PhaseId.RENDER_RESPONSE);
-        pea.setAction("#{policyManageHandler.handleRemove}");
+        pea.setAction("#{policyManageHandler.handlePolicyRemove}");
         pea.setParameters(new Class[]{PrivilegeBean.class});
         pea.setArguments(new Object[]{pb});
 
@@ -115,6 +118,5 @@ public class PolicyManageHandler implements Serializable {
     public void setPolicyEditWizardBean(PolicyWizardBean policyEditWizardBean) {
         this.policyEditWizardBean = policyEditWizardBean;
     }
-
 }
 

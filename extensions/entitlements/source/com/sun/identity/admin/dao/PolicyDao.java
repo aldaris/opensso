@@ -22,7 +22,25 @@ public class PolicyDao implements Serializable {
     private ConditionTypeFactory conditionTypeFactory;
     private SubjectFactory subjectFactory;
 
+
+    private String getPattern(String filter) {
+        String pattern;
+        if (filter == null || filter.length() == 0) {
+            pattern = "*";
+        } else {
+            pattern = "*" + filter + "*";
+        }
+
+        return pattern;
+    }
+
     public List<PrivilegeBean> getPrivilegeBeans() {
+        return getPrivilegeBeans(null);
+    }
+
+    public List<PrivilegeBean> getPrivilegeBeans(String filter) {
+        String pattern = getPattern(filter);
+
         // TODO: add SSO token to public credentials
         Subject authSubject = new Subject();
         PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
@@ -30,7 +48,7 @@ public class PolicyDao implements Serializable {
         List<PrivilegeBean> privilegeBeans = null;
 
         try {
-            Set<String> privilegeNames = pm.getPrivilegeNames();
+            Set<String> privilegeNames = pm.getPrivilegeNames(pattern);
             privilegeBeans = new ArrayList<PrivilegeBean>();
             for (String privilegeName : privilegeNames) {
                 Privilege p = pm.getPrivilege(privilegeName);
@@ -48,6 +66,32 @@ public class PolicyDao implements Serializable {
         }
 
         return privilegeBeans;
+
+    }
+
+    public List<String> getPrivilegeNames() {
+        return getPrivilegeNames(null);
+    }
+
+    public List<String> getPrivilegeNames(String filter) {
+        String pattern = getPattern(filter);
+
+        // TODO: add SSO token to public credentials
+        Subject authSubject = new Subject();
+        PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
+
+        List<PrivilegeBean> privilegeBeans = null;
+
+        Set<String> privilegeNames = null;
+        try {
+            privilegeNames = pm.getPrivilegeNames(pattern);
+        } catch (EntitlementException ee) {
+            // TODO: handle exception
+            ee.printStackTrace();
+            return null;
+        }
+
+        return new ArrayList<String>(privilegeNames);
 
     }
 

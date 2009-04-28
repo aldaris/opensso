@@ -5,10 +5,12 @@ import java.io.Serializable;
 import java.util.List;
 
 public class PolicyManageBean implements Serializable {
+
     private List<PrivilegeBean> privilegeBeans;
     private PolicyDao policyDao;
     private PolicyManageTableBean policyManageTableBean;
     private boolean viewOptionsPopupVisible = false;
+    private String searchFilter;
 
     public List<PrivilegeBean> getPrivilegeBeans() {
         return privilegeBeans;
@@ -35,5 +37,22 @@ public class PolicyManageBean implements Serializable {
 
     public void setViewOptionsPopupVisible(boolean viewOptionsPopupVisible) {
         this.viewOptionsPopupVisible = viewOptionsPopupVisible;
+    }
+
+    public String getSearchFilter() {
+        return searchFilter;
+    }
+
+    public List<String> getPrivilegeNames() {
+        return getPrivilegeNames(null);
+    }
+
+    public List<String> getPrivilegeNames(String filter) {
+        return policyDao.getPrivilegeNames(filter);
+    }
+
+    public void setSearchFilter(String searchFilter) {
+        this.searchFilter = searchFilter;
+        privilegeBeans = policyDao.getPrivilegeBeans(searchFilter);
     }
 }

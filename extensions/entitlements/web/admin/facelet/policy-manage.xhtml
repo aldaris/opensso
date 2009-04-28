@@ -21,7 +21,8 @@
                     <div class="section-inner">
                         <span class="section-head">
                             <span class="section-title">
-                                <ice:outputText value="Policies (#{o:size(policyManageHandler.policyManageBean.privilegeBeans)})"/>
+                                <ice:outputText
+                                    value="Policies (#{o:size(policyManageHandler.policyManageBean.privilegeBeans)} of #{o:size(policyManageBean.privilegeNames)})"/>
                             </span>
                             <span class="section-links">
                                 <ice:panelGrid
@@ -30,6 +31,18 @@
                                         type="view-options"
                                         handler="#{policyManageHandler}"
                                         listenerMethod="viewOptionsListener"/>
+                                    <ice:outputText
+                                        style="font-weight: bold"
+                                        value="|"/>
+                                    <ice:panelGroup>
+                                        <ice:graphicImage
+                                            value="/admin/image/search.png"/>
+                                        <ice:inputText
+                                            styleClass="section-input"
+                                            onkeyup="typeSubmit(this);"
+                                            value="#{policyManageBean.searchFilter}">
+                                        </ice:inputText>
+                                    </ice:panelGroup>
                                 </ice:panelGrid>
                             </span>
                         </span>
@@ -61,16 +74,16 @@
                                 <ice:panelGroup
                                     effect="#{privilegeBean.nameCellEffect}"
                                     visible="#{true}">
-                                        <ice:commandLink
-                                            styleClass="command-link"
-                                            actionListener="#{policyManageHandler.editListener}"
-                                            action="policy-edit">
-                                            <f:attribute
-                                                name="privilegeBean"
-                                                value="#{privilegeBean}"/>
-                                            <ice:outputText
-                                                value="#{privilegeBean.name}"/>
-                                        </ice:commandLink>
+                                    <ice:commandLink
+                                        styleClass="command-link"
+                                        actionListener="#{policyManageHandler.editListener}"
+                                        action="policy-edit">
+                                        <f:attribute
+                                            name="privilegeBean"
+                                            value="#{privilegeBean}"/>
+                                        <ice:outputText
+                                            value="#{privilegeBean.name}"/>
+                                    </ice:commandLink>
                                 </ice:panelGroup>
                             </ice:column>
                             <ice:column
