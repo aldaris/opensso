@@ -22,14 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrCondition.java,v 1.3 2009-03-27 16:29:10 veiming Exp $
+ * $Id: OrCondition.java,v 1.4 2009-04-28 20:50:30 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.security.auth.Subject;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -76,7 +80,34 @@ public class OrCondition implements EntitlementCondition {
      * @param state State of the object encoded as string
      */
     public void setState(String state) {
-       //TODO
+        try {
+            JSONObject jo = new JSONObject(state);
+            pConditionName = (jo.has("pConditionName")) ?
+                jo.optString("pConditionName") : null;
+            JSONArray memberConditions = jo.optJSONArray("memberECondition");
+            if (memberConditions != null) {
+                eConditions = new HashSet<EntitlementCondition>();
+                int len = memberConditions.length();
+                for (int i = 0; i < len; i++) {
+                    JSONObject memberCondition =
+                        memberConditions.getJSONObject(i);
+                    String className = memberCondition.getString("className");
+                    Class cl = Class.forName(className);
+                    EntitlementCondition ec =
+                        (EntitlementCondition) cl.newInstance();
+                    ec.setState(memberCondition.getString("state"));
+                    eConditions.add(ec);
+                }
+            }
+        } catch (InstantiationException ex) {
+            //TOFIX
+        } catch (IllegalAccessException ex) {
+            //TOFIX
+        } catch (ClassNotFoundException ex) {
+            //TOFIX
+        } catch (JSONException ex) {
+            //TOFIX
+        }
     }
 
     /**
