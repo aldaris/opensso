@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// TODO: cache
 public class Scraper {
 
     private static Map<URL, String> cache = new ExpiringHashMap<URL, String>(1000 * 60 * 15);
@@ -35,7 +34,6 @@ public class Scraper {
             in.close();
 
             String base = getBase();
-            String result;
 
             if (base != null) {
                 content = setBase(b.toString(), base);

@@ -4,14 +4,11 @@ import java.io.Serializable;
 
 public class WizardBean implements Serializable {
     private WizardStepBean[] wizardStepBeans = null;
-
-    public WizardBean() {
-        reset();
-    }
+    private int steps;
 
     public void reset() {
-        wizardStepBeans = new WizardStepBean[16];
-        for (int i = 0; i < 16; i++) {
+        wizardStepBeans = new WizardStepBean[getSteps()];
+        for (int i = 0; i < getSteps(); i++) {
             wizardStepBeans[i] = new WizardStepBean();
         }
 
@@ -24,6 +21,15 @@ public class WizardBean implements Serializable {
         return wizardStepBeans;
     }
 
+
+    public boolean isFinishRendered() {
+        for (WizardStepBean wsb: wizardStepBeans) {
+            if (!wsb.isEnabled()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public void gotoStep(int gotoStep) {
         setAllExpanded(false);
@@ -43,5 +49,14 @@ public class WizardBean implements Serializable {
         for (WizardStepBean wsb: getWizardStepBeans()) {
             wsb.setExpanded(expaned);
         }
+    }
+
+    public int getSteps() {
+        return steps;
+    }
+
+    public void setSteps(int steps) {
+        this.steps = steps;
+        reset();
     }
 }

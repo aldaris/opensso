@@ -15,8 +15,8 @@
         <source>tag/button.xhtml</source>
     </tag>
     <tag>
-        <tag-name>wbutton</tag-name>
-        <source>tag/wbutton.xhtml</source>
+        <tag-name>wbuttons</tag-name>
+        <source>tag/wbuttons.xhtml</source>
     </tag>
     <tag>
         <tag-name>wizard</tag-name>

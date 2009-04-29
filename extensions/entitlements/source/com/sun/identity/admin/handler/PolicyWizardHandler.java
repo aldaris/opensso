@@ -71,6 +71,7 @@ public abstract class PolicyWizardHandler
         messagesBean.addMessageBean(mb);
 
         getPolicyWizardBean().reset();
+        getPolicyManageBean().reset();
 
         return getFinishAction();
     }

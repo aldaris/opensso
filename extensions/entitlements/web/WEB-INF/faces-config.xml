@@ -809,6 +809,10 @@
             <property-name>policyNameEditable</property-name>
             <value>true</value>
         </managed-property>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>5</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>
@@ -854,6 +858,10 @@
         <managed-property>
             <property-name>policyNameEditable</property-name>
             <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>5</value>
         </managed-property>
     </managed-bean>
 

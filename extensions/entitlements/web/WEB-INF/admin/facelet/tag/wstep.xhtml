@@ -9,8 +9,9 @@
         expanded="#{wizardBean.wizardStepBeans[step].expanded}"
         disabled="#{!wizardBean.wizardStepBeans[step].enabled}"
         actionListener="#{wizardHandler.expandListener}">
+
         <f:attribute name="step" value="#{step}"/>
-        <f:attribute name="steps" value="#{steps}"/>
+
         <f:facet name="header">
             <ice:panelGroup>
                 <ice:outputText value="#{label}"/>
@@ -19,27 +20,11 @@
         <ui:insert name="wizard-step-body"/>
         <ice:panelGrid 
             styleClass="button-group"
-            columns="3">
-            <o:wbutton
-                type="previous"
+            columns="4">
+            <o:wbuttons
+                bean="#{wizardBean}"
                 handler="#{wizardHandler}"
-                step="#{step}"
-                steps="#{steps}"/>
-            <o:wbutton
-                type="next"
-                handler="#{wizardHandler}"
-                step="#{step}"
-                steps="#{steps}"/>
-            <o:wbutton
-                type="cancel"
-                handler="#{wizardHandler}"
-                step="#{step}"
-                steps="#{steps}"/>
-            <o:wbutton
-                type="finish"
-                handler="#{wizardHandler}"
-                step="#{step}"
-                steps="#{steps}"/>
+                step="#{step}"/>
         </ice:panelGrid>
     </ice:panelCollapsible>
 </ui:composition>

@@ -30,13 +30,6 @@ public class WizardHandler implements Serializable {
         return step;
     }
 
-    protected int getSteps(ActionEvent event) {
-        String val = (String) event.getComponent().getAttributes().get("steps");
-        int steps = Integer.parseInt(val);
-
-        return steps;
-    }
-
     public void gotoStepListener(ActionEvent event) {
         int gotoStep = getGotoStep(event);
 
@@ -45,7 +38,7 @@ public class WizardHandler implements Serializable {
 
     public void expandListener(ActionEvent event) {
         int step = getStep(event);
-        int steps = getSteps(event);
+        int steps = getWizardBean().getSteps();
 
         assert(step <= steps-1);
         
@@ -59,7 +52,7 @@ public class WizardHandler implements Serializable {
 
     public void nextListener(ActionEvent event) {
         int step = getStep(event);
-        int steps = getSteps(event);
+        int steps = getWizardBean().getSteps();
 
         assert (step <= steps-1);
 
@@ -73,7 +66,7 @@ public class WizardHandler implements Serializable {
 
     public void previousListener(ActionEvent event) {
         int step = getStep(event);
-        int steps = getSteps(event);
+        int steps = getWizardBean().getSteps();
 
         assert (step != 0);
         assert (step <= steps-1);

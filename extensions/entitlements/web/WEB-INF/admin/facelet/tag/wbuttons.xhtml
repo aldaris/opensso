@@ -5,27 +5,11 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
     <ice:commandLink
-        rendered="#{type == 'next' &amp;&amp; step &lt; steps-1}"
-        partialSubmit="false"
-        actionListener="#{handler.nextListener}">
-
-        <f:attribute name="step" value="#{step}"/>
-        <f:attribute name="steps" value="#{steps}"/>
-
-        <ice:panelGroup
-            styleClass="button">
-            <ice:outputText
-                value="Next"/>
-            <img class="right" src="../image/go-next.png"/>
-        </ice:panelGroup>
-    </ice:commandLink>
-    <ice:commandLink
-        rendered="#{type == 'previous' &amp;&amp; step != 0}"
+        rendered="#{step != 0}"
         partialSubmit="false"
         actionListener="#{handler.previousListener}">
 
         <f:attribute name="step" value="#{step}"/>
-        <f:attribute name="steps" value="#{steps}"/>
 
         <ice:panelGroup
             styleClass="button">
@@ -35,13 +19,25 @@
         </ice:panelGroup>
     </ice:commandLink>
     <ice:commandLink
-        rendered="#{type == 'cancel'}"
+        rendered="#{step &lt; steps-1}"
+        partialSubmit="false"
+        actionListener="#{handler.nextListener}">
+
+        <f:attribute name="step" value="#{step}"/>
+
+        <ice:panelGroup
+            styleClass="button">
+            <ice:outputText
+                value="Next"/>
+            <img class="right" src="../image/go-next.png"/>
+        </ice:panelGroup>
+    </ice:commandLink>
+    <ice:commandLink
         partialSubmit="false"
         immediate="true"
         action="#{handler.cancelAction}">
 
         <f:attribute name="step" value="#{step}"/>
-        <f:attribute name="steps" value="#{steps}"/>
 
         <ice:panelGroup
             styleClass="button">
@@ -51,11 +47,12 @@
         </ice:panelGroup>
     </ice:commandLink>
     <ice:commandLink
-        rendered="#{type == 'finish' &amp;&amp; step == steps-1}"
+        rendered="#{bean.finishRendered}"
         partialSubmit="false"
         action="#{handler.finishAction}">
+
         <f:attribute name="step" value="#{step}"/>
-        <f:attribute name="steps" value="#{steps}"/>
+
         <ice:panelGroup
             styleClass="button">
             <img class="left" src="../image/execute.png"/>
