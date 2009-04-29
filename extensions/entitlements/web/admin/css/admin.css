@@ -262,45 +262,7 @@ div.button img.left {
     vertical-align: middle;
 }
 
-.popup-info {
-    z-index: 999;
-    position: absolute;
-    background: #FFFFFF;
-    max-width: 300px;
-}
-
-.popup-info pre span {
-    font-family: monospace;
-    font-size: larger;
-}
-
-.popup-info .icon {
-    padding-left: 5px;
-}
-
-.popup-info .title {
-    font-weight: bold;
-    text-align: center;
-}
-
-.popup-error .title span {
-    color: #9999ff;
-}
-
-.popup-info .close {
-    padding-right: 5px;
-    float:  right;
-}
-
-.popup-infoBody {
-    min-width: 200px;
-    text-align: center;
-}
-
-.popup-errorBody span {
-    color: #9999ff;
-}
-
+.popup-info,
 .popup-error {
     z-index: 999;
     position: absolute;
@@ -308,34 +270,42 @@ div.button img.left {
     max-width: 300px;
 }
 
+.popup-info pre span,
 .popup-error pre span {
     font-family: monospace;
     font-size: larger;
 }
 
+.popup-info .icon,
 .popup-error .icon {
     padding-left: 5px;
 }
 
+.popup-info .title,
 .popup-error .title {
     font-weight: bold;
     text-align: center;
-    color: #990000;
 }
 
+.popup-info .title span,
 .popup-error .title span {
-    color: #990000;
+    color: #6666cc;
 }
 
+.popup-info .close,
 .popup-error .close {
     padding-right: 5px;
     float:  right;
 }
 
+.popup-infoBody,
 .popup-errorBody {
     min-width: 200px;
     text-align: center;
-    color: red;
+}
+
+.popup-infoBody span {
+    color: #6666cc;
 }
 
 .popup-errorBody span {
