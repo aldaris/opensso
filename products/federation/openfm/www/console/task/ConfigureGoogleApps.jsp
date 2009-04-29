@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleApps.jsp,v 1.4 2009-03-13 21:33:44 asyhuang Exp $
+   $Id: ConfigureGoogleApps.jsp,v 1.5 2009-04-29 23:52:16 asyhuang Exp $
 
 --%>
 
@@ -154,10 +154,11 @@
     var frm = document.forms['ConfigureGoogleApps'];
     var idpNew = frm.elements['ConfigureGoogleApps.choiceIDP'].value;
     var realmNew = frm.elements['ConfigureGoogleApps.tfRealm'].value;
-    
+    var domainIdNew = frm.elements['ConfigureGoogleApps.tfDomainId'].value;
+
     var msgCreating = "<p><img src=\"../console/images/processing.gif\" width=\"66\" height\"66\"/></p><cc:text name="txtConfiguring" defaultValue="configuring.google.apps.waiting" bundleID="amConsole" escape="false" />";
+    var msgCreated = "<p>&nbsp;</p><input name=\"btnOK\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />\" onClick=\"document.location.replace(\'../task/ConfigureGoogleAppsComplete?idp=\' + idpNew + \'&realm=\' + realmNew + \'&domainId=\' + domainIdNew);return false;\" /></div></p>";
     var ttlCreated = "<h3><cc:text name="txtTtlCreated" defaultValue="google.apps.configured.msg" escape="false" bundleID="amConsole" /></h3>";
-    var msgCreated = "<p>&nbsp;</p><input name=\"btnOK\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />\" onClick=\"document.location.replace(\'../task/ConfigureGoogleAppsComplete?idp=\'+idpNew + \'&realm=\'+realmNew);return false;\" /></div></p>";
     var closeBtn = "<p>&nbsp;</p><p><div class=\"TtlBtnDiv\"><input name=\"btnClose\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />\" onClick=\"focusMain();return false;\" /></div></p>";
     
     var btn1 = frm.elements['ConfigureGoogleApps.button1'];
@@ -176,6 +177,10 @@
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
             '&class=com.sun.identity.workflow.ConfigureGoogleApps' + getData();
+        frm = document.forms['ConfigureGoogleApps'];
+        idpNew = frm.elements['ConfigureGoogleApps.choiceIDP'].value;
+        realmNew = frm.elements['ConfigureGoogleApps.tfRealm'].value;
+        domainIdNew = frm.elements['ConfigureGoogleApps.tfDomainId'].value;
         ajaxPost(ajaxObj, url, params, configured);
         return false;
     }
@@ -197,11 +202,15 @@
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '<center><p>' + result + '</p></center>';
-            if (status == 0) {
-                msg = '<center>' + ttlCreated + msgCreated + '</center>';
+            if (status == 0) {               
+                msg = '<center>' + ttlCreated + msgCreated + '</center>';               
             } else {
                 msg = msg + '<center>' +  closeBtn + '</center>';
-            }
+            }            
+            frm = document.forms['ConfigureGoogleApps'];
+            idpNew = frm.elements['ConfigureGoogleApps.choiceIDP'].value;
+            realmNew = frm.elements['ConfigureGoogleApps.tfRealm'].value;
+            domainIdNew = frm.elements['ConfigureGoogleApps.tfDomainId'].value;
             document.getElementById('dlg').innerHTML = msg;
         }
     }
@@ -296,10 +305,10 @@
 
 <%
     String cot = request.getParameter("cot");
-    String idp = request.getParameter("entityId");
+    String idp = request.getParameter("entityId");   
     if ((cot != null) && (cot.trim().length() > 0)) {
         out.println("hideRealmObjs();");
-        out.println("hideIDPObjs();");
+        out.println("hideIDPObjs();");       
         out.println("presetcot = \"" + cot + "\";");
         out.println("document.getElementById('cotfld').style.display = 'none';");
         out.println("document.getElementById('cottxt').innerHTML = \"" +
@@ -307,7 +316,7 @@
         out.println("document.getElementById('idpfld').style.display = 'none';");
         out.println("document.getElementById('idplbl').style.display = '';");
         out.println("document.getElementById('idptxt').innerHTML = \"" +
-            idp + "\";");
+            idp + "\";");      
     } else {
         out.println("hideRealm();");
     }

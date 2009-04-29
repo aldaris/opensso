@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CompleteCreateHostedIDP.jsp,v 1.4 2009-03-25 00:33:17 asyhuang Exp $
+   $Id: CompleteCreateHostedIDP.jsp,v 1.5 2009-04-29 23:52:42 asyhuang Exp $
 
 --%>
 
@@ -100,7 +100,7 @@
 <cc:text name="txtModifyProfileText" defaultValue="complete.create.host.idp.modify.profile.text" escape="false" bundleID="amConsole" />
 <p>
 <div class="ConFldSetLgdDiv"><cc:text name="txtCreateFedletTitle" defaultValue="complete.create.host.idp.create.google.apps.title" bundleID="amConsole" /></div>
-<cc:text name="txtCreateFedletText" defaultValue="complete.create.host.idp.create.google.apps.text" escape="false" bundleID="amConsole" />
+<cc:text name="txtCreateGoogleAppsText" defaultValue="complete.create.host.idp.create.google.apps.text" escape="false" bundleID="amConsole" />
 </td>
 </tr>
 </table>
