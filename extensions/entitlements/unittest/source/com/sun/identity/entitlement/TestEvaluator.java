@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestEvaluator.java,v 1.5 2009-04-28 17:40:14 veiming Exp $
+ * $Id: TestEvaluator.java,v 1.6 2009-04-29 13:22:48 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -62,8 +62,10 @@ public class TestEvaluator {
 
     @BeforeClass
     public void setup() throws Exception {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
         PrivilegeManager pm = new PolicyPrivilegeManager();
-        pm.initialize(null);
+        pm.initialize(SubjectUtils.createSubject(adminToken));
         Map<String, Boolean> actions = new HashMap<String, Boolean>();
         actions.put("GET", Boolean.TRUE);
         Entitlement ent = new Entitlement(
@@ -84,10 +86,10 @@ public class TestEvaluator {
 
     @AfterClass
     public void cleanup() throws Exception {
-        PrivilegeManager pm = new PolicyPrivilegeManager();
-        pm.initialize(null);
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
+        PrivilegeManager pm = new PolicyPrivilegeManager();
+        pm.initialize(SubjectUtils.createSubject(adminToken));
         pm.removePrivilege(PRIVILEGE1_NAME);
 
         AMIdentityRepository amir = new AMIdentityRepository(

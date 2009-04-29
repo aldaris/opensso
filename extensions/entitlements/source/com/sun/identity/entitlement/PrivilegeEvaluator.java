@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.10 2009-04-26 07:20:36 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.11 2009-04-29 13:22:46 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -208,7 +208,8 @@ class PrivilegeEvaluator {
                     PolicyDataStoreFactory.getInstance().getDataStore();
                 for (Iterator<Privilege> i = ds.search(parent.indexes,
                     SubjectAttributesManager.getSubjectSearchFilter(
-                        parent.subject), bSubTree, threadPool); i.hasNext();
+                        parent.subject, parent.applicationName), bSubTree,
+                        threadPool); i.hasNext();
                 ) {
                     threadPool.submit(new PrivilegeTask(parent, i.next()));
                     count++;

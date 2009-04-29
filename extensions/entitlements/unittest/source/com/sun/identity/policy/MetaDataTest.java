@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MetaDataTest.java,v 1.1 2009-04-29 11:43:14 veiming Exp $
+ * $Id: MetaDataTest.java,v 1.2 2009-04-29 13:22:48 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -107,18 +107,19 @@ public class MetaDataTest {
             SubjectUtils.createSubject(adminToken));
 
         test(privilegMgr, PrivilegeSearchFilter.EQUAL_OPERATOR, creationDate,
-            "equals test");
+            "equals test", false);
         test(privilegMgr, PrivilegeSearchFilter.GREATER_THAN_OPERATOR, 
-            creationDate -1, "greater than test");
+            creationDate -1, "greater than test", true);
         test(privilegMgr, PrivilegeSearchFilter.LESSER_THAN_OPERATOR,
-            creationDate +1, "lesser than test");
+            creationDate +1, "lesser than test", true);
     }
 
     private void test(
         PrivilegeManager privilegMgr,
         int operator,
         long value,
-        String desc
+        String desc,
+        boolean containCheckOnly
     ) throws Exception {
         Set<PrivilegeSearchFilter> filter =
             new HashSet<PrivilegeSearchFilter>();
@@ -126,9 +127,11 @@ public class MetaDataTest {
         Set<String> privilegeNames = privilegMgr.searchPrivilegeNames(
             filter, true);
 
-        if ((privilegeNames == null) || (privilegeNames.size() != 1)) {
-            throw new Exception("MetaDataTest.test: (" + desc +
-                ") search privilege names failed");
+        if (!containCheckOnly) {
+            if ((privilegeNames == null) || (privilegeNames.size() != 1)) {
+                throw new Exception("MetaDataTest.test: (" + desc +
+                    ") search privilege names failed");
+            }
         }
         if (!privilegeNames.contains(POLICY_NAME)) {
             throw new Exception("MetaDataTest.test: (" + desc +

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.6 2009-04-23 23:29:22 veiming Exp $
+   $Id: entitlement.xml,v 1.7 2009-04-29 13:22:49 veiming Exp $
 
 -->
 
@@ -85,10 +85,6 @@
                 </SubSchema>
             </Global>
             <Organization>
-                <AttributeSchema name="subjectAttributeNames" 
-                    type="list"
-                    syntax="string"
-                    i18nKey="" />
                 <SubSchema name="applications" inheritance="multiple">
                     <SubSchema name="application" inheritance="multiple">
                         <AttributeSchema name="applicationType"
@@ -121,6 +117,10 @@
                             i18nKey="" />
                         <AttributeSchema name="resourceComparator"
                             type="single"
+                            syntax="string"
+                            i18nKey="" />
+                        <AttributeSchema name="subjectAttributeNames" 
+                            type="list"
                             syntax="string"
                             i18nKey="" />
                     </SubSchema>

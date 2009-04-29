@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.4 2009-04-25 22:41:01 veiming Exp $
+ * $Id: EntitlementService.java,v 1.5 2009-04-29 13:22:47 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -197,15 +197,13 @@ public class EntitlementService implements IPolicyConfig {
         return results;
     }
 
-    public Set<String> getSubjectAttributeNames(String realm) {
+    public Set<String> getSubjectAttributeNames(String realm, String application
+    ) {
         try {
-            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-            ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
-                adminToken);
-            ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
-            if (orgConfig != null) {
-                return (Set<String>)orgConfig.getAttributesForRead().get(
+            ServiceConfig applConf = getApplicationSubConfig(realm,
+                application);
+            if (applConf != null) {
+                return (Set<String>)applConf.getAttributesForRead().get(
                     ATTR_NAME_SUBJECT_ATTR_NAMES);
             }
         } catch (SMSException ex) {
@@ -216,20 +214,21 @@ public class EntitlementService implements IPolicyConfig {
         return Collections.EMPTY_SET;
     }
 
-    public void addSubjectAttributeNames(String realm, Set<String> names) {
+    public void addSubjectAttributeNames(
+        String realm,
+        String applicationName,
+        Set<String> names
+    ) {
         if ((names == null) || names.isEmpty()) {
             return;
         }
         
         try {
-            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-            ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
-                adminToken);
-            ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
-            if (orgConfig != null) {
+            ServiceConfig applConf = getApplicationSubConfig(realm,
+                applicationName);
+            if (applConf != null) {
                 Set<String> orig = (Set<String>)
-                    orgConfig.getAttributes().get(ATTR_NAME_SUBJECT_ATTR_NAMES);
+                    applConf.getAttributes().get(ATTR_NAME_SUBJECT_ATTR_NAMES);
                 if ((orig == null) || orig.isEmpty()) {
                     orig = new HashSet<String>();
                 }
@@ -237,7 +236,7 @@ public class EntitlementService implements IPolicyConfig {
                 Map<String, Set<String>> map = new
                     HashMap<String, Set<String>>();
                 map.put(ATTR_NAME_SUBJECT_ATTR_NAMES, orig);
-                orgConfig.setAttributes(map);
+                applConf.setAttributes(map);
             }
         } catch (SMSException ex) {
             //TOFIX
@@ -260,25 +259,15 @@ public class EntitlementService implements IPolicyConfig {
         String name,
         Boolean defVal) {
         try {
-            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-            ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
-                adminToken);
-            ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
-            if (orgConfig != null) {
-                ServiceConfig conf = orgConfig.getSubConfig(
-                    CONFIG_APPLICATIONS);
-                if (conf != null) {
-                    ServiceConfig applConf = conf.getSubConfig(appName);
-                    if (applConf != null) {
-                        Map<String, Set<String>> data =
-                            applConf.getAttributes();
-                        Map<String, Set<String>> result =
-                            addAction(data, name, defVal);
-                        if (result != null) {
-                            applConf.setAttributes(result);
-                        }
-                    }
+            ServiceConfig applConf = getApplicationSubConfig(realm, appName);
+
+            if (applConf != null) {
+                Map<String, Set<String>> data =
+                    applConf.getAttributes();
+                Map<String, Set<String>> result =
+                    addAction(data, name, defVal);
+                if (result != null) {
+                    applConf.setAttributes(result);
                 }
             }
         } catch (SMSException ex) {
@@ -286,6 +275,24 @@ public class EntitlementService implements IPolicyConfig {
         } catch (SSOException ex) {
             //TOFIX
         }
+    }
+
+    private ServiceConfig getApplicationSubConfig(String realm, String appName)
+        throws SMSException, SSOException {
+        ServiceConfig applConf = null;
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
+            adminToken);
+        ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
+        if (orgConfig != null) {
+            ServiceConfig conf = orgConfig.getSubConfig(
+                CONFIG_APPLICATIONS);
+            if (conf != null) {
+                applConf = conf.getSubConfig(appName);
+            }
+        }
+        return applConf;
     }
 
     private Map<String, Set<String>> addAction(

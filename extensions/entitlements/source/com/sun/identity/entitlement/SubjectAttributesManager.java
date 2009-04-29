@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.4 2009-04-18 00:05:10 veiming Exp $
+ * $Id: SubjectAttributesManager.java,v 1.5 2009-04-29 13:22:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -148,19 +148,22 @@ public class SubjectAttributesManager {
      * Returns the subject search filter for a given subject.
      *
      * @param subject Subject object.
+     * @param applicationName Name of application.
      * @return subject search filter for a given subject.
      * @throws com.sun.identity.entitlement.EntitlementException if search
      * filter cannot be obtained.
      */
-    public static Set<String> getSubjectSearchFilter(Subject subject)
+    public static Set<String> getSubjectSearchFilter(
+        Subject subject,
+        String applicationName)
         throws EntitlementException {
         Set<String> results = new HashSet<String>();
         results.add(SubjectAttributesCollector.NAMESPACE_IDENTITY + "=" +
             SubjectAttributesCollector.ATTR_NAME_ALL_ENTITIES);
         String realm = "/"; //TOFIX
         if (subject != null) {
-            IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
-            Set<String> names = pc.getSubjectAttributeNames(realm);
+            Set<String> names = getApplicationAttributeNames(realm,
+                applicationName);
             SubjectAttributesManager sam = SubjectAttributesManager.getInstance(
                 realm);
             Map<String, Set<String>> values = sam.getAttributes(subject, names);
@@ -210,5 +213,13 @@ public class SubjectAttributesManager {
         String attrValue
     ) throws EntitlementException {
         return attrCollector.hasAttribute(subject, attrName, attrValue);
+    }
+
+    public static Set<String> getApplicationAttributeNames(
+        String realm,
+        String applicationName
+    ) {
+        IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
+        return pc.getSubjectAttributeNames(realm, applicationName);
     }
 }

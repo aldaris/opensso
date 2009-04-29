@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.5 2009-04-29 11:43:12 veiming Exp $
+ * $Id: DataStore.java,v 1.6 2009-04-29 13:22:47 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -205,18 +205,18 @@ public class DataStore {
 
             long creationDate = p.getCreationDate();
             if (creationDate > 0) {
-                info.add(Long.toString(creationDate) + "=" +
-                    Privilege.CREATION_DATE_ATTRIBUTE);
-                info.add("|" + Long.toString(creationDate) + "=" +
-                    Privilege.CREATION_DATE_ATTRIBUTE);
+                String data = Long.toString(creationDate) + "=" +
+                    Privilege.CREATION_DATE_ATTRIBUTE;
+                info.add(data);
+                info.add("|" + data);
             }
 
             long lastModifiedDate = p.getLastModifiedDate();
             if (lastModifiedDate > 0) {
-                info.add(Long.toString(lastModifiedDate) + "=" +
-                    Privilege.LAST_MODIFIED_DATE_ATTRIBUTE);
-                info.add("|" + Long.toString(lastModifiedDate) + "=" +
-                    Privilege.LAST_MODIFIED_DATE_ATTRIBUTE);
+                String data = Long.toString(lastModifiedDate) + "=" +
+                    Privilege.LAST_MODIFIED_DATE_ATTRIBUTE;
+                info.add(data);
+                info.add("|" + data);
             }
             map.put("ou", info);
 

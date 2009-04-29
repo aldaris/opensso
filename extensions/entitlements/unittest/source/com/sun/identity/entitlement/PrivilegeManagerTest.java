@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.11 2009-04-28 17:40:14 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.12 2009-04-29 13:22:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.encode.Base64;
@@ -67,7 +68,10 @@ public class PrivilegeManagerTest {
 
     @AfterClass
     public void cleanup() throws Exception {
-        PrivilegeManager prm = PrivilegeManager.getInstance(null);
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        PrivilegeManager prm = PrivilegeManager.getInstance(
+            SubjectUtils.createSubject(adminToken));
         prm.removePrivilege(PRIVILEGE_NAME);
     }
 
@@ -140,7 +144,10 @@ public class PrivilegeManagerTest {
         UnittestLog.logMessage(
             "PrivilegeManagerTest.testAddPrivlege():" + "saving privilege=" +
             privilege);
-        PrivilegeManager prm = PrivilegeManager.getInstance(null);
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        PrivilegeManager prm = PrivilegeManager.getInstance(
+            SubjectUtils.createSubject(adminToken));
         prm.addPrivilege(privilege);
 
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
@@ -236,10 +243,10 @@ public class PrivilegeManagerTest {
 
     @Test(dependsOnMethods = {"testAddPrivilege"})
     public void testListPrivilegeNames() throws Exception {
-
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-        PrivilegeManager prm = PrivilegeManager.getInstance(null);
+        PrivilegeManager prm = PrivilegeManager.getInstance(
+            SubjectUtils.createSubject(adminToken));
         Set<String> names = prm.getPrivilegeNames();
         UnittestLog.logMessage(
                 "PrivilegeManagerTest.testListPrivlegeNames():"
@@ -295,7 +302,8 @@ public class PrivilegeManagerTest {
     public void testGetPrivilege() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-        PrivilegeManager prm = PrivilegeManager.getInstance(null);
+        PrivilegeManager prm = PrivilegeManager.getInstance(
+            SubjectUtils.createSubject(adminToken));
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
         UnittestLog.logMessage(
                 "PrivilegeManagerTest.testGetPrivlege():" + "read back privilege=" + p);
