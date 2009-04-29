@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegePolicyMapping.java,v 1.1 2009-04-28 00:34:35 veiming Exp $
+ * $Id: PrivilegePolicyMapping.java,v 1.2 2009-04-29 21:37:59 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -69,6 +69,9 @@ public class PrivilegePolicyMapping {
     private final static String POLICY_NAME = "PrivilegePolicyMappingPolicy";
     private final static String RES_NAME =
         "http://whatever.privilegepolicymapping.com:80";
+    private final static String EXCLUDED_RES =
+        "http://whatever.privilegepolicymapping.com:80/cb";
+
     private AMIdentity testUser;
     private Policy policy;
     private Privilege privilege;
@@ -123,6 +126,14 @@ public class PrivilegePolicyMapping {
                 throw new Exception(
                     "PriviliegePolicyMapping.privilegeToPolicy: action value is incorrect");
             }
+
+            Set<String> excludeRes = r.getExcludedResourceNames();
+            if (!excludeRes.contains(EXCLUDED_RES)) {
+                throw new Exception(
+                    "PriviliegePolicyMapping.privilegeToPolicy: excluded resource is missing");
+            }
+
+
         }
         Set<String> subjectNames = p.getSubjectNames();
         for (String subjectName : subjectNames) {
@@ -146,6 +157,7 @@ public class PrivilegePolicyMapping {
                     "PriviliegePolicyMapping.privilegeToPolicy: not instance of privilege condition");
             }
         }
+
     }
 
     @Test
@@ -188,6 +200,10 @@ public class PrivilegePolicyMapping {
             throw new Exception(
                 "PriviliegePolicyMapping.policyToPrivilege: subject value is incorrect");
         }
+
+        Set<String> excludeRes = new HashSet<String>();
+        excludeRes.add(EXCLUDED_RES);
+        privilege.getEntitlement().setExcludedResourceNames(excludeRes);
     }
     
     private AMIdentity createUser(SSOToken adminToken)

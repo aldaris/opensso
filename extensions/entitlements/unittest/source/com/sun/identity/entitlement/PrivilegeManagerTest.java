@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.12 2009-04-29 13:22:48 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.13 2009-04-29 21:37:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -97,6 +97,9 @@ public class PrivilegeManagerTest {
         subjects.add(ua1);
         subjects.add(ua2);
         OrSubject os = new OrSubject(subjects);
+
+        Set<String> excludedResourceNames = new HashSet<String>();
+        entitlement.setExcludedResourceNames(excludedResourceNames);
 
         String startIp = "100.100.100.100";
         String endIp = "200.200.200.200";
