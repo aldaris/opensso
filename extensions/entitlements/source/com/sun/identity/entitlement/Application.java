@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.8 2009-04-28 16:58:49 veiming Exp $
+ * $Id: Application.java,v 1.9 2009-04-29 18:14:13 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -51,6 +51,7 @@ public class Application {
     private ISearchIndex searchIndex;
     private ISaveIndex saveIndex;
     private ResourceName resourceComparator;
+    private Set<String> attributeNames;
 
     /**
      * Constructs an instance.
@@ -263,5 +264,39 @@ public class Application {
     public void addAction(String name, boolean val) {
         IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
         policyConfig.addApplicationAction("/" , this.name, name, val); //TOFIX realm
+    }
+
+    /**
+     * Sets attribute names.
+     *
+     * @param names Attribute names.
+     */
+    public void setAttributeNames(Set<String> names) {
+        attributeNames = new HashSet<String>();
+        if (names != null) {
+            attributeNames.addAll(names);
+        }
+    }
+
+    /**
+     * Returns save index
+     *
+     * @return save index
+     */
+    public ISaveIndex getSaveIndex() {
+        return saveIndex;
+    }
+
+    /**
+     * Returns search index
+     *
+     * @return search index
+     */
+    public ISearchIndex getSearchIndex() {
+        return searchIndex;
+    }
+
+    public Set<String> getAttributeNames() {
+        return attributeNames;
     }
 }

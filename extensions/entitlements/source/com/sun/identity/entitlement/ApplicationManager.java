@@ -22,17 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.9 2009-04-09 13:15:01 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.10 2009-04-29 18:14:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IPolicyConfig;
-import com.sun.identity.entitlement.interfaces.ISaveIndex;
-import com.sun.identity.entitlement.interfaces.ISearchIndex;
-import com.sun.identity.entitlement.interfaces.ResourceName;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -40,16 +35,6 @@ import java.util.Set;
  * for each realm.
  */
 public final class ApplicationManager {
-    private static Map<String, Map<String, Application>> applications =
-        new HashMap<String, Map<String, Application>>();
-
-    static {
-        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
-        Set<ApplicationInfo> info = policyConfig.getApplications("/");
-        for (ApplicationInfo i : info) {
-            addApplication("/", i); //TOFIX
-        }
-    }
 
     private ApplicationManager() {
     }
@@ -61,8 +46,13 @@ public final class ApplicationManager {
      * @return application names in a realm.
      */
     public static Set<String> getApplicationNames(String realm) {
-        Map<String, Application> map = applications.get(realm);
-        return (map == null) ? Collections.EMPTY_SET : map.keySet();
+        Set<String> results = new HashSet<String>();
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        Set<Application> applications = policyConfig.getApplications(realm);
+        for (Application appl : applications) {
+            results.add(appl.getName());
+        }
+        return results;
     }
 
     /**
@@ -76,81 +66,14 @@ public final class ApplicationManager {
         if ((name == null) || (name.length() == 0)) {
             name = ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
         }
-        Map<String, Application> map = applications.get(realm);
-        return (map == null) ? null : map.get(name);
-    }
-
-    private static void addApplication(String realm, ApplicationInfo info) {
-        String name = info.getName();
-        String appTypeName = info.getApplicationType();
-        Map<String, Boolean> actions = info.getActions();
-        Set<String> resources = info.getResources();
-        Set<String> conditions = info.getConditionClassNames();
-        String searchIndexClassName = info.getSearchIndexImpl();
-        String saveIndexClassName = info.getSaveIndexImpl();
-        String resourceComp = info.getResourceComparator();
-
-        ApplicationType appType = ApplicationTypeManager.get(appTypeName);
-        Application app = new Application(name, appType);
-        Class combiner = getEntitlementCombiner(info.getEntitlementCombiner());
-        app.setEntitlementCombiner(combiner);
-
-        if (actions != null) {
-            app.setActions(actions);
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        Set<Application> applications = policyConfig.getApplications(realm);
+        for (Application appl : applications) {
+            if (appl.getName().equals(name)) {
+                return appl;
+            }
         }
-        if (resources != null) {
-            app.setResources(resources);
-        }
-        if (conditions != null) {
-            app.setResources(conditions);
-        }
-
-        ISearchIndex searchIndex = ApplicationTypeManager.getSearchIndex(
-            searchIndexClassName);
-        ISaveIndex saveIndex = ApplicationTypeManager.getSaveIndex(
-            saveIndexClassName);
-        ResourceName resComp = ApplicationTypeManager.getResourceComparator(
-            resourceComp);
-        if (searchIndex != null) {
-            app.setSearchIndex(searchIndex);
-        }
-        if (saveIndex != null) {
-            app.setSaveIndex(saveIndex);
-        }
-        if (resComp != null) {
-            app.setResourceComparator(resComp);
-        }
-        addApplication(realm, app);
-    }
-
-     private static Class getEntitlementCombiner(String className) {
-        if (className == null) {
-            return null;
-        }
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException ex) {
-            //TOFIX debug error
-        }
-        return com.sun.identity.entitlement.DenyOverride.class;
-    }
-
-    /**
-     * Adds application.
-     *
-     * @param realm Realm name.
-     * @param application Application object.
-     */
-    public synchronized static void addApplication(
-        String realm,
-        Application application
-    ) {
-        Map<String, Application> map = applications.get(realm);
-        if (map == null) {
-            map = new HashMap<String, Application>();
-            applications.put(realm, map);
-        }
-        map.put(application.getName(), application);
+        return null;
     }
 
     /**
@@ -159,13 +82,23 @@ public final class ApplicationManager {
      * @param realm Realm Name.
      * @param name Application Name.
      */
-    public synchronized  static void deleteApplication(
+    public static void deleteApplication(
         String realm,
         String name
     ) {
-        Map<String, Application> map = applications.get(realm);
-        if (map != null) {
-            map.remove(name);
-        }
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        policyConfig.removeApplication(realm, name);
     }
+
+    /**
+     * Saves application data.
+     *
+     * @param application Application object.
+     */
+    public static void saveApplication(String realm, Application application)
+        throws EntitlementException {
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        policyConfig.storeApplication(realm, application);
+    }
+
 }

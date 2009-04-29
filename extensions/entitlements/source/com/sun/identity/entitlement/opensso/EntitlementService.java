@@ -22,16 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.5 2009-04-29 13:22:47 veiming Exp $
+ * $Id: EntitlementService.java,v 1.6 2009-04-29 18:14:16 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.entitlement.ApplicationInfo;
-import com.sun.identity.entitlement.ApplicationTypeInfo;
+import com.sun.identity.entitlement.Application;
+import com.sun.identity.entitlement.ApplicationType;
+import com.sun.identity.entitlement.ApplicationTypeManager;
+import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.interfaces.IPolicyConfig;
+import com.sun.identity.entitlement.interfaces.ISaveIndex;
+import com.sun.identity.entitlement.interfaces.ISearchIndex;
+import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
@@ -55,6 +60,7 @@ public class EntitlementService implements IPolicyConfig {
     private static final String ATTR_NAME_SUBJECT_ATTR_NAMES =
         "subjectAttributeNames";
     private static final String CONFIG_APPLICATIONS = "registeredApplications";
+    private static final String CONFIG_APPLICATION = "application";
     private static final String CONFIG_APPLICATIONTYPE = "applicationType";
     private static final String CONFIG_ACTIONS = "actions";
     private static final String CONFIG_RESOURCES = "resources";
@@ -92,33 +98,15 @@ public class EntitlementService implements IPolicyConfig {
         return Collections.EMPTY_SET;
     }
 
-    public Set<ApplicationTypeInfo> getApplicationTypes() {
-        Set<ApplicationTypeInfo> results = new HashSet<ApplicationTypeInfo>();
+    public Set<ApplicationType> getApplicationTypes() {
+        Set<ApplicationType> results = new HashSet<ApplicationType>();
         try {
-            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-            ServiceConfigManager mgr = new ServiceConfigManager(
-                SERVICE_NAME, adminToken);
-            ServiceConfig globalConfig = mgr.getGlobalConfig(null);
-            if (globalConfig != null) {
-                ServiceConfig conf = globalConfig.getSubConfig(
-                    CONFIG_APPLICATION_TYPES);
-                Set<String> names = conf.getSubConfigNames();
-
-                for (String name : names) {
-                    ServiceConfig appType = conf.getSubConfig(name);
-                    Map<String, Set<String>> data = appType.getAttributes();
-                    Map<String, Boolean> actions = getActions(data);
-                    String saveIndexImpl = getAttribute(data,
-                        CONFIG_SAVE_INDEX_IMPL);
-                    String searchIndexImpl = getAttribute(data,
-                        CONFIG_SEARCH_INDEX_IMPL);
-                    String resourceComp = getAttribute(data,
-                        CONFIG_RESOURCE_COMP_IMPL);
-                    results.add(new ApplicationTypeInfo(
-                        name, actions, saveIndexImpl, searchIndexImpl,
-                        resourceComp));
-                }
+            ServiceConfig conf = getApplicationTypeCollectionConfig();
+            Set<String> names = conf.getSubConfigNames();
+            for (String name : names) {
+                ServiceConfig appType = conf.getSubConfig(name);
+                Map<String, Set<String>> data = appType.getAttributes();
+                results.add(createApplicationType(name, data));
             }
         } catch (SMSException ex) {
             // TOFIX
@@ -126,6 +114,29 @@ public class EntitlementService implements IPolicyConfig {
             //TOFIX
         }
         return results;
+    }
+
+    private ServiceConfig getApplicationTypeCollectionConfig()
+        throws SMSException, SSOException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        ServiceConfigManager mgr = new ServiceConfigManager(
+            SERVICE_NAME, adminToken);
+        ServiceConfig globalConfig = mgr.getGlobalConfig(null);
+        if (globalConfig != null) {
+            return globalConfig.getSubConfig(CONFIG_APPLICATION_TYPES);
+        }
+        return null;
+    }
+
+    private Set<String> getActionSet(Map<String, Boolean> actions) {
+        Set<String> set = new HashSet<String>();
+        if (actions != null) {
+            for (String k : actions.keySet()) {
+                set.add(k + "=" + Boolean.toString(actions.get(k)));
+            }
+        }
+        return set;
     }
 
     private Map<String, Boolean> getActions(Map<String, Set<String>> data) {
@@ -152,8 +163,17 @@ public class EntitlementService implements IPolicyConfig {
         return ((set != null) && !set.isEmpty()) ? set.iterator().next() : null;
     }
 
-    public Set<ApplicationInfo> getApplications(String realm) {
-        Set<ApplicationInfo> results = new HashSet<ApplicationInfo>();
+    private Set<String> getSet(String str) {
+        Set<String> set = new HashSet<String>();
+        if (str != null) {
+            set.add(str);
+        }
+        return set;
+    }
+
+
+    public Set<Application> getApplications(String realm) {
+        Set<Application> results = new HashSet<Application>();
         try {
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
@@ -166,27 +186,10 @@ public class EntitlementService implements IPolicyConfig {
                 Set<String> names = conf.getSubConfigNames();
 
                 for (String name : names) {
-                    ServiceConfig appType = conf.getSubConfig(name);
-                    Map<String, Set<String>> data = appType.getAttributes();
-                    Map<String, Boolean> actions = getActions(data);
-                    Set<String> resources = data.get(CONFIG_RESOURCES);
-                    String entitlementCombiner = getAttribute(data,
-                        CONFIG_ENTITLEMENT_COMBINER);
-                    Set<String> conditionClassNames = data.get(
-                        CONFIG_CONDITIONS);
-                    String applicationType = getAttribute(data,
-                        CONFIG_APPLICATIONTYPE);
-                    String saveIndexImpl = getAttribute(data,
-                        CONFIG_SAVE_INDEX_IMPL);
-                    String searchIndexImpl = getAttribute(data,
-                        CONFIG_SEARCH_INDEX_IMPL);
-                    String resourceComp = getAttribute(data,
-                        CONFIG_RESOURCE_COMP_IMPL);
-
-                    results.add(new ApplicationInfo(
-                        name, actions, resources, entitlementCombiner,
-                        conditionClassNames, applicationType, saveIndexImpl,
-                        searchIndexImpl, resourceComp));
+                    ServiceConfig applConf = conf.getSubConfig(name);
+                    Map<String, Set<String>> data = applConf.getAttributes();
+                    Application app = createApplication(name, data);
+                    results.add(app);
                 }
             }
         } catch (SMSException ex) {
@@ -197,21 +200,16 @@ public class EntitlementService implements IPolicyConfig {
         return results;
     }
 
-    public Set<String> getSubjectAttributeNames(String realm, String application
-    ) {
-        try {
-            ServiceConfig applConf = getApplicationSubConfig(realm,
-                application);
-            if (applConf != null) {
-                return (Set<String>)applConf.getAttributesForRead().get(
-                    ATTR_NAME_SUBJECT_ATTR_NAMES);
-            }
-        } catch (SMSException ex) {
-            //TOFIX
-        } catch (SSOException ex) {
-            //TOFIX
+    private static Class getEntitlementCombiner(String className) {
+        if (className == null) {
+            return null;
         }
-        return Collections.EMPTY_SET;
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException ex) {
+            //TOFIX debug error
+        }
+        return com.sun.identity.entitlement.DenyOverride.class;
     }
 
     public void addSubjectAttributeNames(
@@ -315,5 +313,257 @@ public class EntitlementService implements IPolicyConfig {
         }
 
         return results;
+    }
+
+    public void removeApplication(String realm, String name) {
+        try {
+            ServiceConfig conf = getApplicationCollectionConfig(realm);
+            if (conf != null) {
+                conf.removeSubConfig(name);
+            }
+        } catch (SMSException ex) {
+            //TOFIX
+        } catch (SSOException ex) {
+            //TOFIX
+        }
+    }
+
+    public void removeApplicationType(String name) {
+        try {
+            ServiceConfig conf = getApplicationTypeCollectionConfig();
+            if (conf != null) {
+                conf.removeSubConfig(name);
+            }
+        } catch (SMSException ex) {
+            //TOFIX
+        } catch (SSOException ex) {
+            //TOFIX
+        }
+    }
+
+    private ServiceConfig getApplicationCollectionConfig(String realm)
+        throws SMSException, SSOException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
+            adminToken);
+        ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
+        if (orgConfig != null) {
+            return orgConfig.getSubConfig(CONFIG_APPLICATIONS);
+        }
+        return null;
+    }
+
+    public void storeApplication(String realm, Application appl)
+        throws EntitlementException {
+        try {
+            ServiceConfig orgConfig = getApplicationCollectionConfig(realm);
+            if (orgConfig != null) {
+                ServiceConfig appConfig = 
+                    orgConfig.getSubConfig(appl.getName());
+                if (appConfig == null) {
+                    orgConfig.addSubConfig(appl.getName(),
+                        CONFIG_APPLICATION, 0, getApplicationData(appl));
+                } else {
+                    appConfig.setAttributes(getApplicationData(appl));
+                }
+            }
+        } catch (SMSException ex) {
+            //TOFIX
+        } catch (SSOException ex) {
+            //TOFIX
+        }
+    }
+
+    public void storeApplicationType(ApplicationType applicationType)
+        throws EntitlementException {
+        try {
+            ServiceConfig conf = getApplicationTypeCollectionConfig();
+            if (conf != null) {
+                ServiceConfig sc = conf.getSubConfig(applicationType.getName());
+                if (sc == null) {
+                    conf.addSubConfig(applicationType.getName(),
+                        CONFIG_APPLICATIONS, 0,
+                        getApplicationTypeData(applicationType));
+                } else {
+                    sc.setAttributes(getApplicationTypeData(applicationType));
+                }
+            }
+        } catch (SMSException ex) {
+            //TOFIX
+        } catch (SSOException ex) {
+            //TOFIX
+        }
+    }
+
+    private Map<String, Set<String>> getApplicationTypeData(
+        ApplicationType applType) {
+        Map<String, Set<String>> data = new HashMap<String, Set<String>>();
+        data.put(CONFIG_ACTIONS, getActionSet(applType.getActions()));
+
+        ISaveIndex sIndex = applType.getSaveIndex();
+        String saveIndexClassName = (sIndex != null) ?
+            sIndex.getClass().getName() : null;
+        data.put(CONFIG_SAVE_INDEX_IMPL, (saveIndexClassName == null) ?
+            Collections.EMPTY_SET : getSet(saveIndexClassName));
+
+        ISearchIndex searchIndex = applType.getSearchIndex();
+        String searchIndexClassName = (searchIndex != null) ?
+            searchIndex.getClass().getName() : null;
+        data.put(CONFIG_SEARCH_INDEX_IMPL, (searchIndexClassName == null) ?
+            Collections.EMPTY_SET : getSet(searchIndexClassName));
+
+        ResourceName recComp = applType.getResourceComparator();
+        String resCompClassName = (recComp != null) ?
+            recComp.getClass().getName() : null;
+        data.put(CONFIG_RESOURCE_COMP_IMPL, (resCompClassName == null) ?
+            Collections.EMPTY_SET : getSet(resCompClassName));
+
+        return data;
+    }
+
+    private Map<String, Set<String>> getApplicationData(Application app) {
+        Map<String, Set<String>> data = new HashMap<String, Set<String>>();
+        data.put(CONFIG_APPLICATIONTYPE, 
+            getSet(app.getApplicationType().getName()));
+        data.put(CONFIG_ACTIONS, getActionSet(app.getActions()));
+
+        Set<String> resources = app.getResources();
+        data.put(CONFIG_RESOURCES, (resources == null) ? Collections.EMPTY_SET :
+            resources);
+        data.put(CONFIG_ENTITLEMENT_COMBINER,
+            getSet(app.getEntitlementCombiner().getClass().getName()));
+        Set<String> conditions = app.getConditions();
+        data.put(CONFIG_CONDITIONS, (conditions == null) ?
+            Collections.EMPTY_SET : conditions);
+
+        ISaveIndex sIndex = app.getSaveIndex();
+        String saveIndexClassName = (sIndex != null) ? 
+            sIndex.getClass().getName() : null;
+        data.put(CONFIG_SAVE_INDEX_IMPL, (saveIndexClassName == null) ?
+            Collections.EMPTY_SET : getSet(saveIndexClassName));
+
+        ISearchIndex searchIndex = app.getSearchIndex();
+        String searchIndexClassName = (searchIndex != null) ?
+            searchIndex.getClass().getName() : null;
+        data.put(CONFIG_SEARCH_INDEX_IMPL, (searchIndexClassName == null) ?
+            Collections.EMPTY_SET : getSet(searchIndexClassName));
+
+        ResourceName recComp = app.getResourceComparator();
+        String resCompClassName = (recComp != null) ? 
+            recComp.getClass().getName() : null;
+        data.put(CONFIG_RESOURCE_COMP_IMPL, (resCompClassName == null) ?
+            Collections.EMPTY_SET : getSet(resCompClassName));
+
+        Set<String> sbjAttributes = app.getAttributeNames();
+        data.put(ATTR_NAME_SUBJECT_ATTR_NAMES, (sbjAttributes == null) ?
+            Collections.EMPTY_SET : sbjAttributes);
+        return data;
+    }
+
+    private ApplicationType createApplicationType(
+        String name,
+        Map<String, Set<String>> data
+    ) {
+        Map<String, Boolean> actions = getActions(data);
+        String saveIndexImpl = getAttribute(data,
+            CONFIG_SAVE_INDEX_IMPL);
+        ISaveIndex saveIndex = ApplicationTypeManager.getSaveIndex(
+            saveIndexImpl);
+        String searchIndexImpl = getAttribute(data,
+            CONFIG_SEARCH_INDEX_IMPL);
+        ISearchIndex searchIndex =
+            ApplicationTypeManager.getSearchIndex(searchIndexImpl);
+        String resourceComp = getAttribute(data,
+            CONFIG_RESOURCE_COMP_IMPL);
+        ResourceName resComp =
+            ApplicationTypeManager.getResourceComparator(resourceComp);
+
+        return new ApplicationType(name, actions, searchIndex, saveIndex,
+            resComp);
+    }
+    
+    private Application createApplication(
+        String name,
+        Map<String, Set<String>> data
+    ) {
+        String applicationType = getAttribute(data,
+            CONFIG_APPLICATIONTYPE);
+        ApplicationType appType = ApplicationTypeManager.getAppplicationType(
+            applicationType);
+        Application app = new Application(name, appType);
+
+        Map<String, Boolean> actions = getActions(data);
+        if (actions != null) {
+            app.setActions(actions);
+        }
+
+        Set<String> resources = data.get(CONFIG_RESOURCES);
+        if (resources != null) {
+            app.setResources(resources);
+        }
+
+        String entitlementCombiner = getAttribute(data,
+            CONFIG_ENTITLEMENT_COMBINER);
+        Class combiner = getEntitlementCombiner(
+            entitlementCombiner);
+        app.setEntitlementCombiner(combiner);
+
+        Set<String> conditionClassNames = data.get(
+            CONFIG_CONDITIONS);
+        if (conditionClassNames != null) {
+            app.setConditions(conditionClassNames);
+        }
+
+        String saveIndexImpl = getAttribute(data,
+            CONFIG_SAVE_INDEX_IMPL);
+        ISaveIndex saveIndex = ApplicationTypeManager.getSaveIndex(
+            saveIndexImpl);
+        if (saveIndex != null) {
+            app.setSaveIndex(saveIndex);
+        }
+
+        String searchIndexImpl = getAttribute(data,
+            CONFIG_SEARCH_INDEX_IMPL);
+        ISearchIndex searchIndex =
+            ApplicationTypeManager.getSearchIndex(searchIndexImpl);
+        if (searchIndex != null) {
+            app.setSearchIndex(searchIndex);
+        }
+
+        String resourceComp = getAttribute(data,
+            CONFIG_RESOURCE_COMP_IMPL);
+        ResourceName resComp =
+            ApplicationTypeManager.getResourceComparator(resourceComp);
+        if (resComp != null) {
+            app.setResourceComparator(resComp);
+        }
+
+        Set<String> attributeNames = data.get(
+            ATTR_NAME_SUBJECT_ATTR_NAMES);
+        if (attributeNames != null) {
+            app.setAttributeNames(attributeNames);
+        }
+
+        return app;
+    }
+
+    public Set<String> getSubjectAttributeNames(
+        String realm,
+        String application) {
+        try {
+            ServiceConfig applConfig = getApplicationSubConfig(realm,
+                application);
+            if (applConfig != null) {
+                Application app = createApplication(realm,
+                    applConfig.getAttributes());
+                return app.getAttributeNames();
+            }
+        } catch (SMSException ex) {
+            //TOFIX
+        } catch (SSOException ex) {
+            //TOFIX
+        }
+        return Collections.EMPTY_SET;
     }
 }

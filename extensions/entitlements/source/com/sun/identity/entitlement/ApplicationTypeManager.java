@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeManager.java,v 1.5 2009-04-09 13:15:01 veiming Exp $
+ * $Id: ApplicationTypeManager.java,v 1.6 2009-04-29 18:14:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -31,8 +31,7 @@ import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -43,42 +42,20 @@ public class ApplicationTypeManager {
         "iPlanetAMWebAgentService";
     public static final String DELEGATION_APPLICATION_TYPE_NAME =
         "sunAMDelegationService";
-
-    private static Map<String, ApplicationType> applicationTypes =
-        new HashMap<String, ApplicationType>();
-
-    static {
-        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
-        Set<ApplicationTypeInfo> info = policyConfig.getApplicationTypes();
-        for (ApplicationTypeInfo i : info) {
-            addApplicationType(i);
-        }
-    }
-
+    
     /**
      * Returns application type names.
      *
      * @return application type names.
      */
     public static Set<String> getApplicationTypeNames() {
-        return applicationTypes.keySet();
-    }
-
-    private static void addApplicationType(ApplicationTypeInfo info) {
-        String name = info.getName();
-        Map<String, Boolean> actions = info.getActions();
-        String searchIndexClassName = info.getSearchIndexImpl();
-        String saveIndexClassName = info.getSaveIndexImpl();
-        String resourceComp = info.getResourceComp();
-
-        ISearchIndex searchIndex = ApplicationTypeManager.getSearchIndex(
-            searchIndexClassName);
-        ISaveIndex saveIndex = ApplicationTypeManager.getSaveIndex(
-            saveIndexClassName);
-        ResourceName resourceComparator =
-            ApplicationTypeManager.getResourceComparator(resourceComp);
-        applicationTypes.put(name, new ApplicationType(name, actions,
-            searchIndex, saveIndex, resourceComparator));
+        Set<String> names = new HashSet<String>();
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        Set<ApplicationType> applications = policyConfig.getApplicationTypes();
+        for (ApplicationType a : applications) {
+            names.add(a.getName());
+        }
+        return names;
     }
 
     /**
@@ -87,11 +64,40 @@ public class ApplicationTypeManager {
      * @param name Name of application type.
      * @return application type.
      */
-    public static ApplicationType get(String name) {
-        return applicationTypes.get(name);
+    public static ApplicationType getAppplicationType(String name) {
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        Set<ApplicationType> applications = policyConfig.getApplicationTypes();
+        for (ApplicationType a : applications) {
+            if (a.getName().equals(name)) {
+                return a;
+            }
+        }
+        return null;
     }
 
-    static ISearchIndex getSearchIndex(String className) {
+    /**
+     * Removes application type.
+     *
+     * @param name Name of application type.
+     */
+    public static void removeApplicationType(String name) {
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        policyConfig.removeApplicationType(name);
+    }
+
+    /**
+     * Stores application type.
+     *
+     * @param appType Application type.
+     */
+    public static void saveApplicationType(ApplicationType appType)
+        throws EntitlementException {
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        policyConfig.storeApplicationType(appType);
+    }
+
+
+    public static ISearchIndex getSearchIndex(String className) {
         if (className == null) {
             return null;
         }
@@ -111,7 +117,7 @@ public class ApplicationTypeManager {
         return null;
     }
 
-    static ISaveIndex getSaveIndex(String className) {
+    public static ISaveIndex getSaveIndex(String className) {
         if (className == null) {
             return null;
         }
@@ -131,7 +137,7 @@ public class ApplicationTypeManager {
         return null;
     }
 
-    static ResourceName getResourceComparator(String className) {
+    public static ResourceName getResourceComparator(String className) {
         if (className == null) {
             return null;
         }

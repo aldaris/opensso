@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyConfig.java,v 1.5 2009-04-29 13:22:46 veiming Exp $
+ * $Id: IPolicyConfig.java,v 1.6 2009-04-29 18:14:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
 
-import com.sun.identity.entitlement.ApplicationInfo;
-import com.sun.identity.entitlement.ApplicationTypeInfo;
+import com.sun.identity.entitlement.Application;
+import com.sun.identity.entitlement.ApplicationType;
+import com.sun.identity.entitlement.EntitlementException;
 import java.util.Set;
 
 /**
@@ -41,8 +42,16 @@ public interface IPolicyConfig {
     String INDEX_CACHE_SIZE = "indexCacheSize";
     String RESOURCE_COMPARATOR = "resourceComparator";
 
-    Set<ApplicationInfo> getApplications(String realm);
-    Set<ApplicationTypeInfo> getApplicationTypes();
+    Set<Application> getApplications(String realm);
+    void removeApplication(String realm, String name);
+    void storeApplication(String realm, Application application)
+        throws EntitlementException;
+
+    Set<ApplicationType> getApplicationTypes();
+    void removeApplicationType(String name);
+    void storeApplicationType(ApplicationType applicationType)
+        throws EntitlementException;
+
     String getAttributeValue(String attributeName);
     Set<String> getAttributeValues(String attributeName);
     Set<String> getSubjectAttributeNames(String realm, String application);

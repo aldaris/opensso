@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationType.java,v 1.6 2009-04-09 15:18:33 veiming Exp $
+ * $Id: ApplicationType.java,v 1.7 2009-04-29 18:14:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -154,4 +154,21 @@ public class ApplicationType {
         return resourceComp;
     }
 
+    /**
+     * Returns save index.
+     *
+     * @return save index.
+     */
+    public ISaveIndex getSaveIndex() {
+        return saveIndex;
+    }
+
+    /**
+     * Returns search index.
+     * 
+     * @return search index.
+     */
+    public ISearchIndex getSearchIndex() {
+        return searchIndex;
+    }
 }
