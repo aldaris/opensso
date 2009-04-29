@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AuthNAuthorityTests.java,v 1.3 2009-01-27 00:14:08 nithyas Exp $
+ * $Id: SAMLv2AuthNAuthorityTests.java,v 1.4 2009-04-29 05:31:22 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -457,6 +457,26 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
                 log(Level.SEVERE, "cleanup", "deleteIdentity SP famadm command" 
                         + " failed");
             }
+            if (FederationManager.getExitCode(fmSP.deleteEntity(webcClient,
+                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
+                    true, "saml2")) != 0) {
+                log(Level.FINEST, "cleanup", "Deletion of " +
+                        "Extended entity failed");
+                log(Level.FINEST, "cleanup", "deleteEntity" +
+                        " famadm command failed");
+                assert (false);
+            }
+            if (FederationManager.getExitCode(fmSP.importEntity(webcClient,
+                   configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "", 
+                   spmetadata, "", "saml2")) != 0) {
+               log(Level.SEVERE, "cleanup", "Failed to import extended " +
+                       "metadata");
+               log(Level.SEVERE, "cleanup", "importEntity famadm command" +
+                       " failed");
+               assert(false);
+            } 
+            
             consoleLogin(webcClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
@@ -480,6 +500,26 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
                 log(Level.SEVERE, "cleanup",
                         "deleteAuthInstances ssoadm command failed");
             }
+            if (FederationManager.getExitCode(fmIDP.deleteEntity(webcClient,
+                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
+                    true, "saml2")) != 0) {
+                log(Level.SEVERE, "cleanup", "Deletion of" +
+                        " idp Extended entity failed");
+                log(Level.SEVERE, "cleanup", "deleteEntity" +
+                        " famadm command failed");
+                assert (false);
+            }
+            if (FederationManager.getExitCode(fmIDP.importEntity(webcClient,
+                   configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), "",
+                   idpmetadata, "", "saml2")) != 0) {
+               log(Level.SEVERE, "cleanup", "Failed to import idp " +
+                       "extended metadata");
+               log(Level.SEVERE, "cleanup", "importEntity famadm command" +
+                       " failed");
+               assert(false);
+            } 
+            
             Thread.sleep(5000);
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
