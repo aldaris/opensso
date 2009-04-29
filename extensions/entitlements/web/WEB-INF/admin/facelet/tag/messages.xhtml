@@ -22,7 +22,7 @@
                         value="#{message.summary}"/>
                     <ice:outputText
                         rendered="#{message.detail != null}"
-                        value="#{message.detail}"/>
+                        value=": #{message.detail}"/>
                 </ice:panelGroup>
             </ice:panelSeries>
         </ui:define>

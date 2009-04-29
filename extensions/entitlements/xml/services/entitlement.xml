@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.7 2009-04-29 13:22:49 veiming Exp $
+   $Id: entitlement.xml,v 1.8 2009-04-29 14:33:22 farble1670 Exp $
 
 -->
 
@@ -211,6 +211,73 @@
                             <Value>DateCondition</Value>
                             <Value>DayCondition</Value>
                             <Value>TimeCondition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="entitlementCombiner" />
+                            <Value>com.sun.identity.entitlement.DenyOverride</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="Paycheck"
+                        id="application">
+                        <AttributeValuePair>
+                            <Attribute name="applicationType" />
+                            <Value>iPlanetAMWebAgentService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resources" />
+                            <Value>http://paycheck.sun.com:8081/*</Value>
+                            <Value>http://paycheck.sun.com:8081/private</Value>
+                            <Value>http://paycheck.sun.com:8081/users/*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="conditions" />
+                            <Value>DateCondition</Value>
+                            <Value>DayCondition</Value>
+                            <Value>TimeCondition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="entitlementCombiner" />
+                            <Value>com.sun.identity.entitlement.DenyOverride</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="Calendar"
+                        id="application">
+                        <AttributeValuePair>
+                            <Attribute name="applicationType" />
+                            <Value>iPlanetAMWebAgentService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resources" />
+                            <Value>http://calendar.sun.com</Value>
+                            <Value>http://calendar.sun.com/my</Value>
+                            <Value>http://calendar.sun.com/admin</Value>
+                            <Value>http://calendar.sun.com?calId=*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="conditions" />
+                            <Value>IPCondition</Value>
+                            <Value>DNSNameCondition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="entitlementCombiner" />
+                            <Value>com.sun.identity.entitlement.DenyOverride</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="Instant Messaging"
+                        id="application">
+                        <AttributeValuePair>
+                            <Attribute name="applicationType" />
+                            <Value>iPlanetAMWebAgentService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resources" />
+                            <Value>http://im.sun.com/register</Value>
+                            <Value>http://im.sun.com/im.jnlp</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="conditions" />
+                            <Value>IPCondition</Value>
+                            <Value>DNSNameCondition</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />

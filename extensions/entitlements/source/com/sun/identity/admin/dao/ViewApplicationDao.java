@@ -17,7 +17,6 @@ public class ViewApplicationDao implements Serializable {
 
     private ViewApplicationTypeDao viewApplicationTypeDao;
     private Map<String, ViewApplication> viewApplications = new HashMap<String, ViewApplication>();
-    private String[] tempResources = new String[]{"http://a/*", "http://b", "https://c", "http://1/*", "http://12", "http://13"};
 
     public ViewApplicationTypeDao getViewApplicationTypeDao() {
         return viewApplicationTypeDao;
@@ -44,7 +43,7 @@ public class ViewApplicationDao implements Serializable {
 
             // resources
             List<Resource> resources = new ArrayList<Resource>();
-            for (String resourceString : tempResources) {
+            for (String resourceString : a.getResources()) {
                 Resource r;
                 try {
                     r = (Resource) Class.forName(vat.getResourceClassName()).newInstance();

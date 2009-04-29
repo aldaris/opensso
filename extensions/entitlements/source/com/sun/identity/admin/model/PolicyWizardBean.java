@@ -161,6 +161,6 @@ public class PolicyWizardBean
     }
 
     public String getViewApplicationName() {
-        return viewApplicationName;
+        return getPrivilegeBean().getViewEntitlement().getViewApplication().getName();
     }
 }
