@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.5 2009-04-02 22:13:40 veiming Exp $
+ * $Id: PolicyManager.java,v 1.6 2009-04-29 11:43:13 veiming Exp $
  *
  */
 
@@ -57,6 +57,7 @@ import java.io.ByteArrayInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -127,6 +128,10 @@ public final class PolicyManager {
     static final String NAME_ATTRIBUTE = "name";
     static final String TYPE_ATTRIBUTE = "type";
     static final String DESCRIPTION_ATTRIBUTE = "description";
+    static final String CREATED_BY_ATTRIBUTE = "createdby";
+    static final String CREATION_DATE_ATTRIBUTE = "creationdate";
+    static final String LAST_MODIFIED_BY_ATTRIBUTE = "lastmodifiedby";
+    static final String LAST_MODIFIED_DATE_ATTRIBUTE = "lastmodifieddate";
     static final String PRIORITY_ATTRIBUTE = "priority";
     static final String STATUS_ATTRIBUTE = "priority";
     static final String STATUS_ACTIVE = "active";
@@ -561,6 +566,13 @@ public final class PolicyManager {
         }
         validateForResourcePrefix(policy);
         validateReferrals(policy);
+
+        Date creationDate = new Date();
+        policy.setCreatedBy(token.getPrincipal().getName());
+        policy.setCreationDate(creationDate.getTime());
+        policy.setLastModifiedBy(token.getPrincipal().getName());
+        policy.setLastModifiedDate(creationDate.getTime());
+
         // Construct the named policy
         String policyXml = policy.toXML();
         Map attrs = new HashMap();
@@ -652,6 +664,11 @@ public final class PolicyManager {
                 "policy_realm_does_not_match", realmNames, null, realmName, 
                 PolicyException.POLICY));
         }
+
+        policy.setLastModifiedBy(token.getPrincipal().getName());
+        Date lastModifiedDate = new Date();
+        policy.setLastModifiedDate(lastModifiedDate.getTime());
+
         // Construct the named policy
         String policyXml = policy.toXML();
         Map attrs = new HashMap();

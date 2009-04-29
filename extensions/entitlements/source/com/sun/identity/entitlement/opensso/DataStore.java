@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.4 2009-04-14 00:24:19 veiming Exp $
+ * $Id: DataStore.java,v 1.5 2009-04-29 11:43:12 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -38,6 +38,7 @@ import com.sun.identity.entitlement.util.NetworkMonitor;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.ldap.LDAPDN;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSDataEntry;
 import com.sun.identity.sm.SMSEntry;
@@ -189,6 +190,36 @@ public class DataStore {
             setObjectClass.add(SMSEntry.OC_TOP);
             setObjectClass.add(SMSEntry.OC_SERVICE_COMP);
 
+            Set<String> info = new HashSet<String>(8);
+
+            String createdBy = p.getCreatedBy();
+            if (createdBy != null) {
+                info.add(Privilege.CREATED_BY_ATTRIBUTE + "=" + createdBy);
+            }
+
+            String lastModifiedBy = p.getLastModifiedBy();
+            if (lastModifiedBy != null) {
+                info.add(Privilege.LAST_MODIFIED_BY_ATTRIBUTE + "=" +
+                    lastModifiedBy);
+            }
+
+            long creationDate = p.getCreationDate();
+            if (creationDate > 0) {
+                info.add(Long.toString(creationDate) + "=" +
+                    Privilege.CREATION_DATE_ATTRIBUTE);
+                info.add("|" + Long.toString(creationDate) + "=" +
+                    Privilege.CREATION_DATE_ATTRIBUTE);
+            }
+
+            long lastModifiedDate = p.getLastModifiedDate();
+            if (lastModifiedDate > 0) {
+                info.add(Long.toString(lastModifiedDate) + "=" +
+                    Privilege.LAST_MODIFIED_DATE_ATTRIBUTE);
+                info.add("|" + Long.toString(lastModifiedDate) + "=" +
+                    Privilege.LAST_MODIFIED_DATE_ATTRIBUTE);
+            }
+            map.put("ou", info);
+
             s.setAttributes(map);
             s.save();
             updateIndexCount(adminToken, 1);
@@ -218,6 +249,30 @@ public class DataStore {
                 throw new EntitlementException(10, null, e);
             }
         }
+    }
+
+    public Set<String> search(
+        String filter,
+        int numOfEntries,
+        boolean sortResults,
+        boolean ascendingOrder
+    ) {
+        Set<String> results = new HashSet<String>();
+
+        try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            Set<String> dns = SMSEntry.search(adminToken, BASE_DN, filter);
+            for (String dn : dns) {
+                String rdns[] = LDAPDN.explodeDN(dn, true);
+                if ((rdns != null) && rdns.length > 0) {
+                    results.add(rdns[0]);
+                }
+            }
+        } catch (SMSException ex) {
+            //TOFIX
+        }
+        return results;
     }
 
     public Set<Privilege> search(

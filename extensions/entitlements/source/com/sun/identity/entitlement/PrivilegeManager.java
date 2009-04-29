@@ -22,10 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.5 2009-04-07 19:00:47 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.6 2009-04-29 11:43:12 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
+import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import java.security.Principal;
+import java.util.Date;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -33,6 +37,8 @@ import javax.security.auth.Subject;
  * Class to manage entitlement privileges: to add, remove, modify privilege
  */
 public abstract class PrivilegeManager {
+    private Subject adminSubject;
+
     /**
      * Returns instance of configured <code>PrivilegeManager</code>
      * @param subject subject that would be used for the privilege management 
@@ -64,7 +70,9 @@ public abstract class PrivilegeManager {
      * Initializes the object
      * @param subject subject to initilialize the privilege manager with
      */
-    public abstract void initialize(Subject subject);
+    public void initialize(Subject subject) {
+        this.adminSubject = subject;
+    }
 
     /**
      * Returns a privilege.
@@ -83,6 +91,18 @@ public abstract class PrivilegeManager {
      */
     public void addPrivilege(Privilege privilege)
         throws EntitlementException {
+        Date date = new Date();
+        privilege.setCreationDate(date.getTime());
+        privilege.setLastModifiedDate(date.getTime());
+
+        Set<Principal> principals = adminSubject.getPrincipals();
+        String principalName = ((principals != null) && !principals.isEmpty()) ?
+            principals.iterator().next().getName() : null;
+
+        if (principalName != null) {
+            privilege.setCreatedBy(principalName);
+            privilege.setLastModifiedBy(principalName);
+        }
     }
 
     /**
@@ -103,6 +123,13 @@ public abstract class PrivilegeManager {
      */
     public void modifyPrivilege(Privilege privilege)
         throws EntitlementException {
+        Date date = new Date();
+        privilege.setLastModifiedDate(date.getTime());
+
+        Set<Principal> principals = adminSubject.getPrincipals();
+        if ((principals != null) && !principals.isEmpty()) {
+            privilege.setLastModifiedBy(principals.iterator().next().getName());
+        }
     }
 
     /**
@@ -113,6 +140,23 @@ public abstract class PrivilegeManager {
      *         names.
      */
     public abstract Set<String> getPrivilegeNames() throws EntitlementException;
+
+
+    /**
+     * Returns a set of privilege names for a given search criteria.
+     *
+     * @param filter Set of search filter.
+     * @param boolAnd <code>true</code> for AND-ing the search filter.
+     * @return a set of privilege names for a given search criteria.
+     */
+    public Set<String> searchPrivilegeNames(
+        Set<PrivilegeSearchFilter> filter,
+        boolean boolAnd) {
+        IPolicyDataStore datastore =
+            PolicyDataStoreFactory.getInstance().getDataStore();
+        return datastore.searchPrivilegeNames(
+            filter, boolAnd, 0, false, false);//TOFIX
+    }
 
     /**
      * Returns privilege names matching the pattern.

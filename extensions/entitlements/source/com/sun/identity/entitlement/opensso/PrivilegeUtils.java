@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.13 2009-04-28 00:34:35 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.14 2009-04-29 11:43:12 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -162,6 +162,11 @@ public class PrivilegeUtils {
 
         Privilege privilege = new OpenSSOPrivilege(policyName, entitlement,
             eSubject, eCondition, resourceAttributesSet);
+        privilege.setCreatedBy(policy.getCreatedBy());
+        privilege.setLastModifiedBy(policy.getLastModifiedBy());
+        privilege.setCreationDate(policy.getCreationDate());
+        privilege.setLastModifiedDate(policy.getLastModifiedDate());
+        
         return privilege;
     }
 
@@ -368,6 +373,11 @@ public class PrivilegeUtils {
                 policy.addResponseProvider(pResponseProviderName, responseProvider);
             }
         }
+
+        policy.setCreatedBy(privilege.getCreatedBy());
+        policy.setCreationDate(privilege.getCreationDate());
+        policy.setLastModifiedBy(privilege.getLastModifiedBy());
+        policy.setLastModifiedDate(privilege.getLastModifiedDate());
         return policy;
     }
 

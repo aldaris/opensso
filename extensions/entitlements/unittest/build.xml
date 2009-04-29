@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2009-02-27 16:11:35 veiming Exp $
+   $Id: build.xml,v 1.5 2009-04-29 11:43:14 veiming Exp $
 
 -->
 
@@ -37,6 +37,7 @@
     <property name="build.debuglevel" value="lines,vars,source"/>
 
     <path id="build.class.path">
+        <pathelement location="${entitlements.classes.dir}"/>
         <fileset dir="${entitlements.extlib.dir}">
             <include name="*.jar"/>
         </fileset>
@@ -46,7 +47,6 @@
         <fileset dir="${entitlements.build.lib.local.dir}">
             <include name="*.jar"/>
         </fileset>
-        <pathelement location="${entitlements.classes.dir}"/>
     </path>
     
     <target name="build" depends="preparebuild">        

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.4 2009-04-14 00:24:19 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.5 2009-04-29 11:43:12 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -34,6 +34,7 @@ import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
 import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
+import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import com.sun.identity.shared.BufferedIterator;
 import java.util.Iterator;
 import java.util.Set;
@@ -116,6 +117,28 @@ public class PolicyDataStore implements IPolicyDataStore {
         threadPool.submit(new SearchTask(this, iterator, indexes,
             subjectIndexes, bSubTree, setDNs));
         return iterator;
+    }
+
+    //TOFIX
+    public Set<String> searchPrivilegeNames(
+        Set<PrivilegeSearchFilter> filters,
+        boolean boolAnd,
+        int numOfEntries,
+        boolean sortResults,
+        boolean ascendingOrder
+    ) {
+        StringBuffer strFilter = new StringBuffer();
+        if (boolAnd) {
+            strFilter.append("(&");
+        } else {
+            strFilter.append("(|");
+        }
+        for (PrivilegeSearchFilter psf : filters) {
+            strFilter.append(psf.getFilter());
+        }
+        strFilter.append(")");
+        return dataStore.search(strFilter.toString(), numOfEntries, sortResults,
+            ascendingOrder);
     }
 
     public class SearchTask implements Runnable {

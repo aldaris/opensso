@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.9 2009-04-23 23:29:20 veiming Exp $
+ * $Id: Privilege.java,v 1.10 2009-04-29 11:43:11 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -46,11 +46,22 @@ import org.json.JSONObject;
 public abstract class Privilege implements Serializable {
     private static final long serialVersionUID = -403250971215465050L;
 
+    public static final String CREATED_BY_ATTRIBUTE = "createdby";
+    public static final String LAST_MODIFIED_BY_ATTRIBUTE = "lastmodifiedby";
+    public static final String CREATION_DATE_ATTRIBUTE = "creationdate";
+    public static final String LAST_MODIFIED_DATE_ATTRIBUTE =
+        "lastmodifieddate";
+
     private String name;
     private Entitlement entitlement;
     private EntitlementSubject eSubject;
     private EntitlementCondition eCondition;
     private Set<ResourceAttributes> eResourceAttributes;
+
+    private String createdBy;
+    private String lastModifiedBy;
+    private long creationDate;
+    private long lastModifiedDate;
 
     /**
      * Constructs entitlement privilege
@@ -406,5 +417,77 @@ public abstract class Privilege implements Serializable {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Returns creation date.
+     *
+     * @return creation date.
+     */
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * Sets the creation date.
+     *
+     * @param creationDate creation date.
+     */
+    public void setCreationDate(long creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    /**
+     * Returns last modified date.
+     *
+     * @return last modified date.
+     */
+    public long getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    /**
+     * Sets the last modified date.
+     *
+     * @param lastModifiedDate last modified date.
+     */
+    public void setLastModifiedDate(long lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    /**
+     * Returns the user ID who last modified the policy.
+     *
+     * @return user ID who last modified the policy.
+     */
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    /**
+     * Sets the user ID who last modified the policy.
+     *
+     * @param createdBy user ID who last modified the policy.
+     */
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    /**
+     * Returns the user ID who created the policy.
+     *
+     * @return user ID who created the policy.
+     */
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * Sets the user ID who created the policy.
+     *
+     * @param createdBy user ID who created the policy.
+     */
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 }
