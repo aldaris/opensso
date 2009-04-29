@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AttributeQueryTests.java,v 1.6 2009-02-10 22:08:30 vimal_67 Exp $
+ * $Id: SAMLv2AttributeQueryTests.java,v 1.7 2009-04-29 05:28:16 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,7 +104,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             + "            <Value>mobile=mobile</Value>\n"
             + "            <Value>pager=pager</Value>\n"
             + "            <Value>postofficebox=postofficebox</Value>\n"
-            + "            <Value>secretary=secretary</Value>\n"
+            + "            <Value>title=title</Value>\n"
             + "            <Value>street=street</Value>\n"
             + "            <Value>nsrole=nsrole</Value>\n"
             + "        </Attribute>";
@@ -130,7 +130,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             + "            <Value>mobile=mobile</Value>\n"
             + "            <Value>pager=pager</Value>\n"
             + "            <Value>postofficebox=postofficebox</Value>\n"
-            + "            <Value>secretary=secretary</Value>\n"
+            + "            <Value>title=title</Value>\n"
             + "            <Value>street=street</Value>\n"
             + "            <Value>nsrole=nsrole</Value>\n"
             + "        </Attribute>";
@@ -220,10 +220,32 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);
             idpattrmultiVal = new ArrayList(); 
+            List listnsrole = new ArrayList();
             list.clear();
             String idpuserMultiAttr = configMap.get(
                     TestConstants.KEY_IDP_USER_MULTIATTRIBUTES);
-            list = (ArrayList) parseStringToList(idpuserMultiAttr, ",", "&");
+            listnsrole = 
+                    (ArrayList) parseStringToList(idpuserMultiAttr, ",", "&");
+            // checking if the datastore is ldapv3, then nsrole attribute is not
+            // added to the idp user list
+            Iterator iternsrole = listnsrole.iterator();            
+            while(iternsrole.hasNext()) {
+                String str = (String) iternsrole.next();             
+                int index = str.indexOf("=");
+                if (index != -1) {
+                    String attrName = str.substring(0, index).trim();                    
+                    String strVal = str.substring(index + 1).trim();   
+                    // checking nsrole attribute
+                    if (attrName.equalsIgnoreCase("nsrole")) {                           
+                        if (testNSRoleType.equalsIgnoreCase("filteredrole") || 
+                                testNSRoleType.equalsIgnoreCase("role")) {
+                            list.add(attrName + "=" + strVal);
+                        }
+                    } else {
+                        list.add(attrName + "=" + strVal);
+                    }                      
+                }
+            }
             list.add("sn=" + configMap.get(TestConstants.KEY_IDP_USER));            
             list.add("cn=" + configMap.get(TestConstants.KEY_IDP_USER));            
             list.add("userpassword=" +
@@ -248,12 +270,15 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_USER_TELEPHONE));
             list.add("pager=" + 
                     configMap.get(TestConstants.KEY_IDP_USER_PAGER));
-            list.add("secretary=" + 
-                    configMap.get(TestConstants.KEY_IDP_USER_SECRETARY));
+            list.add("title=" + 
+                    configMap.get(TestConstants.KEY_IDP_USER_TITLE));
             list.add("sunIdentityMSISDNNumber=" + 
                     configMap.get(TestConstants.KEY_IDP_USER_MSISDN));
-            list.add("nsrole=" + 
-                    configMap.get(TestConstants.KEY_IDP_USER_NSROLE));
+            if (testNSRoleType.equalsIgnoreCase("filteredrole") || 
+                    testNSRoleType.equalsIgnoreCase("role")) {
+                list.add("nsrole=" + 
+                        configMap.get(TestConstants.KEY_IDP_USER_NSROLE));
+            }
             // For nsrole attribute: 
             // if the exist is Yes, then the nsrole attribute of a spuser or
             // idpuser is checked after the filteredroles or roles are created
@@ -780,8 +805,8 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             expected = configMap.get(TestConstants.KEY_IDP_USER_TELEPHONE);
         } else if (attrString.equalsIgnoreCase("pager")) {
             expected = configMap.get(TestConstants.KEY_IDP_USER_PAGER);
-        } else if (attrString.equalsIgnoreCase("secretary")) {
-            expected = configMap.get(TestConstants.KEY_IDP_USER_SECRETARY);
+        } else if (attrString.equalsIgnoreCase("title")) {
+            expected = configMap.get(TestConstants.KEY_IDP_USER_TITLE);
         } else if (attrString.equalsIgnoreCase("msi")) {
             expected = configMap.get(TestConstants.KEY_IDP_USER_MSISDN);
         } else if (attrString.equalsIgnoreCase("nsrole")) {
