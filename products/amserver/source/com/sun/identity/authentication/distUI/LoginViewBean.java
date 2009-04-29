@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.25 2009-03-14 03:49:07 manish_rustagi Exp $
+ * $Id: LoginViewBean.java,v 1.26 2009-04-29 18:07:02 qcheng Exp $
  *
  */
 
@@ -805,7 +805,11 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         
         try {
             if ( indexType != null ) {
-                ac.login(indexType, indexName, userCredentials);
+                if (indexType.equals(AuthContext.IndexType.RESOURCE)) {
+                     ac.login(indexType, indexName, userCredentials, envMap);   
+                } else {
+                    ac.login(indexType, indexName, userCredentials);
+                }
                 session.setAttribute("IndexType", indexType.toString());
                 session.setAttribute("IndexName", indexName);
             } else {
@@ -1327,7 +1331,12 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         } else if ( reqDataHash.get("authlevel") != null ) {
             indexType = AuthContext.IndexType.LEVEL;
             indexName = (String)reqDataHash.get("authlevel");
-            
+        } else if ((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM) 
+            != null) && "true".equalsIgnoreCase((String) reqDataHash.get(
+                 ISAuthConstants.IP_RESOURCE_ENV_PARAM))){
+            indexType = AuthContext.IndexType.RESOURCE;
+            indexName = AuthClientUtils.getResourceURL(request);
+            envMap = AuthClientUtils.getEnvMap(request);
         } else if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
             indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
             indexName = (String)reqDataHash.get(Constants.COMPOSITE_ADVICE);
@@ -2004,6 +2013,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     String orgQueryName = "";
     String indexName = "";
     AuthContext.IndexType indexType;
+    Map envMap = null;
     /** List of callback */
     public Callback[] callbacks = null;
     /** List of button options */

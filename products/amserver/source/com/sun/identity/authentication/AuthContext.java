@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.19 2009-02-19 05:46:13 bhavnab Exp $
+ * $Id: AuthContext.java,v 1.20 2009-04-29 18:07:01 qcheng Exp $
  *
  */
 
@@ -39,6 +39,7 @@ import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.share.AuthXMLUtils;
@@ -49,7 +50,6 @@ import com.sun.identity.security.AMSecurityPropertiesException;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.L10NMessageImpl;
-import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Constructor;
@@ -63,6 +63,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -362,7 +363,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      * @supported.api
      */
     public void login() throws AuthLoginException {
-        login(null, null, null, false);
+        login(null, null, null, false, null);
     }
     
     /**
@@ -370,7 +371,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      * identified by the index type and index name. The <code>IndexType</code>
      * defines the possible kinds of "objects" or "resources" for which an
      * authentication can be performed. Currently supported index types are
-     * users, roles, services (or application), levels and
+     * users, roles, services (or application), levels, resources and
      * mechanism/authentication modules.
      *
      * @param type Authentication index type.
@@ -381,7 +382,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      */
     public void login(IndexType type, String indexName)
             throws AuthLoginException {
-        login(type, indexName, null, false);
+        login(type, indexName, null, false, null);
     }
     
     /**
@@ -390,7 +391,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      * The <code>IndexType</code> defines the possible kinds of "objects"
      * or "resources" for which an authentication can
      * be performed. Currently supported index types are
-     * users, roles, services (or application), levels and mechanism.
+     * users, roles, services (or application), levels, resources and mechanism.
      * The <code>pCookieMode</code> indicates that a persistent cookie exists
      * for this request.
      *
@@ -401,7 +402,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      */
     public void login(IndexType type, String indexName, boolean pCookieMode)
             throws AuthLoginException {
-        login(type, indexName, null, pCookieMode);
+        login(type, indexName, null, pCookieMode, null);
     }
     
     /**
@@ -410,7 +411,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      * The <code>IndexType</code> defines the possible kinds of "objects"
      * or "resources" for which an authentication can
      * be performed. Currently supported index types are
-     * users, roles, services (or application), levels and mechanism.
+     * users, roles, services (or application), levels, resources and mechanism.
      * It allows the caller to pass in the desired locale for this request.
      *
      * @param type authentication index type
@@ -421,7 +422,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      */
     public void login(IndexType type, String indexName, String locale)
             throws AuthLoginException {
-        login(type, indexName, null, false, locale);
+        login(type, indexName, null, false, null, locale);
     }
 
     /**
@@ -432,7 +433,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      * The <code>IndexType</code> defines the possible kinds of "objects"
      * or "resources" for which an authentication can
      * be performed. Currently supported index types are
-     * users, roles, services (or application), levels and mechanism.
+     * users, roles, services (or application), levels, resources and mechanism.
      * <p>
      * NOTE : This is a simplified wrapper method to eliminate multi-step calls
      * to 'login' and submit credentials. This method is useful and will work
@@ -453,7 +454,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      */
     public SSOToken login(IndexType type, String indexName, Callback[] userInfo)
             throws AuthLoginException {
-        login(type, indexName, null, false);
+        login(type, indexName, null, false, null);
         
         SSOToken ssoToken = null;
         Callback[] callbacks = null;
@@ -493,7 +494,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      * The <code>IndexType</code> defines the possible kinds of "objects"
      * or "resources" for which an authentication can be performed. Currently
      * supported index types are users, roles, services (or application),
-     * levels and mechanism/authentication modules.
+     * levels, resources and mechanism/authentication modules.
      *
      * @param indexType authentication index type.
      * @param indexName authentication index name.
@@ -512,20 +513,55 @@ public class AuthContext extends Object implements java.io.Serializable {
      */
     public void login(IndexType indexType, String indexName, String[] params)
             throws AuthLoginException {
-        login(indexType, indexName, params, false);
+        login(indexType, indexName, params, false, null);
+    }
+    
+    /**
+     * Starts the login process for the given <code>AuthContext</code> object
+     * identified by the index type and index name with certain parameters
+     * and environment map.
+     * The <code>IndexType</code> defines the possible kinds of "objects"
+     * or "resources" for which an authentication can be performed. Currently
+     * supported index types are users, roles, services (or application),
+     * levels, modules and resources.
+     *
+     * @param indexType authentication index type.
+     * @param indexName authentication index name.
+     * @param params contains the default values for the callbacks. The order
+     *        of this array matches the callbacks order for this login process.
+     *        value for the <code>PasswordCallback</code> is also in String
+     *        format, it will be converted to <code>char[]</code> when it is
+     *        set to the callback. Internal processing for this string array
+     *        uses <code>|</code> as separator. Hence <code>|</code> should not
+     *        be used in these default values. Currently only
+     *        <code>NameCallback</code> and <code>PasswordCallback</code> are
+     *        supported.
+     * @param envMap contains the environment key/value pairs. Key is a String
+     *        object indicating the property name, value is a Set of String
+     *        values for the property. Currenty this parameter only applicable
+     *        when the indexTye is <code>AuthContext.IndexType.RESOURCE</code>.
+     * @exception AuthLoginException if an error occurred during login.
+     *
+     * @supported.api
+     */
+    public void login(IndexType indexType, String indexName, 
+        String[] params, Map envMap)
+            throws AuthLoginException {
+        login(indexType, indexName, params, false, envMap);
     }
     
     private void login(
         IndexType indexType,
         String indexName,
         String[] params,
-        boolean pCookie
+        boolean pCookie,
+        Map envMap
     ) throws AuthLoginException {
         if (clientLocale == null) {
-            login(indexType, indexName, params, false, null);
+            login(indexType, indexName, params, false, envMap, null);
         } else {
             String localeStr = clientLocale.toString();
-            login(indexType, indexName, params, false, localeStr);
+            login(indexType, indexName, params, false, envMap, localeStr);
         }
     }
 
@@ -534,6 +570,7 @@ public class AuthContext extends Object implements java.io.Serializable {
         String indexName,
         String[] params,
         boolean pCookie,
+        Map envMap,
         String locale
     ) throws AuthLoginException {
         if (ssoToken != null) {
@@ -565,7 +602,7 @@ public class AuthContext extends Object implements java.io.Serializable {
             	    authDebug.message("AuthContext.login : runLogin against "
             		    + authServiceURL);
             	}
-                runLogin(indexType, indexName, params, pCookie, locale);
+                runLogin(indexType, indexName, params, pCookie, envMap, locale);
                 return;
             }
         } catch (AuthLoginException e) {
@@ -599,7 +636,8 @@ public class AuthContext extends Object implements java.io.Serializable {
                 e.hasMoreElements(); ) {
                     authServiceURL = (URL)e.nextElement();
                     try {
-                        runLogin(indexType, indexName, params, pCookie, locale);
+                        runLogin(indexType, indexName, params, pCookie, 
+                            envMap, locale);
                         return;
                     } catch (AuthLoginException ex) {
                         authException = ex;
@@ -623,6 +661,7 @@ public class AuthContext extends Object implements java.io.Serializable {
         String indexName,
         String[] params,
         boolean pCookie,
+        Map envMap,
         String locale
     ) throws AuthLoginException {
         if (!localFlag) {
@@ -668,7 +707,7 @@ public class AuthContext extends Object implements java.io.Serializable {
                         getAuthContext(organizationName, ssoTokenID, false, 
                             null, null, null, forceAuth);
                 }
-                acLocal.login(indexType, indexName, pCookie, locale);
+                acLocal.login(indexType, indexName, pCookie, envMap, locale);
             } catch (AuthException e) {
                 throw new AuthLoginException(e);
             }
@@ -687,7 +726,7 @@ public class AuthContext extends Object implements java.io.Serializable {
             }
         }
         // Run Login
-        runRemoteLogin(indexType, indexName, params, pCookie, locale);
+        runRemoteLogin(indexType, indexName, params, pCookie, envMap, locale);
         
         if (authDebug.messageEnabled()) {
             authDebug.message("useNewStyleRemoteAuthentication : " 
@@ -719,7 +758,8 @@ public class AuthContext extends Object implements java.io.Serializable {
                 throw loginException;
             }
             // Re-try login process with AuthIdentifier
-            runRemoteLogin(indexType, indexName, params, pCookie, locale);
+            runRemoteLogin(indexType, indexName, params, pCookie, 
+                envMap, locale);
         } else if (!useNewStyleRemoteAuthentication) {
             useNewStyleRemoteAuthentication = true;
         }
@@ -729,7 +769,7 @@ public class AuthContext extends Object implements java.io.Serializable {
     }
 
     private void runRemoteLogin(IndexType indexType, String indexName,
-        String[] params, boolean pCookie, String locale)
+        String[] params, boolean pCookie, Map envMap, String locale)
         throws AuthLoginException {
         try {
             String xmlString = null;
@@ -746,7 +786,7 @@ public class AuthContext extends Object implements java.io.Serializable {
             }
 
             request.append(MessageFormat.format(
-                AuthXMLTags.XML_REQUEST_PREFIX,authHandles));
+                AuthXMLTags.XML_REQUEST_PREFIX, authHandles));
             if (appSSOToken != null) {
                 request.append(AuthXMLTags.APPSSOTOKEN_BEGIN);
                 request.append(appSSOToken.getTokenID().toString()).
@@ -805,6 +845,8 @@ public class AuthContext extends Object implements java.io.Serializable {
                     request.append(AuthXMLTags.INDEX_TYPE_MODULE_ATTR);
                 } else if (indexType == IndexType.LEVEL) {
                     request.append(AuthXMLTags.INDEX_TYPE_LEVEL_ATTR);
+                } else if (indexType == IndexType.RESOURCE) {
+                    request.append(AuthXMLTags.INDEX_TYPE_RESOURCE);
                 } else if (indexType == IndexType.COMPOSITE_ADVICE) {
                     request.append(
                         AuthXMLTags.INDEX_TYPE_COMPOSITE_ADVICE_ATTR);
@@ -834,6 +876,30 @@ public class AuthContext extends Object implements java.io.Serializable {
                 request.append(AuthXMLTags.PARAMS_BEGIN)
                     .append(paramString.toString())
                     .append(AuthXMLTags.PARAMS_END);
+            }
+            if ((envMap != null) && !envMap.isEmpty()) {
+                StringBuffer envString = new StringBuffer();
+                Iterator keys = envMap.keySet().iterator();
+                while (keys.hasNext()) {
+                    // convert Map to XMLString as follows:
+                    // <EnvValue>keyname|value1|value2|...</EnvValue>
+                    String keyName = (String) keys.next();
+                    Set values = (Set) envMap.get(keyName);
+                    if ((values != null) && !values.isEmpty()) {
+                        envString.append(AuthXMLTags.ENV_AV_BEGIN).append(
+                             AuthClientUtils.escapePipe(keyName));
+                        Iterator iter = values.iterator();
+                        while (iter.hasNext()) {
+                            envString.append(ISAuthConstants.PIPE_SEPARATOR)
+                                .append(AuthClientUtils.escapePipe(
+                                    (String) iter.next()));
+                        }
+                        envString.append(AuthXMLTags.ENV_AV_END);
+                    }
+                }
+                request.append(AuthXMLTags.ENV_BEGIN)
+                    .append(envString.toString())
+                    .append(AuthXMLTags.ENV_END);
             }
             request.append(AuthXMLTags.LOGIN_END)
                 .append(AuthXMLTags.XML_REQUEST_SUFFIX);
@@ -1493,7 +1559,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      *
      * @param hostname hostname or ip address
      *
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public void setClientHostName(String hostname) {
         this.hostName = hostname;
@@ -1505,7 +1571,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      * 
      * @return hostname/IP address
      *
-     * iPlanet-PUBLIC-METHOD
+     * @supported.api
      */
     public String getClientHostName() {
         return (hostName);
@@ -1934,6 +2000,13 @@ public class AuthContext extends Object implements java.io.Serializable {
          */
         public static final IndexType MODULE_INSTANCE =
             new IndexType("module_instance");
+        
+        /**
+         * The <code>RESOURCE</code> index type indicates that the index
+         * name given corresponds to a given policy protected resource URL.
+         */
+        public static final IndexType RESOURCE =
+            new IndexType("resource");
         
         /**
          * The <code>COMPOSITE_ADVICE</code> index type indicates that the

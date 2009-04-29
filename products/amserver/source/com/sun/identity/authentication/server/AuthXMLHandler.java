@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.19 2009-02-05 06:28:29 lakshman_abburi Exp $
+ * $Id: AuthXMLHandler.java,v 1.20 2009-04-29 18:07:03 qcheng Exp $
  *
  */
 
@@ -42,30 +42,29 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 
 import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.service.LoginState;
-import com.sun.identity.authentication.service.LoginStatus;
 import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
 import com.sun.identity.authentication.spi.X509CertificateCallback;
 import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.AMResourceBundleCache;
 import com.sun.identity.shared.locale.L10NMessage;
 
 import java.net.URL;
-import java.security.AccessController;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -266,6 +265,8 @@ public class AuthXMLHandler implements RequestHandler {
         AuthContextLocal authContext = authXMLRequest.getAuthContext();
         LoginState loginState = AuthUtils.getLoginState(authContext);
         String params = authXMLRequest.getParams();
+        List envList = authXMLRequest.getEnvironment();
+        Map envMap = toEnvMap(envList);
         AuthXMLResponse authResponse = new AuthXMLResponse(requestType);
         authResponse.setAuthContext(authContext);
         authResponse.setAuthIdentifier(sessionID);
@@ -438,9 +439,11 @@ public class AuthXMLHandler implements RequestHandler {
                         if (debug.messageEnabled()) {
                             debug.message("locale is : " + locale);
                         }
-                        authContext.login(indexType,indexName,locale);
+                        authContext.login(indexType,indexName, false, 
+                            envMap, locale);
                     } else {
-                        authContext.login(indexType,indexName);
+                        authContext.login(indexType,indexName, false, 
+                            envMap, null);
                     }
                     setServletRequest(servletRequest,authContext);
                     processRequirements(authContext,authResponse, params,
@@ -892,4 +895,32 @@ public class AuthXMLHandler implements RequestHandler {
         }
     }
     
+    // Returns environment Map based on input environment List values
+    // each value takes following format:
+    // env-name|value1|value2|....
+    private Map toEnvMap(List envList) {
+        if (envList == null) {
+            return null;
+        }
+        Map map = new HashMap();
+        int size = envList.size();
+        for (int i = 0; i < size; i++) {
+            String value = (String) envList.get(i);
+            StringTokenizer tokens = new StringTokenizer(value, 
+                ISAuthConstants.PIPE_SEPARATOR);
+            String envName = null;
+            if (tokens.hasMoreTokens()) {
+                envName = (String) tokens.nextToken();
+            }
+            Set envValues = new HashSet();
+            while (tokens.hasMoreTokens()) {
+                envValues.add(
+                    AuthClientUtils.unescapePipe(tokens.nextToken()));
+            }
+            if ((envName != null) && !envValues.isEmpty()) {
+                map.put(envName, envValues);
+            }
+        }
+        return map;
+    }
 } // end class

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.20 2009-02-28 00:57:03 mrudul_uchil Exp $
+ * $Id: AMLoginContext.java,v 1.21 2009-04-29 18:07:03 qcheng Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import com.sun.identity.authentication.server.AuthContextLocal;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.spi.MessageLoginException;
+import com.sun.identity.authentication.spi.RedirectCallback;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.authentication.util.AMAuthUtils;
 import com.sun.identity.common.DNUtils;
@@ -51,7 +52,6 @@ import com.sun.identity.shared.locale.AMResourceBundleCache;
 import java.security.Principal;
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.ResourceBundle;
@@ -220,6 +220,22 @@ public class AMLoginContext {
         }
         if (debug.messageEnabled()) {
             debug.message("LoginState : " + loginState);
+        }
+        
+        // check if this is the redirection case
+        String redirectUrl = (String) 
+            loginParamsMap.get(AuthContextLocal.REDIRECT_URL);
+        if (redirectUrl != null) {
+            // Resource/IP/Env based auth case with Redirection Advice
+            Callback[] redirectCallback = new Callback[1];
+            redirectCallback[0] = 
+                new RedirectCallback(redirectUrl, null, "GET");
+            if (isPureJAAS()) {
+                loginState.setReceivedCallback_NoThread(redirectCallback);
+            } else {
+                loginState.setReceivedCallback(redirectCallback, this);
+            }
+            return;
         }
         parseLoginParams(loginParamsMap);
         if ((indexType == AuthContext.IndexType.MODULE_INSTANCE) &&
@@ -739,7 +755,7 @@ public class AMLoginContext {
             return null;
         }
         if (indexType == AuthContext.IndexType.LEVEL ||
-        indexType == AuthContext.IndexType.COMPOSITE_ADVICE) {
+            indexType == AuthContext.IndexType.COMPOSITE_ADVICE) {
             debug.message(
                 "IndexType level/composite_advice, send choice callback");
             // reset indexType since UI will start module based auth

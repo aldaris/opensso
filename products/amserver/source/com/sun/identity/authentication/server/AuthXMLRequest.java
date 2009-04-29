@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequest.java,v 1.8 2008-06-25 05:42:03 qcheng Exp $
+ * $Id: AuthXMLRequest.java,v 1.9 2009-04-29 18:07:03 qcheng Exp $
  *
  */
 
@@ -38,6 +38,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.service.AuthException;
+import com.sun.identity.authentication.util.ISAuthConstants;
+import java.util.List;
 
 /**
  * The <code>AuthXMLRequest</code> represents the <code>AuthRequest</code> XML
@@ -110,6 +112,7 @@ public class AuthXMLRequest {
     private Callback[] submittedCallbacks;
     private Subject subject;
     private String  params = null;
+    private List env = null;
     AuthContextLocal authContext = null;
     HttpServletRequest servletRequest = null;
     //String origAuthIdentifier=null;
@@ -239,6 +242,9 @@ public class AuthXMLRequest {
             this.indexType = AuthContext.IndexType.MODULE_INSTANCE;
         } else if (strIndexType.equalsIgnoreCase("user")) {
             this.indexType = AuthContext.IndexType.USER;
+        } else if (strIndexType.equalsIgnoreCase(
+            ISAuthConstants.IP_RESOURCE_ENV_PARAM)) {
+            this.indexType = AuthContext.IndexType.RESOURCE;
         } else if (strIndexType.equalsIgnoreCase("compositeAdvice")) {
             this.indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
         }
@@ -486,5 +492,21 @@ public class AuthXMLRequest {
     public String getParams() {
         return params;
     }
+    
+    /**
+     * Sets the environment for the request.
+     * @param env environment to be set for the request.
+     */
+    public void setEnvironment(List env) {
+        this.env = env;
+    }
+
+    /**
+     * Returns the environment setting for the request.
+     * @return the environment setting for the request.
+     */
+    public List getEnvironment() {
+        return env;
+    }    
 }
 

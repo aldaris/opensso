@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLTags.java,v 1.9 2008-12-23 22:05:43 ericow Exp $
+ * $Id: AuthXMLTags.java,v 1.10 2009-04-29 18:07:04 qcheng Exp $
  *
  */
 
@@ -109,6 +109,7 @@ public interface AuthXMLTags {
     public static final String INDEX_TYPE_MODULE_ATTR = "moduleInstance";
     public static final String INDEX_TYPE_LEVEL_ATTR = "authLevel";
     public static final String INDEX_TYPE_USER_ATTR = "user";
+    public static final String INDEX_TYPE_RESOURCE = "resource";
     public static final String INDEX_TYPE_COMPOSITE_ADVICE_ATTR =
         "compositeAdvice";
     public static final String SUCCESS_URL="successURL";
@@ -189,6 +190,12 @@ public interface AuthXMLTags {
     public static final String PARAMS_BEGIN = "<Params>";
     public static final String PARAMS_END = "</Params>";
     public static final String PARAMS = "Params";
+    public static final String ENV_BEGIN = "<Environment>";
+    public static final String ENV_END = "</Environment>";
+    public static final String ENVIRONMENT = "Environment";
+    public static final String ENV_AV_BEGIN = "<EnvValue>";
+    public static final String ENV_AV_END = "</EnvValue>";
+    public static final String ENV_VALUE = "EnvValue";
     public static final String ELEMENT_END = ">";
     public static final String XML_REQUEST_SUFFIX =
         "</Request></AuthContext>";

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.19 2009-01-16 06:29:39 hengming Exp $
+ * $Id: LoginViewBean.java,v 1.20 2009-04-29 18:07:01 qcheng Exp $
  *
  */
 
@@ -66,6 +66,7 @@ import com.sun.identity.shared.locale.L10NMessageImpl;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.security.auth.callback.Callback;
@@ -828,7 +829,11 @@ public class LoginViewBean extends AuthViewBeanBase {
         
         try {
             if ( indexType != null ) {
-                ac.login(indexType, indexName);
+                if (indexType.equals(AuthContext.IndexType.RESOURCE)) {
+                    ac.login(indexType, indexName, false, envMap, null);
+                } else {
+                    ac.login(indexType, indexName);
+                }
             } else {
                 ac.login();
             }
@@ -1515,6 +1520,12 @@ public class LoginViewBean extends AuthViewBeanBase {
             indexType = AuthContext.IndexType.LEVEL;
             indexName = (String)reqDataHash.get("authlevel");
             
+        } else if ((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM) 
+            != null) && "true".equalsIgnoreCase((String) reqDataHash.get(
+                 ISAuthConstants.IP_RESOURCE_ENV_PARAM))){
+            indexType = AuthContext.IndexType.RESOURCE;
+            indexName = AuthClientUtils.getResourceURL(request);
+            envMap = AuthClientUtils.getEnvMap(request);
         } else if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
             indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
             indexName = (String)reqDataHash.get(Constants.COMPOSITE_ADVICE);
@@ -2193,6 +2204,7 @@ public class LoginViewBean extends AuthViewBeanBase {
     String orgName = "";
     String indexName = "";
     AuthContext.IndexType indexType;
+    Map envMap = null;
     /** List of callback */
     public Callback[] callbacks = null;
     /** List of button options */

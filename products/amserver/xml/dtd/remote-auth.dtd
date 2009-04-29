@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: remote-auth.dtd,v 1.7 2008-08-19 19:10:51 veiming Exp $
+    $Id: remote-auth.dtd,v 1.8 2009-04-29 18:07:35 qcheng Exp $
 
 -->
 
@@ -151,7 +151,7 @@ and PasswordCallback in the order that these callbacks are processed.
 The attribute orgName identifies the organization name to 
 which the client will authenticate.
 -->
-<!ELEMENT        Login        (IndexTypeNamePair?,  Params?)>
+<!ELEMENT        Login        (IndexTypeNamePair?,  Params?, Environment?)>
 <!ATTLIST        Login        
         orgName         CDATA        #IMPLIED
         hostName        CDATA        #IMPLIED
@@ -233,6 +233,17 @@ is the name of the template which needs to be used for this error.
      are processed. sample: "user1|password1".
  -->
 <!ELEMENT Params  (#CDATA)>
+
+<!-- Environment identifies a collection of one or more environment
+     name and values pairs. 
+ -->
+<!ELEMENT Environment  (EnvValue+)>
+
+<!-- EnvValue identifies one environment name and values pair. 
+     The EnvValue contains the name and values seperated by "|".
+     sample: "name1|value1|value2".
+ -->
+<!ELEMENT EnvValue  (#CDATA)>
 
 <!-- Index Name identifies the value of  the IndexType specified
      in the IndexType Element -->

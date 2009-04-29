@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLocal.java,v 1.10 2008-06-25 05:42:03 qcheng Exp $
+ * $Id: AuthContextLocal.java,v 1.11 2009-04-29 18:07:03 qcheng Exp $
  *
  */
 
@@ -37,11 +37,16 @@ import com.sun.identity.authentication.service.LoginState;
 import com.sun.identity.authentication.service.LoginStatus;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
+import com.sun.identity.policy.PolicyException;
+import com.sun.identity.policy.util.PolicyDecisionUtils;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -304,7 +309,7 @@ public final class AuthContextLocal extends Object
             " & locale : " + locale);
         }
 
-        login(type, indexName, null, null, null, false, locale);
+        login(type, indexName, null, null, null, false, null, locale);
     }
 
     /**
@@ -368,7 +373,45 @@ public final class AuthContextLocal extends Object
             "with IndexType : " + type + " & Indexname : " + indexName +
             " & pCookieMode : " + pCookieMode + " & locale : " + locale);
         }
-        login(type, indexName, null, null, null, pCookieMode, locale);
+        login(type, indexName, null, null, null, pCookieMode, null, locale);
+    }
+    
+    /**
+     * Starts the login process for the given <code>AuthContextLocal</code>
+     * object identified by the index type and index name.
+     * The <code>IndexType</code> defines the possible kinds
+     * of "objects" or "resources" for which an authentication can
+     * be performed.Currently supported index types are
+     * users, roles, services (or application), levels and mechanism.
+     * The pCookieMode indicates that a persistent cookie exists
+     * for this request.
+     * The locale specifies the user preferred locale setting.
+     *
+     * @param type authentication index type.
+     * @param indexName authentication index name.
+     * @param pCookieMode <code>true</code> if persistent Cookie exists,
+     *        <code>false</code> otherwise
+     * @param envMap Environment Map, key is String, value is set of string.
+     *        this is applicable only when the type is 
+     *        <code>AuthContext.IndexType.RESOURCE</code>
+     * @param locale locale setting.
+     * @throws AuthLoginException if an error occurred during 
+     *            login process.
+     */
+    public void login(
+        AuthContext.IndexType type,
+        String indexName,
+        boolean pCookieMode, 
+        Map envMap,
+        String locale
+    ) throws AuthLoginException {
+        if (authDebug.messageEnabled()) {
+            authDebug.message("AuthContextLocal::login() called " +
+            "with IndexType : " + type + " & Indexname : " + indexName +
+            " & pCookieMode : " + pCookieMode + " & locale : " + locale +
+            " & envMap : " + envMap);
+        }
+        login(type, indexName, null, null, null, pCookieMode, envMap, locale);
     }
 
     /**
@@ -385,7 +428,8 @@ public final class AuthContextLocal extends Object
     protected void login(AuthContext.IndexType type, String indexName, 
         Principal principal, char[] password, Subject subject, 
         boolean pCookieMode) throws AuthLoginException {
-        login(type, indexName, principal, password, subject, pCookieMode, null);
+        login(type, indexName, principal, password, subject, pCookieMode, 
+            null, null);
     }
 
     /**
@@ -397,12 +441,15 @@ public final class AuthContextLocal extends Object
      * @param subject authentication subject
      * @param pCookieMode <code>true</code>persistent Cookie exists,
      *        <code>false</code> otherwise
+     * @param envMap Environment map, this is applicable only when the type
+     *        is <code>AuthContext.IndexType.RESOURCE</code>
      * @param locale locale setting
      * @throws AuthLoginException if error occurs during login
      */
     protected void login(AuthContext.IndexType type, String indexName, 
         Principal principal, char[] password, Subject subject, 
-        boolean pCookieMode, String locale) throws AuthLoginException {
+        boolean pCookieMode, Map envMap, String locale) 
+        throws AuthLoginException {
         try {
             /*if (!getStatus().equals(AuthContext.Status.NOT_STARTED)) {
                 if (authDebug.messageEnabled()) {
@@ -416,6 +463,43 @@ public final class AuthContextLocal extends Object
             // switch the login status
             loginStatus = AuthContext.Status.IN_PROGRESS;
 
+            String redirectUrl = null;
+            // specially processing for resouce/IP/Environement based auth
+            if ((type != null) && type.equals(AuthContext.IndexType.RESOURCE)) { 
+                // this is resouce/IP/Env based authentication
+                // call Policy Decision Util to find out the actual auth type 
+                // required by policy
+                List result = Collections.EMPTY_LIST;
+                try {
+                    result = PolicyDecisionUtils.doResourceIPEnvAuth(
+                            indexName, organizationName, envMap);
+                } catch (PolicyException pe) {
+                    // ignore, continue to default realm based authentication
+                    // may need to revisit this in the future
+                    authDebug.warning("AuthContextLocal.login() policy error " +
+                        "indexName=" + indexName, pe);
+                    type = null;
+                    indexName = null;
+                }
+                if (authDebug.messageEnabled()) {
+                    authDebug.message("AuthContextLocal.login: policy decision="
+                        + result);
+                }
+                if (result.size() == 2) {
+                    type = (AuthContext.IndexType) result.get(0);
+                    indexName = (String) result.get(1);
+                } else if (result.size() == 1) {
+                    // this is the redirection case (Policy Redirection Advice)
+                    redirectUrl = (String) result.get(0);
+                    type = null;
+                    indexName = null;
+                } else {
+                    // no policy decision, use default realm login
+                    type = null;
+                    indexName = null;
+                }
+
+            }
             HashMap loginParamsMap = new HashMap();
 
             loginParamsMap.put(INDEX_TYPE, type);
@@ -425,6 +509,9 @@ public final class AuthContextLocal extends Object
             loginParamsMap.put(SUBJECT, subject);
             loginParamsMap.put(PCOOKIE, Boolean.valueOf(pCookieMode));
             loginParamsMap.put(LOCALE, locale);
+            if (redirectUrl != null) {
+                loginParamsMap.put(REDIRECT_URL, redirectUrl);
+            }
 
             if (authDebug.messageEnabled()) {
                 authDebug.message(
@@ -976,4 +1063,9 @@ public final class AuthContextLocal extends Object
      * locale setting
      */
     public final static String LOCALE = "locale";
+    
+    /**
+     * Redirection URL
+     */
+    public static final String REDIRECT_URL = "redirectionURL";
 }

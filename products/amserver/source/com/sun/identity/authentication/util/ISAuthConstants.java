@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.16 2009-03-06 22:17:03 hengming Exp $
+ * $Id: ISAuthConstants.java,v 1.17 2009-04-29 18:07:34 qcheng Exp $
  *
  */
 
@@ -52,7 +52,44 @@ public interface ISAuthConstants {
      * Module Param
      */
     public static final String MODULE_PARAM = "module";
-
+    
+    /**
+     * Query param name for User based authentication 
+     */
+    public String USER_PARAM = "user";
+    
+    /**
+     * Query param name for Role based authentication
+     */
+    public String ROLE_PARAM = "role";
+    
+    /**
+     * Query param name for AuthLevel based authentication
+     */
+    public String AUTH_LEVEL_PARAM = "authlevel";
+    
+    /**
+     * Query param name for Service based authenticatin 
+     * (a.k.a. authentication chain)
+     */
+    public String SERVICE_PARAM = "service";
+    
+    /**
+     * Query param name for IP/Resource/Environment based authentication
+     */
+    public String IP_RESOURCE_ENV_PARAM = "resource";
+    
+    /**
+     * Query param name for specify resource URL for the 
+     * IP/Resource/Environment based authentication.
+     */
+    public String RESOURCE_URL_PARAM = "resourceURL";
+    
+    /**
+     * Param name for goto redirection
+     */
+    public String GOTO_PARAM = "goto";
+    
     /**
      * Forward parameter, used by UI to inform Liberty federation if this is a
      * forward request or not after successful authentication.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.28 2009-03-14 03:48:00 manish_rustagi Exp $
+ * $Id: AuthClientUtils.java,v 1.29 2009-04-29 18:07:02 qcheng Exp $
  *
  */
 
@@ -33,7 +33,6 @@ import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -2602,6 +2601,103 @@ public class AuthClientUtils {
     
     public static boolean isDistAuthServerTrusted(String distAuthServerLoginURL){
         return distAuthClusterList.contains(distAuthServerLoginURL);
-    }    
+    }
     
+    /**
+     * Returns the resource URL. The method checks value for "resourceURL" 
+     * parameter first, if not present, checks value for "goto" parameter. 
+     * If none exists, returns null.
+     * @param request HttpServletRequest object
+     * @return resourceURL based on the query parameters, returns null if
+     *      resource URL could not be found.
+     */
+    public static String getResourceURL(HttpServletRequest request) {
+        String resourceUrl = request.getParameter(
+            ISAuthConstants.RESOURCE_URL_PARAM);
+        if (resourceUrl == null) {
+            resourceUrl = 
+                request.getParameter(ISAuthConstants.GOTO_PARAM);
+        }
+        return resourceUrl;
+    }
+
+    /**
+     * Returns an environment map which contains all query parameters
+     * and HTTP headers. Keys of the map are String, values of the map are
+     * Sets of String.
+     * @param request HttpServletRequest object.
+     * @return environment Map whose key is String, and value is Set of String.
+     */
+    public static Map getEnvMap(HttpServletRequest request) {
+        Map envParameters = new HashMap();
+        // add all query parameters
+        Enumeration enum1 = request.getParameterNames();
+        while (enum1.hasMoreElements()) {
+            String paramName = (String) enum1.nextElement();
+            String[] values = request.getParameterValues(paramName);
+            if (values != null) {
+                Set set = new HashSet();
+                for (int i = 0; i < values.length; i++) {
+                    set.add((String) values[i]);
+                }
+                if (!set.isEmpty()) {
+                    envParameters.put(paramName, set);
+                }
+            }
+        }
+
+        // add all headers
+        enum1 = request.getHeaderNames();
+        if (enum1 != null) {
+            while (enum1.hasMoreElements()) {
+                String name = (String) enum1.nextElement();
+                Enumeration enum2 = request.getHeaders(name);
+                Set values = new HashSet();
+                while (enum2.hasMoreElements()) {
+                    values.add(enum2.nextElement());
+                }
+                if (!values.isEmpty()) {
+                    envParameters.put(name, values);
+                }
+            }
+        }
+        return envParameters;
+    }
+    
+    /**
+     * Returns unescaped text. This method replaces "&#124;" with "|".
+     *
+     * @param text String to be unescaped.
+     * @return unescape special character text.
+     */
+    public static String unescapePipe(String text) {
+        return text.replaceAll("&#124;", "|");
+    }
+
+    /**
+     * Replaces  <code>|</code> with "&#124;".
+     *
+     * @return String with the special "|" character replaced with "&#124;".
+     */
+    public static String escapePipe(String text) {
+        // escape "|" as it will be used as separator
+        int i = text.indexOf("|");
+        if (i != -1) {
+            StringBuffer sb = new StringBuffer();
+            int len = 0;
+            if (text != null) {
+                len = text.length();
+            }
+            sb.append(text.substring(0, i));
+            for (; i < len; i++) {
+                if (text.charAt(i) == '|') {
+                    sb.append("&#124;");
+                } else {
+                    sb.append(text.charAt(i));
+                }
+            }
+            text = sb.toString();
+        }
+        return text;
+    }
 }

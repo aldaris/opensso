@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthLevelCondition.java,v 1.6 2008-06-25 05:43:50 qcheng Exp $
+ * $Id: AuthLevelCondition.java,v 1.7 2009-04-29 18:07:35 qcheng Exp $
  *
  */
 
@@ -238,7 +238,7 @@ public class AuthLevelCondition implements Condition {
         }
 
         maxRequestAuthLevel = getMaxRequestAuthLevel(env);
-        if (maxRequestAuthLevel == Integer.MIN_VALUE) {
+        if ((maxRequestAuthLevel == Integer.MIN_VALUE) && (token != null)) {
             maxRequestAuthLevel = getMaxRequestAuthLevel(token);
         }
 

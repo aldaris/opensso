@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequestParser.java,v 1.10 2009-01-13 21:47:52 lakshman_abburi Exp $
+ * $Id: AuthXMLRequestParser.java,v 1.11 2009-04-29 18:07:03 qcheng Exp $
  *
  */
 
@@ -47,6 +47,10 @@ import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.service.LoginState;
 import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.share.AuthXMLUtils;
+import com.sun.identity.authentication.util.ISAuthConstants;
+import java.util.ArrayList;
+import java.util.List;
+import org.w3c.dom.NodeList;
 
 /**
  * <code>AuthXMLRequestParser</code> parses the XML data received from the
@@ -276,6 +280,8 @@ public class AuthXMLRequestParser {
          } else if (index == AuthContext.IndexType.
              COMPOSITE_ADVICE) {
              indexTypeParam = "sunamcompositeadvice";
+         } else if (index == AuthContext.IndexType.RESOURCE) {
+             indexTypeParam = ISAuthConstants.IP_RESOURCE_ENV_PARAM;
          }
          return indexTypeParam;
      }
@@ -346,6 +352,24 @@ public class AuthXMLRequestParser {
         Node paramsNode = XMLUtils.getChildNode(loginNode,AuthXMLTags.PARAMS);
         if (paramsNode != null) {
             authXMLRequest.setParams(XMLUtils.getValueOfValueNode(paramsNode));
+        }
+        
+        // get the values for environment if any
+        Node envNode = XMLUtils.getChildNode(loginNode, 
+            AuthXMLTags.ENVIRONMENT);
+        if (envNode != null) {
+            NodeList cList = envNode.getChildNodes();
+            List values = new ArrayList();
+            int len = cList.getLength();
+            for (int i = 0; i < len; i++) {
+                Node node = cList.item(i);
+                if (node.getNodeName().equals(AuthXMLTags.ENV_VALUE)) {
+                    values.add(XMLUtils.getValueOfValueNode(node));
+                }
+            }
+            if (!values.isEmpty()) {
+                authXMLRequest.setEnvironment(values);
+            }
         }
     }
 
