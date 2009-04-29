@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.icesoft.faces.context.effects.Effect;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ public class UrlResourcesBean implements Serializable {
     private boolean addExceptionPopupVisible;
     private UrlResource addExceptionPopupResource;
     private List<Resource> addPopupAvailableResources;
+    private Effect resourcesMessageEffect;
 
     public boolean isAddPopupVisible() {
         return addPopupVisible;
@@ -82,5 +84,13 @@ public class UrlResourcesBean implements Serializable {
 
     public void setAddPopupAvailableResources(List<Resource> addPopupAvailableResources) {
         this.addPopupAvailableResources = addPopupAvailableResources;
+    }
+
+    public Effect getResourcesMessageEffect() {
+        return resourcesMessageEffect;
+    }
+
+    public void setResourcesMessageEffect(Effect resourcesMessageEffect) {
+        this.resourcesMessageEffect = resourcesMessageEffect;
     }
 }

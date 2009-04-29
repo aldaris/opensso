@@ -8,9 +8,14 @@ body {
     font: 80% arial, helvetica, sans-serif;
 }
 
-.messageError {
+.message-error {
     font-weight: bold;
     color: red;
+}
+
+.message-info {
+    font-weight: bold;
+    color: blue;
 }
 
 .section-outer {
@@ -257,17 +262,6 @@ div.button img.left {
     vertical-align: middle;
 }
 
-.popup-modal {
-}
-
-.popup-modalBody {
-
-}
-
-.popup-modalHdr {
-    font-weight: bold;
-}
-
 .popup-info {
     z-index: 999;
     position: absolute;
@@ -289,6 +283,10 @@ div.button img.left {
     text-align: center;
 }
 
+.popup-error .title span {
+    color: #9999ff;
+}
+
 .popup-info .close {
     padding-right: 5px;
     float:  right;
@@ -297,6 +295,51 @@ div.button img.left {
 .popup-infoBody {
     min-width: 200px;
     text-align: center;
+}
+
+.popup-errorBody span {
+    color: #9999ff;
+}
+
+.popup-error {
+    z-index: 999;
+    position: absolute;
+    background: #FFFFFF;
+    max-width: 300px;
+}
+
+.popup-error pre span {
+    font-family: monospace;
+    font-size: larger;
+}
+
+.popup-error .icon {
+    padding-left: 5px;
+}
+
+.popup-error .title {
+    font-weight: bold;
+    text-align: center;
+    color: #990000;
+}
+
+.popup-error .title span {
+    color: #990000;
+}
+
+.popup-error .close {
+    padding-right: 5px;
+    float:  right;
+}
+
+.popup-errorBody {
+    min-width: 200px;
+    text-align: center;
+    color: red;
+}
+
+.popup-errorBody span {
+    color: #990000;
 }
 
 #menu-separator {

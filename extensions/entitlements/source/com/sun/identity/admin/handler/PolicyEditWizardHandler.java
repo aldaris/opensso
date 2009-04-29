@@ -8,11 +8,4 @@ public class PolicyEditWizardHandler extends PolicyWizardHandler {
     public String getCancelAction() {
         return "policy-manage";
     }
-
-    @Override
-    public String cancelPopupOkAction() {
-        getPolicyManageBean().reset();
-        return super.cancelPopupOkAction();
-    }
-
 }

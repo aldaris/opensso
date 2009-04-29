@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <o:popup
+        type="error"
+        modal="true"
+        handler="#{messagesHandler}"
+        closeListenerMethod="messagesPopupListener"
+        title="Error"
+        visible="#{messagesBean.existsError}">
+        <ui:define name="body">
+            <ice:panelSeries
+                var="message"
+                value="#{messagesBean.messageBeans}">
+                <ice:panelGroup>
+                    <ice:outputText
+                        value="#{message.summary}"/>
+                    <ice:outputText
+                        rendered="#{message.detail != null}"
+                        value="#{message.detail}"/>
+                </ice:panelGroup>
+            </ice:panelSeries>
+        </ui:define>
+    </o:popup>
+    <o:popup
+        type="info"
+        modal="true"
+        handler="#{messagesHandler}"
+        closeListenerMethod="messagesPopupListener"
+        title="Info"
+        visible="#{messagesBean.existsInfo}">
+        <ui:define name="body">
+            <ice:panelSeries
+                var="message"
+                value="#{messagesBean.messageBeans}">
+                <ice:panelGroup>
+                    <ice:outputText
+                        value="#{message.summary}"/>
+                    <ice:outputText
+                        rendered="#{message.detail != null}"
+                        value="#{message.detail}"/>
+                </ice:panelGroup>
+            </ice:panelSeries>
+        </ui:define>
+    </o:popup>
+</ui:composition>

@@ -2,7 +2,12 @@ package com.sun.identity.admin;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
+import javax.faces.context.FacesContext;
 
 public class Functions {
 
@@ -42,6 +47,4 @@ public class Functions {
             return r.getString("scrapeError", url, ioe);
         }
     }
-
-
 }

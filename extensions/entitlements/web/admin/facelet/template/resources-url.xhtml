@@ -11,6 +11,8 @@
     <ui:include src="resources-url-add-popup.xhtml"/>
     <ui:include src="resources-url-add-exception-popup.xhtml"/>
 
+    <o:messages/>
+
     <div class="section-outer">
         <o:box>
             <ui:define name="body">
@@ -57,8 +59,10 @@
                     <div class="clear"></div>
                     <ice:selectManyCheckbox
                         id="resource-select"
+                        required="#{true}"
                         layout="spread"
                         partialSubmit="true"
+                        validator="#{urlResourcesHandler.validateResources}"
                         value="#{policyResourcesBean.privilegeBean.viewEntitlement.resources}"
                         converter="urlResourceConverter">
                         <f:selectItems

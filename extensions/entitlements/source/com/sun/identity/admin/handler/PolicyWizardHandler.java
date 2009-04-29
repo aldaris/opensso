@@ -14,6 +14,8 @@ import com.sun.identity.admin.effect.MessageErrorEffect;
 import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.ContainerViewCondition;
 import com.sun.identity.admin.model.ContainerViewSubject;
+import com.sun.identity.admin.model.MessageBean;
+import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.MultiPanelBean;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.PolicyWizardBean;
@@ -45,6 +47,7 @@ public abstract class PolicyWizardHandler
     private PolicyManageBean policyManageBean;
     private QueuedActionBean queuedActionBean;
     private String managedBeanName;
+    private MessagesBean messagesBean;
 
     @Override
     public void setWizardBean(WizardBean wizardBean) {
@@ -68,12 +71,11 @@ public abstract class PolicyWizardHandler
 
     @Override
     public String cancelAction() {
-        getPolicyWizardBean().setCancelPopupVisible(true);
-        return null;
-    }
+        MessageBean mb = new MessageBean();
+        mb.setSummary("Canceled");
+        mb.setSeverity(FacesMessage.SEVERITY_INFO);
+        messagesBean.addMessageBean(mb);
 
-    public String cancelPopupOkAction() {
-        getWizardBean().reset();
         return getCancelAction();
     }
 
@@ -301,5 +303,9 @@ public abstract class PolicyWizardHandler
 
     public void setManagedBeanName(String managedBeanName) {
         this.managedBeanName = managedBeanName;
+    }
+
+    public void setMessagesBean(MessagesBean messagesBean) {
+        this.messagesBean = messagesBean;
     }
 }

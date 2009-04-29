@@ -1,5 +1,7 @@
 package com.sun.identity.admin.handler;
 
+import com.icesoft.faces.context.effects.Effect;
+import com.sun.identity.admin.effect.MessageErrorEffect;
 import com.sun.identity.admin.model.Resource;
 import com.sun.identity.admin.model.UrlResource;
 import com.sun.identity.admin.model.UrlResourcesBean;
@@ -7,9 +9,13 @@ import com.sun.identity.admin.model.ViewEntitlement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.FacesEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.validator.ValidatorException;
 
 public class UrlResourcesHandler implements Serializable {
     private UrlResourcesBean urlResourcesBean;
@@ -140,4 +146,23 @@ public class UrlResourcesHandler implements Serializable {
         }
     }
 
+
+    public void validateResources(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        List<Resource> resources = (List<Resource>) value;
+
+        if (resources == null || resources.size() == 0) {
+            FacesMessage msg = new FacesMessage();
+            // TODO: localize
+            msg.setSummary("Select a resource");
+            msg.setDetail("At least one resource must be selected");
+            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+            Effect e;
+
+            e = new MessageErrorEffect();
+            urlResourcesBean.setResourcesMessageEffect(e);
+
+            throw new ValidatorException(msg);
+        }
+    }
 }

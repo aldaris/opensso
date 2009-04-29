@@ -831,6 +831,10 @@
             <property-name>managedBeanName</property-name>
             <value>policyCreateWizardHandler</value>
         </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
     </managed-bean>
     <!-- policy create -->
 
@@ -868,6 +872,10 @@
         <managed-property>
             <property-name>managedBeanName</property-name>
             <value>policyEditWizardHandler</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
         </managed-property>
     </managed-bean>
     <!-- policy create -->
@@ -923,6 +931,21 @@
         </managed-property>
     </managed-bean>
     <!-- policy manage -->
+
+    <managed-bean>
+        <managed-bean-name>messagesHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.MessagesHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>messagesBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.MessagesBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>componentId</property-name>
+            <value>#{null}</value>
+        </managed-property>
+    </managed-bean>
 
     <navigation-rule>
         <navigation-case>

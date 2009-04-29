@@ -8,6 +8,8 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
+    <o:messages/>
+
     <div class="section-outer">
         <o:box>
             <ui:define name="body">
@@ -19,7 +21,7 @@
                     </span>
                     <div class="clear"></div>
                     <ice:panelGrid
-                        columns="3"
+                        columns="2"
                         columnClasses="label-column,input-column">
                         <ice:panelGroup>
                             <ice:outputLabel
@@ -30,15 +32,11 @@
                             <ice:inputText
                                 id="policyNameInput"
                                 required="true"
-                                partialSubmit="true"
+                                partialSubmit="false"
                                 value="#{policyNameBean.privilegeBean.name}"
                                 effect="#{policyNameBean.policyNameInputEffect}"
                                 validator="#{policyNameHandler.validatePolicyName}"/>
                         </ice:panelGroup>
-                        <ice:message 
-                            for="policyNameInput"
-                            effect="#{policyNameBean.policyNameMessageEffect}"
-                            styleClass="message"/>
                         <ice:panelGroup>
                             <ice:outputLabel
                                 for="policyDescriptionInput"

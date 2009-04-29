@@ -6,7 +6,7 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component">
     <ice:commandLink
         rendered="#{type == 'next' &amp;&amp; step &lt; steps-1}"
-        partialSubmit="true"
+        partialSubmit="false"
         actionListener="#{handler.nextListener}">
 
         <f:attribute name="step" value="#{step}"/>
@@ -21,7 +21,7 @@
     </ice:commandLink>
     <ice:commandLink
         rendered="#{type == 'previous' &amp;&amp; step != 0}"
-        partialSubmit="true"
+        partialSubmit="false"
         actionListener="#{handler.previousListener}">
 
         <f:attribute name="step" value="#{step}"/>
@@ -36,7 +36,7 @@
     </ice:commandLink>
     <ice:commandLink
         rendered="#{type == 'cancel'}"
-        partialSubmit="true"
+        partialSubmit="false"
         immediate="true"
         action="#{handler.cancelAction}">
 
@@ -52,7 +52,7 @@
     </ice:commandLink>
     <ice:commandLink
         rendered="#{type == 'finish' &amp;&amp; step == steps-1}"
-        partialSubmit="true"
+        partialSubmit="false"
         action="#{handler.finishAction}">
         <f:attribute name="step" value="#{step}"/>
         <f:attribute name="steps" value="#{steps}"/>

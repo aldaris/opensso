@@ -65,7 +65,8 @@ public class Scraper {
         Pattern basePattern = Pattern.compile("<base.*?>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher baseMatcher = basePattern.matcher(content);
         if (baseMatcher.find()) {
-            content = baseMatcher.replaceAll("");
+            // base is already set
+            return content;
         }
 
         // add new base tag
