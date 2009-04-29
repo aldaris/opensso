@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.14 2009-04-29 11:43:12 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.15 2009-04-29 19:49:13 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -34,6 +34,8 @@ import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.AndCondition;
+import com.sun.identity.entitlement.Application;
+import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PolicyCondition;
@@ -385,7 +387,9 @@ public class PrivilegeUtils {
             throws PolicyException, SSOException {
         Set<Rule> rules = new HashSet<Rule>();
         String entName = entitlement.getName();
-        String serviceName = entitlement.getApplicationName();
+        String appName = entitlement.getApplicationName();
+        Application appl = ApplicationManager.getApplication("/", appName); //TOFIX
+        String serviceName = appl.getApplicationType().getName();
         Set<String> resourceNames = entitlement.getResourceNames();
         Map<String, Boolean> actionValues = entitlement.getActionValues();
         Map av = pravToPav(actionValues, serviceName);
