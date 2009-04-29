@@ -23,13 +23,27 @@
                     value="../image/#{type}.png" />
                 <ice:outputText
                     value="#{title}"/>
-                <ice:commandButton
-                    type="button"
-                    image="../image/close.gif"
-                    immediate="true"
-                    style="cursor: pointer;">
-                    <ui:insert name="attributes"/>
-                </ice:commandButton>
+                <ice:panelGroup
+                    rendered="#{handler != null}">
+                    <ice:commandButton
+                        type="button"
+                        image="../image/close.gif"
+                        immediate="true"
+                        actionListener="#{handler[closeListenerMethod]}"
+                        style="cursor: pointer;">
+                        <ui:insert name="attributes"/>
+                    </ice:commandButton>
+                </ice:panelGroup>
+                <ice:panelGroup
+                    rendered="#{handler == null}">
+                    <ice:commandButton
+                        type="button"
+                        image="../image/close.gif"
+                        immediate="true"
+                        style="cursor: pointer;">
+                        <ui:insert name="attributes"/>
+                    </ice:commandButton>
+                </ice:panelGroup>
             </ice:panelGrid>
         </f:facet>
         <f:facet name="body">

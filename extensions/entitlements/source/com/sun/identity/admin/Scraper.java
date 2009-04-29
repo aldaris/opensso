@@ -5,59 +5,59 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO: cache
 public class Scraper {
 
-    private String url;
+    private static Map<URL, String> cache = new ExpiringHashMap<URL, String>(1000 * 60 * 15);
+    private URL url;
 
-    public Scraper(String url) {
-        this.url = url;
+    public Scraper(String u) throws MalformedURLException {
+        this.url = new URL(u);
     }
 
     public String scrape() throws IOException {
-        URL u = new URL(url);
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                u.openStream()));
+        String content = cache.get(url);
+        if (content == null) {
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                    url.openStream()));
 
-        String inputLine;
-        StringBuffer b = new StringBuffer();
-        while ((inputLine = in.readLine()) != null) {
-            b.append(inputLine);
-        }
-
-        in.close();
-
-        String base = getBase(url);
-        String result;
-
-        if (base != null) {
-            result = setBase(b.toString(), base);
-        } else {
-            result = b.toString();
-        }
-
-        return result;
-    }
-
-    private static String getBase(String url) {
-        try {
-            URL u = new URL(url);
+            String inputLine;
             StringBuffer b = new StringBuffer();
-            b.append(u.getProtocol());
-            b.append("://");
-            b.append(u.getHost());
-            if (u.getPort() != -1) {
-                b.append(":");
-                b.append(u.getPort());
+            while ((inputLine = in.readLine()) != null) {
+                b.append(inputLine);
             }
 
-            return b.toString();
-        } catch (MalformedURLException mfue) {
-            return null;
+            in.close();
+
+            String base = getBase();
+            String result;
+
+            if (base != null) {
+                content = setBase(b.toString(), base);
+            } else {
+                content = b.toString();
+            }
+            cache.put(url, content);
         }
+        return content;
+    }
+
+    private String getBase() {
+        StringBuffer b = new StringBuffer();
+        b.append(url.getProtocol());
+        b.append("://");
+        b.append(url.getHost());
+        if (url.getPort() != -1) {
+            b.append(":");
+            b.append(url.getPort());
+        }
+
+        return b.toString();
     }
 
     private static String setBase(String content, String base) {

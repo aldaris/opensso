@@ -7,11 +7,11 @@
     xmlns:o="http://opensso.dev.java.net">
 
     <o:popup
+        type="info"
         handler="#{policyManageHandler}"
         modal="true"
         title="View Options"
         visible="#{policyManageBean.viewOptionsPopupVisible}"
-        closeButton="true"
         closeListenerMethod="viewOptionsListener">
         <ui:define name="body">
             <ice:selectManyCheckbox
