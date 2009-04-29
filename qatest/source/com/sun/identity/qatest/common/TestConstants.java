@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.33 2009-03-20 17:33:53 vimal_67 Exp $
+ * $Id: TestConstants.java,v 1.34 2009-04-29 05:33:48 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -457,9 +457,9 @@ public interface TestConstants {
     String KEY_SP_USER_PAGER = "sp_pager";
     
     /**
-     * SAMLv2, IDFF Property key for <code>sp_secretary</code>
+     * SAMLv2, IDFF Property key for <code>sp_title</code>
      */
-    String KEY_SP_USER_SECRETARY = "sp_secretary";
+    String KEY_SP_USER_TITLE = "sp_title";
     
     /**
      * SAMLv2, IDFF Property key for <code>sp_sunIdentityMSISDNNumber</code>
@@ -522,9 +522,9 @@ public interface TestConstants {
     String KEY_IDP_USER_NSROLE = "idp_nsrole";
     
     /**
-     * SAMLv2, IDFF Property key for <code>idp_secretary</code>
+     * SAMLv2, IDFF Property key for <code>idp_title</code>
      */
-    String KEY_IDP_USER_SECRETARY = "idp_secretary";
+    String KEY_IDP_USER_TITLE = "idp_title";
     
     /**
      * SAMLv2, IDFF Property key for <code>sp_sunIdentityMSISDNNumber</code>
