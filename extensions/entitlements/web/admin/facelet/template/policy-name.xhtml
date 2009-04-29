@@ -26,9 +26,10 @@
                         <ice:panelGroup>
                             <ice:outputLabel
                                 for="policyNameInput"
-                                value="New Policy Name"/>
+                                value="Policy Name"/>
                         </ice:panelGroup>
-                        <ice:panelGroup>
+                        <ice:panelGroup
+                            rendered="#{policyNameBean.policyNameEditable}">
                             <ice:inputText
                                 id="policyNameInput"
                                 required="true"
@@ -36,6 +37,12 @@
                                 value="#{policyNameBean.privilegeBean.name}"
                                 effect="#{policyNameBean.policyNameInputEffect}"
                                 validator="#{policyNameHandler.validatePolicyName}"/>
+                        </ice:panelGroup>
+                        <ice:panelGroup
+                            rendered="#{!policyNameBean.policyNameEditable}">
+                            <ice:outputText
+                                style="font-weight: bold"
+                                value="#{policyNameBean.privilegeBean.name}"/>
                         </ice:panelGroup>
                         <ice:panelGroup>
                             <ice:outputLabel

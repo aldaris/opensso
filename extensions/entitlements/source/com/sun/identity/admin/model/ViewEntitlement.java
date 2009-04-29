@@ -52,7 +52,22 @@ public class ViewEntitlement implements Serializable {
         }
 
         // exceptions
-        // TODO
+        for (String rs : e.getExcludedResourceNames()) {
+            String resourceClassName = viewApplication.getViewApplicationType().getResourceClassName();
+            Resource r;
+            try {
+                r = (Resource) Class.forName(resourceClassName).newInstance();
+            } catch (ClassNotFoundException cnfe) {
+                throw new RuntimeException(cnfe);
+            } catch (InstantiationException ie) {
+                throw new RuntimeException(ie);
+            } catch (IllegalAccessException iae) {
+                throw new RuntimeException(iae);
+            }
+            r.setName(rs);
+            exceptions.add(r);
+        }
+        
 
         // actions
         for (String actionName: e.getActionValues().keySet()) {

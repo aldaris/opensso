@@ -214,11 +214,12 @@ public abstract class PolicyWizardHandler
         Matcher matcher = POLICY_NAME_PATTERN.matcher(policyName);
 
         if (!matcher.matches()) {
-            FacesMessage msg = new FacesMessage();
-            // TODO: localize
-            msg.setSummary("Invalid policy name");
-            msg.setDetail("Policy name must be 1 or more alpha-numeric characters");
-            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this.getClass(), "invalidPolicyNameSummary"));
+            mb.setDetail(r.getString(this.getClass(), "invalidPolicyNameDetail"));
+            mb.setDetail("Policy name must be 1 or more alpha-numeric characters");
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
             Effect e;
 
@@ -228,7 +229,7 @@ public abstract class PolicyWizardHandler
             e = new MessageErrorEffect();
             getPolicyWizardBean().setPolicyNameMessageEffect(e);
 
-            throw new ValidatorException(msg);
+            throw new ValidatorException(mb.toFacesMessage());
         }
     }
 

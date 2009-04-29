@@ -805,6 +805,10 @@
             <property-name>viewApplicationsBean</property-name>
             <value>#{viewApplicationsBean}</value>
         </managed-property>
+        <managed-property>
+            <property-name>policyNameEditable</property-name>
+            <value>true</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>
@@ -846,6 +850,10 @@
         <managed-property>
             <property-name>viewApplicationsBean</property-name>
             <value>#{viewApplicationsBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>policyNameEditable</property-name>
+            <value>false</value>
         </managed-property>
     </managed-bean>
 

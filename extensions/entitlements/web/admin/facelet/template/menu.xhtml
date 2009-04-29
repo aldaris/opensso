@@ -8,41 +8,27 @@
         styleClass="menu">
         <ice:menuItem
             action="home"
-            value="#{msg.homeMenuItemValue}"
+            value="#{resources['menu.homeItemValue']}"
             icon="../image/home.png"/>
 
         <ice:menuItem
-            value="${msg.policyMenuItemValue}"
+            value="${resources['menu.policyItemValue']}"
             action="policy"
             icon="../image/policy.png">
         <ice:menuItem
-            value="${msg.policyCreateMenuItemValue}"
+            value="${resources['menu.policyCreateItemValue']}"
             action="policy-create"
             icon="../image/new.png"/>
         <ice:menuItem
-            value="${msg.policyManageMenuItemValue}"
+            value="${resources['menu.policyManageItemValue']}"
             action="policy-manage"
             icon="../image/manage.png"/>
-        <ice:menuItem
-            value="${msg.resourceManageMenuItemValue}"
-            action="resource-manage"
-            icon="../image/resource.png"/>
         </ice:menuItem>
         
         <ice:menuItem
-            value="${msg.federationMenuItemValue}"
+            value="${resources['menu.federationItemValue']}"
             action="federation"
             icon="../image/federation.png">
-        <ice:menuItem 
-            value="${msg.federationSamlv2WorkflowMenuItemValue}"
-            action="samlv2Workflow" 
-            icon="../image/new.png"/> 
-        </ice:menuItem>
-        
-        <ice:menuItem
-            value="${msg.monitoringMenuItemValue}"
-            action="monitoring"
-            icon="../image/monitor.png">
         </ice:menuItem>
     </ice:menuBar>
 </span>

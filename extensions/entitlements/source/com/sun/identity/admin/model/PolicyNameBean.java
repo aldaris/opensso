@@ -11,4 +11,5 @@ public interface PolicyNameBean {
     public Effect getPolicyNameMessageEffect();
     public void setPolicyNameMessageEffect(Effect e);
     public List<SelectItem> getViewApplicationNameItems();
+    public boolean isPolicyNameEditable();
 }

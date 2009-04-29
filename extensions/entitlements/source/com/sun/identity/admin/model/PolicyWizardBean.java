@@ -22,9 +22,7 @@ public class PolicyWizardBean
     private Effect policyNameMessageEffect;
     private int advancedTabsetIndex = 0;
     private List<Resource> availableResources;
-    private boolean finishPopupVisible = false;
-    private boolean cancelPopupVisible = false;
-    private String viewApplicationName;
+    private boolean policyNameEditable = false;
 
     public PolicyWizardBean() {
         // nothing
@@ -34,8 +32,6 @@ public class PolicyWizardBean
     public void reset() {
         super.reset();
         setPrivilegeBean(new PrivilegeBean());
-        finishPopupVisible = false;
-        cancelPopupVisible = false;
     }
 
     public List<SelectItem> getViewApplicationNameItems() {
@@ -111,11 +107,14 @@ public class PolicyWizardBean
     }
 
     public ViewApplication getViewApplication() {
+        if (getPrivilegeBean().getViewEntitlement().getViewApplication() == null) {
+            resetViewApplication();
+        }
         return getPrivilegeBean().getViewEntitlement().getViewApplication();
     }
 
     public void setViewApplicationName(String viewApplicationName) {
-        if (!viewApplicationName.equals(this.viewApplicationName)) {
+        if (getViewApplicationName() == null || !viewApplicationName.equals(getViewApplicationName())) {
             ViewApplication va = viewApplicationsBean.getViewApplications().get(viewApplicationName);
             getPrivilegeBean().getViewEntitlement().setViewApplication(va);
 
@@ -126,14 +125,16 @@ public class PolicyWizardBean
         }
     }
 
-    public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
-        this.viewApplicationsBean = viewApplicationsBean;
-
+    private void resetViewApplication() {
         Map<String, ViewApplication> viewApplicationMap = viewApplicationsBean.getViewApplications();
         Collection<ViewApplication> viewApplications = (Collection<ViewApplication>) viewApplicationMap.values();
         if (viewApplications != null && viewApplications.size() > 0) {
             setViewApplicationName(viewApplications.iterator().next().getName());
         }
+    }
+    public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
+        this.viewApplicationsBean = viewApplicationsBean;
+        resetViewApplication();
     }
 
     public ViewApplicationsBean getViewApplicationsBean() {
@@ -144,23 +145,18 @@ public class PolicyWizardBean
         this.privilegeBean = privilegeBean;
     }
 
-    public boolean isFinishPopupVisible() {
-        return finishPopupVisible;
-    }
-
-    public void setFinishPopupVisible(boolean finishPopupVisible) {
-        this.finishPopupVisible = finishPopupVisible;
-    }
-
-    public boolean isCancelPopupVisible() {
-        return cancelPopupVisible;
-    }
-
-    public void setCancelPopupVisible(boolean cancelPopupVisible) {
-        this.cancelPopupVisible = cancelPopupVisible;
-    }
-
     public String getViewApplicationName() {
+        if (getPrivilegeBean().getViewEntitlement().getViewApplication() == null) {
+            return null;
+        }
         return getPrivilegeBean().getViewEntitlement().getViewApplication().getName();
+    }
+
+    public boolean isPolicyNameEditable() {
+        return policyNameEditable;
+    }
+
+    public void setPolicyNameEditable(boolean policyNameEditable) {
+        this.policyNameEditable = policyNameEditable;
     }
 }
