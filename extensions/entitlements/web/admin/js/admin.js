@@ -1,4 +1,4 @@
-function typeSubmit(element) {
+function submitNow(element) {
     iceSubmitPartial(
         document.getElementById("form"),
         element,
