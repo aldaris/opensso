@@ -148,10 +148,10 @@ public class ViewEntitlement implements Serializable {
         this.viewApplication = viewApplication;
     }
 
-    public String getResourcesToString() {
+    public String getListToString(List list) {
         StringBuffer b = new StringBuffer();
 
-        for (Iterator<Resource> i = resources.iterator(); i.hasNext();) {
+        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
             b.append(i.next());
             if (i.hasNext()) {
                 b.append(",");
@@ -162,10 +162,18 @@ public class ViewEntitlement implements Serializable {
         return b.toString();
     }
 
-    public String getResourcesToFormattedString() {
+    public String getResourcesToString() {
+        return getListToString(resources);
+    }
+
+    public String getExceptionsToString() {
+        return getListToString(exceptions);
+    }
+
+    public String getListToFormattedString(List list) {
         StringBuffer b = new StringBuffer();
 
-        for (Iterator<Resource> i = resources.iterator(); i.hasNext();) {
+        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
             b.append(i.next());
             if (i.hasNext()) {
                 b.append("\n");
@@ -174,6 +182,14 @@ public class ViewEntitlement implements Serializable {
         }
 
         return b.toString();
+    }
+
+    public String getResourcesToFormattedString() {
+        return getListToFormattedString(resources);
+    }
+
+    public String getExceptionsToFormattedString() {
+        return getListToFormattedString(exceptions);
     }
 
     public BooleanActionsBean getBooleanActionsBean() {

@@ -21,6 +21,7 @@
                 partialSubmit="true"
                 value="#{policyManageBean.policyManageTableBean.columnsVisible}">
                 <f:selectItem itemValue="resources" itemLabel="Resources"/>
+                <f:selectItem itemValue="exceptions" itemLabel="Exceptions"/>
                 <f:selectItem itemValue="subject" itemLabel="Subjects"/>
                 <f:selectItem itemValue="condition" itemLabel="Conditions"/>
                 <f:selectItem itemValue="action" itemLabel="Actions"/>
@@ -32,6 +33,7 @@
                 <ice:checkbox for="columns-visible" index="1"/>
                 <ice:checkbox for="columns-visible" index="2"/>
                 <ice:checkbox for="columns-visible" index="3"/>
+                <ice:checkbox for="columns-visible" index="4"/>
             </ice:panelGrid>
         </ui:define>
     </o:popup>

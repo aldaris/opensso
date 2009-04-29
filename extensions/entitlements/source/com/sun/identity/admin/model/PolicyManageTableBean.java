@@ -109,6 +109,10 @@ public class PolicyManageTableBean implements Serializable {
         return getColumnsVisible().contains("resources");
     }
 
+    public boolean isExceptionsColumnVisible() {
+        return getColumnsVisible().contains("exceptions");
+    }
+
     public boolean isSubjectColumnVisible() {
         return getColumnsVisible().contains("subject");
     }

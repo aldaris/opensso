@@ -112,6 +112,30 @@
                                 </o:tooltip>
                             </ice:column>
                             <ice:column
+                                rendered="#{policyManageBean.policyManageTableBean.exceptionsColumnVisible}">
+                                <f:facet name="header">
+                                    <ice:outputText
+                                        value="Exceptions"/>
+                                </f:facet>
+                                <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.exceptionsCellEffect}"
+                                    panelTooltip="exceptionsTooltip">
+                                    <ice:outputText
+                                        value="#{privilegeBean.viewEntitlement.exceptionsToString}"/>
+                                </ice:panelGroup>
+                                <o:tooltip
+                                    tooltipId="exceptionsTooltip"
+                                    title="#{privilegeBean.name}: exceptions (#{o:size(privilegeBean.viewEntitlement.exceptions)})">
+                                    <ui:define name="body">
+                                        <pre>
+                                        <ice:outputText
+                                            value="#{privilegeBean.viewEntitlement.exceptionsToFormattedString}"/>
+                                        </pre>
+                                    </ui:define>
+                                </o:tooltip>
+                            </ice:column>
+                            <ice:column
                                 rendered="#{policyManageBean.policyManageTableBean.subjectColumnVisible}">
                                 <f:facet name="header">
                                     <ice:outputText
