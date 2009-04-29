@@ -933,11 +933,6 @@
     <!-- policy manage -->
 
     <managed-bean>
-        <managed-bean-name>messagesHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.MessagesHandler</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
-    <managed-bean>
         <managed-bean-name>messagesBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.MessagesBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>

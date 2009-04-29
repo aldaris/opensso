@@ -44,7 +44,7 @@ public class Functions {
             return result;
         } catch (IOException ioe) {
             Resources r = new Resources();
-            return r.getString("scrapeError", url, ioe);
+            return r.getString(Functions.class, "scrapeError", url, ioe);
         }
     }
 }

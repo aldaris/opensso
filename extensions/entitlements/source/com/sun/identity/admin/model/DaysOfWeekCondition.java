@@ -37,7 +37,7 @@ public class DaysOfWeekCondition
 
         for (String day: DAYS) {
             Resources r = new Resources();
-            String label = r.getString(day);
+            String label = r.getString(this.getClass(), day);
             SelectItem si = new SelectItem(day, label);
             items.add(si);
         }
@@ -61,7 +61,7 @@ public class DaysOfWeekCondition
 
         for (int i = 0; i < selectedDays.length; i++) {
             Resources r = new Resources();
-            String label = r.getString(selectedDays[i]);
+            String label = r.getString(this.getClass(), selectedDays[i]);
             b.append(label);
             if (i < selectedDays.length-1) {
                 b.append(",");

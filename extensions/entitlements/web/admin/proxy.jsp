@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.sun.identity.admin.Scraper" %>
 <%@page import="com.sun.identity.admin.Resources" %>
+<%@page import="com.sun.identity.admin.Functions" %>
 <%@page import="java.io.IOException" %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -14,7 +15,7 @@
         result = s.scrape();
     } catch (IOException ioe) {
         Resources r = new Resources(request);
-        result = r.getString("scrapeError", url, ioe);
+        result = r.getString(Functions.class, "scrapeError", url, ioe);
     }
  %>
  <%= result %>

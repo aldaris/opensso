@@ -46,20 +46,20 @@ public class Resources {
         return rb;
     }
 
-    public String getString(String key) {
+    public String getString(Class c, String key) {
         ResourceBundle rb = getResourceBundle();
         try {
-            return rb.getString(key);
+            return rb.getString(c.getName() + "." + key);
         } catch (MissingResourceException mre) {
             return null;
         }
     }
 
-    public String getString(String key, Object... params) {
+    public String getString(Class c, String key, Object... params) {
         ResourceBundle rb = getResourceBundle();
         String msg;
         try {
-            msg = rb.getString(key);
+            msg = rb.getString(c.getName() + "." + key);
             msg = MessageFormat.format(msg, params);
         } catch (MissingResourceException mre) {
             msg = null;

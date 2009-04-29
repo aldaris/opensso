@@ -7,6 +7,7 @@ import com.icesoft.faces.context.effects.Fade;
 import com.icesoft.faces.context.effects.Highlight;
 import com.icesoft.faces.context.effects.SlideDown;
 import com.icesoft.faces.context.effects.SlideUp;
+import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.ConditionType;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
@@ -60,30 +61,31 @@ public abstract class PolicyWizardHandler
 
     @Override
     public String finishAction() {
-        PolicyWizardBean pwb = getPolicyWizardBean();
-        pwb.setFinishPopupVisible(true);
-
-        Privilege privilege = pwb.getPrivilegeBean().toPrivilege();
+        Privilege privilege = getPolicyWizardBean().getPrivilegeBean().toPrivilege();
         policyDao.setPrivilege(privilege);
 
-        return null;
+        MessageBean mb = new MessageBean();
+        Resources r = new Resources();
+        mb.setSummary(r.getString(this.getClass(), "finish"));
+        mb.setSeverity(FacesMessage.SEVERITY_INFO);
+        messagesBean.addMessageBean(mb);
+
+        getPolicyWizardBean().reset();
+
+        return getFinishAction();
     }
 
     @Override
     public String cancelAction() {
         MessageBean mb = new MessageBean();
-        mb.setSummary("Canceled");
+        Resources r = new Resources();
+        mb.setSummary(r.getString(this.getClass(), "cancel"));
         mb.setSeverity(FacesMessage.SEVERITY_INFO);
         messagesBean.addMessageBean(mb);
 
-        return getCancelAction();
-    }
-
-    public String finishPopupOkAction() {
-        getPolicyManageBean().reset();
         getPolicyWizardBean().reset();
 
-        return getFinishAction();
+        return getCancelAction();
     }
 
     @Override

@@ -14,24 +14,6 @@
         <ice:outputText value="#{msg.policyEditPanelDetails}" />
     </ui:define>
     <ui:define name="panel-body">
-        <ui:include
-            src="/admin/facelet/template/policy-edit-cancel-popup.xhtml">
-            <ui:param
-                name="policyWizardBean"
-                value="#{policyEditWizardBean}"/>
-            <ui:param
-                name="policyWizardHandler"
-                value="#{policyEditWizardHandler}"/>
-        </ui:include>
-        <ui:include
-            src="/admin/facelet/template/policy-edit-finish-popup.xhtml">
-            <ui:param
-                name="policyWizardBean"
-                value="#{policyEditWizardBean}"/>
-            <ui:param
-                name="policyWizardHandler"
-                value="#{policyEditWizardHandler}"/>
-        </ui:include>
         <o:wizard
             steps="5"
             wizardHandler="#{policyEditWizardHandler}"

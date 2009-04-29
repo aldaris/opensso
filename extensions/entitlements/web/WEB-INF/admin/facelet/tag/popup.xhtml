@@ -24,11 +24,10 @@
                 <ice:outputText
                     value="#{title}"/>
                 <ice:commandButton
-                    rendered="#{handler != null}"
                     type="button"
                     image="../image/close.gif"
                     immediate="true"
-                    actionListener="#{handler[closeListenerMethod]}"
+                    action="no-action"
                     style="cursor: pointer;">
                     <ui:insert name="attributes"/>
                 </ice:commandButton>
