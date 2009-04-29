@@ -2,17 +2,16 @@ package com.sun.identity.admin;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
-import javax.faces.context.FacesContext;
 
 public class Functions {
 
     public static String indexOf(List l, Object o) {
         return Integer.toString(l.indexOf(o));
+    }
+
+    public static boolean contains(Collection c, Object o) {
+        return c.contains(o);
     }
 
     public static String truncate(String s, int length) {
@@ -27,14 +26,6 @@ public class Functions {
             return 0;
         }
         return c.size();
-    }
-
-    public static int length(Object[] oa) {
-        return oa.length;
-    }
-
-    public static int length(String s) {
-        return s.length();
     }
 
     public static String scrape(String url) {

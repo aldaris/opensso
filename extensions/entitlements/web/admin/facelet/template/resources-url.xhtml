@@ -90,7 +90,7 @@
                                             <ice:panelGrid
                                                 columns="1">
                                                 <ice:panelGroup
-                                                    rendered="#{urlResource.exceptable}">
+                                                    rendered="#{urlResource.exceptable &amp;&amp; o:contains(policyResourcesBean.privilegeBean.viewEntitlement.resources, urlResource)}">
                                                     <o:clink
                                                         type="add"
                                                         linkLabel="Add Exception"
@@ -114,7 +114,9 @@
             </ui:define>
         </o:box>
     </div>
-    <div class="section-outer">
+    <ice:panelGroup
+        visible="#{o:size(policyResourcesBean.privilegeBean.viewEntitlement.exceptions) > 0}"
+        styleClass="section-outer">
         <o:box>
             <ui:define name="body">
                 <div class="section-inner">
@@ -165,5 +167,5 @@
                 </div>
             </ui:define>
         </o:box>
-    </div>
+    </ice:panelGroup>
 </span>

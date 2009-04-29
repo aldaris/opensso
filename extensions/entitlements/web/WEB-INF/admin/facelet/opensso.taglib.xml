@@ -64,6 +64,11 @@
         <function-signature>java.lang.String indexOf(java.util.List, java.lang.Object)</function-signature>
     </function>
     <function>
+        <function-name>contains</function-name>
+        <function-class>com.sun.identity.admin.Functions</function-class>
+        <function-signature>boolean contains(java.util.Collection, java.lang.Object)</function-signature>
+    </function>
+    <function>
         <function-name>truncate</function-name>
         <function-class>com.sun.identity.admin.Functions</function-class>
         <function-signature>java.lang.String truncate(java.lang.String, int)</function-signature>
@@ -72,16 +77,6 @@
         <function-name>size</function-name>
         <function-class>com.sun.identity.admin.Functions</function-class>
         <function-signature>int size(java.util.Collection)</function-signature>
-    </function>
-    <function>
-        <function-name>length</function-name>
-        <function-class>com.sun.identity.admin.Functions</function-class>
-        <function-signature>int length(java.lang.Object[])</function-signature>
-    </function>
-    <function>
-        <function-name>length</function-name>
-        <function-class>com.sun.identity.admin.Functions</function-class>
-        <function-signature>int length(java.lang.String)</function-signature>
     </function>
     <function>
         <function-name>scrape</function-name>
