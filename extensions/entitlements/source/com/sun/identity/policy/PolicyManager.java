@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.6 2009-04-29 11:43:13 veiming Exp $
+ * $Id: PolicyManager.java,v 1.7 2009-04-30 23:23:02 veiming Exp $
  *
  */
 
@@ -589,7 +589,7 @@ public final class PolicyManager {
                 NAMED_POLICY_ID, 0, attrs);
             IPolicyDataStore pStore =
                 PolicyDataStoreFactory.getInstance().getDataStore();
-            pStore.add(PrivilegeUtils.policyToPrivilege(policy));
+            pStore.add(realmName, PrivilegeUtils.policyToPrivilege(policy));
         } catch (EntitlementException e) {
             String[] objs = { policy.getName(), org };
             throw (new PolicyException(ResBundleUtils.rbName, 
@@ -649,19 +649,19 @@ public final class PolicyManager {
         NameNotFoundException, NoPermissionException,
         InvalidFormatException, PolicyException {
 
-        String realmName = getOrganizationDN();
+        String realm = getOrganizationDN();
         String subjectRealm = policy.getSubjectRealm();
-        String[] realmNames = {realmName, subjectRealm};
-        if ((subjectRealm != null) && !subjectRealm.equals(realmName)) {
+        String[] realmNames = {realm, subjectRealm};
+        if ((subjectRealm != null) && !subjectRealm.equals(realm)) {
 
             if (debug.messageEnabled()) {
                 debug.message("Can not replace policy in realm :"
-                        + realmName + ", policy has realm subjects "
+                        + realm + ", policy has realm subjects "
                         + " from realm : " + subjectRealm);
             }
 
             throw (new InvalidFormatException(ResBundleUtils.rbName,
-                "policy_realm_does_not_match", realmNames, null, realmName, 
+                "policy_realm_does_not_match", realmNames, null, realm,
                 PolicyException.POLICY));
         }
 
@@ -726,8 +726,9 @@ public final class PolicyManager {
                 if (oldPolicy != null) {
                     IPolicyDataStore pStore =
                         PolicyDataStoreFactory.getInstance().getDataStore();
-                    pStore.delete(PrivilegeUtils.policyToPrivilege(oldPolicy));
-                    pStore.add(PrivilegeUtils.policyToPrivilege(policy));
+                    pStore.delete(realm, PrivilegeUtils.policyToPrivilege(
+                        oldPolicy));
+                    pStore.add(realm, PrivilegeUtils.policyToPrivilege(policy));
                 }
             }
         } catch (EntitlementException e) {
@@ -800,7 +801,8 @@ public final class PolicyManager {
                 if (policy != null) {
                     IPolicyDataStore pStore =
                         PolicyDataStoreFactory.getInstance().getDataStore();
-                    pStore.delete(PrivilegeUtils.policyToPrivilege(policy));
+                    pStore.delete(getOrganizationDN(),
+                        PrivilegeUtils.policyToPrivilege(policy));
                 }
             }
         } catch (EntitlementException e) {

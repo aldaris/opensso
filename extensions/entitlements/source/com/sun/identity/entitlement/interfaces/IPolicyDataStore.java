@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyDataStore.java,v 1.5 2009-04-29 11:43:12 veiming Exp $
+ * $Id: IPolicyDataStore.java,v 1.6 2009-04-30 23:23:02 veiming Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
@@ -44,25 +44,28 @@ public interface IPolicyDataStore {
      * Adds a privilege to the data store. Proper indexes will be created
      * to speed up policy evaluation.
      *
+     * @param ream Realm name.
      * @param privilege Privilege to be added.
      * @throws com.sun.identity.entitlement.EntitlementException if addition
      * failed.
      */
-    void add(Privilege privilege) throws EntitlementException;
+    void add(String realm, Privilege privilege) throws EntitlementException;
 
     /**
      * Deletes a privilege from data store.
      *
+     * @param ream Realm name.
      * @param privilege Privilege to be deleted.
      * @throws com.sun.identity.entitlement.EntitlementException if deletion
      * failed.
      */
-    void delete(Privilege privilege)
+    void delete(String realm, Privilege privilege)
         throws EntitlementException;
 
     /**
      * Returns an iterator of matching privilege objects.
      *
+     * @param ream Realm name.
      * @param indexes Resource search indexes.
      * @param subjectIndexes Subject search indexes.
      * @param bSubTree <code>true</code> for sub tree evaluation.
@@ -72,6 +75,7 @@ public interface IPolicyDataStore {
      * cannot be obtained.
      */
     Iterator<Privilege> search(
+        String realm,
         ResourceSearchIndexes indexes,
         Set<String> subjectIndexes,
         boolean bSubTree,
@@ -80,6 +84,10 @@ public interface IPolicyDataStore {
 
 //TOFIX
     Set<String> searchPrivilegeNames(
-        Set<PrivilegeSearchFilter> filters, boolean boolAnd,
-        int numOfEntries, boolean sortResults, boolean ascendingOrder);
+        String realm,
+        Set<PrivilegeSearchFilter> filters,
+        boolean boolAnd,
+        int numOfEntries, 
+        boolean sortResults,
+        boolean ascendingOrder);
 }

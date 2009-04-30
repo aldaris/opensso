@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.7 2009-04-26 07:20:41 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.8 2009-04-30 23:23:02 veiming Exp $
  *
  */
 
@@ -141,6 +141,7 @@ public class PolicyEvaluator {
     private static final long DEFAULT_USER_NSROLE_CACHE_TTL = 600000;
 
     private String orgName;
+    private String realm;
     private String serviceTypeName;
     private ServiceType serviceType;
     private PolicyCache policyCache;
@@ -330,6 +331,8 @@ public class PolicyEvaluator {
             orgName = com.sun.identity.sm.DNMapper.orgNameToDN(orgName);
         }
         this.orgName = orgName;
+
+        this.realm = com.sun.identity.sm.DNMapper.orgNameToRealmName(orgName);
         this.serviceTypeName = serviceTypeName;
 
         this.policyCache = PolicyCache.getInstance();
@@ -470,7 +473,7 @@ public class PolicyEvaluator {
                 resourceName, actions);
             Evaluator eval = new Evaluator(
                 SubjectUtils.createSubject(adminSSOToken), serviceTypeName);
-            return eval.hasEntitlement(
+            return eval.hasEntitlement(realm,
                 SubjectUtils.createSubject(token), entitlement,
                 envParameters);
         } catch (EntitlementException e) {
@@ -1185,7 +1188,7 @@ public class PolicyEvaluator {
             Evaluator eval = new Evaluator(
                 SubjectUtils.createSubject(adminSSOToken), serviceTypeName);
 
-            List entitlements = eval.evaluate(userSubject, resourceName, 
+            List entitlements = eval.evaluate(realm, userSubject, resourceName,
                 envParameters, subTreeSearch);
             resultsSet = new HashSet();
 

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policyIndex.xml,v 1.7 2009-04-09 13:15:05 veiming Exp $
+   $Id: policyIndex.xml,v 1.8 2009-04-30 23:23:03 veiming Exp $
 
 -->
 
@@ -35,7 +35,7 @@
 <ServicesConfiguration>
     <Service name="PolicyIndex" version="1.0">
         <Schema i18nFileName="" revisionNumber="10">
-            <Global>
+            <Organization>
                 <AttributeSchema name="indexCount"
                     type="single"
                     syntax="numeric"
@@ -44,7 +44,7 @@
                     type="list"
                     syntax="string"
                     i18nKey="" />
-                <SubSchema name="index" inheritance="multiple">
+                <SubSchema name="indexes" inheritance="multiple">
                     <AttributeSchema name="subjectindex"
                         type="list"  isSearchable="yes" />
                     <AttributeSchema name="hostindex"
@@ -55,12 +55,18 @@
                         type="list"  isSearchable="yes" />
                     <AttributeSchema name="serializable"
                         type="single" />
-                </SubSchema>
-            </Global>
+                 </SubSchema>
+            </Organization>
         </Schema>
 
         <Configuration>
-            <GlobalConfiguration />
+            <OrganizationConfiguration name="/">
+                <AttributeValuePair>
+                    <Attribute name="indexCount" />
+                        <Value>0</Value>
+                </AttributeValuePair>
+                <SubConfiguration name="default" id="indexes" />
+            </OrganizationConfiguration>
         </Configuration>
     </Service>
 </ServicesConfiguration>

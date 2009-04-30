@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenProvisioning.java,v 1.4 2009-04-29 13:22:48 veiming Exp $
+ * $Id: OpenProvisioning.java,v 1.5 2009-04-30 23:23:03 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -161,8 +161,8 @@ public class OpenProvisioning {
         Map<String, Set<String>> envParameters =
             new HashMap<String, Set<String>>();
         Evaluator eval = new Evaluator(adminSubject, APPLICATION);
-        List entitlements = eval.evaluate(userSubject, RESOURCE, envParameters,
-            false);
+        List entitlements = eval.evaluate("/", userSubject, RESOURCE,
+            envParameters, false);
         Entitlement e1 = (Entitlement)entitlements.iterator().next();
         if (!e1.getActionValues().isEmpty()) {
             throw new Exception(
@@ -183,7 +183,7 @@ public class OpenProvisioning {
             setLocation);
 
         eval = new Evaluator(adminSubject, APPLICATION);
-        entitlements = eval.evaluate(userSubject, RESOURCE1, envParameters,
+        entitlements = eval.evaluate("/", userSubject, RESOURCE1, envParameters,
             false);
         e1 = (Entitlement)entitlements.iterator().next();
         if (e1.getActionValues().isEmpty()) {

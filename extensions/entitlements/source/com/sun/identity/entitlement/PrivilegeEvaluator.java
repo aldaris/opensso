@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.11 2009-04-29 13:22:46 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.12 2009-04-30 23:23:01 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -105,6 +105,7 @@ class PrivilegeEvaluator {
      * evaluation fails.
      */
     public boolean hasEntitlement(
+        String realm,
         Subject adminSubject,
         Subject subject,
         String applicationName,
@@ -116,7 +117,7 @@ class PrivilegeEvaluator {
             entitlement.getActionValues().keySet(), envParameters, false);
 
         indexes = entitlement.getResourceSearchIndexes();
-        List<Entitlement> results = evaluate();
+        List<Entitlement> results = evaluate(realm);
         Entitlement result = results.get(0);
         for (String action : entitlement.getActionValues().keySet()) {
             Boolean b = result.getActionValue(action);
@@ -142,6 +143,7 @@ class PrivilegeEvaluator {
      * evaluation fails.
      */
     public List<Entitlement> evaluate(
+        String realm,
         Subject adminSubject,
         Subject subject,
         String applicationName,
@@ -152,12 +154,12 @@ class PrivilegeEvaluator {
         init(adminSubject, subject, applicationName,
             resourceName, null, envParameters, recursive);
         indexes = getApplication().getResourceSearchIndex(resourceName);
-        return evaluate();
+        return evaluate(realm);
     }
 
-    private List<Entitlement> evaluate()
+    private List<Entitlement> evaluate(String realm)
         throws EntitlementException {
-        threadPool.submit(new EvaluationTask(this, recursive));
+        threadPool.submit(new EvaluationTask(realm, this, recursive));
 
         synchronized (this) {
             boolean isDone = (eException != null);
@@ -194,9 +196,15 @@ class PrivilegeEvaluator {
 
     class EvaluationTask implements Runnable {
         final PrivilegeEvaluator parent;
+        private String realm;
         private boolean bSubTree;
 
-        EvaluationTask(PrivilegeEvaluator parent, boolean bSubTree) {
+        EvaluationTask(
+            String realm,
+            PrivilegeEvaluator parent,
+            boolean bSubTree
+        ) {
+            this.realm = realm;
             this.parent = parent;
             this.bSubTree = bSubTree;
         }
@@ -206,7 +214,7 @@ class PrivilegeEvaluator {
                 int count = 0;
                 IPolicyDataStore ds =
                     PolicyDataStoreFactory.getInstance().getDataStore();
-                for (Iterator<Privilege> i = ds.search(parent.indexes,
+                for (Iterator<Privilege> i = ds.search(realm, parent.indexes,
                     SubjectAttributesManager.getSubjectSearchFilter(
                         parent.subject, parent.applicationName), bSubTree,
                         threadPool); i.hasNext();

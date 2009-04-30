@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.6 2009-04-29 13:22:47 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.7 2009-04-30 23:23:02 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -68,26 +68,26 @@ public class PolicyDataStore implements IPolicyDataStore {
     }
 
 
-    public void add(Privilege p)
+    public void add(String realm, Privilege p)
         throws EntitlementException {
-        dataStore.add(p);
+        dataStore.add(realm, p);
         IPolicyConfig config = PolicyConfigFactory.getPolicyConfig();
         config.addSubjectAttributeNames("/",
             p.getEntitlement().getApplicationName(),
             SubjectAttributesManager.getRequiredAttributeNames(p)); //TOFIX realm
     }
 
-    public void delete(Privilege p)
+    public void delete(String realm, Privilege p)
             throws EntitlementException {
-        String dn = DataStore.getDistinguishedName(p.getName());
-        dataStore.delete(p.getName());
+        String dn = DataStore.getDistinguishedName(p.getName(), realm, null);
+        dataStore.delete(realm, p.getName());
         policyCache.decache(dn);
         indexCache.clear(p.getEntitlement().getResourceSaveIndexes(), dn);
     }
 
-    private void cache(Privilege p)
+    private void cache(Privilege p, String realm)
             throws EntitlementException {
-        String dn = DataStore.getDistinguishedName(p.getName());
+        String dn = DataStore.getDistinguishedName(p.getName(), realm, null);
         indexCache.cache(p.getEntitlement().getResourceSaveIndexes(), dn);
         policyCache.cache(dn, p);
     }
@@ -98,6 +98,7 @@ public class PolicyDataStore implements IPolicyDataStore {
     }
 
     public Iterator<Privilege> search(
+        String realm,
         ResourceSearchIndexes indexes,
         Set<String> subjectIndexes,
         boolean bSubTree,
@@ -115,13 +116,14 @@ public class PolicyDataStore implements IPolicyDataStore {
                 i.remove();
             }
         }
-        threadPool.submit(new SearchTask(this, iterator, indexes,
+        threadPool.submit(new SearchTask(realm, this, iterator, indexes,
             subjectIndexes, bSubTree, setDNs));
         return iterator;
     }
 
     //TOFIX
     public Set<String> searchPrivilegeNames(
+        String realm,
         Set<PrivilegeSearchFilter> filters,
         boolean boolAnd,
         int numOfEntries,
@@ -138,12 +140,13 @@ public class PolicyDataStore implements IPolicyDataStore {
             strFilter.append(psf.getFilter());
         }
         strFilter.append(")");
-        return dataStore.search(strFilter.toString(), numOfEntries, sortResults,
-            ascendingOrder);
+        return dataStore.search(realm, strFilter.toString(), numOfEntries,
+            sortResults, ascendingOrder);
     }
 
     public class SearchTask implements Runnable {
 
+        private String realm;
         private PolicyDataStore parent;
         private BufferedIterator iterator;
         private ResourceSearchIndexes indexes;
@@ -152,6 +155,7 @@ public class PolicyDataStore implements IPolicyDataStore {
         private Set<String> excludeDNs;
 
         public SearchTask(
+            String realm,
             PolicyDataStore parent,
             BufferedIterator iterator,
             ResourceSearchIndexes indexes,
@@ -159,6 +163,7 @@ public class PolicyDataStore implements IPolicyDataStore {
             boolean bSubTree,
             Set<String> excludeDNs
         ) {
+            this.realm = realm;
             this.parent = parent;
             this.iterator = iterator;
             this.indexes = indexes;
@@ -169,11 +174,11 @@ public class PolicyDataStore implements IPolicyDataStore {
 
         public void run() {
             try {
-                Set<Privilege> results = parent.dataStore.search(
+                Set<Privilege> results = parent.dataStore.search(realm,
                         iterator, indexes, subjectIndexes, bSubTree,
                         excludeDNs);
                 for (Privilege p : results) {
-                    parent.cache(p);
+                    parent.cache(p, realm);
                 }
             } catch (EntitlementException ex) {
                 //TOFIX

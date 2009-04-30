@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MetaDataTest.java,v 1.2 2009-04-29 13:22:48 veiming Exp $
+ * $Id: MetaDataTest.java,v 1.3 2009-04-30 23:23:03 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -124,7 +124,7 @@ public class MetaDataTest {
         Set<PrivilegeSearchFilter> filter =
             new HashSet<PrivilegeSearchFilter>();
         filter.add(new PrivilegeSearchFilter("creationdate", value, operator));
-        Set<String> privilegeNames = privilegMgr.searchPrivilegeNames(
+        Set<String> privilegeNames = privilegMgr.searchPrivilegeNames("/",
             filter, true);
 
         if (!containCheckOnly) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.6 2009-04-29 11:43:12 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.7 2009-04-30 23:23:01 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -150,12 +150,13 @@ public abstract class PrivilegeManager {
      * @return a set of privilege names for a given search criteria.
      */
     public Set<String> searchPrivilegeNames(
+        String realm,
         Set<PrivilegeSearchFilter> filter,
         boolean boolAnd) {
         IPolicyDataStore datastore =
             PolicyDataStoreFactory.getInstance().getDataStore();
         return datastore.searchPrivilegeNames(
-            filter, boolAnd, 0, false, false);//TOFIX
+            realm, filter, boolAnd, 0, false, false);//TOFIX
     }
 
     /**

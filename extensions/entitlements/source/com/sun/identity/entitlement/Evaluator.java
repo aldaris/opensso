@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.13 2009-04-26 07:20:33 veiming Exp $
+ * $Id: Evaluator.java,v 1.14 2009-04-30 23:23:01 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -92,6 +92,7 @@ public class Evaluator {
      * Returns <code>true</code> if the subject is granted to an
      * entitlement.
      *
+     * @param realm Realm name.
      * @param subject Subject who is under evaluation.
      * @param e Entitlement object which describes the resource name and 
      *          actions.
@@ -101,13 +102,14 @@ public class Evaluator {
      * @throws EntitlementException if the result cannot be determined.
      */
     public boolean hasEntitlement(
+        String realm,
         Subject subject, 
         Entitlement e,
         Map<String, Set<String>> envParameters
     ) throws EntitlementException {
         long start = HAS_ENTITLEMENT_MONITOR.start();
         PrivilegeEvaluator evaluator = new PrivilegeEvaluator();
-        boolean result = evaluator.hasEntitlement(
+        boolean result = evaluator.hasEntitlement(realm,
             adminSubject, subject, applicationName, e, envParameters);
         HAS_ENTITLEMENT_MONITOR.end(start);
         return result;
@@ -116,7 +118,8 @@ public class Evaluator {
     /**
      * Returns a list of entitlements for a given subject, resource name
      * and environment.
-     * 
+     *
+     * @param realm Realm Name.
      * @param subject Subject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -127,6 +130,7 @@ public class Evaluator {
      * @throws EntitlementException if the result cannot be determined.
      */
     public List<Entitlement> evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment,
@@ -135,8 +139,8 @@ public class Evaluator {
         long start = (recursive) ? EVAL_SUB_TREE_MONITOR.start() :
             EVAL_SINGLE_LEVEL_MONITOR.start();
         PrivilegeEvaluator evaluator = new PrivilegeEvaluator();
-        List<Entitlement> results = evaluator.evaluate(adminSubject, subject,
-            applicationName, resourceName, environment, recursive);
+        List<Entitlement> results = evaluator.evaluate(realm, adminSubject,
+            subject, applicationName, resourceName, environment, recursive);
         if (recursive) {
             EVAL_SUB_TREE_MONITOR.end(start);
         } else {

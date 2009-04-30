@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.6 2009-04-29 13:22:47 veiming Exp $
+ * $Id: DataStore.java,v 1.7 2009-04-30 23:23:02 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -39,11 +39,12 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.ldap.LDAPDN;
-import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSDataEntry;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceConfigManager;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -53,6 +54,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.AccessController;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,15 +62,15 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * //TOFIX: do not call SMS to figure out the base DN (for searching privileges)
  * @author dennis
  */
 public class DataStore {
     private static final String SERVICE_NAME = "PolicyIndex";
     private static final String INDEX_COUNT = "indexCount";
-    private static final String START_DN_TEMPLATE =
-         "ou=default,ou=GlobalConfig,ou=1.0,ou=" + SERVICE_NAME +
-         ",ou=services,{0}";
+    private static final String REALM_DN_TEMPLATE =
+         "ou={0},ou=default,ou=OrganizationConfig,ou=1.0,ou=" + SERVICE_NAME +
+         ",ou=services,{1}";
     private static final String SUBJECT_INDEX_KEY = "subjectindex";
     private static final String HOST_INDEX_KEY = "hostindex";
     private static final String PATH_INDEX_KEY = "pathindex";
@@ -82,33 +84,65 @@ public class DataStore {
         "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + PATH_INDEX_KEY + "={0})";
     private static final String PATH_PARENT_FILTER_TEMPLATE =
         "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + PATH_PARENT_INDEX_KEY + "={0})";
-    private static String PRIVILEGE_DN;
-    private static String BASE_DN;
 
     private static final NetworkMonitor DB_MONITOR =
         NetworkMonitor.getInstance("dbLookup");
 
-    static {
-        Object[] p = {SMSEntry.getRootSuffix()};
-        BASE_DN = MessageFormat.format(START_DN_TEMPLATE, p);
-        PRIVILEGE_DN = "ou={0}," + BASE_DN;
+    public static String getDistinguishedName(
+        String name,
+        String realm,
+        String indexName) {
+        return "ou=" + name + "," + getSearchBaseDN(realm, indexName);
     }
 
-    public static String getDistinguishedName(String name) {
-        Object[] arg = {name};
-        return MessageFormat.format(PRIVILEGE_DN, arg);
+    public static String getSearchBaseDN(String realm, String indexName) {
+        if (indexName == null) {
+            indexName = "default";
+        }
+        Object[] args = {indexName, DNMapper.orgNameToDN(realm)};
+        return MessageFormat.format(REALM_DN_TEMPLATE, args);
     }
 
-    private void updateIndexCount(SSOToken adminToken, int num) {
+    private String createDefaultSubConfig(
+        SSOToken adminToken,
+        String realm,
+        String indexName)
+        throws SMSException, SSOException {
+        if (indexName == null) {
+            indexName = "default";
+        }
+        ServiceConfig orgConf = getOrgConfig(adminToken, realm);
+
+        Set<String> subConfigNames = orgConf.getSubConfigNames();
+        if (!subConfigNames.contains(indexName)) {
+            orgConf.addSubConfig(indexName, "indexes", 0,
+                Collections.EMPTY_MAP);
+        }
+        ServiceConfig defSubConfig = orgConf.getSubConfig(indexName);
+        return defSubConfig.getDN();
+    }
+
+    private ServiceConfig getOrgConfig(SSOToken adminToken, String realm)
+        throws SMSException, SSOException {
+        ServiceConfigManager mgr = new ServiceConfigManager(
+            SERVICE_NAME, adminToken);
+        ServiceConfig orgConf = mgr.getOrganizationConfig(realm, null);
+        if (orgConf == null) {
+            mgr.createOrganizationConfig(realm, null);
+        }
+        return orgConf;
+    }
+
+    private void updateIndexCount(SSOToken adminToken, String realm, int num) {
         try {
-            ServiceSchemaManager mgr = new ServiceSchemaManager(
+            ServiceConfigManager mgr = new ServiceConfigManager(
                 SERVICE_NAME, adminToken);
-            AttributeSchema as = mgr.getGlobalSchema().getAttributeSchema(
-                INDEX_COUNT);
-            Set set = as.getDefaultValues();
+            ServiceConfig orgConf = getOrgConfig(adminToken, realm);
+            Map<String, Set<String>> map = orgConf.getAttributes();
+            Set<String> set = map.get(INDEX_COUNT);
             int count = 0;
             if ((set != null) && !set.isEmpty()) {
-                String strCount = (String)set.iterator().next();
+                String strCount = (String) set.iterator().next();
                 count = Integer.parseInt(strCount);
                 count += num;
                 set.clear();
@@ -117,7 +151,9 @@ public class DataStore {
                 set = new HashSet();
                 set.add(Integer.toString(num));
             }
-            as.setDefaultValues(set);
+            map = new HashMap<String, Set<String>>();
+            map.put(INDEX_COUNT, set);
+            orgConf.setAttributes(map);
         } catch (NumberFormatException ex) {
             //TOFIX
         } catch (SMSException ex) {
@@ -127,19 +163,22 @@ public class DataStore {
         }
     }
 
-    private int getIndexCount() {
+    private int getIndexCount(String realm) {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         int count = 0;
         try {
-            ServiceSchemaManager mgr = new ServiceSchemaManager(
+            ServiceConfigManager mgr = new ServiceConfigManager(
                 SERVICE_NAME, adminToken);
-            AttributeSchema as = mgr.getGlobalSchema().getAttributeSchema(
-                INDEX_COUNT);
-            Set set = as.getDefaultValues();
-            if ((set != null) && !set.isEmpty()) {
-                String strCount = (String)set.iterator().next();
-                count = Integer.parseInt(strCount);
+            ServiceConfig orgConf = mgr.getOrganizationConfig(realm, null);
+            if (orgConf != null) {
+                Map<String, Set<String>> map = orgConf.getAttributes();
+                Set<String> set = map.get(INDEX_COUNT);
+
+                if ((set != null) && !set.isEmpty()) {
+                    String strCount = (String) set.iterator().next();
+                    count = Integer.parseInt(strCount);
+                }
             }
         } catch (NumberFormatException ex) {
             //TOFIX
@@ -151,8 +190,9 @@ public class DataStore {
         return count;
     }
 
-    public String add(Privilege p)
+    public String add(String realm, Privilege p)
         throws EntitlementException {
+
         ResourceSaveIndexes indexes =
             p.getEntitlement().getResourceSaveIndexes();
         Set<String> subjectIndexes =
@@ -160,8 +200,11 @@ public class DataStore {
 
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        String dn = getDistinguishedName(p.getName());
+        String dn = null;
         try {
+            createDefaultSubConfig(adminToken, realm, null);
+            dn = getDistinguishedName(p.getName(), realm, null);
+
             SMSEntry s = new SMSEntry(adminToken, dn);
             Map<String, Set<String>> map = new HashMap<String, Set<String>>();
 
@@ -222,7 +265,7 @@ public class DataStore {
 
             s.setAttributes(map);
             s.save();
-            updateIndexCount(adminToken, 1);
+            updateIndexCount(adminToken, realm, 1);
         } catch (SSOException e) {
             //TOFIX
         } catch (SMSException e) {
@@ -231,27 +274,30 @@ public class DataStore {
         return dn;
     }
 
-    public void delete(String name)
+    public void delete(String realm, String name)
         throws EntitlementException {
-        String dn = getDistinguishedName(name);
-
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        if (SMSEntry.checkIfEntryExists(dn, adminToken)) {
-            try {
+        String dn = null;
+        try {
+            dn = getDistinguishedName(name, realm, null);
+
+            if (SMSEntry.checkIfEntryExists(dn, adminToken)) {
                 SMSEntry s = new SMSEntry(adminToken, dn);
                 s.delete();
-                updateIndexCount(adminToken, -1);
-            } catch (SMSException e) {
-                Object[] arg = {dn};
-                throw new EntitlementException(51, arg, e);
-            } catch (SSOException e) {
-                throw new EntitlementException(10, null, e);
+                updateIndexCount(adminToken, realm, -1);
             }
+        } catch (SMSException e) {
+            Object[] arg = {dn};
+            throw new EntitlementException(51, arg, e);
+        } catch (SSOException e) {
+            throw new EntitlementException(10, null, e);
         }
+
     }
 
     public Set<String> search(
+        String realm,
         String filter,
         int numOfEntries,
         boolean sortResults,
@@ -262,7 +308,8 @@ public class DataStore {
         try {
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-            Set<String> dns = SMSEntry.search(adminToken, BASE_DN, filter);
+            String baseDN = getSearchBaseDN(realm, null);
+            Set<String> dns = SMSEntry.search(adminToken, baseDN, filter);
             for (String dn : dns) {
                 String rdns[] = LDAPDN.explodeDN(dn, true);
                 if ((rdns != null) && rdns.length > 0) {
@@ -276,6 +323,7 @@ public class DataStore {
     }
 
     public Set<Privilege> search(
+        String realm,
         BufferedIterator iterator,
         ResourceSearchIndexes indexes,
         Set<String> subjectIndexes,
@@ -284,6 +332,7 @@ public class DataStore {
     ) throws EntitlementException {
         Set<Privilege> results = new HashSet<Privilege>();
         String filter = getFilter(indexes, subjectIndexes, bSubTree);
+        String baseDN = getSearchBaseDN(realm, null);
 
         if (filter != null) {
             long start = DB_MONITOR.start();
@@ -291,7 +340,7 @@ public class DataStore {
                 AdminTokenAction.getInstance());
             try {
                 Iterator i = SMSEntry.search(
-                    adminToken, BASE_DN, filter, excludeDNs);
+                    adminToken, baseDN, filter, excludeDNs);
                 while (i.hasNext()) {
                     SMSDataEntry e = (SMSDataEntry)i.next();
                     Privilege privilege = (Privilege)deserializeObject(
@@ -301,7 +350,7 @@ public class DataStore {
                 }
                 iterator.isDone();
             } catch (SMSException e) {
-                Object[] arg = {BASE_DN};
+                Object[] arg = {baseDN};
                 throw new EntitlementException(52, arg, e);
             }
             DB_MONITOR.end(start);
