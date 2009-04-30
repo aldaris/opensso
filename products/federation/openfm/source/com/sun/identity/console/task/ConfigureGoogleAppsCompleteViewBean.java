@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.5 2009-03-25 00:31:51 asyhuang Exp $
+ * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.6 2009-04-30 00:00:36 asyhuang Exp $
  *
  */
 package com.sun.identity.console.task;
@@ -46,7 +46,11 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.Map;
+import java.util.Set;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletOutputStream;
@@ -119,7 +123,12 @@ public class ConfigureGoogleAppsCompleteViewBean
             String realm = req.getParameter("realm");
             String entityId = req.getParameter("idp");
             TaskModel model = (TaskModel) getModelInternal();
-            Map values = model.getConfigureGoogleAppURLs(realm, entityId);
+            Map values = model.getConfigureGoogleAppsURLs(realm, entityId);
+            String domainId = req.getParameter("domainId");
+            String orgMsg = getModel().getLocalizedString(
+                    "configure.google.apps.complete.step1");           
+            String msg = MessageFormat.format(orgMsg , domainId, domainId);
+            values.put("step1", returnEmptySetIfValueIsNull(msg));
             AMPropertySheet ps = (AMPropertySheet) getChild(PROPERTIES);
             ps.setAttributeValues(values, model);
         } catch (AMConsoleException ex) {
@@ -215,4 +224,14 @@ public class ConfigureGoogleAppsCompleteViewBean
             }
         }
     }
+
+    private Set returnEmptySetIfValueIsNull(String str) {
+        Set set = Collections.EMPTY_SET;
+        if (str != null) {
+            set = new HashSet(2);
+            set.add(str);
+        }
+        return set;
+    }
+
 }
