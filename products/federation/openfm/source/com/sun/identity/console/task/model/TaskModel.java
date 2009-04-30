@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModel.java,v 1.5 2009-02-27 12:09:41 asyhuang Exp $
+ * $Id: TaskModel.java,v 1.6 2009-04-30 00:02:00 asyhuang Exp $
  *
  */
 
@@ -129,7 +129,7 @@ public interface TaskModel
     Map getRealmCotWithHostedIDPs() 
         throws AMConsoleException;
     
-    Map getConfigureGoogleAppURLs(String realm, String entityId)
+    Map getConfigureGoogleAppsURLs(String realm, String entityId)
         throws AMConsoleException;
     
 }

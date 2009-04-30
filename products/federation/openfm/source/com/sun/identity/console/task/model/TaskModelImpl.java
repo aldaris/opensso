@@ -22,10 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModelImpl.java,v 1.11 2009-03-19 19:51:10 asyhuang Exp $
+ * $Id: TaskModelImpl.java,v 1.12 2009-04-30 00:01:46 asyhuang Exp $
  *
  */
-
 package com.sun.identity.console.task.model;
 
 import com.sun.identity.cot.COTException;
@@ -39,7 +38,6 @@ import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
-import com.sun.identity.saml2.jaxb.metadata.SingleLogoutServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.SingleSignOnServiceElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
@@ -47,7 +45,8 @@ import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
-import com.sun.identity.shared.xml.XMLUtils;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.Collections;
@@ -60,16 +59,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
-import org.w3c.dom.Document;
-
 
 public class TaskModelImpl
-    extends AMModelBase
-    implements TaskModel
-{
+        extends AMModelBase
+        implements TaskModel {
+
     public TaskModelImpl(HttpServletRequest req, Map map) {
-	super(req, map);
+        super(req, map);
     }
 
     /**
@@ -78,8 +74,8 @@ public class TaskModelImpl
      * @return realm names.
      * @throws AMConsoleException if realm cannot be retrieved.
      */
-    public Set getRealms() 
-        throws AMConsoleException {
+    public Set getRealms()
+            throws AMConsoleException {
         Set results = new TreeSet();
         results.addAll(super.getRealmNames("/", "*"));
         results.add("/");
@@ -92,7 +88,7 @@ public class TaskModelImpl
      * @return a set of signing keys.
      */
     public Set getSigningKeys()
-        throws AMConsoleException {
+            throws AMConsoleException {
         try {
             Set keyEntries = new HashSet();
             JKSKeyProvider kp = new JKSKeyProvider();
@@ -119,8 +115,8 @@ public class TaskModelImpl
      * @return a set of circle of trusts.
      * @throws AMConsoleException if unable to retrieve circle of trusts.
      */
-    public Set getCircleOfTrusts(String realm) 
-        throws AMConsoleException {
+    public Set getCircleOfTrusts(String realm)
+            throws AMConsoleException {
         try {
             CircleOfTrustManager mgr = new CircleOfTrustManager();
             return mgr.getAllCirclesOfTrust(realm);
@@ -128,7 +124,7 @@ public class TaskModelImpl
             throw new AMConsoleException(ex.getMessage());
         }
     }
-    
+
     /**
      * Returns a set of entities in a circle of trust.
      * 
@@ -137,18 +133,18 @@ public class TaskModelImpl
      * @return a set of entities in a circle of trust.
      * @throws AMConsoleException if unable to retrieve entities.
      */
-    public Set getEntities(String realm, String cotName) 
-        throws AMConsoleException {
+    public Set getEntities(String realm, String cotName)
+            throws AMConsoleException {
         try {
             CircleOfTrustManager mgr = new CircleOfTrustManager();
-            Set entities = mgr.listCircleOfTrustMember(realm, cotName, 
-                COTConstants.SAML2);
+            Set entities = mgr.listCircleOfTrustMember(realm, cotName,
+                    COTConstants.SAML2);
             return (entities == null) ? Collections.EMPTY_SET : entities;
         } catch (COTException ex) {
             throw new AMConsoleException(ex.getMessage());
         }
     }
-    
+
     /**
      * Returns a set of hosted IDP in a circle of trust.
      * 
@@ -158,10 +154,10 @@ public class TaskModelImpl
      * @throws AMConsoleException if IDP cannot be returned.
      */
     public Set getHostedIDP(String realm, String cotName)
-        throws AMConsoleException {
+            throws AMConsoleException {
         return getEntities(realm, cotName, true, true);
     }
-    
+
     /**
      * Returns a set of remote IDP in a circle of trust.
      * 
@@ -171,11 +167,10 @@ public class TaskModelImpl
      * @throws AMConsoleException if IDP cannot be returned.
      */
     public Set getRemoteIDP(String realm, String cotName)
-        throws AMConsoleException {
+            throws AMConsoleException {
         return getEntities(realm, cotName, true, false);
     }
-    
-    
+
     /**
      * Returns a set of hosted SP in a circle of trust.
      * 
@@ -185,10 +180,10 @@ public class TaskModelImpl
      * @throws AMConsoleException if IDP cannot be returned.
      */
     public Set getHostedSP(String realm, String cotName)
-        throws AMConsoleException {
+            throws AMConsoleException {
         return getEntities(realm, cotName, false, true);
     }
-    
+
     /**
      * Returns a set of remote SP in a circle of trust.
      * 
@@ -198,16 +193,15 @@ public class TaskModelImpl
      * @throws AMConsoleException if IDP cannot be returned.
      */
     public Set getRemoteSP(String realm, String cotName)
-        throws AMConsoleException {
+            throws AMConsoleException {
         return getEntities(realm, cotName, false, false);
     }
 
     private Set getEntities(
-        String realm, 
-        String cotName, 
-        boolean bIDP, 
-        boolean hosted
-    ) throws AMConsoleException {
+            String realm,
+            String cotName,
+            boolean bIDP,
+            boolean hosted) throws AMConsoleException {
         try {
             SAML2MetaManager mgr = new SAML2MetaManager();
             Set entities = getEntities(realm, cotName);
@@ -218,8 +212,8 @@ public class TaskModelImpl
                 EntityConfigElement elm = mgr.getEntityConfig(realm, entityId);
                 if (elm.isHosted() == hosted) {
                     EntityDescriptorElement desc = mgr.getEntityDescriptor(
-                        realm, entityId);
-                    
+                            realm, entityId);
+
                     if (bIDP) {
                         if (SAML2MetaUtils.getIDPSSODescriptor(desc) != null) {
                             results.add(entityId);
@@ -236,7 +230,7 @@ public class TaskModelImpl
             throw new AMConsoleException(ex.getMessage());
         }
     }
-    
+
     /**
      * Returns a map of realm to a map of circle of trust name to a set of
      * Hosted Identity Providers.
@@ -245,20 +239,20 @@ public class TaskModelImpl
      *         Hosted Identity Providers.
      * @throws AMConsoleException if this map cannot be constructed.
      */
-    public Map getRealmCotWithHostedIDPs() 
-        throws AMConsoleException {
+    public Map getRealmCotWithHostedIDPs()
+            throws AMConsoleException {
         Map map = new HashMap();
         Set realms = getRealms();
-        for (Iterator i = realms.iterator(); i.hasNext(); )  {
-            String realm = (String)i.next();
-            
+        for (Iterator i = realms.iterator(); i.hasNext();) {
+            String realm = (String) i.next();
+
             Set cots = getCircleOfTrusts(realm);
-            for (Iterator j = cots.iterator(); j.hasNext(); ) {
-                String cotName = (String)j.next();
+            for (Iterator j = cots.iterator(); j.hasNext();) {
+                String cotName = (String) j.next();
                 Set idps = getHostedIDP(realm, cotName);
-                
+
                 if ((idps != null) && !idps.isEmpty()) {
-                    Map r = (Map)map.get(realm);
+                    Map r = (Map) map.get(realm);
                     if (r == null) {
                         r = new HashMap();
                         map.put(realm, r);
@@ -269,72 +263,78 @@ public class TaskModelImpl
         }
         return map;
     }
-    
-     public Map getConfigureGoogleAppURLs(String realm, String entityId)
-        throws AMConsoleException {
+
+    public Map getConfigureGoogleAppsURLs(String realm, String entityId)
+            throws AMConsoleException {
         Map map = new HashMap();
-       IDPSSODescriptorElement idpssoDescriptor = null;
-       try {
+        IDPSSODescriptorElement idpssoDescriptor = null;
+        try {
             SAML2MetaManager samlManager = new SAML2MetaManager();
             idpssoDescriptor =
-                    samlManager.getIDPSSODescriptor(realm,entityId);
+                    samlManager.getIDPSSODescriptor(realm, entityId);
+            String signinPageURL = null;
             if (idpssoDescriptor != null) {
-                 
+
                 List signonList = idpssoDescriptor.getSingleSignOnService();
-                
-                for (int i=0; i<signonList.size(); i++) {
-                    SingleSignOnServiceElement signElem = 
+
+                for (int i = 0; i < signonList.size(); i++) {
+                    SingleSignOnServiceElement signElem =
                             (SingleSignOnServiceElement) signonList.get(i);
                     String tmp = signElem.getBinding();
                     if (tmp.contains("HTTP-Redirect")) {
+                        signinPageURL = signElem.getLocation();
                         map.put("SigninPageURL",
-                            returnEmptySetIfValueIsNull(
-                            signElem.getLocation()));
+                                returnEmptySetIfValueIsNull(
+                                signinPageURL));
                     }
                 }
-            
             }
 
+            URL aURL = new URL(signinPageURL);
             String signoutPageURL = null;
-            String protocol = SystemPropertiesManager.get(
-                    Constants.AM_SERVER_PROTOCOL);
-            String host = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
-            String port = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
+            String protocol = aURL.getProtocol();
+            String host = aURL.getHost();
+            int port = aURL.getPort();
+            if (port == -1) {
+                port = (aURL.getProtocol().equals("https")) ? 443 : 80;
+            }
+
             String deploymentURI = SystemPropertiesManager.get(
                     Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
-            String url = protocol + "://" + host + ":" + port + deploymentURI;           
-            signoutPageURL = url + "/UI/Logout?goto=" + url;           
+            String url = protocol + "://" + host + ":" + port + deploymentURI;
+            signoutPageURL = url + "/UI/Logout?goto=" + url;
+
             map.put("SignoutPageURL",
-                    returnEmptySetIfValueIsNull(signoutPageURL)); 
-      
-            map.put("ChangePasswordURL", 
-                returnEmptySetIfValueIsNull(url+"/idm/EndUser"));
-            
+                    returnEmptySetIfValueIsNull(signoutPageURL));
+
+            map.put("ChangePasswordURL",
+                    returnEmptySetIfValueIsNull(url + "/idm/EndUser"));
+
             // get pubkey                 
             Map extValueMap = new HashMap();
-            IDPSSOConfigElement idpssoConfig = samlManager.getIDPSSOConfig(realm,entityId);
+            IDPSSOConfigElement idpssoConfig = samlManager.getIDPSSOConfig(realm, entityId);
             if (idpssoConfig != null) {
-                BaseConfigType baseConfig = (BaseConfigType)idpssoConfig;
+                BaseConfigType baseConfig = (BaseConfigType) idpssoConfig;
                 extValueMap = SAML2MetaUtils.getAttributes(baseConfig);
-            }            
+            }
             List aList = (List) extValueMap.get("signingCertAlias");
             String signingCertAlias = null;
             if (aList != null) {
                 signingCertAlias = (String) aList.get(0);
             }
-            String publickey = 
-                    SAML2MetaSecurityUtils.buildX509Certificate(signingCertAlias);                      
-            String str = "-----BEGIN CERTIFICATE-----\n" 
-                    + publickey 
-                    + "-----END CERTIFICATE-----\n";
-            
-            map.put("PubKey",returnEmptySetIfValueIsNull(str));
+            String publickey =
+                    SAML2MetaSecurityUtils.buildX509Certificate(signingCertAlias);
+            String str = "-----BEGIN CERTIFICATE-----\n" + publickey + "-----END CERTIFICATE-----\n";
+
+            map.put("PubKey", returnEmptySetIfValueIsNull(str));
         } catch (SAML2MetaException ex) {
+            throw new AMConsoleException(ex.getMessage());
+        } catch (MalformedURLException ex) {
             throw new AMConsoleException(ex.getMessage());
         }
         return map;
-     }     
-             
+    }
+
     protected Set returnEmptySetIfValueIsNull(String str) {
         Set set = Collections.EMPTY_SET;
         if (str != null) {
@@ -343,15 +343,15 @@ public class TaskModelImpl
         }
         return set;
     }
-    
+
     protected Set returnEmptySetIfValueIsNull(Set set) {
         return (set != null) ? set : Collections.EMPTY_SET;
     }
-    
+
     protected Set returnEmptySetIfValueIsNull(List l) {
         Set set = new HashSet();
         int size = l.size();
-        for (int i=0;i<size;i++){
+        for (int i = 0; i < size; i++) {
             set.add(l.get(i));
         }
         return set;
