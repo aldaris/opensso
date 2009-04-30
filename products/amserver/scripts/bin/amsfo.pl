@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amsfo.pl,v 1.5 2009-04-16 15:35:59 subashvarma Exp $
+# $Id: amsfo.pl,v 1.6 2009-04-30 05:04:57 kanduls Exp $
 #
 
 ### To Debug this script set AMDEBUG to true ####
@@ -77,6 +77,7 @@ my $broker_vm_args = $prop{'BROKER_VM_ARGS'};
 my $broker_port  = $prop{'BROKER_PORT'};
 my $broker_instance_name = $prop{'BROKER_INSTANCE_NAME'};
 my $jmq_password = $prop{'JMQ_PASSWORD'};
+my $delete_database_dir = $prop{'DELETE_DATABASE'};
 sub get_pid {
 	my $pid_file = $_[0];
         # Open the pid file and read the pid
@@ -178,7 +179,7 @@ sub start_am {
             }
         }
         else {
-            if ($database_dir eq "true") {
+            if ($delete_database_dir eq "true") {
                 File::Path::rmtree($database_dir);
             }
             my $java_home=$prop{'JAVA_HOME'};
@@ -194,9 +195,9 @@ sub start_am {
             }                       
             # creates dir  by  creating all  the  non-existing  parent directories first.
     	    mkpath($database_dir);
-            $ret = Win32::Process::Create($amProcessObj,$amExecutable,$cmd_args,0,NORMAL_PRIORITY_CLASS,".");
-            print Win32::FormatMessage( Win32::GetLastError() );
-
+            $ret = Win32::Process::Create($amProcessObj,$amExecutable,
+                $cmd_args,0,NORMAL_PRIORITY_CLASS,".") || 
+                die print Win32::FormatMessage( Win32::GetLastError() );
             $_ampid = $amProcessObj->GetProcessID();
             # Open the pid file for writing
             open(pid_file, "> $am_pid_file");
