@@ -3,7 +3,7 @@ README file for Open Federation Library
 ------------------------------------------------------------------------------
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
-Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
   
 The contents of this file are subject to the terms
 of the Common Development and Distribution License
@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.unconfigured,v 1.8 2008-08-19 19:11:00 veiming Exp $
+$Id: README.unconfigured,v 1.9 2009-05-01 15:19:54 ggennaro Exp $
 
 
 
@@ -38,21 +38,22 @@ $Id: README.unconfigured,v 1.8 2008-08-19 19:11:00 veiming Exp $
 
 
 %% 1. Contents of this directory 
-   This README file provides information on Fedlet ZIP file without 
+   This README file provides information on Fedlet ZIP file without
    pre-configured IDP and Fedlet (SP) metadata.
    Manual steps (refer to section 2.1) need to setup Fedlet (SP) to work 
    with remote IDP.
 
-   Fedlet.zip 
-     |
-     |- fedlet.war        Fedlet WAR file. This is a ready-to-deploy WAR 
-     |                    to show the Fedlet features.
-     |
-     |- conf              Directory containing Fedlet metadata template,
-     |                    COT template and configuration files. 
-     |
-     |- README            This README file. The file shows how to use the
-                          conf files to setup Fedlet configuration. 
+   Fedlet-unconfigured.zip
+     |- java
+         |
+         |- fedlet.war        Fedlet WAR file. This is a ready-to-deploy WAR
+         |                    to show the Fedlet features.
+         |
+         |- conf              Directory containing Fedlet metadata template,
+         |                    COT template and configuration files.
+         |
+         |- README            This README file. The file shows how to use the
+                              conf files to setup Fedlet configuration.
 
 
 %% 2. How to configure and test Fedlet 

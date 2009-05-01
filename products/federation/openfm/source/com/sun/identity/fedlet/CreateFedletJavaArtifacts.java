@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedletZip.java,v 1.6 2008-11-22 00:54:33 qcheng Exp $
+ * $Id: CreateFedletJavaArtifacts.java,v 1.1 2009-05-01 15:19:58 ggennaro Exp $
  *
  */
 
@@ -35,8 +35,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -50,13 +48,12 @@ import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
- *  * Creates Fedlet.
- *   */
-public class CreateFedletZip {
+ * Creates unconfigured Fedlet artifacts for Java.
+ *
+ */
+public class CreateFedletJavaArtifacts {
     private Map fedConfigTagSwap;
     private List fedConfigTagSwapOrder;
     private Map fedletBits;
@@ -65,7 +62,7 @@ public class CreateFedletZip {
     /**
      * Default constructor
      */
-    public CreateFedletZip() {
+    public CreateFedletJavaArtifacts() {
         fedConfigTagSwap = new HashMap();
         fedConfigTagSwap.put("@CONFIGURATION_PROVIDER_CLASS@",
             "com.sun.identity.plugin.configuration.impl.FedletConfigurationImpl");
@@ -104,22 +101,21 @@ public class CreateFedletZip {
         fedConfigTagSwapOrder.add("/@SERVER_URI@");
     }
 
-    public void createFedletZip(String bitsFile, String jarExtractFile,
-        String warDir, String fedletZipFile, String readmeFile) 
+    public void createFedletJavaArtifacts(String bitsFile, String jarExtractFile,
+        String warDir, String readmeFile, String artifactsFolder)
         throws IOException, FileNotFoundException {
-        validateParameters(bitsFile, jarExtractFile, warDir, fedletZipFile,
-            readmeFile);
-       
-        initMaps(bitsFile, jarExtractFile); 
 
-        File tempFile = new File(fedletZipFile);
-        String workDir = tempFile.getParentFile().toString() + 
-            File.separator + ".fedletzip";
-        File dir = new File(workDir);
-        if (!dir.getParentFile().exists())  {
-            dir.getParentFile().mkdirs();
+        validateParameters(bitsFile, jarExtractFile, warDir, readmeFile);
+       
+        initMaps(bitsFile, jarExtractFile);
+
+        File dir = new File(artifactsFolder);
+        if( !dir.getParentFile().exists() ) {
+            dir.getAbsoluteFile().mkdirs();
         }
         dir.mkdir();
+        String workDir = artifactsFolder;
+
         String fedletWarDir = workDir + File.separator + "war";
         dir = new File(fedletWarDir);
         dir.mkdir();
@@ -141,13 +137,11 @@ public class CreateFedletZip {
             confDir + File.separator + "sp-extended.xml-template");
         copyFile(fedletSrc + File.separator + "idp-extended.xml-template",
             confDir + File.separator + "idp-extended.xml-template");
-        createCOTProperties(confDir);
+        copyFile(fedletSrc + File.separator + "fedlet.cot-template",
+            confDir + File.separator + "fedlet.cot-template");
 
         // copy README file        
         copyFile(readmeFile, workDir + "/README");
-
-        // create Fedlet ZIP
-        createZip(workDir, fedletZipFile);     
     }
     
     public void initMaps(String bitsFile, String jarExtractFile) 
@@ -292,19 +286,8 @@ public class CreateFedletZip {
         }
     }
 
-    private void createCOTProperties(String confDir) throws IOException {
-        
-        String content =
-            "cot-name=fedletcot\n" +
-            "sun-fm-cot-status=Active\n" +
-            "sun-fm-trusted-providers=IDP_ENTITY_ID, FEDLET_ENTITY_ID\n" +
-            "sun-fm-saml2-readerservice-url=\n" + 
-            "sun-fm-saml2-writerservice-url=\n";
-        writeToFile(confDir + File.separator + "fedlet.cot-template", content);
-    }
-    
     private void validateParameters(String bitsFile, String jarExtractFile, 
-        String warDir, String fedletZipFile, String readmeFile)
+        String warDir, String readmeFile)
         throws IOException {
         if (!isFileExists(bitsFile)) {
             throw new IOException("File " + bitsFile + " not found.");
@@ -314,10 +297,6 @@ public class CreateFedletZip {
         }
         if (!isDirExists(warDir)) {
             throw new IOException("Directory " + warDir + " not found.");
-        }
-        if (isFileExists(fedletZipFile)) {
-            throw new IOException("Fedlet file "  + fedletZipFile + 
-                " already exists");
         }
         if (!isFileExists(readmeFile)) {
             throw new IOException("File "  + readmeFile + " not found.");
@@ -408,8 +387,7 @@ public class CreateFedletZip {
             for (Iterator i = files.iterator(); i.hasNext();) {
                 String fname = (String) i.next();
                 FileInputStream in = new FileInputStream(fname);
-                out.putNextEntry(new JarEntry(normalizeFileName(
-                    fname.substring(lenWorkDir))));
+                out.putNextEntry(new JarEntry(fname.substring(lenWorkDir)));
                 int len;
                 while ((len = in.read(buf)) > 0) {
                     out.write(buf, 0, len);
@@ -431,44 +409,6 @@ public class CreateFedletZip {
         }
     }
 
-    private String createZip(String workDir, String zipName)
-        throws IOException {
-        int lenWorkDir = workDir.length() +1;
-
-        ZipOutputStream out = null;
-        try {
-            List files = getAllFiles(workDir, true);
-            out = new ZipOutputStream(new FileOutputStream(zipName));
-            byte[] buf = new byte[1024];
-
-            for (Iterator i = files.iterator(); i.hasNext(); )  {
-                String fname = (String) i.next();
-                FileInputStream in = new FileInputStream(fname);
-                out.putNextEntry(new ZipEntry(normalizeFileName(
-                    fname.substring(lenWorkDir))));
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-
-                // Complete the entry
-                out.closeEntry();
-                in.close();
-            }
-
-            deleteAllFiles(workDir, files);
-            (new File(workDir)).delete();
-            return zipName;
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ex) {
-                // ignore
-            }
-        }
-    }
 
     private void deleteAllFiles(String workDir, List files) {
         for (Iterator i = files.iterator(); i.hasNext(); ) {
@@ -507,39 +447,25 @@ public class CreateFedletZip {
         return list;
     }
     
-
-    /**
-     * Normalizes file name, replaces file separater '\\' with '/' in file name
-     * under Windows environment. This is to avoid '\' in file name when
-     * creating Jar/Zip file under Windows systems, i.e. Fedlet war created
-     * under Windows could not be deployed under Unix system. 
-     */ 
-    private static String normalizeFileName(String fileName) {
-        if (File.separatorChar == '\\') {
-            fileName = fileName.replace('\\', '/');
-        }
-        return fileName; 
-    } 
-
     /**
      * Main program to create Fedlet ZIP
      * The program takes following parameters in order:
      * 1. a file containing the list of filenames to be extract from opensso.war
      * 2. a file containing the list of jars to be extracted
      * 3. file point to the opensso.war
-     * 4. name with full path to write Fedlet ZIP
-     * 5. README file
+     * 4. README file
+     * 5. full path to write Fedlet Java artifacts
      */
     public static void main(String[] args) {
         if ((args == null) || (args.length != 5)) {
             System.err.println("Invalid parameters.");
             System.err.println("Expected parameters (in this order) : " +
                 "<bits_filename> <jar_extract_filename> <war_directory> " +
-                "<fedlet_zip_filename> <readme_filename>");
+                "<readme_filename> <fedlet_artifacts_folder> ");
         }
         try {
-            CreateFedletZip instance = new CreateFedletZip();
-            instance.createFedletZip(args[0], args[1], args[2], args[3],
+            CreateFedletJavaArtifacts instance = new CreateFedletJavaArtifacts();
+            instance.createFedletJavaArtifacts(args[0], args[1], args[2], args[3],
                 args[4]);
         } catch (Exception e) {
             e.printStackTrace();

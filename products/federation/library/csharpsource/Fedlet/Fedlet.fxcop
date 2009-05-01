@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FxCopProject Version="1.36" Name="Fedlet FxCop Project">
+ <ProjectOptions>
+  <SharedProject>True</SharedProject>
+  <Stylesheet Apply="False">c:\program files\microsoft fxcop 1.36\Xml\FxCopReport.xsl</Stylesheet>
+  <SaveMessages>
+   <Project Status="Active, Excluded" NewOnly="False" />
+   <Report Status="Active" NewOnly="False" />
+  </SaveMessages>
+  <ProjectFile Compress="True" DefaultTargetCheck="True" DefaultRuleCheck="True" SaveByRuleGroup="" Deterministic="True" />
+  <EnableMultithreadedLoad>True</EnableMultithreadedLoad>
+  <EnableMultithreadedAnalysis>True</EnableMultithreadedAnalysis>
+  <SourceLookup>True</SourceLookup>
+  <AnalysisExceptionsThreshold>10</AnalysisExceptionsThreshold>
+  <RuleExceptionsThreshold>1</RuleExceptionsThreshold>
+  <Spelling Locale="en-US" />
+  <OverrideRuleVisibilities>False</OverrideRuleVisibilities>
+  <CustomDictionaries SearchFxCopDir="True" SearchUserProfile="True" SearchProjectDir="True" />
+  <SearchGlobalAssemblyCache>False</SearchGlobalAssemblyCache>
+  <DeadlockDetectionTimeout>120</DeadlockDetectionTimeout>
+  <IgnoreGeneratedCode>False</IgnoreGeneratedCode>
+ </ProjectOptions>
+ <Targets>
+  <Target Name="$(ProjectDir)/Fedlet/bin/Debug/Fedlet.dll" Analyze="False" AnalyzeAllChildren="False" />
+  <Target Name="$(ProjectDir)/Fedlet/bin/Release/Fedlet.dll" Analyze="True" AnalyzeAllChildren="True" />
+ </Targets>
+ <Rules>
+  <RuleFiles>
+   <RuleFile Name="$(FxCopDir)\Rules\DesignRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\GlobalizationRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\InteroperabilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\MobilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\NamingRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\PerformanceRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\PortabilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\SecurityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\UsageRules.dll" Enabled="True" AllRulesEnabled="True" />
+  </RuleFiles>
+  <Groups />
+  <Settings />
+ </Rules>
+ <FxCopReport Version="1.36">
+  <Targets>
+   <Target Name="$(ProjectDir)/Fedlet/bin/Debug/Fedlet.dll">
+    <Modules>
+     <Module Name="fedlet.dll">
+      <Namespaces>
+       <Namespace Name="Sun.Identity.Saml2">
+        <Types>
+         <Type Name="IdentityProvider">
+          <Members>
+           <Member Name="#SingleSignOnServiceLocations">
+            <Messages>
+             <Message Id="SignOn" TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726" Status="Excluded" Created="2009-03-25 21:39:16Z">
+              <Issue Name="Member">
+               <Item>SignOn</Item>
+               <Item>'IdentityProvider.SingleSignOnServiceLocations'</Item>
+               <Item>SignIn</Item>
+              </Issue>
+              <Notes>
+               <User Name="ggennaro">
+                <Note Id="0" />
+               </User>
+              </Notes>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+      </Namespaces>
+     </Module>
+    </Modules>
+   </Target>
+   <Target Name="$(ProjectDir)/Fedlet/bin/Release/Fedlet.dll">
+    <Modules>
+     <Module Name="fedlet.dll">
+      <Namespaces>
+       <Namespace Name="Sun.Identity.Saml2">
+        <Types>
+         <Type Name="IdentityProvider">
+          <Members>
+           <Member Name="#SingleSignOnServiceLocations">
+            <Messages>
+             <Message Id="SignOn" TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726" Status="Excluded" Created="2009-03-26 17:15:30Z">
+              <Issue Name="Member">
+               <Item>SignOn</Item>
+               <Item>'IdentityProvider.SingleSignOnServiceLocations'</Item>
+               <Item>SignIn</Item>
+              </Issue>
+              <Notes>
+               <User Name="ggennaro">
+                <Note Id="1" />
+               </User>
+              </Notes>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+      </Namespaces>
+     </Module>
+    </Modules>
+   </Target>
+  </Targets>
+  <Notes>
+   <User Name="ggennaro">
+    <Note Id="0" Modified="2009-03-26 17:10:27Z">Method maps to XSD definition which defines it as SingleSignOnService.</Note>
+    <Note Id="1" Modified="2009-03-26 17:16:05Z">Method maps to XSD definition SingleSignOnService for idp metadata.</Note>
+   </User>
+  </Notes>
+  <Rules>
+   <Rule TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726">
+    <Resolution Name="Member">Replace the term '{0}' in member name {1} with the preferred alternate '{2}'.</Resolution>
+   </Rule>
+  </Rules>
+ </FxCopReport>
+</FxCopProject>

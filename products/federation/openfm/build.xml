@@ -1,7 +1,7 @@
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
-   Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
   
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.51 2009-03-14 00:53:37 mallas Exp $
+   $Id: build.xml,v 1.52 2009-05-01 15:19:59 ggennaro Exp $
 
 -->
 
@@ -152,7 +152,8 @@
 
     <target name="fedlet" depends="war">
         <delete file="${openfm.dir}/built/dist/Fedlet-unconfigured.zip"/>
-        <java classname="com.sun.identity.fedlet.CreateFedletZip">
+        <echo message="Creating Java Artifacts" />
+        <java classname="com.sun.identity.fedlet.CreateFedletJavaArtifacts">
             <classpath refid="build.class.path"/>
             <classpath>
                 <pathelement location="${library.res.i18n.dir}"/>
@@ -161,9 +162,54 @@
             <arg value="${openfm.dir}/resources/fedletBits.properties"/>
             <arg value="${openfm.dir}/resources/fedletJarExtract.properties"/>
             <arg value="${openfm.dir}/built/war/package"/>
-            <arg value="${openfm.dir}/built/dist/Fedlet-unconfigured.zip"/>
             <arg value="${library.dir}/fedlet/README.unconfigured"/>
+            <arg value="${openfm.dir}/built/dist/.fedletjava"/>
         </java>
+        <mkdir dir="${openfm.dir}/built/dist/.fedletdotnet"/>
+        <fail message="Compiled DLL is not present in ${extlib.dir}">
+            <condition>
+                <not>
+                    <available file="${extlib.dir}/Fedlet.dll" />
+                </not>
+            </condition>
+        </fail>
+        <copy file="${library.dir}/fedlet/README.net"
+              tofile="${openfm.dir}/built/dist/.fedletdotnet/readme.txt"/>
+        <copy todir="${openfm.dir}/built/dist/.fedletdotnet/bin">
+            <fileset dir="${extlib.dir}">
+              <include name="Fedlet.dll"/>
+            </fileset>
+        </copy>
+        <copy todir="${openfm.dir}/built/dist/.fedletdotnet/conf">
+            <fileset dir="${library.dir}/csharpsource/Fedlet/Fedlet/conf">
+              <include name="*.cot-template"/>
+              <include name="*.xml-template"/>
+            </fileset>
+        </copy>
+        <copy todir="${openfm.dir}/built/dist/.fedletdotnet/SampleApp">
+            <fileset dir="${library.dir}/csharpsource/Fedlet/SampleApp">
+              <include name="Web.config"/>
+              <include name="site.master"/>
+              <include name="App_Data/*" />
+              <include name="**/*.aspx"/>
+              <include name="**/*.png"/>
+              <include name="**/*.jpg"/>
+              <include name="**/*.gif"/>
+              <include name="**/*.css"/>
+              <include name="**/*.js"/>
+            </fileset>
+        </copy>
+        <copy todir="${openfm.dir}/built/dist/.fedletdotnet/SampleApp/bin">
+            <fileset dir="${openfm.dir}/built/dist/.fedletdotnet/bin">
+              <include name="*.dll"/>
+            </fileset>
+        </copy>
+        <zip destfile="${openfm.dir}/built/dist/Fedlet-unconfigured.zip">
+             <zipfileset dir="${openfm.dir}/built/dist/.fedletjava"   prefix="java"/>
+             <zipfileset dir="${openfm.dir}/built/dist/.fedletdotnet" prefix="asp.net"/>
+        </zip>
+        <delete dir="${openfm.dir}/built/dist/.fedletjava" />
+        <delete dir="${openfm.dir}/built/dist/.fedletdotnet" />
     </target>
 
     <target name="externaltools" depends="jars">
@@ -188,15 +234,14 @@
             <fileset dir=".">
                 <include name="license.txt" />
             </fileset>
-            <fileset dir="${openfm.dir}/resources" 
-                includes="META-INF/services/*" 
-                excludes="META-INF/services/com.sun.xml.ws.assembler.ClientPipelineHook,
+            <fileset dir="${openfm.dir}/resources"
+                includes="META-INF/services/*"
+                excludes="META-INF/services/com.sun.xml.ws.assembler.ClientPipelineHook, 
                 META-INF/services/com.sun.xml.ws.assembler.ServerPipelineHook">
-             </fileset>
+            </fileset>
             <fileset dir="${openfm.services.xml.dir}" includes="*.xml" />
             <zipfileset dir="${openfm.classes.dir}"
                 excludes="com/sun/identity/console/**, 
-                com/sun/identity/tools/deployablewar/**,
                 com/sun/identity/fedlet/**" />
         </jar>
 
