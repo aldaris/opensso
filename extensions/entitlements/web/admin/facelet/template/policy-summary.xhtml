@@ -110,6 +110,41 @@
                     styleClass="summary-table"
                     columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
                     columns="3">
+                    <ice:outputText value="Exceptions"/>
+                    <ice:outputText
+                        value="#{o:size(policySummaryBean.privilegeBean.viewEntitlement.exceptions)}"/>
+                    <ice:commandLink
+                        actionListener="#{policySummaryHandler.editExceptionsListener}"
+                        partialSubmit="true"
+                        styleClass="command-link">
+                        <f:attribute name="step" value="4"/>
+                        <f:attribute name="gotoStep" value="1"/>
+                        <img
+                            style="vertical-align: middle"
+                            src="../image/edit.png"/>
+                        <ice:outputText
+                            style="margin-left: 2px"
+                            value="Edit"/>
+                    </ice:commandLink>
+                </ice:panelGrid>
+                <ice:panelGrid
+                    styleClass="summary-strings"
+                    visible="#{o:size(policySummaryBean.privilegeBean.viewEntitlement.resources) > 0}">
+                    <pre>
+                    <ice:outputText
+                        value="#{policySummaryBean.privilegeBean.viewEntitlement.resourcesToFormattedString}"/>
+                    </pre>
+                </ice:panelGrid>
+            </ui:define>
+        </o:box>
+    </div>
+    <div class="summary-items">
+        <o:box>
+            <ui:define name="body">
+                <ice:panelGrid
+                    styleClass="summary-table"
+                    columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
+                    columns="3">
                     <ice:outputText value="Subjects"/>
                     <ice:outputText value="#{policySummaryBean.privilegeBean.viewSubject == null ? 0 : policySummaryBean.privilegeBean.viewSubject.size}"/>
                     <ice:commandLink
