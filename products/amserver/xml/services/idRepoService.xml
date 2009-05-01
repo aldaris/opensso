@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.31 2009-04-21 20:04:49 sean_brydon Exp $
+   $Id: idRepoService.xml,v 1.32 2009-05-01 18:27:00 veiming Exp $
   
 -->
 
@@ -2288,11 +2288,7 @@
                     <AttributeSchema name="sun-opensso-database-JDBCDbpassword"
                         type="single"
                         syntax="password"
-                        i18nKey="a4022JdbcPassword">
-                        <DefaultValues>
-                            <Value>password</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
+                        i18nKey="a4022JdbcPassword" />
                     <AttributeSchema name="sun-opensso-database-UserTableName"
                         type="single"
                         syntax="string"
