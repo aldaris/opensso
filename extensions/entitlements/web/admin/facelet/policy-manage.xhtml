@@ -40,7 +40,7 @@
                                             value="/admin/image/search.png"/>
                                         <ice:inputText
                                             styleClass="section-input"
-                                            onkeyup="submitNow(this)"
+                                            onkeyup="submitNow(this); setFocus(this);"
                                             valueChangeListener="#{policyManageHandler.searchFilterChangedListener}">
                                         </ice:inputText>
                                     </ice:panelGroup>
