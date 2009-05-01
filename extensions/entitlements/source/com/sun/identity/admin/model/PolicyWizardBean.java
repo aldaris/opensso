@@ -113,6 +113,9 @@ public class PolicyWizardBean
         return getPrivilegeBean().getViewEntitlement().getViewApplication();
     }
 
+    public void setViewApplication(ViewApplication va) {
+    }
+
     public void setViewApplicationName(String viewApplicationName) {
         if (getViewApplicationName() == null || !viewApplicationName.equals(getViewApplicationName())) {
             ViewApplication va = viewApplicationsBean.getViewApplications().get(viewApplicationName);
@@ -132,6 +135,7 @@ public class PolicyWizardBean
             setViewApplicationName(viewApplications.iterator().next().getName());
         }
     }
+
     public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
         this.viewApplicationsBean = viewApplicationsBean;
         resetViewApplication();
@@ -143,6 +147,10 @@ public class PolicyWizardBean
 
     public void setPrivilegeBean(PrivilegeBean privilegeBean) {
         this.privilegeBean = privilegeBean;
+        ViewApplication va = privilegeBean.getViewEntitlement().getViewApplication();
+        if (va != null) {
+            availableResources = new DeepCloneableArrayList<Resource>(va.getResources()).deepClone();
+        }
     }
 
     public String getViewApplicationName() {

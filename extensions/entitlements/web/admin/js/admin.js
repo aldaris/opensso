@@ -3,7 +3,7 @@ function submitNow(element) {
         document.getElementById("form"),
         element,
         MouseEvent.CLICK
-        );
+    );
 }
 
 function resizeFrame(f) {

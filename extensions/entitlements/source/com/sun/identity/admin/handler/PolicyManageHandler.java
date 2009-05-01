@@ -1,6 +1,5 @@
 package com.sun.identity.admin.handler;
 
-import com.icesoft.faces.context.Resource;
 import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.Fade;
 import com.sun.identity.admin.dao.PolicyDao;
@@ -10,7 +9,6 @@ import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.QueuedActionBean;
 import java.io.Serializable;
-import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
@@ -44,6 +42,13 @@ public class PolicyManageHandler implements Serializable {
         policyManageBean.setViewOptionsPopupVisible(!policyManageBean.isViewOptionsPopupVisible());
     }
 
+    public void searchFilterChangedListener(ValueChangeEvent event) {
+        String newSearchFilter = (String)event.getNewValue();
+        if (!newSearchFilter.equals(policyManageBean.getSearchFilter())) {
+            policyManageBean.setSearchFilter(newSearchFilter);
+        }
+    }
+
     public void editListener(ActionEvent event) {
         PrivilegeBean pb = getPrivilegeBean(event);
         policyEditWizardBean.reset();
@@ -71,6 +76,11 @@ public class PolicyManageHandler implements Serializable {
         e = new Fade();
         e.setSubmit(true);
         e.setTransitory(false);
+        pb.setExceptionsCellEffect(e);
+
+        e = new Fade();
+        e.setSubmit(true);
+        e.setTransitory(false);
         pb.setSubjectCellEffect(e);
 
         e = new Fade();
@@ -81,12 +91,12 @@ public class PolicyManageHandler implements Serializable {
         e = new Fade();
         e.setSubmit(true);
         e.setTransitory(false);
-        pb.setRemoveCellEffect(e);
+        pb.setActionCellEffect(e);
 
         e = new Fade();
         e.setSubmit(true);
         e.setTransitory(false);
-        pb.setActionCellEffect(e);
+        pb.setRemoveCellEffect(e);
 
         addRemoveAction(pb);
     }

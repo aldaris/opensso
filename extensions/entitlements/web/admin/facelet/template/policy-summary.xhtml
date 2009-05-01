@@ -129,10 +129,10 @@
                 </ice:panelGrid>
                 <ice:panelGrid
                     styleClass="summary-strings"
-                    visible="#{o:size(policySummaryBean.privilegeBean.viewEntitlement.resources) > 0}">
+                    visible="#{o:size(policySummaryBean.privilegeBean.viewEntitlement.exceptions) > 0}">
                     <pre>
                     <ice:outputText
-                        value="#{policySummaryBean.privilegeBean.viewEntitlement.resourcesToFormattedString}"/>
+                        value="#{policySummaryBean.privilegeBean.viewEntitlement.exceptionsToFormattedString}"/>
                     </pre>
                 </ice:panelGrid>
             </ui:define>
