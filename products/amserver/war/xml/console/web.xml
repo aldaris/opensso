@@ -233,6 +233,7 @@
         <taglib-location>/WEB-INF/com_sun_web_ui/cc.tld</taglib-location>
     </taglib>
     <!-- taglib definition -->
+    <!-- Comment it out due to issue 4891 in WAS/JBOSS/Geronimo
     <resource-ref>
         <description>mysql db idrepo</description>
         <res-ref-name>jdbc/openssousersdb</res-ref-name>
@@ -240,4 +241,5 @@
         <res-auth>Container</res-auth>
         <res-sharing-scope>Shareable</res-sharing-scope>
     </resource-ref>
+    -->
 </web-app>
