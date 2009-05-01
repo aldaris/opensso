@@ -14,7 +14,9 @@
 
         <f:facet name="header">
             <ice:panelGroup>
+                <a class="wstep-link" href="#wstep#{step}">
                 <ice:outputText value="#{label}"/>
+                </a>
             </ice:panelGroup>
         </f:facet>
         <ui:insert name="wizard-step-body"/>
@@ -27,4 +29,5 @@
                 step="#{step}"/>
         </ice:panelGrid>
     </ice:panelCollapsible>
+    <a name="wstep#{step}"/>
 </ui:composition>
