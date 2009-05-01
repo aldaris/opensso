@@ -9,3 +9,7 @@ function submitNow(element) {
 function resizeFrame(f) {
     f.style.height = f.contentWindow.document.body.scrollHeight+'px';
 }
+
+function focusWizardStep(step) {
+    location.href = '#wstep'+step;
+}

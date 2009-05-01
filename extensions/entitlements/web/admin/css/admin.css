@@ -17,6 +17,10 @@ body {
     color: red;
 }
 
+.wstep-link {
+    text-decoration: none;
+}
+
 .message-info {
     font-weight: bold;
     color: blue;
