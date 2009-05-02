@@ -34,6 +34,16 @@
         </managed-property>
     </managed-bean>
 
+    <managed-bean>
+        <managed-bean-name>newsFeedBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.FeedBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>urlKey</property-name>
+            <value>news.url</value>
+        </managed-property>
+    </managed-bean>
+
     <!-- application types -->
     <managed-bean>
         <managed-bean-name>iPlanetAMWebAgentService</managed-bean-name>
@@ -996,8 +1006,8 @@
             <to-view-id>/admin/facelet/resource-manage.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
-            <from-outcome>samlv2Workflow</from-outcome>
-            <to-view-id>/admin/facelet/samlv2-workflow.xhtml</to-view-id>
+            <from-outcome>news</from-outcome>
+            <to-view-id>/admin/facelet/news.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 

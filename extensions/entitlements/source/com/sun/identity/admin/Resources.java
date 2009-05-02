@@ -46,13 +46,17 @@ public class Resources {
         return rb;
     }
 
-    public String getString(Class c, String key) {
+    public String getString(String key) {
         ResourceBundle rb = getResourceBundle();
         try {
-            return rb.getString(c.getName() + "." + key);
+            return rb.getString(key);
         } catch (MissingResourceException mre) {
             return null;
         }
+    }
+
+    public String getString(Class c, String key) {
+        return getString(c.getName() + "." + key);
     }
 
     public String getString(Class c, String key, Object... params) {

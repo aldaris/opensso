@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+
+    <ice:panelGroup
+        styleClass="feed-title">
+        <ice:outputLink
+            value="#{feedBean.feed.link}">
+            <ice:outputText value="#{feedBean.feed.title}"/>
+        </ice:outputLink>
+    </ice:panelGroup>
+    <ice:panelGroup
+        styleClass="feed-description">
+        <ice:outputText value="#{feedBean.feed.description}"/>
+    </ice:panelGroup>
+    <ice:panelSeries
+        var="entry"
+        value="#{feedBean.feed.entries}">
+        <div class="entry-outer">
+            <o:box>
+                <ui:define name="body">
+                    <div class="entry-inner">
+                        <ice:panelGroup
+                            styleClass="entry-title">
+                            <ice:outputLink>
+                                <ice:outputText value="#{entry.title}"/>
+                            </ice:outputLink>
+                        </ice:panelGroup>
+                        <ice:panelGroup
+                            styleClass="entry-pubdate">
+                            <ice:outputText value="#{entry.publishedDate}"/>
+                        </ice:panelGroup>
+                        <ice:panelGroup
+                            styleClass="entry-content">
+                            <ice:outputText
+                                escape="false"
+                                value="#{entry.description.value}"/>
+                            <ice:panelSeries
+                                var="content"
+                                value="#{entry.contents}">
+                                <ice:outputText
+                                    rendered="#{o:size(entry.contents) > 0}"
+                                    escape="false"
+                                    value="#{content.value}"/>
+                            </ice:panelSeries>
+                        </ice:panelGroup>
+                    </div>
+                </ui:define>
+            </o:box>
+        </div>
+    </ice:panelSeries>
+</ui:composition>

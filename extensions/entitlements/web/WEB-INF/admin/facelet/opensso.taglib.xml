@@ -58,6 +58,10 @@
         <tag-name>messages</tag-name>
         <source>tag/messages.xhtml</source>
     </tag>
+    <tag>
+        <tag-name>feed</tag-name>
+        <source>tag/feed.xhtml</source>
+    </tag>
     <function>
         <function-name>indexOf</function-name>
         <function-class>com.sun.identity.admin.Functions</function-class>

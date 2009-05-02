@@ -30,6 +30,14 @@ body {
     padding: 10px;
 }
 
+.section-outer .box .content {
+    background-color: #eee;
+}
+
+.section-outer .box b b.L2,
+.section-outer .box b b.L3 {
+    background-color: #eee;
+}
 .section-inner {
     padding: 10px;
 }
@@ -599,7 +607,7 @@ table.actions tr td {
 }
 
 .box b.tc b.L2,.box b.tc b.L3 { 
-    border-color:#aaa;
+    border-color: #aaa;
 }
 
 .box b.bc b.L1 { 
@@ -607,15 +615,15 @@ table.actions tr td {
 }
 
 .box b.bc b.L2,.box b.bc b.L3 { 
-    border-color:#aaa;
+    border-color: #aaa;
 }
 
 .box .content { 
-    background: #eee;
+    background: transparent;
 }
 
 .box b b.L2, .box b b.L3 {
-    background-color:#eee;
+    background-color: transparent;
 }
 
 .box {
@@ -628,6 +636,71 @@ table.actions tr td {
     padding: 0px;
 }
 
+.feed-title {
+}
+
+.feed-title a {
+    text-decoration: underline;
+}
+
+.feed-title a span {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.feed-description {
+    margin-bottom: 20px;
+}
+
+.feed-description span {
+    font-weight: bold;
+    color: #888;
+}
+
+.entry-title {
+}
+
+.entry-title a {
+    text-decoration: underline;
+}
+
+.entry-title a span {
+    font-size: large;
+    font-weight: bold;
+}
+
+.entry-pubdate {
+    padding-bottom: 10px;
+}
+
+.entry-pubdate span {
+    color: #888;
+    font-size: x-small;
+}
+
+.entry-content {
+    overflow: hidden;
+}
+
+.entry-content * > span {
+}
+
+.entry-content * > ol,
+.entry-content * > ul {
+    padding-left: 40px;
+}
+
+.entry-content * > li {
+    list-style-type: disc;
+}
+
+.entry-inner {
+    padding: 10px;
+}
+
+.entry-outer {
+    padding-bottom: 10px;
+}
 /*
 #homeTabContent {
 width: 100%;
