@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.8 2009-04-29 14:33:22 farble1670 Exp $
+   $Id: entitlement.xml,v 1.9 2009-05-02 00:12:21 farble1670 Exp $
 
 -->
 
@@ -217,7 +217,7 @@
                             <Value>com.sun.identity.entitlement.DenyOverride</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
-                    <SubConfiguration name="Paycheck"
+                    <SubConfiguration name="paycheck"
                         id="application">
                         <AttributeValuePair>
                             <Attribute name="applicationType" />
@@ -240,7 +240,7 @@
                             <Value>com.sun.identity.entitlement.DenyOverride</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
-                    <SubConfiguration name="Calendar"
+                    <SubConfiguration name="calendar"
                         id="application">
                         <AttributeValuePair>
                             <Attribute name="applicationType" />
@@ -251,7 +251,7 @@
                             <Value>http://calendar.sun.com</Value>
                             <Value>http://calendar.sun.com/my</Value>
                             <Value>http://calendar.sun.com/admin</Value>
-                            <Value>http://calendar.sun.com?calId=*</Value>
+                            <Value>http://calendar.sun.com/calendars?calId=*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="conditions" />
@@ -263,7 +263,7 @@
                             <Value>com.sun.identity.entitlement.DenyOverride</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
-                    <SubConfiguration name="Instant Messaging"
+                    <SubConfiguration name="im"
                         id="application">
                         <AttributeValuePair>
                             <Attribute name="applicationType" />

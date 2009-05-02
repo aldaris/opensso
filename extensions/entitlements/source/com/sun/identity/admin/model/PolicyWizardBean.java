@@ -38,7 +38,7 @@ public class PolicyWizardBean
         List<SelectItem> items = new ArrayList<SelectItem>();
 
         for (ViewApplication va : getViewApplicationsBean().getViewApplications().values()) {
-            items.add(new SelectItem(va.getName()));
+            items.add(new SelectItem(va.getName(), va.getTitle()));
         }
 
         return items;

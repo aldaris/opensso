@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,12 @@ public class ViewApplication implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTitle() {
+        Resources r = new Resources();
+        String title = r.getString(this.getClass(), "title."+name);
+        return title;
     }
 
     public ViewApplicationType getViewApplicationType() {
