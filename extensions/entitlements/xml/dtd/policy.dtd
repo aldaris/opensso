@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: policy.dtd,v 1.1 2009-04-29 11:43:15 veiming Exp $
+    $Id: policy.dtd,v 1.2 2009-05-02 06:26:13 veiming Exp $
 
 -->
 
@@ -86,9 +86,17 @@ service, "ResourceName" give the resource name, and "AttributeValuePair"
 provides the action names and corresponding action values. A rule can be
 defined without any actions. A referral policy rule doesn't have any actions.
  -->
-<!ELEMENT	Rule		( ServiceName, ResourceName?,
+<!ELEMENT	Rule		( ServiceName, ApplicationName?, ResourceName?,
 				  AttributeValuePair*  ) >
 <!ATTLIST	Rule
+	name		CDATA		#REQUIRED
+>
+
+<!-- Application provides the name of the application for which a
+     rule has been created. The attribute "name" provides the application
+      name. -->
+<!ELEMENT    ApplicationName        EMPTY>
+<!ATTLIST    ApplicationName
 	name		CDATA		#REQUIRED
 >
 

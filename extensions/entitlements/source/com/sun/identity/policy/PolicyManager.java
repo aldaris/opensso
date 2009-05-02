@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.7 2009-04-30 23:23:02 veiming Exp $
+ * $Id: PolicyManager.java,v 1.8 2009-05-02 06:26:12 veiming Exp $
  *
  */
 
@@ -122,6 +122,7 @@ public final class PolicyManager {
     static final String POLICY_REFERRALS_NODE = "Referrals";
     static final String POLICY_RULE_SERVICE_NODE = "ServiceName";
     static final String POLICY_RULE_RESOURCE_NODE = "ResourceName";
+    static final String POLICY_RULE_APPLICATION_NAME_NODE = "ApplicationName";
     static final String ATTR_VALUE_PAIR_NODE = "AttributeValuePair";
     static final String ATTR_NODE = "Attribute";
     static final String ATTR_VALUE_NODE = "Value";

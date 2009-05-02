@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.4 2009-04-29 21:37:58 veiming Exp $
+ * $Id: Rule.java,v 1.5 2009-05-02 06:26:12 veiming Exp $
  *
  */
 package com.sun.identity.policy;
@@ -33,7 +33,6 @@ import org.w3c.dom.*;
 
 import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.sso.SSOException;
-import com.sun.identity.policy.interfaces.*;
 
 /**
  * The class <code>Rule</code> provides interfaces to manage
@@ -58,6 +57,7 @@ public class Rule extends Object implements Cloneable {
     // Resource for which the rule applies
     String resourceName = EMPTY_RESOURCE_NAME;
     Set<String> excludedResourceNames;
+    private String applicationName;
 
     // Actions allowed on the resource
     private Map actions;
@@ -151,7 +151,8 @@ public class Rule extends Object implements Cloneable {
             String resourceName, Map actions) throws
             NameNotFoundException, InvalidNameException {
         // Rule and resource name can be null
-        this.ruleName = (ruleName != null) ? ruleName : ("rule" + ServiceTypeManager.generateRandomName());
+        this.ruleName = (ruleName != null) ? ruleName :
+            ("rule" + ServiceTypeManager.generateRandomName());
         if ((resourceName == null) || (resourceName == "")) {
             resourceName = EMPTY_RESOURCE_NAME;
         }
@@ -170,6 +171,25 @@ public class Rule extends Object implements Cloneable {
             throw new InvalidNameException(pe, resourceName, 2);
         }
     }
+
+    /**
+     * Sets application Name.
+     *
+     * @param applicationName Application name.
+     */
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    /**
+     * Returns application name.
+     * 
+     * @return application name.
+     */
+    public String getApplicationName() {
+        return (applicationName == null) ? serviceTypeName : applicationName;
+    }
+
 
     /**
      * Constructor to create a <code>Rule</code> object from a XML Node
@@ -211,6 +231,13 @@ public class Rule extends Object implements Cloneable {
                     ruleName, PolicyException.RULE));
         }
         checkAndSetServiceType(serviceTypeName);
+
+        Node applicationNameNode = XMLUtils.getChildNode(ruleNode,
+            PolicyManager.POLICY_RULE_APPLICATION_NAME_NODE);
+        if (applicationNameNode != null) {
+            applicationName = XMLUtils.getNodeAttributeValue(
+                applicationNameNode, PolicyManager.NAME_ATTRIBUTE);
+        }
 
         // Get resource node, can be null
         Node resourceNode = XMLUtils.getChildNode(ruleNode,
@@ -436,20 +463,29 @@ public class Rule extends Object implements Cloneable {
         if (obj == null || !(obj instanceof Rule)) {
             return false;
         }
-        Rule rule = (Rule) obj;
+        Rule other = (Rule) obj;
         if (excludedResourceNames == null) {
-            if (rule.getExcludedResourceNames() != null) {
+            if (other.getExcludedResourceNames() != null) {
                 return false;
             }
-        } else if (!excludedResourceNames.equals(rule.getExcludedResourceNames())) {
+        } else if (!excludedResourceNames.equals(other.getExcludedResourceNames())) {
             return false;
         }
-        if (!isResourceMatch(rule.serviceTypeName,
-                rule.resourceName).equals(ResourceMatch.EXACT_MATCH)) {
+
+        if (applicationName == null) {
+            if (other.applicationName != null) {
+                return false;
+            }
+        } else if (!applicationName.equals(other.applicationName)) {
+            return false;
+        }
+
+        if (!isResourceMatch(other.serviceTypeName,
+                other.resourceName).equals(ResourceMatch.EXACT_MATCH)) {
             return false;
 
         }
-        if (!actions.equals(rule.actions)) {
+        if (!actions.equals(other.actions)) {
             return false;
         }
         return matched;
@@ -512,6 +548,14 @@ public class Rule extends Object implements Cloneable {
             answer.append(
                     XMLUtils.escapeSpecialCharacters(resourceName));
             answer.append("\" />");
+        }
+
+        if (applicationName != null) {
+            answer.append("\n").append("<")
+                .append(PolicyManager.POLICY_RULE_APPLICATION_NAME_NODE)
+                .append(" name=\"")
+                .append(XMLUtils.escapeSpecialCharacters(applicationName))
+                .append("\" />");
         }
 
         Set actionNames = new HashSet();
@@ -631,8 +675,13 @@ public class Rule extends Object implements Cloneable {
 
         answer.ruleName = ruleName;
         answer.serviceTypeName = serviceTypeName;
+        answer.applicationName = applicationName;
         answer.serviceType = serviceType;
         answer.resourceName = resourceName;
+        answer.excludedResourceNames = new HashSet();
+        if (excludedResourceNames != null) {
+            answer.excludedResourceNames.addAll(excludedResourceNames);
+        }
 
         // Copy the actions
         answer.actions = new HashMap();

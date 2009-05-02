@@ -72,6 +72,10 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
+        <servlet-name>messagingservlet</servlet-name>
+        <servlet-class>com.sun.identity.entitlement.util.MessagingServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>entitlementmonitor</servlet-name>
         <servlet-class>com.sun.identity.entitlement.util.NetworkMonitor</servlet-class>
     </servlet>
@@ -90,6 +94,10 @@
     <servlet-mapping>
         <servlet-name>uploadServlet</servlet-name>
         <url-pattern>/uploadHtml</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>messagingservlet</servlet-name>
+        <url-pattern>/messagingservlet/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>entitlementmonitor</servlet-name>
