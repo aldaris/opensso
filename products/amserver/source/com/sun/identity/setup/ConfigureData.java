@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureData.java,v 1.10 2009-01-28 05:35:02 ww203982 Exp $
+ * $Id: ConfigureData.java,v 1.11 2009-05-02 23:05:13 kevinserwin Exp $
  *
  */
 package com.sun.identity.setup;
@@ -166,8 +166,7 @@ public class ConfigureData {
         PolicyManager pm = new PolicyManager(ssoToken, realmName);
 
         InputStreamReader fin = new InputStreamReader(
-            (sctx != null) ? sctx.getResourceAsStream(xmlFile) :
-                new FileInputStream(xmlFile));
+            AMSetupServlet.getResourceAsStream(sctx, xmlFile));
         StringBuffer sbuf = new StringBuffer();
         char[] cbuf = new char[1024];
         int len;
@@ -233,8 +232,7 @@ public class ConfigureData {
     {
         StringBuffer sbuf = new StringBuffer();
         InputStreamReader fin = new InputStreamReader(
-            (sctx != null) ? sctx.getResourceAsStream(baseDir + "/" + fileName) :
-                new FileInputStream(baseDir + "/" + fileName));
+            AMSetupServlet.getResourceAsStream(sctx, baseDir + "/" + fileName));
         char[] cbuf = new char[1024];
         int len;
 

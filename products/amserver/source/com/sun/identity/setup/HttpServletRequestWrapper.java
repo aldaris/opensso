@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpServletRequestWrapper.java,v 1.3 2008-07-21 23:20:18 veiming Exp $
+ * $Id: HttpServletRequestWrapper.java,v 1.4 2009-05-02 23:06:30 kevinserwin Exp $
  *
  */
 
@@ -47,13 +47,18 @@ public class HttpServletRequestWrapper
         }
     }
 
+    public HttpServletRequestWrapper(Map data) {
+        this.req = null;
+        parameterMap.putAll(data);
+    }
+
     /**
      * Returns the locale of the request.
      *
      * @return the locale of the request.
      */
     public Locale getLocale() {
-        return req.getLocale();
+        return (req != null) ? req.getLocale() : Locale.getDefault();
     }
 
     /**
@@ -91,7 +96,8 @@ public class HttpServletRequestWrapper
      * @return the context path.
      */
     public String getContextPath() {
-        return req.getContextPath();
+        return (req != null) ? req.getContextPath() : (String)parameterMap.get(
+            OpenSSOConfigurator.DEPLOYMENT_URI);
     }
 
     /**
@@ -101,6 +107,6 @@ public class HttpServletRequestWrapper
      * @return header.
      */
     public String getHeader(String key) {
-        return req.getHeader(key);
+        return (req != null) ? req.getHeader(key) : null;
     }
 }

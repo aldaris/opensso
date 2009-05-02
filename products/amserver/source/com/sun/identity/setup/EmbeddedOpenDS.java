@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.22 2009-03-19 21:43:22 goodearth Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.23 2009-05-02 23:05:48 kevinserwin Exp $
  *
  */
 
@@ -157,7 +157,7 @@ public class EmbeddedOpenDS {
         for (int i = 0 ; i < files.length; i++) {
             String file = "/WEB-INF/template/opends/"+files[i];
             InputStreamReader fin = new InputStreamReader(
-                servletCtx.getResourceAsStream(file));
+                AMSetupServlet.getResourceAsStream(servletCtx, file));
 
             StringBuffer sbuf = new StringBuffer();
             char[] cbuf = new char[1024];

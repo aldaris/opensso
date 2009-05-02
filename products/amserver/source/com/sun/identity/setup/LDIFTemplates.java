@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDIFTemplates.java,v 1.1 2008-07-29 20:13:20 veiming Exp $
+ * $Id: LDIFTemplates.java,v 1.2 2009-05-02 23:07:18 kevinserwin Exp $
  */
 
 
@@ -84,8 +84,8 @@ public class LDIFTemplates {
         StringBuffer sbuf = new StringBuffer();
 
         try {
-            fin = new InputStreamReader(servletCtx.getResourceAsStream(
-                "/WEB-INF/template/sms/" + templateName));
+            fin = new InputStreamReader(AMSetupServlet.getResourceAsStream(
+                servletCtx, "/WEB-INF/template/sms/" + templateName));
             char[] cbuf = new char[1024];
             int len;
             while ((len = fin.read(cbuf)) > 0) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceXMLTemplates.java,v 1.1 2008-11-19 19:21:21 veiming Exp $
+ * $Id: ServiceXMLTemplates.java,v 1.2 2009-05-02 23:07:18 kevinserwin Exp $
  */
 
 
@@ -45,6 +45,9 @@ public class ServiceXMLTemplates {
     }
     
     public static void copy(String dir, ServletContext servletCtx) {
+        if (servletCtx == null) {
+           return;
+        }
         File d = new File(dir);
         d.mkdirs();
         String classesDir = "/WEB-INF/classes";
@@ -73,8 +76,8 @@ public class ServiceXMLTemplates {
         StringBuffer sbuf = new StringBuffer();
 
         try {
-            fin = new InputStreamReader(servletCtx.getResourceAsStream(
-                templateName));
+            fin = new InputStreamReader(
+                AMSetupServlet.getResourceAsStream(servletCtx, templateName));
             char[] cbuf = new char[1024];
             int len;
             while ((len = fin.read(cbuf)) > 0) {

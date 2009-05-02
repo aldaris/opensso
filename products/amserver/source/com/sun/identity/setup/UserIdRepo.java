@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.15 2009-01-28 05:35:02 ww203982 Exp $
+ * $Id: UserIdRepo.java,v 1.16 2009-05-02 23:07:18 kevinserwin Exp $
  *
  */
 
@@ -229,7 +229,7 @@ class UserIdRepo {
         while (st.hasMoreTokens()) {
             String file = st.nextToken();
             InputStreamReader fin = new InputStreamReader(
-                servletCtx.getResourceAsStream(file));
+                AMSetupServlet.getResourceAsStream(servletCtx, file));
             StringBuffer sbuf = new StringBuffer();
             char[] cbuf = new char[1024];
             int len;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.100 2009-03-21 21:25:46 goodearth Exp $
+ * $Id: AMSetupServlet.java,v 1.101 2009-05-02 23:04:38 kevinserwin Exp $
  *
  */
 
@@ -183,6 +183,24 @@ public class AMSetupServlet extends HttpServlet {
         return isConfiguredFlag;
     } 
 
+    static boolean isConfigured(String baseDir) {
+        String bootstrapFile = baseDir + "/bootstrap";
+        File file = new File(bootstrapFile);
+        if (file.exists()) {
+            try {
+                isConfiguredFlag = Bootstrap.load(
+                    new BootstrapData(baseDir), false);
+                    LoginLogoutMapping.setProductInitialized(isConfiguredFlag);
+                return isConfiguredFlag;
+            } catch (Exception e) {
+                //ignore
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Checks if the product is already configured. This is required when
      * the container on which WAR is deployed is restarted. If  
@@ -256,7 +274,15 @@ public class AMSetupServlet extends HttpServlet {
         return isConfiguredFlag;
     }
 
-    
+    static String configure(ServletContext servletct, Map data) {
+        servletCtx = servletct;
+        HttpServletRequestWrapper req = new HttpServletRequestWrapper(data);
+        HttpServletResponseWrapper res = new HttpServletResponseWrapper(null);
+        boolean result = processRequest(req, res);
+        return (result) ?
+            (String)req.getParameter(SetupConstants.CONFIG_VAR_BASE_DIR) : null;
+    }
+
     public void doPost(HttpServletRequest request,
                 HttpServletResponse response)
                 throws IOException, ServletException, ConfiguratorException {       
@@ -846,6 +872,9 @@ public class AMSetupServlet extends HttpServlet {
         throws IllegalAccessException, InstantiationException,
             ClassNotFoundException 
     {
+        if (servletCtx == null) {
+            return;
+        }
         List plugins = getConfigPluginClasses();
         for (Iterator i = plugins.iterator(); i.hasNext(); ) {
             ConfiguratorPlugin plugin  = (ConfiguratorPlugin)i.next();
@@ -1011,7 +1040,7 @@ public class AMSetupServlet extends HttpServlet {
                     "Cannot read the bootstrap path");
             }
         } else {
-            throw new ConfiguratorException("Servlet Context is null");
+            return null;
         }
     }
     
@@ -1288,7 +1317,7 @@ public class AMSetupServlet extends HttpServlet {
         InputStream is = null;
         
         try {
-            if ((is = servletCtx.getResourceAsStream(file)) == null) {
+            if ((is = getResourceAsStream(servletCtx, file)) == null) {
                 throw new IOException(file + " not found");
             }
             fin = new InputStreamReader(is);
@@ -1613,30 +1642,6 @@ public class AMSetupServlet extends HttpServlet {
         return isIPAddr;
     }
 
-    private static String getResourceContent(String file) throws IOException {
-        String content = null;
-        InputStreamReader fin = new InputStreamReader(
-            servletCtx.getResourceAsStream(file));
-        try {
-            StringBuffer sbuf = new StringBuffer();
-            char[] cbuf = new char[1024];
-            int len;
-            while ((len = fin.read(cbuf)) > 0) {
-                sbuf.append(cbuf, 0, len);
-            }
-            content = sbuf.toString();
-        } finally {
-            if (fin != null) {
-                try {
-                    fin.close();
-                } catch (Exception ex) {
-                    //No handling requried
-                }
-            }
-        }
-        return content;
-    }
-    
     /**
      * Tag swaps strings in schema files.
      *
@@ -1652,7 +1657,7 @@ public class AMSetupServlet extends HttpServlet {
             null);
         for (Iterator i = schemaFiles.iterator(); i.hasNext(); ) {
             String file = (String)i.next();
-            String content = getResourceContent(file);
+            String content = readFile(file).toString();
             FileWriter fout = null;
             
             try {
@@ -1699,7 +1704,7 @@ public class AMSetupServlet extends HttpServlet {
         webAppLocation = webAppLocation.substring(0, index-1);
         
         // Update famsts.wsdl with Keystore location.
-        String contentWSDL = getFileContent("/WEB-INF/wsdl/famsts.wsdl");
+        String contentWSDL = readFile("/WEB-INF/wsdl/famsts.wsdl").toString();
         contentWSDL = StringUtils.strReplaceAll(contentWSDL,
             "@KEYSTORE_LOCATION@", basedir + deployuri);
         BufferedWriter outWSDL = 
@@ -1707,23 +1712,6 @@ public class AMSetupServlet extends HttpServlet {
             "/WEB-INF/wsdl/famsts.wsdl"));
         outWSDL.write(contentWSDL);
         outWSDL.close();
-    }
-    
-    private static String getFileContent(String fileName) throws IOException {
-        InputStream in = servletCtx.getResourceAsStream(fileName);
-        if (in == null) {
-            throw new IOException("Unable to open " + fileName);
-        }
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        StringBuffer buff = new StringBuffer();
-        String line = reader.readLine();
-
-        while (line != null) {
-            buff.append(line).append("\n");
-            line = reader.readLine();
-        }
-        reader.close();
-        return buff.toString();      
     }
     
     /**
@@ -1739,19 +1727,10 @@ public class AMSetupServlet extends HttpServlet {
     ) throws IOException
     {
         String pwd = Crypt.encrypt("changeit");
-        String location = basedir + deployuri + "/" ;
-        writeContent(location + ".keypass", pwd);
-        writeContent(location + ".storepass", pwd);
-
-        InputStream in = servletCtx.getResourceAsStream(
-                "/WEB-INF/template/keystore/keystore.jks");
-        byte[] b = new byte[2007];
-        in.read(b);
-        in.close();
-        FileOutputStream fos = new FileOutputStream(location + "keystore.jks");
-        fos.write(b);
-        fos.flush();
-        fos.close();
+        String location = basedir + deployuri;
+        writeContent(location + "/.keypass", pwd);
+        writeContent(location + "/.storepass", pwd);
+        copyCtxFile("/WEB-INF/template/keystore", "keystore.jks", location);
     }
 
     /**
@@ -2165,7 +2144,7 @@ public class AMSetupServlet extends HttpServlet {
 
         try {
             for (int i = 0; i < jarFiles.length; i++) {
-                copyCtxFile ("/WEB-INF/lib/", jarFiles[i], destDir);
+                copyCtxFile ("/WEB-INF/lib", jarFiles[i], destDir);
             }
         } catch (IOException ioex) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
@@ -2205,7 +2184,7 @@ public class AMSetupServlet extends HttpServlet {
         String [] propFiles = {"log4j.properties"};
         try {
             for (int i = 0; i < propFiles.length; i++) {
-                copyCtxFile ("/WEB-INF/classes/", propFiles[i], destDir);
+                copyCtxFile ("/WEB-INF/classes", propFiles[i], destDir);
             }
         } catch (IOException ioex) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
@@ -2234,7 +2213,7 @@ public class AMSetupServlet extends HttpServlet {
     private static boolean copyCtxFile (String srcDir, String file,
         String destDir) throws IOException
     {
-        InputStream in = servletCtx.getResourceAsStream(srcDir + file);
+        InputStream in = getResourceAsStream(servletCtx, srcDir + "/" + file);
         if (in != null) {
             FileOutputStream fos = new FileOutputStream(destDir + "/" + file);
             byte[] b = new byte[2000];
@@ -2457,6 +2436,19 @@ public class AMSetupServlet extends HttpServlet {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.updateReplPortInfo: "+
                 "could not add replication port info to SM", ex);
+        }
+    }
+
+    static InputStream getResourceAsStream(ServletContext servletContext,
+        String file) {
+
+        if (servletContext == null) {
+            // remove leading '/'
+            file = file.substring(1);
+            return Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream(file);
+        } else {
+            return servletContext.getResourceAsStream(file);
         }
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOConfigurator.java,v 1.1 2008-08-31 06:56:18 hengming Exp $
+ * $Id: OpenSSOConfigurator.java,v 1.2 2009-05-02 23:07:18 kevinserwin Exp $
  */
 
 package com.sun.identity.setup;
@@ -47,7 +47,7 @@ public class OpenSSOConfigurator {
     private static final String OPENSSO_CONFIGURATOR_PROPERTIES =
         "OpenSSOConfigurator";
     private static final String SERVER_URL = "SERVER_URL";
-    private static final String DEPLOYMENT_URI = "DEPLOYMENT_URI";
+    static final String DEPLOYMENT_URI = "DEPLOYMENT_URI";
     private static final String ADMIN_PWD = "ADMIN_PWD";
     private static final String ADMIN_CONFIRM_PWD = "ADMIN_CONFIRM_PWD";
     private static final String AMLDAPUSERPASSWD = "AMLDAPUSERPASSWD";
