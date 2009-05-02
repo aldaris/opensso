@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceLookup.java,v 1.6 2008-06-25 05:42:26 qcheng Exp $
+ * $Id: ResourceLookup.java,v 1.7 2009-05-02 22:12:04 kevinserwin Exp $
  *
  */
 
@@ -135,7 +135,13 @@ public class ResourceLookup {
             String resourceName) {
         URL resourceURL = null;
         try {
-            resourceURL = context.getResource(resourceName);
+            if (context == null) {
+                resourceURL = Thread.currentThread().getContextClassLoader()
+                    .getResource(resourceName.substring(1));
+                // remove leading '/' from resourceName
+            } else {
+                resourceURL = context.getResource(resourceName);
+            }
         } catch (Exception e) {
             debug.message("Error getting resource  : " + e.getMessage());
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModuleProperties.java,v 1.7 2008-12-23 21:27:03 ericow Exp $
+ * $Id: AMModuleProperties.java,v 1.8 2009-05-02 22:11:28 kevinserwin Exp $
  *
  */
 
@@ -85,7 +85,13 @@ class AMModuleProperties {
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setEntityResolver(new XMLHandler());
-            in = servletContext.getResourceAsStream(fileName);
+            if (servletContext == null) {
+                in = Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream(fileName.substring(1));
+                // remove leading '/' from fileName
+            } else {
+                in = servletContext.getResourceAsStream(fileName);
+            }
             Document doc = builder.parse(in);
             in.close();
             walk(doc);
@@ -132,7 +138,13 @@ class AMModuleProperties {
                         AuthD.getAuth().getServletContext();
         InputStream resStream = null;
         try {
-            resStream = servletContext.getResourceAsStream(fileName);
+            if (servletContext == null) {
+                resStream = Thread.currentThread().getContextClassLoader()
+		  .getResourceAsStream(fileName.substring(1));
+                // remove leading '/' from fileName
+            } else {
+                resStream = servletContext.getResourceAsStream(fileName);
+            }
             // file might be empty for modules like Cert,Anonymous etc.
             if (resStream !=null && resStream.read() == -1) {
                 if (debug.messageEnabled()) {

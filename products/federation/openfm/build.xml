@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.52 2009-05-01 15:19:59 ggennaro Exp $
+   $Id: build.xml,v 1.53 2009-05-02 22:07:58 kevinserwin Exp $
 
 -->
 
@@ -136,6 +136,7 @@
         <antcall target="unittest" />
         <antcall target="clientsdk" />
         <antcall target="clientsamples" />
+        <antcall target="embedsample" />
         <antcall target="doc" />
         <antcall target="zip" />
         <filter token="DATE" value="${nightly.date}" />
@@ -273,6 +274,10 @@
          <ant antfile="${openfm.clientsamples.dir}/build.xml" inheritRefs="true"/>
     </target>
 
+    <target name="embedsample" depends="war">
+         <ant antfile="${openfm.samples.dir}/EmbeddedOpenSSO/build.xml" inheritRefs="true"/>
+    </target>
+    
     <target name="doc" depends="preparebuild">
         <javadoc maxmemory="512m" destdir="${openfm.built.apidocs.dir}" 
             windowtitle="OpenSSO API" failonerror="true">
@@ -363,7 +368,7 @@
         <mkdir dir="${openfm.built.apidocs.dir}"/>
     </target>
 
-    <target name="clean" depends="war-clean,tools-clean,unittest-clean,clientsdk-clean,clientsamples-clean">
+    <target name="clean" depends="war-clean,tools-clean,unittest-clean,clientsdk-clean,clientsamples-clean,embedsample-clean">
         <delete dir="${openfm.built.apidocs.dir}"/>
         <delete dir="${openfm.built.docs.dir}"/>
         <delete dir="${openfm.classes.dir}"/>
@@ -411,6 +416,11 @@
   
     <target name="clientsamples-clean">
         <ant antfile="${openfm.clientsamples.dir}/build.xml" inheritRefs="true"
+            target="clean"/>
+    </target>
+
+    <target name="embedsample-clean">
+        <ant antfile="${openfm.samples.dir}/EmbeddedOpenSSO/build.xml" inheritRefs="true"
             target="clean"/>
     </target>
 
