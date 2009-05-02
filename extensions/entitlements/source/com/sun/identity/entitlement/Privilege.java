@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.10 2009-04-29 11:43:11 veiming Exp $
+ * $Id: Privilege.java,v 1.11 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.policy.ResourceMatch;
-import com.sun.identity.shared.debug.Debug;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -183,8 +182,7 @@ public abstract class Privilege implements Serializable {
             JSONObject jo = toJSONObject();
             s = (jo == null) ? super.toString() : jo.toString(2);
         } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("Entitlement.toString(), JSONException: " + joe.getMessage());
+            PrivilegeManager.debug.error("Entitlement.toString()", joe);
         }
         return s;
     }

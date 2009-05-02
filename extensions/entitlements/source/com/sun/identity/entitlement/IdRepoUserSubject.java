@@ -22,9 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoUserSubject.java,v 1.2 2009-04-26 07:20:36 veiming Exp $
+ * $Id: IdRepoUserSubject.java,v 1.3 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+/**
+ * Identity Repository User Subject.
+ */
 public class IdRepoUserSubject extends UserSubject {
 }

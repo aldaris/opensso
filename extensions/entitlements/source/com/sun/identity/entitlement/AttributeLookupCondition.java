@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeLookupCondition.java,v 1.1 2009-04-23 23:29:20 veiming Exp $
+ * $Id: AttributeLookupCondition.java,v 1.2 2009-05-02 08:53:59 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -38,39 +38,76 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * TOFIX
+ * This condition evaluates if a given attribute from subject matches with
+ * the one in resource.
  */
 public class AttributeLookupCondition implements EntitlementCondition {
+    /**
+     * User Macro
+     */
     public static final String MACRO_USER = "$USER";
+    /**
+     * Resource Macro
+     */
     public static final String MACRO_RESOURCE = "$RES";
 
     private String key;
     private String value;
     private String pConditionName = "";
 
+    /**
+     * Constructor.
+     */
     public AttributeLookupCondition() {
     }
 
+    /**
+     * Constructor.
+     *
+     * @param key Matching key.
+     * @param value Matching value.
+     */
     public AttributeLookupCondition(String key, String value) {
         this.key = key;
         this.value = value;
     }
 
+    /**
+     * Sets state of the object
+     *
+     * @param state State of the object encoded as string
+     */
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
             key = jo.optString("key");
             value = jo.optString("value");
             pConditionName = jo.optString("pConditionName");
-        } catch (JSONException joe) {
-            //TOFIX
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("AttributeLookupCondition.setState",e);
         }
     }
 
+    /**
+     * Returns state of the object.
+     *
+     * @return state of the object encoded as string.
+     */
     public String getState() {
         return toString();
     }
 
+    /**
+     * Returns <code>ConditionDecision</code> of
+     * <code>EntitlementCondition</code> evaluation.
+     *
+     * @param subject EntitlementCondition who is under evaluation.
+     * @param resourceName Resource name.
+     * @param environment Environment parameters.
+     * @return <code>ConditionDecision</code> of
+     * <code>EntitlementCondition</code> evaluation
+     * @throws EntitlementException if error occurs.
+     */
     public ConditionDecision evaluate(
         Subject subject,
         String resourceName,
@@ -132,33 +169,66 @@ public class AttributeLookupCondition implements EntitlementCondition {
         return attrValue;
     }
 
+    /**
+     * Returns matching key.
+     *
+     * @return matching key.
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * Returns OpenSSO policy Condition name.
+     *
+     * @return subject name as used in OpenSSO policy,
+     *         this is releavant only when UserECondition was created from
+     *         OpenSSO policy Condition.
+     */
     public String getPConditionName() {
         return pConditionName;
     }
 
+    /**
+     * Returns matching value.
+     *
+     * @return matching value.
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * Sets matching key.
+     *
+     * @param key Matching key.
+     */
     public void setKey(String key) {
         this.key = key;
     }
 
+    /**
+     * Sets OpenSSO policy Condition name
+     * @param pConditionName subject name as used in OpenSSO policy,
+     *        this is releavant only when UserECondition was created from
+     *        OpenSSO policy Condition.
+     */
     public void setPConditionName(String pConditionName) {
         this.pConditionName = pConditionName;
     }
 
+    /**
+     * Set matching value.
+     * @param value Matching value.
+     */
     public void setValue(String value) {
         this.value = value;
     }
 
     /**
-     * Returns JSONObject mapping of the object
-     * @return JSONObject mapping  of the object
+     * Returns JSONObject mapping of the object.
+     *
+     * @return JSONObject mapping  of the object.
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
@@ -171,7 +241,7 @@ public class AttributeLookupCondition implements EntitlementCondition {
     /**
      * Returns <code>true</code> if the passed in object is equal to this object
      * @param obj object to check for equality
-     * @return  <code>true</code> if the passed in object is equal to this object
+     * @return <code>true</code> if the passed in object is equal to this object
      */
     @Override
     public boolean equals(Object obj) {
@@ -210,8 +280,9 @@ public class AttributeLookupCondition implements EntitlementCondition {
     }
 
     /**
-     * Returns hash code of the object
-     * @return hash code of the object
+     * Returns hash code of the object.
+     *
+     * @return hash code of the object.
      */
     @Override
     public int hashCode() {
@@ -229,16 +300,17 @@ public class AttributeLookupCondition implements EntitlementCondition {
     }
 
     /**
-     * Returns string representation of the object
-     * @return string representation of the object
+     * Returns string representation of the object.
+     * 
+     * @return string representation of the object.
      */
     @Override
     public String toString() {
         String s = null;
         try {
             s = toJSONObject().toString(2);
-        } catch (JSONException joe) {
-            //TOFIX
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("AttributeLookupCondition.setState",e);
         }
         return s;
     }

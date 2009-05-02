@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeCondition.java,v 1.4 2009-04-07 10:25:09 veiming Exp $
+ * $Id: TimeCondition.java,v 1.5 2009-05-02 08:54:00 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.shared.debug.Debug;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -454,10 +453,8 @@ public class TimeCondition implements EntitlementCondition {
         String s = null;
         try {
             s = toJSONObject().toString(2);
-        } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("TimeCondition.toString(), JSONException:" +
-                    joe.getMessage());
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("TimeCondition.toString()", e);
         }
         return s;
     }

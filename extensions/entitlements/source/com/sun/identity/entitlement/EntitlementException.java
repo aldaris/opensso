@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementException.java,v 1.5 2009-03-03 21:53:53 veiming Exp $
+ * $Id: EntitlementException.java,v 1.6 2009-05-02 08:53:59 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -32,7 +32,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Entitlement related exception. * 
+ * Entitlement related exception.
  */
 public class EntitlementException extends Exception {
     private static final String RES_BUNDLE_NAME = "EntitlementException";
@@ -134,4 +134,3 @@ public class EntitlementException extends Exception {
             msg;
     }
 }
-

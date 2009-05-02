@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCombiner.java,v 1.7 2009-04-23 23:29:20 veiming Exp $
+ * $Id: EntitlementCombiner.java,v 1.8 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -41,7 +41,6 @@ import java.util.Set;
  * extends this class.
  *
  * <code>init</code> needs to be called after it is created.
- *
  */
 public abstract class EntitlementCombiner {
     private String resourceName;

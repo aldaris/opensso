@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.14 2009-04-30 23:23:01 veiming Exp $
+ * $Id: Evaluator.java,v 1.15 2009-05-02 08:53:59 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -149,6 +149,11 @@ public class Evaluator {
         return results;
     }
 
+    /**
+     * Returns application name.
+     * 
+     * @return application name.
+     */
     public String getApplicationName() {
         return applicationName;
     }

@@ -22,11 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotSubject.java,v 1.6 2009-04-17 23:55:31 dillidorai Exp $
+ * $Id: NotSubject.java,v 1.7 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
-
-import com.sun.identity.shared.debug.Debug;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,10 +36,10 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 /**
- * EntitlementSubject wrapped on an EntitlementSubject object to provide boolean NOT wrapper.
- * Membership of NotSubject is satisfied in the user is not a member of
- * the nested EntitlementSubject
- * @author dorai
+ * This class wrapped on an Entitlement Subject object to provide boolean
+ * NOT.
+ * Membership of <code>NotSubject</code> is satisfied in the user is not a
+ * member of the nested <code>EntitlementSubject</code>.
  */
 public class NotSubject implements EntitlementSubject {
 
@@ -91,20 +89,21 @@ public class NotSubject implements EntitlementSubject {
 
             }
             pSubjectName = jo.optString("pSubjectName");
-        } catch (JSONException joe) {
-            //TODO: record exception, propogate exception?
-        } catch (InstantiationException inse) {
-            //TODO: record exception, propogate exception?
-        } catch (ClassNotFoundException inse) {
-            //TODO: record exception, propogate exception?
-        } catch (IllegalAccessException inse) {
-            //TODO: record exception, propogate exception?
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("NotSubject.setState", e);
+        } catch (InstantiationException e) {
+            PrivilegeManager.debug.error("NotSubject.setState", e);
+        } catch (ClassNotFoundException e) {
+            PrivilegeManager.debug.error("NotSubject.setState", e);
+        } catch (IllegalAccessException e) {
+            PrivilegeManager.debug.error("NotSubject.setState", e);
         }
     }
 
     /**
-     * Returns state of the object
-     * @return state of the object encoded as string
+     * Returns state of the object.
+     *
+     * @return state of the object encoded as string.
      */
     public String getState() {
         return toString();
@@ -112,35 +111,39 @@ public class NotSubject implements EntitlementSubject {
 
     /**
      * Returns <code>SubjectDecision</code> of
-     * <code>EntitlementSubject</code> evaluation
+     * <code>EntitlementSubject</code> evaluation.
+     *
      * @param subject EntitlementSubject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
      * @return <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation
-     * @throws com.sun.identity.entitlement,  EntitlementException in case
-     * of any error
+     * @throws  EntitlementException if any errors occur.
      */
     public SubjectDecision evaluate(
-            SubjectAttributesManager mgr,
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return null;
+        SubjectAttributesManager mgr,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
+        SubjectDecision d = eSubject.evaluate(mgr, subject, resourceName,
+            environment);
+        return new SubjectDecision(!d.isSatisfied(), Collections.EMPTY_MAP);
     }
 
     /**
-     * Sets nested EntitlementSubject
-     * @param eSubject nested EntitlementSubject
+     * Sets nested EntitlementSubject.
+     *
+     * @param eSubject nested EntitlementSubject.
      */
     public void setESubject(EntitlementSubject eSubject) {
         this.eSubject = eSubject;
     }
 
     /**
-     * Returns nested EntitlementSubject
-     * @return nested EntitlementSubject
+     * Returns nested EntitlementSubject.
+     *
+     * @return nested EntitlementSubject.
      */
     public EntitlementSubject getESubject() {
         return eSubject;
@@ -182,18 +185,18 @@ public class NotSubject implements EntitlementSubject {
     }
 
     /**
-     * Returns string representation of the object
-     * @return string representation of the object
+     * Returns string representation of the object.
+     *
+     * @return string representation of the object.
      */
+    @Override
     public String toString() {
         String s = null;
         try {
             JSONObject jo = toJSONObject();
             s = (jo == null) ? super.toString() : jo.toString(2);
-        } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("OrESubject.toString(), JSONException: " +
-                    joe.getMessage());
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("NotSubject.toString()", e);
         }
         return s;
     }
@@ -203,6 +206,7 @@ public class NotSubject implements EntitlementSubject {
      * @param obj object to check for equality
      * @return  <code>true</code> if the passed in object is equal to this object
      */
+    @Override
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
@@ -237,6 +241,7 @@ public class NotSubject implements EntitlementSubject {
      * Returns hash code of the object
      * @return hash code of the object
      */
+    @Override
     public int hashCode() {
         int code = 0;
         if (eSubject != null) {
@@ -248,6 +253,11 @@ public class NotSubject implements EntitlementSubject {
         return code;
     }
 
+    /**
+     * Returns search index attributes.
+     *
+     * @return search index attributes.
+     */
     public Map<String, Set<String>> getSearchIndexAttributes() {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
         Set<String> set = new HashSet<String>();
@@ -256,6 +266,11 @@ public class NotSubject implements EntitlementSubject {
         return map;
     }
 
+    /**
+     * Returns required attribute names.
+     *
+     * @return required attribute names.
+     */
     public Set<String> getRequiredAttributeNames() {
         return (Collections.EMPTY_SET);
     }

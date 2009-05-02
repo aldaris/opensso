@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrSubject.java,v 1.6 2009-04-24 01:36:26 dillidorai Exp $
+ * $Id: OrSubject.java,v 1.7 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.shared.debug.Debug;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -99,14 +98,14 @@ public class OrSubject implements EntitlementSubject {
             } else {
                 pSubjectName = null;
             }
-        } catch (JSONException joe) {
-            //TODO: record exception, propogate exception?
-        } catch (InstantiationException inse) {
-            //TODO: record exception, propogate exception?
-        } catch (ClassNotFoundException inse) {
-            //TODO: record exception, propogate exception?
-        } catch (IllegalAccessException inse) {
-            //TODO: record exception, propogate exception?
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("OrSubject.setState", e);
+        } catch (InstantiationException e) {
+            PrivilegeManager.debug.error("OrSubject.setState", e);
+        } catch (ClassNotFoundException e) {
+            PrivilegeManager.debug.error("OrSubject.setState", e);
+        } catch (IllegalAccessException e) {
+            PrivilegeManager.debug.error("OrSubject.setState", e);
         }
     }
 
@@ -127,27 +126,41 @@ public class OrSubject implements EntitlementSubject {
      * @param environment Environment parameters.
      * @return <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation
-     * @throws EntitlementException in case
-     * of any error
+     * @throws EntitlementException if any errors occur.
      */
     public SubjectDecision evaluate(
-            SubjectAttributesManager mgr,
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment) throws EntitlementException {
-        Set<EntitlementSubject> subjects = getESubjects();
-        if ((subjects != null) && !subjects.isEmpty()) {
-            for (EntitlementSubject e : subjects) {
-                SubjectDecision decision =
-                        e.evaluate(mgr, subject, resourceName, environment);
+        SubjectAttributesManager mgr,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
+        SubjectDecision result = new SubjectDecision(false,
+            Collections.EMPTY_MAP);
+        if ((eSubjects != null) && !eSubjects.isEmpty()) {
+            for (EntitlementSubject e : eSubjects) {
+                SubjectDecision decision = e.evaluate(mgr, subject,
+                    resourceName, environment);
                 if (decision.isSatisfied()) {
                     return decision;
                 }
+                if (result == null) {
+                    result = decision;
+                } else {
+                    Map advices = result.getAdvices();
+                    Map dAdvices = decision.getAdvices();
+
+                    if ((dAdvices != null) && !dAdvices.isEmpty()) {
+                        if ((advices == null) || advices.isEmpty()) {
+                            result = new SubjectDecision(false, dAdvices);
+                        } else {
+                            advices.putAll(dAdvices);
+                            result = new SubjectDecision(false, advices);
+                        }
+                    }
+                 }
             }
-            return new SubjectDecision(false, Collections.EMPTY_MAP);
-        } else {
-            return new SubjectDecision(false, Collections.EMPTY_MAP);
         }
+        return result;
     }
 
     /**
@@ -218,10 +231,8 @@ public class OrSubject implements EntitlementSubject {
         try {
             JSONObject jo = toJSONObject();
             s = (jo == null) ? super.toString() : jo.toString(2);
-        } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("OrESubject.toString(), JSONException: " +
-                    joe.getMessage());
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("OrSubject.toString", e);
         }
         return s;
     }

@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndCondition.java,v 1.4 2009-04-28 20:55:15 veiming Exp $
+ * $Id: AndCondition.java,v 1.5 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.shared.debug.Debug;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -36,11 +36,12 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 /**
- * EntitlementCondition wrapper on a set of EntitlementCondition(s) to provide boolean OR logic
- * Membership is of AndCondition is satisfied if the user is a member of any
- * of the wrapped EntitlementCondition
- * @author dorai
- */
+ * <code>EntitlementCondition</code> wrapper on a set of
+ * <code>EntitlementCondition</code>(s) to provide
+ * boolean OR logic Membership is of <code>AndCondition</code> is satisfied
+ * if the user is a member of any of the wrapped
+ * <code>EntitlementCondition</code>.
+  */
 public class AndCondition implements EntitlementCondition {
     private static final long serialVersionUID = -403250971215465050L;
 
@@ -48,33 +49,39 @@ public class AndCondition implements EntitlementCondition {
     private String pConditionName;
 
     /**
-     * Constructs AndCondition
+     * Constructs <code>AndCondition</code>
      */
     public AndCondition() {
     }
 
     /**
      * Constructs AndCondition
-     * @param eConditions wrapped EntitlementCondition(s)
+     *
+     * @param eConditions wrapped <code>EntitlementCondition</code>(s)
      */
     public AndCondition(Set<EntitlementCondition> eConditions) {
         this.eConditions = eConditions;
     }
 
     /**
-     * Constructs AndCondition
-     * @param eConditions wrapped EntitlementCondition(s)
+     * Constructs <code>AndCondition</code>.
+     *
+     * @param eConditions wrapped <code>EntitlementCondition</code>(s)
      * @param pConditionName subject name as used in OpenSSO policy,
      * this is releavant only when UserECondition was created from
      * OpenSSO policy Condition
      */
-    public AndCondition(Set<EntitlementCondition> eConditions, String pConditionName) {
+    public AndCondition(
+        Set<EntitlementCondition> eConditions,
+        String pConditionName
+    ) {
         this.eConditions = eConditions;
         this.pConditionName = pConditionName;
     }
 
     /**
      * Sets state of the object
+     *
      * @param state State of the object encoded as string
      */
     public void setState(String state) {
@@ -98,19 +105,20 @@ public class AndCondition implements EntitlementCondition {
                 }
             }
         } catch (InstantiationException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("AndCondition.setState", ex);
         } catch (IllegalAccessException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("AndCondition.setState", ex);
         } catch (ClassNotFoundException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("AndCondition.setState", ex);
         } catch (JSONException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("AndCondition.setState", ex);
         }
     }
 
     /**
-     * Returns state of the object
-     * @return state of the object encoded as string
+     * Returns state of the object.
+     *
+     * @return state of the object encoded as string.
      */
     public String getState() {
         return toString();
@@ -124,28 +132,36 @@ public class AndCondition implements EntitlementCondition {
      * @param environment Environment parameters.
      * @return <code>ConditionDecision</code> of
      * <code>EntitlementCondition</code> evaluation
-     * @throws com.sun.identity.entitlement,  EntitlementException in case
-     * of any error
+     * @throws EntitlementException if error occurs.
      */
     public ConditionDecision evaluate(
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return null;
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
+        for (EntitlementCondition ec : eConditions) {
+            ConditionDecision d = ec.evaluate(subject, resourceName,
+                environment);
+            if (!d.isSatisfied()) {
+                return d;
+            }
+        }
+        return new ConditionDecision(true, Collections.EMPTY_MAP);
     }
 
     /**
-     * Sets the nested EntitlementCondition(s)
-     * @param eConditions the nested EntitlementCondition(s)
+     * Sets the nested <code>EntitlementCondition</code>(s).
+     *
+     * @param eConditions the nested <code>EntitlementCondition</code>(s)
      */
     public void setEConditions(Set<EntitlementCondition> eConditions) {
         this.eConditions = eConditions;
     }
 
     /**
-     * Returns the nested EntitlementCondition(s)
-     * @return  the nested EntitlementCondition(s)
+     * Returns the nested <code>EntitlementCondition</code>(s).
+     *
+     * @return the nested <code>EntitlementCondition</code>(s).
      */
     public Set<EntitlementCondition> getEConditions() {
         return eConditions;
@@ -198,10 +214,8 @@ public class AndCondition implements EntitlementCondition {
         try {
             JSONObject jo = toJSONObject();
             s = (jo == null) ? super.toString() : jo.toString(2);
-        } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("OrECondition.toString(), JSONException: " +
-                    joe.getMessage());
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("AndCondition.toString()", e);
         }
         return s;
     }

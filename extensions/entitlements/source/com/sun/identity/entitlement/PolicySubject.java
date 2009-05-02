@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicySubject.java,v 1.1 2009-04-28 00:34:34 veiming Exp $
+ * $Id: PolicySubject.java,v 1.2 2009-05-02 08:53:59 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -42,8 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * //TOFIX
- * @author dennis
+ * This subject wraps all OpenSSO policy subject.
  */
 public class PolicySubject implements EntitlementSubject {
     private String name;
@@ -51,33 +50,66 @@ public class PolicySubject implements EntitlementSubject {
     private Set<String> values;
     private boolean exclusive;
 
+    /**
+     * Constructor.
+     *
+     * @param name Name of condition.
+     * @param className Implementation class name.
+     * @param values Values of this subject.
+     * @param exclusive <code>true</code> to be exclusive.
+     */
     public PolicySubject(
         String name,
         String className,
         Set<String> values,
-        boolean exclusive) {
+        boolean exclusive
+    ) {
         this.name = name;
         this.className = className;
         this.values = values;
         this.exclusive = exclusive;
     }
 
+    /**
+     * Returns name.
+     * @return name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns class name.
+     *
+     * @return class name.
+     */
     public String getClassName() {
         return className;
     }
 
+    /**
+     * Returns values.
+     *
+     * @return values.
+     */
     public Set<String> getValues() {
         return values;
     }
 
+    /**
+     * Returns <code>true</code> if this is an exclusive subject.
+     *
+     * @return <code>true</code> if this is an exclusive subject.
+     */
     public boolean isExclusive() {
         return exclusive;
     }
 
+    /**
+     * Sets states
+     *
+     * @param state State.
+     */
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
@@ -86,7 +118,7 @@ public class PolicySubject implements EntitlementSubject {
             this.exclusive = jo.optBoolean("exclusive");
             this.values = getValues((JSONArray)jo.opt("values"));
         } catch (JSONException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("PolicySubject.setState", ex);
         }
     }
 
@@ -99,6 +131,11 @@ public class PolicySubject implements EntitlementSubject {
         return result;
     }
 
+    /**
+     * Returns state of this subject.
+     * 
+     * @return state of this subject.
+     */
     public String getState() {
         JSONObject jo = new JSONObject();
 
@@ -109,11 +146,16 @@ public class PolicySubject implements EntitlementSubject {
             jo.put("values", values);
             return jo.toString(2);
         } catch (JSONException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("PolicySubject.getState", ex);
         }
         return "";
     }
 
+    /**
+     * Returns search index attributes.
+     *
+     * @return search index attributes.
+     */
     public Map<String, Set<String>> getSearchIndexAttributes() {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>(4);
         Set<String> set = new HashSet<String>();
@@ -122,10 +164,25 @@ public class PolicySubject implements EntitlementSubject {
         return map;
     }
 
+    /**
+     * Returns required attribute names.
+     *
+     * @return required attribute names.
+     */
     public Set<String> getRequiredAttributeNames() {
         return(Collections.EMPTY_SET);
     }
 
+    /**
+     * Returns subject decision.
+     * @param mgr Subject attribute manager
+     * @param subject Subject to be evaluated.
+     * @param resourceName Resource name to be evaluated.
+     * @param environment Environment map.
+     * @return subject decision.
+     * @throws com.sun.identity.entitlement.EntitlementException if error
+     *         occurs.
+     */
     public SubjectDecision evaluate(
         SubjectAttributesManager mgr,
         Subject subject,
@@ -141,17 +198,16 @@ public class PolicySubject implements EntitlementSubject {
             return new SubjectDecision(sbj.isMember(token),
                 Collections.EMPTY_MAP);
         } catch (SSOException ex) {
-            //TOFIX
+            throw new EntitlementException(508, ex);
         } catch (PolicyException ex) {
-            //TOFIX
+            throw new EntitlementException(508, ex);
         } catch (ClassNotFoundException ex) {
-            //TOFIX
+            throw new EntitlementException(508, ex);
         } catch (InstantiationException ex) {
-            //TOFIX
+            throw new EntitlementException(508, ex);
         } catch (IllegalAccessException ex) {
-            //TOFIX
+            throw new EntitlementException(508, ex);
         }
-        return null;
     }
 
     private static SSOToken getSSOToken(Subject subject) {

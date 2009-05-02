@@ -22,26 +22,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrCondition.java,v 1.4 2009-04-28 20:50:30 veiming Exp $
+ * $Id: OrCondition.java,v 1.5 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.shared.debug.Debug;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.security.auth.Subject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
 /**
- * EntitlementCondition wrapper on a set of EntitlementCondition(s) to provide boolean OR logic
+ * <code>EntitlementCondition</code> wrapper on a set of
+ * <code>EntitlementCondition</code>(s) to provide boolean OR logic
  * Membership is of OrCondition is satisfied if the user is a member of any
  * of the wrapped EntitlementCondition
- * @author dorai
  */
 public class OrCondition implements EntitlementCondition {
     private static final long serialVersionUID = -403250971215465050L;
@@ -50,13 +48,14 @@ public class OrCondition implements EntitlementCondition {
     private String pConditionName;
 
     /**
-     * Constructs OrCondition
+     * Constructor.
      */
     public OrCondition() {
     }
 
     /**
-     * Constructs OrCondition
+     * Constructor.
+     *
      * @param eConditions wrapped EntitlementCondition(s)
      */
     public OrCondition(Set<EntitlementCondition> eConditions) {
@@ -64,13 +63,17 @@ public class OrCondition implements EntitlementCondition {
     }
 
     /**
-     * Constructs OrCondition
+     * Constructor.
+     *
      * @param eConditions wrapped EntitlementCondition(s)
      * @param pConditionName subject name as used in OpenSSO policy,
      * this is releavant only when UserECondition was created from
      * OpenSSO policy Condition
      */
-    public OrCondition(Set<EntitlementCondition> eConditions, String pConditionName) {
+    public OrCondition(
+        Set<EntitlementCondition> eConditions,
+        String pConditionName
+    ) {
         this.eConditions = eConditions;
         this.pConditionName = pConditionName;
     }
@@ -100,13 +103,13 @@ public class OrCondition implements EntitlementCondition {
                 }
             }
         } catch (InstantiationException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("OrCondition.setState", ex);
         } catch (IllegalAccessException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("OrCondition.setState", ex);
         } catch (ClassNotFoundException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("OrCondition.setState", ex);
         } catch (JSONException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("OrCondition.setState", ex);
         }
     }
 
@@ -130,16 +133,45 @@ public class OrCondition implements EntitlementCondition {
      * of any error
      */
     public ConditionDecision evaluate(
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return null;
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
+        ConditionDecision results = new ConditionDecision(false, 
+            Collections.EMPTY_MAP);
+        if ((eConditions == null) || eConditions.isEmpty()) {
+            return results;
+        }
+
+        for (EntitlementCondition ec : eConditions) {
+            ConditionDecision d = ec.evaluate(subject, resourceName,
+                environment);
+            if (d.isSatisfied()) {
+                return d;
+            }
+            if (results == null) {
+                results = d;
+            } else {
+                Map<String, Set<String>> advices = results.getAdvices();
+                Map<String, Set<String>> dAdvices = d.getAdvices();
+
+                if ((dAdvices != null) && !dAdvices.isEmpty()) {
+                    if ((advices == null) || advices.isEmpty()) {
+                        results = new ConditionDecision(false, dAdvices);
+                    } else {
+                        advices.putAll(dAdvices);
+                        results = new ConditionDecision(false, advices);
+                    }
+                }
+            }
+        }
+        return results;
     }
 
     /**
-     * Sets the nested EntitlementCondition(s)
-     * @param eConditions the nested EntitlementCondition(s)
+     * Sets the nested EntitlementCondition(s).
+     *
+     * @param eConditions the nested EntitlementCondition(s).
      */
     public void setEConditions(Set<EntitlementCondition> eConditions) {
         this.eConditions = eConditions;
@@ -194,15 +226,14 @@ public class OrCondition implements EntitlementCondition {
      * Returns string representation of the object
      * @return string representation of the object
      */
+    @Override
     public String toString() {
         String s = null;
         try {
             JSONObject jo = toJSONObject();
             s = (jo == null) ? super.toString() : jo.toString(2);
-        } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("OrECondition.toString(), JSONException: " +
-                    joe.getMessage());
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("OrCondition.toString", e);
         }
         return s;
     }
@@ -212,6 +243,7 @@ public class OrCondition implements EntitlementCondition {
      * @param obj object to check for equality
      * @return  <code>true</code> if the passed in object is equal to this object
      */
+    @Override
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
@@ -250,6 +282,7 @@ public class OrCondition implements EntitlementCondition {
      * Returns hash code of the object
      * @return hash code of the object
      */
+    @Override
     public int hashCode() {
         int code = 0;
         if (eConditions != null) {

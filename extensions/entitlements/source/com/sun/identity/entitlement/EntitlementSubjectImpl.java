@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementSubjectImpl.java,v 1.2 2009-04-26 07:20:32 veiming Exp $
+ * $Id: EntitlementSubjectImpl.java,v 1.3 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.shared.debug.Debug;
 
 import java.security.Principal;
 import java.util.Set;
@@ -52,15 +51,16 @@ public abstract class EntitlementSubjectImpl implements EntitlementSubject {
     /**
      * Constructor
      *
-     * @param id the uuid of subject.
+     * @param uuid the universal ID of subject.
      */
     public EntitlementSubjectImpl(String uuid) {
         this.uuid = uuid;
     }
 
     /**
-     * Constructs GroupSubject
-     * @param group id the uuid of subject.
+     * Constructor.
+     *
+     * @param uuid is the universal Id of subject.
      * @param pSubjectName subject name as used in OpenSSO policy,
      * this is releavant only when it was created from OpenSSO policy Subject
      */
@@ -79,22 +79,24 @@ public abstract class EntitlementSubjectImpl implements EntitlementSubject {
             uuid = jo.has("uuid") ? jo.optString("uuid") : null;
             pSubjectName = jo.has("pSubjectName") ?
                 jo.optString("pSubjectName") : null;
-        } catch (JSONException joe) {
-            //TOFIX
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("EntitlementSubjectImpl.setState", e);
         }
     }
 
     /**
-     * Returns state of the object
-     * @return state of the object encoded as string
+     * Returns state of the object.
+     *
+     * @return state of the object encoded as string.
      */
     public String getState() {
         return toString();
     }
 
     /**
-     * Returns JSONObject mapping of the object
-     * @return JSONObject mapping  of the object
+     * Returns JSONObject mapping of the object.
+     *
+     * @return JSONObject mapping  of the object.
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
@@ -104,18 +106,17 @@ public abstract class EntitlementSubjectImpl implements EntitlementSubject {
     }
 
     /**
-     * Returns string representation of the object
-     * @return string representation of the object
+     * Returns string representation of the object.
+     *
+     * @return string representation of the object.
      */
     @Override
     public String toString() {
         String s = null;
         try {
             s = toJSONObject().toString(2);
-        } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("EntitlementSubjectImpl.toString(), JSONException:" +
-                    joe.getMessage());
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("EntitlementSubjectImpl.toString", e);
         }
         return s;
     }
@@ -218,5 +219,4 @@ public abstract class EntitlementSubjectImpl implements EntitlementSubject {
         }
         return false;
     }
-
 }

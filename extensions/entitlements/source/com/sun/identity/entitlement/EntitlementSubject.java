@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementSubject.java,v 1.6 2009-04-10 22:40:00 veiming Exp $
+ * $Id: EntitlementSubject.java,v 1.7 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -78,13 +78,12 @@ public interface EntitlementSubject extends Serializable {
      * @param environment Environment parameters.
      * @return <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation
-     * @throws com.sun.identity.entitlement,  EntitlementException in case
-     * of any error
+     * @throws EntitlementException if any errors occur.
      */
-    public SubjectDecision evaluate(
-            SubjectAttributesManager mgr,
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException;
+    SubjectDecision evaluate(
+        SubjectAttributesManager mgr,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment)
+        throws EntitlementException;
 }

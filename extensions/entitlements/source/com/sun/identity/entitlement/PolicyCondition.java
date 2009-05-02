@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCondition.java,v 1.1 2009-04-28 00:34:34 veiming Exp $
+ * $Id: PolicyCondition.java,v 1.2 2009-05-02 08:53:59 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -42,14 +42,20 @@ import org.json.JSONObject;
 
 
 /**
- * //TOFIX
- * @author dennis
+ * This condition wraps all OpenSSO policy condition.
  */
 public class PolicyCondition implements EntitlementCondition {
     private String className;
     private String name;
     private Map<String, Set<String>> properties;
 
+    /**
+     * Constructor.
+     *
+     * @param name Name of condition.
+     * @param className Implementation class name.
+     * @param properties Properties of the condition.
+     */
     public PolicyCondition(
         String name,
         String className,
@@ -58,26 +64,46 @@ public class PolicyCondition implements EntitlementCondition {
         this.properties = properties;
     }
 
+    /**
+     * Returns class name.
+     *
+     * @return class name.
+     */
     public String getClassName() {
         return className;
     }
 
+    /**
+     * Returns name.
+     *
+     * @return name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns properties.
+     *
+     * @return properties.
+     */
     public Map<String, Set<String>> getProperties() {
         return properties;
     }
 
+    /**
+     * Sets the state of this condition.
+     *
+     * @param state State of this condition.
+     */
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
             this.name = jo.optString("name");
             this.className = jo.optString("className");
             this.properties = getProperties((JSONObject)jo.opt("properties"));
-        } catch (JSONException ex) {
-            //TOFIX
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("PolicyCondition.setState", e);
         }
     }
 
@@ -97,6 +123,11 @@ public class PolicyCondition implements EntitlementCondition {
         return result;
     }
 
+    /**
+     * Returns state of this condition.
+     *
+     * @return state of this condition.
+     */
     public String getState() {
         JSONObject jo = new JSONObject();
 
@@ -106,11 +137,20 @@ public class PolicyCondition implements EntitlementCondition {
             jo.put("properties", properties);
             return jo.toString(2);
         } catch (JSONException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("PolicyCondition.getState", ex);
         }
         return "";
     }
 
+    /**
+     * Returns condition decision.
+     *
+     * @param subject Subject to be evaluated.
+     * @param resourceName Resource name.
+     * @param environment Environment map.
+     * @return condition decision.
+     * @throws com.sun.identity.entitlement.EntitlementException if error occur.
+     */
     public ConditionDecision evaluate(
         Subject subject,
         String resourceName,
@@ -126,17 +166,16 @@ public class PolicyCondition implements EntitlementCondition {
                 cond.getConditionDecision(token, properties);
             return new ConditionDecision(dec.isAllowed(), dec.getAdvices());
         } catch (SSOException ex) {
-            //TOFIX
+            throw new EntitlementException(510, ex);
         } catch (PolicyException ex) {
-            //TOFIX
+            throw new EntitlementException(510, ex);
         } catch (ClassNotFoundException ex) {
-            //TOFIX
+            throw new EntitlementException(510, ex);
         } catch (InstantiationException ex) {
-            //TOFIX
+            throw new EntitlementException(510, ex);
         } catch (IllegalAccessException ex) {
-            //TOFIX
+            throw new EntitlementException(510, ex);
         }
-        return null;
     }
 
     private static SSOToken getSSOToken(Subject subject) {

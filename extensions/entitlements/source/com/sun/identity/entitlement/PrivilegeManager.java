@@ -22,12 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.7 2009-04-30 23:23:01 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.8 2009-05-02 08:54:00 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
+import com.sun.identity.entitlement.util.DebugFactory;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.shared.debug.IDebug;
 import java.security.Principal;
 import java.util.Date;
 import java.util.Set;
@@ -37,6 +39,8 @@ import javax.security.auth.Subject;
  * Class to manage entitlement privileges: to add, remove, modify privilege
  */
 public abstract class PrivilegeManager {
+    public static IDebug debug = DebugFactory.getDebug("Entitlement");
+
     private Subject adminSubject;
 
     /**
@@ -53,12 +57,12 @@ public abstract class PrivilegeManager {
                 "com.sun.identity.entitlement.opensso.PolicyPrivilegeManager");
             pm = (PrivilegeManager)clazz.newInstance();
             pm.initialize(subject);
-        } catch (ClassNotFoundException cnfe) {
-            //TODO: add debug
-        } catch (InstantiationException ie) {
-            //TODO: add debug
-        } catch (IllegalAccessException iae) {
-            //TODO: add debug
+        } catch (ClassNotFoundException e) {
+            debug.error("PrivilegeManager.getInstance", e);
+        } catch (InstantiationException e) {
+            debug.error("PrivilegeManager.getInstance", e);
+        } catch (IllegalAccessException e) {
+            debug.error("PrivilegeManager.getInstance", e);
         }
         return pm;
     }

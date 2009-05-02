@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.9 2009-04-29 18:14:13 veiming Exp $
+ * $Id: Application.java,v 1.10 2009-05-02 08:53:59 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -107,9 +107,11 @@ public class Application {
         try {
             return (EntitlementCombiner)entitlementCombiner.newInstance();
         } catch (InstantiationException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("Application.getEntitlementCombiner",
+                ex);
         } catch (IllegalAccessException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("Application.getEntitlementCombiner",
+                ex);
         }
         return null;
     }

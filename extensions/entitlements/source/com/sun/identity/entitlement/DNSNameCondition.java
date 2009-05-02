@@ -22,11 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNSNameCondition.java,v 1.1 2009-04-07 19:00:47 veiming Exp $
+ * $Id: DNSNameCondition.java,v 1.2 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
-
-import com.sun.identity.shared.debug.Debug;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -272,10 +270,8 @@ public class DNSNameCondition implements EntitlementCondition {
         String s = null;
         try {
             s = toJSONObject().toString(2);
-        } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("DNSNameCondition.toString(), JSONException:" +
-                    joe.getMessage());
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("DNSNameCondition.toString()", e);
         }
         return s;
     }

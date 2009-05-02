@@ -22,13 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StaticAttributes.java,v 1.3 2009-03-27 16:29:10 veiming Exp $
+ * $Id: StaticAttributes.java,v 1.4 2009-05-02 08:54:00 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.shared.debug.Debug;
-
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -113,22 +110,22 @@ public class StaticAttributes implements ResourceAttributes {
      * Returns string representation of the object
      * @return string representation of the object
      */
+    @Override
     public String toString() {
         String s = null;
         try {
             s = toJSONObject().toString(2);
-        } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("UserESubject.toString(), JSONException:" +
-                    joe.getMessage());
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("StaticAttributes.toString", e);
         }
         return s;
     }
-        /**
+
+    /**
      * Sets OpenSSO policy response provider name of the object
-     * @param pResponseProviderName response provider name as used in OpenSSO policy,
-     * this is releavant only when StaticAttributes was created from
-     * OpenSSO policy Subject
+     * @param pResponseProviderName response provider name as used in OpenSSO
+     *        policy, this is releavant only when StaticAttributes was created
+     *        from OpenSSO policy Subject
      */
     public void setPResponseProviderName(String pResponseProviderName) {
         this.pResponseProviderName = pResponseProviderName;
@@ -149,6 +146,7 @@ public class StaticAttributes implements ResourceAttributes {
      * @param obj object to check for equality
      * @return  <code>true</code> if the passed in object is equal to this object
      */
+    @Override
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
@@ -184,6 +182,7 @@ public class StaticAttributes implements ResourceAttributes {
      * Returns hash code of the object
      * @return hash code of the object
      */
+    @Override
     public int hashCode() {
         int code = 0;
         if (properties != null) {
@@ -194,5 +193,4 @@ public class StaticAttributes implements ResourceAttributes {
         }
         return code;
     }
-
 }

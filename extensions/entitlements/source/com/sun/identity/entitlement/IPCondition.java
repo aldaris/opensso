@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPCondition.java,v 1.5 2009-04-07 19:00:47 veiming Exp $
+ * $Id: IPCondition.java,v 1.6 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.shared.debug.Debug;
 
 import java.util.Collections;
 import java.util.Map;
@@ -37,7 +36,7 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 /**
- * EntitlementCondition to represent IP, DNS name based  constraint
+ * Entitlement Condition to represent IP constraint
   */
 public class IPCondition implements EntitlementCondition {
     private static final long serialVersionUID = -403250971215465050L;
@@ -92,7 +91,8 @@ public class IPCondition implements EntitlementCondition {
             startIp = jo.optString("startIp");
             endIp = jo.optString("endIp");
             pConditionName = jo.optString("pConditionName");
-        } catch (JSONException joe) {
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("IPCondition.setState", e);
         }
     }
 
@@ -104,8 +104,7 @@ public class IPCondition implements EntitlementCondition {
      * @param environment Environment parameters.
      * @return <code>ConditionDecision</code> of
      * <code>EntitlementCondition</code> evaluation
-     * @throws com.sun.identity.entitlement,  EntitlementException in case
-     * of any error
+     * @throws EntitlementException if any errors occur.
      */
     public ConditionDecision evaluate(
         Subject subject,
@@ -116,8 +115,7 @@ public class IPCondition implements EntitlementCondition {
         String ip = ((setIP != null) && !setIP.isEmpty()) ?
             setIP.iterator().next() : null;
 
-        boolean allowed = (ip == null) || isAllowedByIp(ip);
-        //TOFIX Would retrun true if no ip was specified in the request. This does not look right. 
+        boolean allowed = (ip != null) && isAllowedByIp(ip);
         return new ConditionDecision(allowed, Collections.EMPTY_MAP);
     }
 
@@ -156,28 +154,36 @@ public class IPCondition implements EntitlementCondition {
     }
 
     /**
-     * @return the startIp
+     * Return start IP.
+     *
+     * @return the start IP.
      */
     public String getStartIp() {
         return startIp;
     }
 
     /**
-     * @param startIp the startIp to set
+     * Set start IP.
+     *
+     * @param startIp Start IP.
      */
     public void setStartIp(String startIp) {
         this.startIp = startIp;
     }
 
     /**
-     * @return the endIp
+     * Returns end IP.
+     *
+     * @return the end IP.
      */
     public String getEndIp() {
         return endIp;
     }
 
     /**
-     * @param endIp the endIp to set
+     * Sets end IP.
+     *
+     * @param endIp the end IP.
      */
     public void setEndIp(String endIp) {
         this.endIp = endIp;
@@ -284,10 +290,8 @@ public class IPCondition implements EntitlementCondition {
         String s = null;
         try {
             s = toJSONObject().toString(2);
-        } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("IPCondiiton.toString(), JSONException:" +
-                    joe.getMessage());
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("IPCondiiton.toString", e);
         }
         return s;
     }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.9 2009-04-26 07:20:33 veiming Exp $
+ * $Id: GroupSubject.java,v 1.10 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -43,22 +43,23 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 /**
- * EntitlementSubject to represent group identity for membership check
- * @author dorai
+ * This class represents group identity for membership check
  */
 public class GroupSubject extends EntitlementSubjectImpl {
     private static final long serialVersionUID = -403250971215465050L;
 
     /**
-     * Constructs an GroupSubject
+     * Constructor.
      */
     public GroupSubject() {
         super();
     }
 
     /**
-     * Constructs GroupSubject
-     * @param group the uuid of the group who is member of the EntitlementSubject
+     * Constructor.
+     *
+     * @param group the uuid of the group who is member of the 
+     *        EntitlementSubject.
      */
     public GroupSubject(String group) {
         super(group);
@@ -66,10 +67,12 @@ public class GroupSubject extends EntitlementSubjectImpl {
 
     /**
      * Constructs GroupSubject
-     * @param group the uuid of the group who is member of the EntitlementSubject
+     *
+     * @param group the uuid of the group who is member of the
+     *        EntitlementSubject
      * @param pSubjectName subject name as used in OpenSSO policy,
-     * this is releavant only when GroupSubject was created from
-     * OpenSSO policy Subject
+     *        this is releavant only when GroupSubject was created from
+     *        OpenSSO policy Subject
      */
     public GroupSubject(String group, String pSubjectName) {
         super(group, pSubjectName);
@@ -128,6 +131,11 @@ public class GroupSubject extends EntitlementSubjectImpl {
         return false;
     }
 
+    /**
+     * Returns search index attributes.
+     *
+     * @return search index attributes.
+     */
     public Map<String, Set<String>> getSearchIndexAttributes() {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>(4);
         {
@@ -145,6 +153,11 @@ public class GroupSubject extends EntitlementSubjectImpl {
         return map;
     }
 
+    /**
+     * Returns required attribute names.
+     * 
+     * @return required attribute names.
+     */
     public Set<String> getRequiredAttributeNames() {
         return(Collections.EMPTY_SET);
     }

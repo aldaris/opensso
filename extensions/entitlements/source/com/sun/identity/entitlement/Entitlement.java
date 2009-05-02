@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.29 2009-04-25 22:40:30 veiming Exp $
+ * $Id: Entitlement.java,v 1.30 2009-05-02 08:53:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
-import com.sun.identity.shared.debug.Debug;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -92,7 +91,7 @@ public class Entitlement implements Serializable {
         setActionNames(actionNames);
     }
 
-        /**
+    /**
      * Creates an entitlement object.
      *
      * @param resourceName Resource name.
@@ -398,8 +397,7 @@ public class Entitlement implements Serializable {
             JSONObject jo = toJSONObject();
             s = (jo == null) ? super.toString() : jo.toString(2);
         } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("Entitlement.toString(), JSONException: " + joe.getMessage());
+            PrivilegeManager.debug.error("Entitlement.toString()", joe);
         }
         return s;
     }
@@ -570,16 +568,31 @@ public class Entitlement implements Serializable {
         return code;
     }
 
+    /**
+     * Returns resource search indexes.
+     *
+     * @return resource search indexes.
+     */
     public ResourceSearchIndexes getResourceSearchIndexes() {
         return getApplication().getApplicationType().getResourceSearchIndex(
                 resourceNames.iterator().next()); //TODO: recheck
     }
 
+    /**
+     * Returns resource save indexes.
+     *
+     * @return resource save indexes.
+     */
     public ResourceSaveIndexes getResourceSaveIndexes() {
         return getApplication().getApplicationType().getResourceSaveIndex(
                 resourceNames.iterator().next()); //TODO: recheck
     }
 
+    /**
+     * Returns application for this entitlement.
+     * 
+     * @return application for this entitlement.
+     */
     public Application getApplication() {
         if (application == null) {
             application = ApplicationManager.getApplication(

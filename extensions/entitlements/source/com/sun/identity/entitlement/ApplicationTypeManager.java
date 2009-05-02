@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeManager.java,v 1.6 2009-04-29 18:14:14 veiming Exp $
+ * $Id: ApplicationTypeManager.java,v 1.7 2009-05-02 08:53:59 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -96,7 +96,12 @@ public class ApplicationTypeManager {
         policyConfig.storeApplicationType(appType);
     }
 
-
+    /**
+     * Returns search index implementation class.
+     *
+     * @param className Search index implementation class name.
+     * @return search index implementation class.
+     */
     public static ISearchIndex getSearchIndex(String className) {
         if (className == null) {
             return null;
@@ -108,15 +113,24 @@ public class ApplicationTypeManager {
                 return (ISearchIndex) o;
             }
         } catch (InstantiationException ex) {
-            //TOFIX debug error
+            PrivilegeManager.debug.error(
+                "ApplicationTypeManager.getSearchIndex", ex);
         } catch (IllegalAccessException ex) {
-            //TOFIX debug error
+            PrivilegeManager.debug.error(
+                "ApplicationTypeManager.getSearchIndex", ex);
         } catch (ClassNotFoundException ex) {
-            //TOFIX debug error
+            PrivilegeManager.debug.error(
+                "ApplicationTypeManager.getSearchIndex", ex);
         }
         return null;
     }
 
+    /**
+     * Returns save index implementation class.
+     *
+     * @param className Save index implementation class name.
+     * @return saveindex implementation class.
+     */
     public static ISaveIndex getSaveIndex(String className) {
         if (className == null) {
             return null;
@@ -128,15 +142,24 @@ public class ApplicationTypeManager {
                 return (ISaveIndex) o;
             }
         } catch (InstantiationException ex) {
-            //TOFIX debug error
+            PrivilegeManager.debug.error(
+                "ApplicationTypeManager.getSaveIndex", ex);
         } catch (IllegalAccessException ex) {
-            //TOFIX debug error
+            PrivilegeManager.debug.error(
+                "ApplicationTypeManager.getSaveIndex", ex);
         } catch (ClassNotFoundException ex) {
-            //TOFIX debug error
+            PrivilegeManager.debug.error(
+                "ApplicationTypeManager.getSaveIndex", ex);
         }
         return null;
     }
 
+    /**
+     * Returns resource comparator implementation class.
+     *
+     * @param className Resource comparator implementation class name.
+     * @return resource comparator implementation class.
+     */
     public static ResourceName getResourceComparator(String className) {
         if (className == null) {
             return null;
@@ -148,13 +171,15 @@ public class ApplicationTypeManager {
                 return (ResourceName) o;
             }
         } catch (InstantiationException ex) {
-            //TOFIX debug error
+            PrivilegeManager.debug.error(
+                "ApplicationTypeManager.getResourceComparator", ex);
         } catch (IllegalAccessException ex) {
-            //TOFIX debug error
+            PrivilegeManager.debug.error(
+                "ApplicationTypeManager.getResourceComparator", ex);
         } catch (ClassNotFoundException ex) {
-            //TOFIX debug error
+            PrivilegeManager.debug.error(
+                "ApplicationTypeManager.getResourceComparator", ex);
         }
         return null;
     }
-
 }
