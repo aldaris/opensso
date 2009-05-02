@@ -4,10 +4,10 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
+
     <ice:commandLink
         rendered="#{step != 0}"
         partialSubmit="false"
-        onclick="focusWizardStep('#{step-1}');"
         actionListener="#{handler.previousListener}">
 
         <f:attribute name="step" value="#{step}"/>
@@ -22,7 +22,6 @@
     <ice:commandLink
         rendered="#{step &lt; steps-1}"
         partialSubmit="false"
-        onclick="focusWizardStep('#{step+1}');"
         actionListener="#{handler.nextListener}">
 
         <f:attribute name="step" value="#{step}"/>

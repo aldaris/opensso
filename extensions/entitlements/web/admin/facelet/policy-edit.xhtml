@@ -16,6 +16,7 @@
     <ui:define name="panel-body">
         <o:wizard
             wizardHandler="#{policyEditWizardHandler}"
+            steps="5"
             wizardBean="#{policyEditWizardBean}">
             <ui:define name="wizard-steps">
                 <o:wstep
@@ -88,8 +89,5 @@
                 </o:wstep>
             </ui:define>
         </o:wizard>
-        <script type="text/javascript">
-            focusWizardStep(4);
-        </script>
     </ui:define>
 </ui:composition>

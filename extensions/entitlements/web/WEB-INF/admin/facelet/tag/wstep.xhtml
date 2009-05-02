@@ -5,18 +5,18 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
+
     <ice:panelCollapsible
         expanded="#{wizardBean.wizardStepBeans[step].expanded}"
         disabled="#{!wizardBean.wizardStepBeans[step].enabled}"
-        actionListener="#{wizardHandler.expandListener}">
+        actionListener="#{wizardHandler.expandListener}"
+        visible="#{true}">
 
         <f:attribute name="step" value="#{step}"/>
 
         <f:facet name="header">
             <ice:panelGroup>
-                <a class="wstep-link" href="#wstep#{step}">
-                    <ice:outputText value="#{label}"/>
-                </a>
+                <ice:outputText value="#{label}"/>
             </ice:panelGroup>
         </f:facet>
         <ui:insert name="wizard-step-body"/>
@@ -28,6 +28,9 @@
                 handler="#{wizardHandler}"
                 step="#{step}"/>
         </ice:panelGrid>
+        <script type="text/javascript">
+            focusWizardStep('#{step}');
+        </script>
     </ice:panelCollapsible>
     <a name="wstep#{step}"/>
 </ui:composition>

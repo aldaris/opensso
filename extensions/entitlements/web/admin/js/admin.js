@@ -11,5 +11,6 @@ function resizeFrame(f) {
 }
 
 function focusWizardStep(step) {
-    location.href = '#wstep'+step;
+    href = '#wstep'+step;
+    window.location.href = href;
 }
