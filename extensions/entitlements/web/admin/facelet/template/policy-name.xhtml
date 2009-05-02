@@ -28,21 +28,15 @@
                                 for="policyNameInput"
                                 value="Policy Name"/>
                         </ice:panelGroup>
-                        <ice:panelGroup
-                            rendered="#{policyNameBean.policyNameEditable}">
+                        <ice:panelGroup>
                             <ice:inputText
                                 id="policyNameInput"
+                                readonly="#{!policyNameBean.policyNameEditable}"
                                 required="true"
                                 partialSubmit="false"
                                 value="#{policyNameBean.privilegeBean.name}"
                                 effect="#{policyNameBean.policyNameInputEffect}"
                                 validator="#{policyNameHandler.validatePolicyName}"/>
-                        </ice:panelGroup>
-                        <ice:panelGroup
-                            rendered="#{!policyNameBean.policyNameEditable}">
-                            <ice:outputText
-                                style="font-weight: bold"
-                                value="#{policyNameBean.privilegeBean.name}"/>
                         </ice:panelGroup>
                         <ice:panelGroup>
                             <ice:outputLabel

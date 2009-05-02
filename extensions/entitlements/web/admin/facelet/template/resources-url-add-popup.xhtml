@@ -5,26 +5,28 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
-    <ice:panelPopup
-        styleClass="popup-modal"
+
+    <o:popup
+        type="question"
+        handler="#{urlResourcesHandler}"
         modal="true"
-        draggable="false"
+        title="Add URL Resources"
         visible="#{urlResourcesBean.addPopupVisible}"
-        autoCentre="true">
-        <f:facet name="header">
-            <ice:panelGrid>
-                <ice:outputText
-                    styleClass="popup-header"
-                    value="Add URL Resources"/>
-            </ice:panelGrid>
-        </f:facet>
-        <f:facet name="body">
+        closeListenerMethod="addPopupCancelListener">
+        <ui:define name="body">
             <ice:panelGroup>
                 <ice:panelGrid
+                    columnClasses="label-column,input-column"
                     columns="2">
-                    <ice:outputText
-                        value="URL Resource"/>
+                    <ice:panelGroup>
+                        <ice:outputLabel
+                            for="add-popup-input"
+                            value="URL Resource"/>
+                    </ice:panelGroup>
                     <ice:selectInputText
+                        id="add-popup-input"
+                        partialSubmit="true"
+                        immediate="true"
                         listVar="urlResource"
                         listValue="#{urlResourcesBean.addPopupAvailableResourceItems}"
                         valueChangeListener="#{urlResourcesHandler.addPopupUpdateAvailableResourcesListener}"
@@ -37,7 +39,7 @@
                         </f:facet>
                         <f:attribute
                             name="availableResources"
-                            value="#{policyResourcesBean.availableResources}"/>
+                            value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResources}"/>
                     </ice:selectInputText>
                 </ice:panelGrid>
                 <ice:panelGrid
@@ -51,7 +53,7 @@
                         <ui:define name="attributes">
                             <f:attribute
                                 name="availableResources"
-                                value="#{policyResourcesBean.availableResources}"/>
+                                value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResources}"/>
                             <f:attribute
                                 name="viewEntitlement"
                                 value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
@@ -64,6 +66,6 @@
                         listenerMethod="addPopupCancelListener"/>
                 </ice:panelGrid>
             </ice:panelGroup>
-        </f:facet>
-    </ice:panelPopup>
+        </ui:define>
+    </o:popup>
 </span>

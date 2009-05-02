@@ -1,18 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <ui:composition
-    template="template/page.xhtml"
+    template="template/page-no-title.xhtml"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
         
-    <ui:define name="panel-title">
-        <ice:outputText value="News" />
-    </ui:define>
-    <ui:define name="panel-details">
-        <ice:outputText value="OpenSSO news" />
-    </ui:define>
     <ui:define name="panel-body">
         <o:feed
             feedBean="#{newsFeedBean}"/>

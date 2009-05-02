@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.DeepCloneableArrayList;
 import com.sun.identity.admin.handler.BooleanActionsHandler;
 import com.sun.identity.entitlement.Entitlement;
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.faces.model.SelectItem;
 
 public class ViewEntitlement implements Serializable {
 
@@ -19,6 +21,7 @@ public class ViewEntitlement implements Serializable {
     private BooleanActionsBean booleanActionsBean = new BooleanActionsBean();
     private ViewApplication viewApplication;
     private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();;
+    private List<Resource> availableResources = new ArrayList<Resource>();
 
     public ViewEntitlement() {
         booleanActionsHandler.setBooleanActionsBean(booleanActionsBean);
@@ -51,6 +54,8 @@ public class ViewEntitlement implements Serializable {
             resources.add(r);
         }
 
+        resetAvailableResources();
+
         // exceptions
         for (String rs : e.getExcludedResourceNames()) {
             String resourceClassName = viewApplication.getViewApplicationType().getResourceClassName();
@@ -79,6 +84,15 @@ public class ViewEntitlement implements Serializable {
         }
     }
 
+    private void resetAvailableResources() {
+        availableResources = new DeepCloneableArrayList<Resource>(viewApplication.getResources()).deepClone();
+        for (Resource r: resources) {
+            if (!availableResources.contains(r)) {
+                availableResources.add(r);
+            }
+        }
+    }
+
     public List<Resource> getResources() {
         return resources;
     }
@@ -89,6 +103,7 @@ public class ViewEntitlement implements Serializable {
 
     public void setResources(List<Resource> resources) {
         this.resources = resources;
+        resetAvailableResources();
     }
 
     public Resource[] getResourceArray() {
@@ -146,6 +161,7 @@ public class ViewEntitlement implements Serializable {
 
     public void setViewApplication(ViewApplication viewApplication) {
         this.viewApplication = viewApplication;
+        resetAvailableResources();
     }
 
     public String getListToString(List list) {
@@ -198,5 +214,19 @@ public class ViewEntitlement implements Serializable {
 
     public BooleanActionsHandler getBooleanActionsHandler() {
         return booleanActionsHandler;
+    }
+
+    public List<Resource> getAvailableResources() {
+        return availableResources;
+    }
+
+    public List<SelectItem> getAvailableResourceItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+
+        for (Resource r : privilegeBean.getViewEntitlement().getAvailableResources()) {
+            items.add(new SelectItem(r, r.getName()));
+        }
+
+        return items;
     }
 }

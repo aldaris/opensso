@@ -5,26 +5,23 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
-    <ice:panelPopup
-        styleClass="popup-modal"
+
+    <o:popup
+        type="question"
+        handler="#{urlResourcesHandler}"
         modal="true"
-        draggable="false"
+        title="Add Exception"
         visible="#{urlResourcesBean.addExceptionPopupVisible}"
-        autoCentre="true">
-        <f:facet name="header">
-            <ice:panelGrid>
-                <ice:outputText
-                    styleClass="popup-header"
-                    value="Add Exception"/>
-            </ice:panelGrid>
-        </f:facet>
-        <f:facet name="body">
+        closeListenerMethod="addExceptionPopupCancelListener">
+        <ui:define name="body">
             <ice:panelGroup>
                 <ice:panelGrid
                     columns="2">
-                    <ice:outputText
+                    <ice:outputLabel
+                        for="resources-exception-input"
                         value="#{urlResourcesBean.addExceptionPopupResource.exceptionPrefix}"/>
                     <ice:inputText
+                        id="resources-exception-input"
                         value="#{urlResourcesBean.addExceptionPopupName}"/>
                 </ice:panelGrid>
                 <ice:panelGrid
@@ -46,6 +43,6 @@
                         listenerMethod="addExceptionPopupCancelListener"/>
                 </ice:panelGrid>
             </ice:panelGroup>
-        </f:facet>
-    </ice:panelPopup>
+        </ui:define>
+    </o:popup>
 </span>

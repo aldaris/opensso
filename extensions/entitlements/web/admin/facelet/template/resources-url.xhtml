@@ -31,7 +31,7 @@
                                     <ui:define name="attributes">
                                         <f:attribute
                                             name="availableResources"
-                                            value="#{policyResourcesBean.availableResources}"/>
+                                            value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResources}"/>
                                     </ui:define>
                                 </o:clink>
                                 <ice:outputText
@@ -48,9 +48,6 @@
                                         <f:attribute
                                             name="viewEntitlement"
                                             value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
-                                        <f:attribute
-                                            name="availableResources"
-                                            value="#{policyResourcesBean.availableResources}"/>
                                     </ice:inputText>
                                 </ice:panelGroup>
                             </ice:panelGrid>
@@ -66,13 +63,13 @@
                         value="#{policyResourcesBean.privilegeBean.viewEntitlement.resources}"
                         converter="urlResourceConverter">
                         <f:selectItems
-                            value="#{policyResourcesBean.availableResourceItems}"/>
+                            value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResourceItems}"/>
                     </ice:selectManyCheckbox>
                     <ice:panelGroup
                         scrollHeight="200px">
                         <ice:panelSeries
                             var="urlResource"
-                            value="#{policyResourcesBean.availableResources}">
+                            value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResources}">
                             <ice:panelGroup
                                 styleClass="url-resource-outer"
                                 visible="#{urlResource.visible}">
@@ -85,7 +82,7 @@
                                             <ice:checkbox
                                                 styleClass="url-resource-checkbox"
                                                 for="resource-select"
-                                                index="#{o:indexOf(policyResourcesBean.availableResources,urlResource)}">
+                                                index="#{o:indexOf(policyResourcesBean.privilegeBean.viewEntitlement.availableResources,urlResource)}">
                                             </ice:checkbox>
                                             <ice:panelGrid
                                                 columns="1">

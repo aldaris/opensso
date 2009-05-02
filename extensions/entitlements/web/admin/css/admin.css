@@ -103,7 +103,7 @@ body {
 }
 
 .label-column {
-    padding-top: 7px;
+    padding: 7px;
     vertical-align: top;
 }
 
@@ -279,48 +279,56 @@ div.button img.left {
 }
 
 .popup-info,
+.popup-question,
 .popup-error {
     z-index: 999;
     position: absolute;
     background: #FFFFFF;
-    max-width: 300px;
+    max-width: 600px;
+    min-width: 200px;
 }
 
 .popup-info pre span,
+.popup-question pre span,
 .popup-error pre span {
     font-family: monospace;
     font-size: larger;
 }
 
 .popup-info .icon,
+.popup-question .icon,
 .popup-error .icon {
     padding-left: 5px;
 }
 
 .popup-info .title,
+.popup-question .title,
 .popup-error .title {
     font-weight: bold;
     text-align: center;
 }
 
 .popup-info .title span,
+.popup-question .title span,
 .popup-error .title span {
     color: #6666cc;
 }
 
 .popup-info .close,
+.popup-question .close,
 .popup-error .close {
     padding-right: 5px;
     float:  right;
 }
 
 .popup-infoBody,
+.popup-questionBody,
 .popup-errorBody {
-    min-width: 200px;
     text-align: center;
 }
 
-.popup-infoBody span {
+.popup-infoBody span,
+.popup-questionBody span {
     color: #6666cc;
 }
 
