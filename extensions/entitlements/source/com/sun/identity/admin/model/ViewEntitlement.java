@@ -223,7 +223,7 @@ public class ViewEntitlement implements Serializable {
     public List<SelectItem> getAvailableResourceItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
 
-        for (Resource r : privilegeBean.getViewEntitlement().getAvailableResources()) {
+        for (Resource r : getAvailableResources()) {
             items.add(new SelectItem(r, r.getName()));
         }
 

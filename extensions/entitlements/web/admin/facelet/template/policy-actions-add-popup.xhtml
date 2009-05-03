@@ -5,27 +5,20 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
-
-    <ice:panelPopup
-        styleClass="popup-modal"
+    
+    <o:popup
+        type="question"
+        handler="#{booleanActionsHandler}"
         modal="true"
-        draggable="false"
+        title="Add Action"
         visible="#{booleanActionsBean.addPopupVisible}"
-        autoCentre="true">
-
-        <f:facet name="header">
-            <ice:panelGrid>
-                <ice:outputText
-                    styleClass="popup-header"
-                    value="Add Action"/>
-            </ice:panelGrid>
-        </f:facet>
-        <f:facet name="body">
+        closeListenerMethod="addPopupCancelListener">
+        <ui:define name="body">
             <ice:panelGroup>
                 <ice:panelGrid
                     columns="2">
                     <ice:outputText
-                    value="Action name"/>
+                        value="Action name"/>
                     <ice:inputText
                         value="#{booleanActionsBean.addPopupName}"/>
                 </ice:panelGrid>
@@ -43,6 +36,6 @@
                         listenerMethod="addPopupCancelListener"/>
                 </ice:panelGrid>
             </ice:panelGroup>
-        </f:facet>
-    </ice:panelPopup>
+        </ui:define>
+    </o:popup>
 </span>
