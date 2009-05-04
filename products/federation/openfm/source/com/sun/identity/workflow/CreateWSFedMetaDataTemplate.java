@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateWSFedMetaDataTemplate.java,v 1.7 2008-08-28 06:20:57 babysunil Exp $
+ * $Id: CreateWSFedMetaDataTemplate.java,v 1.8 2009-05-04 18:22:15 exu Exp $
  *
  */
 
@@ -53,10 +53,10 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0.SecurityTokenReference;
-import org.w3._2000._09.xmldsig_.X509Data;
-import org.w3._2000._09.xmldsig_.X509DataType.X509Certificate;
-import org.w3._2005._08.addressing.AttributedURIType;
+import com.sun.identity.wsfederation.jaxb.wsse.SecurityTokenReferenceElement;
+import com.sun.identity.wsfederation.jaxb.xmlsig.X509DataElement;
+import com.sun.identity.wsfederation.jaxb.xmlsig.X509DataType.X509Certificate;
+import com.sun.identity.wsfederation.jaxb.wsaddr.AttributedURIType;
 
 /**
  * Create WS Federation Meta Template.
@@ -116,17 +116,18 @@ public class CreateWSFedMetaDataTemplate {
         String maStr = buildMetaAliasInURI(idpAlias);
         
         if ((idpSCertAlias != null) && idpSCertAlias.length() > 0) {
-            org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0.ObjectFactory 
+            com.sun.identity.wsfederation.jaxb.wsse.ObjectFactory 
                 secextObjFactory = new 
-                org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0.ObjectFactory();
-            org.w3._2000._09.xmldsig_.ObjectFactory dsObjectFactory = new 
-                org.w3._2000._09.xmldsig_.ObjectFactory();
+                com.sun.identity.wsfederation.jaxb.wsse.ObjectFactory();
+            com.sun.identity.wsfederation.jaxb.xmlsig.ObjectFactory 
+                dsObjectFactory = new 
+                com.sun.identity.wsfederation.jaxb.xmlsig.ObjectFactory();
 
             TokenSigningKeyInfoElement tski = 
                 objFactory.createTokenSigningKeyInfoElement();
-            SecurityTokenReference str = 
-                secextObjFactory.createSecurityTokenReference();
-            X509Data x509Data = dsObjectFactory.createX509Data();
+            SecurityTokenReferenceElement str = 
+                secextObjFactory.createSecurityTokenReferenceElement();
+            X509DataElement x509Data = dsObjectFactory.createX509DataElement();
             X509Certificate x509Cert = 
                 dsObjectFactory.createX509DataTypeX509Certificate();
             x509Cert.setValue(
@@ -143,8 +144,8 @@ public class CreateWSFedMetaDataTemplate {
         
         TokenIssuerEndpointElement tie = 
             objFactory.createTokenIssuerEndpointElement();
-        org.w3._2005._08.addressing.ObjectFactory addrObjFactory = 
-            new org.w3._2005._08.addressing.ObjectFactory();
+        com.sun.identity.wsfederation.jaxb.wsaddr.ObjectFactory addrObjFactory =
+            new com.sun.identity.wsfederation.jaxb.wsaddr.ObjectFactory();
         AttributedURIType auri = addrObjFactory.createAttributedURIType();
         auri.setValue(url + "/WSFederationServlet" + maStr);
         tie.setAddress(auri);        
@@ -190,8 +191,8 @@ public class CreateWSFedMetaDataTemplate {
         
         TokenIssuerEndpointElement tie = 
             objFactory.createTokenIssuerEndpointElement();
-        org.w3._2005._08.addressing.ObjectFactory addrObjFactory = 
-            new org.w3._2005._08.addressing.ObjectFactory();
+        com.sun.identity.wsfederation.jaxb.wsaddr.ObjectFactory addrObjFactory =
+            new com.sun.identity.wsfederation.jaxb.wsaddr.ObjectFactory();
         AttributedURIType auri = addrObjFactory.createAttributedURIType();
         auri.setValue(url + "/WSFederationServlet" + maStr);
         tie.setAddress(auri);        
