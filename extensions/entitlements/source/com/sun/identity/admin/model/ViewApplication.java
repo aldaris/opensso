@@ -90,11 +90,11 @@ public class ViewApplication implements Serializable {
     }
 
     public Application toApplication(ViewApplicationTypeDao viewApplicationTypeDao) {
-        // TODO
         //
         // this is really just modifies the applications.
         //
 
+        // TODO: realm
         Application app = ApplicationManager.getApplication("/", name);
 
         // resources
