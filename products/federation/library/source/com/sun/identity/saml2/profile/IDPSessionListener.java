@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSessionListener.java,v 1.6 2009-03-13 23:50:58 weisun2 Exp $
+ * $Id: IDPSessionListener.java,v 1.7 2009-05-04 23:17:35 weisun2 Exp $
  *
  */
 
@@ -124,7 +124,9 @@ public class IDPSessionListener
            if (IDPCache.spSessionPartnerBySessionID.get(sessID) != null) {
                IDPCache.spSessionPartnerBySessionID.remove(sessID);
            }
-           SAML2Repository.getInstance().delete(sessionIndex);      
+           if (SAML2Utils.isSAML2FailOverEnabled()) {
+               SAML2Repository.getInstance().delete(sessionIndex);   
+           }       
            if (SAML2Utils.debug.messageEnabled()) {
                SAML2Utils.debug.message(
                    classMethod +
@@ -142,6 +144,6 @@ public class IDPSessionListener
                 SAML2Utils.debug.warning(
                     classMethod + "SAML2 Repository error.", samle);
             }        
-       }
+        } 
     }
 }
