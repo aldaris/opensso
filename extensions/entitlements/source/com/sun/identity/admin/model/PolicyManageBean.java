@@ -52,7 +52,9 @@ public class PolicyManageBean implements Serializable {
     }
 
     public void setSearchFilter(String searchFilter) {
-        this.searchFilter = searchFilter;
-        privilegeBeans = policyDao.getPrivilegeBeans(searchFilter);
+        if (!searchFilter.equals(this.searchFilter)) {
+            this.searchFilter = searchFilter;
+            privilegeBeans = policyDao.getPrivilegeBeans(searchFilter);
+        }
     }
 }

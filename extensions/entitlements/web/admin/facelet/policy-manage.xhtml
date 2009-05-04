@@ -40,9 +40,8 @@
                                             value="/admin/image/search.png"/>
                                         <ice:inputText
                                             styleClass="section-input"
-                                            onkeyup="submitNow(this); setFocus(this);"
-                                            valueChangeListener="#{policyManageHandler.searchFilterChangedListener}">
-                                        </ice:inputText>
+                                            onkeyup="submitNow(this); setFocus(this)"
+                                            value="#{policyManageBean.searchFilter}"/>
                                     </ice:panelGroup>
                                 </ice:panelGrid>
                             </span>

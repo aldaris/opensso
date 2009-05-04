@@ -42,13 +42,6 @@ public class PolicyManageHandler implements Serializable {
         policyManageBean.setViewOptionsPopupVisible(!policyManageBean.isViewOptionsPopupVisible());
     }
 
-    public void searchFilterChangedListener(ValueChangeEvent event) {
-        String newSearchFilter = (String)event.getNewValue();
-        if (!newSearchFilter.equals(policyManageBean.getSearchFilter())) {
-            policyManageBean.setSearchFilter(newSearchFilter);
-        }
-    }
-
     public void editListener(ActionEvent event) {
         PrivilegeBean pb = getPrivilegeBean(event);
         policyEditWizardBean.reset();
