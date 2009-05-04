@@ -968,6 +968,12 @@
         </managed-property>
     </managed-bean>
 
+    <managed-bean>
+        <managed-bean-name>navigationHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.NavigationHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
     <navigation-rule>
         <navigation-case>
             <from-outcome>home</from-outcome>
@@ -982,20 +988,8 @@
             <to-view-id>/admin/facelet/federation.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
-            <from-outcome>monitoring</from-outcome>
-            <to-view-id>/admin/facelet/monitoring.xhtml</to-view-id>
-        </navigation-case>
-        <navigation-case>
             <from-outcome>policy-create</from-outcome>
             <to-view-id>/admin/facelet/policy-create.xhtml</to-view-id>
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>policy-edit</from-outcome>
-            <to-view-id>/admin/facelet/policy-edit.xhtml</to-view-id>
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>policy-created</from-outcome>
-            <to-view-id>/admin/facelet/policy-created.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>policy-manage</from-outcome>
@@ -1014,6 +1008,9 @@
     <lifecycle>
         <phase-listener>
             com.sun.identity.admin.model.QueuedActionListener
+        </phase-listener>
+        <phase-listener>
+            net.sf.jsfcomp.onload.OnLoadPhaseListener
         </phase-listener>
     </lifecycle>
 </faces-config>

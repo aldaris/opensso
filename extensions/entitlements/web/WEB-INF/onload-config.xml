@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<onload-config xmlns="urn:onload-config"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:onload-config onload-config.xsd">
+
+  <navigation-rule>
+    <view-id>/admin/facelet/home.xhtml</view-id>
+    <action>#{navigationHandler.homeAction}</action>
+  </navigation-rule>
+  <navigation-rule>
+    <view-id>/admin/facelet/policy-create.xhtml</view-id>
+    <action>#{navigationHandler.policyCreateAction}</action>
+  </navigation-rule>
+  <navigation-rule>
+    <view-id>/admin/facelet/policy-manage.xhtml</view-id>
+    <action>#{navigationHandler.policyManageAction}</action>
+  </navigation-rule>
+  <navigation-rule>
+    <view-id>/admin/facelet/news.xhtml</view-id>
+    <action>#{navigationHandler.newsAction}</action>
+  </navigation-rule>
+  <navigation-rule>
+    <view-id>/admin/facelet/federation.xhtml</view-id>
+    <action>#{navigationHandler.federationCreateAction}</action>
+  </navigation-rule>
+</onload-config>

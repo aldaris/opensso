@@ -42,6 +42,10 @@
             /WEB-INF/admin/facelet/opensso.taglib.xml
         </param-value>
     </context-param>
+    <context-param>
+        <param-name>onload-config</param-name>
+        <param-value>/WEB-INF/onload-config.xml</param-value>
+    </context-param>
 
     <filter>
         <filter-name>ConsoleAuthFilter</filter-name>
