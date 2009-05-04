@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneWS7Container.java,v 1.9 2009-03-13 23:00:38 ykwon Exp $
+ * $Id: TuneWS7Container.java,v 1.10 2009-05-04 23:35:14 ykwon Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -323,7 +323,7 @@ public class TuneWS7Container extends TuneWebServer implements
             if (!curCfgMap.get(ACCEPTOR_THREADS).toString().equals("default")) {
                 int curAcceptorT = Integer.parseInt(
                         curCfgMap.get(ACCEPTOR_THREADS).toString());
-                if (curAcceptorT < configInfo.getAcceptorThreads()) {
+                if (curAcceptorT != configInfo.getAcceptorThreads()) {
                     isHttpListnerPropChanged = setHttpListenerProp();
                 }
             } else {

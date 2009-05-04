@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneAS9Container.java,v 1.9 2009-03-13 23:00:25 ykwon Exp $
+ * $Id: TuneAS9Container.java,v 1.10 2009-05-04 23:35:53 ykwon Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -33,6 +33,7 @@ import com.sun.identity.tune.common.AMTuneException;
 import com.sun.identity.tune.common.AMTuneLogger;
 import com.sun.identity.tune.config.AS9ContainerConfigInfo;
 import com.sun.identity.tune.config.AMTuneConfigInfo;
+import com.sun.identity.tune.constants.AMTuneConstants;
 import com.sun.identity.tune.constants.WebContainerConstants;
 import com.sun.identity.tune.intr.TuneAppServer;
 import com.sun.identity.tune.util.AMTuneUtil;
@@ -148,7 +149,7 @@ public class TuneAS9Container extends TuneAppServer implements
             mWriter.writeln(ACCEPTOR_THREADS + "=" +
                     configInfo.getAcceptorThreads());
             mWriter.writeln(" ");
-            
+
             mWriter.writelnLocaleMsg("pt-as-pending-count-threads-msg");
             mWriter.writeLocaleMsg("pt-cur-val");
             mWriter.writeln(MAX_PENDING_COUNT + "=" +
@@ -288,6 +289,7 @@ public class TuneAS9Container extends TuneAppServer implements
             mWriter.writeLocaleMsg("pt-rec-val");
             mWriter.writeln(asAdminNewUseConMarkSweepGc);
             mWriter.writeln(" ");
+
             String asAdminNewServerpolicy = "";
             if (asConfigInfo.isTuneWebContainerJavaPolicy()) {
                 asAdminNewServerpolicy =
@@ -308,12 +310,32 @@ public class TuneAS9Container extends TuneAppServer implements
                 mWriter.writeln(PARALLEL_GC_THREADS + "=" + 
                         curCfgMap.get(PARALLEL_GC_THREADS));
                 mWriter.writeLocaleMsg("pt-rec-val");
-                mWriter.writeLocaleMsg("pt-rec-none");
+                mWriter.writelnLocaleMsg("pt-rec-none");
                 mWriter.writeln(" ");
             }
+            
+            mWriter.writelnLocaleMsg("pt-as-rqst-proc-init-threads-msg");
+            mWriter.writeLocaleMsg("pt-cur-val");
+            mWriter.writeln(REQUEST_PROCESSING_INITIAL_THREAD_COUNT + "=" +
+                    curCfgMap.get(REQUESTPROC_INIT_THREAD_PARAM));
+            mWriter.writeLocaleMsg("pt-rec-val");
+            mWriter.writeln(REQUEST_PROCESSING_INITIAL_THREAD_COUNT + "=" +
+                    AMTUNE_NUM_WS_RQTHROTTLE_MIN);
+            mWriter.writeln(" ");
+
+            mWriter.writelnLocaleMsg("pt-as-rqst-proc-thread-count-msg");
+            mWriter.writeLocaleMsg("pt-cur-val");
+            mWriter.writeln(REQUEST_PROCESSING_THREAD_COUNT + "=" +
+                    curCfgMap.get(REQUESTPROC_THREAD_PARAM));
+            mWriter.writeLocaleMsg("pt-rec-val");
+            mWriter.writeln(REQUEST_PROCESSING_THREAD_COUNT + "=" +
+                    getMaxThreadPoolVal());
+            mWriter.writeln(" ");
+
             if (configInfo.isReviewMode()) {
                 return;
             }
+
             AMTuneUtil.backupConfigFile(tuneFile);
             setASParams();
             List delOptList = new ArrayList();
@@ -407,7 +429,8 @@ public class TuneAS9Container extends TuneAppServer implements
     }
     /**
      * This method Construct a parameter string to perform an asadmin 
-     * set for acceptor-thread, queue-size, and count-thread parameters
+     * set for acceptor-thread, request-processing thread, queue-size 
+     * and count-thread parameters
      */
     private void setASParams() {
         try {
@@ -415,11 +438,31 @@ public class TuneAS9Container extends TuneAppServer implements
             if (curCfgMap.get(ACCEPTOR_THREAD_PARAM) != null) {
                 int curAccVal = Integer.parseInt(
                         curCfgMap.get(ACCEPTOR_THREAD_PARAM).toString());
-                if (curAccVal < configInfo.getAcceptorThreads()) {
+                if (curAccVal != configInfo.getAcceptorThreads()) {
                     asAdminSetParams.append(
                             asConfigInfo.getAcceptorThreadString());
                     asAdminSetParams.append("=");
                     asAdminSetParams.append(configInfo.getAcceptorThreads());
+                    asAdminSetParams.append(" ");
+                }
+            }
+            if (curCfgMap.get(REQUESTPROC_INIT_THREAD_PARAM) != null) {
+                int curReqInitVal = Integer.parseInt(
+                     curCfgMap.get(REQUESTPROC_INIT_THREAD_PARAM).toString());
+                if (curReqInitVal < AMTUNE_NUM_WS_RQTHROTTLE_MIN) {
+                    asAdminSetParams.append(REQUESTPROC_INIT_THREAD_PARAM);
+                    asAdminSetParams.append("=");
+                    asAdminSetParams.append(AMTUNE_NUM_WS_RQTHROTTLE_MIN);
+                    asAdminSetParams.append(" ");
+                }
+            }
+            if (curCfgMap.get(REQUESTPROC_THREAD_PARAM) != null) {
+                int curReqVal = Integer.parseInt(
+                      curCfgMap.get(REQUESTPROC_THREAD_PARAM).toString());
+                if (curReqVal < getMaxThreadPoolVal()) {
+                    asAdminSetParams.append(REQUESTPROC_THREAD_PARAM);
+                    asAdminSetParams.append("=");
+                    asAdminSetParams.append(getMaxThreadPoolVal());
                     asAdminSetParams.append(" ");
                 }
             }
@@ -675,6 +718,20 @@ public class TuneAS9Container extends TuneAppServer implements
     
     protected void deletePasswordFile() {
         AMTuneUtil.deleteFile(asConfigInfo.getAdminPassfilePath());
+    }
+
+    /**
+     * Return maximum number of threads.
+     */
+    private int getMaxThreadPoolVal() {
+        int recMaxThreadPool = configInfo.getNumOfMaxThreadPool();
+        if (recMaxThreadPool < AMTUNE_NUM_WS_THREADS_MIN_VAL) {
+            recMaxThreadPool = AMTUNE_NUM_WS_THREADS_MIN_VAL;
+        }
+        if (recMaxThreadPool > AMTUNE_NUM_WS_THREADS_MAX_VAL) {
+            recMaxThreadPool = AMTUNE_NUM_WS_THREADS_MAX_VAL;
+        }
+        return recMaxThreadPool;
     }
     
     /**

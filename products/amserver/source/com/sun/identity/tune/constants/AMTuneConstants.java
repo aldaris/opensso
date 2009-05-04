@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConstants.java,v 1.10 2009-03-13 22:59:10 ykwon Exp $
+ * $Id: AMTuneConstants.java,v 1.11 2009-05-04 23:32:08 ykwon Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -55,6 +55,10 @@ public interface AMTuneConstants {
     static String NIAGARA_II_PLUS_T5140 = "T5140";
     static String NIAGARA_II_PLUS_T5240 = "T5240";
     static String NIAGARA_II_PLUS_T5440 = "T5440";
+    //Niagara or CMT's hardware threads per core and scaling factors
+    static int DIV_NUM_CPU_NIAGARA_I = 4;
+    static int DIV_NUM_CPU_NIAGARA_II = 8;
+    static int MIN_NUM_CPU = 1;
 
     static String LOG_DIR = "logs";
     static String ROOT_REALM = "/";

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.13 2009-03-13 23:01:36 ykwon Exp $
+ * $Id: AMTuneUtil.java,v 1.14 2009-05-04 23:34:10 ykwon Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -56,7 +56,6 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
-
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -265,6 +264,23 @@ import java.util.zip.ZipOutputStream;
                         .getString("pt-unable-no-cpu"));
             } else {
             	setNiagaraBoxType(hwPlatform);
+                 if (isNiagara_I()) {
+                     pLogger.log(Level.INFO, "getSunOSSystemInfo",
+                            "Tuning T1 box");
+                     if (noCpus >= DIV_NUM_CPU_NIAGARA_I) {
+                        noCpus = noCpus / DIV_NUM_CPU_NIAGARA_I;
+                     } else {
+                        noCpus = MIN_NUM_CPU;
+                     }
+                 } else if (isNiagara_II() || isNiagara_II_Plus()) {
+                     pLogger.log(Level.INFO, "getSunOSSystemInfo",
+                             "Tuning T2 or T2 Plus box");
+                     if (noCpus >= DIV_NUM_CPU_NIAGARA_II) {
+                        noCpus = noCpus / DIV_NUM_CPU_NIAGARA_II;
+                     } else {
+                        noCpus = MIN_NUM_CPU;
+                     }
+                 }
                 sysInfoMap.put(PROCESSERS_LINE, Integer.toString(noCpus));
             }
             rBuf.setLength(0);
@@ -783,7 +799,7 @@ import java.util.zip.ZipOutputStream;
     }
     
     /**
-     * Return true for T5220,T5240 and T5440.
+     * Return true for T5140,T5240 and T5440.
      */
     public static boolean isNiagara_II_Plus() {
         return isNiagara_II_Plus;
@@ -795,16 +811,16 @@ import java.util.zip.ZipOutputStream;
             if (hwPlatform.indexOf(NIAGARA_I_T1000) != -1 ||
                     hwPlatform.indexOf(NIAGARA_I_T2000) != -1) {
                 isNiagara_I = true;
-                pLogger.log(Level.FINEST, "setNiagaraBoxType", "Niagara I");
+                pLogger.log(Level.FINEST, "setNiagaraBoxType", "T1 ");
             } else if (hwPlatform.indexOf(NIAGARA_II_T5120) != -1 ||
                     hwPlatform.indexOf(NIAGARA_II_T5220) != -1) {
                 isNiagara_II = true;
-                pLogger.log(Level.FINEST, "setNiagaraBoxType", "Niagara II");
-            } else if (hwPlatform.indexOf(NIAGARA_II_T5220) != -1 ||
+                pLogger.log(Level.FINEST, "setNiagaraBoxType", "T2");
+            } else if (hwPlatform.indexOf(NIAGARA_II_PLUS_T5140) != -1 ||
                     hwPlatform.indexOf(NIAGARA_II_PLUS_T5240) != -1 ||
                     hwPlatform.indexOf(NIAGARA_II_PLUS_T5440) != -1) {
                 isNiagara_II_Plus = true;
-                pLogger.log(Level.FINEST, "setNiagaraBoxType", "Niagara II-P");
+                pLogger.log(Level.FINEST, "setNiagaraBoxType", "T2 Plus");
             }
         }
     }
