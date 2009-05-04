@@ -9,6 +9,7 @@ public class BooleanActionsBean implements Serializable {
     private List<Action> actions = new ArrayList<Action>();
     private boolean addPopupVisible = false;
     private String addPopupName;
+    private ViewApplication viewApplication;
 
     public List<Action> getActions() {
         return actions;
@@ -62,5 +63,13 @@ public class BooleanActionsBean implements Serializable {
 
         return b.toString();
 
+    }
+
+    public ViewApplication getViewApplication() {
+        return viewApplication;
+    }
+
+    public void setViewApplication(ViewApplication viewApplication) {
+        this.viewApplication = viewApplication;
     }
 }

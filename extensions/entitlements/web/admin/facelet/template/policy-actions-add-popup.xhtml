@@ -5,9 +5,9 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
-    
+
     <o:popup
-        type="question"
+        type="warning"
         handler="#{booleanActionsHandler}"
         modal="true"
         title="Add Action"
@@ -15,11 +15,21 @@
         closeListenerMethod="addPopupCancelListener">
         <ui:define name="body">
             <ice:panelGroup>
+                <ice:panelGroup
+                    style="text-align: left; padding-bottom: 10px">
+                    <ice:outputFormat
+                        escape="false"
+                        value="#{resources['policy-actions-add-popup.warning']}">
+                        <f:param value="#{booleanActionsBean.viewApplication.title}"/>
+                    </ice:outputFormat>
+                </ice:panelGroup>
                 <ice:panelGrid
                     columns="2">
-                    <ice:outputText
+                    <ice:outputLabel
+                        for="actions-add-popup-name"
                         value="Action name"/>
                     <ice:inputText
+                        id="actions-add-popup-name"
                         value="#{booleanActionsBean.addPopupName}"/>
                 </ice:panelGrid>
                 <ice:panelGrid
@@ -29,6 +39,14 @@
                         type="ok"
                         handler="#{booleanActionsHandler}"
                         listenerMethod="addPopupOkListener">
+                        <ui:define name="attributes">
+                            <f:attribute
+                                name="viewApplicationsBean"
+                                value="#{viewApplicationsBean}"/>
+                            <f:attribute
+                                name="viewApplicationDao"
+                                value="#{viewApplicationDao}"/>
+                        </ui:define>
                     </o:button>
                     <o:button
                         type="cancel"

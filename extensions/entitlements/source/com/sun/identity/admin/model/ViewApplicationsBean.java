@@ -16,4 +16,8 @@ public class ViewApplicationsBean implements Serializable {
     public Map<String, ViewApplication> getViewApplications() {
         return viewApplications;
     }
+
+    public void reset() {
+        viewApplications = viewApplicationDao.getViewApplications();
+    }
 }

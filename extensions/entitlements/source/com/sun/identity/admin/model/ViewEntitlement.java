@@ -22,6 +22,7 @@ public class ViewEntitlement implements Serializable {
     private ViewApplication viewApplication;
     private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();;
     private List<Resource> availableResources = new ArrayList<Resource>();
+    private ViewApplicationsBean viewApplicationsBean;
 
     public ViewEntitlement() {
         booleanActionsHandler.setBooleanActionsBean(booleanActionsBean);
@@ -35,7 +36,7 @@ public class ViewEntitlement implements Serializable {
         }
 
         // application
-        viewApplication = viewApplications.get(e.getApplicationName());
+        setViewApplication(viewApplications.get(e.getApplicationName()));
 
         // resources
         for (String rs : e.getResourceNames()) {
@@ -161,6 +162,8 @@ public class ViewEntitlement implements Serializable {
 
     public void setViewApplication(ViewApplication viewApplication) {
         this.viewApplication = viewApplication;
+        booleanActionsBean.setViewApplication(viewApplication);
+
         resetAvailableResources();
     }
 
@@ -228,5 +231,13 @@ public class ViewEntitlement implements Serializable {
         }
 
         return items;
+    }
+
+    public ViewApplicationsBean getViewApplicationsBean() {
+        return viewApplicationsBean;
+    }
+
+    public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
+        this.viewApplicationsBean = viewApplicationsBean;
     }
 }
