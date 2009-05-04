@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.22 2008-06-25 05:46:14 qcheng Exp $
+   $Id: build.xml,v 1.23 2009-05-04 18:21:06 exu Exp $
 
 -->
 
@@ -88,11 +88,12 @@
     <target name="xsd.wsfederation" depends="preparebuild" unless="library.xsd.wsfederation.done">
         <property name="xsd.wsfederation.dir" value="${library.xsd.dir}/wsfederation"/>
         <property name="xsd.wsfederation.catalog" value="${xsd.wsfederation.dir}/catalog.xml"/>
-        <property name="xsd.wsfederation.files" value="${xsd.wsfederation.dir}/ws-federation.xsd ${xsd.wsfederation.dir}/entity-config-schema.xsd" />
+        <property name="xsd.wsfederation.files" value="${xsd.wsfederation.dir}/xmldsig-core-schema.xsd ${xsd.wsfederation.dir}/oasis-200401-wss-wssecurity-utility-1.0.xsd ${xsd.wsfederation.dir}/oasis-200401-wss-wssecurity-secext-1.0.xsd
+${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.wsfederation.dir}/ws-securitypolicy-1.2.xsd ${xsd.wsfederation.dir}/ws-federation.xsd ${xsd.wsfederation.dir}/entity-config-schema.xsd" />
         <java classname="com.sun.tools.xjc.Driver" 
             maxmemory="128m" failonerror="true" fork="true">
             <classpath refid="build.class.path"/>
-            <arg line="-b ${xsd.wsfederation.dir}/binding.xjb -extension -verbose -d ${library.src.dir} -catalog ${xsd.wsfederation.catalog} ${xsd.wsfederation.files}"/> 
+            <arg line="-b ${xsd.wsfederation.dir}/binding.xjb -extension -verbose -d ${library.src.dir} ${xsd.wsfederation.files}"/> 
         </java>
         <property name="library.xsd.wsfederation.done" value="true" />
         <concat destfile="${libtracker}" append="true">library.xsd.wsfederation.done=true&#10;</concat>

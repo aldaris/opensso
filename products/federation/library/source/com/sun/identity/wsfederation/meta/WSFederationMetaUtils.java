@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaUtils.java,v 1.3 2008-06-25 05:48:06 qcheng Exp $
+ * $Id: WSFederationMetaUtils.java,v 1.4 2009-05-04 18:21:06 exu Exp $
  *
  */
 
@@ -65,9 +65,14 @@ public final class WSFederationMetaUtils {
     // Need to explicitly list xmldsig, otherwise JAXB doesn't see it, since
     // dsig elements are buried in 'any' elements. Grrr...
     private static final String JAXB_PACKAGES =
+        "com.sun.identity.wsfederation.jaxb.xmlsig:" +
+        "com.sun.identity.wsfederation.jaxb.wsu:" +
+        "com.sun.identity.wsfederation.jaxb.wsse:" +
+        "com.sun.identity.wsfederation.jaxb.wsaddr:" +
+        "com.sun.identity.wsfederation.jaxb.wspolicy:" +
+        "com.sun.identity.wsfederation.jaxb.wsspolicy:" +
         "com.sun.identity.wsfederation.jaxb.entityconfig:" +
-        "com.sun.identity.wsfederation.jaxb.wsfederation:" +
-        "org.w3._2000._09.xmldsig_";
+        "com.sun.identity.wsfederation.jaxb.wsfederation";
 
     private static JAXBContext jaxbContext = null;
     private static final String PROP_JAXB_FORMATTED_OUTPUT =

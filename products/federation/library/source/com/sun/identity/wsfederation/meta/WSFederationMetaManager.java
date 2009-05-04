@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaManager.java,v 1.6 2008-11-10 22:57:04 veiming Exp $
+ * $Id: WSFederationMetaManager.java,v 1.7 2009-05-04 18:21:06 exu Exp $
  *
  */
 
@@ -59,9 +59,9 @@ import com.sun.identity.wsfederation.jaxb.wsfederation.TokenIssuerNameElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.TokenSigningKeyInfoElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.UriNamedClaimTypesOfferedElement;
 import com.sun.identity.wsfederation.logging.LogUtil;
-import org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0.SecurityTokenReferenceType;
-import org.w3._2000._09.xmldsig_.X509DataType;
-import org.w3._2000._09.xmldsig_.X509DataType.X509Certificate;
+import com.sun.identity.wsfederation.jaxb.wsse.SecurityTokenReferenceType;
+import com.sun.identity.wsfederation.jaxb.xmlsig.X509DataType;
+import com.sun.identity.wsfederation.jaxb.xmlsig.X509DataType.X509Certificate;
 
 /**
  * The <code>WSFederationMetaManager</code> provides methods to manage both the 

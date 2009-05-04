@@ -17,7 +17,7 @@
 
    [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
 
-   $Id: ws-addr.xsd,v 1.1 2007-06-22 07:06:49 superpat7 Exp $
+   $Id: ws-addr.xsd,v 1.2 2009-05-04 18:21:06 exu Exp $
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.w3.org/2005/08/addressing" targetNamespace="http://www.w3.org/2005/08/addressing" blockDefault="#all" elementFormDefault="qualified" finalDefault="" attributeFormDefault="unqualified">
 	

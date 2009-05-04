@@ -57,13 +57,13 @@ No other rights are granted by implication, estoppel or otherwise.
 		   elementFormDefault='qualified' >
 
   <xs:import namespace='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd' 
-			 schemaLocation='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd' />
+			 schemaLocation='oasis-200401-wss-wssecurity-secext-1.0.xsd' />
   <xs:import namespace='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd' 
-			 schemaLocation='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd' />
+			 schemaLocation='oasis-200401-wss-wssecurity-utility-1.0.xsd' />
   <xs:import namespace='http://www.w3.org/2005/08/addressing' 
-			 schemaLocation='http://www.w3.org/2006/03/addressing/ws-addr.xsd' />
+			 schemaLocation='ws-addr.xsd' />
   <xs:import namespace='http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200512' 
-			 schemaLocation='http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200512/ws-securitypolicy-1.2.xsd'/>
+			 schemaLocation='ws-securitypolicy-1.2.xsd'/>
 
   <!-- Section 3.1 -->
   <xs:element name='FederationMetadata' type='tns:FederationMetadataType' />
