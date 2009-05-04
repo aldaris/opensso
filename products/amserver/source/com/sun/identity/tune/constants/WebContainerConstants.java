@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebContainerConstants.java,v 1.5 2009-03-13 22:59:22 ykwon Exp $
+ * $Id: WebContainerConstants.java,v 1.6 2009-05-04 23:27:06 ykwon Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -89,8 +89,15 @@ public interface WebContainerConstants extends AMTuneConstants {
             "AMTUNE_WEB_CONTAINER_JAVA_POLICY";
     static String JAVA_SECURITY_POLICY = "-Djava.security.policy";
     static String MAX_PENDING_COUNT = "max-pending-count";
-        
+    static String REQUEST_PROCESSING_INITIAL_THREAD_COUNT = 
+            "initial-thread-count";
+    static String REQUEST_PROCESSING_THREAD_COUNT =
+            "thread-count";
     static String ACCEPTOR_THREAD_PARAM = ".acceptor-threads";
+    static String REQUESTPROC_THREAD_PARAM = 
+            "server.http-service.request-processing.thread-count";
+    static String REQUESTPROC_INIT_THREAD_PARAM =
+            "server.http-service.request-processing.initial-thread-count";
     static String COUNT_THREAD_PARAM = 
             "server.http-service.connection-pool.max-pending-count";
     static String QUEUE_SIZE_PARAM =

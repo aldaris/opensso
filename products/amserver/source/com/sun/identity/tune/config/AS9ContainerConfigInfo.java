@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AS9ContainerConfigInfo.java,v 1.6 2009-03-13 22:57:40 ykwon Exp $
+ * $Id: AS9ContainerConfigInfo.java,v 1.7 2009-05-04 23:28:28 ykwon Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -174,6 +174,10 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
             getCmd.append(" ");
             getCmd.append(acceptorThreadParam);
             getCmd.append(" ");
+            getCmd.append(REQUESTPROC_INIT_THREAD_PARAM);
+            getCmd.append(" ");
+            getCmd.append(REQUESTPROC_THREAD_PARAM);
+            getCmd.append(" ");
             getCmd.append(COUNT_THREAD_PARAM);
             getCmd.append(" ");
             getCmd.append(QUEUE_SIZE_PARAM);
@@ -196,6 +200,14 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
                 FileHandler cfgF = new FileHandler(tempFile);
                 reqLine =  cfgF.getLine(acceptorThreadParam);
                 cfgMap.put(ACCEPTOR_THREAD_PARAM, 
+                        AMTuneUtil.getLastToken(reqLine, PARAM_VAL_DELIM));
+
+                reqLine = cfgF.getLine(REQUESTPROC_INIT_THREAD_PARAM);
+                cfgMap.put(REQUESTPROC_INIT_THREAD_PARAM,
+                        AMTuneUtil.getLastToken(reqLine, PARAM_VAL_DELIM));
+
+                reqLine = cfgF.getLine(REQUESTPROC_THREAD_PARAM);
+                cfgMap.put(REQUESTPROC_THREAD_PARAM,
                         AMTuneUtil.getLastToken(reqLine, PARAM_VAL_DELIM));
                 
                 reqLine = cfgF.getLine(COUNT_THREAD_PARAM);
