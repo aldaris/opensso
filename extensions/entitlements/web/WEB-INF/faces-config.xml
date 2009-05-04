@@ -255,7 +255,7 @@
         </managed-property>
         <managed-property>
             <property-name>subjectIconUri</property-name>
-            <value>/admin/image/or.gif</value>
+            <value>/admin/image/or.png</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -276,7 +276,7 @@
         </managed-property>
         <managed-property>
             <property-name>subjectIconUri</property-name>
-            <value>/admin/image/and.gif</value>
+            <value>/admin/image/and.png</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -297,7 +297,7 @@
         </managed-property>
         <managed-property>
             <property-name>subjectIconUri</property-name>
-            <value>/admin/image/not.gif</value>
+            <value>/admin/image/not.png</value>
         </managed-property>
     </managed-bean>
 
@@ -647,7 +647,7 @@
         </managed-property>
         <managed-property>
             <property-name>conditionIconUri</property-name>
-            <value>/admin/image/or.gif</value>
+            <value>/admin/image/or.png</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -668,7 +668,7 @@
         </managed-property>
         <managed-property>
             <property-name>conditionIconUri</property-name>
-            <value>/admin/image/and.gif</value>
+            <value>/admin/image/and.png</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -689,7 +689,7 @@
         </managed-property>
         <managed-property>
             <property-name>conditionIconUri</property-name>
-            <value>/admin/image/not.gif</value>
+            <value>/admin/image/not.png</value>
         </managed-property>
     </managed-bean>
 
