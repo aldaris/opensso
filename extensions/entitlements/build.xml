@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.36 2009-05-01 21:43:40 dillidorai Exp $
+  $Id: build.xml,v 1.37 2009-05-04 23:52:05 dillidorai Exp $
 
 -->
 
@@ -297,10 +297,11 @@
         <property environment="env" />
         <echo message="compiling xacml3 schema to create java source " />
         <echo message="JAVA_HOME=${env.JAVA_HOME}" />
+        <mkdir dir="build/source" />
         <java classname="com.sun.tools.internal.xjc.Driver" 
             classpath="${env.JAVA_HOME}/lib/tools.jar"
             maxmemory="256m" failonerror="true" fork="true">
-            <arg line="-b xsd/xacml-core-v3.xjb -extension -d source xsd/xacml-core-v3-schema-cd-1.xsd"/> 
+            <arg line="-b xsd/xacml-core-v3.xjb -extension -d build/source xsd/xacml-core-v3-schema-cd-1.xsd"/> 
         </java>
     </target>
 
