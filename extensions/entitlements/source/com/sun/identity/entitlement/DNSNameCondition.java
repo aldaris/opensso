@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNSNameCondition.java,v 1.2 2009-05-02 08:53:59 veiming Exp $
+ * $Id: DNSNameCondition.java,v 1.3 2009-05-04 20:57:05 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -114,7 +114,7 @@ public class DNSNameCondition implements EntitlementCondition {
             domainNameMask = jo.optString("domainNameMask");
             pConditionName = jo.optString("pConditionName");
         } catch (JSONException joe) {
-            //TOFIX
+            PrivilegeManager.debug.error("DNSNameCondition.setState", joe);
         }
     }
 

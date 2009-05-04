@@ -22,21 +22,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceSaveIndexes.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
+ * $Id: ResourceSaveIndexes.java,v 1.2 2009-05-04 20:57:06 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import java.util.Set;
 
 /**
- *
- * @author dennis
+ * This class encapculates the resource indexes which are stored in data store.
+ * These indexes are created to boost performance (policy evaluation).
  */
 public class ResourceSaveIndexes {
     private Set<String> hostIndexes;
     private Set<String> pathIndexes;
     private Set<String> parentPath;
 
+    /**
+     * Constructor.
+     *
+     * @param hostIndexes Set of host indexes.
+     * @param pathIndexes Set of path indexes.
+     * @param parentPath Set of parent path indexes.
+     */
     public ResourceSaveIndexes(
         Set<String> hostIndexes,
         Set<String> pathIndexes,
@@ -47,18 +54,38 @@ public class ResourceSaveIndexes {
         this.parentPath = parentPath;
     }
 
+    /**
+     * Returns host indexes.
+     *
+     * @return host indexes.
+     */
     public Set<String> getHostIndexes() {
         return hostIndexes;
     }
 
-    public Set<String> getParentPath() {
+    /**
+     * Returns parent path indexes.
+     *
+     * @return parent path indexes.
+     */
+    public Set<String> getParentPathIndexes() {
         return parentPath;
     }
 
+    /**
+     * Returns path indexes.
+     *
+     * @return path indexes.
+     */
     public Set<String> getPathIndexes() {
         return pathIndexes;
     }
 
+    /**
+     * Adds all resource indexes from other object.
+     *
+     * @param other the other resource save indexes object.
+     */
     public void addAll(ResourceSaveIndexes other) {
         this.hostIndexes.addAll(other.hostIndexes);
         this.pathIndexes.addAll(other.pathIndexes);

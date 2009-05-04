@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.8 2009-05-02 08:54:00 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.9 2009-05-04 20:57:06 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,6 +39,9 @@ import javax.security.auth.Subject;
  * Class to manage entitlement privileges: to add, remove, modify privilege
  */
 public abstract class PrivilegeManager {
+    /**
+     * Debug for Policy Administration Point classes
+     */
     public static IDebug debug = DebugFactory.getDebug("Entitlement");
 
     private Subject adminSubject;
@@ -67,6 +70,9 @@ public abstract class PrivilegeManager {
         return pm;
     }
 
+    /**
+     * Constructor.
+     */
     public PrivilegeManager() {
     }
 
@@ -152,11 +158,13 @@ public abstract class PrivilegeManager {
      * @param filter Set of search filter.
      * @param boolAnd <code>true</code> for AND-ing the search filter.
      * @return a set of privilege names for a given search criteria.
+     * @throws EntitlementException if search failed.
      */
     public Set<String> searchPrivilegeNames(
         String realm,
         Set<PrivilegeSearchFilter> filter,
-        boolean boolAnd) {
+        boolean boolAnd
+    ) throws EntitlementException {
         IPolicyDataStore datastore =
             PolicyDataStoreFactory.getInstance().getDataStore();
         return datastore.searchPrivilegeNames(

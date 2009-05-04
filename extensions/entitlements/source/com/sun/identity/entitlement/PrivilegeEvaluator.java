@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.12 2009-04-30 23:23:01 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.13 2009-05-04 20:57:06 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -189,7 +189,7 @@ class PrivilegeEvaluator {
     private Application getApplication() {
         if (application == null) {
             application = ApplicationManager.getApplication(
-                "/", applicationName); //TOFIX: realm and NPE
+                "/", applicationName); //TOFIX: realm
         }
         return application;
     }

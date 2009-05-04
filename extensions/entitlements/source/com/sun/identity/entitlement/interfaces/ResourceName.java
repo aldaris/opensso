@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceName.java,v 1.1 2009-04-07 10:25:09 veiming Exp $
+ * $Id: ResourceName.java,v 1.2 2009-05-04 20:57:06 veiming Exp $
  *
  */
 
@@ -43,7 +43,6 @@ import com.sun.identity.policy.ResourceMatch;
  * determine its hierarchy during policy evaluation and
  * also its display in the GUI. A class that implements
  * this interface must have a empty constructor.
- * @supported.all.api
  */
 public interface ResourceName {
 

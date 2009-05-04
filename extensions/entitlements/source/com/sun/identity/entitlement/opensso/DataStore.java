@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.7 2009-04-30 23:23:02 veiming Exp $
+ * $Id: DataStore.java,v 1.8 2009-05-04 20:57:07 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -31,6 +31,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
@@ -60,10 +61,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import javax.persistence.EntityExistsException;
 
 /**
- * //TOFIX: do not call SMS to figure out the base DN (for searching privileges)
- * @author dennis
+ * This class *talks* to SMS to get the configuration information.
  */
 public class DataStore {
     private static final String SERVICE_NAME = "PolicyIndex";
@@ -88,13 +89,28 @@ public class DataStore {
     private static final NetworkMonitor DB_MONITOR =
         NetworkMonitor.getInstance("dbLookup");
 
-    public static String getDistinguishedName(
+    /**
+     * Returns distingished name of a privilege.
+     *
+     * @param name Privilege name.
+     * @param realm Realm name.
+     * @param indexName Index name (default is "default");
+     * @return the distingished name of a privilege.
+     */
+    public static String getPrivilegeDistinguishedName(
         String name,
         String realm,
         String indexName) {
         return "ou=" + name + "," + getSearchBaseDN(realm, indexName);
     }
 
+    /**
+     * Returns the base search DN.
+     *
+     * @param realm Realm name.
+     * @param indexName Index name (default is "default")
+     * @return
+     */
     public static String getSearchBaseDN(String realm, String indexName) {
         if (indexName == null) {
             indexName = "default";
@@ -155,11 +171,11 @@ public class DataStore {
             map.put(INDEX_COUNT, set);
             orgConf.setAttributes(map);
         } catch (NumberFormatException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("DataStore.updateIndexCount", ex);
         } catch (SMSException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("DataStore.updateIndexCount", ex);
         } catch (SSOException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("DataStore.updateIndexCount", ex);
         }
     }
 
@@ -181,15 +197,24 @@ public class DataStore {
                 }
             }
         } catch (NumberFormatException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("DataStore.getIndexCount", ex);
         } catch (SMSException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("DataStore.getIndexCount", ex);
         } catch (SSOException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("DataStore.getIndexCount", ex);
         }
         return count;
     }
 
+    /**
+     * Adds a privilege.
+     *
+     * @param realm Realm name.
+     * @param p Privilege object.
+     * @return the DN of added privilege.
+     * @throws com.sun.identity.entitlement.EntitlementException if privilege
+     * cannot be added.
+     */
     public String add(String realm, Privilege p)
         throws EntitlementException {
 
@@ -203,7 +228,7 @@ public class DataStore {
         String dn = null;
         try {
             createDefaultSubConfig(adminToken, realm, null);
-            dn = getDistinguishedName(p.getName(), realm, null);
+            dn = getPrivilegeDistinguishedName(p.getName(), realm, null);
 
             SMSEntry s = new SMSEntry(adminToken, dn);
             Map<String, Set<String>> map = new HashMap<String, Set<String>>();
@@ -217,7 +242,7 @@ public class DataStore {
             for (String i : indexes.getPathIndexes()) {
                 searchable.add(PATH_INDEX_KEY + "=" + i);
             }
-            for (String i : indexes.getParentPath()) {
+            for (String i : indexes.getParentPathIndexes()) {
                 searchable.add(PATH_PARENT_INDEX_KEY + "=" + i);
             }
             for (String i : subjectIndexes) {
@@ -267,20 +292,28 @@ public class DataStore {
             s.save();
             updateIndexCount(adminToken, realm, 1);
         } catch (SSOException e) {
-            //TOFIX
+            throw new EntitlementException(210, e);
         } catch (SMSException e) {
-            //TOFIX
+            throw new EntitlementException(210, e);
         }
         return dn;
     }
 
-    public void delete(String realm, String name)
+    /**
+     * Removes privilege.
+     *
+     * @param realm Realm name.
+     * @param name Privilege name.
+     * @throws com.sun.identity.entitlement.EntitlementException if privilege
+     * cannot be removed.
+     */
+    public void remove(String realm, String name)
         throws EntitlementException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         String dn = null;
         try {
-            dn = getDistinguishedName(name, realm, null);
+            dn = getPrivilegeDistinguishedName(name, realm, null);
 
             if (SMSEntry.checkIfEntryExists(dn, adminToken)) {
                 SMSEntry s = new SMSEntry(adminToken, dn);
@@ -296,13 +329,25 @@ public class DataStore {
 
     }
 
+    /**
+     * Returns a set of privilege names that satifies a search filter.
+     *
+     * @param realm Realm name
+     * @param filter Search filter.
+     * @param numOfEntries Number of max entries.
+     * @param sortResults <code>true</code> to have result sorted.
+     * @param ascendingOrder <code>true</code> to have result sorted in
+     * ascending order.
+     * @return a set of privilege names that satifies a search filter.
+     * @throws EntityExistsException if search failed.
+     */
     public Set<String> search(
         String realm,
         String filter,
         int numOfEntries,
         boolean sortResults,
         boolean ascendingOrder
-    ) {
+    ) throws EntitlementException {
         Set<String> results = new HashSet<String>();
 
         try {
@@ -317,11 +362,24 @@ public class DataStore {
                 }
             }
         } catch (SMSException ex) {
-            //TOFIX
+            throw new EntitlementException(215, ex);
         }
         return results;
     }
 
+    /**
+     * Returns a set of privilege that satifies the resource and subject
+     * indexes.
+     *
+     * @param realm Realm name
+     * @param iterator Buffered iterator to have the result fed to it.
+     * @param indexes Resource search indexes.
+     * @param subjectIndexes Subject search indexes.
+     * @param bSubTree <code>true</code> to do sub tree search
+     * @param excludeDNs Set of DN to be excluded from the search results.
+     * @return a set of privilege that satifies the resource and subject
+     * indexes.
+     */
     public Set<Privilege> search(
         String realm,
         BufferedIterator iterator,

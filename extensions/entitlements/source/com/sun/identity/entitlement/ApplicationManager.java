@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.10 2009-04-29 18:14:14 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.11 2009-05-04 20:57:05 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -81,11 +81,12 @@ public final class ApplicationManager {
      *
      * @param realm Realm Name.
      * @param name Application Name.
+     * @throws EntitlementException
      */
     public static void deleteApplication(
         String realm,
         String name
-    ) {
+    ) throws EntitlementException {
         IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
         policyConfig.removeApplication(realm, name);
     }

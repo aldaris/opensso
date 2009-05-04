@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexTest.java,v 1.5 2009-03-31 01:16:12 veiming Exp $
+ * $Id: ResourceNameIndexTest.java,v 1.6 2009-05-04 20:57:08 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -90,7 +90,7 @@ public class ResourceNameIndexTest {
             Set<String> expectedResult = map.get(k);
             ResourceSaveIndexes indexes = gen.getIndexes(k);
 
-            if (!indexes.getParentPath().equals(expectedResult)) {
+            if (!indexes.getParentPathIndexes().equals(expectedResult)) {
                 String msg = "ResourceNameIndexTest.testPathParent: " + k + 
                     " failed.";
                 UnittestLog.logError(msg);

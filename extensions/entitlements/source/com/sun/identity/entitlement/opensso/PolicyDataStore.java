@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.7 2009-04-30 23:23:02 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.8 2009-05-04 20:57:07 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -79,15 +79,15 @@ public class PolicyDataStore implements IPolicyDataStore {
 
     public void delete(String realm, Privilege p)
             throws EntitlementException {
-        String dn = DataStore.getDistinguishedName(p.getName(), realm, null);
-        dataStore.delete(realm, p.getName());
+        String dn = DataStore.getPrivilegeDistinguishedName(p.getName(), realm, null);
+        dataStore.remove(realm, p.getName());
         policyCache.decache(dn);
         indexCache.clear(p.getEntitlement().getResourceSaveIndexes(), dn);
     }
 
     private void cache(Privilege p, String realm)
             throws EntitlementException {
-        String dn = DataStore.getDistinguishedName(p.getName(), realm, null);
+        String dn = DataStore.getPrivilegeDistinguishedName(p.getName(), realm, null);
         indexCache.cache(p.getEntitlement().getResourceSaveIndexes(), dn);
         policyCache.cache(dn, p);
     }
@@ -121,7 +121,19 @@ public class PolicyDataStore implements IPolicyDataStore {
         return iterator;
     }
 
-    //TOFIX
+    /**
+     * Returns a set of privilege names that satifies a search filter.
+     *
+     * @param realm Realm name
+     * @param filters Search filters.
+     * @param boolAnd <code>true</code> to have filters as exclusive.
+     * @param numOfEntries Number of max entries.
+     * @param sortResults <code>true</code> to have result sorted.
+     * @param ascendingOrder <code>true</code> to have result sorted in
+     * ascending order.
+     * @return a set of privilege names that satifies a search filter.
+     * @throws EntityExistsException if search failed.
+     */
     public Set<String> searchPrivilegeNames(
         String realm,
         Set<PrivilegeSearchFilter> filters,
@@ -129,7 +141,7 @@ public class PolicyDataStore implements IPolicyDataStore {
         int numOfEntries,
         boolean sortResults,
         boolean ascendingOrder
-    ) {
+    ) throws EntitlementException {
         StringBuffer strFilter = new StringBuffer();
         if (boolAnd) {
             strFilter.append("(&");

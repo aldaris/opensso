@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLResourceName.java,v 1.1 2009-04-07 10:25:09 veiming Exp $
+ * $Id: URLResourceName.java,v 1.2 2009-05-04 20:57:06 veiming Exp $
  *
  */
 
@@ -212,7 +212,6 @@ public class URLResourceName
      * @param o2 a url query parameter to be compared  
      * @return -1 if o1 < o2; 0 if o1 = o2; 1 if o1 > o2
      */
-
     public int compare(Object o1, Object o2)
     {
        String s1 = (String)o1; 

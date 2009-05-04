@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyDataStore.java,v 1.6 2009-04-30 23:23:02 veiming Exp $
+ * $Id: IPolicyDataStore.java,v 1.7 2009-05-04 20:57:06 veiming Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
@@ -82,12 +82,26 @@ public interface IPolicyDataStore {
         IThreadPool threadPool
     ) throws EntitlementException;
 
-//TOFIX
+
+    /**
+     * Returns a set of privilege names that matched a set of search criteria.
+     *
+     * @param realm Realm name.
+     * @param filters Set of search filter (criteria).
+     * @param boolAnd <code>true</code> to be inclusive.
+     * @param numOfEntries Number of maximum search entries.
+     * @param sortResults <code>true</code> to have the result sorted.
+     * @param ascendingOrder  <code>true</code> to have the result sorted in
+     *        ascending order.
+     * @return a set of privilege names that matched a set of search criteria.
+     * @throws EntitlementException if search failed.
+     */
     Set<String> searchPrivilegeNames(
         String realm,
         Set<PrivilegeSearchFilter> filters,
         boolean boolAnd,
         int numOfEntries, 
         boolean sortResults,
-        boolean ascendingOrder);
+        boolean ascendingOrder
+    ) throws EntitlementException;
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ELogRecord.java,v 1.1 2009-03-15 07:22:14 veiming Exp $
+ * $Id: ELogRecord.java,v 1.2 2009-05-04 20:57:07 veiming Exp $
  */
 
 package com.sun.identity.entitlement.log;
@@ -34,8 +34,7 @@ import java.util.logging.Level;
 import javax.security.auth.Subject;
 
 /**
- *
- * @author dennis
+ * This class encapsulates the items in a log record.
  */
 public class ELogRecord extends java.util.logging.LogRecord
     implements ILogRecord {
@@ -43,8 +42,20 @@ public class ELogRecord extends java.util.logging.LogRecord
     private Subject logBy;
     private Subject logFor;
 
-    public ELogRecord(Level level, String message, Subject logBy, Subject logFor)
-    {
+    /**
+     * Constructor.
+     *
+     * @param level Log level.
+     * @param message Log message.
+     * @param logBy log by subject.
+     * @param logFor log for subject.
+     */
+    public ELogRecord(
+        Level level,
+        String message,
+        Subject logBy,
+        Subject logFor
+    ) {
         super(level, message);
         this.logBy = logBy;
         this.logFor = logFor;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeCondition.java,v 1.5 2009-05-02 08:54:00 veiming Exp $
+ * $Id: TimeCondition.java,v 1.6 2009-05-04 20:57:06 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -164,7 +164,7 @@ public class TimeCondition implements EntitlementCondition {
                 try {
                     currentGmt = Long.parseLong(time);
                 } catch (NumberFormatException e) {
-                    //TOFIX
+                    //ignore
                 }
             }
 

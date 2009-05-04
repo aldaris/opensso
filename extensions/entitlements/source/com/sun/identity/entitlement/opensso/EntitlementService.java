@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.6 2009-04-29 18:14:16 veiming Exp $
+ * $Id: EntitlementService.java,v 1.7 2009-05-04 20:57:07 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -33,6 +33,7 @@ import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationType;
 import com.sun.identity.entitlement.ApplicationTypeManager;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
@@ -72,8 +73,18 @@ public class EntitlementService implements IPolicyConfig {
     private static final String CONFIG_RESOURCE_COMP_IMPL = "resourceComparator";
     private static final String CONFIG_APPLICATION_TYPES = "applicationTypes";
 
+    /**
+     * Constructor.
+     */
     public EntitlementService() {
     }
+
+    /**
+     * Returns attribute value of a given attribute name,
+     *
+     * @param attributeName attribute name.
+     * @return attribute value of a given attribute name,
+     */
 
     public String getAttributeValue(String attrName) {
         Set<String> values = getAttributeValues(attrName);
@@ -81,6 +92,12 @@ public class EntitlementService implements IPolicyConfig {
             values.iterator().next() : null;
     }
 
+    /**
+     * Returns set of attribute values of a given attribute name,
+     *
+     * @param attributeName attribute name.
+     * @return set of attribute values of a given attribute name,
+     */
     public Set<String> getAttributeValues(String attrName) {
         try {
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -91,13 +108,20 @@ public class EntitlementService implements IPolicyConfig {
                 attrName);
             return as.getDefaultValues();
         } catch (SMSException ex) {
-            //TOFIX;
+            PrivilegeManager.debug.error(
+                "EntitlementService.getAttributeValues", ex);
         } catch (SSOException ex) {
-            //TOFIX;
+            PrivilegeManager.debug.error(
+                "EntitlementService.getAttributeValues", ex);
         }
         return Collections.EMPTY_SET;
     }
 
+    /**
+     * Returns a set of registered application type.
+     *
+     * @return A set of registered application type.
+     */
     public Set<ApplicationType> getApplicationTypes() {
         Set<ApplicationType> results = new HashSet<ApplicationType>();
         try {
@@ -109,9 +133,11 @@ public class EntitlementService implements IPolicyConfig {
                 results.add(createApplicationType(name, data));
             }
         } catch (SMSException ex) {
-            // TOFIX
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplicationTypes", ex);
         } catch (SSOException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplicationTypes", ex);
         }
         return results;
     }
@@ -171,7 +197,12 @@ public class EntitlementService implements IPolicyConfig {
         return set;
     }
 
-
+    /**
+     * Returns a set of registered applications.
+     *
+     * @param realm Realm name.
+     * @return a set of registered applications.
+     */
     public Set<Application> getApplications(String realm) {
         Set<Application> results = new HashSet<Application>();
         try {
@@ -193,9 +224,11 @@ public class EntitlementService implements IPolicyConfig {
                 }
             }
         } catch (SMSException ex) {
-            // TOFIX
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplications", ex);
         } catch (SSOException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplications", ex);
         }
         return results;
     }
@@ -207,16 +240,26 @@ public class EntitlementService implements IPolicyConfig {
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException ex) {
-            //TOFIX debug error
+            PrivilegeManager.debug.error(
+                "EntitlementService.getEntitlementCombiner", ex);
         }
         return com.sun.identity.entitlement.DenyOverride.class;
     }
 
+    /**
+     * Returns subject attribute names.
+     *
+     * @param realm Realm name.
+     * @param application Application name.
+     * @return subject attribute names.
+     * @throws EntitlementException if subject attribute names cannot be
+     * returned.
+     */
     public void addSubjectAttributeNames(
         String realm,
         String applicationName,
         Set<String> names
-    ) {
+    ) throws EntitlementException {
         if ((names == null) || names.isEmpty()) {
             return;
         }
@@ -237,9 +280,9 @@ public class EntitlementService implements IPolicyConfig {
                 applConf.setAttributes(map);
             }
         } catch (SMSException ex) {
-            //TOFIX
+            throw new EntitlementException(220, ex);
         } catch (SSOException ex) {
-            //TOFIX
+            throw new EntitlementException(220, ex);
         }
     }
 
@@ -250,12 +293,14 @@ public class EntitlementService implements IPolicyConfig {
      * @param appName application name.
      * @param name Action name.
      * @param defVal Default value.
+     * @throws EntitlementException if action cannot be added.
      */
     public void addApplicationAction(
         String realm,
         String appName,
         String name,
-        Boolean defVal) {
+        Boolean defVal
+    ) throws EntitlementException {
         try {
             ServiceConfig applConf = getApplicationSubConfig(realm, appName);
 
@@ -269,9 +314,9 @@ public class EntitlementService implements IPolicyConfig {
                 }
             }
         } catch (SMSException ex) {
-            //TOFIX
+            throw new EntitlementException(221, ex);
         } catch (SSOException ex) {
-            //TOFIX
+            throw new EntitlementException(221, ex);
         }
     }
 
@@ -297,7 +342,7 @@ public class EntitlementService implements IPolicyConfig {
         Map<String, Set<String>> data,
         String name,
         Boolean defVal
-    ) {
+    ) throws EntitlementException {
         Map<String, Set<String>> results = null;
 
         Map<String, Boolean> actionMap = getActions(data);
@@ -309,35 +354,56 @@ public class EntitlementService implements IPolicyConfig {
             results = new HashMap<String, Set<String>>();
             results.put(CONFIG_ACTIONS, cloned);
         } else {
-            //TOFIX
+            Object[] args = {name};
+            throw new EntitlementException(222, args);
         }
 
         return results;
     }
 
-    public void removeApplication(String realm, String name) {
+    /**
+     * Removes application.
+     *
+     * @param realm Realm name.
+     * @param name name of application to be removed.
+     * @throws EntitlementException if application cannot be removed.
+     */
+    public void removeApplication(String realm, String name)
+        throws EntitlementException
+    {
         try {
             ServiceConfig conf = getApplicationCollectionConfig(realm);
             if (conf != null) {
                 conf.removeSubConfig(name);
             }
         } catch (SMSException ex) {
-            //TOFIX
+            Object[] args = {name};
+            throw new EntitlementException(230, args);
         } catch (SSOException ex) {
-            //TOFIX
+            Object[] args = {name};
+            throw new EntitlementException(230, args);
         }
     }
 
-    public void removeApplicationType(String name) {
+    /**
+     * Removes application type.
+     *
+     * @param name name of application type to be removed.
+     * @throws EntitlementException  if application type cannot be removed.
+     */
+    public void removeApplicationType(String name)
+        throws EntitlementException{
         try {
             ServiceConfig conf = getApplicationTypeCollectionConfig();
             if (conf != null) {
                 conf.removeSubConfig(name);
             }
         } catch (SMSException ex) {
-            //TOFIX
+            Object[] arg = {name};
+            throw new EntitlementException(240, arg, ex);
         } catch (SSOException ex) {
-            //TOFIX
+            Object[] arg = {name};
+            throw new EntitlementException(240, arg, ex);
         }
     }
 
@@ -354,6 +420,13 @@ public class EntitlementService implements IPolicyConfig {
         return null;
     }
 
+    /**
+     * Stores the application to data store.
+     *
+     * @param realm Realm name
+     * @param application Application object.
+     * @throws EntitlementException if application cannot be stored.
+     */
     public void storeApplication(String realm, Application appl)
         throws EntitlementException {
         try {
@@ -369,12 +442,20 @@ public class EntitlementService implements IPolicyConfig {
                 }
             }
         } catch (SMSException ex) {
-            //TOFIX
+            Object[] arg = {appl.getName()};
+            throw new EntitlementException(231, arg, ex);
         } catch (SSOException ex) {
-            //TOFIX
+            Object[] arg = {appl.getName()};
+            throw new EntitlementException(231, arg, ex);
         }
     }
 
+    /**
+     * Stores the application type to data store.
+     *
+     * @param applicationType Application type  object.
+     * @throws EntitlementException if application type cannot be stored.
+     */
     public void storeApplicationType(ApplicationType applicationType)
         throws EntitlementException {
         try {
@@ -390,9 +471,11 @@ public class EntitlementService implements IPolicyConfig {
                 }
             }
         } catch (SMSException ex) {
-            //TOFIX
+            Object[] arg = {applicationType.getName()};
+            throw new EntitlementException(241, arg, ex);
         } catch (SSOException ex) {
-            //TOFIX
+            Object[] arg = {applicationType.getName()};
+            throw new EntitlementException(241, arg, ex);
         }
     }
 
@@ -548,6 +631,13 @@ public class EntitlementService implements IPolicyConfig {
         return app;
     }
 
+    /**
+     * Returns subject attribute names.
+     *
+     * @param realm Realm name.
+     * @param application Application name.
+     * @return subject attribute names.
+     */
     public Set<String> getSubjectAttributeNames(
         String realm,
         String application) {
@@ -560,9 +650,11 @@ public class EntitlementService implements IPolicyConfig {
                 return app.getAttributeNames();
             }
         } catch (SMSException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error(
+                "EntitlementService.getSubjectAttributeNames", ex);
         } catch (SSOException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error(
+                "EntitlementService.getSubjectAttributeNames", ex);
         }
         return Collections.EMPTY_SET;
     }

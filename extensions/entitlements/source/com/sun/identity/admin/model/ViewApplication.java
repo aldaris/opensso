@@ -4,6 +4,7 @@ import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.ViewApplicationTypeDao;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
+import com.sun.identity.entitlement.EntitlementException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -108,7 +109,11 @@ public class ViewApplication implements Serializable {
         Map appActions = app.getActions();
         for (Action action: actions) {
             if (!appActions.containsKey(action.getName())) {
-                app.addAction(action.getName(), (Boolean)action.getValue());
+                try {
+                    app.addAction(action.getName(), (Boolean)action.getValue());
+                } catch (EntitlementException ex) {
+                    //TODO
+                }
             }
         }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.10 2009-05-02 08:53:59 veiming Exp $
+ * $Id: Application.java,v 1.11 2009-05-04 20:57:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -262,8 +262,10 @@ public class Application {
      *
      * @param name Action name.
      * @param val Default value.
+     * @throws EntitlementException if action cannot be added.
      */
-    public void addAction(String name, boolean val) {
+    public void addAction(String name, boolean val)
+        throws EntitlementException {
         IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
         policyConfig.addApplicationAction("/" , this.name, name, val); //TOFIX realm
     }

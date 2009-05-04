@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeManager.java,v 1.7 2009-05-02 08:53:59 veiming Exp $
+ * $Id: ApplicationTypeManager.java,v 1.8 2009-05-04 20:57:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -79,8 +79,10 @@ public class ApplicationTypeManager {
      * Removes application type.
      *
      * @param name Name of application type.
+     * @throws EntitlementException if application type cannot be removed.
      */
-    public static void removeApplicationType(String name) {
+    public static void removeApplicationType(String name
+    ) throws EntitlementException {
         IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
         policyConfig.removeApplicationType(name);
     }

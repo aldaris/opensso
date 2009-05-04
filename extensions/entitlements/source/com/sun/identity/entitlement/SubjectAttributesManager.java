@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.5 2009-04-29 13:22:46 veiming Exp $
+ * $Id: SubjectAttributesManager.java,v 1.6 2009-05-04 20:57:06 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -54,7 +54,7 @@ public class SubjectAttributesManager {
         try {
             DEFAULT_IMPL_CLASS = Class.forName(DEFAULT_IMPL);
         } catch (ClassNotFoundException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("SubjectAttributesManager.<init>", ex);
         }
     }
 
@@ -65,9 +65,11 @@ public class SubjectAttributesManager {
                 this.attrCollector = (SubjectAttributesCollector)
                     DEFAULT_IMPL_CLASS.newInstance();
             } catch (InstantiationException ex) {
-                //TOFIX
+                PrivilegeManager.debug.error("SubjectAttributesManager.<init>",
+                    ex);
             } catch (IllegalAccessException ex) {
-                //TOFIX
+                PrivilegeManager.debug.error("SubjectAttributesManager.<init>",
+                    ex);
             }
         }
     }
@@ -215,10 +217,19 @@ public class SubjectAttributesManager {
         return attrCollector.hasAttribute(subject, attrName, attrValue);
     }
 
+    /**
+     * Returns application attribute names.
+     *
+     * @param realm Realm name
+     * @param applicationName Application name.
+     * @return application attribute names.
+     * @throws EntitlementException if application attributes cannot be
+     * returned.
+     */
     public static Set<String> getApplicationAttributeNames(
         String realm,
         String applicationName
-    ) {
+    ) throws EntitlementException {
         IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
         return pc.getSubjectAttributeNames(realm, applicationName);
     }

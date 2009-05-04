@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyConfig.java,v 1.6 2009-04-29 18:14:15 veiming Exp $
+ * $Id: IPolicyConfig.java,v 1.7 2009-05-04 20:57:06 veiming Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
@@ -33,8 +33,7 @@ import com.sun.identity.entitlement.EntitlementException;
 import java.util.Set;
 
 /**
- *
- * @author dennis
+ * This interfaces defines the methods required from a policy configuration.
  */
 public interface IPolicyConfig {
     String POLICY_THREAD_SIZE = "threadSize";
@@ -42,21 +41,98 @@ public interface IPolicyConfig {
     String INDEX_CACHE_SIZE = "indexCacheSize";
     String RESOURCE_COMPARATOR = "resourceComparator";
 
+    /**
+     * Returns a set of registered applications.
+     *
+     * @param realm Realm name.
+     * @return a set of registered applications.
+     */
     Set<Application> getApplications(String realm);
-    void removeApplication(String realm, String name);
+
+    /**
+     * Removes application.
+     *
+     * @param realm Realm name.
+     * @param name name of application to be removed.
+     * @throws EntitlementException if application cannot be removed.
+     */
+    void removeApplication(String realm, String name)
+        throws EntitlementException;
+
+    /**
+     * Stores the application to data store.
+     *
+     * @param realm Realm name
+     * @param application Application object.
+     * @throws EntitlementException if application cannot be stored.
+     */
     void storeApplication(String realm, Application application)
         throws EntitlementException;
 
+    /**
+     * Returns a set of registered application type.
+     *
+     * @return A set of registered application type.
+     */
     Set<ApplicationType> getApplicationTypes();
-    void removeApplicationType(String name);
+
+    /**
+     * Removes application type.
+     *
+     * @param name name of application type to be removed.
+     * @throws EntitlementException  if application type cannot be removed.
+     */
+    void removeApplicationType(String name)
+        throws EntitlementException;
+
+    /**
+     * Stores the application type to data store.
+     *
+     * @param applicationType Application type  object.
+     * @throws EntitlementException if application type cannot be stored.
+     */
     void storeApplicationType(ApplicationType applicationType)
         throws EntitlementException;
 
+    /**
+     * Returns attribute value of a given attribute name,
+     *
+     * @param attributeName attribute name.
+     * @return attribute value of a given attribute name,
+     */
     String getAttributeValue(String attributeName);
+
+    /**
+     * Returns set of attribute values of a given attribute name,
+     *
+     * @param attributeName attribute name.
+     * @return set of attribute values of a given attribute name,
+     */
     Set<String> getAttributeValues(String attributeName);
-    Set<String> getSubjectAttributeNames(String realm, String application);
+
+    /**
+     * Returns subject attribute names.
+     *
+     * @param realm Realm name.
+     * @param application Application name.
+     * @return subject attribute names.
+     * @throws EntitlementException if subject attribute names cannot be
+     * returned.
+     */
+    Set<String> getSubjectAttributeNames(String realm, String application)
+        throws EntitlementException;
+
+    /**
+     * Adds subject attribute names.
+     *
+     * @param realm Realm name.
+     * @param application Application name.
+     * @param names Set of subject attribute names.
+       @throws EntitlementException if subject attribute names cannot be
+     *         added.
+     */
     void addSubjectAttributeNames(String realm, String application,
-        Set<String> names);
+        Set<String> names) throws EntitlementException;;
 
     /**
      * Adds a new action.
@@ -65,10 +141,12 @@ public interface IPolicyConfig {
      * @param appName Application name,
      * @param name Action name.
      * @param defVal Default value.
+     * @throws EntitlementException if action cannot be added.
      */
     void addApplicationAction(
         String realm,
         String appName,
         String name,
-        Boolean defVal);
+        Boolean defVal
+    ) throws EntitlementException;
 }

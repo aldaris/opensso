@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleSubject.java,v 1.8 2009-04-21 13:08:02 veiming Exp $
+ * $Id: RoleSubject.java,v 1.9 2009-05-04 20:57:06 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -36,8 +36,7 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 /**
- * EntitlementSubject to represent role identity for membership check
- * @author dorai
+ * EntitlementSubject to represent role identity for membership check.
  */
 public class RoleSubject extends EntitlementSubjectImpl {
     private static final long serialVersionUID = -403250971215465050L;
@@ -76,8 +75,7 @@ public class RoleSubject extends EntitlementSubjectImpl {
      * @param environment Environment parameters.
      * @return <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation
-     * @throws com.sun.identity.entitlement,  EntitlementException in case
-     * of any error
+     * @throws EntitlementException if any errors ocurr.
      */
     public SubjectDecision evaluate(
         SubjectAttributesManager mgr,
@@ -100,6 +98,11 @@ public class RoleSubject extends EntitlementSubjectImpl {
     }
 
 
+    /**
+     * Returns search index attributes.
+     *
+     * @return search index attributes.
+     */
     public Map<String, Set<String>> getSearchIndexAttributes() {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>(2);
         Set<String> set = new HashSet<String>();
@@ -109,6 +112,11 @@ public class RoleSubject extends EntitlementSubjectImpl {
         return map;
     }
 
+    /**
+     * Returns required attribute names.
+     *
+     * @return required attribute names.
+     */
     public Set<String> getRequiredAttributeNames() {
         Set<String> set = new HashSet<String>(2);
         set.add(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +

@@ -22,22 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectResult.java,v 1.1 2009-02-10 23:37:38 dillidorai Exp $
+ * $Id: SubjectResult.java,v 1.2 2009-05-04 20:57:06 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 /**
  * Class to represent the result of <code>ESubject</code> evaluation
- * @author ddorai
  */
 public class SubjectResult {
 
     private boolean booleanResult;
-    String reason;
+    private String reason;
 
     /**
-     * Construct SubjectResult
+     * Constructor.
+     * 
      * @param booleanResult boolean result value of the SubjectResult
      * @param reason reason for the result
      */

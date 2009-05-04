@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.2 2009-04-14 00:24:18 veiming Exp $
+ * $Id: ThreadPool.java,v 1.3 2009-05-04 20:57:06 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -38,6 +38,9 @@ import java.util.concurrent.Executors;
 public final class ThreadPool implements IThreadPool {
     private ExecutorService exeService;
 
+    /**
+     * Constructor.
+     */
     public ThreadPool() {
         exeService = Executors.newCachedThreadPool();
     }

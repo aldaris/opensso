@@ -153,7 +153,11 @@ public class PolicyDao implements Serializable {
         Map<String, Boolean> actionValues = e.getActionValues();
         for (String actionName : actionValues.keySet()) {
             if (!validActionName.contains(actionName)) {
-                app.addAction(actionName, actionValues.get(actionName));
+                try {
+                    app.addAction(actionName, actionValues.get(actionName));
+                } catch (EntitlementException ex) {
+                    //TODO
+                }
             }
         }
     }

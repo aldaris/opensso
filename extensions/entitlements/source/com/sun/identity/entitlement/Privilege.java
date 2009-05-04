@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.11 2009-05-02 08:53:59 veiming Exp $
+ * $Id: Privilege.java,v 1.12 2009-05-04 20:57:06 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -45,9 +45,24 @@ import org.json.JSONObject;
 public abstract class Privilege implements Serializable {
     private static final long serialVersionUID = -403250971215465050L;
 
+    /**
+     * Created by index key
+     */
     public static final String CREATED_BY_ATTRIBUTE = "createdby";
+
+    /**
+     * Last modified by index key
+     */
     public static final String LAST_MODIFIED_BY_ATTRIBUTE = "lastmodifiedby";
+
+    /**
+     * Creation date index key
+     */
     public static final String CREATION_DATE_ATTRIBUTE = "creationdate";
+
+    /**
+     * Last modified date index key
+     */
     public static final String LAST_MODIFIED_DATE_ATTRIBUTE =
         "lastmodifieddate";
 
@@ -129,13 +144,20 @@ public abstract class Privilege implements Serializable {
     }
 
     /**
-     * //TOFIX
-     * @return
+     * Returns privilege Type.
+     * @see PrivilegeType
+     *
+     * @return privilege Type.
      */
     public PrivilegeType getType() {
         return PrivilegeType.UNKNOWN;
     }
 
+    /**
+     * Returns string representation of OpenSSO native policy.
+     * 
+     * @return string representation of OpenSSO native policy.
+     */
     public abstract String getNativePolicy();
     
     /**
