@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.12 2009-02-06 23:39:49 exu Exp $
+   $Id: index.jsp,v 1.13 2009-05-04 18:15:50 exu Exp $
 
 --%>
 
@@ -291,7 +291,7 @@
                                 (AssertionConsumerServiceElement) j.next();
                             if ((acs != null) && (acs.getBinding() != null)) {
                                String acsURL = acs.getLocation();
-                                int loc = acsURL.indexOf(deployuri);
+                                int loc = acsURL.indexOf(deployuri + "/");
                                 if (loc == -1) {
                                     continue;
                                 } else {
