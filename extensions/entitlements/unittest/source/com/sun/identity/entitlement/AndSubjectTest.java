@@ -22,19 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrSubjectTest.java,v 1.4 2009-05-05 00:28:59 veiming Exp $
+ * $Id: AndSubjectTest.java,v 1.1 2009-05-05 00:28:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
+
+
 
 import java.util.HashSet;
 import java.util.Set;
 import org.testng.annotations.Test;
 
-/**
- *
- * @author dillidorai
- */
-public class OrSubjectTest {
+
+public class AndSubjectTest {
 
     @Test
     public void testConstruction() throws Exception {
@@ -59,16 +58,15 @@ public class OrSubjectTest {
         subjects.add(gs1);
         subjects.add(gs2);
         subjects.add(ns1);
-        OrSubject os = new OrSubject(subjects);
-        OrSubject os1 = new OrSubject();
-        os1.setState(os.getState());
-        boolean result = os.equals(os1);
+        AndSubject andSubject = new AndSubject(subjects);
+        AndSubject andSubuject1 = new AndSubject();
+        andSubuject1.setState(andSubject.getState());
+        boolean result = andSubject.equals(andSubuject1);
         if (!result) {
-            throw new Exception("OrSubjectTest.testConstruction():"
-                    + "OrSubject with setState="
-                    +  "does not equal OrSubject with getState()");
+            throw new Exception("AndSubjectTest.testConstruction():"
+                    + "AndSubject with setState="
+                    +  "does not equal AndSubject with getState()");
              
         }
     }
-
 }

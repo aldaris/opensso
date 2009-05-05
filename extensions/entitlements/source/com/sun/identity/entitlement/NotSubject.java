@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotSubject.java,v 1.7 2009-05-02 08:53:59 veiming Exp $
+ * $Id: NotSubject.java,v 1.8 2009-05-05 00:28:58 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -88,7 +88,8 @@ public class NotSubject implements EntitlementSubject {
                 eSubject.setState(memberSubject.getString("state"));
 
             }
-            pSubjectName = jo.optString("pSubjectName");
+            pSubjectName = jo.has("pSubjectName") ?
+                jo.optString("pSubjectName") : null;
         } catch (JSONException e) {
             PrivilegeManager.debug.error("NotSubject.setState", e);
         } catch (InstantiationException e) {

@@ -22,50 +22,38 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndConditionTest.java,v 1.4 2009-05-05 00:28:58 veiming Exp $
+ * $Id: NotConditionTest.java,v 1.1 2009-05-05 00:28:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.unittest.UnittestLog;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import org.testng.annotations.Test;
 
-/**
- *
- * @author dillidorai
- */
-public class AndConditionTest {
+
+public class NotConditionTest {
 
     @Test
     public void testConstruction() throws Exception {
 
         IPCondition ipc = new IPCondition("100.100.100.100", "200.200.200.200");
         ipc.setPConditionName("ip1");
-        DNSNameCondition dnsc = new DNSNameCondition("*.sun.com");
-        dnsc.setPConditionName("ip2");
-        TimeCondition tc = new TimeCondition("08:00", "16:00",
-                "mon", "fri");
-        tc.setStartDate("01/01/2001");
-        tc.setEndDate("02/02/2002");
-        tc.setEnforcementTimeZone("PST");
-        tc.setPConditionName("tc1");
-        Set<EntitlementCondition> conditions
-                = new HashSet<EntitlementCondition>();
-        conditions.add(ipc);
-        conditions.add(dnsc);
-        conditions.add(tc);
-        AndCondition ac = new AndCondition(conditions);
-
-        AndCondition ac1 = new AndCondition();
+        NotCondition ac = new NotCondition(ipc);
+        NotCondition ac1 = new NotCondition();
         ac1.setState(ac.getState());
 
-        if (!ac1.equals(ac1)) {
-            throw new Exception("AndConditionTest.testConstruction():"
-                    + "AndCondition with setState="
-                    +  "does not equal AndCondition with getState()");
+        if (!ac1.equals(ac)) {
+            throw new Exception(
+                "NotConditionTest.testConstruction():" +
+                " NotCondition with setState does not equal NotCondition " +
+                "with getState()");
         }
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        new AndConditionTest().testConstruction();
+        UnittestLog.flush(new Date().toString());
     }
 }

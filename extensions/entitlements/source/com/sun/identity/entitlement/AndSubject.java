@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrSubject.java,v 1.8 2009-05-05 00:28:58 veiming Exp $
+ * $Id: AndSubject.java,v 1.1 2009-05-05 00:28:58 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -36,12 +36,11 @@ import javax.security.auth.Subject;
  * boolean OR logic Membership is of OrSubject is satisfied if the user is
  * a member of any of the wrapped EntitlementSubject
  */
-public class OrSubject extends LogicalSubject {
-
+public class AndSubject extends LogicalSubject {
     /**
      * Constructs OrSubject
      */
-    public OrSubject() {
+    public AndSubject() {
         super();
     }
 
@@ -49,7 +48,7 @@ public class OrSubject extends LogicalSubject {
      * Constructs OrSubject
      * @param eSubjects wrapped EntitlementSubject(s)
      */
-    public OrSubject(Set<EntitlementSubject> eSubjects) {
+    public AndSubject(Set<EntitlementSubject> eSubjects) {
         super(eSubjects);
     }
 
@@ -60,7 +59,7 @@ public class OrSubject extends LogicalSubject {
      * this is releavant only when UserESubject was created from
      * OpenSSO policy Subject
      */
-    public OrSubject(Set<EntitlementSubject> eSubjects, String pSubjectName) {
+    public AndSubject(Set<EntitlementSubject> eSubjects, String pSubjectName) {
         super(eSubjects, pSubjectName);
     }
 
@@ -81,34 +80,17 @@ public class OrSubject extends LogicalSubject {
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
-        SubjectDecision result = new SubjectDecision(false,
-            Collections.EMPTY_MAP);
-        
         Set<EntitlementSubject> eSubjects = getESubjects();
+
         if ((eSubjects != null) && !eSubjects.isEmpty()) {
             for (EntitlementSubject e : eSubjects) {
                 SubjectDecision decision = e.evaluate(mgr, subject,
                     resourceName, environment);
-                if (decision.isSatisfied()) {
+                if (!decision.isSatisfied()) {
                     return decision;
                 }
-                if (result == null) {
-                    result = decision;
-                } else {
-                    Map advices = result.getAdvices();
-                    Map dAdvices = decision.getAdvices();
-
-                    if ((dAdvices != null) && !dAdvices.isEmpty()) {
-                        if ((advices == null) || advices.isEmpty()) {
-                            result = new SubjectDecision(false, dAdvices);
-                        } else {
-                            advices.putAll(dAdvices);
-                            result = new SubjectDecision(false, advices);
-                        }
-                    }
-                 }
             }
         }
-        return result;
+        return new SubjectDecision(true, Collections.EMPTY_MAP);
     }
 }

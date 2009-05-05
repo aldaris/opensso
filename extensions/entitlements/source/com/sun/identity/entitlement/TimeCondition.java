@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeCondition.java,v 1.6 2009-05-04 20:57:06 veiming Exp $
+ * $Id: TimeCondition.java,v 1.7 2009-05-05 00:28:58 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -135,6 +135,7 @@ public class TimeCondition implements EntitlementCondition {
             startDate = jo.optString("startDate");
             endDate = jo.optString("endDate");
             pConditionName = jo.optString("pConditionName");
+            enforcementTimeZone = jo.optString("enforcementTimeZone");
         } catch (JSONException joe) {
         }
     }

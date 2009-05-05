@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrConditionTest.java,v 1.2 2009-04-07 19:00:48 veiming Exp $
+ * $Id: OrConditionTest.java,v 1.3 2009-05-05 00:28:59 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -42,14 +42,10 @@ public class OrConditionTest {
 
     @Test
     public void testConstruction() throws Exception {
-
         IPCondition ipc = new IPCondition("100.100.100.100", "200.200.200.200");
         ipc.setPConditionName("ip1");
         DNSNameCondition dnsc = new DNSNameCondition("*.sun.com");
         dnsc.setPConditionName("dns1");
-
-        UnittestLog.logMessage(
-                "OrConditionTest.testConstruction():" + "ipc.toString()=" + ipc.toString());
 
         TimeCondition tc = new TimeCondition("08:00", "16:00",
                 "mon", "fri");
@@ -65,9 +61,15 @@ public class OrConditionTest {
         conditions.add(dnsc);
         conditions.add(tc);
         OrCondition oc = new OrCondition(conditions);
-        UnittestLog.logMessage(
-                "OrConditionTest.testConstruction():" + "oc.toString()=" + oc.toString());
+        OrCondition oc1 = new OrCondition();
+        oc1.setState(oc.getState());
 
+        if (!oc1.equals(oc)) {
+            throw new Exception(
+                "OrConditionTest.testConstruction():" +
+                " OrCondition with setState does not equal OrCondition with " +
+                "getState()");
+        }
     }
 
     public static void main(String[] args) throws Exception {
