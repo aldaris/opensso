@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.15 2009-05-05 16:28:06 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.16 2009-05-05 22:20:30 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -57,8 +57,9 @@ import org.testng.annotations.BeforeClass;
  */
 public class PrivilegeManagerTest {
 
-    private static String SERVICE_NAME = "iPlanetAMWebAgentService";
-    private static String PRIVILEGE_NAME = "TestPrivilege";
+    private static final String SERVICE_NAME = "iPlanetAMWebAgentService";
+    private static final String PRIVILEGE_NAME = "TestPrivilege";
+    private static final String PRIVILEGE_DESC = "Test Description";
     private Privilege privilege;
 
     @BeforeClass
@@ -144,6 +145,7 @@ public class PrivilegeManagerTest {
 
         privilege = new OpenSSOPrivilege(PRIVILEGE_NAME, entitlement, os,
             ipc, ra);
+        privilege.setDescription(PRIVILEGE_DESC);
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance(
@@ -275,6 +277,11 @@ public class PrivilegeManagerTest {
                 "failed to get privilege.");
         }
 
+        if (!p.getDescription().equals(PRIVILEGE_DESC)) {
+            throw new Exception("PrivilegeManagerTest.testGetPrivilege: " +
+                "failed to get privilege description.");
+        }
+        
         String xml = prm.getPrivilegeXML(PRIVILEGE_NAME);
         if ((xml == null) || (xml.trim().length() == 0)) {
             throw new Exception("PrivilegeManagerTest.testGetPrivilege: " +

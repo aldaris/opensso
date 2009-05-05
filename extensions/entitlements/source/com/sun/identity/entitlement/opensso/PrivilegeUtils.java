@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.16 2009-05-02 06:26:12 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.17 2009-05-05 22:20:30 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -40,6 +40,7 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PolicyCondition;
 import com.sun.identity.entitlement.PolicySubject;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserAttributes;
@@ -84,7 +85,7 @@ public class PrivilegeUtils {
                 AdminTokenAction.getInstance());
             svcTypeManager = new ServiceTypeManager(adminToken);
         } catch (SSOException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("PrivilegeUtils.<init>", ex);
         }
     }
 
@@ -164,6 +165,7 @@ public class PrivilegeUtils {
 
         Privilege privilege = new OpenSSOPrivilege(policyName, entitlement,
             eSubject, eCondition, resourceAttributesSet);
+        privilege.setDescription(policy.getDescription());
         privilege.setCreatedBy(policy.getCreatedBy());
         privilege.setLastModifiedBy(policy.getLastModifiedBy());
         privilege.setCreationDate(policy.getCreationDate());
@@ -345,6 +347,7 @@ public class PrivilegeUtils {
             throws PolicyException, SSOException {
         Policy policy = null;
         policy = new Policy(privilege.getName());
+        policy.setDescription(privilege.getDescription());
         if (privilege.getEntitlement() != null) {
             Entitlement entitlement = privilege.getEntitlement();
             Set<Rule> rules = entitlementToRules(entitlement);

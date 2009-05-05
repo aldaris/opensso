@@ -285,7 +285,7 @@ public class PrivilegeBean implements Serializable {
                 ConditionTypeFactory conditionTypeFactory) {
 
         name = p.getName();
-        description = null; // TODO
+        description = p.getDescription();
 
         // entitlement
         viewEntitlement = new ViewEntitlement(p.getEntitlement(), viewApplications);
@@ -340,12 +340,14 @@ public class PrivilegeBean implements Serializable {
         Set<ResourceAttributes> attrs = null;
 
         try {
-            return new OpenSSOPrivilege(
+            Privilege p = new OpenSSOPrivilege(
                 name,
                 entitlement,
                 eSubject,
                 condition,
                 attrs);
+            p.setDescription(description);
+            return p;
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }

@@ -22,15 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.14 2009-05-05 21:32:13 veiming Exp $
+ * $Id: Privilege.java,v 1.15 2009-05-05 22:20:29 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.interfaces.ResourceName;
-import com.sun.identity.policy.ResourceMatch;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,6 +63,7 @@ public abstract class Privilege implements Serializable {
         "lastmodifieddate";
 
     private String name;
+    private String description;
     private Entitlement entitlement;
     private EntitlementSubject eSubject;
     private EntitlementCondition eCondition;
@@ -102,18 +99,34 @@ public abstract class Privilege implements Serializable {
     }
 
     /**
-     * Returns the name of the privilege
+     * Returns the name of the privilege.
+     *
      * @return name of the privilege.
-     * @throws EntitlementException in case of any error
      */
     public String getName() {
         return name;
     }
 
     /**
+     * Returns the description of the privilege.
+     * 
+     * @return description of the privilege.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description of the privilege.
+     * 
+     * @param description Description of the privilege.
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    /**
      * Returns the eSubject the privilege
      * @return eSubject of the privilege.
-     * @throws EntitlementException in case of any error
      */
     public EntitlementSubject getSubject() {
         return eSubject;
@@ -122,7 +135,6 @@ public abstract class Privilege implements Serializable {
     /**
      * Returns the eCondition the privilege
      * @return eCondition of the privilege.
-     * @throws EntitlementException in case of any error
      */
     public EntitlementCondition getCondition() {
         return eCondition;
@@ -131,7 +143,6 @@ public abstract class Privilege implements Serializable {
     /**
      * Returns the eResurceAttributes of  the privilege
      * @return eResourceAttributes of the privilege.
-     * @throws EntitlementException in case of any error
      */
     public Set<ResourceAttributes> getResourceAttributes() {
         return eResourceAttributes;
