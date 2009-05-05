@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.31 2009-05-05 08:19:36 veiming Exp $
+ * $Id: Entitlement.java,v 1.32 2009-05-05 15:25:03 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
+import com.sun.identity.policy.ResourceMatch;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -381,9 +382,33 @@ public class Entitlement implements Serializable {
     public boolean evaluate(
         Subject subject,
         String resourceName,
-        Map<String, Set<String>> environment)
+        Set<String> actionNames,
+        Map<String, Set<String>> environment,
+        boolean recursive)
         throws EntitlementException {
-        return false; //TOFIX ?? REMOVE?
+        if ((resourceNames == null) || resourceNames.isEmpty()) {
+            return false;
+        }
+        ResourceName rc = getApplication().getResourceComparator();
+        boolean resMatch = false;
+        for (String r : resourceNames) {
+            ResourceMatch m = rc.compare(r, resourceName, true);
+            resMatch = m.equals(ResourceMatch.EXACT_MATCH) ||
+                m.equals(ResourceMatch.WILDCARD_MATCH) ||
+                (recursive && (m.equals(ResourceMatch.SUB_RESOURCE_MATCH)));
+            if (resMatch == true) {
+                break;
+            }
+        }
+        if (!resMatch) {
+            return false;
+        }
+        for (String a : actionNames) {
+            if (actionValues.keySet().contains(a)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
