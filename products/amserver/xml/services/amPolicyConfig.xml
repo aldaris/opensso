@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicyConfig.xml,v 1.8 2008-08-22 22:50:01 veiming Exp $
+    $Id: amPolicyConfig.xml,v 1.9 2009-05-05 18:53:03 mrudul_uchil Exp $
 
 -->
 
@@ -37,7 +37,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/iPlanetAMPolicyConfigService"
             i18nFileName="amPolicyConfig"
-            revisionNumber="50"
+            revisionNumber="60"
             i18nKey="iplanet-am-policy-config-service-description">
             <Global>
                 <AttributeSchema name="serviceObjectClasses"
@@ -356,6 +356,7 @@
                         <ChoiceValue i18nKey="a141a">SessionPropertyCondition</ChoiceValue>
                         <ChoiceValue i18nKey="a141fc">LDAPFilterCondition</ChoiceValue>
                         <ChoiceValue i18nKey="a141amc">AMIdentityMembershipCondition</ChoiceValue>
+                        <ChoiceValue i18nKey="a151">ResourceEnvIPCondition</ChoiceValue>
                     </ChoiceValues>
                     <DefaultValues>
                         <Value>AuthLevelCondition</Value>
@@ -369,6 +370,7 @@
                         <Value>SessionPropertyCondition</Value>
                         <Value>LDAPFilterCondition</Value>
                         <Value>AMIdentityMembershipCondition</Value>
+                        <Value>ResourceEnvIPCondition</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="sun-am-policy-selected-responseproviders"

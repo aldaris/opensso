@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicy.xml,v 1.8 2008-08-26 23:48:09 goodearth Exp $
+    $Id: amPolicy.xml,v 1.9 2009-05-05 18:53:03 mrudul_uchil Exp $
 
 -->
 
@@ -37,7 +37,7 @@
     <Service name="iPlanetAMPolicyService" version="1.0">
         <Schema
             i18nFileName="amPolicy"
-            revisionNumber="50"
+            revisionNumber="60"
             i18nKey="iplanet-policy-service-name">
 
             <Organization>
@@ -250,6 +250,12 @@
             i18nFileName="amPolicy"
             i18nKey="sun-amidentitymembership-condition-name"
             propertiesViewBeanURL = "../policy/IdentityMembershipCondition" />
+        <PluginSchema
+            name="ResourceEnvIPCondition"
+            interfaceName="Condition"
+            className="com.sun.identity.policy.plugins.ResourceEnvIPCondition"
+            i18nFileName="amPolicy"
+            i18nKey="sun-resourceenvip-condition-name" />
         <PluginSchema
             name="IDRepoResponseProvider"
             interfaceName="ResponseProvider"
