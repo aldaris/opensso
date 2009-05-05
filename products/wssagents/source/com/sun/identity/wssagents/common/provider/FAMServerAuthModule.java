@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthModule.java,v 1.8 2008-09-25 18:51:51 mallas Exp $
+ * $Id: FAMServerAuthModule.java,v 1.9 2009-05-05 01:16:12 mallas Exp $
  *
  */
 
@@ -67,6 +67,8 @@ public class FAMServerAuthModule implements ServerAuthModule {
     private static Method validateRequest;
     private static Method print;
     private static Method secureResponse;
+    private static final Logger logger =
+                   Logger.getLogger("com.sun.identity.wssagents.security");
     
     // Instance of SOAPRequestHandler
     private Object serverAuthModule;
@@ -90,30 +92,35 @@ public class FAMServerAuthModule implements ServerAuthModule {
 	       CallbackHandler handler,
 	       Map options) throws AuthException {
         
-        if(_logger != null) {
-            _logger.log(Level.INFO, "FAMServerAuthModule.Init");
+        if(logger.isLoggable(Level.FINE)) {
+           logger.log(Level.FINE, "FAMServerAuthModule.Init");
         }
         
         ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
         try {
             if (_handler == null) {
                 try {
-                    oldcc.loadClass("com.sun.identity.classloader.FAMClassLoader");
+                    oldcc.loadClass(
+                       "com.sun.identity.classloader.FAMClassLoader");
                     // Get the OpenSSO Classloader
                     cls = 
                         com.sun.identity.classloader.FAMClassLoader.
                             getFAMClassLoader(null,jars);
                 } catch (ClassNotFoundException cnfe) {
-                    System.out.println("FAMServerAuthModule : " + 
+                    if(logger.isLoggable(Level.FINE)) {
+                       logger.log(Level.FINE, "FAMServerAuthModule : " +
                         "ClassNotFoundException, will load " + 
                             "wssagents.classloader.FAMClassLoader");
+                    }
                     cls = 
                         com.sun.identity.wssagents.classloader.FAMClassLoader.
                             getFAMClassLoader(jars);
                 } catch (java.lang.NoClassDefFoundError ncdfe) {
-                    System.out.println("FAMServerAuthModule : " + 
-                        "NoClassDefFoundError, will load " + 
+                   if(logger.isLoggable(Level.FINE)) {
+                       logger.log(Level.FINE, "FAMServerAuthModule : " +
+                        "ClassNotFoundException, will load " + 
                             "wssagents.classloader.FAMClassLoader");
+                    }
                     cls = 
                         com.sun.identity.wssagents.classloader.FAMClassLoader.
                             getFAMClassLoader(jars);
@@ -152,9 +159,9 @@ public class FAMServerAuthModule implements ServerAuthModule {
             args[0] = options;
             init.invoke(serverAuthModule, args);
         } catch(Exception ex) {
-            if(_logger != null) {
-                _logger.log(Level.SEVERE,
-                "FAMServerAuthModule.initialization failed : " + ex.toString());
+            if(logger.isLoggable(Level.SEVERE)) {
+               logger.log(Level.SEVERE,
+                "FAMServerAuthModule.initialization failed : ",  ex);
             }
             throw new RuntimeException(ex);
         } finally {
@@ -222,9 +229,9 @@ public class FAMServerAuthModule implements ServerAuthModule {
                 (SOAPMessage)messageInfo.getRequestMessage();
             
             Object args[] = new Object[1];
-            if(_logger != null) {
+            if(logger != null) {
                 args[0] = soapMessage.getSOAPPart().getEnvelope();
-                _logger.log(Level.FINE, "FAMServerAuthModule.validateRequest: "
+                logger.log(Level.FINE, "FAMServerAuthModule.validateRequest: "
                     + "SOAPMessage before validation: " + print.invoke(
                     serverAuthModule, args));
             }
@@ -238,22 +245,21 @@ public class FAMServerAuthModule implements ServerAuthModule {
             packet.invocationProperties.put("javax.security.auth.Subject", 
                 clientSubject);
             
-            if(_logger != null) {
+            if(logger.isLoggable(Level.FINE)) {
                 args = new Object[1];
                 args[0] = soapMessage.getSOAPPart().getEnvelope();
-                _logger.log(Level.FINE, "FAMServerAuthModule.validateRequest: "
+                logger.log(Level.FINE, "FAMServerAuthModule.validateRequest: "
                     + "SOAPMessage after validation: " + print.invoke(
                     serverAuthModule, args));
             }
             
         } catch(Exception sbe) {
-            if(_logger != null) {
-                _logger.log(Level.SEVERE, "AMServerAuthModule.validateRequest:"
-                + " Failed in Validating the Request.");
+            if(logger.isLoggable(Level.WARNING)) {
+               logger.log(Level.WARNING,"FAMServerAuthModule.validateRequest:"
+                            + "Failed in Validating the Request.", sbe);
             }
-            sbe.printStackTrace();
-            AuthException ae = new AuthException("Validating Request failed");
-            ae.initCause(sbe);
+            AuthException ae = new AuthException(sbe.getCause().getMessage());
+            ae.initCause(sbe.getCause());
             throw ae;
         } finally {
             Thread.currentThread().setContextClassLoader(oldcc);
@@ -299,8 +305,8 @@ public class FAMServerAuthModule implements ServerAuthModule {
 
             Object[] args = new Object[1];
             args[0] = soapMessage.getSOAPPart().getEnvelope();
-            if(_logger != null) {
-                _logger.log(Level.FINE, "FAMServerAuthModule.secureResponse: " 
+            if(logger.isLoggable(Level.FINE)) {
+               logger.log(Level.FINE, "FAMServerAuthModule.secureResponse: " 
                     + "SOAPMessage before securing: " + print.invoke(
                     serverAuthModule, args));
             }
@@ -309,21 +315,20 @@ public class FAMServerAuthModule implements ServerAuthModule {
             args[1] = messageInfo.getMap();
             soapMessage = (SOAPMessage) secureResponse.invoke(
                 serverAuthModule, args);
-            if(_logger != null) {
+            if(logger.isLoggable(Level.FINE)) {
                 args = new Object[1];
                 args[0] = soapMessage.getSOAPPart().getEnvelope();
-                _logger.log(Level.FINE, "FAMServerAuthModule.secureResponse: " 
+                logger.log(Level.FINE, "FAMServerAuthModule.secureResponse: " 
                     + "SOAPMessage after securing: " + print.invoke(
                     serverAuthModule, args));
             }
             
         } catch(Exception ie) {
-            if(_logger != null) {
-                _logger.log(Level.SEVERE, "FAMClientAuthModule.secureResponse:"
-                    + " Failed in securing the response.");
+            if(logger.isLoggable(Level.WARNING)) {
+               logger.log(Level.WARNING, "FAMClientAuthModule.secureResponse:"
+                    + " Failed in securing the response.", ie);
             }
-            ie.printStackTrace();
-            AuthException ae = new AuthException("Securing response failed");
+            AuthException ae = new AuthException(ie.getCause().getMessage());
             ae.initCause(ie);
             throw ae;
         } finally {
@@ -347,15 +352,7 @@ public class FAMServerAuthModule implements ServerAuthModule {
             throw new AuthException("nullSubject");
         }
     }
-    
-    
-    private static Logger _logger = null;
-    
-    static {
-        LogManager logManager = LogManager.getLogManager();
-        _logger = logManager.getLogger(
-            "javax.enterprise.system.core.security");
-    }
+           
     
      public Class[] getSupportedMessageTypes() {
          return null;

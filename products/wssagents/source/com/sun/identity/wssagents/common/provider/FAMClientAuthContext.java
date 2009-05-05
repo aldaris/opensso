@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClientAuthContext.java,v 1.2 2008-06-25 05:54:47 qcheng Exp $
+ * $Id: FAMClientAuthContext.java,v 1.3 2009-05-05 01:16:12 mallas Exp $
  *
  */
 
@@ -35,9 +35,14 @@ import javax.security.auth.message.AuthException;
 import javax.security.auth.message.AuthStatus;
 import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.config.ClientAuthContext;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class FAMClientAuthContext implements ClientAuthContext {
 
+    private static final Logger logger =
+                   Logger.getLogger("com.sun.identity.wssagents.security");
+     
     private CallbackHandler handler = null;
     //***************AuthModule Instance**********
     FAMClientAuthModule authModule = null;
@@ -46,28 +51,24 @@ public class FAMClientAuthContext implements ClientAuthContext {
     public FAMClientAuthContext(String operation, Subject subject, Map map, 
         CallbackHandler callbackHandler) {
         
-        //System.out.println("FAMClientAuthContext operation : " + operation);
-        //System.out.println("FAMClientAuthContext subject : " + subject);
-        //System.out.println("FAMClientAuthContext map : " + map);
-        //System.out.println("FAMClientAuthContext callbackHandler : " + 
-        //    callbackHandler);
-
         this.handler = callbackHandler;
         String providerName = (String) map.get("providername");
         int svcIndex = providerName.lastIndexOf("}");
         providerName = providerName.substring(svcIndex+1);
         
-        System.out.println("FAMClientAuthContext providername : " 
-            + providerName);
-        
+        if(logger.isLoggable(Level.FINE)) {
+           logger.log(Level.FINE, "FAMClientAuthContext providername : " 
+                      + providerName); 
+        }
+               
         authModule = new FAMClientAuthModule();
         map.put("providername", providerName);
         try {
             authModule.initialize(null, null, null, map);
         } catch (AuthException e) {
-            System.out.println("FAMClientAuthContext : clientAuthModule : " + 
-                "Initialize ERROR : " + e.toString());
-            e.printStackTrace();
+            if(logger.isLoggable(Level.SEVERE))
+               logger.log(Level.SEVERE, "FAMClientAuthContext.:"
+                    + "Initialization failed :", e);            
         }
     }
 
@@ -77,9 +78,10 @@ public class FAMClientAuthContext implements ClientAuthContext {
         try {
             return authModule.secureRequest(messageInfo, clientSubject);
         } catch (AuthException e) {
-            System.out.println("FAMClientAuthContext : clientAuthModule : " + 
-                "secureRequest ERROR : " + e.toString());
-            e.printStackTrace();
+            if(logger.isLoggable(Level.WARNING)) {
+               logger.log(Level.WARNING,
+                   "FAMClientAuthContext.secureRequest failed : ", e );                 
+            }     
             return AuthStatus.SEND_FAILURE;
         }
         
@@ -92,9 +94,10 @@ public class FAMClientAuthContext implements ClientAuthContext {
             return authModule.validateResponse(messageInfo, clientSubject, 
                 serviceSubject);
         } catch (AuthException e) {
-            System.out.println("FAMClientAuthContext : clientAuthModule : " + 
-                "validateResponse ERROR : " + e.toString());
-            e.printStackTrace();
+            if(logger.isLoggable(Level.WARNING)) {
+               logger.log(Level.WARNING, "FAMClientAuthContext.validateResponse:"
+                       + "failed : ", e);
+            }
             return AuthStatus.SEND_FAILURE;
         }
         
@@ -105,9 +108,10 @@ public class FAMClientAuthContext implements ClientAuthContext {
         try {
             authModule.cleanSubject(messageInfo, subject);
         } catch (AuthException e) {
-            System.out.println("FAMClientAuthContext : clientAuthModule : " + 
-                "cleanSubject ERROR.");
-            e.printStackTrace();
+            if(logger.isLoggable(Level.WARNING)) {
+               logger.log(Level.WARNING, "FAMClientAuthContext.cleanSubject:"
+                       + "failed : ", e);
+            }            
         }
     }
    

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetQuote.java,v 1.3 2008-08-15 01:05:41 veiming Exp $
+ * $Id: GetQuote.java,v 1.4 2009-05-05 01:16:12 mallas Exp $
  *
  */
 package com.samples;
@@ -33,6 +33,7 @@ import javax.jws.HandlerChain;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.xml.ws.WebServiceRef;
+import javax.xml.ws.soap.SOAPFaultException;
 
 public class GetQuote extends HttpServlet {
     
@@ -44,7 +45,7 @@ public class GetQuote extends HttpServlet {
     /**
      * Get Stock quote from WSP
      */
-    public QuoteResponseType getStockQuote(String symbol) {
+    public QuoteResponseType getStockQuote(String symbol) throws SOAPFaultException {
         StockQuotePortType port = service.getStockQuotePortTypePort();
         QuoteRequestType body = new QuoteRequestType();
         body.setSymbol(symbol);
@@ -191,6 +192,9 @@ public class GetQuote extends HttpServlet {
             }
             out.write("</body>\n");
             out.write("</html>\n");
+        } catch (SOAPFaultException sfe) {
+           out.write("SOAP Fault exception occured: Fault string" 
+               + sfe.getFault().getFaultString()); 
         } catch (Exception ex) {
             ex.printStackTrace(out);
         }

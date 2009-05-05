@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMHttpAuthModule.java,v 1.6 2008-08-19 19:15:11 veiming Exp $
+ * $Id: FAMHttpAuthModule.java,v 1.7 2009-05-05 01:16:12 mallas Exp $
  *
  */
  
@@ -61,6 +61,8 @@ import com.sun.identity.wssagents.classloader.FAMClassLoader;
  */
 public class FAMHttpAuthModule implements ServerAuthModule {
     // Pointer to HttpRequestHandler
+    private static final Logger logger =
+                   Logger.getLogger("com.sun.identity.wssagents.security");
     private static Class _handler;
     
     // Methods in HttpRequestHandler
@@ -87,8 +89,8 @@ public class FAMHttpAuthModule implements ServerAuthModule {
 	       CallbackHandler handler,
 	       Map options) throws AuthException {
         
-        if(_logger != null) {
-            _logger.log(Level.INFO, "FAMHttpAuthModule.Init");
+        if(logger != null) {
+           logger.log(Level.INFO, "FAMHttpAuthModule.Init");
         }
         
         ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
@@ -122,11 +124,10 @@ public class FAMHttpAuthModule implements ServerAuthModule {
             args[0] = options;
             init.invoke(httpAuthModule, args);
         } catch (Exception ex) {
-            if(_logger != null) {
-                _logger.log(Level.SEVERE,
-                    "FAMHttpAuthModule.initialize failed");
+            if(logger != null) {
+               logger.log(Level.SEVERE,
+                    "FAMHttpAuthModule.initialize failed", ex);
             }
-            ex.printStackTrace();
         } finally {
             Thread.currentThread().setContextClassLoader(oldcc);
         }
@@ -152,7 +153,8 @@ public class FAMHttpAuthModule implements ServerAuthModule {
                 
         HttpServletRequest request = 
                 (HttpServletRequest)messageInfo.getRequestMessage();
-        HttpServletResponse response = (HttpServletResponse)messageInfo.getResponseMessage();
+        HttpServletResponse response = 
+                (HttpServletResponse)messageInfo.getResponseMessage();
         // Check if you needs to authenticate
         Object[] args = new Object[2];
         args[0] = clientSubject;
@@ -162,13 +164,12 @@ public class FAMHttpAuthModule implements ServerAuthModule {
             Thread.currentThread().setContextClassLoader(cls);
             authN = (Boolean) shouldAuthenticate.invoke(httpAuthModule, args);
         } catch (Exception ex) {
-            if(_logger != null) {
-                _logger.log(Level.SEVERE, "FAMHttpAuthModule.validateRequest " 
-                            + "shouldAuthenticate failed");
-            }
-            ex.printStackTrace();
+            if(logger != null) {
+               logger.log(Level.SEVERE, "FAMHttpAuthModule.validateRequest " 
+                            + "shouldAuthenticate failed", ex);
+            }            
             AuthException ae = new AuthException(ex.getMessage());
-            ae.initCause(ex);
+            ae.initCause(ex.getCause());
             throw (ae);
         } finally {
             Thread.currentThread().setContextClassLoader(oldcc);
@@ -182,21 +183,20 @@ public class FAMHttpAuthModule implements ServerAuthModule {
                 Thread.currentThread().setContextClassLoader(cls);
                 loginURL = (String) getLoginURL.invoke(httpAuthModule, args);
             } catch (Exception ex) {
-                if(_logger != null) {
-                    _logger.log(Level.SEVERE, 
+                if(logger != null) {
+                   logger.log(Level.SEVERE, 
                                 "FAMHttpAuthModule.validateRequest " +
-                                "getLoginURL failed");
-                }
-                ex.printStackTrace();
+                                "getLoginURL failed", ex);
+                }                
                 AuthException ae = new AuthException(ex.getMessage());
-                ae.initCause(ex);
+                ae.initCause(ex.getCause());
                 throw (ae);
             } finally {
                 Thread.currentThread().setContextClassLoader(oldcc);
             }
             
-            if(_logger != null) {
-                _logger.log(Level.FINE,
+            if(logger != null) {
+               logger.log(Level.FINE,
                     "FAMHttpAuthModule.validateRequest: LoginURL :" 
                     + loginURL);
             }
@@ -250,15 +250,7 @@ public class FAMHttpAuthModule implements ServerAuthModule {
     public Class[] getSupportedMessageTypes() {
         return null;
     }
-    
-    private static Logger _logger = null;
-    
-    static {
-        LogManager logManager = LogManager.getLogManager();
-        _logger = logManager.getLogger(
-            "javax.enterprise.system.core.security");
-    }
-    
+        
     /**
      * The list of jar files to be loaded by FAMClassLoader.
      */

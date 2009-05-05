@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMAuthConfigProvider.java,v 1.4 2008-08-19 19:15:11 veiming Exp $
+ * $Id: FAMAuthConfigProvider.java,v 1.5 2009-05-05 01:16:12 mallas Exp $
  *
  */
 
@@ -36,9 +36,15 @@ import javax.security.auth.message.config.AuthConfigFactory;
 import javax.security.auth.message.config.AuthConfigProvider;
 import javax.security.auth.message.config.ClientAuthConfig;
 import javax.security.auth.message.config.ServerAuthConfig;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class FAMAuthConfigProvider implements AuthConfigProvider {
 
+    private static final Logger logger =
+                   Logger.getLogger("com.sun.identity.wssagents.security");
+
+    
     String id = null;
     String description = "OpenSSO AuthConfigProvider";
     
@@ -53,13 +59,17 @@ public class FAMAuthConfigProvider implements AuthConfigProvider {
         }
     }
 
-    public ClientAuthConfig getClientAuthConfig(String layer, String appContext, 
-        CallbackHandler callbackHandler) throws AuthException {
-        System.out.println("FAMAuthConfigProvider getClientAuthConfig " + 
-            "appContext : " + appContext);
-        System.out.println("FAMAuthConfigProvider getClientAuthConfig " + 
-            "callbackHandler : " + callbackHandler);
+    public ClientAuthConfig getClientAuthConfig(
+             String layer, 
+             String appContext, 
+             CallbackHandler callbackHandler) throws AuthException {
         
+        if(logger.isLoggable(Level.FINE)) {
+           logger.log(Level.FINE, "FAMAuthConfigProvider getClientAuthConfig:"+ 
+                      " appContext : " + appContext + 
+                      " callbackHandler : " + callbackHandler); 
+        }
+                
         ClientAuthConfig clientConfig = null;
 
         clientConfig = 
@@ -77,11 +87,13 @@ public class FAMAuthConfigProvider implements AuthConfigProvider {
     
     public ServerAuthConfig getServerAuthConfig(String layer, String appContext, 
         CallbackHandler callbackHandler) throws AuthException {
-        System.out.println("FAMAuthConfigProvider getServerAuthConfig " + 
-            "appContext : " + appContext);
-        System.out.println("FAMAuthConfigProvider getServerAuthConfig " + 
-            "callbackHandler : " + callbackHandler);
         
+        if(logger.isLoggable(Level.FINE)) {
+           logger.log(Level.FINE, "FAMAuthConfigProvider getServerAuthConfig:"+ 
+                      " appContext : " + appContext + 
+                      " callbackHandler : " + callbackHandler); 
+        }
+               
         ServerAuthConfig serverConfig = null;
 
         serverConfig = 

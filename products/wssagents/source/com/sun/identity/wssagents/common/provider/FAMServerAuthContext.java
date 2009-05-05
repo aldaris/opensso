@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthContext.java,v 1.4 2008-07-12 18:36:19 mallas Exp $
+ * $Id: FAMServerAuthContext.java,v 1.5 2009-05-05 01:16:12 mallas Exp $
  *
  */
 
@@ -38,9 +38,21 @@ import javax.security.auth.message.config.ServerAuthContext;
 import com.sun.xml.ws.api.model.wsdl.WSDLPort;
 import com.sun.xml.ws.api.server.WSEndpoint;
 import com.sun.xml.ws.api.EndpointAddress;
+import javax.xml.ws.soap.SOAPFaultException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.namespace.QName;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class FAMServerAuthContext implements ServerAuthContext {
     
+    private static final Logger logger =
+                   Logger.getLogger("com.sun.identity.wssagents.security");
+
+    private static final String SOAP_NS = 
+                         "http://schemas.xmlsoap.org/soap/envelope/";
     private CallbackHandler handler = null;
     
     //***************AuthModule Instance**********
@@ -49,22 +61,9 @@ public class FAMServerAuthContext implements ServerAuthContext {
     /** Creates a new instance of FAMServerAuthContext */
     public FAMServerAuthContext(String operation, Subject subject, Map map, 
         CallbackHandler callbackHandler) {
-        //System.out.println("FAMServerAuthContext operation : " + operation);
-        //System.out.println("FAMServerAuthContext subject : " + subject);
-        //System.out.println("FAMServerAuthContext map : " + map);
-        //System.out.println("FAMServerAuthContext callbackHandler : " + 
-        //    callbackHandler);
         //initialize the AuthModules and keep references to them
         this.handler = callbackHandler;
-        
-        // TBD : Following code will be changed to use only one way of getting
-        // service end point once Metro / JAX-WS team gives the fix for
-        // "appContext" issue.
-        String appContext = (String)map.get("providername");
-        System.out.println("FAMServerAuthContext appContext : " + appContext);
-        
         WSEndpoint endPoint = (WSEndpoint)map.get("ENDPOINT");
-
         String providerName = null;
         if(endPoint != null) {
            WSDLPort port = endPoint.getPort();
@@ -76,16 +75,18 @@ public class FAMServerAuthContext implements ServerAuthContext {
               }
            }
         }
-                        
-        
+        if(logger.isLoggable(Level.FINE)) {
+           logger.log(Level.FINE, "FAMServerAuthContext.endpoint from the " +
+                        "WSDL: " + providerName);
+        }
         authModule = new FAMServerAuthModule();
         map.put("providername", providerName);
         try {
             authModule.initialize(null, null, null,map);
         } catch (AuthException e) {
-            System.out.println("FAMServerAuthContext : serverAuthModule : " + 
-                "Initialize ERROR : " + e.toString());
-            e.printStackTrace();
+            if(logger.isLoggable(Level.SEVERE)) {
+               logger.log(Level.SEVERE, "FAMServerAuthContext Init failed", e);
+            }
         }
         
     }
@@ -97,10 +98,11 @@ public class FAMServerAuthContext implements ServerAuthContext {
             return authModule.validateRequest(messageInfo, clientSubject, 
                 serviceSubject);
         } catch (AuthException e) {
-            System.out.println("FAMServerAuthContext : serverAuthModule : " + 
-                "validateRequest ERROR : " + e.toString());
-            e.printStackTrace();
-            return AuthStatus.SEND_FAILURE;
+            if(logger.isLoggable(Level.WARNING)) {
+               logger.log(Level.WARNING, "FAMServerAuthContext validate" +
+                 " request failed", e);
+            }
+            throw new SOAPFaultException(createSOAPFault(e.getMessage()));
         }
         
     }
@@ -111,10 +113,11 @@ public class FAMServerAuthContext implements ServerAuthContext {
         try {
             return authModule.secureResponse(messageInfo, serviceSubject);
         } catch (AuthException e) {
-            System.out.println("FAMServerAuthContext : serverAuthModule : " + 
-                "secureResponse ERROR : " + e.toString());
-            e.printStackTrace();
-            return AuthStatus.SEND_FAILURE;
+            if(logger.isLoggable(Level.WARNING)) {
+               logger.log(Level.WARNING, "FAMServerAuthContext secure" +
+                 " response failed", e);
+            }
+            throw new SOAPFaultException(createSOAPFault(e.getMessage()));
         }
         
     }
@@ -124,11 +127,27 @@ public class FAMServerAuthContext implements ServerAuthContext {
         try {
             authModule.cleanSubject(messageInfo, subject);
         } catch (AuthException e) {
-            System.out.println("FAMServerAuthContext : serverAuthModule : " + 
-                "cleanSubject ERROR.");
-            e.printStackTrace();
+            if(logger.isLoggable(Level.WARNING)) {
+               logger.log(Level.WARNING, "FAMServerAuthContext clean" +
+                 " subject failed", e);
+            }
         }
     }
 
+    private SOAPFault createSOAPFault(String faultMsg) throws AuthException {
+        if(faultMsg == null || faultMsg.length() == 0) {
+           faultMsg = "Unknown error";        
+        }
+        try {
+            SOAPFactory sf = SOAPFactory.newInstance();
+            return sf.createFault(faultMsg, new QName(SOAP_NS, "Server", "S"));
+        } catch (Exception ex) {
+            if(logger.isLoggable(Level.SEVERE)) {
+               logger.log(Level.SEVERE, "FAMServerAuthContext create" +
+                 " SOAPFault failed", ex);
+             }
+             throw new AuthException(ex.getMessage());
+        }
+    }
 
 }
