@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.13 2009-04-29 21:37:59 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.14 2009-05-05 00:44:38 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -155,43 +155,17 @@ public class PrivilegeManagerTest {
 
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
         IPCondition ipc1 = (IPCondition) p.getCondition();
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddPrivlege():" + "READ startIp="
-                + ipc1.getStartIp());
         if (!ipc1.getStartIp().equals(startIp)) {
-            UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddPrivlege():" + "READ startIp "
-                + " does not equal set startIp");
             throw new Exception(
                 "PrivilegeManagerTest.testAddPrivlege():" + "READ startIp "
                 + " does not equal set startIp");
         }
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddPrivlege():" + "READ endIp="
-                + ipc1.getEndIp());
         if (!ipc1.getEndIp().equals(endIp)) {
-            UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddPrivlege():" + "READ endIp "
-                + " does not equal set endIp");
             throw new Exception(
                 "PrivilegeManagerTest.testAddPrivlege():" + "READ endIp "
                 + " does not equal set endIp");
         }
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddPrivlege():" + "read privilege="
-                + p);
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddPrivlege():"
-                + "saved privilege entitlement="
-                + privilege.getEntitlement());
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddPrivlege():"
-                + "read privilege entitlement="
-                + p.getEntitlement());
         if (!privilege.equals(p)) {
-            UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddPrivlege():" + "read privilege not"
-                + "equal to saved privilege");
             //TODO: looks like hashCodes differ for nested subjects and conditions compared to
             // the saved ones. Need to investigate more
             /*
@@ -216,22 +190,12 @@ public class PrivilegeManagerTest {
             }
         }
 
-
         Set privilegeNames = prm.getPrivilegeNames();
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddPrivlege():"
-                + "got privilege names="
-                + privilegeNames);
         if (!privilegeNames.contains(PRIVILEGE_NAME)) {
-             UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddPrivlege():"
-                + "got privilege names doe not contain saved privilege");
               throw new Exception(
                 "PrivilegeManagerTest.testAddPrivlege():"
                 + "got privilege names doe not contain saved privilege");
         }
-
-
     }
 
     @Test(dependsOnMethods = {"testAddPrivilege"})
@@ -308,7 +272,16 @@ public class PrivilegeManagerTest {
         PrivilegeManager prm = PrivilegeManager.getInstance(
             SubjectUtils.createSubject(adminToken));
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testGetPrivlege():" + "read back privilege=" + p);
+
+        if (p == null) {
+            throw new Exception("PrivilegeManagerTest.testGetPrivilege: " +
+                "failed to get privilege.");
+        }
+
+        String xml = prm.getPrivilegeXML(PRIVILEGE_NAME);
+        if ((xml == null) || (xml.trim().length() == 0)) {
+            throw new Exception("PrivilegeManagerTest.testGetPrivilege: " +
+                "failed to get privilege XML.");
+        }
     }
 }

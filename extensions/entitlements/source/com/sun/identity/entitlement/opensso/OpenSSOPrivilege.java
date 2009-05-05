@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPrivilege.java,v 1.5 2009-04-23 23:29:20 veiming Exp $
+ * $Id: OpenSSOPrivilege.java,v 1.6 2009-05-05 00:44:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -128,5 +128,4 @@ public class OpenSSOPrivilege extends Privilege {
 
         return results;
     }
-
 }

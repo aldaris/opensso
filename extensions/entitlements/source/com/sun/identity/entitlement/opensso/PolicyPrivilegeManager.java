@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.4 2009-04-29 11:43:12 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.5 2009-05-05 00:44:38 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -58,6 +58,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      * @param subject subject that would be used for privilege management
      * operations
      */
+    @Override
     public void initialize(Subject subject) {
         super.initialize(subject);
         SSOToken ssoToken = (SSOToken) AccessController.doPrivileged(
@@ -78,15 +79,15 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      * an error
      */
     public Privilege getPrivilege(String privilegeName)
-            throws EntitlementException {
+        throws EntitlementException {
         Privilege privilege = null;
         try {
             Policy policy = pm.getPolicy(privilegeName);
             privilege = PrivilegeUtils.policyToPrivilege(policy);
         } catch (PolicyException pe) {
-            //TOFIX
+            throw new EntitlementException(102, pe);
         } catch (SSOException ssoe) {
-            //TOFIX
+            throw new EntitlementException(102, ssoe);
         }
         return privilege;
     }
@@ -171,7 +172,8 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      * @throws com.sun.identity.entitlement.EntitlementException if there
      * is an error
      */
-    public Set<String> getPrivilegeNames(String pattern) throws EntitlementException {
+    public Set<String> getPrivilegeNames(String pattern)
+        throws EntitlementException {
         Set<String> names = null;
         try {
             names = pm.getPolicyNames(pattern);
@@ -181,6 +183,27 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
             //TODO: record, wrap and propogate
         }
         return names;
+    }
+
+    /**
+     * Returns the XML representation of this privilege.
+     *
+     * @param name Privilege name.
+     * @return XML representation of this privilege.
+     * @throws EntitlementException if privilege is not found, or cannot
+     * be obtained.
+     */
+    @Override
+    public String getPrivilegeXML(String name)
+        throws EntitlementException {
+        try {
+            Policy policy = pm.getPolicy(name);
+            return policy.toXML();
+        } catch (PolicyException pe) {
+            throw new EntitlementException(102, pe);
+        } catch (SSOException ssoe) {
+            throw new EntitlementException(102, ssoe);
+        }
     }
 }
 
