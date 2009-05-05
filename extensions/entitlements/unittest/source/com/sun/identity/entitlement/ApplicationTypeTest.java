@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeTest.java,v 1.1 2009-04-29 18:14:17 veiming Exp $
+ * $Id: ApplicationTypeTest.java,v 1.2 2009-05-05 08:19:37 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -55,13 +55,25 @@ public class ApplicationTypeTest {
         Application app = ApplicationManager.getApplication("/", 
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
         if (app == null) {
-            throw new Exception("ApplicationTypeTest.testApplicationType cannot get application");
+            throw new Exception("ApplicationTypeTest.testApplication cannot get application");
         }
         ApplicationManager.saveApplication("/", app);
         app = ApplicationManager.getApplication("/",
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
         if (app == null) {
-            throw new Exception("ApplicationTypeTest.testApplicationType application lost");
+            throw new Exception("ApplicationTypeTest.testApplication application lost");
         }
+
+        ValidateResourceResult r = app.validateResourceName("http://www.sun.com");
+        if (!r.isValid()) {
+            throw new Exception(
+                "ApplicationTypeTest.testApplication, validateResourceName (+ve test) is incorrect");
+        }
+        r = app.validateResourceName("http://www.sun.com:abc");
+        if (r.isValid()) {
+            throw new Exception(
+                "ApplicationTypeTest.testApplication, validateResourceName (-ve test) is incorrect");
+        }
+
     }
 }

@@ -121,7 +121,7 @@ public class PolicyDao implements Serializable {
         try {
             return (pm.getPrivilege(name) != null);
         } catch (EntitlementException ee) {
-            throw new RuntimeException(ee);
+            return false;
         }
     }
 

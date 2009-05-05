@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.5 2009-05-02 06:26:12 veiming Exp $
+ * $Id: Rule.java,v 1.6 2009-05-05 08:19:37 veiming Exp $
  *
  */
 package com.sun.identity.policy;
@@ -33,6 +33,8 @@ import org.w3c.dom.*;
 
 import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.entitlement.PolicyConfigFactory;
+import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 
 /**
  * The class <code>Rule</code> provides interfaces to manage
@@ -165,10 +167,15 @@ public class Rule extends Object implements Cloneable {
         // Verify the action names
         //serviceType.validateActionValues(actions);
         this.actions = new HashMap(actions);
-        try {
-            this.resourceName = serviceType.canonicalize(resourceName);
-        } catch (PolicyException pe) {
-            throw new InvalidNameException(pe, resourceName, 2);
+        IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
+        if (pc.isEntitlementMode()) {
+            this.resourceName = resourceName;
+        } else {
+            try {
+                this.resourceName = serviceType.canonicalize(resourceName);
+            } catch (PolicyException pe) {
+                throw new InvalidNameException(pe, resourceName, 2);
+            }
         }
     }
 
@@ -256,10 +263,13 @@ public class Rule extends Object implements Cloneable {
         }
         if (resourceName != null) {
             resourceName = resourceName.trim();
-            try {
-                resourceName = serviceType.canonicalize(resourceName);
-            } catch (PolicyException pe) {
-                throw new InvalidNameException(pe, resourceName, 2);
+            IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
+            if (!pc.isEntitlementMode()) {
+                try {
+                    resourceName = serviceType.canonicalize(resourceName);
+                } catch (PolicyException pe) {
+                    throw new InvalidNameException(pe, resourceName, 2);
+                }
             }
         }
 

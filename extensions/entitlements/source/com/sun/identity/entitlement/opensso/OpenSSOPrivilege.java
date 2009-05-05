@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPrivilege.java,v 1.6 2009-05-05 00:44:38 veiming Exp $
+ * $Id: OpenSSOPrivilege.java,v 1.7 2009-05-05 08:19:36 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -60,6 +60,7 @@ public class OpenSSOPrivilege extends Privilege {
      * @param eCondition EntitlementCondition used for constraint check
      * @param eResourceAttributes Resource1Attributes used to get additional
      * result attributes
+     * @throws EntitlementException if resource names are invalid.
      */
     public OpenSSOPrivilege(
         String name,
@@ -67,7 +68,7 @@ public class OpenSSOPrivilege extends Privilege {
         EntitlementSubject eSubject,
         EntitlementCondition eCondition,
         Set<ResourceAttributes> eResourceAttributes
-    ) {
+    ) throws EntitlementException {
         super(name, entitlement, eSubject, eCondition, eResourceAttributes);
     }
 

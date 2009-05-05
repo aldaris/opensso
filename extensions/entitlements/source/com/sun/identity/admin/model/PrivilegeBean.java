@@ -3,6 +3,7 @@ package com.sun.identity.admin.model;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
+import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceAttributes;
@@ -332,15 +333,16 @@ public class PrivilegeBean implements Serializable {
         // TODO
         Set<ResourceAttributes> attrs = null;
 
-
-        Privilege privilege = new OpenSSOPrivilege(
+        try {
+            return new OpenSSOPrivilege(
                 name,
                 entitlement,
                 eSubject,
                 condition,
                 attrs);
-
-        return privilege;
+        } catch (EntitlementException e) {
+            return null; //TODO
+        }
     }
 
     public ViewCondition getViewCondition() {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.11 2009-05-04 20:57:05 veiming Exp $
+ * $Id: Application.java,v 1.12 2009-05-05 08:19:36 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -300,7 +300,29 @@ public class Application {
         return searchIndex;
     }
 
+    /**
+     * Return attribute names.
+     *
+     * @return attribute names.
+     */
     public Set<String> getAttributeNames() {
         return attributeNames;
+    }
+
+    /**
+     * Returns the results of validating resource name.
+     *
+     * @param resource Resource to be validated.
+     * @return the results of validating resource name.
+     */
+    public ValidateResourceResult validateResourceName(String resource) {
+        try {
+            getResourceComparator().canonicalize(resource);
+            return new ValidateResourceResult( 
+                ValidateResourceResult.VALID_CODE_VALID, "");
+        } catch (EntitlementException ex) {
+            return new ValidateResourceResult(
+                ValidateResourceResult.VALID_CODE_INVALID, ex.getMessage());
+        }
     }
 }
