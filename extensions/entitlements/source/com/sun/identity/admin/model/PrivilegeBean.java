@@ -9,6 +9,7 @@ import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -70,30 +71,187 @@ public class PrivilegeBean implements Serializable {
         this.exceptionsCellEffect = exceptionsCellEffect;
     }
 
-    public static class NameComparator implements Comparator {
+    public Date getBirth() {
+        return birth;
+    }
 
+    public void setBirth(Date birth) {
+        this.birth = birth;
+    }
+
+    public Effect getBirthCellEffect() {
+        return birthCellEffect;
+    }
+
+    public void setBirthCellEffect(Effect birthCellEffect) {
+        this.birthCellEffect = birthCellEffect;
+    }
+
+    public Effect getAuthorCellEffect() {
+        return authorCellEffect;
+    }
+
+    public void setAuthorCellEffect(Effect authorCellEffect) {
+        this.authorCellEffect = authorCellEffect;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public Date getModified() {
+        return modified;
+    }
+
+    public void setModified(Date modified) {
+        this.modified = modified;
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
+    }
+
+    public Effect getModifierCellEffect() {
+        return modifierCellEffect;
+    }
+
+    public void setModifierCellEffect(Effect modifierCellEffect) {
+        this.modifierCellEffect = modifierCellEffect;
+    }
+
+    public Effect getModifiedCellEffect() {
+        return modifiedCellEffect;
+    }
+
+    public void setModifiedCellEffect(Effect modifiedCellEffect) {
+        this.modifiedCellEffect = modifiedCellEffect;
+    }
+
+    public static abstract class PrivilegeComparator implements Comparator {
         private boolean ascending;
 
-        public NameComparator(boolean ascending) {
+        public PrivilegeComparator(boolean ascending) {
             this.ascending = ascending;
+        }
+
+        public boolean isAscending() {
+            return ascending;
+        }
+
+        public void setAscending(boolean ascending) {
+            this.ascending = ascending;
+        }
+
+    }
+
+    public static class NameComparator extends PrivilegeComparator {
+
+        public NameComparator(boolean ascending) {
+            super(ascending);
         }
 
         public int compare(Object o1, Object o2) {
             PrivilegeBean pb1 = (PrivilegeBean) o1;
             PrivilegeBean pb2 = (PrivilegeBean) o2;
 
-            if (ascending) {
+            if (isAscending()) {
                 return pb1.getName().compareTo(pb2.getName());
             } else {
                 return pb2.getName().compareTo(pb1.getName());
             }
         }
     }
+
+    public static class BirthComparator extends PrivilegeComparator {
+
+        public BirthComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            PrivilegeBean pb1 = (PrivilegeBean) o1;
+            PrivilegeBean pb2 = (PrivilegeBean) o2;
+
+            if (isAscending()) {
+                return pb1.getBirth().compareTo(pb2.getBirth());
+            } else {
+                return pb2.getBirth().compareTo(pb1.getBirth());
+            }
+        }
+    }
+
+    public static class ModifiedComparator extends PrivilegeComparator {
+
+        public ModifiedComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            PrivilegeBean pb1 = (PrivilegeBean) o1;
+            PrivilegeBean pb2 = (PrivilegeBean) o2;
+
+            if (isAscending()) {
+                return pb1.getModified().compareTo(pb2.getModified());
+            } else {
+                return pb2.getModified().compareTo(pb1.getModified());
+            }
+        }
+    }
+
+    public static class AuthorComparator extends PrivilegeComparator {
+
+        public AuthorComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            PrivilegeBean pb1 = (PrivilegeBean) o1;
+            PrivilegeBean pb2 = (PrivilegeBean) o2;
+
+            if (isAscending()) {
+                return pb1.getAuthor().compareTo(pb2.getAuthor());
+            } else {
+                return pb2.getAuthor().compareTo(pb1.getAuthor());
+            }
+        }
+    }
+
+    public static class ModifierComparator extends PrivilegeComparator {
+
+        public ModifierComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            PrivilegeBean pb1 = (PrivilegeBean) o1;
+            PrivilegeBean pb2 = (PrivilegeBean) o2;
+
+            if (isAscending()) {
+                return pb1.getModifier().compareTo(pb2.getModifier());
+            } else {
+                return pb2.getModifier().compareTo(pb1.getModifier());
+            }
+        }
+    }
+
+
     private String name = "myPolicy" + System.currentTimeMillis();
     private String description = null;
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
     private ViewCondition viewCondition = null;
     private ViewSubject viewSubject = null;
+    private Date birth;
+    private Date modified;
+    private String author;
+    private String modifier;
     private Effect nameCellEffect = null;
     private Effect resourcesCellEffect = null;
     private Effect subjectCellEffect = null;
@@ -101,6 +259,10 @@ public class PrivilegeBean implements Serializable {
     private Effect removeCellEffect = null;
     private Effect actionCellEffect = null;
     private Effect exceptionsCellEffect = null;
+    private Effect birthCellEffect = null;
+    private Effect modifierCellEffect = null;
+    private Effect modifiedCellEffect = null;
+    private Effect authorCellEffect = null;
 
     public PrivilegeBean() {
         // empty
@@ -123,6 +285,15 @@ public class PrivilegeBean implements Serializable {
 
         // conditions
         viewCondition = conditionTypeFactory.getViewCondition(p.getCondition());
+
+        // created, modified
+        birth = new Date(p.getCreationDate());
+
+        // created, modified
+        birth = new Date(p.getCreationDate());
+        author = p.getCreatedBy();
+        modified = new Date(p.getLastModifiedDate());
+        modifier = p.getLastModifiedBy();
     }
 
     public String getName() {

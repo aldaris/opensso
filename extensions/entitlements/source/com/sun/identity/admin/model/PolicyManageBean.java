@@ -17,14 +17,13 @@ public class PolicyManageBean implements Serializable {
     }
 
     public void reset() {
-        privilegeBeans = policyDao.getPrivilegeBeans();
+        privilegeBeans = policyDao.getPrivilegeBeans(searchFilter);
         policyManageTableBean = new PolicyManageTableBean(privilegeBeans);
     }
 
     public void setPolicyDao(PolicyDao policyDao) {
         this.policyDao = policyDao;
-        privilegeBeans = policyDao.getPrivilegeBeans();
-        policyManageTableBean = new PolicyManageTableBean(privilegeBeans);
+        reset();
     }
 
     public PolicyManageTableBean getPolicyManageTableBean() {
@@ -54,7 +53,7 @@ public class PolicyManageBean implements Serializable {
     public void setSearchFilter(String searchFilter) {
         if (!searchFilter.equals(this.searchFilter)) {
             this.searchFilter = searchFilter;
-            privilegeBeans = policyDao.getPrivilegeBeans(searchFilter);
+            reset();
         }
     }
 }

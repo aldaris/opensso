@@ -1,8 +1,7 @@
 package com.sun.identity.admin.dao;
 
 import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.ViewSubject;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -11,37 +10,15 @@ import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
-import com.sun.identity.security.AdminTokenAction;
 import java.io.Serializable;
-import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 
 public abstract class IdRepoSubjectDao extends SubjectDao implements Serializable {
 
     private int timeout = 5;
     private int limit = 100;
-
-    private SSOToken getSSOToken() {
-        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-
-        try {
-            SSOTokenManager manager = SSOTokenManager.getInstance();
-            SSOToken ssoToken = manager.createSSOToken(request);
-            manager.validateToken(ssoToken);
-            return ssoToken;
-        } catch (SSOException ssoe) {
-            throw new RuntimeException(ssoe);
-        }
-    }
-
-    private SSOToken getAdminSSOToken() {
-        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        return (SSOToken) AccessController.doPrivileged(AdminTokenAction.getInstance());
-    }
 
     protected abstract IdType getIdType();
 
@@ -53,7 +30,7 @@ public abstract class IdRepoSubjectDao extends SubjectDao implements Serializabl
 
     protected AMIdentity getAMIdentity(String name) {
         try {
-            return IdUtils.getIdentity(getAdminSSOToken(), name);
+            return IdUtils.getIdentity(new Token().getAdminSSOToken(), name);
         } catch (IdRepoException idre) {
             throw new RuntimeException(idre);
         }
@@ -92,7 +69,7 @@ public abstract class IdRepoSubjectDao extends SubjectDao implements Serializabl
         String realmName = "/";
 
         try {
-            AMIdentityRepository repo = new AMIdentityRepository(getSSOToken(), realmName);
+            AMIdentityRepository repo = new AMIdentityRepository(new Token().getSSOToken(), realmName);
             IdSearchResults results = repo.searchIdentities(idType, pattern, idsc);
             return results;
         } catch (IdRepoException e) {

@@ -87,6 +87,74 @@
                                 </ice:panelGroup>
                             </ice:column>
                             <ice:column
+                                rendered="#{policyManageBean.policyManageTableBean.modifierColumnVisible}">
+                                <f:facet name="header">
+                                    <ice:commandSortHeader
+                                        columnName="modifier"
+                                        actionListener="#{policyManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="Modified By"/>
+                                    </ice:commandSortHeader>
+                                </f:facet>
+                                <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.modifierCellEffect}">
+                                    <ice:outputText
+                                        value="#{privilegeBean.modifier}"/>
+                                </ice:panelGroup>
+                            </ice:column>
+                            <ice:column
+                                rendered="#{policyManageBean.policyManageTableBean.authorColumnVisible}">
+                                <f:facet name="header">
+                                    <ice:commandSortHeader
+                                        columnName="author"
+                                        actionListener="#{policyManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="Author"/>
+                                    </ice:commandSortHeader>
+                                </f:facet>
+                                <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.authorCellEffect}">
+                                    <ice:outputText
+                                        value="#{privilegeBean.author}"/>
+                                </ice:panelGroup>
+                            </ice:column>
+                            <ice:column
+                                rendered="#{policyManageBean.policyManageTableBean.modifiedColumnVisible}">
+                                <f:facet name="header">
+                                    <ice:commandSortHeader
+                                        columnName="modified"
+                                        actionListener="#{policyManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="Modified"/>
+                                    </ice:commandSortHeader>
+                                </f:facet>
+                                <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.modifiedCellEffect}">
+                                    <ice:outputText
+                                        value="#{privilegeBean.modified}"/>
+                                </ice:panelGroup>
+                            </ice:column>
+                            <ice:column
+                                rendered="#{policyManageBean.policyManageTableBean.birthColumnVisible}">
+                                <f:facet name="header">
+                                    <ice:commandSortHeader
+                                        columnName="birth"
+                                        actionListener="#{policyManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="Created"/>
+                                    </ice:commandSortHeader>
+                                </f:facet>
+                                <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.birthCellEffect}">
+                                    <ice:outputText
+                                        value="#{privilegeBean.birth}"/>
+                                </ice:panelGroup>
+                            </ice:column>
+                            <ice:column
                                 rendered="#{policyManageBean.policyManageTableBean.resourcesColumnVisible}">
                                 <f:facet name="header">
                                     <ice:outputText
@@ -159,30 +227,6 @@
                                 </o:tooltip>
                             </ice:column>
                             <ice:column
-                                rendered="#{policyManageBean.policyManageTableBean.conditionColumnVisible}">
-                                <f:facet name="header">
-                                    <ice:outputText
-                                        value="Conditions"/>
-                                </f:facet>
-                                <ice:panelGroup
-                                    visible="#{true}"
-                                    effect="#{privilegeBean.conditionCellEffect}"
-                                    panelTooltip="conditionTooltip">
-                                    <ice:outputText
-                                        value="#{privilegeBean.viewCondition.toString}"/>
-                                </ice:panelGroup>
-                                <o:tooltip
-                                    tooltipId="conditionTooltip"
-                                    title="#{privilegeBean.name}: conditions (#{privilegeBean.viewCondition.size})">
-                                    <ui:define name="body">
-                                        <pre>
-                                        <ice:outputText
-                                            value="#{privilegeBean.viewCondition.toFormattedString}"/>
-                                        </pre>
-                                    </ui:define>
-                                </o:tooltip>
-                            </ice:column>
-                            <ice:column
                                 rendered="#{policyManageBean.policyManageTableBean.actionColumnVisible}">
                                 <f:facet name="header">
                                     <ice:outputText
@@ -202,6 +246,30 @@
                                         <pre>
                                         <ice:outputText
                                             value="#{privilegeBean.viewEntitlement.booleanActionsBean.actionsToFormattedString}"/>
+                                        </pre>
+                                    </ui:define>
+                                </o:tooltip>
+                            </ice:column>
+                            <ice:column
+                                rendered="#{policyManageBean.policyManageTableBean.conditionColumnVisible}">
+                                <f:facet name="header">
+                                    <ice:outputText
+                                        value="Conditions"/>
+                                </f:facet>
+                                <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.conditionCellEffect}"
+                                    panelTooltip="conditionTooltip">
+                                    <ice:outputText
+                                        value="#{privilegeBean.viewCondition.toString}"/>
+                                </ice:panelGroup>
+                                <o:tooltip
+                                    tooltipId="conditionTooltip"
+                                    title="#{privilegeBean.name}: conditions (#{privilegeBean.viewCondition.size})">
+                                    <ui:define name="body">
+                                        <pre>
+                                        <ice:outputText
+                                            value="#{privilegeBean.viewCondition.toFormattedString}"/>
                                         </pre>
                                     </ui:define>
                                 </o:tooltip>

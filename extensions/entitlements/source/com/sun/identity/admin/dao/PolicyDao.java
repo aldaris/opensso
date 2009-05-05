@@ -1,5 +1,7 @@
 package com.sun.identity.admin.dao;
 
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.ConditionTypeFactory;
 import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.SubjectFactory;
@@ -9,6 +11,7 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,12 +78,7 @@ public class PolicyDao implements Serializable {
 
     public List<String> getPrivilegeNames(String filter) {
         String pattern = getPattern(filter);
-
-        // TODO: add SSO token to public credentials
-        Subject authSubject = new Subject();
-        PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
-
-        List<PrivilegeBean> privilegeBeans = null;
+        PrivilegeManager pm = getPrivilegeManager();
 
         Set<String> privilegeNames = null;
         try {
@@ -96,9 +94,9 @@ public class PolicyDao implements Serializable {
     }
 
     private PrivilegeManager getPrivilegeManager() {
-        // TODO: add SSO token to public credentials
-        Subject authSubject = new Subject();
-        PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
+        SSOToken t = new Token().getSSOToken();
+        Subject s = SubjectUtils.createSubject(t);
+        PrivilegeManager pm = PrivilegeManager.getInstance(s);
 
         return pm;
     }
@@ -155,8 +153,8 @@ public class PolicyDao implements Serializable {
             if (!validActionName.contains(actionName)) {
                 try {
                     app.addAction(actionName, actionValues.get(actionName));
-                } catch (EntitlementException ex) {
-                    //TODO
+                } catch (EntitlementException ee) {
+                    throw new RuntimeException(ee);
                 }
             }
         }

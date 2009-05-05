@@ -11,7 +11,6 @@ import com.sun.identity.admin.model.QueuedActionBean;
 import java.io.Serializable;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
-import javax.faces.event.ValueChangeEvent;
 
 public class PolicyManageHandler implements Serializable {
 
@@ -35,6 +34,17 @@ public class PolicyManageHandler implements Serializable {
     }
 
     public void sortTableListener(ActionEvent event) {
+        PhaseEventAction pea = new PhaseEventAction();
+        pea.setDoBeforePhase(true);
+        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+        pea.setAction("#{policyManageHandler.handleSort}");
+        pea.setParameters(new Class[]{});
+        pea.setArguments(new Object[]{});
+
+        queuedActionBean.getPhaseEventActions().add(pea);
+    }
+
+    public void handleSort() {
         policyManageBean.getPolicyManageTableBean().sort();
     }
 
@@ -85,6 +95,26 @@ public class PolicyManageHandler implements Serializable {
         e.setSubmit(true);
         e.setTransitory(false);
         pb.setActionCellEffect(e);
+
+        e = new Fade();
+        e.setSubmit(true);
+        e.setTransitory(false);
+        pb.setBirthCellEffect(e);
+
+        e = new Fade();
+        e.setSubmit(true);
+        e.setTransitory(false);
+        pb.setAuthorCellEffect(e);
+
+        e = new Fade();
+        e.setSubmit(true);
+        e.setTransitory(false);
+        pb.setModifiedCellEffect(e);
+
+        e = new Fade();
+        e.setSubmit(true);
+        e.setTransitory(false);
+        pb.setModifierCellEffect(e);
 
         e = new Fade();
         e.setSubmit(true);

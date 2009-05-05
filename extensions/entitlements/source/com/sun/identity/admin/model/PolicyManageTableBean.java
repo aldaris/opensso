@@ -81,6 +81,14 @@ public class PolicyManageTableBean implements Serializable {
     static {
         comparators.put(new SortKey("name", true), new PrivilegeBean.NameComparator(true));
         comparators.put(new SortKey("name", false), new PrivilegeBean.NameComparator(false));
+        comparators.put(new SortKey("birth", true), new PrivilegeBean.BirthComparator(true));
+        comparators.put(new SortKey("birth", false), new PrivilegeBean.BirthComparator(false));
+        comparators.put(new SortKey("author", true), new PrivilegeBean.AuthorComparator(true));
+        comparators.put(new SortKey("author", false), new PrivilegeBean.AuthorComparator(false));
+        comparators.put(new SortKey("modified", true), new PrivilegeBean.ModifiedComparator(true));
+        comparators.put(new SortKey("modified", false), new PrivilegeBean.ModifiedComparator(false));
+        comparators.put(new SortKey("modifier", true), new PrivilegeBean.ModifierComparator(true));
+        comparators.put(new SortKey("modifier", false), new PrivilegeBean.ModifierComparator(false));
     }
 
     public PolicyManageTableBean(List<PrivilegeBean> privilegeBeans) {
@@ -88,8 +96,8 @@ public class PolicyManageTableBean implements Serializable {
 
         columnsVisible.add("resources");
         columnsVisible.add("subject");
-        columnsVisible.add("condition");
-        columnsVisible.add("action");
+        columnsVisible.add("modifier");
+        columnsVisible.add("modified");
     }
 
     public SortKey getSortKey() {
@@ -123,5 +131,21 @@ public class PolicyManageTableBean implements Serializable {
 
     public boolean isActionColumnVisible() {
         return getColumnsVisible().contains("action");
+    }
+
+    public boolean isBirthColumnVisible() {
+        return getColumnsVisible().contains("birth");
+    }
+
+    public boolean isModifiedColumnVisible() {
+        return getColumnsVisible().contains("modified");
+    }
+
+    public boolean isAuthorColumnVisible() {
+        return getColumnsVisible().contains("author");
+    }
+
+    public boolean isModifierColumnVisible() {
+        return getColumnsVisible().contains("modifier");
     }
 }
