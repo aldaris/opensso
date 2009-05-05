@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.14 2009-05-05 00:44:38 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.15 2009-05-05 16:28:06 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -144,9 +144,6 @@ public class PrivilegeManagerTest {
 
         privilege = new OpenSSOPrivilege(PRIVILEGE_NAME, entitlement, os,
             ipc, ra);
-        UnittestLog.logMessage(
-            "PrivilegeManagerTest.testAddPrivlege():" + "saving privilege=" +
-            privilege);
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance(
@@ -282,6 +279,21 @@ public class PrivilegeManagerTest {
         if ((xml == null) || (xml.trim().length() == 0)) {
             throw new Exception("PrivilegeManagerTest.testGetPrivilege: " +
                 "failed to get privilege XML.");
+        }
+    }
+
+    @Test(dependsOnMethods = {"testAddPrivilege"})
+    public void testLastModifiedDate() throws Exception {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+        PrivilegeManager prm = PrivilegeManager.getInstance(
+            SubjectUtils.createSubject(adminToken));
+        prm.modifyPrivilege(privilege);
+        Long cdate = privilege.getCreationDate();
+        Long mdate = privilege.getLastModifiedDate();
+        if (cdate == mdate) {
+            throw new Exception("PrivilegeManagerTest.testLastModifiedDate: " +
+                "creation and last modified date are the same.");
         }
     }
 }

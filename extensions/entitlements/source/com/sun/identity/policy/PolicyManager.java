@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.8 2009-05-02 06:26:12 veiming Exp $
+ * $Id: PolicyManager.java,v 1.9 2009-05-05 16:28:06 veiming Exp $
  *
  */
 
@@ -568,11 +568,15 @@ public final class PolicyManager {
         validateForResourcePrefix(policy);
         validateReferrals(policy);
 
-        Date creationDate = new Date();
-        policy.setCreatedBy(token.getPrincipal().getName());
-        policy.setCreationDate(creationDate.getTime());
-        policy.setLastModifiedBy(token.getPrincipal().getName());
-        policy.setLastModifiedDate(creationDate.getTime());
+        String testCreatedBy = policy.getCreatedBy();
+        //testCreatedBy is set if we are doing policy replaced.
+        if ((testCreatedBy == null) || (testCreatedBy.length() == 0)) {
+            Date creationDate = new Date();
+            policy.setCreatedBy(token.getPrincipal().getName());
+            policy.setCreationDate(creationDate.getTime());
+            policy.setLastModifiedBy(token.getPrincipal().getName());
+            policy.setLastModifiedDate(creationDate.getTime());
+        }
 
         // Construct the named policy
         String policyXml = policy.toXML();
