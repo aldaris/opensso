@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.15 2009-01-28 05:35:02 ww203982 Exp $
+ * $Id: BootstrapData.java,v 1.16 2009-05-05 21:24:47 veiming Exp $
  *
  */
 
@@ -302,10 +302,10 @@ public class BootstrapData {
         dsameUserPwd = (String)mapQuery.get(BootstrapData.PWD);
 
         if (bCrypt) {
-            pwd = Crypt.decode(pwd, Crypt.getHardcodedKeyEncryptor());
+            pwd = JCECrypt.decode(pwd);
             pwd = Crypt.encode(pwd);
             
-            dspwd = Crypt.decode(dspwd, Crypt.getHardcodedKeyEncryptor());
+            dspwd = JCECrypt.decode(dspwd);
             dspwd = Crypt.encode(dspwd);
         }
         
@@ -381,10 +381,10 @@ public class BootstrapData {
         String template = BOOTSTRAP_SERVER_CONFIG_LDAP_SVR;
         
         if (bCrypt) {
-            pwd = Crypt.decode(pwd, Crypt.getHardcodedKeyEncryptor());
+            pwd = JCECrypt.decode(pwd);
             pwd = Crypt.encode(pwd);
             
-            dspwd = Crypt.decode(dspwd, Crypt.getHardcodedKeyEncryptor());
+            dspwd = JCECrypt.decode(dspwd);
             dspwd = Crypt.encode(dspwd);
         }
 
@@ -457,8 +457,7 @@ public class BootstrapData {
         String protocol = (String)configuration.get(PROTOCOL);
         // remove ://
         protocol = protocol.substring(0, protocol.length() -3);
-        String pwd = Crypt.encode((String) configuration.get(PWD),
-            Crypt.getHardcodedKeyEncryptor());
+        String pwd = JCECrypt.encode((String) configuration.get(PWD));
         String serverInstance = (String) configuration.get(
             SERVER_INSTANCE);
 
@@ -477,8 +476,8 @@ public class BootstrapData {
         url = StringUtils.strReplaceAll(url, "@BIND_DN@",
             URLEncoder.encode((String)configuration.get(DS_MGR), "UTF-8")); 
         url = StringUtils.strReplaceAll(url, "@BIND_PWD@",
-            URLEncoder.encode(Crypt.encode((String)configuration.get(DS_PWD),
-                Crypt.getHardcodedKeyEncryptor()), "UTF-8")); 
+            URLEncoder.encode(
+                JCECrypt.encode((String) configuration.get(DS_PWD)), "UTF-8"));
         return url;
     }
 

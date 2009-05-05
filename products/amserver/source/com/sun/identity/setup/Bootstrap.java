@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.16 2009-01-28 05:35:02 ww203982 Exp $
+ * $Id: Bootstrap.java,v 1.17 2009-05-05 21:24:46 veiming Exp $
  *
  */
 
@@ -195,8 +195,8 @@ public class Bootstrap {
         String dsameUser = "cn=dsameuser,ou=DSAME Users," + dsbasedn;
         String instanceName = bootstrapData.getInstanceName();
 
-        SSOToken ssoToken = getSSOToken(dsbasedn, dsameUser,
-            Crypt.decode(pwd, Crypt.getHardcodedKeyEncryptor()));
+        SSOToken ssoToken = getSSOToken(dsbasedn, dsameUser, 
+            JCECrypt.decode(pwd));
         try {
             properties = ServerConfiguration.getServerInstance(
                 ssoToken, instanceName);
@@ -304,8 +304,8 @@ public class Bootstrap {
             start = url.indexOf("?" + BootstrapData.PWD + "=");
         }
         if (start != -1) {
-            String encPassword = URLEncoder.encode(Crypt.encode(password, 
-                Crypt.getHardcodedKeyEncryptor()), "UTF-8");
+            String encPassword = URLEncoder.encode(
+                JCECrypt.encode(password), "UTF-8");
             int end = url.indexOf("&", start+1);
             if (end == -1) {
                 url = url.substring(0, start + 5) + encPassword;

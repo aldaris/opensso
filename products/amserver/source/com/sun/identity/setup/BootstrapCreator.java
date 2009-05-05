@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapCreator.java,v 1.12 2009-01-13 19:16:50 veiming Exp $
+ * $Id: BootstrapCreator.java,v 1.13 2009-05-05 21:24:46 veiming Exp $
  *
  */
 
@@ -37,7 +37,6 @@ import com.iplanet.services.ldap.LDAPUser;
 import com.iplanet.services.ldap.Server;
 import com.iplanet.services.ldap.ServerGroup;
 import com.iplanet.services.ldap.ServerInstance;
-import com.iplanet.services.util.Crypt;
 import com.iplanet.services.util.XMLException;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.common.configuration.ConfigurationException;
@@ -143,12 +142,10 @@ public class BootstrapCreator {
             ServerInstance userInstance = defaultGroup.getServerInstance(
                 LDAPUser.Type.AUTH_ADMIN);
             String dsameUserName = userInstance.getAuthID();
-            String dsameUserPwd = Crypt.encode(userInstance.getPasswd(),
-                Crypt.getHardcodedKeyEncryptor());
+            String dsameUserPwd = JCECrypt.encode(userInstance.getPasswd());
 
             String connDN = svrCfg.getAuthID();
-            String connPwd = Crypt.encode(svrCfg.getPasswd(),
-                Crypt.getHardcodedKeyEncryptor());
+            String connPwd = JCECrypt.encode(svrCfg.getPasswd());
             String rootSuffix = svrCfg.getBaseDN();
 
             Collection serverList = sg.getServersList();
