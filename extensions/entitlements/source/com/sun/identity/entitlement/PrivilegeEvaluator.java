@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.13 2009-05-04 20:57:06 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.14 2009-05-05 21:32:13 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +50,7 @@ class PrivilegeEvaluator {
     private List<List<Entitlement>> resultQ = new
         LinkedList<List<Entitlement>>();
     private Application application;
+    private Set<String> actionNames;
     private int counter;
     private int maxCounter = -1;
     private EntitlementCombiner entitlementCombiner;
@@ -83,9 +85,17 @@ class PrivilegeEvaluator {
         this.applicationName = applicationName;
         this.resourceName = resourceName;
         this.envParameters = envParameters;
+        
+        this.actionNames = new HashSet<String>();
+        if ((actions == null) || actions.isEmpty()) {
+            this.actionNames.addAll(getApplication().getActions().keySet());
+        } else {
+            this.actionNames.addAll(actions);
+        }
+
         entitlementCombiner = getApplication().getEntitlementCombiner();
         entitlementCombiner.init(applicationName, resourceName,
-            actions, recursive);
+            this.actionNames, recursive);
         this.recursive = recursive;
         threadPool = new ThreadPool(); //TOFIX
     }
@@ -247,7 +257,7 @@ class PrivilegeEvaluator {
         public void run() {
             try {
                 List<Entitlement> entitlements = privilege.evaluate(
-                    parent.subject, parent.resourceName,
+                    parent.subject, parent.resourceName, parent.actionNames,
                     parent.envParameters, parent.recursive);
                 synchronized(parent) {
                     parent.resultQ.add(entitlements);

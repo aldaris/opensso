@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.13 2009-05-05 08:19:36 veiming Exp $
+ * $Id: Privilege.java,v 1.14 2009-05-05 21:32:13 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -182,6 +182,7 @@ public abstract class Privilege implements Serializable {
      * 
      * @param subject Subject who is under evaluation.
      * @param resourceName Resource name.
+     * @param actionNames Set of action names.
      * @param environment Environment parameters.
      * @param recursive <code>true</code> to perform evaluation on sub resources
      *        from the given resource name.
@@ -192,6 +193,7 @@ public abstract class Privilege implements Serializable {
     public abstract List<Entitlement> evaluate(
         Subject subject,
         String resourceName,
+        Set<String> actionNames,
         Map<String, Set<String>> environment,
         boolean recursive) throws EntitlementException;
 
@@ -360,43 +362,6 @@ public abstract class Privilege implements Serializable {
             code += eResourceAttributes.hashCode();
         }
         return code;
-    }
-
-    protected Set<String> getMatchingResources(
-        String resourceName,
-        boolean recursive
-    ) {
-        Set<String> matched = new HashSet<String>();
-        ResourceName resComparator = entitlement.getResourceComparator();
-
-        for (String r : entitlement.getResourceNames()) {
-            ResourceMatch match = resComparator.compare(resourceName, r, true);
-            if (match.equals(ResourceMatch.EXACT_MATCH) ||
-                match.equals(ResourceMatch.WILDCARD_MATCH)) {
-                matched.add(r);
-            } else if (recursive && match.equals(
-                ResourceMatch.SUB_RESOURCE_MATCH)) {
-                matched.add(r);
-            }
-        }
-
-        for (Iterator<String> i = matched.iterator(); i.hasNext(); ) {
-            String r = i.next();
-            for (String e : entitlement.getExcludedResourceNames()) {
-                ResourceMatch match = resComparator.compare(r, e, true);
-                if (match.equals(ResourceMatch.EXACT_MATCH) ||
-                    match.equals(ResourceMatch.WILDCARD_MATCH)) {
-                    i.remove();
-                    break;
-                } else if (recursive && match.equals(
-                    ResourceMatch.SUB_RESOURCE_MATCH)) {
-                    i.remove();
-                    break;
-                }
-            }
-        }
-
-        return matched;
     }
 
     protected boolean doesSubjectMatch(

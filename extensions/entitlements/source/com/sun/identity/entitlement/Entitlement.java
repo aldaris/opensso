@@ -22,15 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.32 2009-05-05 15:25:03 veiming Exp $
+ * $Id: Entitlement.java,v 1.33 2009-05-05 21:32:13 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.policy.ResourceMatch;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -371,44 +373,66 @@ public class Entitlement implements Serializable {
     }
 
     /**
-     * Returns <code>true</code> if the request satisfies the request
+     * Returns a set of resource names that match the given resource.
      * @param subject Subject who is under evaluation.
      * @param resourceNames Resource name.
      * @param environment Environment parameters.
-     * @return <code>true</code> if the request satisfies the 
-     * <code>SubjectFilter</code>, otherwise <code>false</code>
-     * @throws com.sun.identity.entitlement.EntitlementException
+     * @return a set of resource names that match the given resource.
+     * @throws EntitlementException if resource names cannot be returned.
      */
-    public boolean evaluate(
+    public Set<String> evaluate(
         Subject subject,
         String resourceName,
         Set<String> actionNames,
         Map<String, Set<String>> environment,
         boolean recursive)
         throws EntitlementException {
-        if ((resourceNames == null) || resourceNames.isEmpty()) {
-            return false;
-        }
-        ResourceName rc = getApplication().getResourceComparator();
-        boolean resMatch = false;
-        for (String r : resourceNames) {
-            ResourceMatch m = rc.compare(r, resourceName, true);
-            resMatch = m.equals(ResourceMatch.EXACT_MATCH) ||
-                m.equals(ResourceMatch.WILDCARD_MATCH) ||
-                (recursive && (m.equals(ResourceMatch.SUB_RESOURCE_MATCH)));
-            if (resMatch == true) {
-                break;
-            }
-        }
-        if (!resMatch) {
-            return false;
-        }
         for (String a : actionNames) {
             if (actionValues.keySet().contains(a)) {
-                return true;
+                return getMatchingResources(resourceName, recursive);
             }
         }
-        return false;
+        return Collections.EMPTY_SET;
+    }
+
+    protected Set<String> getMatchingResources(
+        String resourceName,
+        boolean recursive
+    ) {
+        if ((resourceNames == null) || resourceNames.isEmpty()) {
+            return Collections.EMPTY_SET;
+        }
+        Set<String> matched = new HashSet<String>();
+        ResourceName resComparator = getResourceComparator();
+
+        for (String r : resourceNames) {
+            ResourceMatch match = resComparator.compare(resourceName, r, true);
+            if (match.equals(ResourceMatch.EXACT_MATCH) ||
+                match.equals(ResourceMatch.WILDCARD_MATCH)) {
+                matched.add(r);
+            } else if (recursive && match.equals(
+                ResourceMatch.SUB_RESOURCE_MATCH)) {
+                matched.add(r);
+            }
+        }
+
+        for (Iterator<String> i = matched.iterator(); i.hasNext(); ) {
+            String r = i.next();
+            for (String e : excludedResourceNames) {
+                ResourceMatch match = resComparator.compare(r, e, true);
+                if (match.equals(ResourceMatch.EXACT_MATCH) ||
+                    match.equals(ResourceMatch.WILDCARD_MATCH)) {
+                    i.remove();
+                    break;
+                } else if (recursive && match.equals(
+                    ResourceMatch.SUB_RESOURCE_MATCH)) {
+                    i.remove();
+                    break;
+                }
+            }
+        }
+
+        return matched;
     }
 
     /**
