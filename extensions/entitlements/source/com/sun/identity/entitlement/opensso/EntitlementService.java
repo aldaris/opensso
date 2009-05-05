@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.7 2009-05-04 20:57:07 veiming Exp $
+ * $Id: EntitlementService.java,v 1.8 2009-05-05 06:43:24 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -50,6 +50,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -72,6 +74,8 @@ public class EntitlementService implements IPolicyConfig {
     private static final String CONFIG_SAVE_INDEX_IMPL = "saveIndexImpl";
     private static final String CONFIG_RESOURCE_COMP_IMPL = "resourceComparator";
     private static final String CONFIG_APPLICATION_TYPES = "applicationTypes";
+    private static final String SHOW_ENTITLEMENT_CONSOLE =
+        "showEntitlementConsole";
 
     /**
      * Constructor.
@@ -657,5 +661,39 @@ public class EntitlementService implements IPolicyConfig {
                 "EntitlementService.getSubjectAttributeNames", ex);
         }
         return Collections.EMPTY_SET;
+    }
+
+    /**
+     * Returns <code>true</code> if OpenSSO policy data is migrated to a
+     * form that entitlements service can operates on them.
+     *
+     * @return <code>true</code> if OpenSSO policy data is migrated to a
+     * form that entitlements service can operates on them.
+     */
+    public boolean isEntitlementMode() {
+        try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            ServiceSchemaManager smgr = new ServiceSchemaManager(
+                SERVICE_NAME, adminToken);
+            return true;
+        } catch (SMSException ex) {
+            return false;
+        } catch (SSOException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Returns <code>true</code> to show entitlement console.
+     *
+     * @return <code>true</code> to show entitlement console.
+     */
+    public boolean showEntitlementConsole() {
+        if (!isEntitlementMode()) {
+            return false;
+        }
+        String strShow = getAttributeValue(SHOW_ENTITLEMENT_CONSOLE);
+        return (strShow != null) ? Boolean.parseBoolean(strShow) : false;
     }
 }
