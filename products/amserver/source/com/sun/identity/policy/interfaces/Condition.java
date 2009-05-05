@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Condition.java,v 1.5 2008-06-25 05:43:47 qcheng Exp $
+ * $Id: Condition.java,v 1.6 2009-05-05 18:27:47 mrudul_uchil Exp $
  *
  */
 
@@ -229,6 +229,24 @@ public interface Condition extends Cloneable {
     public static final String REQUEST_AUTHENTICATED_TO_SERVICES 
             = "requestAuthenticatedToServices";
 
+    /** Key that is used identify the advice messages from
+     * <code>AuthSchemeCondition</code>
+     */
+    public static final String AUTH_SCHEME_CONDITION_ADVICE =
+            "AuthSchemeConditionAdvice";
+
+    /** Key that is used identify the advice messages from
+     * <code>AuthenticateToServiceCondition</code>
+     */
+    public static final String AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE
+            = "AuthenticateToServiceConditionAdvice";
+    
+    /** Key that is used identify the advice messages from
+     * <code>AuthLevelCondition</code>.
+     */
+    public static final String AUTH_LEVEL_CONDITION_ADVICE =
+            "AuthLevelConditionAdvice";
+    
     /**
      * Following keys are used to define relevant key names for processing
      * the environment Map of an IPCondition.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.29 2009-04-29 18:07:02 qcheng Exp $
+ * $Id: AuthClientUtils.java,v 1.30 2009-05-05 18:32:37 mrudul_uchil Exp $
  *
  */
 
@@ -2631,6 +2631,10 @@ public class AuthClientUtils {
     public static Map getEnvMap(HttpServletRequest request) {
         Map envParameters = new HashMap();
         // add all query parameters
+        String strIP = request.getRemoteAddr();
+        Set ipSet = new HashSet(1);
+        ipSet.add((String) strIP);
+        envParameters.put(ISAuthConstants.REQUEST_IP,ipSet);
         Enumeration enum1 = request.getParameterNames();
         while (enum1.hasMoreElements()) {
             String paramName = (String) enum1.nextElement();

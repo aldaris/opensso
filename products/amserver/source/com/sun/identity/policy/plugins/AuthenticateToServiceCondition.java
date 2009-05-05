@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticateToServiceCondition.java,v 1.6 2008-06-25 05:43:51 qcheng Exp $
+ * $Id: AuthenticateToServiceCondition.java,v 1.7 2009-05-05 18:29:01 mrudul_uchil Exp $
  *
  */
 
@@ -61,12 +61,6 @@ public class AuthenticateToServiceCondition implements Condition {
 
     private static final Debug DEBUG 
         = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME);
-
-    /** Key that is used identify the advice messages from
-     * <code>AuthenticateToServiceCondition</code>
-     */
-    public static final String AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE
-            = "AuthenticateToServiceConditionAdvice";
 
     private Map properties;
     private String authenticateToService = null;

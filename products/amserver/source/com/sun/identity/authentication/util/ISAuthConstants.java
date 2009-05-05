@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.17 2009-04-29 18:07:34 qcheng Exp $
+ * $Id: ISAuthConstants.java,v 1.18 2009-05-05 18:34:22 mrudul_uchil Exp $
  *
  */
 
@@ -85,6 +85,18 @@ public interface ISAuthConstants {
      */
     public String RESOURCE_URL_PARAM = "resourceURL";
     
+    /**
+     * Param name to specify redirect URL advice in Policy condition for the 
+     * IP/Resource/Environment based authentication.
+     */
+    public String REDIRECT_URL_PARAM = "redirectURL";
+    
+    /**
+     * Key name to specify the IP address value in environment map for the 
+     * IP/Resource/Environment based authentication.
+     */
+    public static final String REQUEST_IP = "requestIp";
+            
     /**
      * Param name for goto redirection
      */

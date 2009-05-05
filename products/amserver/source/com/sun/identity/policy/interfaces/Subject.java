@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Subject.java,v 1.2 2008-06-25 05:43:47 qcheng Exp $
+ * $Id: Subject.java,v 1.3 2009-05-05 18:27:47 mrudul_uchil Exp $
  *
  */
 
@@ -201,23 +201,6 @@ public interface Subject extends Cloneable {
      */
     public boolean isMember(SSOToken token)
         throws SSOException, PolicyException;
-
-
-    /**
-     * Return a hash code for this <code>Subject</code>.
-     *
-     * @return a hash code for this <code>Subject</code>.
-     */
-    public int hashCode();
-
-
-    /**
-     * Indicates whether some other object is "equal to" this one.
-     *
-     * @param o another object that will be compared with this one
-     * @return <code>true</code> if equal.
-     */
-    public boolean equals(Object o);
 
     /**
      * Creates and returns a copy of this object.

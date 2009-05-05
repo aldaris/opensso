@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPCondition.java,v 1.4 2008-06-25 05:43:51 qcheng Exp $
+ * $Id: IPCondition.java,v 1.5 2009-05-05 18:29:01 mrudul_uchil Exp $
  *
  */
 
@@ -217,7 +217,7 @@ public class IPCondition implements Condition {
      * in the policy  decision.
      *
      * @throws PolicyException if the condition has not been initialized
-     *        with a successful call to <code.setProperties(Map)</code> and/or
+     *        with a successful call to <code>setProperties(Map)</code> and/or
      *        the value of key <code>REQUEST_IP</code> is not a String or the
      *        value of of key <code>REQUEST_DNS_NAME</code> is not a Set of
      *        strings.

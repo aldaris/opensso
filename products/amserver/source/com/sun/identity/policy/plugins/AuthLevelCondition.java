@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthLevelCondition.java,v 1.7 2009-04-29 18:07:35 qcheng Exp $
+ * $Id: AuthLevelCondition.java,v 1.8 2009-05-05 18:29:01 mrudul_uchil Exp $
  *
  */
 
@@ -65,13 +65,7 @@ import java.util.Collections;
 public class AuthLevelCondition implements Condition {
 
     private static final Debug DEBUG 
-        = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME);
-
-    /** Key that is used identify the advice messages from
-     * <code>AuthLevelCondition</code>.
-     */
-    public static final String AUTH_LEVEL_CONDITION_ADVICE =
-            "AuthLevelConditionAdvice"; 
+        = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME); 
 
     private Map properties;
     private String authLevel; //realmQualifiedLevel
