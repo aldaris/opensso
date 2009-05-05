@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.38 2009-05-05 00:10:10 dillidorai Exp $
+  $Id: build.xml,v 1.39 2009-05-05 14:00:47 dillidorai Exp $
 
 -->
 
@@ -297,12 +297,17 @@
         <property environment="env" />
         <echo message="compiling xacml3 schema to create java source " />
         <echo message="JAVA_HOME=${env.JAVA_HOME}" />
-        <mkdir dir="built/source" />
+	<mkdir dir="${entitlements.built.src.dir}" />
         <java classname="com.sun.tools.internal.xjc.Driver" 
             classpath="${env.JAVA_HOME}/lib/tools.jar"
             maxmemory="256m" failonerror="true" fork="true">
-            <arg line="-b xsd/xacml-core-v3.xjb -extension -d built/source xsd/xacml-core-v3-schema-cd-1.xsd"/> 
+	    <arg line="-b xsd/xacml-core-v3.xjb -extension -d ${entitlements.built.src.dir} xsd/xacml-core-v3-schema-cd-1.xsd"/> 
         </java>
+       <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+              destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
+              debug="${build.debug}" debuglevel="${build.debuglevel}" >
+	      <src path="${entitlements.built.src.dir}/com/sun/identity/entitlement/xacml3/core" />
+       </javac>
     </target>
 
    <target name="clean-lib">
