@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.33 2009-04-21 17:41:25 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.34 2009-05-05 01:15:33 mallas Exp $
  *
  */
 
@@ -183,7 +183,11 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
        
         ProviderConfig config = null;
         STSRemoteConfig stsConfig = null;
-        
+        if(debug.messageEnabled()) {
+           debug.message("SOAPRequestHandler.validateRequest: " +
+                   "Before validation: " 
+                   + WSSUtils.print(soapRequest.getSOAPPart())); 
+        }
         String[] data = {WSSUtils.print(soapRequest.getSOAPPart())};
         LogUtil.access(Level.FINE,
                 LogUtil.REQUEST_TO_BE_VALIDATED,
@@ -246,16 +250,27 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         SecurityMechanism securityMechanism =
                 secureMsg.getSecurityMechanism();
         String uri = securityMechanism.getURI();
+        if(debug.messageEnabled()) {
+           debug.message("SOAPRequestHandler.validateRequest: " +
+                   "soap message security mechanism: "); 
+        }
         
         if ( ((config != null) && (config.isRequestSignEnabled())) ){
             // delay the signature verification after authentication
             // for kerberos token.
             if(!uri.equals(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI)) {               
                if (!secureMsg.verifySignature(config.getPublicKeyAlias())) {
-                   debug.error("SOAPRequestHandler.validateRequest:: Signature"
-                           + "verification failed.");                
+                   if(debug.warningEnabled()) {
+                      debug.warning("SOAPRequestHandler.validateRequest:: " +
+                              "Signature verification failed.");
+                   }
                    throw new SecurityException(
                         bundle.getString("signatureValidationFailed"));
+               } else {
+                 if(debug.messageEnabled()) {
+                    debug.message("SOAPRequestHandler.validateRequest: " +
+                            "Signature verification successful"); 
+                 }  
                }
             }
         }
@@ -266,8 +281,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
 
         if(debug.messageEnabled()) {
-            debug.message("List of getSecurityMechanisms : " + list);
-            debug.message("current uri : " + uri);
+            debug.message("SOAPRequestHandler.validateRequest: " +
+                    "list of accepted SecurityMechanisms : " + list);            
         }
 
         if(!list.contains(uri)) {
@@ -277,6 +292,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 SecurityMechanism.WSS_TLS_ANONYMOUS_URI))&&
                     (!list.contains(
                     SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI))) {
+                if(debug.warningEnabled()) {
+                   debug.warning("SOAPRequestHandler.validateRequest: "
+                        + "unsupported security mechanism");
+                }
                 throw new SecurityException(
                         bundle.getString("unsupportedSecurityMechanism"));
             } else {
@@ -362,9 +381,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
     public SOAPMessage secureResponse (SOAPMessage soapMessage, 
             Map sharedState) throws SecurityException {
 
-        if(debug.messageEnabled()) {
-            debug.message("SOAPRequestHandler.secureResponse: " + 
-                "sharedState map : " + sharedState);
+        if(debug.messageEnabled()) {            
             debug.message("SOAPRequestHandler.secureResponse - " + 
                 "Input SOAP message : " + 
                 WSSUtils.print(soapMessage.getSOAPPart()));
@@ -394,6 +411,9 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         Object req = sharedState.get(SOAPBindingConstants.LIBERTY_REQUEST);
         if(req != null) {
+            if(debug.messageEnabled()) {
+               debug.message("SOAPRequestHandler.secureResponse: liberty req:"); 
+            }
             MessageProcessor processor = new MessageProcessor(config);
             try {
                 return processor.secureResponse(soapMessage, sharedState);
@@ -462,7 +482,11 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 LogUtil.SUCCESS_SECURE_RESPONSE,
                 data2,
                 null);
-        
+        if(debug.messageEnabled()) {            
+            debug.message("SOAPRequestHandler.secureResponse - " + 
+                "Secured SOAP response : " + 
+                WSSUtils.print(soapMessage.getSOAPPart()));
+        }
         return soapMessage;
 
     }
@@ -519,9 +543,17 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                     new SecureSOAPMessage(soapMessage, true);
         } else {
             if (securityMechanism.isTALookupRequired()) {
-                if(config.usePassThroughSecurityToken()) {
+                if(debug.messageEnabled()) {
+                   debug.message("SOAPRequestHandler.secureRequest :"
+                           + "using STS for security tokens"); 
+                }
+                if(config.usePassThroughSecurityToken()) {   
                    Subject authnSubj = getAuthenticatedSubject();
                    if(authnSubj != null) {
+                      if(debug.messageEnabled()) {
+                         debug.message("SOAPRequestHandler.secureRequest :" +
+                              " using the authenticated subject"); 
+                      }
                       subject = authnSubj;
                    }
                 }
@@ -534,11 +566,19 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                    }
                    ssoToken = (SSOToken)ThreadLocalService.getSSOToken(); 
                 }
+                if(debug.messageEnabled() && ssoToken != null) {
+                   debug.message("SOAPequestHandler.secureRequest: ssoToken " +
+                           "is available. ");   
+                }
                 if(securityMechanism.getURI().equals
                      (SecurityMechanism.LIBERTY_DS_SECURITY_URI)) {
                    if(ssoToken == null) {
                       throw new SecurityException(
                                 bundle.getString("invalidSSOToken"));
+                   }
+                   if(debug.messageEnabled()) {
+                      debug.message("SOAPRequestHandler.secureRequest: "
+                              + " using liberty security"); 
                    }
                    return getSecureMessageFromLiberty(ssoToken, subject,
                             soapMessage, sharedState, config);
@@ -553,9 +593,17 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                         }
                         Object customToken = getCustomCredential(subject);
                         if(customToken == null) {
+                           if(debug.messageEnabled()) {
+                              debug.message("SOAPRequestHandler.secureRequest:"
+                                      + " using sso token as OBOToken"); 
+                           }
                            securityToken = client.getSecurityToken(config,
                                         ssoToken);
                         } else {
+                           if(debug.messageEnabled()) {
+                              debug.message("SOAPRequestHandler.secureRequest:"
+                                      + " using custom token as OBOToken"); 
+                           }
                            securityToken = client.getSecurityToken(config,
                                         customToken); 
                         }
@@ -567,6 +615,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 }
             
             } else {
+                if(debug.messageEnabled()) {
+                   debug.message("SOAPRequestHandler.secureRequest: " +
+                           " Generate security tokens locally"); 
+                }
                 securityToken = getSecurityToken(
                         securityMechanism, config, subject);
             }
@@ -609,7 +661,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 LogUtil.SUCCESS_SECURE_REQUEST,
                 data2,
                 null);
-        
+        if(debug.messageEnabled()) {
+           debug.message("SOAPRequestHandler.secureRequest:  SOAP message" +
+              " after securing: " + WSSUtils.print(soapMessage.getSOAPPart())); 
+        }
         return soapMessage;
     }
 
@@ -628,9 +683,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
     public void validateResponse (SOAPMessage soapMessage, 
             Map sharedState) throws SecurityException {
 
-        if(debug.messageEnabled()) {
-            debug.message("SOAPRequestHandler.validateResponse: " + 
-                "sharedState map : " + sharedState);
+        if(debug.messageEnabled()) {      
             debug.message("SOAPRequestHandler.validateResponse - " + 
                 "Input SOAP message : " + 
                 WSSUtils.print(soapMessage.getSOAPPart()));
@@ -693,6 +746,11 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 LogUtil.SUCCESS_VALIDATE_RESPONSE,
                 data2,
                 null);
+        if(debug.messageEnabled()) {      
+            debug.message("SOAPRequestHandler.validateResponse - " + 
+                "SOAP message after validation : " + 
+                WSSUtils.print(soapMessage.getSOAPPart()));
+        }
     }
 
     /**

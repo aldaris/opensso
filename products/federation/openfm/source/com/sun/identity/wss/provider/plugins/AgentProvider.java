@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyght owner]"
  *
- * $Id: AgentProvider.java,v 1.39 2009-04-21 17:41:24 mallas Exp $
+ * $Id: AgentProvider.java,v 1.40 2009-05-05 01:15:32 mallas Exp $
  *
  */
 
@@ -215,7 +215,8 @@ public class AgentProvider extends ProviderConfig {
                        attributes = (Map) provider.getAttributes();
                     }
                     if (debug.messageEnabled()) {
-                        debug.message("Attributes from WSP end point : " 
+                        debug.message("AgentProvider.init "
+                            + "Provider Configuration using end point : " 
                             + attributes);
                     }
                     profilePresent = true;
@@ -244,7 +245,8 @@ public class AgentProvider extends ProviderConfig {
             Map attributes = (Map) provider.getAttributes(attrNames);
             profilePresent = true;
             if (debug.messageEnabled()) {
-                debug.message("Attributes from provider : " 
+                debug.message("AgentProvider.init "
+                    + "Provider configuration: "
                     + attributes);
             }
             parseAgentKeyValues(attributes);

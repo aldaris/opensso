@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.17 2009-04-21 17:41:25 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.18 2009-05-05 01:15:32 mallas Exp $
  *
  */
 
@@ -195,6 +195,10 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             if ((authChain == null) || (authChain.length() == 0) ||
                 (authChain.equals("none"))) {
                 if((config != null) && (!validateUser(usertoken, subject)) ){
+                    if(debug.warningEnabled()) {
+                       debug.warning("DefaultAuthenticator. authentication " +                                
+                               "failed."); 
+                    }
                     throw new SecurityException(
                         bundle.getString("authenticationFailed"));
                 }
