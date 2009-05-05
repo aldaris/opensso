@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionOpViewBeanBase.java,v 1.3 2008-06-25 05:43:02 qcheng Exp $
+ * $Id: ConditionOpViewBeanBase.java,v 1.4 2009-05-05 18:43:41 mrudul_uchil Exp $
  *
  */
 
@@ -44,8 +44,10 @@ import com.sun.identity.console.policy.model.PolicyCache;
 import com.sun.identity.console.policy.model.PolicyModel;
 import com.sun.identity.policy.interfaces.Condition;
 import com.sun.web.ui.model.CCAddRemoveModel;
+import com.sun.web.ui.model.CCEditableListModel;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
+import com.sun.web.ui.view.editablelist.CCEditableList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -157,11 +159,13 @@ public abstract class ConditionOpViewBeanBase
     protected View createChild(String name) {
         View view = null;
 
-        if (ptModel.isChildSupported(name)) {
+        if ((ptModel != null) && ptModel.isChildSupported(name)) {
             view = ptModel.createChild(this, name);
         } else if (name.equals(PROPERTY_ATTRIBUTE)) {
             view = new AMPropertySheet(this, propertySheetModel, name);
-        } else if (propertySheetModel.isChildSupported(name)) {
+        } else if ((propertySheetModel != null) &&
+             propertySheetModel.isChildSupported(name)
+        ) {
             view = propertySheetModel.createChild(this, name, getModel());
         } else {
             view = super.createChild(name);
@@ -278,18 +282,30 @@ public abstract class ConditionOpViewBeanBase
 
         for (Iterator iter = propertyNames.iterator(); iter.hasNext(); ) {
             String name = (String)iter.next();
-            Object[] array = propertySheetModel.getValues(name);
+            View child = getChild(name);
+            if (child instanceof CCEditableList) {
+                CCEditableList list = (CCEditableList)child;
+                list.restoreStateData();
+                CCEditableListModel m = (CCEditableListModel)list.getModel();
+                Set selected = getValues(m.getOptionList());
+ 
+                if ((selected != null) && !selected.isEmpty()) {
+                    values.put(name, selected);
+                }
+             } else {
+                Object[] array = propertySheetModel.getValues(name);
 
-            if ((array != null) && (array.length > 0)) {
-                if (array.length == 1) {
-                    String v = array[0].toString();
-                    if ((v != null) && (v.trim().length() > 0)) {
-                        Set val = new HashSet(2);
-                        val.add(v.trim());
-                        values.put(name, val);
+                if ((array != null) && (array.length > 0)) {
+                    if (array.length == 1) {
+                        String v = array[0].toString();
+                        if ((v != null) && (v.trim().length() > 0)) {
+                            Set val = new HashSet(2);
+                            val.add(v.trim());
+                            values.put(name, val);
+                        }
+                    } else {
+                        values.put(name, AMAdminUtils.toSet(array));
                     }
-                } else {
-                    values.put(name, AMAdminUtils.toSet(array));
                 }
             }
         }

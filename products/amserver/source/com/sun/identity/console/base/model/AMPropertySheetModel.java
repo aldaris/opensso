@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheetModel.java,v 1.10 2008-10-16 19:14:37 veiming Exp $
+ * $Id: AMPropertySheetModel.java,v 1.11 2009-05-05 18:42:52 mrudul_uchil Exp $
  *
  */
 
@@ -104,6 +104,8 @@ public class AMPropertySheetModel
         "com.sun.identity.console.ui.taglib.CCMapListTag";
     public static final String GLOBAL_MAP_LIST =
         "com.sun.identity.console.ui.taglib.CCGlobalMapListTag";
+    public static final String EDITABLE_LIST =
+        "com.sun.web.ui.taglib.editablelist.CCEditableListTag";
     public static final String ADDREMOVE_LIST =
         "com.sun.web.ui.taglib.addremove.CCAddRemoveTag";
     public static final String passwordRandom =
@@ -161,7 +163,9 @@ public class AMPropertySheetModel
                     view.registerChild(name, CCMapList.class);
                 } else if (tagName.equals(GLOBAL_MAP_LIST)) {
                     view.registerChild(name, CCGlobalMapList.class);
-                }
+                } else if (tagName.equals(EDITABLE_LIST)) {
+                    view.registerChild(name, CCEditableList.class);
+                 }
             }
         }
         if (hasSubConfigTable) {
