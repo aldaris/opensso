@@ -136,6 +136,14 @@ public class PrivilegeBean implements Serializable {
         this.modifiedCellEffect = modifiedCellEffect;
     }
 
+    public Effect getExportCellEffect() {
+        return exportCellEffect;
+    }
+
+    public void setExportCellEffect(Effect exportCellEffect) {
+        this.exportCellEffect = exportCellEffect;
+    }
+
     public static abstract class PrivilegeComparator implements Comparator {
         private boolean ascending;
 
@@ -264,6 +272,7 @@ public class PrivilegeBean implements Serializable {
     private Effect modifierCellEffect = null;
     private Effect modifiedCellEffect = null;
     private Effect authorCellEffect = null;
+    private Effect exportCellEffect = null;
 
     public PrivilegeBean() {
         // empty
@@ -278,7 +287,7 @@ public class PrivilegeBean implements Serializable {
         name = p.getName();
         description = null; // TODO
 
-        // entitlement (TODO: exceptions)
+        // entitlement
         viewEntitlement = new ViewEntitlement(p.getEntitlement(), viewApplications);
 
         // subjects
@@ -286,9 +295,6 @@ public class PrivilegeBean implements Serializable {
 
         // conditions
         viewCondition = conditionTypeFactory.getViewCondition(p.getCondition());
-
-        // created, modified
-        birth = new Date(p.getCreationDate());
 
         // created, modified
         birth = new Date(p.getCreationDate());
@@ -340,8 +346,8 @@ public class PrivilegeBean implements Serializable {
                 eSubject,
                 condition,
                 attrs);
-        } catch (EntitlementException e) {
-            return null; //TODO
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.entitlement.AndSubject;
 import com.sun.identity.entitlement.EntitlementSubject;
 import java.io.Serializable;
 
@@ -15,8 +16,19 @@ public class AndSubjectType
     }
 
     public ViewSubject newViewSubject(EntitlementSubject es, SubjectFactory stf) {
-        // TODO
-        return null;
+        assert (es instanceof AndSubject);
+        AndSubject as = (AndSubject) es;
+
+        AndViewSubject avs = (AndViewSubject) newViewSubject();
+
+        if (as.getESubjects() != null) {
+            for (EntitlementSubject childEs : as.getESubjects()) {
+                ViewSubject vs = stf.getViewSubject(childEs);
+                avs.addViewSubject(vs);
+            }
+        }
+
+        return avs;
     }
 
 }

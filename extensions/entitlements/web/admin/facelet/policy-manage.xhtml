@@ -275,6 +275,23 @@
                                 </o:tooltip>
                             </ice:column>
                             <ice:column
+                                rendered="#{policyManageBean.policyManageTableBean.exportColumnVisible}"
+                                style="text-align: center">
+                                <f:facet name="header">
+                                    <ice:outputText value="Export"/>
+                                </f:facet>
+                                <ice:panelGroup
+                                    visible="#{true}"
+                                    effect="#{privilegeBean.exportCellEffect}">
+                                    <ice:outputLink
+                                        value="../pxml?name=#{privilegeBean.name}">
+                                        <ice:graphicImage
+                                            value="../image/xml.png"/>
+                                    </ice:outputLink>
+                                </ice:panelGroup>
+                            </ice:column>
+                            <ice:column
+                                rendered="#{policyManageBean.policyManageTableBean.removeColumnVisible}"
                                 style="text-align: center">
                                 <f:facet name="header">
                                     <ice:outputText value="Remove"/>

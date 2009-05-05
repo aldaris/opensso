@@ -22,6 +22,10 @@ public class PolicyManageTableBean implements Serializable {
         this.columnsVisible = columnsVisible;
     }
 
+    public void setPrivilegeBeans(List<PrivilegeBean> privilegeBeans) {
+        this.privilegeBeans = privilegeBeans;
+    }
+
     public static class SortKey implements Serializable {
         private boolean ascending = false;
         private String column = "name";
@@ -91,13 +95,12 @@ public class PolicyManageTableBean implements Serializable {
         comparators.put(new SortKey("modifier", false), new PrivilegeBean.ModifierComparator(false));
     }
 
-    public PolicyManageTableBean(List<PrivilegeBean> privilegeBeans) {
-        this.privilegeBeans = privilegeBeans;
-
+    public PolicyManageTableBean() {
         columnsVisible.add("resources");
         columnsVisible.add("subject");
         columnsVisible.add("modifier");
         columnsVisible.add("modified");
+        columnsVisible.add("remove");
     }
 
     public SortKey getSortKey() {
@@ -147,5 +150,12 @@ public class PolicyManageTableBean implements Serializable {
 
     public boolean isModifierColumnVisible() {
         return getColumnsVisible().contains("modifier");
+    }
+
+    public boolean isRemoveColumnVisible() {
+        return getColumnsVisible().contains("remove");
+    }
+    public boolean isExportColumnVisible() {
+        return getColumnsVisible().contains("export");
     }
 }

@@ -1,11 +1,13 @@
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.EntitlementCondition;
+import com.sun.identity.entitlement.NotCondition;
 import java.io.Serializable;
 
-public class NotConditionType 
-    extends ConditionType
-    implements Serializable {
+public class NotConditionType
+        extends ConditionType
+        implements Serializable {
+
     public ViewCondition newViewCondition() {
         ViewCondition vc = new NotViewCondition();
         vc.setConditionType(this);
@@ -14,7 +16,16 @@ public class NotConditionType
     }
 
     public ViewCondition newViewCondition(EntitlementCondition ec, ConditionTypeFactory conditionTypeFactory) {
-        // TODO: no not e-condition
-        return null;
+        assert (ec instanceof NotCondition);
+        NotCondition nc = (NotCondition) ec;
+
+        NotViewCondition nvc = (NotViewCondition) newViewCondition();
+
+        if (nc.getECondition() != null) {
+            ViewCondition vc = conditionTypeFactory.getViewCondition(nc.getECondition());
+            nvc.addViewCondition(vc);
+        }
+
+        return nvc;
     }
 }

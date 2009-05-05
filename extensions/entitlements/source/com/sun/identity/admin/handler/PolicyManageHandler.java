@@ -119,6 +119,11 @@ public class PolicyManageHandler implements Serializable {
         e = new Fade();
         e.setSubmit(true);
         e.setTransitory(false);
+        pb.setExportCellEffect(e);
+
+        e = new Fade();
+        e.setSubmit(true);
+        e.setTransitory(false);
         pb.setRemoveCellEffect(e);
 
         addRemoveAction(pb);

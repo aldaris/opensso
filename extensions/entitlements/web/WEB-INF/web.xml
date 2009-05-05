@@ -48,13 +48,22 @@
     </context-param>
 
     <filter>
-        <filter-name>ConsoleAuthFilter</filter-name>
+        <filter-name>AdminAuthFilter</filter-name>
         <filter-class>com.sun.identity.admin.AuthFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>ConsoleAuthFilter</filter-name>
+        <filter-name>AdminAuthFilter</filter-name>
         <url-pattern>/admin/facelet/*</url-pattern>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>AdminAuthFilter</filter-name>
+        <url-pattern>/admin/pxml/*</url-pattern>
+    </filter-mapping>
+    <servlet>
+        <servlet-name>PrivilegeXmlServlet</servlet-name>
+        <servlet-class>com.sun.identity.admin.PrivilegeXmlServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -83,6 +92,10 @@
         <servlet-name>entitlementmonitor</servlet-name>
         <servlet-class>com.sun.identity.entitlement.util.NetworkMonitor</servlet-class>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>PrivilegeXmlServlet</servlet-name>
+        <url-pattern>/admin/pxml/*</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Persistent Faces Servlet</servlet-name>
         <url-pattern>/xmlhttp/*</url-pattern>

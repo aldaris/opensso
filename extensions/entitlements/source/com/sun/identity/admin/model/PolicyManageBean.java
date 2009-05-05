@@ -8,7 +8,7 @@ public class PolicyManageBean implements Serializable {
 
     private List<PrivilegeBean> privilegeBeans;
     private PolicyDao policyDao;
-    private PolicyManageTableBean policyManageTableBean;
+    private PolicyManageTableBean policyManageTableBean = new PolicyManageTableBean();
     private boolean viewOptionsPopupVisible = false;
     private String searchFilter;
 
@@ -18,7 +18,7 @@ public class PolicyManageBean implements Serializable {
 
     public void reset() {
         privilegeBeans = policyDao.getPrivilegeBeans(searchFilter);
-        policyManageTableBean = new PolicyManageTableBean(privilegeBeans);
+        policyManageTableBean.setPrivilegeBeans(privilegeBeans);
     }
 
     public void setPolicyDao(PolicyDao policyDao) {

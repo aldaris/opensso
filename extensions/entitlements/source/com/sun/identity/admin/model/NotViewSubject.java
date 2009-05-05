@@ -9,7 +9,7 @@ public class NotViewSubject extends ContainerViewSubject implements Serializable
     public EntitlementSubject getEntitlementSubject() {
         NotSubject ns = new NotSubject();
 
-        if (getViewSubjects().size() != 0) {
+        if (getViewSubjects() != null && getViewSubjects().size() != 0) {
             ns.setESubject(getViewSubjects().get(0).getEntitlementSubject());
         }
 

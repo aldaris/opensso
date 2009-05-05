@@ -307,7 +307,7 @@
         <managed-bean-scope>session</managed-bean-scope>
         <list-entries>
             <value>#{orSubjectType}</value>
-            <!--<value>#{andSubjectType}</value>-->
+            <value>#{andSubjectType}</value>
             <value>#{notSubjectType}</value>
             <value>#{userSubjectType}</value>
             <value>#{idRepoUserSubjectType}</value>
@@ -323,7 +323,7 @@
         <managed-bean-scope>session</managed-bean-scope>
         <list-entries>
             <value>#{orSubjectType}</value>
-            <!--<value>#{andSubjectType}</value>-->
+            <value>#{andSubjectType}</value>
             <value>#{notSubjectType}</value>
         </list-entries>
     </managed-bean>
@@ -337,12 +337,10 @@
                 <key>com.sun.identity.entitlement.OrSubject</key>
                 <value>#{orSubjectType}</value>
             </map-entry>
-            <!--
             <map-entry>
                 <key>com.sun.identity.entitlement.AndSubject</key>
                 <value>#{andSubjectType}</value>
             </map-entry>
-            -->
             <map-entry>
                 <key>com.sun.identity.entitlement.NotSubject</key>
                 <value>#{notSubjectType}</value>
