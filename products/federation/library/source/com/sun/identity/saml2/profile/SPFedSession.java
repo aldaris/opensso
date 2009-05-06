@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPFedSession.java,v 1.4 2008-06-25 05:47:55 qcheng Exp $
+ * $Id: SPFedSession.java,v 1.5 2009-05-06 19:48:34 madan_ranganath Exp $
  *
  */
 
@@ -56,7 +56,12 @@ public class SPFedSession {
      * <code>NameIDInfo</code> for the session.
      */
     public NameIDInfo info = null;
-    
+
+     /**
+     * SP meta Alias
+     */
+    public String metaAlias = null;
+
     /**
      * Constructs new <code>SPFedSession</code> object
      *
@@ -66,10 +71,12 @@ public class SPFedSession {
      */
     public SPFedSession(String idpSessionIndex,
                         String sessionID,
-                        NameIDInfo info)
+                        NameIDInfo info,
+                        String metaAlias)
     {
         this.idpSessionIndex = idpSessionIndex;
         this.spTokenID = sessionID;
         this.info = info;
+        this.metaAlias = metaAlias;
     }
 }

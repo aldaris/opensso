@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.26 2009-03-14 01:10:32 madan_ranganath Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.27 2009-05-06 19:50:35 madan_ranganath Exp $
  *
  */
 
@@ -290,6 +290,10 @@ public class CreateSAML2HostedProviderTemplate {
             "\">\n" +
             "           <Value></Value>\n" +
             "       </Attribute>\n" +
+            "       <Attribute name=\"" +
+            SAML2Constants.IDP_SESSION_SYNC_ENABLED + "\">\n" +
+            "           <Value>false</Value>\n" +
+            "       </Attribute>\n" +
             "    </IDPSSOConfig>\n"
         );
     }
@@ -492,6 +496,10 @@ public class CreateSAML2HostedProviderTemplate {
             "       </Attribute>\n" +
             "       <Attribute name=\"" +
             SAML2Constants.USE_INTRODUCTION_FOR_IDP_PROXY + "\">\n" +
+            "           <Value>false</Value>\n" +
+            "       </Attribute>\n" +
+            "       <Attribute name=\"" +
+            SAML2Constants.SP_SESSION_SYNC_ENABLED + "\">\n" +
             "           <Value>false</Value>\n" +
             "       </Attribute>\n" +
             "    </SPSSOConfig>\n"

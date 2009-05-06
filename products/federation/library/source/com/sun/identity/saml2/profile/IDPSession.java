@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSession.java,v 1.4 2008-06-25 05:47:53 qcheng Exp $
+ * $Id: IDPSession.java,v 1.5 2009-05-06 19:48:34 madan_ranganath Exp $
  *
  */
 
@@ -53,6 +53,8 @@ public class IDPSession {
     private boolean doLogoutAll = false;  
     private List sessionPartners = null;
     private String authnContext = null;
+    private String metaAlias = null;
+
   
     /**
      * Constructor for a <code>IDPSession</code>.
@@ -253,8 +255,27 @@ public class IDPSession {
                 originatingLogoutSPEntityID = new String(tmp);
             }
             doLogoutAll = idpSessionCopy.getLogoutAll();
+            metaAlias = idpSessionCopy.getMetaAlias();
         } catch (SessionException se) {
             SAML2Utils.debug.error("Session Exception.", se);
         }
+    }
+  
+    /**
+     * Sets the IDP Meta Alias.
+     *
+     * @param IDP Meta Alias
+     */
+    public void setMetaAlias(String metaAlias) {
+        this.metaAlias = metaAlias;
+    }
+
+    /**
+     * Returns the IDP Meta Alias.
+     *
+     * @return the IDP Meta Alias
+     */
+    public String getMetaAlias() {
+        return metaAlias;
     }
 }

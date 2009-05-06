@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.38 2009-03-03 01:52:40 qcheng Exp $
+ * $Id: SAML2Constants.java,v 1.39 2009-05-06 19:49:52 madan_ranganath Exp $
  *
  */
 
@@ -1464,4 +1464,16 @@ public interface SAML2Constants {
      * Query parameter name for error message
      */
     public String ERROR_MESSAGE = "errormessage";
+
+    /**
+     * IDP Session Synchronize Enabled
+     */
+    public String IDP_SESSION_SYNC_ENABLED =
+            "idpSessionSyncEnabled";
+
+    /**
+     * SP Session Synchronize Enabled
+     */
+    public String SP_SESSION_SYNC_ENABLED =
+            "spSessionSyncEnabled";
 } 

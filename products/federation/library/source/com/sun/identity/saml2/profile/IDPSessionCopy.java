@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSessionCopy.java,v 1.2 2008-06-25 05:47:54 qcheng Exp $
+ * $Id: IDPSessionCopy.java,v 1.3 2009-05-06 19:48:34 madan_ranganath Exp $
  *
  */
 
@@ -51,7 +51,9 @@ public class IDPSessionCopy implements Serializable {
     private String pendingLogoutRequestID = null; 
     private String originatingLogoutRequestID = null;
     private String originatingLogoutSPEntityID = null;
-    private boolean doLogoutAll = false;   
+    private boolean doLogoutAll = false;
+    private String metaAlias = null;
+
     /**
      * Constructor for a <code>IDPSessionCopy</code>
      *
@@ -79,7 +81,8 @@ public class IDPSessionCopy implements Serializable {
             idpSession.getOriginatingLogoutRequestID();
         originatingLogoutSPEntityID =
             idpSession.getOriginatingLogoutSPEntityID();   
-        doLogoutAll = idpSession.getLogoutAll();   
+        doLogoutAll = idpSession.getLogoutAll();
+        metaAlias = idpSession.getMetaAlias();
     }
     
     /**
@@ -170,6 +173,24 @@ public class IDPSessionCopy implements Serializable {
      */ 
     public boolean getLogoutAll() {
         return doLogoutAll;
+    }
+
+    /**
+     * Sets the IDP Meta Alias.
+     *
+     * @param IDP Meta Alias
+     */
+    public void setMetaAlias(String metaAlias) {
+        this.metaAlias = metaAlias;
+    }
+
+    /**
+     * Returns the IDP Meta Alias.
+     *
+     * @return the IDP Meta Alias
+     */
+    public String getMetaAlias() {
+        return metaAlias;
     }
 }
 

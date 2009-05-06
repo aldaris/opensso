@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.46 2009-04-01 17:47:14 madan_ranganath Exp $
+ * $Id: IDPSSOUtil.java,v 1.47 2009-05-06 19:48:34 madan_ranganath Exp $
  *
  */
 
@@ -338,7 +338,7 @@ public class IDPSSOUtil {
             SAML2Constants.AFFILIATION_ID);
         // generate a response for the authn request
         Response res = getResponse(session, authnReq, spEntityID, idpEntityID,
-            realm, nameIDFormat, acsURL, affiliationID);
+            idpMetaAlias, realm, nameIDFormat, acsURL, affiliationID);
      
         if (res == null) {
             SAML2Utils.debug.error("IDPSSOUtil.sendResponseToACS:" +
@@ -627,6 +627,7 @@ public class IDPSSOUtil {
         AuthnRequest authnReq,
         String recipientEntityID,
         String idpEntityID,
+        String idpMetaAlias,
         String realm,
         String nameIDFormat,
         String acsURL,
@@ -649,8 +650,8 @@ public class IDPSSOUtil {
             List assertionList = new ArrayList();
         
             Assertion assertion = getAssertion(session, authnReq, 
-                recipientEntityID, idpEntityID, realm, nameIDFormat, acsURL,
-                affiliationID);
+                recipientEntityID, idpEntityID, idpMetaAlias, realm,
+                nameIDFormat, acsURL, affiliationID);
     
             if (assertion == null) {
                 SAML2Utils.debug.error(
@@ -710,6 +711,7 @@ public class IDPSSOUtil {
         AuthnRequest authnReq,
         String recipientEntityID,
         String idpEntityID,
+        String idpMetaAlias,
         String realm,
         String nameIDFormat,
         String acsURL,
@@ -750,6 +752,9 @@ public class IDPSSOUtil {
             if (idpSession == null) {
                 idpSession = new IDPSession(session);
             }
+            // Set the metaAlias in the IDP session object
+            idpSession.setMetaAlias(idpMetaAlias);
+
             IDPCache.idpSessionsByIndices.put(sessionIndex, idpSession);
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message(classMethod +

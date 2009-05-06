@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.37 2009-04-01 17:47:15 madan_ranganath Exp $
+ * $Id: SPACSUtils.java,v 1.38 2009-05-06 19:48:34 madan_ranganath Exp $
  *
  */
 
@@ -1353,8 +1353,8 @@ public class SPACSUtils {
         }
         String requestID = respInfo.getResponse().getInResponseTo();
         // save info in memory for logout
-        saveInfoInMemory(sessionProvider, session, sessionIndex, info,
-            IDPProxyUtil.isIDPProxyEnabled(requestID), isTransient);
+        saveInfoInMemory(sessionProvider, session, sessionIndex, metaAlias,
+            info, IDPProxyUtil.isIDPProxyEnabled(requestID), isTransient);
 
         // invoke SP Adapter
         SAML2ServiceProviderAdapter spAdapter =
@@ -1499,8 +1499,9 @@ public class SPACSUtils {
     }
 
     private static void saveInfoInMemory(SessionProvider sessionProvider,
-        Object session, String sessionIndex, NameIDInfo info,
-        boolean isIDPProxy, boolean isTransient) throws SAML2Exception {
+        Object session, String sessionIndex, String metaAlias,
+        NameIDInfo info, boolean isIDPProxy, boolean isTransient)
+        throws SAML2Exception {
         
         String infoKeyString = (new NameIDInfoKey(
             info.getNameIDValue(),
@@ -1563,7 +1564,7 @@ public class SPACSUtils {
                 }  
                 synchronized (fedSessions) {
                     fedSessions.add(new SPFedSession(sessionIndex, tokenID,
-                        info));
+                        info, metaAlias));
                     SPCache.fedSessionListsByNameIDInfoKey.put(
                         infoKeyString, fedSessions);
                 }
@@ -1600,7 +1601,8 @@ public class SPACSUtils {
                     }    
                     if (!found) {
                         fedSessions.add(
-                            new SPFedSession(sessionIndex, tokenID, info));
+                            new SPFedSession(sessionIndex, tokenID, info,
+                                             metaAlias));
                         SPCache.fedSessionListsByNameIDInfoKey.put(
                             infoKeyString, fedSessions);
                     }
