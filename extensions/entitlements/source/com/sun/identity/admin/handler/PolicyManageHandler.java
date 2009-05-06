@@ -4,6 +4,7 @@ import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.Fade;
 import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.PhaseEventAction;
+import com.sun.identity.admin.model.PolicyFilterHolder;
 import com.sun.identity.admin.model.PolicyManageBean;
 import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PrivilegeBean;
@@ -11,6 +12,7 @@ import com.sun.identity.admin.model.QueuedActionBean;
 import java.io.Serializable;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
+import javax.faces.event.ValueChangeEvent;
 
 public class PolicyManageHandler implements Serializable {
 
@@ -25,6 +27,14 @@ public class PolicyManageHandler implements Serializable {
 
         return pb;
     }
+
+    public PolicyFilterHolder getPolicyFilterHolder(ActionEvent event) {
+        PolicyFilterHolder pfh = (PolicyFilterHolder) event.getComponent().getAttributes().get("policyFilterHolder");
+        assert(pfh != null);
+
+        return pfh;
+    }
+
     public PolicyManageBean getPolicyManageBean() {
         return policyManageBean;
     }
@@ -44,12 +54,42 @@ public class PolicyManageHandler implements Serializable {
         queuedActionBean.getPhaseEventActions().add(pea);
     }
 
+    private void addResetEvent() {
+        PhaseEventAction pea = new PhaseEventAction();
+        pea.setDoBeforePhase(true);
+        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+        pea.setAction("#{policyManageHandler.handleReset}");
+        pea.setParameters(new Class[]{});
+        pea.setArguments(new Object[]{});
+
+        queuedActionBean.getPhaseEventActions().add(pea);
+    }
+
     public void handleSort() {
         policyManageBean.getPolicyManageTableBean().sort();
     }
 
+    public void handleReset() {
+        policyManageBean.reset();
+    }
+
     public void viewOptionsListener(ActionEvent event) {
         policyManageBean.setViewOptionsPopupVisible(!policyManageBean.isViewOptionsPopupVisible());
+    }
+
+    public void addPolicyFilterListener(ActionEvent event) {
+        getPolicyManageBean().newPolicyFilterHolder();
+        addResetEvent();
+    }
+
+    public void policyFilterChangedListener(ValueChangeEvent event) {
+        addResetEvent();
+    }
+
+    public void removePolicyFilterListener(ActionEvent event) {
+        PolicyFilterHolder pfh = getPolicyFilterHolder(event);
+        getPolicyManageBean().getPolicyFilterHolders().remove(pfh);
+        addResetEvent();
     }
 
     public void editListener(ActionEvent event) {

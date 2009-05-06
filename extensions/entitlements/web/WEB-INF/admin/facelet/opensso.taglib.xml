@@ -62,6 +62,10 @@
         <tag-name>feed</tag-name>
         <source>tag/feed.xhtml</source>
     </tag>
+    <tag>
+        <tag-name>policyfilterholder</tag-name>
+        <source>tag/policyfilterholder.xhtml</source>
+    </tag>
     <function>
         <function-name>indexOf</function-name>
         <function-class>com.sun.identity.admin.Functions</function-class>

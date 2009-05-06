@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class BeanHashMap<K,V> extends HashMap<K,V> {
-    public Collection<V> getValues() {
+    public Collection<V> getMapValues() {
         return values();
     }
 
-    public Set<K> getKeys() {
+    public Set<K> getMapKeys() {
         return keySet();
     }
 }

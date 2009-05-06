@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
+
+    <ice:panelGroup
+        styleClass="policy-filter-outer">
+        <o:box>
+            <ui:define name="body">
+                <ice:panelGrid
+                    styleClass="policy-filter"
+                    columnClasses="policy-filter-tableCol1,policy-filter-tableCol3"
+                    columns="2">
+                    <ice:panelGroup>
+                        <ice:outputText
+                            value="Add a filter ..."/>
+                    </ice:panelGroup>
+                    <ice:commandLink
+                        styleClass="command-link"
+                        actionListener="#{policyManageHandler.addPolicyFilterListener}">
+                        <ice:graphicImage
+                            value="../image/add-16.png"/>
+                    </ice:commandLink>
+                </ice:panelGrid>
+            </ui:define>
+        </o:box>
+    </ice:panelGroup>
+    <ice:panelSeries
+        var="policyFilterHolder"
+        value="#{policyManageBean.policyFilterHolders}">
+        <o:policyfilterholder
+            policyFilterHolder="#{policyFilterHolder}"/>
+    </ice:panelSeries>
+</span>

@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+
+    <ice:panelGroup
+        styleClass="policy-filter-outer">
+        <o:box>
+            <ui:define name="body">
+                <ice:panelGroup>
+                    <ice:panelGrid
+                        styleClass="policy-filter"
+                        columnClasses="policy-filter-tableCol1,policy-filter-tableCol3"
+                        columns="2">
+                        <ice:panelGrid
+                            columns="2">
+                            <ice:panelGroup>
+                                <ice:selectOneMenu
+                                    styleClass="policy-filter-input"
+                                    id="filter-type-select"
+                                    valueChangeListener="#{policyManageHandler.policyFilterChangedListener}"
+                                    value="#{policyFilterHolder.policyFilterTypeName}">
+                                    <f:selectItems
+                                        value="#{policyFilterHolder.policyFilterTypeNameItems}"/>
+                                </ice:selectOneMenu>
+                                <ice:outputText
+                                    value="is"/>
+                            </ice:panelGroup>
+                            <ui:include
+                                src="/admin/facelet/template/policy-filter-template-includer.xhtml">
+                                <ui:param
+                                    name="policyFilter"
+                                    value="#{policyFilterHolder.policyFilter}"/>
+                            </ui:include>
+                        </ice:panelGrid>
+                        <ice:panelGroup>
+                            <ice:commandLink
+                                actionListener="#{policyManageHandler.removePolicyFilterListener}">
+                                <f:attribute
+                                    name="policyFilterHolder"
+                                    value="#{policyFilterHolder}"/>
+                                <ice:graphicImage
+                                    value="../image/remove-16.png"/>
+                            </ice:commandLink>
+                            <ice:commandLink
+                                actionListener="#{policyManageHandler.addPolicyFilterListener}">
+                                <ice:graphicImage
+                                    value="../image/add-16.png"/>
+                            </ice:commandLink>
+                        </ice:panelGroup>
+                    </ice:panelGrid>
+                </ice:panelGroup>
+            </ui:define>
+        </o:box>
+    </ice:panelGroup>
+</ui:composition>

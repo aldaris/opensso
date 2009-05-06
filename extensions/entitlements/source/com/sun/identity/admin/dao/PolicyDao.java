@@ -3,6 +3,7 @@ package com.sun.identity.admin.dao;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.ConditionTypeFactory;
+import com.sun.identity.admin.model.PolicyFilterHolder;
 import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.SubjectFactory;
 import com.sun.identity.admin.model.ViewApplicationsBean;
@@ -12,8 +13,11 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,20 +42,40 @@ public class PolicyDao implements Serializable {
     }
 
     public List<PrivilegeBean> getPrivilegeBeans() {
-        return getPrivilegeBeans(null);
+        return getPrivilegeBeans(null, Collections.EMPTY_LIST);
     }
 
-    public List<PrivilegeBean> getPrivilegeBeans(String filter) {
+    private Set<PrivilegeSearchFilter> getPrivilegeSearchFilters(List<PolicyFilterHolder> policyFilterHolders) {
+        Set<PrivilegeSearchFilter> psfs = new HashSet<PrivilegeSearchFilter>();
+
+        for (PolicyFilterHolder pfh: policyFilterHolders) {
+            List<PrivilegeSearchFilter> l = pfh.getPolicyFilter().getPrivilegeSearchFilters();
+            if (l != null) {
+                // TODO: list should never be null
+                psfs.addAll(l);
+            }
+        }
+
+        return psfs;
+    }
+
+    public List<PrivilegeBean> getPrivilegeBeans(String filter, List<PolicyFilterHolder> policyFilterHolders) {
         String pattern = getPattern(filter);
-
-        // TODO: add SSO token to public credentials
-        Subject authSubject = new Subject();
-        PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
-
+        Set<PrivilegeSearchFilter> psfs = getPrivilegeSearchFilters(policyFilterHolders);
+        PrivilegeManager pm = getPrivilegeManager();
         List<PrivilegeBean> privilegeBeans = null;
 
         try {
-            Set<String> privilegeNames = pm.getPrivilegeNames(pattern);
+            Set<String> privilegeNames;
+            // TODO: shouldn't be either / or here, should be able to
+            // search for both
+            if (psfs.size() > 0) {
+                // TODO: realm
+                privilegeNames = pm.searchPrivilegeNames("/", psfs, true);
+            } else {
+                privilegeNames = pm.getPrivilegeNames(pattern);
+            }
+
             privilegeBeans = new ArrayList<PrivilegeBean>();
             for (String privilegeName : privilegeNames) {
                 Privilege p = pm.getPrivilege(privilegeName);

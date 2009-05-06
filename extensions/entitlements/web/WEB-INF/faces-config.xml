@@ -931,6 +931,10 @@
             <property-name>policyDao</property-name>
             <value>#{policyDao}</value>
         </managed-property>
+        <managed-property>
+            <property-name>policyFilterTypes</property-name>
+            <value>#{policyFilterTypes}</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>
@@ -972,6 +976,51 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
+    <!-- filter types -->
+    <managed-bean>
+        <managed-bean-name>birthPolicyFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.BirthPolicyFilterType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>birth</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/policy-filter-birth.xhtml</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>modifiedPolicyFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ModifiedPolicyFilterType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>modified</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/policy-filter-modified.xhtml</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>policyFilterTypes</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.BeanHashMap</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <map-entries>
+            <map-entry>
+                <key>#{birthPolicyFilterType.name}</key>
+                <value>#{birthPolicyFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{modifiedPolicyFilterType.name}</key>
+                <value>#{modifiedPolicyFilterType}</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+    <!-- filter types -->
+
     <navigation-rule>
         <navigation-case>
             <from-outcome>home</from-outcome>
@@ -1008,7 +1057,7 @@
             com.sun.identity.admin.model.QueuedActionListener
         </phase-listener>
         <phase-listener>
-            net.sf.jsfcomp.onload.OnLoadPhaseListener
+            com.sun.identity.admin.RedirectPhaseListener
         </phase-listener>
     </lifecycle>
 </faces-config>

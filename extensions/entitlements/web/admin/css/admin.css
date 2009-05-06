@@ -242,6 +242,41 @@ div.button img.left {
     clear: both;
 }
 
+.policy-filter-outer {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.policy-filter {
+    width: 100%;
+    min-height: 20px;
+}
+
+.policy-filter-tableCol1 {
+    padding-left: 5px;
+}
+
+.policy-filter-tableCol2 {
+}
+
+.policy-filter-tableCol3 {
+    float: right;
+    padding-right: 5px;
+    position: relative;
+    top: 2px;
+}
+
+.policy-filter-tableCol1 span label,
+.policy-filter-tableCol1 span input {
+    padding-left: 5px;
+    vertical-align: middle;
+}
+
+.policy-filter-input {
+    padding: 0;
+    margin: 0;
+}
+
 .url-resource {
     width: 100%;
 }
