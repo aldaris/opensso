@@ -85,8 +85,6 @@ public class PolicyManageTableBean implements Serializable {
     static {
         comparators.put(new SortKey("name", true), new PrivilegeBean.NameComparator(true));
         comparators.put(new SortKey("name", false), new PrivilegeBean.NameComparator(false));
-        comparators.put(new SortKey("description", true), new PrivilegeBean.NameComparator(true));
-        comparators.put(new SortKey("description", false), new PrivilegeBean.NameComparator(false));
         comparators.put(new SortKey("description", true), new PrivilegeBean.DescriptionComparator(true));
         comparators.put(new SortKey("description", false), new PrivilegeBean.DescriptionComparator(false));
         comparators.put(new SortKey("birth", true), new PrivilegeBean.BirthComparator(true));

@@ -92,7 +92,8 @@
                                         </ice:commandLink>
                                     </ice:panelGroup>
                                 </ice:column>
-                                <ice:column>
+                                <ice:column
+                                    rendered="#{policyManageBean.policyManageTableBean.descriptionColumnVisible}">
                                     <f:facet name="header">
                                         <ice:commandSortHeader
                                             columnName="description"
