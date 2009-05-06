@@ -12,12 +12,14 @@ import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.ConditionType;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
+import com.sun.identity.admin.model.AndViewSubject;
 import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.ContainerViewCondition;
 import com.sun.identity.admin.model.ContainerViewSubject;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.MultiPanelBean;
+import com.sun.identity.admin.model.OrViewSubject;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PolicyManageBean;
@@ -212,6 +214,50 @@ public abstract class PolicyWizardHandler
 
     public void actionRemoveListener(ActionEvent event) {
         BooleanAction ba = getBooleanAction(event);
+    }
+
+    public void anyOfSubjectListener(ActionEvent event) {
+        ViewSubject vs = getPolicyWizardBean().getPrivilegeBean().getViewSubject();
+        if (vs == null) {
+            // add empty OR
+            ViewSubject ovs = getPolicyWizardBean().getSubjectType("or").newViewSubject();
+            getPolicyWizardBean().getPrivilegeBean().setViewSubject(ovs);
+        } else if (vs instanceof OrViewSubject) {
+            // do nothing, already OR
+        } else if (vs instanceof AndViewSubject) {
+            // strip off top level AND and replace with OR
+            AndViewSubject avs = (AndViewSubject)vs;
+            OrViewSubject ovs = (OrViewSubject)getPolicyWizardBean().getSubjectType("or").newViewSubject();
+            ovs.setViewSubjects(avs.getViewSubjects());
+            getPolicyWizardBean().getPrivilegeBean().setViewSubject(ovs);
+        } else {
+            // wrap whatever is there with an OR
+            OrViewSubject ovs = (OrViewSubject)getPolicyWizardBean().getSubjectType("or").newViewSubject();
+            ovs.addViewSubject(vs);
+            getPolicyWizardBean().getPrivilegeBean().setViewSubject(ovs);
+        }
+    }
+
+    public void allOfSubjectListener(ActionEvent event) {
+        ViewSubject vs = getPolicyWizardBean().getPrivilegeBean().getViewSubject();
+        if (vs == null) {
+            // add empty AND
+            ViewSubject avs = getPolicyWizardBean().getSubjectType("and").newViewSubject();
+            getPolicyWizardBean().getPrivilegeBean().setViewSubject(avs);
+        } else if (vs instanceof AndViewSubject) {
+            // do nothing, already AND
+        } else if (vs instanceof OrViewSubject) {
+            // strip off top level OR and replace with AND
+            OrViewSubject ovs = (OrViewSubject)vs;
+            AndViewSubject avs = (AndViewSubject)getPolicyWizardBean().getSubjectType("and").newViewSubject();
+            avs.setViewSubjects(ovs.getViewSubjects());
+            getPolicyWizardBean().getPrivilegeBean().setViewSubject(avs);
+        } else {
+            // wrap whatever is there with an AND
+            AndViewSubject avs = (AndViewSubject)getPolicyWizardBean().getSubjectType("and").newViewSubject();
+            avs.addViewSubject(vs);
+            getPolicyWizardBean().getPrivilegeBean().setViewSubject(avs);
+        }
     }
 
     public void validatePolicyName(FacesContext context, UIComponent component, Object value) throws ValidatorException {

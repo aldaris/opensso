@@ -151,7 +151,7 @@ public class PolicyWizardBean
         this.subjectTypes = subjectTypes;
     }
 
-    private SubjectType getSubjectType(String name) {
+    public SubjectType getSubjectType(String name) {
         for (SubjectType st: subjectTypes) {
             if (st.getName().equals(name)) {
                 return st;
@@ -164,7 +164,7 @@ public class PolicyWizardBean
         this.conditionTypes = conditionTypes;
     }
 
-    private ConditionType getConditionType(String name) {
+    public ConditionType getConditionType(String name) {
         for (ConditionType ct: conditionTypes) {
             if (ct.getName().equals(name)) {
                 return ct;

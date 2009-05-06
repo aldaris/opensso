@@ -16,15 +16,15 @@ public abstract class ContainerViewSubject extends ViewSubject implements Contai
     }
 
     public List getTreeNodes() {
-        return viewSubjects;
+        return getViewSubjects();
     }
     
     public void addViewSubject(ViewSubject vs) {
-        viewSubjects.add(vs);
+        getViewSubjects().add(vs);
     }
 
     public int getViewSubjectsSize() {
-        return viewSubjects.size();
+        return getViewSubjects().size();
     }
 
     @Override
@@ -82,5 +82,9 @@ public abstract class ContainerViewSubject extends ViewSubject implements Contai
     @Override
     public String getTitle() {
         return getSubjectType().getTitle();
+    }
+
+    public void setViewSubjects(List<ViewSubject> viewSubjects) {
+        this.viewSubjects = viewSubjects;
     }
 }
