@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyDataStore.java,v 1.7 2009-05-04 20:57:06 veiming Exp $
+ * $Id: IPolicyDataStore.java,v 1.8 2009-05-06 07:30:59 veiming Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
@@ -60,6 +60,17 @@ public interface IPolicyDataStore {
      * failed.
      */
     void delete(String realm, Privilege privilege)
+        throws EntitlementException;
+
+    /**
+     * Deletes a privilege from data store.
+     *
+     * @param ream Realm name.
+     * @param privilegeName name of privilege to be deleted.
+     * @throws com.sun.identity.entitlement.EntitlementException if deletion
+     * failed.
+     */
+    void delete(String realm, String privilegeName)
         throws EntitlementException;
 
     /**

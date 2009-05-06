@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.8 2009-05-04 20:57:07 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.9 2009-05-06 07:30:59 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -77,12 +77,24 @@ public class PolicyDataStore implements IPolicyDataStore {
             SubjectAttributesManager.getRequiredAttributeNames(p)); //TOFIX realm
     }
 
+    public void delete(String realm, String privilegeName)
+        throws EntitlementException {
+        delete(realm, privilegeName, false);
+    }
+
     public void delete(String realm, Privilege p)
-            throws EntitlementException {
-        String dn = DataStore.getPrivilegeDistinguishedName(p.getName(), realm, null);
-        dataStore.remove(realm, p.getName());
-        policyCache.decache(dn);
+        throws EntitlementException {
+        String dn = delete(realm, p.getName(), true);
         indexCache.clear(p.getEntitlement().getResourceSaveIndexes(), dn);
+    }
+
+    private String delete(String realm, String privilegeName, boolean notify)
+        throws EntitlementException {
+        String dn = DataStore.getPrivilegeDistinguishedName(
+            privilegeName, realm, null);
+        dataStore.remove(realm, privilegeName, notify);
+        policyCache.decache(dn);
+        return dn;
     }
 
     private void cache(Privilege p, String realm)
@@ -90,11 +102,6 @@ public class PolicyDataStore implements IPolicyDataStore {
         String dn = DataStore.getPrivilegeDistinguishedName(p.getName(), realm, null);
         indexCache.cache(p.getEntitlement().getResourceSaveIndexes(), dn);
         policyCache.cache(dn, p);
-    }
-
-    private void decache(Privilege p)
-            throws EntitlementException {
-        policyCache.decache(p.getName());
     }
 
     public Iterator<Privilege> search(
