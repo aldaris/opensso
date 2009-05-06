@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: IdentityProvider.cs,v 1.1 2009-05-01 15:19:55 ggennaro Exp $
+ * $Id: IdentityProvider.cs,v 1.2 2009-05-06 21:44:33 ggennaro Exp $
  */
 
 using System.Collections;
@@ -91,7 +91,7 @@ namespace Sun.Identity.Saml2
 
                 // Load now since a) it doesn't change and b) its a 
                 // performance dog on Win 2003 64-bit.
-                byte[] byteArray = Encoding.UTF8.GetBytes(this.EncodedCertificate);
+                byte[] byteArray = Encoding.UTF8.GetBytes(this.EncodedSigningCertificate);
                 this.certificate = new X509Certificate2(byteArray);
             }
             catch (DirectoryNotFoundException dnfe)
@@ -129,11 +129,11 @@ namespace Sun.Identity.Saml2
         /// Gets the encoded X509 certifcate located within the identity
         /// provider's metadata.
         /// </summary>
-        public string EncodedCertificate
+        public string EncodedSigningCertificate
         {
             get
             {
-                string xpath = "/md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor/ds:KeyInfo/ds:X509Data/ds:X509Certificate";
+                string xpath = "/md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor[@use='signing']/ds:KeyInfo/ds:X509Data/ds:X509Certificate";
                 XmlNode root = this.metadata.DocumentElement;
                 XmlNode node = root.SelectSingleNode(xpath, this.metadataNsMgr);
                 string value = node.InnerText.Trim(); // Regex.Replace(node.InnerText.Trim(), @"[\r\t]", "");
@@ -142,9 +142,9 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
-        /// Gets the X509 certificate for this identity provider.
+        /// Gets the X509 signing certificate for this identity provider.
         /// </summary>
-        public X509Certificate2 Certificate
+        public X509Certificate2 SigningCertificate
         {
             get
             {
