@@ -247,6 +247,13 @@ div.button img.left {
     margin-bottom: 5px;
 }
 
+.policy-filter-outer * > * {
+    border: none;
+    border-collapse: collapse;
+    padding: 0;
+    margin: 0;
+}
+
 .policy-filter {
     width: 100%;
     min-height: 20px;
