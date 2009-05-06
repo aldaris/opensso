@@ -20,14 +20,17 @@
             </ice:panelGroup>
         </f:facet>
         <ui:insert name="wizard-step-body"/>
-        <ice:panelGrid
-            styleClass="button-group"
-            columns="4">
-            <o:wbuttons
-                bean="#{wizardBean}"
-                handler="#{wizardHandler}"
-                step="#{step}"/>
-        </ice:panelGrid>
+        <ice:panelGroup
+            styleClass="button-container">
+            <ice:panelGrid
+                columns="4"
+                styleClass="button-group">
+                <o:wbuttons
+                    bean="#{wizardBean}"
+                    handler="#{wizardHandler}"
+                    step="#{step}"/>
+            </ice:panelGrid>
+        </ice:panelGroup>
         <script type="text/javascript">
             focusWizardStep('#{step}');
         </script>

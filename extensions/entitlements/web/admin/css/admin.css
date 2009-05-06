@@ -117,8 +117,15 @@ textarea.policy-description {
 }
 
 
+.button-container {
+    height: 50px;
+}
+
 .button-group {
-    margin-top: 16px;
+    clear: both;
+    margin-top: 10px;
+    position: relative;
+    float: right;
 }
 
 
@@ -327,7 +334,7 @@ div.button img.left {
     z-index: 999;
     position: absolute;
     background: #FFFFFF;
-    max-width: 300px;
+    max-width: 400px;
     min-width: 200px;
 }
 
