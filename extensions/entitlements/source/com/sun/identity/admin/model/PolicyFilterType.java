@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import java.io.Serializable;
 
 public abstract class PolicyFilterType implements Serializable {
@@ -15,8 +16,8 @@ public abstract class PolicyFilterType implements Serializable {
     }
 
     public String getTitle() {
-        // TODO
-        return getName();
+        Resources r = new Resources();
+        return r.getString(this.getClass(), "title");
     }
 
     public abstract PolicyFilter newPolicyFilter();

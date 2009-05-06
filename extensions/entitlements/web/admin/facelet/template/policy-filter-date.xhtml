@@ -8,6 +8,7 @@
     xmlns:o="http://opensso.dev.java.net">
 
     <ice:panelGrid
+        styleClass="policy-filter-table"
         columns="3">
         <ice:panelGroup>
             <ice:selectOneMenu
@@ -21,6 +22,7 @@
         <ice:panelGroup
             visible="#{policyFilter.valueShown}">
             <ice:panelGrid
+                styleClass="policy-filter-table"
                 columns="2">
                 <ice:panelGroup>
                     <ice:inputText
@@ -44,11 +46,12 @@
         <ice:panelGroup
             visible="#{policyFilter.dateShown}">
             <ice:selectInputDate
-                id="foo"
                 valueChangeListener="#{policyManageHandler.policyFilterChangedListener}"
                 styleClass="policy-filter-input"
                 value="#{policyFilter.date}"
                 renderAsPopup="true">
+                <f:convertDateTime 
+                    timeZone="#{timeZoneBean.timeZone.ID}"/>
             </ice:selectInputDate>
         </ice:panelGroup>
     </ice:panelGrid>

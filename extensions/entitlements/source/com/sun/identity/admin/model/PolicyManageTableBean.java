@@ -85,6 +85,10 @@ public class PolicyManageTableBean implements Serializable {
     static {
         comparators.put(new SortKey("name", true), new PrivilegeBean.NameComparator(true));
         comparators.put(new SortKey("name", false), new PrivilegeBean.NameComparator(false));
+        comparators.put(new SortKey("description", true), new PrivilegeBean.NameComparator(true));
+        comparators.put(new SortKey("description", false), new PrivilegeBean.NameComparator(false));
+        comparators.put(new SortKey("description", true), new PrivilegeBean.DescriptionComparator(true));
+        comparators.put(new SortKey("description", false), new PrivilegeBean.DescriptionComparator(false));
         comparators.put(new SortKey("birth", true), new PrivilegeBean.BirthComparator(true));
         comparators.put(new SortKey("birth", false), new PrivilegeBean.BirthComparator(false));
         comparators.put(new SortKey("author", true), new PrivilegeBean.AuthorComparator(true));
@@ -96,9 +100,9 @@ public class PolicyManageTableBean implements Serializable {
     }
 
     public PolicyManageTableBean() {
+        columnsVisible.add("description");
         columnsVisible.add("resources");
         columnsVisible.add("subject");
-        columnsVisible.add("modifier");
         columnsVisible.add("modified");
         columnsVisible.add("remove");
     }
@@ -118,6 +122,10 @@ public class PolicyManageTableBean implements Serializable {
 
     public boolean isResourcesColumnVisible() {
         return getColumnsVisible().contains("resources");
+    }
+
+    public boolean isDescriptionColumnVisible() {
+        return getColumnsVisible().contains("description");
     }
 
     public boolean isExceptionsColumnVisible() {

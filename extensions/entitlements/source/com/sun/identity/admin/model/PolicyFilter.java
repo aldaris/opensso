@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import java.io.Serializable;
 import java.util.List;
@@ -25,8 +26,8 @@ public abstract class PolicyFilter implements Serializable {
     }
 
     public String getTitle() {
-        // TODO
-        return getName();
+        Resources r = new Resources();
+        return r.getString(this.getClass(), "title");
     }
 
     public abstract List<PrivilegeSearchFilter> getPrivilegeSearchFilters();

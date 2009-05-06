@@ -20,6 +20,7 @@
                 rendered="#{policyManageBean.viewOptionsPopupVisible}"
                 partialSubmit="true"
                 value="#{policyManageBean.policyManageTableBean.columnsVisible}">
+                <f:selectItem itemValue="description" itemLabel="Description"/>
                 <f:selectItem itemValue="author" itemLabel="Author"/>
                 <f:selectItem itemValue="birth" itemLabel="Created"/>
                 <f:selectItem itemValue="modifier" itemLabel="Modified By"/>
@@ -47,6 +48,7 @@
                 <ice:checkbox for="columns-visible" index="9"/>
                 <ice:checkbox for="columns-visible" index="10"/>
                 <ice:checkbox for="columns-visible" index="11"/>
+                <ice:checkbox for="columns-visible" index="12"/>
             </ice:panelGrid>
         </ui:define>
     </o:popup>

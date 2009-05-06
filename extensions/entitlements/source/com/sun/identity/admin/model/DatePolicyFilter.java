@@ -1,7 +1,9 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.faces.model.SelectItem;
@@ -54,8 +56,8 @@ public abstract class DatePolicyFilter extends PolicyFilter {
         THIS_YEAR;
 
         public String getTitle() {
-            // TODO
-            return toString();
+            Resources r = new Resources();
+            return r.getString(this.getClass(), toString() + ".title");
         }
 
         public List<SelectItem> getItems() {
@@ -83,8 +85,8 @@ public abstract class DatePolicyFilter extends PolicyFilter {
         }
 
         public String getTitle() {
-            // TODO
-            return toString();
+            Resources r = new Resources();
+            return r.getString(this.getClass(), toString() + ".title");
         }
 
         public List<SelectItem> getItems() {
@@ -141,14 +143,60 @@ public abstract class DatePolicyFilter extends PolicyFilter {
     public List<PrivilegeSearchFilter> getPrivilegeSearchFilters() {
         List<PrivilegeSearchFilter> psfs = new ArrayList<PrivilegeSearchFilter>();
 
+        Calendar nowCal = Calendar.getInstance();
+
         if (verb == Verb.WITHIN_LAST) {
             String attrName = getPrivilegeAttributeName();
-            long longValue = System.currentTimeMillis() - unit.getMultiplier()*value;
+            long longValue = nowCal.getTimeInMillis() - unit.getMultiplier()*value;
             int op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
             psfs.add(new PrivilegeSearchFilter(attrName, longValue, op));
+        } else if (verb == Verb.EXACTLY) {
+            Calendar startCal = Calendar.getInstance();
+            startCal.setTime(date);
+            startCal.set(Calendar.HOUR_OF_DAY, 0);
+            startCal.set(Calendar.MINUTE, 0);
+            startCal.set(Calendar.SECOND, 0);
+            long startTime = startCal.getTimeInMillis();
+
+            Calendar endCal = Calendar.getInstance();
+            endCal.setTime(date);
+            endCal.set(Calendar.HOUR_OF_DAY, 23);
+            endCal.set(Calendar.MINUTE, 59);
+            endCal.set(Calendar.SECOND, 59);
+            long endTime = endCal.getTimeInMillis();
+
+            String attrName = getPrivilegeAttributeName();
+            int op;
+
+            op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new PrivilegeSearchFilter(attrName, startTime, op));
+
+            op = PrivilegeSearchFilter.LESSER_THAN_OPERATOR;
+            psfs.add(new PrivilegeSearchFilter(attrName, endTime, op));
+        } else if (verb == Verb.BEFORE) {
+            Calendar c = Calendar.getInstance();
+            c.setTime(date);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            long time = c.getTimeInMillis();
+
+            String attrName = getPrivilegeAttributeName();
+            int op = PrivilegeSearchFilter.LESSER_THAN_OPERATOR;
+            psfs.add(new PrivilegeSearchFilter(attrName, time, op));
+        } else if (verb == Verb.AFTER) {
+            Calendar c = Calendar.getInstance();
+            c.setTime(date);
+            c.set(Calendar.HOUR_OF_DAY, 23);
+            c.set(Calendar.MINUTE, 59);
+            c.set(Calendar.SECOND, 59);
+            long time = c.getTimeInMillis();
+
+            String attrName = getPrivilegeAttributeName();
+            int op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new PrivilegeSearchFilter(attrName, time, op));
         }
 
         return psfs;
     }
-
 }

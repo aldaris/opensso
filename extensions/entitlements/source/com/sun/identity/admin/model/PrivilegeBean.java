@@ -144,6 +144,14 @@ public class PrivilegeBean implements Serializable {
         this.exportCellEffect = exportCellEffect;
     }
 
+    public Effect getDescriptionCellEffect() {
+        return descriptionCellEffect;
+    }
+
+    public void setDescriptionCellEffect(Effect descriptionCellEffect) {
+        this.descriptionCellEffect = descriptionCellEffect;
+    }
+
     public static abstract class PrivilegeComparator implements Comparator {
         private boolean ascending;
 
@@ -175,6 +183,24 @@ public class PrivilegeBean implements Serializable {
                 return pb1.getName().compareTo(pb2.getName());
             } else {
                 return pb2.getName().compareTo(pb1.getName());
+            }
+        }
+    }
+
+    public static class DescriptionComparator extends PrivilegeComparator {
+
+        public DescriptionComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            PrivilegeBean pb1 = (PrivilegeBean) o1;
+            PrivilegeBean pb2 = (PrivilegeBean) o2;
+
+            if (isAscending()) {
+                return pb1.getDescription().compareTo(pb2.getDescription());
+            } else {
+                return pb2.getDescription().compareTo(pb1.getDescription());
             }
         }
     }
@@ -262,6 +288,7 @@ public class PrivilegeBean implements Serializable {
     private String author;
     private String modifier;
     private Effect nameCellEffect = null;
+    private Effect descriptionCellEffect = null;
     private Effect resourcesCellEffect = null;
     private Effect subjectCellEffect = null;
     private Effect conditionCellEffect = null;
