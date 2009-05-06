@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.39 2009-05-05 14:00:47 dillidorai Exp $
+  $Id: build.xml,v 1.40 2009-05-06 22:33:27 dillidorai Exp $
 
 -->
 
@@ -104,7 +104,7 @@
        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
               debug="${build.debug}" debuglevel="${build.debuglevel}"
-              excludes = "opensso/**" >
+	      excludes = "opensso/** xacml3/**" >
            <src path="${entitlements.src.dir}/com/sun/identity/entitlement"/>
            <src path="${entitlements.src.dir}/com/sun/identity/shared/debug"/>
            <classpath refid="build.class.path"/>
@@ -307,8 +307,19 @@
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
               debug="${build.debug}" debuglevel="${build.debuglevel}" >
 	      <src path="${entitlements.built.src.dir}/com/sun/identity/entitlement/xacml3/core" />
+	      <src path="${entitlements.built.src.dir}/com/sun/identity/entitlement/xacml3/core" />
        </javac>
     </target>
+
+   <target name="src-xacml3" depends="src-ent, xjc.xacml3">
+       <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+              destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
+              debug="${build.debug}" debuglevel="${build.debuglevel}" >
+	      <src path="${entitlements.built.src.dir}/com/sun/identity/entitlement/xacml3" />
+	      <src path="${entitlements.src.dir}/com/sun/identity/entitlement/xacml3" />
+           <classpath refid="build.class.path"/>
+       </javac>
+   </target>
 
    <target name="clean-lib">
        <delete dir="${entitlements.war.lib.local.dir}"/>
