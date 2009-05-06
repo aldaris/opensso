@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicy.xml,v 1.2 2009-04-28 00:34:35 veiming Exp $
+    $Id: amPolicy.xml,v 1.3 2009-05-06 22:40:36 veiming Exp $
 
 -->
 
@@ -37,7 +37,7 @@
     <Service name="iPlanetAMPolicyService" version="1.0">
         <Schema
             i18nFileName="amPolicy"
-            revisionNumber="50"
+            revisionNumber="60"
             i18nKey="iplanet-policy-service-name">
 
             <Organization>

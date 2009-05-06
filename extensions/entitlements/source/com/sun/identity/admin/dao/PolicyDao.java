@@ -71,8 +71,13 @@ public class PolicyDao implements Serializable {
             // search for both
             if (psfs.size() > 0) {
                 // TODO: realm
-                privilegeNames = pm.searchPrivilegeNames("/", psfs, true);
+                privilegeNames = pm.searchPrivilegeNames("/", psfs);
             } else {
+                //TODO
+                // API got changed, need to modify code to something like this
+                //
+                // psfs.add(new PrivilegeSearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
+                // pm.searchPrivilegeNames("/", psfs);
                 privilegeNames = pm.getPrivilegeNames(pattern);
             }
 

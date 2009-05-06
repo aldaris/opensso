@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.40 2009-05-06 22:33:27 dillidorai Exp $
+  $Id: build.xml,v 1.41 2009-05-06 22:40:35 veiming Exp $
 
 -->
 
@@ -215,7 +215,7 @@
    </target>
 
     <target name="merge-classes" depends="src,unwar">
-        <copy todir="${war.package.dir}/WEB-INF">
+        <copy todir="${war.package.dir}/WEB-INF" overwrite="true">
             <fileset dir="${entitlements.dtd.dir}" includes="*.dtd" />
         </copy>
         <copy todir="${war.package.dir}/WEB-INF/classes">

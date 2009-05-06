@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.6 2009-05-05 16:28:05 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.7 2009-05-06 22:40:36 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -36,6 +36,7 @@ import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
+import java.util.Collections;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -175,15 +176,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      */
     public Set<String> getPrivilegeNames(String pattern)
         throws EntitlementException {
-        Set<String> names = null;
-        try {
-            names = pm.getPolicyNames(pattern);
-        } catch (PolicyException pe) {
-            //TODO: record, wrap and propogate
-        } catch (SSOException ssoe) {
-            //TODO: record, wrap and propogate
-        }
-        return names;
+        return Collections.EMPTY_SET;
     }
 
     /**
