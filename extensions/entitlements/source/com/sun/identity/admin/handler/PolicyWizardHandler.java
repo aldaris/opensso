@@ -12,6 +12,7 @@ import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.ConditionType;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
+import com.sun.identity.admin.model.AndViewCondition;
 import com.sun.identity.admin.model.AndViewSubject;
 import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.ContainerViewCondition;
@@ -19,6 +20,7 @@ import com.sun.identity.admin.model.ContainerViewSubject;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.MultiPanelBean;
+import com.sun.identity.admin.model.OrViewCondition;
 import com.sun.identity.admin.model.OrViewSubject;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.PolicyWizardBean;
@@ -238,6 +240,28 @@ public abstract class PolicyWizardHandler
         }
     }
 
+    public void anyOfConditionListener(ActionEvent event) {
+        ViewCondition vc = getPolicyWizardBean().getPrivilegeBean().getViewCondition();
+        if (vc == null) {
+            // add empty OR
+            ViewCondition ovc = getPolicyWizardBean().getConditionType("or").newViewCondition();
+            getPolicyWizardBean().getPrivilegeBean().setViewCondition(ovc);
+        } else if (vc instanceof OrViewCondition) {
+            // do nothing, already OR
+        } else if (vc instanceof AndViewCondition) {
+            // strip off top level AND and replace with OR
+            AndViewCondition avc = (AndViewCondition)vc;
+            OrViewCondition ovc = (OrViewCondition)getPolicyWizardBean().getConditionType("or").newViewCondition();
+            ovc.setViewConditions(avc.getViewConditions());
+            getPolicyWizardBean().getPrivilegeBean().setViewCondition(ovc);
+        } else {
+            // wrap whatever is there with an OR
+            OrViewCondition ovc = (OrViewCondition)getPolicyWizardBean().getConditionType("or").newViewCondition();
+            ovc.addViewCondition(vc);
+            getPolicyWizardBean().getPrivilegeBean().setViewCondition(ovc);
+        }
+    }
+
     public void allOfSubjectListener(ActionEvent event) {
         ViewSubject vs = getPolicyWizardBean().getPrivilegeBean().getViewSubject();
         if (vs == null) {
@@ -260,6 +284,28 @@ public abstract class PolicyWizardHandler
         }
     }
 
+    public void allOfConditionListener(ActionEvent event) {
+        ViewCondition vc = getPolicyWizardBean().getPrivilegeBean().getViewCondition();
+        if (vc == null) {
+            // add empty AND
+            ViewCondition avc = getPolicyWizardBean().getConditionType("and").newViewCondition();
+            getPolicyWizardBean().getPrivilegeBean().setViewCondition(avc);
+        } else if (vc instanceof AndViewCondition) {
+            // do nothing, already AND
+        } else if (vc instanceof OrViewCondition) {
+            // strip off top level OR and replace with AND
+            OrViewCondition ovc = (OrViewCondition)vc;
+            AndViewCondition avc = (AndViewCondition)getPolicyWizardBean().getConditionType("and").newViewCondition();
+            avc.setViewConditions(ovc.getViewConditions());
+            getPolicyWizardBean().getPrivilegeBean().setViewCondition(avc);
+        } else {
+            // wrap whatever is there with an AND
+            AndViewCondition avc = (AndViewCondition)getPolicyWizardBean().getConditionType("and").newViewCondition();
+            avc.addViewCondition(vc);
+            getPolicyWizardBean().getPrivilegeBean().setViewCondition(avc);
+        }
+    }
+
     public void validatePolicyName(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         String policyName = (String) value;
         Matcher matcher = POLICY_NAME_PATTERN.matcher(policyName);
@@ -269,7 +315,6 @@ public abstract class PolicyWizardHandler
             Resources r = new Resources();
             mb.setSummary(r.getString(this.getClass(), "invalidPolicyNameSummary"));
             mb.setDetail(r.getString(this.getClass(), "invalidPolicyNameDetail"));
-            mb.setDetail("Policy name must be 1 or more alpha-numeric characters");
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
             Effect e;

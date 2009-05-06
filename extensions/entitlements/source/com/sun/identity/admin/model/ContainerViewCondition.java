@@ -12,7 +12,7 @@ public abstract class ContainerViewCondition extends ViewCondition implements Co
     private List<ViewCondition> viewConditions = new ArrayList<ViewCondition>();
 
     public void addViewCondition(ViewCondition vc) {
-        viewConditions.add(vc);
+        getViewConditions().add(vc);
     }
 
     public List<ViewCondition> getViewConditions() {
@@ -20,11 +20,11 @@ public abstract class ContainerViewCondition extends ViewCondition implements Co
     }
 
     public int getViewConditionsSize() {
-        return viewConditions.size();
+        return getViewConditions().size();
     }
 
     public List getTreeNodes() {
-        return viewConditions;
+        return getViewConditions();
     }
 
     @Override
@@ -78,5 +78,9 @@ public abstract class ContainerViewCondition extends ViewCondition implements Co
         b.append(")");
 
         return b.toString();
+    }
+
+    public void setViewConditions(List<ViewCondition> viewConditions) {
+        this.viewConditions = viewConditions;
     }
 }
