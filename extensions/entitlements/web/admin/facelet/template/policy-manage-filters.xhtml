@@ -9,6 +9,7 @@
     xmlns:o="http://opensso.dev.java.net">
 
     <ice:panelGroup
+        visible="#{o:size(policyManageBean.policyFilterHolders) == 0}"
         styleClass="policy-filter-outer">
         <o:box>
             <ui:define name="body">
