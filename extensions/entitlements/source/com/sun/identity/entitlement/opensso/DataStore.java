@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.9 2009-05-06 07:30:59 veiming Exp $
+ * $Id: DataStore.java,v 1.10 2009-05-06 23:59:29 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -387,6 +387,8 @@ public class DataStore {
                     results.add(rdns[0]);
                 }
             }
+            //TOFIX
+            results.remove("default");
         } catch (SMSException ex) {
             throw new EntitlementException(215, ex);
         }

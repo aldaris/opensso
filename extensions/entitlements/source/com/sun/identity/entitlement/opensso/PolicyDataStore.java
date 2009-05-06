@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.9 2009-05-06 07:30:59 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.10 2009-05-06 23:59:29 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -150,15 +150,23 @@ public class PolicyDataStore implements IPolicyDataStore {
         boolean ascendingOrder
     ) throws EntitlementException {
         StringBuffer strFilter = new StringBuffer();
-        if (boolAnd) {
-            strFilter.append("(&");
+        if (filters.isEmpty()) {
+            strFilter.append("(ou=*");
         } else {
-            strFilter.append("(|");
+            if (filters.size() == 1) {
+                strFilter.append(filters.iterator().next().getFilter());
+            } else {
+                if (boolAnd) {
+                    strFilter.append("(&");
+                } else {
+                    strFilter.append("(|");
+                }
+                for (PrivilegeSearchFilter psf : filters) {
+                    strFilter.append(psf.getFilter());
+                }
+                strFilter.append(")");
+            }
         }
-        for (PrivilegeSearchFilter psf : filters) {
-            strFilter.append(psf.getFilter());
-        }
-        strFilter.append(")");
         return dataStore.search(realm, strFilter.toString(), numOfEntries,
             sortResults, ascendingOrder);
     }

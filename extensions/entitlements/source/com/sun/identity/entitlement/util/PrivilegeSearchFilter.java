@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeSearchFilter.java,v 1.1 2009-04-29 11:43:13 veiming Exp $
+ * $Id: PrivilegeSearchFilter.java,v 1.2 2009-05-06 23:59:29 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
+
+import com.sun.identity.entitlement.Privilege;
 
 /**
  * This class encapsulates the information required for searching
@@ -93,7 +95,11 @@ public class PrivilegeSearchFilter {
      */
     public String getFilter() {
         if (value != null) {
-            return "(ou=" + attrName + "=" + value +")";
+            if (attrName.equals(Privilege.NAME_ATTRIBUTE)) {
+                return "(ou=" + value +")";
+            } else {
+                return "(ou=" + attrName + "=" + value +")";
+            }
         }
 
         String op = null;
