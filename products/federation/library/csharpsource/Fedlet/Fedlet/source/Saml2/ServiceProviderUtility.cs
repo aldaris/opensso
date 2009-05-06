@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProviderUtility.cs,v 1.1 2009-05-01 15:19:55 ggennaro Exp $
+ * $Id: ServiceProviderUtility.cs,v 1.2 2009-05-06 22:16:59 ggennaro Exp $
  */
 
 using System;
@@ -255,7 +255,7 @@ namespace Sun.Identity.Saml2
         private void CheckSignature(AuthnResponse authnResponse)
         {
             IdentityProvider identityProvider = (IdentityProvider)this.IdentityProviders[authnResponse.Issuer];
-            string idpCert = Regex.Replace(identityProvider.EncodedCertificate, @"\s", "");
+            string idpCert = Regex.Replace(identityProvider.EncodedSigningCertificate, @"\s", "");
             string authCert = Regex.Replace(authnResponse.SignatureCertificate, @"\s", "");
 
             if (authCert != null)
@@ -267,7 +267,7 @@ namespace Sun.Identity.Saml2
             SignedXml signedXml = new SignedXml((XmlDocument)authnResponse.XmlDom);
             XmlElement authSignatureElement = (XmlElement)authnResponse.XmlSignature;
             signedXml.LoadXml(authSignatureElement);
-            bool results = signedXml.CheckSignature(identityProvider.Certificate, true);
+            bool results = signedXml.CheckSignature(identityProvider.SigningCertificate, true);
 
             if( results == false )
                 throw new Saml2Exception(Resources.AuthnResponseInvalidSignature);
