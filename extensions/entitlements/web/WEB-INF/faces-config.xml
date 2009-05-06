@@ -817,6 +817,14 @@
         <managed-bean-class>com.sun.identity.admin.model.PolicyWizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
+            <property-name>conditionTypes</property-name>
+            <value>#{conditionTypeFactory.conditionTypes}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectTypes</property-name>
+            <value>#{subjectTypes}</value>
+        </managed-property>
+        <managed-property>
             <property-name>viewApplicationsBean</property-name>
             <value>#{viewApplicationsBean}</value>
         </managed-property>
@@ -866,6 +874,14 @@
         <managed-bean-name>policyEditWizardBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.PolicyWizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>conditionTypes</property-name>
+            <value>#{conditionTypeFactory.conditionTypes}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectTypes</property-name>
+            <value>#{subjectTypes}</value>
+        </managed-property>
         <managed-property>
             <property-name>viewApplicationsBean</property-name>
             <value>#{viewApplicationsBean}</value>

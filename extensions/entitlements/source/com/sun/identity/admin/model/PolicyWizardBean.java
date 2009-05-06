@@ -22,6 +22,8 @@ public class PolicyWizardBean
     private Effect policyNameMessageEffect;
     private int advancedTabsetIndex = 0;
     private boolean policyNameEditable = false;
+    private List<ConditionType> conditionTypes;
+    private List<SubjectType> subjectTypes;
 
     public PolicyWizardBean() {
         // nothing
@@ -31,6 +33,11 @@ public class PolicyWizardBean
     public void reset() {
         super.reset();
         setPrivilegeBean(new PrivilegeBean());
+
+        ConditionType oct = getConditionType("or");
+        privilegeBean.setViewCondition(oct.newViewCondition());
+        SubjectType ost = getSubjectType("or");
+        privilegeBean.setViewSubject(ost.newViewSubject());
     }
 
     public List<SelectItem> getViewApplicationNameItems() {
@@ -138,5 +145,31 @@ public class PolicyWizardBean
 
     public void setPolicyNameEditable(boolean policyNameEditable) {
         this.policyNameEditable = policyNameEditable;
+    }
+
+    public void setSubjectTypes(List<SubjectType> subjectTypes) {
+        this.subjectTypes = subjectTypes;
+    }
+
+    private SubjectType getSubjectType(String name) {
+        for (SubjectType st: subjectTypes) {
+            if (st.getName().equals(name)) {
+                return st;
+            }
+        }
+        return null;
+    }
+
+    public void setConditionTypes(List<ConditionType> conditionTypes) {
+        this.conditionTypes = conditionTypes;
+    }
+
+    private ConditionType getConditionType(String name) {
+        for (ConditionType ct: conditionTypes) {
+            if (ct.getName().equals(name)) {
+                return ct;
+            }
+        }
+        return null;
     }
 }

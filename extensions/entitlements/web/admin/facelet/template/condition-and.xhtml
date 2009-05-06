@@ -7,7 +7,7 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
     <c:if test="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'and'}">
-        <ice:outputText value="AND of the following conditions:"/>
+        <ice:outputText value="All of the following conditions:"/>
         <ice:panelGroup
             styleClass="conditions">
             <c:forEach

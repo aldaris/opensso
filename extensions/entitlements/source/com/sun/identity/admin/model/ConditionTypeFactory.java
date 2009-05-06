@@ -37,6 +37,7 @@ public class ConditionTypeFactory implements Serializable {
     public List<ConditionType> getConditionTypes() {
         return new ArrayList<ConditionType>(viewConditionToConditionTypeMap.values());
     }
+
     public Map<String, ConditionType> getEntitlementConditionToConditionTypeMap() {
         return entitlementConditionToConditionTypeMap;
     }

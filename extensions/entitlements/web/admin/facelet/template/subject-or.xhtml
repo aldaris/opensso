@@ -8,7 +8,7 @@
     xmlns:o="http://opensso.dev.java.net">
         
     <c:if test="#{viewSubject != null &amp;&amp; viewSubject.subjectType.name == 'or'}">
-        <ice:outputText value="OR of the following subjects:"/>
+        <ice:outputText value="Any of the following subjects:"/>
         <ice:panelGroup
             styleClass="conditions">
             <c:forEach
