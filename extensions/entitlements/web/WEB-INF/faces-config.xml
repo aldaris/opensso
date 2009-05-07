@@ -1080,7 +1080,7 @@
             com.sun.identity.admin.model.QueuedActionListener
         </phase-listener>
         <phase-listener>
-            com.sun.identity.admin.RedirectPhaseListener
+            com.sun.identity.admin.ActionPhaseListener
         </phase-listener>
     </lifecycle>
 </faces-config>
