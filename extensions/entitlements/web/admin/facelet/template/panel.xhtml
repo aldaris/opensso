@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<span xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ice="http://www.icesoft.com/icefaces/component">
-    <div id="panel-title">
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component">
+        
+    <f:subview>
+        <div id="panel-title">
             <ui:insert name="panel-title"/>
-    </div>
-    <div id="panel-details">
-        <p>
-            <ui:insert name="panel-details"/>
-        </p>
-    </div>
-    <div id="panel-body">
+        </div>
+        <div id="panel-details">
+            <p>
+                <ui:insert name="panel-details"/>
+            </p>
+        </div>
+        <div id="panel-body">
             <ui:insert name="panel-body"/>
-    </div>
+        </div>
+    </f:subview>
 </span>
