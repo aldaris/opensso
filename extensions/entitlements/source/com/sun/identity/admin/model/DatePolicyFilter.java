@@ -195,6 +195,54 @@ public abstract class DatePolicyFilter extends PolicyFilter {
             String attrName = getPrivilegeAttributeName();
             int op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
             psfs.add(new PrivilegeSearchFilter(attrName, time, op));
+        } else if (verb == Verb.TODAY) {
+            Calendar startCal = Calendar.getInstance();
+            startCal.setTimeInMillis(nowCal.getTimeInMillis());
+            startCal.set(Calendar.HOUR_OF_DAY, 0);
+            startCal.set(Calendar.MINUTE, 0);
+            startCal.set(Calendar.SECOND, 0);
+            long startTime = startCal.getTimeInMillis();
+
+            Calendar endCal = Calendar.getInstance();
+            endCal.setTimeInMillis(nowCal.getTimeInMillis());
+            endCal.set(Calendar.HOUR_OF_DAY, 23);
+            endCal.set(Calendar.MINUTE, 59);
+            endCal.set(Calendar.SECOND, 59);
+            long endTime = endCal.getTimeInMillis();
+
+            String attrName = getPrivilegeAttributeName();
+            int op;
+
+            op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new PrivilegeSearchFilter(attrName, startTime, op));
+
+            op = PrivilegeSearchFilter.LESSER_THAN_OPERATOR;
+            psfs.add(new PrivilegeSearchFilter(attrName, endTime, op));
+        } else if (verb == Verb.YESTERDAY) {
+            Calendar startCal = Calendar.getInstance();
+            startCal.setTimeInMillis(nowCal.getTimeInMillis());
+            startCal.set(Calendar.HOUR_OF_DAY, 0);
+            startCal.set(Calendar.MINUTE, 0);
+            startCal.set(Calendar.SECOND, 0);
+            startCal.roll(Calendar.DAY_OF_YEAR, -1);
+            long startTime = startCal.getTimeInMillis();
+
+            Calendar endCal = Calendar.getInstance();
+            endCal.setTimeInMillis(nowCal.getTimeInMillis());
+            endCal.set(Calendar.HOUR_OF_DAY, 23);
+            endCal.set(Calendar.MINUTE, 59);
+            endCal.set(Calendar.SECOND, 59);
+            endCal.roll(Calendar.DAY_OF_YEAR, -1);
+            long endTime = endCal.getTimeInMillis();
+
+            String attrName = getPrivilegeAttributeName();
+            int op;
+
+            op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new PrivilegeSearchFilter(attrName, startTime, op));
+
+            op = PrivilegeSearchFilter.LESSER_THAN_OPERATOR;
+            psfs.add(new PrivilegeSearchFilter(attrName, endTime, op));
         }
 
         return psfs;
