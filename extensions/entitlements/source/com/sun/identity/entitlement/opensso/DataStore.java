@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.10 2009-05-06 23:59:29 veiming Exp $
+ * $Id: DataStore.java,v 1.11 2009-05-07 22:24:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -44,6 +44,7 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSDataEntry;
 import com.sun.identity.sm.SMSEntry;
@@ -382,17 +383,23 @@ public class DataStore {
             String baseDN = getSearchBaseDN(realm, null);
             Set<String> dns = SMSEntry.search(adminToken, baseDN, filter);
             for (String dn : dns) {
-                String rdns[] = LDAPDN.explodeDN(dn, true);
-                if ((rdns != null) && rdns.length > 0) {
-                    results.add(rdns[0]);
+                if (!areDNIdentical(baseDN, dn)) {
+                    String rdns[] = LDAPDN.explodeDN(dn, true);
+                    if ((rdns != null) && rdns.length > 0) {
+                        results.add(rdns[0]);
+                    }
                 }
             }
-            //TOFIX
-            results.remove("default");
         } catch (SMSException ex) {
             throw new EntitlementException(215, ex);
         }
         return results;
+    }
+
+    private static boolean areDNIdentical(String dn1, String dn2) {
+        DN dnObj1 = new DN(dn1);
+        DN dnObj2 = new DN(dn2);
+        return dnObj1.equals(dnObj2);
     }
 
     /**
