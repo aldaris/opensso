@@ -22,14 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyConfigureGoogleApps.xml,v 1.5 2009-04-29 23:58:04 asyhuang Exp $
+   $Id: propertyConfigureGoogleApps.xml,v 1.6 2009-05-07 21:36:35 asyhuang Exp $
 
 -->
 
 <!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
 
 <propertysheet>
-    <section name="idpconf" defaultValue="configure.google.apps.section.idp.setup">
+    <section name="question" defaultValue="blank.header">
         <property required="true">
             <label name="lblRealm" defaultValue="configure.google.apps.label.realm" labelFor="tfRealm" />
             <cc name="tfRealm" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
@@ -56,9 +56,11 @@
     <section name="question" defaultValue="configure.google.apps.section.setup">
         <property required="true">
             <label name="lblDomainId" defaultValue="configure.google.apps.label.domain.id" labelFor="tfDomainId" />
-            <cc name="tfDomainId" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
-                <attribute name="localizeDisplayFieldValue" value="false" />
-                <attribute name="size" value="75" />
+            <cc name="tfDomainId" 
+                tagclass="com.sun.web.ui.taglib.editablelist.CCEditableListTag">
+                <attribute name="name" value="list" />
+                <attribute name="listboxLabel" value="label.current.value" />
+                <attribute name="textboxLabel" value="label.new.value" />
             </cc>
             <fieldhelp name="helpdomainName"
 	                       defaultValue="configure.google.apps.help.domainName" />

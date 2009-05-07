@@ -22,10 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureGoogleApps.java,v 1.3 2009-03-22 08:36:19 asyhuang Exp $
+ * $Id: ConfigureGoogleApps.java,v 1.4 2009-05-07 21:35:06 asyhuang Exp $
  *
  */
-
 package com.sun.identity.workflow;
 
 import com.sun.identity.cot.COTException;
@@ -41,35 +40,41 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 import javax.xml.bind.JAXBException;
 
 /**
  ** Configure GoogleApps.
-**/
+ **/
 public class ConfigureGoogleApps
-    extends Task
-{
+        extends Task {
+
     private static String nameidMapping =
             "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified=uid";
-    
+
     public ConfigureGoogleApps() {
     }
 
     public String execute(Locale locale, Map params)
-        throws WorkflowException {
-        String domainId = getString(params, ParameterKeys.P_DOMAIN_ID);
+            throws WorkflowException {
+        String domainIds = getString(params, ParameterKeys.P_DOMAIN_ID);
         String entityId = getString(params, ParameterKeys.P_IDP);
         String realm = getString(params, ParameterKeys.P_REALM);
         String cot = getString(params, ParameterKeys.P_COT);
-        if (!(domainId.length()>0) || (domainId==null)) {
-            Object[] param = {domainId};
+        if (!(domainIds.length() > 0) || (domainIds == null)) {
+            Object[] param = {domainIds};
             throw new WorkflowException("domain.is.empty", param);
         }
         updateIDPMeta(realm, entityId);
-        updateSPMeta(realm, cot, domainId);
+
+        StringTokenizer st = new StringTokenizer(domainIds, ",");
+        while (st.hasMoreTokens()) {
+            updateSPMeta(realm, cot, st.nextToken().trim());
+        }
+
         Object[] param = {entityId};
         return MessageFormat.format(
-            getMessage("google.apps.configured.success", locale), param);
+                getMessage("google.apps.configured.success", locale), param);
     }
 
     private void updateIDPMeta(String realm, String entityId)
@@ -106,16 +111,18 @@ public class ConfigureGoogleApps
     private void updateSPMeta(String realm, String cot, String domainId)
             throws WorkflowException {
 
-        String metadata = "<EntityDescriptor entityID=\"google.com\" xmlns=\"urn"
+        String metadata = "<EntityDescriptor entityID=\"google.com/a/"
+                + domainId + "\"" + " xmlns=\"urn"
                 + ":oasis:names:tc:SAML:2.0:metadata\">"
                 + "<SPSSODescriptor protocolSupportEnumeration=\"urn:oasis:nam"
                 + "es:tc:SAML:2.0:protocol\"> <NameIDFormat>urn:oasis:names:t"
                 + "c:SAML:1.1:nameid-format:unspecified</NameIDFormat>"
                 + "<AssertionConsumerService index=\"1\" Binding=\"urn:oasis:na"
-                + "mes:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"https://ww"
-                + "w.google.com/a/" + domainId + "/acs\" />"
+                + "mes:tc:SAML:2.0:bindings:HTTP-POST\""
+                + " Location=\"https://www.google.com/a/"
+                + domainId + "/acs\" />"
                 + "</SPSSODescriptor></EntityDescriptor>";
-        
+
         String extendedMeta = null;
         try {
             EntityDescriptorElement e =
@@ -143,5 +150,4 @@ public class ConfigureGoogleApps
             }
         }
     }
-
 }

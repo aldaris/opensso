@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyConfigureGoogleAppsComplete.xml,v 1.4 2009-04-29 23:58:08 asyhuang Exp $ 
+   $Id: propertyConfigureGoogleAppsComplete.xml,v 1.5 2009-05-07 21:36:35 asyhuang Exp $ 
 
 -->
 
@@ -91,11 +91,19 @@
     </section>
     <section name="ConfigurationInstruction" defaultValue="configure.google.apps.complete.instruction.section">
         <property span="true">
-            <cc name="step1"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag"> 
-                <attribute name="defaultValue" value="" />               
+            <cc name="step1"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+                <attribute name="defaultValue" value="configure.google.apps.complete.step1" />
                 <attribute name="escape" value="false" />
             </cc>
         </property>
+
+        <property span="true">
+            <cc name="urllist"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+                <attribute name="defaultValue" value="" />
+                <attribute name="escape" value="false" />
+            </cc>
+        </property>
+
         <property span="true">
             <cc name="step2"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
                 <attribute name="defaultValue" value="configure.google.apps.complete.step2" />
@@ -132,5 +140,19 @@
                 <attribute name="escape" value="false" />
             </cc>
         </property>
+        <property span="true">
+            <cc name="step8"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+                <attribute name="defaultValue" value="configure.google.apps.complete.step8" />
+                <attribute name="escape" value="false" />
+            </cc>
+        </property>
+
+         <property span="true">
+            <cc name="stepOthers"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+                <attribute name="defaultValue" value="configure.google.apps.complete.step.others" />
+                <attribute name="escape" value="false" />
+            </cc>
+        </property>
+
     </section>
 </propertysheet>

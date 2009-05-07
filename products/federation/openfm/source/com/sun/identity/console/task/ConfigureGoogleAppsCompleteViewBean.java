@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.6 2009-04-30 00:00:36 asyhuang Exp $
+ * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.7 2009-05-07 21:31:45 asyhuang Exp $
  *
  */
 package com.sun.identity.console.task;
@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletOutputStream;
@@ -124,11 +125,22 @@ public class ConfigureGoogleAppsCompleteViewBean
             String entityId = req.getParameter("idp");
             TaskModel model = (TaskModel) getModelInternal();
             Map values = model.getConfigureGoogleAppsURLs(realm, entityId);
-            String domainId = req.getParameter("domainId");
-            String orgMsg = getModel().getLocalizedString(
-                    "configure.google.apps.complete.step1");           
-            String msg = MessageFormat.format(orgMsg , domainId, domainId);
-            values.put("step1", returnEmptySetIfValueIsNull(msg));
+            String domainIds = req.getParameter("domainId");
+            StringTokenizer st = new StringTokenizer(domainIds, ",");
+            String domainId = null;
+
+            String msg = "<ul>";
+            while (st.hasMoreTokens()) {
+                domainId = st.nextToken().trim();
+                String orgMsg = getModel().getLocalizedString(
+                        "configure.google.apps.complete.urllist");
+                msg += "<li>";
+                msg += MessageFormat.format(orgMsg, domainId, domainId);
+                msg += "</li>";
+            }
+            msg += "</ul>";
+           
+            values.put("urllist", returnEmptySetIfValueIsNull(msg));
             AMPropertySheet ps = (AMPropertySheet) getChild(PROPERTIES);
             ps.setAttributeValues(values, model);
         } catch (AMConsoleException ex) {
@@ -233,5 +245,4 @@ public class ConfigureGoogleAppsCompleteViewBean
         }
         return set;
     }
-
 }

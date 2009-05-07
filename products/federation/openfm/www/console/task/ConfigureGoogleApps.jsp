@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleApps.jsp,v 1.5 2009-04-29 23:52:16 asyhuang Exp $
+   $Id: ConfigureGoogleApps.jsp,v 1.6 2009-05-07 21:35:55 asyhuang Exp $
 
 --%>
 
@@ -154,8 +154,8 @@
     var frm = document.forms['ConfigureGoogleApps'];
     var idpNew = frm.elements['ConfigureGoogleApps.choiceIDP'].value;
     var realmNew = frm.elements['ConfigureGoogleApps.tfRealm'].value;
-    var domainIdNew = frm.elements['ConfigureGoogleApps.tfDomainId'].value;
-
+    var domainIdNew ;
+    
     var msgCreating = "<p><img src=\"../console/images/processing.gif\" width=\"66\" height\"66\"/></p><cc:text name="txtConfiguring" defaultValue="configuring.google.apps.waiting" bundleID="amConsole" escape="false" />";
     var msgCreated = "<p>&nbsp;</p><input name=\"btnOK\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />\" onClick=\"document.location.replace(\'../task/ConfigureGoogleAppsComplete?idp=\' + idpNew + \'&realm=\' + realmNew + \'&domainId=\' + domainIdNew);return false;\" /></div></p>";
     var ttlCreated = "<h3><cc:text name="txtTtlCreated" defaultValue="google.apps.configured.msg" escape="false" bundleID="amConsole" /></h3>";
@@ -180,7 +180,13 @@
         frm = document.forms['ConfigureGoogleApps'];
         idpNew = frm.elements['ConfigureGoogleApps.choiceIDP'].value;
         realmNew = frm.elements['ConfigureGoogleApps.tfRealm'].value;
-        domainIdNew = frm.elements['ConfigureGoogleApps.tfDomainId'].value;
+        var size = frm.elements['ConfigureGoogleApps.tfDomainId.listbox'].length ;
+        i=0;
+        domainIdNew="";
+        for (i=0;i<size-1;i++) 
+        { 
+        domainIdNew += frm.elements['ConfigureGoogleApps.tfDomainId.listbox'].options[i].value + "," ;
+        }  
         ajaxPost(ajaxObj, url, params, configured);
         return false;
     }
@@ -189,11 +195,18 @@
         var cot = frm.elements['ConfigureGoogleApps.choiceCOT'].value;
         var idp = frm.elements['ConfigureGoogleApps.choiceIDP'].value;
         var realm = frm.elements['ConfigureGoogleApps.tfRealm'].value;
-        var domainId = frm.elements['ConfigureGoogleApps.tfDomainId'].value;
+        var size = frm.elements['ConfigureGoogleApps.tfDomainId.listbox'].length ;
+        i=0;
+        domainIdNew="";
+        for (i=0;i<size-1;i++)
+        {
+            domainIdNew += frm.elements['ConfigureGoogleApps.tfDomainId.listbox'].options[i].value + "," ;
+        }
+
         return "&realm=" + escapeEx(realm) +
             "&cot=" + escapeEx(cot) +
             "&idp=" + escapeEx(idp) +
-            "&domainId=" + escapeEx(domainId);
+            "&domainId=" + escapeEx(domainIdNew);
     }
 
     function configured() {
@@ -210,7 +223,13 @@
             frm = document.forms['ConfigureGoogleApps'];
             idpNew = frm.elements['ConfigureGoogleApps.choiceIDP'].value;
             realmNew = frm.elements['ConfigureGoogleApps.tfRealm'].value;
-            domainIdNew = frm.elements['ConfigureGoogleApps.tfDomainId'].value;
+            var size = frm.elements['ConfigureGoogleApps.tfDomainId.listbox'].length ;
+            i=0; domainIdNew="";
+            for (i=0;i<size-1;i++)
+            {
+                domainIdNew += frm.elements['ConfigureGoogleApps.tfDomainId.listbox'].options[i].value + "," ;
+            }
+ 
             document.getElementById('dlg').innerHTML = msg;
         }
     }
