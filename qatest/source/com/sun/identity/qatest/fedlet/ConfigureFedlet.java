@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureFedlet.java,v 1.1 2009-03-20 17:36:06 vimal_67 Exp $
+ * $Id: ConfigureFedlet.java,v 1.2 2009-05-07 22:27:57 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.IDMCommon;
-import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.FedletCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
@@ -42,8 +41,11 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.mortbay.jetty.Connector;
@@ -69,7 +71,7 @@ public class ConfigureFedlet extends TestCommon {
     private JarUtility jarUti;
     File zipLocation;
     File UnzipLocation;
-    private ResourceBundle rb_clientGlobal;
+    private ResourceBundle rb_clientGlobal;    
     
     /** Creates a new instance of configureFedlet */
     public ConfigureFedlet() {
@@ -415,9 +417,19 @@ public class ConfigureFedlet extends TestCommon {
      * Create Fedlet
      */ 
     private void CreateFedlet(URL fedurl) 
-            throws FailingHttpStatusCodeException {
+            throws FailingHttpStatusCodeException, Exception {
         try {
-            page = (HtmlPage) idpWebClient.getPage(fedurl);
+            HtmlTextInput txtattrMapAssertion;
+            HtmlTextInput txtattrMapName;
+            HtmlSubmitInput addButton;
+            HtmlPage btnaddpage;            
+            Map amap = new HashMap();           
+            
+            amap = parseStringToRegularMap(
+                    configMap.get(TestConstants.KEY_FEDLET_ATT_MAP), ",");           
+            log(Level.FINEST, "CreateFedlet", "Attributes Map:" + amap); 
+            
+            page = (HtmlPage) idpWebClient.getPage(fedurl);            
             HtmlForm form = (HtmlForm) page.getForms().get(0);
 
             log(Level.FINEST, "CreateFedlet", "Page:" + 
@@ -429,6 +441,25 @@ public class ConfigureFedlet extends TestCommon {
             HtmlTextInput txtdestURL = (HtmlTextInput) form.getInputByName(
                     "CreateFedlet.tfAssertConsumer");            
             txtdestURL.setValueAttribute(clientURL);
+            
+            // attributes Map    
+            Set aset = amap.keySet();
+            Iterator iter = aset.iterator();
+            while (iter.hasNext()) {
+                String key = (String) iter.next();                   
+                String value = (String) amap.get(key);                 
+            
+                txtattrMapAssertion = (HtmlTextInput)form.getInputByName(
+                        "CreateFedlet.tfAttrMappingAssertion");
+                txtattrMapAssertion.setValueAttribute(key);
+                txtattrMapName = (HtmlTextInput)form.getInputByName(
+                        "CreateFedlet.tfAttrMappingName");
+                txtattrMapName.setValueAttribute(value);
+                addButton = (HtmlSubmitInput) form.getInputByName(
+                        "CreateFedlet.btnAddAttrMapping");
+                btnaddpage = (HtmlPage) addButton.click();            
+            } 
+            
             HtmlSubmitInput createButton = 
                     (HtmlSubmitInput) form.getInputByName("Create" +
                     "Fedlet.button1");
@@ -439,6 +470,32 @@ public class ConfigureFedlet extends TestCommon {
             Logger.getLogger(
                     ConfigureFedlet.class.getName()).log(
                     Level.SEVERE, null, ex);
-        }
+            
+        } catch (Exception e) {
+            log(Level.SEVERE, "CreateFedlet", e.getMessage());
+            e.printStackTrace();            
+            throw e;
+        }       
     }   
+    
+    /*
+     * parse string to Regular Map
+     */
+    private Map parseStringToRegularMap(String str, String mTok)
+    throws Exception {
+        entering("parseStringToRegularMap", null);
+        Map map = new HashMap();
+        StringTokenizer st = new StringTokenizer(str, mTok);
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            int idx = token.indexOf("=");
+            if (idx != -1) {      
+                String attrName = token.substring(0, idx);
+                String attrValue = token.substring(idx+1, token.length());
+                map.put(attrName, attrValue);                               
+            }
+        }        
+        exiting("parseStringToRegularMap");
+        return map;
+    }
 }
