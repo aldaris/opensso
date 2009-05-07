@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amsfo.pl,v 1.6 2009-04-30 05:04:57 kanduls Exp $
+# $Id: amsfo.pl,v 1.7 2009-05-07 06:58:43 kanduls Exp $
 #
 
 ### To Debug this script set AMDEBUG to true ####
@@ -96,12 +96,16 @@ sub stop_jmq() {
        if (-f $jmq_pid_file) {
            $jmq_pid = get_pid($jmq_pid_file);
            print("Shutting the pid: $jmq_pid", "\n");
-           $? = kill(9, $jmq_pid);
-           print("JMQ Broker is shutdown", "\n");
+           $ret = kill(-9, $jmq_pid);
+           if ($ret ne 0) {
+	      	print("JMQ Broker is shutdown ", "\n");
+	      	unlink($jmq_pid_file);
+	   } else {
+	     	print("Error stopping JMQ broker ", "\n");
+	   }
 		   #$ENV{IMQ_JAVAHOME} = $prop{'JAVA_HOME'};
            #my @shutdownCmd = ("$jmq_shutdown_exe", "shutdown", "bkr", "-f", "-b", "localhost:$broker_port", "-u", "admin", "-p", "$jmq_password");
            #exec(@shutdownCmd) or print STDERR "couldn't exec shutdown command: $!";
-		   unlink($jmq_pid_file);
        }else {
            if ($debug eq "true") {
               print("JMQ Broker not running", "\n");
