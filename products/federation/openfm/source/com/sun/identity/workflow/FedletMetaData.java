@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletMetaData.java,v 1.6 2008-11-25 18:26:08 qcheng Exp $
+ * $Id: FedletMetaData.java,v 1.7 2009-05-07 23:21:35 exu Exp $
  *
  */
 
@@ -81,18 +81,23 @@ public class FedletMetaData {
                 extendedData.substring(idx1);
         }
         
-        if ((attrMapping != null) && !attrMapping.isEmpty()) {
-            idx = extendedData.indexOf("<Attribute name=\"attributeMap\">");
-            if (idx != -1) {
+        idx = extendedData.indexOf("<Attribute name=\"attributeMap\">");
+        if (idx != -1) {
+            if ((attrMapping != null) && !attrMapping.isEmpty()) {
                 StringBuffer buff = new StringBuffer();
                 for (Iterator i = attrMapping.iterator(); i.hasNext(); ) {
-                    buff.append("<Value>")
+                    buff.append("\n           <Value>")
                         .append((String)i.next())
                         .append("</Value>");
                 }
                 idx = extendedData.indexOf(">", idx);
                 extendedData = extendedData.substring(0, idx+1) + 
                     buff.toString() +
+                    extendedData.substring(idx+1);
+            } else {
+                idx = extendedData.indexOf(">", idx);
+                extendedData = extendedData.substring(0, idx+1) + 
+                    "\n           <Value>*=*</Value>" +
                     extendedData.substring(idx+1);
             }
         }
