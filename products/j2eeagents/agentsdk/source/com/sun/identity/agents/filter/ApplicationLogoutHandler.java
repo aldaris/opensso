@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationLogoutHandler.java,v 1.9 2008-08-04 20:03:34 huacui Exp $
+ * $Id: ApplicationLogoutHandler.java,v 1.10 2009-05-07 22:33:59 leiming Exp $
  *
  */
 
@@ -164,19 +164,15 @@ implements IApplicationLogoutHandler {
 
     private String getApplicationEntryURI(HttpServletRequest request) {
         String appName = getApplicationName(request);
-        String result = (String) getEntryURIs().get(appName);
+        String result = getApplicationConfigurationString(request,
+                    CONFIG_LOGOUT_ENTRY_URI_MAP, appName);
         if (result == null) {
-            result = getManager().getApplicationConfigurationString(
-                        CONFIG_LOGOUT_ENTRY_URI_MAP, appName);
-            if (result == null) {
-                if (isLogMessageEnabled()) {
-                    logMessage("ApplicationLogoutHandler: no entry URI "
-                            + "specified for app: " + appName
-                            + ". Using appcontext URI");
-                }
-                result = request.getContextPath();
+            if (isLogMessageEnabled()) {
+                logMessage("ApplicationLogoutHandler: no entry URI "
+                        + "specified for app: " + appName
+                        + ". Using appcontext URI");
             }
-            getEntryURIs().put(appName, result);
+            result = request.getContextPath();
         }
         return result;
     }
@@ -356,7 +352,7 @@ implements IApplicationLogoutHandler {
         boolean result = false;
 
         if ((appName != null) && (appName.length() > 0)) {
-            String logoutURI = getManager().getApplicationConfigurationString(
+            String logoutURI = getApplicationConfigurationString(request,
                     CONFIG_LOGOUT_URI_MAP, appName);            
             if ((logoutURI != null) && (logoutURI.length() > 0)) {
                 if (request.getRequestURI().equals(logoutURI)) {
@@ -382,6 +378,54 @@ implements IApplicationLogoutHandler {
         return result;
     }
 
+    /**
+     * get the property id's value based on possible second context as the key.
+     * The key of second context is in the form of appName/path1 from requested 
+     * URI /appName/path1/path2/...
+     */
+    private String getApplicationConfigurationString(HttpServletRequest request,
+            String id, String appName) {
+
+        String requestURI = request.getRequestURI();
+        int index1 = requestURI.indexOf("/", 1);
+        int index2 = -1;
+        if (index1 > 0) {
+            index2 = requestURI.indexOf("/", index1 + 1);
+        }
+        String secondContextKey = null;
+        if (index2 > 0) {
+            secondContextKey = requestURI.substring(1, index2);
+        }
+
+        // return if the key is null.
+        if (secondContextKey == null || secondContextKey.length() == 0) {
+            return getManager().getApplicationConfigurationString(
+                    id, appName);
+        }
+
+        // return to use appName as the key if second context value is null.
+        String secondContextValue = 
+                getManager().getApplicationConfigurationString(
+                    id, secondContextKey);
+        if (secondContextValue == null || secondContextValue.length() == 0) {
+            return getManager().getApplicationConfigurationString(
+                    id, appName);
+        }
+
+        // get default or global value for this property.
+        String defaultValue = getManager().getConfigurationString(id);
+        if (defaultValue == null || defaultValue.length() == 0) {
+            return secondContextValue;
+        }
+
+        if (secondContextValue.equals(defaultValue)) {
+            return getManager().getApplicationConfigurationString(
+                    id, appName);
+        } else {
+            return secondContextValue;
+        }
+    }
+    
     /**
      * Caches the isActive flag
      */
@@ -489,10 +533,6 @@ implements IApplicationLogoutHandler {
         }
     }
 
-    private Hashtable getEntryURIs() {
-        return _entryURIs;
-    }
-
     private void doCookiesReset(AmFilterRequestContext ctx) {
         HttpServletRequest request = ctx.getHttpServletRequest();
         HttpServletResponse response = ctx.getHttpServletResponse();
@@ -506,6 +546,5 @@ implements IApplicationLogoutHandler {
     private boolean _isActiveFlag;
     private boolean _introSpectRequestAllow;
     private Hashtable _localLogoutHandlers = new Hashtable();
-    private Hashtable _entryURIs = new Hashtable();
 }
 
