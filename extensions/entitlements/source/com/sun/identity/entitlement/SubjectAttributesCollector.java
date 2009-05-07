@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesCollector.java,v 1.3 2009-04-18 00:05:10 veiming Exp $
+ * $Id: SubjectAttributesCollector.java,v 1.4 2009-05-07 23:00:25 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -60,18 +60,22 @@ public interface SubjectAttributesCollector {
     /**
      * Returns the attribute values of the given user represented by
      * <class>Subject</class> object.
+     *
      * @param subject identity of the user
      * @param attrNames requested attribute names
      * @return a map of attribute names and their values
      * @throws com.sun.identity.entitlement.EntitlementException if this
      * operation failed.
      */
-    Map<String, Set<String>> getAttributes(Subject subject,
-        Set<String> attrNames) throws EntitlementException;
+    Map<String, Set<String>> getAttributes(
+        Subject subject,
+        Set<String> attrNames
+    ) throws EntitlementException;
 
     /**
      * Returns <code>true</code> if attribute value for the given user
      * represented by <class>Subject</class> object is present.
+     *
      * @param subject identity of the user
      * @param attrName attribute name to check
      * @param attrValue attribute value to check
@@ -80,6 +84,8 @@ public interface SubjectAttributesCollector {
      * @throws com.sun.identity.entitlement.EntitlementException if this
      * operation failed.
      */
-    boolean hasAttribute(Subject subject, String attrName,
+    boolean hasAttribute(
+        Subject subject,
+        String attrName,
         String attrValue) throws EntitlementException;
 }

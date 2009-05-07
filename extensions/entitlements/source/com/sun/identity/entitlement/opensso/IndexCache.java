@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.3 2009-05-04 20:57:07 veiming Exp $
+ * $Id: IndexCache.java,v 1.4 2009-05-07 23:00:25 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -46,6 +46,11 @@ public class IndexCache {
     private ReadWriteLock rwlock = new ReentrantReadWriteLock();
 
 
+    /**
+     * Constructs
+     *
+     * @param size Size of cache.
+     */
     public IndexCache(int size) {
         this.size = size;
         clearCaches();
@@ -53,6 +58,9 @@ public class IndexCache {
 
     /**
      * Caches indexes.
+     *
+     * @param indexes Resource cache indexes.
+     * @param dn Distinguished name of the privilege.
      */
     public void cache(ResourceSaveIndexes indexes, String dn) {
         cache(dn, indexes.getHostIndexes(), subjectIndexCache);
@@ -77,6 +85,12 @@ public class IndexCache {
         }
     }
 
+    /**
+     * Clear index cache.
+     *
+     * @param indexes Resource cache indexes.
+     * @param dn Distinguished name of the privilege.
+     */
     public void clear(ResourceSaveIndexes indexes, String dn) {
         clear(dn, indexes.getHostIndexes(), subjectIndexCache);
         clear(dn, indexes.getHostIndexes(), hostIndexCache);
@@ -110,6 +124,14 @@ public class IndexCache {
         }
     }
 
+    /**
+     * Returns a set of DN that matches the resource and subject indexes.
+     *
+     * @param indexes Resource search indexes.
+     * @param subjectIndexes Subject search indexes
+     * @param bSubTree <code>true</code> for sub tree search mode.
+     * @return A set of DN that matches the resource and subject indexes.
+     */
     public Set<String> getMatchingEntries(
         ResourceSearchIndexes indexes,
         Set<String> subjectIndexes,

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.17 2009-05-07 22:13:31 veiming Exp $
+ * $Id: Privilege.java,v 1.18 2009-05-07 23:00:25 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -172,27 +172,6 @@ public abstract class Privilege implements Serializable {
     public PrivilegeType getType() {
         return PrivilegeType.UNKNOWN;
     }
-
-    /**
-     * Returns string representation of OpenSSO native policy.
-     * 
-     * @return string representation of OpenSSO native policy.
-     */
-    public abstract String getNativePolicy();
-    
-    /**
-     * Returns <code>true</code> if the subject is granted to an
-     * entitlement.
-     *
-     * @param subject Subject who is under evaluation.
-     * @param e Entitlement object which describes the resource name and
-     *          actions.
-     * @return <code>true</code> if the subject is granted to an
-     *         entitlement.
-     * @throws EntitlementException if the result cannot be determined.
-     */
-    public abstract boolean hasEntitlement(Subject subject, Entitlement e)
-        throws EntitlementException;
 
     /**
      * Returns a list of entitlement for a given subject, resource name

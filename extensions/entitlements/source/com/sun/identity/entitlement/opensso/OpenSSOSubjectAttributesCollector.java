@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOSubjectAttributesCollector.java,v 1.3 2009-04-18 00:05:10 veiming Exp $
+ * $Id: OpenSSOSubjectAttributesCollector.java,v 1.4 2009-05-07 23:00:25 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -37,7 +37,6 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -51,6 +50,16 @@ import javax.security.auth.Subject;
 public class OpenSSOSubjectAttributesCollector
     implements SubjectAttributesCollector {
 
+    /**
+     * Returns the attribute values of the given user represented by
+     * <class>Subject</class> object.
+     *
+     * @param subject identity of the user
+     * @param attrNames requested attribute names
+     * @return a map of attribute names and their values
+     * @throws com.sun.identity.entitlement.EntitlementException if this
+     * operation failed.
+     */
     public Map<String, Set<String>> getAttributes(
         Subject subject,
         Set<String> attrNames
@@ -105,13 +114,12 @@ public class OpenSSOSubjectAttributesCollector
             publicCreds.add(results);
             return results;
         } catch (SSOException e) {
-            //TOFIX
+            Object[] params = {uuid};
+            throw new EntitlementException(600, params, e);
         } catch (IdRepoException e) {
-            //TOFIX
-        } catch (Exception e) {
-            e.printStackTrace();
+            Object[] params = {uuid};
+            throw new EntitlementException(600, params, e);
         }
-        return Collections.EMPTY_MAP;
     }
 
     private Set<String> getAttributeNames(Set<String> attrNames, String ns) {
@@ -125,7 +133,18 @@ public class OpenSSOSubjectAttributesCollector
         return results;
     }
 
-
+    /**
+     * Returns <code>true</code> if attribute value for the given user
+     * represented by <class>Subject</class> object is present.
+     *
+     * @param subject identity of the user
+     * @param attrName attribute name to check
+     * @param attrValue attribute value to check
+     * @return <code>true</code> if attribute value for the given user
+     * represented by <class>Subject</class> object is present.
+     * @throws com.sun.identity.entitlement.EntitlementException if this
+     * operation failed.
+     */
     public boolean hasAttribute(
         Subject subject,
         String attrName,
@@ -145,19 +164,20 @@ public class OpenSSOSubjectAttributesCollector
                     NAMESPACE_MEMBERSHIP.length()));
                 if (type != null) {
                     AMIdentity parent = new AMIdentity(adminToken,
-                        attrValue); //TOFIX: realm
+                        attrValue);
                     if (parent.getType().equals(type)) {
                         Set<String> members = parent.getMembers(IdType.USER);
                         return members.contains(amid.getUniversalId());
                     }
                 }
             }
+            return false;
         } catch (IdRepoException e) {
-            //TOFIX
+            Object[] params = {uuid};
+            throw new EntitlementException(601, params, e);
         } catch (SSOException e) {
-            //TOFIX
+            Object[] params = {uuid};
+            throw new EntitlementException(601, params, e);
         }
-        return false;
     }
-
 }

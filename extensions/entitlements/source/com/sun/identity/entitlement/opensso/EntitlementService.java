@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.9 2009-05-07 22:13:32 veiming Exp $
+ * $Id: EntitlementService.java,v 1.10 2009-05-07 23:00:25 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -56,6 +56,9 @@ import java.util.Set;
  * @author dennis
  */
 public class EntitlementService implements IPolicyConfig {
+    /**
+     * Entitlement Service name.
+     */
     public static final String SERVICE_NAME = "openssoEntitlement";
 
     private static final String ATTR_NAME_SUBJECT_ATTR_NAMES =

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
+ * $Id: PolicyCache.java,v 1.2 2009-05-07 23:00:25 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -34,8 +34,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- *
- * @author dennis
+ * Policy Cache
  */
 class PolicyCache {
     private int size;
@@ -47,6 +46,12 @@ class PolicyCache {
         cache = new Cache(size);
     }
 
+    /**
+     * Caches a privilege.
+     *
+     * @param dn DN of the privilege object.
+     * @param p Privilege.
+     */
     public void cache(String dn, Privilege p) {
         rwlock.writeLock().lock();
         try {

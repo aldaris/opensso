@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.11 2009-05-07 22:13:32 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.12 2009-05-07 23:00:25 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -40,8 +40,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- *
- * @author dennis
+ * //TOFIX
  */
 public class PolicyDataStore implements IPolicyDataStore {
 

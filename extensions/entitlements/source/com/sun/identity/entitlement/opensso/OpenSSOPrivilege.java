@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPrivilege.java,v 1.8 2009-05-05 21:32:13 veiming Exp $
+ * $Id: OpenSSOPrivilege.java,v 1.9 2009-05-07 23:00:25 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -45,7 +45,7 @@ import javax.security.auth.Subject;
 
 /**
  *
- * @author dennis
+ * 
  */
 public class OpenSSOPrivilege extends Privilege {
     private static final NetworkMonitor EVAL_SINGLE_LEVEL_MONITOR =
@@ -77,16 +77,6 @@ public class OpenSSOPrivilege extends Privilege {
         return PrivilegeType.OPENSSO;
     }
 
-    @Override
-    public String getNativePolicy() {
-        return null; //TOFIX;
-    }
-
-    @Override
-    public boolean hasEntitlement(Subject subject, Entitlement e)
-        throws EntitlementException {
-        return false;
-    }
 
     @Override
     public List<Entitlement> evaluate(
