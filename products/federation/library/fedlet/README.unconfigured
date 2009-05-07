@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.unconfigured,v 1.9 2009-05-01 15:19:54 ggennaro Exp $
+$Id: README.unconfigured,v 1.10 2009-05-07 23:20:07 exu Exp $
 
 
 
@@ -113,6 +113,26 @@ $Id: README.unconfigured,v 1.9 2009-05-01 15:19:54 ggennaro Exp $
         the IDP entity.
      The configuration is done, you could continue to section 2.2 to deploy
      fedlet.war and test your Fedlet setup.
+
+     NOTE REGARDING MODIFICATIONS TO SAMLv2 METADATA:
+
+     Be sure to convey information regarding any changes made in the service 
+     provider metadata to the identity provider so it can make the corresponding
+     changes to its own configuration. A modified sp.xml file may be sent to 
+     the identity provider but any modifications made to sp-extended.xml should
+     be conveyed to the identity provider using a different method. Once the 
+     identity provider receives the appropriate standard and extended metadata 
+     values, it can make the changes using the OpenSSO console. Information on 
+     customizing SAMLv2 providers using the OpenSSO console is available in the
+     OpenSSO Enterprise 8.0 documentation.
+
+     * SAMLv2 Service Provider Customization link-
+      http://docs.sun.com/app/docs/doc/820-3886/federation.samlv2idpassertioncontent?a=view
+     * SAMLv2 Identity Provider Customization link-
+     http://docs.sun.com/app/docs/doc/820-3886/federation.samlv2idpassertioncontent?a=view
+
+     If the identity provider is using a product other than OpenSSO Enterprise,
+     they would make the changes according to their product's documentation.
 
    2.2 Test your Fedlet setup
      After deploying fedlet.war into your web container, try access the 
