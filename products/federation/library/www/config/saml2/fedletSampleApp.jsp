@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSampleApp.jsp,v 1.6 2009-03-03 01:53:34 qcheng Exp $
+   $Id: fedletSampleApp.jsp,v 1.7 2009-05-07 23:31:48 vimal_67 Exp $
 
 --%>
 
@@ -150,7 +150,7 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
             Set attrVals = (HashSet) attrs.get(attrName);
             if ((attrVals != null) && !attrVals.isEmpty()) {
                 Iterator it = attrVals.iterator();
-                if (it.hasNext()) {
+                while (it.hasNext()) {
                     out.println(attrName + "=" + it.next() + "<br>");
                 }
             }
