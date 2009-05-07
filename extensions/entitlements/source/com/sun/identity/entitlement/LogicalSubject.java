@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogicalSubject.java,v 1.2 2009-05-05 15:25:04 veiming Exp $
+ * $Id: LogicalSubject.java,v 1.3 2009-05-07 00:28:09 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -276,6 +276,10 @@ public abstract class LogicalSubject implements EntitlementSubject {
      */
     public Map<String, Set<String>> getSearchIndexAttributes() {
         Map<String, Set<String>> results = new HashMap<String, Set<String>>();
+        if (eSubjects == null) {
+            return results;
+        }
+        
         for (EntitlementSubject e : eSubjects) {
             Map<String, Set<String>> map = e.getSearchIndexAttributes();
             if ((map != null) && !map.isEmpty()) {
@@ -316,6 +320,9 @@ public abstract class LogicalSubject implements EntitlementSubject {
      */
     public Set<String> getRequiredAttributeNames() {
         Set<String> results = new HashSet<String>();
+        if (eSubjects == null) {
+            return results;
+        }
         for (EntitlementSubject e : eSubjects) {
             results.addAll(e.getRequiredAttributeNames());
         }
