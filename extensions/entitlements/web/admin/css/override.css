@@ -1,14 +1,10 @@
 /*
- * workaround for icefaces issue 4081
- * http://jira.icefaces.org/browse/ICE-4081
- */
-.iceMnuBarItem a,
-.iceMnuBarItem span,
-.iceMnuBarItem a:hover,
-.iceMnuBarVrtItem a,
-.iceMnuBarVrtItem span,
-.iceMnuBarVrtItem a:hover {
-    display:inline;
+* workaround for icefaces issue 4081
+* http://jira.icefaces.org/browse/ICE-4081
+*/
+
+.iceMnuBarItem span {
+    display: inline;
 }
 
 .iceMnuBarItem, .iceMnuBarVrtItem {
@@ -19,7 +15,8 @@
 .iceMnuItm a,
 .iceMnuItm a:hover,
 .iceMnuItmVrt a,
-.iceMnuItmVrt a:hover {    padding-top: 4px;
+.iceMnuItmVrt a:hover {
+    padding-top: 4px;
     padding-bottom: 4px;
 }
 

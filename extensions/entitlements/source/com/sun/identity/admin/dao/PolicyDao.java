@@ -60,26 +60,17 @@ public class PolicyDao implements Serializable {
     }
 
     public List<PrivilegeBean> getPrivilegeBeans(String filter, List<PolicyFilterHolder> policyFilterHolders) {
-        String pattern = getPattern(filter);
         Set<PrivilegeSearchFilter> psfs = getPrivilegeSearchFilters(policyFilterHolders);
+        String pattern = getPattern(filter);
+        psfs.add(new PrivilegeSearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
+
         PrivilegeManager pm = getPrivilegeManager();
         List<PrivilegeBean> privilegeBeans = null;
 
         try {
             Set<String> privilegeNames;
-            // TODO: shouldn't be either / or here, should be able to
-            // search for both
-            if (psfs.size() > 0) {
-                // TODO: realm
-                privilegeNames = pm.searchPrivilegeNames("/", psfs);
-            } else {
-                //TODO
-                // API got changed, need to modify code to something like this
-                //
-                // psfs.add(new PrivilegeSearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
-                // pm.searchPrivilegeNames("/", psfs);
-                privilegeNames = pm.getPrivilegeNames(pattern);
-            }
+            // TODO: realm
+            privilegeNames = pm.searchPrivilegeNames("/", psfs);
 
             privilegeBeans = new ArrayList<PrivilegeBean>();
             for (String privilegeName : privilegeNames) {
