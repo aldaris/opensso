@@ -84,22 +84,25 @@
                                                 value="#{subjectContainer.filter}"
                                                 onkeyup="submitNow(this);"/>
                                         </ice:panelGrid>
-                                        <ice:panelSeries
-                                            value="#{subjectContainer.viewSubjects}"
-                                            var="viewSubject">
-                                            <ice:panelGroup
-                                                styleClass="draggable"
-                                                draggable="true"
-                                                dragValue="#{viewSubject}"
-                                                dragOptions="dragGhost">
-                                                <ice:panelGrid columns="2">
-                                                    <ice:graphicImage value="#{viewSubject.subjectType.subjectIconUri}"/>
-                                                    <ice:panelGroup>
-                                                        <ice:outputText value="#{viewSubject.title}"/>
-                                                    </ice:panelGroup>
-                                                </ice:panelGrid>
-                                            </ice:panelGroup>
-                                        </ice:panelSeries>
+                                        <ice:panelGroup
+                                            scrollHeight="200px">
+                                            <ice:panelSeries
+                                                value="#{subjectContainer.viewSubjects}"
+                                                var="viewSubject">
+                                                <ice:panelGroup
+                                                    styleClass="draggable"
+                                                    draggable="true"
+                                                    dragValue="#{viewSubject}"
+                                                    dragOptions="dragGhost">
+                                                    <ice:panelGrid columns="2">
+                                                        <ice:graphicImage value="#{viewSubject.subjectType.subjectIconUri}"/>
+                                                        <ice:panelGroup>
+                                                            <ice:outputText value="#{viewSubject.title}"/>
+                                                        </ice:panelGroup>
+                                                    </ice:panelGrid>
+                                                </ice:panelGroup>
+                                            </ice:panelSeries>
+                                        </ice:panelGroup>
                                     </ui:define>
                                 </o:multipanel>
                                 <ice:panelGroup
