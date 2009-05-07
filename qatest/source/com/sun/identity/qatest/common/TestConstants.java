@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.34 2009-04-29 05:33:48 vimal_67 Exp $
+ * $Id: TestConstants.java,v 1.35 2009-05-07 22:31:18 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -579,7 +579,12 @@ public interface TestConstants {
     /**
      * Fedlet attribute map for <code>fedlet_name</code>
      */
-    String KEY_FEDLET_NAME = "fedlet_name";      
+    String KEY_FEDLET_NAME = "fedlet_name";  
+    
+    /**
+     * Fedlet attribute map for <code>fedlet_attributes_mapping</code>
+     */
+    String KEY_FEDLET_ATT_MAP = "fedlet_attributes_mapping"; 
     
     /**
      * Fedlet attribute map for <code>fedlet_war_type</code>
