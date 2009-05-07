@@ -2,9 +2,12 @@
 * workaround for icefaces issue 4081
 * http://jira.icefaces.org/browse/ICE-4081
 */
-
 .iceMnuBarItem span {
-    display: inline;
+    padding-left: 30px;
+}
+.iceMnuBarItem img {
+    position: absolute;
+    top: 156px;
 }
 
 .iceMnuBarItem, .iceMnuBarVrtItem {
