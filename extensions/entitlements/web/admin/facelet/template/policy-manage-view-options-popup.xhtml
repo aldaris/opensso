@@ -14,42 +14,56 @@
         visible="#{policyManageBean.viewOptionsPopupVisible}"
         closeListenerMethod="viewOptionsListener">
         <ui:define name="body">
-            <ice:selectManyCheckbox
-                id="columns-visible"
-                layout="spread"
-                rendered="#{policyManageBean.viewOptionsPopupVisible}"
-                partialSubmit="true"
-                value="#{policyManageBean.policyManageTableBean.columnsVisible}">
-                <f:selectItem itemValue="description" itemLabel="Description"/>
-                <f:selectItem itemValue="author" itemLabel="Author"/>
-                <f:selectItem itemValue="birth" itemLabel="Created"/>
-                <f:selectItem itemValue="modifier" itemLabel="Modified By"/>
-                <f:selectItem itemValue="modified" itemLabel="Last Modified"/>
-                <f:selectItem itemValue="resources" itemLabel="Resources"/>
-                <f:selectItem itemValue="exceptions" itemLabel="Exceptions"/>
-                <f:selectItem itemValue="subject" itemLabel="Subjects"/>
-                <f:selectItem itemValue="action" itemLabel="Actions"/>
-                <f:selectItem itemValue="condition" itemLabel="Conditions"/>
-                <f:selectItem itemValue="export" itemLabel="Export"/>
-                <f:selectItem itemValue="remove" itemLabel="Remove"/>
-            </ice:selectManyCheckbox>
-            <ice:panelGrid
-                columns="2"
-                styleClass="view-options-table">
-                <ice:checkbox for="columns-visible" index="0"/>
-                <ice:checkbox for="columns-visible" index="1"/>
-                <ice:checkbox for="columns-visible" index="2"/>
-                <ice:checkbox for="columns-visible" index="3"/>
-                <ice:checkbox for="columns-visible" index="4"/>
-                <ice:checkbox for="columns-visible" index="5"/>
-                <ice:checkbox for="columns-visible" index="6"/>
-                <ice:checkbox for="columns-visible" index="7"/>
-                <ice:checkbox for="columns-visible" index="8"/>
-                <ice:checkbox for="columns-visible" index="9"/>
-                <ice:checkbox for="columns-visible" index="10"/>
-                <ice:checkbox for="columns-visible" index="11"/>
-                <ice:checkbox for="columns-visible" index="12"/>
-            </ice:panelGrid>
+            <ice:panelGroup>
+                <ice:selectManyCheckbox
+                    id="columns-visible"
+                    layout="spread"
+                    rendered="#{policyManageBean.viewOptionsPopupVisible}"
+                    partialSubmit="true"
+                    value="#{policyManageBean.policyManageTableBean.columnsVisible}">
+                    <f:selectItem itemValue="description" itemLabel="Description"/>
+                    <f:selectItem itemValue="author" itemLabel="Author"/>
+                    <f:selectItem itemValue="birth" itemLabel="Created"/>
+                    <f:selectItem itemValue="modifier" itemLabel="Modified By"/>
+                    <f:selectItem itemValue="modified" itemLabel="Last Modified"/>
+                    <f:selectItem itemValue="resources" itemLabel="Resources"/>
+                    <f:selectItem itemValue="exceptions" itemLabel="Exceptions"/>
+                    <f:selectItem itemValue="subject" itemLabel="Subjects"/>
+                    <f:selectItem itemValue="action" itemLabel="Actions"/>
+                    <f:selectItem itemValue="condition" itemLabel="Conditions"/>
+                    <f:selectItem itemValue="export" itemLabel="Export"/>
+                    <f:selectItem itemValue="remove" itemLabel="Remove"/>
+                </ice:selectManyCheckbox>
+                <ice:panelGrid
+                    columns="2"
+                    styleClass="view-options-table">
+                    <ice:checkbox for="columns-visible" index="0"/>
+                    <ice:checkbox for="columns-visible" index="1"/>
+                    <ice:checkbox for="columns-visible" index="2"/>
+                    <ice:checkbox for="columns-visible" index="3"/>
+                    <ice:checkbox for="columns-visible" index="4"/>
+                    <ice:checkbox for="columns-visible" index="5"/>
+                    <ice:checkbox for="columns-visible" index="6"/>
+                    <ice:checkbox for="columns-visible" index="7"/>
+                    <ice:checkbox for="columns-visible" index="8"/>
+                    <ice:checkbox for="columns-visible" index="9"/>
+                    <ice:checkbox for="columns-visible" index="10"/>
+                    <ice:checkbox for="columns-visible" index="11"/>
+                    <ice:checkbox for="columns-visible" index="12"/>
+                </ice:panelGrid>
+            </ice:panelGroup>
+            <ice:panelGroup>
+                <ice:panelGrid
+                    columns="2">
+                    <ice:outputLabel
+                        for="policy-manage-rows"
+                        value="Number per page"/>
+                    <ice:inputText
+                        id="policy-manage-rows"
+                        size="3"
+                        value="#{policyManageBean.policyManageTableBean.rows}"/>
+                </ice:panelGrid>
+            </ice:panelGroup>
         </ui:define>
     </o:popup>
 </span>

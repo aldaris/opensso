@@ -26,6 +26,14 @@ public class PolicyManageTableBean implements Serializable {
         this.privilegeBeans = privilegeBeans;
     }
 
+    public int getRows() {
+        return rows;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
     public static class SortKey implements Serializable {
         private boolean ascending = false;
         private String column = "name";
@@ -81,6 +89,7 @@ public class PolicyManageTableBean implements Serializable {
     private static Map<SortKey,Comparator> comparators = new HashMap<SortKey,Comparator>();
     private int cellWidth = 20;
     private List<String> columnsVisible = new ArrayList<String>();
+    private int rows = 10;
 
     static {
         comparators.put(new SortKey("name", true), new PrivilegeBean.NameComparator(true));

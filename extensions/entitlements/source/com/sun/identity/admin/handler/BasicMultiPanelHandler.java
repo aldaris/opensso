@@ -7,8 +7,8 @@ import com.sun.identity.admin.model.MultiPanelBean;
 import java.io.Serializable;
 import javax.faces.event.ActionEvent;
 
-public class BasicMultiPanelHandler implements Serializable {
-    public void expandListener(ActionEvent event) {
+public class BasicMultiPanelHandler implements MultiPanelHandler, Serializable {
+    public void panelExpandListener(ActionEvent event) {
         MultiPanelBean mpb = (MultiPanelBean) event.getComponent().getAttributes().get("bean");
         assert (mpb != null);
 
@@ -23,7 +23,7 @@ public class BasicMultiPanelHandler implements Serializable {
         mpb.setPanelExpandEffect(e);
     }
 
-    public void removeListener(ActionEvent event) {
+    public void panelRemoveListener(ActionEvent event) {
         // nothing
     }
 }

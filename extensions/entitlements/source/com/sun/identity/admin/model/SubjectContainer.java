@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class SubjectContainer implements MultiPanelBean, Serializable {
+
     private SubjectDao subjectDao;
     private SubjectType subjectType;
     private List<ViewSubject> viewSubjects;
@@ -17,8 +18,11 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
 
     public void setSubjectDao(SubjectDao subjectDao) {
         this.subjectDao = subjectDao;
+        reset();
+    }
 
-        viewSubjects = subjectDao.getViewSubjects();
+    private void reset() {
+        viewSubjects = subjectDao.getViewSubjects(filter);
     }
 
     public void setSubjectType(SubjectType subjectType) {
@@ -39,7 +43,7 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
 
     public void setFilter(String filter) {
         this.filter = filter;
-        viewSubjects = subjectDao.getViewSubjects(filter);
+        reset();
     }
 
     public boolean isPanelExpanded() {

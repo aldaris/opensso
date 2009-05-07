@@ -25,8 +25,21 @@
                     <div class="section-inner">
                         <span class="section-head">
                             <span class="section-title">
-                                <ice:outputText
-                                    value="Policies (#{o:size(policyManageHandler.policyManageBean.privilegeBeans)} of #{o:size(policyManageBean.allPrivilegeNames)})"/>
+                                <ice:dataPaginator
+                                    for="policyManageTable"
+                                    rowsCountVar="rowsCount"
+                                    displayedRowsCountVar="displayedRowsCountVar"
+                                    firstRowIndexVar="firstRowIndex"
+                                    lastRowIndexVar="lastRowIndex"
+                                    pageCountVar="pageCount"
+                                    pageIndexVar="pageIndex">
+                                    <ice:outputFormat
+                                        value="Policies ({0}-{1} of {2})">
+                                        <f:param value="#{firstRowIndex}" />
+                                        <f:param value="#{lastRowIndex}" />
+                                        <f:param value="#{rowsCount}" />
+                                    </ice:outputFormat>
+                                </ice:dataPaginator>
                             </span>
                             <span class="section-links">
                                 <ice:panelGrid
@@ -62,6 +75,7 @@
                             <ice:dataTable
                                 id="policyManageTable"
                                 var="privilegeBean"
+                                rows="#{policyManageBean.policyManageTableBean.rows}"
                                 styleClass="policy-manage"
                                 value="#{policyManageHandler.policyManageBean.privilegeBeans}"
                                 sortColumn="#{policyManageBean.policyManageTableBean.sortKey.column}"
@@ -333,6 +347,46 @@
                                     </ice:panelGroup>
                                 </ice:column>
                             </ice:dataTable>
+                            <center>
+                            <ice:panelGrid
+                                columns="1" >
+                                <ice:dataPaginator
+                                    for="policyManageTable"
+                                    rowsCountVar="rowsCount"
+                                    displayedRowsCountVar="displayedRowsCountVar"
+                                    visible="#{rowsCount > displayedRowsCountVar}"
+                                    fastStep="10"
+                                    pageCountVar="pageCount"
+                                    pageIndexVar="pageIndex"
+                                    paginatorMaxPages="9"
+                                    paginator="true">
+                                    <f:facet name="first" >
+                                        <ice:graphicImage
+                                            url="/xmlhttp/css/rime/css-images/arrow-first.gif" style="border:none;"/>
+                                    </f:facet>
+                                    <f:facet name="last">
+                                        <ice:graphicImage
+                                            url="/xmlhttp/css/rime/css-images/arrow-last.gif" style="border:none;" />
+                                    </f:facet>
+                                    <f:facet name="previous">
+                                        <ice:graphicImage
+                                            url="/xmlhttp/css/rime/css-images/arrow-previous.gif" style="border:none;" />
+                                    </f:facet>
+                                    <f:facet name="next">
+                                        <ice:graphicImage
+                                            url="/xmlhttp/css/rime/css-images/arrow-next.gif" style="border:none;" />
+                                    </f:facet>
+                                    <f:facet name="fastforward">
+                                        <ice:graphicImage
+                                            url="/xmlhttp/css/rime/css-images/arrow-ff.gif" style="border:none;" />
+                                    </f:facet>
+                                    <f:facet name="fastrewind">
+                                        <ice:graphicImage
+                                            url="/xmlhttp/css/rime/css-images/arrow-fr.gif" style="border:none;" />
+                                    </f:facet>
+                                </ice:dataPaginator>
+                            </ice:panelGrid>
+                            </center>
                         </ice:panelGroup>
                     </div>
                 </ui:define>
