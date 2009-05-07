@@ -51,12 +51,8 @@ public class PolicyManageBean implements Serializable {
         return searchFilter;
     }
 
-    public List<String> getPrivilegeNames() {
-        return getPrivilegeNames(null);
-    }
-
-    public List<String> getPrivilegeNames(String filter) {
-        return policyDao.getPrivilegeNames(filter);
+    public List<String> getAllPrivilegeNames() {
+        return policyDao.getPrivilegeNames();
     }
 
     public void setSearchFilter(String searchFilter) {

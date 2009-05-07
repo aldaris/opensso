@@ -83,9 +83,7 @@ public class PolicyDao implements Serializable {
                 privilegeBeans.add(pb);
             }
         } catch (EntitlementException ee) {
-            // TODO: handle exception
-            ee.printStackTrace();
-            return null;
+            throw new RuntimeException(ee);
         }
 
         return privilegeBeans;
@@ -93,24 +91,26 @@ public class PolicyDao implements Serializable {
     }
 
     public List<String> getPrivilegeNames() {
-        return getPrivilegeNames(null);
+        return getPrivilegeNames(null, Collections.EMPTY_LIST);
     }
 
-    public List<String> getPrivilegeNames(String filter) {
+    public List<String> getPrivilegeNames(String filter, List<PolicyFilterHolder> policyFilterHolders) {
+        Set<PrivilegeSearchFilter> psfs = getPrivilegeSearchFilters(policyFilterHolders);
         String pattern = getPattern(filter);
-        PrivilegeManager pm = getPrivilegeManager();
+        psfs.add(new PrivilegeSearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
 
-        Set<String> privilegeNames = null;
+        PrivilegeManager pm = getPrivilegeManager();
+        List<PrivilegeBean> privilegeBeans = null;
+
+        Set<String> privilegeNames;
         try {
-            privilegeNames = pm.getPrivilegeNames(pattern);
+            // TODO: realm
+            privilegeNames = pm.searchPrivilegeNames("/", psfs);
         } catch (EntitlementException ee) {
-            // TODO: handle exception
-            ee.printStackTrace();
-            return null;
+            throw new RuntimeException(ee);
         }
 
         return new ArrayList<String>(privilegeNames);
-
     }
 
     private PrivilegeManager getPrivilegeManager() {
