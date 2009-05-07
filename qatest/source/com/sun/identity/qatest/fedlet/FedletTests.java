@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletTests.java,v 1.1 2009-03-20 17:37:39 vimal_67 Exp $
+ * $Id: FedletTests.java,v 1.2 2009-05-07 22:29:46 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,11 +35,13 @@ import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
@@ -60,6 +62,8 @@ public class FedletTests extends TestCommon {
     private FederationManager fmfedletIDP;
     private String fedletURL;
     private HtmlPage page1;
+    private String testAttribute;
+    private ArrayList idpattrmultiVal;
     
     /**
      * This is constructor for this class.
@@ -71,14 +75,16 @@ public class FedletTests extends TestCommon {
     /**
      * This setup method creates the required users.
      */
+    @Parameters({"ptestName", "pAttribute"})
     @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
       "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void setup() 
+    public void setup(String ptestName, String pAttribute) 
     throws Exception {                
         ArrayList list;
         try {            
             log(Level.FINEST, "setup", "Entering");
             configMap = new HashMap<String, String>();
+            testAttribute = pAttribute;
             
             //Upload global properties file in configMap
             FedletCommon.getEntriesFromResourceBundle("AMConfig", configMap);
@@ -103,12 +109,32 @@ public class FedletTests extends TestCommon {
                     configMap.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD));
             
             fmfedletIDP = new FederationManager(fedletidpurl);
+            idpattrmultiVal = new ArrayList(); 
             list = new ArrayList();
+            String idpuserMultiAttr = configMap.get(
+                    TestConstants.KEY_IDP_USER_MULTIATTRIBUTES);
+            list = (ArrayList) parseStringToList(idpuserMultiAttr, ",", "&");
             list.add("sn=" + configMap.get(TestConstants.KEY_FEDLETIDP_USER));
             list.add("cn=" + configMap.get(TestConstants.KEY_FEDLETIDP_USER));
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_FEDLETIDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
+            
+            // grabbing idp attribute multivalues list
+            Iterator iter = list.iterator();            
+            while(iter.hasNext()) {
+                String str = (String) iter.next();             
+                int index = str.indexOf("=");
+                if (index != -1) {
+                    String attrName = str.substring(0, index).trim();                    
+                    String strVal = str.substring(index + 1).trim();  
+                               
+                    // adding multivalues to list                   
+                    if (attrName.equalsIgnoreCase(testAttribute)) {
+                        idpattrmultiVal.add(strVal);
+                    }                      
+                }                
+            }            
             if (FederationManager.getExitCode(
                     fmfedletIDP.createIdentity(webClient,
                     configMap.get(TestConstants.KEY_ATT_EXECUTION_REALM),
@@ -156,8 +182,13 @@ public class FedletTests extends TestCommon {
                     "Running: testSPSSOHTTPArtifact");
             String str = "Run Fedlet (SP) initiated Single Sign-On using " +
                     "HTTP Artifact binding";  
-            Reporter.log("Test Description: This is a Fedlet (SP) initiated " +
-                    "Single Sign-On test using HTTP Artifact binding");  
+            Reporter.log("Test Description: This testcase tests the " +
+                    "attribute " + testAttribute +  " in Fedlet (SP) " +
+                    "initiated Single Sign-On test using " +
+                    "HTTP Artifact binding");  
+            log(Level.FINEST, "testSPSSOHTTPArtifact", str);
+            log(Level.FINEST, "testSPSSOHTTPArtifact", "Attribute: " + 
+                    testAttribute);
             getWebClient();
             xmlfile = baseDir + "testspssohttpartifact.xml";            
             String urlStr = getAnchors(str);
@@ -165,6 +196,21 @@ public class FedletTests extends TestCommon {
             log(Level.FINEST, "testSPSSOHTTPArtifact", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
+            log(Level.FINEST, "testSPSSOHTTPArtifact", "Page: " + 
+                    page1.getWebResponse().getContentAsString());
+            
+            // checking multivalues of a attribute
+            Iterator iter = idpattrmultiVal.iterator();
+            while (iter.hasNext()) {
+                String multiVal = (String) iter.next();             
+                    if (!page1.getWebResponse().getContentAsString().
+                            contains(multiVal)) {
+                        log(Level.SEVERE, "attributeQueryTest", 
+                            "Couldn't find attribute value " +
+                            multiVal);
+                        assert false;
+                    }     
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "testSPSSOHTTPArtifact", e.getMessage());
             e.printStackTrace();
@@ -186,9 +232,13 @@ public class FedletTests extends TestCommon {
             log(Level.FINEST, "testIDPSSOHTTPArtifact", 
                     "Running: testIDPSSOHTTPArtifact");
             String str = "Run Identity Provider initiated Single Sign-On " +
-                    "using HTTP Artifact binding";
-            Reporter.log("Test Description: This is a IDP initiated " +
-                    "Single Sign-On test using HTTP Artifact binding");  
+                    "using HTTP Artifact binding";            
+            Reporter.log("Test Description: This testcase tests the " +
+                    "attribute " + testAttribute +  " in Identity Provider" +
+                    " initiated Single Sign-On using HTTP Artifact binding");  
+            log(Level.FINEST, "testIDPSSOHTTPArtifact", str);
+            log(Level.FINEST, "testIDPSSOHTTPArtifact", "Attribute: " + 
+                    testAttribute);
             getWebClient();
             xmlfile = baseDir + "testidpssohttpartifact.xml";
             String urlStr = getAnchors(str);
@@ -196,6 +246,21 @@ public class FedletTests extends TestCommon {
             log(Level.FINEST, "testIDPSSOHTTPArtifact", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
+            log(Level.FINEST, "testIDPSSOHTTPArtifact", "Page: " + 
+                    page1.getWebResponse().getContentAsString());
+            
+            // checking multivalues of a attribute
+            Iterator iter = idpattrmultiVal.iterator();
+            while (iter.hasNext()) {
+                String multiVal = (String) iter.next();             
+                    if (!page1.getWebResponse().getContentAsString().
+                            contains(multiVal)) {
+                        log(Level.SEVERE, "attributeQueryTest", 
+                            "Couldn't find attribute value " +
+                            multiVal);
+                        assert false;
+                    }     
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "testIDPSSOHTTPArtifact", e.getMessage());
             e.printStackTrace();
@@ -215,9 +280,13 @@ public class FedletTests extends TestCommon {
             log(Level.FINEST, "testSPSSOHTTPPost", 
                     "Running: testSPSSOHTTPPost");
             String str = "Run Fedlet (SP) initiated Single Sign-On using" +
-                    " HTTP POST binding";
-            Reporter.log("Test Description: This is a Fedlet (SP) initiated " +
-                    "Single Sign-On test using HTTP POST binding");  
+                    " HTTP POST binding";            
+            Reporter.log("Test Description: This testcase tests the " +
+                    "attribute " + testAttribute +  " in Fedlet (SP) " +
+                    "initiated Single Sign-On test using HTTP POST binding");  
+            log(Level.FINEST, "testSPSSOHTTPPost", str);
+            log(Level.FINEST, "testSPSSOHTTPPost", "Attribute: " + 
+                    testAttribute);
             getWebClient();
             xmlfile = baseDir + "testspssohttppost.xml";
             String urlStr = getAnchors(str);
@@ -225,6 +294,21 @@ public class FedletTests extends TestCommon {
             log(Level.FINEST, "testSPSSOHTTPPost", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
+            log(Level.FINEST, "testSPSSOHTTPPost", "Page: " + 
+                    page1.getWebResponse().getContentAsString());
+            
+            // checking multivalues of a attribute
+            Iterator iter = idpattrmultiVal.iterator();
+            while (iter.hasNext()) {
+                String multiVal = (String) iter.next();             
+                    if (!page1.getWebResponse().getContentAsString().
+                            contains(multiVal)) {
+                        log(Level.SEVERE, "attributeQueryTest", 
+                            "Couldn't find attribute value " +
+                            multiVal);
+                        assert false;
+                    }     
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "testSPSSOHTTPPost", e.getMessage());
             e.printStackTrace();
@@ -244,9 +328,13 @@ public class FedletTests extends TestCommon {
             log(Level.FINEST, "testIDPSSOHTTPPost", 
                     "Running: testIDPSSOHTTPPost");
             String str = "Run Identity Provider initiated Single Sign-On " +
-                    "using HTTP POST binding";
-            Reporter.log("Test Description: This is a IDP initiated " +
-                    "Single Sign-On test using HTTP POST binding");  
+                    "using HTTP POST binding";            
+            Reporter.log("Test Description: This testcase tests the " +
+                    "attribute " + testAttribute +  " in Identity Provider" +
+                    " initiated Single Sign-On using HTTP POST binding");  
+            log(Level.FINEST, "testIDPSSOHTTPPost", str);
+            log(Level.FINEST, "testIDPSSOHTTPPost", "Attribute: " + 
+                    testAttribute);
             getWebClient();
             xmlfile = baseDir + "testidpssohttppost.xml";
             String urlStr = getAnchors(str);
@@ -254,6 +342,21 @@ public class FedletTests extends TestCommon {
             log(Level.FINEST, "testIDPSSOHTTPPost", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
+            log(Level.FINEST, "testIDPSSOHTTPPost", "Page: " + 
+                    page1.getWebResponse().getContentAsString());
+            
+            // checking multivalues of a attribute
+            Iterator iter = idpattrmultiVal.iterator();
+            while (iter.hasNext()) {
+                String multiVal = (String) iter.next();             
+                    if (!page1.getWebResponse().getContentAsString().
+                            contains(multiVal)) {
+                        log(Level.SEVERE, "attributeQueryTest", 
+                            "Couldn't find attribute value " +
+                            multiVal);
+                        assert false;
+                    }     
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "testIDPSSOHTTPPost", e.getMessage());
             e.printStackTrace();
