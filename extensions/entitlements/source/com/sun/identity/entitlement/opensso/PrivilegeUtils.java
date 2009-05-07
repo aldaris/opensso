@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.17 2009-05-05 22:20:30 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.18 2009-05-07 22:13:32 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -61,6 +61,7 @@ import com.sun.identity.policy.plugins.PrivilegeSubject;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.HashSet;
@@ -101,29 +102,58 @@ public class PrivilegeUtils {
      * @return entitlement Privilege object
      * @throws com.sun.identity.policy.PolicyException if the mapping fails
      */
-    public static Privilege policyToPrivilege(Policy policy)
-            throws PolicyException, EntitlementException {
-        //TODO: split a policy to multiple prrivileges if the rules have
-        // different acation values
+    public static Set<Privilege> policyToPrivileges(Policy policy)
+        throws SSOException, PolicyException, EntitlementException {
         if (policy == null) {
-            return null;
+            return Collections.EMPTY_SET;
         }
+
+        Set<Privilege> privileges = new HashSet<Privilege>();
 
         String policyName = policy.getName();
-        Set ruleNames = policy.getRuleNames();
-        Set<Rule> rules = new HashSet<Rule>();
-        for (Object ruleNameObj : ruleNames) {
-            String ruleName = (String) ruleNameObj;
-            Rule rule = policy.getRule(ruleName);
-            rules.add(rule);
-        }
-        Entitlement entitlement = null;
-        try {
-            entitlement = rulesToEntitlement(rules);
-        } catch (SSOException e) {
-            //TODO: record, wrap and propogate the exception
-        }
+        Set<Entitlement> entitlements = rulesToEntitlement(policy);
+        EntitlementSubject eSubject = toEntitlementSubject(policy);
+        EntitlementCondition eCondition = toEntitlementCondition(policy);
+        Set<ResourceAttributes> resourceAttributesSet =
+            toResourceAttributes(policy);
 
+        if (entitlements.size() == 1) {
+            privileges.add(createPrivilege(policyName, policyName,
+                entitlements.iterator().next(), eSubject,
+                eCondition, resourceAttributesSet, policy));
+        } else {
+            for (Entitlement e : entitlements) {
+                String pName = policyName + "_" + e.getName();
+                privileges.add(createPrivilege(pName, policyName, e, eSubject,
+                    eCondition, resourceAttributesSet, policy));
+            }
+        }
+        
+        return privileges;
+    }
+
+    private static Privilege createPrivilege(
+        String name,
+        String policyName,
+        Entitlement e,
+        EntitlementSubject eSubject,
+        EntitlementCondition eCondition,
+        Set<ResourceAttributes> resourceAttributesSet,
+        Policy policy
+    ) throws EntitlementException {
+        Privilege privilege = new OpenSSOPrivilege(name, e,
+            eSubject, eCondition, resourceAttributesSet);
+        privilege.setPolicyName(policyName);
+        privilege.setDescription(policy.getDescription());
+        privilege.setCreatedBy(policy.getCreatedBy());
+        privilege.setLastModifiedBy(policy.getLastModifiedBy());
+        privilege.setCreationDate(policy.getCreationDate());
+        privilege.setLastModifiedDate(policy.getLastModifiedDate());
+        return privilege;
+    }
+
+    private static EntitlementSubject toEntitlementSubject(Policy policy)
+        throws PolicyException {
         Set subjectNames = policy.getSubjectNames();
         Set nqSubjects = new HashSet();
         for (Object subjectNameObj : subjectNames) {
@@ -136,8 +166,11 @@ public class PrivilegeUtils {
             nqSubject[2] = exclusive;
             nqSubjects.add(nqSubject);
         }
-        EntitlementSubject eSubject = nqSubjectsToESubject(nqSubjects);
+        return nqSubjectsToESubject(nqSubjects);
+    }
 
+    private static EntitlementCondition toEntitlementCondition(Policy policy)
+        throws PolicyException {
         Set conditionNames = policy.getConditionNames();
         Set nConditions = new HashSet();
         for (Object conditionNameObj : conditionNames) {
@@ -148,8 +181,11 @@ public class PrivilegeUtils {
             nCondition[1] = condition;
             nConditions.add(nCondition);
         }
-        EntitlementCondition eCondition = nConditionsToECondition(nConditions);
+        return nConditionsToECondition(nConditions);
+    }
 
+    private static Set<ResourceAttributes> toResourceAttributes(Policy policy) 
+        throws PolicyException, EntitlementException {
         Set rpNames = policy.getResponseProviderNames();
         Set nrps = new HashSet();
         for (Object rpNameObj : rpNames) {
@@ -160,54 +196,47 @@ public class PrivilegeUtils {
             nrp[1] = rp;
             nrps.add(nrp);
         }
-        Set<ResourceAttributes> resourceAttributesSet =
-            nrpsToResourceAttributes(nrps);
-
-        Privilege privilege = new OpenSSOPrivilege(policyName, entitlement,
-            eSubject, eCondition, resourceAttributesSet);
-        privilege.setDescription(policy.getDescription());
-        privilege.setCreatedBy(policy.getCreatedBy());
-        privilege.setLastModifiedBy(policy.getLastModifiedBy());
-        privilege.setCreationDate(policy.getCreationDate());
-        privilege.setLastModifiedDate(policy.getLastModifiedDate());
-        
-        return privilege;
+        return nrpsToResourceAttributes(nrps);
     }
 
-    private static Entitlement rulesToEntitlement(Set<Rule> rules)
-            throws PolicyException, SSOException {
-        if (rules == null || rules.isEmpty()) {
-            return null;
+    private static Set<Entitlement> rulesToEntitlement(Policy policy)
+        throws PolicyException, SSOException {
+        Set ruleNames = policy.getRuleNames();
+        Set<Rule> rules = new HashSet<Rule>();
+        for (Object ruleNameObj : ruleNames) {
+            String ruleName = (String) ruleNameObj;
+            Rule rule = policy.getRule(ruleName);
+            rules.add(rule);
         }
-        Set<String> resourceNames = new HashSet<String>();
-        Set<String> excludedResourceNames = new HashSet<String>();
-        Rule lrule = null;
-        //TODO: split a policy to multiple prrivileges if the rules have different
-        // acation values
+        if (rules == null || rules.isEmpty()) {
+            return Collections.EMPTY_SET;
+        }
+
+        Set<Entitlement> entitlements = new HashSet<Entitlement>();
+
         for (Rule rule : rules) {
-            lrule = rule;
-            String resourceName = rule.getResourceName();
+            String serviceName = rule.getServiceTypeName();
+            Map<String, Boolean> actionMap = pavToPrav(rule.getActionValues(), 
+                serviceName);
+            String entitlementName = rule.getName();
+            
+            Set<String> resourceNames = new HashSet<String>();
+            resourceNames.add(rule.getResourceName());
+
+            Set<String> excludedResourceNames = new HashSet<String>();
             Set excludedResourceNames1 = rule.getExcludedResourceNames();
-            resourceNames.add(resourceName);
             if (excludedResourceNames1 != null) {
                 excludedResourceNames.addAll(excludedResourceNames1);
             }
 
-        }
-        String serviceName = lrule.getServiceTypeName();
-        Map<String, Boolean> actionMap = pavToPrav(lrule.getActionValues(), 
-                serviceName);
-        String entitlementName = lrule.getName();
-        int dashi = entitlementName.indexOf("---");
-        if (dashi != -1) {
-            entitlementName = entitlementName.substring(0, dashi);
+            Entitlement entitlement = new Entitlement(rule.getApplicationName(),
+                resourceNames, actionMap);
+            entitlement.setName(entitlementName);
+            entitlement.setExcludedResourceNames(excludedResourceNames);
+            entitlements.add(entitlement);
         }
 
-        Entitlement entitlement = new Entitlement(lrule.getApplicationName(),
-            resourceNames, actionMap);
-        entitlement.setName(entitlementName);
-        entitlement.setExcludedResourceNames(excludedResourceNames);
-        return entitlement;
+        return entitlements;
     }
 
     private static EntitlementSubject nqSubjectsToESubject(Set nqSubjects) {
@@ -389,21 +418,27 @@ public class PrivilegeUtils {
     private static Set<Rule> entitlementToRules(Entitlement entitlement)
             throws PolicyException, SSOException {
         Set<Rule> rules = new HashSet<Rule>();
-        String entName = entitlement.getName();
         String appName = entitlement.getApplicationName();
         Application appl = ApplicationManager.getApplication("/", appName); //TOFIX
         String serviceName = appl.getApplicationType().getName();
+
         Set<String> resourceNames = entitlement.getResourceNames();
         Map<String, Boolean> actionValues = entitlement.getActionValues();
         Map av = pravToPav(actionValues, serviceName);
+
         if (resourceNames != null) {
             int rc = 0;
+            String entName = entitlement.getName();
+            if (entName == null) {
+                entName = "entitlement";
+            }
+
             for (String resourceName : resourceNames) {
-                rc += 1;
+                rc++;
                 Rule rule = new Rule(entName + "---" + rc, serviceName,
-                        resourceName, av);
+                    resourceName, av);
                 rule.setExcludedResourceNames(
-                        entitlement.getExcludedResourceNames());
+                    entitlement.getExcludedResourceNames());
                 rule.setApplicationName(appName);
                 rules.add(rule);
             }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyConfig.java,v 1.8 2009-05-05 06:43:24 veiming Exp $
+ * $Id: IPolicyConfig.java,v 1.9 2009-05-07 22:13:32 veiming Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
@@ -157,12 +157,14 @@ public interface IPolicyConfig {
      * @return <code>true</code> if OpenSSO policy data is migrated to a
      * form that entitlements service can operates on them.
      */
-    boolean isEntitlementMode();
+    boolean hasEntitlementDITs();
 
     /**
-     * Returns <code>true</code> to show entitlement console.
+     * Returns <code>true</code> if the system is migrated to support
+     * entitlement services.
      *
-     * @return <code>true</code> to show entitlement console.
+     * @return <code>true</code> if the system is migrated to support
+     * entitlement services.
      */
-    boolean showEntitlementConsole();
+    boolean migratedToEntitlementService();
 }

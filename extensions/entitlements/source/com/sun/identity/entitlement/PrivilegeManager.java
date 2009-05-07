@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.12 2009-05-06 22:40:36 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.13 2009-05-07 22:13:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
 import com.sun.identity.entitlement.util.DebugFactory;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
@@ -53,6 +54,11 @@ public abstract class PrivilegeManager {
      * @return instance of configured <code>PrivilegeManager</code>
      */
     static public PrivilegeManager getInstance(Subject subject) {
+        IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
+        if (!pc.migratedToEntitlementService()) {
+            throw new UnsupportedOperationException(
+                "Updating of DITs is required before using the entitlement service");
+        }
         PrivilegeManager pm = null;
         try {
             //TODO: read the class name from configuration
@@ -148,16 +154,6 @@ public abstract class PrivilegeManager {
     }
 
     /**
-     * Returns privilege names.
-     *
-     * @return privilege names.
-     * @throws EntitlementException if there are errors obtaining privilege
-     *         names.
-     */
-    public abstract Set<String> getPrivilegeNames() throws EntitlementException;
-
-
-    /**
      * Returns a set of privilege names for a given search criteria.
      *
      * @param filter Set of search filter.
@@ -173,18 +169,6 @@ public abstract class PrivilegeManager {
         return datastore.searchPrivilegeNames(
             realm, filter, true, 0, false, false);//TOFIX
     }
-
-    /**
-     * Returns privilege names matching the pattern.
-     *
-     * @param pattern pattern to match the privilege names.
-     * @return privilege names matching the pattern.
-     * @throws EntitlementException if there are errors obtaining privilege
-     *         names.
-     */
-    public abstract Set<String> getPrivilegeNames(String pattern)
-        throws EntitlementException;
-
 
     /**
      * Returns the XML representation of this privilege.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.9 2009-05-05 16:28:06 veiming Exp $
+ * $Id: PolicyManager.java,v 1.10 2009-05-07 22:13:33 veiming Exp $
  *
  */
 
@@ -594,7 +594,7 @@ public final class PolicyManager {
                 NAMED_POLICY_ID, 0, attrs);
             IPolicyDataStore pStore =
                 PolicyDataStoreFactory.getInstance().getDataStore();
-            pStore.add(realmName, PrivilegeUtils.policyToPrivilege(policy));
+            pStore.add(realmName, PrivilegeUtils.policyToPrivileges(policy));
         } catch (EntitlementException e) {
             String[] objs = { policy.getName(), org };
             throw (new PolicyException(ResBundleUtils.rbName, 
@@ -731,9 +731,9 @@ public final class PolicyManager {
                 if (oldPolicy != null) {
                     IPolicyDataStore pStore =
                         PolicyDataStoreFactory.getInstance().getDataStore();
-                    pStore.delete(realm, PrivilegeUtils.policyToPrivilege(
+                    pStore.delete(realm, PrivilegeUtils.policyToPrivileges(
                         oldPolicy));
-                    pStore.add(realm, PrivilegeUtils.policyToPrivilege(policy));
+                    pStore.add(realm, PrivilegeUtils.policyToPrivileges(policy));
                 }
             }
         } catch (EntitlementException e) {
@@ -807,7 +807,7 @@ public final class PolicyManager {
                     IPolicyDataStore pStore =
                         PolicyDataStoreFactory.getInstance().getDataStore();
                     pStore.delete(getOrganizationDN(),
-                        PrivilegeUtils.policyToPrivilege(policy));
+                        PrivilegeUtils.policyToPrivileges(policy));
                 }
             }
         } catch (EntitlementException e) {

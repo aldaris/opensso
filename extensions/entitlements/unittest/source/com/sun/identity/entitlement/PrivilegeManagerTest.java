@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.16 2009-05-05 22:20:30 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.17 2009-05-07 22:13:33 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -30,11 +30,11 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.sm.ServiceManager;
-import com.sun.identity.unittest.UnittestLog;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -188,13 +188,6 @@ public class PrivilegeManagerTest {
                 }
             }
         }
-
-        Set privilegeNames = prm.getPrivilegeNames();
-        if (!privilegeNames.contains(PRIVILEGE_NAME)) {
-              throw new Exception(
-                "PrivilegeManagerTest.testAddPrivlege():"
-                + "got privilege names doe not contain saved privilege");
-        }
     }
 
     @Test(dependsOnMethods = {"testAddPrivilege"})
@@ -213,10 +206,15 @@ public class PrivilegeManagerTest {
                 AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance(
             SubjectUtils.createSubject(adminToken));
-        Set<String> names = prm.getPrivilegeNames();
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testListPrivlegeNames():"
-                + "listing privilege names:" + names);
+
+        Set<PrivilegeSearchFilter> psf = new HashSet<PrivilegeSearchFilter>();
+        psf.add(new PrivilegeSearchFilter(Privilege.NAME_ATTRIBUTE, "*"));
+        Set privilegeNames = prm.searchPrivilegeNames("/", psf);
+        if (!privilegeNames.contains(PRIVILEGE_NAME)) {
+              throw new Exception(
+                "PrivilegeManagerTest.testListPrivilegeNames():"
+                + "got privilege names does not contain saved privilege");
+        }
     }
 
     private String serializeObject(Serializable object)

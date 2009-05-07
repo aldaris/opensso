@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.8 2009-05-05 06:43:24 veiming Exp $
+ * $Id: EntitlementService.java,v 1.9 2009-05-07 22:13:32 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -50,8 +50,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -74,8 +72,8 @@ public class EntitlementService implements IPolicyConfig {
     private static final String CONFIG_SAVE_INDEX_IMPL = "saveIndexImpl";
     private static final String CONFIG_RESOURCE_COMP_IMPL = "resourceComparator";
     private static final String CONFIG_APPLICATION_TYPES = "applicationTypes";
-    private static final String SHOW_ENTITLEMENT_CONSOLE =
-        "showEntitlementConsole";
+    private static final String MIGRATED_TO_ENTITLEMENT_SERVICES =
+        "migratedtoentitlementservice";
 
     /**
      * Constructor.
@@ -670,7 +668,7 @@ public class EntitlementService implements IPolicyConfig {
      * @return <code>true</code> if OpenSSO policy data is migrated to a
      * form that entitlements service can operates on them.
      */
-    public boolean isEntitlementMode() {
+    public boolean hasEntitlementDITs() {
         try {
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
@@ -685,15 +683,17 @@ public class EntitlementService implements IPolicyConfig {
     }
 
     /**
-     * Returns <code>true</code> to show entitlement console.
+     * Returns <code>true</code> if the system is migrated to support
+     * entitlement services.
      *
-     * @return <code>true</code> to show entitlement console.
+     * @return <code>true</code> if the system is migrated to support
+     * entitlement services.
      */
-    public boolean showEntitlementConsole() {
-        if (!isEntitlementMode()) {
+    public boolean migratedToEntitlementService() {
+        if (!hasEntitlementDITs()) {
             return false;
         }
-        String strShow = getAttributeValue(SHOW_ENTITLEMENT_CONSOLE);
+        String strShow = getAttributeValue(MIGRATED_TO_ENTITLEMENT_SERVICES);
         return (strShow != null) ? Boolean.parseBoolean(strShow) : false;
     }
 }

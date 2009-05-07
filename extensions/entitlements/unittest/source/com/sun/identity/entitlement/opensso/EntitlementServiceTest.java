@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementServiceTest.java,v 1.1 2009-05-05 06:43:24 veiming Exp $
+ * $Id: EntitlementServiceTest.java,v 1.2 2009-05-07 22:13:33 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -34,18 +34,19 @@ import org.testng.annotations.Test;
 
 public class EntitlementServiceTest {
     @Test
-    public void isEntitlementMode() {
+    public void hasEntitlementDITs() {
         IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
-        boolean result = pc.isEntitlementMode();
+        boolean result = pc.hasEntitlementDITs();
         UnittestLog.logMessage(
-            "EntitlementServiceTest.isEntitlementMode: returns " + result);
+            "EntitlementServiceTest.hasEntitlementDITs: returns " + result);
     }
     
     @Test
-    public void showEntitlementConsole() {
+    public void migratedToEntitlementService() {
         IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
-        boolean result = pc.showEntitlementConsole();
+        boolean result = pc.migratedToEntitlementService();
         UnittestLog.logMessage(
-            "EntitlementServiceTest.showEntitlementConsole: returns " + result);
+            "EntitlementServiceTest.migratedToEntitlementService: returns " +
+            result);
     }
 }

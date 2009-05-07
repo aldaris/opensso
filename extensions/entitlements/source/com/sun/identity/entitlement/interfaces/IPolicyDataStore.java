@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyDataStore.java,v 1.8 2009-05-06 07:30:59 veiming Exp $
+ * $Id: IPolicyDataStore.java,v 1.9 2009-05-07 22:13:32 veiming Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
@@ -41,25 +41,26 @@ import java.util.Set;
 public interface IPolicyDataStore {
 
     /**
-     * Adds a privilege to the data store. Proper indexes will be created
-     * to speed up policy evaluation.
+     * Adds a set of privileges to the data store. Proper indexes will be
+     * created to speed up policy evaluation.
      *
      * @param ream Realm name.
-     * @param privilege Privilege to be added.
+     * @param privileges Privileges to be added.
      * @throws com.sun.identity.entitlement.EntitlementException if addition
      * failed.
      */
-    void add(String realm, Privilege privilege) throws EntitlementException;
+    void add(String realm, Set<Privilege> privileges)
+        throws EntitlementException;
 
     /**
-     * Deletes a privilege from data store.
+     * Deletes a set of privileges from data store.
      *
      * @param ream Realm name.
-     * @param privilege Privilege to be deleted.
+     * @param privileges Privileges to be deleted.
      * @throws com.sun.identity.entitlement.EntitlementException if deletion
      * failed.
      */
-    void delete(String realm, Privilege privilege)
+    void delete(String realm, Set<Privilege> privilege)
         throws EntitlementException;
 
     /**

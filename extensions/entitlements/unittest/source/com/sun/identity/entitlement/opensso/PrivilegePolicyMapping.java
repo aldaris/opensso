@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegePolicyMapping.java,v 1.2 2009-04-29 21:37:59 veiming Exp $
+ * $Id: PrivilegePolicyMapping.java,v 1.3 2009-05-07 22:13:33 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -162,7 +162,14 @@ public class PrivilegePolicyMapping {
 
     @Test
     public void policyToPrivilege() throws Exception {
-        privilege = PrivilegeUtils.policyToPrivilege(policy);
+        Set<Privilege> privileges = PrivilegeUtils.policyToPrivileges(policy);
+        if (privileges.isEmpty()) {
+            throw new Exception(
+                "PriviliegePolicyMapping.policyToPrivilege: cannot get privilege");
+        }
+
+        privilege = privileges.iterator().next();
+
         EntitlementCondition cond = privilege.getCondition();
         if (!(cond instanceof OrCondition)) {
             throw new Exception(

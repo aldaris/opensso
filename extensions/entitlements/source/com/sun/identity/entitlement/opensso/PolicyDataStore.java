@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.10 2009-05-06 23:59:29 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.11 2009-05-07 22:13:32 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -68,13 +68,15 @@ public class PolicyDataStore implements IPolicyDataStore {
     }
 
 
-    public void add(String realm, Privilege p)
+    public void add(String realm, Set<Privilege> privileges)
         throws EntitlementException {
-        dataStore.add(realm, p);
-        IPolicyConfig config = PolicyConfigFactory.getPolicyConfig();
-        config.addSubjectAttributeNames("/",
-            p.getEntitlement().getApplicationName(),
-            SubjectAttributesManager.getRequiredAttributeNames(p)); //TOFIX realm
+        for (Privilege p : privileges) {
+            dataStore.add(realm, p);
+            IPolicyConfig config = PolicyConfigFactory.getPolicyConfig();
+            config.addSubjectAttributeNames(realm,
+                p.getEntitlement().getApplicationName(),
+                SubjectAttributesManager.getRequiredAttributeNames(p));
+        }
     }
 
     public void delete(String realm, String privilegeName)
@@ -82,10 +84,12 @@ public class PolicyDataStore implements IPolicyDataStore {
         delete(realm, privilegeName, false);
     }
 
-    public void delete(String realm, Privilege p)
+    public void delete(String realm, Set<Privilege> privileges)
         throws EntitlementException {
-        String dn = delete(realm, p.getName(), true);
-        indexCache.clear(p.getEntitlement().getResourceSaveIndexes(), dn);
+        for (Privilege p : privileges) {
+            String dn = delete(realm, p.getName(), true);
+            indexCache.clear(p.getEntitlement().getResourceSaveIndexes(), dn);
+        }
     }
 
     private String delete(String realm, String privilegeName, boolean notify)

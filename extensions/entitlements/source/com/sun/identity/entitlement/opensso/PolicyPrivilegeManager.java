@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.7 2009-05-06 22:40:36 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.8 2009-05-07 22:13:32 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -36,7 +36,6 @@ import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
-import java.util.Collections;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -84,7 +83,11 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         Privilege privilege = null;
         try {
             Policy policy = pm.getPolicy(privilegeName);
-            privilege = PrivilegeUtils.policyToPrivilege(policy);
+            Set<Privilege> privileges =
+                PrivilegeUtils.policyToPrivileges(policy);
+            if ((privileges != null) && !privileges.isEmpty()) {
+                privilege = privileges.iterator().next();
+            }
         } catch (PolicyException pe) {
             throw new EntitlementException(102, pe);
         } catch (SSOException ssoe) {
@@ -147,36 +150,6 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         } catch (SSOException ssoe) {
             //TODO: record, wrap and propogate
         }
-    }
-
-    /**
-     * Returns privilege names
-     * @return privilege names
-     * @throws com.sun.identity.entitlement.EntitlementException if there
-     * is an error
-     */
-    public Set<String> getPrivilegeNames() throws EntitlementException {
-        Set<String> names = null;
-        try {
-            names = pm.getPolicyNames();
-        } catch (PolicyException pe) {
-            //TODO: record, wrap and propogate
-        } catch (SSOException ssoe) {
-            //TODO: record, wrap and propogate
-        }
-        return names;
-    }
-
-    /**
-     * Returns privilege names matching the pattern
-     * @param pattern pattern to match the privilege names
-     * @return privilege names matching the pattern
-     * @throws com.sun.identity.entitlement.EntitlementException if there
-     * is an error
-     */
-    public Set<String> getPrivilegeNames(String pattern)
-        throws EntitlementException {
-        return Collections.EMPTY_SET;
     }
 
     /**
