@@ -10,6 +10,7 @@ import com.sun.identity.idm.IdSearchOpModifier;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -67,14 +68,12 @@ public class IdRepoUserSubjectDao extends IdRepoSubjectDao implements Serializab
     @Override
     protected IdSearchControl getIdSearchControl(String pattern) {
         IdSearchControl idsc = super.getIdSearchControl(pattern);
+        Map searchMap = new HashMap();
 
-        Map searchMap = new HashMap(2);
-        Set patternSet = new HashSet(2);
-        patternSet.add(pattern);
+        searchMap.put(getNamingAttribute(), Collections.singleton(pattern));
+        searchMap.put("cn", Collections.singleton(pattern));
 
-        searchMap.put(getNamingAttribute(), patternSet);
         idsc.setSearchModifiers(IdSearchOpModifier.OR, searchMap);
-
         return idsc;
     }
 
