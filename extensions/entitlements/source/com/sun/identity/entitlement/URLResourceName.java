@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLResourceName.java,v 1.2 2009-05-04 20:57:06 veiming Exp $
+ * $Id: URLResourceName.java,v 1.3 2009-05-08 07:03:21 veiming Exp $
  *
  */
 
@@ -88,7 +88,7 @@ public class URLResourceName
         }
         int index = urlStr.indexOf("://"); 
         String proto = urlStr.substring(0, index);
-        String resource = urlStr.substring(index + 3);
+        String resource = urlStr.substring(index + 3); // host.sample.com...
 
         String hostAndPort = resource;
         String urlPath = "";
@@ -112,6 +112,9 @@ public class URLResourceName
         String port = "";
         if (resource != null && resource.length() != 0) {
             index = resource.indexOf('/');
+            if (index == -1) {
+               index = resource.indexOf('?');
+            }
             if (index != -1) {
                 hostAndPort = resource.substring(0, index);
                 urlPath = resource.substring(index);

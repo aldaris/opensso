@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.11 2009-05-08 00:13:22 veiming Exp $
+ * $Id: PolicyManager.java,v 1.12 2009-05-08 07:03:21 veiming Exp $
  *
  */
 
@@ -592,7 +592,7 @@ public final class PolicyManager {
             namedPolicy.addSubConfig(policy.getName(),
                 NAMED_POLICY_ID, 0, attrs);
             PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                DNMapper.orgNameToRealmName(realmName));
+                realmName);
             pis.add(PrivilegeUtils.policyToPrivileges(policy));
         } catch (EntitlementException e) {
             String[] objs = { policy.getName(), org };
@@ -729,7 +729,7 @@ public final class PolicyManager {
                 policyEntry.setAttributes(attrs);
                 if (oldPolicy != null) {
                     PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                        DNMapper.orgNameToRealmName(realm));
+                        realm);
                     pis.delete(PrivilegeUtils.policyToPrivileges(oldPolicy));
                     pis.add(PrivilegeUtils.policyToPrivileges(policy));
                 }
@@ -803,7 +803,7 @@ public final class PolicyManager {
                 // do the removal in resources tree
                 if (policy != null) {
                     PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                        DNMapper.orgNameToRealmName(getOrganizationDN()));
+                        getOrganizationDN());
                     pis.delete(PrivilegeUtils.policyToPrivileges(policy));
                 }
             }
@@ -1220,11 +1220,11 @@ public final class PolicyManager {
         while ( iter.hasNext() ) {
             String prefix = (String) iter.next();
             boolean interpretWildCard = true;
-            ResourceMatch rm = resourceType.compare(resourceName, prefix, 
+            ResourceMatch resMatch = resourceType.compare(resourceName, prefix,
                     interpretWildCard);
-            if ( rm.equals(ResourceMatch.SUPER_RESOURCE_MATCH)
-                        || rm.equals(ResourceMatch.WILDCARD_MATCH)
-                        || rm.equals(ResourceMatch.EXACT_MATCH) ) {
+            if ( resMatch.equals(ResourceMatch.SUPER_RESOURCE_MATCH)
+                        || resMatch.equals(ResourceMatch.WILDCARD_MATCH)
+                        || resMatch.equals(ResourceMatch.EXACT_MATCH) ) {
                 validResource = true;
                 break;
             }

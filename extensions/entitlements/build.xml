@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.41 2009-05-06 22:40:35 veiming Exp $
+  $Id: build.xml,v 1.42 2009-05-08 07:03:20 veiming Exp $
 
 -->
 
@@ -218,7 +218,10 @@
         <copy todir="${war.package.dir}/WEB-INF" overwrite="true">
             <fileset dir="${entitlements.dtd.dir}" includes="*.dtd" />
         </copy>
-        <copy todir="${war.package.dir}/WEB-INF/classes">
+        <copy todir="${war.package.dir}/WEB-INF/template/sms" overwrite="true">
+            <fileset dir="${entitlements.war.template}" includes="*.*" />
+        </copy>
+        <copy todir="${war.package.dir}/WEB-INF/classes" overwrite="true">
             <fileset dir="${entitlements.classes.dir}" includes="**/*.class" />
             <fileset dir="${entitlements.res.dir}/config" includes="*.properties" />
             <fileset dir="${entitlements.xml.svc.dir}" includes="*.xml" />

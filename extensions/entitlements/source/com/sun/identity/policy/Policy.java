@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Policy.java,v 1.5 2009-05-08 00:48:15 veiming Exp $
+ * $Id: Policy.java,v 1.6 2009-05-08 07:03:21 veiming Exp $
  *
  */
 
@@ -42,9 +42,11 @@ import org.w3c.dom.*;
 import com.iplanet.sso.*;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.Cache;
+import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.policy.plugins.OrgReferral;
+import com.sun.identity.sm.DNMapper;
 
 /**
  * The class <code>Policy</code> represents a policy definition.
@@ -591,14 +593,15 @@ public class Policy implements Cloneable {
                 PolicyException.RULE));
         }
 
-/*        IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
-        if (pc.migratedToEntitlementService()) {
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            "/");
+        if (ec.migratedToEntitlementService()) {
             if (rules.size() >= 1) {
                 throw new InvalidNameException(ResBundleUtils.rbName,
                     "cannot_have_more_than_one_rule", null, rule.getName(),
                     PolicyException.RULE);
             }
-        }*/
+        }
 
         rules.put(rule.getName(), rule);
     }
