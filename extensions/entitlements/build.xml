@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.43 2009-05-08 21:56:52 veiming Exp $
+  $Id: build.xml,v 1.44 2009-05-08 23:49:05 dillidorai Exp $
 
 -->
 
@@ -44,6 +44,8 @@
            property="amserver.jar.exists" value="true" />
    <available file="${entitlements.extlib.dir}/opensso-sharedlib.jar"
            property="sharedlib.jar.exists" value="true" />
+   <available file="${entitlements.built.src.dir}/com/sun/identity/entitlement/xacml3/core"
+           property="xacml3.core.source.exists" value="true" />
 
    <target name="build" depends="package-war"/>
    
@@ -298,7 +300,7 @@
    </target>
 
     <!-- requires JAVA_HOME to point to jdk 1.6 -->
-    <target name="xjc.xacml3" unless="xjc.xacml3.done">
+    <target name="xjc.xacml3" unless="xacml3.core.source.exists">
         <property environment="env" />
         <echo message="compiling xacml3 schema to create java source " />
         <echo message="JAVA_HOME=${env.JAVA_HOME}" />
