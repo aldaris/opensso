@@ -19,7 +19,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: sanity-all.xml,v 1.1 2009-01-26 23:32:22 nithyas Exp $
+ $Id: sanity-all.xml,v 1.2 2009-05-08 20:56:25 nithyas Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -309,7 +309,7 @@
         <parameter name="testName" value="IDMDeleteIdentitiesTest"/>
         <groups>
             <run>
-                <include name="ds_ds"/>             
+                <include name="@mode@"/>             
             </run>
         </groups>         
         <classes>             
