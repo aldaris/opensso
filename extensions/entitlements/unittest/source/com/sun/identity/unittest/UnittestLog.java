@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnittestLog.java,v 1.5 2009-03-14 03:06:51 dillidorai Exp $
+ * $Id: UnittestLog.java,v 1.6 2009-05-08 23:09:26 dillidorai Exp $
  */
 
 package com.sun.identity.unittest;
@@ -54,7 +54,6 @@ public class UnittestLog {
     private static void writeToFile(String datestamp) {
         String basedir = SystemProperties.get(SystemProperties.CONFIG_PATH) +
             SystemProperties.get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
-        System.out.println("basdir=" + basedir);
         if (basedir.equals("nullnull")) {
             for(Object obj : buffer) {
                 System.out.println(obj);
