@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.2 2009-05-06 23:09:49 farble1670 Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.3 2009-05-08 23:50:31 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -41,6 +41,7 @@ import com.sun.identity.entitlement.UserAttributes;
 import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.sm.ServiceManager;
+import com.sun.identity.unittest.UnittestLog;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -68,14 +69,17 @@ public class PrivilegeUtilsTest {
 
     @Test
     public void testPrivilegeToXACMLPolicy() throws Exception {
+        try {
+        UnittestLog.logMessage("PrivilegeUtils.testPrivilegeToXACMLPolicy():" +
+                " entered");
         Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
         actionValues.put("GET", Boolean.TRUE);
         actionValues.put("POST", Boolean.FALSE);
         // The port is required for passing equals  test
         // opensso policy would add default port if port not specified
         String resourceName = "http://www.sun.com:80";
-        Entitlement entitlement = new Entitlement(); //SERVICE_NAME,
-                //resourceName); //, actionValues);
+        Entitlement entitlement = new Entitlement(SERVICE_NAME,
+                resourceName, actionValues);
         entitlement.setName("ent1");
 
         String user11 = "id=user11,ou=user," + ServiceManager.getBaseDN();
@@ -128,11 +132,20 @@ public class PrivilegeUtilsTest {
         ra.add(sa);
         ra.add(ua);
 
-        Privilege privilege = new OpenSSOPrivilege(PRIVILEGE_NAME, entitlement, os,
+        Privilege privilege = new OpenSSOPrivilege(PRIVILEGE_NAME, entitlement, ua1,
                 ipc, ra);
+        UnittestLog.logMessage("PrivilegeUtils.testPrivilegeToXACMLPolicy():" +
+                "Privilege=" + privilege.toString());
+        UnittestLog.logMessage("PrivilegeUtils.testPrivilegeToXACMLPolicy():" +
+                "converting to xacml policy");
         // TODO(jtb): not compiling
-        //String xacmlString = PrivilegeUtils.toXACML(privilege);
-
+        String xacmlString = PrivilegeUtils.toXACML(privilege);
+        UnittestLog.logMessage("xacml policy=" + xacmlString);
+        } catch (Throwable t) {
+            UnittestLog.logError("Throable:",  t);
+            UnittestLog.logMessage("Thrwoable:" +  t.getMessage());
+            t.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws Exception {
