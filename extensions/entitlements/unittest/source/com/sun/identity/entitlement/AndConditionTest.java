@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndConditionTest.java,v 1.4 2009-05-05 00:28:58 veiming Exp $
+ * $Id: AndConditionTest.java,v 1.5 2009-05-08 17:53:30 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -66,6 +66,17 @@ public class AndConditionTest {
             throw new Exception("AndConditionTest.testConstruction():"
                     + "AndCondition with setState="
                     +  "does not equal AndCondition with getState()");
+        }
+    }
+
+    @Test
+    public void NPEWhenEConditionsIsNull() throws Exception {
+        AndCondition oc = new AndCondition();
+        try {
+            oc.toString();
+        } catch (NullPointerException e) {
+            throw new Exception(
+                "AndConditionTest.NPEWhenEConditionsIsNull failed.");
         }
     }
 }

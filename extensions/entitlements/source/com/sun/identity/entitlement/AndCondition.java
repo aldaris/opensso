@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndCondition.java,v 1.5 2009-05-02 08:53:59 veiming Exp $
+ * $Id: AndCondition.java,v 1.6 2009-05-08 17:53:29 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -139,11 +139,13 @@ public class AndCondition implements EntitlementCondition {
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
-        for (EntitlementCondition ec : eConditions) {
-            ConditionDecision d = ec.evaluate(subject, resourceName,
-                environment);
-            if (!d.isSatisfied()) {
-                return d;
+        if ((eConditions != null) && !eConditions.isEmpty()) {
+            for (EntitlementCondition ec : eConditions) {
+                ConditionDecision d = ec.evaluate(subject, resourceName,
+                    environment);
+                if (!d.isSatisfied()) {
+                    return d;
+                }
             }
         }
         return new ConditionDecision(true, Collections.EMPTY_MAP);
@@ -195,11 +197,14 @@ public class AndCondition implements EntitlementCondition {
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
         jo.put("pConditionName", pConditionName);
-        for (EntitlementCondition eCondition : eConditions) {
-            JSONObject subjo = new JSONObject();
-            subjo.put("className", eCondition.getClass().getName());
-            subjo.put("state", eCondition.getState());
-            jo.append("memberECondition", subjo);
+
+        if ((eConditions != null) && !eConditions.isEmpty()) {
+            for (EntitlementCondition eCondition : eConditions) {
+                JSONObject subjo = new JSONObject();
+                subjo.put("className", eCondition.getClass().getName());
+                subjo.put("state", eCondition.getState());
+                jo.append("memberECondition", subjo);
+            }
         }
         return jo;
     }

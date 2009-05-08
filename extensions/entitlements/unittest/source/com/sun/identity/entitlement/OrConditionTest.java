@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrConditionTest.java,v 1.4 2009-05-08 17:04:20 veiming Exp $
+ * $Id: OrConditionTest.java,v 1.5 2009-05-08 17:53:30 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -75,6 +75,5 @@ public class OrConditionTest {
             throw new Exception(
                 "OrConditionTest.NPEWhenEConditionsIsNull failed.");
         }
-
     }
 }
