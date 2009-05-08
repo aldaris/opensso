@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.15 2009-04-10 01:49:10 inthanga Exp $
+ * $Id: IDMCommon.java,v 1.16 2009-05-08 21:05:16 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -131,8 +131,13 @@ public class IDMCommon extends TestCommon {
      */
     public void modifyIdentity(AMIdentity amid, Map values)
     throws Exception {
-        amid.setAttributes(values);
-        amid.store();
+        try {
+            amid.setAttributes(values);
+            amid.store();
+        } finally {
+            Thread.sleep(notificationSleepTime);
+        }
+        
     }
     
     /**
@@ -625,6 +630,7 @@ public class IDMCommon extends TestCommon {
                 memberName + " from " + idType + " " + idName + "...");
         removeUserMember(ssoToken, memberName, idName, getIdType(idType),
                 realmName);
+        Thread.sleep(notificationSleepTime);
         AMIdentity memid = getFirstAMIdentity(ssoToken, memberName,
                 IdType.USER, realmName);
         AMIdentity id = getFirstAMIdentity(ssoToken, idName, getIdType(idType),
