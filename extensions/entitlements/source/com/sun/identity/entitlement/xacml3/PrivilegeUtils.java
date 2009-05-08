@@ -22,43 +22,49 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.1 2009-05-06 22:35:23 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.2 2009-05-08 23:51:24 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOException;
-import com.sun.identity.entitlement.AndSubject;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
-import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.EntitlementSubject;
-import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceAttributes;
-import com.sun.identity.entitlement.StaticAttributes;
-import com.sun.identity.entitlement.UserAttributes;
+
+import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.entitlement.xacml3.core.AllOf;
 import com.sun.identity.entitlement.xacml3.core.AnyOf;
 import com.sun.identity.entitlement.xacml3.core.AttributeValue;
 import com.sun.identity.entitlement.xacml3.core.AttributeDesignator;
 import com.sun.identity.entitlement.xacml3.core.Match;
+import com.sun.identity.entitlement.xacml3.core.ObjectFactory;
 import com.sun.identity.entitlement.xacml3.core.Policy;
+import com.sun.identity.entitlement.xacml3.core.Target;
+
+import com.sun.identity.entitlement.util.DebugFactory;
+
+import com.sun.identity.shared.debug.IDebug;
+
+import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 /**
  * Class with utility methods to map from
  * <code>com.sun.identity.entity.Privilege</code>
  * to
- * </code>com.sun.identity.xacml3.Policy</code>
+ * </code>com.sun.identity.xacml3.core.Policy</code>
  */
 public class PrivilegeUtils {
+    
+    static IDebug debug = DebugFactory.getDebug("Entitlement");
 
     /**
      * Constructs PrivilegeUtils
@@ -67,11 +73,25 @@ public class PrivilegeUtils {
     }
 
     public static String toXACML(Privilege privilege) {
-        return null;
+        StringWriter stringWriter = new StringWriter();
+        Policy policy = privilegeToPolicy(privilege);
+        try {
+            ObjectFactory objectFactory = new ObjectFactory();
+            JAXBContext jaxbContext = JAXBContext.newInstance(
+                    "com.sun.identity.entitlement.xacml3.core");
+            JAXBElement<Policy> policyElement = objectFactory.createPolicy(policy);
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+                    Boolean.TRUE);
+            marshaller.marshal(policyElement, stringWriter);
+        } catch (JAXBException je) {
+            //TOODO: handle, propogate exception
+            debug.error("JAXBException while mapping privilege to policy:", je);
+        }
+        return stringWriter.toString();
     }
 
-    public static Policy privilegeToPolicy(Privilege privilege)
-            throws SSOException {
+    public static Policy privilegeToPolicy(Privilege privilege)  {
 
         /*
          * See entitelement meeting minutes - 22apr09
@@ -100,90 +120,183 @@ public class PrivilegeUtils {
             return null;
         }
 
+        Policy policy = new Policy();
+
         String privilegeName = privilege.getName();
         String applicationName = null; //privilege.getApplicationName();
-        String description = null; //privilege.getDescription();
+
+        String policyId = privilegeNameToPolicyId(privilegeName,
+                applicationName);
+        policy.setPolicyId(policyId);
+
+        String description = privilege.getDescription();
+        policy.setDescription(description);
+
+
         // PolicyIssuer policyIssuer = null;
+
         // Version version = null;
+
         // Defaults policyDefaults = null;
+
         // String ruleCombiningAlgId = "rca";
-        // Target target = null;
+
+        // XACML Target contains a  list of AnyOf(s)
+        // XACML AnyOf contains a list of AllOf(s)
+        // XACML AllOf contains a list of Match(s)
+
+        Target target = new Target();
+        policy.setTarget(target);
+
+        List<AnyOf> targetAnyOfList = target.getAnyOf();
+
+        EntitlementSubject es = privilege.getSubject();
+        List<AnyOf> anyOfSubjectList = entitlementSubjectToAnyOfList(es);
+        if (anyOfSubjectList != null) {
+            targetAnyOfList.addAll(anyOfSubjectList);
+        }
 
         Entitlement entitlement = privilege.getEntitlement();
 
         Set<String> resources = entitlement.getResourceNames();
-        Set<String> excludedResources = entitlement.getExcludedResourceNames();
 
-        Map<String, Boolean> actionValues = entitlement.getActionValues();
 
-        // XACML Target ontains a  list of AnyOf(s)
-        // XACML AnyOf contains a list of AllOf(s)
-        // XACML AllOf contains a list of Match(s)
-
-        String policyId = privilegeNameToPolicyId(privilegeName,
-                applicationName);
+        List<AnyOf> anyOfResourceList = resourceNamesToAnyOfList(resources);
+        if (anyOfResourceList != null) {
+            targetAnyOfList.addAll(anyOfResourceList);
+        }
 
         AnyOf anyOfApplication = applicationNameToAnyOf(applicationName);
         if (anyOfApplication != null) {
+            targetAnyOfList.add(anyOfApplication);
         }
 
-        List<AnyOf> anyOfResources = resourceNamesToAnyOf(resources);
-        if (anyOfResources != null) {
-        }
-
-        List<AnyOf> anyOfActionValues = actionValuesToAnyOf(actionValues);
-        if (anyOfResources != null) {
-        }
-
-        EntitlementSubject es = privilege.getSubject();
-        List<AnyOf> anyOfSubjects = entitlementSubjectToAnyOf(es);
-        if (anyOfSubjects != null) {
+        Map<String, Boolean> actionValues = entitlement.getActionValues();
+        List<AnyOf> anyOfActionList = actionValuesToAnyOfList(actionValues);
+        if (anyOfActionList != null) {
+            targetAnyOfList.addAll(anyOfActionList);
         }
 
         // PermitRule, DenyRule
         List permitActions = null; // effect: Permit
         List denyActions = null; // effect: Deny
 
-        List<AnyOf> anyOfExcludedResources = excludedResourceNamesToAnyOf(
+        Set<String> excludedResources = entitlement.getExcludedResourceNames();
+        List<AnyOf> exlcudedResourcesAnyOfList = excludedResourceNamesToAnyOfList(
                 excludedResources);
-        if (anyOfResources != null) {
-        }
 
         EntitlementCondition ec = privilege.getCondition();
 
         Set<ResourceAttributes> ra = privilege.getResourceAttributes();
 
-        Policy policy = new Policy();
 
         return policy;
     }
 
-    public static AnyOf applicationNameToAnyOf(String applicationName) {
-        return null;
-    }
-
     public static String privilegeNameToPolicyId(String privilegeName,
             String applicationName) {
-        return null;
+        return privilegeName;
     }
 
-    public static List<AnyOf> resourceNamesToAnyOf(Set<String> resourceNames) {
+    public static List<AnyOf> entitlementSubjectToAnyOfList(
+            EntitlementSubject es) {
+        if (es == null) {
+            return null;
+        }
+        List<AnyOf> anyOfList = new ArrayList<AnyOf>();
+        AnyOf anyOf = new AnyOf();
+        anyOfList.add(anyOf);
+        List<AllOf> allOfList = anyOf.getAllOf();
+        AllOf allOf = new AllOf();
+        allOfList.add(allOf);
+        List<Match> matchList = allOf.getMatch();
+        if (es instanceof UserSubject) {
+            UserSubject us = (UserSubject)es;
+            String userId = us.getID();
+
+            Match match = new Match();
+            matchList.add(match);
+            match.setMatchId("subject-match-id");
+
+            AttributeValue attributeValue = new AttributeValue();
+            String dataType = "datatype";
+            attributeValue.setDataType(dataType);
+            attributeValue.getContent().add(userId);
+
+            AttributeDesignator attributeDesignator = new AttributeDesignator();
+            String category = "category";
+            attributeDesignator.setCategory(category);
+            String attributeId = "attributeId";
+            attributeDesignator.setAttributeId(attributeId);
+            String dt = "dataType";
+            attributeDesignator.setDataType(dt);
+            String issuer = "issuer";
+            attributeDesignator.setIssuer(issuer);
+            boolean mustBePresent = true;
+            attributeDesignator.setMustBePresent(mustBePresent);
+
+            match.setAttributeValue(attributeValue);
+            match.setAttributeDesignator(attributeDesignator);
+        }
+        return anyOfList;
+    }
+
+
+    public static List<AnyOf> resourceNamesToAnyOfList(Set<String> resourceNames) {
         if (resourceNames == null || resourceNames.isEmpty()) {
             return null;
         }
-        List<AnyOf> anyOfResources = new ArrayList<AnyOf>();
+        List<AnyOf> anyOfList = new ArrayList<AnyOf>();
+        AnyOf anyOf = new AnyOf();
+        anyOfList.add(anyOf);
+        List<AllOf> allOfList = anyOf.getAllOf();
         for (String resourceName : resourceNames) {
-            List<AllOf> allOfResources = new ArrayList<AllOf>();
-            AllOf allOfResource = new AllOf();
-            allOfResource.getMatch().add(resourceNameToMatch(resourceName));
+            AllOf allOf = new AllOf();
+            List<Match> matchList = allOf.getMatch();
+            matchList.add(resourceNameToMatch(resourceName));
+            allOfList.add(allOf);
         }
-        return null;
+        return anyOfList;
+    }
+
+    public static AnyOf applicationNameToAnyOf(String applicationName) {
+        AnyOf anyOf = new AnyOf();
+        return anyOf;
+    }
+
+    public static List<AnyOf> actionValuesToAnyOfList(
+            Map<String, Boolean> actionValues) {
+        if (actionValues == null || actionValues.isEmpty()) {
+            return null;
+        }
+        List<AnyOf> anyOfList = new ArrayList<AnyOf>();
+        AnyOf anyOf = new AnyOf();
+        anyOfList.add(anyOf);
+        List<AllOf> allOfList = anyOf.getAllOf();
+        Set<String> actionNames = actionValues.keySet();
+        for (String actionName : actionNames) {
+            AllOf allOf = new AllOf();
+            List<Match> matchList = allOf.getMatch();
+            matchList.add(actionNameToMatch(actionName));
+            allOfList.add(allOf);
+        }
+        return anyOfList;
+    }
+
+    public static List<AnyOf> excludedResourceNamesToAnyOfList(
+            Set<String> excludedResources) {
+        List<AnyOf> anyOfList = new ArrayList<AnyOf>();
+        return anyOfList;
     }
 
     public static Match resourceNameToMatch(String resourceName) {
-        if (resourceName == null) {
+        if (resourceName == null | resourceName.length() == 0) {
             return null;
         }
+
+        Match match = new Match();
+        String matchId = "matchId";
+        match.setMatchId(matchId);
 
         AttributeValue attributeValue = new AttributeValue();
         String dataType = "datatype";
@@ -202,28 +315,42 @@ public class PrivilegeUtils {
         boolean mustBePresent = true;
         attributeDesignator.setMustBePresent(mustBePresent);
 
-        Match match = new Match();
-        String matchId = "matchId";
-        match.setMatchId(matchId);
         match.setAttributeValue(attributeValue);
         match.setAttributeDesignator(attributeDesignator);
 
         return match;
     }
 
-    public static List<AnyOf> excludedResourceNamesToAnyOf(
-            Set<String> excludedResources) {
-        return null;
+    public static Match actionNameToMatch(String actionName) {
+        if (actionName == null | actionName.length() == 0) {
+            return null;
+        }
+
+        Match match = new Match();
+        String matchId = "matchId";
+        match.setMatchId(matchId);
+
+        AttributeValue attributeValue = new AttributeValue();
+        String dataType = "datatype";
+        attributeValue.setDataType(dataType);
+        attributeValue.getContent().add(actionName);
+
+        AttributeDesignator attributeDesignator = new AttributeDesignator();
+        String category = "category";
+        attributeDesignator.setCategory(category);
+        String attributeId = "attributeId";
+        attributeDesignator.setAttributeId(attributeId);
+        String dt = "dataType";
+        attributeDesignator.setDataType(dt);
+        String issuer = "issuer";
+        attributeDesignator.setIssuer(issuer);
+        boolean mustBePresent = true;
+        attributeDesignator.setMustBePresent(mustBePresent);
+
+        match.setAttributeValue(attributeValue);
+        match.setAttributeDesignator(attributeDesignator);
+
+        return match;
     }
 
-    public static List<AnyOf> actionValuesToAnyOf(
-            Map<String, Boolean> actionValues) {
-        return null;
-    }
-
-    public static List<AnyOf> entitlementSubjectToAnyOf(
-            EntitlementSubject entitlementSubject) {
-        return null;
-    }
-    
 }
