@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationServlet.java,v 1.1 2009-05-06 07:31:00 veiming Exp $
+ * $Id: NotificationServlet.java,v 1.2 2009-05-08 00:13:22 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.PolicyDataStoreFactory;
-import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
+import com.sun.identity.entitlement.PrivilegeIndexStore;
 import java.io.IOException;
 import java.io.Writer;
 import javax.servlet.ServletException;
@@ -70,10 +69,10 @@ public class NotificationServlet extends HttpServlet {
             if (action.equals(PRIVILEGE_DELETED)) {
                 String privilegeName = req.getParameter(ATTR_NAME);
                 String realm = req.getParameter(ATTR_REALM_NAME);
-                IPolicyDataStore pds =
-                    PolicyDataStoreFactory.getInstance().getDataStore();
+                PrivilegeIndexStore pis =
+                    PrivilegeIndexStore.getInstance(realm);
                 try {
-                    pds.delete(realm, privilegeName);
+                    pis.delete(privilegeName);
                 } catch (EntitlementException e) {
                     //ignore
                 }

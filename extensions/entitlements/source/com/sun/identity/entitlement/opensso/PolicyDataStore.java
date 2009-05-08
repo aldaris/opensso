@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.12 2009-05-07 23:00:25 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.13 2009-05-08 00:13:22 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PolicyConfigFactory;
-import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
 import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
 import com.sun.identity.entitlement.interfaces.IPolicyConfig;
@@ -39,16 +39,20 @@ import com.sun.identity.shared.BufferedIterator;
 import java.util.Iterator;
 import java.util.Set;
 
-/**
- * //TOFIX
- */
-public class PolicyDataStore implements IPolicyDataStore {
 
+public class PolicyDataStore extends PrivilegeIndexStore {
     private PolicyCache policyCache;
     private IndexCache indexCache;
     private DataStore dataStore = new DataStore();
+    private String realm;
 
-    public PolicyDataStore() {
+    /**
+     * Constructor.
+     *
+     * @param realm Realm Name
+     */
+    public PolicyDataStore(String realm) {
+        this.realm = realm;
         IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
         policyCache = new PolicyCache(getNumeric(
             policyConfig.getAttributeValue(IPolicyConfig.POLICY_CACHE_SIZE),
@@ -66,8 +70,15 @@ public class PolicyDataStore implements IPolicyDataStore {
         }
     }
 
-
-    public void add(String realm, Set<Privilege> privileges)
+    /**
+     * Adds a set of privileges to the data store. Proper indexes will be
+     * created to speed up policy evaluation.
+     *
+     * @param privileges Privileges to be added.
+     * @throws com.sun.identity.entitlement.EntitlementException if addition
+     * failed.
+     */
+    public void add(Set<Privilege> privileges)
         throws EntitlementException {
         for (Privilege p : privileges) {
             dataStore.add(realm, p);
@@ -78,12 +89,26 @@ public class PolicyDataStore implements IPolicyDataStore {
         }
     }
 
-    public void delete(String realm, String privilegeName)
+    /**
+     * Deletes a set of privileges from data store.
+     *
+     * @param privileges Privileges to be deleted.
+     * @throws com.sun.identity.entitlement.EntitlementException if deletion
+     * failed.
+     */
+    public void delete(String privilegeName)
         throws EntitlementException {
         delete(realm, privilegeName, false);
     }
 
-    public void delete(String realm, Set<Privilege> privileges)
+    /**
+     * Deletes a privilege from data store.
+     *
+     * @param privilegeName name of privilege to be deleted.
+     * @throws com.sun.identity.entitlement.EntitlementException if deletion
+     * failed.
+     */
+    public void delete(Set<Privilege> privileges)
         throws EntitlementException {
         for (Privilege p : privileges) {
             String dn = delete(realm, p.getName(), true);
@@ -101,14 +126,25 @@ public class PolicyDataStore implements IPolicyDataStore {
     }
 
     private void cache(Privilege p, String realm)
-            throws EntitlementException {
-        String dn = DataStore.getPrivilegeDistinguishedName(p.getName(), realm, null);
+        throws EntitlementException {
+        String dn = DataStore.getPrivilegeDistinguishedName(
+            p.getName(), realm, null);
         indexCache.cache(p.getEntitlement().getResourceSaveIndexes(), dn);
         policyCache.cache(dn, p);
     }
 
+    /**
+     * Returns an iterator of matching privilege objects.
+     *
+     * @param indexes Resource search indexes.
+     * @param subjectIndexes Subject search indexes.
+     * @param bSubTree <code>true</code> for sub tree evaluation.
+     * @param threadPool Thread pool for executing threads.
+     * @return an iterator of matching privilege objects.
+     * @throws com.sun.identity.entitlement.EntitlementException if results
+     * cannot be obtained.
+     */
     public Iterator<Privilege> search(
-        String realm,
         ResourceSearchIndexes indexes,
         Set<String> subjectIndexes,
         boolean bSubTree,
@@ -134,7 +170,6 @@ public class PolicyDataStore implements IPolicyDataStore {
     /**
      * Returns a set of privilege names that satifies a search filter.
      *
-     * @param realm Realm name
      * @param filters Search filters.
      * @param boolAnd <code>true</code> to have filters as exclusive.
      * @param numOfEntries Number of max entries.
@@ -142,10 +177,9 @@ public class PolicyDataStore implements IPolicyDataStore {
      * @param ascendingOrder <code>true</code> to have result sorted in
      * ascending order.
      * @return a set of privilege names that satifies a search filter.
-     * @throws EntityExistsException if search failed.
+     * @throws EntitlementException if search failed.
      */
     public Set<String> searchPrivilegeNames(
-        String realm,
         Set<PrivilegeSearchFilter> filters,
         boolean boolAnd,
         int numOfEntries,

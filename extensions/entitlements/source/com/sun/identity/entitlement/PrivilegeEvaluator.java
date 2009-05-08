@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.14 2009-05-05 21:32:13 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.15 2009-05-08 00:13:21 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -222,9 +221,8 @@ class PrivilegeEvaluator {
         public void run() {
             try {
                 int count = 0;
-                IPolicyDataStore ds =
-                    PolicyDataStoreFactory.getInstance().getDataStore();
-                for (Iterator<Privilege> i = ds.search(realm, parent.indexes,
+                PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(realm);
+                for (Iterator<Privilege> i = pis.search(parent.indexes,
                     SubjectAttributesManager.getSubjectSearchFilter(
                         parent.subject, parent.applicationName), bSubTree,
                         threadPool); i.hasNext();

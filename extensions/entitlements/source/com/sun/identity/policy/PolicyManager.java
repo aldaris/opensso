@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.10 2009-05-07 22:13:33 veiming Exp $
+ * $Id: PolicyManager.java,v 1.11 2009-05-08 00:13:22 veiming Exp $
  *
  */
 
@@ -37,8 +37,7 @@ import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
-import com.sun.identity.entitlement.PolicyDataStoreFactory;
+import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.ldap.util.DN;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -592,9 +591,9 @@ public final class PolicyManager {
             //create the policy entry
             namedPolicy.addSubConfig(policy.getName(),
                 NAMED_POLICY_ID, 0, attrs);
-            IPolicyDataStore pStore =
-                PolicyDataStoreFactory.getInstance().getDataStore();
-            pStore.add(realmName, PrivilegeUtils.policyToPrivileges(policy));
+            PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+                DNMapper.orgNameToRealmName(realmName));
+            pis.add(PrivilegeUtils.policyToPrivileges(policy));
         } catch (EntitlementException e) {
             String[] objs = { policy.getName(), org };
             throw (new PolicyException(ResBundleUtils.rbName, 
@@ -729,11 +728,10 @@ public final class PolicyManager {
                 validateReferrals(policy);
                 policyEntry.setAttributes(attrs);
                 if (oldPolicy != null) {
-                    IPolicyDataStore pStore =
-                        PolicyDataStoreFactory.getInstance().getDataStore();
-                    pStore.delete(realm, PrivilegeUtils.policyToPrivileges(
-                        oldPolicy));
-                    pStore.add(realm, PrivilegeUtils.policyToPrivileges(policy));
+                    PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+                        DNMapper.orgNameToRealmName(realm));
+                    pis.delete(PrivilegeUtils.policyToPrivileges(oldPolicy));
+                    pis.add(PrivilegeUtils.policyToPrivileges(policy));
                 }
             }
         } catch (EntitlementException e) {
@@ -804,10 +802,9 @@ public final class PolicyManager {
 
                 // do the removal in resources tree
                 if (policy != null) {
-                    IPolicyDataStore pStore =
-                        PolicyDataStoreFactory.getInstance().getDataStore();
-                    pStore.delete(getOrganizationDN(),
-                        PrivilegeUtils.policyToPrivileges(policy));
+                    PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+                        DNMapper.orgNameToRealmName(getOrganizationDN()));
+                    pis.delete(PrivilegeUtils.policyToPrivileges(policy));
                 }
             }
         } catch (EntitlementException e) {

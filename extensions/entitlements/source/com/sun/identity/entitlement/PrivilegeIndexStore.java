@@ -22,62 +22,116 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyDataStore.java,v 1.9 2009-05-07 22:13:32 veiming Exp $
+ * $Id: PrivilegeIndexStore.java,v 1.1 2009-05-08 00:13:21 veiming Exp $
  */
 
-package com.sun.identity.entitlement.interfaces;
+package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.Privilege;
-import com.sun.identity.entitlement.ResourceSearchIndexes;
+import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
- * This interface defines the methods required to store policy indexes
- * in datastore.
+ * Privilege Index Store is responsible to storing privilege in
+ * a persistent data store.
  */
-public interface IPolicyDataStore {
+public abstract class PrivilegeIndexStore {
+    private static Map<String, PrivilegeIndexStore> instances = new
+        HashMap<String, PrivilegeIndexStore>();
+    private static Class clazz;
+
+    static {
+        try {
+            //TOFIX: configurable
+            clazz = Class.forName(
+                "com.sun.identity.entitlement.opensso.PolicyDataStore");
+        } catch (ClassNotFoundException e) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.static<init>", e);
+        }
+    }
+
+    /**
+     * Returns an instance of the privilege index store.
+     *
+     * @param realm Realm Name.
+     * @return an instance of the privilege index store.
+     */
+    public synchronized static PrivilegeIndexStore getInstance(
+        String realm) {
+        if (clazz == null) {
+            return null;
+        }
+        PrivilegeIndexStore impl = instances.get(realm);
+
+        if (impl == null) {
+            Class[] parameterTypes = {String.class};
+            try {
+                Constructor constructor = clazz.getConstructor(parameterTypes);
+                Object[] args = {realm};
+                impl = (PrivilegeIndexStore) constructor.newInstance(args);
+                instances.put(realm, impl);
+            } catch (InstantiationException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (IllegalAccessException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (IllegalArgumentException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (InvocationTargetException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (NoSuchMethodException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (SecurityException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            }
+        }
+        return impl;
+    }
 
     /**
      * Adds a set of privileges to the data store. Proper indexes will be
      * created to speed up policy evaluation.
      *
-     * @param ream Realm name.
      * @param privileges Privileges to be added.
      * @throws com.sun.identity.entitlement.EntitlementException if addition
      * failed.
      */
-    void add(String realm, Set<Privilege> privileges)
+    public abstract void add(Set<Privilege> privileges)
         throws EntitlementException;
 
     /**
      * Deletes a set of privileges from data store.
      *
-     * @param ream Realm name.
      * @param privileges Privileges to be deleted.
      * @throws com.sun.identity.entitlement.EntitlementException if deletion
      * failed.
      */
-    void delete(String realm, Set<Privilege> privilege)
+    public abstract void delete(Set<Privilege> privilege)
         throws EntitlementException;
 
     /**
      * Deletes a privilege from data store.
      *
-     * @param ream Realm name.
      * @param privilegeName name of privilege to be deleted.
      * @throws com.sun.identity.entitlement.EntitlementException if deletion
      * failed.
      */
-    void delete(String realm, String privilegeName)
+    public abstract void delete(String privilegeName)
         throws EntitlementException;
 
     /**
      * Returns an iterator of matching privilege objects.
      *
-     * @param ream Realm name.
      * @param indexes Resource search indexes.
      * @param subjectIndexes Subject search indexes.
      * @param bSubTree <code>true</code> for sub tree evaluation.
@@ -86,8 +140,7 @@ public interface IPolicyDataStore {
      * @throws com.sun.identity.entitlement.EntitlementException if results
      * cannot be obtained.
      */
-    Iterator<Privilege> search(
-        String realm,
+    public abstract Iterator<Privilege> search(
         ResourceSearchIndexes indexes,
         Set<String> subjectIndexes,
         boolean bSubTree,
@@ -98,7 +151,6 @@ public interface IPolicyDataStore {
     /**
      * Returns a set of privilege names that matched a set of search criteria.
      *
-     * @param realm Realm name.
      * @param filters Set of search filter (criteria).
      * @param boolAnd <code>true</code> to be inclusive.
      * @param numOfEntries Number of maximum search entries.
@@ -108,11 +160,10 @@ public interface IPolicyDataStore {
      * @return a set of privilege names that matched a set of search criteria.
      * @throws EntitlementException if search failed.
      */
-    Set<String> searchPrivilegeNames(
-        String realm,
+    public abstract Set<String> searchPrivilegeNames(
         Set<PrivilegeSearchFilter> filters,
         boolean boolAnd,
-        int numOfEntries, 
+        int numOfEntries,
         boolean sortResults,
         boolean ascendingOrder
     ) throws EntitlementException;
