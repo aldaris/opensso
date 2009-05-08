@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteCachedServicesImpl.java,v 1.16 2008-07-16 19:17:03 kenwho Exp $
+ * $Id: IdRemoteCachedServicesImpl.java,v 1.17 2009-05-08 00:47:07 hengming Exp $
  *
  */
 
@@ -299,6 +299,31 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         IdCacheBlock cb = getFromCache(key);
         if (cb != null) {
             cb.clear();
+        }
+    }
+
+     // @Override
+    public boolean isExists(SSOToken token, IdType type, String name,
+        String amOrgName) throws SSOException, IdRepoException
+    {
+        AMIdentity id = new AMIdentity(token, name, type, amOrgName, null);
+        String dn = id.getUniversalId().toLowerCase();
+
+        IdCacheBlock cb = (IdCacheBlock) idRepoCache.get(dn);
+        if (cb == null) { // Entry not present in cache
+            if (getDebug().messageEnabled()) {
+                getDebug().message("IdRemoteCachedServicesImpl." +
+                    "isExist(): NO entry found in Cachefor key = " + dn);
+            }
+            return super.isExists(token, type, name, amOrgName);
+        }
+        // Get the principal DN
+        AMIdentity tokenId = IdUtils.getIdentity(token);
+        String principalDN = tokenId.getUniversalId();
+        if (cb.hasCache(principalDN)) {
+            return true;
+        } else {
+            return super.isExists(token, type, name, amOrgName);
         }
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.16 2008-11-14 00:09:54 veiming Exp $
+ * $Id: SOAPClient.java,v 1.17 2009-05-08 00:49:55 hengming Exp $
  *
  */
 
@@ -174,6 +174,7 @@ public class SOAPClient {
                         if ((url = JAXRPCHelper.getValidURL(serviceName))
                             != null) {
                             validServerFound = true;
+                            setURL(url);
                         }
                     } catch (RemoteException re) {
                         // This exception is thrown only when there

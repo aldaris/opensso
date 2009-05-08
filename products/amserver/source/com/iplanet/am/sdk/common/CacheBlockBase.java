@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheBlockBase.java,v 1.4 2008-06-25 05:41:23 qcheng Exp $
+ * $Id: CacheBlockBase.java,v 1.5 2009-05-08 00:48:08 hengming Exp $
  *
  */
 
@@ -214,6 +214,11 @@ public abstract class CacheBlockBase {
             }
         }
         return isExpired;
+    }
+
+    public synchronized boolean hasCache(String principalDN) {
+        CacheEntry ce = (CacheEntry) cacheEntries.get(principalDN);
+        return (ce != null && !hasExpiredAndUpdated());
     }
 
     public synchronized boolean hasCompleteSet(String principalDN) {
