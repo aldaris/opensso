@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2009-04-29 11:43:14 veiming Exp $
+   $Id: build.xml,v 1.6 2009-05-08 23:49:34 dillidorai Exp $
 
 -->
 
@@ -52,7 +52,9 @@
     <target name="build" depends="preparebuild">        
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
                destdir="${unittest.classes.dir}" source="1.5" target="1.5"
-               debug="${build.debug}" debuglevel="${build.debuglevel}">
+               debug="${build.debug}" debuglevel="${build.debuglevel}"
+               excludes="**/xacml3/**"
+               >
             <src path="${unittest.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>
