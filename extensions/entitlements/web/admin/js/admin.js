@@ -1,9 +1,18 @@
+var submitTimeout = null;
+
+function doSubmit(element) {
+        iceSubmitPartial(
+            document.getElementById("form"),
+            element,
+            MouseEvent.CLICK
+        );
+        submitTimeout = null;
+        setFocus(element);
+}
+
 function submitNow(element) {
-    iceSubmitPartial(
-        document.getElementById("form"),
-        element,
-        MouseEvent.CLICK
-    );
+    clearTimeout(submitTimeout);
+    submitTimeout = setTimeout(function(){doSubmit(element)}, 1000);
 }
 
 function resizeFrame(f) {

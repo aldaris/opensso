@@ -56,7 +56,7 @@
                                             value="/admin/image/search.png"/>
                                         <ice:inputText
                                             styleClass="section-input"
-                                            onkeyup="submitNow(this); setFocus(this)"
+                                            onkeyup="submitNow(this);"
                                             value="#{policyManageBean.searchFilter}"/>
                                     </ice:panelGroup>
                                 </ice:panelGrid>
@@ -355,7 +355,7 @@
                                         rowsCountVar="rowsCount"
                                         displayedRowsCountVar="displayedRowsCountVar"
                                         rendered="#{o:size(policyManageBean.privilegeBeans) > policyManageBean.policyManageTableBean.rows}"
-                                        fastStep="10"
+                                        fastStep="1"
                                         pageCountVar="pageCount"
                                         pageIndexVar="pageIndex"
                                         paginatorMaxPages="9"
