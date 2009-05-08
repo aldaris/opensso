@@ -11,7 +11,9 @@ function doSubmit(element) {
 }
 
 function submitNow(element) {
-    clearTimeout(submitTimeout);
+    if (submitTimeout != null) {
+        clearTimeout(submitTimeout);
+    }
     submitTimeout = setTimeout(function(){doSubmit(element)}, 1000);
 }
 
