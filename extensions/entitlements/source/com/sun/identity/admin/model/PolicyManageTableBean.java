@@ -170,6 +170,7 @@ public class PolicyManageTableBean implements Serializable {
     public boolean isRemoveColumnVisible() {
         return getColumnsVisible().contains("remove");
     }
+
     public boolean isExportColumnVisible() {
         return getColumnsVisible().contains("export");
     }

@@ -114,6 +114,11 @@ public class PolicyManageHandler implements Serializable {
         e = new Fade();
         e.setSubmit(true);
         e.setTransitory(false);
+        pb.setDescriptionCellEffect(e);
+
+        e = new Fade();
+        e.setSubmit(true);
+        e.setTransitory(false);
         pb.setResourcesCellEffect(e);
 
         e = new Fade();
