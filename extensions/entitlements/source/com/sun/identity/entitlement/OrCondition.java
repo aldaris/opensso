@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrCondition.java,v 1.5 2009-05-02 08:53:59 veiming Exp $
+ * $Id: OrCondition.java,v 1.6 2009-05-08 17:04:20 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -213,11 +213,14 @@ public class OrCondition implements EntitlementCondition {
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
         jo.put("pConditionName", pConditionName);
-        for (EntitlementCondition eCondition : eConditions) {
-            JSONObject subjo = new JSONObject();
-            subjo.put("className", eCondition.getClass().getName());
-            subjo.put("state", eCondition.getState());
-            jo.append("memberECondition", subjo);
+
+        if ((eConditions != null) && !eConditions.isEmpty()) {
+            for (EntitlementCondition eCondition : eConditions) {
+                JSONObject subjo = new JSONObject();
+                subjo.put("className", eCondition.getClass().getName());
+                subjo.put("state", eCondition.getState());
+                jo.append("memberECondition", subjo);
+            }
         }
         return jo;
     }

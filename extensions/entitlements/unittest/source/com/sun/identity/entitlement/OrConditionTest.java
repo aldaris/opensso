@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrConditionTest.java,v 1.3 2009-05-05 00:28:59 veiming Exp $
+ * $Id: OrConditionTest.java,v 1.4 2009-05-08 17:04:20 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -34,10 +34,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.testng.annotations.Test;
 
-/**
- *
- * @author dillidorai
- */
 public class OrConditionTest {
 
     @Test
@@ -53,8 +49,6 @@ public class OrConditionTest {
         tc.setEndDate("02/02/2002");
         tc.setEnforcementTimeZone("PST");
         tc.setPConditionName("tc1");
-        UnittestLog.logMessage(
-                "OrConditionTest.testConstruction():" + "tc.toString()=" + tc.toString());
 
         Set<EntitlementCondition> conditions = new HashSet<EntitlementCondition>();
         conditions.add(ipc);
@@ -72,8 +66,15 @@ public class OrConditionTest {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        new OrConditionTest().testConstruction();
-        UnittestLog.flush(new Date().toString());
+    @Test
+    public void NPEWhenEConditionsIsNull() throws Exception {
+        OrCondition oc = new OrCondition();
+        try {
+            oc.toString();
+        } catch (NullPointerException e) {
+            throw new Exception(
+                "OrConditionTest.NPEWhenEConditionsIsNull failed.");
+        }
+
     }
 }
