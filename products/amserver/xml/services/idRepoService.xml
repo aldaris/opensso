@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.32 2009-05-01 18:27:00 veiming Exp $
+   $Id: idRepoService.xml,v 1.33 2009-05-08 19:11:53 sean_brydon Exp $
   
 -->
 
@@ -2248,7 +2248,7 @@
                             <ChoiceValue i18nKey="a4018choiceURL">JDBC</ChoiceValue>
                         </ChoiceValues>
                         <DefaultValues>
-                            <Value>JNDI</Value>
+                            <Value>JDBC</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sun-opensso-database-DataSourceJndiName"
