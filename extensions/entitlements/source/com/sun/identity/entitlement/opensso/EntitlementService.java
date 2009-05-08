@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.10 2009-05-07 23:00:25 veiming Exp $
+ * $Id: EntitlementService.java,v 1.11 2009-05-08 00:48:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -32,9 +32,9 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationType;
 import com.sun.identity.entitlement.ApplicationTypeManager;
+import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PrivilegeManager;
-import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
@@ -53,9 +53,8 @@ import java.util.Set;
 
 /**
  *
- * @author dennis
  */
-public class EntitlementService implements IPolicyConfig {
+public class EntitlementService extends EntitlementConfiguration {
     /**
      * Entitlement Service name.
      */
@@ -78,23 +77,13 @@ public class EntitlementService implements IPolicyConfig {
     private static final String MIGRATED_TO_ENTITLEMENT_SERVICES =
         "migratedtoentitlementservice";
 
+    private String realm;
+
     /**
      * Constructor.
      */
-    public EntitlementService() {
-    }
-
-    /**
-     * Returns attribute value of a given attribute name,
-     *
-     * @param attributeName attribute name.
-     * @return attribute value of a given attribute name,
-     */
-
-    public String getAttributeValue(String attrName) {
-        Set<String> values = getAttributeValues(attrName);
-        return ((values != null) && !values.isEmpty()) ?
-            values.iterator().next() : null;
+    public EntitlementService(String realm) {
+        this.realm = realm;
     }
 
     /**
@@ -103,7 +92,7 @@ public class EntitlementService implements IPolicyConfig {
      * @param attributeName attribute name.
      * @return set of attribute values of a given attribute name,
      */
-    public Set<String> getAttributeValues(String attrName) {
+    public Set<String> getConfiguration(String attrName) {
         try {
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
@@ -205,10 +194,9 @@ public class EntitlementService implements IPolicyConfig {
     /**
      * Returns a set of registered applications.
      *
-     * @param realm Realm name.
      * @return a set of registered applications.
      */
-    public Set<Application> getApplications(String realm) {
+    public Set<Application> getApplications() {
         Set<Application> results = new HashSet<Application>();
         try {
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -254,14 +242,12 @@ public class EntitlementService implements IPolicyConfig {
     /**
      * Returns subject attribute names.
      *
-     * @param realm Realm name.
      * @param application Application name.
      * @return subject attribute names.
      * @throws EntitlementException if subject attribute names cannot be
      * returned.
      */
     public void addSubjectAttributeNames(
-        String realm,
         String applicationName,
         Set<String> names
     ) throws EntitlementException {
@@ -294,14 +280,12 @@ public class EntitlementService implements IPolicyConfig {
     /**
      * Adds a new action.
      *
-     * @param realm Realm name.
      * @param appName application name.
      * @param name Action name.
      * @param defVal Default value.
      * @throws EntitlementException if action cannot be added.
      */
     public void addApplicationAction(
-        String realm,
         String appName,
         String name,
         Boolean defVal
@@ -369,11 +353,10 @@ public class EntitlementService implements IPolicyConfig {
     /**
      * Removes application.
      *
-     * @param realm Realm name.
      * @param name name of application to be removed.
      * @throws EntitlementException if application cannot be removed.
      */
-    public void removeApplication(String realm, String name)
+    public void removeApplication(String name)
         throws EntitlementException
     {
         try {
@@ -428,11 +411,10 @@ public class EntitlementService implements IPolicyConfig {
     /**
      * Stores the application to data store.
      *
-     * @param realm Realm name
      * @param application Application object.
      * @throws EntitlementException if application cannot be stored.
      */
-    public void storeApplication(String realm, Application appl)
+    public void storeApplication(Application appl)
         throws EntitlementException {
         try {
             ServiceConfig orgConfig = getApplicationCollectionConfig(realm);
@@ -639,13 +621,10 @@ public class EntitlementService implements IPolicyConfig {
     /**
      * Returns subject attribute names.
      *
-     * @param realm Realm name.
      * @param application Application name.
      * @return subject attribute names.
      */
-    public Set<String> getSubjectAttributeNames(
-        String realm,
-        String application) {
+    public Set<String> getSubjectAttributeNames(String application) {
         try {
             ServiceConfig applConfig = getApplicationSubConfig(realm,
                 application);
@@ -696,7 +675,10 @@ public class EntitlementService implements IPolicyConfig {
         if (!hasEntitlementDITs()) {
             return false;
         }
-        String strShow = getAttributeValue(MIGRATED_TO_ENTITLEMENT_SERVICES);
-        return (strShow != null) ? Boolean.parseBoolean(strShow) : false;
+        Set<String> setMigrated = getConfiguration(
+            MIGRATED_TO_ENTITLEMENT_SERVICES);
+        String migrated = ((setMigrated != null) && !setMigrated.isEmpty()) ?
+            setMigrated.iterator().next() : null;
+        return (migrated != null) ? Boolean.parseBoolean(migrated) : false;
     }
 }

@@ -22,29 +22,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementServiceTest.java,v 1.2 2009-05-07 22:13:33 veiming Exp $
+ * $Id: EntitlementServiceTest.java,v 1.3 2009-05-08 00:48:16 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
-import com.sun.identity.entitlement.PolicyConfigFactory;
-import com.sun.identity.entitlement.interfaces.IPolicyConfig;
+import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.unittest.UnittestLog;
 import org.testng.annotations.Test;
 
 public class EntitlementServiceTest {
     @Test
     public void hasEntitlementDITs() {
-        IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
-        boolean result = pc.hasEntitlementDITs();
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        boolean result = ec.hasEntitlementDITs();
         UnittestLog.logMessage(
             "EntitlementServiceTest.hasEntitlementDITs: returns " + result);
     }
     
     @Test
     public void migratedToEntitlementService() {
-        IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
-        boolean result = pc.migratedToEntitlementService();
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        boolean result = ec.migratedToEntitlementService();
         UnittestLog.logMessage(
             "EntitlementServiceTest.migratedToEntitlementService: returns " +
             result);

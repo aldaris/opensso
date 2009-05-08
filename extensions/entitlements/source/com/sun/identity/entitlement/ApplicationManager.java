@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.11 2009-05-04 20:57:05 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.12 2009-05-08 00:48:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,8 +46,9 @@ public final class ApplicationManager {
      */
     public static Set<String> getApplicationNames(String realm) {
         Set<String> results = new HashSet<String>();
-        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
-        Set<Application> applications = policyConfig.getApplications(realm);
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            realm);
+        Set<Application> applications = ec.getApplications();
         for (Application appl : applications) {
             results.add(appl.getName());
         }
@@ -66,8 +66,9 @@ public final class ApplicationManager {
         if ((name == null) || (name.length() == 0)) {
             name = ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
         }
-        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
-        Set<Application> applications = policyConfig.getApplications(realm);
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            realm);
+        Set<Application> applications = ec.getApplications();
         for (Application appl : applications) {
             if (appl.getName().equals(name)) {
                 return appl;
@@ -87,8 +88,9 @@ public final class ApplicationManager {
         String realm,
         String name
     ) throws EntitlementException {
-        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
-        policyConfig.removeApplication(realm, name);
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            realm);
+        ec.removeApplication(name);
     }
 
     /**
@@ -98,8 +100,9 @@ public final class ApplicationManager {
      */
     public static void saveApplication(String realm, Application application)
         throws EntitlementException {
-        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
-        policyConfig.storeApplication(realm, application);
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            realm);
+        ec.storeApplication(application);
     }
 
 }

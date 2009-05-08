@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.14 2009-05-08 00:13:21 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.15 2009-05-08 00:48:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.util.DebugFactory;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import com.sun.identity.shared.debug.IDebug;
@@ -53,8 +52,9 @@ public abstract class PrivilegeManager {
      * @return instance of configured <code>PrivilegeManager</code>
      */
     static public PrivilegeManager getInstance(Subject subject) {
-        IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
-        if (!pc.migratedToEntitlementService()) {
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            "/");
+        if (!ec.migratedToEntitlementService()) {
             throw new UnsupportedOperationException(
                 "Updating of DITs is required before using the entitlement service");
         }

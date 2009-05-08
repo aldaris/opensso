@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Policy.java,v 1.4 2009-05-07 22:13:32 veiming Exp $
+ * $Id: Policy.java,v 1.5 2009-05-08 00:48:15 veiming Exp $
  *
  */
 
@@ -42,8 +42,6 @@ import org.w3c.dom.*;
 import com.iplanet.sso.*;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.Cache;
-import com.sun.identity.entitlement.PolicyConfigFactory;
-import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.policy.plugins.OrgReferral;

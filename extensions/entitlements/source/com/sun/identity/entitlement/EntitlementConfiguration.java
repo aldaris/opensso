@@ -22,51 +22,105 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyConfig.java,v 1.9 2009-05-07 22:13:32 veiming Exp $
+ * $Id: EntitlementConfiguration.java,v 1.1 2009-05-08 00:48:14 veiming Exp $
  */
 
-package com.sun.identity.entitlement.interfaces;
+package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.Application;
-import com.sun.identity.entitlement.ApplicationType;
-import com.sun.identity.entitlement.EntitlementException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
- * This interfaces defines the methods required from a policy configuration.
+ * Entitlement Configuration
  */
-public interface IPolicyConfig {
-    String POLICY_THREAD_SIZE = "threadSize";
-    String POLICY_CACHE_SIZE = "policyCacheSize";
-    String INDEX_CACHE_SIZE = "indexCacheSize";
-    String RESOURCE_COMPARATOR = "resourceComparator";
+public abstract class EntitlementConfiguration {
+    public static final String POLICY_THREAD_SIZE = "threadSize";
+    public static final String POLICY_CACHE_SIZE = "policyCacheSize";
+    public static final String INDEX_CACHE_SIZE = "indexCacheSize";
+    public static final String RESOURCE_COMPARATOR = "resourceComparator";
+    
+    private static Class clazz;
+    private static Map<String, EntitlementConfiguration> instances =
+        new HashMap<String, EntitlementConfiguration>();
+
+    static {
+        try {
+            //TOFIX
+            clazz = Class.forName(
+                "com.sun.identity.entitlement.opensso.EntitlementService");
+        } catch (ClassNotFoundException e) {
+            PrivilegeManager.debug.error("EntitlementConfiguration.<init>", e);
+        }
+    }
+
+    /**
+     * Returns an instance of entitlement configuration.
+     *
+     * @param realm Realm name.
+     * @return an instance of entitlement configuration.
+     */
+    public static EntitlementConfiguration getInstance(String realm) {
+        if (clazz == null) {
+            return null;
+        }
+        EntitlementConfiguration impl = instances.get(realm);
+
+        if (impl == null) {
+            Class[] parameterTypes = {String.class};
+            try {
+                Constructor constructor = clazz.getConstructor(parameterTypes);
+                Object[] args = {realm};
+                impl = (EntitlementConfiguration)constructor.newInstance(args);
+                instances.put(realm, impl);
+            } catch (InstantiationException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (IllegalAccessException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (IllegalArgumentException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (InvocationTargetException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (NoSuchMethodException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (SecurityException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            }
+        }
+        return impl;
+    }
 
     /**
      * Returns a set of registered applications.
      *
-     * @param realm Realm name.
      * @return a set of registered applications.
      */
-    Set<Application> getApplications(String realm);
+    public abstract Set<Application> getApplications();
 
     /**
      * Removes application.
      *
-     * @param realm Realm name.
      * @param name name of application to be removed.
      * @throws EntitlementException if application cannot be removed.
      */
-    void removeApplication(String realm, String name)
+    public abstract void removeApplication(String name)
         throws EntitlementException;
 
     /**
      * Stores the application to data store.
      *
-     * @param realm Realm name
      * @param application Application object.
      * @throws EntitlementException if application cannot be stored.
      */
-    void storeApplication(String realm, Application application)
+    public abstract void storeApplication(Application application)
         throws EntitlementException;
 
     /**
@@ -74,7 +128,7 @@ public interface IPolicyConfig {
      *
      * @return A set of registered application type.
      */
-    Set<ApplicationType> getApplicationTypes();
+    public abstract Set<ApplicationType> getApplicationTypes();
 
     /**
      * Removes application type.
@@ -82,7 +136,7 @@ public interface IPolicyConfig {
      * @param name name of application type to be removed.
      * @throws EntitlementException  if application type cannot be removed.
      */
-    void removeApplicationType(String name)
+    public abstract void removeApplicationType(String name)
         throws EntitlementException;
 
     /**
@@ -91,16 +145,8 @@ public interface IPolicyConfig {
      * @param applicationType Application type  object.
      * @throws EntitlementException if application type cannot be stored.
      */
-    void storeApplicationType(ApplicationType applicationType)
+    public abstract void storeApplicationType(ApplicationType applicationType)
         throws EntitlementException;
-
-    /**
-     * Returns attribute value of a given attribute name,
-     *
-     * @param attributeName attribute name.
-     * @return attribute value of a given attribute name,
-     */
-    String getAttributeValue(String attributeName);
 
     /**
      * Returns set of attribute values of a given attribute name,
@@ -108,43 +154,39 @@ public interface IPolicyConfig {
      * @param attributeName attribute name.
      * @return set of attribute values of a given attribute name,
      */
-    Set<String> getAttributeValues(String attributeName);
+    public abstract Set<String> getConfiguration(String attributeName);
 
     /**
      * Returns subject attribute names.
      *
-     * @param realm Realm name.
      * @param application Application name.
      * @return subject attribute names.
      * @throws EntitlementException if subject attribute names cannot be
      * returned.
      */
-    Set<String> getSubjectAttributeNames(String realm, String application)
+    public abstract Set<String> getSubjectAttributeNames(String application)
         throws EntitlementException;
 
     /**
      * Adds subject attribute names.
      *
-     * @param realm Realm name.
      * @param application Application name.
      * @param names Set of subject attribute names.
        @throws EntitlementException if subject attribute names cannot be
      *         added.
      */
-    void addSubjectAttributeNames(String realm, String application,
+    public abstract void addSubjectAttributeNames(String application,
         Set<String> names) throws EntitlementException;;
 
     /**
      * Adds a new action.
      *
-     * @param realm Realm name.
      * @param appName Application name,
      * @param name Action name.
      * @param defVal Default value.
      * @throws EntitlementException if action cannot be added.
      */
-    void addApplicationAction(
-        String realm,
+    public abstract void addApplicationAction(
         String appName,
         String name,
         Boolean defVal
@@ -157,7 +199,7 @@ public interface IPolicyConfig {
      * @return <code>true</code> if OpenSSO policy data is migrated to a
      * form that entitlements service can operates on them.
      */
-    boolean hasEntitlementDITs();
+    public abstract boolean hasEntitlementDITs();
 
     /**
      * Returns <code>true</code> if the system is migrated to support
@@ -166,5 +208,6 @@ public interface IPolicyConfig {
      * @return <code>true</code> if the system is migrated to support
      * entitlement services.
      */
-    boolean migratedToEntitlementService();
+    public abstract boolean migratedToEntitlementService();
+
 }

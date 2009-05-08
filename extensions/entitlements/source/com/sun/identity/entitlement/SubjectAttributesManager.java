@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.6 2009-05-04 20:57:06 veiming Exp $
+ * $Id: SubjectAttributesManager.java,v 1.7 2009-05-08 00:48:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -230,7 +229,8 @@ public class SubjectAttributesManager {
         String realm,
         String applicationName
     ) throws EntitlementException {
-        IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
-        return pc.getSubjectAttributeNames(realm, applicationName);
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            realm);
+        return ec.getSubjectAttributeNames(applicationName);
     }
 }

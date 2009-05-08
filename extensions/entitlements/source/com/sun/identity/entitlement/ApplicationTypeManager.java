@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeManager.java,v 1.8 2009-05-04 20:57:05 veiming Exp $
+ * $Id: ApplicationTypeManager.java,v 1.9 2009-05-08 00:48:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
@@ -50,8 +49,8 @@ public class ApplicationTypeManager {
      */
     public static Set<String> getApplicationTypeNames() {
         Set<String> names = new HashSet<String>();
-        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
-        Set<ApplicationType> applications = policyConfig.getApplicationTypes();
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        Set<ApplicationType> applications = ec.getApplicationTypes();
         for (ApplicationType a : applications) {
             names.add(a.getName());
         }
@@ -65,8 +64,9 @@ public class ApplicationTypeManager {
      * @return application type.
      */
     public static ApplicationType getAppplicationType(String name) {
-        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
-        Set<ApplicationType> applications = policyConfig.getApplicationTypes();
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        Set<ApplicationType> applications = ec.getApplicationTypes();
+
         for (ApplicationType a : applications) {
             if (a.getName().equals(name)) {
                 return a;
@@ -83,8 +83,8 @@ public class ApplicationTypeManager {
      */
     public static void removeApplicationType(String name
     ) throws EntitlementException {
-        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
-        policyConfig.removeApplicationType(name);
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        ec.removeApplicationType(name);
     }
 
     /**
@@ -94,8 +94,8 @@ public class ApplicationTypeManager {
      */
     public static void saveApplicationType(ApplicationType appType)
         throws EntitlementException {
-        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
-        policyConfig.storeApplicationType(appType);
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        ec.storeApplicationType(appType);
     }
 
     /**

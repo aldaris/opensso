@@ -22,17 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.13 2009-05-08 00:13:22 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.14 2009-05-08 00:48:15 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
+import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.PolicyConfigFactory;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
-import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import com.sun.identity.shared.BufferedIterator;
@@ -53,13 +52,24 @@ public class PolicyDataStore extends PrivilegeIndexStore {
      */
     public PolicyDataStore(String realm) {
         this.realm = realm;
-        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
-        policyCache = new PolicyCache(getNumeric(
-            policyConfig.getAttributeValue(IPolicyConfig.POLICY_CACHE_SIZE),
-            100000));
-        indexCache = new IndexCache(getNumeric(
-            policyConfig.getAttributeValue(IPolicyConfig.INDEX_CACHE_SIZE),
-            100000));
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            realm);
+
+        Set<String> setPolicyCacheSize = ec.getConfiguration(
+            EntitlementConfiguration.POLICY_CACHE_SIZE);
+        String policyCacheSize = ((setPolicyCacheSize != null) &&
+            !setPolicyCacheSize.isEmpty()) ?
+                setPolicyCacheSize.iterator().next() : null;
+        policyCache = (policyCacheSize != null) ? new PolicyCache(getNumeric(
+            policyCacheSize, 100000)) : new PolicyCache(100000);
+
+        Set<String> setIndexCacheSize = ec.getConfiguration(
+            EntitlementConfiguration.INDEX_CACHE_SIZE);
+        String indexCacheSize = ((setIndexCacheSize != null) &&
+            !setIndexCacheSize.isEmpty()) ?
+                setIndexCacheSize.iterator().next() : null;
+        indexCache = (indexCacheSize != null) ? new IndexCache(getNumeric(
+            indexCacheSize, 100000)) : new IndexCache(100000);
     }
 
     private static int getNumeric(String str, int defaultValue) {
@@ -82,9 +92,9 @@ public class PolicyDataStore extends PrivilegeIndexStore {
         throws EntitlementException {
         for (Privilege p : privileges) {
             dataStore.add(realm, p);
-            IPolicyConfig config = PolicyConfigFactory.getPolicyConfig();
-            config.addSubjectAttributeNames(realm,
-                p.getEntitlement().getApplicationName(),
+            EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            realm);
+            ec.addSubjectAttributeNames(p.getEntitlement().getApplicationName(),
                 SubjectAttributesManager.getRequiredAttributeNames(p));
         }
     }

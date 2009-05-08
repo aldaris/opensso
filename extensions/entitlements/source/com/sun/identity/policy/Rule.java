@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.7 2009-05-07 22:13:33 veiming Exp $
+ * $Id: Rule.java,v 1.8 2009-05-08 00:48:16 veiming Exp $
  *
  */
 package com.sun.identity.policy;
@@ -33,8 +33,7 @@ import org.w3c.dom.*;
 
 import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.sso.SSOException;
-import com.sun.identity.entitlement.PolicyConfigFactory;
-import com.sun.identity.entitlement.interfaces.IPolicyConfig;
+import com.sun.identity.entitlement.EntitlementConfiguration;
 
 /**
  * The class <code>Rule</code> provides interfaces to manage
@@ -167,8 +166,8 @@ public class Rule extends Object implements Cloneable {
         // Verify the action names
         //serviceType.validateActionValues(actions);
         this.actions = new HashMap(actions);
-        IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
-        if (pc.hasEntitlementDITs()) {
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        if (ec.hasEntitlementDITs()) {
             this.resourceName = resourceName;
         } else {
             try {
@@ -263,8 +262,9 @@ public class Rule extends Object implements Cloneable {
         }
         if (resourceName != null) {
             resourceName = resourceName.trim();
-            IPolicyConfig pc = PolicyConfigFactory.getPolicyConfig();
-            if (!pc.hasEntitlementDITs()) {
+            EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+                "/");
+            if (!ec.hasEntitlementDITs()) {
                 try {
                     resourceName = serviceType.canonicalize(resourceName);
                 } catch (PolicyException pe) {
