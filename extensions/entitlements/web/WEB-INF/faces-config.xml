@@ -1026,6 +1026,32 @@
             <value>/admin/facelet/template/policy-filter-modified.xhtml</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>authorPolicyFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.AuthorPolicyFilterType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>author</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/policy-filter-author.xhtml</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>modifierPolicyFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ModifierPolicyFilterType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>modifier</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/policy-filter-modifier.xhtml</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
         <managed-bean-name>policyFilterTypes</managed-bean-name>
@@ -1039,6 +1065,14 @@
             <map-entry>
                 <key>#{modifiedPolicyFilterType.name}</key>
                 <value>#{modifiedPolicyFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{authorPolicyFilterType.name}</key>
+                <value>#{authorPolicyFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{modifierPolicyFilterType.name}</key>
+                <value>#{modifierPolicyFilterType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
