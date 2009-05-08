@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.18 2009-05-07 22:13:32 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.19 2009-05-08 21:56:52 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -221,7 +221,7 @@ public class PrivilegeUtils {
             String entitlementName = rule.getName();
             
             Set<String> resourceNames = new HashSet<String>();
-            resourceNames.add(rule.getResourceName());
+            resourceNames.addAll(rule.getResourceNames());
 
             Set<String> excludedResourceNames = new HashSet<String>();
             Set excludedResourceNames1 = rule.getExcludedResourceNames();
@@ -379,7 +379,7 @@ public class PrivilegeUtils {
         policy.setDescription(privilege.getDescription());
         if (privilege.getEntitlement() != null) {
             Entitlement entitlement = privilege.getEntitlement();
-            Set<Rule> rules = entitlementToRules(entitlement);
+            Set<Rule> rules = entitlementToRule(entitlement);
             for (Rule rule : rules) {
                 policy.addRule(rule);
             }
@@ -415,7 +415,7 @@ public class PrivilegeUtils {
         return policy;
     }
 
-    private static Set<Rule> entitlementToRules(Entitlement entitlement)
+    private static Set<Rule> entitlementToRule(Entitlement entitlement)
             throws PolicyException, SSOException {
         Set<Rule> rules = new HashSet<Rule>();
         String appName = entitlement.getApplicationName();
@@ -427,21 +427,17 @@ public class PrivilegeUtils {
         Map av = pravToPav(actionValues, serviceName);
 
         if (resourceNames != null) {
-            int rc = 0;
             String entName = entitlement.getName();
             if (entName == null) {
                 entName = "entitlement";
             }
 
-            for (String resourceName : resourceNames) {
-                rc++;
-                Rule rule = new Rule(entName + "---" + rc, serviceName,
-                    resourceName, av);
-                rule.setExcludedResourceNames(
-                    entitlement.getExcludedResourceNames());
-                rule.setApplicationName(appName);
-                rules.add(rule);
-            }
+            Rule rule = new Rule(entName, serviceName, null, av);
+            rule.setResourceNames(resourceNames);
+            rule.setExcludedResourceNames(
+                entitlement.getExcludedResourceNames());
+            rule.setApplicationName(appName);
+            rules.add(rule);
         }
         return rules;
     }

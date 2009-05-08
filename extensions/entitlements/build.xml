@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.42 2009-05-08 07:03:20 veiming Exp $
+  $Id: build.xml,v 1.43 2009-05-08 21:56:52 veiming Exp $
 
 -->
 
@@ -227,6 +227,8 @@
             <fileset dir="${entitlements.xml.svc.dir}" includes="*.xml" />
             <fileset dir="${entitlements.web.dir}" includes="*.xml" />
         </copy>
+        <copy todir="${war.package.dir}/WEB-INF/classes/com/sun/identity/policy"
+            file="${entitlements.dtd.dir}/policyAdmin.dtd" />
     </target>
 
    <target name="merge-properties" depends="unwar">

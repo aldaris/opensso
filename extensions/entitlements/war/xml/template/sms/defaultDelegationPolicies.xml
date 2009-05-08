@@ -9,52 +9,11 @@
     <Rule name="delegation-rule1">
         <ServiceName name="sunAMDelegationService" />
         <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunIdentityRepositoryService/1.0/globalConfig/*" />
-        <AttributeValuePair>
-            <Attribute name="READ" />
-            <Value>allow</Value>
-        </AttributeValuePair>
-    </Rule>
-    <Subjects name="Subjects" description="">
-        <Subject name="delegation-subject" type="AuthenticatedUsers" includeType="inclusive">
-        </Subject>
-    </Subjects>
-</Policy>
-
-
-<Policy name="AllUserReadableServices2" referralPolicy="false" active="true" >
-    <Rule name="delegation-rule2">
-        <ServiceName name="sunAMDelegationService" />
         <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/DAI/1.0/globalConfig/*" />
-        <AttributeValuePair>
-            <Attribute name="READ" />
-            <Value>allow</Value>
-        </AttributeValuePair>
-    </Rule>
-    <Subjects name="Subjects" description="">
-        <Subject name="delegation-subject" type="AuthenticatedUsers" includeType="inclusive">
-        </Subject>
-    </Subjects>
-</Policy>
-
-<Policy name="AllUserReadableServices3" referralPolicy="false" active="true" >
-    <Rule name="delegation-rule3">
-        <ServiceName name="sunAMDelegationService" />
         <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/iPlanetAMAdminConsoleService/1.0/globalConfig/*" />
-        <AttributeValuePair>
-            <Attribute name="READ" />
-            <Value>allow</Value>
-        </AttributeValuePair>
-    </Rule>
-    <Subjects name="Subjects" description="">
-        <Subject name="delegation-subject" type="AuthenticatedUsers" includeType="inclusive">
-        </Subject>
-    </Subjects>
-</Policy>
-
-<Policy name="AllUserReadableServices4" referralPolicy="false" active="true" >
-    <Rule name="delegation-rule4">
-        <ServiceName name="sunAMDelegationService" />
         <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunFMSAML2MetadataService/1.0/OrganizationConfig/*" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunFMCOTConfigService/1.0/OrganizationConfig/*" />
+
         <AttributeValuePair>
             <Attribute name="READ" />
             <Value>allow</Value>
@@ -66,20 +25,6 @@
     </Subjects>
 </Policy>
 
-<Policy name="AllUserReadableServices5" referralPolicy="false" active="true" >
-    <Rule name="delegation-rule5">
-        <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunFMCOTConfigService/1.0/OrganizationConfig/*" />
-        <AttributeValuePair>
-            <Attribute name="READ" />
-            <Value>allow</Value>
-        </AttributeValuePair>
-    </Rule>
-    <Subjects name="Subjects" description="">
-        <Subject name="delegation-subject" type="AuthenticatedUsers" includeType="inclusive">
-        </Subject>
-    </Subjects>
-</Policy>
 
 <!-- Delegation policy for users to read their attributes -->
 <Policy name="SelfReadAttributes" referralPolicy="false" active="true" >
