@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.10 2008-11-17 23:57:03 mallas Exp $
+ * $Id: WSSSignatureProvider.java,v 1.11 2009-05-09 15:44:02 mallas Exp $
  *
  */
 
@@ -57,6 +57,7 @@ import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.wss.security.STRTransform;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.wss.security.BinarySecurityToken;
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.iplanet.security.x509.CertUtils;
 import java.lang.ClassNotFoundException;
 
@@ -67,12 +68,17 @@ import java.lang.ClassNotFoundException;
  */ 
 public class WSSSignatureProvider extends AMSignatureProvider {
     
+    private static final String USE_STR_TRANSFORMATION = 
+            "com.sun.identity.wss.signature.usestrtransformation";
     private boolean isSTRTransformRegistered = false;
+    private boolean useSTRTransformation = true;
     
     /** Creates a new instance of WSSSignatureProvider */
     public WSSSignatureProvider() {
         super();
-
+        useSTRTransformation = Boolean.valueOf(
+                SystemConfigurationUtil.getProperty(
+                USE_STR_TRANSFORMATION, "true")).booleanValue();
     }
     
     private synchronized void registerSTRTransform() {
@@ -107,7 +113,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                                    java.util.List ids)
         throws XMLSignatureException {
         
-        if(!isSTRTransformRegistered) {
+        if(useSTRTransformation && !isSTRTransformRegistered) {
            registerSTRTransform();
         }
         
@@ -247,12 +253,13 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                         Constants.ALGO_ID_DIGEST_SHA1);
             }
 
-            Transforms strtransform = new Transforms(doc);
-            strtransform.addTransform(STRTransform.STR_TRANSFORM_URI,
-                       transformParams);
-            signature.addDocument("#"+secRefId, strtransform,
-                        Constants.ALGO_ID_DIGEST_SHA1);
-
+            if(useSTRTransformation) {
+               Transforms strtransform = new Transforms(doc);
+               strtransform.addTransform(STRTransform.STR_TRANSFORM_URI,
+                            transformParams);
+               signature.addDocument("#"+secRefId, strtransform,
+                            Constants.ALGO_ID_DIGEST_SHA1);
+            }
 
             Element keyIdentifier = doc.createElementNS(
                         WSSConstants.WSSE_NS,
@@ -347,7 +354,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                                    String referenceType)
         throws XMLSignatureException {
 
-        if(!isSTRTransformRegistered) {
+        if(useSTRTransformation && !isSTRTransformRegistered) {
            registerSTRTransform();
         }
         
@@ -458,7 +465,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
             
             Element tokenE = (Element)root.getElementsByTagNameNS(
                       WSSConstants.WSSE_NS,tokenType).item(0);
-            if (tokenE != null) {
+            if (tokenE != null && useSTRTransformation) {
                 Transforms strtransforms = new Transforms(doc);
                 strtransforms.addTransform(
                                STRTransform.STR_TRANSFORM_URI, transformParams);
@@ -527,7 +534,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                                        java.lang.String certAlias)
         throws XMLSignatureException {
         
-        if(!isSTRTransformRegistered) {
+        if(useSTRTransformation && !isSTRTransformRegistered) {
            registerSTRTransform();
         }
 

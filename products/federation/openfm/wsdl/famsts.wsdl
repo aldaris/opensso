@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: famsts.wsdl,v 1.8 2008-11-18 00:00:02 mallas Exp $
+   $Id: famsts.wsdl,v 1.9 2009-05-09 15:44:02 mallas Exp $
 
 -->
 <wsdl:definitions name="SecurityTokenService" targetNamespace="http://localhost:8080/openfm/SecurityTokenService/" 
@@ -186,7 +186,7 @@
         </wsdl:binding>
 	<wsdl:service name="SecurityTokenService">
                 <wsdl:port name="ISecurityTokenService_Port" binding="tns:ISecurityTokenService_Binding">
-                        <soap12:address location="http://localhost:8080/fam/sts"/>
+                        <soap12:address location="http://localhost:8080/opensso/sts"/>
                 </wsdl:port>
                 <wsdl:port name="ISecurityTokenService_PortSoap11" binding="tns:ISecurityTokenService_BindingSoap11">
                         <soap:address location="http://localhost:8080/opensso/sts/soap11"/>

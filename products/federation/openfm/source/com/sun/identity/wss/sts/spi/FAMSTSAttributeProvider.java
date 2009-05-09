@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.18 2009-04-16 17:30:10 mrudul_uchil Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.19 2009-05-09 15:44:01 mallas Exp $
  *
  */
 
@@ -222,7 +222,8 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
         tmp = (Set)agentConfig.get(SAML_ATTRIBUTE_MAP);
         Map samlAttributeMap = null;
         if(tmp != null && !tmp.isEmpty()) {
-           samlAttributeMap = getSAMLAttributes(subjectName, tmp, namespace);
+           samlAttributeMap = WSSUtils.getSAMLAttributes(
+                   subjectName, tmp, namespace, ssoToken);
         }
         if(samlAttributeMap != null) {
            attrs.putAll(samlAttributeMap);
@@ -246,7 +247,8 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
                 CollectionHelper.getMapAttr(
                 agentConfig, INCLUDE_MEMBERSHIPS, "false")).booleanValue(); 
         if(includeMemberships){
-           Map memberships = getMemberships(subjectName, namespace); 
+           Map memberships = WSSUtils.getMembershipAttributes(
+                   subjectName, namespace); 
            if(memberships != null && !memberships.isEmpty()) {
               attrs.putAll(memberships);
            }
@@ -267,106 +269,17 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
         if(agentConfig == null) {
            return userName;
         }
-        
+                
         String nameIDImpl = CollectionHelper.getMapAttr(
                             agentConfig, NAMEID_MAPPER_CLASS); 
         if(nameIDImpl == null) {
            return userName;
         }
 
-        try {
-            Class nameIDImplClass = 
-                (Thread.currentThread().getContextClassLoader()).
-                loadClass(nameIDImpl);
-            NameIdentifierMapper niMapper = 
-                    (NameIdentifierMapper)nameIDImplClass.newInstance(); 
-            return niMapper.getUserPsuedoName(userName);
-        } catch (Exception ex) {
-            STSUtils.debug.error("FAMSTSAttributeProvider.getUserPseduoName: "+
-            " Exception", ex);
-        }
-        return userName;
+        return WSSUtils.getUserPseduoName(userName, nameIDImpl);
+
     }
-
-    /**
-     * Returns SAML Attributes for attribute statements
-     * @param subjectName
-     * @param attributeMap
-     * @param namespace
-     * @return map of saml attribute mappings
-     */
-    private Map<QName, List<String>> getSAMLAttributes(String subjectName,
-                  Set attributeMap, String namespace) {
-
-        Map<QName, List<String>> map = new HashMap();
-        AMIdentity amId = null;
-        try {
-            amId = new AMIdentity(WSSUtils.getAdminToken(), subjectName);
-            if(!amId.isExists()) {
-               if(STSUtils.debug.messageEnabled()) {
-                  STSUtils.debug.message("FAMSTSAttributeProvider.getSAML" +
-                  "Attributes: Subject " + subjectName + " does not exist");
-               }
-            }
-        } catch (Exception ex) {
-            STSUtils.debug.error("FAMSTSAttributeProvider.getSAML" +
-                    "Attributes: read subject error", ex);
-            return null;
-        }
-
-        for (Iterator iter = attributeMap.iterator(); iter.hasNext();) {
-             String attribute = (String)iter.next();
-             if(attribute.indexOf("=") != -1) {
-                StringTokenizer st = new StringTokenizer(attribute, "=");
-                if(st.countTokens() != 2) {
-                   continue;
-                }
-                String samlAttribute = st.nextToken();
-                String realAttribute = st.nextToken();
-                Set values = new HashSet();
-                boolean attributeFoundInSSOToken = false;
-                if(ssoToken != null) {
-                   try {
-                       String attributeValue = 
-                               ssoToken.getProperty(realAttribute);
-                       if(attributeValue != null) {
-                          values.add(attributeValue);
-                          attributeFoundInSSOToken = true;
-                       }
-                   } catch (SSOException se) {
-                       if(STSUtils.debug.messageEnabled()) {
-                          STSUtils.debug.message("FAMSTSAttributeProvider.get"+
-                                  "SAMLAttributes: SSOException", se);
-                       }
-                   }
-                }
-                
-                if(!attributeFoundInSSOToken) {
-                   try {
-                       values = amId.getAttribute(realAttribute);
-                   } catch (Exception ex) {
-                       STSUtils.debug.error("FAMSTSAttributeProvider.getSAML" +
-                           "Attributes: read attributes error", ex);
-                   }
-                }
-                
-                if(values == null || values.isEmpty()) {
-                   if(STSUtils.debug.messageEnabled()) {
-                      STSUtils.debug.message("FAMSTSAttributeProvider.get"+
-                           "SAMLAttributes: attribute value not found for" +
-                           realAttribute);
-                   }
-                   continue;
-                }
-                List<String> list = new ArrayList();
-                list.addAll(values);
-                QName qName = new QName(namespace, samlAttribute);
-                map.put(qName, list);
-             }
-        }
-        return map; 
-    }
-    
+       
     /**
      * Returns end user's principal if OpenSSO Token is present or
      * any other custom token, otherwise returns null.
@@ -462,20 +375,7 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
         }
         return null;
     }
-
-    private Map<QName, List<String>>  getMemberships(
-               String subjectName, String namespace) {
-        Map<QName, List<String>> map = new HashMap();
-        List<String> roles = WSSUtils.getMemberShips(subjectName);
-        if(roles == null || roles.isEmpty()) {
-           return map;
-        }
-
-        QName qName = new QName(namespace, MEMBERSHIPS);
-        map.put(qName, roles);
-        return map;
-    }
-    
+       
     /**
      *  Returns the principal from the authenticated Subject if available
      *  through private credentials

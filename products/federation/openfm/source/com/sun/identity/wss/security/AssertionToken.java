@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionToken.java,v 1.6 2008-08-22 04:07:56 mallas Exp $
+ * $Id: AssertionToken.java,v 1.7 2009-05-09 15:44:00 mallas Exp $
  *
  */
 
@@ -514,7 +514,22 @@ public class AssertionToken implements SecurityToken {
                     continue; 
                  }
                  List values = (List)attributes.get(qName);
-                 Attribute attr = new Attribute(attrName, nameSpace, values);             
+                 if(values == null || values.isEmpty()) {
+                    continue; 
+                 }
+                 
+                 List elementValues = new ArrayList();
+                 for (Iterator iter1=values.iterator(); iter1.hasNext();) {
+                     String value = (String)iter1.next();
+                     String attrValue = "<AttributeValue>" + value +
+                              "</AttributeValue>";
+                     Element valueE =  XMLUtils.toDOMDocument(
+                             attrValue, WSSUtils.debug).getDocumentElement();
+                     elementValues.add(valueE);
+                 }
+                 
+                 Attribute attr = new Attribute(attrName, nameSpace,
+                         elementValues);             
                  samlAttributes.add(attr);            
              } 
              if(samlAttributes.isEmpty()) {

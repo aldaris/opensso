@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.11 2008-09-08 21:50:16 mallas Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.12 2009-05-09 15:44:01 mallas Exp $
  *
  */
 
@@ -40,34 +40,12 @@ import com.sun.xml.ws.security.trust.elements.RequestedAttachedReference;
 import com.sun.xml.ws.security.trust.elements.RequestedUnattachedReference;
 import com.sun.xml.ws.security.trust.elements.str.SecurityTokenReference;
 
-import com.sun.xml.wss.XWSSecurityException;
-import com.sun.org.apache.xml.internal.security.keys.KeyInfo;
 import com.sun.xml.wss.impl.MessageConstants;
-import com.sun.xml.wss.saml.Advice;
-import com.sun.xml.wss.saml.Assertion;
-import com.sun.xml.wss.saml.Attribute;
-import com.sun.xml.wss.saml.AttributeStatement;
-import com.sun.xml.wss.saml.AudienceRestriction;
-import com.sun.xml.wss.saml.AudienceRestrictionCondition;
-import com.sun.xml.wss.saml.AuthenticationStatement;
-import com.sun.xml.wss.saml.AuthnContext;
-import com.sun.xml.wss.saml.AuthnStatement;
-import com.sun.xml.wss.saml.Conditions;
-import com.sun.xml.wss.saml.NameID;
-import com.sun.xml.wss.saml.NameIdentifier;
-import com.sun.xml.wss.saml.SAMLAssertionFactory;
-import com.sun.xml.wss.saml.SAMLException;
-import com.sun.xml.wss.saml.SubjectConfirmation;
-import com.sun.xml.wss.saml.KeyInfoConfirmationData;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.HashMap;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import com.sun.xml.ws.security.trust.logging.LogStringsMessages;
 
@@ -81,13 +59,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.sun.org.apache.xml.internal.security.keys.KeyInfo;
+import com.sun.org.apache.xml.internal.security.keys.keyresolver.KeyResolverException;
 import com.sun.org.apache.xml.internal.security.encryption.EncryptedKey;
 import com.sun.org.apache.xml.internal.security.keys.content.X509Data;
 import com.sun.identity.wss.sts.STSUtils;
-import com.sun.identity.wss.sts.STSConstants;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.xml.ws.security.trust.WSTrustElementFactory;
-import java.security.PrivateKey;
 import com.sun.org.apache.xml.internal.security.exceptions.XMLSecurityException;
 import com.sun.identity.wss.sts.STSConstants;
 import com.sun.identity.plugin.session.impl.FMSessionProvider;
@@ -105,13 +82,22 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.wss.security.SecurityException;
 import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
 import com.sun.identity.wss.security.SecurityToken;
-import com.sun.identity.wss.logging.LogUtil;
 import com.sun.identity.wss.security.WSSConstants;
 import com.sun.identity.wss.security.UserNameTokenSpec;
 import com.iplanet.services.util.Crypt;
 import com.sun.identity.wss.security.SecurityTokenFactory;
 import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.wss.security.SecurityMechanism;
+import com.sun.identity.wss.security.AssertionTokenSpec;
+import com.sun.identity.wss.security.AssertionToken;
+import com.sun.identity.wss.security.SAML2TokenSpec;
+import com.sun.identity.wss.security.SAML2Token;
+import com.sun.identity.saml2.assertion.AssertionFactory;
+import com.sun.identity.saml2.common.SAML2Exception;
+import com.sun.identity.saml2.assertion.NameID;
+import com.sun.identity.saml.assertion.NameIdentifier;
+import com.sun.identity.saml.common.SAMLException;
+import com.sun.identity.wss.logging.LogUtil;
 
 
 public class FAMSTSTokenProvider implements STSTokenProvider {
@@ -158,6 +144,12 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
         WSTrustElementFactory eleFac = 
             WSTrustElementFactory.newInstance(wstVer);
         
+        final X509Certificate stsCert = 
+            (X509Certificate)ctx.getOtherProperties().get(
+            IssuedTokenContext.STS_CERTIFICATE);
+        String stsCertAlias = WSSUtils.getXMLSignatureManager().
+                getKeyProvider().getCertificateAlias(stsCert);
+        
         // Create the KeyInfo for SubjectConfirmation
         final KeyInfo keyInfo = createKeyInfo(ctx);
         
@@ -169,34 +161,54 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                 + tokenType);
         }
         
-        // Create SAML assertion
-        Assertion assertion = null;
+        //Create SAML Assertion
+        Element assertionE = null;
         
         if (WSTrustConstants.SAML10_ASSERTION_TOKEN_TYPE.equals(tokenType)||
-            WSTrustConstants.SAML11_ASSERTION_TOKEN_TYPE.equals(tokenType)){
-            assertion = 
-                createSAML11Assertion(wstVer, tokenLifeSpan, confirMethod, 
-                assertionId, issuer, appliesTo, keyInfo, claimedAttrs, 
-                keyType, getAuthnMechanism(ctx));
-            String[] data = {assertionId,issuer,appliesTo,confirMethod,
-                tokenType,keyType};
-            LogUtil.access(Level.INFO,
-                        LogUtil.CREATED_SAML11_ASSERTION,
-                        data,
-                        null);
-        } else if (WSTrustConstants.SAML20_ASSERTION_TOKEN_TYPE.equals(
-            tokenType)){
-            String authnCtx = getAuthContextClassRef(ctx);                
-            assertion = 
-                createSAML20Assertion(wstVer, tokenLifeSpan, confirMethod, 
-                assertionId, issuer, appliesTo, keyInfo, claimedAttrs, keyType, 
-                authnCtx);
-            String[] data = {assertionId,issuer,appliesTo,confirMethod,
-                tokenType,keyType};
-            LogUtil.access(Level.INFO,
-                        LogUtil.CREATED_SAML20_ASSERTION,
-                        data,
-                        null);
+            WSTrustConstants.SAML11_ASSERTION_TOKEN_TYPE.equals(tokenType)) {
+            String authMethod = getAuthnMechanism(ctx);
+            try {
+                assertionE = createSAML11Assertion(wstVer, tokenLifeSpan,
+                             confirMethod, authMethod, issuer, appliesTo, 
+                             keyInfo, claimedAttrs,
+                             keyType, assertionId, stsCertAlias);                
+                if(LogUtil.isLogEnabled()) {
+                   String[] data = {assertionId,issuer,appliesTo,confirMethod,
+                                 tokenType,keyType};
+                   LogUtil.access(Level.INFO,
+                           LogUtil.CREATED_SAML11_ASSERTION,
+                           data,
+                           null);
+                }
+            } catch (FAMSTSException fse) {
+                STSUtils.debug.error("FAMSTSTokenProvider.generateToken: " +
+                        "Could not generate SAML11 Assertion", fse);
+                throw new WSTrustException(fse.getMessage());
+            }
+            
+        } else if (tokenType == null || 
+               WSTrustConstants.SAML20_ASSERTION_TOKEN_TYPE.equals(
+               tokenType)){
+            String authnCtx = getAuthContextClassRef(ctx);
+            try {
+                assertionE =
+                createSAML20Assertion(wstVer, tokenLifeSpan, confirMethod,
+                assertionId, issuer, appliesTo, keyInfo, claimedAttrs, keyType,
+                authnCtx, stsCertAlias);
+                if(LogUtil.isLogEnabled()) {
+                   String[] data = {assertionId,issuer,appliesTo,confirMethod,
+                                    tokenType,keyType};
+                   LogUtil.access(Level.INFO,
+                                  LogUtil.CREATED_SAML20_ASSERTION,
+                                  data,
+                                  null);
+                }
+            } catch (FAMSTSException fse) {
+                STSUtils.debug.error("FAMSTSTokenProvider.generateToken: " +
+                        "Could not generate SAML2 Assertion", fse);
+                throw new WSTrustException(fse.getMessage());
+            }   
+             
         } else {
             // TBD : Need to add code for UserName token creation and 
             // X509 token creation.
@@ -211,39 +223,13 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                 LogStringsMessages.WST_0031_UNSUPPORTED_TOKEN_TYPE(
                 tokenType, appliesTo));
         }
-            
-        // Get the STS's certificate and private key
-        final X509Certificate stsCert = 
-            (X509Certificate)ctx.getOtherProperties().get(
-            IssuedTokenContext.STS_CERTIFICATE);
-        final PrivateKey stsPrivKey = 
-            (PrivateKey)ctx.getOtherProperties().get(
-            IssuedTokenContext.STS_PRIVATE_KEY);
-            
-        // Sign the assertion with STS's private key
-        Element signedAssertion = null;
-        try{
-            signedAssertion = assertion.sign(stsCert, stsPrivKey, true);
-            //signedAssertion = assertion.sign(stsCert, stsPrivKey);
-        } catch (SAMLException ex){
-            STSUtils.debug.error("FAMSTSTokenProvider.generateToken ERROR : " + 
-                "ERROR_SIGNING_SAML_ASSERTION : ", ex);
-            String[] data = {ex.getLocalizedMessage()};
-            LogUtil.error(Level.INFO,
-                        LogUtil.ERROR_SIGNING_SAML_ASSERTION,
-                        data,
-                        null);
-            throw new WSTrustException(
-                    LogStringsMessages.WST_0032_ERROR_CREATING_SAML_ASSERTION(),
-                    ex);
-        }
-        
+                      
         if(STSUtils.debug.messageEnabled()) {
             STSUtils.debug.message("FAMSTSTokenProvider.signedAssertion : " + 
-                XMLUtils.print(signedAssertion));
+                XMLUtils.print(assertionE));
         }
-        ctx.setSecurityToken(new GenericToken(signedAssertion));
-        
+          
+        ctx.setSecurityToken(new GenericToken(assertionE));        
         // Create References
         String valueType = null;
         if (WSTrustConstants.SAML10_ASSERTION_TOKEN_TYPE.equals(tokenType)||
@@ -277,256 +263,142 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    protected Assertion createSAML11Assertion(final WSTrustVersion wstVer, 
-        int lifeSpan, String confirMethod, final String assertionId, 
-        final String issuer, final String appliesTo, final KeyInfo keyInfo, 
+    protected Element createSAML11Assertion(final WSTrustVersion wstVer,
+        int lifeSpan, String confirMethod, final String authMethod,
+        final String issuer, final String appliesTo, final KeyInfo keyInfo,
         final Map<QName, List<String>> claimedAttrs, String keyType,
-        String authMethod) throws WSTrustException{
-        
-        Assertion assertion = null;
-        try{
-            final SAMLAssertionFactory samlFac = 
-                SAMLAssertionFactory.newInstance(SAMLAssertionFactory.SAML1_1);
-            
-            final TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
-            final GregorianCalendar issuerInst = 
-                new GregorianCalendar(utcTimeZone);
-            final GregorianCalendar notOnOrAfter = 
-                new GregorianCalendar(utcTimeZone);
-            lifeSpan = lifeSpan + (5 * 60 * 1000);
-            notOnOrAfter.add(Calendar.MILLISECOND, lifeSpan);
-            
-            List<AudienceRestrictionCondition> arc = null;
-            if (appliesTo != null){
-                arc = new ArrayList<AudienceRestrictionCondition>();
-                List<String> au = new ArrayList<String>();
-                au.add(appliesTo);
-                arc.add(samlFac.createAudienceRestrictionCondition(au));
+        String assertionId, String stsKey) throws FAMSTSException {
+        try {                              
+            SecurityTokenFactory stFactory = SecurityTokenFactory.getInstance(
+                    WSSUtils.getAdminToken());
+            String subjectName = getSubjectName(claimedAttrs);
+            if(subjectName == null) {
+               if(STSUtils.debug.warningEnabled()) {
+                  STSUtils.debug.warning("FAMSTSTokenProvider.createSAML11" +
+                          "Assertion: subject is null"); 
+               }
+               throw new FAMSTSException(
+                       STSUtils.bundle.getString("nullSubject"));
             }
-            
-            final List<String> confirmMethods = new ArrayList<String>();
             if (confirMethod == null){
                 if (keyType.equals(wstVer.getBearerKeyTypeURI())){
-                     //confirMethod = STSConstants.SAML_BEARER_1_0;
-                    confirMethod = STSConstants.SAML_SENDER_VOUCHES_1_0;
-            
+                    confirMethod = STSConstants.SAML_BEARER_1_0;
                 } else {
                     confirMethod = STSConstants.SAML_HOLDER_OF_KEY_1_0;
                 }
             }
-            
-            Element keyInfoEle = null;
-            if (keyInfo != null && !wstVer.getBearerKeyTypeURI().equals(
-                keyType)) {
-                keyInfoEle = keyInfo.getElement();
+            AssertionTokenSpec tokenSpec = new AssertionTokenSpec();
+            NameIdentifier nameID = new NameIdentifier(subjectName);         
+            tokenSpec.setSenderIdentity(nameID);
+            tokenSpec.setAppliesTo(appliesTo);
+            tokenSpec.setAssertionInterval(lifeSpan);
+            tokenSpec.setIssuer(issuer);
+            tokenSpec.setConfirmationMethod(confirMethod);
+            tokenSpec.setClaimedAttributes(claimedAttrs);
+            X509Certificate cert = keyInfo.getX509Certificate();
+            if(cert != null) {
+               String clientCert = WSSUtils.getXMLSignatureManager().
+                       getKeyProvider().getCertificateAlias(cert);
+               tokenSpec.setSubjectCertAlias(clientCert);
             }
-            confirmMethods.add(confirMethod);
-            
-            final SubjectConfirmation subjectConfirm = 
-                samlFac.createSubjectConfirmation(confirmMethods, null, 
-                keyInfoEle);
-            final Conditions conditions =
-                samlFac.createConditions(issuerInst, notOnOrAfter, null, arc, 
-                null);
-            final Advice advice = samlFac.createAdvice(null, null, null);
-            
-            com.sun.xml.wss.saml.Subject subj = null;
-            final List<Attribute> attrs = new ArrayList<Attribute>();
-            final Set<Map.Entry<QName, List<String>>> entries = 
-                claimedAttrs.entrySet();
-            for(Map.Entry<QName, List<String>> entry : entries){
-                final QName attrKey = entry.getKey();
-                final List<String> values = entry.getValue();
-                if (values != null && values.size() > 0){
-                    if (STSAttributeProvider.NAME_IDENTIFIER.equals(
-                            attrKey.getLocalPart()) && subj == null){
-                        final NameIdentifier nameId = 
-                            samlFac.createNameIdentifier(values.get(0), 
-                            attrKey.getNamespaceURI(), null);
-                        subj = samlFac.createSubject(nameId, subjectConfirm);
-                    } else {
-                        final Attribute attr = 
-                            samlFac.createAttribute(attrKey.getLocalPart(), 
-                            attrKey.getNamespaceURI(), values);
-                        attrs.add(attr);
-                    }
-                }
-            }
-            
-            final List<Object> statements = new ArrayList<Object>();
-            final AuthenticationStatement statement = 
-                  samlFac.createAuthenticationStatement(authMethod, issuerInst, 
-                  subj, null, null);
-            statements.add(statement); 
-            if (!attrs.isEmpty()){                
-                final AttributeStatement attrStatement = 
-                    samlFac.createAttributeStatement(subj, attrs);
-                statements.add(attrStatement);
-            }
-            assertion =
-                samlFac.createAssertion(assertionId, issuer, issuerInst, 
-                conditions, advice, statements);
-        } catch(SAMLException ex){
-            STSUtils.debug.error("FAMSTSTokenProvider.createSAML11Assertion : " 
-                + "ERROR_CREATING_SAML11_ASSERTION : ", ex);
-            String[] data = {ex.getLocalizedMessage()};
-            LogUtil.error(Level.INFO,
-                        LogUtil.ERROR_CREATING_SAML11_ASSERTION,
-                        data,
-                        null);
-            LogUtil.error(Level.SEVERE,
-                        LogUtil.ERROR_CREATING_SAML11_ASSERTION,
-                        data,
-                        null);
-            throw new WSTrustException(
-                LogStringsMessages.WST_0032_ERROR_CREATING_SAML_ASSERTION(), 
-                ex);
-        } catch(XWSSecurityException ex){
-            STSUtils.debug.error("FAMSTSTokenProvider.createSAML11Assertion : " 
-                + "ERROR_CREATING_SAML11_ASSERTION : ", ex);
-            String[] data = {ex.getLocalizedMessage()};
-            LogUtil.error(Level.INFO,
-                        LogUtil.ERROR_CREATING_SAML11_ASSERTION,
-                        data,
-                        null);
-            LogUtil.error(Level.SEVERE,
-                        LogUtil.ERROR_CREATING_SAML11_ASSERTION,
-                        data,
-                        null);
-            throw new WSTrustException(
-                LogStringsMessages.WST_0032_ERROR_CREATING_SAML_ASSERTION(), 
-                ex);
+            tokenSpec.setAuthenticationMethod(authMethod);
+            tokenSpec.setAssertionID(assertionId);
+
+            AssertionToken token =
+                    (AssertionToken)stFactory.getSecurityToken(tokenSpec);
+            return token.toDocumentElement();
+
+        } catch (SecurityException se) {
+            STSUtils.debug.error("FAMSTSTokenProvider.createSAML11Assertion:" +
+                    " failed in creating SAML11 Token", se);
+            throw new FAMSTSException(se.getMessage());
+        } catch (SAMLException sle) {
+            STSUtils.debug.error("FAMSTSTokenProvider.createSAML11Assertion:" +
+                    " failed in creating SAML11 Token", sle);
+            throw new FAMSTSException(sle.getMessage());
+        } catch (KeyResolverException ke) {
+            STSUtils.debug.error("FAMSTSTokenProvider.createSAML11Assertion:" +
+                    " failed in creating SAML11 Token", ke);
+            throw new FAMSTSException(ke.getMessage());
         }
-        
-        return assertion;
     }
     
-    protected Assertion createSAML20Assertion(final WSTrustVersion wstVer, 
-        int lifeSpan, String confirMethod, final String assertionId, 
-        final String issuer, final String appliesTo, final KeyInfo keyInfo, 
-        final  Map<QName, List<String>> claimedAttrs, String keyType, 
-        String authnCtx) throws WSTrustException {
-        
-        Assertion assertion = null;
-        try{
-            final SAMLAssertionFactory samlFac = 
-                SAMLAssertionFactory.newInstance(SAMLAssertionFactory.SAML2_0);
-            
-            // Create Conditions
-            final TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
-            final GregorianCalendar issueInst = 
-                new GregorianCalendar(utcTimeZone);
-            final GregorianCalendar notOnOrAfter = 
-                new GregorianCalendar(utcTimeZone);
-            //remove later, read this from a config by the token provider
-            lifeSpan = lifeSpan + (5 * 60 * 1000);
-            notOnOrAfter.add(Calendar.MILLISECOND, lifeSpan);
-            
-            List<AudienceRestriction> arc = null;
-            KeyInfoConfirmationData keyInfoConfData = null;
-            if (confirMethod == null){
-                if (keyType.equals(wstVer.getBearerKeyTypeURI())){
-                     //confirMethod = STSConstants.SAML_BEARER_2_0;
-                    confirMethod = STSConstants.SAML_SENDER_VOUCHES_2_0;
+    protected Element createSAML20Assertion(final WSTrustVersion wstVer,
+        int lifeSpan, String confirMethod, String assertionId,
+        final String issuer, final String appliesTo, final KeyInfo keyInfo,
+        final  Map<QName, List<String>> claimedAttrs, String keyType,
+        String authnCtx, String stsKey) throws FAMSTSException {
 
+        try {           
+            SecurityTokenFactory stFactory = SecurityTokenFactory.getInstance(
+                      WSSUtils.getAdminToken());
+            String subjectName = getSubjectName(claimedAttrs);
+            if(subjectName == null) {
+               if(STSUtils.debug.warningEnabled()) {
+                  STSUtils.debug.warning("FAMSTSTokenProvider.createSAML2" +
+                          "Assertion: subject is null"); 
+               }
+               throw new FAMSTSException(
+                       STSUtils.bundle.getString("nullSubject"));
+            }
+            if (confirMethod == null) {
+                if (keyType.equals(wstVer.getBearerKeyTypeURI())){
+                    confirMethod = STSConstants.SAML_BEARER_2_0;
                 } else {
-                    confirMethod = STSConstants.SAML_HOLDER_OF_KEY_2_0;
-                    if (keyInfo != null){
-                        keyInfoConfData = samlFac.createKeyInfoConfirmationData(
-                            keyInfo.getElement());
-                    }
+                    confirMethod = STSConstants.SAML_HOLDER_OF_KEY_2_0;                  
                 }
             }
-            if (appliesTo != null){
-                         arc = new ArrayList<AudienceRestriction>();
-                         List<String> au = new ArrayList<String>();
-                         au.add(appliesTo);
-                         arc.add(samlFac.createAudienceRestriction(au));
+            SAML2TokenSpec tokenSpec = new SAML2TokenSpec();
+            AssertionFactory assertionFactory = AssertionFactory.getInstance();
+            NameID nameID = assertionFactory.createNameID();
+            nameID.setValue(subjectName);
+            nameID.setNameQualifier(issuer);
+            tokenSpec.setAssertionID(assertionId);
+            tokenSpec.setSenderIdentity(nameID);
+            tokenSpec.setConfirmationMethod(confirMethod);
+            X509Certificate cert = keyInfo.getX509Certificate();
+            if(cert != null) {
+               String clientCert = WSSUtils.getXMLSignatureManager().
+                       getKeyProvider().getCertificateAlias(cert);
+               tokenSpec.setSubjectCertAlias(clientCert);
             }
-            final Conditions conditions = 
-                samlFac.createConditions(issueInst, notOnOrAfter, null, arc, 
-                null, null);
-               
-            final SubjectConfirmation subjectConfirm = 
-                samlFac.createSubjectConfirmation(null, keyInfoConfData, 
-                confirMethod);
-            
-            com.sun.xml.wss.saml.Subject subj = null;
-            final List<Attribute> attrs = new ArrayList<Attribute>();
-            
-           // if(claimedAttrs != null) {
-            final Set<Map.Entry<QName, List<String>>> entries = 
-                claimedAttrs.entrySet();
-            for(Map.Entry<QName, List<String>> entry : entries){
-                final QName attrKey = entry.getKey();
-                final List<String> values = entry.getValue();
-                if (values != null && values.size() > 0){
-                    if (STSAttributeProvider.NAME_IDENTIFIER.equals(
-                            attrKey.getLocalPart()) && subj == null){
-                        final NameID nameId = 
-                            samlFac.createNameID(values.get(0), 
-                            attrKey.getNamespaceURI(), null);
-                        subj = samlFac.createSubject(nameId, subjectConfirm);
-                    }
-                    else{
-                        final Attribute attr = 
-                            samlFac.createAttribute(attrKey.getLocalPart(), 
-                            values);
-                        attrs.add(attr);
-                    }
-                }
-            }
-            //}   
-            final List<Object> statements = new ArrayList<Object>();
-            AuthnContext ctx = samlFac.createAuthnContext(authnCtx, null);           
-            final AuthnStatement statement = 
-                    samlFac.createAuthnStatement(issueInst, null, ctx);
-            statements.add(statement); 
-            if (!attrs.isEmpty()){                
-                final AttributeStatement attrStatement = 
-                    samlFac.createAttributeStatement(attrs);
-                statements.add(attrStatement);
-            }
-            
-            final NameID issuerID = samlFac.createNameID(issuer, null, null);
-            
-            // Create Assertion
-            assertion =
-                samlFac.createAssertion(assertionId, issuerID, issueInst, 
-                conditions, null, subj, statements);
-        } catch(SAMLException ex){
-            STSUtils.debug.error("FAMSTSTokenProvider.createSAML20Assertion " + 
-                " ERROR : ERROR_CREATING_SAML20_ASSERTION : ", ex);
-            String[] data = {ex.getLocalizedMessage()};
-            LogUtil.error(Level.INFO,
-                        LogUtil.ERROR_CREATING_SAML20_ASSERTION,
-                        data,
-                        null);
-            LogUtil.error(Level.SEVERE,
-                        LogUtil.ERROR_CREATING_SAML20_ASSERTION,
-                        data,
-                        null);
-            throw new WSTrustException(
-                LogStringsMessages.WST_0032_ERROR_CREATING_SAML_ASSERTION(), 
-                ex);
-        } catch(XWSSecurityException ex){
-            STSUtils.debug.error("FAMSTSTokenProvider.createSAML20Assertion " + 
-                " ERROR : ERROR_CREATING_SAML20_ASSERTION : ", ex);
-            String[] data = {ex.getLocalizedMessage()};
-            LogUtil.error(Level.INFO,
-                        LogUtil.ERROR_CREATING_SAML20_ASSERTION,
-                        data,
-                        null);
-            LogUtil.error(Level.SEVERE,
-                        LogUtil.ERROR_CREATING_SAML20_ASSERTION,
-                        data,
-                        null);
-            throw new WSTrustException(
-                LogStringsMessages.WST_0032_ERROR_CREATING_SAML_ASSERTION(), 
-                ex);
+            tokenSpec.setAppliesTo(appliesTo);
+            tokenSpec.setClaimedAttributes(claimedAttrs);
+            tokenSpec.setAssertionInterval(lifeSpan);
+            tokenSpec.setAuthnContextClassRef(authnCtx);
+            tokenSpec.setIssuer(issuer);
+            tokenSpec.setSigningAlias(stsKey);
+            SAML2Token saml2Token =
+                    (SAML2Token)stFactory.getSecurityToken(tokenSpec);
+            return saml2Token.toDocumentElement();
+        } catch (SecurityException se) {
+            STSUtils.debug.error("FAMSTSTokenProvider.createSAML2Assertion: " +
+                    " failed in creating SAML20 Token", se);
+            throw new FAMSTSException(se.getMessage());
+        } catch (SAML2Exception s2e) {
+             STSUtils.debug.error("FAMSTSTokenProvider.createSAML2Assertion: " +
+                    " failed in creating SAML20 Token", s2e);
+            throw new FAMSTSException(s2e.getMessage());
+        } catch (KeyResolverException ke) {
+             STSUtils.debug.error("FAMSTSTokenProvider.createSAML2Assertion: " +
+                    " failed in creating SAML20 Token", ke);
+            throw new FAMSTSException(ke.getMessage());
         }
+    }
         
-        return assertion;
+    private String getSubjectName(Map claimedAttrs) {
+        Set<Map.Entry<QName, List<String>>> entries = claimedAttrs.entrySet();
+        for(Map.Entry<QName, List<String>> entry : entries){
+            QName attrKey = entry.getKey();
+            List<String> values = entry.getValue();
+            if (values != null && values.size() > 0){
+                if (STSAttributeProvider.NAME_IDENTIFIER.equals(
+                            attrKey.getLocalPart())){
+                    return values.get(0);                                                
+                 }
+            }
+        }
+        return null;
     }
      
     private KeyInfo createKeyInfo(final IssuedTokenContext ctx) throws 
@@ -801,4 +673,5 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
         
     }    
     
+ 
 }

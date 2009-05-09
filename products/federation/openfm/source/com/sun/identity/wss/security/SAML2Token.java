@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Token.java,v 1.6 2008-08-22 04:07:56 mallas Exp $
+ * $Id: SAML2Token.java,v 1.7 2009-05-09 15:44:01 mallas Exp $
  *
  */
 
@@ -504,7 +504,7 @@ public class SAML2Token implements SecurityToken {
       * @exception SecurityException if unable to sign the assertion.
       */
      public void sign(String alias) throws SecurityException {
-         try {
+         try {             
              X509Certificate x509Cert = 
                  AMTokenProvider.getKeyProvider().getX509Certificate(certAlias);
              PrivateKey privateKey = 
@@ -554,12 +554,20 @@ public class SAML2Token implements SecurityToken {
              }             
              Attribute attr = factory.createAttribute();
              attr.setName(attrName);
-             attr.setAttributeValue(attributes.get(qName));
+             List values = attributes.get(qName);            
+             List elementValues = new ArrayList();
+                 for (Iterator iter1=values.iterator(); iter1.hasNext();) {
+                     String value = (String)iter1.next();
+                     String attrValue = "<AttributeValue>" + value +
+                              "</AttributeValue>";                     
+                     elementValues.add(attrValue);
+                 }
+             attr.setAttributeValue(elementValues);
              samlAttributes.add(attr);            
          }
          if(samlAttributes.isEmpty()) {
             return null;
-         }         
+         }                         
          AttributeStatement attrStatement = factory.createAttributeStatement();
          attrStatement.setAttribute(samlAttributes);
          return attrStatement;

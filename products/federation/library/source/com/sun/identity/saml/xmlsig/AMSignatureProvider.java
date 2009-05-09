@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSignatureProvider.java,v 1.9 2008-11-10 22:57:00 veiming Exp $
+ * $Id: AMSignatureProvider.java,v 1.10 2009-05-09 15:43:59 mallas Exp $
  *
  */
 
@@ -193,7 +193,7 @@ public class AMSignatureProvider implements SignatureProvider {
         org.w3c.dom.Element root = null; 
         XMLSignature sig = null; 
         try {
-            Constants.setSignatureSpecNSprefix("");    
+            Constants.setSignatureSpecNSprefix("ds");    
             if (keystore == null) { 
                 throw new XMLSignatureException(
                           SAMLUtilsCommon.bundle.getString("nullkeystore"));
@@ -452,7 +452,7 @@ public class AMSignatureProvider implements SignatureProvider {
         org.w3c.dom.Element root = null;    
         XMLSignature sig = null; 
         try {      
-            Constants.setSignatureSpecNSprefix("");    
+            Constants.setSignatureSpecNSprefix("ds");    
             PrivateKey privateKey =         
                 (PrivateKey) keystore.getPrivateKey(certAlias);
             if (privateKey == null) {         
@@ -609,7 +609,7 @@ public class AMSignatureProvider implements SignatureProvider {
 
         XMLSignature signature = null;
         try {
-            Constants.setSignatureSpecNSprefix("");    
+            Constants.setSignatureSpecNSprefix("ds");    
             PrivateKey privateKey =         
                 (PrivateKey) keystore.getPrivateKey(certAlias);
             if (privateKey == null) {         

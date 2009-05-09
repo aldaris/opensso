@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.16 2009-04-21 17:41:25 mallas Exp $
+ * $Id: WSSUtils.java,v 1.17 2009-05-09 15:44:01 mallas Exp $
  *
  */
 
@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 import java.math.BigInteger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -88,6 +89,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.namespace.QName;
 import com.sun.identity.wss.xmlsig.WSSSignatureProvider;
 import com.sun.identity.wss.xmlenc.WSSEncryptionProvider;
 import com.sun.identity.idm.IdSearchControl;
@@ -96,6 +98,7 @@ import com.sun.identity.idm.IdSearchResults;
 import com.sun.org.apache.xml.internal.security.keys.content.X509Data;
 import com.sun.identity.wss.security.handler.WSSCacheRepository;
 import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.wss.sts.spi.NameIdentifierMapper;
 
 /**
  * This class provides util methods for the web services security. 
@@ -111,6 +114,7 @@ public class WSSUtils {
      private static final String WSS_CACHE_REPO_PLUGIN =
                         "com.sun.identity.wss.security.cacherepository.plugin";
      private static WSSCacheRepository cacheRepository = null;
+     private static final String MEMBERSHIPS = "Memberships";
      
      static {
             bundle = Locale.getInstallResourceBundle("fmWSSecurity");
@@ -714,5 +718,150 @@ public class WSSUtils {
             }
         }
         return cacheRepository;
+    }
+    
+    /**
+     * Returns the SAML Attribute Map<QName, List<String>>. The attribute map
+     * is generated from the given SSOToken first and if not found, then it
+     * will try to find from the repository.
+     * @param subjectName the principal to be used for retrieving the user
+     *                    attributes.
+     * @param attributeNames set of attribute names for the attribute map
+     * @param namespace the name space for the saml attribute name
+     * @param ssoToken the user's SSOToken.
+     * @return the saml attributes for the SAML Token specification.
+     */ 
+    public static Map<QName, List<String>> getSAMLAttributes(
+            String subjectName,
+            Set attributeNames, 
+            String namespace,
+            SSOToken ssoToken) {
+
+        Map<QName, List<String>> map = new HashMap();
+        AMIdentity amId = null;
+        try {
+            amId = new AMIdentity(getAdminToken(), subjectName);
+            if(!amId.isExists()) {
+               if(debug.messageEnabled()) {
+                  debug.message("WSSUtils.getSAMLAttributes: " +
+                  "Subject " + subjectName + " does not exist");
+               }
+               return map;
+            }
+        } catch (IdRepoException ex) {
+            if(debug.warningEnabled()) {
+               debug.warning("WSSUtils.getSAML" +
+                    "Attributes: IdRepo exception: ", ex);
+            }
+            return map;
+        } catch (SSOException se) {
+            if(debug.warningEnabled()) {
+               debug.warning("WSSUtils.getSAML" +
+                    "Attributes: SSOException", se);
+            }
+            return map;
+        }
+
+        for (Iterator iter = attributeNames.iterator(); iter.hasNext();) {
+             String attribute = (String)iter.next();
+             if(attribute.indexOf("=") != -1) {
+                StringTokenizer st = new StringTokenizer(attribute, "=");
+                if(st.countTokens() != 2) {
+                   continue;
+                }
+                String samlAttribute = st.nextToken();
+                String realAttribute = st.nextToken();
+                Set values = new HashSet();
+                boolean attributeFoundInSSOToken = false;
+                if(ssoToken != null) {
+                   try {
+                       String attributeValue = 
+                               ssoToken.getProperty(realAttribute);
+                       if(attributeValue != null) {
+                          values.add(attributeValue);
+                          attributeFoundInSSOToken = true;
+                       }
+                   } catch (SSOException se) {
+                       if(debug.warningEnabled()) {
+                          debug.warning("WSSUtils.get"+
+                                  "SAMLAttributes: SSOException", se);
+                       }                       
+                   }
+                }
+                
+                if(!attributeFoundInSSOToken) {
+                   try {
+                       values = amId.getAttribute(realAttribute);
+                   } catch (IdRepoException ex) {
+                       if(debug.warningEnabled()) {
+                          debug.warning("WSSUtils.getSAML" +
+                           "Attributes: IdRepoException", ex);
+                       }
+                   } catch (SSOException se) {
+                       if(debug.warningEnabled()) {
+                          debug.warning("WSSUtils.getSAML" +
+                           "Attributes: SSOException", se);
+                       }
+                   }
+                }
+                
+                if(values == null || values.isEmpty()) {
+                   if(debug.messageEnabled()) {
+                      debug.message("WSSUtils.get"+
+                           "SAMLAttributes: attribute value not found for" +
+                           realAttribute);
+                   }
+                   continue;
+                }
+                List<String> list = new ArrayList();
+                list.addAll(values);
+                QName qName = new QName(namespace, samlAttribute);
+                map.put(qName, list);
+             }
+        }
+        return map; 
+    }
+    /**
+     * Returns the user pseduo name from the given nameid mapper.
+     * @param userName the authenticated user name.
+     * @param nameIDImpl the nameid mapper implementation class
+     * @return the user psueduo name.
+     */
+    public static String getUserPseduoName(String userName, String nameIDImpl){
+   
+        if(nameIDImpl == null) {
+           return userName;
+        }
+        try {
+            Class nameIDImplClass = 
+                (Thread.currentThread().getContextClassLoader()).
+                loadClass(nameIDImpl);
+            NameIdentifierMapper niMapper = 
+                    (NameIdentifierMapper)nameIDImplClass.newInstance(); 
+            return niMapper.getUserPsuedoName(userName);
+        } catch (Exception ex) {
+            debug.error("FAMSTSAttributeProvider.getUserPseduoName: "+
+            " Exception", ex);
+        }
+        return userName;
+    }
+    
+    /**
+     * Returns the membership attributes for the given subject.
+     * @param subjectName the authenticated subject
+     * @param namespace the saml attribute namespace.
+     * @return the SAML attributes for the user memberships.
+     */
+    public static Map<QName, List<String>>  getMembershipAttributes(
+               String subjectName, String namespace) {
+        
+        Map<QName, List<String>> map = new HashMap();
+        List<String> roles = getMemberShips(subjectName);
+        if(roles == null || roles.isEmpty()) {
+           return map;
+        }
+        QName qName = new QName(namespace, MEMBERSHIPS);
+        map.put(qName, roles);
+        return map;
     }
 }

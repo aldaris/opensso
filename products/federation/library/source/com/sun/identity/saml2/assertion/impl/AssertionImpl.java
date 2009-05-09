@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionImpl.java,v 1.7 2008-06-25 05:47:42 qcheng Exp $
+ * $Id: AssertionImpl.java,v 1.8 2009-05-09 15:43:59 mallas Exp $
  *
  */
 
@@ -58,6 +58,7 @@ import com.sun.identity.saml2.assertion.Conditions;
 import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.xmlenc.EncManager;
 import com.sun.identity.saml2.xmlsig.SigManager;
+import com.sun.identity.saml2.common.SAML2Utils;
 
 /**
  * The <code>Assertion</code> element is a package of information
@@ -842,7 +843,8 @@ public class AssertionImpl implements Assertion {
         }
         sb.append("</").append(appendNS).append(ASSERTION_ELEMENT).
         append(">\n");
-        return sb.toString();
+        //return SAML2Utils.removeNewLineChars(sb.toString());
+       return sb.toString();
     }
 
    /**

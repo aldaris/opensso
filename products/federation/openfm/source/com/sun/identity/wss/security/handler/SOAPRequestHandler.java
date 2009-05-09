@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.34 2009-05-05 01:15:33 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.35 2009-05-09 15:44:01 mallas Exp $
  *
  */
 
@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Set;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -138,6 +139,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             "com.sun.identity.liberty.authnsvc.url";
     
     private static final String MECHANISM_SSOTOKEN = "SSOTOKEN";
+
+    /**
+     * Property for the SAML issuer name.
+     */
+    private static final String ASSERTION_ISSUER = 
+                   "com.sun.identity.wss.security.samlassertion.issuer";
 
     /**
      * Initializes the handler with the given configuration. 
@@ -952,21 +959,53 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                return securityToken;
             }
             NameIdentifier ni = null;
+            Map samlAttributes = new HashMap();
             try {
                 SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
                 SSOToken userToken = subjectSecurity.ssoToken;
-               if(userToken != null) {
-                    ni = new NameIdentifier(userToken.getPrincipal().getName());
+                String subjectName = userToken.getPrincipal().getName();
+                if(userToken != null) {
+                   String nameIDImpl = config.getNameIDMapper();
+                   if(nameIDImpl == null) {
+                      ni = new NameIdentifier(subjectName); 
+                   } else {
+                      ni = new NameIdentifier(
+                           WSSUtils.getUserPseduoName(subjectName, nameIDImpl)); 
+                   }                                               
                 } else {
                     ni = new NameIdentifier(config.getProviderName());
+                }
+                
+                Map attributes = WSSUtils.getSAMLAttributes(
+                        subjectName, config.getSAMLAttributeMapping(),
+                        config.getSAMLAttributeNamespace(), userToken);
+                
+                if(attributes != null) {
+                   samlAttributes.putAll(attributes); 
+                }
+                
+                if(config.shouldIncludeMemberships()) {
+                   Map memberships = WSSUtils.getMembershipAttributes(
+                          subjectName, config.getSAMLAttributeNamespace());
+                   if(memberships != null) {
+                      samlAttributes.putAll(memberships);
+                   }
                 }
             } catch (Exception ex) {
                 throw new SecurityException(ex.getMessage());
             }
-
+                        
             AssertionTokenSpec tokenSpec = new AssertionTokenSpec(ni,
                     secMech, certAlias);
-           securityToken = factory.getSecurityToken(tokenSpec); 
+            String issuer = SystemConfigurationUtil.getProperty(
+                            ASSERTION_ISSUER);
+            if(issuer != null) {
+               tokenSpec.setIssuer(issuer);
+            }
+            if(!samlAttributes.isEmpty()) {
+               tokenSpec.setClaimedAttributes(samlAttributes); 
+            }
+            securityToken = factory.getSecurityToken(tokenSpec); 
 
         } else if(
             (SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI.equals(uri)) ||
@@ -1047,16 +1086,36 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                return securityToken;
             }
             NameID ni = null;
+            Map samlAttributes = new HashMap();
             try {
                 AssertionFactory assertionFactory =
                         AssertionFactory.getInstance();
-               ni = assertionFactory.createNameID();
+                ni = assertionFactory.createNameID();
                 SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
-                SSOToken userToken = subjectSecurity.ssoToken;
-               if(userToken != null) {
-                    ni.setValue(userToken.getPrincipal().getName());
+                SSOToken userToken = subjectSecurity.ssoToken;                
+                if(userToken != null) {
+                   String subjectName = userToken.getPrincipal().getName();                  
+                   String nameIDMapper = config.getNameIDMapper();
+                   if(nameIDMapper == null) {
+                      ni.setValue(subjectName); 
+                   } else {
+                      ni.setValue(
+                        WSSUtils.getUserPseduoName(subjectName, nameIDMapper));
+                   }
+                   Map attributes = WSSUtils.getSAMLAttributes(subjectName, 
+                          config.getSAMLAttributeMapping(), 
+                          config.getSAMLAttributeNamespace(),
+                          userToken);
+                   if(attributes != null) {
+                      samlAttributes.putAll(attributes); 
+                   }
+                   Map memberships = WSSUtils.getMembershipAttributes(
+                           subjectName, config.getSAMLAttributeNamespace());
+                   if(memberships != null) {
+                      samlAttributes.putAll(memberships); 
+                   }
                 } else {
-                    ni.setValue(config.getProviderName());
+                  ni.setValue(config.getProviderName());
                 }
 
             } catch (Exception ex) {
@@ -1065,7 +1124,17 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
             SAML2TokenSpec tokenSpec = new SAML2TokenSpec(ni,
                     secMech, certAlias);
-           securityToken = factory.getSecurityToken(tokenSpec);                                 
+
+            String issuer = SystemConfigurationUtil.getProperty(
+                            ASSERTION_ISSUER);
+            if(issuer != null) {
+               tokenSpec.setIssuer(issuer);
+            }
+
+            if(!samlAttributes.isEmpty()) {
+               tokenSpec.setClaimedAttributes(samlAttributes); 
+            }
+            securityToken = factory.getSecurityToken(tokenSpec);                                 
 
         } else if(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI.equals(uri) ||
            SecurityMechanism.WSS_TLS_KERBEROS_TOKEN_URI.equals(uri) ||

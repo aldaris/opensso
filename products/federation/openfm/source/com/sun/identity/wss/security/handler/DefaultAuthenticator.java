@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.18 2009-05-05 01:15:32 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.19 2009-05-09 15:44:01 mallas Exp $
  *
  */
 
@@ -95,6 +95,7 @@ import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.services.naming.URLNotFoundException;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.saml.assertion.SubjectConfirmation;
 import com.sun.identity.shared.Constants;
 import org.ietf.jgss.GSSManager;
 import org.ietf.jgss.Oid;
@@ -596,7 +597,12 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             } else if(Statement.ATTRIBUTE_STATEMENT == st.getStatementType()) {
                AttributeStatement attribStatement = (AttributeStatement)st;
                sub = attribStatement.getSubject();
-               Element keyInfo = sub.getSubjectConfirmation().getKeyInfo();
+               SubjectConfirmation subConfirmation = null;
+               Element keyInfo = null;
+               if(subConfirmation != null) {
+                  keyInfo = subConfirmation.getKeyInfo(); 
+               }
+               
                if(keyInfo != null) {
                   X509Certificate cert = WSSUtils.getCertificate(keyInfo);
                   subject.getPublicCredentials().add(cert);

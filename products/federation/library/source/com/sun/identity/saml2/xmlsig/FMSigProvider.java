@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSigProvider.java,v 1.4 2008-06-25 05:48:03 qcheng Exp $
+ * $Id: FMSigProvider.java,v 1.5 2009-05-09 15:43:59 mallas Exp $
  *
  */
 
@@ -150,7 +150,7 @@ public final class FMSigProvider implements SigProvider {
 	Element root = doc.getDocumentElement();
 	XMLSignature sig = null;
 	try {
-	    Constants.setSignatureSpecNSprefix("");
+	    Constants.setSignatureSpecNSprefix("ds");
 	} catch (XMLSecurityException xse1) {
 	    throw new SAML2Exception(xse1);
 	}   

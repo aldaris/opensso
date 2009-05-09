@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.78 2009-04-21 17:50:18 mallas Exp $
+   $Id: AgentService.xml,v 1.79 2009-05-09 15:43:58 mallas Exp $
 
 -->
 
@@ -2801,8 +2801,40 @@
                              <Value>256</Value>
                          </DefaultValues>
                     </AttributeSchema>
-
-
+                    <AttributeSchema
+                        name="SAMLAttributeMapping"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a334">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="NameIDMapper"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a335">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="AttributeNamespace"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a336">
+                        <DefaultValues>
+                            <Value>http://www.sun.com</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="includeMemberships"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a337">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
                 </SubSchema>
                 

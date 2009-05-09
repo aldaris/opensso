@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.2 2008-08-13 18:56:41 mrudul_uchil Exp $
+ * $Id: LogUtil.java,v 1.3 2009-05-09 15:44:00 mallas Exp $
  *
  */
 
@@ -281,7 +281,7 @@ public class LogUtil {
      *
      * @return true if logging is enabled.
      */
-    public boolean isLogEnabled() {
+    public static boolean isLogEnabled() {
         if (logger == null) {
             return false;
         } else {
