@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MetaDataTest.java,v 1.4 2009-05-06 22:40:36 veiming Exp $
+ * $Id: MetaDataTest.java,v 1.5 2009-05-09 01:08:47 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -103,7 +103,7 @@ public class MetaDataTest {
             throw new Exception("MetaDataTest.test: last modified user Id is wrong");
         }
 
-        PrivilegeManager privilegMgr = PrivilegeManager.getInstance(
+        PrivilegeManager privilegMgr = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
 
         test(privilegMgr, PrivilegeSearchFilter.EQUAL_OPERATOR, creationDate,
@@ -124,8 +124,7 @@ public class MetaDataTest {
         Set<PrivilegeSearchFilter> filter =
             new HashSet<PrivilegeSearchFilter>();
         filter.add(new PrivilegeSearchFilter("creationdate", value, operator));
-        Set<String> privilegeNames = privilegMgr.searchPrivilegeNames("/",
-            filter);
+        Set<String> privilegeNames = privilegMgr.searchPrivilegeNames(filter);
 
         if (!containCheckOnly) {
             if ((privilegeNames == null) || (privilegeNames.size() != 1)) {

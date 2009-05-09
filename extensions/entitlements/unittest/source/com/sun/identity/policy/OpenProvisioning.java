@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenProvisioning.java,v 1.5 2009-04-30 23:23:03 veiming Exp $
+ * $Id: OpenProvisioning.java,v 1.6 2009-05-09 01:08:47 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -92,7 +92,7 @@ public class OpenProvisioning {
     private void createPolicy(SSOToken adminToken)
         throws EntitlementException {
         PrivilegeManager pMgr = new PolicyPrivilegeManager();
-        pMgr.initialize(SubjectUtils.createSubject(adminToken));
+        pMgr.initialize("/", SubjectUtils.createSubject(adminToken));
         Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
         actionValues.put("CREATE", Boolean.TRUE);
         actionValues.put("READ", Boolean.TRUE);
@@ -126,7 +126,7 @@ public class OpenProvisioning {
         amir.deleteIdentities(identities);
 
         PrivilegeManager pMgr = new PolicyPrivilegeManager();
-        pMgr.initialize(SubjectUtils.createSubject(adminToken));
+        pMgr.initialize("/", SubjectUtils.createSubject(adminToken));
         pMgr.removePrivilege(PRIVILEGE_NAME);
     }
 

@@ -22,13 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.8 2009-05-07 22:13:32 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.9 2009-05-09 01:08:46 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.PolicyDataStore;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.policy.Policy;
@@ -44,8 +46,13 @@ import javax.security.auth.Subject;
  * as <code>com.sun.identity.policy</code> objects
  */
 public class PolicyPrivilegeManager extends PrivilegeManager {
-
+    private static boolean migratedToEntitlementSvc = false;
     private PolicyManager pm;
+
+    static {
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        migratedToEntitlementSvc = ec.migratedToEntitlementService();
+    }
 
     /**
      * Creates instance of <code>PolicyPrivilegeManager</code>
@@ -59,16 +66,18 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      * operations
      */
     @Override
-    public void initialize(Subject subject) {
-        super.initialize(subject);
+    public void initialize(String realm, Subject subject) {
+        super.initialize(realm, subject);
         SSOToken ssoToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance()); //TOFIX subject
-        try {
-            pm = new PolicyManager(ssoToken);
-        } catch (SSOException ssoe) {
-            //TOFIX
-        } catch (PolicyException pe) {
-            //TOFIX
+        if (!migratedToEntitlementSvc) {
+            try {
+                pm = new PolicyManager(ssoToken, realm);
+            } catch (SSOException ssoe) {
+                //TOFIX
+            } catch (PolicyException pe) {
+                //TOFIX
+            }
         }
     }
 
@@ -82,7 +91,16 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         throws EntitlementException {
         Privilege privilege = null;
         try {
-            Policy policy = pm.getPolicy(privilegeName);
+            Policy policy = null;
+            
+            if (!migratedToEntitlementSvc) {
+                policy = pm.getPolicy(privilegeName);
+            } else {
+                PolicyDataStore pdb = PolicyDataStore.getInstance();
+                policy = (Policy)pdb.getPolicy(getRealm(), privilegeName);
+                //TOFIX ACXML
+            }
+
             Set<Privilege> privileges =
                 PrivilegeUtils.policyToPrivileges(policy);
             if ((privileges != null) && !privileges.isEmpty()) {
@@ -106,13 +124,22 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     public void addPrivilege(Privilege privilege)
         throws EntitlementException {
         super.addPrivilege(privilege);
+        String name = privilege.getName();
+
         try {
             Policy policy = PrivilegeUtils.privilegeToPolicy(privilege);
-            pm.addPolicy(policy);
-        } catch (PolicyException pe) {
-            //TOFIX
-        } catch (SSOException ssoe) {
-            //TOFIX
+            if (!migratedToEntitlementSvc) {
+                pm.addPolicy(policy);
+            } else {
+                PolicyDataStore pdb = PolicyDataStore.getInstance();
+                pdb.addPolicy(getRealm(), policy);
+            }
+        } catch (PolicyException e) {
+            Object[] params = {name};
+            throw new EntitlementException(202, params, e);
+        } catch (SSOException e) {
+            Object[] params = {name};
+            throw new EntitlementException(202, params, e);
         }
     }
 
@@ -125,11 +152,18 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     public void removePrivilege(String privilegeName)
             throws EntitlementException {
         try {
-            pm.removePolicy(privilegeName);
-        } catch (PolicyException pe) {
-            //TOFIX
-        } catch (SSOException ssoe) {
-            //TOFIX
+            if (!migratedToEntitlementSvc) {
+                pm.removePolicy(privilegeName);
+            } else {
+                PolicyDataStore pdb = PolicyDataStore.getInstance();
+                pdb.removePolicy(getRealm(), privilegeName);
+            }
+        } catch (PolicyException e) {
+            Object[] params = {privilegeName};
+            throw new EntitlementException(205, params, e);
+        } catch (SSOException e) {
+            Object[] params = {privilegeName};
+            throw new EntitlementException(205, params, e);
         }
     }
 
@@ -142,13 +176,22 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     public void modifyPrivilege(Privilege privilege)
             throws EntitlementException {
         super.modifyPrivilege(privilege);
+        String privilegeName = privilege.getName();
+
         try {
-            pm.removePolicy(privilege.getName());
-            pm.addPolicy(PrivilegeUtils.privilegeToPolicy(privilege));
-        } catch (PolicyException pe) {
-            //TODO: record, wrap and propogate
-        } catch (SSOException ssoe) {
-            //TODO: record, wrap and propogate
+            if (!migratedToEntitlementSvc) {
+                pm.removePolicy(privilege.getName());
+                pm.addPolicy(PrivilegeUtils.privilegeToPolicy(privilege));
+            } else {
+                PolicyDataStore pdb = PolicyDataStore.getInstance();
+                pdb.modifyPolicy(getRealm(), privilege);
+            }
+        } catch (PolicyException e) {
+            Object[] params = {privilegeName};
+            throw new EntitlementException(206, params, e);
+        } catch (SSOException e) {
+            Object[] params = {privilegeName};
+            throw new EntitlementException(206, params, e);
         }
     }
 
@@ -164,7 +207,15 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     public String getPrivilegeXML(String name)
         throws EntitlementException {
         try {
-            Policy policy = pm.getPolicy(name);
+            Policy policy = null;
+
+            if (!migratedToEntitlementSvc) {
+                policy = pm.getPolicy(name);
+            } else {
+                PolicyDataStore pdb = PolicyDataStore.getInstance();
+                policy = (Policy)pdb.getPolicy(getRealm(), name);
+            }
+
             return policy.toXML();
         } catch (PolicyException pe) {
             throw new EntitlementException(102, pe);

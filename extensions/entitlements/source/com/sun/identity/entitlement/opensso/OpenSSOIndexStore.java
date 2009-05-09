@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.15 2009-05-09 01:08:46 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.1 2009-05-09 01:08:46 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -39,7 +39,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 
-public class PolicyDataStore extends PrivilegeIndexStore {
+public class OpenSSOIndexStore extends PrivilegeIndexStore {
     private PolicyCache policyCache;
     private IndexCache indexCache;
     private DataStore dataStore = new DataStore();
@@ -50,7 +50,7 @@ public class PolicyDataStore extends PrivilegeIndexStore {
      *
      * @param realm Realm Name
      */
-    public PolicyDataStore(String realm) {
+    public OpenSSOIndexStore(String realm) {
         this.realm = realm;
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             realm);
@@ -108,7 +108,7 @@ public class PolicyDataStore extends PrivilegeIndexStore {
      */
     public void delete(String privilegeName)
         throws EntitlementException {
-        delete(privilegeName, false);
+        delete(privilegeName, true);
     }
 
     /**
@@ -221,7 +221,7 @@ public class PolicyDataStore extends PrivilegeIndexStore {
     public class SearchTask implements Runnable {
 
         private String realm;
-        private PolicyDataStore parent;
+        private OpenSSOIndexStore parent;
         private BufferedIterator iterator;
         private ResourceSearchIndexes indexes;
         private Set<String> subjectIndexes;
@@ -230,7 +230,7 @@ public class PolicyDataStore extends PrivilegeIndexStore {
 
         public SearchTask(
             String realm,
-            PolicyDataStore parent,
+            OpenSSOIndexStore parent,
             BufferedIterator iterator,
             ResourceSearchIndexes indexes,
             Set<String> subjectIndexes,

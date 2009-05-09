@@ -65,7 +65,7 @@ public class TestServlet extends HttpServlet {
         try {
             SSOToken t = SSOTokenManager.getInstance().createSSOToken(request);
             Subject s = SubjectUtils.createSubject(t);
-            PrivilegeManager pm = PrivilegeManager.getInstance(s);
+            PrivilegeManager pm = PrivilegeManager.getInstance("/", s);
 
             return pm;
         } catch (SSOException ssoe) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.15 2009-05-08 00:48:14 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.16 2009-05-09 01:08:45 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -43,6 +43,7 @@ public abstract class PrivilegeManager {
      */
     public static IDebug debug = DebugFactory.getDebug("Entitlement");
 
+    private String realm;
     private Subject adminSubject;
 
     /**
@@ -51,7 +52,7 @@ public abstract class PrivilegeManager {
      * operations
      * @return instance of configured <code>PrivilegeManager</code>
      */
-    static public PrivilegeManager getInstance(Subject subject) {
+    static public PrivilegeManager getInstance(String realm, Subject subject) {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             "/");
         if (!ec.migratedToEntitlementService()) {
@@ -64,7 +65,7 @@ public abstract class PrivilegeManager {
             Class clazz = Class.forName(
                 "com.sun.identity.entitlement.opensso.PolicyPrivilegeManager");
             pm = (PrivilegeManager)clazz.newInstance();
-            pm.initialize(subject);
+            pm.initialize(realm, subject);
         } catch (ClassNotFoundException e) {
             debug.error("PrivilegeManager.getInstance", e);
         } catch (InstantiationException e) {
@@ -78,14 +79,17 @@ public abstract class PrivilegeManager {
     /**
      * Constructor.
      */
-    public PrivilegeManager() {
+    protected PrivilegeManager() {
     }
 
     /**
-     * Initializes the object
+     * Initializes the object.
+     *
+     * @param realm Realm name
      * @param subject subject to initilialize the privilege manager with
      */
-    public void initialize(Subject subject) {
+    public void initialize(String realm, Subject subject) {
+        this.realm = realm;
         this.adminSubject = subject;
     }
 
@@ -128,6 +132,7 @@ public abstract class PrivilegeManager {
      */
     public void removePrivilege(String privilegeName)
         throws EntitlementException {
+        //TOFIX
     }
 
     /**
@@ -160,11 +165,19 @@ public abstract class PrivilegeManager {
      * @throws EntitlementException if search failed.
      */
     public Set<String> searchPrivilegeNames(
-        String realm,
         Set<PrivilegeSearchFilter> filter
     ) throws EntitlementException {
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(realm);
         return pis.searchPrivilegeNames(filter, true, 0, false, false);//TOFIX
+    }
+
+    /**
+     * Returns realm name.
+     *
+     * @return realm name.
+     */
+    public String getRealm() {
+        return realm;
     }
 
     /**

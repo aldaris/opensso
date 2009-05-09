@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.11 2009-05-07 22:24:11 veiming Exp $
+ * $Id: DataStore.java,v 1.12 2009-05-09 01:08:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -381,14 +381,19 @@ public class DataStore {
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
             String baseDN = getSearchBaseDN(realm, null);
-            Set<String> dns = SMSEntry.search(adminToken, baseDN, filter);
-            for (String dn : dns) {
-                if (!areDNIdentical(baseDN, dn)) {
-                    String rdns[] = LDAPDN.explodeDN(dn, true);
-                    if ((rdns != null) && rdns.length > 0) {
-                        results.add(rdns[0]);
+
+            if (SMSEntry.checkIfEntryExists(baseDN, adminToken)) {
+                Set<String> dns = SMSEntry.search(adminToken, baseDN, filter);
+                for (String dn : dns) {
+                    if (!areDNIdentical(baseDN, dn)) {
+                        String rdns[] = LDAPDN.explodeDN(dn, true);
+                        if ((rdns != null) && rdns.length > 0) {
+                            results.add(rdns[0]);
+                        }
                     }
                 }
+            } else {
+                return Collections.EMPTY_SET;
             }
         } catch (SMSException ex) {
             throw new EntitlementException(215, ex);

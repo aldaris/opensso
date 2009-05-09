@@ -41,7 +41,8 @@ public class PrivilegeXmlServlet extends HttpServlet {
         Subject s = SubjectUtils.createSubject(t);
 
         try {
-            PrivilegeManager pm = PrivilegeManager.getInstance(s);
+            //TODO realm is fixed to /
+            PrivilegeManager pm = PrivilegeManager.getInstance("/", s);
             String xml = pm.getPrivilegeXML(name);
             out.print(xml);
         } catch (EntitlementException ee) {

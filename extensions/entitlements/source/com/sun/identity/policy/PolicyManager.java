@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.13 2009-05-08 21:56:52 veiming Exp $
+ * $Id: PolicyManager.java,v 1.14 2009-05-09 01:08:46 veiming Exp $
  *
  */
 
@@ -97,7 +97,7 @@ public final class PolicyManager {
     public static final String DELEGATION_REALM = 
                       "/sunamhiddenrealmdelegationservicepermissions";
 
-    static final String NAMED_POLICY = "Policies";
+    public static final String NAMED_POLICY = "Policies";
     static final String REALM_SUBJECTS = "RealmSubjects";
     static final String XML_REALM_SUBJECTS = "xmlRealmSubjects";
     private static final String NAMED_POLICY_ID = "NamedPolicy";
@@ -113,7 +113,7 @@ public final class PolicyManager {
     private static final String POLICY_XML = "xmlpolicy";
     static final String POLICY_VERSION = "1.0";
 
-    static final String POLICY_ROOT_NODE = "Policy";
+    public static final String POLICY_ROOT_NODE = "Policy";
     static final String POLICY_RULE_NODE = "Rule";
     static final String POLICY_SUBJECTS_NODE = "Subjects";
     static final String POLICY_CONDITIONS_NODE = "Conditions";

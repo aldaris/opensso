@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationServlet.java,v 1.2 2009-05-08 00:13:22 veiming Exp $
+ * $Id: NotificationServlet.java,v 1.3 2009-05-09 01:08:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -72,7 +72,7 @@ public class NotificationServlet extends HttpServlet {
                 PrivilegeIndexStore pis =
                     PrivilegeIndexStore.getInstance(realm);
                 try {
-                    pis.delete(privilegeName);
+                    pis.delete(privilegeName, false);
                 } catch (EntitlementException e) {
                     //ignore
                 }

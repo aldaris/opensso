@@ -69,8 +69,7 @@ public class PolicyDao implements Serializable {
 
         try {
             Set<String> privilegeNames;
-            // TODO: realm
-            privilegeNames = pm.searchPrivilegeNames("/", psfs);
+            privilegeNames = pm.searchPrivilegeNames(psfs);
 
             privilegeBeans = new ArrayList<PrivilegeBean>();
             for (String privilegeName : privilegeNames) {
@@ -105,7 +104,7 @@ public class PolicyDao implements Serializable {
         Set<String> privilegeNames;
         try {
             // TODO: realm
-            privilegeNames = pm.searchPrivilegeNames("/", psfs);
+            privilegeNames = pm.searchPrivilegeNames(psfs);
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }
@@ -116,7 +115,8 @@ public class PolicyDao implements Serializable {
     private PrivilegeManager getPrivilegeManager() {
         SSOToken t = new Token().getSSOToken();
         Subject s = SubjectUtils.createSubject(t);
-        PrivilegeManager pm = PrivilegeManager.getInstance(s);
+                    // TODO: realm
+        PrivilegeManager pm = PrivilegeManager.getInstance("/", s);
 
         return pm;
     }

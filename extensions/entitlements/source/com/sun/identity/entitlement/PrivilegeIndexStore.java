@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeIndexStore.java,v 1.1 2009-05-08 00:13:21 veiming Exp $
+ * $Id: PrivilegeIndexStore.java,v 1.2 2009-05-09 01:08:45 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -128,6 +128,18 @@ public abstract class PrivilegeIndexStore {
      */
     public abstract void delete(String privilegeName)
         throws EntitlementException;
+
+    /**
+     * Deletes a privilege from data store.
+     *
+     * @param privilegeName name of privilege to be deleted.
+     * @param notify <code>true</code> to notify changes.
+     * @throws com.sun.identity.entitlement.EntitlementException if deletion
+     * failed.
+     */
+    public abstract String delete(String privilegeName, boolean notify)
+        throws EntitlementException;
+
 
     /**
      * Returns an iterator of matching privilege objects.

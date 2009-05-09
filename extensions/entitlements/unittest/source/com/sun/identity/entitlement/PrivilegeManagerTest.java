@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.17 2009-05-07 22:13:33 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.18 2009-05-09 01:08:47 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -71,7 +71,7 @@ public class PrivilegeManagerTest {
     public void cleanup() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        PrivilegeManager prm = PrivilegeManager.getInstance(
+        PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
         prm.removePrivilege(PRIVILEGE_NAME);
     }
@@ -148,7 +148,7 @@ public class PrivilegeManagerTest {
         privilege.setDescription(PRIVILEGE_DESC);
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        PrivilegeManager prm = PrivilegeManager.getInstance(
+        PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
         prm.addPrivilege(privilege);
 
@@ -204,12 +204,12 @@ public class PrivilegeManagerTest {
     public void testListPrivilegeNames() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-        PrivilegeManager prm = PrivilegeManager.getInstance(
+        PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
 
         Set<PrivilegeSearchFilter> psf = new HashSet<PrivilegeSearchFilter>();
         psf.add(new PrivilegeSearchFilter(Privilege.NAME_ATTRIBUTE, "*"));
-        Set privilegeNames = prm.searchPrivilegeNames("/", psf);
+        Set privilegeNames = prm.searchPrivilegeNames(psf);
         if (!privilegeNames.contains(PRIVILEGE_NAME)) {
               throw new Exception(
                 "PrivilegeManagerTest.testListPrivilegeNames():"
@@ -266,7 +266,7 @@ public class PrivilegeManagerTest {
     public void testGetPrivilege() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-        PrivilegeManager prm = PrivilegeManager.getInstance(
+        PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
 
@@ -291,7 +291,7 @@ public class PrivilegeManagerTest {
     public void testLastModifiedDate() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-        PrivilegeManager prm = PrivilegeManager.getInstance(
+        PrivilegeManager prm = PrivilegeManager.getInstance("/", 
             SubjectUtils.createSubject(adminToken));
         prm.modifyPrivilege(privilege);
         Long cdate = privilege.getCreationDate();
