@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: tblSAMLv2IDPAuthenticationContext.xml,v 1.4 2008-06-25 05:51:10 qcheng Exp $
+   $Id: tblSAMLv2IDPAuthenticationContext.xml,v 1.5 2009-05-11 21:14:25 asyhuang Exp $
 
 -->
 
@@ -44,6 +44,7 @@
             <option label="samlv2.authenticationContext.key.option.user" value="user" />
             <option label="samlv2.authenticationContext.key.option.role" value="role" />
             <option label="samlv2.authenticationContext.key.option.level" value="authlevel" />
+            <option label="samlv2.authenticationContext.key.option.resourceURL" value="resourceURL" />
         </cc>
     </column>
     <column name="tblColValue" >

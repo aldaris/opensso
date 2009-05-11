@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AuthContexts.java,v 1.3 2008-06-25 05:49:37 qcheng Exp $
+ * $Id: SAMLv2AuthContexts.java,v 1.4 2009-05-11 21:15:39 asyhuang Exp $
  *
  */
 
@@ -81,9 +81,12 @@ public class SAMLv2AuthContexts
                 (SAMLv2AuthContext)entry.getValue();
             String str = SAMLv2AuthContextObj.name
                 + "|" +  SAMLv2AuthContextObj.level 
-                + "|" +  SAMLv2AuthContextObj.key 
-                + "=" +  SAMLv2AuthContextObj.value 
-                + "|";
+                + "|" ;
+            if(!SAMLv2AuthContextObj.key.equals("none")){
+                str = str +  SAMLv2AuthContextObj.key
+                    + "=" +  SAMLv2AuthContextObj.value;
+            }
+            str = str + "|";
             if(SAMLv2AuthContextObj.isDefault){
                 str = str + "default";
             }
