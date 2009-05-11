@@ -24,6 +24,7 @@ public class PolicyManageTableBean implements Serializable {
 
     public void setPrivilegeBeans(List<PrivilegeBean> privilegeBeans) {
         this.privilegeBeans = privilegeBeans;
+        sort();
     }
 
     public int getRows() {
