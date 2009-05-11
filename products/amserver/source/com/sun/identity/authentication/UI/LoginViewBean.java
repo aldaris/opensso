@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.20 2009-04-29 18:07:01 qcheng Exp $
+ * $Id: LoginViewBean.java,v 1.21 2009-05-11 22:24:22 qcheng Exp $
  *
  */
 
@@ -1520,9 +1520,11 @@ public class LoginViewBean extends AuthViewBeanBase {
             indexType = AuthContext.IndexType.LEVEL;
             indexName = (String)reqDataHash.get("authlevel");
             
-        } else if ((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM) 
+        } else if (((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM) 
             != null) && "true".equalsIgnoreCase((String) reqDataHash.get(
-                 ISAuthConstants.IP_RESOURCE_ENV_PARAM))){
+                 ISAuthConstants.IP_RESOURCE_ENV_PARAM))) ||
+            ((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM) == null) &&
+              (reqDataHash.get(ISAuthConstants.RESOURCE_URL_PARAM) != null))) {
             indexType = AuthContext.IndexType.RESOURCE;
             indexName = AuthClientUtils.getResourceURL(request);
             envMap = AuthClientUtils.getEnvMap(request);
