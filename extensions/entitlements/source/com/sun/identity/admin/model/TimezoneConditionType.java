@@ -16,7 +16,7 @@ public class TimezoneConditionType
 
     public ViewCondition newViewCondition(TimeCondition tc) {
         TimezoneCondition tzc = (TimezoneCondition)newViewCondition();
-        TimeZone tz = TimeZone.getTimeZone(tc.getEnforcementTimeZone());
+        tzc.setTimezoneId(tc.getEnforcementTimeZone());
 
         return tzc;
     }

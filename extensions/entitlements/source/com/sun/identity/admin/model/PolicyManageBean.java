@@ -25,6 +25,7 @@ public class PolicyManageBean implements Serializable {
         pfh.setPolicyFilterTypes(getPolicyFilterTypes());
         policyFilterHolders.add(pfh);
     }
+
     public void reset() {
         privilegeBeans = policyDao.getPrivilegeBeans(searchFilter, policyFilterHolders);
         policyManageTableBean.setPrivilegeBeans(privilegeBeans);

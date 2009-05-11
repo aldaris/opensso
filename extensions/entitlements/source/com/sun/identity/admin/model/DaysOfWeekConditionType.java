@@ -28,7 +28,6 @@ public class DaysOfWeekConditionType
 
         String startDay = tc.getStartDay();
         String endDay = tc.getEndDay();
-        endDay = endDay.substring(1, endDay.length()-1);
 
         for (int i = days.indexOf(startDay); days.get(i).equals(endDay); i++) {
             selectedDays.add(days.get(i));

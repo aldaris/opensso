@@ -13,32 +13,31 @@ public abstract class TimeConditionType extends ConditionType {
         ConditionType ct = conditionTypeFactory.getConditionType(AndViewCondition.class);
         assert (ct != null);
         AndViewCondition avc = (AndViewCondition) ct.newViewCondition();
-        avc.setConditionType(conditionTypeFactory.getConditionType(AndConditionType.class));
 
         TimeConditionType tct;
 
-        if (tc.getStartDate() != null) {
+        if (tc.getStartDate() != null && tc.getStartDate().length() > 0) {
             tct = (TimeConditionType)conditionTypeFactory.getConditionType(DateRangeCondition.class);
             assert (tct != null);
             ViewCondition vc = tct.newViewCondition(tc);
             avc.addViewCondition(vc);
         }
 
-        if (tc.getStartTime() != null) {
+        if (tc.getStartTime() != null && tc.getStartTime().length() > 0) {
             tct = (TimeConditionType)conditionTypeFactory.getConditionType(TimeRangeCondition.class);
             assert (tct != null);
             ViewCondition vc = tct.newViewCondition(tc);
             avc.addViewCondition(vc);
         }
 
-        if (tc.getStartDay() != null) {
+        if (tc.getStartDay() != null && tc.getStartDay().length() > 0) {
             tct = (TimeConditionType)conditionTypeFactory.getConditionType(DaysOfWeekCondition.class);
             assert (tct != null);
             ViewCondition vc = tct.newViewCondition(tc);
             avc.addViewCondition(vc);
         }
 
-        if (tc.getEnforcementTimeZone() != null) {
+        if (tc.getEnforcementTimeZone() != null && tc.getEnforcementTimeZone().length() > 0) {
             tct = (TimeConditionType)conditionTypeFactory.getConditionType(TimezoneCondition.class);
             assert (tct != null);
             ViewCondition vc = tct.newViewCondition(tc);

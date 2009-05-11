@@ -40,24 +40,23 @@ public class Tree {
     }
 
     public int size() {
-        int size = sizer(rootNode, 0);
+        int size = sizer(rootNode);
         return size;
     }
 
-    private int sizer(TreeNode currentTn, int size) {
+    private int sizer(TreeNode currentTn) {
         if (currentTn == null) {
             return 0;
         } else if (currentTn instanceof ContainerTreeNode) {
-            size++;
+            int mySize = 1;
             ContainerTreeNode ctn = (ContainerTreeNode)currentTn;
             for (TreeNode childTn: ctn.getTreeNodes()) {
-                size += sizer(childTn, size);
+                mySize += sizer(childTn);
             }
+            return mySize;
         } else {
             return 1;
         }
-
-        return size;
     }
 
     public List<TreeNode> asList() {
