@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.35 2009-05-09 15:44:01 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.36 2009-05-11 07:36:24 mallas Exp $
  *
  */
 
@@ -999,7 +999,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                     secMech, certAlias);
             String issuer = SystemConfigurationUtil.getProperty(
                             ASSERTION_ISSUER);
-            if(issuer != null) {
+            if(issuer != null && issuer.length() !=0 ) {
                tokenSpec.setIssuer(issuer);
             }
             if(!samlAttributes.isEmpty()) {
@@ -1127,7 +1127,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
             String issuer = SystemConfigurationUtil.getProperty(
                             ASSERTION_ISSUER);
-            if(issuer != null) {
+            if(issuer != null && issuer.length() !=0 ) {
                tokenSpec.setIssuer(issuer);
             }
 
