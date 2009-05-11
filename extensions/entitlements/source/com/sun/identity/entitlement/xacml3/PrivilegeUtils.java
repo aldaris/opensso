@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.3 2009-05-11 18:30:00 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.4 2009-05-11 19:10:29 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -43,6 +43,7 @@ import com.sun.identity.entitlement.xacml3.core.ObjectFactory;
 import com.sun.identity.entitlement.xacml3.core.Policy;
 import com.sun.identity.entitlement.xacml3.core.Rule;
 import com.sun.identity.entitlement.xacml3.core.Target;
+import com.sun.identity.entitlement.xacml3.core.VariableDefinition;
 
 import com.sun.identity.entitlement.util.DebugFactory;
 
@@ -77,8 +78,8 @@ public class PrivilegeUtils {
 
     public static String toXACML(Privilege privilege) {
         StringWriter stringWriter = new StringWriter();
-        Policy policy = privilegeToPolicy(privilege);
         try {
+            Policy policy = privilegeToPolicy(privilege);
             ObjectFactory objectFactory = new ObjectFactory();
             JAXBContext jaxbContext = JAXBContext.newInstance(
                     "com.sun.identity.entitlement.xacml3.core");
@@ -94,7 +95,8 @@ public class PrivilegeUtils {
         return stringWriter.toString();
     }
 
-    public static Policy privilegeToPolicy(Privilege privilege)  {
+    public static Policy privilegeToPolicy(Privilege privilege) throws
+            JAXBException  {
 
         /*
          * See entitelement meeting minutes - 22apr09
@@ -134,6 +136,27 @@ public class PrivilegeUtils {
 
         String description = privilege.getDescription();
         policy.setDescription(description);
+
+        List<Object> vrList 
+            = policy.getCombinerParametersOrRuleCombinerParametersOrVariableDefinition();
+
+        ObjectFactory objectFactory = new ObjectFactory();
+        JAXBContext jaxbContext = JAXBContext.newInstance(
+                "com.sun.identity.entitlement.xacml3.core");
+
+        VariableDefinition createdBy = new VariableDefinition(); // string
+        createdBy.setVariableId("createdBy");
+        AttributeValue cbv = new AttributeValue();
+        cbv.setDataType("string");
+        cbv.getContent().add(privilege.getCreatedBy());
+        JAXBElement<AttributeValue> cbve 
+                = objectFactory.createAttributeValue(cbv);
+        createdBy.setExpression(cbve);
+        vrList.add(createdBy);
+
+        VariableDefinition lastModifiedBy = new VariableDefinition(); // string
+        VariableDefinition creationDate = new VariableDefinition(); // long
+        VariableDefinition lastModifiedDate = new VariableDefinition(); // long
 
         // TODO
         //use VariableDefinition to set created-by, created-on
@@ -222,8 +245,6 @@ public class PrivilegeUtils {
             if (anyOfPermitActionList != null) {
                 permitTargetAnyOfList.addAll(anyOfPermitActionList);
             }
-            List<Object> vrList 
-                = policy.getCombinerParametersOrRuleCombinerParametersOrVariableDefinition();
             vrList.add(permitRule);
             
         }
@@ -243,8 +264,6 @@ public class PrivilegeUtils {
             if (anyOfDenyActionList != null) {
                 denyTargetAnyOfList.addAll(anyOfDenyActionList);
             }
-            List<Object> vrList 
-                = policy.getCombinerParametersOrRuleCombinerParametersOrVariableDefinition();
             vrList.add(denyRule);
         }
 
