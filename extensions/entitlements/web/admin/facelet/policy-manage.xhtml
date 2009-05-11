@@ -33,7 +33,7 @@
                                     pageCountVar="pageCount"
                                     pageIndexVar="pageIndex">
                                     <ice:outputFormat
-                                        value="Policies ({0}-{1} of {2})">
+                                        value="#{resources['policy-manage.tableTitle']}">
                                         <f:param value="#{firstRowIndex}" />
                                         <f:param value="#{lastRowIndex}" />
                                         <f:param value="#{rowsCount}" />
@@ -117,11 +117,20 @@
                                         </ice:commandSortHeader>
                                     </f:facet>
                                     <ice:panelGroup
+                                        panelTooltip="descriptionTooltip"
                                         effect="#{privilegeBean.descriptionCellEffect}"
                                         visible="#{true}">
                                         <ice:outputText
                                             value="#{privilegeBean.description}"/>
                                     </ice:panelGroup>
+                                    <o:tooltip
+                                        tooltipId="descriptionTooltip"
+                                        title="#{privilegeBean.name}: description">
+                                        <ui:define name="body">
+                                            <ice:outputText
+                                                value="#{privilegeBean.description}"/>
+                                        </ui:define>
+                                    </o:tooltip>
                                 </ice:column>
                                 <ice:column
                                     rendered="#{policyManageBean.policyManageTableBean.modifierColumnVisible}">
@@ -171,7 +180,12 @@
                                         visible="#{true}"
                                         effect="#{privilegeBean.modifiedCellEffect}">
                                         <ice:outputText
-                                            value="#{privilegeBean.modified}"/>
+                                            value="#{privilegeBean.modified}">
+                                            <f:convertDateTime
+                                                dateStyle="short"
+                                                timeZone="#{timeZoneBean.timeZone.ID}"
+                                                type="both" />
+                                        </ice:outputText>
                                     </ice:panelGroup>
                                 </ice:column>
                                 <ice:column
@@ -188,7 +202,12 @@
                                         visible="#{true}"
                                         effect="#{privilegeBean.birthCellEffect}">
                                         <ice:outputText
-                                            value="#{privilegeBean.birth}"/>
+                                            value="#{privilegeBean.birth}">
+                                            <f:convertDateTime
+                                                dateStyle="short"
+                                                timeZone="#{timeZoneBean.timeZone.ID}"
+                                                type="both" />
+                                        </ice:outputText>
                                     </ice:panelGroup>
                                 </ice:column>
                                 <ice:column

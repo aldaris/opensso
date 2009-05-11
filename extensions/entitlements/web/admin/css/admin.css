@@ -609,7 +609,7 @@ table.actions tr td {
 }
 .tooltipBody {
     padding: 10px;
-    max-width: none;
+    max-width: 600px;
     min-width: 200px;
     font-size: x-small;
 }
