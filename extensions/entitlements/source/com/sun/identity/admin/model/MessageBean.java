@@ -31,6 +31,10 @@ public class MessageBean implements Serializable {
         return getSeverity().equals(FacesMessage.SEVERITY_ERROR);
     }
 
+    public boolean isWarning() {
+        return getSeverity().equals(FacesMessage.SEVERITY_WARN);
+    }
+
     public boolean isInfo() {
         return getSeverity().equals(FacesMessage.SEVERITY_INFO);
     }

@@ -51,7 +51,7 @@ public abstract class SubjectType {
 
     public String getTitle() {
         Resources r = new Resources();
-        String title = r.getString(this.getClass(), "title");
+        String title = r.getString(this, "title");
         if (title == null) {
             title = getName();
         }

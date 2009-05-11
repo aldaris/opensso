@@ -332,8 +332,8 @@ div.button img.left {
     z-index: 999;
     position: absolute;
     background: #FFFFFF;
-    max-width: 400px;
     min-width: 200px;
+    max-width: 600px;
 }
 
 .popup-info pre span,

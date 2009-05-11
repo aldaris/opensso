@@ -70,7 +70,7 @@ public abstract class PolicyWizardHandler
 
         MessageBean mb = new MessageBean();
         Resources r = new Resources();
-        mb.setSummary(r.getString(this.getClass(), "finish"));
+        mb.setSummary(r.getString(this, "finish"));
         mb.setSeverity(FacesMessage.SEVERITY_INFO);
         messagesBean.addMessageBean(mb);
 
@@ -84,7 +84,7 @@ public abstract class PolicyWizardHandler
     public String cancelAction() {
         MessageBean mb = new MessageBean();
         Resources r = new Resources();
-        mb.setSummary(r.getString(this.getClass(), "cancel"));
+        mb.setSummary(r.getString(this, "cancel"));
         mb.setSeverity(FacesMessage.SEVERITY_INFO);
         messagesBean.addMessageBean(mb);
 
@@ -313,8 +313,8 @@ public abstract class PolicyWizardHandler
         if (!matcher.matches()) {
             MessageBean mb = new MessageBean();
             Resources r = new Resources();
-            mb.setSummary(r.getString(this.getClass(), "invalidPolicyNameSummary"));
-            mb.setDetail(r.getString(this.getClass(), "invalidPolicyNameDetail"));
+            mb.setSummary(r.getString(this, "invalidPolicyNameSummary"));
+            mb.setDetail(r.getString(this, "invalidPolicyNameDetail"));
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
             Effect e;

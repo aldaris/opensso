@@ -8,7 +8,8 @@ import javax.faces.model.SelectItem;
 
 public class UrlResourcesBean implements Serializable {
     private boolean addPopupVisible = false;
-    private String addPopupName;
+    private String addPopupPrefix;
+    private String addPopupSuffix;
     private String addExceptionPopupName;
     private String searchFilter;
     private boolean addExceptionPopupVisible;
@@ -22,14 +23,6 @@ public class UrlResourcesBean implements Serializable {
 
     public void setAddPopupVisible(boolean addPopupVisible) {
         this.addPopupVisible = addPopupVisible;
-    }
-
-    public String getAddPopupName() {
-        return addPopupName;
-    }
-
-    public void setAddPopupName(String addPopupName) {
-        this.addPopupName = addPopupName;
     }
 
     public String getSearchFilter() {
@@ -82,6 +75,23 @@ public class UrlResourcesBean implements Serializable {
         return items;
     }
 
+    public List<SelectItem> getAddPopupAvailableResourcePrefixItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        if (addPopupAvailableResources == null) {
+            return items;
+        }
+
+        for (Resource r: addPopupAvailableResources) {
+            UrlResource ur = (UrlResource)r;
+            if (ur.isSuffixable()) {
+                SelectItem i = new SelectItem(ur.getPrefix());
+                items.add(i);
+            }
+        }
+
+        return items;
+    }
+
     public void setAddPopupAvailableResources(List<Resource> addPopupAvailableResources) {
         this.addPopupAvailableResources = addPopupAvailableResources;
     }
@@ -92,5 +102,21 @@ public class UrlResourcesBean implements Serializable {
 
     public void setResourcesMessageEffect(Effect resourcesMessageEffect) {
         this.resourcesMessageEffect = resourcesMessageEffect;
+    }
+
+    public String getAddPopupPrefix() {
+        return addPopupPrefix;
+    }
+
+    public void setAddPopupPrefix(String addPopupPrefix) {
+        this.addPopupPrefix = addPopupPrefix;
+    }
+
+    public String getAddPopupSuffix() {
+        return addPopupSuffix;
+    }
+
+    public void setAddPopupSuffix(String addPopupSuffix) {
+        this.addPopupSuffix = addPopupSuffix;
     }
 }

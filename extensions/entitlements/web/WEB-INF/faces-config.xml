@@ -808,6 +808,10 @@
             <property-name>urlResourcesBean</property-name>
             <value>#{urlResourcesBean}</value>
         </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
     </managed-bean>
     <!-- url resource chooser -->
 

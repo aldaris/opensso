@@ -57,7 +57,7 @@ public abstract class DatePolicyFilter extends PolicyFilter {
 
         public String getTitle() {
             Resources r = new Resources();
-            return r.getString(this.getClass(), toString() + ".title");
+            return r.getString(this, toString() + ".title");
         }
 
         public List<SelectItem> getItems() {
@@ -86,7 +86,7 @@ public abstract class DatePolicyFilter extends PolicyFilter {
 
         public String getTitle() {
             Resources r = new Resources();
-            return r.getString(this.getClass(), toString() + ".title");
+            return r.getString(this, toString() + ".title");
         }
 
         public List<SelectItem> getItems() {

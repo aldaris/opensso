@@ -16,33 +16,14 @@
         <ui:define name="body">
             <ice:panelGroup>
                 <ice:panelGrid
-                    columnClasses="label-column,input-column"
                     columns="2">
-                    <ice:panelGroup>
-                        <ice:outputLabel
-                            for="add-popup-input"
-                            value="URL Resource"/>
-                    </ice:panelGroup>
-                    <ice:selectInputText
-                        id="add-popup-input"
-                        style="z-index: 999; position: relative"
-                        width="250px"
-                        partialSubmit="true"
-                        immediate="true"
-                        listVar="urlResource"
-                        listValue="#{urlResourcesBean.addPopupAvailableResourceItems}"
-                        valueChangeListener="#{urlResourcesHandler.addPopupUpdateAvailableResourcesListener}"
-                        value="#{urlResourcesBean.addPopupName}">
-                        <f:facet name="selectInputText">
-                            <ice:panelGrid>
-                                <ice:outputText
-                                    value="#{urlResource}"/>
-                            </ice:panelGrid>
-                        </f:facet>
-                        <f:attribute
-                            name="availableResources"
-                            value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResources}"/>
-                    </ice:selectInputText>
+                    <ice:selectOneMenu
+                        value="#{urlResourcesBean.addPopupPrefix}">
+                        <f:selectItems
+                            value="#{urlResourcesBean.addPopupAvailableResourcePrefixItems}"/>
+                    </ice:selectOneMenu>
+                    <ice:inputText
+                        value="#{urlResourcesBean.addPopupSuffix}"/>
                 </ice:panelGrid>
                 <ice:panelGrid
                     styleClass="button-group"

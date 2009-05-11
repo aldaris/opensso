@@ -1,13 +1,15 @@
 package com.sun.identity.admin.handler;
 
 import com.icesoft.faces.context.effects.Effect;
+import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.effect.MessageErrorEffect;
+import com.sun.identity.admin.model.MessageBean;
+import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.Resource;
 import com.sun.identity.admin.model.UrlResource;
 import com.sun.identity.admin.model.UrlResourcesBean;
 import com.sun.identity.admin.model.ViewEntitlement;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -20,6 +22,7 @@ import javax.faces.validator.ValidatorException;
 public class UrlResourcesHandler implements Serializable {
 
     private UrlResourcesBean urlResourcesBean;
+    private MessagesBean messagesBean;
 
     private UrlResource getUrlResource(FacesEvent event) {
         UrlResource ur = (UrlResource) event.getComponent().getAttributes().get("urlResource");
@@ -52,38 +55,43 @@ public class UrlResourcesHandler implements Serializable {
         ve.setResourceArray(resourceArray);
     }
 
-    public void addListener(ActionEvent event) {
-        urlResourcesBean.setAddPopupVisible(true);
-        List<Resource> ar = getAvailableResources(event);
-        urlResourcesBean.setAddPopupAvailableResources(ar);
-    }
-
-    public void addPopupUpdateAvailableResourcesListener(ValueChangeEvent event) {
-        List<Resource> ar = getAvailableResources(event);
-        String filter = (String) event.getNewValue();
-
-        List<Resource> filteredResources = filterList(ar, filter);
-        urlResourcesBean.setAddPopupAvailableResources(filteredResources);
-    }
-
-    private List filterList(List l, String f) {
-        if (f == null || f.length() == 0) {
-            return l;
-        }
-        List newList = new ArrayList();
-        for (Object o : l) {
-            if (o.toString().startsWith(f)) {
-                newList.add(o);
+    private boolean isResourcesAddable(List<Resource> availableResources) {
+        for (Resource r: availableResources) {
+            UrlResource ur = (UrlResource)r;
+            if (ur.isSuffixable()) {
+                return true;
             }
         }
 
-        return newList;
+        return false;
+    }
+
+    public void addListener(ActionEvent event) {
+        List<Resource> ar = getAvailableResources(event);
+        if (isResourcesAddable(ar)) {
+            urlResourcesBean.setAddPopupVisible(true);
+            urlResourcesBean.setAddPopupAvailableResources(ar);
+        } else {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "noAddSummary"));
+            mb.setDetail(r.getString(this, "noAddDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_WARN);
+            messagesBean.addMessageBean(mb);
+        }
+    }
+
+    private void resetAddPopup() {
+        urlResourcesBean.setAddPopupPrefix(null);
+        urlResourcesBean.setAddPopupSuffix(null);
+        urlResourcesBean.setAddPopupVisible(false);
     }
 
     public void addPopupOkListener(ActionEvent event) {
-        String name = urlResourcesBean.getAddPopupName();
+        String prefix = urlResourcesBean.getAddPopupPrefix();
+        String suffix = urlResourcesBean.getAddPopupSuffix();
         UrlResource ur = new UrlResource();
-        ur.setName(name);
+        ur.setName(prefix+suffix);
 
         ViewEntitlement ve = getViewEntitlement(event);
         List<Resource> ar = getAvailableResources(event);
@@ -95,13 +103,12 @@ public class UrlResourcesHandler implements Serializable {
             ar.add(ur);
         }
 
-        urlResourcesBean.setAddPopupName(null);
-        urlResourcesBean.setAddPopupVisible(false);
+        resetAddPopup();
     }
 
     public void addExceptionPopupOkListener(ActionEvent event) {
         String name = urlResourcesBean.getAddExceptionPopupName();
-        String prefix = urlResourcesBean.getAddExceptionPopupResource().getExceptionPrefix();
+        String prefix = urlResourcesBean.getAddExceptionPopupResource().getPrefix();
 
         UrlResource ur = new UrlResource();
         ur.setName(prefix + name);
@@ -121,7 +128,7 @@ public class UrlResourcesHandler implements Serializable {
     }
 
     public void addPopupCancelListener(ActionEvent event) {
-        urlResourcesBean.setAddPopupVisible(false);
+        resetAddPopup();
     }
 
     public void addExceptionPopupCancelListener(ActionEvent event) {
@@ -168,5 +175,9 @@ public class UrlResourcesHandler implements Serializable {
 
             throw new ValidatorException(msg);
         }
+    }
+
+    public void setMessagesBean(MessagesBean messagesBean) {
+        this.messagesBean = messagesBean;
     }
 }

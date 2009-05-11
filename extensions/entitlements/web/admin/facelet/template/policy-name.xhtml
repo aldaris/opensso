@@ -8,8 +8,6 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <o:messages/>
-
     <div class="section-outer">
         <o:box>
             <ui:define name="body">
@@ -73,7 +71,6 @@
                                 value="Application Type"/>
                         </ice:panelGroup>
                         <ice:panelGroup>
-                            #{policyWizardBean.viewApplicationNameItems}
                             <ice:selectOneMenu
                                 id="application-type"
                                 value="#{policyNameBean.viewApplicationName}">

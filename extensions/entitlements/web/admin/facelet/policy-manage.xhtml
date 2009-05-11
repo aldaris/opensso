@@ -16,7 +16,6 @@
             value="#{resources['policy-manage.panelDetails']}" />
     </ui:define>
     <ui:define name="panel-body">
-        <o:messages/>
         <ui:include
             src="/admin/facelet/template/policy-manage-view-options-popup.xhtml"/>
         <div class="section-outer">
@@ -66,6 +65,7 @@
                         <ui:include
                             src="/admin/facelet/template/policy-manage-filters.xhtml"/>
                         <ice:panelGroup
+                            style="padding-top: 10px"
                             rendered="#{o:size(policyManageHandler.policyManageBean.privilegeBeans) == 0}">
                             <ice:outputText
                                 value="No policies"/>

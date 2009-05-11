@@ -18,9 +18,34 @@
                 var="message"
                 value="#{messagesBean.messageBeans}">
                 <ice:panelGroup>
-                    <ice:outputText
+                    <ice:outputLabel
+                        for="message-detail"
                         value="#{message.summary}"/>
                     <ice:outputText
+                        id="message-detail"
+                        rendered="#{message.detail != null}"
+                        value=": #{message.detail}"/>
+                </ice:panelGroup>
+            </ice:panelSeries>
+        </ui:define>
+    </o:popup>
+    <o:popup
+        type="warning"
+        modal="true"
+        handler="#{messagesHandler}"
+        closeListenerMethod="messagesPopupListener"
+        title="Warning"
+        visible="#{messagesBean.existsWarning}">
+        <ui:define name="body">
+            <ice:panelSeries
+                var="message"
+                value="#{messagesBean.messageBeans}">
+                <ice:panelGroup>
+                    <ice:outputLabel
+                        for="message-detail"
+                        value="#{message.summary}"/>
+                    <ice:outputText
+                        id="message-detail"
                         rendered="#{message.detail != null}"
                         value=": #{message.detail}"/>
                 </ice:panelGroup>
@@ -39,9 +64,11 @@
                 var="message"
                 value="#{messagesBean.messageBeans}">
                 <ice:panelGroup>
-                    <ice:outputText
+                    <ice:outputLabel
+                        for="message-detail"
                         value="#{message.summary}"/>
                     <ice:outputText
+                        id="message-detail"
                         rendered="#{message.detail != null}"
                         value="#{message.detail}"/>
                 </ice:panelGroup>

@@ -55,21 +55,32 @@ public class Resources {
         }
     }
 
-    public String getString(Class c, String key) {
-        return getString(c.getName() + "." + key);
-    }
-
-    public String getString(Class c, String key, Object... params) {
+    public String getString(String key, Object... params) {
         ResourceBundle rb = getResourceBundle();
         String msg;
         try {
-            msg = rb.getString(c.getName() + "." + key);
+            msg = rb.getString(key);
             msg = MessageFormat.format(msg, params);
         } catch (MissingResourceException mre) {
             msg = null;
         }
 
         return msg;
+    }
 
+    public String getString(Object o, String key) {
+        return getString(o.getClass().getName() + "." + key);
+    }
+
+    public String getString(Class c, String key) {
+        return getString(c.getName() + "." + key);
+    }
+
+    public String getString(Object o, String key, Object... params) {
+        return getString(o.getClass().getName() + "." + key, params);
+    }
+
+    public String getString(Class c, String key, Object... params) {
+        return getString(c.getName() + "." + key, params);
     }
 }

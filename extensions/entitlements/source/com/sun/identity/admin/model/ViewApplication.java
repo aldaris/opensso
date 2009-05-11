@@ -62,7 +62,7 @@ public class ViewApplication implements Serializable {
 
     public String getTitle() {
         Resources r = new Resources();
-        String title = r.getString(this.getClass(), "title."+name);
+        String title = r.getString(this, "title."+name);
         return title;
     }
 

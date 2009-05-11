@@ -88,6 +88,15 @@ public class MessagesBean implements Serializable {
         return false;
     }
 
+    public boolean isExistsWarning() {
+        for (MessageBean mb: getMessageBeans()) {
+            if (mb.isWarning()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isExistsInfo() {
         for (MessageBean mb: getMessageBeans()) {
             if (mb.isInfo()) {

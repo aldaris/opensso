@@ -11,8 +11,6 @@
     <ui:include src="resources-url-add-popup.xhtml"/>
     <ui:include src="resources-url-add-exception-popup.xhtml"/>
 
-    <o:messages/>
-
     <div class="section-outer">
         <o:box>
             <ui:define name="body">
@@ -24,16 +22,17 @@
                         <span class="section-links">
                             <ice:panelGrid
                                 columns="3">
-                                <o:clink
-                                    type="add"
-                                    handler="#{urlResourcesHandler}"
-                                    listenerMethod="addListener">
-                                    <ui:define name="attributes">
-                                        <f:attribute
-                                            name="availableResources"
-                                            value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResources}"/>
-                                    </ui:define>
-                                </o:clink>
+                                <ice:commandLink
+                                    styleClass="command-link"
+                                    actionListener="#{urlResourcesHandler.addListener}">
+                                    <f:attribute
+                                        name="availableResources"
+                                        value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResources}"/>
+                                    <ice:graphicImage
+                                        value="../image/add.png"/>
+                                    <ice:outputText
+                                        value="Add"/>
+                                </ice:commandLink>
                                 <ice:outputText
                                     style="font-weight: bold"
                                     value="|"/>
@@ -87,7 +86,7 @@
                                             <ice:panelGrid
                                                 columns="1">
                                                 <ice:panelGroup
-                                                    rendered="#{urlResource.exceptable &amp;&amp; o:contains(policyResourcesBean.privilegeBean.viewEntitlement.resources, urlResource)}">
+                                                    rendered="#{urlResource.suffixable &amp;&amp; o:contains(policyResourcesBean.privilegeBean.viewEntitlement.resources, urlResource)}">
                                                     <o:clink
                                                         type="add"
                                                         linkLabel="Add Exception"

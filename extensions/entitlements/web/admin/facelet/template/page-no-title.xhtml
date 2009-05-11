@@ -3,7 +3,9 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:ice="http://www.icesoft.com/icefaces/component">
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+
     <f:loadBundle basename="com.sun.identity.admin.Messages" var="resources"/>
     <ice:outputHead>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -18,6 +20,7 @@
             <ice:form 
                 id="form"
                 partialSubmit="true">
+                <o:messages/>
                 <div id="header">
                     <ui:include src="header.xhtml"/>
                 </div>
