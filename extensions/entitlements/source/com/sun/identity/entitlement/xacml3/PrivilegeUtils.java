@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.2 2009-05-08 23:51:24 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.3 2009-05-11 18:30:00 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -37,9 +37,11 @@ import com.sun.identity.entitlement.xacml3.core.AllOf;
 import com.sun.identity.entitlement.xacml3.core.AnyOf;
 import com.sun.identity.entitlement.xacml3.core.AttributeValue;
 import com.sun.identity.entitlement.xacml3.core.AttributeDesignator;
+import com.sun.identity.entitlement.xacml3.core.EffectType;
 import com.sun.identity.entitlement.xacml3.core.Match;
 import com.sun.identity.entitlement.xacml3.core.ObjectFactory;
 import com.sun.identity.entitlement.xacml3.core.Policy;
+import com.sun.identity.entitlement.xacml3.core.Rule;
 import com.sun.identity.entitlement.xacml3.core.Target;
 
 import com.sun.identity.entitlement.util.DebugFactory;
@@ -48,6 +50,7 @@ import com.sun.identity.shared.debug.IDebug;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -132,6 +135,10 @@ public class PrivilegeUtils {
         String description = privilege.getDescription();
         policy.setDescription(description);
 
+        // TODO
+        //use VariableDefinition to set created-by, created-on
+        // last-modified-by, last-modified-on
+
 
         // PolicyIssuer policyIssuer = null;
 
@@ -172,22 +179,74 @@ public class PrivilegeUtils {
         }
 
         Map<String, Boolean> actionValues = entitlement.getActionValues();
-        List<AnyOf> anyOfActionList = actionValuesToAnyOfList(actionValues);
+        List<AnyOf> anyOfActionList 
+                = actionNamesToAnyOfList(actionValues.keySet());
         if (anyOfActionList != null) {
             targetAnyOfList.addAll(anyOfActionList);
         }
 
         // PermitRule, DenyRule
-        List permitActions = null; // effect: Permit
-        List denyActions = null; // effect: Deny
+        Set<String> permitActions = new HashSet<String>();
+        Set<String> denyActions = new HashSet<String>();
+        if (actionValues != null) {
+            Set<String> actionNames = actionValues.keySet();
+            for(String actionName : actionNames) {
+                if (Boolean.TRUE.equals(actionValues.get(actionName))) {
+                    permitActions.add(actionName);
+                } else {
+                    denyActions.add(actionName);
+                }
+            }
+        }
 
         Set<String> excludedResources = entitlement.getExcludedResourceNames();
-        List<AnyOf> exlcudedResourcesAnyOfList = excludedResourceNamesToAnyOfList(
+        List<AnyOf> anyOfExcludedResourceList = excludedResourceNamesToAnyOfList(
                 excludedResources);
 
         EntitlementCondition ec = privilege.getCondition();
 
         Set<ResourceAttributes> ra = privilege.getResourceAttributes();
+
+        if (!permitActions.isEmpty()) {
+            Rule permitRule = new Rule();
+            permitRule.setRuleId("permit-rule");
+            permitRule.setDescription("permit-description");
+            permitRule.setEffect(EffectType.PERMIT);
+            Target permitTarget = new Target();
+            permitRule.setTarget(permitTarget);
+            List<AnyOf> permitTargetAnyOfList = permitTarget.getAnyOf();
+            if (anyOfExcludedResourceList != null) {
+                permitTargetAnyOfList.addAll(anyOfExcludedResourceList);
+            }
+            List<AnyOf> anyOfPermitActionList = actionNamesToAnyOfList(permitActions);
+            if (anyOfPermitActionList != null) {
+                permitTargetAnyOfList.addAll(anyOfPermitActionList);
+            }
+            List<Object> vrList 
+                = policy.getCombinerParametersOrRuleCombinerParametersOrVariableDefinition();
+            vrList.add(permitRule);
+            
+        }
+
+        if (!denyActions.isEmpty()) {
+            Rule denyRule = new Rule();
+            denyRule.setRuleId("deny-rule");
+            denyRule.setDescription("deny-description");
+            denyRule.setEffect(EffectType.DENY);
+            Target denyTarget = new Target();
+            denyRule.setTarget(denyTarget);
+            List<AnyOf> denyTargetAnyOfList = denyTarget.getAnyOf();
+            if (anyOfExcludedResourceList != null) {
+                denyTargetAnyOfList.addAll(anyOfExcludedResourceList);
+            }
+            List<AnyOf> anyOfDenyActionList = actionNamesToAnyOfList(denyActions);
+            if (anyOfDenyActionList != null) {
+                denyTargetAnyOfList.addAll(anyOfDenyActionList);
+            }
+            List<Object> vrList 
+                = policy.getCombinerParametersOrRuleCombinerParametersOrVariableDefinition();
+            vrList.add(denyRule);
+        }
 
 
         return policy;
@@ -264,16 +323,15 @@ public class PrivilegeUtils {
         return anyOf;
     }
 
-    public static List<AnyOf> actionValuesToAnyOfList(
-            Map<String, Boolean> actionValues) {
-        if (actionValues == null || actionValues.isEmpty()) {
+    public static List<AnyOf> actionNamesToAnyOfList(
+            Set<String> actionNames) {
+        if (actionNames == null || actionNames.isEmpty()) {
             return null;
         }
         List<AnyOf> anyOfList = new ArrayList<AnyOf>();
         AnyOf anyOf = new AnyOf();
         anyOfList.add(anyOf);
         List<AllOf> allOfList = anyOf.getAllOf();
-        Set<String> actionNames = actionValues.keySet();
         for (String actionName : actionNames) {
             AllOf allOf = new AllOf();
             List<Match> matchList = allOf.getMatch();
