@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogicalSubject.java,v 1.3 2009-05-07 00:28:09 veiming Exp $
+ * $Id: LogicalSubject.java,v 1.4 2009-05-12 05:51:58 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -327,5 +327,21 @@ public abstract class LogicalSubject implements EntitlementSubject {
             results.addAll(e.getRequiredAttributeNames());
         }
         return results;
+    }
+
+   /**
+     * Returns <code>true</code> is this subject is an identity object.
+     *
+     * @return <code>true</code> is this subject is an identity object.
+     */
+    public boolean isIdentity() {
+        if ((eSubjects != null) && !eSubjects.isEmpty()) {
+            for (EntitlementSubject e : eSubjects) {
+                if (e.isIdentity()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

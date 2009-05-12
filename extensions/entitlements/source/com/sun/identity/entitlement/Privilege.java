@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.18 2009-05-07 23:00:25 veiming Exp $
+ * $Id: Privilege.java,v 1.19 2009-05-12 05:51:58 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -103,6 +103,15 @@ public abstract class Privilege implements Serializable {
         this.eSubject = eSubject;
         this.eCondition = eCondition;
         this.eResourceAttributes = eResourceAttributes;
+        validateSubject();
+    }
+
+    private void validateSubject()
+        throws EntitlementException {
+        if ((eSubject == null) || !eSubject.isIdentity()){
+            Object[] params = {name};
+            throw new EntitlementException(310, params);
+        }
     }
 
     /**

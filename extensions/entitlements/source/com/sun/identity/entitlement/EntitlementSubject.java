@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementSubject.java,v 1.7 2009-05-02 08:53:59 veiming Exp $
+ * $Id: EntitlementSubject.java,v 1.8 2009-05-12 05:51:58 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -86,4 +86,11 @@ public interface EntitlementSubject extends Serializable {
         String resourceName,
         Map<String, Set<String>> environment)
         throws EntitlementException;
+
+    /**
+     * Returns <code>true</code> is this subject is an identity object.
+     *
+     * @return <code>true</code> is this subject is an identity object.
+     */
+    boolean isIdentity();
 }

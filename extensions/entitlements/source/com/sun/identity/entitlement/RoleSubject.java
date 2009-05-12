@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleSubject.java,v 1.9 2009-05-04 20:57:06 veiming Exp $
+ * $Id: RoleSubject.java,v 1.10 2009-05-12 05:51:58 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -122,5 +122,14 @@ public class RoleSubject extends EntitlementSubjectImpl {
         set.add(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
             IdType.ROLE.getName());
         return set;
+    }
+
+    /**
+     * Returns <code>true</code> is this subject is an identity object.
+     *
+     * @return <code>true</code> is this subject is an identity object.
+     */
+    public boolean isIdentity() {
+        return true;
     }
 }

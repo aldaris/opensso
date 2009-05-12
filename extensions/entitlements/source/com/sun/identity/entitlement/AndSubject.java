@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndSubject.java,v 1.1 2009-05-05 00:28:58 veiming Exp $
+ * $Id: AndSubject.java,v 1.2 2009-05-12 05:51:58 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -33,8 +33,8 @@ import javax.security.auth.Subject;
 
 /**
  * EntitlementSubject wrapper on a set of EntitlementSubject(s) to provide 
- * boolean OR logic Membership is of OrSubject is satisfied if the user is
- * a member of any of the wrapped EntitlementSubject
+ * boolean And logic Membership is of AndSubject is satisfied if the user is
+ * a member of any of the wrapped <code>EntitlementSubject</code>
  */
 public class AndSubject extends LogicalSubject {
     /**
