@@ -104,7 +104,6 @@ public class ViewEntitlement implements Serializable {
 
     public void setResources(List<Resource> resources) {
         this.resources = resources;
-        resetAvailableResources();
     }
 
     public Resource[] getResourceArray() {

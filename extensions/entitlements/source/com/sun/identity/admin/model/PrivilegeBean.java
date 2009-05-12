@@ -278,7 +278,7 @@ public class PrivilegeBean implements Serializable {
     }
 
 
-    private String name = "myPolicy" + System.currentTimeMillis();
+    private String name = null;
     private String description = null;
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
     private ViewCondition viewCondition = null;

@@ -150,7 +150,7 @@ public class UrlResourcesHandler implements Serializable {
         List<Resource> availableResources = getViewEntitlement(event).getAvailableResources();
 
         for (Resource r : availableResources) {
-            if (!r.getName().startsWith(searchFilter)) {
+            if (!r.getName().contains(searchFilter)) {
                 r.setVisible(false);
             } else {
                 r.setVisible(true);

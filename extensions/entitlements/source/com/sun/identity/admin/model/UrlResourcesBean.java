@@ -7,11 +7,12 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 public class UrlResourcesBean implements Serializable {
+
     private boolean addPopupVisible = false;
-    private String addPopupPrefix;
-    private String addPopupSuffix;
     private String addExceptionPopupName;
     private String searchFilter;
+    private UrlResource addPopupResource;
+    private UrlResourceParts addPopupUrlResourceParts;
     private boolean addExceptionPopupVisible;
     private UrlResource addExceptionPopupResource;
     private List<Resource> addPopupAvailableResources;
@@ -57,43 +58,29 @@ public class UrlResourcesBean implements Serializable {
         this.addExceptionPopupName = addExceptionPopupName;
     }
 
-    public List<Resource> getAddPopupAvailableResources() {
-        return addPopupAvailableResources;
-    }
-
-    public List<SelectItem> getAddPopupAvailableResourceItems() {
+    public List<SelectItem> getAddPopupAvailableResourceNameItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
-        if (addPopupAvailableResources == null) {
+        if (getAddPopupAvailableResources() == null) {
             return items;
         }
 
-        for (Resource r: addPopupAvailableResources) {
-            SelectItem i = new SelectItem(r, r.getName());
+        for (Resource r : getAddPopupAvailableResources()) {
+            UrlResource ur = (UrlResource) r;
+            SelectItem i = new SelectItem(ur.getName());
             items.add(i);
         }
 
         return items;
     }
 
-    public List<SelectItem> getAddPopupAvailableResourcePrefixItems() {
-        List<SelectItem> items = new ArrayList<SelectItem>();
-        if (addPopupAvailableResources == null) {
-            return items;
-        }
-
-        for (Resource r: addPopupAvailableResources) {
-            UrlResource ur = (UrlResource)r;
-            if (ur.isSuffixable()) {
-                SelectItem i = new SelectItem(ur.getPrefix());
-                items.add(i);
+    public void setAddPopupAvailableResources(List<Resource> addPopupAvailableResources) {
+        this.addPopupAvailableResources = new ArrayList<Resource>();
+        for (Resource r : addPopupAvailableResources) {
+            UrlResource ur = (UrlResource) r;
+            if (ur.isAddable()) {
+                this.getAddPopupAvailableResources().add(ur);
             }
         }
-
-        return items;
-    }
-
-    public void setAddPopupAvailableResources(List<Resource> addPopupAvailableResources) {
-        this.addPopupAvailableResources = addPopupAvailableResources;
     }
 
     public Effect getResourcesMessageEffect() {
@@ -104,19 +91,40 @@ public class UrlResourcesBean implements Serializable {
         this.resourcesMessageEffect = resourcesMessageEffect;
     }
 
-    public String getAddPopupPrefix() {
-        return addPopupPrefix;
+    public String getAddPopupResourceName() {
+        if (getAddPopupResource() == null) {
+            return null;
+        }
+        return getAddPopupResource().getName();
     }
 
-    public void setAddPopupPrefix(String addPopupPrefix) {
-        this.addPopupPrefix = addPopupPrefix;
+    public void setAddPopupResourceName(String name) {
+        if (name == null) {
+            setAddPopupResource(null);
+        } else {
+            UrlResource ur = new UrlResource();
+            ur.setName(name);
+            setAddPopupResource(ur);
+        }
     }
 
-    public String getAddPopupSuffix() {
-        return addPopupSuffix;
+    public UrlResource getAddPopupResource() {
+        return addPopupResource;
     }
 
-    public void setAddPopupSuffix(String addPopupSuffix) {
-        this.addPopupSuffix = addPopupSuffix;
+    public void setAddPopupResource(UrlResource addPopupResource) {
+        this.addPopupResource = addPopupResource;
+    }
+
+    public UrlResourceParts getAddPopupUrlResourceParts() {
+        return addPopupUrlResourceParts;
+    }
+
+    public void setAddPopupUrlResourceParts(UrlResourceParts addPopupUrlResourceParts) {
+        this.addPopupUrlResourceParts = addPopupUrlResourceParts;
+    }
+
+    public List<Resource> getAddPopupAvailableResources() {
+        return addPopupAvailableResources;
     }
 }

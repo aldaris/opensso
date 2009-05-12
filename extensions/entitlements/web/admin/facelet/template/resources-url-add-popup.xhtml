@@ -10,21 +10,58 @@
         type="question"
         handler="#{urlResourcesHandler}"
         modal="true"
-        title="Add URL Resources"
+        title="Add URL Resource"
         visible="#{urlResourcesBean.addPopupVisible}"
         closeListenerMethod="addPopupCancelListener">
+
         <ui:define name="body">
-            <ice:panelGroup>
-                <ice:panelGrid
-                    columns="2">
+            <ice:panelGroup
+                styleClass="url-resource-add-popup">
+                <ice:panelGroup
+                    style="padding-bottom: 20px">
+                    <ice:outputText
+                        escape="false"
+                        value="#{resources['resources-url-add-popup.info']}"/>
+                </ice:panelGroup>
+                <ice:panelGroup>
+                    <ice:outputLabel
+                        for="url-resource-select"
+                        value="URL resource pattern"/>
+                </ice:panelGroup>
+                <ice:panelGroup>
                     <ice:selectOneMenu
-                        value="#{urlResourcesBean.addPopupPrefix}">
+                        id="url-resoure-select"
+                        styleClass="packed-input"
+                        valueChangeListener="#{urlResourcesHandler.addPopupResourceChangedListener}"
+                        value="#{urlResourcesBean.addPopupResourceName}">
                         <f:selectItems
-                            value="#{urlResourcesBean.addPopupAvailableResourcePrefixItems}"/>
+                            value="#{urlResourcesBean.addPopupAvailableResourceNameItems}"/>
                     </ice:selectOneMenu>
-                    <ice:inputText
-                        value="#{urlResourcesBean.addPopupSuffix}"/>
-                </ice:panelGrid>
+                </ice:panelGroup>
+                <ice:panelGroup
+                    rendered="#{urlResourcesBean.addPopupResource != null}">
+                    <ice:panelGroup
+                        style="margin-top: 20px">
+                        <ice:outputLabel
+                            for="url-resource-fields"
+                            value="New URL resource"/>
+                    </ice:panelGroup>
+                    <ice:panelSeries
+                        id="url-resource-fields"
+                        var="urlResourcePart"
+                        value="#{urlResourcesBean.addPopupUrlResourceParts.urlResourceParts}">
+                        <ice:outputText
+                            rendered="#{urlResourcePart.part != '*'}"
+                            value="#{urlResourcePart.part}"/>
+                        <ice:inputText
+                            styleClass="packed-input"
+                            size="#{urlResourcePart.valueLength}"
+                            partialSubmit="true"
+                            onkeyup="submitNow(this);"
+                            rendered="#{urlResourcePart.part == '*'}"
+                            value="#{urlResourcePart.value}"/>
+                    </ice:panelSeries>
+                </ice:panelGroup>
                 <ice:panelGrid
                     styleClass="button-group"
                     columns="2">

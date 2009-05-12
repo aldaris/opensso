@@ -86,7 +86,7 @@
                                             <ice:panelGrid
                                                 columns="1">
                                                 <ice:panelGroup
-                                                    rendered="#{urlResource.suffixable &amp;&amp; o:contains(policyResourcesBean.privilegeBean.viewEntitlement.resources, urlResource)}">
+                                                    rendered="#{urlResource.exceptable &amp;&amp; o:contains(policyResourcesBean.privilegeBean.viewEntitlement.resources, urlResource)}">
                                                     <o:clink
                                                         type="add"
                                                         linkLabel="Add Exception"

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.11 2009-05-07 22:13:34 veiming Exp $
+   $Id: entitlement.xml,v 1.12 2009-05-12 15:30:58 farble1670 Exp $
 
 -->
 
@@ -213,6 +213,11 @@
                             <Value>iPlanetAMWebAgentService</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
+                            <Attribute name="resources" />
+                            <Value>http://*</Value>
+                            <Value>https://*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
                             <Attribute name="conditions" />
                             <Value>IPCondition</Value>
                             <Value>DNSNameCondition</Value>
@@ -234,8 +239,8 @@
                         <AttributeValuePair>
                             <Attribute name="resources" />
                             <Value>http://paycheck.sun.com:8081/*</Value>
-                            <Value>http://paycheck.sun.com:8081/private</Value>
-                            <Value>http://paycheck.sun.com:8081/users/*</Value>
+                            <Value>http://paycheck.sun.com:8081/*/private</Value>
+                            <Value>http://paycheck.sun.com:8081/*/users/*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="conditions" />
@@ -256,10 +261,10 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="resources" />
-                            <Value>http://calendar.sun.com</Value>
-                            <Value>http://calendar.sun.com/my</Value>
+                            <Value>http://calendar.sun.com/*</Value>
+                            <Value>http://calendar.sun.com/my/*</Value>
                             <Value>http://calendar.sun.com/admin</Value>
-                            <Value>http://calendar.sun.com/calendars?calId=*</Value>
+                            <Value>http://calendar.sun.com/*/calendars?calId=*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="conditions" />
