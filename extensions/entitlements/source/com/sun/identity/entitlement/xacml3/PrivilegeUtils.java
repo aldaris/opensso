@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.6 2009-05-12 17:25:45 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.7 2009-05-12 21:02:06 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -168,7 +168,7 @@ public class PrivilegeUtils {
         lastModifiedBy.setExpression(cbve);
 
         VariableDefinition creationDate = new VariableDefinition(); // long
-        vrList.add(creationDate);
+        //vrList.add(creationDate); TODO: fix and uncomment
         creationDate.setVariableId("creationDate");
         AttributeValue cdv = new AttributeValue();
         cdv.setDataType("string");
@@ -178,7 +178,7 @@ public class PrivilegeUtils {
         creationDate.setExpression(cdve);
 
         VariableDefinition lastModifiedDate = new VariableDefinition(); // long
-        vrList.add(lastModifiedDate);
+        //vrList.add(lastModifiedDate); TODO: fix and uncomment
         lastModifiedDate.setVariableId("lastModifiedDate");
         AttributeValue lmdv = new AttributeValue();
         lmdv.setDataType("string");
@@ -437,7 +437,19 @@ public class PrivilegeUtils {
 
     public static List<AnyOf> excludedResourceNamesToAnyOfList(
             Set<String> excludedResources) {
+        if (excludedResources == null || excludedResources.isEmpty()) {
+            return null;
+        }
         List<AnyOf> anyOfList = new ArrayList<AnyOf>();
+        AnyOf anyOf = new AnyOf();
+        anyOfList.add(anyOf);
+        List<AllOf> allOfList = anyOf.getAllOf();
+        for (String resourceName : excludedResources) {
+            AllOf allOf = new AllOf();
+            List<Match> matchList = allOf.getMatch();
+            matchList.add(resourceNameToNotMatch(resourceName));
+            allOfList.add(allOf);
+        }
         return anyOfList;
     }
 
@@ -448,6 +460,38 @@ public class PrivilegeUtils {
 
         Match match = new Match();
         String matchId = "matchId";
+        match.setMatchId(matchId);
+
+        AttributeValue attributeValue = new AttributeValue();
+        String dataType = "datatype";
+        attributeValue.setDataType(dataType);
+        attributeValue.getContent().add(resourceName);
+
+        AttributeDesignator attributeDesignator = new AttributeDesignator();
+        String category = "category";
+        attributeDesignator.setCategory(category);
+        String attributeId = "attributeId";
+        attributeDesignator.setAttributeId(attributeId);
+        String dt = "dataType";
+        attributeDesignator.setDataType(dt);
+        String issuer = "issuer";
+        attributeDesignator.setIssuer(issuer);
+        boolean mustBePresent = true;
+        attributeDesignator.setMustBePresent(mustBePresent);
+
+        match.setAttributeValue(attributeValue);
+        match.setAttributeDesignator(attributeDesignator);
+
+        return match;
+    }
+
+    public static Match resourceNameToNotMatch(String resourceName) {
+        if (resourceName == null | resourceName.length() == 0) {
+            return null;
+        }
+
+        Match match = new Match();
+        String matchId = "not-matchId";
         match.setMatchId(matchId);
 
         AttributeValue attributeValue = new AttributeValue();
@@ -510,6 +554,7 @@ public class PrivilegeUtils {
             throws JAXBException {
         Condition condition = null;
         if (es != null || ec != null) {
+            condition = new Condition();
             ObjectFactory objectFactory = new ObjectFactory();
             JAXBContext jaxbContext = JAXBContext.newInstance(
                     "com.sun.identity.entitlement.xacml3.core");
