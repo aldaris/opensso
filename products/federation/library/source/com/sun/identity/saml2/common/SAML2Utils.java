@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.45 2009-03-03 01:52:41 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.46 2009-05-12 22:41:31 madan_ranganath Exp $
  *
  */
 
@@ -419,17 +419,47 @@ public class SAML2Utils extends SAML2SDKUtils {
 
         // POST Profile - if Response signing is true then
         // assertion signing will not be done at the IDP
-        boolean wantPostResponseSigned = 
-            SAML2Utils.wantPOSTResponseSigned(
-                orgName,hostEntityId,SAML2Constants.SP_ROLE);
-        if (profileBinding.equals(SAML2Constants.HTTP_POST) 
-                && wantPostResponseSigned) {
-            if (debug.messageEnabled()) {
-                debug.message(method + "binding is :" + profileBinding);
-                debug.message(method + "signResponse  :" + 
-                    wantPostResponseSigned);
+        if (needAssertionSigned) {
+            boolean wantPostResponseSigned =
+                SAML2Utils.wantPOSTResponseSigned(
+                    orgName,hostEntityId,SAML2Constants.SP_ROLE);
+            if (profileBinding.equals(SAML2Constants.HTTP_POST)) {
+                if (debug.messageEnabled()) {
+                    debug.message(method + "binding is :" + profileBinding);
+                }
+                if (wantPostResponseSigned) {
+                    if (debug.messageEnabled()) {
+                        debug.message(method + "signResponse  :" +
+                            wantPostResponseSigned);
+                    }
+                    needAssertionSigned = false;
+                } else {
+                    if (response.isSigned()) {
+                       // POST Profile - it is sufficient if response is
+                        // signed, not a mandatory condition that assertion
+                        // be also signed.
+                        // Make sure that the certificate is valid
+                        IDPSSODescriptorElement idpSSODescriptor = null;
+                        try {
+                            idpSSODescriptor = saml2MetaManager.
+                                    getIDPSSODescriptor(orgName, idpEntityId);
+                        } catch (SAML2MetaException sme) {
+                            SAML2Utils.debug.error(method, sme);
+                            idpSSODescriptor = null;
+                        }
+                        if (idpSSODescriptor != null) {
+                            X509Certificate idpCert =
+                                KeyUtil.getVerificationCert(
+                                    idpSSODescriptor, idpEntityId,
+                                    SAML2Constants.IDP_ROLE);
+                            if (idpCert != null &&
+                                response.isSignatureValid(idpCert)) {
+                                needAssertionSigned = false;
+                            }
+                        }
+                    }
+                }
             }
-            needAssertionSigned = false;
         }
         
         List assertions = response.getAssertion();
