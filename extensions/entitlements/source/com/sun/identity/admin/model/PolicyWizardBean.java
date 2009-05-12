@@ -31,8 +31,20 @@ public class PolicyWizardBean
 
     @Override
     public void reset() {
+        reset(true);
+    }
+
+    public void reset(boolean resetName) {
         super.reset();
+
+        String name = privilegeBean.getName();
+        String desc = privilegeBean.getDescription();
         setPrivilegeBean(new PrivilegeBean());
+
+        if (!resetName) {
+            privilegeBean.setName(name);
+            privilegeBean.setDescription(desc);
+        }
 
         ConditionType oct = getConditionType("or");
         privilegeBean.setViewCondition(oct.newViewCondition());
@@ -103,7 +115,7 @@ public class PolicyWizardBean
 
     public void setViewApplicationName(String viewApplicationName) {
         if (getViewApplicationName() == null || !viewApplicationName.equals(getViewApplicationName())) {
-            reset();
+            reset(false);
 
             ViewApplication va = viewApplicationsBean.getViewApplications().get(viewApplicationName);
             getPrivilegeBean().getViewEntitlement().setViewApplication(va);
@@ -154,7 +166,7 @@ public class PolicyWizardBean
     }
 
     public SubjectType getSubjectType(String name) {
-        for (SubjectType st: subjectTypes) {
+        for (SubjectType st : subjectTypes) {
             if (st.getName().equals(name)) {
                 return st;
             }
@@ -167,7 +179,7 @@ public class PolicyWizardBean
     }
 
     public ConditionType getConditionType(String name) {
-        for (ConditionType ct: conditionTypes) {
+        for (ConditionType ct : conditionTypes) {
             if (ct.getName().equals(name)) {
                 return ct;
             }

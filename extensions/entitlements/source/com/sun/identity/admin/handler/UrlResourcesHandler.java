@@ -7,6 +7,7 @@ import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.Resource;
 import com.sun.identity.admin.model.UrlResource;
+import com.sun.identity.admin.model.UrlResourceParts;
 import com.sun.identity.admin.model.UrlResourcesBean;
 import com.sun.identity.admin.model.ViewEntitlement;
 import java.io.Serializable;
@@ -56,9 +57,9 @@ public class UrlResourcesHandler implements Serializable {
     }
 
     private boolean isResourcesAddable(List<Resource> availableResources) {
-        for (Resource r: availableResources) {
-            UrlResource ur = (UrlResource)r;
-            if (ur.isSuffixable()) {
+        for (Resource r : availableResources) {
+            UrlResource ur = (UrlResource) r;
+            if (ur.isAddable()) {
                 return true;
             }
         }
@@ -68,9 +69,14 @@ public class UrlResourcesHandler implements Serializable {
 
     public void addListener(ActionEvent event) {
         List<Resource> ar = getAvailableResources(event);
-        if (isResourcesAddable(ar)) {
+        urlResourcesBean.setAddPopupAvailableResources(ar);
+
+        if (urlResourcesBean.getAddPopupAvailableResources().size() > 0) {
             urlResourcesBean.setAddPopupVisible(true);
-            urlResourcesBean.setAddPopupAvailableResources(ar);
+
+            UrlResource ur = (UrlResource) urlResourcesBean.getAddPopupAvailableResources().get(0);
+            urlResourcesBean.setAddPopupResource(ur);
+            urlResourcesBean.setAddPopupUrlResourceParts(ur.getUrlResourceParts());
         } else {
             MessageBean mb = new MessageBean();
             Resources r = new Resources();
@@ -82,23 +88,17 @@ public class UrlResourcesHandler implements Serializable {
     }
 
     private void resetAddPopup() {
-        urlResourcesBean.setAddPopupPrefix(null);
-        urlResourcesBean.setAddPopupSuffix(null);
+        urlResourcesBean.setAddPopupResource(null);
+        urlResourcesBean.setAddPopupUrlResourceParts(null);
         urlResourcesBean.setAddPopupVisible(false);
     }
 
     public void addPopupOkListener(ActionEvent event) {
-        String prefix = urlResourcesBean.getAddPopupPrefix();
-        String suffix = urlResourcesBean.getAddPopupSuffix();
-        UrlResource ur = new UrlResource();
-        ur.setName(prefix+suffix);
-
         ViewEntitlement ve = getViewEntitlement(event);
-        List<Resource> ar = getAvailableResources(event);
+        UrlResource ur = urlResourcesBean.getAddPopupUrlResourceParts().getUrlResource();
+        ve.getResources().add(ur);
 
-        if (!ve.getResources().contains(ur)) {
-            ve.getResources().add(ur);
-        }
+        List<Resource> ar = getAvailableResources(event);
         if (!ar.contains(ur)) {
             ar.add(ur);
         }
@@ -108,7 +108,7 @@ public class UrlResourcesHandler implements Serializable {
 
     public void addExceptionPopupOkListener(ActionEvent event) {
         String name = urlResourcesBean.getAddExceptionPopupName();
-        String prefix = urlResourcesBean.getAddExceptionPopupResource().getPrefix();
+        String prefix = urlResourcesBean.getAddExceptionPopupResource().getExceptionPrefix();
 
         UrlResource ur = new UrlResource();
         ur.setName(prefix + name);
@@ -155,6 +155,17 @@ public class UrlResourcesHandler implements Serializable {
             } else {
                 r.setVisible(true);
             }
+        }
+    }
+
+    public void addPopupResourceChangedListener(ValueChangeEvent event) {
+        String addPopupResourceName = (String) event.getNewValue();
+        if (addPopupResourceName != null) {
+            UrlResource addPopupResource = new UrlResource();
+            addPopupResource.setName(addPopupResourceName);
+
+            UrlResourceParts urp = new UrlResourceParts(addPopupResource);
+            urlResourcesBean.setAddPopupUrlResourceParts(urp);
         }
     }
 

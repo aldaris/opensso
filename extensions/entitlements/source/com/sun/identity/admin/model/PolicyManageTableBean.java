@@ -36,7 +36,7 @@ public class PolicyManageTableBean implements Serializable {
     }
 
     public static class SortKey implements Serializable {
-        private boolean ascending = false;
+        private boolean ascending = true;
         private String column = "name";
 
         public SortKey() {

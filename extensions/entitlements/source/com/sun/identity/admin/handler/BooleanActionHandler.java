@@ -9,7 +9,9 @@ public class BooleanActionHandler implements Serializable {
 
     public void selectListener(ValueChangeEvent event) {
         Boolean b = (Boolean) event.getNewValue();
-        booleanAction.setAllow(b.booleanValue());
+        if (b != null) {
+            booleanAction.setAllow(b.booleanValue());
+        }
     }
 
     public BooleanAction getBooleanAction() {
