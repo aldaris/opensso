@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPolicyDataStore.java,v 1.1 2009-05-09 01:08:46 veiming Exp $
+ * $Id: OpenSSOPolicyDataStore.java,v 1.2 2009-05-12 19:58:40 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -31,6 +31,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PolicyDataStore;
+import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException;
@@ -90,7 +91,12 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
 
                 PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
                     realm);
-                pis.add(PrivilegeUtils.policyToPrivileges(policyObj));
+                Set<Privilege> privileges =
+                    PrivilegeUtils.policyToPrivileges(policyObj);
+                for (Privilege p : privileges) {
+                    p.canonicalizeResources();
+                }
+                pis.add(privileges);
             } catch (SSOException e) {
                 Object[] params = {name};
                 throw new EntitlementException(202, params, e);
@@ -231,10 +237,19 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
                 PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
                     realm);
                 pis.delete(name);
+                Set<Privilege> privileges =
+                    PrivilegeUtils.policyToPrivileges(policyObj);
+                for (Privilege p : privileges) {
+                    p.canonicalizeResources();
+                }
+                pis.add(privileges);
             } catch (SSOException e) {
                 Object[] params = {name};
                 throw new EntitlementException(206, params, e);
             } catch (SMSException e) {
+                Object[] params = {name};
+                throw new EntitlementException(206, params, e);
+            } catch (PolicyException e) {
                 Object[] params = {name};
                 throw new EntitlementException(206, params, e);
             }

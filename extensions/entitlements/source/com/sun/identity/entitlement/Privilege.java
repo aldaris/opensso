@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.19 2009-05-12 05:51:58 veiming Exp $
+ * $Id: Privilege.java,v 1.20 2009-05-12 19:58:40 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.ResourceName;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -502,4 +503,11 @@ public abstract class Privilege implements Serializable {
         return this.policyName;
     }
 
+    /**
+     * Canonicalizes resource name before persistence.
+     */
+    public void canonicalizeResources()
+        throws EntitlementException {
+        entitlement.canonicalizeResources();
+    }
 }

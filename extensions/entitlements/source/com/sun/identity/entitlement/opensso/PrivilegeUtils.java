@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.20 2009-05-12 05:01:03 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.21 2009-05-12 19:58:41 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -44,7 +44,6 @@ import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserAttributes;
-import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.policy.ActionSchema;
 import com.sun.identity.policy.InvalidNameException;
 import com.sun.identity.policy.Policy;
@@ -220,23 +219,17 @@ public class PrivilegeUtils {
             Map<String, Boolean> actionMap = pavToPrav(rule.getActionValues(), 
                 serviceName);
             String entitlementName = rule.getName();
-            ResourceName resComparator = ApplicationManager.getApplication(
-                "/", serviceName).getResourceComparator(); //TOFIX
-            
+           
             Set<String> resourceNames = new HashSet<String>();
             Set<String> ruleResources = rule.getResourceNames();
             if (ruleResources != null) {
-                for (String r : ruleResources) {
-                    resourceNames.add(resComparator.canonicalize(r));
-                }
+                resourceNames.addAll(ruleResources);
             }
 
             Set<String> excludedResourceNames = new HashSet<String>();
             Set<String> excludedResourceNames1 = rule.getExcludedResourceNames();
             if (excludedResourceNames1 != null) {
-                for (String r : excludedResourceNames1) {
-                    excludedResourceNames.add(resComparator.canonicalize(r));
-                }
+                excludedResourceNames.addAll(excludedResourceNames1);
             }
 
             Entitlement entitlement = new Entitlement(rule.getApplicationName(),
