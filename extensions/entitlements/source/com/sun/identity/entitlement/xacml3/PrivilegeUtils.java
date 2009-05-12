@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.5 2009-05-12 01:08:38 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.6 2009-05-12 17:25:45 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -205,9 +205,15 @@ public class PrivilegeUtils {
         List<AnyOf> targetAnyOfList = target.getAnyOf();
 
         EntitlementSubject es = privilege.getSubject();
+        /* TODO: detect simple subjects and set attribute value and designator
         List<AnyOf> anyOfSubjectList = entitlementSubjectToAnyOfList(es);
         if (anyOfSubjectList != null) {
             targetAnyOfList.addAll(anyOfSubjectList);
+        }
+        */
+        AnyOf anyOfSubject = entitlementSubjectToAnyOf(es);
+        if (anyOfSubject != null) {
+            targetAnyOfList.add(anyOfSubject);
         }
 
         Entitlement entitlement = privilege.getEntitlement();
@@ -349,6 +355,45 @@ public class PrivilegeUtils {
         return anyOfList;
     }
 
+
+    public static AnyOf entitlementSubjectToAnyOf(
+            EntitlementSubject es) throws JAXBException {
+        if (es == null) {
+            return null;
+        }
+        AnyOf anyOf = new AnyOf();
+        List<AllOf> allOfList = anyOf.getAllOf();
+        AllOf allOf = new AllOf();
+        allOfList.add(allOf);
+        List<Match> matchList = allOf.getMatch();
+
+        Match match = new Match();
+        matchList.add(match);
+        match.setMatchId("json:subject:match");
+
+        AttributeValue attributeValue = new AttributeValue();
+        String dataType = "json:subject";
+        attributeValue.setDataType(dataType);
+        String esString = es.toString();
+        attributeValue.getContent().add(esString);
+
+        AttributeDesignator attributeDesignator = new AttributeDesignator();
+        String category = "json:subject:category";
+        attributeDesignator.setCategory(category);
+        String attributeId = "attributeId";
+        attributeDesignator.setAttributeId(attributeId);
+        String dt = "dataType";
+        attributeDesignator.setDataType(dt);
+        String issuer = "issuer";
+        attributeDesignator.setIssuer(issuer);
+        boolean mustBePresent = true;
+        attributeDesignator.setMustBePresent(mustBePresent);
+
+        match.setAttributeValue(attributeValue);
+        match.setAttributeDesignator(attributeDesignator);
+
+        return anyOf;
+    }
 
     public static List<AnyOf> resourceNamesToAnyOfList(Set<String> resourceNames) {
         if (resourceNames == null || resourceNames.isEmpty()) {
