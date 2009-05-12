@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.3 2009-05-08 23:50:31 dillidorai Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.4 2009-05-12 21:03:02 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -82,6 +82,12 @@ public class PrivilegeUtilsTest {
                 resourceName, actionValues);
         entitlement.setName("ent1");
 
+        Set<String> excludedResources = new HashSet<String>();
+        excludedResources.add("http://www.sun.com:80/hr");
+        excludedResources.add("http://www.sun.com:80/legal");
+        entitlement.setExcludedResourceNames(excludedResources);
+
+
         String user11 = "id=user11,ou=user," + ServiceManager.getBaseDN();
         String user12 = "id=user12,ou=user," + ServiceManager.getBaseDN();
         UserSubject ua1 = new IdRepoUserSubject();
@@ -134,6 +140,11 @@ public class PrivilegeUtilsTest {
 
         Privilege privilege = new OpenSSOPrivilege(PRIVILEGE_NAME, entitlement, ua1,
                 ipc, ra);
+        privilege.setCreatedBy("amadmin");
+        privilege.setLastModifiedBy("amadmin");
+        privilege.setCreationDate(System.currentTimeMillis());
+        privilege.setLastModifiedDate(System.currentTimeMillis());
+
         UnittestLog.logMessage("PrivilegeUtils.testPrivilegeToXACMLPolicy():" +
                 "Privilege=" + privilege.toString());
         UnittestLog.logMessage("PrivilegeUtils.testPrivilegeToXACMLPolicy():" +
