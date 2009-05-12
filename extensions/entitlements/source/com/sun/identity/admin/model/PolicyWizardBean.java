@@ -103,6 +103,8 @@ public class PolicyWizardBean
 
     public void setViewApplicationName(String viewApplicationName) {
         if (getViewApplicationName() == null || !viewApplicationName.equals(getViewApplicationName())) {
+            reset();
+
             ViewApplication va = viewApplicationsBean.getViewApplications().get(viewApplicationName);
             getPrivilegeBean().getViewEntitlement().setViewApplication(va);
 

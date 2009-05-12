@@ -3,6 +3,7 @@ package com.sun.identity.admin.model;
 import java.io.Serializable;
 
 public class WizardBean implements Serializable {
+
     private WizardStepBean[] wizardStepBeans = null;
     private int steps;
 
@@ -12,18 +13,19 @@ public class WizardBean implements Serializable {
             wizardStepBeans[i] = new WizardStepBean();
         }
 
-        WizardStepBean first = getWizardStepBeans()[0];
-        first.setEnabled(true);
-        first.setExpanded(true);
+        if (getWizardStepBeans().length > 0) {
+            WizardStepBean first = getWizardStepBeans()[0];
+            first.setEnabled(true);
+            first.setExpanded(true);
+        }
     }
 
     public WizardStepBean[] getWizardStepBeans() {
         return wizardStepBeans;
     }
 
-
     public boolean isFinishRendered() {
-        for (WizardStepBean wsb: wizardStepBeans) {
+        for (WizardStepBean wsb : wizardStepBeans) {
             if (!wsb.isEnabled()) {
                 return false;
             }
@@ -40,13 +42,13 @@ public class WizardBean implements Serializable {
     }
 
     public void setAllEnabled(boolean enabled) {
-        for (WizardStepBean wsb: getWizardStepBeans()) {
+        for (WizardStepBean wsb : getWizardStepBeans()) {
             wsb.setEnabled(enabled);
         }
     }
 
     public void setAllExpanded(boolean expaned) {
-        for (WizardStepBean wsb: getWizardStepBeans()) {
+        for (WizardStepBean wsb : getWizardStepBeans()) {
             wsb.setExpanded(expaned);
         }
     }
