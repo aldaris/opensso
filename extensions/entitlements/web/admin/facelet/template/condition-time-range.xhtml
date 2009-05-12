@@ -11,36 +11,128 @@
 
         <ice:panelGrid
             columns="5">
-                <ice:outputText value="Start Time:"/>
-                <ice:inputText
-                    size="2"
-                    maxLength="2"
-                    value="#{viewCondition.startHour}"/>
-                <ice:outputText value=":"/>
-                <ice:inputText
-                    size="2"
-                    maxLength="2"
-                    value="#{viewCondition.startMinute}"/>
-                <ice:selectOneMenu
-                    value="#{viewCondition.startPeriod}">
-                    <f:selectItem itemValue="AM" itemLabel="AM"/>
-                    <f:selectItem itemValue="PM" itemLabel="PM"/>
-                </ice:selectOneMenu>
-                <ice:outputText value="End Time:"/>
-                <ice:inputText
-                    size="2"
-                    maxLength="2"
-                    value="#{viewCondition.endHour}"/>
-                <ice:outputText value=":"/>
-                <ice:inputText
-                    size="2"
-                    maxLength="2"
-                    value="#{viewCondition.endMinute}"/>
-                <ice:selectOneMenu
-                    value="#{viewCondition.endPeriod}">
-                    <f:selectItem itemValue="AM" itemLabel="AM"/>
-                    <f:selectItem itemValue="PM" itemLabel="PM"/>
-                </ice:selectOneMenu>
-            </ice:panelGrid>
+            <ice:outputText value="Start Time:"/>
+            <ice:selectOneMenu
+                value="#{viewCondition.startHour}">
+                <f:selectItem
+                    itemValue="0"
+                    itemLabel="12"/>
+                <f:selectItem
+                    itemValue="1"
+                    itemLabel="01"/>
+                <f:selectItem
+                    itemValue="2"
+                    itemLabel="02"/>
+                <f:selectItem
+                    itemValue="3"
+                    itemLabel="03"/>
+                <f:selectItem
+                    itemValue="4"
+                    itemLabel="04"/>
+                <f:selectItem
+                    itemValue="5"
+                    itemLabel="05"/>
+                <f:selectItem
+                    itemValue="6"
+                    itemLabel="06"/>
+                <f:selectItem
+                    itemValue="7"
+                    itemLabel="07"/>
+                <f:selectItem
+                    itemValue="8"
+                    itemLabel="08"/>
+                <f:selectItem
+                    itemValue="9"
+                    itemLabel="09"/>
+                <f:selectItem
+                    itemValue="10"
+                    itemLabel="10"/>
+                <f:selectItem
+                    itemValue="11"
+                    itemLabel="11"/>
+            </ice:selectOneMenu>
+            <ice:outputText value=":"/>
+            <ice:selectOneMenu
+                value="#{viewCondition.startMinute}">
+                <f:selectItem
+                    itemValue="0"
+                    itemLabel="00"/>
+                <f:selectItem
+                    itemValue="15"
+                    itemLabel="15"/>
+                <f:selectItem
+                    itemValue="30"
+                    itemLabel="30"/>
+                <f:selectItem
+                    itemValue="45"
+                    itemLabel="45"/>
+            </ice:selectOneMenu>
+            <ice:selectOneMenu
+                value="#{viewCondition.startPeriod}">
+                <f:selectItem itemValue="AM" itemLabel="AM"/>
+                <f:selectItem itemValue="PM" itemLabel="PM"/>
+            </ice:selectOneMenu>
+            <ice:outputText value="End Time:"/>
+            <ice:selectOneMenu
+                value="#{viewCondition.endHour}">
+                <f:selectItem
+                    itemValue="0"
+                    itemLabel="12"/>
+                <f:selectItem
+                    itemValue="1"
+                    itemLabel="01"/>
+                <f:selectItem
+                    itemValue="2"
+                    itemLabel="02"/>
+                <f:selectItem
+                    itemValue="3"
+                    itemLabel="03"/>
+                <f:selectItem
+                    itemValue="4"
+                    itemLabel="04"/>
+                <f:selectItem
+                    itemValue="5"
+                    itemLabel="05"/>
+                <f:selectItem
+                    itemValue="6"
+                    itemLabel="06"/>
+                <f:selectItem
+                    itemValue="7"
+                    itemLabel="07"/>
+                <f:selectItem
+                    itemValue="8"
+                    itemLabel="08"/>
+                <f:selectItem
+                    itemValue="9"
+                    itemLabel="09"/>
+                <f:selectItem
+                    itemValue="10"
+                    itemLabel="10"/>
+                <f:selectItem
+                    itemValue="11"
+                    itemLabel="11"/>
+            </ice:selectOneMenu>
+            <ice:outputText value=":"/>
+            <ice:selectOneMenu
+                value="#{viewCondition.endMinute}">
+                <f:selectItem
+                    itemValue="0"
+                    itemLabel="00"/>
+                <f:selectItem
+                    itemValue="15"
+                    itemLabel="15"/>
+                <f:selectItem
+                    itemValue="30"
+                    itemLabel="30"/>
+                <f:selectItem
+                    itemValue="45"
+                    itemLabel="45"/>
+            </ice:selectOneMenu>
+            <ice:selectOneMenu
+                value="#{viewCondition.endPeriod}">
+                <f:selectItem itemValue="AM" itemLabel="AM"/>
+                <f:selectItem itemValue="PM" itemLabel="PM"/>
+            </ice:selectOneMenu>
+        </ice:panelGrid>
     </ice:panelGroup>
 </span>

@@ -50,6 +50,8 @@ public class PolicyWizardBean
         privilegeBean.setViewCondition(oct.newViewCondition());
         SubjectType ost = getSubjectType("or");
         privilegeBean.setViewSubject(ost.newViewSubject());
+
+        advancedTabsetIndex = 0;
     }
 
     public List<SelectItem> getViewApplicationNameItems() {

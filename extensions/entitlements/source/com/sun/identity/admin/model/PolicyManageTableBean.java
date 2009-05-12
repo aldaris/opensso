@@ -97,6 +97,8 @@ public class PolicyManageTableBean implements Serializable {
         comparators.put(new SortKey("name", false), new PrivilegeBean.NameComparator(false));
         comparators.put(new SortKey("description", true), new PrivilegeBean.DescriptionComparator(true));
         comparators.put(new SortKey("description", false), new PrivilegeBean.DescriptionComparator(false));
+        comparators.put(new SortKey("application", true), new PrivilegeBean.ApplicationComparator(true));
+        comparators.put(new SortKey("application", false), new PrivilegeBean.ApplicationComparator(false));
         comparators.put(new SortKey("birth", true), new PrivilegeBean.BirthComparator(true));
         comparators.put(new SortKey("birth", false), new PrivilegeBean.BirthComparator(false));
         comparators.put(new SortKey("author", true), new PrivilegeBean.AuthorComparator(true));
@@ -134,6 +136,10 @@ public class PolicyManageTableBean implements Serializable {
 
     public boolean isDescriptionColumnVisible() {
         return getColumnsVisible().contains("description");
+    }
+
+    public boolean isApplicationColumnVisible() {
+        return getColumnsVisible().contains("application");
     }
 
     public boolean isExceptionsColumnVisible() {

@@ -133,6 +133,23 @@
                                     </o:tooltip>
                                 </ice:column>
                                 <ice:column
+                                    rendered="#{policyManageBean.policyManageTableBean.applicationColumnVisible}">
+                                    <f:facet name="header">
+                                        <ice:commandSortHeader
+                                            columnName="application"
+                                            actionListener="#{policyManageHandler.sortTableListener}">
+                                            <ice:outputText
+                                                value="Application"/>
+                                        </ice:commandSortHeader>
+                                    </f:facet>
+                                    <ice:panelGroup
+                                        visible="#{true}"
+                                        effect="#{privilegeBean.applicationCellEffect}">
+                                        <ice:outputText
+                                            value="#{privilegeBean.viewEntitlement.viewApplication.name}"/>
+                                    </ice:panelGroup>
+                                </ice:column>
+                                <ice:column
                                     rendered="#{policyManageBean.policyManageTableBean.modifierColumnVisible}">
                                     <f:facet name="header">
                                         <ice:commandSortHeader
