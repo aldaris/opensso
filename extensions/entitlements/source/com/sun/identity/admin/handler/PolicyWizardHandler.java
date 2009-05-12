@@ -203,6 +203,10 @@ public abstract class PolicyWizardHandler
         gotoStepListener(event);
     }
 
+    public void editApplicationListener(ActionEvent event) {
+        gotoStepListener(event);
+    }
+
     @Override
     public void gotoStepListener(ActionEvent event) {
         super.gotoStepListener(event);

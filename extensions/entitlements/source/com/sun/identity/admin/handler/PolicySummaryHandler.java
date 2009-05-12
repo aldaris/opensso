@@ -9,4 +9,5 @@ public interface PolicySummaryHandler {
     public void editSubjectsListener(ActionEvent event);
     public void editConditionsListener(ActionEvent event);
     public void editActionsListener(ActionEvent event);
+    public void editApplicationListener(ActionEvent event);
 }
