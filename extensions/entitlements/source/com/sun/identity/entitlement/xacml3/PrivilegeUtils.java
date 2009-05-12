@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.4 2009-05-11 19:10:29 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.5 2009-05-12 01:08:38 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -33,10 +33,13 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceAttributes;
 
 import com.sun.identity.entitlement.UserSubject;
+
 import com.sun.identity.entitlement.xacml3.core.AllOf;
+import com.sun.identity.entitlement.xacml3.core.Apply;
 import com.sun.identity.entitlement.xacml3.core.AnyOf;
 import com.sun.identity.entitlement.xacml3.core.AttributeValue;
 import com.sun.identity.entitlement.xacml3.core.AttributeDesignator;
+import com.sun.identity.entitlement.xacml3.core.Condition;
 import com.sun.identity.entitlement.xacml3.core.EffectType;
 import com.sun.identity.entitlement.xacml3.core.Match;
 import com.sun.identity.entitlement.xacml3.core.ObjectFactory;
@@ -145,6 +148,7 @@ public class PrivilegeUtils {
                 "com.sun.identity.entitlement.xacml3.core");
 
         VariableDefinition createdBy = new VariableDefinition(); // string
+        vrList.add(createdBy);
         createdBy.setVariableId("createdBy");
         AttributeValue cbv = new AttributeValue();
         cbv.setDataType("string");
@@ -152,16 +156,36 @@ public class PrivilegeUtils {
         JAXBElement<AttributeValue> cbve 
                 = objectFactory.createAttributeValue(cbv);
         createdBy.setExpression(cbve);
-        vrList.add(createdBy);
 
         VariableDefinition lastModifiedBy = new VariableDefinition(); // string
+        vrList.add(lastModifiedBy);
+        lastModifiedBy.setVariableId("lastModifiedBy");
+        AttributeValue lmbv = new AttributeValue();
+        lmbv.setDataType("string");
+        lmbv.getContent().add(privilege.getLastModifiedBy());
+        JAXBElement<AttributeValue> lmbve 
+                = objectFactory.createAttributeValue(lmbv);
+        lastModifiedBy.setExpression(cbve);
+
         VariableDefinition creationDate = new VariableDefinition(); // long
+        vrList.add(creationDate);
+        creationDate.setVariableId("creationDate");
+        AttributeValue cdv = new AttributeValue();
+        cdv.setDataType("string");
+        cdv.getContent().add(privilege.getCreationDate());
+        JAXBElement<AttributeValue> cdve 
+                = objectFactory.createAttributeValue(cdv);
+        creationDate.setExpression(cdve);
+
         VariableDefinition lastModifiedDate = new VariableDefinition(); // long
-
-        // TODO
-        //use VariableDefinition to set created-by, created-on
-        // last-modified-by, last-modified-on
-
+        vrList.add(lastModifiedDate);
+        lastModifiedDate.setVariableId("lastModifiedDate");
+        AttributeValue lmdv = new AttributeValue();
+        lmdv.setDataType("string");
+        lmdv.getContent().add(privilege.getLastModifiedDate());
+        JAXBElement<AttributeValue> lmdve 
+                = objectFactory.createAttributeValue(lmdv);
+        creationDate.setExpression(lmdve);
 
         // PolicyIssuer policyIssuer = null;
 
@@ -225,13 +249,14 @@ public class PrivilegeUtils {
         Set<String> excludedResources = entitlement.getExcludedResourceNames();
         List<AnyOf> anyOfExcludedResourceList = excludedResourceNamesToAnyOfList(
                 excludedResources);
-
-        EntitlementCondition ec = privilege.getCondition();
+        Condition condition = eSubjectConditionToXCondition(
+                privilege.getSubject(), privilege.getCondition());
 
         Set<ResourceAttributes> ra = privilege.getResourceAttributes();
 
         if (!permitActions.isEmpty()) {
             Rule permitRule = new Rule();
+            vrList.add(permitRule);
             permitRule.setRuleId("permit-rule");
             permitRule.setDescription("permit-description");
             permitRule.setEffect(EffectType.PERMIT);
@@ -245,12 +270,15 @@ public class PrivilegeUtils {
             if (anyOfPermitActionList != null) {
                 permitTargetAnyOfList.addAll(anyOfPermitActionList);
             }
-            vrList.add(permitRule);
+            if (condition != null) {
+                permitRule.setCondition(condition);
+            }
             
         }
 
         if (!denyActions.isEmpty()) {
             Rule denyRule = new Rule();
+            vrList.add(denyRule);
             denyRule.setRuleId("deny-rule");
             denyRule.setDescription("deny-description");
             denyRule.setEffect(EffectType.DENY);
@@ -264,7 +292,9 @@ public class PrivilegeUtils {
             if (anyOfDenyActionList != null) {
                 denyTargetAnyOfList.addAll(anyOfDenyActionList);
             }
-            vrList.add(denyRule);
+            if (condition != null) {
+                denyRule.setCondition(condition);
+            }
         }
 
 
@@ -428,6 +458,42 @@ public class PrivilegeUtils {
         match.setAttributeDesignator(attributeDesignator);
 
         return match;
+    }
+
+    public static Condition eSubjectConditionToXCondition(
+            EntitlementSubject es, EntitlementCondition ec) 
+            throws JAXBException {
+        Condition condition = null;
+        if (es != null || ec != null) {
+            ObjectFactory objectFactory = new ObjectFactory();
+            JAXBContext jaxbContext = JAXBContext.newInstance(
+                    "com.sun.identity.entitlement.xacml3.core");
+
+            Apply apply = new Apply();
+            apply.setFunctionId("subject-and-condition-satisfied");
+            List applyExpressions = apply.getExpression();
+            if (es != null) {
+                String esString = es.toString();
+                AttributeValue esv = new AttributeValue();
+                String dataType = "subject:json";
+                esv.setDataType(dataType);
+                esv.getContent().add(esString);
+                JAXBElement esve  = objectFactory.createAttributeValue(esv);
+                applyExpressions.add(esve);
+            }
+            if (ec != null) {
+                String ecString = ec.toString();
+                AttributeValue ecv = new AttributeValue();
+                String dataType = "condition:json";
+                ecv.setDataType(dataType);
+                ecv.getContent().add(ecString);
+                JAXBElement ecve  = objectFactory.createAttributeValue(ecv);
+                applyExpressions.add(ecve);
+            }
+            JAXBElement applyElement  = objectFactory.createApply(apply);
+            condition.setExpression(applyElement);
+        }
+        return condition;
     }
 
 }
