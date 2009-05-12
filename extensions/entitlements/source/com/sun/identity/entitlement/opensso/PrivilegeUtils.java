@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.19 2009-05-08 21:56:52 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.20 2009-05-12 05:01:03 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -44,6 +44,7 @@ import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserAttributes;
+import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.policy.ActionSchema;
 import com.sun.identity.policy.InvalidNameException;
 import com.sun.identity.policy.Policy;
@@ -200,7 +201,7 @@ public class PrivilegeUtils {
     }
 
     private static Set<Entitlement> rulesToEntitlement(Policy policy)
-        throws PolicyException, SSOException {
+        throws PolicyException, SSOException, EntitlementException {
         Set ruleNames = policy.getRuleNames();
         Set<Rule> rules = new HashSet<Rule>();
         for (Object ruleNameObj : ruleNames) {
@@ -219,14 +220,23 @@ public class PrivilegeUtils {
             Map<String, Boolean> actionMap = pavToPrav(rule.getActionValues(), 
                 serviceName);
             String entitlementName = rule.getName();
+            ResourceName resComparator = ApplicationManager.getApplication(
+                "/", serviceName).getResourceComparator(); //TOFIX
             
             Set<String> resourceNames = new HashSet<String>();
-            resourceNames.addAll(rule.getResourceNames());
+            Set<String> ruleResources = rule.getResourceNames();
+            if (ruleResources != null) {
+                for (String r : ruleResources) {
+                    resourceNames.add(resComparator.canonicalize(r));
+                }
+            }
 
             Set<String> excludedResourceNames = new HashSet<String>();
-            Set excludedResourceNames1 = rule.getExcludedResourceNames();
+            Set<String> excludedResourceNames1 = rule.getExcludedResourceNames();
             if (excludedResourceNames1 != null) {
-                excludedResourceNames.addAll(excludedResourceNames1);
+                for (String r : excludedResourceNames1) {
+                    excludedResourceNames.add(resComparator.canonicalize(r));
+                }
             }
 
             Entitlement entitlement = new Entitlement(rule.getApplicationName(),
@@ -622,16 +632,6 @@ public class PrivilegeUtils {
 
     private static String randomName() {
         return "" + random.nextInt(10000);
-    }
-
-    private static Set toSet(Object obj) {
-        if (obj == null) {
-            return null;
-        }
-
-        Set set = new HashSet();
-        set.add(obj);
-        return set;
     }
 
     static Map pravToPav(Map<String, Boolean> actionValues,
