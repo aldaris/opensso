@@ -7,4 +7,5 @@ public interface PolicySubjectsHandler extends MultiPanelHandler {
     public void subjectDropListener(DropEvent dropEvent);
     public void allOfSubjectListener(ActionEvent event);
     public void anyOfSubjectListener(ActionEvent event);
+    public boolean validateSubjects();
 }

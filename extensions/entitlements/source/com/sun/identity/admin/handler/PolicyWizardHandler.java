@@ -27,6 +27,7 @@ import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PolicyManageBean;
 import com.sun.identity.admin.model.PolicyWizardStep;
 import com.sun.identity.admin.model.QueuedActionBean;
+import com.sun.identity.admin.model.Resource;
 import com.sun.identity.admin.model.SubjectType;
 import com.sun.identity.admin.model.Tree;
 import com.sun.identity.admin.model.ViewCondition;
@@ -34,19 +35,17 @@ import com.sun.identity.admin.model.ViewSubject;
 import com.sun.identity.admin.model.WizardBean;
 import com.sun.identity.entitlement.Privilege;
 import java.io.Serializable;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
-import javax.faces.validator.ValidatorException;
 
 public abstract class PolicyWizardHandler
         extends WizardHandler
         implements Serializable, PolicyNameHandler, PolicySubjectsHandler,
-        PolicyConditionsHandler, PolicySummaryHandler {
+        PolicyConditionsHandler, PolicySummaryHandler, PolicyResourcesHandler {
 
     private Pattern POLICY_NAME_PATTERN = Pattern.compile("[0-9a-zA-Z]+");
     private PolicyDao policyDao;
@@ -64,9 +63,32 @@ public abstract class PolicyWizardHandler
 
     protected abstract String getCancelAction();
 
+    private boolean validateSteps() {
+        if (!validatePolicyName()) {
+            return false;
+        }
+        if (!validateResources()) {
+            return false;
+        }
+        if (!validateSubjects()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void expandListener(ActionEvent event) {
+        if (!validateSteps()) {
+            return;
+        }
+
+        super.expandListener(event);
+    }
+
     @Override
     public String finishAction() {
-        if (!validateSubjects()) {
+        if (!validateSteps()) {
             return null;
         }
 
@@ -105,8 +127,14 @@ public abstract class PolicyWizardHandler
 
         switch (pws) {
             case NAME:
+                if (!validatePolicyName()) {
+                    return;
+                }
                 break;
             case RESOURCES:
+                if (!validateResources()) {
+                    return;
+                }
                 break;
             case SUBJECTS:
                 if (!validateSubjects()) {
@@ -118,6 +146,8 @@ public abstract class PolicyWizardHandler
             case SUMMARY:
                 break;
         }
+
+        super.nextListener(event);
     }
 
     @Override
@@ -127,8 +157,14 @@ public abstract class PolicyWizardHandler
 
         switch (pws) {
             case NAME:
+                if (!validatePolicyName()) {
+                    return;
+                }
                 break;
             case RESOURCES:
+                if (!validateResources()) {
+                    return;
+                }
                 break;
             case SUBJECTS:
                 if (!validateSubjects()) {
@@ -349,8 +385,8 @@ public abstract class PolicyWizardHandler
         }
     }
 
-    public void validatePolicyName(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        String policyName = (String) value;
+    public boolean validatePolicyName() {
+        String policyName = getPolicyWizardBean().getPrivilegeBean().getName();
         Matcher matcher = POLICY_NAME_PATTERN.matcher(policyName);
 
         if (!matcher.matches()) {
@@ -368,12 +404,24 @@ public abstract class PolicyWizardHandler
             e = new MessageErrorEffect();
             getPolicyWizardBean().setPolicyNameMessageEffect(e);
 
-            throw new ValidatorException(mb.toFacesMessage());
+            messagesBean.addMessageBean(mb);
+            getPolicyWizardBean().gotoStep(PolicyWizardStep.NAME.toInt());
+
+            return false;
         }
+
+        return true;
     }
 
     public boolean validateSubjects() {
-        if (getPolicyWizardBean().getPrivilegeBean().getViewSubject().getSizeLeafs() == 0) {
+        if (!getWizardBean().isStepEnabled(PolicyWizardStep.SUBJECTS.toInt())) {
+            return true;
+        }
+
+        if (
+                getPolicyWizardBean().getPrivilegeBean().getViewSubject() == null ||
+                getPolicyWizardBean().getPrivilegeBean().getViewSubject().getSizeLeafs() == 0) {
+
             MessageBean mb = new MessageBean();
             Resources r = new Resources();
             mb.setSummary(r.getString(this, "noSubjectsSummary"));
@@ -381,6 +429,8 @@ public abstract class PolicyWizardHandler
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
             messagesBean.addMessageBean(mb);
+            getPolicyWizardBean().gotoStep(PolicyWizardStep.SUBJECTS.toInt());
+
             return false;
         }
         return true;
@@ -464,4 +514,29 @@ public abstract class PolicyWizardHandler
     public void setMessagesBean(MessagesBean messagesBean) {
         this.messagesBean = messagesBean;
     }
+
+    public boolean validateResources() {
+        if (!getWizardBean().isStepEnabled(PolicyWizardStep.RESOURCES.toInt())) {
+            return true;
+        }
+
+        List<Resource> resources = getPolicyWizardBean().getPrivilegeBean().getViewEntitlement().getResources();
+
+        if (resources == null || resources.size() == 0) {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "noResourcesSummary"));
+            mb.setDetail(r.getString(this, "noResourcesDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+            messagesBean.addMessageBean(mb);
+            getPolicyWizardBean().gotoStep(PolicyWizardStep.RESOURCES.toInt());
+
+            return false;
+        }
+
+        return true;
+    }
+
+
 }

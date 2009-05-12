@@ -169,25 +169,6 @@ public class UrlResourcesHandler implements Serializable {
         }
     }
 
-    public void validateResources(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        List<Resource> resources = (List<Resource>) value;
-
-        if (resources == null || resources.size() == 0) {
-            FacesMessage msg = new FacesMessage();
-            // TODO: localize
-            msg.setSummary("Select a resource");
-            msg.setDetail("At least one resource must be selected");
-            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-            Effect e;
-
-            e = new MessageErrorEffect();
-            urlResourcesBean.setResourcesMessageEffect(e);
-
-            throw new ValidatorException(msg);
-        }
-    }
-
     public void setMessagesBean(MessagesBean messagesBean) {
         this.messagesBean = messagesBean;
     }

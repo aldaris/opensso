@@ -55,10 +55,8 @@
                     <div class="clear"></div>
                     <ice:selectManyCheckbox
                         id="resource-select"
-                        required="#{true}"
                         layout="spread"
                         partialSubmit="true"
-                        validator="#{urlResourcesHandler.validateResources}"
                         value="#{policyResourcesBean.privilegeBean.viewEntitlement.resources}"
                         converter="urlResourceConverter">
                         <f:selectItems

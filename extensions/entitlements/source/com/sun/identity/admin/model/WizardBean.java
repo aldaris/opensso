@@ -24,6 +24,11 @@ public class WizardBean implements Serializable {
         return wizardStepBeans;
     }
 
+    public boolean isStepEnabled(int step) {
+        WizardStepBean wsb = getWizardStepBeans()[step];
+        return wsb.isEnabled();
+    }
+
     public boolean isFinishRendered() {
         for (WizardStepBean wsb : wizardStepBeans) {
             if (!wsb.isEnabled()) {

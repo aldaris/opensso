@@ -30,11 +30,9 @@
                             <ice:inputText
                                 id="policyNameInput"
                                 readonly="#{!policyNameBean.policyNameEditable}"
-                                required="true"
                                 partialSubmit="false"
                                 value="#{policyNameBean.privilegeBean.name}"
-                                effect="#{policyNameBean.policyNameInputEffect}"
-                                validator="#{policyNameHandler.validatePolicyName}"/>
+                                effect="#{policyNameBean.policyNameInputEffect}"/>
                         </ice:panelGroup>
                         <ice:panelGroup>
                             <ice:outputLabel
