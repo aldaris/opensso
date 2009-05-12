@@ -40,18 +40,23 @@ public class Tree {
     }
 
     public int size() {
-        int size = sizer(rootNode);
+        int size = sizer(rootNode, true);
         return size;
     }
 
-    private int sizer(TreeNode currentTn) {
+    public int sizeLeafs() {
+        int size = sizer(rootNode, false);
+        return size;
+    }
+
+    private int sizer(TreeNode currentTn, boolean countContainers) {
         if (currentTn == null) {
             return 0;
         } else if (currentTn instanceof ContainerTreeNode) {
-            int mySize = 1;
+            int mySize = countContainers ? 1 : 0;
             ContainerTreeNode ctn = (ContainerTreeNode)currentTn;
             for (TreeNode childTn: ctn.getTreeNodes()) {
-                mySize += sizer(childTn);
+                mySize += sizer(childTn, countContainers);
             }
             return mySize;
         } else {

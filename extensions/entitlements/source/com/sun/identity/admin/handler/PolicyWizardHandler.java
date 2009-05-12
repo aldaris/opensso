@@ -25,6 +25,7 @@ import com.sun.identity.admin.model.OrViewSubject;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PolicyManageBean;
+import com.sun.identity.admin.model.PolicyWizardStep;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.SubjectType;
 import com.sun.identity.admin.model.Tree;
@@ -65,6 +66,10 @@ public abstract class PolicyWizardHandler
 
     @Override
     public String finishAction() {
+        if (!validateSubjects()) {
+            return null;
+        }
+
         Privilege privilege = getPolicyWizardBean().getPrivilegeBean().toPrivilege();
         policyDao.setPrivilege(privilege);
 
@@ -95,14 +100,48 @@ public abstract class PolicyWizardHandler
 
     @Override
     public void nextListener(ActionEvent event) {
-        super.nextListener(event);
-
         int step = getStep(event);
-        switch (step) {
-            // resources
-            case 1:
+        PolicyWizardStep pws = PolicyWizardStep.valueOf(step);
+
+        switch (pws) {
+            case NAME:
+                break;
+            case RESOURCES:
+                break;
+            case SUBJECTS:
+                if (!validateSubjects()) {
+                    return;
+                }
+                break;
+            case ADVANCED:
+                break;
+            case SUMMARY:
                 break;
         }
+    }
+
+    @Override
+    public void previousListener(ActionEvent event) {
+        int step = getStep(event);
+        PolicyWizardStep pws = PolicyWizardStep.valueOf(step);
+
+        switch (pws) {
+            case NAME:
+                break;
+            case RESOURCES:
+                break;
+            case SUBJECTS:
+                if (!validateSubjects()) {
+                    return;
+                }
+                break;
+            case ADVANCED:
+                break;
+            case SUMMARY:
+                break;
+        }
+
+        super.previousListener(event);
     }
 
     public void conditionDropListener(DropEvent dropEvent) {
@@ -232,13 +271,13 @@ public abstract class PolicyWizardHandler
             // do nothing, already OR
         } else if (vs instanceof AndViewSubject) {
             // strip off top level AND and replace with OR
-            AndViewSubject avs = (AndViewSubject)vs;
-            OrViewSubject ovs = (OrViewSubject)getPolicyWizardBean().getSubjectType("or").newViewSubject();
+            AndViewSubject avs = (AndViewSubject) vs;
+            OrViewSubject ovs = (OrViewSubject) getPolicyWizardBean().getSubjectType("or").newViewSubject();
             ovs.setViewSubjects(avs.getViewSubjects());
             getPolicyWizardBean().getPrivilegeBean().setViewSubject(ovs);
         } else {
             // wrap whatever is there with an OR
-            OrViewSubject ovs = (OrViewSubject)getPolicyWizardBean().getSubjectType("or").newViewSubject();
+            OrViewSubject ovs = (OrViewSubject) getPolicyWizardBean().getSubjectType("or").newViewSubject();
             ovs.addViewSubject(vs);
             getPolicyWizardBean().getPrivilegeBean().setViewSubject(ovs);
         }
@@ -254,13 +293,13 @@ public abstract class PolicyWizardHandler
             // do nothing, already OR
         } else if (vc instanceof AndViewCondition) {
             // strip off top level AND and replace with OR
-            AndViewCondition avc = (AndViewCondition)vc;
-            OrViewCondition ovc = (OrViewCondition)getPolicyWizardBean().getConditionType("or").newViewCondition();
+            AndViewCondition avc = (AndViewCondition) vc;
+            OrViewCondition ovc = (OrViewCondition) getPolicyWizardBean().getConditionType("or").newViewCondition();
             ovc.setViewConditions(avc.getViewConditions());
             getPolicyWizardBean().getPrivilegeBean().setViewCondition(ovc);
         } else {
             // wrap whatever is there with an OR
-            OrViewCondition ovc = (OrViewCondition)getPolicyWizardBean().getConditionType("or").newViewCondition();
+            OrViewCondition ovc = (OrViewCondition) getPolicyWizardBean().getConditionType("or").newViewCondition();
             ovc.addViewCondition(vc);
             getPolicyWizardBean().getPrivilegeBean().setViewCondition(ovc);
         }
@@ -276,13 +315,13 @@ public abstract class PolicyWizardHandler
             // do nothing, already AND
         } else if (vs instanceof OrViewSubject) {
             // strip off top level OR and replace with AND
-            OrViewSubject ovs = (OrViewSubject)vs;
-            AndViewSubject avs = (AndViewSubject)getPolicyWizardBean().getSubjectType("and").newViewSubject();
+            OrViewSubject ovs = (OrViewSubject) vs;
+            AndViewSubject avs = (AndViewSubject) getPolicyWizardBean().getSubjectType("and").newViewSubject();
             avs.setViewSubjects(ovs.getViewSubjects());
             getPolicyWizardBean().getPrivilegeBean().setViewSubject(avs);
         } else {
             // wrap whatever is there with an AND
-            AndViewSubject avs = (AndViewSubject)getPolicyWizardBean().getSubjectType("and").newViewSubject();
+            AndViewSubject avs = (AndViewSubject) getPolicyWizardBean().getSubjectType("and").newViewSubject();
             avs.addViewSubject(vs);
             getPolicyWizardBean().getPrivilegeBean().setViewSubject(avs);
         }
@@ -298,13 +337,13 @@ public abstract class PolicyWizardHandler
             // do nothing, already AND
         } else if (vc instanceof OrViewCondition) {
             // strip off top level OR and replace with AND
-            OrViewCondition ovc = (OrViewCondition)vc;
-            AndViewCondition avc = (AndViewCondition)getPolicyWizardBean().getConditionType("and").newViewCondition();
+            OrViewCondition ovc = (OrViewCondition) vc;
+            AndViewCondition avc = (AndViewCondition) getPolicyWizardBean().getConditionType("and").newViewCondition();
             avc.setViewConditions(ovc.getViewConditions());
             getPolicyWizardBean().getPrivilegeBean().setViewCondition(avc);
         } else {
             // wrap whatever is there with an AND
-            AndViewCondition avc = (AndViewCondition)getPolicyWizardBean().getConditionType("and").newViewCondition();
+            AndViewCondition avc = (AndViewCondition) getPolicyWizardBean().getConditionType("and").newViewCondition();
             avc.addViewCondition(vc);
             getPolicyWizardBean().getPrivilegeBean().setViewCondition(avc);
         }
@@ -331,6 +370,20 @@ public abstract class PolicyWizardHandler
 
             throw new ValidatorException(mb.toFacesMessage());
         }
+    }
+
+    public boolean validateSubjects() {
+        if (getPolicyWizardBean().getPrivilegeBean().getViewSubject().getSizeLeafs() == 0) {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "noSubjectsSummary"));
+            mb.setDetail(r.getString(this, "noSubjectsDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+            messagesBean.addMessageBean(mb);
+            return false;
+        }
+        return true;
     }
 
     public void setPolicyDao(PolicyDao policyDao) {
@@ -375,12 +428,12 @@ public abstract class PolicyWizardHandler
 
     public void handlePanelRemove(MultiPanelBean mpb) {
         if (mpb instanceof ViewSubject) {
-            ViewSubject vs = (ViewSubject)mpb;
+            ViewSubject vs = (ViewSubject) mpb;
             Tree subjectTree = new Tree(getPolicyWizardBean().getPrivilegeBean().getViewSubject());
             ViewSubject rootVs = (ViewSubject) subjectTree.remove(vs);
             getPolicyWizardBean().getPrivilegeBean().setViewSubject(rootVs);
         } else if (mpb instanceof ViewCondition) {
-            ViewCondition vc = (ViewCondition)mpb;
+            ViewCondition vc = (ViewCondition) mpb;
             Tree conditionTree = new Tree(getPolicyWizardBean().getPrivilegeBean().getViewCondition());
             ViewCondition rootVc = (ViewCondition) conditionTree.remove(vc);
             getPolicyWizardBean().getPrivilegeBean().setViewCondition(rootVc);
