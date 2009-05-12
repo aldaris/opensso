@@ -33,7 +33,8 @@
             <zipfileset dir="${openfm.built.war.dir}/package/WEB-INF" prefix="WEB-INF" excludes="web.xml" />
             <zipfileset file="${embedded.extlib.dir}/j2ee.jar" prefix="WEB-INF/lib" />            
             <zipfileset dir="${openfm.built.war.dir}/package/config" prefix="config" />
-            <zipfileset dir="${embedded.base.dir}/www" excludes="web.xml" />
+            <zipfileset dir="${embedded.base.dir}/www" excludes="web.xml" />            
+            <zipfileset file="${embedded.base.dir}/source/Hello.java" prefix="source" />
             <zipfileset dir="${embedded.classes.dir}" prefix="WEB-INF/classes" />
             <zipfileset dir="${embedded.resources.dir}" prefix="WEB-INF/classes" />
             <zipfileset file="${embedded.base.dir}/README" />

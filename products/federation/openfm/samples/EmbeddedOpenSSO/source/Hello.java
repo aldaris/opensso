@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Hello.java,v 1.1 2009-05-02 21:56:43 kevinserwin Exp $
+ * $Id: Hello.java,v 1.2 2009-05-12 05:38:47 kevinserwin Exp $
  */
 
 import java.io.*;
@@ -30,6 +30,10 @@ import java.util.*;
 import javax.security.auth.callback.*;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.setup.EmbeddedOpenSSO;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdUtils;
 
 /**
  *
@@ -47,6 +51,7 @@ public class Hello {
             configData.put(key, val);
         }
         EmbeddedOpenSSO embOpenSSO = new EmbeddedOpenSSO(baseDir, configData);
+
 
         boolean isConfigured = embOpenSSO.isConfigured();
         if (!isConfigured) {
@@ -99,6 +104,26 @@ public class Hello {
                 System.out.println("Authentication Failed");
             } else {
                 System.out.println("Authentication is successful.");
+
+		   SSOToken token = ac.getSSOToken();
+
+		    String userDN = token.getPrincipal().getName();
+		    System.out.println("User Name: " + userDN);
+
+		    try {
+			AMIdentity userIdentity = IdUtils.getIdentity(token);
+			Map attrs = userIdentity.getAttributes();
+			System.out.println("User Attributes: ");
+
+			for (Iterator i = attrs.keySet().iterator(); i.hasNext(); ) {
+			    String attrName = (String)i.next();
+                    Set values = (Set)attrs.get(attrName);
+                    System.out.println(attrName + "=" + values);
+			}
+		    } catch (IdRepoException e) {
+			e.printStackTrace();
+		    }
+
             }
         
           } catch (Exception e) {

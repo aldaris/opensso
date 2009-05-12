@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.1 2009-05-02 21:56:43 kevinserwin Exp $
+   $Id: README,v 1.2 2009-05-12 05:38:47 kevinserwin Exp $
 
 -->
 
@@ -35,17 +35,18 @@ classes.
 Contents of this directory:
   <>            (root directory where opensso.zip is extracted)
      |- README                (this README file)
+     |- build.sh              (script to build the Hello sample)
      |- run.sh                (script to execute the Hello sample)
      |- login.jsp             (login script for deployed version of sample)
      |- config                (contents from opensso.war)
+     |- source                (sample source code directory)
+       |- Hello.java          (sample code for Embedded OpenSSO)
      |- WEB-INF               (contents from opensso.war)
        |- classes             (contains opensso.war classes plus Hello.class)
        |- classes/configparam.properties  (contains configuration parameters
                                            for embedded opensso. 
                                            NOTE: This file must be modified to
                                            use the deployed version)
-
-
 
 Steps to run Embedded OpenSSO:
 
@@ -61,6 +62,10 @@ Standalone
    % chmod 755 run.sh
 
 3. Execute the run.sh script:
+   % run.sh
+
+4. Modify source/Hello.java and then rebuild to test your modifications.
+   % build.sh
    % run.sh
 
 Deployed
