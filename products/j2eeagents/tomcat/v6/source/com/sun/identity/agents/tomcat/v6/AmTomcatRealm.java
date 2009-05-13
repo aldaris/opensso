@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmTomcatRealm.java,v 1.3 2009-04-01 23:57:02 subbae Exp $
+ * $Id: AmTomcatRealm.java,v 1.4 2009-05-13 00:54:32 kamna Exp $
  */
 
 
@@ -120,30 +120,33 @@ public class AmTomcatRealm extends RealmBase {
                         + username);
                 }
 
-                if ((moduleAccess != null)
-                        && moduleAccess.isLogMessageEnabled()) {
-                    Set roles = result.getAttributes();
-                    ArrayList rolesList = new ArrayList();
+               
+                Set roles = result.getAttributes();
+                ArrayList rolesList = new ArrayList();
 
-                    if ((roles != null) && (roles.size() > 0)) {
-                        Iterator it = roles.iterator();
-                        StringBuffer bufRoles = new StringBuffer();
+                if ((roles != null) && (roles.size() > 0)) {
+                	Iterator it = roles.iterator();
+                	StringBuffer bufRoles = new StringBuffer();
 
-                        while (it.hasNext()) {
-                            String role = (String) it.next();
-                            bufRoles.append(role);
-                            bufRoles.append(" ");
-                            rolesList.add(role);
-                        }
-
-                        moduleAccess.logMessage(
-                            "AmTomcatRealm: User " + username
-                            + " has roles: " + bufRoles.toString());
-                        tomcatUser = new GenericPrincipal(this,
-                                         username,
-                                         credentials,
-                                         rolesList);
-                    }
+                	while (it.hasNext()) {
+                		String role = (String) it.next();
+                		bufRoles.append(role);
+                		bufRoles.append(" ");
+                		rolesList.add(role);
+                	}
+                	
+                	tomcatUser = new GenericPrincipal(this,
+            				username,
+            				credentials,
+            				rolesList);
+                	
+                	if ((moduleAccess != null)
+                			&& moduleAccess.isLogMessageEnabled()) {
+                		moduleAccess.logMessage(
+                				"AmTomcatRealm: User " + username
+                				+ " has roles: " + bufRoles.toString());
+                		
+                	}
                 }
             }
         } catch (Exception ex) {
