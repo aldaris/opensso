@@ -75,7 +75,7 @@
                                 </ui:define>
                                 <ui:define name="panel-body">
                                     <ice:panelSeries
-                                        value="#{conditionTypeFactory.conditionTypes}"
+                                        value="#{policyConditionsBean.privilegeBean.viewEntitlement.viewApplication.conditionTypes}"
                                         var="conditionType">
                                         <ice:panelGroup
                                             styleClass="draggable"

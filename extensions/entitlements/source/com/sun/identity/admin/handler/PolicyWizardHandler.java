@@ -145,6 +145,8 @@ public abstract class PolicyWizardHandler
                 break;
             case SUMMARY:
                 break;
+            default:
+                assert false : "unhandled step: " + pws;
         }
 
         super.nextListener(event);
@@ -175,6 +177,8 @@ public abstract class PolicyWizardHandler
                 break;
             case SUMMARY:
                 break;
+            default:
+                assert false : "unhandled step: " + pws;
         }
 
         super.previousListener(event);
@@ -185,8 +189,6 @@ public abstract class PolicyWizardHandler
         if (type == DndEvent.DROPPED) {
             ConditionType dragValue = (ConditionType) dropEvent.getTargetDragValue();
             ContainerViewCondition dropValue = (ContainerViewCondition) dropEvent.getTargetDropValue();
-
-            // TODO: implicit or?
 
             ViewCondition vc = dragValue.newViewCondition();
             if (dropValue == null) {

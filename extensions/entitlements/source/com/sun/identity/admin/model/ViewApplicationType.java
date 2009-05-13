@@ -8,6 +8,7 @@ public class ViewApplicationType implements Serializable {
     private List<Action> actions;
     private String resourceTemplate;
     private String resourceClassName;
+    private String entitlementApplicationType;
 
     public String getName() {
         return name;
@@ -39,5 +40,13 @@ public class ViewApplicationType implements Serializable {
 
     public void setResourceClassName(String resourceClassName) {
         this.resourceClassName = resourceClassName;
+    }
+
+    public String getEntitlementApplicationType() {
+        return entitlementApplicationType;
+    }
+
+    public void setEntitlementApplicationType(String entitlementApplicationType) {
+        this.entitlementApplicationType = entitlementApplicationType;
     }
 }

@@ -53,11 +53,15 @@
 
     <!-- application types -->
     <managed-bean>
-        <managed-bean-name>iPlanetAMWebAgentService</managed-bean-name>
+        <managed-bean-name>urlViewApplicationType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.ViewApplicationType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>name</property-name>
+            <value>iPlanetAMWebAgentService</value>
+        </managed-property>
+        <managed-property>
+            <property-name>entitlementApplicationType</property-name>
             <value>iPlanetAMWebAgentService</value>
         </managed-property>
         <managed-property>
@@ -69,15 +73,40 @@
             <value>com.sun.identity.admin.model.UrlResource</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>bankingViewApplicationType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ViewApplicationType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>banking</value>
+        </managed-property>
+        <managed-property>
+            <property-name>entitlementApplicationType</property-name>
+            <value>banking</value>
+        </managed-property>
+        <managed-property>
+            <property-name>resourceTemplate</property-name>
+            <value>template/resources-banking.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>resourceClassName</property-name>
+            <value>com.sun.identity.admin.model.BankingResource</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>viewApplicationTypes</managed-bean-name>
+        <managed-bean-name>entitlementApplicationTypeToViewApplicationTypeMap</managed-bean-name>
         <managed-bean-class>java.util.HashMap</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <map-entries>
             <map-entry>
-                <key>iPlanetAMWebAgentService</key>
-                <value>#{iPlanetAMWebAgentService}</value>
+                <key>#{urlViewApplicationType.entitlementApplicationType}</key>
+                <value>#{urlViewApplicationType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{bankingViewApplicationType.entitlementApplicationType}</key>
+                <value>#{bankingViewApplicationType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
@@ -86,10 +115,6 @@
         <managed-bean-name>viewApplicationTypeDao</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.dao.ViewApplicationTypeDao</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>viewApplicationTypes</property-name>
-            <value>#{viewApplicationTypes}</value>
-        </managed-property>
     </managed-bean>
     <!-- application types -->
 

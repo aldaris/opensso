@@ -1,5 +1,6 @@
 package com.sun.identity.admin.dao;
 
+import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.model.Action;
 import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.ViewApplicationType;
@@ -11,19 +12,15 @@ import java.util.List;
 import java.util.Map;
 
 public class ViewApplicationTypeDao implements Serializable {
-    private Map<String,ViewApplicationType> viewApplicationTypes;
+    public List<ViewApplicationType> getViewApplicationTypes() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        Map<String,ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String,ViewApplicationType>)mbr.resolve("entitlementApplicationNameToViewApplicationTypeMap");
 
-    public Map<String,ViewApplicationType> getViewApplicationTypes() {
-        return viewApplicationTypes;
-    }
 
-    public void setViewApplicationTypes(Map<String,ViewApplicationType> viewApplicationTypes) {
-        this.viewApplicationTypes = viewApplicationTypes;
-
-        for (String name: viewApplicationTypes.keySet()) {
-            ViewApplicationType vat = viewApplicationTypes.get(name);
-            ApplicationType at = ApplicationTypeManager.getAppplicationType(
-                vat.getName());
+        List<ViewApplicationType> viewApplicationTypes = new ArrayList<ViewApplicationType>();
+        for (String entitlementApplicationType: entitlementApplicationTypeToViewApplicationTypeMap.keySet()) {
+            ViewApplicationType vat = entitlementApplicationTypeToViewApplicationTypeMap.get(entitlementApplicationType);
+            ApplicationType at = ApplicationTypeManager.getAppplicationType(entitlementApplicationType);
             List<Action> actions = new ArrayList<Action>();
             for (String actionName: at.getActions().keySet()) {
                 Boolean value = at.getActions().get(actionName);
@@ -33,6 +30,9 @@ public class ViewApplicationTypeDao implements Serializable {
                 actions.add(ba);
             }
             vat.setActions(actions);
+            viewApplicationTypes.add(vat);
         }
+
+        return viewApplicationTypes;
     }
 }
