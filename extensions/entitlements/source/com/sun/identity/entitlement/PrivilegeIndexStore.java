@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeIndexStore.java,v 1.2 2009-05-09 01:08:45 veiming Exp $
+ * $Id: PrivilegeIndexStore.java,v 1.3 2009-05-13 23:05:29 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -49,7 +49,7 @@ public abstract class PrivilegeIndexStore {
         try {
             //TOFIX: configurable
             clazz = Class.forName(
-                "com.sun.identity.entitlement.opensso.PolicyDataStore");
+                "com.sun.identity.entitlement.opensso.OpenSSOIndexStore");
         } catch (ClassNotFoundException e) {
             PrivilegeManager.debug.error("PrivilegeIndexStore.static<init>", e);
         }
