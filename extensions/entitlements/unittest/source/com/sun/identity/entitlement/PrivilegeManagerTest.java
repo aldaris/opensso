@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.18 2009-05-09 01:08:47 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.19 2009-05-13 08:59:24 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -56,15 +56,23 @@ import org.testng.annotations.BeforeClass;
  * @author dillidorai
  */
 public class PrivilegeManagerTest {
-
-    private static final String SERVICE_NAME = "iPlanetAMWebAgentService";
-    private static final String PRIVILEGE_NAME = "TestPrivilege";
+    private static final String APPL_NAME = "PrivilegeManagerTestAppl";
+    private static final String PRIVILEGE_NAME = "PrivilegeManagerTest";
+    private static final String PRIVILEGE_NAME1 = "PrivilegeManagerTest1";
     private static final String PRIVILEGE_DESC = "Test Description";
     private Privilege privilege;
+    
 
     @BeforeClass
-    public void setup() throws SSOException, IdRepoException {
-
+    public void setup() throws SSOException, IdRepoException, EntitlementException {
+        Application appl = new Application(APPL_NAME,
+            ApplicationTypeManager.getAppplicationType(
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
+        Set<String> appResources = new HashSet<String>();
+        appResources.add("http://www.privilegemanagertest.*");
+        appl.addResources(appResources);
+        appl.setEntitlementCombiner(DenyOverride.class);
+        ApplicationManager.saveApplication("/", appl);
     }
 
     @AfterClass
@@ -74,6 +82,56 @@ public class PrivilegeManagerTest {
         PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
         prm.removePrivilege(PRIVILEGE_NAME);
+        
+        ApplicationManager.deleteApplication("/", APPL_NAME);
+    }
+
+    @Test
+    public void testResourceValidationPrivilege() throws Exception {
+        Application appl = ApplicationManager.getApplication("/", APPL_NAME);
+
+        ValidateResourceResult res =
+            appl.validateResourceName("http://www.privilegemanagertest.com/hr");
+        if (!res.isValid()) {
+            throw new Exception(
+                "PrivilegeManagerTest.testResourceValidationPrivilege" +
+                " positive test failed");
+        }
+
+        res = appl.validateResourceName("http://www.test1.com:abc/hr");
+        if (res.isValid()) {
+            throw new Exception(
+                "PrivilegeManagerTest.testResourceValidationPrivilege" +
+                " negative test failed");
+        }
+    }
+
+    @Test
+    public void testNoSubjectInPrivilege() throws Exception {
+        Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
+        actionValues.put("GET", Boolean.TRUE);
+        actionValues.put("POST", Boolean.FALSE);
+        String resourceName = "http://www.privilegemanagertest.com:80";
+        Entitlement entitlement = new Entitlement(APPL_NAME,
+                resourceName, actionValues);
+        entitlement.setName("ent1");
+
+        Set<EntitlementSubject> eSubjects = new HashSet<EntitlementSubject>();
+        eSubjects.add(new AndSubject(null));
+        OrSubject os = new OrSubject(eSubjects);
+
+        try {
+            new OpenSSOPrivilege(PRIVILEGE_NAME1, entitlement, os, null, null);
+        } catch (EntitlementException e) {
+            if (e.getErrorCode() != 310)  {
+                throw e;
+            } else {
+                return;
+            }
+        }
+
+        throw new Exception(
+            "PrivilegeManagerTest.testNoSubjectInPrivilege failed");
     }
 
     @Test
@@ -83,8 +141,8 @@ public class PrivilegeManagerTest {
         actionValues.put("POST", Boolean.FALSE);
         // The port is required for passing equals  test
         // opensso policy would add default port if port not specified
-        String resourceName = "http://www.sun.com:80";
-        Entitlement entitlement = new Entitlement(SERVICE_NAME,
+        String resourceName = "http://www.privilegemanagertest.com:80";
+        Entitlement entitlement = new Entitlement(APPL_NAME,
                 resourceName, actionValues);
         entitlement.setName("ent1");
 
@@ -113,8 +171,6 @@ public class PrivilegeManagerTest {
         Set<EntitlementCondition> conditions = new HashSet<EntitlementCondition>();
         conditions.add(dnsc);
         conditions.add(tc);
-        OrCondition oc = new OrCondition(conditions);
-        AndCondition ac = new AndCondition(conditions);
 
         StaticAttributes sa = new StaticAttributes();
         Map<String, Set<String>> attrValues = new HashMap<String, Set<String>>();
@@ -153,6 +209,7 @@ public class PrivilegeManagerTest {
         prm.addPrivilege(privilege);
 
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
+
         IPCondition ipc1 = (IPCondition) p.getCondition();
         if (!ipc1.getStartIp().equals(startIp)) {
             throw new Exception(
@@ -165,14 +222,9 @@ public class PrivilegeManagerTest {
                 + " does not equal set endIp");
         }
         if (!privilege.equals(p)) {
-            //TODO: looks like hashCodes differ for nested subjects and conditions compared to
-            // the saved ones. Need to investigate more
-            /*
             throw new Exception("PrivilegeManagerTest.testAddPrivlege():"
                 + "read privilege not"
                 + "equal to saved privilege");
-            */
-
         }
 
         {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestEvaluator.java,v 1.8 2009-05-09 01:08:47 veiming Exp $
+ * $Id: TestEvaluator.java,v 1.9 2009-05-13 08:59:24 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -51,25 +51,34 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class TestEvaluator {
+    private static final String APPL_NAME = "TestEvaluatorAppl";
     private static final String PRIVILEGE1_NAME = "entitlementPrivilege1";
     private static final String USER1_NAME = "privilegeEvalTestUser1";
     private static final String USER2_NAME = "privilegeEvalTestUser2";
-    private static final String URL1 = "http://www.sun.com:80/private";
+    private static final String URL1 = "http://www.testevaluator.com:80/private";
 
-    
     private AMIdentity user1;
     private AMIdentity user2;
 
     @BeforeClass
     public void setup() throws Exception {
+        Application appl = new Application(APPL_NAME, 
+            ApplicationTypeManager.getAppplicationType(
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
+
+        Set<String> avaliableResources = new HashSet<String>();
+        avaliableResources.add("http://www.testevaluator.com:80/*");
+        appl.addResources(avaliableResources);
+        appl.setEntitlementCombiner(DenyOverride.class);
+        ApplicationManager.saveApplication("/", appl);
+
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PrivilegeManager pm = new PolicyPrivilegeManager();
         pm.initialize("/", SubjectUtils.createSubject(adminToken));
         Map<String, Boolean> actions = new HashMap<String, Boolean>();
         actions.put("GET", Boolean.TRUE);
-        Entitlement ent = new Entitlement(
-            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME, URL1, actions);
+        Entitlement ent = new Entitlement(APPL_NAME, URL1, actions);
         user1 = createUser(USER1_NAME);
         user2 = createUser(USER2_NAME);
         Set<EntitlementSubject> esSet = new HashSet<EntitlementSubject>();
@@ -98,6 +107,8 @@ public class TestEvaluator {
         identities.add(user1);
         identities.add(user2);
         amir.deleteIdentities(identities);
+
+        ApplicationManager.deleteApplication("/", APPL_NAME);
     }
 
     @Test
@@ -117,7 +128,7 @@ public class TestEvaluator {
             AdminTokenAction.getInstance());
         Evaluator evaluator = new Evaluator(
             SubjectUtils.createSubject(adminToken),
-            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
+            APPL_NAME);
         return evaluator.hasEntitlement("/", subject,
             new Entitlement(res, actions), Collections.EMPTY_MAP);
     }

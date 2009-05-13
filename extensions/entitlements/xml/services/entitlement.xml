@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.12 2009-05-12 15:30:58 farble1670 Exp $
+   $Id: entitlement.xml,v 1.13 2009-05-13 08:59:24 veiming Exp $
 
 -->
 
@@ -304,6 +304,10 @@
                             <Value>sunAMDelegationService</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
+                            <Attribute name="resources" />
+                            <Value>sms://*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />
                             <Value>com.sun.identity.entitlement.DenyOverride</Value>
                         </AttributeValuePair>
@@ -313,6 +317,10 @@
                         <AttributeValuePair>
                             <Attribute name="applicationType" />
                             <Value>openProvisioning</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resources" />
+                            <Value>/*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />

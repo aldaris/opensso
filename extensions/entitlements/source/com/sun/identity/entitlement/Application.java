@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.13 2009-05-08 00:48:14 veiming Exp $
+ * $Id: Application.java,v 1.14 2009-05-13 08:59:23 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -30,6 +30,7 @@ package com.sun.identity.entitlement;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
+import com.sun.identity.policy.ResourceMatch;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -316,8 +317,30 @@ public class Application {
      * @return the results of validating resource name.
      */
     public ValidateResourceResult validateResourceName(String resource) {
+        ResourceName resComp = getResourceComparator();
+        boolean match = false;
+
+        if ((resources != null) && !resources.isEmpty()) {
+            for (String r : resources) {
+                ResourceMatch rm = resComp.compare(resource, r, true);
+                if (rm.equals(ResourceMatch.EXACT_MATCH) ||
+                    rm.equals(ResourceMatch.SUB_RESOURCE_MATCH) ||
+                    rm.equals(ResourceMatch.WILDCARD_MATCH)
+                ) {
+                    match = true;
+                    break;
+                }
+            }
+        }
+
+        if (!match) {
+            return new ValidateResourceResult(
+                ValidateResourceResult.VALID_CODE_DOES_MATCH_VALID_RESOURCES,
+                "");
+        }
+
         try {
-            getResourceComparator().canonicalize(resource);
+            resComp.canonicalize(resource);
             return new ValidateResourceResult( 
                 ValidateResourceResult.VALID_CODE_VALID, "");
         } catch (EntitlementException ex) {

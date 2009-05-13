@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidateResourceResult.java,v 1.1 2009-05-05 15:25:04 veiming Exp $
+ * $Id: ValidateResourceResult.java,v 1.2 2009-05-13 08:59:23 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -34,6 +34,7 @@ package com.sun.identity.entitlement;
 public class ValidateResourceResult {
     public static int VALID_CODE_VALID = 0;
     public static int VALID_CODE_INVALID = 1;
+    public static int VALID_CODE_DOES_MATCH_VALID_RESOURCES = 2;
 
     private int validCode;
     private String message;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.21 2009-05-12 19:58:41 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.22 2009-05-13 08:59:23 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -487,9 +487,9 @@ public class PrivilegeUtils {
                                 int i = sat.indexOf("=");
                                 String name = null;
                                 String value = null;
-                                if (i > 0) {
-                                    name = sat.substring(i);
-                                    value = sat.substring(i, sat.length());
+                                if (i != -1) {
+                                    name = sat.substring(0, i);
+                                    value = sat.substring(i+1);
                                 } else {
                                     name = sat;
                                     value = null;
@@ -514,19 +514,24 @@ public class PrivilegeUtils {
                                 int i = uat.indexOf("=");
                                 String name = null;
                                 String value = null;
-                                if (i > 0) {
-                                    name = uat.substring(i);
-                                    value = uat.substring(i, uat.length());
+                                if (i != -1) {
+                                    name = uat.substring(0, i);
+                                    value = uat.substring(i+1);
                                 } else {
                                     name = uat;
                                     value = null;
                                 }
-                                Set values = (Set) uaprops.get(name);
-                                if (values == null) {
-                                    values = new HashSet();
-                                    uaprops.put(name, values);
+
+                                if (value == null) {
+                                    uaprops.put(name, null);
+                                } else {
+                                    Set values = (Set) uaprops.get(name);
+                                    if (values == null) {
+                                        values = new HashSet();
+                                        uaprops.put(name, values);
+                                    }
+                                    values.add(value);
                                 }
-                                values.add(value);
                             }
                             ua.setProperties(uaprops);
                             ua.setPResponseProviderName(nrpName);
@@ -588,30 +593,26 @@ public class PrivilegeUtils {
                         for (Object entryObj : entrySet) {
                             Map.Entry entry = (Map.Entry) entryObj;
                             String name = (String) entry.getKey();
-                            Set values = (Set) entry.getValue();
-                            String value = null;
+                            Set<String> values = (Set<String>) entry.getValue();
+
                             if (values != null && !values.isEmpty()) {
-                                value = (String) values.iterator().next();
+                                for (String s : values) {
+                                    newValues.add(name + "=" + s);
+                                }
+                            } else {
+                                newValues.add(name);
                             }
 
-                            String newValue = name;
-                            if (value != null) {
-                                newValue = name + "=" + value;
-
-                            }
-
-                            newValues.add(newValue);
                             if (!newValues.isEmpty()) {
                                 Map newProps = new HashMap();
                                 newProps.put(rp.DYNAMIC_ATTRIBUTE, newValues);
                                 Map configParams = new HashMap();
                                 configParams.put(
-                                        PolicyConfig.SELECTED_DYNAMIC_ATTRIBUTES,
-                                        newValues);
+                                    PolicyConfig.SELECTED_DYNAMIC_ATTRIBUTES,
+                                    newValues);
                                 rp.initialize(configParams);
                                 rp.setProperties(newProps);
                             }
-
                         }
                     }
                     arr[1] = rp;

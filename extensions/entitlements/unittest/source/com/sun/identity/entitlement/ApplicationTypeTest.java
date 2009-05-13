@@ -22,18 +22,35 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeTest.java,v 1.2 2009-05-05 08:19:37 veiming Exp $
+ * $Id: ApplicationTypeTest.java,v 1.3 2009-05-13 08:59:24 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import java.util.HashSet;
+import java.util.Set;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-/**
- *
- * @author dennis
- */
 public class ApplicationTypeTest {
+    private static final String APPL_NAME = "ApplicationTypeTestApp";
+    @BeforeClass
+    public void setup() throws EntitlementException {
+        Application appl = new Application(APPL_NAME,
+            ApplicationTypeManager.getAppplicationType(
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
+        Set<String> resources = new HashSet<String>();
+        resources.add("http://*");
+        appl.addResources(resources);
+        appl.setEntitlementCombiner(DenyOverride.class);
+        ApplicationManager.saveApplication("/", appl);
+    }
+
+    @AfterClass
+    public void cleanup() throws EntitlementException {
+        ApplicationManager.deleteApplication("/", APPL_NAME);
+    }
 
     @Test
     public void testApplicationType() throws Exception {
@@ -52,11 +69,11 @@ public class ApplicationTypeTest {
     
     @Test
     public void testApplication() throws Exception {
-        Application app = ApplicationManager.getApplication("/", 
-            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
+        Application app = ApplicationManager.getApplication("/", APPL_NAME);
         if (app == null) {
             throw new Exception("ApplicationTypeTest.testApplication cannot get application");
         }
+
         ApplicationManager.saveApplication("/", app);
         app = ApplicationManager.getApplication("/",
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
@@ -64,16 +81,15 @@ public class ApplicationTypeTest {
             throw new Exception("ApplicationTypeTest.testApplication application lost");
         }
 
-        ValidateResourceResult r = app.validateResourceName("http://www.sun.com");
+        ValidateResourceResult r = app.validateResourceName("http://www.appplicationtypetest.com:80/hr");
         if (!r.isValid()) {
             throw new Exception(
                 "ApplicationTypeTest.testApplication, validateResourceName (+ve test) is incorrect");
         }
-        r = app.validateResourceName("http://www.sun.com:abc");
+        r = app.validateResourceName("http://www.appplicationtypetest.com:abc");
         if (r.isValid()) {
             throw new Exception(
                 "ApplicationTypeTest.testApplication, validateResourceName (-ve test) is incorrect");
         }
-
     }
 }
