@@ -3,8 +3,9 @@ package com.sun.identity.admin.model;
 import com.icesoft.faces.context.effects.Appear;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.entitlement.EntitlementSubject;
+import java.io.Serializable;
 
-public abstract class ViewSubject implements MultiPanelBean, TreeNode {
+public abstract class ViewSubject implements MultiPanelBean, TreeNode, Serializable {
     private boolean panelExpanded = true;
     private Effect panelExpandEffect;
     private Effect panelEffect;
