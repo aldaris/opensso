@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.7 2009-05-12 21:02:06 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.8 2009-05-13 00:50:51 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -161,27 +161,29 @@ public class PrivilegeUtils {
         vrList.add(lastModifiedBy);
         lastModifiedBy.setVariableId("lastModifiedBy");
         AttributeValue lmbv = new AttributeValue();
-        lmbv.setDataType("string");
+        lmbv.setDataType("xs:string");
         lmbv.getContent().add(privilege.getLastModifiedBy());
         JAXBElement<AttributeValue> lmbve 
                 = objectFactory.createAttributeValue(lmbv);
         lastModifiedBy.setExpression(cbve);
 
+        // use simpledateformat to format as yyyy-MM-ddTHH:mm:ss.SSS in GMT
         VariableDefinition creationDate = new VariableDefinition(); // long
         //vrList.add(creationDate); TODO: fix and uncomment
         creationDate.setVariableId("creationDate");
         AttributeValue cdv = new AttributeValue();
-        cdv.setDataType("string");
+        cdv.setDataType("xs:dateTime");
         cdv.getContent().add(privilege.getCreationDate());
         JAXBElement<AttributeValue> cdve 
                 = objectFactory.createAttributeValue(cdv);
         creationDate.setExpression(cdve);
 
+        // use simpledateformat to format as yyyy-MM-ddTHH:mm:ss.SSS in GMT
         VariableDefinition lastModifiedDate = new VariableDefinition(); // long
         //vrList.add(lastModifiedDate); TODO: fix and uncomment
         lastModifiedDate.setVariableId("lastModifiedDate");
         AttributeValue lmdv = new AttributeValue();
-        lmdv.setDataType("string");
+        lmdv.setDataType("xs:dateTime");
         lmdv.getContent().add(privilege.getLastModifiedDate());
         JAXBElement<AttributeValue> lmdve 
                 = objectFactory.createAttributeValue(lmdv);
@@ -263,7 +265,7 @@ public class PrivilegeUtils {
         if (!permitActions.isEmpty()) {
             Rule permitRule = new Rule();
             vrList.add(permitRule);
-            permitRule.setRuleId("permit-rule");
+            permitRule.setRuleId(entitlement.getName() + ":permit-rule:");
             permitRule.setDescription("permit-description");
             permitRule.setEffect(EffectType.PERMIT);
             Target permitTarget = new Target();
@@ -285,7 +287,7 @@ public class PrivilegeUtils {
         if (!denyActions.isEmpty()) {
             Rule denyRule = new Rule();
             vrList.add(denyRule);
-            denyRule.setRuleId("deny-rule");
+            denyRule.setRuleId(entitlement.getName() + ":deny-rule");
             denyRule.setDescription("deny-description");
             denyRule.setEffect(EffectType.DENY);
             Target denyTarget = new Target();
@@ -330,7 +332,7 @@ public class PrivilegeUtils {
 
             Match match = new Match();
             matchList.add(match);
-            match.setMatchId("subject-match-id");
+            match.setMatchId("user-subject-match");
 
             AttributeValue attributeValue = new AttributeValue();
             String dataType = "datatype";
@@ -338,13 +340,13 @@ public class PrivilegeUtils {
             attributeValue.getContent().add(userId);
 
             AttributeDesignator attributeDesignator = new AttributeDesignator();
-            String category = "category";
+            String category = "subject-category";
             attributeDesignator.setCategory(category);
-            String attributeId = "attributeId";
+            String attributeId = "user-subject:user-id";
             attributeDesignator.setAttributeId(attributeId);
-            String dt = "dataType";
+            String dt = "xs;string";
             attributeDesignator.setDataType(dt);
-            String issuer = "issuer";
+            String issuer = "subject:issuer";
             attributeDesignator.setIssuer(issuer);
             boolean mustBePresent = true;
             attributeDesignator.setMustBePresent(mustBePresent);
@@ -369,22 +371,22 @@ public class PrivilegeUtils {
 
         Match match = new Match();
         matchList.add(match);
-        match.setMatchId("json:subject:match");
+        match.setMatchId("subject:json:match");
 
         AttributeValue attributeValue = new AttributeValue();
-        String dataType = "json:subject";
+        String dataType = "subject:json:" + es.getClass().getName();
         attributeValue.setDataType(dataType);
         String esString = es.toString();
         attributeValue.getContent().add(esString);
 
         AttributeDesignator attributeDesignator = new AttributeDesignator();
-        String category = "json:subject:category";
+        String category = "subject:json:category";
         attributeDesignator.setCategory(category);
-        String attributeId = "attributeId";
+        String attributeId = "subject:json";
         attributeDesignator.setAttributeId(attributeId);
-        String dt = "dataType";
+        String dt = "subject:json" + es.getClass().getName();
         attributeDesignator.setDataType(dt);
-        String issuer = "issuer";
+        String issuer = "subject:issuer";
         attributeDesignator.setIssuer(issuer);
         boolean mustBePresent = true;
         attributeDesignator.setMustBePresent(mustBePresent);
@@ -459,22 +461,22 @@ public class PrivilegeUtils {
         }
 
         Match match = new Match();
-        String matchId = "matchId";
+        String matchId = "resource-match";
         match.setMatchId(matchId);
 
         AttributeValue attributeValue = new AttributeValue();
-        String dataType = "datatype";
+        String dataType = "xs;string";
         attributeValue.setDataType(dataType);
         attributeValue.getContent().add(resourceName);
 
         AttributeDesignator attributeDesignator = new AttributeDesignator();
-        String category = "category";
+        String category = "resource:category";
         attributeDesignator.setCategory(category);
-        String attributeId = "attributeId";
+        String attributeId = "resource-id";
         attributeDesignator.setAttributeId(attributeId);
-        String dt = "dataType";
+        String dt = "xs:string";
         attributeDesignator.setDataType(dt);
-        String issuer = "issuer";
+        String issuer = "resource:issuer";
         attributeDesignator.setIssuer(issuer);
         boolean mustBePresent = true;
         attributeDesignator.setMustBePresent(mustBePresent);
@@ -491,20 +493,20 @@ public class PrivilegeUtils {
         }
 
         Match match = new Match();
-        String matchId = "not-matchId";
+        String matchId = "resource-no-mach";
         match.setMatchId(matchId);
 
         AttributeValue attributeValue = new AttributeValue();
-        String dataType = "datatype";
+        String dataType = "xs:string";
         attributeValue.setDataType(dataType);
         attributeValue.getContent().add(resourceName);
 
         AttributeDesignator attributeDesignator = new AttributeDesignator();
-        String category = "category";
+        String category = "resource:category";
         attributeDesignator.setCategory(category);
-        String attributeId = "attributeId";
+        String attributeId = "resource-id";
         attributeDesignator.setAttributeId(attributeId);
-        String dt = "dataType";
+        String dt = "xs:string";
         attributeDesignator.setDataType(dt);
         String issuer = "issuer";
         attributeDesignator.setIssuer(issuer);
@@ -523,22 +525,22 @@ public class PrivilegeUtils {
         }
 
         Match match = new Match();
-        String matchId = "matchId";
+        String matchId = "action-match";
         match.setMatchId(matchId);
 
         AttributeValue attributeValue = new AttributeValue();
-        String dataType = "datatype";
+        String dataType = "xs:string";
         attributeValue.setDataType(dataType);
         attributeValue.getContent().add(actionName);
 
         AttributeDesignator attributeDesignator = new AttributeDesignator();
-        String category = "category";
+        String category = "action-category";
         attributeDesignator.setCategory(category);
-        String attributeId = "attributeId";
+        String attributeId = "action-id";
         attributeDesignator.setAttributeId(attributeId);
-        String dt = "dataType";
+        String dt = "xs:string";
         attributeDesignator.setDataType(dt);
-        String issuer = "issuer";
+        String issuer = "action-issuer";
         attributeDesignator.setIssuer(issuer);
         boolean mustBePresent = true;
         attributeDesignator.setMustBePresent(mustBePresent);
@@ -565,7 +567,7 @@ public class PrivilegeUtils {
             if (es != null) {
                 String esString = es.toString();
                 AttributeValue esv = new AttributeValue();
-                String dataType = "subject:json";
+                String dataType = "subject:json:" + es.getClass().getName();
                 esv.setDataType(dataType);
                 esv.getContent().add(esString);
                 JAXBElement esve  = objectFactory.createAttributeValue(esv);
@@ -574,7 +576,7 @@ public class PrivilegeUtils {
             if (ec != null) {
                 String ecString = ec.toString();
                 AttributeValue ecv = new AttributeValue();
-                String dataType = "condition:json";
+                String dataType = "condition:json:" + ec.getClass().getName();
                 ecv.setDataType(dataType);
                 ecv.getContent().add(ecString);
                 JAXBElement ecve  = objectFactory.createAttributeValue(ecv);
