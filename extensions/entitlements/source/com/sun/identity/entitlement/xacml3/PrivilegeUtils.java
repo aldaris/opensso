@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.8 2009-05-13 00:50:51 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.9 2009-05-13 01:20:16 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -53,11 +53,13 @@ import com.sun.identity.entitlement.util.DebugFactory;
 import com.sun.identity.shared.debug.IDebug;
 
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -167,27 +169,36 @@ public class PrivilegeUtils {
                 = objectFactory.createAttributeValue(lmbv);
         lastModifiedBy.setExpression(cbve);
 
-        // use simpledateformat to format as yyyy-MM-ddTHH:mm:ss.SSS in GMT
-        VariableDefinition creationDate = new VariableDefinition(); // long
-        //vrList.add(creationDate); TODO: fix and uncomment
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss.SSS");
+        sdf1.setTimeZone(TimeZone.getTimeZone("GMT"));
+        sdf2.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        VariableDefinition creationDate = new VariableDefinition();
+        vrList.add(creationDate); 
         creationDate.setVariableId("creationDate");
         AttributeValue cdv = new AttributeValue();
         cdv.setDataType("xs:dateTime");
-        cdv.getContent().add(privilege.getCreationDate());
+        cdv.getContent().add(
+                sdf1.format(privilege.getCreationDate())
+                + "T"
+                + sdf2.format(privilege.getCreationDate()));
         JAXBElement<AttributeValue> cdve 
                 = objectFactory.createAttributeValue(cdv);
         creationDate.setExpression(cdve);
 
-        // use simpledateformat to format as yyyy-MM-ddTHH:mm:ss.SSS in GMT
-        VariableDefinition lastModifiedDate = new VariableDefinition(); // long
-        //vrList.add(lastModifiedDate); TODO: fix and uncomment
+        VariableDefinition lastModifiedDate = new VariableDefinition();
+        vrList.add(lastModifiedDate); 
         lastModifiedDate.setVariableId("lastModifiedDate");
         AttributeValue lmdv = new AttributeValue();
         lmdv.setDataType("xs:dateTime");
-        lmdv.getContent().add(privilege.getLastModifiedDate());
+        lmdv.getContent().add(
+                sdf1.format(privilege.getLastModifiedDate())
+                + "T"
+                + sdf2.format(privilege.getLastModifiedDate()));
         JAXBElement<AttributeValue> lmdve 
                 = objectFactory.createAttributeValue(lmdv);
-        creationDate.setExpression(lmdve);
+        lastModifiedDate.setExpression(lmdve);
 
         // PolicyIssuer policyIssuer = null;
 
