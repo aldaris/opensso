@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.10 2009-05-12 19:58:41 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.11 2009-05-13 20:40:00 dillidorai Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -207,6 +207,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     @Override
     public String getPrivilegeXML(String name)
         throws EntitlementException {
+	/* TODO: restore the behaviour after implementing XACMLPrivilegeManager
         try {
             Policy policy = null;
 
@@ -223,6 +224,9 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         } catch (SSOException ssoe) {
             throw new EntitlementException(102, ssoe);
         }
+	*/
+	Privilege privilege = getPrivilege(name);
+	return com.sun.identity.entitlement.xacml3.PrivilegeUtils.toXACML(privilege);
     }
 }
 
