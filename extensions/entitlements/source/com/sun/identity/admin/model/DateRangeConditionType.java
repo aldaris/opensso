@@ -26,7 +26,7 @@ public class DateRangeConditionType
         DateRangeCondition drc = (DateRangeCondition)newViewCondition();
 
         Date startDate = parseDate(tc.getStartDate());
-        Date endDate = parseDate(tc.getStartDate());
+        Date endDate = parseDate(tc.getEndDate());
 
         Calendar startCal = new GregorianCalendar(startDate.year, startDate.month, startDate.day);
         Calendar endCal = new GregorianCalendar(endDate.year, endDate.month, endDate.day);
@@ -45,7 +45,7 @@ public class DateRangeConditionType
         assert(dateArray.length == 3);
 
         d.year = Integer.valueOf(dateArray[0]);
-        d.month = Integer.valueOf(dateArray[1]);
+        d.month = Integer.valueOf(dateArray[1])-1;
         d.day = Integer.valueOf(dateArray[2]);
 
         return d;

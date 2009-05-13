@@ -15,11 +15,15 @@
             <ice:selectInputDate
                 renderAsPopup="true"
                 value="#{viewCondition.startDate}">
+                <f:convertDateTime
+                    timeZone="#{timeZoneBean.timeZone.ID}"/>
             </ice:selectInputDate>
             <ice:outputText value="End Date:"/>
             <ice:selectInputDate
                 renderAsPopup="true"
                 value="#{viewCondition.endDate}">
+                <f:convertDateTime
+                    timeZone="#{timeZoneBean.timeZone.ID}"/>
             </ice:selectInputDate>
         </ice:panelGrid>
     </ice:panelGroup>
