@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.36 2009-05-11 07:36:24 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.37 2009-05-13 23:51:29 mallas Exp $
  *
  */
 
@@ -963,35 +963,37 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             try {
                 SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
                 SSOToken userToken = subjectSecurity.ssoToken;
-                String subjectName = userToken.getPrincipal().getName();
                 if(userToken != null) {
+                   String subjectName = userToken.getPrincipal().getName();
                    String nameIDImpl = config.getNameIDMapper();
-                   if(nameIDImpl == null) {
+                   if(nameIDImpl == null || nameIDImpl.length() == 0) {
                       ni = new NameIdentifier(subjectName); 
                    } else {
                       ni = new NameIdentifier(
-                           WSSUtils.getUserPseduoName(subjectName, nameIDImpl)); 
+                           WSSUtils.getUserPseduoName(subjectName, nameIDImpl));
                    }                                               
-                } else {
-                    ni = new NameIdentifier(config.getProviderName());
-                }
-                
-                Map attributes = WSSUtils.getSAMLAttributes(
+                   Map attributes = WSSUtils.getSAMLAttributes(
                         subjectName, config.getSAMLAttributeMapping(),
                         config.getSAMLAttributeNamespace(), userToken);
                 
-                if(attributes != null) {
-                   samlAttributes.putAll(attributes); 
+                   if(attributes != null) {
+                      samlAttributes.putAll(attributes); 
+                   }
+                
+                   if(config.shouldIncludeMemberships()) {
+                      Map memberships = WSSUtils.getMembershipAttributes(
+                          subjectName, config.getSAMLAttributeNamespace());
+                      if(memberships != null) {
+                          samlAttributes.putAll(memberships);
+                      }
+                    }
+                } else {                    
+                    ni = new NameIdentifier(config.getProviderName());
                 }
                 
-                if(config.shouldIncludeMemberships()) {
-                   Map memberships = WSSUtils.getMembershipAttributes(
-                          subjectName, config.getSAMLAttributeNamespace());
-                   if(memberships != null) {
-                      samlAttributes.putAll(memberships);
-                   }
-                }
             } catch (Exception ex) {
+                debug.error("SOAPRequestHandler.getSecurityToken: " +
+                        "Failed in creating SAML tokens", ex);
                 throw new SecurityException(ex.getMessage());
             }
                         
