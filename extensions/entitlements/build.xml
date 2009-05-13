@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.44 2009-05-08 23:49:05 dillidorai Exp $
+  $Id: build.xml,v 1.45 2009-05-13 21:34:09 dillidorai Exp $
 
 -->
 
@@ -141,7 +141,7 @@
        </javac>
    </target>
 
-   <target name="src" depends="src-ent,src-policy,src-admin"/>
+   <target name="src" depends="src-ent,src-xacml3,src-policy,src-admin"/>
    
    <target name="unwar" depends="init">
        <unjar
