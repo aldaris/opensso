@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.14 2009-05-13 08:59:23 veiming Exp $
+ * $Id: Application.java,v 1.15 2009-05-13 21:55:29 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -335,7 +335,7 @@ public class Application {
 
         if (!match) {
             return new ValidateResourceResult(
-                ValidateResourceResult.VALID_CODE_DOES_MATCH_VALID_RESOURCES,
+                ValidateResourceResult.VALID_CODE_DOES_NOT_MATCH_VALID_RESOURCES,
                 "");
         }
 
