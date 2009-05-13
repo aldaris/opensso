@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.14 2009-05-13 20:09:33 farble1670 Exp $
+   $Id: entitlement.xml,v 1.15 2009-05-13 21:24:10 veiming Exp $
 
 -->
 
@@ -176,7 +176,7 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="resourceComparator" />
-                            <Value>com.sun.identity.entitlement.URLResourceName</Value>
+                            <Value>com.sun.identity.entitlement.PrefixResourceName</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="openProvisioning"
@@ -198,7 +198,7 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="resourceComparator" />
-                            <Value>com.sun.identity.entitlement.URLResourceName</Value>
+                            <Value>com.sun.identity.entitlement.PrefixResourceName</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="banking"
@@ -218,7 +218,7 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="resourceComparator" />
-                            <Value>com.sun.identity.entitlement.URLResourceName</Value>
+                            <Value>com.sun.identity.entitlement.ExactMatchResourceName</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>

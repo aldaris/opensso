@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLResourceName.java,v 1.3 2009-05-08 07:03:21 veiming Exp $
+ * $Id: URLResourceName.java,v 1.4 2009-05-13 21:24:10 veiming Exp $
  *
  */
 
@@ -84,7 +84,8 @@ public class URLResourceName
          */
         if ((!urlStr.startsWith(DEFAULT_WEB_PROTOCOL + "://")) 
              && (!urlStr.startsWith(SECURE_WEB_PROTOCOL + "://"))) {
-            return super.canonicalize(urlStr);
+            Object[] params = {urlStr};
+            throw new EntitlementException(303, params);
         }
         int index = urlStr.indexOf("://"); 
         String proto = urlStr.substring(0, index);
