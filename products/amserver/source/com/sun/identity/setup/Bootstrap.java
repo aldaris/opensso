@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.17 2009-05-05 21:24:46 veiming Exp $
+ * $Id: Bootstrap.java,v 1.18 2009-05-13 21:26:36 hengming Exp $
  *
  */
 
@@ -40,8 +40,10 @@ import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.authentication.internal.InvalidAuthContextException;
 import com.sun.identity.authentication.internal.server.SMSAuthModule;
+import com.sun.identity.common.Constants;
 import com.sun.identity.common.DebugPropertiesObserver;
 import com.sun.identity.common.configuration.ServerConfiguration;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSPropertiesObserver;
@@ -201,19 +203,31 @@ public class Bootstrap {
             properties = ServerConfiguration.getServerInstance(
                 ssoToken, instanceName);
             if (properties != null) {
+                // set debug level to error because debug.message in
+                // SMSEntry.initializedClass won't work and will print out
+                // error message. Save the debug level and will be restored
+                // after SMSEntry.initializedClass.
+                String debugLevel = (String)properties.get(
+                    Constants.SERVICES_DEBUG_LEVEL);
+                properties.setProperty(Constants.SERVICES_DEBUG_LEVEL,
+                    Debug.STR_ERROR);
                 SystemProperties.initializeProperties(
                     properties, true, false);
+                DebugPropertiesObserver debugPO =
+                    DebugPropertiesObserver.getInstance();
                 String serverConfigXML =
                     ServerConfiguration.getServerConfigXML(
                     ssoToken, instanceName);
                 Crypt.reinitialize();
                 BootstrapData.loadServerConfigXML(serverConfigXML);
                 SMSEntry.initializeClass();
+                properties.setProperty(Constants.SERVICES_DEBUG_LEVEL,
+                    debugLevel);
                 SystemProperties.initializeProperties(
                     properties, true, true);
                 AdminUtils.initialize();
                 SMSAuthModule.initialize();
-                DebugPropertiesObserver.getInstance().notifyChanges();
+                debugPO.notifyChanges();
                 SMSPropertiesObserver.getInstance().notifyChanges();
                 SystemProperties.setServerInstanceName(instanceName);
 

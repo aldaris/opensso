@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.40 2009-02-06 21:35:01 veiming Exp $
+ * $Id: SetupConstants.java,v 1.41 2009-05-13 21:26:36 hengming Exp $
  *
  */
 
@@ -381,6 +381,11 @@ public interface SetupConstants {
      * Configuration Variable for Directory Server config store property.
      */
     String CONFIG_VAR_DS_DATASTORE_CLASS = "DS_OBJECT_CLASS";
+
+    /**
+     * Configuration Variable for Embedded DS config store property.
+     */
+    String CONFIG_VAR_EMBEDDED_DATASTORE_CLASS = "EMBEDDED_DS_OBJECT_CLASS";
 
     /**
      * Configuration Variable for Flat-file config store property.

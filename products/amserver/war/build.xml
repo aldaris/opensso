@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.59 2009-03-19 21:42:52 goodearth Exp $
+   $Id: build.xml,v 1.60 2009-05-13 21:25:14 hengming Exp $
 
 -->
 
@@ -206,6 +206,7 @@
                 <include name="install.ldif" />
                 <include name="plugin.ldif" />
                 <include name="sunone_schema2.ldif" />
+                <include name="opends_config_index_template.ldif" />
             </zipfileset>
             <zipfileset dir="${amserver.warbase.dir}/opends/config" prefix="WEB-INF/template/opends/config">
                 <include name="am_sm_ds_schema.ldif" />

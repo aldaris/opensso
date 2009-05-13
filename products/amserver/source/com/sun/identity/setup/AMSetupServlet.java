@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.101 2009-05-02 23:04:38 kevinserwin Exp $
+ * $Id: AMSetupServlet.java,v 1.102 2009-05-13 21:26:35 hengming Exp $
  *
  */
 
@@ -557,7 +557,7 @@ public class AMSetupServlet extends HttpServlet {
             List schemaFiles = getSchemaFiles(dataStore);
             String basedir = (String) map.get(
                 SetupConstants.CONFIG_VAR_BASE_DIR);
-            writeSchemaFiles(basedir, schemaFiles);
+            writeSchemaFiles(basedir, schemaFiles, map, dataStore);
             // Get the remote host name from the SERVER URL  
             // entered in the 'Add to existing instance' and place
             // it in the map. This is for console configurator.
@@ -599,7 +599,7 @@ public class AMSetupServlet extends HttpServlet {
             List schemaFiles = getSchemaFiles(dataStore);
             String basedir = (String)map.get(
                 SetupConstants.CONFIG_VAR_BASE_DIR);
-            writeSchemaFiles(basedir, schemaFiles);
+            writeSchemaFiles(basedir, schemaFiles, map, dataStore);
         }
         return isDITLoaded;
     }
@@ -812,6 +812,7 @@ public class AMSetupServlet extends HttpServlet {
 
     private static void postInitialize(SSOToken adminSSOToken)
         throws SSOException, SMSException {
+        SMSEntry.initializeClass();
         AMAuthenticationManager.reInitializeAuthServices();
         
         AMIdentityRepository.clearCache();
@@ -1248,10 +1249,12 @@ public class AMSetupServlet extends HttpServlet {
                     int idx1 = sbuf.indexOf(
                         SetupConstants.CONFIG_VAR_SMS_DATASTORE_CLASS);
                     if (idx1 != -1) {
+                        String dataStoreClass = embedded ?
+                            SetupConstants.CONFIG_VAR_EMBEDDED_DATASTORE_CLASS:
+                            SetupConstants.CONFIG_VAR_DS_DATASTORE_CLASS;
                         sbuf.replace(idx1, idx1 +
                             (SetupConstants.CONFIG_VAR_SMS_DATASTORE_CLASS)
-                            .length(),
-                            SetupConstants.CONFIG_VAR_DS_DATASTORE_CLASS);
+                            .length(), dataStoreClass);
                     }
                 }
             }
@@ -1651,8 +1654,10 @@ public class AMSetupServlet extends HttpServlet {
      */
     private static void writeSchemaFiles(
         String basedir,
-        List schemaFiles
-    )  throws IOException {
+        List schemaFiles,
+        Map map,
+        String dataStore
+    )  throws Exception {
         SetupProgress.reportStart("configurator.progress.tagswap.schemafiles", 
             null);
         for (Iterator i = schemaFiles.iterator(); i.hasNext(); ) {
@@ -1684,6 +1689,10 @@ public class AMSetupServlet extends HttpServlet {
         
         AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
         dsConfig.loadSchemaFiles(schemaFiles);
+
+        if (dataStore.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
+            EmbeddedOpenDS.rebuildIndex(map);
+        }
     }
 
     /**

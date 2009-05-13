@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.23 2009-05-02 23:05:48 kevinserwin Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.24 2009-05-13 21:26:36 hengming Exp $
  *
  */
 
@@ -66,6 +66,7 @@ import org.opends.server.core.DirectoryServer;
 import org.opends.server.extensions.ConfigFileHandler;
 import org.opends.server.extensions.SaltedSHA512PasswordStorageScheme;
 import org.opends.server.tools.dsconfig.DSConfig;
+import org.opends.server.tools.RebuildIndex;
 import org.opends.server.types.DirectoryEnvironmentConfig;
 import org.opends.server.util.EmbeddedUtils;
 
@@ -1012,5 +1013,35 @@ public class EmbeddedOpenDS {
              
         }
         return null;
+    }
+
+    public static void rebuildIndex(Map map) throws Exception {
+
+        shutdownServer("Rebuild index");
+        String basedir = (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR);
+        String odsRoot = basedir + "/" +
+            SetupConstants.SMS_OPENDS_DATASTORE;
+        Debug debug = Debug.getInstance(SetupConstants.DEBUG_NAME);
+        String[] args = {
+            "--configClass",
+            "org.opends.server.extensions.ConfigFileHandler",
+            "--configFile",
+            odsRoot + "/config/config.ldif",
+            "--baseDN",
+            (String)map.get(SetupConstants.CONFIG_VAR_ROOT_SUFFIX),
+            "--index",
+            "sunxmlkeyvalue" };
+        OutputStream bos = new ByteArrayOutputStream();
+        OutputStream boe = new ByteArrayOutputStream();
+        RebuildIndex.mainRebuildIndex(args, true, bos, boe);
+        String outStr = bos.toString();
+        String errStr = boe.toString();
+        if (errStr.length() != 0) {
+            debug.error("EmbeddedOpenDS:rebuildIndex:stderr=" + errStr);
+        }
+        if (debug.messageEnabled()) {
+            debug.message("EmbeddedOpenDS:rebuildIndex:Result:" + outStr);
+        }
+        startServer(odsRoot);
     }
 }

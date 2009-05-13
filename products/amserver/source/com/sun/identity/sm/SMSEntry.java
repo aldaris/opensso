@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.48 2009-04-02 19:40:59 veiming Exp $
+ * $Id: SMSEntry.java,v 1.49 2009-05-13 21:27:50 hengming Exp $
  *
  */
 
@@ -277,6 +277,7 @@ public class SMSEntry implements Cloneable {
         if (smsObject != null) {
             SMSNotificationManager.getInstance().deregisterListener(smsObject);
             smsObject.shutdown();
+            smsObject = null;
         }
         
         // Create the SMSObject, based on the configuration
