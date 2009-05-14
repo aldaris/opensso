@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.13 2009-05-14 22:42:34 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.14 2009-05-14 23:39:44 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -137,7 +137,7 @@ public class PrivilegeUtils {
         String privilegeName = privilege.getName();
         String applicationName = null; 
         if (privilege.getEntitlement() != null) {
-            privilegeName = privilege.getEntitlement().getApplicationName();
+            applicationName = privilege.getEntitlement().getApplicationName();
         }
 
         String policyId = privilegeNameToPolicyId(privilegeName,
@@ -251,7 +251,8 @@ public class PrivilegeUtils {
         Set<String> resources = entitlement.getResourceNames();
 
 
-        List<AnyOf> anyOfResourceList = resourceNamesToAnyOfList(resources, applicationName);
+        List<AnyOf> anyOfResourceList = resourceNamesToAnyOfList(resources,
+                applicationName);
         if (anyOfResourceList != null) {
             targetAnyOfList.addAll(anyOfResourceList);
         }
@@ -263,7 +264,8 @@ public class PrivilegeUtils {
 
         Map<String, Boolean> actionValues = entitlement.getActionValues();
         List<AnyOf> anyOfActionList 
-                = actionNamesToAnyOfList(actionValues.keySet(), applicationName);
+                = actionNamesToAnyOfList(actionValues.keySet(),
+                applicationName);
         if (anyOfActionList != null) {
             targetAnyOfList.addAll(anyOfActionList);
         }
@@ -492,7 +494,8 @@ public class PrivilegeUtils {
         return anyOfList;
     }
 
-    public static Match resourceNameToMatch(String resourceName, String applicationName) {
+    public static Match resourceNameToMatch(String resourceName,
+            String applicationName) {
         if (resourceName == null | resourceName.length() == 0) {
             return null;
         }
@@ -525,7 +528,8 @@ public class PrivilegeUtils {
         return match;
     }
 
-    public static Match resourceNameToNotMatch(String resourceName, String applicationName) {
+    public static Match resourceNameToNotMatch(String resourceName,
+            String applicationName) {
         if (resourceName == null | resourceName.length() == 0) {
             return null;
         }
@@ -558,7 +562,8 @@ public class PrivilegeUtils {
         return match;
     }
 
-    public static Match actionNameToMatch(String actionName, String applicationName) {
+    public static Match actionNameToMatch(String actionName,
+            String applicationName) {
         if (actionName == null | actionName.length() == 0) {
             return null;
         }
@@ -602,7 +607,8 @@ public class PrivilegeUtils {
                     XACMLConstants.XACML3_CORE_PKG);
 
             Apply apply = new Apply();
-            apply.setFunctionId(XACMLConstants.JSON_SUBJECT_AND_CONDITION_SATISFIED);
+            apply.setFunctionId(
+                    XACMLConstants.JSON_SUBJECT_AND_CONDITION_SATISFIED);
             List applyExpressions = apply.getExpression();
             if (es != null) {
                 String esString = es.toString();
