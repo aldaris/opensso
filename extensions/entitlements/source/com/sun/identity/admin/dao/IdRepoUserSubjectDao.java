@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class IdRepoUserSubjectDao extends IdRepoSubjectDao implements Serializable {
+public class IdRepoUserSubjectDao extends IdRepoSubjectDao {
 
     private String namingAttribute;
 

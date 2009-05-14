@@ -2,8 +2,9 @@ package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
 import com.sun.identity.entitlement.EntitlementSubject;
+import java.io.Serializable;
 
-public abstract class SubjectType {
+public abstract class SubjectType implements Serializable {
     private String name;
     private String template;
     private String subjectIconUri;

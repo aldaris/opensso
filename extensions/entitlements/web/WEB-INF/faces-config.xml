@@ -291,6 +291,27 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>bankingSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.BankingSubjectType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>banking</value>
+        </managed-property>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-banking.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/banking.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>orSubjectType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.OrSubjectType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -368,6 +389,7 @@
             <value>#{idRepoRoleSubjectType}</value>
             <value>#{groupSubjectType}</value>
             <value>#{idRepoGroupSubjectType}</value>
+            <value>#{bankingSubjectType}</value>
         </list-entries>
     </managed-bean>
 
@@ -423,6 +445,10 @@
                 <key>com.sun.identity.entitlement.IdRepoGroupSubject</key>
                 <value>#{idRepoGroupSubjectType}</value>
             </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.BankingSubject</key>
+                <value>#{bankingSubjectType}</value>
+            </map-entry>
         </map-entries>
     </managed-bean>
 
@@ -442,6 +468,10 @@
             <map-entry>
                 <key>com.sun.identity.admin.model.IdRepoGroupViewSubject</key>
                 <value>#{idRepoRoleSubjectDao}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.BankingViewSubject</key>
+                <value>#{bankingSubjectDao}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
@@ -517,6 +547,15 @@
             <value>5</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>bankingSubjectDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.BankingSubjectDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{bankingSubjectType}</value>
+        </managed-property>
+    </managed-bean>
     <!-- subject dao's -->
 
     <!-- subject containers -->
@@ -559,6 +598,19 @@
             <value>#{idRepoGroupSubjectDao}</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>bankingSubjectContainer</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SubjectContainer</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{bankingSubjectType}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectDao</property-name>
+            <value>#{bankingSubjectDao}</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
         <managed-bean-name>subjectContainers</managed-bean-name>
@@ -568,6 +620,7 @@
             <value>#{idRepoUserSubjectContainer}</value>
             <!--<value>#{idRepoRoleSubjectContainer}</value>-->
             <value>#{idRepoGroupSubjectContainer}</value>
+            <value>#{bankingSubjectContainer}</value>
         </list-entries>
     </managed-bean>
     <!-- subject containers -->

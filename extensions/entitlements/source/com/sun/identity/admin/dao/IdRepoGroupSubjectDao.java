@@ -4,9 +4,8 @@ import com.sun.identity.admin.model.IdRepoGroupViewSubject;
 import com.sun.identity.admin.model.ViewSubject;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
-import java.io.Serializable;
 
-public class IdRepoGroupSubjectDao extends IdRepoSubjectDao implements Serializable {
+public class IdRepoGroupSubjectDao extends IdRepoSubjectDao {
     protected IdType getIdType() {
         return IdType.GROUP;
     }

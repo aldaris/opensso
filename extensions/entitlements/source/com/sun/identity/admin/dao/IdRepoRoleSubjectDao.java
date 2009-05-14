@@ -6,7 +6,7 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import java.io.Serializable;
 
-public class IdRepoRoleSubjectDao extends IdRepoSubjectDao implements Serializable {
+public class IdRepoRoleSubjectDao extends IdRepoSubjectDao {
     protected IdType getIdType() {
         return IdType.ROLE;
     }
