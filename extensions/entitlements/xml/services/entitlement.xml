@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.15 2009-05-13 21:24:10 veiming Exp $
+   $Id: entitlement.xml,v 1.16 2009-05-14 06:17:23 farble1670 Exp $
 
 -->
 
@@ -205,8 +205,7 @@
                         id="applicationType">
                         <AttributeValuePair>
                             <Attribute name="actions" />
-                            <Value>GET=true</Value>
-                            <Value>POST=true</Value>
+                            <Value>TRANSFER=true</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="searchIndexImpl" />
