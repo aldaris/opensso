@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: banking.xml,v 1.1 2009-05-14 06:17:23 farble1670 Exp $
+    $Id: banking.xml,v 1.2 2009-05-14 21:32:23 farble1670 Exp $
 
 -->
 
@@ -37,61 +37,28 @@
         <Schema
             i18nFileName=""
             i18nKey="">
-	    <Global>
+            <Global>
                 <AttributeSchema name="serviceObjectClasses"
                     type="list"
                     syntax="string"
 		    i18nKey="">
-		    <DefaultValues>
-                	<Value>banking-service</Value>
-		    </DefaultValues>
-	        </AttributeSchema>
-	    </Global>
+                    <DefaultValues>
+                        <Value>banking-service</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+            </Global>
 
             <Policy>
-                <AttributeSchema name="CREATE"
+                <AttributeSchema name="TRANSFER"
                     type="single"
-		    syntax="boolean"
-                    uitype="radio"
-                    i18nKey="">
-		    <IsResourceNameAllowed/>
-		    <BooleanValues>
-                        <BooleanTrueValue>true</BooleanTrueValue>
-                        <BooleanFalseValue>false</BooleanFalseValue>
-                    </BooleanValues>	
-		</AttributeSchema>
-                <AttributeSchema name="READ"
-                    type="single"
-                    syntax="boolean"
+        		    syntax="boolean"
                     uitype="radio"
                     i18nKey="">
                     <IsResourceNameAllowed/>
                     <BooleanValues>
                         <BooleanTrueValue>true</BooleanTrueValue>
                         <BooleanFalseValue>false</BooleanFalseValue>
-                    </BooleanValues>    
-                </AttributeSchema>
-                <AttributeSchema name="UPDATE"
-                    type="single"
-                    syntax="boolean"
-                    uitype="radio"
-                    i18nKey="">
-                    <IsResourceNameAllowed/>
-                    <BooleanValues>
-                        <BooleanTrueValue>true</BooleanTrueValue>
-                        <BooleanFalseValue>false</BooleanFalseValue>
-                    </BooleanValues>    
-                </AttributeSchema>
-                <AttributeSchema name="DELETE"
-                    type="single"
-                    syntax="boolean"
-                    uitype="radio"
-                    i18nKey="">
-                    <IsResourceNameAllowed/>
-                    <BooleanValues>
-                        <BooleanTrueValue>true</BooleanTrueValue>
-                        <BooleanFalseValue>false</BooleanFalseValue>
-                    </BooleanValues>    
+                    </BooleanValues>
                 </AttributeSchema>
             </Policy>
         </Schema>

@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BankingSubject.java,v 1.1 2009-05-14 19:11:23 farble1670 Exp $
+ * $Id: BankingSubject.java,v 1.2 2009-05-14 21:32:23 farble1670 Exp $
  */
 package com.sun.identity.entitlement;
 
 public class BankingSubject extends UserSubject {
     public static enum Banker {
         ACCOUNT_OWNER,
-        JOIN_ACCOUNT_OWNER,
+        JOINT_ACCOUNT_OWNER,
         BANK_MANAGER,
         CLERK,
         ACCOUNT_MANAGER;
