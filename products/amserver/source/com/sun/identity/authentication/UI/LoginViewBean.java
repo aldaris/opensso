@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.21 2009-05-11 22:24:22 qcheng Exp $
+ * $Id: LoginViewBean.java,v 1.22 2009-05-14 04:17:34 222713 Exp $
  *
  */
 
@@ -45,11 +45,11 @@ import com.sun.identity.shared.encode.CookieUtils;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.server.AuthContextLocal;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.service.AuthUtils;
+import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.HttpCallback;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
@@ -291,6 +291,29 @@ public class LoginViewBean extends AuthViewBeanBase {
             // will be used to retrieve the session for session upgrade
             sessionID = AuthUtils.getSessionIDFromRequest(request);
             ssoToken = AuthUtils.getExistingValidSSOToken(sessionID);
+
+            //Check for session Timeout	 
+            if((ssoToken == null) && (sessionID != null) &&	 
+              (sessionID.toString().length()!= 0)){	 
+                    if(AuthUtils.isTimedOut(sessionID)){
+                        clearCookie(request);	 
+                        errorCode = AMAuthErrorCode.AUTH_TIMEOUT;	 
+                        ErrorMessage = AuthUtils.getErrorVal(	 
+                              AMAuthErrorCode.AUTH_TIMEOUT,	 
+                              AuthUtils.ERROR_MESSAGE);	 
+                        errorTemplate = AuthUtils.getErrorVal(	 
+                              AMAuthErrorCode.AUTH_TIMEOUT,	 
+                              AuthUtils.ERROR_TEMPLATE);	 
+	 
+                        ISLocaleContext localeContext = new ISLocaleContext();	 
+                        localeContext.setLocale(request);	 
+                        java.util.Locale locale = localeContext.getLocale();	 
+                        rb =  rbCache.getResBundle(bundleName, locale);	 
+                        super.forwardTo(requestContext);	 
+                        return;	 
+                  }	 
+            }
+
             forceAuth = AuthUtils.forceAuthFlagExists(reqDataHash);
             if (ssoToken != null) {
                 if (AuthUtils.newSessionArgExists(reqDataHash)) {
@@ -1706,6 +1729,21 @@ public class LoginViewBean extends AuthViewBeanBase {
         }        
     }    
    
+    private void clearCookie(HttpServletRequest req) {	 
+        if (AuthUtils.isCookieSupported(req)) {	 
+            clearCookie(AuthUtils.getCookieName());	 
+            AuthUtils.clearHostUrlCookie(response);	 
+            AuthUtils.clearlbCookie(request, response);	 
+            if (storeCookies != null && !storeCookies.isEmpty()) {	 
+                for (Iterator it = storeCookies.iterator();	 
+                    it.hasNext();){	 
+                    String cookieName = (String)it.next();	 
+                    AuthUtils.clearServerCookie(cookieName, request, response);	 
+                }	 
+            }	 
+        }	 
+    }
+
     // Method to check if Persistent exist and use it to login to DSAME
     private boolean isPersistentCookieValid() {
         if (loginDebug.messageEnabled()) {
