@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.11 2009-05-14 22:33:46 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.12 2009-05-14 22:39:26 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -564,7 +564,8 @@ public class PrivilegeUtils {
         }
 
         Match match = new Match();
-        String matchId = XACMLConstants.ENTITLEMENT_ACTION_MATCH;
+        String matchId = XACMLConstants.ENTITLEMENT_ACTION_MATCH + ":"
+                + applicationName;
         match.setMatchId(matchId);
 
         AttributeValue attributeValue = new AttributeValue();
