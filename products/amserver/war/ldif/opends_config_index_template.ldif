@@ -3,4 +3,3 @@ objectClass: top
 objectClass: ds-cfg-local-db-index
 ds-cfg-attribute: sunxmlkeyvalue
 ds-cfg-index-type: equality
-ds-cfg-index-type: substring
