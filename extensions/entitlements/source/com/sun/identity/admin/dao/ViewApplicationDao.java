@@ -33,7 +33,7 @@ public class ViewApplicationDao implements Serializable {
                 continue;
             }
 
-            ViewApplication va = new ViewApplication(a, vat);
+            ViewApplication va = new ViewApplication(a);
             viewApplications.put(va.getName(), va);
         }
 
@@ -41,9 +41,9 @@ public class ViewApplicationDao implements Serializable {
     }
 
     public void setViewApplication(ViewApplication va) {
-        // TODO: realm
         try {
             Application a = va.toApplication(viewApplicationTypeDao);
+            // TODO: realm
             ApplicationManager.saveApplication("/", a);
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);

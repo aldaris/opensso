@@ -41,8 +41,8 @@
                     <ice:panelGroup
                         rendered="#{o:size(policyResourcesBean.privilegeBean.viewEntitlement.resources) > 0}">
                         <ice:dataTable
-                            styleClass="banking-resources-table"
-                            columnClasses="banking-resources-tableCol1,banking-resources-tableCol2,banking-resources-tableCol3"
+                            styleClass="banking-resources"
+                            columnClasses="banking-resourcesCol1,banking-resourcesCol2,banking-resourcesCol3"
                             var="bankingResource"
                             value="#{policyResourcesBean.privilegeBean.viewEntitlement.resources}">
                             <ice:column>

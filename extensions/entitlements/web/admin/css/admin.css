@@ -527,18 +527,40 @@ div.button img.left {
     cursor: pointer;
 }
 
-table.actions tr td {
-    text-align: center;
+.actionsCol1 {
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
-.banking-resources-tableCol1 {
+.actionsCol2 {
     text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
 }
-.banking-resources-tableCol2 {
-    text-align: left;
-}
-.banking-resources-tableCol3 {
+
+.actionsCol3 {
     text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.banking-resourcesCol1 {
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.banking-resourcesCol2 {
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.banking-resourcesCol3 {
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .multipanel {

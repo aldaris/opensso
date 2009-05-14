@@ -21,10 +21,14 @@ public class ViewApplication implements Serializable {
     private List<Action> actions = new ArrayList<Action>();
     private List<ConditionType> conditionTypes = new ArrayList<ConditionType>();
 
-    public ViewApplication(Application a, ViewApplicationType viewApplicationType) {
-        setName(a.getName());
+    public ViewApplication(Application a) {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
 
-        setViewApplicationType(viewApplicationType);
+        name = a.getName();
+
+        // application type
+        Map<String, ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String, ViewApplicationType>) mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
+        viewApplicationType = entitlementApplicationTypeToViewApplicationTypeMap.get(a.getApplicationType().getName());
 
         // resources
         for (String resourceString : a.getResources()) {
@@ -52,7 +56,6 @@ public class ViewApplication implements Serializable {
         }
 
         // conditions
-        ManagedBeanResolver mbr = new ManagedBeanResolver();
         ConditionTypeFactory ctf = (ConditionTypeFactory) mbr.resolve("conditionTypeFactory");
         for (String viewConditionClassName : a.getConditions()) {
             Class c;
@@ -63,7 +66,7 @@ public class ViewApplication implements Serializable {
                 continue;
             }
             ConditionType ct = ctf.getConditionType(c);
-            assert(ct != null);
+            assert (ct != null);
             conditionTypes.add(ct);
         }
     }
