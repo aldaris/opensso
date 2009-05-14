@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.20 2009-03-03 01:52:49 qcheng Exp $
+ * $Id: IDPSSOFederate.java,v 1.21 2009-05-14 17:23:45 exu Exp $
  *
  */
 
@@ -478,6 +478,8 @@ public class IDPSSOFederate {
 
                 // get the relay state query parameter from the request
                 relayState = request.getParameter(SAML2Constants.RELAY_STATE);
+                AuthnContext matchingAuthnContext =
+                    idpAuthnContextInfo.getAuthnContext();
     
                 if (session == null) {
                     // the user has not logged in yet, redirect to auth
@@ -491,6 +493,13 @@ public class IDPSSOFederate {
                             new CacheObject(authnReq));
                     }
     
+                    // save the AuthnContext in the IDPCache so that it can be
+                    // retrieved later when the user successfully authenticates
+                    synchronized (IDPCache.idpAuthnContextCache) { 
+                        IDPCache.idpAuthnContextCache.put(reqID,
+                            new CacheObject(matchingAuthnContext));
+                    }
+                    
                     // save the relay state in the IDPCache so that it can be
                     // retrieved later when the user successfully authenticates
                     if (relayState != null && relayState.trim().length() != 0) {
@@ -592,6 +601,9 @@ public class IDPSSOFederate {
                         // Save the new requestId and AuthnRequest
                         IDPCache.authnRequestCache.put(reqID, 
                             new CacheObject(authnReq));
+                        // Save the new requestId and AuthnContext
+                        IDPCache.idpAuthnContextCache.put(reqID, 
+                            new CacheObject(matchingAuthnContext));
                         // save if the request was an Session Upgrade case.
                         IDPCache.isSessionUpgradeCache.add(reqID);
                         // redirect to the authentication service
@@ -642,7 +654,8 @@ public class IDPSSOFederate {
                         try {
                             IDPSSOUtil.sendResponseToACS(request, response,
                                 session, authnReq, spEntityID, idpEntityID,
-                                idpMetaAlias, realm, nameIDFormat, relayState);
+                                idpMetaAlias, realm, nameIDFormat, relayState,
+                                matchingAuthnContext);
                         } catch (SAML2Exception se) {
                             SAML2Utils.debug.error(classMethod +
                                 "Unable to do sso or federation.", se);
@@ -664,6 +677,15 @@ public class IDPSSOFederate {
                 if (cacheObj != null) {
                     authnReq = (AuthnRequest)cacheObj.getObject();
                 }
+                AuthnContext matchingAuthnContext = null;
+                synchronized (IDPCache.idpAuthnContextCache) {
+                    cacheObj = (CacheObject)
+                        IDPCache.idpAuthnContextCache.remove(reqID);
+                }
+                if (cacheObj != null) {
+                    matchingAuthnContext = (AuthnContext)cacheObj.getObject();
+                }
+                
                 relayState = (String)IDPCache.relayStateCache.remove(reqID);
                 if (authnReq == null) {
                     SAML2Utils.debug.error(classMethod +
@@ -707,7 +729,7 @@ public class IDPSSOFederate {
                 try {
                     IDPSSOUtil.sendResponseToACS(request, response, session,
                         authnReq, spEntityID, idpEntityID, idpMetaAlias, realm,
-                        nameIDFormat, relayState);
+                        nameIDFormat, relayState, matchingAuthnContext);
                 } catch (SAML2Exception se) {
                     SAML2Utils.debug.error(classMethod +
                         "Unable to do sso or federation.", se);
@@ -877,10 +899,21 @@ public class IDPSSOFederate {
         if ((authnTypeAndValues != null) 
             && (!authnTypeAndValues.isEmpty())) { 
             Iterator iter = authnTypeAndValues.iterator();
-            StringBuffer authSB = new StringBuffer((String)iter.next());
+            boolean isFirst = true;
+            StringBuffer authSB = new StringBuffer();
             while (iter.hasNext()) {
-                authSB.append("&"); 
-                authSB.append((String)iter.next());
+                String authnValue = (String) iter.next();
+                int index = authnValue.indexOf("=");
+                if (index != -1) {
+                    if (isFirst) {
+                        isFirst = false;
+                    } else {
+                        authSB.append("&"); 
+                    }
+                    authSB.append(authnValue.substring(0, index+1));
+                    authSB.append(
+                        URLEncDec.encode(authnValue.substring(index+1)));
+                }
             }
             if (newURL.indexOf("?") == -1) {
                 newURL.append("?");
@@ -963,6 +996,7 @@ public class IDPSSOFederate {
     private static void cleanUpCache(String reqID) {
         IDPCache.oldIDPSessionCache.remove(reqID);
         IDPCache.authnRequestCache.remove(reqID);
+        IDPCache.idpAuthnContextCache.remove(reqID);
         IDPCache.isSessionUpgradeCache.remove(reqID); 
     }
 }

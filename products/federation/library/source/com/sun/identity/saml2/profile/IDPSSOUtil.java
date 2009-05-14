@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.48 2009-05-12 22:44:45 madan_ranganath Exp $
+ * $Id: IDPSSOUtil.java,v 1.49 2009-05-14 17:23:45 exu Exp $
  *
  */
 
@@ -285,7 +285,7 @@ public class IDPSSOUtil {
         }
 
         sendResponseToACS(request, response, session, authnReq, spEntityID,
-            idpEntityID, idpMetaAlias, realm, nameIDFormat, relayState);
+            idpEntityID, idpMetaAlias, realm, nameIDFormat, relayState, null);
     }
 
     /**
@@ -302,12 +302,15 @@ public class IDPSSOUtil {
      * @param realm the realm
      * @param nameIDFormat the <code>NameIDFormat</code>
      * @param relayState the relay state 
+     * @param matchingAuthnContext the <code>AuthnContext</code> used to find
+     *  authentication type and scheme.
      * 
      */
     public static void sendResponseToACS(HttpServletRequest request,
         HttpServletResponse response, Object session, AuthnRequest authnReq,
         String spEntityID, String idpEntityID, String idpMetaAlias,
-        String realm, String nameIDFormat, String relayState) 
+        String realm, String nameIDFormat, String relayState,
+        AuthnContext matchingAuthnContext) 
         throws SAML2Exception {
 
         StringBuffer returnedBinding = new StringBuffer();
@@ -338,7 +341,8 @@ public class IDPSSOUtil {
             SAML2Constants.AFFILIATION_ID);
         // generate a response for the authn request
         Response res = getResponse(session, authnReq, spEntityID, idpEntityID,
-            idpMetaAlias, realm, nameIDFormat, acsURL, affiliationID);
+            idpMetaAlias, realm, nameIDFormat, acsURL, affiliationID,
+            matchingAuthnContext);
      
         if (res == null) {
             SAML2Utils.debug.error("IDPSSOUtil.sendResponseToACS:" +
@@ -618,6 +622,8 @@ public class IDPSSOUtil {
      * @param nameIDFormat the <code>NameIDFormat</code>
      * @param acsURL the <code>ACS</code> service <code>url</code>
      * @param affiliationID affiliationID for IDP initiated SSO
+     * @param matchingAuthnContext the <code>AuthnContext</code> used to find
+     *  authentication type and scheme.
      * 
      * @return the <code>SAML Response</code> object
      * @exception SAML2Exception if the operation is not successful
@@ -631,7 +637,8 @@ public class IDPSSOUtil {
         String realm,
         String nameIDFormat,
         String acsURL,
-        String affiliationID) 
+        String affiliationID,
+        AuthnContext matchingAuthnContext) 
         throws SAML2Exception {
     
         String classMethod = "IDPSSOUtil.getResponse: ";
@@ -651,7 +658,7 @@ public class IDPSSOUtil {
         
             Assertion assertion = getAssertion(session, authnReq, 
                 recipientEntityID, idpEntityID, idpMetaAlias, realm,
-                nameIDFormat, acsURL, affiliationID);
+                nameIDFormat, acsURL, affiliationID, matchingAuthnContext);
     
             if (assertion == null) {
                 SAML2Utils.debug.error(
@@ -702,6 +709,8 @@ public class IDPSSOUtil {
      * @param nameIDFormat the <code>NameIDFormat</code>
      * @param acsURL the <code>ACS</code> service <code>url</code>
      * @param affiliationID affiliationID for IDP initiated SSO
+     * @param matchingAuthnContext the <code>AuthnContext</code> used to find
+     *  authentication type and scheme.
      * 
      * @return the <code>SAML Assertion</code> object
      * @exception SAML2Exception if the operation is not successful
@@ -715,7 +724,8 @@ public class IDPSSOUtil {
         String realm,
         String nameIDFormat,
         String acsURL,
-        String affiliationID) 
+        String affiliationID,
+        AuthnContext matchingAuthnContext) 
         throws SAML2Exception {
     
         String classMethod = "IDPSSOUtil.getAssertion: ";
@@ -733,7 +743,8 @@ public class IDPSSOUtil {
     
         NewBoolean isNewSessionIndex = new NewBoolean();
         AuthnStatement authnStatement = getAuthnStatement(
-            session, isNewSessionIndex, authnReq, idpEntityID, realm);
+            session, isNewSessionIndex, authnReq, idpEntityID, realm,
+            matchingAuthnContext);
         if (authnStatement == null) {
             return null;
         }
@@ -939,6 +950,8 @@ public class IDPSSOUtil {
      * @param authnReq the <code>AuthnRequest</code> object
      * @param idpEntityID the entity id of the identity provider
      * @param realm the realm name
+     *  @param matchingAuthnContext the <code>AuthnContext</code> used to find
+     *  authentication type and scheme.
      *
      * @return the <code>SAML AuthnStatement</code> object
      * @exception SAML2Exception if the operation is not successful
@@ -948,7 +961,8 @@ public class IDPSSOUtil {
         NewBoolean isNewSessionIndex, 
         AuthnRequest authnReq,
         String idpEntityID,
-        String realm)
+        String realm,
+        AuthnContext matchingAuthnContext)
         throws SAML2Exception {
         String classMethod = "IDPSSOUtil.getAuthnStatement: ";
 
@@ -974,28 +988,32 @@ public class IDPSSOUtil {
             authInstant = new Date();
         }
         authnStatement.setAuthnInstant(authInstant);
-       
-        String authLevel = null;
-        try {
-            String[] values = sessionProvider.getProperty(
-                session, SessionProvider.AUTH_LEVEL);
-            if (values != null && values.length != 0 &&
-                values[0] != null && values[0].length() != 0) {
-                authLevel = values[0];
+
+        AuthnContext authnContext = matchingAuthnContext;
+        if (authnContext == null) {
+            String authLevel = null;
+            try {
+                String[] values = sessionProvider.getProperty(
+                    session, SessionProvider.AUTH_LEVEL);
+                if (values != null && values.length != 0 &&
+                    values[0] != null && values[0].length() != 0) {
+                    authLevel = values[0];
+                }
+            } catch (Exception e) {
+                SAML2Utils.debug.error(classMethod +
+                    "exception retrieving auth level info from the session: ",
+                    e);
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("errorGettingAuthnStatement"));
             }
-        } catch (Exception e) {
-            SAML2Utils.debug.error(classMethod +
-                "exception retrieving auth level info from the session: ", e);
-            throw new SAML2Exception(
-                SAML2Utils.bundle.getString("errorGettingAuthnStatement"));
+
+            IDPAuthnContextMapper idpAuthnContextMapper = 
+                getIDPAuthnContextMapper(realm, idpEntityID);
+
+            authnContext =
+                idpAuthnContextMapper.getAuthnContextFromAuthLevel(
+                    authLevel, realm, idpEntityID);
         }
-
-        IDPAuthnContextMapper idpAuthnContextMapper = 
-            getIDPAuthnContextMapper(realm, idpEntityID);
-
-        AuthnContext authnContext =
-            idpAuthnContextMapper.getAuthnContextFromAuthLevel(
-                authLevel, realm, idpEntityID);
 
         authnStatement.setAuthnContext(authnContext);
        

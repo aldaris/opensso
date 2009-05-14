@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.17 2008-08-22 20:40:42 hengming Exp $
+ * $Id: IDPCache.java,v 1.18 2009-05-14 17:23:45 exu Exp $
  *
  */
 
@@ -59,6 +59,16 @@ public class IDPCache {
      */
     public static PeriodicCleanUpMap authnRequestCache = new PeriodicCleanUpMap(
         SPCache.interval * 1000, SPCache.interval * 1000); 
+
+    /**
+     * Cache saves the authn context objects before IDP redirects user to 
+     * authentication.
+     * Key : request ID String
+     * Value : AuthnContext object
+     */
+    public static PeriodicCleanUpMap idpAuthnContextCache = 
+        new PeriodicCleanUpMap(
+            SPCache.interval * 1000, SPCache.interval * 1000); 
 
     /**
      * Cache saves the assertion objects.
