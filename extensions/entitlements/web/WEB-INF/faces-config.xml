@@ -308,7 +308,7 @@
         </managed-property>
         <managed-property>
             <property-name>subjectIconUri</property-name>
-            <value>/admin/image/banking.png</value>
+            <value>/admin/image/money.png</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
