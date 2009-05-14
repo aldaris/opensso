@@ -567,7 +567,7 @@
         <list-entries>
             <value>#{idRepoUserSubjectContainer}</value>
             <!--<value>#{idRepoRoleSubjectContainer}</value>-->
-            <!--<value>#{idRepoGroupSubjectContainer}</value>-->
+            <value>#{idRepoGroupSubjectContainer}</value>
         </list-entries>
     </managed-bean>
     <!-- subject containers -->

@@ -64,7 +64,7 @@
                                 value="#{subjectContainers}"
                                 var="subjectContainer">
                                 <o:multipanel
-                                    visible="true"
+                                    visible="#{o:size(subjectContainer.viewSubjects) > 0}"
                                     expanded="#{subjectContainer.expanded}"
                                     bean="#{subjectContainer}"
                                     handler="#{basicMultiPanelHandler}"
