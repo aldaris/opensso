@@ -257,23 +257,11 @@ div.button img.left {
     margin-bottom: 5px;
 }
 
-.policy-filter-outer * > table.policy-filter-table {
-    border: none;
-    border-collapse: collapse;
-    padding: 0;
-    margin: 0;
-}
-
-.policy-filter-table * > td {
-    padding-right: 5px;
-}
-
 .policy-filter {
     width: 100%;
 }
 
-.policy-filter-lead {
-    padding-left: 5px;
+.policy-filter-type {
 }
 
 .policy-filter-actions {
@@ -283,15 +271,14 @@ div.button img.left {
     top: 2px;
 }
 
-.policy-filter-tableCol1 span label,
-.policy-filter-tableCol1 span input {
-    padding-left: 5px;
-    vertical-align: middle;
-}
-
-.policy-filter-input {
+.inline-input * > * {
     padding: 0;
     margin: 0;
+    border-collapse: collapse;
+}
+
+.inline-input * > td {
+    padding-right: 5px;
 }
 
 

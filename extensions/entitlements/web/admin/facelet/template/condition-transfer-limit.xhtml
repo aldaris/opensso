@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
+
+    <ice:panelGroup
+        rendered="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'transferLimit'}">
+
+        <ice:panelGrid
+            styleClass="inline-input"
+            columns="3">
+            <ice:outputText value="Transfer amount is"/>
+            <ice:selectOneMenu
+                value="#{viewCondition.limitTypeString}">
+                <f:selectItems
+                    value="#{viewCondition.limitType.items}"/>
+            </ice:selectOneMenu>
+            <ice:inputText
+                size="6"
+                value="#{viewCondition.limit}"/>
+        </ice:panelGrid>
+    </ice:panelGroup>
+</span>

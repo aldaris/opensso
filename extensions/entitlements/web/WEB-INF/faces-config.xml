@@ -576,6 +576,27 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>transferLimitConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.TransferLimitConditionType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>transferLimit</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-transfer-limit.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/money.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>timeRangeConditionType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.TimeRangeConditionType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -759,6 +780,10 @@
                 <value>#{daysOfWeekConditionType}</value>
             </map-entry>
             <map-entry>
+                <key>com.sun.identity.admin.model.TransferLimitCondition</key>
+                <value>#{transferLimitConditionType}</value>
+            </map-entry>
+            <map-entry>
                 <key>com.sun.identity.admin.model.OrViewCondition</key>
                 <value>#{orConditionType}</value>
             </map-entry>
@@ -800,6 +825,10 @@
             <map-entry>
                 <key>com.sun.identity.entitlement.IPCondition</key>
                 <value>#{ipRangeConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.BankTransferLimitCondition</key>
+                <value>#{transferLimitConditionType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
