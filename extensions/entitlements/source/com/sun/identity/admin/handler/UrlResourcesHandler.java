@@ -1,8 +1,6 @@
 package com.sun.identity.admin.handler;
 
-import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
-import com.sun.identity.admin.effect.MessageErrorEffect;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.Resource;
@@ -13,12 +11,9 @@ import com.sun.identity.admin.model.ViewEntitlement;
 import java.io.Serializable;
 import java.util.List;
 import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.FacesEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.validator.ValidatorException;
 
 public class UrlResourcesHandler implements Serializable {
 
@@ -54,17 +49,6 @@ public class UrlResourcesHandler implements Serializable {
          */
         Resource[] resourceArray = (Resource[]) event.getNewValue();
         ve.setResourceArray(resourceArray);
-    }
-
-    private boolean isResourcesAddable(List<Resource> availableResources) {
-        for (Resource r : availableResources) {
-            UrlResource ur = (UrlResource) r;
-            if (ur.isAddable()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public void addListener(ActionEvent event) {

@@ -8,7 +8,7 @@ public abstract class SubjectDao {
     private SubjectType subjectType;
 
     public abstract List<ViewSubject> getViewSubjects();
-    public abstract List<ViewSubject> getViewSubjects(String pattern);
+    public abstract List<ViewSubject> getViewSubjects(String filter);
     public abstract void decorate(ViewSubject vs);
 
     public void setSubjectType(SubjectType subjectType) {

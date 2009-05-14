@@ -294,6 +294,7 @@ div.button img.left {
     margin: 0;
 }
 
+
 .url-resource {
     width: 100%;
 }
@@ -320,6 +321,22 @@ div.button img.left {
 
 .url-resource-add-popup {
     text-align: left;
+}
+
+.banking-resources-add-popup {
+    text-align: left;
+}
+
+.banking-resources-select-table {
+    width: 100%;
+}
+
+.banking-resources-select-tableCol1 {
+    width: 40%;
+}
+
+.banking-resources-select-tableCol2 {
+    width: 60%;
 }
 
 .view-options-tableCol1 {
@@ -511,6 +528,16 @@ div.button img.left {
 }
 
 table.actions tr td {
+    text-align: center;
+}
+
+.banking-resources-tableCol1 {
+    text-align: left;
+}
+.banking-resources-tableCol2 {
+    text-align: left;
+}
+.banking-resources-tableCol3 {
     text-align: center;
 }
 

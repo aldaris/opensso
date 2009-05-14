@@ -1,6 +1,7 @@
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.DeepCloneableArrayList;
+import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.handler.BooleanActionsHandler;
 import com.sun.identity.entitlement.Entitlement;
 import java.io.Serializable;
@@ -39,6 +40,8 @@ public class ViewEntitlement implements Serializable {
         setViewApplication(viewApplications.get(e.getApplicationName()));
 
         // resources
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        Map<String,ResourceDecorator> resourceDecorators = (Map<String,ResourceDecorator>)mbr.resolve("resourceDecorators");
         for (String rs : e.getResourceNames()) {
             String resourceClassName = viewApplication.getViewApplicationType().getResourceClassName();
             Resource r;
@@ -52,6 +55,13 @@ public class ViewEntitlement implements Serializable {
                 throw new RuntimeException(iae);
             }
             r.setName(rs);
+
+            // decorate resource (optionally)
+            ResourceDecorator rd = resourceDecorators.get(r.getClass().getName());
+            if (rd != null) {
+                rd.decorate(r);
+            }
+            
             resources.add(r);
         }
 

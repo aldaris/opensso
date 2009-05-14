@@ -819,7 +819,7 @@
     </managed-bean>
     <!-- condition types -->
 
-    <!-- url resource chooser -->
+    <!-- url resources -->
     <managed-bean>
         <managed-bean-name>urlResourcesBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.UrlResourcesBean</managed-bean-class>
@@ -838,7 +838,32 @@
             <value>#{messagesBean}</value>
         </managed-property>
     </managed-bean>
-    <!-- url resource chooser -->
+    <!-- url resource -->
+
+    <!-- banking resources -->
+    <managed-bean>
+        <managed-bean-name>bankingResourcesBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.BankingResourcesBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>bankingResourcesHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.BankingResourcesHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>bankingResourcesBean</property-name>
+            <value>#{bankingResourcesBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectDao</property-name>
+            <value>#{idRepoUserSubjectDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{idRepoUserSubjectType}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- banking resources -->
 
     <!-- policy create -->
     <managed-bean>
@@ -1106,6 +1131,29 @@
         </map-entries>
     </managed-bean>
     <!-- filter types -->
+
+    <!-- resource decorators -->
+    <managed-bean>
+        <managed-bean-name>bankingResourceDecorator</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.BankingResourceDecorator</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectDao</property-name>
+            <value>#{idRepoUserSubjectDao}</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>resourceDecorators</managed-bean-name>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <map-entries>
+            <map-entry>
+                <key>com.sun.identity.admin.model.BankingResource</key>
+                <value>#{bankingResourceDecorator}</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+    <!-- resource decorators -->
 
     <navigation-rule>
         <navigation-case>

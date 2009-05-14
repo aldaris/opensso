@@ -12,7 +12,6 @@ import com.sun.identity.idm.IdType;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +42,16 @@ public class IdRepoUserSubjectDao extends IdRepoSubjectDao implements Serializab
                 String cn = (String) cnSet.iterator().next();
                 uvs.setCn(cn);
             }
+            Set snSet = (Set) attrs.get("sn");
+            if (snSet != null && snSet.size() > 0) {
+                String sn = (String) snSet.iterator().next();
+                uvs.setSn(sn);
+            }
+            Set enSet = (Set) attrs.get("employeeNumber");
+            if (enSet != null && enSet.size() > 0) {
+                String en = (String) enSet.iterator().next();
+                uvs.setEmployeeNumber(en);
+            }
         }
 
         return uvs;
@@ -72,6 +81,8 @@ public class IdRepoUserSubjectDao extends IdRepoSubjectDao implements Serializab
 
         searchMap.put(getNamingAttribute(), Collections.singleton(pattern));
         searchMap.put("cn", Collections.singleton(pattern));
+        searchMap.put("sn", Collections.singleton(pattern));
+        searchMap.put("employeeNumber", Collections.singleton(pattern));
 
         idsc.setSearchModifiers(IdSearchOpModifier.OR, searchMap);
         return idsc;
@@ -86,5 +97,7 @@ public class IdRepoUserSubjectDao extends IdRepoSubjectDao implements Serializab
         // TODO
         // any other user decoration?
         idus.setCn(decoratedIdus.getCn());
+        idus.setSn(decoratedIdus.getSn());
+        idus.setEmployeeNumber(decoratedIdus.getEmployeeNumber());
     }
 }

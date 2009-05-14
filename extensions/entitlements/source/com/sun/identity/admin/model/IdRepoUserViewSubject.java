@@ -5,6 +5,8 @@ import com.sun.identity.entitlement.EntitlementSubject;
 
 public class IdRepoUserViewSubject extends ViewSubject {
     private String cn;
+    private String employeeNumber;
+    private String sn;
 
     public EntitlementSubject getEntitlementSubject() {
         IdRepoUserSubject idus = new IdRepoUserSubject();
@@ -27,5 +29,21 @@ public class IdRepoUserViewSubject extends ViewSubject {
             return cn;
         }
         return super.getTitle();
+    }
+
+    public String getEmployeeNumber() {
+        return employeeNumber;
+    }
+
+    public void setEmployeeNumber(String employeeNumber) {
+        this.employeeNumber = employeeNumber;
+    }
+
+    public String getSn() {
+        return sn;
+    }
+
+    public void setSn(String sn) {
+        this.sn = sn;
     }
 }
