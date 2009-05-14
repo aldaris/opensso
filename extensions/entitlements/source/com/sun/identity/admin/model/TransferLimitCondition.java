@@ -60,7 +60,7 @@ public class TransferLimitCondition
                 btlc.setLimitType(btlc.MIN_TRANSFER_LIMIT);
                 break;
             case UPPER:
-                btlc.setLimitType(btlc.MIN_TRANSFER_LIMIT);
+                btlc.setLimitType(btlc.MAX_TRANSFER_LIMIT);
                 break;
         }
 
