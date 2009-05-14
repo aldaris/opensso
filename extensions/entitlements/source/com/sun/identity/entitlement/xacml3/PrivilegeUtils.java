@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.9 2009-05-13 01:20:16 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.10 2009-05-14 20:27:44 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -87,8 +87,9 @@ public class PrivilegeUtils {
             Policy policy = privilegeToPolicy(privilege);
             ObjectFactory objectFactory = new ObjectFactory();
             JAXBContext jaxbContext = JAXBContext.newInstance(
-                    "com.sun.identity.entitlement.xacml3.core");
-            JAXBElement<Policy> policyElement = objectFactory.createPolicy(policy);
+                    XACMLConstants.XACML3_CORE_PKG);
+            JAXBElement<Policy> policyElement
+                    = objectFactory.createPolicy(policy);
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
                     Boolean.TRUE);
@@ -133,7 +134,10 @@ public class PrivilegeUtils {
         Policy policy = new Policy();
 
         String privilegeName = privilege.getName();
-        String applicationName = null; //privilege.getApplicationName();
+        String applicationName = null; 
+        if (privilege.getEntitlement() != null) {
+            privilegeName = privilege.getEntitlement().getApplicationName();
+        }
 
         String policyId = privilegeNameToPolicyId(privilegeName,
                 applicationName);
@@ -147,23 +151,23 @@ public class PrivilegeUtils {
 
         ObjectFactory objectFactory = new ObjectFactory();
         JAXBContext jaxbContext = JAXBContext.newInstance(
-                "com.sun.identity.entitlement.xacml3.core");
+                XACMLConstants.XACML3_CORE_PKG);
 
-        VariableDefinition createdBy = new VariableDefinition(); // string
+        VariableDefinition createdBy = new VariableDefinition();
         vrList.add(createdBy);
-        createdBy.setVariableId("createdBy");
+        createdBy.setVariableId(XACMLConstants.PRIVILEGE_CREATED_BY);
         AttributeValue cbv = new AttributeValue();
-        cbv.setDataType("string");
+        cbv.setDataType(XACMLConstants.XS_STRING);
         cbv.getContent().add(privilege.getCreatedBy());
         JAXBElement<AttributeValue> cbve 
                 = objectFactory.createAttributeValue(cbv);
         createdBy.setExpression(cbve);
 
-        VariableDefinition lastModifiedBy = new VariableDefinition(); // string
+        VariableDefinition lastModifiedBy = new VariableDefinition();
         vrList.add(lastModifiedBy);
-        lastModifiedBy.setVariableId("lastModifiedBy");
+        lastModifiedBy.setVariableId(XACMLConstants.PRIVILEGE_LAST_MOIFIED_BY);
         AttributeValue lmbv = new AttributeValue();
-        lmbv.setDataType("xs:string");
+        lmbv.setDataType(XACMLConstants.XS_STRING);
         lmbv.getContent().add(privilege.getLastModifiedBy());
         JAXBElement<AttributeValue> lmbve 
                 = objectFactory.createAttributeValue(lmbv);
@@ -176,9 +180,9 @@ public class PrivilegeUtils {
 
         VariableDefinition creationDate = new VariableDefinition();
         vrList.add(creationDate); 
-        creationDate.setVariableId("creationDate");
+        creationDate.setVariableId(XACMLConstants.PRIVILEGE_CREATION_DATE);
         AttributeValue cdv = new AttributeValue();
-        cdv.setDataType("xs:dateTime");
+        cdv.setDataType(XACMLConstants.XS_DATE_TIME);
         cdv.getContent().add(
                 sdf1.format(privilege.getCreationDate())
                 + "T"
@@ -189,9 +193,10 @@ public class PrivilegeUtils {
 
         VariableDefinition lastModifiedDate = new VariableDefinition();
         vrList.add(lastModifiedDate); 
-        lastModifiedDate.setVariableId("lastModifiedDate");
+        lastModifiedDate.setVariableId(
+                XACMLConstants.PRIVILEGE_LAST_MODIFIED_DATE);
         AttributeValue lmdv = new AttributeValue();
-        lmdv.setDataType("xs:dateTime");
+        lmdv.setDataType(XACMLConstants.XS_DATE_TIME);
         lmdv.getContent().add(
                 sdf1.format(privilege.getLastModifiedDate())
                 + "T"
@@ -200,13 +205,15 @@ public class PrivilegeUtils {
                 = objectFactory.createAttributeValue(lmdv);
         lastModifiedDate.setExpression(lmdve);
 
-        // PolicyIssuer policyIssuer = null;
+        // TODO: uncomment and fix the following
 
-        // Version version = null;
+        // PolicyIssuer policyIssuer = null;  // optional
 
-        // Defaults policyDefaults = null;
+        // Version version = null;  // required
 
-        // String ruleCombiningAlgId = "rca";
+        // Defaults policyDefaults = null; // optional
+
+        // String ruleCombiningAlgId = "rca"; // required
 
         // XACML Target contains a  list of AnyOf(s)
         // XACML AnyOf contains a list of AllOf(s)
@@ -218,12 +225,14 @@ public class PrivilegeUtils {
         List<AnyOf> targetAnyOfList = target.getAnyOf();
 
         EntitlementSubject es = privilege.getSubject();
+
         /* TODO: detect simple subjects and set attribute value and designator
         List<AnyOf> anyOfSubjectList = entitlementSubjectToAnyOfList(es);
         if (anyOfSubjectList != null) {
             targetAnyOfList.addAll(anyOfSubjectList);
         }
         */
+
         AnyOf anyOfSubject = entitlementSubjectToAnyOf(es);
         if (anyOfSubject != null) {
             targetAnyOfList.add(anyOfSubject);
@@ -234,7 +243,7 @@ public class PrivilegeUtils {
         Set<String> resources = entitlement.getResourceNames();
 
 
-        List<AnyOf> anyOfResourceList = resourceNamesToAnyOfList(resources);
+        List<AnyOf> anyOfResourceList = resourceNamesToAnyOfList(resources, applicationName);
         if (anyOfResourceList != null) {
             targetAnyOfList.addAll(anyOfResourceList);
         }
@@ -246,7 +255,7 @@ public class PrivilegeUtils {
 
         Map<String, Boolean> actionValues = entitlement.getActionValues();
         List<AnyOf> anyOfActionList 
-                = actionNamesToAnyOfList(actionValues.keySet());
+                = actionNamesToAnyOfList(actionValues.keySet(), applicationName);
         if (anyOfActionList != null) {
             targetAnyOfList.addAll(anyOfActionList);
         }
@@ -266,8 +275,9 @@ public class PrivilegeUtils {
         }
 
         Set<String> excludedResources = entitlement.getExcludedResourceNames();
-        List<AnyOf> anyOfExcludedResourceList = excludedResourceNamesToAnyOfList(
-                excludedResources);
+        List<AnyOf> anyOfExcludedResourceList
+                = excludedResourceNamesToAnyOfList(
+                excludedResources, applicationName);
         Condition condition = eSubjectConditionToXCondition(
                 privilege.getSubject(), privilege.getCondition());
 
@@ -276,8 +286,9 @@ public class PrivilegeUtils {
         if (!permitActions.isEmpty()) {
             Rule permitRule = new Rule();
             vrList.add(permitRule);
-            permitRule.setRuleId(entitlement.getName() + ":permit-rule:");
-            permitRule.setDescription("permit-description");
+            permitRule.setRuleId(entitlement.getName()
+                    + XACMLConstants.PREMIT_RULE_SUFFIX);
+            permitRule.setDescription(XACMLConstants.PERMIT_RULE_DESCRIPTION);
             permitRule.setEffect(EffectType.PERMIT);
             Target permitTarget = new Target();
             permitRule.setTarget(permitTarget);
@@ -285,7 +296,8 @@ public class PrivilegeUtils {
             if (anyOfExcludedResourceList != null) {
                 permitTargetAnyOfList.addAll(anyOfExcludedResourceList);
             }
-            List<AnyOf> anyOfPermitActionList = actionNamesToAnyOfList(permitActions);
+            List<AnyOf> anyOfPermitActionList
+                    = actionNamesToAnyOfList(permitActions, applicationName);
             if (anyOfPermitActionList != null) {
                 permitTargetAnyOfList.addAll(anyOfPermitActionList);
             }
@@ -298,8 +310,9 @@ public class PrivilegeUtils {
         if (!denyActions.isEmpty()) {
             Rule denyRule = new Rule();
             vrList.add(denyRule);
-            denyRule.setRuleId(entitlement.getName() + ":deny-rule");
-            denyRule.setDescription("deny-description");
+            denyRule.setRuleId(entitlement.getName() 
+                    + XACMLConstants.DENY_RULE_SUFFIX);
+            denyRule.setDescription(XACMLConstants.DENY_RULE_DESCRIPTION);
             denyRule.setEffect(EffectType.DENY);
             Target denyTarget = new Target();
             denyRule.setTarget(denyTarget);
@@ -307,7 +320,8 @@ public class PrivilegeUtils {
             if (anyOfExcludedResourceList != null) {
                 denyTargetAnyOfList.addAll(anyOfExcludedResourceList);
             }
-            List<AnyOf> anyOfDenyActionList = actionNamesToAnyOfList(denyActions);
+            List<AnyOf> anyOfDenyActionList
+                    = actionNamesToAnyOfList(denyActions, applicationName);
             if (anyOfDenyActionList != null) {
                 denyTargetAnyOfList.addAll(anyOfDenyActionList);
             }
@@ -325,6 +339,7 @@ public class PrivilegeUtils {
         return privilegeName;
     }
 
+    // TODO: not used now, use, test, fix and verify
     public static List<AnyOf> entitlementSubjectToAnyOfList(
             EntitlementSubject es) {
         if (es == null) {
@@ -358,7 +373,7 @@ public class PrivilegeUtils {
             String dt = "xs;string";
             attributeDesignator.setDataType(dt);
             String issuer = "subject:issuer";
-            attributeDesignator.setIssuer(issuer);
+            // attributeDesignator.setIssuer(issuer); TODO: verify and fix
             boolean mustBePresent = true;
             attributeDesignator.setMustBePresent(mustBePresent);
 
@@ -382,23 +397,25 @@ public class PrivilegeUtils {
 
         Match match = new Match();
         matchList.add(match);
-        match.setMatchId("subject:json:match");
+        match.setMatchId(XACMLConstants.JSON_SUBJECT_MATCH);
 
         AttributeValue attributeValue = new AttributeValue();
-        String dataType = "subject:json:" + es.getClass().getName();
+        String dataType = XACMLConstants.JSON_SUBJECT_DATATYPE
+                + es.getClass().getName();
         attributeValue.setDataType(dataType);
         String esString = es.toString();
         attributeValue.getContent().add(esString);
 
         AttributeDesignator attributeDesignator = new AttributeDesignator();
-        String category = "subject:json:category";
+        String category = XACMLConstants.XACML_ACCESS_SUBJECT_CATEGORY;
         attributeDesignator.setCategory(category);
-        String attributeId = "subject:json";
+        String attributeId = XACMLConstants.JSON_SUBJECT_ID;
         attributeDesignator.setAttributeId(attributeId);
-        String dt = "subject:json" + es.getClass().getName();
+        String dt = XACMLConstants.JSON_SUBJECT_DATATYPE
+                + es.getClass().getName();
         attributeDesignator.setDataType(dt);
-        String issuer = "subject:issuer";
-        attributeDesignator.setIssuer(issuer);
+        String issuer = XACMLConstants.SUBJECT_ISSUER; // TODO: not a constant?
+        //attributeDesignator.setIssuer(issuer); //TODO: verify and fix
         boolean mustBePresent = true;
         attributeDesignator.setMustBePresent(mustBePresent);
 
@@ -408,7 +425,8 @@ public class PrivilegeUtils {
         return anyOf;
     }
 
-    public static List<AnyOf> resourceNamesToAnyOfList(Set<String> resourceNames) {
+    public static List<AnyOf> resourceNamesToAnyOfList(
+            Set<String> resourceNames, String applicationName) {
         if (resourceNames == null || resourceNames.isEmpty()) {
             return null;
         }
@@ -419,7 +437,7 @@ public class PrivilegeUtils {
         for (String resourceName : resourceNames) {
             AllOf allOf = new AllOf();
             List<Match> matchList = allOf.getMatch();
-            matchList.add(resourceNameToMatch(resourceName));
+            matchList.add(resourceNameToMatch(resourceName, applicationName));
             allOfList.add(allOf);
         }
         return anyOfList;
@@ -431,7 +449,7 @@ public class PrivilegeUtils {
     }
 
     public static List<AnyOf> actionNamesToAnyOfList(
-            Set<String> actionNames) {
+            Set<String> actionNames, String applicationName) {
         if (actionNames == null || actionNames.isEmpty()) {
             return null;
         }
@@ -442,14 +460,14 @@ public class PrivilegeUtils {
         for (String actionName : actionNames) {
             AllOf allOf = new AllOf();
             List<Match> matchList = allOf.getMatch();
-            matchList.add(actionNameToMatch(actionName));
+            matchList.add(actionNameToMatch(actionName, applicationName));
             allOfList.add(allOf);
         }
         return anyOfList;
     }
 
     public static List<AnyOf> excludedResourceNamesToAnyOfList(
-            Set<String> excludedResources) {
+            Set<String> excludedResources, String applicationName) {
         if (excludedResources == null || excludedResources.isEmpty()) {
             return null;
         }
@@ -460,35 +478,36 @@ public class PrivilegeUtils {
         for (String resourceName : excludedResources) {
             AllOf allOf = new AllOf();
             List<Match> matchList = allOf.getMatch();
-            matchList.add(resourceNameToNotMatch(resourceName));
+            matchList.add(resourceNameToNotMatch(resourceName, applicationName));
             allOfList.add(allOf);
         }
         return anyOfList;
     }
 
-    public static Match resourceNameToMatch(String resourceName) {
+    public static Match resourceNameToMatch(String resourceName, String applicationName) {
         if (resourceName == null | resourceName.length() == 0) {
             return null;
         }
 
         Match match = new Match();
-        String matchId = "resource-match";
+        String matchId = XACMLConstants.ENTITLEMENT_RESOURCE_MATCH + ":"
+                + applicationName;
         match.setMatchId(matchId);
 
         AttributeValue attributeValue = new AttributeValue();
-        String dataType = "xs;string";
+        String dataType = XACMLConstants.XS_STRING;
         attributeValue.setDataType(dataType);
         attributeValue.getContent().add(resourceName);
 
         AttributeDesignator attributeDesignator = new AttributeDesignator();
-        String category = "resource:category";
+        String category = XACMLConstants.XACML_RESOURCE_CATEGORY;
         attributeDesignator.setCategory(category);
-        String attributeId = "resource-id";
+        String attributeId = XACMLConstants.XACML_RESOURCE_ID;
         attributeDesignator.setAttributeId(attributeId);
-        String dt = "xs:string";
+        String dt = XACMLConstants.XS_STRING;
         attributeDesignator.setDataType(dt);
-        String issuer = "resource:issuer";
-        attributeDesignator.setIssuer(issuer);
+        String issuer = XACMLConstants.RESOURCE_ISSUER; // TOOD: not a constant?
+        // attributeDesignator.setIssuer(issuer); TODO: verify and fix
         boolean mustBePresent = true;
         attributeDesignator.setMustBePresent(mustBePresent);
 
@@ -498,29 +517,30 @@ public class PrivilegeUtils {
         return match;
     }
 
-    public static Match resourceNameToNotMatch(String resourceName) {
+    public static Match resourceNameToNotMatch(String resourceName, String applicationName) {
         if (resourceName == null | resourceName.length() == 0) {
             return null;
         }
 
         Match match = new Match();
-        String matchId = "resource-no-mach";
+        String matchId = XACMLConstants.ENTITLEMENT_RESOURCE_NO_MATCH + ":"
+                + applicationName;
         match.setMatchId(matchId);
 
         AttributeValue attributeValue = new AttributeValue();
-        String dataType = "xs:string";
+        String dataType = XACMLConstants.XS_STRING;
         attributeValue.setDataType(dataType);
         attributeValue.getContent().add(resourceName);
 
         AttributeDesignator attributeDesignator = new AttributeDesignator();
-        String category = "resource:category";
+        String category = XACMLConstants.XACML_RESOURCE_CATEGORY;
         attributeDesignator.setCategory(category);
-        String attributeId = "resource-id";
+        String attributeId = XACMLConstants.XACML_RESOURCE_ID;
         attributeDesignator.setAttributeId(attributeId);
-        String dt = "xs:string";
+        String dt = XACMLConstants.XS_STRING;
         attributeDesignator.setDataType(dt);
-        String issuer = "issuer";
-        attributeDesignator.setIssuer(issuer);
+        String issuer = XACMLConstants.RESOURCE_ISSUER; // TODO: not a constant?
+        // attributeDesignator.setIssuer(issuer); TODO: verify and fix
         boolean mustBePresent = true;
         attributeDesignator.setMustBePresent(mustBePresent);
 
@@ -530,29 +550,29 @@ public class PrivilegeUtils {
         return match;
     }
 
-    public static Match actionNameToMatch(String actionName) {
+    public static Match actionNameToMatch(String actionName, String applicationName) {
         if (actionName == null | actionName.length() == 0) {
             return null;
         }
 
         Match match = new Match();
-        String matchId = "action-match";
+        String matchId = XACMLConstants.ENTITLEMENT_ACTION_MATCH;
         match.setMatchId(matchId);
 
         AttributeValue attributeValue = new AttributeValue();
-        String dataType = "xs:string";
+        String dataType = XACMLConstants.XS_STRING;
         attributeValue.setDataType(dataType);
         attributeValue.getContent().add(actionName);
 
         AttributeDesignator attributeDesignator = new AttributeDesignator();
-        String category = "action-category";
+        String category = XACMLConstants.XACML_ACTION_CATEGORY;
         attributeDesignator.setCategory(category);
-        String attributeId = "action-id";
+        String attributeId = XACMLConstants.XACML_ACTION_ID;
         attributeDesignator.setAttributeId(attributeId);
-        String dt = "xs:string";
+        String dt = XACMLConstants.XS_STRING;
         attributeDesignator.setDataType(dt);
-        String issuer = "action-issuer";
-        attributeDesignator.setIssuer(issuer);
+        String issuer = XACMLConstants.ACTION_ISSUER; // TODO: not a constant?
+        // attributeDesignator.setIssuer(issuer); // TODO: verify and fix
         boolean mustBePresent = true;
         attributeDesignator.setMustBePresent(mustBePresent);
 
@@ -570,15 +590,15 @@ public class PrivilegeUtils {
             condition = new Condition();
             ObjectFactory objectFactory = new ObjectFactory();
             JAXBContext jaxbContext = JAXBContext.newInstance(
-                    "com.sun.identity.entitlement.xacml3.core");
+                    XACMLConstants.XACML3_CORE_PKG);
 
             Apply apply = new Apply();
-            apply.setFunctionId("subject-and-condition-satisfied");
+            apply.setFunctionId(XACMLConstants.JSON_SUBJECT_AND_CONDITION_SATISFIED);
             List applyExpressions = apply.getExpression();
             if (es != null) {
                 String esString = es.toString();
                 AttributeValue esv = new AttributeValue();
-                String dataType = "subject:json:" + es.getClass().getName();
+                String dataType = XACMLConstants.JSON_SUBJECT_DATATYPE + es.getClass().getName();
                 esv.setDataType(dataType);
                 esv.getContent().add(esString);
                 JAXBElement esve  = objectFactory.createAttributeValue(esv);
@@ -587,7 +607,7 @@ public class PrivilegeUtils {
             if (ec != null) {
                 String ecString = ec.toString();
                 AttributeValue ecv = new AttributeValue();
-                String dataType = "condition:json:" + ec.getClass().getName();
+                String dataType = XACMLConstants.JSON_CONDITION_DATATYPE + ec.getClass().getName();
                 ecv.setDataType(dataType);
                 ecv.getContent().add(ecString);
                 JAXBElement ecve  = objectFactory.createAttributeValue(ecv);
