@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.47 2009-05-14 05:34:05 farble1670 Exp $
+  $Id: build.xml,v 1.48 2009-05-14 05:41:32 farble1670 Exp $
 
 -->
 
@@ -141,8 +141,7 @@
        </javac>
    </target>
 
-   <target name="src" depends="src-ent,src-policy,src-admin"/>
-   
+   <target name="src" depends="src-xacml3,src-policy,src-admin"/>
    <target name="unwar" depends="init">
        <unjar
            src="${entitlements.extlib.dir}/opensso.war"
