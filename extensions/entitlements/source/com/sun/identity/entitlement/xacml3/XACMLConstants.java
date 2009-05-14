@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLConstants.java,v 1.1 2009-05-14 20:27:12 dillidorai Exp $
+ * $Id: XACMLConstants.java,v 1.2 2009-05-14 22:33:10 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
 /**
  * Interface that defines constants used by XACML classes
  */
-public interface XACMLConstants {
+public final class XACMLConstants {
 
 public static final String XACML3_CORE_PKG 
         = "com.sun.identity.entitlement.xacml3.core";
@@ -78,9 +78,9 @@ public static final String XACML_RESOURCE_ID
 public static final String XACML_RESOURCE_CATEGORY 
         = "urn:oasis:names:tc:xacml:3.0:attribute-category:resource";
 public static final String ENTITLEMENT_RESOURCE_MATCH 
-        = "urn:sun:opensso:entitlement:resource-match";
+        = "urn:sun:opensso:entitlement:resource-match:application";
 public static final String ENTITLEMENT_RESOURCE_NO_MATCH 
-        = "urn:sun:opensso:entitlement:resource-no-match";
+        = "urn:sun:opensso:entitlement:resource-no-match:application";
 public static final String RESOURCE_ISSUER 
         = "urn:sun:opensso";
 
@@ -89,7 +89,7 @@ public static final String XACML_ACTION_ID
 public static final String XACML_ACTION_CATEGORY 
         = "urn:oasis:names:tc:xacml:3.0:attribute-category:action";
 public static final String ENTITLEMENT_ACTION_MATCH 
-        = "urn:sun:opensso:entitlement:action-match";
+        = "urn:sun:opensso:entitlement:action-match:application";
 public static final String ACTION_ISSUER 
         = "urn:sun:opensso";
 
@@ -97,6 +97,24 @@ public static final String JSON_SUBJECT_AND_CONDITION_SATISFIED
         = "urn:sun:opensso:entitlement:json-subject-and-condiiton-satisfied";
 public static final String JSON_CONDITION_DATATYPE 
         = "urn:sun:opensso:entitlement:json-condition-type";
+
+// XACML standard combining algorithms
+public static final String XACML_RULE_DENY_OVERRIDES
+        = "urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-overrides";
+public static final String XACML_POLICY_DENY_OVERRIDES
+        = "urn:oasis:names:tc:xacml:3.0:policy-combining-algorithm:deny-overrides";
+public static final String XACML_RULE_PERMIT_OVERRIDES
+        = "urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:permit-overrides";
+public static final String XACML_POLICY_PERMIT_OVERRIDES
+        = "urn:oasis:names:tc:xacml:3.0:policy-combining-algorithm:permit-overrides";
+public static final String XACML_RULE_DENY_UNLESS_PERMIT
+        = "urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-unless-permit";
+public static final String XACML_POLICY_DENY_UNLESS_PERMIT
+        = "urn:oasis:names:tc:xacml:3.0:policy-combining-algorithm:deny-unless-permit";
+public static final String XACML_RULE_PERMIT_UNLESS_DENY
+        = "urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:permit-unless-deny";
+public static final String XACML_POLICY_PERMIT_UNLESS_DENY
+        = "urn:oasis:names:tc:xacml:3.0:policy-combining-algorithm:permit-unless-deny";
 
 }
 
