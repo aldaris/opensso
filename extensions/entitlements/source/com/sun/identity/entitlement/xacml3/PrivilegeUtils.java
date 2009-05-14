@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.12 2009-05-14 22:39:26 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.13 2009-05-14 22:42:34 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -294,7 +294,7 @@ public class PrivilegeUtils {
         if (!permitActions.isEmpty()) {
             Rule permitRule = new Rule();
             vrList.add(permitRule);
-            permitRule.setRuleId(entitlement.getName()
+            permitRule.setRuleId(entitlement.getName() + ":"
                     + XACMLConstants.PREMIT_RULE_SUFFIX);
             permitRule.setDescription(XACMLConstants.PERMIT_RULE_DESCRIPTION);
             permitRule.setEffect(EffectType.PERMIT);
@@ -318,7 +318,7 @@ public class PrivilegeUtils {
         if (!denyActions.isEmpty()) {
             Rule denyRule = new Rule();
             vrList.add(denyRule);
-            denyRule.setRuleId(entitlement.getName() 
+            denyRule.setRuleId(entitlement.getName()  + ":"
                     + XACMLConstants.DENY_RULE_SUFFIX);
             denyRule.setDescription(XACMLConstants.DENY_RULE_DESCRIPTION);
             denyRule.setEffect(EffectType.DENY);
