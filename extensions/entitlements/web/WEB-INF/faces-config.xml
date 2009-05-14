@@ -270,6 +270,27 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>idRepoGroupSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.IdRepoGroupSubjectType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>idRepoGroup</value>
+        </managed-property>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-idrepo-group.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/group.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>orSubjectType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.OrSubjectType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -346,6 +367,7 @@
             <value>#{roleSubjectType}</value>
             <value>#{idRepoRoleSubjectType}</value>
             <value>#{groupSubjectType}</value>
+            <value>#{idRepoGroupSubjectType}</value>
         </list-entries>
     </managed-bean>
 
@@ -397,6 +419,10 @@
                 <key>com.sun.identity.entitlement.IdRepoRoleSubject</key>
                 <value>#{idRepoRoleSubjectType}</value>
             </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.IdRepoGroupSubject</key>
+                <value>#{idRepoGroupSubjectType}</value>
+            </map-entry>
         </map-entries>
     </managed-bean>
 
@@ -411,6 +437,10 @@
             </map-entry>
             <map-entry>
                 <key>com.sun.identity.admin.model.IdRepoRoleViewSubject</key>
+                <value>#{idRepoRoleSubjectDao}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.IdRepoGroupViewSubject</key>
                 <value>#{idRepoRoleSubjectDao}</value>
             </map-entry>
         </map-entries>
@@ -470,6 +500,23 @@
             <value>5</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>idRepoGroupSubjectDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.IdRepoGroupSubjectDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{idRepoGroupSubjectType}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>limit</property-name>
+            <value>100</value>
+        </managed-property>
+        <managed-property>
+            <property-name>timeout</property-name>
+            <value>5</value>
+        </managed-property>
+    </managed-bean>
     <!-- subject dao's -->
 
     <!-- subject containers -->
@@ -499,6 +546,19 @@
             <value>#{idRepoRoleSubjectDao}</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>idRepoGroupSubjectContainer</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SubjectContainer</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{idRepoGroupSubjectType}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectDao</property-name>
+            <value>#{idRepoGroupSubjectDao}</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
         <managed-bean-name>subjectContainers</managed-bean-name>
@@ -507,6 +567,7 @@
         <list-entries>
             <value>#{idRepoUserSubjectContainer}</value>
             <!--<value>#{idRepoRoleSubjectContainer}</value>-->
+            <!--<value>#{idRepoGroupSubjectContainer}</value>-->
         </list-entries>
     </managed-bean>
     <!-- subject containers -->
