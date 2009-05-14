@@ -29,6 +29,7 @@
                         for="banking-resource-select"
                         value="Account"/>
                     <ice:selectInputText
+                        disabled="#{bankingResourcesBean.allAccounts}"
                         width="300px"
                         style="position: relative; z-index: 999"
                         value="#{bankingResourcesBean.addPopupAccountNumber}"
@@ -52,8 +53,17 @@
                             style="font-weight: bold; font-size: larger"
                             rendered="#{bankingResourcesBean.addPopupViewSubject != null}"
                             value="#{bankingResourcesBean.addPopupViewSubject.cn}"/>
-                        </ice:panelGroup>
+                    </ice:panelGroup>
                 </ice:panelGrid>
+                <ice:panelGroup
+                    style="padding-top: 20px">
+                    <ice:selectBooleanCheckbox
+                        value="#{bankingResourcesBean.allAccounts}"
+                        valueChangeListener="#{bankingResourcesHandler.allAccountsListener}"/>
+                    <ice:outputLabel
+                        for="all-accounts-select"
+                        value="All accounts"/>
+                </ice:panelGroup>
                 <ice:panelGrid
                     styleClass="button-group"
                     columns="2">

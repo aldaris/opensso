@@ -12,6 +12,7 @@ public class BankingResourcesBean implements Serializable {
     private String addPopupAccountNumber;
     private List<ViewSubject> viewSubjects;
     private ViewSubject addPopupViewSubject;
+    private boolean allAccounts = false;
 
     public BankingResourcesBean() {
         reset();
@@ -22,6 +23,7 @@ public class BankingResourcesBean implements Serializable {
         addPopupAccountNumber = null;
         viewSubjects = Collections.EMPTY_LIST;
         addPopupViewSubject = null;
+        allAccounts = false;
     }
 
     public boolean isAddPopupVisible() {
@@ -67,5 +69,13 @@ public class BankingResourcesBean implements Serializable {
 
     public void setAddPopupViewSubject(ViewSubject addPopupViewSubject) {
         this.addPopupViewSubject = addPopupViewSubject;
+    }
+
+    public boolean isAllAccounts() {
+        return allAccounts;
+    }
+
+    public void setAllAccounts(boolean allAccounts) {
+        this.allAccounts = allAccounts;
     }
 }

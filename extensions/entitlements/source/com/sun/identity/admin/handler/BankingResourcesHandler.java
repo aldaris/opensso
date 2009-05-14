@@ -41,6 +41,11 @@ public class BankingResourcesHandler implements Serializable {
     public void addListener(ActionEvent event) {
         List<ViewSubject> viewSubjects = subjectDao.getViewSubjects();
         bankingResourcesBean.setViewSubjects(viewSubjects);
+
+        ViewEntitlement ve = getViewEntitlement(event);
+        if (ve.getResources().contains(BankingResource.ALL_ACCOUNTS)) {
+            bankingResourcesBean.setAllAccounts(true);
+        }
         bankingResourcesBean.setAddPopupVisible(true);
     }
 
@@ -55,21 +60,31 @@ public class BankingResourcesHandler implements Serializable {
         ViewEntitlement ve = getViewEntitlement(event);
         IdRepoUserViewSubject idus = (IdRepoUserViewSubject) bankingResourcesBean.getAddPopupViewSubject();
 
-        if (idus == null) {
-            MessageBean mb = new MessageBean();
-            mb.setSummary("No match");
-            mb.setDetail("No matching account found");
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-            ManagedBeanResolver mbr = new ManagedBeanResolver();
-            MessagesBean msb = (MessagesBean) mbr.resolve("messagesBean");
-            msb.addMessageBean(mb);
-        } else {
-            BankingResource br = new BankingResource();
-            br.setName(idus.getEmployeeNumber());
-            br.setOwner(idus);
+        if (bankingResourcesBean.isAllAccounts()) {
+            BankingResource br = BankingResource.ALL_ACCOUNTS;
+            ve.getResources().clear();
             ve.getResources().add(br);
 
             bankingResourcesBean.reset();
+        } else {
+            ve.getResources().remove(BankingResource.ALL_ACCOUNTS);
+
+            if (idus == null) {
+                MessageBean mb = new MessageBean();
+                mb.setSummary("No match");
+                mb.setDetail("No matching account found");
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+                ManagedBeanResolver mbr = new ManagedBeanResolver();
+                MessagesBean msb = (MessagesBean) mbr.resolve("messagesBean");
+                msb.addMessageBean(mb);
+            } else {
+                BankingResource br = new BankingResource();
+                br.setName(idus.getEmployeeNumber());
+                br.setOwner(idus);
+                ve.getResources().add(br);
+
+                bankingResourcesBean.reset();
+            }
         }
     }
 
@@ -79,6 +94,12 @@ public class BankingResourcesHandler implements Serializable {
 
     public void setBankingResourcesBean(BankingResourcesBean bankingResourcesBean) {
         this.bankingResourcesBean = bankingResourcesBean;
+    }
+
+    public void allAccountsListener(ValueChangeEvent event) {
+        Boolean val = (Boolean) event.getNewValue();
+        bankingResourcesBean.setAddPopupAccountNumber(null);
+        bankingResourcesBean.setAddPopupViewSubject(null);
     }
 
     public void addPopupAccountNumberChangedListener(ValueChangeEvent event) {

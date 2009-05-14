@@ -24,6 +24,9 @@
                                 <ice:commandLink
                                     styleClass="command-link"
                                     actionListener="#{bankingResourcesHandler.addListener}">
+                                    <f:attribute 
+                                        name="viewEntitlement"
+                                        value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
                                     <ice:graphicImage
                                         value="../image/add.png"/>
                                     <ice:outputText
