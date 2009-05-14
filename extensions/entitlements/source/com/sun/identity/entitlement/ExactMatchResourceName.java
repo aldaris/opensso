@@ -22,11 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExactMatchResourceName.java,v 1.1 2009-05-13 21:24:10 veiming Exp $
+ * $Id: ExactMatchResourceName.java,v 1.2 2009-05-14 05:34:07 farble1670 Exp $
  *
  */
-
-
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
@@ -34,6 +32,8 @@ import com.sun.identity.policy.ResourceMatch;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This plugin extends the functionality provided in
@@ -42,7 +42,7 @@ import java.util.Set;
  * like validating port, assigning default port of 80, if port absent etc.
  */
 public class ExactMatchResourceName
-    implements Comparator, ResourceName {
+        implements Comparator, ResourceName {
 
     public void initialize(Map configParams) {
     }
@@ -55,7 +55,7 @@ public class ExactMatchResourceName
      * @throws EntitlementException if the url string is invalid
      */
     public String canonicalize(String str)
-        throws EntitlementException {
+            throws EntitlementException {
         return str.toLowerCase();
     }
 
@@ -69,46 +69,58 @@ public class ExactMatchResourceName
      * @return -1 if o1 < o2; 0 if o1 = o2; 1 if o1 > o2
      */
     public int compare(Object o1, Object o2) {
-       String s1 = (String)o1; 
-       String s2 = (String)o2; 
+        String s1 = (String) o1;
+        String s2 = (String) o2;
 
-       if (s1 == null) {
-           if (s2 != null) {
-               return -1;
-           } else {
-               return 0;
-           }
-       } else {
-           if (s2 == null) {
-               return 1;
-           }
-       }
+        if (s1 == null) {
+            if (s2 != null) {
+                return -1;
+            } else {
+                return 0;
+            }
+        } else {
+            if (s2 == null) {
+                return 1;
+            }
+        }
 
-       return s1.compareToIgnoreCase(s2);
+        return s1.compareToIgnoreCase(s2);
+    }
+
+    public boolean matches(String s, String p) {
+        String ps = p.replaceAll("\\*", ".*");
+        Pattern pattern = Pattern.compile(ps);
+        Matcher m = pattern.matcher(s);
+
+        return m.matches();
     }
 
     public String getSubResource(String resource, String superResource) {
         return resource;
     }
 
-
     public String append(String superResource, String subResource) {
-        return superResource+subResource;
+        return superResource + subResource;
     }
 
     public ResourceMatch compare(
-        String requestResource,
-        String targetResource,
-        boolean wildcardCompare) {
-        if (compare(requestResource, targetResource) == 0) {
-            return ResourceMatch.EXACT_MATCH;
+            String requestResource,
+            String targetResource,
+            boolean wildcardCompare) {
+        if (wildcardCompare) {
+            if (matches(requestResource, targetResource)) {
+                return ResourceMatch.WILDCARD_MATCH;
+            }
+            return ResourceMatch.NO_MATCH;
+        } else {
+            if (compare(requestResource, targetResource) == 0) {
+                return ResourceMatch.EXACT_MATCH;
+            }
+            return ResourceMatch.NO_MATCH;
         }
-        return ResourceMatch.NO_MATCH;
     }
 
-    public Set getServiceTypeNames()
-    {
+    public Set getServiceTypeNames() {
         return null;
     }
-
 }
