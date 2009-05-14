@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFedSmokeTest.java,v 1.6 2009-01-27 00:18:21 nithyas Exp $
+ * $Id: WSFedSmokeTest.java,v 1.7 2009-05-14 16:37:01 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -232,7 +232,7 @@ public class WSFedSmokeTest extends WSFedCommon {
 
             url = new URL(spurl);
             HtmlPage sppage = (HtmlPage)webClient.getPage(url);
-            if (getHtmlPageStringIndex(sppage, "Authentication") != -1) {
+            if (getHtmlPageStringIndex(sppage, "(Login)") != -1) {
                 log(Level.FINE, "wsfedSPSLOInit", "SP side logout was " +
                         "successful");
             } else {
@@ -243,7 +243,7 @@ public class WSFedSmokeTest extends WSFedCommon {
             Thread.sleep(10000);
             url = new URL(idpurl);
             HtmlPage idppage = (HtmlPage)webClient.getPage(url);
-            if (getHtmlPageStringIndex(idppage, "Authentication") != -1) {
+            if (getHtmlPageStringIndex(idppage, "(Login)") != -1) {
                 log(Level.FINE, "wsfedSPSLOInit", "IDP side logout was " +
                         "successful");
             } else {
@@ -305,7 +305,7 @@ public class WSFedSmokeTest extends WSFedCommon {
 
             url = new URL(spurl);
             HtmlPage sppage = (HtmlPage)webClient.getPage(url);
-            if (getHtmlPageStringIndex(sppage, "Authentication") != -1) {
+            if (getHtmlPageStringIndex(sppage, "(Login)") != -1) {
                 log(Level.FINE, "wsfedSPSLOInit", "SP side logout was " +
                         "successful");
             } else {
@@ -316,7 +316,7 @@ public class WSFedSmokeTest extends WSFedCommon {
             Thread.sleep(10000);
             url = new URL(idpurl);
             HtmlPage idppage = (HtmlPage)webClient.getPage(url);
-            if (getHtmlPageStringIndex(idppage, "Authentication") != -1) {
+            if (getHtmlPageStringIndex(idppage, "(Login)") != -1) {
                 log(Level.FINE, "wsfedSPSLOInit", "IDP side logout was " +
                         "successful");
             } else {
