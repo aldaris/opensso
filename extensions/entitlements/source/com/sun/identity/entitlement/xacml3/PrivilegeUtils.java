@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.10 2009-05-14 20:27:44 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.11 2009-05-14 22:33:46 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -47,6 +47,7 @@ import com.sun.identity.entitlement.xacml3.core.Policy;
 import com.sun.identity.entitlement.xacml3.core.Rule;
 import com.sun.identity.entitlement.xacml3.core.Target;
 import com.sun.identity.entitlement.xacml3.core.VariableDefinition;
+import com.sun.identity.entitlement.xacml3.core.Version;
 
 import com.sun.identity.entitlement.util.DebugFactory;
 
@@ -175,8 +176,10 @@ public class PrivilegeUtils {
 
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss.SSS");
+        SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS");
         sdf1.setTimeZone(TimeZone.getTimeZone("GMT"));
         sdf2.setTimeZone(TimeZone.getTimeZone("GMT"));
+        sdf3.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         VariableDefinition creationDate = new VariableDefinition();
         vrList.add(creationDate); 
@@ -205,13 +208,18 @@ public class PrivilegeUtils {
                 = objectFactory.createAttributeValue(lmdv);
         lastModifiedDate.setExpression(lmdve);
 
-        // TODO: uncomment and fix the following
+        // PolicyIssuer policyIssuer = null;  // optional, TODO
 
-        // PolicyIssuer policyIssuer = null;  // optional
+        Version version = new Version();
 
-        // Version version = null;  // required
+        // TODO: use privilege version in future
+        version.setValue(sdf3.format(privilege.getLastModifiedDate())); 
+        policy.setVersion(version);
 
-        // Defaults policyDefaults = null; // optional
+        // Defaults policyDefaults = null; // optional, TODO
+
+        String rca = getRuleCombiningAlgId(applicationName);
+        policy.setRuleCombiningAlgId(rca);
 
         // String ruleCombiningAlgId = "rca"; // required
 
@@ -400,7 +408,7 @@ public class PrivilegeUtils {
         match.setMatchId(XACMLConstants.JSON_SUBJECT_MATCH);
 
         AttributeValue attributeValue = new AttributeValue();
-        String dataType = XACMLConstants.JSON_SUBJECT_DATATYPE
+        String dataType = XACMLConstants.JSON_SUBJECT_DATATYPE + ":"
                 + es.getClass().getName();
         attributeValue.setDataType(dataType);
         String esString = es.toString();
@@ -411,7 +419,7 @@ public class PrivilegeUtils {
         attributeDesignator.setCategory(category);
         String attributeId = XACMLConstants.JSON_SUBJECT_ID;
         attributeDesignator.setAttributeId(attributeId);
-        String dt = XACMLConstants.JSON_SUBJECT_DATATYPE
+        String dt = XACMLConstants.JSON_SUBJECT_DATATYPE + ":"
                 + es.getClass().getName();
         attributeDesignator.setDataType(dt);
         String issuer = XACMLConstants.SUBJECT_ISSUER; // TODO: not a constant?
@@ -598,7 +606,8 @@ public class PrivilegeUtils {
             if (es != null) {
                 String esString = es.toString();
                 AttributeValue esv = new AttributeValue();
-                String dataType = XACMLConstants.JSON_SUBJECT_DATATYPE + es.getClass().getName();
+                String dataType = XACMLConstants.JSON_SUBJECT_DATATYPE + ":"
+                        + es.getClass().getName();
                 esv.setDataType(dataType);
                 esv.getContent().add(esString);
                 JAXBElement esve  = objectFactory.createAttributeValue(esv);
@@ -607,7 +616,8 @@ public class PrivilegeUtils {
             if (ec != null) {
                 String ecString = ec.toString();
                 AttributeValue ecv = new AttributeValue();
-                String dataType = XACMLConstants.JSON_CONDITION_DATATYPE + ec.getClass().getName();
+                String dataType = XACMLConstants.JSON_CONDITION_DATATYPE + ":"
+                        + ec.getClass().getName();
                 ecv.setDataType(dataType);
                 ecv.getContent().add(ecString);
                 JAXBElement ecve  = objectFactory.createAttributeValue(ecv);
@@ -617,6 +627,11 @@ public class PrivilegeUtils {
             condition.setExpression(applyElement);
         }
         return condition;
+    }
+
+    public static String getRuleCombiningAlgId(String applicationName) {
+        // TODO: return the correct alogrithm id based on application
+        return XACMLConstants.XACML_RULE_DENY_OVERRIDES;
     }
 
 }
