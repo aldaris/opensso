@@ -24,22 +24,13 @@
                 <ice:outputText
                     value="#{title}"/>
                 <ice:panelGroup
+                    styleClass="float-right"
                     rendered="#{handler != null}">
                     <ice:commandButton
                         type="button"
                         image="../image/close.gif"
                         immediate="true"
                         actionListener="#{handler[closeListenerMethod]}"
-                        style="cursor: pointer;">
-                        <ui:insert name="attributes"/>
-                    </ice:commandButton>
-                </ice:panelGroup>
-                <ice:panelGroup
-                    rendered="#{handler == null}">
-                    <ice:commandButton
-                        type="button"
-                        image="../image/close.gif"
-                        immediate="true"
                         style="cursor: pointer;">
                         <ui:insert name="attributes"/>
                     </ice:commandButton>

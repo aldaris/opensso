@@ -342,8 +342,7 @@ div.button img.left {
 .popup-question,
 .popup-warning,
 .popup-error {
-    z-index: 999;
-    position: absolute;
+    clear: both;
     background: #FFFFFF;
     min-width: 200px;
     max-width: 600px;
@@ -384,7 +383,19 @@ div.button img.left {
 .popup-warning .close,
 .popup-error .close {
     padding-right: 5px;
-    float:  right;
+    position: relative;
+    float: right;
+
+}
+
+.float-right {
+    position: relative;
+    float: right;
+}
+
+.popup-info .close * {
+    position: relative;
+    float: right;
 }
 
 .popup-infoBody,
@@ -392,6 +403,14 @@ div.button img.left {
 .popup-warningBody,
 .popup-errorBody {
     text-align: center;
+}
+
+.popup-infoHdr,
+.popup-questionHdr,
+.popup-warningHdr,
+.popup-errorHdr {
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .popup-infoBody span,

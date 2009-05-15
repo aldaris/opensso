@@ -81,23 +81,21 @@
                                                 for="resource-select"
                                                 index="#{o:indexOf(policyResourcesBean.privilegeBean.viewEntitlement.availableResources,urlResource)}">
                                             </ice:checkbox>
-                                            <ice:panelGrid
-                                                columns="1">
-                                                <ice:panelGroup
-                                                    rendered="#{urlResource.exceptable &amp;&amp; o:contains(policyResourcesBean.privilegeBean.viewEntitlement.resources, urlResource)}">
-                                                    <o:clink
-                                                        type="add"
-                                                        linkLabel="Add Exception"
-                                                        handler="#{urlResourcesHandler}"
-                                                        listenerMethod="addExceptionListener">
-                                                        <ui:define name="attributes">
-                                                            <f:attribute
-                                                                name="urlResource"
-                                                                value="#{urlResource}"/>
-                                                        </ui:define>
-                                                    </o:clink>
-                                                </ice:panelGroup>
-                                            </ice:panelGrid>
+                                            <ice:panelGroup
+                                                styleClass="float-right"
+                                                rendered="#{urlResource.exceptable &amp;&amp; o:contains(policyResourcesBean.privilegeBean.viewEntitlement.resources, urlResource)}">
+                                                <o:clink
+                                                    type="add"
+                                                    linkLabel="Add Exception"
+                                                    handler="#{urlResourcesHandler}"
+                                                    listenerMethod="addExceptionListener">
+                                                    <ui:define name="attributes">
+                                                        <f:attribute
+                                                            name="urlResource"
+                                                            value="#{urlResource}"/>
+                                                    </ui:define>
+                                                </o:clink>
+                                            </ice:panelGroup>
                                         </ice:panelGrid>
                                     </ui:define>
                                 </o:box>
