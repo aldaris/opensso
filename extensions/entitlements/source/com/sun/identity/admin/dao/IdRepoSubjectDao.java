@@ -2,6 +2,8 @@ package com.sun.identity.admin.dao;
 
 import com.iplanet.sso.SSOException;
 import com.sun.identity.admin.Token;
+import com.sun.identity.admin.model.IdRepoUserViewSubject;
+import com.sun.identity.admin.model.IdRepoViewSubject;
 import com.sun.identity.admin.model.ViewSubject;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -10,10 +12,10 @@ import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class IdRepoSubjectDao extends SubjectDao {
 
@@ -22,7 +24,21 @@ public abstract class IdRepoSubjectDao extends SubjectDao {
 
     protected abstract IdType getIdType();
 
-    protected abstract ViewSubject newViewSubject(AMIdentity ami);
+    protected ViewSubject newViewSubject(AMIdentity ami) {
+        IdRepoViewSubject idvs = (IdRepoViewSubject) getSubjectType().newViewSubject();
+        idvs.setName(ami.getUniversalId());
+        Map attrs;
+        try {
+            attrs = ami.getAttributes();
+        } catch (IdRepoException idre) {
+            attrs = null;
+        } catch (SSOException ssoe) {
+            attrs = null;
+        }
+        decorate(idvs, attrs);
+
+        return idvs;
+    }
 
     public List<ViewSubject> getViewSubjects() {
         return getViewSubjects("");
@@ -38,19 +54,7 @@ public abstract class IdRepoSubjectDao extends SubjectDao {
 
     protected ViewSubject getViewSubject(String name) {
         AMIdentity ami = getAMIdentity(name);
-        String uuid = ami.getUniversalId();
-        Map attrs;
-
-        try {
-            attrs = ami.getAttributes();
-        } catch (IdRepoException idre) {
-            attrs = null;
-        } catch (SSOException ssoe) {
-            attrs = null;
-        }
-
         ViewSubject vs = newViewSubject(ami);
-        vs.setName(uuid);
 
         return vs;
     }
@@ -106,14 +110,6 @@ public abstract class IdRepoSubjectDao extends SubjectDao {
         for (Object o : results.getSearchResults()) {
             AMIdentity ami = (AMIdentity) o;
             String uuid = ami.getUniversalId();
-            Map attrs;
-            try {
-                attrs = ami.getAttributes();
-            } catch (IdRepoException idre) {
-                attrs = null;
-            } catch (SSOException ssoe) {
-                attrs = null;
-            }
             ViewSubject vs = newViewSubject(ami);
             vs.setName(uuid);
             subjects.add(vs);
@@ -136,5 +132,33 @@ public abstract class IdRepoSubjectDao extends SubjectDao {
 
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    public void decorate(ViewSubject vs) {
+        assert (vs instanceof IdRepoViewSubject);
+        AMIdentity ami = getAMIdentity(vs.getName());
+
+        Map attrs;
+        try {
+            attrs = ami.getAttributes();
+        } catch (IdRepoException idre) {
+            attrs = null;
+        } catch (SSOException ssoe) {
+            attrs = null;
+        }
+        if (attrs != null) {
+            decorate(vs, attrs);
+        }
+    }
+
+    protected void decorate(ViewSubject vs, Map attrs) {
+        if (attrs != null) {
+            IdRepoViewSubject idvs = (IdRepoViewSubject) vs;
+            Set cnSet = (Set) attrs.get("cn");
+            if (cnSet != null && cnSet.size() > 0) {
+                String cn = (String) cnSet.iterator().next();
+                idvs.setCn(cn);
+            }
+        }
     }
 }

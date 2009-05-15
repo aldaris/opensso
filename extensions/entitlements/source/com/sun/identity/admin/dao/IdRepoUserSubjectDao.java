@@ -9,7 +9,6 @@ import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchOpModifier;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,40 +20,6 @@ public class IdRepoUserSubjectDao extends IdRepoSubjectDao {
 
     protected IdType getIdType() {
         return IdType.USER;
-    }
-
-    protected ViewSubject newViewSubject(AMIdentity ami) {
-        IdRepoUserViewSubject uvs = (IdRepoUserViewSubject) getSubjectType().newViewSubject();
-        uvs.setName(ami.getUniversalId());
-
-        Map attrs;
-        try {
-            attrs = ami.getAttributes();
-        } catch (IdRepoException idre) {
-            attrs = null;
-        } catch (SSOException ssoe) {
-            attrs = null;
-        }
-
-        if (attrs != null) {
-            Set cnSet = (Set) attrs.get("cn");
-            if (cnSet != null && cnSet.size() > 0) {
-                String cn = (String) cnSet.iterator().next();
-                uvs.setCn(cn);
-            }
-            Set snSet = (Set) attrs.get("sn");
-            if (snSet != null && snSet.size() > 0) {
-                String sn = (String) snSet.iterator().next();
-                uvs.setSn(sn);
-            }
-            Set enSet = (Set) attrs.get("employeeNumber");
-            if (enSet != null && enSet.size() > 0) {
-                String en = (String) enSet.iterator().next();
-                uvs.setEmployeeNumber(en);
-            }
-        }
-
-        return uvs;
     }
 
     public String getNamingAttribute() {
@@ -88,16 +53,22 @@ public class IdRepoUserSubjectDao extends IdRepoSubjectDao {
         return idsc;
     }
 
-    public void decorate(ViewSubject vs) {
-        assert(vs instanceof IdRepoUserViewSubject);
-        IdRepoUserViewSubject idus = (IdRepoUserViewSubject)vs;
+    @Override
+    protected void decorate(ViewSubject vs, Map attrs) {
+        super.decorate(vs, attrs);
 
-        IdRepoUserViewSubject decoratedIdus = (IdRepoUserViewSubject)getViewSubject(idus.getName());
-
-        // TODO
-        // any other user decoration?
-        idus.setCn(decoratedIdus.getCn());
-        idus.setSn(decoratedIdus.getSn());
-        idus.setEmployeeNumber(decoratedIdus.getEmployeeNumber());
+        if (attrs != null) {
+            IdRepoUserViewSubject idus = (IdRepoUserViewSubject) vs;
+            Set snSet = (Set) attrs.get("sn");
+            if (snSet != null && snSet.size() > 0) {
+                String sn = (String) snSet.iterator().next();
+                idus.setSn(sn);
+            }
+            Set enSet = (Set) attrs.get("employeeNumber");
+            if (enSet != null && enSet.size() > 0) {
+                String en = (String) enSet.iterator().next();
+                idus.setEmployeeNumber(en);
+            }
+        }
     }
 }

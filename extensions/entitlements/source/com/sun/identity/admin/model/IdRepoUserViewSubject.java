@@ -3,8 +3,7 @@ package com.sun.identity.admin.model;
 import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.EntitlementSubject;
 
-public class IdRepoUserViewSubject extends ViewSubject {
-    private String cn;
+public class IdRepoUserViewSubject extends IdRepoViewSubject {
     private String employeeNumber;
     private String sn;
 
@@ -13,22 +12,6 @@ public class IdRepoUserViewSubject extends ViewSubject {
         idus.setID(getName());
 
         return idus;
-    }
-
-    public String getCn() {
-        return cn;
-    }
-
-    public void setCn(String cn) {
-        this.cn = cn;
-    }
-
-    @Override
-    public String getTitle() {
-        if (cn != null) {
-            return cn;
-        }
-        return super.getTitle();
     }
 
     public String getEmployeeNumber() {

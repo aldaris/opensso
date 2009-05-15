@@ -86,6 +86,11 @@
                                         </ice:panelGrid>
                                         <ice:panelGroup
                                             scrollHeight="100px">
+                                            <ice:panelGroup
+                                                visible="#{o:size(subjectContainer.viewSubjects) == 0}">
+                                                <ice:outputText
+                                                    value="No subjects. Try widening your search."/>
+                                            </ice:panelGroup>
                                             <ice:panelSeries
                                                 value="#{subjectContainer.viewSubjects}"
                                                 var="viewSubject">

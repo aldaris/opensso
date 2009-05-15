@@ -9,11 +9,7 @@
     <ice:panelGroup
         rendered="#{viewSubject != null &amp;&amp; viewSubject.subjectType.name == 'idRepoUser'}">
         <ice:panelGroup>
-            <ice:outputText value="#{viewSubject.name}"/>
-        </ice:panelGroup>
-        <ice:panelGroup
-            rendered="#{viewSubject.cn != null}">
-            <ice:outputText value="#{viewSubject.cn}"/>
+            <ice:outputText value="#{viewSubject.title}"/>
         </ice:panelGroup>
     </ice:panelGroup>
 </span>

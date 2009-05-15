@@ -1,26 +1,18 @@
 package com.sun.identity.admin.dao;
 
-import com.sun.identity.admin.model.IdRepoRoleViewSubject;
 import com.sun.identity.admin.model.ViewSubject;
-import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
-import java.io.Serializable;
+import java.util.Map;
 
 public class IdRepoRoleSubjectDao extends IdRepoSubjectDao {
     protected IdType getIdType() {
         return IdType.ROLE;
     }
 
-    protected ViewSubject newViewSubject(AMIdentity ami) {
-        IdRepoRoleViewSubject rvs = (IdRepoRoleViewSubject)getSubjectType().newViewSubject();
-        rvs.setName(ami.getUniversalId());
+    @Override
+    protected void decorate(ViewSubject vs, Map attrs) {
+        super.decorate(vs, attrs);
 
-        return rvs;
+        // TODO?
     }
-
-    public void decorate(ViewSubject vs) {
-        // TODO
-        // any role decoration?
-    }
-
 }
