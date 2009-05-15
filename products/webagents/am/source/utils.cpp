@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: utils.cpp,v 1.13 2008-09-27 00:20:05 madan_ranganath Exp $
+ * $Id: utils.cpp,v 1.14 2009-05-15 19:10:14 madan_ranganath Exp $
  *
  */ 
 #include <stdexcept>
@@ -193,12 +193,18 @@ Utils::match_patterns(const char *patbegin, const char *matchbegin,
             int char_match = 0; int match_count = 0; 
 	    int query_count = 0;
                         
-            string matchbegin(s1);
-            
             while (*p1 == '-' || *p1 == '*') {
                 p1++;
             }
             
+	    if ((*p1 == '\0') && (*s1 == '\0')) {
+                // No more characters left to compare
+                // -*- matches with the remaining characters
+                return AM_EXACT_PATTERN_MATCH;
+	    }
+
+            // Continue with the rest of the pattern
+            string matchbegin(s1);
             if (*p1 == '\0') {
                 // if the last character is a "/" , need to ignore the same
                 int pos = matchbegin.find_last_of("/");
