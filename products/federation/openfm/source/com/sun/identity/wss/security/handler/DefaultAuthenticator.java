@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.19 2009-05-09 15:44:01 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.20 2009-05-15 18:03:32 huacui Exp $
  *
  */
 
@@ -873,6 +873,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
                SSOToken ssoToken = SSOTokenManager.getInstance().
                        createSSOToken(famToken.getTokenID());
                addSSOToken(ssoToken, subject);
+               subject = addPrincipal(ssoToken.getPrincipal().getName(), subject);
             } else  {
                subject.getPublicCredentials().add(token.toDocumentElement());
             }

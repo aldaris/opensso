@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadLocalService.java,v 1.5 2008-07-12 18:38:24 mallas Exp $
+ * $Id: ThreadLocalService.java,v 1.6 2009-05-15 18:04:55 huacui Exp $
  *
  */
 
@@ -35,7 +35,7 @@ import com.iplanet.sso.SSOToken;
  * ThreadLocalservice is a convenient utility class file to store
  * thread local state variables.
  */
-class ThreadLocalService {
+public class ThreadLocalService {
     
     private static ThreadLocal ssoToken = null;    
     private static ThreadLocal serviceName = null;
@@ -73,7 +73,7 @@ class ThreadLocalService {
         return null;
     }
 
-    static synchronized void setSSOToken(final Object sToken) {
+    public static synchronized void setSSOToken(final Object sToken) {
         ssoToken = new ThreadLocal() {
             protected synchronized Object initialValue() {
                 return sToken;
@@ -81,7 +81,7 @@ class ThreadLocalService {
         };       
     }
     
-    static synchronized void removeSSOToken(Object sToken) {
+    public static synchronized void removeSSOToken(Object sToken) {
         if(ssoToken != null) {
            ssoToken.remove();
            ssoToken = null;

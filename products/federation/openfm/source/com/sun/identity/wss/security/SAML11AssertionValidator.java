@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML11AssertionValidator.java,v 1.5 2008-10-10 23:40:13 mallas Exp $
+ * $Id: SAML11AssertionValidator.java,v 1.6 2009-05-15 18:02:09 huacui Exp $
  *
  */
 
@@ -71,11 +71,11 @@ public class SAML11AssertionValidator {
         
         try {
             Assertion saml11Assertion = new Assertion(assertionE);
-            if(!saml11Assertion.isSigned() || 
-                    !saml11Assertion.isSignatureValid()) {
+            if(!saml11Assertion.isSigned()) { 
                throw new SecurityException(
                        WSSUtils.bundle.getString("assertionNotSigned"));
             }
+
             String issuer = saml11Assertion.getIssuer();
             if(issuer == null) {
                throw new SecurityException(

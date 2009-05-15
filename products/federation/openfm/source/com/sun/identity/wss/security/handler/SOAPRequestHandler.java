@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.37 2009-05-13 23:51:29 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.38 2009-05-15 18:02:59 huacui Exp $
  *
  */
 
@@ -963,6 +963,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             try {
                 SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
                 SSOToken userToken = subjectSecurity.ssoToken;
+                if(userToken == null) {
+                   if(debug.messageEnabled()) {
+                      debug.message("SOAPRequestHandler.getSecurityToken:: " +
+                              "using thread local for SSOToken");
+                   }
+                   userToken = (SSOToken)ThreadLocalService.getSSOToken();
+                }
                 if(userToken != null) {
                    String subjectName = userToken.getPrincipal().getName();
                    String nameIDImpl = config.getNameIDMapper();
@@ -1094,7 +1101,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                         AssertionFactory.getInstance();
                 ni = assertionFactory.createNameID();
                 SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
-                SSOToken userToken = subjectSecurity.ssoToken;                
+                SSOToken userToken = subjectSecurity.ssoToken;
+                if(userToken == null) {
+                   if(debug.messageEnabled()) {
+                      debug.message("SOAPRequestHandler.getSecurityToken:: " +
+                              "using thread local for SSOToken");
+                   }
+                   userToken = (SSOToken)ThreadLocalService.getSSOToken();
+                }
                 if(userToken != null) {
                    String subjectName = userToken.getPrincipal().getName();                  
                    String nameIDMapper = config.getNameIDMapper();
