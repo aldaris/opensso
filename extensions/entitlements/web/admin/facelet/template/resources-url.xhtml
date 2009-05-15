@@ -134,8 +134,8 @@
                                             columns="2">
                                             <ice:outputText
                                                 value="#{urlResource.name}"/>
-                                            <ice:panelGrid
-                                                columns="1">
+                                            <ice:panelGroup
+                                                styleClass="float-right">
                                                 <o:clink
                                                     type="remove"
                                                     handler="#{urlResourcesHandler}"
@@ -149,7 +149,7 @@
                                                             value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
                                                     </ui:define>
                                                 </o:clink>
-                                            </ice:panelGrid>
+                                            </ice:panelGroup>
                                         </ice:panelGrid>
                                     </ui:define>
                                 </o:box>

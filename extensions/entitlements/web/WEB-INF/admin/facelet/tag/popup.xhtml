@@ -7,7 +7,7 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component">
 
     <ice:panelPopup
-        styleClass="popup-#{type}"
+        styleClass="popup-#{type}#{width != null ? ' width-' : ''}#{width != null ? width : ''}"
         draggable="false"
         autoCentre="true"
         modal="#{modal}"

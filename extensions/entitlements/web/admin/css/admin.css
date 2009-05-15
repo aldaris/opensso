@@ -8,6 +8,26 @@ body {
     font: 80% arial, helvetica, sans-serif;
 }
 
+.width-200 {
+    width: 200px;
+}
+
+.width-300 {
+    width: 300px;
+}
+
+.width-400 {
+    width: 400px;
+}
+
+.width-500 {
+    width: 500px;
+}
+
+.width-600 {
+    width: 600px;
+}
+
 .ifr {
     min-height: 100px;
 }
@@ -664,14 +684,15 @@ div.button img.left {
 .tooltipHdr {
     font-weight: bold;
 }
+
 .tooltipBody {
     padding: 10px;
-    max-width: 600px;
-    min-width: 200px;
     font-size: x-small;
 }
 
 .tooltip {
+    overflow: hidden;
+    width: 400px;
 }
 
 .tooltip pre span {

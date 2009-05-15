@@ -24,10 +24,10 @@ public class UrlResourcePart implements Serializable {
 
     public int getValueLength() {
         if (value == null) {
-            return 1;
+            return 3;
         }
         if (value.length() == 0) {
-            return 1;
+            return 3;
         }
         return value.length();
     }
