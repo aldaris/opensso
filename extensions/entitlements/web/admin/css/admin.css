@@ -393,11 +393,6 @@ div.button img.left {
     float: right;
 }
 
-.popup-info .close * {
-    position: relative;
-    float: right;
-}
-
 .popup-infoBody,
 .popup-questionBody,
 .popup-warningBody,
@@ -409,8 +404,8 @@ div.button img.left {
 .popup-questionHdr,
 .popup-warningHdr,
 .popup-errorHdr {
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 .popup-infoBody span,

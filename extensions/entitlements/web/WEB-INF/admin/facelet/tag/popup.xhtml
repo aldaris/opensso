@@ -35,6 +35,18 @@
                         <ui:insert name="attributes"/>
                     </ice:commandButton>
                 </ice:panelGroup>
+                <ice:panelGroup
+                    styleClass="float: right"
+                    rendered="#{handler == null}">
+                    <ice:commandButton
+                        type="button"
+                        image="../image/close.gif"
+                        immediate="true"
+                        style="cursor: pointer;">
+                        <ui:insert name="attributes"/>
+                    </ice:commandButton>
+                </ice:panelGroup>
+
             </ice:panelGrid>
         </f:facet>
         <f:facet name="body">
