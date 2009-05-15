@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureDsameFileTask.java,v 1.2 2008-06-25 05:54:35 qcheng Exp $
+ * $Id: ConfigureDsameFileTask.java,v 1.3 2009-05-15 23:26:08 krishna_indigo Exp $
  *
  */
 
@@ -137,8 +137,10 @@ public class ConfigureDsameFileTask
             // file.
             Map tokens = new HashMap();
             tokens.put("MODULE", ConfigUtil.getLibPath());
+            tokens.put("AGENTBOOTSTRAP",
+	   	stateAccess.get(STR_CONFIG_FILE_PATH_TAG));
             tokens.put("AGENTCONFIG", 
-                stateAccess.get(STR_CONFIG_FILE_PATH_TAG));
+                stateAccess.get(STR_CONFIG_AGENT_CONFIG_FILE_PATH_TAG));
 
             tokens.put("EAPI", STR_APC22_TWO_LIB_SUFFIX);
             if (OSChecker.isWindows()) {

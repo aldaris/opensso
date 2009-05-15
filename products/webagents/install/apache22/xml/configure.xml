@@ -115,13 +115,13 @@
             <task name="CONFIGURE_AGENT_PROPS">
                 <class name="ConfigurePropertiesTask" type="system"/>
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
-                                       value="FAMAgentBootstrap.template"/>
+                                       value="OpenSSOAgentBootstrap.template"/>
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
-                                       value="FAMAgentBootstrap.properties"/>
+                                       value="OpenSSOAgentBootstrap.properties"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
-                                       value="FAMAgentConfiguration.template"/>
+                                       value="OpenSSOAgentConfiguration.template"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG" 
-		                       value="FAMAgentConfiguration.properties"/>
+		                       value="OpenSSOAgentConfiguration.properties"/>
             </task>
             <task name="BACKUP_FILE">
            	 	<class name="BackupFileTask" type="system"/>
@@ -184,6 +184,7 @@
 						<property name="AGENT_PROFILE_LOOKUP_KEY" value="AGENT_PROFILE_NAME"/>
 					</validation>
 				</validations>
+			</interaction>
                         <interaction lookupkey="CREATE_AGENT_PROFILE_NAME" 
                                      persistent="false">
                              <skipIf key="CREATE_AGENT_PROFILE_KEY" ignorecase="true">
@@ -241,6 +242,7 @@
 				<value-normalizer>
 					<class name="PathNormalizer" type="system"/>
 				</value-normalizer>
+			    </validations>
 			</interaction>
 		</instance-interactions>
 		<common-tasks/>
@@ -269,13 +271,13 @@
             <task name="CONFIGURE_AGENT_PROPS">
                 <class name="ConfigurePropertiesTask" type="system"/>
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
-                                       value="FAMAgentBootstrap.template"/>
+                                       value="OpenSSOAgentBootstrap.template"/>
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
-                                       value="FAMAgentBootstrap.properties"/>
+                                       value="OpenSSOAgentBootstrap.properties"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
-                                       value="FAMAgentConfiguration.template"/>
+                                       value="OpenSSOAgentConfiguration.template"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG" 
-		                       value="FAMAgentConfiguration.properties"/>
+		                       value="OpenSSOAgentConfiguration.properties"/>
             </task>
             <task name="CREATE_AGENT_PROFILE">
                 <class name="CreateProfileTask" type="system"/>
@@ -338,15 +340,15 @@
                     <class name="MigrateWebAgentConfigurePropertiesTask" 
 			    type="system"/>    
                     <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
-                              value="FAMAgentBootstrap.template"/>
+                              value="OpenSSOAgentBootstrap.template"/>
                     <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
-                              value="FAMAgentBootstrap.properties"/>
+                              value="OpenSSOAgentBootstrap.properties"/>
                     <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
-                              value="FAMAgentConfiguration.template"/>
+                              value="OpenSSOAgentConfiguration.template"/>
                     <property name="CONFIG_FILENAME_AGENT_CONFIG"
-                              value="FAMAgentConfiguration.properties"/>
+                              value="OpenSSOAgentConfiguration.properties"/>
                     <property name="CONFIG_FILENAME_AGENT_MIGRATE_PROPERTIES"
-                              value="FAMAgentMigration.properties"/>
+                              value="OpenSSOAgentMigration.properties"/>
                 </task>
                 <task name="CONFIGURE_DSAME_CONF"> 
  	            <class name="ConfigureDsameFileTask" type="custom"/> 
@@ -357,3 +359,4 @@
             </instance-tasks>
         </migrate>
 </configure>
+

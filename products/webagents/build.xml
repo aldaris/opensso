@@ -1,7 +1,7 @@
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
-   Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
   
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.13 2009-02-14 00:00:19 robertis Exp $
+   $Id: build.xml,v 1.14 2009-05-15 23:26:07 krishna_indigo Exp $
 
 -->
 
@@ -104,6 +104,7 @@
     </target>
 
     <target name="all">
+        <antcall target="apache22" />
         <antcall target="sjsws" />
         <antcall target="apache" />
         <antcall target="proxy40" />
