@@ -187,7 +187,7 @@ public class PrivilegeBean implements Serializable {
             PrivilegeBean pb1 = (PrivilegeBean) o1;
             PrivilegeBean pb2 = (PrivilegeBean) o2;
 
-            if (isAscending()) {
+            if (!isAscending()) {
                 return pb1.getName().compareTo(pb2.getName());
             } else {
                 return pb2.getName().compareTo(pb1.getName());
@@ -205,10 +205,13 @@ public class PrivilegeBean implements Serializable {
             PrivilegeBean pb1 = (PrivilegeBean) o1;
             PrivilegeBean pb2 = (PrivilegeBean) o2;
 
-            if (isAscending()) {
-                return pb1.getDescription().compareTo(pb2.getDescription());
+            String d1 = (pb1.getDescription() == null) ? "" : pb1.getDescription();
+            String d2 = (pb2.getDescription() == null) ? "" : pb2.getDescription();
+
+            if (!isAscending()) {
+                return d1.compareTo(d2);
             } else {
-                return pb2.getDescription().compareTo(pb1.getDescription());
+                return d2.compareTo(d1);
             }
         }
     }
@@ -223,7 +226,7 @@ public class PrivilegeBean implements Serializable {
             PrivilegeBean pb1 = (PrivilegeBean) o1;
             PrivilegeBean pb2 = (PrivilegeBean) o2;
 
-            if (isAscending()) {
+            if (!isAscending()) {
                 return pb1.getViewEntitlement().getViewApplication().getName().compareTo(pb2.getViewEntitlement().getViewApplication().getName());
             } else {
                 return pb2.getViewEntitlement().getViewApplication().getName().compareTo(pb1.getViewEntitlement().getViewApplication().getName());
@@ -241,7 +244,7 @@ public class PrivilegeBean implements Serializable {
             PrivilegeBean pb1 = (PrivilegeBean) o1;
             PrivilegeBean pb2 = (PrivilegeBean) o2;
 
-            if (isAscending()) {
+            if (!isAscending()) {
                 return pb1.getBirth().compareTo(pb2.getBirth());
             } else {
                 return pb2.getBirth().compareTo(pb1.getBirth());
@@ -259,7 +262,7 @@ public class PrivilegeBean implements Serializable {
             PrivilegeBean pb1 = (PrivilegeBean) o1;
             PrivilegeBean pb2 = (PrivilegeBean) o2;
 
-            if (isAscending()) {
+            if (!isAscending()) {
                 return pb1.getModified().compareTo(pb2.getModified());
             } else {
                 return pb2.getModified().compareTo(pb1.getModified());
@@ -277,7 +280,7 @@ public class PrivilegeBean implements Serializable {
             PrivilegeBean pb1 = (PrivilegeBean) o1;
             PrivilegeBean pb2 = (PrivilegeBean) o2;
 
-            if (isAscending()) {
+            if (!isAscending()) {
                 return pb1.getAuthor().compareTo(pb2.getAuthor());
             } else {
                 return pb2.getAuthor().compareTo(pb1.getAuthor());
@@ -295,7 +298,7 @@ public class PrivilegeBean implements Serializable {
             PrivilegeBean pb1 = (PrivilegeBean) o1;
             PrivilegeBean pb2 = (PrivilegeBean) o2;
 
-            if (isAscending()) {
+            if (!isAscending()) {
                 return pb1.getModifier().compareTo(pb2.getModifier());
             } else {
                 return pb2.getModifier().compareTo(pb1.getModifier());
