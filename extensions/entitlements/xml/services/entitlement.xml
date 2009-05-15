@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.17 2009-05-14 15:12:07 farble1670 Exp $
+   $Id: entitlement.xml,v 1.18 2009-05-15 23:11:18 farble1670 Exp $
 
 -->
 
@@ -363,6 +363,10 @@
                         <AttributeValuePair>
                             <Attribute name="conditions" />
                             <Value>com.sun.identity.admin.model.TransferLimitCondition</Value>
+                            <Value>com.sun.identity.admin.model.DateRangeCondition</Value>
+                            <Value>com.sun.identity.admin.model.DaysOfWeekCondition</Value>
+                            <Value>com.sun.identity.admin.model.TimeRangeCondition</Value>
+                            <Value>com.sun.identity.admin.model.TimezoneCondition</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />
