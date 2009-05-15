@@ -342,7 +342,6 @@ div.button img.left {
 .popup-question,
 .popup-warning,
 .popup-error {
-    clear: both;
     background: #FFFFFF;
     min-width: 200px;
     max-width: 600px;
@@ -385,7 +384,6 @@ div.button img.left {
     padding-right: 5px;
     position: relative;
     float: right;
-
 }
 
 .float-right {
