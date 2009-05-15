@@ -22,12 +22,14 @@
                         <ice:outputText
                             value="Add a filter ..."/>
                     </ice:panelGroup>
-                    <ice:commandLink
-                        styleClass="command-link float-right"
-                        actionListener="#{policyManageHandler.addPolicyFilterListener}">
-                        <ice:graphicImage
-                            value="../image/add-16.png"/>
-                    </ice:commandLink>
+                    <ice:panelGroup
+                        styleClass="float-right">
+                        <ice:commandLink
+                            actionListener="#{policyManageHandler.addPolicyFilterListener}">
+                            <ice:graphicImage
+                                value="../image/add-16.png"/>
+                        </ice:commandLink>
+                    </ice:panelGroup>
                 </ice:panelGrid>
             </ui:define>
         </o:box>

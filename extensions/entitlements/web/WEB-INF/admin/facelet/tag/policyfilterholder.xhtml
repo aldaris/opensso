@@ -15,13 +15,12 @@
                     styleClass="inline-input">
                     <ice:panelGrid
                         styleClass="policy-filter"
-                        columnClasses="policy-filter-type,policy-filter-actions"
+                        columnClasses="policy-filter-lead,policy-filter-actions"
                         columns="2">
                         <ice:panelGrid
                             columns="3">
                             <ice:panelGroup>
                                 <ice:selectOneMenu
-                                    styleClass="policy-filter-input"
                                     id="filter-type-select"
                                     valueChangeListener="#{policyManageHandler.policyFilterChangedListener}"
                                     value="#{policyFilterHolder.policyFilterTypeName}">
@@ -41,7 +40,6 @@
                         <ice:panelGroup
                             styleClass="float-right">
                             <ice:commandLink
-                                styleClass="command-link"
                                 actionListener="#{policyManageHandler.removePolicyFilterListener}">
                                 <f:attribute
                                     name="policyFilterHolder"
@@ -50,7 +48,6 @@
                                     value="../image/remove-16.png"/>
                             </ice:commandLink>
                             <ice:commandLink
-                                styleClass="command-link"
                                 actionListener="#{policyManageHandler.addPolicyFilterListener}">
                                 <ice:graphicImage
                                     value="../image/add-16.png"/>

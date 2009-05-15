@@ -16,6 +16,17 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
     private boolean panelVisible = false;
     private String filter;
 
+    public boolean isVisible() {
+        if (filter != null && filter.length() > 0) {
+            return true;
+        }
+        if (viewSubjects.size() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     public void setSubjectDao(SubjectDao subjectDao) {
         this.subjectDao = subjectDao;
         reset();

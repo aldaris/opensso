@@ -64,7 +64,7 @@
                                 value="#{subjectContainers}"
                                 var="subjectContainer">
                                 <o:multipanel
-                                    visible="#{o:size(subjectContainer.viewSubjects) > 0}"
+                                    visible="#{subjectContainer.visible}"
                                     expanded="#{subjectContainer.expanded}"
                                     bean="#{subjectContainer}"
                                     handler="#{basicMultiPanelHandler}"
@@ -92,6 +92,7 @@
                                                 <ice:panelGroup
                                                     styleClass="draggable"
                                                     draggable="true"
+                                                    dragMask="dragging,drag_cancel,hover_start,hover_end"
                                                     dragValue="#{viewSubject}"
                                                     dragOptions="dragGhost">
                                                     <ice:panelGrid columns="2">

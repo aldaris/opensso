@@ -279,22 +279,26 @@ div.button img.left {
 
 .policy-filter {
     width: 100%;
+    border-collapse: collapse;
 }
 
 .policy-filter-type {
 }
 
+.policy-filter-lead {
+    padding-left: 5px;
+}
+
 .policy-filter-actions {
-    float: right;
     padding-right: 5px;
     position: relative;
-    top: 2px;
 }
 
 .inline-input * > * {
     padding: 0;
     margin: 0;
     border-collapse: collapse;
+    vertical-align: middle;
 }
 
 .inline-input * > td {
@@ -586,8 +590,16 @@ div.button img.left {
 }
 
 .multipanel-header {
-    padding: 2px;
+    padding-left: 5px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    padding-right: 5px;
     white-space: nowrap;
+    border-collapse: collapse;
+}
+
+.multipanel-header table {
+    border-collapse: collapse;
 }
 
 .multipanel-title {
@@ -620,6 +632,7 @@ div.button img.left {
 
 .summary-table {
     width: 100%;
+    border-collapse: collapse;
 }
 
 .summary-tableCol1 {
@@ -740,10 +753,8 @@ div.button img.left {
     border-left-width: 1px;
     border-right-style: solid;
     border-right-width: 1px;
-    margin: 0; overflow: visible;
-}
-
-.box .content { 
+    margin: 0; 
+    overflow: hidden;
     border-left-color: #aaa;
     border-right-color: #aaa;
 }
