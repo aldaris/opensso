@@ -7,11 +7,11 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component">
 
     <ice:panelPopup
-        styleClass="popup-#{type}#{width != null ? ' width-' : ''}#{width != null ? width : ''}"
+        styleClass="popup-#{type == null ? 'info' : type}#{width != null ? ' width-' : ''}#{width != null ? width : ''}"
         draggable="false"
         autoCentre="true"
-        modal="#{modal}"
-        visible="#{visible}">
+        modal="#{modal == null ? 'true' : modal}"
+        visible="#{visible == null ? 'true' : visible}">
         <f:facet name="header">
             <ice:panelGrid
                 width="100%"
@@ -20,7 +20,7 @@
                 columns="3"
                 columnClasses="icon,title,close">
                 <ice:graphicImage
-                    value="../image/#{type}.png" />
+                    value="../image/#{type == null ? 'info' : type}.png" />
                 <ice:outputText
                     value="#{title}"/>
                 <ice:panelGroup
@@ -29,7 +29,7 @@
                     <ice:commandButton
                         type="button"
                         image="../image/close.gif"
-                        immediate="true"
+                        immediate="#{closeImmediate == null ? 'true' : closeImmediate}"
                         actionListener="#{handler[closeListenerMethod]}"
                         style="cursor: pointer;">
                         <ui:insert name="attributes"/>

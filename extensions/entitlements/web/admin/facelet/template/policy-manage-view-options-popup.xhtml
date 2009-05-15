@@ -9,8 +9,8 @@
     <o:popup
         width="300"
         type="question"
+        closeImmediate="false"
         handler="#{policyManageHandler}"
-        modal="true"
         title="View Options"
         visible="#{policyManageBean.viewOptionsPopupVisible}"
         closeListenerMethod="viewOptionsListener">
@@ -20,7 +20,7 @@
                     id="columns-visible"
                     layout="spread"
                     rendered="#{policyManageBean.viewOptionsPopupVisible}"
-                    partialSubmit="true"
+                    partialSubmit="false"
                     value="#{policyManageBean.policyManageTableBean.columnsVisible}">
                     <f:selectItem itemValue="description" itemLabel="Description"/>
                     <f:selectItem itemValue="application" itemLabel="Application"/>
