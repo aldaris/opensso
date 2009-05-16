@@ -8,6 +8,8 @@
     xmlns:o="http://opensso.dev.java.net">
 
     <ui:define name="panel-body">
-        <o:iframe src="#{resources['home.url']}"/>
+        <o:iframe
+            url="#{resources['home.url']}"
+            localUri="#{resources['home.localUri']}"/>
     </ui:define>
 </ui:composition>

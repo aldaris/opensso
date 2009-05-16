@@ -12,8 +12,21 @@ import java.net.URL;
 
 public class FeedBean implements Serializable {
     private SyndFeed feed;
+    private String urlKey;
+    private Exception exception;
 
     public void setUrlKey(String urlKey) {
+        this.urlKey = urlKey;
+    }
+
+    public SyndFeed getFeed() {
+        if (feed == null) {
+            loadFeed();
+        }
+        return feed;
+    }
+
+    private void loadFeed() {
         Resources r = new Resources();
         String u = r.getString(urlKey);
 
@@ -22,16 +35,17 @@ public class FeedBean implements Serializable {
 
             SyndFeedInput input = new SyndFeedInput();
             feed = input.build(new XmlReader(url));
+            exception = null;
         } catch (MalformedURLException mfue) {
-            // TODO
+            this.exception = mfue;
         } catch (IOException ioe) {
-            // TODO
+            this.exception = ioe;
         } catch (FeedException fe) {
-            // TODO
+            this.exception = fe;
         }
     }
 
-    public SyndFeed getFeed() {
-        return feed;
+    public Exception getException() {
+        return exception;
     }
 }

@@ -18,7 +18,6 @@ import com.iplanet.sso.SSOTokenManager;
 
 public class AuthFilter implements Filter {
     private static String LOGIN_PATH = "/UI/Login";
-    private static String CONSOLE_PATH = "/admin";
 
     private FilterConfig filterConfig = null;
 
@@ -66,23 +65,7 @@ public class AuthFilter implements Filter {
     }
 
     private String getGotoUrl(HttpServletRequest request) {
-        StringBuffer gotoUrl = new StringBuffer();
-
-        String scheme = request.getScheme();
-        String server = request.getServerName();
-        int port = request.getServerPort();
-        String path = request.getContextPath();
-
-        gotoUrl.append(scheme);
-        gotoUrl.append("://");
-        gotoUrl.append(server);
-        gotoUrl.append(":");
-        gotoUrl.append(port);
-        gotoUrl.append(path);
-
-        gotoUrl.append(CONSOLE_PATH);
-
-        return gotoUrl.toString();
+        return request.getRequestURL().toString();
     }
 
     private boolean isAuthenticated(HttpServletRequest httpRequest) {
