@@ -55,7 +55,7 @@
                                 </f:facet>
                                 <ice:panelGroup>
                                     <ice:outputText
-                                        value="#{bankingResource.name}"/>
+                                        value="#{bankingResource.title}"/>
                                 </ice:panelGroup>
                             </ice:column>
                             <ice:column>
@@ -65,7 +65,8 @@
                                 </f:facet>
                                 <ice:panelGroup>
                                     <ice:outputText
-                                        value="#{bankingResource.owner.cn}"/>
+                                        rendered="#{bankingResource.owner != null}"
+                                        value="#{bankingResource.owner.title}"/>
                                 </ice:panelGroup>
                             </ice:column>
                             <ice:column>

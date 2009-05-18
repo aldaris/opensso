@@ -1,6 +1,7 @@
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.DeepCloneable;
+import com.sun.identity.admin.Resources;
 
 public abstract class Action implements DeepCloneable {
     private String name;
@@ -27,6 +28,11 @@ public abstract class Action implements DeepCloneable {
     public abstract String toString();
 
     public String getTitle() {
-        return getName();
+        Resources r = new Resources();
+        String title = r.getString(this, "title."+getName(), getName());
+        if (title == null) {
+            title = getName();
+        }
+        return title;
     }
 }

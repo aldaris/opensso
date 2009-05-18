@@ -1,6 +1,7 @@
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.DeepCloneable;
+import com.sun.identity.admin.Resources;
 import java.io.Serializable;
 
 public abstract class Resource implements Serializable, DeepCloneable {
@@ -13,6 +14,15 @@ public abstract class Resource implements Serializable, DeepCloneable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTitle() {
+        Resources r = new Resources();
+        String title = r.getString(this, "title."+getName(), getName());
+        if (title != null) {
+            return title;
+        }
+        return getName();
     }
 
     public boolean isVisible() {

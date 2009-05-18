@@ -72,14 +72,4 @@ public class BooleanAction
         String title = r.getString(this, "allow."+allow);
         return title;
     }
-
-    @Override
-    public String getTitle() {
-        Resources r = new Resources();
-        String title = r.getString(this, "title."+getName(), getName());
-        if (title == null) {
-            title = getName();
-        }
-        return title;
-    }
 }
