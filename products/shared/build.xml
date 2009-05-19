@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2008-06-25 05:52:42 qcheng Exp $
+   $Id: build.xml,v 1.6 2009-05-19 14:30:24 kevinserwin Exp $
 
 -->
 
@@ -60,7 +60,7 @@
     </target>
 
     <target name="build" depends="preparebuild">
-        <javac destdir="${sharedlib.classes.dir}" source="1.4" target="1.4"
+        <javac destdir="${sharedlib.classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${sharedlib.src.dir}"/>
             <compilerarg value="-Xlint:deprecation" />

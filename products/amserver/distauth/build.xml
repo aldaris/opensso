@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2008-06-25 05:40:26 qcheng Exp $
+   $Id: build.xml,v 1.9 2009-05-19 14:27:55 kevinserwin Exp $
 
 -->
 
@@ -44,7 +44,7 @@
 
     <target name="all" depends="preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-            destdir="${distauth.classes.dir}" source="1.4" target="1.4"
+            destdir="${distauth.classes.dir}" source="1.5" target="1.5"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${amserver.distauth.dir}/configurator/source"/>
             <classpath refid="build.class.path"/>

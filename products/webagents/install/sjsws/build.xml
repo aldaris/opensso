@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2009-04-21 23:39:37 subbae Exp $
+   $Id: build.xml,v 1.9 2009-05-19 14:27:53 kevinserwin Exp $
 
 -->
 
@@ -42,7 +42,7 @@
         location="${webagents.install.dir}/${containername}/source"/>
 
     <target name="build">
-        <javac destdir="${webagents.container.classes.dir}" source="1.4" target="1.4"
+        <javac destdir="${webagents.container.classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${webagents.install.sjsws.src.dir}"/>
             <classpath refid="build.class.path"/>

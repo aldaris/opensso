@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2009-01-28 05:34:44 ww203982 Exp $
+   $Id: build.xml,v 1.10 2009-05-19 14:27:58 kevinserwin Exp $
 
 -->
 
@@ -50,7 +50,7 @@
 
     <target name="client" depends="preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-            destdir="${samples.classes.dir}" source="1.4" target="1.4"
+            destdir="${samples.classes.dir}" source="1.5" target="1.5"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${samples.src.dir}"/>
             <classpath refid="build.class.path"/>

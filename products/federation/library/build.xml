@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.23 2009-05-04 18:21:06 exu Exp $
+   $Id: build.xml,v 1.24 2009-05-19 14:27:54 kevinserwin Exp $
 
 -->
 
@@ -128,18 +128,9 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
 
     <target name="build" depends="preparebuild, xsd.liberty, xsd.saml2, xsd.wsfederation">
          <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-                destdir="${library.classes.dir}" source="1.4" target="1.4"
-                debug="${build.debug}" debuglevel="${build.debuglevel}"
-                srcdir="${library.src.dir}"
-                excludes="${one_dot_five_targets}">
-            <classpath refid="build.class.path"/>
-            <compilerarg value="-Xlint:deprecation" />
-        </javac>
-        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
                 destdir="${library.classes.dir}" source="1.5" target="1.5"
                 debug="${build.debug}" debuglevel="${build.debuglevel}"
-                srcdir="${library.src.dir}"
-                includes="${one_dot_five_targets}">
+                srcdir="${library.src.dir}" >
             <classpath refid="build.class.path"/>
             <compilerarg value="-Xlint:deprecation" />
         </javac>

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.14 2008-10-13 05:30:05 bina Exp $
+   $Id: build.xml,v 1.15 2009-05-19 14:30:25 kevinserwin Exp $
 
 -->
 
@@ -82,7 +82,7 @@
     <target name="compile" depends="preparebuild">
         <antcall target="legacy-build" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${upgrade.classes.dir}" source="1.4" target="1.4"
+               destdir="${upgrade.classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${upgrade.source.dir}"/>
             <classpath refid="build.class.path"/>
@@ -111,7 +111,7 @@
     
     <target name="compile-services">
         <javac sourcepath="${fileToWorkon}" memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               source="1.4" target="1.4"
+               source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${fileToWorkon}"/> 
             <classpath refid="build.class.path"/>

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.73 2009-03-25 04:33:32 kevinserwin Exp $
+   $Id: build.xml,v 1.74 2009-05-19 14:27:54 kevinserwin Exp $
 
 -->
 
@@ -93,27 +93,13 @@
     <target name="enterprise" if="enterprise.authmodules.present">   
         <antcall target="idsvcs" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${amserver.classes.dir}" source="1.4" target="1.4"
-               debug="${build.debug}" debuglevel="${build.debuglevel}"
-               excludes="${amserver_one_dot_five_targets}">
+               destdir="${amserver.classes.dir}" source="1.5" target="1.5"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${amserver.src.dir}"/>
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
-            <exclude name="**/com/sun/identity/tools/logdoc/*.java"/>
-            <exclude name="**/com/sun/identity/cli/tools/*.java"/>
-            <exclude name="**/com/sun/identity/diagnostic/**"/>
-            <exclude name="**/com/sun/identity/cli/annotation/*.java"/>
-            <exclude name="**/com/sun/identity/cli/definition/*.java"/>
         </javac>
         <antcall target="jaxrpc" />
-        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${amserver.classes.dir}" source="1.5" target="1.5"
-               debug="${build.debug}" debuglevel="${build.debuglevel}"
-               includes="${amserver_one_dot_five_targets}">
-            <src path="${amserver.src.dir}"/>
-            <classpath refid="build.class.path"/>
-            <exclude name="**/package-info.java"/>
-        </javac>
         
         <filter token="DATESTAMP" value="${war.time.stamp}"/>        
         <filter token="VERSION" value="${version.set}" />
@@ -211,7 +197,7 @@
         <antcall target="idsvcs" />
         
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${amserver.classes.dir}" source="1.4" target="1.4"
+               destdir="${amserver.classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}"
                excludes="${amserver_one_dot_five_targets}">
             <src path="${amserver.src.dir}"/>

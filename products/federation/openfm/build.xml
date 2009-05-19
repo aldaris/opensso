@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.53 2009-05-02 22:07:58 kevinserwin Exp $
+   $Id: build.xml,v 1.54 2009-05-19 14:27:58 kevinserwin Exp $
 
 -->
 
@@ -97,22 +97,13 @@
             <arg value="com.sun.identity.federation.cli.stubs"/>
         </java>
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-            destdir="${openfm.classes.dir}" source="1.4" target="1.4"
+            destdir="${openfm.classes.dir}" source="1.5" target="1.5"
             debug="${build.debug}" debuglevel="${build.debuglevel}"
-            srcdir="${openfm.src.dir}"
-            excludes="${openfm_one_dot_five_targets},com/sun/identity/federation/cli/tools/**,com/sun/identity/federation/cli/definition/**">
+            srcdir="${openfm.src.dir}">
+            <classpath refid="build.class.path"/>
+            <compilerarg value="-Xlint:deprecation" />
+        </javac>
 
-            <classpath refid="build.class.path"/>
-            <compilerarg value="-Xlint:deprecation" />
-        </javac>
-        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-            destdir="${openfm.classes.dir}" source="1.5" target="1.5" 
-            srcdir="${openfm.src.dir}"
-            debug="${build.debug}" debuglevel="${build.debuglevel}"
-            includes="${openfm_one_dot_five_targets}">
-            <classpath refid="build.class.path"/>
-            <compilerarg value="-Xlint:deprecation" />
-        </javac>
     </target>
 
     <target name="clihelper" depends="preparebuild">
