@@ -32,6 +32,14 @@
         <ice:panelTab label="User Attributes">
         </ice:panelTab>
         <ice:panelTab label="Resource Attributes">
+            <ui:include src="policy-attributes-static.xhtml">
+                <ui:param
+                    name="attributesBean"
+                    value="#{policyWizardBean.privilegeBean.staticAttributesBean}"/>
+                <ui:param
+                    name="attributesHandler"
+                    value="#{policyWizardBean.privilegeBean.staticAttributesBean.attributesHandler}"/>
+            </ui:include>
         </ice:panelTab>
     </ice:panelTabSet>
 </span>

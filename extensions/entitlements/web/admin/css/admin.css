@@ -562,6 +562,7 @@ div.button img.left {
     text-align: left;
     padding-left: 10px;
     padding-right: 10px;
+    min-width: 200px;
 }
 
 .actionsCol2 {
@@ -571,6 +572,26 @@ div.button img.left {
 }
 
 .actionsCol3 {
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.attributesCol1 {
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    min-width: 200px;
+}
+
+.attributesCol2 {
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    min-width: 200px;
+}
+
+.attributesCol3 {
     text-align: center;
     padding-left: 10px;
     padding-right: 10px;

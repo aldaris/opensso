@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+
+    <o:popup
+        width="300"
+        type="question"
+        handler="#{attributesHandler}"
+        modal="true"
+        title="Add Resource Attribute"
+        visible="#{attributesBean.addPopupVisible}"
+        closeListenerMethod="addPopupCancelListener">
+        <ui:define name="body">
+            <ice:panelGroup>
+                <ice:panelGroup
+                    style="text-align: left; padding-bottom: 10px">
+                    <ice:outputFormat
+                        escape="false"
+                        value="#{resources['policy-attributes-static-add-popup.question']}"/>
+                </ice:panelGroup>
+                <ice:panelGrid
+                    columns="3">
+                    <ice:inputText
+                        size="10"
+                        tabindex="10"
+                        value="#{attributesBean.addPopupName}"/>
+                    <ice:outputText
+                        value="="/>
+                    <ice:inputText
+                        tabindex="11"
+                        size="10"
+                        value="#{attributesBean.addPopupValue}"/>
+                </ice:panelGrid>
+                <ice:panelGrid
+                    styleClass="button-group"
+                    columns="2">
+                    <o:button
+                        type="ok"
+                        handler="#{attributesHandler}"
+                        listenerMethod="addPopupOkListener">
+                        <ui:define name="attributes">
+                        </ui:define>
+                    </o:button>
+                    <o:button
+                        type="cancel"
+                        handler="#{attributesHandler}"
+                        listenerMethod="addPopupCancelListener"/>
+                </ice:panelGrid>
+            </ice:panelGroup>
+        </ui:define>
+    </o:popup>
+</span>

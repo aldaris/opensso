@@ -539,6 +539,4 @@ public abstract class PolicyWizardHandler
 
         return true;
     }
-
-
 }

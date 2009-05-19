@@ -1,6 +1,7 @@
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
+import com.sun.identity.admin.handler.StaticAttributesHandler;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementException;
@@ -160,6 +161,10 @@ public class PrivilegeBean implements Serializable {
         this.applicationCellEffect = applicationCellEffect;
     }
 
+    public AttributesBean getStaticAttributesBean() {
+        return staticAttributesBean;
+    }
+
     public static abstract class PrivilegeComparator implements Comparator {
         private boolean ascending;
 
@@ -312,6 +317,7 @@ public class PrivilegeBean implements Serializable {
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
     private ViewCondition viewCondition = null;
     private ViewSubject viewSubject = null;
+    private AttributesBean staticAttributesBean = new StaticAttributesBean();
     private Date birth;
     private Date modified;
     private String author;
@@ -353,6 +359,12 @@ public class PrivilegeBean implements Serializable {
         // conditions
         viewCondition = conditionTypeFactory.getViewCondition(p.getCondition());
 
+        // static attributes
+        staticAttributesBean = new StaticAttributesBean(p.getResourceAttributes());
+
+        // user attributes
+        // TODO
+
         // created, modified
         birth = new Date(p.getCreationDate());
         author = p.getCreatedBy();
@@ -392,9 +404,11 @@ public class PrivilegeBean implements Serializable {
             condition = getViewCondition().getEntitlementCondition();
         }
 
-        // resource attrs
+        // static attrs
+        Set<ResourceAttributes> attrs = staticAttributesBean.toResourceAttributesSet();
+
+        // user attrs
         // TODO
-        Set<ResourceAttributes> attrs = null;
 
         try {
             Privilege p = new OpenSSOPrivilege(
