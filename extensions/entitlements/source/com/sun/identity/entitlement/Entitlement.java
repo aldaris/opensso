@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.34 2009-05-12 19:58:40 veiming Exp $
+ * $Id: Entitlement.java,v 1.35 2009-05-19 23:50:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
+import com.sun.identity.entitlement.util.JSONUtils;
 import com.sun.identity.policy.ResourceMatch;
 import java.io.Serializable;
 import java.util.Collections;
@@ -81,6 +82,16 @@ public class Entitlement implements Serializable {
      * Creates an entitlement object with default service name.
      */
     public Entitlement() {
+    }
+
+    public Entitlement(JSONObject jo) throws JSONException {
+        name = (String)jo.opt("name");
+        applicationName = (String)jo.opt("applicationName");
+        resourceNames = JSONUtils.getSet(jo, "resourceNames");
+        excludedResourceNames = JSONUtils.getSet(jo, "excludedResourceNames");
+        actionValues = JSONUtils.getMapStringBoolean(jo, "actionsValues");
+        advices = JSONUtils.getMapStringSetString(jo, "advices");
+        attributes = JSONUtils.getMapStringSetString(jo, "attributes");
     }
 
     /**
@@ -459,12 +470,27 @@ public class Entitlement implements Serializable {
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
         jo.put("name", name);
-        jo.put("serviceName", applicationName);
-        jo.put("resourceNames", resourceNames);
-        jo.put("excludedResourceNames", excludedResourceNames);
-        jo.put("actionsValues", actionValues);
-        jo.put("advices", advices);
-        jo.put("attributes", attributes);
+        jo.put("applicationName", applicationName);
+
+        if (resourceNames != null) {
+            jo.put("resourceNames", resourceNames);
+        }
+
+        if (excludedResourceNames != null) {
+            jo.put("excludedResourceNames", excludedResourceNames);
+        }
+
+        if (actionValues != null) {
+            jo.put("actionsValues", actionValues);
+        }
+
+        if (advices != null) {
+            jo.put("advices", advices);
+        }
+
+        if (attributes != null) {
+            jo.put("attributes", attributes);
+        }
         return jo;
     }
 

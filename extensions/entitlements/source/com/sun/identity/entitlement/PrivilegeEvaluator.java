@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.15 2009-05-08 00:13:21 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.16 2009-05-19 23:50:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -33,6 +33,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import javax.security.auth.Subject;
 
 /**
@@ -50,12 +53,12 @@ class PrivilegeEvaluator {
         LinkedList<List<Entitlement>>();
     private Application application;
     private Set<String> actionNames;
-    private int counter;
-    private int maxCounter = -1;
     private EntitlementCombiner entitlementCombiner;
     private boolean recursive;
     private IThreadPool threadPool;
     private EntitlementException eException;
+    private final Lock lock = new ReentrantLock();
+    private Condition hasResults = lock.newCondition();
 
     /**
      * Initializes the evaluator.
@@ -96,7 +99,7 @@ class PrivilegeEvaluator {
         entitlementCombiner.init(applicationName, resourceName,
             this.actionNames, recursive);
         this.recursive = recursive;
-        threadPool = new ThreadPool(); //TOFIX
+        threadPool = new EntitlementThreadPool(); //TOFIX
     }
 
     /**
@@ -168,29 +171,50 @@ class PrivilegeEvaluator {
 
     private List<Entitlement> evaluate(String realm)
         throws EntitlementException {
-        threadPool.submit(new EvaluationTask(realm, this, recursive));
 
-        synchronized (this) {
-            boolean isDone = (eException != null);
-            while ((maxCounter == -1) || ((maxCounter != counter) && !isDone)) {
+        int totalCount = 0;
+        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(realm);
+        Iterator<Privilege> i = pis.search(indexes,
+            SubjectAttributesManager.getSubjectSearchFilter(
+                subject, applicationName), recursive, threadPool);
+        Set<Privilege> privileges = new HashSet<Privilege>(20);
+        while (i.hasNext()) {
+            privileges.add(i.next());
+            totalCount++;
+            if ((totalCount % 10) == 0) {
+                threadPool.submit(new PrivilegeTask(this, privileges));
+                privileges.clear();
+            }
+        }
+        if (!privileges.isEmpty()) {
+            threadPool.submit(new PrivilegeTask(this, privileges));
+        }
+
+        int counter = 0;
+        lock.lock();
+        boolean isDone = (eException != null);
+
+        try {
+            while (!isDone && (counter < totalCount)) {
+                if (resultQ.isEmpty()) {
+                    hasResults.await();
+                }
                 while (!resultQ.isEmpty() && !isDone) {
                     entitlementCombiner.add(resultQ.remove(0));
                     isDone = entitlementCombiner.isDone();
                     counter++;
                 }
-                if ((maxCounter != counter) && !isDone) {
-                    try {
-                        wait();
-                    } catch (InterruptedException ex) {
-                        Evaluator.debug.error("PrivilegeEvaluator.evaluate", ex);
-                    }
-                }
             }
-
-            if (eException != null) {
-                throw eException;
-            }
+        } catch (InterruptedException ex) {
+            Evaluator.debug.error("PrivilegeEvaluator.evaluate", ex);
+        } finally {
+            lock.unlock();
         }
+
+        if (eException != null) {
+            throw eException;
+        }
+
         return entitlementCombiner.getResults();
     }
 
@@ -203,68 +227,38 @@ class PrivilegeEvaluator {
         return application;
     }
 
-    class EvaluationTask implements Runnable {
-        final PrivilegeEvaluator parent;
-        private String realm;
-        private boolean bSubTree;
-
-        EvaluationTask(
-            String realm,
-            PrivilegeEvaluator parent,
-            boolean bSubTree
-        ) {
-            this.realm = realm;
-            this.parent = parent;
-            this.bSubTree = bSubTree;
-        }
-
-        public void run() {
-            try {
-                int count = 0;
-                PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(realm);
-                for (Iterator<Privilege> i = pis.search(parent.indexes,
-                    SubjectAttributesManager.getSubjectSearchFilter(
-                        parent.subject, parent.applicationName), bSubTree,
-                        threadPool); i.hasNext();
-                ) {
-                    threadPool.submit(new PrivilegeTask(parent, i.next()));
-                    count++;
-                }
-                parent.maxCounter = count;
-                synchronized (parent) {
-                    parent.notify();
-                }
-            } catch (EntitlementException ex) {
-                parent.eException = ex;
-                synchronized (parent) {
-                    parent.notify();
-                }
-            }
-        }
-    }
-
     class PrivilegeTask implements Runnable {
         final PrivilegeEvaluator parent;
-        private Privilege privilege;
+        private Set<Privilege> privileges;
 
-        PrivilegeTask(PrivilegeEvaluator parent, Privilege privilege) {
+        PrivilegeTask(PrivilegeEvaluator parent, Set<Privilege> privileges) {
             this.parent = parent;
-            this.privilege = privilege;
+            this.privileges = new HashSet(privileges.size() *2);
+            this.privileges.addAll(privileges);
         }
 
         public void run() {
             try {
-                List<Entitlement> entitlements = privilege.evaluate(
-                    parent.subject, parent.resourceName, parent.actionNames,
-                    parent.envParameters, parent.recursive);
-                synchronized(parent) {
-                    parent.resultQ.add(entitlements);
-                    parent.notify();
+                for (Privilege privilege : privileges) {
+                    List<Entitlement> entitlements = privilege.evaluate(
+                        parent.subject, parent.resourceName, parent.actionNames,
+                        parent.envParameters, parent.recursive);
+
+                    try {
+                        parent.lock.lock();
+                        parent.resultQ.add(entitlements);
+                        parent.hasResults.signal();
+                    } finally {
+                        parent.lock.unlock();
+                    }
                 }
             } catch (EntitlementException ex) {
-                parent.eException = ex;
-                synchronized (parent) {
-                    parent.notify();
+                try {
+                    parent.lock.lock();
+                    parent.eException = ex;
+                    parent.hasResults.signal();
+                } finally {
+                    parent.lock.unlock();
                 }
             }
         }

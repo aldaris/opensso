@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceAttributes.java,v 1.3 2009-03-27 16:29:10 veiming Exp $
+ * $Id: ResourceAttributes.java,v 1.4 2009-05-19 23:50:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -43,18 +43,19 @@ public interface ResourceAttributes extends Serializable {
      * @throws com.sun.identity.entitlement.EntitlementException if any
      * abnormal condition occured
      */
-    public void setProperties(Map<String, Set<String>> properties)
-            throws EntitlementException;
+    void setProperties(Map<String, Set<String>> properties)
+        throws EntitlementException;
 
     /**
      * <code>ResourceAttributes</code>
      * @return configuration properties for this
      * <code>ResourceAttributes</code>
      */
-    public Map<String, Set<String>> getProperties();
+    Map<String, Set<String>> getProperties();
 
     /**
-     * Returns resoruce attributes aplicable to the request
+     * Returns resoruce attributes aplicable to the request.
+     *
      * @param subject Subject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -62,9 +63,25 @@ public interface ResourceAttributes extends Serializable {
      * @throws com.sun.identity.entitlement.EntitlementException
      * if can not get condition decision
      */
-    public Map<String, Set<String>> evaluate(
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException;
+    Map<String, Set<String>> evaluate(
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment)
+        throws EntitlementException;
+
+    /**
+     * Sets OpenSSO policy response provider name of the object
+     * @param pResponseProviderName response provider name as used in OpenSSO
+     *        policy, this is releavant only when StaticAttributes was created
+     *        from OpenSSO policy Subject
+     */
+    void setPResponseProviderName(String pResponseProviderName);
+
+    /**
+     * Returns OpenSSO policy response provider name of the object
+     * @return response provider name as used in OpenSSO policy,
+     * this is releavant only when StaticAttributes was created from
+     * OpenSSO policy Subject
+     */
+    String getPResponseProviderName();
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.2 2009-05-19 00:15:22 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.3 2009-05-19 23:50:15 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -91,6 +91,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     public void add(Set<Privilege> privileges)
         throws EntitlementException {
         for (Privilege p : privileges) {
+            p.canonicalizeResources();
             dataStore.add(realm, p);
             EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             realm);
@@ -172,8 +173,9 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 i.remove();
             }
         }
-        threadPool.submit(new SearchTask(realm, this, iterator, indexes,
-            subjectIndexes, bSubTree, setDNs));
+        SearchTask st = new SearchTask(realm, this, iterator, indexes,
+            subjectIndexes, bSubTree, setDNs);
+        threadPool.submit(st);
         return iterator;
     }
 

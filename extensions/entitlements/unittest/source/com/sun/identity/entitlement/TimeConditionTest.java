@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeConditionTest.java,v 1.1 2009-03-14 03:08:00 dillidorai Exp $
+ * $Id: TimeConditionTest.java,v 1.2 2009-05-19 23:50:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -49,19 +49,9 @@ public class TimeConditionTest {
         tc.setEndDate("02/02/2002");
         tc.setEnforcementTimeZone("PST");
         tc.setPConditionName("tc1");
-        UnittestLog.logMessage(
-                "TimeConditionTest.testConstruction():" + "tc.toString()=" + tc.toString());
 
         TimeCondition tc1 = new TimeCondition();
         tc1.setState(tc.getState());
-        UnittestLog.logMessage(
-                "TimeConditionTest.testConstruction():" + "tc1.toString()=" + tc1.toString());
-
-
-        UnittestLog.logMessage(
-                "TimeConditionTest.testConstruction():" + "resetting attributes");
-        UnittestLog.logMessage(
-                "TimeConditionTest.testConstruction():" + "tc1.toString()=" + tc1.toString());
     }
 
     public static void main(String[] args) throws Exception {

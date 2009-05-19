@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCondition.java,v 1.2 2009-05-02 08:53:59 veiming Exp $
+ * $Id: PolicyCondition.java,v 1.3 2009-05-19 23:50:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -49,6 +49,9 @@ public class PolicyCondition implements EntitlementCondition {
     private String name;
     private Map<String, Set<String>> properties;
 
+    public PolicyCondition() {
+    }
+    
     /**
      * Constructor.
      *

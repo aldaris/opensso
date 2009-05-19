@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.13 2009-05-19 00:15:22 veiming Exp $
+ * $Id: DataStore.java,v 1.14 2009-05-19 23:50:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -32,17 +32,17 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.EntitlementThreadPool;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
-import com.sun.identity.entitlement.ThreadPool;
+import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.NetworkMonitor;
 import com.sun.identity.entitlement.util.NotificationServlet;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
-import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.ldap.LDAPDN;
 import com.sun.identity.shared.ldap.util.DN;
 import com.sun.identity.sm.DNMapper;
@@ -52,15 +52,9 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -74,6 +68,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.persistence.EntityExistsException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * This class *talks* to SMS to get the configuration information.
@@ -100,8 +96,7 @@ public class DataStore {
 
     private static final NetworkMonitor DB_MONITOR =
         NetworkMonitor.getInstance("dbLookup");
-
-    private static ThreadPool threadPool = new ThreadPool();
+    private static IThreadPool threadPool = new EntitlementThreadPool();
     private static final String currentServerInstance =
         SystemProperties.getServerInstanceName();
 
@@ -268,7 +263,7 @@ public class DataStore {
 
             Set<String> set = new HashSet<String>(2);
             map.put(SMSEntry.ATTR_KEYVAL, set);
-            set.add(SERIALIZABLE_INDEX_KEY + "=" + serializeObject(p));
+            set.add(SERIALIZABLE_INDEX_KEY + "=" + p.toJSONObject().toString());
 
             Set<String> setObjectClass = new HashSet<String>(4);
             map.put(SMSEntry.ATTR_OBJECTCLASS, setObjectClass);
@@ -318,6 +313,8 @@ public class DataStore {
             s.setAttributes(map);
             s.save();
             updateIndexCount(adminToken, realm, 1);
+        } catch (JSONException e) {
+            throw new EntitlementException(210, e);
         } catch (SSOException e) {
             throw new EntitlementException(210, e);
         } catch (SMSException e) {
@@ -451,16 +448,21 @@ public class DataStore {
                     adminToken, baseDN, filter, excludeDNs);
                 while (i.hasNext()) {
                     SMSDataEntry e = (SMSDataEntry)i.next();
-                    Privilege privilege = (Privilege)deserializeObject(
-                        e.getAttributeValue(SERIALIZABLE_INDEX_KEY));
+                    Privilege privilege = Privilege.getInstance(
+                        new JSONObject(e.getAttributeValue(
+                        SERIALIZABLE_INDEX_KEY)));
                     iterator.add(privilege);
                     results.add(privilege);
                 }
                 iterator.isDone();
+            } catch (JSONException e) {
+                Object[] arg = {baseDN};
+                throw new EntitlementException(52, arg, e);
             } catch (SMSException e) {
                 Object[] arg = {baseDN};
                 throw new EntitlementException(52, arg, e);
             }
+
             DB_MONITOR.end(start);
         }
         return results;
@@ -518,51 +520,6 @@ public class DataStore {
 
         String result = filter.toString();
         return (result.length() > 0) ? "(&" + result + ")" : null;
-    }
-
-    private String serializeObject(Serializable object)
-        throws EntitlementException {
-        ObjectOutputStream oos = null;
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            oos = new ObjectOutputStream(out);
-            oos.writeObject(object);
-            oos.close();
-            return Base64.encode(out.toByteArray());
-        } catch (IOException e) {
-            throw new EntitlementException(200, null, e);
-        } finally {
-            if (oos != null) {
-                try {
-                    oos.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        }
-    }
-
-    private Object deserializeObject(String strSerialized)
-        throws EntitlementException {
-        ObjectInputStream ois = null;
-        try {
-            InputStream in = new ByteArrayInputStream(
-                Base64.decode(strSerialized));
-            ois = new ObjectInputStream(in);
-            return ois.readObject();
-        } catch (ClassNotFoundException ex) {
-            throw new EntitlementException(201, null, ex);
-        } catch (IOException ex) {
-            throw new EntitlementException(201, null, ex);
-        } finally {
-            try {
-                if (ois != null) {
-                    ois.close();
-                }
-            } catch (IOException ex) {
-                // ignore
-            }
-        }
     }
 
     public class Notifier implements Runnable {

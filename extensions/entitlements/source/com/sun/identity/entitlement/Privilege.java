@@ -22,11 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.21 2009-05-19 00:15:21 veiming Exp $
+ * $Id: Privilege.java,v 1.22 2009-05-19 23:50:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.util.JSONUtils;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -84,6 +86,9 @@ public abstract class Privilege implements Serializable {
     private String lastModifiedBy;
     private long creationDate;
     private long lastModifiedDate;
+
+    public Privilege() {
+    }
 
     /**
      * Constructs entitlement privilege
@@ -230,10 +235,26 @@ public abstract class Privilege implements Serializable {
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
+        jo.put("className", getClass().getName());
         jo.put("name", name);
 
+        if (policyName != null) {
+            jo.put("policyName", policyName);
+        }
+        if (description != null) {
+            jo.put("description", description);
+        }
+        if (createdBy != null) {
+            jo.put("createdBy", createdBy);
+        }
+        if (lastModifiedBy != null) {
+            jo.put("lastModifiedBy", lastModifiedBy);
+        }
+        jo.put("lastModifiedDate", lastModifiedDate);
+        jo.put("creationDate", creationDate);
+
         if (entitlement != null) {
-            jo.append("entitlement", entitlement.toJSONObject());
+            jo.put("entitlement", entitlement.toJSONObject());
         }
 
         if (eSubject != null) {
@@ -250,21 +271,134 @@ public abstract class Privilege implements Serializable {
             jo.put("eCondition", subjo);
         }
 
-        //TODO: test and fix
-        if (eResourceAttributes != null) {
-            JSONArray subjo = new JSONArray();
-            if (eResourceAttributes != null) {
-                JSONArray arr = new JSONArray();
-                for (ResourceAttributes ra : eResourceAttributes) {
-                    JSONObject subjo1 = new JSONObject();
-                    subjo1.put("className", ra.getClass().getName());
-                    subjo1.put("state", ra.toString());
-                    subjo.put(subjo1);
-                }
+        if ((eResourceAttributes != null) && !eResourceAttributes.isEmpty()) {
+            for (ResourceAttributes r : eResourceAttributes) {
+                JSONObject subjo = new JSONObject();
+                subjo.put("className", r.getClass().getName());
+                subjo.put("name", r.getPResponseProviderName());
+                subjo.put("properties", r.getProperties());
+                jo.append("eResourceAttributes", subjo);
             }
-            jo.put("eResourceAttributes", subjo);
         }
         return jo;
+    }
+
+    public static Privilege getInstance(JSONObject jo) {
+        String className = jo.optString("className");
+        try {
+            Class clazz = Class.forName(className);
+            Privilege privilege = (Privilege)clazz.newInstance();
+            privilege.name = jo.optString("name");
+            privilege.description = jo.optString("description");
+            privilege.policyName = jo.optString("policyName");
+            privilege.createdBy = jo.getString("createdBy");
+            privilege.lastModifiedBy = jo.getString("lastModifiedBy");
+            privilege.creationDate = JSONUtils.getLong(jo,
+                "creationDate");
+            privilege.lastModifiedDate = JSONUtils.getLong(jo,
+                "lastModifiedDate");
+
+            if (jo.has("entitlement")) {
+                privilege.entitlement = new Entitlement(
+                    jo.getJSONObject("entitlement"));
+            }
+            privilege.eSubject = getESubject(jo);
+            privilege.eCondition = getECondition(jo);
+            privilege.eResourceAttributes = getResourceAttributes(jo);
+            
+            return privilege;
+        } catch (InstantiationException ex) {
+            PrivilegeManager.debug.error("Privilege.getInstance", ex);
+        } catch (IllegalAccessException ex) {
+            PrivilegeManager.debug.error("Privilege.getInstance", ex);
+        } catch (ClassNotFoundException ex) {
+            PrivilegeManager.debug.error("Privilege.getInstance", ex);
+        } catch (JSONException ex) {
+            PrivilegeManager.debug.error("Privilege.getInstance", ex);
+        }
+        return null;
+    }
+
+    private static Set<ResourceAttributes> getResourceAttributes(JSONObject jo)
+        throws JSONException{
+        if (!jo.has("eResourceAttributes")) {
+            return null;
+        }
+        JSONArray array = jo.getJSONArray("eResourceAttributes");
+        Set<ResourceAttributes> results = new HashSet<ResourceAttributes>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject json = (JSONObject)array.get(i);
+            try {
+                Class clazz = Class.forName(json.getString("className"));
+                ResourceAttributes ra = (ResourceAttributes)clazz.newInstance();
+                ra.setProperties(JSONUtils.getMapStringSetString(
+                    json, "properties"));
+                ra.setPResponseProviderName(json.getString("name"));
+                results.add(ra);
+            } catch (EntitlementException ex) {
+                PrivilegeManager.debug.error(
+                    "Privilege.getResourceAttributes", ex);
+            } catch (InstantiationException ex) {
+                PrivilegeManager.debug.error(
+                    "Privilege.getResourceAttributes", ex);
+            } catch (IllegalAccessException ex) {
+                PrivilegeManager.debug.error(
+                    "Privilege.getResourceAttributes", ex);
+            } catch (ClassNotFoundException ex) {
+                PrivilegeManager.debug.error(
+                    "Privilege.getResourceAttributes", ex);
+            }
+        }
+
+
+        return results;
+    }
+
+
+    private static EntitlementSubject getESubject(JSONObject jo)
+        throws JSONException {
+        if (!jo.has("eSubject")) {
+            return null;
+        }
+        JSONObject sbj = jo.getJSONObject("eSubject");
+        try {
+            Class clazz = Class.forName(sbj.getString("className"));
+            EntitlementSubject eSubject = (EntitlementSubject)
+                clazz.newInstance();
+            eSubject.setState(sbj.getString("state"));
+            return eSubject;
+        } catch (InstantiationException ex) {
+            PrivilegeManager.debug.error("Privilege.getESubject", ex);
+        } catch (IllegalAccessException ex) {
+            PrivilegeManager.debug.error("Privilege.getESubject", ex);
+        } catch (ClassNotFoundException ex) {
+            PrivilegeManager.debug.error("Privilege.getESubject", ex);
+        }
+        return null;
+    }
+
+
+    private static EntitlementCondition getECondition(JSONObject jo)
+        throws JSONException {
+        if (!jo.has("eCondition")) {
+            return null;
+        }
+        
+        JSONObject sbj = jo.getJSONObject("eCondition");
+        try {
+            Class clazz = Class.forName(sbj.getString("className"));
+            EntitlementCondition eCondition = (EntitlementCondition)
+                clazz.newInstance();
+            eCondition.setState(sbj.getString("state"));
+            return eCondition;
+        } catch (InstantiationException ex) {
+            PrivilegeManager.debug.error("Privilege.getECondition", ex);
+        } catch (IllegalAccessException ex) {
+            PrivilegeManager.debug.error("Privilege.getECondition", ex);
+        } catch (ClassNotFoundException ex) {
+            PrivilegeManager.debug.error("Privilege.getECondition", ex);
+        }
+        return null;
     }
 
     /**
@@ -514,3 +648,5 @@ public abstract class Privilege implements Serializable {
         entitlement.canonicalizeResources();
     }
 }
+
+
