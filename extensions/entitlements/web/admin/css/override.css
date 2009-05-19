@@ -8,20 +8,12 @@
 
 .iceMnuBarItem img {
     position: absolute;
-    top: 156px;
+    top: 158px;
 }
 
 .iceMnuBarItem, .iceMnuBarVrtItem {
-    padding-top: 4px;
-    padding-bottom: 4px;
-}
-
-.iceMnuItm a,
-.iceMnuItm a:hover,
-.iceMnuItmVrt a,
-.iceMnuItmVrt a:hover {
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .iceSelInpTxtTxt {

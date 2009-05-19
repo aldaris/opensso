@@ -74,7 +74,7 @@
                                     <ui:define name="body">
                                         <ice:panelGrid
                                             columns="2"
-                                            styleClass="url-resource"
+                                            styleClass="url-resource inline-input"
                                             columnClasses="url-resource-tableCol1,url-resource-tableCol2">
                                             <ice:checkbox
                                                 styleClass="url-resource-checkbox"
@@ -122,6 +122,7 @@
                         scrollHeight="100px">
                         <ice:panelSeries
                             var="urlResource"
+                            styleClass="inline-input"
                             value="#{policyResourcesBean.privilegeBean.viewEntitlement.exceptions}">
                             <ice:panelGroup
                                 styleClass="url-resource-outer"

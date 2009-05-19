@@ -1,0 +1,12 @@
+.policy-manage-cell span {
+    width: 100px;
+    text-overflow: ellipsis;
+}
+
+.box .content {
+    width: 100%
+}
+
+.section-inner {
+    width: 100%;
+}

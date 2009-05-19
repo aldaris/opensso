@@ -309,6 +309,7 @@ div.button img.left {
 
 
 .inline-input td {
+    border-collapse: collapse;
     padding-right: 5px;
 }
 
@@ -317,6 +318,7 @@ div.button img.left {
     padding: 0;
     margin: 0;
     border-collapse: collapse;
+    vertical-align: middle;
 }
 
 
