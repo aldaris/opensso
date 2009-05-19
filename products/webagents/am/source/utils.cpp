@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: utils.cpp,v 1.14 2009-05-15 19:10:14 madan_ranganath Exp $
+ * $Id: utils.cpp,v 1.15 2009-05-19 01:18:34 madan_ranganath Exp $
  *
  */ 
 #include <stdexcept>
@@ -224,7 +224,7 @@ Utils::match_patterns(const char *patbegin, const char *matchbegin,
 		      i = match_index + 1) {
                          match_count++;
                 }
-                if ((query_count == 1) || ( match_count > 1))  {
+                if ((query_count == 1) || ( match_count > 0))  {
                     return AM_NO_MATCH;
 	        } else {
                     return AM_EXACT_PATTERN_MATCH;
