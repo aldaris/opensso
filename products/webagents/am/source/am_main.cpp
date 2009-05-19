@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_main.cpp,v 1.8 2008-08-04 19:22:11 huacui Exp $
+ * $Id: am_main.cpp,v 1.9 2009-05-19 21:25:46 dknab Exp $
  *
  */
 
@@ -64,35 +64,31 @@ END_PRIVATE_NAMESPACE
 USING_PRIVATE_NAMESPACE
 void log_version_info() {
     Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS,
-             "=======================================");
+            "=======================================");
     std::string versionStr("Version: ");
-    versionStr.append(Version::getMajorVersion());
-    PUSH_BACK_CHAR(versionStr, '.');
-    versionStr.append(Version::getMinorVersion());
-    if(Version::getPatchVersion() != NULL) {
-        versionStr.append(Version::getPatchVersion());
-    }
-    if(Version::getHPVersion() != NULL) {
+    versionStr.append(Version::getAgentVersion());
+    if(Version::getERVersion() != NULL) {
         versionStr.append(" ");
-        versionStr.append(Version::getHPVersion());
+        versionStr.append(Version::getERVersion());
     }
-    if(Version::getEscalationId() != NULL) {
-        PUSH_BACK_CHAR(versionStr, ' ');
-        versionStr.append(Version::getEscalationId());
+    if(Version::getFVBMarker() != NULL) {
+        versionStr.append(" (");
+        versionStr.append(Version::getFVBMarker());
+        versionStr.append(" )");
     }
     Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS, "%s",
-             versionStr.c_str());
+            versionStr.c_str());
 
     if(Version::getBuildDate() != NULL) {
         Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS,
-                 "Build Date: %s", Version::getBuildDate());
+            "Build Date: %s", Version::getBuildDate());
     }
     if(Version::getBuildDate() != NULL) {
         Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS,
-                 "Build Machine: %s", Version::getBuildMachine());
+            "Build Machine: %s", Version::getBuildMachine());
     }
     Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS,
-             "=======================================");
+            "=======================================");
 }
 
 /**

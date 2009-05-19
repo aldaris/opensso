@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.16 2009-02-14 00:00:36 robertis Exp $
+   $Id: build_agent.xml,v 1.17 2009-05-19 21:25:25 dknab Exp $
 
 -->
 
@@ -143,12 +143,18 @@
         </copy>
 
         <!-- Copy RELEASE_NOTES file -->
+        <available file="${webagents.basedir}/.copyReleaseNotes" property="copy.release.notes"/>
+        <antcall target="copyreleasenotes"/>
+
+    </target>
+
+    <target name="copyreleasenotes" if="copy.release.notes">
+        <!-- Copy RELEASE_NOTES file -->
         <copy todir="${container.web_agent.dir}">
             <fileset dir="${webagents.basedir}">
                 <include name="RELEASE_NOTES"/>
             </fileset>
         </copy>
-
     </target>
 
     <target name="clean">

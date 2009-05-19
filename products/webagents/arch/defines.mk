@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines.mk,v 1.9 2008-09-13 01:10:55 robertis Exp $
+# $Id: defines.mk,v 1.10 2009-05-19 21:24:57 dknab Exp $
 #
 #
 
@@ -35,15 +35,42 @@
 ifndef	DEFINES_INCLUDED
 DEFINES_INCLUDED := true
 
+###############
+# VERSION INFO
+###############
+
 AGENT_MAJOR_VER := 3
 AGENT_MINOR_VER := 0
-# When setting the patch version use the format "-0x"
+# Patch version, ex: AGENT_PATCH_VER := -01 (empty for RTM release)
 AGENT_PATCH_VER :=
-# When setting the hotpatch version use the format "Hotpatch #"
-AGENT_HP_VER := 
-# When setting an escalation number for a verification binary, use the format "(#)"
-AGENT_ESCALATION :=
 AGENT_VER := $(AGENT_MAJOR_VER).$(AGENT_MINOR_VER)$(AGENT_PATCH_VER)
+
+# Set RELEASE_TYPE to one of the following:
+#   empty: for RTM or patch release, ex: agent 3.0 or agent 3.0-01 
+#   ER: for Exception Release, ex: agent 3.0-01 ER 1
+#   FVB: for Fix Verification Binary, ex: agent 3.0-01 (Escalation 123) 
+#        (FVB is only for local workspace, should not be checked in)
+# If RELEASE_TYPE is set to ER, update AGENT_ER_VER.
+# If RELEASE_TYPE is set to FVB, update AGENT_FVB_MARKER.
+#
+RELEASE_TYPE = 
+
+# For ER set AGENT_ER_VER (ex: AGENT_ER_VER := ER 1)
+ifeq ($(RELEASE_TYPE), ER)
+AGENT_ER_VER := 
+AGENT_ER_TEXT := Exception Release: $(AGENT_ER_VER)
+ADD_README := YES
+else
+ADD_README := NO
+endif
+
+# For FVB set AGENT_FVB_MARKER (ex: AGENT_FVB_MARKER := Escalation 123)
+ifeq ($(RELEASE_TYPE), FVB)
+AGENT_FVB_MARKER := 
+AGENT_FVB_TEXT := Fix Verification Binary: $(AGENT_FVB_MARKER)
+endif
+
+###############
 
 OS_ARCH := $(shell uname -s)
 OS_ARCH_VER := $(shell uname -r)

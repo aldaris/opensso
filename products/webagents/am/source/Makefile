@@ -223,20 +223,19 @@ $(TEST_LIB): $(OBJS) $(TEST_LIB_MAP_FILE)
 version.h: version.template
 	sed -e 's%BUILD_DATE%$(BUILD_DATE)%g' \
 	    -e 's%BUILD_MACHINE%$(BUILD_MACHINE)%g' \
-	    -e 's%MAJOR_VERSION%$(AGENT_MAJOR_VER)%g' \
-	    -e 's%MINOR_VERSION%$(AGENT_MINOR_VER)%g' \
-	    -e 's%PATCH_VERSION%$(AGENT_PATCH_VER)%g' \
-	    -e 's%HP_VERSION%$(AGENT_HP_VER)%g' \
-	    -e 's%ESCALATION%$(AGENT_ESCALATION)%g' $< > $@
+	    -e 's%AGENT_VER%$(AGENT_VER)%g' \
+	    -e 's%AGENT_ER_VER%$(AGENT_ER_VER)%g' \
+	    -e 's%AGENT_FVB_MARKER%$(AGENT_FVB_MARKER)%g' $< > $@
 
 $(USERX_ROOT)/.version: $(USERX_ROOT)/version.template
 	sed -e 's%BUILD_DATE%$(BUILD_DATE)%g' \
 	    -e 's%BUILD_MACHINE%$(BUILD_MACHINE)%g' \
-	    -e 's%MAJOR_VERSION%$(AGENT_MAJOR_VER)%g' \
-	    -e 's%MINOR_VERSION%$(AGENT_MINOR_VER)%g' \
-	    -e 's%PATCH_VERSION%$(AGENT_PATCH_VER)%g' \
-	    -e 's%HP_VERSION%$(AGENT_HP_VER)%g' \
-	    -e 's%ESCALATION%$(AGENT_ESCALATION)%g' $< > $@
+	    -e 's%AGENT_VER%$(AGENT_VER)%g' \
+	    -e 's%AGENT_ER_TEXT%$(AGENT_ER_TEXT)%g' \
+	    -e 's%AGENT_FVB_TEXT%$(AGENT_FVB_TEXT)%g' $< > $@
+ifeq ($(ADD_README), YES)
+	echo "copy release notes" > $(USERX_ROOT)/.copyReleaseNotes
+endif
 
 softlink_so:
 ifeq ($(OS_ARCH), WINNT)
