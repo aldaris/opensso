@@ -21,8 +21,10 @@
   <IgnoreGeneratedCode>False</IgnoreGeneratedCode>
  </ProjectOptions>
  <Targets>
-  <Target Name="$(ProjectDir)/Fedlet/bin/Debug/Fedlet.dll" Analyze="False" AnalyzeAllChildren="False" />
-  <Target Name="$(ProjectDir)/Fedlet/bin/Release/Fedlet.dll" Analyze="True" AnalyzeAllChildren="True" />
+  <AssemblyReferenceDirectories>
+   <Directory>$(ProjectDir)/Fedlet/bin/Release/</Directory>
+  </AssemblyReferenceDirectories>
+  <Target Name="$(ProjectDir)/Fedlet/bin/Debug/Fedlet.dll" Analyze="True" AnalyzeAllChildren="True" />
  </Targets>
  <Rules>
   <RuleFiles>
@@ -51,38 +53,6 @@
           <Members>
            <Member Name="#SingleSignOnServiceLocations">
             <Messages>
-             <Message Id="SignOn" TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726" Status="Excluded" Created="2009-03-25 21:39:16Z">
-              <Issue Name="Member">
-               <Item>SignOn</Item>
-               <Item>'IdentityProvider.SingleSignOnServiceLocations'</Item>
-               <Item>SignIn</Item>
-              </Issue>
-              <Notes>
-               <User Name="ggennaro">
-                <Note Id="0" />
-               </User>
-              </Notes>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
-         </Type>
-        </Types>
-       </Namespace>
-      </Namespaces>
-     </Module>
-    </Modules>
-   </Target>
-   <Target Name="$(ProjectDir)/Fedlet/bin/Release/Fedlet.dll">
-    <Modules>
-     <Module Name="fedlet.dll">
-      <Namespaces>
-       <Namespace Name="Sun.Identity.Saml2">
-        <Types>
-         <Type Name="IdentityProvider">
-          <Members>
-           <Member Name="#SingleSignOnServiceLocations">
-            <Messages>
              <Message Id="SignOn" TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726" Status="Excluded" Created="2009-03-26 17:15:30Z">
               <Issue Name="Member">
                <Item>SignOn</Item>
@@ -99,6 +69,38 @@
            </Member>
           </Members>
          </Type>
+         <Type Name="Saml2Utils">
+          <Members>
+           <Member Name="#CompressConvertToBase64UrlEncode(System.Xml.XPath.IXPathNavigable)">
+            <Messages>
+             <Message TypeName="UriReturnValuesShouldNotBeStrings" Category="Microsoft.Design" CheckId="CA1055" Status="Excluded" Created="2009-05-06 23:16:19Z">
+              <Issue>
+               <Item>'Saml2Utils.CompressConvertToBase64UrlEncode(IXPathNavigable)'</Item>
+              </Issue>
+              <Notes>
+               <User Name="ggennaro">
+                <Note Id="3" />
+               </User>
+              </Notes>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#UrlDecodeConvertFromBase64Decompress(System.String)">
+            <Messages>
+             <Message TypeName="UriReturnValuesShouldNotBeStrings" Category="Microsoft.Design" CheckId="CA1055" Status="Excluded" Created="2009-05-06 23:16:19Z">
+              <Issue>
+               <Item>'Saml2Utils.UrlDecodeConvertFromBase64Decompress(string)'</Item>
+              </Issue>
+              <Notes>
+               <User Name="ggennaro">
+                <Note Id="2" />
+               </User>
+              </Notes>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
         </Types>
        </Namespace>
       </Namespaces>
@@ -108,11 +110,15 @@
   </Targets>
   <Notes>
    <User Name="ggennaro">
-    <Note Id="0" Modified="2009-03-26 17:10:27Z">Method maps to XSD definition which defines it as SingleSignOnService.</Note>
     <Note Id="1" Modified="2009-03-26 17:16:05Z">Method maps to XSD definition SingleSignOnService for idp metadata.</Note>
+    <Note Id="2" Modified="2009-05-06 23:16:25Z">Exclusion needed since SAML Artifacts are the exception to this rule.</Note>
+    <Note Id="3" Modified="2009-05-06 23:16:28Z">Exclusion needed since SAML Artifacts are the exception to this rule.</Note>
    </User>
   </Notes>
   <Rules>
+   <Rule TypeName="UriReturnValuesShouldNotBeStrings" Category="Microsoft.Design" CheckId="CA1055">
+    <Resolution Name="Default">Change the return type of {0} from string to System.Uri.</Resolution>
+   </Rule>
    <Rule TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726">
     <Resolution Name="Member">Replace the term '{0}' in member name {1} with the preferred alternate '{2}'.</Resolution>
    </Rule>

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: CircleOfTrust.cs,v 1.1 2009-05-01 15:19:55 ggennaro Exp $
+ * $Id: CircleOfTrust.cs,v 1.2 2009-05-19 16:01:03 ggennaro Exp $
  */
 
 using System;
@@ -39,6 +39,17 @@ namespace Sun.Identity.Saml2
     public class CircleOfTrust
     {
         #region Members
+
+        /// <summary>
+        /// Name of key of property used for the saml2 reader service url.
+        /// </summary>
+        private const string Saml2ReaderServiceKey = "sun-fm-saml2-readerservice-url";
+
+        /// <summary>
+        /// Name of key of property used for the saml2 writer service url.
+        /// </summary>
+        private const string Saml2WriterServiceKey = "sun-fm-saml2-writerservice-url";
+
         /// <summary>
         /// Name of key of property used for list of trusted providers.
         /// </summary>
@@ -90,6 +101,48 @@ namespace Sun.Identity.Saml2
         /// the fedlet.cot configuration file.
         /// </summary>
         public NameValueCollection Attributes { get; private set; }
+
+        /// <summary>
+        /// Gets the saml2 reader service url, empty string if not specified,
+        /// null attribute is not found.
+        /// </summary>
+        public Uri ReaderServiceUrl
+        {
+            get
+            {
+                string value = this.Attributes[CircleOfTrust.Saml2ReaderServiceKey];
+
+                if (!String.IsNullOrEmpty(value))
+                {
+                    return new Uri(value);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the saml2 writer service url, empty string if not specified,
+        /// null attribute is not found.
+        /// </summary>
+        public Uri WriterServiceUrl
+        {
+            get
+            {
+                string value = this.Attributes[CircleOfTrust.Saml2WriterServiceKey];
+
+                if (!String.IsNullOrEmpty(value))
+                {
+                    return new Uri(value);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
         #endregion
 
         #region Methods

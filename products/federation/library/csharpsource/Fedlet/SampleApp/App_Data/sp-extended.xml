@@ -49,7 +49,7 @@
             <Value>exact</Value>
         </Attribute>
         <Attribute name="attributeMap">
-            <Value></Value>
+            <Value>*=*</Value>
         </Attribute>
         <Attribute name="saml2AuthModuleName">
             <Value></Value>

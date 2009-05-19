@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.net,v 1.1 2009-05-01 15:19:54 ggennaro Exp $
+$Id: README.net,v 1.2 2009-05-19 16:01:04 ggennaro Exp $
 
 %% Contents:
     %% 1. Contents of this directory 
@@ -32,6 +32,8 @@ $Id: README.net,v 1.1 2009-05-01 15:19:54 ggennaro Exp $
     %% 3. How to configure and deploy the Fedlet for .NET
     %% 4. How to use the Sample Application to test your deployment
     %% 5. How to integrate with existing application after Single Sign-on
+    %% 6. How to enable support for multiple Identity Providers
+    %% 7. How to enable Identity Provider Discovery Service
 
 
 %% 1. Contents of this directory 
@@ -102,6 +104,26 @@ $Id: README.net,v 1.1 2009-05-01 15:19:54 ggennaro Exp $
    bin/ folder of your hosted application, multiple instances of the Fedlet with
    its own configuration can be co-deployed in the same Internet Information
    Server (IIS).
+
+   NOTE REGARDING MODIFICATIONS TO SAMLv2 METADATA:
+
+   Be sure to convey information regarding any changes made in the service
+   provider metadata to the identity provider so it can make the corresponding
+   changes to its own configuration. A modified sp.xml file may be sent to
+   the identity provider but any modifications made to sp-extended.xml should
+   be conveyed to the identity provider using a different method. Once the
+   identity provider receives the appropriate standard and extended metadata
+   values, it can make the changes using the OpenSSO console. Information on
+   customizing SAMLv2 providers using the OpenSSO console is available in the
+   OpenSSO Enterprise 8.0 documentation.
+
+   * SAMLv2 Service Provider Customization link:
+     http://docs.sun.com/app/docs/doc/820-3886/federation.samlv2idpassertioncontent?a=view
+   * SAMLv2 Identity Provider Customization link:
+     http://docs.sun.com/app/docs/doc/820-3886/federation.samlv2idpassertioncontent?a=view
+
+   If the identity provider is using a product other than OpenSSO Enterprise,
+   they would make the changes according to their product's documentation.
       
 %% 4. How to use the Sample Application to test your deployment
    The Sample Application could be used to test your deployment of the Fedlet
@@ -159,4 +181,102 @@ $Id: README.net,v 1.1 2009-05-01 15:19:54 ggennaro Exp $
    with the assertion information.  The sample application demonstrates how to
    retreive attributes and sujbect information from this object.
 
+%% 6. How to enable support for multiple Identity Providers
+   To configure a second Identity Provider with this Fedlet:
 
+      a) Get the standard metadata XML file for the new Identity Provider, name
+         the XML file as "idp2.xml" and copy it to the App_Data/ folder.
+      b) Decide on the circle-of-trust (COT) the new Identity Provider would
+         belong. This IDP could be added to an existing COT (e.g. "fedlet.cot")
+         or a new COT.
+          i)  To add the Identity Provider to an existing COT, edit the
+              corresponding COT file (e.g. "fedlet.cot") within the App_Data/
+              folder, and append the new IDP entity ID (specified by the
+              "entityID" attribute in the "idp2.xml" metadata file) to the
+              value of "sun-fm-trusted-providers" attribute using "," as the
+              separator.
+         ii)  To add to a new circle-of-trust:
+              - Create a new file named "fedlet2.cot" and place within the
+                App_Data/ folder. Use the existing fedlet.cot as a template,
+                but change the value of attribute "cot-name" to the actual name
+                of the new COT (e.g. "cot2"), and include both the new IDP
+                entity ID and the Fedlet entity ID as value for
+                "sun-fm-trusted-providers" attribute (two entity IDs separated
+                by ",").
+              - Edit the sp-extended.xml file, add the new COT name to the
+                value of "cotlist" attribute. For example:
+
+                <Attribute name="cotlist">
+                  <Value>saml2cot</Value>
+                  <Value>cot2</Value>
+                </Attribute>
+
+      c) Create a new "idp2-extended.xml" file as the extended metadata for the
+         new Identity Provider. Use the existing idp-extended.xml as a template
+         but change the "entityID" to the new IDP entity ID, change the value
+         for "cotlist" attribute to the COT name if a new COT is created for
+         the IDP.
+
+         Note: Make sure the second IDP is a remote IDP by setting the
+               "hosted" attribute in the EntityConfig element to "false".
+
+      d) Send the .NET Fedlet metadata XML file (i.e. "sp.xml" within the
+         App_Data/ folder) to the second IDP, import the metadata in the remote
+         IDP and add it to the same circle-of-trust as the IDP.
+
+   Repeat the same steps for the third, fourth, ... and [X]th IDP, using
+   idpX.xml/idpX-extended.xml/fedletX.cot as standard meta/extended meta/COT
+   name for the new IDP. Restart the Application Pool associated with your
+   .NET application to make the change effective.
+
+   If you have performed the above with the Sample Application, returning to the
+   default page will now provide you with a list of IDPs to perform single sign
+   on.
+
+%% 7. How to enable Identity Provider Discovery Service
+
+   When the .NET Fedlet is configured with multiple Identity Providers in a
+   COT, it could additionally be configured to use an IDP Discovery Service to
+   determine the preferred IDP.
+
+   In order to leverage this functionality, you first need to have the Identity
+   Provider Discovery Service set up and deployed before performing the steps
+   listed below.  If you installed the OpenSSO WAR, the IDP Discovery Service is
+   already bundled with the product.  Alternately, you could follow the
+   documented process in creating a separate WAR for just the IDP Discovery
+   Service.  Please refer to the OpenSSO documentation on how to set up and use
+   the IDP Discovery Service.  After configuring this service, take note of the
+   reader service URL (URL to find out the preferred IDP) and the writer service
+   URL (URL to write the preferred IDP), they are needed in the steps below. If
+   you are using OpenSSO, the reader service URL is typically:
+
+     <protocol>://<host>:<port>/deploy_uri/saml2reader
+     (for example: http://discovery.common.com/opensso/saml2reader)
+
+   Likewise, the writer service URL is typically:
+
+     <protocol>://<host>:<port>/deploy_uri/saml2writer
+     (for example: http://discovery.common.com/opensso/saml2writer)
+
+   To configure the .NET Fedlet to support IDP discovery:
+
+      a) Edit the COT file (e.g. "fedlet.cot"), and set the value for attribute
+         "sun-fm-saml2-readerservice-url" to the SAML2 reader service URL
+         (e.g. http://discovery.common.com/opensso/saml2reader), set the value
+         for attribute "sun-fm-saml2-writerservice-url" to the SAML2 writer
+         service URL (e.g. http://discovery.common.com/opensso/saml2writer).
+      b) Restart the Application Pool associated with your .NET application to
+         make the change effective.
+      c) Setup IDP discovery on each of your remote IDPs. If the IDP is an
+         OpenSSO server instance, you need go to the administration console,
+         find the COT for the IDP and .NET Fedlet, and specify the SAML2 reader
+         service URL and SAML2 writer service URL, and Save.
+      d) If you have performed the above with the Sample Application and have
+         configured it with multiple Identity Providers, returning to the
+         default page will now provide you a link to "use the IDP Discovery
+         Service".  Since no preferred IDP has been established, first proceed
+         with one of the available single sign-on services. Once authenticated,
+         navigate back to the homepage and then click the link to "use the IDP
+         Discovery Service".  You will be redirected to the discovery service to
+         determine the preferred IDP and then back to the Sample Application
+         with the preferred IDP designated in the list of IDPs.

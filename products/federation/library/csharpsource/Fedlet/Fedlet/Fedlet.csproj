@@ -67,6 +67,7 @@
     <Compile Include="source\Saml2\Exceptions\ServiceProviderUtilityException.cs" />
     <Compile Include="source\Saml2\IdentityProvider.cs" />
     <Compile Include="source\Saml2\Saml2Constants.cs" />
+    <Compile Include="source\Saml2\Saml2Utils.cs" />
     <Compile Include="source\Saml2\ServiceProvider.cs" />
     <Compile Include="source\Saml2\ServiceProviderUtility.cs" />
   </ItemGroup>

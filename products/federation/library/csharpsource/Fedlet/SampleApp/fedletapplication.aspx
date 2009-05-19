@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: fedletapplication.aspx,v 1.1 2009-05-01 15:19:58 ggennaro Exp $
+ * $Id: fedletapplication.aspx,v 1.2 2009-05-19 16:01:05 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" MasterPageFile="~/site.master" %>
@@ -147,6 +147,9 @@
         </table>
     <% } %>
 
+    <p>
+    Return to the <a href="default.aspx">homepage</a> to try other examples available in this sample application.
+    </p>
 
 
 </asp:Content>

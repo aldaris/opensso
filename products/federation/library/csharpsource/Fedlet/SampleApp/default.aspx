@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: default.aspx,v 1.1 2009-05-01 15:19:57 ggennaro Exp $
+ * $Id: default.aspx,v 1.2 2009-05-19 16:01:05 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" MasterPageFile="~/site.master"%>
@@ -72,6 +72,9 @@
     <%
         string idpLinks = "";
         string errorMessage = null;
+        bool hasMultipleIdps = false;
+        string preferredIdpEntityId = null;
+        
         try
         {
             ServiceProviderUtility serviceProviderUtility;
@@ -82,8 +85,10 @@
                 serviceProviderUtility = new ServiceProviderUtility(Context);
                 Cache["spu"] = serviceProviderUtility;
             }
-            
+
             ServiceProvider sp = serviceProviderUtility.ServiceProvider;
+            hasMultipleIdps = (serviceProviderUtility.IdentityProviders.Count > 1);
+            preferredIdpEntityId = Saml2Utils.GetPreferredIdentityProvider(Request);
 
             Hashtable identityProviders = serviceProviderUtility.IdentityProviders;
             foreach (string key in identityProviders.Keys)
@@ -112,12 +117,15 @@
 
                 if (ssoMetaAlias == null)
                 {
-                    throw new ServiceProviderUtilityException("Unable to provide the links for IDP initiated SSO with an OpenSSO deployment.");
+                    throw new ServiceProviderUtilityException("IDP initiated SSO is currently only supported with an OpenSSO deployment.");
                 }
                 
                 string idpAuthUrl = string.Format("{0}/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias={1}&spEntityID={2}&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
                                                   ssoDeployment, ssoMetaAlias, sp.EntityId);
-                idpLinks += string.Format("<li><a href=\"{0}\">IDP initiated SSO with {1}</a></li>\n", Server.HtmlEncode(idpAuthUrl), Server.HtmlEncode(idp.EntityId));
+                idpLinks += string.Format("<li><a href=\"{0}\">IDP initiated SSO with {1}</a>{2}</li>\n", 
+                                          Server.HtmlEncode(idpAuthUrl), 
+                                          Server.HtmlEncode(idp.EntityId),
+                                          (preferredIdpEntityId == idp.EntityId ? " (preferred)" : string.Empty) );
             }
         }
         catch (ServiceProviderUtilityException spue)
@@ -137,6 +145,14 @@
         <ul>
         <%=idpLinks%>
         </ul>
+        <%if( hasMultipleIdps ) { %>
+            <p>
+            Since you have multiple identity providers specified, you can optionally
+            <a href="discoveridp.aspx">use the IDP Discovery Service</a> to determine 
+            your preferred IDP if you have specified the reader service within your 
+            circle-of-trust file.
+            </p>
+        <%} %>
 
         <p>
         The above demonstrates how a .NET developer could issue a redirect

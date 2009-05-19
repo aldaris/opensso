@@ -4,6 +4,7 @@
       <AnalyzerSettings>
         <CollectionProperty Name="Hungarian">
           <Value>ns</Value>
+          <Value>sp</Value>
         </CollectionProperty>
       </AnalyzerSettings>
     </Analyzer>

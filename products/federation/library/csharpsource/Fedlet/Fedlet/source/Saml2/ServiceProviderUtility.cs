@@ -22,21 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProviderUtility.cs,v 1.2 2009-05-06 22:16:59 ggennaro Exp $
+ * $Id: ServiceProviderUtility.cs,v 1.3 2009-05-19 16:01:02 ggennaro Exp $
  */
 
 using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.SessionState;
 using System.Xml;
 using Sun.Identity.Properties;
 using Sun.Identity.Saml2.Exceptions;
-using System.Text.RegularExpressions;
 
 namespace Sun.Identity.Saml2
 {
@@ -47,8 +47,37 @@ namespace Sun.Identity.Saml2
     public class ServiceProviderUtility
     {
         #region Members
+        
+        /// <summary>
+        /// Home folder containing configuration and metadata.
+        /// </summary>
         private string homeFolder;
-        private Hashtable circleOfTrusts;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the ServiceProviderUtility class
+        /// using the App_Data folder for the application as the default home
+        /// folder for configuration and metadata.
+        /// </summary>
+        /// <param name="context">HttpContext used for reading application data.</param>
+        public ServiceProviderUtility(HttpContext context)
+        {
+            this.Initialize(context.Server.MapPath(@"App_Data"));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ServiceProviderUtility class
+        /// using the given home folder for configuration and metadata.
+        /// </summary>
+        /// <param name="homeFolder">Home folder containing configuration and metadata.</param>
+        public ServiceProviderUtility(string homeFolder)
+        {
+            this.Initialize(homeFolder);
+        }
+        
         #endregion
 
         #region Properties
@@ -63,123 +92,16 @@ namespace Sun.Identity.Saml2
         /// entity ID.
         /// </summary>
         public Hashtable IdentityProviders { get; private set; }
-        #endregion
-
-        #region Constructors
 
         /// <summary>
-        /// Constructor using the App_Data folder for the application as the 
-        /// default home folder for configuration and metadata.
+        /// Gets the collection of circle-of-trusts configured for the
+        /// hosted application where the key is the circle-of-trust's
+        /// "cot-name".
         /// </summary>
-        /// <param name="context"></param>
-        public ServiceProviderUtility(HttpContext context)
-        {
-            this.Initialize(context.Server.MapPath(@"App_Data"));
-        }
-
-        /// <summary>
-        /// Constructor using the given home folder for configuration and
-        /// metadata.
-        /// </summary>
-        /// <param name="homeFolder"></param>
-        public ServiceProviderUtility(string homeFolder)
-        {
-            this.Initialize(homeFolder);
-        }
-        
+        public Hashtable CircleOfTrusts { get; private set; }
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Internal method to load configuration information and metadata
-        /// for the hosted service provider and associated identity providers.
-        /// </summary>
-        /// <param name="homeFolder"></param>
-        private void Initialize(string homeFolder) {
-
-            DirectoryInfo dirInfo = new DirectoryInfo(homeFolder);
-            if (!dirInfo.Exists)
-                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityHomeFolderNotFound);
-
-            this.homeFolder = homeFolder;
-
-            // Load the metadata for this service provider.
-            this.ServiceProvider = new ServiceProvider(this.homeFolder);
-
-            // Load the configuration for one or more circle of trusts.
-            this.circleOfTrusts = new Hashtable();
-            this.InitializeCircleOfTrusts();
-
-            // Load metadata for one or more identity providers.
-            this.IdentityProviders = new Hashtable();
-            this.InitializeIdentityProviders();
-        }
-
-        /// <summary>
-        /// Internal method to load all configuration information for all
-        /// circle of trusts found in the home folder.
-        /// </summary>
-        private void InitializeCircleOfTrusts()
-        {
-            DirectoryInfo dirInfo = new DirectoryInfo(this.homeFolder);
-            FileInfo[] files = dirInfo.GetFiles("fedlet*.cot");
-
-            foreach (FileInfo file in files)
-            {
-                CircleOfTrust cot = new CircleOfTrust(file.FullName);
-                string key = cot.Attributes["cot-name"];
-                this.circleOfTrusts.Add(key, cot);
-            }
-
-            if (this.circleOfTrusts.Count <= 0)
-                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtiltyCircleOfTrustsNotFound);
-        }
-
-        /// <summary>
-        /// Internal method to load all configuration information for all
-        /// identity providers' metadata founds in the home folder.
-        /// </summary>
-        private void InitializeIdentityProviders()
-        {
-            int index = 0;
-            bool done = false;
-            string metadataFilePattern = "idp{0}.xml";
-            string extendedFilePattern = "idp{0}-extended.xml";
-
-            while (!done)
-            {
-                string metadataFileName;
-                string extendedFileName;
-
-                if (index == 0)
-                {
-                    metadataFileName = string.Format(CultureInfo.InvariantCulture, metadataFilePattern, string.Empty);
-                    extendedFileName = string.Format(CultureInfo.InvariantCulture, extendedFilePattern, string.Empty);
-                }
-                else
-                {
-                    metadataFileName = string.Format(CultureInfo.InvariantCulture, metadataFilePattern, index);
-                    extendedFileName = string.Format(CultureInfo.InvariantCulture, extendedFilePattern, index);
-                }
-
-                FileInfo metadataFile = new FileInfo(this.homeFolder + @"/" + metadataFileName);
-                FileInfo extendedFile = new FileInfo(this.homeFolder + @"/" + extendedFileName);
-
-                if (metadataFile.Exists && extendedFile.Exists)
-                {
-                    IdentityProvider identityProvider = new IdentityProvider(metadataFile.FullName, extendedFile.FullName);
-                    this.IdentityProviders.Add(identityProvider.EntityId, identityProvider);
-                    index++;
-                }
-                else
-                {
-                    done = true;
-                }
-            }
-
-            if (this.IdentityProviders.Count <= 0)
-                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdentityProvidersNotFound);
-        }
 
         /// <summary>
         /// Retrieve the AuthnResponse object found encoded within the HttpRequest form.
@@ -214,34 +136,20 @@ namespace Sun.Identity.Saml2
         {
             AuthnResponse authnResponse = new AuthnResponse(samlResponse);
 
-            CheckIssuer(authnResponse);
-            CheckStatusCode(authnResponse);
-            CheckSignature(authnResponse);
-            CheckConditionWithTime(authnResponse);
-            CheckConditionWithAudience(authnResponse);
-            CheckCircleOfTrust(authnResponse);
+            this.CheckIssuer(authnResponse);
+            ServiceProviderUtility.CheckStatusCode(authnResponse);
+            this.CheckSignature(authnResponse);
+            ServiceProviderUtility.CheckConditionWithTime(authnResponse);
+            this.CheckConditionWithAudience(authnResponse);
+            this.CheckCircleOfTrust(authnResponse);
 
             return authnResponse;
         }
 
-        private void CheckIssuer(AuthnResponse authnResponse)
-        {
-            if (!this.IdentityProviders.ContainsKey(authnResponse.Issuer))
-                throw new Saml2Exception(Resources.AuthnResponseInvalidIssuer);
-        }
-
-        private static void CheckStatusCode(AuthnResponse authnResponse)
-        {
-            if (authnResponse.StatusCode != Saml2Constants.Success)
-                throw new Saml2Exception(Resources.AuthnResponseInvalidStatusCode);
-        }
-
-        private void CheckConditionWithAudience(AuthnResponse authnResponse)
-        {
-            if (!authnResponse.ConditionAudiences.Contains(this.ServiceProvider.EntityId))
-                throw new Saml2Exception(Resources.AuthnResponseInvalidConditionAudience);
-        }
-
+        /// <summary>
+        /// Checks the time condition of the given AuthnResponse.
+        /// </summary>
+        /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
         private static void CheckConditionWithTime(AuthnResponse authnResponse)
         {
             DateTime utcNow = DateTime.UtcNow;
@@ -249,9 +157,147 @@ namespace Sun.Identity.Saml2
             DateTime utcOnOrAfter = TimeZoneInfo.ConvertTimeToUtc(authnResponse.ConditionNotOnOrAfter);
 
             if (utcNow < utcBefore || utcNow >= utcOnOrAfter)
+            {
                 throw new Saml2Exception(Resources.AuthnResponseInvalidConditionTime);
+            }
         }
 
+        /// <summary>
+        /// Checks the status code of the given AuthnResponse.
+        /// </summary>
+        /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
+        private static void CheckStatusCode(AuthnResponse authnResponse)
+        {
+            if (authnResponse.StatusCode != Saml2Constants.Success)
+            {
+                throw new Saml2Exception(Resources.AuthnResponseInvalidStatusCode);
+            }
+        }
+
+        /// <summary>
+        /// Internal method to load configuration information and metadata
+        /// for the hosted service provider and associated identity providers.
+        /// </summary>
+        /// <param name="homeFolder">Home folder containing configuration and metadata.</param>
+        private void Initialize(string homeFolder)
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(homeFolder);
+            if (!dirInfo.Exists)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityHomeFolderNotFound);
+            }
+
+            this.homeFolder = homeFolder;
+
+            // Load the metadata for this service provider.
+            this.ServiceProvider = new ServiceProvider(this.homeFolder);
+
+            // Load the configuration for one or more circle of trusts.
+            this.CircleOfTrusts = new Hashtable();
+            this.InitializeCircleOfTrusts();
+
+            // Load metadata for one or more identity providers.
+            this.IdentityProviders = new Hashtable();
+            this.InitializeIdentityProviders();
+        }
+
+        /// <summary>
+        /// Internal method to load all configuration information for all
+        /// circle of trusts found in the home folder.
+        /// </summary>
+        private void InitializeCircleOfTrusts()
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(this.homeFolder);
+            FileInfo[] files = dirInfo.GetFiles("fedlet*.cot");
+
+            foreach (FileInfo file in files)
+            {
+                CircleOfTrust cot = new CircleOfTrust(file.FullName);
+                string key = cot.Attributes["cot-name"];
+                this.CircleOfTrusts.Add(key, cot);
+            }
+
+            if (this.CircleOfTrusts.Count <= 0)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtiltyCircleOfTrustsNotFound);
+            }
+        }
+
+        /// <summary>
+        /// Internal method to load all configuration information for all
+        /// identity providers' metadata founds in the home folder.
+        /// </summary>
+        private void InitializeIdentityProviders()
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(this.homeFolder);
+            FileInfo[] files = dirInfo.GetFiles("idp*.xml");
+
+            string metadataFilePattern = "idp(.*).xml";         // for regex.match
+            string extendedFilePattern = "idp{0}-extended.xml"; // for string.format
+            string fileIndex = null;
+
+            foreach (FileInfo metadataFile in files)
+            {
+                Match m = Regex.Match(metadataFile.Name, metadataFilePattern);
+                
+                // determine index
+                if (m.Success)
+                {
+                    fileIndex = m.Groups[1].Value;
+                }
+
+                string extendedFileName;
+                if (fileIndex == null)
+                {
+                    extendedFileName = string.Format(CultureInfo.InvariantCulture, extendedFilePattern, string.Empty);
+                }
+                else
+                {
+                    extendedFileName = string.Format(CultureInfo.InvariantCulture, extendedFilePattern, fileIndex);
+                }
+
+                FileInfo extendedFile = new FileInfo(this.homeFolder + @"/" + extendedFileName);
+                if (metadataFile.Exists && extendedFile.Exists)
+                {
+                    IdentityProvider identityProvider = new IdentityProvider(metadataFile.FullName, extendedFile.FullName);
+                    this.IdentityProviders.Add(identityProvider.EntityId, identityProvider);
+                }
+            }
+
+            if (this.IdentityProviders.Count <= 0)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdentityProvidersNotFound);
+            }
+        }
+
+        /// <summary>
+        /// Checks the issuer of the given AuthnResponse.
+        /// </summary>
+        /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
+        private void CheckIssuer(AuthnResponse authnResponse)
+        {
+            if (!this.IdentityProviders.ContainsKey(authnResponse.Issuer))
+            {
+                throw new Saml2Exception(Resources.AuthnResponseInvalidIssuer);
+            }
+        }
+
+        /// <summary>
+        /// Checks the audience condition of the given AuthnResponse.
+        /// </summary>
+        /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
+        private void CheckConditionWithAudience(AuthnResponse authnResponse)
+        {
+            if (!authnResponse.ConditionAudiences.Contains(this.ServiceProvider.EntityId))
+            {
+                throw new Saml2Exception(Resources.AuthnResponseInvalidConditionAudience);
+            }
+        }
+
+        /// <summary>
+        /// Checks the signature of the given AuthnResponse.
+        /// </summary>
+        /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
         private void CheckSignature(AuthnResponse authnResponse)
         {
             IdentityProvider identityProvider = (IdentityProvider)this.IdentityProviders[authnResponse.Issuer];
@@ -261,7 +307,9 @@ namespace Sun.Identity.Saml2
             if (authCert != null)
             {
                 if (authCert != idpCert)
+                {
                     throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureCertsDontMatch);
+                }
             }
 
             SignedXml signedXml = new SignedXml((XmlDocument)authnResponse.XmlDom);
@@ -269,25 +317,34 @@ namespace Sun.Identity.Saml2
             signedXml.LoadXml(authSignatureElement);
             bool results = signedXml.CheckSignature(identityProvider.SigningCertificate, true);
 
-            if( results == false )
+            if (results == false)
+            {
                 throw new Saml2Exception(Resources.AuthnResponseInvalidSignature);
+            }
         }
 
+        /// <summary>
+        /// Checks to confirm the issuer and hosted service provider are in
+        /// the same circle of trust for the the given AuthnResponse.
+        /// </summary>
+        /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
         private void CheckCircleOfTrust(AuthnResponse authnResponse)
         {
             string spEntityId = this.ServiceProvider.EntityId;
             string authIdpEntityId = authnResponse.Issuer;
 
-            foreach (string cotName in this.circleOfTrusts.Keys)
+            foreach (string cotName in this.CircleOfTrusts.Keys)
             {
-                CircleOfTrust cot = (CircleOfTrust) this.circleOfTrusts[cotName];
+                CircleOfTrust cot = (CircleOfTrust) this.CircleOfTrusts[cotName];
                 if (cot.AreProvidersTrusted(spEntityId, authIdpEntityId))
+                {
                     return;
+                }
             }
+
             throw new Saml2Exception(Resources.AuthnResponseNotInCircleOfTrust);
         }
 
         #endregion
-
     }
 }

@@ -7,6 +7,7 @@
             <Word>Fedlet</Word>
             <Word>Authn</Word>
             <Word>saml</Word>
+            <Word>Utils</Word>
         </Recognized>
         <Deprecated>
             <Term PreferredAlternate="EnterpriseServices">ComPlus</Term>
