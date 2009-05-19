@@ -295,19 +295,6 @@ div.button img.left {
     position: relative;
 }
 
-
-/*
-.inline-input,
-.inline-input *,
-.inline-input * > * {
-    padding: 0;
-    margin: 0;
-    border-collapse: collapse;
-    vertical-align: middle;
-}
-*/
-
-
 .inline-input td {
     border-collapse: collapse;
     padding-right: 5px;
