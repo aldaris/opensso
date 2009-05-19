@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.19 2009-05-13 08:59:24 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.20 2009-05-19 00:15:22 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -262,6 +262,16 @@ public class PrivilegeManagerTest {
         Set<PrivilegeSearchFilter> psf = new HashSet<PrivilegeSearchFilter>();
         psf.add(new PrivilegeSearchFilter(Privilege.NAME_ATTRIBUTE, "*"));
         Set privilegeNames = prm.searchPrivilegeNames(psf);
+        if (!privilegeNames.contains(PRIVILEGE_NAME)) {
+              throw new Exception(
+                "PrivilegeManagerTest.testListPrivilegeNames():"
+                + "got privilege names does not contain saved privilege");
+        }
+
+        psf = new HashSet<PrivilegeSearchFilter>();
+        psf.add(new PrivilegeSearchFilter(Privilege.DESCRIPTION_ATTRIBUTE,
+            PRIVILEGE_DESC));
+        privilegeNames = prm.searchPrivilegeNames(psf);
         if (!privilegeNames.contains(PRIVILEGE_NAME)) {
               throw new Exception(
                 "PrivilegeManagerTest.testListPrivilegeNames():"

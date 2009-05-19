@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.1 2009-05-09 01:08:46 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.2 2009-05-19 00:15:22 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -198,7 +198,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     ) throws EntitlementException {
         StringBuffer strFilter = new StringBuffer();
         if (filters.isEmpty()) {
-            strFilter.append("(ou=*");
+            strFilter.append("(ou=*)");
         } else {
             if (filters.size() == 1) {
                 strFilter.append(filters.iterator().next().getFilter());

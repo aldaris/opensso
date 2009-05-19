@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.20 2009-05-12 19:58:40 veiming Exp $
+ * $Id: Privilege.java,v 1.21 2009-05-19 00:15:21 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.interfaces.ResourceName;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +67,10 @@ public abstract class Privilege implements Serializable {
      */
     public static final String NAME_ATTRIBUTE = "ou";
 
+    /**
+     * Privilege description search attribute name,
+     */
+    public static final String DESCRIPTION_ATTRIBUTE = "description";
 
     private String name;
     private String policyName;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.12 2009-05-09 01:08:46 veiming Exp $
+ * $Id: DataStore.java,v 1.13 2009-05-19 00:15:22 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -276,6 +276,16 @@ public class DataStore {
             setObjectClass.add(SMSEntry.OC_SERVICE_COMP);
 
             Set<String> info = new HashSet<String>(8);
+
+            String privilegeName = p.getName();
+            if (privilegeName != null) {
+                info.add(Privilege.NAME_ATTRIBUTE + "=" + privilegeName);
+            }
+
+            String privilegeDesc = p.getDescription();
+            if (privilegeDesc != null) {
+                info.add(Privilege.DESCRIPTION_ATTRIBUTE + "=" + privilegeDesc);
+            }
 
             String createdBy = p.getCreatedBy();
             if (createdBy != null) {
