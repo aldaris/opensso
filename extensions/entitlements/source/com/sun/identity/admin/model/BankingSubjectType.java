@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.dao.SubjectDao;
 import com.sun.identity.entitlement.BankingSubject;
 import com.sun.identity.entitlement.BankingSubject.Banker;
 import com.sun.identity.entitlement.EntitlementSubject;
@@ -30,6 +31,9 @@ public class BankingSubjectType
 
         BankingViewSubject bvs = (BankingViewSubject)newViewSubject();
         bvs.setName(bs.getID());
+
+        SubjectDao sd = stf.getSubjectDao(bvs);
+        sd.decorate(bvs);
 
         return bvs;
     }

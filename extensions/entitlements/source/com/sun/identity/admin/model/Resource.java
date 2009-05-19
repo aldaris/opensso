@@ -35,7 +35,7 @@ public abstract class Resource implements Serializable, DeepCloneable {
 
     @Override
     public String toString() {
-        return getName();
+        return getTitle();
     }
 
     @Override

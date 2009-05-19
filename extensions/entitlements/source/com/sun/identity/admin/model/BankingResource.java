@@ -23,6 +23,14 @@ public class BankingResource extends Resource implements Serializable {
         return owner;
     }
 
+    @Override
+    public String toString() {
+        if (owner != null) {
+            return getTitle() + " (" + owner.getTitle() + ")";
+        }
+        return super.toString();
+    }
+
     public void setOwner(ViewSubject owner) {
         this.owner = owner;
     }

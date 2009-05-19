@@ -58,9 +58,9 @@ body {
 .section-outer .box b b.L3 {
     background-color: #eee;
 }
+
 .section-inner {
     padding: 10px;
-    width: 100%;
 }
 
 .section-head {
@@ -295,15 +295,28 @@ div.button img.left {
     position: relative;
 }
 
+
+/*
+.inline-input,
+.inline-input *,
 .inline-input * > * {
     padding: 0;
     margin: 0;
     border-collapse: collapse;
     vertical-align: middle;
 }
+*/
 
-.inline-input * > td {
+
+.inline-input td {
     padding-right: 5px;
+}
+
+.inline-input,
+.inline-input * {
+    padding: 0;
+    margin: 0;
+    border-collapse: collapse;
 }
 
 
@@ -674,7 +687,6 @@ div.button img.left {
 
 .policy-manage {
     width: 100%;
-	table-layout: fixed;
 }
 
 .policy-manageCol1,
@@ -694,7 +706,8 @@ div.button img.left {
 .policy-manageCol15 {
     white-space: nowrap;
     overflow: hidden;
-	text-overflow: ellipsis;
+    max-width: 200px;
+    min-width: 40px;
 }
 
 .tooltip .icon {
@@ -803,7 +816,6 @@ div.button img.left {
 
 .box .content { 
     padding: 0px;
-    width: 100%;
 }
 
 .feed-title {
