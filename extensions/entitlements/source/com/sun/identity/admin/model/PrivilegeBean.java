@@ -1,7 +1,5 @@
 package com.sun.identity.admin.model;
 
-import com.icesoft.faces.context.effects.Effect;
-import com.sun.identity.admin.handler.StaticAttributesHandler;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementException;
@@ -17,84 +15,12 @@ import java.util.Set;
 
 public class PrivilegeBean implements Serializable {
 
-    public Effect getNameCellEffect() {
-        return nameCellEffect;
-    }
-
-    public void setNameCellEffect(Effect nameCellEffect) {
-        this.nameCellEffect = nameCellEffect;
-    }
-
-    public Effect getResourcesCellEffect() {
-        return resourcesCellEffect;
-    }
-
-    public void setResourcesCellEffect(Effect resourcesCellEffect) {
-        this.resourcesCellEffect = resourcesCellEffect;
-    }
-
-    public Effect getSubjectCellEffect() {
-        return subjectCellEffect;
-    }
-
-    public void setSubjectCellEffect(Effect subjectCellEffect) {
-        this.subjectCellEffect = subjectCellEffect;
-    }
-
-    public Effect getConditionCellEffect() {
-        return conditionCellEffect;
-    }
-
-    public void setConditionCellEffect(Effect conditionCellEffect) {
-        this.conditionCellEffect = conditionCellEffect;
-    }
-
-    public Effect getRemoveCellEffect() {
-        return removeCellEffect;
-    }
-
-    public void setRemoveCellEffect(Effect removeCellEffect) {
-        this.removeCellEffect = removeCellEffect;
-    }
-
-    public Effect getActionCellEffect() {
-        return actionCellEffect;
-    }
-
-    public void setActionCellEffect(Effect actionCellEffect) {
-        this.actionCellEffect = actionCellEffect;
-    }
-
-    public Effect getExceptionsCellEffect() {
-        return exceptionsCellEffect;
-    }
-
-    public void setExceptionsCellEffect(Effect exceptionsCellEffect) {
-        this.exceptionsCellEffect = exceptionsCellEffect;
-    }
-
     public Date getBirth() {
         return birth;
     }
 
     public void setBirth(Date birth) {
         this.birth = birth;
-    }
-
-    public Effect getBirthCellEffect() {
-        return birthCellEffect;
-    }
-
-    public void setBirthCellEffect(Effect birthCellEffect) {
-        this.birthCellEffect = birthCellEffect;
-    }
-
-    public Effect getAuthorCellEffect() {
-        return authorCellEffect;
-    }
-
-    public void setAuthorCellEffect(Effect authorCellEffect) {
-        this.authorCellEffect = authorCellEffect;
     }
 
     public String getAuthor() {
@@ -119,46 +45,6 @@ public class PrivilegeBean implements Serializable {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
-    }
-
-    public Effect getModifierCellEffect() {
-        return modifierCellEffect;
-    }
-
-    public void setModifierCellEffect(Effect modifierCellEffect) {
-        this.modifierCellEffect = modifierCellEffect;
-    }
-
-    public Effect getModifiedCellEffect() {
-        return modifiedCellEffect;
-    }
-
-    public void setModifiedCellEffect(Effect modifiedCellEffect) {
-        this.modifiedCellEffect = modifiedCellEffect;
-    }
-
-    public Effect getExportCellEffect() {
-        return exportCellEffect;
-    }
-
-    public void setExportCellEffect(Effect exportCellEffect) {
-        this.exportCellEffect = exportCellEffect;
-    }
-
-    public Effect getDescriptionCellEffect() {
-        return descriptionCellEffect;
-    }
-
-    public void setDescriptionCellEffect(Effect descriptionCellEffect) {
-        this.descriptionCellEffect = descriptionCellEffect;
-    }
-
-    public Effect getApplicationCellEffect() {
-        return applicationCellEffect;
-    }
-
-    public void setApplicationCellEffect(Effect applicationCellEffect) {
-        this.applicationCellEffect = applicationCellEffect;
     }
 
     public AttributesBean getStaticAttributesBean() {
@@ -322,20 +208,6 @@ public class PrivilegeBean implements Serializable {
     private Date modified;
     private String author;
     private String modifier;
-    private Effect nameCellEffect = null;
-    private Effect descriptionCellEffect = null;
-    private Effect resourcesCellEffect = null;
-    private Effect subjectCellEffect = null;
-    private Effect conditionCellEffect = null;
-    private Effect removeCellEffect = null;
-    private Effect actionCellEffect = null;
-    private Effect exceptionsCellEffect = null;
-    private Effect birthCellEffect = null;
-    private Effect modifierCellEffect = null;
-    private Effect modifiedCellEffect = null;
-    private Effect authorCellEffect = null;
-    private Effect exportCellEffect = null;
-    private Effect applicationCellEffect = null;
 
     public PrivilegeBean() {
         // empty

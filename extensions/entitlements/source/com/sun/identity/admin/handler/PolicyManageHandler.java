@@ -1,7 +1,5 @@
 package com.sun.identity.admin.handler;
 
-import com.icesoft.faces.context.effects.Effect;
-import com.icesoft.faces.context.effects.Fade;
 import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.PolicyFilterHolder;
@@ -103,73 +101,6 @@ public class PolicyManageHandler implements Serializable {
     public void removeListener(ActionEvent event) {
         PrivilegeBean pb = getPrivilegeBean(event);
         assert (pb != null);
-
-        Effect e;
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setNameCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setDescriptionCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setResourcesCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setExceptionsCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setSubjectCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setConditionCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setActionCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setBirthCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setAuthorCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setModifiedCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setModifierCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setExportCellEffect(e);
-
-        e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        pb.setRemoveCellEffect(e);
 
         addRemoveAction(pb);
     }

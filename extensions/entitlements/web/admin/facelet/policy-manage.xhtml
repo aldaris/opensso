@@ -93,7 +93,6 @@
                                     </f:facet>
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
-                                        effect="#{privilegeBean.nameCellEffect}"
                                         visible="#{true}">
                                         <ice:commandLink
                                             styleClass="command-link"
@@ -120,7 +119,6 @@
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
                                         panelTooltip="descriptionTooltip"
-                                        effect="#{privilegeBean.descriptionCellEffect}"
                                         visible="#{true}">
                                         <ice:outputText
                                             value="#{privilegeBean.description}"/>
@@ -146,8 +144,7 @@
                                     </f:facet>
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
-                                        visible="#{true}"
-                                        effect="#{privilegeBean.applicationCellEffect}">
+                                        visible="#{true}">
                                         <ice:outputText
                                             value="#{privilegeBean.viewEntitlement.viewApplication.title}"/>
                                     </ice:panelGroup>
@@ -164,8 +161,7 @@
                                     </f:facet>
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
-                                        visible="#{true}"
-                                        effect="#{privilegeBean.modifierCellEffect}">
+                                        visible="#{true}">
                                         <ice:outputText
                                             value="#{privilegeBean.modifier}"/>
                                     </ice:panelGroup>
@@ -182,8 +178,7 @@
                                     </f:facet>
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
-                                        visible="#{true}"
-                                        effect="#{privilegeBean.authorCellEffect}">
+                                        visible="#{true}">
                                         <ice:outputText
                                             value="#{privilegeBean.author}"/>
                                     </ice:panelGroup>
@@ -200,8 +195,7 @@
                                     </f:facet>
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
-                                        visible="#{true}"
-                                        effect="#{privilegeBean.modifiedCellEffect}">
+                                        visible="#{true}">
                                         <ice:outputText
                                             value="#{privilegeBean.modified}">
                                             <f:convertDateTime
@@ -223,8 +217,7 @@
                                     </f:facet>
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
-                                        visible="#{true}"
-                                        effect="#{privilegeBean.birthCellEffect}">
+                                        visible="#{true}">
                                         <ice:outputText
                                             value="#{privilegeBean.birth}">
                                             <f:convertDateTime
@@ -243,7 +236,6 @@
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
                                         visible="#{true}"
-                                        effect="#{privilegeBean.resourcesCellEffect}"
                                         panelTooltip="resourcesTooltip">
                                         <ice:outputText
                                             value="#{privilegeBean.viewEntitlement.resourcesToString}"/>
@@ -268,7 +260,6 @@
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
                                         visible="#{true}"
-                                        effect="#{privilegeBean.exceptionsCellEffect}"
                                         panelTooltip="exceptionsTooltip">
                                         <ice:outputText
                                             value="#{privilegeBean.viewEntitlement.exceptionsToString}"/>
@@ -293,7 +284,6 @@
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
                                         visible="#{true}"
-                                        effect="#{privilegeBean.subjectCellEffect}"
                                         panelTooltip="subjectTooltip">
                                         <ice:outputText
                                             value="#{privilegeBean.viewSubject.toString}"/>
@@ -318,7 +308,6 @@
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
                                         visible="#{true}"
-                                        effect="#{privilegeBean.actionCellEffect}"
                                         panelTooltip="actionTooltip">
                                         <ice:outputText
                                             value="#{privilegeBean.viewEntitlement.booleanActionsBean.actionsToString}"/>
@@ -343,7 +332,6 @@
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
                                         visible="#{true}"
-                                        effect="#{privilegeBean.conditionCellEffect}"
                                         panelTooltip="conditionTooltip">
                                         <ice:outputText
                                             value="#{privilegeBean.viewCondition.toString}"/>
@@ -360,6 +348,30 @@
                                     </o:tooltip>
                                 </ice:column>
                                 <ice:column
+                                    rendered="#{policyManageBean.policyManageTableBean.staticAttributesColumnVisible}">
+                                    <f:facet name="header">
+                                        <ice:outputText
+                                            value="Resource Attributes"/>
+                                    </f:facet>
+                                    <ice:panelGroup
+                                        styleClass="policy-manage-cell"
+                                        visible="#{true}"
+                                        panelTooltip="staticAttributesTooltip">
+                                        <ice:outputText
+                                            value="#{privilegeBean.staticAttributesBean.toString}"/>
+                                    </ice:panelGroup>
+                                    <o:tooltip
+                                        tooltipId="staticAttributesTooltip"
+                                        title="#{privilegeBean.name}: resource attributes (#{o:size(privilegeBean.staticAttributesBean.viewAttributes)})">
+                                        <ui:define name="body">
+                                            <pre>
+                                        <ice:outputText
+                                            value="#{privilegeBean.staticAttributesBean.toFormattedString}"/>
+                                            </pre>
+                                        </ui:define>
+                                    </o:tooltip>
+                                </ice:column>
+                                <ice:column
                                     rendered="#{policyManageBean.policyManageTableBean.exportColumnVisible}"
                                     style="text-align: center">
                                     <f:facet name="header">
@@ -367,8 +379,7 @@
                                     </f:facet>
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
-                                        visible="#{true}"
-                                        effect="#{privilegeBean.exportCellEffect}">
+                                        visible="#{true}">
                                         <ice:outputLink
                                             value="../pxml?name=#{privilegeBean.name}">
                                             <ice:graphicImage
@@ -384,8 +395,7 @@
                                     </f:facet>
                                     <ice:panelGroup
                                         styleClass="policy-manage-cell"
-                                        visible="#{true}"
-                                        effect="#{privilegeBean.removeCellEffect}">
+                                        visible="#{true}">
                                         <ice:commandLink
                                             actionListener="#{policyManageHandler.removeListener}">
                                             <f:attribute
