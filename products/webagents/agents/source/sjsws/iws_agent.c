@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.21 2009-02-27 19:26:50 robertis Exp $
+ * $Id: iws_agent.c,v 1.22 2009-05-20 23:31:25 subbae Exp $
  *
  *
  */
@@ -825,8 +825,11 @@ static void set_method(void ** args, char * orig_req){
     }
 }
 
-am_status_t get_request_url(Session *sn, Request *rq, char **request_url,
-			    void* agent_config) {
+am_status_t get_request_url(Session *sn, 
+                           Request *rq, 
+                           void* agent_config,
+                           char **request_url,
+                           char **orig_request_url) {
     am_status_t retVal = AM_SUCCESS;
     const char *protocol = "HTTP";
     const char *host_hdr = pblock_findval(HOST_HDR, rq->headers);
@@ -836,13 +839,10 @@ am_status_t get_request_url(Session *sn, Request *rq, char **request_url,
     if (security_active) {
         protocol = "HTTPS";
     }
-    retVal = am_web_get_request_url(host_hdr, protocol, server_hostname,
+    retVal = am_web_get_all_request_urls(host_hdr, protocol, server_hostname,
                                     server_portnum, uri, query,
-                                    request_url, agent_config);
-    if (retVal == AM_SUCCESS) {
-        am_web_log_debug("get_request_url(): "
-                         "request_url=\"%s\"", *request_url);
-    } else {
+                                    agent_config, request_url, orig_request_url);
+    if (retVal != AM_SUCCESS) {
         am_web_log_error("get_request_url(): Failed with error: %s.",
                          am_status_to_string(retVal));
     }
@@ -869,6 +869,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
     void *args[] = { (void *)rq };
     char *method = NULL;
     char *request_url = NULL;
+    char *orig_request_url = NULL;
     char *orig_req = NULL ;
     char *path_info = NULL;
     char * response = NULL;
@@ -925,14 +926,17 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
     
     agent_config = am_web_get_agent_configuration();
 
-    status = get_request_url(sn, rq, &request_url, agent_config);
-    am_web_log_debug("validate_session_policy(): "
-                     "request_url=\"%s\"", request_url);
+    status = get_request_url(sn, 
+                             rq, 
+                             agent_config, 
+                             &request_url, 
+                             &orig_request_url);
 
-    /* Check for magic notification URL */
-    if (B_TRUE==am_web_is_notification(request_url, agent_config)) {
+    /* Check notification URL. orig_request_url is getting passed. */
+    if (B_TRUE==am_web_is_notification(orig_request_url, agent_config)) {
         notifResult = process_new_notification(param, sn, rq, agent_config);
         am_web_free_memory(request_url);
+        am_web_free_memory(orig_request_url);
         am_web_delete_agent_configuration(agent_config);
         return notifResult;
     }
@@ -940,6 +944,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
     if (getISCookie(pblock_findval(COOKIE_HDR, rq->headers), &dpro_cookie, agent_config)
         == REQ_ABORTED) {
         am_web_free_memory(request_url);
+        am_web_free_memory(orig_request_url);
         am_web_delete_agent_configuration(agent_config);
         return REQ_ABORTED;
     }
@@ -1155,6 +1160,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
     am_policy_result_destroy(&result);
     am_web_free_memory(dpro_cookie);
     am_web_free_memory(request_url);
+    am_web_free_memory(orig_request_url);
     am_web_free_memory(logout_url);
 
     am_web_delete_agent_configuration(agent_config);

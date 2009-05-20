@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.47 2009-03-04 23:17:16 robertis Exp $
+ * $Id: am_web.cpp,v 1.48 2009-05-20 23:31:25 subbae Exp $
  *
  */
 
@@ -126,6 +126,8 @@ USING_PRIVATE_NAMESPACE
 // notification response body.
 #define NOTIFICATION_OK		       "OK\r\n"
 unsigned long policy_clock_skew = 0;
+#define PORT_MIN_VAL 0
+#define PORT_MAX_VAL 65536
 
 /**
   * Constants to create the POST submit form
@@ -2147,7 +2149,7 @@ am_web_get_request_url(const char *host_hdr, const char *protocol,
 	    url.setHost(hostname);
 	}
 
-	if(port > 0 && port < 65536) {
+	if(port > PORT_MIN_VAL && port < PORT_MAX_VAL) {
 	    url.setPort(port);
 	}
     } else {
@@ -2182,6 +2184,87 @@ am_web_get_request_url(const char *host_hdr, const char *protocol,
     return retVal;
 }
 
+/**
+ * Sets original request url and request url.
+ * request url gets overrideden if override properties are set.
+ * Original request url gets used during notification request processing.
+ * request url is used for rest of request processing.
+ */
+extern "C" AM_WEB_EXPORT am_status_t
+am_web_get_all_request_urls(const char *host_hdr, 
+                       const char *protocol,
+		       const char *hostname, 
+                       size_t port, 
+                       const char *uri,
+		       const char *query, 
+                       void* agent_config,
+                       char **request_url,
+                       char **orig_request_url) {
+    am_status_t retVal = AM_SUCCESS;
+    URL url;
+
+    if(uri != NULL) url.setURI(uri);
+    if(query != NULL) url.setQuery(query);
+    if(protocol != NULL) url.setProtocol(protocol);
+
+    if(host_hdr == NULL || strlen(host_hdr) == 0) {
+	if(hostname != NULL) {
+	    url.setHost(hostname);
+	}
+
+	if(port > PORT_MIN_VAL && port < PORT_MAX_VAL) {
+	    url.setPort(port);
+	}
+    } else {
+	std::string hostHdr(host_hdr);
+	std::size_t pos = hostHdr.find(':');
+	if(pos == std::string::npos) {
+	    url.setHost(hostHdr);
+	} else {
+	    std::string host = hostHdr.substr(0, pos);
+	    if(host.size() != 0) {
+		url.setHost(host);
+	    } else {
+		url.setHost(hostname);
+	    }
+
+	    port = Utils::getNumber(hostHdr.substr(pos + 1));
+	    if(port > 0 && port < 65536) url.setPort(port);
+	}
+    }
+
+    // set original request url
+    std::string origUrlStr;
+    url.getURLString(origUrlStr);
+
+    *orig_request_url = (char *)malloc(origUrlStr.size() + 1);
+    if(*orig_request_url == NULL) {
+	am_web_log_error("am_web_get_all_request_urls(): "
+			 "Unable to allocate memory to orig_request_url.");
+	retVal = AM_NO_MEMORY;
+    } else {
+	am_web_log_debug("am_web_get_all_request_urls(): "
+			 "orig_request_url is %s",  origUrlStr.c_str());
+	strcpy(*orig_request_url, origUrlStr.c_str());
+    }
+
+    // sets override request url, if override is set
+    overrideProtoHostPort(url, agent_config);
+    std::string urlStr;
+    url.getURLString(urlStr);
+
+    *request_url = (char *)malloc(urlStr.size() + 1);
+    if(*request_url == NULL) {
+	am_web_log_error("am_web_get_all_request_urls(): "
+			 "Unable to allocate memory to request_url.");
+	retVal = AM_NO_MEMORY;
+    } else {
+	am_web_log_debug("am_web_get_all_request_urls(): "
+			 "request_url is %s",  urlStr.c_str());
+	strcpy(*request_url, urlStr.c_str());
+    }
+    return retVal;
+}
 
 extern "C" AM_WEB_EXPORT am_status_t
 am_web_check_cookie_in_post(void **args, char **dpro_cookie,

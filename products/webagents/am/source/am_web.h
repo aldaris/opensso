@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.26 2009-03-03 23:23:52 dknab Exp $
+ * $Id: am_web.h,v 1.27 2009-05-20 23:31:25 subbae Exp $
  *
  */
 
@@ -1212,6 +1212,23 @@ am_web_get_request_url(const char *host_hdr, const char *protocol,
 		       const char *hostname, size_t port,
 		       const char *uri, const char *query,
 		       char **req_url, void* agent_config);
+
+/**
+ * Sets original request url and request url.
+ * request url gets overrideden if override properties are set.
+ * Original request url gets used during notification request processing.
+ * request url is used for rest of request processing.
+ */
+AM_WEB_EXPORT am_status_t
+am_web_get_all_request_urls(const char *host_hdr,
+                       const char *protocol,
+                       const char *hostname,
+                       size_t port,
+                       const char *uri,
+                       const char *query,
+                       void* agent_config,
+                       char **request_url,
+                       char **orig_request_url);
 
 /*
  * Method to determine if the override_host_port is set
