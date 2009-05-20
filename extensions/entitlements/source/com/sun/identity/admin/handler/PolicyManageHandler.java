@@ -84,6 +84,10 @@ public class PolicyManageHandler implements Serializable {
         addResetEvent();
     }
 
+    public void policyFilterChangedListener(ActionEvent event) {
+        addResetEvent();
+    }
+
     public void removePolicyFilterListener(ActionEvent event) {
         PolicyFilterHolder pfh = getPolicyFilterHolder(event);
         getPolicyManageBean().getPolicyFilterHolders().remove(pfh);

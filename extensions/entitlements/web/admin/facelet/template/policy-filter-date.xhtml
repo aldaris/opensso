@@ -19,7 +19,7 @@
             </ice:selectOneMenu>
         </ice:panelGroup>
         <ice:panelGroup
-            visible="#{policyFilter.valueShown}">
+            rendered="#{policyFilter.valueShown}">
             <ice:panelGrid
                 columns="2">
                 <ice:panelGroup>
@@ -40,7 +40,7 @@
             </ice:panelGrid>
         </ice:panelGroup>
         <ice:panelGroup
-            visible="#{policyFilter.dateShown}">
+            rendered="#{policyFilter.dateShown}">
             <ice:selectInputDate
                 valueChangeListener="#{policyManageHandler.policyFilterChangedListener}"
                 value="#{policyFilter.date}"
