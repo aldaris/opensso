@@ -1249,6 +1249,19 @@
             <value>/admin/facelet/template/policy-filter-modifier.xhtml</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>descriptionPolicyFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.DescriptionPolicyFilterType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>description</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/policy-filter-description.xhtml</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
         <managed-bean-name>policyFilterTypes</managed-bean-name>
@@ -1270,6 +1283,10 @@
             <map-entry>
                 <key>#{modifierPolicyFilterType.name}</key>
                 <value>#{modifierPolicyFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{descriptionPolicyFilterType.name}</key>
+                <value>#{descriptionPolicyFilterType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>

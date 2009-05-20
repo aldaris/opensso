@@ -27,7 +27,11 @@ public abstract class PolicyFilter implements Serializable {
 
     public String getTitle() {
         Resources r = new Resources();
-        return r.getString(this, "title");
+        String title = r.getString(this, "title");
+        if (title != null) {
+            return title;
+        }
+        return getName();
     }
 
     public abstract List<PrivilegeSearchFilter> getPrivilegeSearchFilters();

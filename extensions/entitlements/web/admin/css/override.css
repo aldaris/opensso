@@ -20,6 +20,12 @@
     margin: 2px;
 }
 
-.iceMnuItm {
-    padding: 5px;
+.iceMnuItm a,
+.iceMnuItm a:hover {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.iceMnuItm a img {
+    padding-left: 3px;
 }
