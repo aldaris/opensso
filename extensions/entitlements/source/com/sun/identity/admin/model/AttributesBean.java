@@ -25,6 +25,8 @@ public abstract class AttributesBean implements Serializable {
         addPopupName = null;
     }
 
+    public abstract ViewAttribute newViewAttribute();
+
     public boolean isAddPopupVisible() {
         return addPopupVisible;
     }

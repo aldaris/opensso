@@ -4,9 +4,14 @@ import java.io.Serializable;
 
 public abstract class ViewAttribute implements Serializable {
     private String name;
+    private boolean nameEditable = false;
 
     public String getName() {
         return name;
+    }
+
+    public void setEditable(boolean editable) {
+        setNameEditable(editable);
     }
 
     public void setName(String name) {
@@ -14,7 +19,7 @@ public abstract class ViewAttribute implements Serializable {
     }
 
     public String getTitle() {
-        // TODO
+        // TODO?
         return getName();
     }
 
@@ -35,5 +40,16 @@ public abstract class ViewAttribute implements Serializable {
         }
         ViewAttribute va = (ViewAttribute)o;
         return va.getName().equals(getName());
+    }
+
+    public boolean isNameEditable() {
+        if (name == null || name.length() == 0) {
+            return true;
+        }
+        return nameEditable;
+    }
+
+    public void setNameEditable(boolean nameEditable) {
+        this.nameEditable = nameEditable;
     }
 }

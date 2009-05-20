@@ -2,9 +2,16 @@ package com.sun.identity.admin.model;
 
 public class StaticViewAttribute extends ViewAttribute {
     private String value;
+    private boolean valueEditable = false;
 
     public StaticViewAttribute() {
         super();
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        super.setEditable(editable);
+        setValueEditable(editable);
     }
 
     public StaticViewAttribute(AttributesBean ab) {
@@ -39,5 +46,16 @@ public class StaticViewAttribute extends ViewAttribute {
     @Override
     public String toString() {
         return getTitle() + "=" + value;
+    }
+
+    public boolean isValueEditable() {
+        if (value == null || value.length() == 0) {
+            return true;
+        }
+        return valueEditable;
+    }
+
+    public void setValueEditable(boolean valueEditable) {
+        this.valueEditable = valueEditable;
     }
 }

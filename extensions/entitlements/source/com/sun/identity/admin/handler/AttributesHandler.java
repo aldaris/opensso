@@ -5,6 +5,8 @@ import com.sun.identity.admin.model.StaticViewAttribute;
 import com.sun.identity.admin.model.ViewAttribute;
 import java.io.Serializable;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.FacesEvent;
+import javax.faces.event.ValueChangeEvent;
 
 public class AttributesHandler implements Serializable {
     private AttributesBean attributesBean;
@@ -21,7 +23,7 @@ public class AttributesHandler implements Serializable {
         this.attributesBean = attributesBean;
     }
 
-    protected ViewAttribute getViewAttribute(ActionEvent event) {
+    protected ViewAttribute getViewAttribute(FacesEvent event) {
         ViewAttribute va = (ViewAttribute) event.getComponent().getAttributes().get("viewAttribute");
         assert (va != null);
 
@@ -34,7 +36,9 @@ public class AttributesHandler implements Serializable {
     }
 
     public void addListener(ActionEvent event) {
-        attributesBean.setAddPopupVisible(true);
+        ViewAttribute va = attributesBean.newViewAttribute();
+        va.setEditable(true);
+        attributesBean.getViewAttributes().add(va);
     }
 
     public void addPopupOkListener(ActionEvent event) {
@@ -50,6 +54,13 @@ public class AttributesHandler implements Serializable {
         attributesBean.reset();
     }
 
+    public void editNameListener(ActionEvent event) {
+        ViewAttribute va = (ViewAttribute)getViewAttribute(event);
+        va.setNameEditable(true);
+    }
 
-
+    public void nameEditedListener(ValueChangeEvent event) {
+        ViewAttribute va = (ViewAttribute)getViewAttribute(event);
+        va.setNameEditable(false);
+    }
 }

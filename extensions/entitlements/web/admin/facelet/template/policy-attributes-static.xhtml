@@ -7,8 +7,6 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <ui:include src="policy-attributes-static-add-popup.xhtml"/>
-
     <div class="section-outer">
         <o:box>
             <ui:define name="body">
@@ -44,16 +42,58 @@
                             <f:facet name="header">
                                 <ice:outputText value="Name"/>
                             </f:facet>
-                            <ice:panelGroup>
-                                <ice:outputText value="#{attribute.title}"/>
+                            <ice:panelGroup
+                                visible="#{!attribute.nameEditable}">
+                                <ice:commandLink
+                                    styleClass="command-link"
+                                    actionListener="#{attributesHandler.editNameListener}">
+                                    <f:attribute
+                                        name="viewAttribute"
+                                        value="#{attribute}"/>
+                                    <ice:outputText
+                                        value="#{attribute.title}"/>
+                                </ice:commandLink>
+                            </ice:panelGroup>
+                            <ice:panelGroup
+                                visible="#{attribute.nameEditable}">
+                                <ice:inputText
+                                    style="width: 100%"
+                                    styleClass="inline-input"
+                                    valueChangeListener="#{attributesHandler.nameEditedListener}"
+                                    value="#{attribute.name}">
+                                    <f:attribute
+                                        name="viewAttribute"
+                                        value="#{attribute}"/>
+                                </ice:inputText>
                             </ice:panelGroup>
                         </ice:column>
                         <ice:column>
                             <f:facet name="header">
                                 <ice:outputText value="Value"/>
                             </f:facet>
-                            <ice:panelGroup>
-                                <ice:outputText value="#{attribute.value}"/>
+                            <ice:panelGroup
+                                visible="#{!attribute.valueEditable}">
+                                <ice:commandLink
+                                    styleClass="command-link"
+                                    actionListener="#{attributesHandler.editValueListener}">
+                                    <f:attribute
+                                        name="viewAttribute"
+                                        value="#{attribute}"/>
+                                    <ice:outputText
+                                        value="#{attribute.value}"/>
+                                </ice:commandLink>
+                            </ice:panelGroup>
+                            <ice:panelGroup
+                                visible="#{attribute.valueEditable}">
+                                <ice:inputText
+                                    styleClass="inline-input"
+                                    style="width: 100%"
+                                    valueChangeListener="#{attributesHandler.valueEditedListener}"
+                                    value="#{attribute.value}">
+                                    <f:attribute
+                                        name="viewAttribute"
+                                        value="#{attribute}"/>
+                                </ice:inputText>
                             </ice:panelGroup>
                         </ice:column>
                         <ice:column>

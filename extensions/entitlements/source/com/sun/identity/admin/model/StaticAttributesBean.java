@@ -16,6 +16,10 @@ public class StaticAttributesBean extends AttributesBean {
         super();
     }
 
+    public ViewAttribute newViewAttribute() {
+        return new StaticViewAttribute();
+    }
+
     public StaticAttributesBean(Set<ResourceAttributes> resourceAttributes) {
         this();
 
