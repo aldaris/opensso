@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.50 2009-05-20 20:32:43 farble1670 Exp $
+  $Id: build.xml,v 1.51 2009-05-20 20:39:36 farble1670 Exp $
 
 -->
 
@@ -46,7 +46,6 @@
            property="sharedlib.jar.exists" value="true" />
    <available file="${entitlements.built.src.dir}/com/sun/identity/entitlement/xacml3/core"
            property="xacml3.core.source.exists" value="true" />
-   <available file="${war.package.dir}" property="war.package.dir.exists"/>
 
   <echo>${war.package.dir}</echo>
   <echo>${war.package.dir.exists}</echo>
@@ -147,7 +146,7 @@
 
    <target name="src" depends="src-xacml3,src-policy,src-admin"/>
 
-   <target name="unwar" depends="init" unless="war.package.dir.exists">
+   <target name="unwar" depends="init">
        <unjar
            src="${entitlements.extlib.dir}/opensso.war"
            dest="${war.package.dir}" />
