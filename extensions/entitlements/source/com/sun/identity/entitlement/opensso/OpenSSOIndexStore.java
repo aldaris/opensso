@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.3 2009-05-19 23:50:15 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.4 2009-05-20 07:43:40 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -123,7 +123,8 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         throws EntitlementException {
         for (Privilege p : privileges) {
             String dn = delete(p.getName(), true);
-            indexCache.clear(p.getEntitlement().getResourceSaveIndexes(), dn);
+            indexCache.clear(p.getEntitlement().getResourceSaveIndexes(),
+                dn);
         }
     }
 
@@ -136,11 +137,16 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         return dn;
     }
 
-    private void cache(Privilege p, String realm)
-        throws EntitlementException {
+    private void cache(
+        Privilege p,
+        Set<String> subjectSearchIndexes,
+        String realm
+    ) throws EntitlementException {
         String dn = DataStore.getPrivilegeDistinguishedName(
             p.getName(), realm, null);
-        indexCache.cache(p.getEntitlement().getResourceSaveIndexes(), dn);
+        indexCache.cache(
+            p.getEntitlement().getResourceSaveIndexes(),
+            subjectSearchIndexes, dn);
         policyCache.cache(dn, p);
     }
 
@@ -254,7 +260,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                         iterator, indexes, subjectIndexes, bSubTree,
                         excludeDNs);
                 for (Privilege p : results) {
-                    parent.cache(p, realm);
+                    parent.cache(p, subjectIndexes, realm);
                 }
             } catch (EntitlementException ex) {
                 //TOFIX
