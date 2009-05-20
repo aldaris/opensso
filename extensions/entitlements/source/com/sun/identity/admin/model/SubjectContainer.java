@@ -4,6 +4,7 @@ import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.dao.SubjectDao;
 import java.io.Serializable;
 import java.util.List;
+import org.apache.commons.collections.comparators.NullComparator;
 
 public class SubjectContainer implements MultiPanelBean, Serializable {
 
@@ -14,7 +15,7 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
     private Effect panelExpandEffect;
     private Effect panelEffect;
     private boolean panelVisible = false;
-    private String filter;
+    private String filter = "";
 
     public boolean isVisible() {
         if (filter != null && filter.length() > 0) {
@@ -53,8 +54,14 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
     }
 
     public void setFilter(String filter) {
+        if (filter == null) {
+            filter = "";
+        }
+        NullComparator n = new NullComparator();
+        if (n.compare(this.filter, filter) != 0) {
+            reset();
+        }
         this.filter = filter;
-        reset();
     }
 
     public boolean isPanelExpanded() {

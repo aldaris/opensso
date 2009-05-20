@@ -1,7 +1,3 @@
-/*
-* workaround for icefaces issue 4081
-* http://jira.icefaces.org/browse/ICE-4081
-*/
 .iceMnuBarItem span {
     padding-left: 30px;
 }

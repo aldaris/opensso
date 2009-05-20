@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections.comparators.NullComparator;
 
 public class PolicyManageBean implements Serializable {
 
@@ -12,9 +13,9 @@ public class PolicyManageBean implements Serializable {
     private PolicyDao policyDao;
     private PolicyManageTableBean policyManageTableBean = new PolicyManageTableBean();
     private boolean viewOptionsPopupVisible = false;
-    private String searchFilter;
+    private String searchFilter = "";
     private List<PolicyFilterHolder> policyFilterHolders = new ArrayList<PolicyFilterHolder>();
-    private Map<String,PolicyFilterType> policyFilterTypes;
+    private Map<String, PolicyFilterType> policyFilterTypes;
 
     public List<PrivilegeBean> getPrivilegeBeans() {
         return privilegeBeans;
@@ -57,10 +58,14 @@ public class PolicyManageBean implements Serializable {
     }
 
     public void setSearchFilter(String searchFilter) {
-        if (!searchFilter.equals(this.searchFilter)) {
-            this.searchFilter = searchFilter;
+        if (searchFilter == null) {
+            searchFilter = "";
+        }
+        NullComparator n = new NullComparator();
+        if (n.compare(this.searchFilter, searchFilter) != 0) {
             reset();
         }
+        this.searchFilter = searchFilter;
     }
 
     public List<PolicyFilterHolder> getPolicyFilterHolders() {
