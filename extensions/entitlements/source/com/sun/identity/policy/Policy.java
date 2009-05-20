@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Policy.java,v 1.6 2009-05-08 07:03:21 veiming Exp $
+ * $Id: Policy.java,v 1.7 2009-05-20 06:39:11 veiming Exp $
  *
  */
 
@@ -46,7 +46,6 @@ import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.policy.plugins.OrgReferral;
-import com.sun.identity.sm.DNMapper;
 
 /**
  * The class <code>Policy</code> represents a policy definition.
@@ -1446,9 +1445,8 @@ public class Policy implements Cloneable {
         answer.append("\" referralPolicy=\"").append(referralPolicy);
         answer.append("\" active=\"").append(active);
         answer.append("\" >");
-        Iterator rules = getRuleNames().iterator();
-        while (rules.hasNext()) {
-            String ruleName = (String) rules.next();
+        for (Iterator i = getRuleNames().iterator(); i.hasNext(); ) {
+            String ruleName = (String)i.next();
             try {
                 Rule rule = getRule(ruleName);
                 answer.append(rule.toXML());

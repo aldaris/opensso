@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.22 2009-05-13 08:59:23 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.23 2009-05-20 06:39:10 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -478,7 +478,8 @@ public class PrivilegeUtils {
                     IDRepoResponseProvider irp = (IDRepoResponseProvider) rp;
                     Map props = irp.getProperties();
                     if (props != null) {
-                        Set sas = (Set) props.get(irp.STATIC_ATTRIBUTE);
+                        Set sas = (Set) props.get(
+                            IDRepoResponseProvider.STATIC_ATTRIBUTE);
                         if (sas != null && !sas.isEmpty()) {
                             StaticAttributes sa = new StaticAttributes();
                             Map saprops = new HashMap();
@@ -505,7 +506,8 @@ public class PrivilegeUtils {
                             sa.setPResponseProviderName(nrpName);
                             resourceAttributesSet.add(sa);
                         }
-                        Set uas = (Set) props.get(irp.DYNAMIC_ATTRIBUTE);
+                        Set uas = (Set) props.get(
+                            IDRepoResponseProvider.DYNAMIC_ATTRIBUTE);
                         if (uas != null && !uas.isEmpty()) {
                             UserAttributes ua = new UserAttributes();
                             Map uaprops = new HashMap();
@@ -556,7 +558,7 @@ public class PrivilegeUtils {
                     arr[0] = sa.getPResponseProviderName();
                     IDRepoResponseProvider rp = new IDRepoResponseProvider();
                     Map props = sa.getProperties();
-                    if (props != null) {
+                    if ((props != null) && !props.isEmpty()) {
                         Set newValues = new HashSet();
                         Set entrySet = props.entrySet();
                         for (Object entryObj : entrySet) {
@@ -572,7 +574,9 @@ public class PrivilegeUtils {
                             }
                             if (!newValues.isEmpty()) {
                                 Map newProps = new HashMap();
-                                newProps.put(rp.STATIC_ATTRIBUTE, newValues);
+                                newProps.put(
+                                    IDRepoResponseProvider.STATIC_ATTRIBUTE,
+                                    newValues);
                                 rp.setProperties(newProps);
                             }
 
@@ -605,7 +609,9 @@ public class PrivilegeUtils {
 
                             if (!newValues.isEmpty()) {
                                 Map newProps = new HashMap();
-                                newProps.put(rp.DYNAMIC_ATTRIBUTE, newValues);
+                                newProps.put(
+                                    IDRepoResponseProvider.DYNAMIC_ATTRIBUTE,
+                                    newValues);
                                 Map configParams = new HashMap();
                                 configParams.put(
                                     PolicyConfig.SELECTED_DYNAMIC_ATTRIBUTES,
