@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityPrincipal.java,v 1.5 2008-08-27 19:05:52 mrudul_uchil Exp $
+ * $Id: SecurityPrincipal.java,v 1.6 2009-05-20 03:32:10 mallas Exp $
  *
  */
 
@@ -57,7 +57,17 @@ public class SecurityPrincipal implements Principal, Serializable {
      * @return false if the given object is not equal to this principal.
      */
     public boolean equals(Object o) {
-        return true;
+        if(this == o) {
+           return true;
+        } else if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        
+        if(name == null) {
+           return false;
+        }
+        return name.equals(((SecurityPrincipal)o).getName());        
+       
     }
 
     /**
