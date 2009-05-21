@@ -7,13 +7,38 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <ice:panelGroup>
+    <ice:panelGroup
+        styleClass="policy-summary-resources">
         <ice:panelGrid
-            styleClass="summary-strings">
-            <pre>
-            <ice:outputText
-                value="#{policySummary.policyWizardBean.privilegeBean.viewEntitlement.resourcesToFormattedString}"/>
-            </pre>
+            columns="2">
+            <ice:panelGroup
+                rendered="#{o:size(policySummary.policyWizardBean.privilegeBean.viewEntitlement.resources) > 0}">
+                <ice:panelGroup>
+                    <ice:outputText
+                        value="Resources"/>
+                </ice:panelGroup>
+                <ice:panelGroup
+                    styleClass="summary-strings">
+                    <pre>
+                        <ice:outputText
+                            value="#{policySummary.policyWizardBean.privilegeBean.viewEntitlement.resourcesToFormattedString}"/>
+                    </pre>
+                </ice:panelGroup>
+            </ice:panelGroup>
+            <ice:panelGroup
+                rendered="#{o:size(policySummary.policyWizardBean.privilegeBean.viewEntitlement.exceptions) > 0}">
+                <ice:panelGroup>
+                    <ice:outputText
+                        value="Exceptions"/>
+                </ice:panelGroup>
+                <ice:panelGroup
+                    styleClass="summary-strings">
+                    <pre>
+                        <ice:outputText
+                            value="#{policySummary.policyWizardBean.privilegeBean.viewEntitlement.exceptionsToFormattedString}"/>
+                    </pre>
+                </ice:panelGroup>
+            </ice:panelGroup>
         </ice:panelGrid>
     </ice:panelGroup>
 </span>

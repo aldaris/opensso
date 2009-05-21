@@ -12,7 +12,11 @@ public class ResourcesPolicySummary extends PolicySummary {
     }
 
     public String getValue() {
-        return Integer.toString(getPolicyWizardBean().getPrivilegeBean().getViewEntitlement().getResources().size());
+        int resCount = getPolicyWizardBean().getPrivilegeBean().getViewEntitlement().getResources().size();
+        int exCount = getPolicyWizardBean().getPrivilegeBean().getViewEntitlement().getExceptions().size();
+
+        // TODO: localize
+        return Integer.toString(resCount+exCount);
     }
 
     public String getIcon() {

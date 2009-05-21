@@ -895,6 +895,15 @@ div.button img.left {
 .entry-outer {
     padding-bottom: 10px;
 }
+
+.policy-summary-resources {
+}
+
+.policy-summary-resources td {
+    padding-right: 20px;
+    vertical-align: top;
+}
+
 /*
 #homeTabContent {
 width: 100%;
