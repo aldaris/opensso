@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.24 2009-05-21 06:35:31 veiming Exp $
+ * $Id: Privilege.java,v 1.25 2009-05-21 23:29:55 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -65,6 +65,12 @@ public abstract class Privilege {
      * Name search attribute name,
      */
     public static final String NAME_ATTRIBUTE = "ou";
+
+    //TOFIX
+    public static final String RESOURCE_MACRO_SELF = "$SELF";
+
+    //TOFIX
+    public static final String RESOURCE_MACRO_ATTRIBUTE = "$ATTR";
 
     /**
      * Privilege description search attribute name,

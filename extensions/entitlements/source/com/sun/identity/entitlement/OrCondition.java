@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrCondition.java,v 1.7 2009-05-21 06:35:31 veiming Exp $
+ * $Id: OrCondition.java,v 1.8 2009-05-21 23:29:55 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -138,7 +138,8 @@ public class OrCondition implements EntitlementCondition {
         ConditionDecision results = new ConditionDecision(false, 
             Collections.EMPTY_MAP);
         if ((eConditions == null) || eConditions.isEmpty()) {
-            return results;
+            return new ConditionDecision(true,
+                Collections.EMPTY_MAP);
         }
 
         for (EntitlementCondition ec : eConditions) {

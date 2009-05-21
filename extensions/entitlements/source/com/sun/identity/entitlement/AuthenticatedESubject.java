@@ -22,15 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedESubject.java,v 1.1 2009-02-26 00:46:37 dillidorai Exp $
+ * $Id: AuthenticatedESubject.java,v 1.2 2009-05-21 23:29:55 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 
-public class AuthenticatedESubject {
+public class AuthenticatedESubject implements EntitlementSubject {
 
     public AuthenticatedESubject() {
     }
@@ -39,15 +42,16 @@ public class AuthenticatedESubject {
      * Sets state of the object
      * @param state State of the object encoded as string
      */
-    void setState(String state) {
+    public void setState(String state) {
+        //DO NOTHING
     }
 
     /**
      * Returns state of the object
      * @return state of the object encoded as string
      */
-    String getState() {
-        return null;
+    public String getState() {
+        return "";
     }
 
     /**
@@ -74,6 +78,31 @@ public class AuthenticatedESubject {
 
     public String getName() {
         return null;
+    }
+
+    public Map<String, Set<String>> getSearchIndexAttributes() {
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        Set<String> set = new HashSet<String>();
+        set.add(SubjectAttributesCollector.ATTR_NAME_ALL_ENTITIES);
+        map.put(SubjectAttributesCollector.NAMESPACE_IDENTITY, set);
+        return map;
+    }
+
+    public Set<String> getRequiredAttributeNames() {
+        return Collections.EMPTY_SET;
+    }
+
+    public SubjectDecision evaluate(
+        SubjectAttributesManager mgr,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
+        return new SubjectDecision(true, Collections.EMPTY_MAP); //TOFIX
+    }
+
+    public boolean isIdentity() {
+        return true;
     }
 
 }

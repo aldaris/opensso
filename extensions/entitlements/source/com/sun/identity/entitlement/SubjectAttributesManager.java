@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.8 2009-05-21 01:23:49 hengming Exp $
+ * $Id: SubjectAttributesManager.java,v 1.9 2009-05-21 23:29:55 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -61,12 +61,12 @@ public class SubjectAttributesManager {
             DEFAULT_SUBJECT_ATTRIBUTES_COLLECTOR_NAME);
 
         String implClass = null;
-        if (configMap != null)  {
+        if (configMap != null) {
             Set<String> tmpSet = configMap.get("class");
-            if ((tmpSet != null) && (!tmpSet.isEmpty())) { 
+            if ((tmpSet != null) && (!tmpSet.isEmpty())) {
                 implClass = tmpSet.iterator().next();
-            } 
-	}
+            }
+        }
 
         if (implClass == null) {
             implClass = DEFAULT_IMPL;

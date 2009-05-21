@@ -22,13 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.38 2009-05-21 08:17:48 veiming Exp $
+ * $Id: Entitlement.java,v 1.39 2009-05-21 23:29:55 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.entitlement.util.JSONUtils;
 import com.sun.identity.policy.ResourceMatch;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
+import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -397,23 +400,29 @@ public class Entitlement {
         throws EntitlementException {
         for (String a : actionNames) {
             if (actionValues.keySet().contains(a)) {
-                return getMatchingResources(resourceName, recursive);
+                return getMatchingResources(subject, resourceName, recursive);
             }
         }
         return Collections.EMPTY_SET;
     }
 
     protected Set<String> getMatchingResources(
+        Subject subject,
         String resourceName,
         boolean recursive
-    ) {
+    ) throws EntitlementException {
         if ((resourceNames == null) || resourceNames.isEmpty()) {
             return Collections.EMPTY_SET;
         }
+        //TOFIX
+        ResourceName resComp = getResourceComparator();
+        resourceName = resComp.canonicalize(resourceName);
+
         Set<String> matched = new HashSet<String>();
         ResourceName resComparator = getResourceComparator();
 
-        for (String r : resourceNames) {
+        Set<String> resources = tagswapResourceNames(subject, resourceNames);
+        for (String r : resources) {
             ResourceMatch match = resComparator.compare(resourceName, r, true);
             if (match.equals(ResourceMatch.EXACT_MATCH) ||
                 match.equals(ResourceMatch.WILDCARD_MATCH)) {
@@ -428,7 +437,10 @@ public class Entitlement {
             String r = i.next();
             if ((excludedResourceNames != null) &&
                 !excludedResourceNames.isEmpty()) {
-                for (String e : excludedResourceNames) {
+
+                Set<String> excludes = tagswapResourceNames(subject,
+                    excludedResourceNames);
+                for (String e : excludes) {
                     ResourceMatch match = resComparator.compare(r, e, true);
                     if (match.equals(ResourceMatch.EXACT_MATCH) ||
                         match.equals(ResourceMatch.WILDCARD_MATCH)) {
@@ -444,6 +456,35 @@ public class Entitlement {
         }
 
         return matched;
+    }
+    
+    private Set<String> tagswapResourceNames(Subject sbj, Set<String> set)
+        throws EntitlementException {
+        Set<String> resources = new HashSet<String>();
+        Set<String> userIds = new HashSet<String>();
+
+        Set<Principal> principals = sbj.getPrincipals();
+        if (!principals.isEmpty()) {
+            for (Principal p : principals) {
+                String name = p.getName();
+                if (DN.isDN(name)){
+                    String[] rdns = LDAPDN.explodeDN(name, true);
+                    userIds.add(rdns[0]);
+                } else {
+                    userIds.add(name);
+                }
+            }
+        }
+
+        if (!userIds.isEmpty()) {
+            for (String r : set) {
+                for (String uid : userIds) {
+                    resources.add(r.replaceAll("\\$SELF", uid));
+                }
+            }
+        }
+
+        return resources;
     }
 
     /**
