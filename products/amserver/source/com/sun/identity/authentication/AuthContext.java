@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.20 2009-04-29 18:07:01 qcheng Exp $
+ * $Id: AuthContext.java,v 1.21 2009-05-21 21:57:33 qcheng Exp $
  *
  */
 
@@ -892,7 +892,8 @@ public class AuthContext extends Object implements java.io.Serializable {
                         while (iter.hasNext()) {
                             envString.append(ISAuthConstants.PIPE_SEPARATOR)
                                 .append(AuthClientUtils.escapePipe(
-                                    (String) iter.next()));
+                                    XMLUtils.escapeSpecialCharacters(
+                                    (String) iter.next())));
                         }
                         envString.append(AuthXMLTags.ENV_AV_END);
                     }

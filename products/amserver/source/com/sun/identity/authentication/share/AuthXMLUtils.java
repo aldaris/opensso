@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLUtils.java,v 1.7 2008-12-23 22:22:50 ericow Exp $
+ * $Id: AuthXMLUtils.java,v 1.8 2009-05-21 21:57:34 qcheng Exp $
  *
  */
 
@@ -1187,14 +1187,14 @@ public class AuthXMLUtils {
 
         // <RedirectData>
         Map redirectData = redirectCallback.getRedirectData();
-        Iterator nameSet = redirectData.keySet().iterator();
-        
-        while (nameSet.hasNext()) {
-            String name = (String) nameSet.next();
-            String value = (String) redirectData.get(name);
-            name = (name != null) ? name : "";
-            value = (value != null) ? value : "";
-            xmlString.append(AuthXMLTags.REDIRECT_DATA_BEGIN)
+        if (redirectData != null) {
+            Iterator nameSet = redirectData.keySet().iterator();      
+            while (nameSet.hasNext()) {
+                String name = (String) nameSet.next();
+                String value = (String) redirectData.get(name);
+                name = (name != null) ? name : "";
+                value = (value != null) ? value : "";
+                xmlString.append(AuthXMLTags.REDIRECT_DATA_BEGIN)
                     .append(AuthXMLTags.REDIRECT_NAME_BEGIN)
                     .append(name)
                     .append(AuthXMLTags.REDIRECT_NAME_END)
@@ -1202,6 +1202,7 @@ public class AuthXMLUtils {
                     .append(value)
                     .append(AuthXMLTags.REDIRECT_VALUE_END)
                     .append(AuthXMLTags.REDIRECT_DATA_END);
+            }
         }
 
         // <RedirectStatusParam>

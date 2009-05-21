@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDecisionUtils.java,v 1.1 2009-04-29 18:07:00 qcheng Exp $
+ * $Id: PolicyDecisionUtils.java,v 1.2 2009-05-21 21:58:02 qcheng Exp $
  *
  */
 
@@ -219,23 +219,29 @@ public class PolicyDecisionUtils {
                         + item + ", realm=" + realm + ", type=" + adviceType);
                 }
                 // value contains two part : <realm>:<value>, e.g. /realm:4
-                // remove string before ":" from the advice to get actual value
-                int col = item.lastIndexOf(":");
-                if (col != -1) {
-                    String tmp = item.substring(0, col);
-                    if (!tmp.equals(realm)) {
-                        // This requires authentication at different realm,
-                        // but we can't change realm once authentication 
-                        // started, so ignore this advice
-                        continue;
-                    }
-                    // ":" exists in the value
-                    if (col != item.length() - 1) {
-                        value = item.substring(col + 1);
+                if (item.startsWith("/")) {
+                    // realm present, remove string before ":" from the 
+                    // advice to get actual value
+                    int col = item.indexOf(":");
+                    if (col != -1) {
+                        String tmp = item.substring(0, col);
+                        if (!tmp.equals(realm)) {
+                            // This requires authentication at different realm,
+                            // but we can't change realm once authentication 
+                            // started, so ignore this advice
+                            continue;
+                        }
+                        // ":" exists in the value
+                        if (col != item.length() - 1) {
+                            value = item.substring(col + 1);
+                        } else {
+                            // ":" is the last string, error advice case, ignore
+                            continue;
+                        }   
                     } else {
-                        // ":" is the last string, error advice case, ignore
-                        continue;
-                    }   
+                        // no realm parameter
+                        value = item;
+                    }
                 } else {
                     // no realm parameter
                     value = item;

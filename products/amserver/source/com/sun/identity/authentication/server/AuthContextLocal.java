@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLocal.java,v 1.11 2009-04-29 18:07:03 qcheng Exp $
+ * $Id: AuthContextLocal.java,v 1.12 2009-05-21 21:57:34 qcheng Exp $
  *
  */
 
@@ -37,8 +37,10 @@ import com.sun.identity.authentication.service.LoginState;
 import com.sun.identity.authentication.service.LoginStatus;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
+import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.util.PolicyDecisionUtils;
+import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import java.security.Principal;
@@ -491,6 +493,23 @@ public final class AuthContextLocal extends Object
                 } else if (result.size() == 1) {
                     // this is the redirection case (Policy Redirection Advice)
                     redirectUrl = (String) result.get(0);
+                    // append goto parameter for federation case
+                    Set tmp = (Set) envMap.get(ISAuthConstants.GOTO_PARAM);
+                    if ((tmp != null) && !tmp.isEmpty()) {
+                        String gotoParam = (String) tmp.iterator().next();
+                        if ((gotoParam != null) && (gotoParam.length() != 0)) {
+                            if ((redirectUrl != null) && 
+                                (redirectUrl.indexOf("?") != -1)) {
+                                redirectUrl = redirectUrl + "&" + 
+                                    ISAuthConstants.GOTO_PARAM + "=" + 
+                                    URLEncDec.encode(gotoParam);
+                            } else {
+                                redirectUrl = redirectUrl + "?" + 
+                                    ISAuthConstants.GOTO_PARAM + "=" + 
+                                    URLEncDec.encode(gotoParam);
+                            }
+                        }
+                    }
                     type = null;
                     indexName = null;
                 } else {
