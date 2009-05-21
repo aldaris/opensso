@@ -29,6 +29,7 @@ public class PolicyWizardBean
     private PolicySummary applicationPolicySummary = new ApplicationPolicySummary(this);
     private PolicySummary resourcesPolicySummary = new ResourcesPolicySummary(this);
     private PolicySummary subjectsPolicySummary = new SubjectsPolicySummary(this);
+    private PolicySummary conditionsPolicySummary = new ConditionsPolicySummary(this);
 
     public PolicyWizardBean() {
         super();
@@ -57,6 +58,13 @@ public class PolicyWizardBean
         privilegeBean.setViewSubject(ost.newViewSubject());
 
         advancedTabsetIndex = 0;
+
+        namePolicySummary = new NamePolicySummary(this);
+        descriptionPolicySummary = new DescriptionPolicySummary(this);
+        applicationPolicySummary = new ApplicationPolicySummary(this);
+        resourcesPolicySummary = new ResourcesPolicySummary(this);
+        subjectsPolicySummary = new SubjectsPolicySummary(this);
+        conditionsPolicySummary = new ConditionsPolicySummary(this);
     }
 
     public List<SelectItem> getViewApplicationNameItems() {
@@ -212,5 +220,9 @@ public class PolicyWizardBean
 
     public PolicySummary getSubjectsPolicySummary() {
         return subjectsPolicySummary;
+    }
+
+    public PolicySummary getConditionsPolicySummary() {
+        return conditionsPolicySummary;
     }
 }

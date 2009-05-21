@@ -98,6 +98,11 @@ public abstract class ViewCondition implements MultiPanelBean, TreeNode {
         return t.size();
     }
 
+    public int getSizeLeafs() {
+        Tree t = new Tree(this);
+        return t.sizeLeafs();
+    }
+
     String getIndentString(int i) {
         String indent = "";
         for (int j = 0; j < i; j++) {

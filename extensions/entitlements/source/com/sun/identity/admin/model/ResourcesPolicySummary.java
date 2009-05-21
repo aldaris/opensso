@@ -19,6 +19,13 @@ public class ResourcesPolicySummary extends PolicySummary {
         return Integer.toString(resCount+exCount);
     }
 
+    public boolean isExpandable() {
+        int resCount = getPolicyWizardBean().getPrivilegeBean().getViewEntitlement().getResources().size();
+        int exCount = getPolicyWizardBean().getPrivilegeBean().getViewEntitlement().getExceptions().size();
+
+        return  resCount+exCount > 0;
+    }
+
     public String getIcon() {
         return "../image/url.png";
     }

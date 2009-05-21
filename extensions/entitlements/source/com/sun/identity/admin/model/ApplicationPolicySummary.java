@@ -15,6 +15,10 @@ public class ApplicationPolicySummary extends PolicySummary {
         return getPolicyWizardBean().getPrivilegeBean().getViewEntitlement().getViewApplication().getTitle();
     }
 
+    public boolean isExpandable() {
+        return false;
+    }
+
     public String getIcon() {
         // TODO
         return "../image/application.png";

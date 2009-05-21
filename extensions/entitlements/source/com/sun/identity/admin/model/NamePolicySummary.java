@@ -15,6 +15,10 @@ public class NamePolicySummary extends PolicySummary {
         return getPolicyWizardBean().getPrivilegeBean().getName();
     }
 
+    public boolean isExpandable() {
+        return false;
+    }
+
     public String getIcon() {
         // TODO
         return "../image/edit.png";
@@ -27,5 +31,4 @@ public class NamePolicySummary extends PolicySummary {
     public PolicyWizardStep getGotoStep() {
         return PolicyWizardStep.NAME;
     }
-
 }

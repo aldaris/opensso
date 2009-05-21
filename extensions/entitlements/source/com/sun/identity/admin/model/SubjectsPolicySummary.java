@@ -15,6 +15,10 @@ public class SubjectsPolicySummary extends PolicySummary {
         return Integer.toString(getPolicyWizardBean().getPrivilegeBean().getViewSubject().getSizeLeafs());
     }
 
+    public boolean isExpandable() {
+        return getPolicyWizardBean().getPrivilegeBean().getViewSubject().getSizeLeafs() > 0;
+
+    }
     public String getIcon() {
         return "../image/role.png";
     }

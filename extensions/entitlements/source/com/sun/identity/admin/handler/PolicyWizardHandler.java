@@ -25,6 +25,7 @@ import com.sun.identity.admin.model.OrViewSubject;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PolicyManageBean;
+import com.sun.identity.admin.model.PolicyWizardAdvancedTabIndex;
 import com.sun.identity.admin.model.PolicyWizardStep;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.Resource;

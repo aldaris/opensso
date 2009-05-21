@@ -15,6 +15,10 @@ public class DescriptionPolicySummary extends PolicySummary {
         return getPolicyWizardBean().getPrivilegeBean().getDescription();
     }
 
+    public boolean isExpandable() {
+        return false;
+    }
+
     public String getIcon() {
         // TODO
         return "../image/description.png";

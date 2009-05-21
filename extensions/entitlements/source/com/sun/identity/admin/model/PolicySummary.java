@@ -8,7 +8,7 @@ import java.io.Serializable;
 import javax.faces.event.ActionEvent;
 
 public abstract class PolicySummary
-    implements Serializable, MultiPanelBean, MultiPanelHandler {
+        implements Serializable, MultiPanelBean, MultiPanelHandler {
 
     private PolicyWizardBean policyWizardBean;
     private Effect panelExpandEffect;
@@ -28,10 +28,12 @@ public abstract class PolicySummary
 
     public abstract String getIcon();
 
+    public abstract boolean isExpandable();
+
     public abstract PolicyWizardStep getGotoStep();
 
-    public int getAdvancedTabIndex() {
-        return 0;
+    public PolicyWizardAdvancedTabIndex getAdvancedTabIndex() {
+        return PolicyWizardAdvancedTabIndex.ACTIONS;
     }
 
     public void panelExpandListener(ActionEvent event) {
@@ -86,17 +88,27 @@ public abstract class PolicySummary
         return policyWizardBean;
     }
 
-    protected int getGotoStep(ActionEvent event) {
+    protected PolicyWizardStep getGotoStep(ActionEvent event) {
         Object o = event.getComponent().getAttributes().get("gotoStep");
-        PolicyWizardStep pws = (PolicyWizardStep)o;
-        int step = pws.toInt();
+        PolicyWizardStep pws = (PolicyWizardStep) o;
 
-        return step;
+        return pws;
+    }
+
+    protected PolicyWizardAdvancedTabIndex getGotoAdvancedTabIndex(ActionEvent event) {
+        Object o = event.getComponent().getAttributes().get("gotoAdvancedTabIndex");
+        PolicyWizardAdvancedTabIndex index = (PolicyWizardAdvancedTabIndex) o;
+
+        return index;
     }
 
     public void editListener(ActionEvent event) {
-        int gotoStep = getGotoStep(event);
+        PolicyWizardStep gotoStep = getGotoStep(event);
+        getPolicyWizardBean().gotoStep(gotoStep.toInt());
 
-        getPolicyWizardBean().gotoStep(gotoStep);
+        if (gotoStep.equals(PolicyWizardStep.ADVANCED)) {
+            PolicyWizardAdvancedTabIndex gotoIndex = getGotoAdvancedTabIndex(event);
+            getPolicyWizardBean().setAdvancedTabsetIndex(gotoIndex.toInt());
+        }
     }
 }
