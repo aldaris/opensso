@@ -24,9 +24,14 @@ public class PolicyWizardBean
     private boolean policyNameEditable = false;
     private List<ConditionType> conditionTypes;
     private List<SubjectType> subjectTypes;
+    private PolicySummary namePolicySummary = new NamePolicySummary(this);
+    private PolicySummary descriptionPolicySummary = new DescriptionPolicySummary(this);
+    private PolicySummary applicationPolicySummary = new ApplicationPolicySummary(this);
+    private PolicySummary resourcesPolicySummary = new ResourcesPolicySummary(this);
+    private PolicySummary subjectsPolicySummary = new SubjectsPolicySummary(this);
 
     public PolicyWizardBean() {
-        // nothing
+        super();
     }
 
     @Override
@@ -187,5 +192,25 @@ public class PolicyWizardBean
             }
         }
         return null;
+    }
+
+    public PolicySummary getNamePolicySummary() {
+        return namePolicySummary;
+    }
+
+    public PolicySummary getDescriptionPolicySummary() {
+        return descriptionPolicySummary;
+    }
+
+    public PolicySummary getApplicationPolicySummary() {
+        return applicationPolicySummary;
+    }
+
+    public PolicySummary getResourcesPolicySummary() {
+        return resourcesPolicySummary;
+    }
+
+    public PolicySummary getSubjectsPolicySummary() {
+        return subjectsPolicySummary;
     }
 }

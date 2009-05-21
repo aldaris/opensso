@@ -63,6 +63,10 @@
         <source>tag/feed.xhtml</source>
     </tag>
     <tag>
+        <tag-name>summarypanel</tag-name>
+        <source>tag/summarypanel.xhtml</source>
+    </tag>
+    <tag>
         <tag-name>policyfilterholder</tag-name>
         <source>tag/policyfilterholder.xhtml</source>
     </tag>

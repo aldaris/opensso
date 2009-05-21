@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <f:subview>
+        <ice:panelGroup
+            styleClass="summary-panel">
+
+            <o:multipanel
+                collapsible="#{policySummary.template != null}"
+                removeable="false"
+                visible="#{policySummary.panelVisible}"
+                expanded="#{policySummary.panelExpanded}"
+                bean="#{policySummary}"
+                handler="#{policySummary}">
+
+                <ui:define name="panel-title">
+                    <ice:panelGrid
+                        styleClass="summary-table inline-input"
+                        columnClasses="summary-tableCol1,summary-tableCol2"
+                        columns="2">
+                        <ice:commandLink
+                            actionListener="#{policySummary.editListener}"
+                            partialSubmit="true"
+                            styleClass="command-link">
+                            <f:attribute 
+                                name="gotoStep"
+                                value="#{policySummary.gotoStep}"/>
+                            <ice:graphicImage
+                                style="padding-right: 2px"
+                                value="#{policySummary.icon}"/>
+                            <ice:outputText
+                                style="font-weight: bold"
+                                value="#{policySummary.label}"/>
+                        </ice:commandLink>
+                        <ice:outputText
+                            value="#{policySummary.value}"/>
+                    </ice:panelGrid>
+                </ui:define>
+                <ui:define name="panel-body">
+                    <ice:panelGroup
+                        rendered="#{policySummary.template != null}">
+                        <ui:include
+                            src="#{policySummary.template}"/>
+                        </ice:panelGroup>
+                </ui:define>
+            </o:multipanel>
+        </ice:panelGroup>
+    </f:subview>
+</ui:composition>
