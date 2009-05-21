@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.53 2009-05-21 21:15:37 pbryan Exp $
+  $Id: build.xml,v 1.54 2009-05-21 23:01:49 pbryan Exp $
 
 -->
 
@@ -135,8 +135,8 @@
        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
               debug="${build.debug}" debuglevel="${build.debuglevel}">
-           <src path="${entitlements.src.dir}/com/sun/identity/policy"/>
            <src path="${entitlements.src.dir}/com/sun/identity/entitlement/opensso"/>
+           <src path="${entitlements.src.dir}/com/sun/identity/policy"/>
            <classpath refid="build.class.path"/>
        </javac>
    </target>

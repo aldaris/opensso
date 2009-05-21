@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.1 2009-05-21 21:15:37 pbryan Exp $
+ * $Id: DecisionResource.java,v 1.2 2009-05-21 23:01:50 pbryan Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -38,7 +38,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
-import com.sun.identity.entitlement.opensso.SubjectUtils;
+//import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.security.AdminTokenAction;
 
 /**
@@ -49,8 +49,8 @@ import com.sun.identity.security.AdminTokenAction;
 @Path("/1/entitlement/decision")
 public class DecisionResource {
 
-	private static final Subject ADMIN_SUBJECT =
-	 SubjectUtils.createSubject((SSOToken)AccessController.doPrivileged(AdminTokenAction.getInstance()));
+	private static final Subject ADMIN_SUBJECT = null;
+//	 SubjectUtils.createSubject((SSOToken)AccessController.doPrivileged(AdminTokenAction.getInstance()));
 
 	@GET
 	@Produces("text/plain")
