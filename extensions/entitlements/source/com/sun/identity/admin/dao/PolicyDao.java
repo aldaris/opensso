@@ -28,7 +28,8 @@ public class PolicyDao implements Serializable {
     private ViewApplicationsBean viewApplicationsBean;
     private ConditionTypeFactory conditionTypeFactory;
     private SubjectFactory subjectFactory;
-
+    private int timeout;
+    private int limit;
 
     private String getPattern(String filter) {
         String pattern;
@@ -69,7 +70,7 @@ public class PolicyDao implements Serializable {
 
         try {
             Set<String> privilegeNames;
-            privilegeNames = pm.searchPrivilegeNames(psfs);
+            privilegeNames = pm.searchPrivilegeNames(psfs, limit, timeout);
 
             privilegeBeans = new ArrayList<PrivilegeBean>();
             for (String privilegeName : privilegeNames) {
@@ -104,7 +105,7 @@ public class PolicyDao implements Serializable {
         Set<String> privilegeNames;
         try {
             // TODO: realm
-            privilegeNames = pm.searchPrivilegeNames(psfs);
+            privilegeNames = pm.searchPrivilegeNames(psfs, limit, timeout);
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }
@@ -200,5 +201,13 @@ public class PolicyDao implements Serializable {
 
     public void setSubjectFactory(SubjectFactory subjectFactory) {
         this.subjectFactory = subjectFactory;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 }

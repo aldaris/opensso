@@ -1141,6 +1141,14 @@
             <property-name>conditionTypeFactory</property-name>
             <value>#{conditionTypeFactory}</value>
         </managed-property>
+        <managed-property>
+            <property-name>limit</property-name>
+            <value>100</value>
+        </managed-property>
+        <managed-property>
+            <property-name>timeout</property-name>
+            <value>5</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>
