@@ -97,6 +97,11 @@
         <servlet-name>entitlementmonitor</servlet-name>
         <servlet-class>com.sun.identity.entitlement.util.NetworkMonitor</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ws</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PrivilegeXmlServlet</servlet-name>
         <url-pattern>/admin/pxml/*</url-pattern>
@@ -128,5 +133,9 @@
     <servlet-mapping>
         <servlet-name>entitlementmonitor</servlet-name>
         <url-pattern>/entitlementmonitor/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ws</servlet-name>
+        <url-pattern>/ws/*</url-pattern>
     </servlet-mapping>
 </web-app>
