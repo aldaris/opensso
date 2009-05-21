@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrCondition.java,v 1.6 2009-05-08 17:04:20 veiming Exp $
+ * $Id: OrCondition.java,v 1.7 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -42,8 +42,6 @@ import org.json.JSONException;
  * of the wrapped EntitlementCondition
  */
 public class OrCondition implements EntitlementCondition {
-    private static final long serialVersionUID = -403250971215465050L;
-
     private Set<EntitlementCondition> eConditions;
     private String pConditionName;
 

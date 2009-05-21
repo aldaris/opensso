@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogicalSubject.java,v 1.4 2009-05-12 05:51:58 veiming Exp $
+ * $Id: LogicalSubject.java,v 1.5 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,8 +39,6 @@ import org.json.JSONObject;
  * Base class for <code>OrSubejct</code> and <code>AndSubejct</code>.
  */
 public abstract class LogicalSubject implements EntitlementSubject {
-
-    private static final long serialVersionUID = -403250971215465050L;
     private Set<EntitlementSubject> eSubjects;
     private String pSubjectName;
 

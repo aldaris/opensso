@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPCondition.java,v 1.6 2009-05-02 08:53:59 veiming Exp $
+ * $Id: IPCondition.java,v 1.7 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,8 +39,6 @@ import org.json.JSONException;
  * Entitlement Condition to represent IP constraint
   */
 public class IPCondition implements EntitlementCondition {
-    private static final long serialVersionUID = -403250971215465050L;
-
     /** Key that is used to define request IP address that is passed in
      * the <code>env</code> parameter while invoking
      * <code>getConditionDecision</code> method of an <code>IPCondition</code>.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.21 2009-05-21 01:04:03 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.22 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -33,20 +33,13 @@ import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.sm.ServiceManager;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.json.JSONObject;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 import org.testng.annotations.BeforeClass;
@@ -247,8 +240,8 @@ public class PrivilegeManagerTest {
 
     @Test(dependsOnMethods = {"testAddPrivilege"})
     public void testSerializePrivilege() throws Exception {
-        String serialized = serializeObject(privilege);
-        Privilege p = (Privilege) deserializeObject(serialized);
+        String serialized = privilege.toJSONObject().toString();
+        Privilege p = Privilege.getInstance(new JSONObject(serialized));
         if (!p.equals(privilege)) {
             throw new Exception(
                     "PrivilegeManagerTest.testSerializePrivilege: failed");
@@ -279,51 +272,6 @@ public class PrivilegeManagerTest {
               throw new Exception(
                 "PrivilegeManagerTest.testListPrivilegeNames():"
                 + "got privilege names does not contain saved privilege");
-        }
-    }
-
-    private String serializeObject(Serializable object)
-            throws EntitlementException {
-        ObjectOutputStream oos = null;
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            oos = new ObjectOutputStream(out);
-            oos.writeObject(object);
-            oos.close();
-            return Base64.encode(out.toByteArray());
-        } catch (IOException e) {
-            throw new EntitlementException(200, null, e);
-        } finally {
-            if (oos != null) {
-                try {
-                    oos.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        }
-    }
-
-    private Object deserializeObject(String strSerialized)
-            throws EntitlementException {
-        ObjectInputStream ois = null;
-        try {
-            InputStream in = new ByteArrayInputStream(
-                    Base64.decode(strSerialized));
-            ois = new ObjectInputStream(in);
-            return ois.readObject();
-        } catch (ClassNotFoundException ex) {
-            throw new EntitlementException(201, null, ex);
-        } catch (IOException ex) {
-            throw new EntitlementException(201, null, ex);
-        } finally {
-            try {
-                if (ois != null) {
-                    ois.close();
-                }
-            } catch (IOException ex) {
-                // ignore
-            }
         }
     }
 

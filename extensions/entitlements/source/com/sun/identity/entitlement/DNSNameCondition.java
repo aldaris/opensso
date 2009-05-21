@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNSNameCondition.java,v 1.3 2009-05-04 20:57:05 veiming Exp $
+ * $Id: DNSNameCondition.java,v 1.4 2009-05-21 06:35:30 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -38,8 +38,6 @@ import org.json.JSONException;
  * EntitlementCondition to represent IP, DNS name based  constraint
   */
 public class DNSNameCondition implements EntitlementCondition {
-    private static final long serialVersionUID = -403250971215465050L;
-
     /** Key that is used in an <code>DNSNameCondition</code> to define the DNS
      * name values for which a policy applies. The value corresponding to the
      * key has to be a <code>Set</code> with at most one element is a

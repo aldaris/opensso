@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleSubject.java,v 1.10 2009-05-12 05:51:58 veiming Exp $
+ * $Id: RoleSubject.java,v 1.11 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,8 +39,6 @@ import javax.security.auth.Subject;
  * EntitlementSubject to represent role identity for membership check.
  */
 public class RoleSubject extends EntitlementSubjectImpl {
-    private static final long serialVersionUID = -403250971215465050L;
-
     /**
      * Constructs an RoleSubject
      */

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotSubject.java,v 1.9 2009-05-12 05:51:58 veiming Exp $
+ * $Id: NotSubject.java,v 1.10 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -42,8 +42,6 @@ import org.json.JSONException;
  * member of the nested <code>EntitlementSubject</code>.
  */
 public class NotSubject implements EntitlementSubject {
-
-    private static final long serialVersionUID = -403250971215465050L;
     private EntitlementSubject eSubject;
     private String pSubjectName;
 

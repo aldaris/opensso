@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSubject.java,v 1.8 2009-05-12 05:51:58 veiming Exp $
+ * $Id: UserSubject.java,v 1.9 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,8 +39,6 @@ import javax.security.auth.Subject;
  * @author dorai
  */
 public class UserSubject extends EntitlementSubjectImpl {
-    private static final long serialVersionUID = -403250971215465050L;
-
     /**
      * Constructs an UserSubject
      */

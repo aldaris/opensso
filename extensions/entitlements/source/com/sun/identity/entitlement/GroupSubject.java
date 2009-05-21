@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.11 2009-05-12 05:51:58 veiming Exp $
+ * $Id: GroupSubject.java,v 1.12 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -46,8 +46,6 @@ import javax.security.auth.Subject;
  * This class represents group identity for membership check
  */
 public class GroupSubject extends EntitlementSubjectImpl {
-    private static final long serialVersionUID = -403250971215465050L;
-
     /**
      * Constructor.
      */

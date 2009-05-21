@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.23 2009-05-21 01:04:02 veiming Exp $
+ * $Id: Privilege.java,v 1.24 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.util.JSONUtils;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +39,7 @@ import org.json.JSONObject;
 /**
  * Class representing entitlement privilege
  */
-public abstract class Privilege implements Serializable {
-    private static final long serialVersionUID = -403250971215465050L;
-
+public abstract class Privilege {
     /**
      * Created by index key
      */
@@ -276,6 +273,7 @@ public abstract class Privilege implements Serializable {
                 JSONObject subjo = new JSONObject();
                 subjo.put("className", r.getClass().getName());
                 subjo.put("state", r.getState());
+                jo.append("eResourceAttributes", subjo);
             }
         }
         return jo;
@@ -330,7 +328,6 @@ public abstract class Privilege implements Serializable {
                 Class clazz = Class.forName(json.getString("className"));
                 ResourceAttribute ra = (ResourceAttribute)clazz.newInstance();
                 ra.setState(json.getString("state"));
-                ra.setPResponseProviderName(json.getString("name"));
                 results.add(ra);
             } catch (InstantiationException ex) {
                 PrivilegeManager.debug.error(

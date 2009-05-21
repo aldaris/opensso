@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeCondition.java,v 1.7 2009-05-05 00:28:58 veiming Exp $
+ * $Id: TimeCondition.java,v 1.8 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -47,8 +47,6 @@ import org.json.JSONException;
  * @author dorai
  */
 public class TimeCondition implements EntitlementCondition {
-    private static final long serialVersionUID = -403250971215465050L;
-
     /**
      * Key that is used to define current time that is passed in the
      *  <code>env</code> parameter while invoking <code>getConditionDecision

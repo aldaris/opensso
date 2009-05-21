@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StaticAttributes.java,v 1.5 2009-05-21 01:04:02 veiming Exp $
+ * $Id: StaticAttributes.java,v 1.6 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -38,8 +38,6 @@ import org.json.JSONException;
  * Interface specification for entitlement <code>ResourceAttribute</code>
  */
 public class StaticAttributes implements ResourceAttribute {
-    private static final long serialVersionUID = -403250971215465050L;
-
     private String propertyName;
     private Set<String> propertyValues;
     private String pResponseProviderName;

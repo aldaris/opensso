@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotCondition.java,v 1.1 2009-05-05 00:28:58 veiming Exp $
+ * $Id: NotCondition.java,v 1.2 2009-05-21 06:35:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -40,8 +40,6 @@ import org.json.JSONException;
  * member of the nested <code>EntitlementCondition</code>.
  */
 public class NotCondition implements EntitlementCondition {
-    private static final long serialVersionUID = -403250971215465050L;
-
     private EntitlementCondition eCondition;
     private String pConditionName;
 
