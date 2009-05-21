@@ -14,13 +14,6 @@ public class StaticViewAttribute extends ViewAttribute {
         setValueEditable(editable);
     }
 
-    public StaticViewAttribute(AttributesBean ab) {
-        assert(ab instanceof StaticAttributesBean);
-        StaticAttributesBean sab = (StaticAttributesBean)ab;
-        setName(sab.getAddPopupName());
-        setValue(sab.getAddPopupValue());
-    }
-
     public String getValue() {
         return value;
     }

@@ -1,7 +1,6 @@
 package com.sun.identity.admin.handler;
 
 import com.sun.identity.admin.model.AttributesBean;
-import com.sun.identity.admin.model.StaticViewAttribute;
 import com.sun.identity.admin.model.ViewAttribute;
 import java.io.Serializable;
 import javax.faces.event.ActionEvent;
@@ -39,19 +38,6 @@ public class AttributesHandler implements Serializable {
         ViewAttribute va = attributesBean.newViewAttribute();
         va.setEditable(true);
         attributesBean.getViewAttributes().add(va);
-    }
-
-    public void addPopupOkListener(ActionEvent event) {
-        StaticViewAttribute sva = new StaticViewAttribute(attributesBean);
-        attributesBean.getViewAttributes().add(sva);
-
-        // TODO, verify name/val not null
-
-        attributesBean.reset();
-    }
-
-    public void addPopupCancelListener(ActionEvent event) {
-        attributesBean.reset();
     }
 
     public void editNameListener(ActionEvent event) {

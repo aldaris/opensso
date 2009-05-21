@@ -67,7 +67,7 @@ body {
     font-size: 14px;
     font-weight: bold;
     border-bottom: 1px solid;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     float: left;
     width: 100%;
 }
@@ -89,6 +89,10 @@ body {
     margin: 0;
     padding: 0;
     margin-left: 5px;
+}
+
+.section-details {
+    margin-bottom: 10px;
 }
 
 .packed-input {
@@ -470,13 +474,6 @@ div.button img.left {
     width: 100%;
 }
 
-.policy-create-conditions .drop-target {
-    background: #ffffff;
-    border: 1px solid #000000;
-    padding: 16px;
-    margin: 32px;
-}
-
 .conditions-selected {
     padding-left: 4px;
     width: 70%;
@@ -519,7 +516,7 @@ div.button img.left {
     width: 100%;
 }
 
-.policy-create-subjects .drop-target {
+.drop-target {
     background: #ffffff;
     border: 1px solid #000000;
     padding: 16px;
@@ -902,6 +899,30 @@ div.button img.left {
 .policy-summary-resources td {
     padding-right: 20px;
     vertical-align: top;
+}
+
+.user-attributes {
+    width: 100%;
+}
+
+.user-attributes-selected {
+    vertical-align: top;
+    width: 70%;
+}
+
+.user-attributes-gutter {
+    width: 5%;
+}
+
+.user-attributes-selected div table {
+    width: 100%;
+    padding-right: 40px;
+    margin: 0px;
+}
+
+.user-attributes-available {
+    vertical-align: top;
+    width: 30%;
 }
 
 /*

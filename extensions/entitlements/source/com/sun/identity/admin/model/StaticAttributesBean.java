@@ -6,9 +6,9 @@ import com.sun.identity.entitlement.StaticAttributes;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import static com.sun.identity.admin.model.AttributesBean.AttributeType.*;
 
 public class StaticAttributesBean extends AttributesBean {
-    private String addPopupValue;
 
     public StaticAttributesBean() {
         super();
@@ -16,6 +16,10 @@ public class StaticAttributesBean extends AttributesBean {
 
     public ViewAttribute newViewAttribute() {
         return new StaticViewAttribute();
+    }
+
+    public AttributeType getAttributeType() {
+        return STATIC;
     }
 
     public StaticAttributesBean(Set<ResourceAttribute> resourceAttributes) {
@@ -58,14 +62,5 @@ public class StaticAttributesBean extends AttributesBean {
     public void reset() {
         super.reset();
         setAttributesHandler(new StaticAttributesHandler(this));
-        addPopupValue = null;
-    }
-
-    public String getAddPopupValue() {
-        return addPopupValue;
-    }
-
-    public void setAddPopupValue(String addPopupValue) {
-        this.addPopupValue = addPopupValue;
     }
 }

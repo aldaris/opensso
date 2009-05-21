@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import java.io.Serializable;
 
 public abstract class ViewAttribute implements Serializable {
@@ -19,7 +20,6 @@ public abstract class ViewAttribute implements Serializable {
     }
 
     public String getTitle() {
-        // TODO?
         return getName();
     }
 

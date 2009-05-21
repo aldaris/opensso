@@ -32,6 +32,7 @@ public class PolicyWizardBean
     private PolicySummary conditionsPolicySummary = new ConditionsPolicySummary(this);
     private PolicySummary actionsPolicySummary = new ActionsPolicySummary(this);
     private PolicySummary staticAttributesPolicySummary = new StaticAttributesPolicySummary(this);
+    private PolicySummary userAttributesPolicySummary = new UserAttributesPolicySummary(this);
 
     public PolicyWizardBean() {
         super();
@@ -69,6 +70,7 @@ public class PolicyWizardBean
         conditionsPolicySummary = new ConditionsPolicySummary(this);
         actionsPolicySummary = new ActionsPolicySummary(this);
         staticAttributesPolicySummary = new StaticAttributesPolicySummary(this);
+        userAttributesPolicySummary = new UserAttributesPolicySummary(this);
     }
 
     public List<SelectItem> getViewApplicationNameItems() {
@@ -236,5 +238,9 @@ public class PolicyWizardBean
 
     public PolicySummary getStaticAttributesPolicySummary() {
         return staticAttributesPolicySummary;
+    }
+
+    public PolicySummary getUserAttributesPolicySummary() {
+        return userAttributesPolicySummary;
     }
 }

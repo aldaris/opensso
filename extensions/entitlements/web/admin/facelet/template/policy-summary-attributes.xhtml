@@ -9,11 +9,16 @@
 
     <ice:panelGroup>
         <ice:panelGrid
+            columns="#{o:size(policySummary.policyWizardBean.privilegeBean.attributesBeans)}"
             styleClass="summary-strings">
-            <pre>
-            <ice:outputText
-                value="#{policySummary.toFormattedString}"/>
-            </pre>
+            <ice:panelSeries
+                var="attributesBean"
+                value="#{policySummary.policyWizardBean.privilegeBean.attributesBeans}">
+                <pre>
+                <ice:outputText
+                    value="#{attributesBean.toFormattedString}"/>
+                </pre>
+            </ice:panelSeries>
         </ice:panelGrid>
     </ice:panelGroup>
 </span>

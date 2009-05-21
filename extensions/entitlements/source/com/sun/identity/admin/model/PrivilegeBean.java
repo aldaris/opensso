@@ -8,8 +8,11 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,8 +50,8 @@ public class PrivilegeBean implements Serializable {
         this.modifier = modifier;
     }
 
-    public AttributesBean getStaticAttributesBean() {
-        return staticAttributesBean;
+    public List<AttributesBean> getAttributesBeans() {
+        return attributesBeans;
     }
 
     public static abstract class PrivilegeComparator implements Comparator {
@@ -203,14 +206,18 @@ public class PrivilegeBean implements Serializable {
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
     private ViewCondition viewCondition = null;
     private ViewSubject viewSubject = null;
-    private AttributesBean staticAttributesBean = new StaticAttributesBean();
+    private List<AttributesBean> attributesBeans = new ArrayList<AttributesBean>();
     private Date birth;
     private Date modified;
     private String author;
     private String modifier;
 
     public PrivilegeBean() {
-        // empty
+        AttributesBean ab;
+        ab = new StaticAttributesBean();
+        attributesBeans.add(ab);
+        ab = new UserAttributesBean();
+        attributesBeans.add(ab);
     }
 
     public PrivilegeBean(
@@ -231,11 +238,12 @@ public class PrivilegeBean implements Serializable {
         // conditions
         viewCondition = conditionTypeFactory.getViewCondition(p.getCondition());
 
-        // static attributes
-        staticAttributesBean = new StaticAttributesBean(p.getResourceAttributes());
-
-        // user attributes
-        // TODO
+        // attributes
+        AttributesBean ab;
+        ab = new StaticAttributesBean(p.getResourceAttributes());
+        attributesBeans.add(ab);
+        ab = new UserAttributesBean(p.getResourceAttributes());
+        attributesBeans.add(ab);
 
         // created, modified
         birth = new Date(p.getCreationDate());
@@ -276,11 +284,12 @@ public class PrivilegeBean implements Serializable {
             condition = getViewCondition().getEntitlementCondition();
         }
 
-        // static attrs
-        Set<ResourceAttribute> attrs = staticAttributesBean.toResourceAttributesSet();
-
-        // user attrs
-        // TODO
+        // attrs
+        Set<ResourceAttribute> attributes = new HashSet<ResourceAttribute>();
+        for (AttributesBean ab: attributesBeans) {
+            Set<ResourceAttribute> attrs = ab.toResourceAttributesSet();
+            attributes.addAll(attrs);
+        }
 
         try {
             Privilege p = new OpenSSOPrivilege(
@@ -288,7 +297,7 @@ public class PrivilegeBean implements Serializable {
                 entitlement,
                 eSubject,
                 condition,
-                attrs);
+                attributes);
             p.setDescription(description);
             return p;
         } catch (EntitlementException ee) {

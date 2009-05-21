@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.51 2009-05-20 20:39:36 farble1670 Exp $
+  $Id: build.xml,v 1.52 2009-05-21 20:28:49 farble1670 Exp $
 
 -->
 
@@ -46,9 +46,6 @@
            property="sharedlib.jar.exists" value="true" />
    <available file="${entitlements.built.src.dir}/com/sun/identity/entitlement/xacml3/core"
            property="xacml3.core.source.exists" value="true" />
-
-  <echo>${war.package.dir}</echo>
-  <echo>${war.package.dir.exists}</echo>
 
    <target name="build" depends="package-war"/>
    

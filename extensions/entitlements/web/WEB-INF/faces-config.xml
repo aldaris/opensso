@@ -157,6 +157,11 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>userAttributesPanelBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.BasicMultiPanelBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>basicMultiPanelHandler</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.handler.BasicMultiPanelHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>

@@ -116,7 +116,7 @@ public class PolicyDao implements Serializable {
     private PrivilegeManager getPrivilegeManager() {
         SSOToken t = new Token().getSSOToken();
         Subject s = SubjectUtils.createSubject(t);
-                    // TODO: realm
+        // TODO: realm
         PrivilegeManager pm = PrivilegeManager.getInstance("/", s);
 
         return pm;

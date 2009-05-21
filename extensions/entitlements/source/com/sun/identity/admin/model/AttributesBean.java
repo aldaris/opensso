@@ -10,9 +10,16 @@ import java.util.Set;
 
 public abstract class AttributesBean implements Serializable {
     private List<ViewAttribute> viewAttributes = new ArrayList<ViewAttribute>();
-    private boolean addPopupVisible;
-    private String addPopupName;
     private AttributesHandler attributesHandler;
+
+    public enum AttributeType {
+        STATIC,
+        USER;
+
+        public String getToString() {
+            return toString();
+        }
+    }
 
     public AttributesBean() {
         reset();
@@ -21,27 +28,12 @@ public abstract class AttributesBean implements Serializable {
     public abstract Set<ResourceAttribute> toResourceAttributesSet();
 
     public void reset() {
-        addPopupVisible = false;
-        addPopupName = null;
     }
+
 
     public abstract ViewAttribute newViewAttribute();
 
-    public boolean isAddPopupVisible() {
-        return addPopupVisible;
-    }
-
-    public void setAddPopupVisible(boolean addPopupVisible) {
-        this.addPopupVisible = addPopupVisible;
-    }
-
-    public String getAddPopupName() {
-        return addPopupName;
-    }
-
-    public void setAddPopupName(String addPopupName) {
-        this.addPopupName = addPopupName;
-    }
+    public abstract AttributeType getAttributeType();
 
     public List<ViewAttribute> getViewAttributes() {
         return viewAttributes;
@@ -63,7 +55,11 @@ public abstract class AttributesBean implements Serializable {
         return getListToFormattedString(viewAttributes);
     }
 
-    public String getListToString(List list) {
+    public static String getToFormattedString(List<ViewAttribute> vas) {
+        return getListToFormattedString(vas);
+    }
+
+    private static String getListToString(List list) {
         StringBuffer b = new StringBuffer();
 
         for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
@@ -73,11 +69,10 @@ public abstract class AttributesBean implements Serializable {
             }
 
         }
-
         return b.toString();
     }
 
-    public String getListToFormattedString(List list) {
+    private static String getListToFormattedString(List list) {
         StringBuffer b = new StringBuffer();
 
         for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
