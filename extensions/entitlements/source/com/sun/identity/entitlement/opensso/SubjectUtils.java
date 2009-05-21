@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectUtils.java,v 1.3 2009-04-28 00:34:35 veiming Exp $
+ * $Id: SubjectUtils.java,v 1.4 2009-05-21 08:17:49 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -30,16 +30,13 @@ package com.sun.identity.entitlement.opensso;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.shared.Constants;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 import javax.security.auth.Subject;
 
-/**
- *
- * @author dennis
- */
 public class SubjectUtils {
     private SubjectUtils() {
     }
@@ -55,8 +52,22 @@ public class SubjectUtils {
             return new Subject(false, userPrincipals, new HashSet(),
                 privateCred);
         } catch (SSOException ex) {
-            return null; //TOFIX
+            PrivilegeManager.debug.error("SubjectUtils.createSubject", ex);
+            return null;
         }
+    }
+
+    public static SSOToken getSSOToken(Subject subject) {
+        Set set = subject.getPrivateCredentials();
+        if ((set == null) || set.isEmpty()) {
+            return null;
+        }
+        for (Object o : set) {
+            if (o instanceof SSOToken) {
+                return (SSOToken)o;
+            }
+        }
+        return null;
     }
 
     public static String getPrincipalId(Subject subject) {

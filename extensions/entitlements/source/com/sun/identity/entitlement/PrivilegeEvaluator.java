@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.16 2009-05-19 23:50:14 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.17 2009-05-21 08:17:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -43,6 +43,7 @@ import javax.security.auth.Subject;
  * and a environment paramaters.
  */
 class PrivilegeEvaluator {
+    private String realm = "/";
     private Subject adminSubject;
     private Subject subject;
     private String applicationName;
@@ -65,6 +66,7 @@ class PrivilegeEvaluator {
      *
      * @param adminSubject Administrator subject which is used for evcaluation.
      * @param subject Subject to be evaluated.
+     * @param realm Realm Name
      * @param applicationName Application Name.
      * @param resourceName Rsource name.
      * @param actions Action names.
@@ -76,6 +78,7 @@ class PrivilegeEvaluator {
     private void init(
         Subject adminSubject,
         Subject subject,
+        String realm,
         String applicationName,
         String resourceName,
         Set<String> actions,
@@ -84,22 +87,25 @@ class PrivilegeEvaluator {
     ) throws EntitlementException {
         this.adminSubject = adminSubject;
         this.subject = subject;
+        this.realm = realm;
         this.applicationName = applicationName;
         this.resourceName = resourceName;
         this.envParameters = envParameters;
+
+        Application appl = getApplication();
         
         this.actionNames = new HashSet<String>();
         if ((actions == null) || actions.isEmpty()) {
-            this.actionNames.addAll(getApplication().getActions().keySet());
+            this.actionNames.addAll(appl.getActions().keySet());
         } else {
             this.actionNames.addAll(actions);
         }
 
-        entitlementCombiner = getApplication().getEntitlementCombiner();
-        entitlementCombiner.init(applicationName, resourceName,
+        entitlementCombiner = appl.getEntitlementCombiner();
+        entitlementCombiner.init(realm, applicationName, resourceName,
             this.actionNames, recursive);
         this.recursive = recursive;
-        threadPool = new EntitlementThreadPool(); //TOFIX
+        threadPool = new EntitlementThreadPool(); //TODO QOS
     }
 
     /**
@@ -124,7 +130,7 @@ class PrivilegeEvaluator {
         Entitlement entitlement,
         Map<String, Set<String>> envParameters
     ) throws EntitlementException {
-        init(adminSubject, subject, applicationName,
+        init(adminSubject, subject, realm, applicationName,
             entitlement.getResourceName(), 
             entitlement.getActionValues().keySet(), envParameters, false);
 
@@ -163,7 +169,7 @@ class PrivilegeEvaluator {
         Map<String, Set<String>> envParameters,
         boolean recursive
     ) throws EntitlementException {
-        init(adminSubject, subject, applicationName,
+        init(adminSubject, subject, realm, applicationName,
             resourceName, null, envParameters, recursive);
         indexes = getApplication().getResourceSearchIndex(resourceName);
         return evaluate(realm);
@@ -222,7 +228,7 @@ class PrivilegeEvaluator {
     private Application getApplication() {
         if (application == null) {
             application = ApplicationManager.getApplication(
-                "/", applicationName); //TOFIX: realm
+                realm, applicationName);
         }
         return application;
     }

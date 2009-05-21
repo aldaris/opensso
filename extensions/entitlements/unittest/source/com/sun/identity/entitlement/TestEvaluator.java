@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestEvaluator.java,v 1.9 2009-05-13 08:59:24 veiming Exp $
+ * $Id: TestEvaluator.java,v 1.10 2009-05-21 08:17:50 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -62,7 +62,7 @@ public class TestEvaluator {
 
     @BeforeClass
     public void setup() throws Exception {
-        Application appl = new Application(APPL_NAME, 
+        Application appl = new Application("/", APPL_NAME,
             ApplicationTypeManager.getAppplicationType(
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
 

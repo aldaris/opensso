@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.7 2009-05-09 01:08:45 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.8 2009-05-21 08:17:48 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -35,7 +35,7 @@ public abstract class PolicyDataStore {
 
     static {
         try {
-            //TOFIX
+            //TODO configurable data store
             Class clazz = Class.forName(
                 "com.sun.identity.entitlement.opensso.OpenSSOPolicyDataStore");
             instance = (PolicyDataStore)clazz.newInstance();

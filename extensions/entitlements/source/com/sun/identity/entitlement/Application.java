@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.15 2009-05-13 21:55:29 veiming Exp $
+ * $Id: Application.java,v 1.16 2009-05-21 08:17:48 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -42,6 +42,7 @@ import java.util.Set;
  * and the supported actions.
  */
 public class Application {
+    private String realm = "/";
     private String name;
     private ApplicationType applicationType;
     private Map<String, Boolean> actions;
@@ -59,7 +60,12 @@ public class Application {
      * @param name Name of Application.
      * @param applicationType Its application type.
      */
-    public Application(String name, ApplicationType applicationType) {
+    public Application(
+        String realm,
+        String name,
+        ApplicationType applicationType
+    ) {
+        this.realm = realm;
         this.name = name;
         this.applicationType = applicationType;
     }
@@ -266,8 +272,8 @@ public class Application {
      */
     public void addAction(String name, boolean val)
         throws EntitlementException {
-        //TOFIX realm
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            realm);
         ec.addApplicationAction(this.name, name, val);
     }
 

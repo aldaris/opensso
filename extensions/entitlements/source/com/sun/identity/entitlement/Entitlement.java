@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.37 2009-05-21 06:35:30 veiming Exp $
+ * $Id: Entitlement.java,v 1.38 2009-05-21 08:17:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -671,7 +671,7 @@ public class Entitlement {
     public Application getApplication() {
         if (application == null) {
             application = ApplicationManager.getApplication(
-                "/", applicationName); //TOFIX
+                "/", applicationName); //TODO realm
         }
         return application;
     }

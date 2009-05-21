@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeTest.java,v 1.3 2009-05-13 08:59:24 veiming Exp $
+ * $Id: ApplicationTypeTest.java,v 1.4 2009-05-21 08:17:49 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -37,7 +37,7 @@ public class ApplicationTypeTest {
     private static final String APPL_NAME = "ApplicationTypeTestApp";
     @BeforeClass
     public void setup() throws EntitlementException {
-        Application appl = new Application(APPL_NAME,
+        Application appl = new Application("/", APPL_NAME,
             ApplicationTypeManager.getAppplicationType(
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
         Set<String> resources = new HashSet<String>();

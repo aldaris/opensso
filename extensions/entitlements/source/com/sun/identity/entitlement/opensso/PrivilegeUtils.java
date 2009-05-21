@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.24 2009-05-21 01:04:02 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.25 2009-05-21 08:17:49 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -329,12 +329,12 @@ public class PrivilegeUtils {
                 return new PolicySubject((String)nSubject[0],
                     className, val, (Boolean)nSubject[2]);
             }
-        } catch (ClassNotFoundException ex) {
-            //TOFIX
-        } catch (InstantiationException ex) {
-            //TOFIX
-        } catch (IllegalAccessException ex) {
-            //TOFIX
+        } catch (ClassNotFoundException e) {
+            PrivilegeManager.debug.error("PrivilegeUtils.mapGenericSubject", e);
+        } catch (InstantiationException e) {
+            PrivilegeManager.debug.error("PrivilegeUtils.mapGenericSubject", e);
+        } catch (IllegalAccessException e) {
+            PrivilegeManager.debug.error("PrivilegeUtils.mapGenericSubject", e);
         }
         return null;
     }
@@ -362,24 +362,27 @@ public class PrivilegeUtils {
                 return new PolicyCondition((String)nCondition[0], className,
                     props);
             }
-        } catch (ClassNotFoundException ex) {
-            //TOFIX
-        } catch (InstantiationException ex) {
-            //TOFIX
-        } catch (IllegalAccessException ex) {
-            //TOFIX
+        } catch (ClassNotFoundException e) {
+            PrivilegeManager.debug.error(
+                "PrivilegeUtils.mapGenericCondition", e);
+        } catch (InstantiationException e) {
+            PrivilegeManager.debug.error(
+                "PrivilegeUtils.mapGenericCondition", e);
+        } catch (IllegalAccessException e) {
+            PrivilegeManager.debug.error(
+                "PrivilegeUtils.mapGenericCondition", e);
         }
         return null;
     }
 
-    public static Policy privilegeToPolicy(Privilege privilege)
+    public static Policy privilegeToPolicy(String realm, Privilege privilege)
             throws PolicyException, SSOException {
         Policy policy = null;
         policy = new Policy(privilege.getName());
         policy.setDescription(privilege.getDescription());
         if (privilege.getEntitlement() != null) {
             Entitlement entitlement = privilege.getEntitlement();
-            Set<Rule> rules = entitlementToRule(entitlement);
+            Set<Rule> rules = entitlementToRule(realm, entitlement);
             for (Rule rule : rules) {
                 policy.addRule(rule);
             }
@@ -414,11 +417,13 @@ public class PrivilegeUtils {
         return policy;
     }
 
-    private static Set<Rule> entitlementToRule(Entitlement entitlement)
-            throws PolicyException, SSOException {
+    private static Set<Rule> entitlementToRule(
+        String realm,
+        Entitlement entitlement
+    ) throws PolicyException, SSOException {
         Set<Rule> rules = new HashSet<Rule>();
         String appName = entitlement.getApplicationName();
-        Application appl = ApplicationManager.getApplication("/", appName); //TOFIX
+        Application appl = ApplicationManager.getApplication(realm, appName);
         String serviceName = appl.getApplicationType().getName();
 
         Set<String> resourceNames = entitlement.getResourceNames();

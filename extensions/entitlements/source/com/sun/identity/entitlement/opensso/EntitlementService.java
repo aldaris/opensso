@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.12 2009-05-21 01:23:49 hengming Exp $
+ * $Id: EntitlementService.java,v 1.13 2009-05-21 08:17:48 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -214,7 +214,7 @@ public class EntitlementService extends EntitlementConfiguration {
                 for (String name : names) {
                     ServiceConfig applConf = conf.getSubConfig(name);
                     Map<String, Set<String>> data = applConf.getAttributes();
-                    Application app = createApplication(name, data);
+                    Application app = createApplication(realm, name, data);
                     results.add(app);
                 }
             }
@@ -556,6 +556,7 @@ public class EntitlementService extends EntitlementConfiguration {
     }
     
     private Application createApplication(
+        String realm,
         String name,
         Map<String, Set<String>> data
     ) {
@@ -563,7 +564,7 @@ public class EntitlementService extends EntitlementConfiguration {
             CONFIG_APPLICATIONTYPE);
         ApplicationType appType = ApplicationTypeManager.getAppplicationType(
             applicationType);
-        Application app = new Application(name, appType);
+        Application app = new Application(realm, name, appType);
 
         Map<String, Boolean> actions = getActions(data);
         if (actions != null) {
@@ -631,7 +632,7 @@ public class EntitlementService extends EntitlementConfiguration {
             ServiceConfig applConfig = getApplicationSubConfig(realm,
                 application);
             if (applConfig != null) {
-                Application app = createApplication(realm,
+                Application app = createApplication(realm, application,
                     applConfig.getAttributes());
                 return app.getAttributeNames();
             }

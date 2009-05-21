@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.22 2009-05-21 06:35:31 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.23 2009-05-21 08:17:49 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -58,7 +58,7 @@ public class PrivilegeManagerTest {
 
     @BeforeClass
     public void setup() throws SSOException, IdRepoException, EntitlementException {
-        Application appl = new Application(APPL_NAME,
+        Application appl = new Application("/", APPL_NAME,
             ApplicationTypeManager.getAppplicationType(
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
         Set<String> appResources = new HashSet<String>();

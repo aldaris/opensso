@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPolicyDataStore.java,v 1.3 2009-05-19 23:50:15 veiming Exp $
+ * $Id: OpenSSOPolicyDataStore.java,v 1.4 2009-05-21 08:17:49 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -66,7 +66,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
 
-        //TOFIX
+        //TODO XACML
         if (policy instanceof Policy) {
             Policy policyObj = (Policy) policy;
             String name = policyObj.getName();
@@ -207,7 +207,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
 
-        //TOFIX
+        //TODO XACML
         if (policy instanceof Policy) {
             Policy policyObj = (Policy) policy;
             String name = policyObj.getName();

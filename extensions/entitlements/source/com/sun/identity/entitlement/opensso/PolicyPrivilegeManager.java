@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.11 2009-05-13 20:40:00 dillidorai Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.12 2009-05-21 08:17:49 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -36,8 +36,6 @@ import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
-import com.sun.identity.security.AdminTokenAction;
-import java.security.AccessController;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -47,6 +45,7 @@ import javax.security.auth.Subject;
  */
 public class PolicyPrivilegeManager extends PrivilegeManager {
     private static boolean migratedToEntitlementSvc = false;
+    private String realm = "/";
     private PolicyManager pm;
 
     static {
@@ -68,15 +67,17 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     @Override
     public void initialize(String realm, Subject subject) {
         super.initialize(realm, subject);
-        SSOToken ssoToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance()); //TOFIX subject
+        this.realm = realm;
+        SSOToken ssoToken = SubjectUtils.getSSOToken(subject);
         if (!migratedToEntitlementSvc) {
             try {
                 pm = new PolicyManager(ssoToken, realm);
-            } catch (SSOException ssoe) {
-                //TOFIX
-            } catch (PolicyException pe) {
-                //TOFIX
+            } catch (SSOException e) {
+                PrivilegeManager.debug.error(
+                    "PolicyPrivilegeManager.initialize", e);
+            } catch (PolicyException e) {
+                PrivilegeManager.debug.error(
+                    "PolicyPrivilegeManager.initialize", e);
             }
         }
     }
@@ -98,7 +99,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
                 policy = (Policy)pdb.getPolicy(getRealm(), privilegeName);
-                //TOFIX ACXML
+                //TODO XACML
             }
 
             Set<Privilege> privileges =
@@ -127,7 +128,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         String name = privilege.getName();
 
         try {
-            Policy policy = PrivilegeUtils.privilegeToPolicy(privilege);
+            Policy policy = PrivilegeUtils.privilegeToPolicy(realm, privilege);
             if (!migratedToEntitlementSvc) {
                 pm.addPolicy(policy);
             } else {
@@ -181,11 +182,11 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         try {
             if (!migratedToEntitlementSvc) {
                 pm.removePolicy(privilege.getName());
-                pm.addPolicy(PrivilegeUtils.privilegeToPolicy(privilege));
+                pm.addPolicy(PrivilegeUtils.privilegeToPolicy(realm, privilege));
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
                 pdb.modifyPolicy(getRealm(), 
-                    PrivilegeUtils.privilegeToPolicy(privilege));
+                    PrivilegeUtils.privilegeToPolicy(realm, privilege));
             }
         } catch (PolicyException e) {
             Object[] params = {privilegeName};

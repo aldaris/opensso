@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCombiner.java,v 1.9 2009-05-04 20:57:06 veiming Exp $
+ * $Id: EntitlementCombiner.java,v 1.10 2009-05-21 08:17:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -60,12 +60,14 @@ public abstract class EntitlementCombiner {
     /**
      * Initializes the combiner.
      *
+     * @param realm Realm name.
      * @param applicationName Application Name.
      * @param resourceName Resource name to be evaluated.
      * @param actions Action names to be evaluated.
      * @param isRecursive <code>true<</code> for sub stree evaluation.
      */
     public void init(
+        String realm,
         String applicationName,
         String resourceName,
         Set<String> actions,
@@ -75,8 +77,8 @@ public abstract class EntitlementCombiner {
         this.isRecursive = isRecursive;
         this.actions = new HashSet<String>();
 
-        Application application = ApplicationManager.getApplication("/",
-            applicationName); //TOFIX realm
+        Application application = ApplicationManager.getApplication(realm,
+            applicationName);
         rootE = new Entitlement(applicationName, resourceName,
             Collections.EMPTY_MAP);
         resourceComparator = application.getResourceComparator();

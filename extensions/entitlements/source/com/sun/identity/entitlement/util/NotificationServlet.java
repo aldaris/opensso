@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationServlet.java,v 1.3 2009-05-09 01:08:46 veiming Exp $
+ * $Id: NotificationServlet.java,v 1.4 2009-05-21 08:17:49 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
+import com.sun.identity.entitlement.PrivilegeManager;
 import java.io.IOException;
 import java.io.Writer;
 import javax.servlet.ServletException;
@@ -83,7 +84,8 @@ public class NotificationServlet extends HttpServlet {
             writer.write("200");
             writer.flush();
         } catch (IOException ex) {
-            //TOFIX
+            PrivilegeManager.debug.error("NotificationServlet.handleRequest",
+                ex);
         } finally {
             try {
                 writer.close();
