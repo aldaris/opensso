@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.20 2009-05-19 00:15:22 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.21 2009-05-21 01:04:03 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -172,32 +172,35 @@ public class PrivilegeManagerTest {
         conditions.add(dnsc);
         conditions.add(tc);
 
-        StaticAttributes sa = new StaticAttributes();
-        Map<String, Set<String>> attrValues = new HashMap<String, Set<String>>();
+        StaticAttributes sa1 = new StaticAttributes();
         Set<String> aValues = new HashSet<String>();
         aValues.add("a10");
         aValues.add("a20");
+        sa1.setPropertyName("a");
+        sa1.setPropertyValues(aValues);
+        sa1.setPResponseProviderName("sa");
+        
+        StaticAttributes sa2 = new StaticAttributes();
         Set<String> bValues = new HashSet<String>();
         bValues.add("b10");
         bValues.add("b20");
-        attrValues.put("a", aValues);
-        attrValues.put("b", bValues);
-        sa.setProperties(attrValues);
-        sa.setPResponseProviderName("sa");
+        sa2.setPropertyName("b");
+        sa2.setPropertyValues(bValues);
+        sa2.setPResponseProviderName("sa");
 
-        UserAttributes ua = new UserAttributes();
-        attrValues = new HashMap<String, Set<String>>();
-        Set<String> mailAliases = new HashSet<String>();
-        mailAliases.add("email1");
-        mailAliases.add("email2");
-        attrValues.put("mail", mailAliases);
-        attrValues.put("uid", null);
-        ua.setProperties(attrValues);
-        ua.setPResponseProviderName("ua");
+        UserAttributes uat1 = new UserAttributes();
+        uat1.setPropertyName("email");
+        uat1.setPResponseProviderName("ua");
 
-        Set<ResourceAttributes> ra = new HashSet<ResourceAttributes>();
-        ra.add(sa);
-        ra.add(ua);
+        UserAttributes uat2 = new UserAttributes();
+        uat2.setPropertyName("uid");
+        uat2.setPResponseProviderName("ua");
+
+        Set<ResourceAttribute> ra = new HashSet<ResourceAttribute>();
+        ra.add(sa1);
+        ra.add(sa2);
+        ra.add(uat1);
+        ra.add(uat2);
 
         privilege = new OpenSSOPrivilege(PRIVILEGE_NAME, entitlement, os,
             ipc, ra);

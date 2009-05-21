@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.6 2009-04-26 07:20:47 veiming Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.7 2009-05-21 01:04:04 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -38,6 +38,9 @@ import com.sun.identity.entitlement.IPCondition;
 import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.ResourceAttribute;
+import com.sun.identity.entitlement.StaticAttributes;
+import com.sun.identity.entitlement.UserAttributes;
 import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -90,23 +93,50 @@ public class PrivilegeUtilsTest {
         AndCondition andCondition = new AndCondition();
         andCondition.setEConditions(setConditions);
 
+        StaticAttributes sa1 = new StaticAttributes();
+        Set<String> aValues = new HashSet<String>();
+        aValues.add("a10");
+        aValues.add("a20");
+        sa1.setPropertyName("a");
+        sa1.setPropertyValues(aValues);
+        sa1.setPResponseProviderName("sa");
+
+        StaticAttributes sa2 = new StaticAttributes();
+        Set<String> bValues = new HashSet<String>();
+        bValues.add("b10");
+        bValues.add("b20");
+        sa2.setPropertyName("b");
+        sa2.setPropertyValues(bValues);
+        sa2.setPResponseProviderName("sa");
+
+        UserAttributes uat1 = new UserAttributes();
+        uat1.setPropertyName("email");
+        uat1.setPResponseProviderName("ua");
+
+        UserAttributes uat2 = new UserAttributes();
+        uat2.setPropertyName("uid");
+        uat2.setPResponseProviderName("ua");
+
+        Set<ResourceAttribute> ra = new HashSet<ResourceAttribute>();
+        ra.add(sa1);
+        ra.add(sa2);
+        ra.add(uat1);
+        ra.add(uat2);
+
         Privilege privilege = new OpenSSOPrivilege(
                 "TestPrivilege",
                 entitlement,
                 os, //orSubject
                 andCondition, //entitlementCondition
-                null); //attributes
+                ra); //attributes
 
-        UnittestLog.logMessage(
-                "PrivilegeUtilsTest.testPrivilegeToPolicy():" + "privilege=" 
-                + privilege);
         Policy policy = PrivilegeUtils.privilegeToPolicy(privilege);
-        
-        UnittestLog.logMessage(
-                "PrivilegeUtilsTest.testPrivilegeToPolicy():" + "policy="
-                + policy.toXML());
-         
+        Set<Privilege> ps = PrivilegeUtils.policyToPrivileges(policy);
 
+        if ((ps == null) || ps.isEmpty()) {
+            throw new Exception(
+                "PrivilegeUtilsTest.testPrivilegeToPolicy failed.");
+        }
     }
 
     private Rule createRule(String ruleName) throws PolicyException {

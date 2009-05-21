@@ -1,12 +1,10 @@
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.handler.StaticAttributesHandler;
-import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.ResourceAttributes;
+import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.StaticAttributes;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 
 public class StaticAttributesBean extends AttributesBean {
@@ -20,44 +18,40 @@ public class StaticAttributesBean extends AttributesBean {
         return new StaticViewAttribute();
     }
 
-    public StaticAttributesBean(Set<ResourceAttributes> resourceAttributes) {
+    public StaticAttributesBean(Set<ResourceAttribute> resourceAttributes) {
         this();
 
-        for (ResourceAttributes ras: resourceAttributes) {
+        for (ResourceAttribute ras: resourceAttributes) {
             if (!(ras instanceof StaticAttributes)) {
                 continue;
             }
 
-            for (String key: ras.getProperties().keySet()) {
-                for (String val: ras.getProperties().get(key)) {
-                    StaticViewAttribute sva = new StaticViewAttribute();
-                    sva.setName(key);
-                    sva.setValue(val);
-                    getViewAttributes().add(sva);
-                }
+            String key = ras.getPropertyName();
+            for (String val : ras.getPropertyValues()) {
+                StaticViewAttribute sva = new StaticViewAttribute();
+                sva.setName(key);
+                sva.setValue(val);
+                getViewAttributes().add(sva);
             }
         }
     }
 
-    public Set<ResourceAttributes> toResourceAttributesSet() {
-        Map<String,Set<String>> properties = new HashMap<String,Set<String>>();
+    public Set<ResourceAttribute> toResourceAttributesSet() {
+        Set<ResourceAttribute> resAttributes = new HashSet<ResourceAttribute>();
 
         for (ViewAttribute va: getViewAttributes()) {
             if (!(va instanceof StaticViewAttribute)) {
                 continue;
             }
             StaticViewAttribute sva = (StaticViewAttribute)va;
-            properties.put(sva.getName(), Collections.singleton(sva.getValue()));
+            StaticAttributes sas = new StaticAttributes();
+            
+            sas.setPropertyName(sva.getName());
+            sas.setPropertyValues(Collections.singleton(sva.getValue()));
+            resAttributes.add(sas);
         }
 
-        ResourceAttributes sas = new StaticAttributes();
-        try {
-            sas.setProperties(properties);
-        } catch (EntitlementException ee) {
-            throw new AssertionError(ee);
-        }
-
-        return Collections.singleton(sas);
+        return resAttributes;
     }
 
     @Override

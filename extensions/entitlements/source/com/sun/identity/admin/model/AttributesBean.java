@@ -1,7 +1,7 @@
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.handler.AttributesHandler;
-import com.sun.identity.entitlement.ResourceAttributes;
+import com.sun.identity.entitlement.ResourceAttribute;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,7 +18,7 @@ public abstract class AttributesBean implements Serializable {
         reset();
     }
 
-    public abstract Set<ResourceAttributes> toResourceAttributesSet();
+    public abstract Set<ResourceAttribute> toResourceAttributesSet();
 
     public void reset() {
         addPopupVisible = false;

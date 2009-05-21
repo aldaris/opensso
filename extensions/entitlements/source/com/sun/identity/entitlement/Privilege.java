@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.22 2009-05-19 23:50:14 veiming Exp $
+ * $Id: Privilege.java,v 1.23 2009-05-21 01:04:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -80,7 +80,7 @@ public abstract class Privilege implements Serializable {
     private Entitlement entitlement;
     private EntitlementSubject eSubject;
     private EntitlementCondition eCondition;
-    private Set<ResourceAttributes> eResourceAttributes;
+    private Set<ResourceAttribute> eResourceAttributes;
 
     private String createdBy;
     private String lastModifiedBy;
@@ -104,7 +104,7 @@ public abstract class Privilege implements Serializable {
         Entitlement entitlement,
         EntitlementSubject eSubject,
         EntitlementCondition eCondition,
-        Set<ResourceAttributes> eResourceAttributes
+        Set<ResourceAttribute> eResourceAttributes
     ) throws EntitlementException {
         entitlement.validateResourceNames();
         this.name = name;
@@ -169,7 +169,7 @@ public abstract class Privilege implements Serializable {
      * Returns the eResurceAttributes of  the privilege
      * @return eResourceAttributes of the privilege.
      */
-    public Set<ResourceAttributes> getResourceAttributes() {
+    public Set<ResourceAttribute> getResourceAttributes() {
         return eResourceAttributes;
     }
 
@@ -272,12 +272,10 @@ public abstract class Privilege implements Serializable {
         }
 
         if ((eResourceAttributes != null) && !eResourceAttributes.isEmpty()) {
-            for (ResourceAttributes r : eResourceAttributes) {
+            for (ResourceAttribute r : eResourceAttributes) {
                 JSONObject subjo = new JSONObject();
                 subjo.put("className", r.getClass().getName());
-                subjo.put("name", r.getPResponseProviderName());
-                subjo.put("properties", r.getProperties());
-                jo.append("eResourceAttributes", subjo);
+                subjo.put("state", r.getState());
             }
         }
         return jo;
@@ -319,25 +317,21 @@ public abstract class Privilege implements Serializable {
         return null;
     }
 
-    private static Set<ResourceAttributes> getResourceAttributes(JSONObject jo)
+    private static Set<ResourceAttribute> getResourceAttributes(JSONObject jo)
         throws JSONException{
         if (!jo.has("eResourceAttributes")) {
             return null;
         }
         JSONArray array = jo.getJSONArray("eResourceAttributes");
-        Set<ResourceAttributes> results = new HashSet<ResourceAttributes>();
+        Set<ResourceAttribute> results = new HashSet<ResourceAttribute>();
         for (int i = 0; i < array.length(); i++) {
             JSONObject json = (JSONObject)array.get(i);
             try {
                 Class clazz = Class.forName(json.getString("className"));
-                ResourceAttributes ra = (ResourceAttributes)clazz.newInstance();
-                ra.setProperties(JSONUtils.getMapStringSetString(
-                    json, "properties"));
+                ResourceAttribute ra = (ResourceAttribute)clazz.newInstance();
+                ra.setState(json.getString("state"));
                 ra.setPResponseProviderName(json.getString("name"));
                 results.add(ra);
-            } catch (EntitlementException ex) {
-                PrivilegeManager.debug.error(
-                    "Privilege.getResourceAttributes", ex);
             } catch (InstantiationException ex) {
                 PrivilegeManager.debug.error(
                     "Privilege.getResourceAttributes", ex);
@@ -349,7 +343,6 @@ public abstract class Privilege implements Serializable {
                     "Privilege.getResourceAttributes", ex);
             }
         }
-
 
         return results;
     }
@@ -454,19 +447,6 @@ public abstract class Privilege implements Serializable {
             }
         }
 
-        if (eCondition == null) {
-            if (object.getCondition() != null) {
-                return false;
-            }
-        } else { // name not null
-
-            if ((object.getCondition()) == null) {
-                return false;
-            } else if (!eCondition.equals(object.getCondition())) {
-                return false;
-            }
-        }
-
         if (eResourceAttributes == null) {
             if (object.getResourceAttributes() != null) {
                 return false;
@@ -480,6 +460,20 @@ public abstract class Privilege implements Serializable {
                 return false;
             }
         }
+
+        if (eCondition == null) {
+            if (object.getCondition() != null) {
+                return false;
+            }
+        } else { // name not null
+
+            if ((object.getCondition()) == null) {
+                return false;
+            } else if (!eCondition.equals(object.getCondition())) {
+                return false;
+            }
+        }
+
         return equalled;
     }
 

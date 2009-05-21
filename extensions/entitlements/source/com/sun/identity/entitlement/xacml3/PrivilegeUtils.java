@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.14 2009-05-14 23:39:44 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.15 2009-05-21 01:04:02 veiming Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -30,7 +30,7 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Privilege;
-import com.sun.identity.entitlement.ResourceAttributes;
+import com.sun.identity.entitlement.ResourceAttribute;
 
 import com.sun.identity.entitlement.UserSubject;
 
@@ -291,7 +291,7 @@ public class PrivilegeUtils {
         Condition condition = eSubjectConditionToXCondition(
                 privilege.getSubject(), privilege.getCondition());
 
-        Set<ResourceAttributes> ra = privilege.getResourceAttributes();
+        Set<ResourceAttribute> ra = privilege.getResourceAttributes();
 
         if (!permitActions.isEmpty()) {
             Rule permitRule = new Rule();

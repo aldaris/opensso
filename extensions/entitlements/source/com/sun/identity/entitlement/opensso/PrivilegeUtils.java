@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.23 2009-05-20 06:39:10 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.24 2009-05-21 01:04:02 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -41,7 +41,7 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PolicyCondition;
 import com.sun.identity.entitlement.PolicySubject;
 import com.sun.identity.entitlement.PrivilegeManager;
-import com.sun.identity.entitlement.ResourceAttributes;
+import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserAttributes;
 import com.sun.identity.policy.ActionSchema;
@@ -60,12 +60,10 @@ import com.sun.identity.policy.plugins.PrivilegeCondition;
 import com.sun.identity.policy.plugins.PrivilegeSubject;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -114,7 +112,7 @@ public class PrivilegeUtils {
         Set<Entitlement> entitlements = rulesToEntitlement(policy);
         EntitlementSubject eSubject = toEntitlementSubject(policy);
         EntitlementCondition eCondition = toEntitlementCondition(policy);
-        Set<ResourceAttributes> resourceAttributesSet =
+        Set<ResourceAttribute> resourceAttributesSet =
             toResourceAttributes(policy);
 
         if (entitlements.size() == 1) {
@@ -138,7 +136,7 @@ public class PrivilegeUtils {
         Entitlement e,
         EntitlementSubject eSubject,
         EntitlementCondition eCondition,
-        Set<ResourceAttributes> resourceAttributesSet,
+        Set<ResourceAttribute> resourceAttributesSet,
         Policy policy
     ) throws EntitlementException {
         Privilege privilege = new OpenSSOPrivilege(name, e,
@@ -184,7 +182,7 @@ public class PrivilegeUtils {
         return nConditionsToECondition(nConditions);
     }
 
-    private static Set<ResourceAttributes> toResourceAttributes(Policy policy) 
+    private static Set<ResourceAttribute> toResourceAttributes(Policy policy)
         throws PolicyException, EntitlementException {
         Set rpNames = policy.getResponseProviderNames();
         Set nrps = new HashSet();
@@ -226,16 +224,15 @@ public class PrivilegeUtils {
                 resourceNames.addAll(ruleResources);
             }
 
-            Set<String> excludedResourceNames = new HashSet<String>();
-            Set<String> excludedResourceNames1 = rule.getExcludedResourceNames();
-            if (excludedResourceNames1 != null) {
-                excludedResourceNames.addAll(excludedResourceNames1);
-            }
-
             Entitlement entitlement = new Entitlement(rule.getApplicationName(),
                 resourceNames, actionMap);
             entitlement.setName(entitlementName);
-            entitlement.setExcludedResourceNames(excludedResourceNames);
+            Set<String> excludedResourceNames1 = rule.getExcludedResourceNames();
+            if (excludedResourceNames1 != null) {
+                Set<String> excludedResourceNames = new HashSet<String>();
+                excludedResourceNames.addAll(excludedResourceNames1);
+                entitlement.setExcludedResourceNames(excludedResourceNames);
+            }
             entitlements.add(entitlement);
         }
 
@@ -401,13 +398,12 @@ public class PrivilegeUtils {
         }
 
         if (privilege.getResourceAttributes() != null) {
-            List nrps = resourceAttributesToResponseProviders(
+            Map<String, ResponseProvider> nrps =
+                resourceAttributesToResponseProviders(
                     privilege.getResourceAttributes());
-            for (Object obj : nrps) {
-                Object[] arr = (Object[]) obj;
-                String pResponseProviderName = (String) arr[0];
-                ResponseProvider responseProvider = (ResponseProvider) arr[1];
-                policy.addResponseProvider(pResponseProviderName, responseProvider);
+            for (String rpName : nrps.keySet()) {
+                ResponseProvider responseProvider = nrps.get(rpName);
+                policy.addResponseProvider(rpName, responseProvider);
             }
         }
 
@@ -466,168 +462,189 @@ public class PrivilegeUtils {
         return pc;
     }
 
-    private static Set<ResourceAttributes> nrpsToResourceAttributes(
-            Set nrps) throws EntitlementException {
-        Set<ResourceAttributes> resourceAttributesSet = new HashSet();
+    private static Set<ResourceAttribute> nrpsToResourceAttributes(
+        Set nrps) throws EntitlementException {
+        Set<ResourceAttribute> resourceAttributesSet = new HashSet();
         if (nrps != null && !nrps.isEmpty()) {
             for (Object nrpObj : nrps) {
                 Object[] nrpa = (Object[]) nrpObj;
                 String nrpName = (String) nrpa[0];
                 ResponseProvider rp = (ResponseProvider) nrpa[1];
                 if (rp instanceof IDRepoResponseProvider) {
-                    IDRepoResponseProvider irp = (IDRepoResponseProvider) rp;
-                    Map props = irp.getProperties();
-                    if (props != null) {
-                        Set sas = (Set) props.get(
-                            IDRepoResponseProvider.STATIC_ATTRIBUTE);
-                        if (sas != null && !sas.isEmpty()) {
-                            StaticAttributes sa = new StaticAttributes();
-                            Map saprops = new HashMap();
-                            for (Object obj : sas) {
-                                String sat = (String) obj;
-                                int i = sat.indexOf("=");
-                                String name = null;
-                                String value = null;
-                                if (i != -1) {
-                                    name = sat.substring(0, i);
-                                    value = sat.substring(i+1);
-                                } else {
-                                    name = sat;
-                                    value = null;
-                                }
-                                Set values = (Set) saprops.get(name);
-                                if (values == null) {
-                                    values = new HashSet();
-                                    saprops.put(name, values);
-                                }
-                                values.add(value);
-                            }
-                            sa.setProperties(saprops);
-                            sa.setPResponseProviderName(nrpName);
-                            resourceAttributesSet.add(sa);
-                        }
-                        Set uas = (Set) props.get(
-                            IDRepoResponseProvider.DYNAMIC_ATTRIBUTE);
-                        if (uas != null && !uas.isEmpty()) {
-                            UserAttributes ua = new UserAttributes();
-                            Map uaprops = new HashMap();
-                            for (Object obj : uas) {
-                                String uat = (String) obj;
-                                int i = uat.indexOf("=");
-                                String name = null;
-                                String value = null;
-                                if (i != -1) {
-                                    name = uat.substring(0, i);
-                                    value = uat.substring(i+1);
-                                } else {
-                                    name = uat;
-                                    value = null;
-                                }
-
-                                if (value == null) {
-                                    uaprops.put(name, null);
-                                } else {
-                                    Set values = (Set) uaprops.get(name);
-                                    if (values == null) {
-                                        values = new HashSet();
-                                        uaprops.put(name, values);
-                                    }
-                                    values.add(value);
-                                }
-                            }
-                            ua.setProperties(uaprops);
-                            ua.setPResponseProviderName(nrpName);
-                            resourceAttributesSet.add(ua);
-                        }
-                    }
+                    resourceAttributesSet.addAll(nrpsToResourceAttributes(
+                        (IDRepoResponseProvider) rp, nrpName));
                 }
-
             }
         }
         return resourceAttributesSet;
     }
 
-    private static List resourceAttributesToResponseProviders(
-            Set<ResourceAttributes> resourceAttributes) throws PolicyException {
-        List nrps = new ArrayList();
-        if (resourceAttributes != null) {
-            for (ResourceAttributes ra : resourceAttributes) {
-                if (ra instanceof StaticAttributes) {
-                    StaticAttributes sa = (StaticAttributes) ra;
-                    Object[] arr = new Object[2];
-                    arr[0] = sa.getPResponseProviderName();
-                    IDRepoResponseProvider rp = new IDRepoResponseProvider();
-                    Map props = sa.getProperties();
-                    if ((props != null) && !props.isEmpty()) {
-                        Set newValues = new HashSet();
-                        Set entrySet = props.entrySet();
-                        for (Object entryObj : entrySet) {
-                            Map.Entry entry = (Map.Entry) entryObj;
-                            String name = (String) entry.getKey();
-                            Set values = (Set) entry.getValue();
-                            if (values != null && !values.isEmpty()) {
-                                for (Object valueObj : values) {
-                                    String value = (String) valueObj;
-                                    newValues.add(name + "=" + value);
-                                }
+    private static Set<ResourceAttribute> nrpsToResourceAttributes(
+        IDRepoResponseProvider irp,
+        String nrpName) throws EntitlementException {
+        Map<String, ResourceAttribute> map = new
+            HashMap<String, ResourceAttribute>();
+        Map props = irp.getProperties();
 
-                            }
-                            if (!newValues.isEmpty()) {
-                                Map newProps = new HashMap();
-                                newProps.put(
-                                    IDRepoResponseProvider.STATIC_ATTRIBUTE,
-                                    newValues);
-                                rp.setProperties(newProps);
-                            }
+        if ((props != null) && !props.isEmpty()) {
+            Set<String> sas = (Set<String>) props.get(
+                IDRepoResponseProvider.STATIC_ATTRIBUTE);
 
-                        }
-                        arr[1] = rp;
-                        nrps.add(arr);
+            if (sas != null && !sas.isEmpty()) {
+                for (String sat : sas) {
+                    int i = sat.indexOf("=");
+                    String name = (i != -1) ? sat.substring(0, i) : sat;
+                    String value = (i != -1) ? sat.substring(i + 1) : null;
+
+                    String k = name + "_" +
+                        IDRepoResponseProvider.STATIC_ATTRIBUTE;
+                    StaticAttributes sa = (StaticAttributes) map.get(k);
+                    if (sa == null) {
+                        sa = new StaticAttributes();
+                        sa.setPropertyName(name);
+                        map.put(k, sa);
                     }
-
-                } else if (ra instanceof UserAttributes) {
-                    UserAttributes ua = (UserAttributes) ra;
-                    Object[] arr = new Object[2];
-                    arr[0] = ua.getPResponseProviderName();
-                    Map props = ua.getProperties();
-                    IDRepoResponseProvider rp = new IDRepoResponseProvider();
-                    if (props != null) {
-                        Set newValues = new HashSet();
-                        Set entrySet = props.entrySet();
-                        for (Object entryObj : entrySet) {
-                            Map.Entry entry = (Map.Entry) entryObj;
-                            String name = (String) entry.getKey();
-                            Set<String> values = (Set<String>) entry.getValue();
-
-                            if (values != null && !values.isEmpty()) {
-                                for (String s : values) {
-                                    newValues.add(name + "=" + s);
-                                }
-                            } else {
-                                newValues.add(name);
-                            }
-
-                            if (!newValues.isEmpty()) {
-                                Map newProps = new HashMap();
-                                newProps.put(
-                                    IDRepoResponseProvider.DYNAMIC_ATTRIBUTE,
-                                    newValues);
-                                Map configParams = new HashMap();
-                                configParams.put(
-                                    PolicyConfig.SELECTED_DYNAMIC_ATTRIBUTES,
-                                    newValues);
-                                rp.initialize(configParams);
-                                rp.setProperties(newProps);
-                            }
-                        }
+                    if (value != null) {
+                        sa.getPropertyValues().add(value);
                     }
-                    arr[1] = rp;
-                    nrps.add(arr);
+                    sa.setPResponseProviderName(nrpName);
                 }
+            }
 
+            Set<String> uas = (Set<String>) props.get(
+                IDRepoResponseProvider.DYNAMIC_ATTRIBUTE);
+
+            if (uas != null && !uas.isEmpty()) {
+                for (String uat : uas) {
+                    int i = uat.indexOf("=");
+                    String name = (i != -1) ? uat.substring(0, i) : uat;
+                    String value = (i != -1) ? uat.substring(i + 1) : null;
+
+                    String k = name + "_" +
+                        IDRepoResponseProvider.DYNAMIC_ATTRIBUTE;
+                    UserAttributes ua = (UserAttributes) map.get(k);
+                    if (ua == null) {
+                        ua = new UserAttributes();
+                        ua.setPropertyName(name);
+                        map.put(k, ua);
+                    }
+                    if (value != null) {
+                        ua.getPropertyValues().add(value);
+                    }
+                    ua.setPResponseProviderName(nrpName);
+                }
             }
         }
-        return nrps;
+        Set<ResourceAttribute> results = new HashSet<ResourceAttribute>();
+        results.addAll(map.values());
+        return results;
+    }
+
+
+
+    private static Map<String, ResponseProvider>
+        resourceAttributesToResponseProviders(
+            Set<ResourceAttribute> resourceAttributes
+    ) throws PolicyException {
+        Map<String, ResponseProvider> results = new
+            HashMap<String, ResponseProvider>();
+
+        if (resourceAttributes != null) {
+            Map<String, Map<String, Set<String>>> map = new
+                HashMap<String, Map<String, Set<String>>>();
+
+            for (ResourceAttribute ra : resourceAttributes) {
+                if (ra instanceof StaticAttributes) {
+                    resourceAttributesToResponseProviders(
+                        (StaticAttributes)ra, map);
+                } else if (ra instanceof UserAttributes) {
+                    resourceAttributesToResponseProviders(
+                        (UserAttributes)ra, map);
+                }
+            }
+
+            for (String n : map.keySet()) {
+                ResponseProvider rp = new IDRepoResponseProvider();
+                Map<String, Set<String>> values = map.get(n);
+                Set<String> dynValues = values.get(
+                    IDRepoResponseProvider.DYNAMIC_ATTRIBUTE);
+
+                if ((dynValues != null) && !dynValues.isEmpty()) {
+                    Map<String, Set<String>> configParams = new
+                        HashMap<String, Set<String>>();
+                    configParams.put(PolicyConfig.SELECTED_DYNAMIC_ATTRIBUTES,
+                        dynValues);
+                    rp.initialize(configParams);
+                }
+
+                rp.setProperties(values);
+
+                results.put(n, rp);
+            }
+        }
+
+        return results;
+    }
+
+    private static void resourceAttributesToResponseProviders(
+        StaticAttributes sa,
+        Map<String, Map<String, Set<String>>> results) throws PolicyException {
+        String pluginName = sa.getPResponseProviderName();
+
+        Map<String, Set<String>> map = results.get(pluginName);
+        if (map == null) {
+            map = new HashMap<String, Set<String>>();
+            results.put(pluginName, map);
+        }
+
+        String propertyName = sa.getPropertyName();
+        Set<String> propertyValues = sa.getPropertyValues();
+
+        Set<String> values = map.get(
+            IDRepoResponseProvider.STATIC_ATTRIBUTE);
+        if (values == null) {
+            values = new HashSet<String>();
+            map.put(IDRepoResponseProvider.STATIC_ATTRIBUTE, values);
+        }
+
+        getResponseAttributeValues(propertyName, propertyValues, values);
+    }
+
+    private static void resourceAttributesToResponseProviders(
+        UserAttributes ua,
+        Map<String, Map<String, Set<String>>> results) throws PolicyException {
+        String pluginName = ua.getPResponseProviderName();
+        
+        Map<String, Set<String>> map = results.get(pluginName);
+        if (map == null) {
+            map = new HashMap<String, Set<String>>();
+            results.put(pluginName, map);
+        }
+
+        String propertyName = ua.getPropertyName();
+        Set<String> propertyValues = ua.getPropertyValues();
+
+        Set<String> values = map.get(
+            IDRepoResponseProvider.DYNAMIC_ATTRIBUTE);
+        if (values == null) {
+            values = new HashSet<String>();
+            map.put(IDRepoResponseProvider.DYNAMIC_ATTRIBUTE, values);
+        }
+
+        getResponseAttributeValues(propertyName, propertyValues, values);
+    }
+
+    private static void getResponseAttributeValues(
+        String propertyName,
+        Set<String> propertyValues,
+        Set<String> results) {
+        if ((propertyValues != null) && !propertyValues.isEmpty()) {
+            for (String v : propertyValues) {
+                results.add(propertyName + "=" + v);
+            }
+        } else {
+            results.add(propertyName);
+        }
     }
 
     private static String randomName() {

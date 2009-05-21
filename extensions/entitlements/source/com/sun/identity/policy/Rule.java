@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.10 2009-05-09 01:08:46 veiming Exp $
+ * $Id: Rule.java,v 1.11 2009-05-21 01:04:03 veiming Exp $
  *
  */
 package com.sun.identity.policy;
@@ -254,9 +254,13 @@ public class Rule extends Object implements Cloneable {
         resourceNames = new HashSet<String>();
         resourceNames.addAll(getResources(ruleNode,
             PolicyManager.POLICY_RULE_RESOURCE_NODE, entitlementDIT));
-        excludedResourceNames = new HashSet<String>();
-        excludedResourceNames.addAll(getResources(ruleNode,
-            PolicyManager.POLICY_RULE_EXCLUDED_RESOURCE_NODE, entitlementDIT));
+        
+        Set<String> excludeResources = getResources(ruleNode,
+            PolicyManager.POLICY_RULE_EXCLUDED_RESOURCE_NODE, entitlementDIT);
+        if (excludeResources != null) {
+            excludedResourceNames = new HashSet<String>();
+            excludedResourceNames.addAll(excludeResources);
+        }
 
         // Get the actions and action values, cannot be null
         Set actionNodes = XMLUtils.getChildNodes(ruleNode,
@@ -292,10 +296,11 @@ public class Rule extends Object implements Cloneable {
         String childNodeName,
         boolean entitlementDIT
     ) throws InvalidNameException {
-        Set<String> container = new HashSet<String>();
+        Set<String> container = null;
         Set children = XMLUtils.getChildNodes(ruleNode, childNodeName);
 
         if ((children != null) && !children.isEmpty()) {
+            container = new HashSet<String>();
             for (Iterator i = children.iterator(); i.hasNext();) {
                 Node resourceNode = (Node) i.next();
                 String resourceName = XMLUtils.getNodeAttributeValue(
@@ -438,9 +443,11 @@ public class Rule extends Object implements Cloneable {
      */
     public void setExcludedResourceNames(
             Set<String> excludedResourceNames) {
-        this.excludedResourceNames = new HashSet();
         if (excludedResourceNames != null) {
+            this.excludedResourceNames = new HashSet();
             this.excludedResourceNames.addAll(excludedResourceNames);
+        } else {
+            this.excludedResourceNames = null;
         }
     }
 
@@ -747,9 +754,9 @@ public class Rule extends Object implements Cloneable {
         if (resourceNames != null) {
             answer.resourceNames.addAll(resourceNames);
         }
-
-        answer.excludedResourceNames = new HashSet();
+        
         if (excludedResourceNames != null) {
+            answer.excludedResourceNames = new HashSet();
             answer.excludedResourceNames.addAll(excludedResourceNames);
         }
 

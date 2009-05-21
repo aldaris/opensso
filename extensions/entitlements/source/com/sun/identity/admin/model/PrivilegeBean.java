@@ -5,7 +5,7 @@ import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Privilege;
-import com.sun.identity.entitlement.ResourceAttributes;
+import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import java.io.Serializable;
 import java.util.Comparator;
@@ -277,7 +277,7 @@ public class PrivilegeBean implements Serializable {
         }
 
         // static attrs
-        Set<ResourceAttributes> attrs = staticAttributesBean.toResourceAttributesSet();
+        Set<ResourceAttribute> attrs = staticAttributesBean.toResourceAttributesSet();
 
         // user attrs
         // TODO

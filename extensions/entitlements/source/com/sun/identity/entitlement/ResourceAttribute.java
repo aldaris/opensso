@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceAttributes.java,v 1.4 2009-05-19 23:50:14 veiming Exp $
+ * $Id: ResourceAttribute.java,v 1.1 2009-05-21 01:04:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -32,26 +32,30 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 /**
- * Interface specification for entitlement <code>ResourceAttributes</code>
+ * Interface specification for entitlement <code>ResourceAttribute</code>
  */
-public interface ResourceAttributes extends Serializable {
+public interface ResourceAttribute extends Serializable {
 
     /**
-     * Sets configuration properties for this <code>ResourceAttributes</code>
-     * @param properties configuration properties for  this
-     * <code>ResourceAttributes</code>
-     * @throws com.sun.identity.entitlement.EntitlementException if any
-     * abnormal condition occured
+     * Sets property name.
+     *
+     * @param name property name.
      */
-    void setProperties(Map<String, Set<String>> properties)
-        throws EntitlementException;
+    void setPropertyName(String name);
 
     /**
-     * <code>ResourceAttributes</code>
-     * @return configuration properties for this
-     * <code>ResourceAttributes</code>
+     * Returns property name.
+     *
+     * @return name property name.
      */
-    Map<String, Set<String>> getProperties();
+    String getPropertyName();
+
+    /**
+     * Returns property values.
+     *
+     * @return properties for this <code>ResourceAttribute</code>.
+     */
+    Set<String> getPropertyValues();
 
     /**
      * Returns resoruce attributes aplicable to the request.
@@ -84,4 +88,18 @@ public interface ResourceAttributes extends Serializable {
      * OpenSSO policy Subject
      */
     String getPResponseProviderName();
+
+    /**
+     * Returns the state of this object.
+     *
+     * @return state of this object.
+     */
+    String getState();
+
+    /**
+     * Sets the state of the object.
+     *
+     * @param s state of the object.
+     */
+    void setState(String s);
 }

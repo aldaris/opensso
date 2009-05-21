@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StaticAttributes.java,v 1.4 2009-05-02 08:54:00 veiming Exp $
+ * $Id: StaticAttributes.java,v 1.5 2009-05-21 01:04:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.util.JSONUtils;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -33,50 +35,39 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 /**
- * Interface specification for entitlement <code>ResourceAttributes</code>
+ * Interface specification for entitlement <code>ResourceAttribute</code>
  */
-public class StaticAttributes implements ResourceAttributes {
+public class StaticAttributes implements ResourceAttribute {
     private static final long serialVersionUID = -403250971215465050L;
 
-    private Map<String, Set<String>> properties;
+    private String propertyName;
+    private Set<String> propertyValues;
     private String pResponseProviderName;
 
     /**
      * Constructs an instance of StaticAttributes
      */
     public StaticAttributes() {
-
+        propertyValues = new HashSet<String>();
     }
 
-    /**
-     * Constructs an instance of StaticAttributes
-     * @param properties configuration properties for  this object
-     */
-
-    public StaticAttributes(Map<String, Set<String>> properties) {
-        this.properties = properties;
+    public String getPropertyName() {
+        return propertyName;
     }
 
-    /**
-     * Sets configuration properties for this <code>ResourceAttributes</code>
-     * @param properties configuration properties for  this
-     * <code>ResourceAttributes</code>
-     * @throws com.sun.identity.entitlement.EntitlementException if any
-     * abnormal condition occured
-     */
-    public void setProperties(Map<String, Set<String>> properties)
-            throws EntitlementException {
-        this.properties = properties;
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
 
-    /**
-     * <code>ResourceAttributes</code>
-     * @return configuration properties for this
-     * <code>ResourceAttributes</code>
-     */
-    public Map<String, Set<String>> getProperties() {
-        return properties;
+    public Set<String> getPropertyValues() {
+        return propertyValues;
     }
+
+    public void setPropertyValues(Set<String> propertyValues) {
+        this.propertyValues = new HashSet<String>();
+        this.propertyValues.addAll(propertyValues);
+    }
+
 
     /**
      * Returns resoruce attributes aplicable to the request
@@ -96,12 +87,45 @@ public class StaticAttributes implements ResourceAttributes {
     }
 
     /**
+     * Returns the state of this object.
+     *
+     * @return state of this object.
+     */
+    public String getState() {
+        try {
+            return toJSONObject().toString();
+        } catch (JSONException ex) {
+            PrivilegeManager.debug.error("StaticAttribute.getState", ex);
+            return "";
+        }
+    }
+
+    /**
+     * Sets the state of the object.
+     *
+     * @param s state of the object.
+     */
+    public void setState(String s) {
+        if ((s != null) && (s.trim().length() > 0)) {
+            try {
+                JSONObject json = new JSONObject(s);
+                propertyName = json.getString("propertyName");
+                propertyValues = JSONUtils.getSet(json, "propertyValues");
+                pResponseProviderName = json.getString("pResponseProviderName");
+            } catch (JSONException ex) {
+                PrivilegeManager.debug.error("StaticAttribute.setState", ex);
+            }
+        }
+    }
+
+    /**
      * Returns JSONObject mapping of the object
      * @return JSONObject mapping  of the object
      */
-    public JSONObject toJSONObject() throws JSONException {
+    private JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
-        jo.put("properties", properties);
+        jo.put("propertyName", propertyName);
+        jo.put("propertyValues", propertyValues);
         jo.put("pResponseProviderName", pResponseProviderName);
         return jo;
     }
@@ -155,16 +179,28 @@ public class StaticAttributes implements ResourceAttributes {
         if (!getClass().equals(obj.getClass())) {
             return false;
         }
+
         StaticAttributes object = (StaticAttributes) obj;
-        if (properties == null) {
-            if (object.getProperties() != null) {
+        if (propertyName == null) {
+            if (object.propertyName != null) {
                 return false;
             }
         } else {
-            if (!properties.equals(object.getProperties())) {
+            if (!propertyName.equals(object.propertyName)) {
                 return false;
             }
         }
+
+        if (propertyValues == null) {
+            if (object.propertyValues != null) {
+                return false;
+            }
+        } else {
+            if (!propertyValues.equals(object.propertyValues)) {
+                return false;
+            }
+        }
+
         if (pResponseProviderName == null) {
             if (object.getPResponseProviderName() != null) {
                 return false;
@@ -185,8 +221,11 @@ public class StaticAttributes implements ResourceAttributes {
     @Override
     public int hashCode() {
         int code = 0;
-        if (properties != null) {
-            code += properties.hashCode();
+        if (propertyName != null) {
+            code += propertyName.hashCode();
+        }
+        if (propertyValues != null) {
+            code += propertyValues.hashCode();
         }
         if (pResponseProviderName != null) {
              code += pResponseProviderName.hashCode();

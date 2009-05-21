@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.35 2009-05-19 23:50:14 veiming Exp $
+ * $Id: Entitlement.java,v 1.36 2009-05-21 01:04:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -254,7 +254,8 @@ public class Entitlement implements Serializable {
      * @return excluded resource names.
      */
     public Set<String> getExcludedResourceNames() {
-        return excludedResourceNames;
+        return (excludedResourceNames == null) ? Collections.EMPTY_SET :
+            excludedResourceNames;
     }
 
     /**
@@ -429,16 +430,19 @@ public class Entitlement implements Serializable {
 
         for (Iterator<String> i = matched.iterator(); i.hasNext(); ) {
             String r = i.next();
-            for (String e : excludedResourceNames) {
-                ResourceMatch match = resComparator.compare(r, e, true);
-                if (match.equals(ResourceMatch.EXACT_MATCH) ||
-                    match.equals(ResourceMatch.WILDCARD_MATCH)) {
-                    i.remove();
-                    break;
-                } else if (recursive && match.equals(
-                    ResourceMatch.SUB_RESOURCE_MATCH)) {
-                    i.remove();
-                    break;
+            if ((excludedResourceNames != null) &&
+                !excludedResourceNames.isEmpty()) {
+                for (String e : excludedResourceNames) {
+                    ResourceMatch match = resComparator.compare(r, e, true);
+                    if (match.equals(ResourceMatch.EXACT_MATCH) ||
+                        match.equals(ResourceMatch.WILDCARD_MATCH)) {
+                        i.remove();
+                        break;
+                    } else if (recursive && match.equals(
+                        ResourceMatch.SUB_RESOURCE_MATCH)) {
+                        i.remove();
+                        break;
+                    }
                 }
             }
         }
@@ -549,17 +553,17 @@ public class Entitlement implements Serializable {
             }
         }
 
-        if (excludedResourceNames == null) {
-            if ((object.getExcludedResourceNames() != null) &&
-                    !object.getExcludedResourceNames().isEmpty()) {
+        if ((excludedResourceNames == null) || excludedResourceNames.isEmpty()) {
+            if ((object.excludedResourceNames != null) &&
+                !object.excludedResourceNames.isEmpty()) {
                 return false;
             }
-        } else { // excludedResourceNames not null
-
-            if ((object.getExcludedResourceNames()) == null) {
+        } else {
+            if (object.excludedResourceNames == null) {
                 return false;
-            } else if (!excludedResourceNames.equals(
-                    object.getExcludedResourceNames())) {
+            }
+            if (!excludedResourceNames.equals(
+                object.excludedResourceNames)) {
                 return false;
             }
         }
@@ -706,6 +710,7 @@ public class Entitlement implements Serializable {
             }
             resourceNames = temp;
         }
+        
         if ((excludedResourceNames != null) && !excludedResourceNames.isEmpty())
         {
             Set<String> temp = new HashSet<String>();
