@@ -11,12 +11,23 @@ public class ConditionsPolicySummary extends PolicySummary {
         return "Conditions";
     }
 
+    private int getCount() {
+        ViewCondition vc = getPolicyWizardBean().getPrivilegeBean().getViewCondition();
+        if (vc == null) {
+            return 0;
+        }
+        return vc.getSizeLeafs();
+    }
+
     public String getValue() {
-        return Integer.toString(getPolicyWizardBean().getPrivilegeBean().getViewCondition().getSizeLeafs());
+        int count = getCount();
+
+        return Integer.toString(count);
     }
 
     public boolean isExpandable() {
-        return getPolicyWizardBean().getPrivilegeBean().getViewCondition().getSizeLeafs() > 0;
+        int count = getCount();
+        return count > 0;
     }
 
     public String getIcon() {
