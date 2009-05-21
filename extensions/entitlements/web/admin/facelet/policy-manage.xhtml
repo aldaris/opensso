@@ -376,6 +376,30 @@
                                     </o:tooltip>
                                 </ice:column>
                                 <ice:column
+                                    rendered="#{policyManageBean.policyManageTableBean.userAttributesColumnVisible}">
+                                    <f:facet name="header">
+                                        <ice:outputText
+                                            value="User Attributes"/>
+                                    </f:facet>
+                                    <ice:panelGroup
+                                        styleClass="policy-manage-cell"
+                                        visible="#{true}"
+                                        panelTooltip="userAttributesTooltip">
+                                        <ice:outputText
+                                            value="#{privilegeBean.userAttributesBean.toString}"/>
+                                    </ice:panelGroup>
+                                    <o:tooltip
+                                        tooltipId="userAttributesTooltip"
+                                        title="#{privilegeBean.name}: user attributes (#{o:size(privilegeBean.userAttributesBean.viewAttributes)})">
+                                        <ui:define name="body">
+                                            <pre>
+                                        <ice:outputText
+                                            value="#{privilegeBean.userAttributesBean.toFormattedString}"/>
+                                            </pre>
+                                        </ui:define>
+                                    </o:tooltip>
+                                </ice:column>
+                                <ice:column
                                     rendered="#{policyManageBean.policyManageTableBean.exportColumnVisible}"
                                     style="text-align: center">
                                     <f:facet name="header">

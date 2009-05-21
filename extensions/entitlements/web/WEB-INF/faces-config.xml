@@ -576,6 +576,10 @@
             <property-name>subjectDao</property-name>
             <value>#{idRepoUserSubjectDao}</value>
         </managed-property>
+        <managed-property>
+            <property-name>searchVisible</property-name>
+            <value>true</value>
+        </managed-property>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>idRepoRoleSubjectContainer</managed-bean-name>
@@ -588,6 +592,10 @@
         <managed-property>
             <property-name>subjectDao</property-name>
             <value>#{idRepoRoleSubjectDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>searchVisible</property-name>
+            <value>true</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -602,6 +610,10 @@
             <property-name>subjectDao</property-name>
             <value>#{idRepoGroupSubjectDao}</value>
         </managed-property>
+        <managed-property>
+            <property-name>searchVisible</property-name>
+            <value>true</value>
+        </managed-property>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>bankingSubjectContainer</managed-bean-name>
@@ -614,6 +626,10 @@
         <managed-property>
             <property-name>subjectDao</property-name>
             <value>#{bankingSubjectDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>searchVisible</property-name>
+            <value>false</value>
         </managed-property>
     </managed-bean>
 

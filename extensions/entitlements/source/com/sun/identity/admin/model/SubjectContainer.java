@@ -11,11 +11,12 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
     private SubjectDao subjectDao;
     private SubjectType subjectType;
     private List<ViewSubject> viewSubjects;
-    private boolean panelExpanded = true;
+    private boolean panelExpanded = false;
     private Effect panelExpandEffect;
     private Effect panelEffect;
     private boolean panelVisible = false;
     private String filter = "";
+    private boolean searchVisible = false;
 
     public boolean isVisible() {
         if (filter != null && filter.length() > 0) {
@@ -59,9 +60,9 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
         }
         NullComparator n = new NullComparator();
         if (n.compare(this.filter, filter) != 0) {
+            this.filter = filter;
             reset();
         }
-        this.filter = filter;
     }
 
     public boolean isPanelExpanded() {
@@ -94,5 +95,13 @@ public class SubjectContainer implements MultiPanelBean, Serializable {
 
     public void setPanelVisible(boolean panelVisible) {
         this.panelVisible = panelVisible;
+    }
+
+    public boolean isSearchVisible() {
+        return searchVisible;
+    }
+
+    public void setSearchVisible(boolean searchVisible) {
+        this.searchVisible = searchVisible;
     }
 }

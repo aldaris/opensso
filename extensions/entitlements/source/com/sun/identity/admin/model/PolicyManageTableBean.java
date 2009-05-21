@@ -162,6 +162,10 @@ public class PolicyManageTableBean implements Serializable {
         return getColumnsVisible().contains("attributes-static");
     }
 
+    public boolean isUserAttributesColumnVisible() {
+        return getColumnsVisible().contains("attributes-user");
+    }
+
     public boolean isBirthColumnVisible() {
         return getColumnsVisible().contains("birth");
     }

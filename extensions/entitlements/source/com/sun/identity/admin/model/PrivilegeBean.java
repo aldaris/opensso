@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.model.AttributesBean.AttributeType;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementException;
@@ -345,5 +346,22 @@ public class PrivilegeBean implements Serializable {
         PrivilegeBean other = (PrivilegeBean)o;
 
         return other.getName().equals(name);
+    }
+
+    public AttributesBean getStaticAttributesBean() {
+        return getAttributesBean(AttributeType.STATIC);
+    }
+
+    public AttributesBean getUserAttributesBean() {
+        return getAttributesBean(AttributeType.USER);
+    }
+
+    private AttributesBean getAttributesBean(AttributeType attributeType) {
+        for (AttributesBean ab: attributesBeans) {
+            if (ab.getAttributeType().equals(attributeType)) {
+                return ab;
+            }
+        }
+        return null;
     }
 }

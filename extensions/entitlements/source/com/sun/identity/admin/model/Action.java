@@ -31,6 +31,9 @@ public abstract class Action implements DeepCloneable {
         Resources r = new Resources();
         String title = r.getString(this, "title."+getName(), getName());
         if (title == null) {
+            title = r.getString(this, "title._none", getName());
+        }
+        if (title == null) {
             title = getName();
         }
         return title;
