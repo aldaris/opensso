@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesCollector.java,v 1.4 2009-05-07 23:00:25 veiming Exp $
+ * $Id: SubjectAttributesCollector.java,v 1.5 2009-05-21 01:23:49 hengming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -58,6 +58,14 @@ public interface SubjectAttributesCollector {
     String ATTR_NAME_ALL_ENTITIES = "all";
 
     /**
+     * Initializes this object with specified parameters.
+     *
+     * @param realm the realm
+     * @param configMap configuration map
+     */
+    public void init(String realm, Map<String, Set<String>> configMap);
+
+    /**
      * Returns the attribute values of the given user represented by
      * <class>Subject</class> object.
      *
@@ -88,4 +96,12 @@ public interface SubjectAttributesCollector {
         Subject subject,
         String attrName,
         String attrValue) throws EntitlementException;
+
+    /**
+     * Returns available subject attribute names.
+     *
+     * @return a set of available subject attribute names or null if not found
+     */
+    public Set<String> getAvailableSubjectAttributeNames()
+        throws EntitlementException;
 }

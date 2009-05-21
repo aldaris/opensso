@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementConfiguration.java,v 1.1 2009-05-08 00:48:14 veiming Exp $
+ * $Id: EntitlementConfiguration.java,v 1.2 2009-05-21 01:23:49 hengming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -191,6 +191,22 @@ public abstract class EntitlementConfiguration {
         String name,
         Boolean defVal
     ) throws EntitlementException;
+
+    /**
+     * Returns subject attributes collector names.
+     *
+     * @return subject attributes collector names.
+     */
+    public abstract Set<String> getSubjectAttributesCollectorNames();
+
+    /**
+     * Returns subject attributes collector configuration.
+     *
+     * @param name subject attributes collector name
+     * @return subject attributes collector configuration.
+     */
+    public abstract Map<String, Set<String>>
+        getSubjectAttributesCollectorConfiguration(String name);
 
     /**
      * Returns <code>true</code> if OpenSSO policy data is migrated to a

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.7 2009-05-08 00:48:14 veiming Exp $
+ * $Id: SubjectAttributesManager.java,v 1.8 2009-05-21 01:23:49 hengming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -43,33 +43,48 @@ import javax.security.auth.Subject;
 public class SubjectAttributesManager {
     private String realmName;
     private SubjectAttributesCollector attrCollector;
+    private static final String DEFAULT_SUBJECT_ATTRIBUTES_COLLECTOR_NAME =
+        "OpenSSO";
     private static final String DEFAULT_IMPL =
         "com.sun.identity.entitlement.opensso.OpenSSOSubjectAttributesCollector";
-    private static Class DEFAULT_IMPL_CLASS;
     private static Map<String, SubjectAttributesManager> instances =
         new HashMap<String, SubjectAttributesManager>();
 
-    static {
-        try {
-            DEFAULT_IMPL_CLASS = Class.forName(DEFAULT_IMPL);
-        } catch (ClassNotFoundException ex) {
-            PrivilegeManager.debug.error("SubjectAttributesManager.<init>", ex);
-        }
-    }
-
     private SubjectAttributesManager(String realmName) {
         this.realmName = realmName;
-        if (DEFAULT_IMPL_CLASS != null) {
-            try {
-                this.attrCollector = (SubjectAttributesCollector)
-                    DEFAULT_IMPL_CLASS.newInstance();
-            } catch (InstantiationException ex) {
-                PrivilegeManager.debug.error("SubjectAttributesManager.<init>",
-                    ex);
-            } catch (IllegalAccessException ex) {
-                PrivilegeManager.debug.error("SubjectAttributesManager.<init>",
-                    ex);
-            }
+
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            realmName);
+
+        Map<String, Set<String>> configMap =
+            ec.getSubjectAttributesCollectorConfiguration(
+            DEFAULT_SUBJECT_ATTRIBUTES_COLLECTOR_NAME);
+
+        String implClass = null;
+        if (configMap != null)  {
+            Set<String> tmpSet = configMap.get("class");
+            if ((tmpSet != null) && (!tmpSet.isEmpty())) { 
+                implClass = tmpSet.iterator().next();
+            } 
+	}
+
+        if (implClass == null) {
+            implClass = DEFAULT_IMPL;
+        }
+
+        try {
+            attrCollector = (SubjectAttributesCollector)Class.forName(
+                implClass).newInstance();
+            attrCollector.init(realmName, configMap);
+        } catch (ClassNotFoundException ex) {
+            PrivilegeManager.debug.error("SubjectAttributesManager.<init>",
+                ex);
+        } catch (InstantiationException ex) {
+            PrivilegeManager.debug.error("SubjectAttributesManager.<init>",
+                ex);
+        } catch (IllegalAccessException ex) {
+            PrivilegeManager.debug.error("SubjectAttributesManager.<init>",
+                ex);
         }
     }
 
@@ -232,5 +247,18 @@ public class SubjectAttributesManager {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             realm);
         return ec.getSubjectAttributeNames(applicationName);
+    }
+
+    /**
+     * Returns available subject attribute names.
+     *
+     * @return a set of available subject attribute names or null if not found
+     * @throws EntitlementException if available subject attribute names
+     * cannot be returned.
+     */
+    public Set<String> getAvailableSubjectAttributeNames()
+        throws EntitlementException{
+
+        return attrCollector.getAvailableSubjectAttributeNames();
     }
 }

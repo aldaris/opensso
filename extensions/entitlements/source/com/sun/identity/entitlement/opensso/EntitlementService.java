@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.11 2009-05-08 00:48:15 veiming Exp $
+ * $Id: EntitlementService.java,v 1.12 2009-05-21 01:23:49 hengming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -74,6 +74,8 @@ public class EntitlementService extends EntitlementConfiguration {
     private static final String CONFIG_SAVE_INDEX_IMPL = "saveIndexImpl";
     private static final String CONFIG_RESOURCE_COMP_IMPL = "resourceComparator";
     private static final String CONFIG_APPLICATION_TYPES = "applicationTypes";
+    private static final String CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS =
+        "subjectAttributesCollectors";
     private static final String MIGRATED_TO_ENTITLEMENT_SERVICES =
         "migratedtoentitlementservice";
 
@@ -641,6 +643,66 @@ public class EntitlementService extends EntitlementConfiguration {
                 "EntitlementService.getSubjectAttributeNames", ex);
         }
         return Collections.EMPTY_SET;
+    }
+
+    /**
+     * Returns subject attributes collector names.
+     *
+     * @return subject attributes collector names.
+     */
+    public Set<String> getSubjectAttributesCollectorNames() {
+        try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            ServiceConfigManager mgr = new ServiceConfigManager(
+                SERVICE_NAME, adminToken);
+            ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
+            if (orgConfig != null) {
+                ServiceConfig conf = orgConfig.getSubConfig(
+                    CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS);
+                return conf.getSubConfigNames();
+            }
+        } catch (SMSException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getSubjectAttributesCollectorNames:", ex);
+        } catch (SSOException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getSubjectAttributesCollectorNames:", ex);
+        }
+        return null;
+    }
+
+    /**
+     * Returns subject attributes collector configuration.
+     *
+     * @param name subject attributes collector name
+     * @return subject attributes collector configuration.
+     */
+    public Map<String, Set<String>>
+        getSubjectAttributesCollectorConfiguration(String name) {
+
+        try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            ServiceConfigManager mgr = new ServiceConfigManager(
+                SERVICE_NAME, adminToken);
+            ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
+            if (orgConfig != null) {
+                ServiceConfig conf = orgConfig.getSubConfig(
+                    CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS);
+                ServiceConfig sacConfig = conf.getSubConfig(name);
+                if (sacConfig != null) {
+                    return sacConfig.getAttributes();
+                }
+            }
+        } catch (SMSException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplications", ex);
+        } catch (SSOException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplications", ex);
+        }
+        return null;
     }
 
     /**

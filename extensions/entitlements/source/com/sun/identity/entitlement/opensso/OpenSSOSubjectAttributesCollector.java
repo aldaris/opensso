@@ -22,23 +22,30 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOSubjectAttributesCollector.java,v 1.4 2009-05-07 23:00:25 veiming Exp $
+ * $Id: OpenSSOSubjectAttributesCollector.java,v 1.5 2009-05-21 01:23:49 hengming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.SubjectAttributesCollector;
 import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.SMSException;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -49,6 +56,35 @@ import javax.security.auth.Subject;
  */
 public class OpenSSOSubjectAttributesCollector
     implements SubjectAttributesCollector {
+
+    static ServiceConfigManager idRepoServiceConfigManager;
+    static Debug debug = Debug.getInstance("Entitlement");
+    private static final String LDAPv3Config_USER_ATTR = 
+        "sun-idrepo-ldapv3-config-user-attributes";
+    private String realm;
+
+    static {
+        try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            idRepoServiceConfigManager = new ServiceConfigManager(adminToken,
+                IdConstants.REPO_SERVICE, "1.0");
+        } catch (SSOException ssoex) {
+            debug.error("OpenSSOSubjectAttributesCollector.static:", ssoex);
+        } catch (SMSException smsex) {
+            debug.error("OpenSSOSubjectAttributesCollector.static:", smsex);
+        }
+    }
+
+    /**
+     * Initializes this object with specified parameters.
+     *
+     * @param realm the realm
+     * @param configMap configuration map
+     */
+    public void init(String realm, Map<String, Set<String>> configMap) {
+        this.realm = realm;
+    }
 
     /**
      * Returns the attribute values of the given user represented by
@@ -178,6 +214,48 @@ public class OpenSSOSubjectAttributesCollector
         } catch (SSOException e) {
             Object[] params = {uuid};
             throw new EntitlementException(601, params, e);
+        }
+    }
+
+    /**
+     * Returns available subject attribute names.
+     *
+     * @return a set of available subject attribute names or null if not found
+     */
+    public Set<String> getAvailableSubjectAttributeNames()
+        throws EntitlementException {
+
+        try {
+            ServiceConfig sc = idRepoServiceConfigManager.getOrganizationConfig(
+                realm, null);
+            if (sc == null) {
+                return null;
+            }
+            Set subConfigNames = sc.getSubConfigNames();
+            if ((subConfigNames == null) || (subConfigNames.isEmpty())) {
+                return null;
+            }
+
+            CaseInsensitiveHashSet result = null;
+
+            for(Iterator iter = subConfigNames.iterator(); iter.hasNext();) {
+                String idRepoName = (String) iter.next();
+                ServiceConfig reposc = sc.getSubConfig(idRepoName);
+                Map attrMap = reposc.getAttributesForRead();
+                Set userAttrs = (Set)attrMap.get(LDAPv3Config_USER_ATTR);
+                if ((userAttrs != null) && (!userAttrs.isEmpty())) {
+                    if (result == null) {
+                        result = new CaseInsensitiveHashSet();
+                    }
+                    result.addAll(userAttrs);
+                }
+            }
+
+            return result;
+        } catch (SMSException e) {
+            throw new EntitlementException(602, e);
+        } catch (SSOException e) {
+            throw new EntitlementException(602, e);
         }
     }
 }

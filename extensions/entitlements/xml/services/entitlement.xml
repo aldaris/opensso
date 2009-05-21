@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.18 2009-05-15 23:11:18 farble1670 Exp $
+   $Id: entitlement.xml,v 1.19 2009-05-21 01:24:29 hengming Exp $
 
 -->
 
@@ -129,6 +129,14 @@
                             i18nKey="" />
                         <AttributeSchema name="subjectAttributeNames" 
                             type="list"
+                            syntax="string"
+                            i18nKey="" />
+                    </SubSchema>
+                </SubSchema>
+                <SubSchema name="subjectAttributesCollectors" inheritance="multiple">
+                    <SubSchema name="OpenSSOSubjectAttributesCollector" inheritance="multiple">
+                        <AttributeSchema name="class"
+                            type="single"
                             syntax="string"
                             i18nKey="" />
                     </SubSchema>
@@ -371,6 +379,16 @@
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />
                             <Value>com.sun.identity.entitlement.DenyOverride</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                </SubConfiguration>
+                <SubConfiguration name="subjectAttributesCollectors" 
+                    id="subjectAttributesCollectors">
+                    <SubConfiguration name="OpenSSO" 
+                        id="OpenSSOSubjectAttributesCollector">
+                        <AttributeValuePair>
+                            <Attribute name="class" />
+                            <Value>com.sun.identity.entitlement.opensso.OpenSSOSubjectAttributesCollector</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>
