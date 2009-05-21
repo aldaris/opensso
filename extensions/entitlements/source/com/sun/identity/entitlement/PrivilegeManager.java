@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.16 2009-05-09 01:08:45 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.17 2009-05-21 01:11:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -155,6 +155,25 @@ public abstract class PrivilegeManager {
         if ((principals != null) && !principals.isEmpty()) {
             privilege.setLastModifiedBy(principals.iterator().next().getName());
         }
+    }
+
+    /**
+     * Returns a set of privilege names for a given search criteria.
+     *
+     * @param filter Set of search filter.
+     * @param searchSizeLimit Search size limit.
+     * @param searchTimeLimit Search time limit in seconds.
+     * @return a set of privilege names for a given search criteria.
+     * @throws EntitlementException if search failed.
+     */
+    public Set<String> searchPrivilegeNames(
+        Set<PrivilegeSearchFilter> filter,
+        int searchSizeLimit,
+        int searchTimeLimit
+    ) throws EntitlementException {
+        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(realm);
+        return pis.searchPrivilegeNames(filter, true, searchSizeLimit,
+            false, false);//TOFIX
     }
 
     /**
