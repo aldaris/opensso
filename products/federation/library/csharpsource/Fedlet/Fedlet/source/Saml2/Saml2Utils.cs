@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: Saml2Utils.cs,v 1.1 2009-05-19 16:01:03 ggennaro Exp $
+ * $Id: Saml2Utils.cs,v 1.2 2009-05-21 23:46:56 ggennaro Exp $
  */
 
 using System;
@@ -109,42 +109,6 @@ namespace Sun.Identity.Saml2
             string issueInstant = DateTime.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", DateTimeFormatInfo.InvariantInfo);
 
             return issueInstant;
-        }
-
-        /// <summary>
-        /// Gets the preferred identity provider entity id based on the value
-        /// found in the query string found in the given HttpRequest.
-        /// </summary>
-        /// <param name="request">HttpRequest containing Common Domain Cookie results.</param>
-        /// <returns>Preferred IDP Entity ID, null if not available.</returns>
-        public static string GetPreferredIdentityProvider(HttpRequest request)
-        {
-            string commonDomainCookieValue = request.QueryString[Saml2Constants.CommonDomainCookieName];
-            return Saml2Utils.GetPreferredIdentityProvider(commonDomainCookieValue);
-        }
-
-        /// <summary>
-        /// Gets the preferred identity provider entity id based on the value
-        /// found in the specified string.
-        /// </summary>
-        /// <param name="commonDomainCookieValue">Common Domain Cookie value.</param>
-        /// <returns>Preferred IDP Entity ID, null if not available.</returns>
-        public static string GetPreferredIdentityProvider(string commonDomainCookieValue)
-        {
-            string idpEntityId = null;
-
-            if (commonDomainCookieValue != null)
-            {
-                char[] separator = { ' ' };
-                string[] listOfIdpEntityIds = commonDomainCookieValue.Split(separator);
-
-                if (listOfIdpEntityIds.Length > 0)
-                {
-                    idpEntityId = Saml2Utils.ConvertFromBase64(listOfIdpEntityIds[listOfIdpEntityIds.Length - 1]);
-                }
-            }
-
-            return idpEntityId;
         }
 
         /// <summary>

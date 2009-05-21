@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: discoveridp.aspx,v 1.1 2009-05-19 16:01:05 ggennaro Exp $
+ * $Id: discoveridp.aspx,v 1.2 2009-05-21 23:46:55 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" %>
@@ -39,67 +39,76 @@
         Cache["spu"] = serviceProviderUtility;
     }
 
-    string commonDomainDiscoverySessionAttribute = "_cotList";
-    
-    StringBuilder homePageUrl = new StringBuilder();
-    homePageUrl.Append("default.aspx");
-    
-    if (Request.QueryString[Saml2Constants.CommonDomainCookieName] != null)
+    // Determine if the IDP has already been discovered...
+    string idpEntityId = IdentityProviderDiscoveryUtils.GetPreferredIdentityProvider(Request);
+
+    if (idpEntityId == null)
     {
-        // Value obtained, clear the session attribute and redirect with results to the homepage.
-        Session[commonDomainDiscoverySessionAttribute] = null;
-        
-        homePageUrl.Append("?");
-        homePageUrl.Append(Saml2Constants.CommonDomainCookieName);
-        homePageUrl.Append("=");
-        homePageUrl.Append(Request.QueryString[Saml2Constants.CommonDomainCookieName]);
+        // Discover the IDP by redirecting to the reader service.
+        IdentityProviderDiscoveryUtils.StoreRequestParameters(Context);
 
-        Response.Redirect(homePageUrl.ToString(), true);
-    }
-    else
-    {
-        // Value not obtained yet, redirect to reader service.
-        ArrayList cotList = (ArrayList)Session[commonDomainDiscoverySessionAttribute];
+        Uri readerServiceUrl = IdentityProviderDiscoveryUtils.GetReaderServiceUrl(serviceProviderUtility, Context);
 
-        if (cotList == null)
+        if (readerServiceUrl != null)
         {
-            cotList = new ArrayList();
-            foreach (string cotName in serviceProviderUtility.CircleOfTrusts.Keys)
-            {
-                CircleOfTrust cot = (CircleOfTrust)serviceProviderUtility.CircleOfTrusts[cotName];
-
-                if (cot.ReaderServiceUrl != null)
-                {
-                    cotList.Add(cotName);
-                }
-            }
-        }
-
-        IEnumerator enumerator = cotList.GetEnumerator();
-        if (enumerator.MoveNext())
-        {
-            Response.AppendHeader("test", cotList.Count.ToString());
-            string cotName = (string)enumerator.Current;
-            cotList.Remove(cotName);
-            Session[commonDomainDiscoverySessionAttribute] = cotList;
-
-            CircleOfTrust cot = (CircleOfTrust)serviceProviderUtility.CircleOfTrusts[cotName];
-            string readerSvc = cot.ReaderServiceUrl.AbsoluteUri;
-
-            // redirect to the service and terminate the calling response.
-            StringBuilder readerSvcUrl = new StringBuilder();
-            readerSvcUrl.Append(readerSvc);
-            readerSvcUrl.Append("?");
-            readerSvcUrl.Append("RelayState=");
-            readerSvcUrl.Append(Request.Url.AbsoluteUri);
-
-            Response.Redirect(readerSvcUrl.ToString(), true);
+            IdentityProviderDiscoveryUtils.RedirectToReaderService(readerServiceUrl, Context);
             return;
         }
-
-        // Exhausted list, reset the session attribute head home.
-        Session[commonDomainDiscoverySessionAttribute] = null;
-        homePageUrl.Append("?idpNotDiscovered");
-        Response.Redirect(homePageUrl.ToString(), true);        
     }
+
+    // Retrieve all previously stored parameters and reset the discovery
+    // process if we've exhausted all reader services...
+    NameValueCollection parameters = IdentityProviderDiscoveryUtils.RetrieveRequestParameters(Context);
+    IdentityProviderDiscoveryUtils.ResetDiscovery(Context);
+
+    // Check for required parameters...
+    if (String.IsNullOrEmpty(parameters["RelayState"]))
+    {
+        Response.StatusCode = 400;
+        Response.StatusDescription = "RelayState not provided.";
+        Response.End();
+        return;
+    }
+
+    // Redirect back to the RelayState...
+    StringBuilder redirectUrl = new StringBuilder();
+    redirectUrl.Append(parameters["RelayState"]);
+
+    // ...with all original parameters...    
+    bool foundFirst = false;
+    foreach (string name in parameters.Keys)
+    {
+        if (foundFirst)
+        {
+            redirectUrl.Append("&");
+        }
+        else
+        {
+            foundFirst = true;
+            redirectUrl.Append("?");
+        }
+
+        redirectUrl.Append(name);
+        redirectUrl.Append("=");
+        redirectUrl.Append(parameters[name]);
+    }
+
+    // ...and pass on the value provided by the reader...
+    if (idpEntityId != null)
+    {
+        if (parameters != null)
+        {
+            redirectUrl.Append("&");
+        }
+        else
+        {
+            redirectUrl.Append("?");
+        }
+
+        redirectUrl.Append(IdentityProviderDiscoveryUtils.CommonDomainCookieName);
+        redirectUrl.Append("=");
+        redirectUrl.Append(Server.HtmlEncode(Request.QueryString[IdentityProviderDiscoveryUtils.CommonDomainCookieName]));
+    }
+        
+    Response.Redirect(redirectUrl.ToString(), true);
 %>

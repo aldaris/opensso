@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: default.aspx,v 1.2 2009-05-19 16:01:05 ggennaro Exp $
+ * $Id: default.aspx,v 1.3 2009-05-21 23:46:55 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" MasterPageFile="~/site.master"%>
@@ -88,7 +88,7 @@
 
             ServiceProvider sp = serviceProviderUtility.ServiceProvider;
             hasMultipleIdps = (serviceProviderUtility.IdentityProviders.Count > 1);
-            preferredIdpEntityId = Saml2Utils.GetPreferredIdentityProvider(Request);
+            preferredIdpEntityId = IdentityProviderDiscoveryUtils.GetPreferredIdentityProvider(Request);
 
             Hashtable identityProviders = serviceProviderUtility.IdentityProviders;
             foreach (string key in identityProviders.Keys)
@@ -145,14 +145,22 @@
         <ul>
         <%=idpLinks%>
         </ul>
-        <%if( hasMultipleIdps ) { %>
+        <%
+           if( hasMultipleIdps ) 
+           {
+               string currentPage = Request.Url.AbsoluteUri;
+               if( currentPage.IndexOf("?") > 0 ) 
+               {
+                   currentPage = currentPage.Substring(0, currentPage.IndexOf("?"));
+               }
+        %>
             <p>
             Since you have multiple identity providers specified, you can optionally
-            <a href="discoveridp.aspx">use the IDP Discovery Service</a> to determine 
+            <a href="discoveridp.aspx?RelayState=<%=currentPage %>">use the IDP Discovery Service</a> to determine 
             your preferred IDP if you have specified the reader service within your 
             circle-of-trust file.
             </p>
-        <%} %>
+        <% } %>
 
         <p>
         The above demonstrates how a .NET developer could issue a redirect

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: Saml2Constants.cs,v 1.2 2009-05-19 16:01:03 ggennaro Exp $
+ * $Id: Saml2Constants.cs,v 1.3 2009-05-21 23:46:56 ggennaro Exp $
  */
 
 namespace Sun.Identity.Saml2
@@ -41,11 +41,6 @@ namespace Sun.Identity.Saml2
         /// Constant for status codes used in SAML responses.
         /// </summary>
         public const string Success = "urn:oasis:names:tc:SAML:2.0:status:Success";
-
-        /// <summary>
-        /// Constant for the name of the common domain cookie.
-        /// </summary>
-        public const string CommonDomainCookieName = "_saml_idp";
 
         /// <summary>
         /// Constant for defining the length of IDs used in SAMLv2
