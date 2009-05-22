@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.16 2009-05-21 08:17:48 veiming Exp $
+ * $Id: Application.java,v 1.17 2009-05-22 23:52:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -47,6 +47,7 @@ public class Application {
     private ApplicationType applicationType;
     private Map<String, Boolean> actions;
     private Set<String> conditions;
+    private Set<String> subjects;
     private Set<String> resources;
     private Class entitlementCombiner;
     private ISearchIndex searchIndex;
@@ -94,7 +95,6 @@ public class Application {
     public ApplicationType getApplicationType() {
         return applicationType;
     }
-
     /**
      * Returns set of supported condition class names.
      *
@@ -102,6 +102,15 @@ public class Application {
      */
     public Set<String> getConditions() {
         return conditions;
+    }
+
+    /**
+     * Returns set of supported subject class names.
+     *
+     * @return set of supported subject class names.
+     */
+    public Set<String> getSubjects() {
+        return subjects;
     }
 
     /**
@@ -147,6 +156,15 @@ public class Application {
      */
     public void setConditions(Set<String> conditions) {
         this.conditions = conditions;
+    }
+
+    /**
+     * Sets supported subject class names.
+     *
+     * @param conditions Supported subject class names.
+     */
+    public void setSubjects(Set<String> subjects) {
+        this.subjects = subjects;
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.14 2009-05-21 23:29:56 veiming Exp $
+ * $Id: EntitlementService.java,v 1.15 2009-05-22 23:52:06 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -68,6 +68,7 @@ public class EntitlementService extends EntitlementConfiguration {
     private static final String CONFIG_ACTIONS = "actions";
     private static final String CONFIG_RESOURCES = "resources";
     private static final String CONFIG_CONDITIONS = "conditions";
+    private static final String CONFIG_SUBJECTS = "subjects";
     private static final String CONFIG_ENTITLEMENT_COMBINER =
         "entitlementCombiner";
     private static final String CONFIG_SEARCH_INDEX_IMPL = "searchIndexImpl";
@@ -509,6 +510,10 @@ public class EntitlementService extends EntitlementConfiguration {
         data.put(CONFIG_CONDITIONS, (conditions == null) ?
             Collections.EMPTY_SET : conditions);
 
+        Set<String> subjects = app.getSubjects();
+        data.put(CONFIG_SUBJECTS, (subjects == null) ?
+            Collections.EMPTY_SET : subjects);
+
         ISaveIndex sIndex = app.getSaveIndex();
         String saveIndexClassName = (sIndex != null) ? 
             sIndex.getClass().getName() : null;
@@ -586,6 +591,12 @@ public class EntitlementService extends EntitlementConfiguration {
             CONFIG_CONDITIONS);
         if (conditionClassNames != null) {
             app.setConditions(conditionClassNames);
+        }
+
+        Set<String> subjectClassNames = data.get(
+            CONFIG_SUBJECTS);
+        if (subjectClassNames != null) {
+            app.setSubjects(subjectClassNames);
         }
 
         String saveIndexImpl = getAttribute(data,

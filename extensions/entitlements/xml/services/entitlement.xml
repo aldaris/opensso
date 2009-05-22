@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.19 2009-05-21 01:24:29 hengming Exp $
+   $Id: entitlement.xml,v 1.20 2009-05-22 23:52:06 veiming Exp $
 
 -->
 
@@ -104,6 +104,10 @@
                             syntax="string"
                             i18nKey="" />
                         <AttributeSchema name="resources"
+                            type="list"
+                            syntax="string"
+                            i18nKey="" />
+                        <AttributeSchema name="subjects"
                             type="list"
                             syntax="string"
                             i18nKey="" />
@@ -245,6 +249,12 @@
                             <Value>https://*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
+                            <Attribute name="subjects" />
+                            <Value>com.sun.identity.admin.model.AndViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.NotViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.OrViewSubject</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
                             <Attribute name="conditions" />
                             <!--<Value>com.sun.identity.admin.model.ActiveSessionTimeCondition</Value>-->
                             <Value>com.sun.identity.admin.model.DateRangeCondition</Value>
@@ -272,6 +282,12 @@
                             <Value>http://paycheck.sun.com:8081/*/users/*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
+                            <Attribute name="subjects" />
+                            <Value>com.sun.identity.admin.model.AndViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.NotViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.OrViewSubject</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
                             <Attribute name="conditions" />
                             <Value>com.sun.identity.admin.model.DnsNameViewCondition</Value>
                             <Value>com.sun.identity.admin.model.IpRangeViewCondition</Value>
@@ -295,6 +311,12 @@
                             <Value>http://calendar.sun.com/*/calendars?calId=*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
+                            <Attribute name="subjects" />
+                            <Value>com.sun.identity.admin.model.AndViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.NotViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.OrViewSubject</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
                             <Attribute name="conditions" />
                             <Value>com.sun.identity.admin.model.DateRangeCondition</Value>
                             <Value>com.sun.identity.admin.model.DaysOfWeekCondition</Value>
@@ -316,6 +338,12 @@
                             <Attribute name="resources" />
                             <Value>http://im.sun.com/register</Value>
                             <Value>http://im.sun.com/im.jnlp</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="subjects" />
+                            <Value>com.sun.identity.admin.model.AndViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.NotViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.OrViewSubject</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="conditions" />
@@ -367,6 +395,13 @@
                         <AttributeValuePair>
                             <Attribute name="resources" />
                             <Value>*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="subjects" />
+                            <Value>com.sun.identity.admin.model.BankingViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.AndViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.NotViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.OrViewSubject</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="conditions" />

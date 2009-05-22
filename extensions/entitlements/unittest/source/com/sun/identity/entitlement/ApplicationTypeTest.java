@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeTest.java,v 1.4 2009-05-21 08:17:49 veiming Exp $
+ * $Id: ApplicationTypeTest.java,v 1.5 2009-05-22 23:52:06 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -44,6 +44,10 @@ public class ApplicationTypeTest {
         resources.add("http://*");
         appl.addResources(resources);
         appl.setEntitlementCombiner(DenyOverride.class);
+        
+        Set<String> subjects = new HashSet<String>();
+        subjects.add("com.sun.identity.admin.model.OrViewSubject");
+        appl.setSubjects(subjects);
         ApplicationManager.saveApplication("/", appl);
     }
 
@@ -90,6 +94,12 @@ public class ApplicationTypeTest {
         if (r.isValid()) {
             throw new Exception(
                 "ApplicationTypeTest.testApplication, validateResourceName (-ve test) is incorrect");
+        }
+
+        Set<String> subjects = app.getSubjects();
+        if (!subjects.contains("com.sun.identity.admin.model.OrViewSubject")) {
+            throw new Exception(
+                "ApplicationTypeTest.testApplication, subject test fails");
         }
     }
 }
