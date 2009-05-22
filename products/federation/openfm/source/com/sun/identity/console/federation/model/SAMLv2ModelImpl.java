@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.41 2009-01-09 20:55:46 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.42 2009-05-22 06:16:14 asyhuang Exp $
  *
  */
 
@@ -135,7 +135,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaIdpMap.put(ASSERTION_CACHE_ENABLED,
                 Collections.EMPTY_SET);
         extendedMetaIdpMap.put(COT_LIST, Collections.EMPTY_SET);
-        
+        extendedMetaIdpMap.put(IDP_META_ALIAS, Collections.EMPTY_SET);
+        extendedMetaIdpMap.put(IDP_SESSION_SYNC_ENABLED, Collections.EMPTY_SET);
+
         // ECP
         extendedMetaIdpMap.put(ATTR_IDP_ECP_SESSION_MAPPER,
                 Collections.EMPTY_SET);
@@ -186,7 +188,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaSpMap.put(WANT_POST_RESP_SIGN, Collections.EMPTY_SET);
         extendedMetaSpMap.put(ARTI_MSG_ENCODE, Collections.EMPTY_SET);
         extendedMetaSpMap.put(COT_LIST, Collections.EMPTY_SET);        
-               
+        extendedMetaSpMap.put(SP_META_ALIAS, Collections.EMPTY_SET);
+        extendedMetaSpMap.put(SP_SESSION_SYNC_ENABLED, Collections.EMPTY_SET);
+
         //IDP PROXY
         extendedMetaSpMap.put(ENABLE_IDP_PROXY, Collections.EMPTY_SET);
         extendedMetaSpMap.put(IDP_PROXY_LIST, Collections.EMPTY_SET);
@@ -262,6 +266,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 Collections.EMPTY_SET);
         extendedAdMetaIdpMap.put(ATTR_SAE_IDP_URL,
                 Collections.EMPTY_SET);
+        extendedAdMetaIdpMap.put(IDP_SESSION_SYNC_ENABLED, Collections.EMPTY_SET);
     }
     
     //extended Assertion Content metadata attributes for sp only    
@@ -312,7 +317,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     
     //extended Services metadata attributes for sp only    
     static {
-        extendedSMetaSpMap.put(SP_META_ALIAS, Collections.EMPTY_SET);        
+        extendedSMetaSpMap.put(SP_META_ALIAS, Collections.EMPTY_SET);
     }
     
     //extended Advanced metadata attributes for sp only    
@@ -335,7 +340,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedAdMetaSpMap.put(ATTR_SAE_SP_APP_SECRET_LIST,
                 Collections.EMPTY_SET);
         extendedAdMetaSpMap.put(ATTR_SAE_SP_URL, Collections.EMPTY_SET);
-        extendedAdMetaSpMap.put(ATTR_SAE_LOGOUT_URL, Collections.EMPTY_SET);        
+        extendedAdMetaSpMap.put(ATTR_SAE_LOGOUT_URL, Collections.EMPTY_SET);
+
+        extendedAdMetaSpMap.put(SP_SESSION_SYNC_ENABLED, Collections.EMPTY_SET);
+
     }
     
     static {

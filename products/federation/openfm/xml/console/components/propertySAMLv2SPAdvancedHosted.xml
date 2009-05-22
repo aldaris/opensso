@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAdvancedHosted.xml,v 1.5 2009-03-11 22:16:55 asyhuang Exp $
+   $Id: propertySAMLv2SPAdvancedHosted.xml,v 1.6 2009-05-22 06:17:00 asyhuang Exp $
 
 -->
 
@@ -166,5 +166,14 @@
                 </property>
             </ccgroup>                    
         </property>  
+    </section>
+        <section name="SessionSyncEnabled" defaultValue="samlv2.attribute.label.SessionSyncEnabled" >
+        <property>
+            <cc name="spSessionSyncEnabled"
+                tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" >
+                <attribute name="label" value="label.Enable" />
+            </cc>
+            <fieldhelp name="helpSpSessionSyncEnabled" defaultValue="samlv2.attribute.label.help.spSessionSyncEnabled" />
+        </property>
     </section>
 </propertysheet>
