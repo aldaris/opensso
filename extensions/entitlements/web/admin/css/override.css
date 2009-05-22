@@ -1,15 +1,16 @@
 .iceMnuBarItem span {
     padding-left: 30px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .iceMnuBarItem img {
     position: absolute;
-    top: 158px;
+    top: 155px;
 }
 
-.iceMnuBarItem, .iceMnuBarVrtItem {
-    padding-top: 5px;
-    padding-bottom: 5px;
+.iceMnuBarSubMenu, .iceMnuBarVrtSubMenu {
+    margin-top: -2px;
 }
 
 .iceSelInpTxtTxt {
