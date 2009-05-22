@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.3 2009-05-22 17:03:31 pbryan Exp $
+ * $Id: DecisionResource.java,v 1.4 2009-05-22 17:32:05 pbryan Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -89,6 +89,7 @@ public class DecisionResource {
 	}
 
 	private Subject toSubject(String subject) {
+		if (subject == null) { return null; }
 		return toSubject(new AuthSPrincipal(subject));
 	}
 
