@@ -317,6 +317,27 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>virtualSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.VirtualSubjectType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>virtual</value>
+        </managed-property>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-virtual.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/virtual.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>orSubjectType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.OrSubjectType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -395,6 +416,7 @@
             <value>#{groupSubjectType}</value>
             <value>#{idRepoGroupSubjectType}</value>
             <value>#{bankingSubjectType}</value>
+            <value>#{virtualSubjectType}</value>
         </list-entries>
     </managed-bean>
 
@@ -454,6 +476,14 @@
                 <key>com.sun.identity.entitlement.BankingSubject</key>
                 <value>#{bankingSubjectType}</value>
             </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.AnyUserSubject</key>
+                <value>#{virtualSubjectType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.AuthenticatedESubject</key>
+                <value>#{virtualSubjectType}</value>
+            </map-entry>
         </map-entries>
     </managed-bean>
 
@@ -477,6 +507,10 @@
             <map-entry>
                 <key>com.sun.identity.admin.model.BankingViewSubject</key>
                 <value>#{bankingSubjectDao}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.VirtualViewSubject</key>
+                <value>#{virtualSubjectDao}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
@@ -561,6 +595,15 @@
             <value>#{bankingSubjectType}</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>virtualSubjectDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.VirtualSubjectDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{virtualSubjectType}</value>
+        </managed-property>
+    </managed-bean>
     <!-- subject dao's -->
 
     <!-- subject containers -->
@@ -632,7 +675,24 @@
             <value>false</value>
         </managed-property>
     </managed-bean>
-
+    <managed-bean>
+        <managed-bean-name>virtualSubjectContainer</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SubjectContainer</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{virtualSubjectType}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectDao</property-name>
+            <value>#{virtualSubjectDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>searchVisible</property-name>
+            <value>false</value>
+        </managed-property>
+    </managed-bean>
+    
     <managed-bean>
         <managed-bean-name>subjectContainers</managed-bean-name>
         <managed-bean-class>java.util.ArrayList</managed-bean-class>
@@ -642,6 +702,7 @@
             <!--<value>#{idRepoRoleSubjectContainer}</value>-->
             <value>#{idRepoGroupSubjectContainer}</value>
             <value>#{bankingSubjectContainer}</value>
+            <value>#{virtualSubjectContainer}</value>
         </list-entries>
     </managed-bean>
     <!-- subject containers -->

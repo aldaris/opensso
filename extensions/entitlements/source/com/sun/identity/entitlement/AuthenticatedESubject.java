@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedESubject.java,v 1.2 2009-05-21 23:29:55 veiming Exp $
+ * $Id: AuthenticatedESubject.java,v 1.3 2009-05-22 15:22:22 farble1670 Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -33,9 +33,11 @@ import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 
-public class AuthenticatedESubject implements EntitlementSubject {
+public class AuthenticatedESubject extends VirtualSubject {
+    public static final String ID = "_authenticated";
 
-    public AuthenticatedESubject() {
+    public VirtualId getVirtualId() {
+        return VirtualId.AUTHENTICATED;
     }
 
     /**
