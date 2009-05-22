@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.2 2009-05-21 23:01:50 pbryan Exp $
+ * $Id: DecisionResource.java,v 1.3 2009-05-22 17:03:31 pbryan Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -36,9 +36,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
-//import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.security.AdminTokenAction;
 
 /**
@@ -49,8 +50,9 @@ import com.sun.identity.security.AdminTokenAction;
 @Path("/1/entitlement/decision")
 public class DecisionResource {
 
-	private static final Subject ADMIN_SUBJECT = null;
-//	 SubjectUtils.createSubject((SSOToken)AccessController.doPrivileged(AdminTokenAction.getInstance()));
+	public enum Permission { deny, allow }
+
+	private @Context SecurityContext security;
 
 	@GET
 	@Produces("text/plain")
@@ -60,15 +62,17 @@ public class DecisionResource {
 	 @QueryParam("action") String action,
 	 @QueryParam("resource") String resource) {
 
+		Subject caller = toSubject(security.getUserPrincipal());
+
 	 	try {
-			return Boolean.toString(new Evaluator(ADMIN_SUBJECT).hasEntitlement(realm,
+			return p(new Evaluator(caller).hasEntitlement(realm,
 			 toSubject(subject), toEntitlement(resource, action), Collections.EMPTY_MAP));
 		}
 
 		// fail safe
 		catch (EntitlementException ee) {
-			return "false";
-		}		
+			return p(false);
+		}
 	}
 
 	private Entitlement toEntitlement(String resource, String action) {
@@ -77,10 +81,19 @@ public class DecisionResource {
 		return new Entitlement(resource, set);
 	}
 
+	private Subject toSubject(Principal principal) {
+		if (principal == null) { return null; }
+		Set<Principal> set = new HashSet<Principal>();
+		set.add(principal);
+		return new Subject(false, set, new HashSet(), new HashSet());
+	}
+
 	private Subject toSubject(String subject) {
-		Set<Principal> principals = new HashSet<Principal>();
-		principals.add(new AuthSPrincipal(subject));
-		return new Subject(false, principals, new HashSet(), new HashSet());
+		return toSubject(new AuthSPrincipal(subject));
+	}
+
+	private String p(boolean b) {
+		return (b ? Permission.allow.toString() : Permission.deny.toString());
 	}
 }
 
