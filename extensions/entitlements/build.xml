@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.54 2009-05-21 23:01:49 pbryan Exp $
+  $Id: build.xml,v 1.55 2009-05-22 23:10:49 veiming Exp $
 
 -->
 
@@ -48,6 +48,10 @@
            property="xacml3.core.source.exists" value="true" />
 
    <target name="build" depends="package-war"/>
+   <target name="build-lite">
+        <property name="lite" value="true" />
+        <antcall target="package-war" />
+   </target>
    
    <target name="init" depends="amserver-jar,sharedlib-jar,build-lib,war-lib">
        <mkdir dir="${entitlements.dist.dir}" />
@@ -149,46 +153,49 @@
            dest="${war.package.dir}" />
    </target>
 
-   <target name="merge-webxml" depends="unwar">
+    <target name="copy-webxml" depends="unwar" if="lite">
+    </target>
+
+   <target name="merge-webxml" depends="unwar" unless="lite">
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
             <arg value="&lt;context-param&gt;.+?&lt;/context-param&gt;" />
-            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${entitlements.basedir}/web/WEB-INF/web.xml" />
             <arg value="${war.package.dir}/WEB-INF/web.xml" />
             <arg value="&lt;!-- context param --&gt;" />
         </java>
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
             <arg value="&lt;servlet&gt;.+?&lt;/servlet&gt;" />
-            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${entitlements.basedir}/web/WEB-INF/web.xml" />
             <arg value="${war.package.dir}/WEB-INF/web.xml" />
             <arg value="&lt;!-- servlet declaration --&gt;" />
         </java>
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
             <arg value="&lt;filter&gt;.+?&lt;/filter&gt;" />
-            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${entitlements.basedir}/web/WEB-INF/web.xml" />
             <arg value="${war.package.dir}/WEB-INF/web.xml" />
             <arg value="&lt;!-- filter declaration --&gt;" />
         </java>
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
             <arg value="&lt;servlet-mapping&gt;.+?&lt;/servlet-mapping&gt;" />
-            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${entitlements.basedir}/web/WEB-INF/web.xml" />
             <arg value="${war.package.dir}/WEB-INF/web.xml" />
             <arg value="&lt;!-- servlet mapping --&gt;" />
         </java>
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
             <arg value="&lt;filter-mapping&gt;.+?&lt;/filter-mapping&gt;" />
-            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${entitlements.basedir}/web/WEB-INF/web.xml" />
             <arg value="${war.package.dir}/WEB-INF/web.xml" />
             <arg value="&lt;!-- filter mapping --&gt;" />
         </java>
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
             <arg value="&lt;session-config&gt;.+?&lt;/session-config&gt;" />
-            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${entitlements.basedir}/web/WEB-INF/web.xml" />
             <arg value="${war.package.dir}/WEB-INF/web.xml" />
             <arg value="&lt;!-- taglib definition --&gt;" />
         </java>
@@ -196,7 +203,7 @@
 
    <target name="merge-web" depends="unwar,merge-webxml">
        <copy todir="${war.package.dir}">
-           <fileset dir="${entitlements.web.dir}" includes="**" />
+           <fileset dir="${entitlements.web.dir}" includes="**" excludes="WEB-INF/web.xml" />
        </copy>
    </target>
 
@@ -214,6 +221,15 @@
            <fileset dir="${entitlements.war.lib.local.dir}"
                includes="*.jar" />
        </copy>
+       <antcall target="removeicefaces.jar" />
+   </target>
+
+   <target name="removeicefaces.jar" if="lite">
+        <delete file="${war.package.dir}/WEB-INF/lib/icefaces-1.8.0.jar" />
+        <delete file="${war.package.dir}/WEB-INF/lib/icefaces-comps-1.8.0.jar" />
+        <delete file="${war.package.dir}/WEB-INF/lib/icefaces-facelets-1.8.0.jar" />
+        <delete file="${war.package.dir}/WEB-INF/lib/jsf-api-1.2_02.jar" />
+        <delete file="${war.package.dir}/WEB-INF/lib/jsf-impl-1.2-b19.jar" />
    </target>
 
     <target name="merge-classes" depends="src,unwar">
