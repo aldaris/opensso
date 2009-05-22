@@ -67,6 +67,11 @@
                     styleClass="button-group"
                     columns="2">
                     <o:button
+                        type="cancel"
+                        bean="#{resourceChooserClient}"
+                        handler="#{urlResourcesHandler}"
+                        listenerMethod="addPopupCancelListener"/>
+                    <o:button
                         type="ok"
                         bean="#{resourceChooserClient}"
                         handler="#{urlResourcesHandler}"
@@ -80,11 +85,6 @@
                                 value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
                         </ui:define>
                     </o:button>
-                    <o:button
-                        type="cancel"
-                        bean="#{resourceChooserClient}"
-                        handler="#{urlResourcesHandler}"
-                        listenerMethod="addPopupCancelListener"/>
                 </ice:panelGrid>
             </ice:panelGroup>
         </ui:define>

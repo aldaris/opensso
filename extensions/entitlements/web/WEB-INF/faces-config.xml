@@ -433,7 +433,7 @@
 
     <managed-bean>
         <managed-bean-name>entitlementSubjectToSubjectTypeMap</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.BeanHashMap</managed-bean-class>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <map-entries>
             <map-entry>
@@ -698,9 +698,9 @@
         <managed-bean-class>java.util.ArrayList</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <list-entries>
-            <value>#{idRepoUserSubjectContainer}</value>
-            <!--<value>#{idRepoRoleSubjectContainer}</value>-->
             <value>#{idRepoGroupSubjectContainer}</value>
+            <!--<value>#{idRepoRoleSubjectContainer}</value>-->
+            <value>#{idRepoUserSubjectContainer}</value>
             <value>#{bankingSubjectContainer}</value>
             <value>#{virtualSubjectContainer}</value>
         </list-entries>
@@ -942,7 +942,7 @@
 
     <managed-bean>
         <managed-bean-name>viewConditionToConditionTypeMap</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.BeanHashMap</managed-bean-class>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <map-entries>
             <!--
@@ -1355,7 +1355,7 @@
 
     <managed-bean>
         <managed-bean-name>policyFilterTypes</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.BeanHashMap</managed-bean-class>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <map-entries>
             <map-entry>

@@ -6,6 +6,7 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
 
+    <a name="wstep#{step}"/>
     <ice:panelCollapsible
         expanded="#{wizardBean.wizardStepBeans[step].expanded}"
         disabled="#{!wizardBean.wizardStepBeans[step].enabled}"
@@ -35,5 +36,4 @@
             focusWizardStep('#{step}');
         </script>
     </ice:panelCollapsible>
-    <a name="wstep#{step}"/>
 </ui:composition>

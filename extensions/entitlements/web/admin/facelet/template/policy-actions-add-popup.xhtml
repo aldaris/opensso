@@ -37,6 +37,10 @@
                     styleClass="button-group"
                     columns="2">
                     <o:button
+                        type="cancel"
+                        handler="#{booleanActionsHandler}"
+                        listenerMethod="addPopupCancelListener"/>
+                    <o:button
                         type="ok"
                         handler="#{booleanActionsHandler}"
                         listenerMethod="addPopupOkListener">
@@ -49,10 +53,6 @@
                                 value="#{viewApplicationDao}"/>
                         </ui:define>
                     </o:button>
-                    <o:button
-                        type="cancel"
-                        handler="#{booleanActionsHandler}"
-                        listenerMethod="addPopupCancelListener"/>
                 </ice:panelGrid>
             </ice:panelGroup>
         </ui:define>

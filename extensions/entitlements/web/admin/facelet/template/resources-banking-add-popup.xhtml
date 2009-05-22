@@ -65,6 +65,10 @@
                         for="all-accounts-select"
                         value="All accounts"/>
                 </ice:panelGroup>
+                    <o:button
+                        type="cancel"
+                        handler="#{bankingResourcesHandler}"
+                        listenerMethod="addPopupCancelListener"/>
                 <ice:panelGrid
                     styleClass="button-group"
                     columns="2">
@@ -78,10 +82,6 @@
                                 value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
                         </ui:define>
                     </o:button>
-                    <o:button
-                        type="cancel"
-                        handler="#{bankingResourcesHandler}"
-                        listenerMethod="addPopupCancelListener"/>
                 </ice:panelGrid>
             </ice:panelGroup>
         </ui:define>
