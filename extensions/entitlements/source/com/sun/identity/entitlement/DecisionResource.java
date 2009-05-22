@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.4 2009-05-22 17:32:05 pbryan Exp $
+ * $Id: DecisionResource.java,v 1.5 2009-05-22 22:33:44 pbryan Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -50,51 +50,51 @@ import com.sun.identity.security.AdminTokenAction;
 @Path("/1/entitlement/decision")
 public class DecisionResource {
 
-	public enum Permission { deny, allow }
+    public enum Permission { deny, allow }
 
-	private @Context SecurityContext security;
+    private @Context SecurityContext security;
 
-	@GET
-	@Produces("text/plain")
-	public String decision(
-	 @QueryParam("realm") String realm,
-	 @QueryParam("subject") String subject,
-	 @QueryParam("action") String action,
-	 @QueryParam("resource") String resource) {
+    @GET
+    @Produces("text/plain")
+    public String decision(
+     @QueryParam("realm") String realm,
+     @QueryParam("subject") String subject,
+     @QueryParam("action") String action,
+     @QueryParam("resource") String resource) {
 
-		Subject caller = toSubject(security.getUserPrincipal());
+        Subject caller = toSubject(security.getUserPrincipal());
 
-	 	try {
-			return p(new Evaluator(caller).hasEntitlement(realm,
-			 toSubject(subject), toEntitlement(resource, action), Collections.EMPTY_MAP));
-		}
+         try {
+            return p(new Evaluator(caller).hasEntitlement(realm,
+             toSubject(subject), toEntitlement(resource, action), Collections.EMPTY_MAP));
+        }
 
-		// fail safe
-		catch (EntitlementException ee) {
-			return p(false);
-		}
-	}
+        // fail safe
+        catch (EntitlementException ee) {
+            return p(false);
+        }
+    }
 
-	private Entitlement toEntitlement(String resource, String action) {
-		HashSet set = new HashSet<String>();
-		set.add(action);
-		return new Entitlement(resource, set);
-	}
+    private Entitlement toEntitlement(String resource, String action) {
+        HashSet set = new HashSet<String>();
+        set.add(action);
+        return new Entitlement(resource, set);
+    }
 
-	private Subject toSubject(Principal principal) {
-		if (principal == null) { return null; }
-		Set<Principal> set = new HashSet<Principal>();
-		set.add(principal);
-		return new Subject(false, set, new HashSet(), new HashSet());
-	}
+    private Subject toSubject(Principal principal) {
+        if (principal == null) { return null; }
+        Set<Principal> set = new HashSet<Principal>();
+        set.add(principal);
+        return new Subject(false, set, new HashSet(), new HashSet());
+    }
 
-	private Subject toSubject(String subject) {
-		if (subject == null) { return null; }
-		return toSubject(new AuthSPrincipal(subject));
-	}
+    private Subject toSubject(String subject) {
+        if (subject == null) { return null; }
+        return toSubject(new AuthSPrincipal(subject));
+    }
 
-	private String p(boolean b) {
-		return (b ? Permission.allow.toString() : Permission.deny.toString());
-	}
+    private String p(boolean b) {
+        return (b ? Permission.allow.toString() : Permission.deny.toString());
+    }
 }
 
