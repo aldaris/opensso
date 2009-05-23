@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JavaOneDemoCondition.java,v 1.1 2009-05-21 23:30:23 veiming Exp $
+ * $Id: JavaOneDemoCondition.java,v 1.2 2009-05-23 00:58:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -56,6 +56,7 @@ public class JavaOneDemoCondition implements EntitlementCondition {
     }
 
     public ConditionDecision evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment

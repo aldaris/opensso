@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCondition.java,v 1.3 2009-05-19 23:50:14 veiming Exp $
+ * $Id: PolicyCondition.java,v 1.4 2009-05-23 00:58:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -148,6 +148,7 @@ public class PolicyCondition implements EntitlementCondition {
     /**
      * Returns condition decision.
      *
+     * @param realm Realm name.
      * @param subject Subject to be evaluated.
      * @param resourceName Resource name.
      * @param environment Environment map.
@@ -155,6 +156,7 @@ public class PolicyCondition implements EntitlementCondition {
      * @throws com.sun.identity.entitlement.EntitlementException if error occur.
      */
     public ConditionDecision evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment

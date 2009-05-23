@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndCondition.java,v 1.7 2009-05-21 06:35:30 veiming Exp $
+ * $Id: AndCondition.java,v 1.8 2009-05-23 00:58:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -125,6 +125,8 @@ public class AndCondition implements EntitlementCondition {
     /**
      * Returns <code>ConditionDecision</code> of
      * <code>EntitlementCondition</code> evaluation
+     *
+     * @param realm Realm name.
      * @param subject EntitlementCondition who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -133,13 +135,14 @@ public class AndCondition implements EntitlementCondition {
      * @throws EntitlementException if error occurs.
      */
     public ConditionDecision evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
         if ((eConditions != null) && !eConditions.isEmpty()) {
             for (EntitlementCondition ec : eConditions) {
-                ConditionDecision d = ec.evaluate(subject, resourceName,
+                ConditionDecision d = ec.evaluate(realm, subject, resourceName,
                     environment);
                 if (!d.isSatisfied()) {
                     return d;

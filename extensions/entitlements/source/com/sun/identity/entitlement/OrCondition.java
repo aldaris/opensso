@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrCondition.java,v 1.8 2009-05-21 23:29:55 veiming Exp $
+ * $Id: OrCondition.java,v 1.9 2009-05-23 00:58:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -122,6 +122,8 @@ public class OrCondition implements EntitlementCondition {
     /**
      * Returns <code>ConditionDecision</code> of
      * <code>EntitlementCondition</code> evaluation
+     *
+     * @param realm Realm name.
      * @param subject EntitlementCondition who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -131,6 +133,7 @@ public class OrCondition implements EntitlementCondition {
      * of any error
      */
     public ConditionDecision evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment
@@ -143,7 +146,7 @@ public class OrCondition implements EntitlementCondition {
         }
 
         for (EntitlementCondition ec : eConditions) {
-            ConditionDecision d = ec.evaluate(subject, resourceName,
+            ConditionDecision d = ec.evaluate(realm, subject, resourceName,
                 environment);
             if (d.isSatisfied()) {
                 return d;

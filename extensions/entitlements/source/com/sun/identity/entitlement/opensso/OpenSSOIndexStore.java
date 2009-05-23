@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.5 2009-05-21 08:17:48 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.6 2009-05-23 00:58:15 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -36,6 +36,7 @@ import com.sun.identity.entitlement.SubjectAttributesManager;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import com.sun.identity.shared.BufferedIterator;
+import com.sun.identity.sm.DNMapper;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -92,7 +93,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     public void add(Set<Privilege> privileges)
         throws EntitlementException {
         for (Privilege p : privileges) {
-            p.canonicalizeResources();
+            p.canonicalizeResources(DNMapper.orgNameToRealmName(realm));
             dataStore.add(realm, p);
             EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             realm);
@@ -124,8 +125,8 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         throws EntitlementException {
         for (Privilege p : privileges) {
             String dn = delete(p.getName(), true);
-            indexCache.clear(p.getEntitlement().getResourceSaveIndexes(),
-                dn);
+            indexCache.clear(p.getEntitlement().getResourceSaveIndexes(
+                DNMapper.orgNameToRealmName(realm)), dn);
         }
     }
 
@@ -145,9 +146,8 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     ) throws EntitlementException {
         String dn = DataStore.getPrivilegeDistinguishedName(
             p.getName(), realm, null);
-        indexCache.cache(
-            p.getEntitlement().getResourceSaveIndexes(),
-            subjectSearchIndexes, dn);
+        indexCache.cache(p.getEntitlement().getResourceSaveIndexes(
+            DNMapper.orgNameToRealmName(realm)), subjectSearchIndexes, dn);
         policyCache.cache(dn, p);
     }
 

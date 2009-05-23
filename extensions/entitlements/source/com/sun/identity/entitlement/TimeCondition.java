@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeCondition.java,v 1.8 2009-05-21 06:35:31 veiming Exp $
+ * $Id: TimeCondition.java,v 1.9 2009-05-23 00:58:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -141,6 +141,8 @@ public class TimeCondition implements EntitlementCondition {
     /**
      * Returns <code>ConditionDecision</code> of
      * <code>EntitlementCondition</code> evaluation
+     *
+     * @param realm Realm name.
      * @param subject EntitlementCondition who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -150,6 +152,7 @@ public class TimeCondition implements EntitlementCondition {
      * of any error
      */
     public ConditionDecision evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment)

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.14 2009-05-19 23:50:15 veiming Exp $
+ * $Id: DataStore.java,v 1.15 2009-05-23 00:58:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -231,7 +231,7 @@ public class DataStore {
         throws EntitlementException {
 
         ResourceSaveIndexes indexes =
-            p.getEntitlement().getResourceSaveIndexes();
+            p.getEntitlement().getResourceSaveIndexes(realm);
         Set<String> subjectIndexes =
             SubjectAttributesManager.getSubjectSearchIndexes(p);
 

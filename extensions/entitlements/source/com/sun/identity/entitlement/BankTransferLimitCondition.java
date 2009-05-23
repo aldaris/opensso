@@ -16,8 +16,12 @@ public class BankTransferLimitCondition implements EntitlementCondition {
     private int transferLimit;
     private String limitType;
 
-    public ConditionDecision evaluate(Subject subject, String resourceName,
-        Map<String, Set<String>> environment) throws EntitlementException {
+    public ConditionDecision evaluate(
+        String realm, 
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
         ConditionDecision result = new ConditionDecision(false, null);
         if (environment != null) {
             Set<String> values = environment.get(MAX_TRANSFER_LIMIT);

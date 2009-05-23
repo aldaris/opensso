@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.11 2009-05-21 01:04:03 veiming Exp $
+ * $Id: Rule.java,v 1.12 2009-05-23 00:58:15 veiming Exp $
  *
  */
 package com.sun.identity.policy;
@@ -207,7 +207,6 @@ public class Rule extends Object implements Cloneable {
      */
     protected Rule(Node ruleNode) throws InvalidFormatException,
             InvalidNameException, NameNotFoundException {
-        //TODO: account for excludedResourceNames
         // Make sure the node name is rule
         if (!ruleNode.getNodeName().equalsIgnoreCase(
                 PolicyManager.POLICY_RULE_NODE)) {

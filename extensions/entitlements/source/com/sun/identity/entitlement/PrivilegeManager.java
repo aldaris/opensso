@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.18 2009-05-21 08:17:48 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.19 2009-05-23 00:58:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -111,6 +111,7 @@ public abstract class PrivilegeManager {
     public void addPrivilege(Privilege privilege)
         throws EntitlementException {
         Date date = new Date();
+        privilege.validateResourceNames(realm);
         privilege.setCreationDate(date.getTime());
         privilege.setLastModifiedDate(date.getTime());
 
@@ -143,6 +144,7 @@ public abstract class PrivilegeManager {
      */
     public void modifyPrivilege(Privilege privilege)
         throws EntitlementException {
+        privilege.validateResourceNames(realm);
         Privilege origPrivilege = getPrivilege(privilege.getName());
         if (origPrivilege != null) {
             privilege.setCreatedBy(origPrivilege.getCreatedBy());

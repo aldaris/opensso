@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNSNameCondition.java,v 1.4 2009-05-21 06:35:30 veiming Exp $
+ * $Id: DNSNameCondition.java,v 1.5 2009-05-23 00:58:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -119,6 +119,8 @@ public class DNSNameCondition implements EntitlementCondition {
     /**
      * Returns <code>ConditionDecision</code> of
      * <code>EntitlementCondition</code> evaluation
+     *
+     * @param realm Realm name.
      * @param subject EntitlementCondition who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -128,6 +130,7 @@ public class DNSNameCondition implements EntitlementCondition {
      * of any error
      */
     public ConditionDecision evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment

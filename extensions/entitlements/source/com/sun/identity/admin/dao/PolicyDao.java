@@ -166,7 +166,7 @@ public class PolicyDao implements Serializable {
     }
 
     private void validateAction(Entitlement e) {
-        Application app = e.getApplication();
+        Application app = e.getApplication("/"); // TODO : hardcode realm
         Set<String> validActionName = app.getActions().keySet();
 
         Map<String, Boolean> actionValues = e.getActionValues();

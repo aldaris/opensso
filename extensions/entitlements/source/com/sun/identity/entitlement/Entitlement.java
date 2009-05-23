@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.39 2009-05-21 23:29:55 veiming Exp $
+ * $Id: Entitlement.java,v 1.40 2009-05-23 00:58:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -385,6 +385,8 @@ public class Entitlement {
 
     /**
      * Returns a set of resource names that match the given resource.
+     *
+     * @param realm Realm Name
      * @param subject Subject who is under evaluation.
      * @param resourceNames Resource name.
      * @param environment Environment parameters.
@@ -392,6 +394,7 @@ public class Entitlement {
      * @throws EntitlementException if resource names cannot be returned.
      */
     public Set<String> evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Set<String> actionNames,
@@ -400,13 +403,15 @@ public class Entitlement {
         throws EntitlementException {
         for (String a : actionNames) {
             if (actionValues.keySet().contains(a)) {
-                return getMatchingResources(subject, resourceName, recursive);
+                return getMatchingResources(realm,
+                    subject, resourceName, recursive);
             }
         }
         return Collections.EMPTY_SET;
     }
 
     protected Set<String> getMatchingResources(
+        String realm,
         Subject subject,
         String resourceName,
         boolean recursive
@@ -414,12 +419,11 @@ public class Entitlement {
         if ((resourceNames == null) || resourceNames.isEmpty()) {
             return Collections.EMPTY_SET;
         }
-        //TOFIX
-        ResourceName resComp = getResourceComparator();
-        resourceName = resComp.canonicalize(resourceName);
+        
+        ResourceName resComparator = getResourceComparator(realm);
+        resourceName = resComparator.canonicalize(resourceName);
 
         Set<String> matched = new HashSet<String>();
-        ResourceName resComparator = getResourceComparator();
 
         Set<String> resources = tagswapResourceNames(subject, resourceNames);
         for (String r : resources) {
@@ -466,12 +470,12 @@ public class Entitlement {
         Set<Principal> principals = sbj.getPrincipals();
         if (!principals.isEmpty()) {
             for (Principal p : principals) {
-                String name = p.getName();
-                if (DN.isDN(name)){
-                    String[] rdns = LDAPDN.explodeDN(name, true);
+                String pName = p.getName();
+                if (DN.isDN(pName)){
+                    String[] rdns = LDAPDN.explodeDN(pName, true);
                     userIds.add(rdns[0]);
                 } else {
-                    userIds.add(name);
+                    userIds.add(pName);
                 }
             }
         }
@@ -687,43 +691,46 @@ public class Entitlement {
     /**
      * Returns resource search indexes.
      *
+     * @param realm Realm Name
      * @return resource search indexes.
      */
-    public ResourceSearchIndexes getResourceSearchIndexes() {
-        return getApplication().getApplicationType().getResourceSearchIndex(
-                resourceNames.iterator().next()); //TODO: recheck
+    public ResourceSearchIndexes getResourceSearchIndexes(String realm) {
+        return getApplication(realm).getApplicationType()
+            .getResourceSearchIndex(resourceNames.iterator().next()); //TODO: recheck
     }
 
     /**
      * Returns resource save indexes.
      *
+     * @param realm Realm Name
      * @return resource save indexes.
      */
-    public ResourceSaveIndexes getResourceSaveIndexes() {
-        return getApplication().getApplicationType().getResourceSaveIndex(
+    public ResourceSaveIndexes getResourceSaveIndexes(String realm) {
+        return getApplication(realm).getApplicationType().getResourceSaveIndex(
                 resourceNames.iterator().next()); //TODO: recheck
     }
 
     /**
      * Returns application for this entitlement.
-     * 
+     *
+     * @param realm Realm Name
      * @return application for this entitlement.
      */
-    public Application getApplication() {
+    public Application getApplication(String realm) {
         if (application == null) {
             application = ApplicationManager.getApplication(
-                "/", applicationName); //TODO realm
+                realm, applicationName);
         }
         return application;
     }
 
-    ResourceName getResourceComparator() {
-        return getApplication().getResourceComparator();
+    ResourceName getResourceComparator(String realm) {
+        return getApplication(realm).getResourceComparator();
     }
 
-    void validateResourceNames() throws EntitlementException {
+    void validateResourceNames(String realm) throws EntitlementException {
         if ((resourceNames != null) && !resourceNames.isEmpty()) {
-            Application app = getApplication();
+            Application app = getApplication(realm);
             for (String r : resourceNames) {
                 ValidateResourceResult result = app.validateResourceName(r);
                 if (!result.isValid()) {
@@ -734,12 +741,14 @@ public class Entitlement {
         }
     }
 
-     /**
+    /**
      * Canonicalizes resource name before persistence.
+     *
+     * @param realm Realm Name
      */
-    public void canonicalizeResources()
+    public void canonicalizeResources(String realm)
         throws EntitlementException {
-        ResourceName resComp = getResourceComparator();
+        ResourceName resComp = getResourceComparator(realm);
         if ((resourceNames != null) && !resourceNames.isEmpty()) {
             Set<String> temp = new HashSet<String>();
             for (String r : resourceNames) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeCondition.java,v 1.1 2009-05-21 23:30:23 veiming Exp $
+ * $Id: AttributeCondition.java,v 1.2 2009-05-23 00:58:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -60,6 +60,7 @@ public class AttributeCondition implements EntitlementCondition {
     }
 
     public ConditionDecision evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment
@@ -87,7 +88,7 @@ public class AttributeCondition implements EntitlementCondition {
         Set<String> searchAttrName = new HashSet<String>();
         searchAttrName.add(attrName);
         SubjectAttributesManager m =
-            SubjectAttributesManager.getInstance("/"); //TOFIX REALM
+            SubjectAttributesManager.getInstance(realm);
         Map<String, Set<String>> mapResults = 
             m.getAttributes(subject, searchAttrName);
         Set<String> results = mapResults.get(attrName);

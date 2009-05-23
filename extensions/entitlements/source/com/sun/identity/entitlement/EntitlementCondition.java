@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCondition.java,v 1.3 2009-05-02 08:53:59 veiming Exp $
+ * $Id: EntitlementCondition.java,v 1.4 2009-05-23 00:58:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -51,6 +51,7 @@ public interface EntitlementCondition extends Serializable {
     /**
      * Returns condition decision.
      *
+     * @param realm Realm Name
      * @param subject Subject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -59,6 +60,7 @@ public interface EntitlementCondition extends Serializable {
      *         if can not get condition decision.
      */
     ConditionDecision evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment)

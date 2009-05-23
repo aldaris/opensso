@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.25 2009-05-21 23:29:55 veiming Exp $
+ * $Id: Privilege.java,v 1.26 2009-05-23 00:58:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -66,10 +66,14 @@ public abstract class Privilege {
      */
     public static final String NAME_ATTRIBUTE = "ou";
 
-    //TOFIX
+    /**
+     * Macro used in resource name
+     */
     public static final String RESOURCE_MACRO_SELF = "$SELF";
 
-    //TOFIX
+    /**
+     * Macro used in condition
+     */
     public static final String RESOURCE_MACRO_ATTRIBUTE = "$ATTR";
 
     /**
@@ -94,7 +98,8 @@ public abstract class Privilege {
     }
 
     /**
-     * Constructs entitlement privilege
+     * Constructs entitlement privilege.
+     *
      * @param name name of the privilege
      * @param eSubject EntitlementSubject used for membership check
      * @param eCondition EntitlementCondition used for constraint check
@@ -109,13 +114,16 @@ public abstract class Privilege {
         EntitlementCondition eCondition,
         Set<ResourceAttribute> eResourceAttributes
     ) throws EntitlementException {
-        entitlement.validateResourceNames();
         this.name = name;
         this.entitlement = entitlement;
         this.eSubject = eSubject;
         this.eCondition = eCondition;
         this.eResourceAttributes = eResourceAttributes;
         validateSubject();
+    }
+
+    void validateResourceNames(String realm) throws EntitlementException {
+        entitlement.validateResourceNames(realm);
     }
 
     private void validateSubject()
@@ -197,7 +205,8 @@ public abstract class Privilege {
     /**
      * Returns a list of entitlement for a given subject, resource name
      * and environment.
-     * 
+     *
+     * @param realm Realm Name
      * @param subject Subject who is under evaluation.
      * @param resourceName Resource name.
      * @param actionNames Set of action names.
@@ -209,6 +218,7 @@ public abstract class Privilege {
      * @throws EntitlementException if the result cannot be determined.
      */
     public abstract List<Entitlement> evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Set<String> actionNames,
@@ -526,6 +536,7 @@ public abstract class Privilege {
     }
 
     protected boolean doesConditionMatch(
+        String realm,
         Map<String, Set<String>> resultAdvices,
         Subject subject,
         String resourceName,
@@ -535,7 +546,7 @@ public abstract class Privilege {
             return true;
         }
 
-        ConditionDecision decision = eCondition.evaluate(
+        ConditionDecision decision = eCondition.evaluate(realm,
             subject, resourceName, environment);
         if (!decision.isSatisfied()) {
             Map<String, Set<String>> advices = decision.getAdvices();
@@ -639,10 +650,12 @@ public abstract class Privilege {
 
     /**
      * Canonicalizes resource name before persistence.
+     *
+     * @param realm Realm Name
      */
-    public void canonicalizeResources()
+    public void canonicalizeResources(String realm)
         throws EntitlementException {
-        entitlement.canonicalizeResources();
+        entitlement.canonicalizeResources(realm);
     }
 }
 

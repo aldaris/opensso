@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPCondition.java,v 1.7 2009-05-21 06:35:31 veiming Exp $
+ * $Id: IPCondition.java,v 1.8 2009-05-23 00:58:14 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -97,6 +97,8 @@ public class IPCondition implements EntitlementCondition {
     /**
      * Returns <code>ConditionDecision</code> of
      * <code>EntitlementCondition</code> evaluation
+     *
+     * @param realm Realm Name.
      * @param subject EntitlementCondition who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -105,6 +107,7 @@ public class IPCondition implements EntitlementCondition {
      * @throws EntitlementException if any errors occur.
      */
     public ConditionDecision evaluate(
+        String realm,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment
