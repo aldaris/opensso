@@ -101,38 +101,40 @@
                             <ice:panelGroup
                                 style="height: 10px;">
                             </ice:panelGroup>
-                            <o:multipanel
-                                visible="true"
-                                expanded="#{conditionExpressionPanelBean.expanded}"
-                                bean="#{conditionExpressionPanelBean}"
-                                handler="#{basicMultiPanelHandler}"
-                                collapsible="true"
-                                removeable="false">
-                                <ui:define name="panel-title">
-                                    <ice:panelGroup>
-                                        <ice:outputText value="Expressions"/>
-                                    </ice:panelGroup>
-                                </ui:define>
-                                <ui:define name="panel-body">
-                                    <ice:panelSeries
-                                        value="#{conditionTypeFactory.conditionTypes}"
-                                        var="conditionType">
-                                        <ice:panelGroup
-                                            styleClass="draggable"
-                                            rendered="#{conditionType.expression}"
-                                            draggable="true"
-                                            dragValue="#{conditionType}"
-                                            dragOptions="dragGhost">
-                                            <ice:panelGrid columns="2">
-                                                <ice:graphicImage value="#{conditionType.conditionIconUri}"/>
-                                                <ice:panelGroup>
-                                                    <ice:outputText value="#{conditionType.title}"/>
-                                                </ice:panelGroup>
-                                            </ice:panelGrid>
+                            <ice:panelGroup
+                                rendered="#{o:size(policyConditionsBean.privilegeBean.viewEntitlement.viewApplication.expressionConditionTypes) > 0}">
+                                <o:multipanel
+                                    visible="true"
+                                    expanded="#{conditionExpressionPanelBean.expanded}"
+                                    bean="#{conditionExpressionPanelBean}"
+                                    handler="#{basicMultiPanelHandler}"
+                                    collapsible="true"
+                                    removeable="false">
+                                    <ui:define name="panel-title">
+                                        <ice:panelGroup>
+                                            <ice:outputText value="Expressions"/>
                                         </ice:panelGroup>
-                                    </ice:panelSeries>
-                                </ui:define>
-                            </o:multipanel>
+                                    </ui:define>
+                                    <ui:define name="panel-body">
+                                        <ice:panelSeries
+                                            value="#{policyConditionsBean.privilegeBean.viewEntitlement.viewApplication.expressionConditionTypes}"
+                                            var="conditionType">
+                                            <ice:panelGroup
+                                                styleClass="draggable"
+                                                draggable="true"
+                                                dragValue="#{conditionType}"
+                                                dragOptions="dragGhost">
+                                                <ice:panelGrid columns="2">
+                                                    <ice:graphicImage value="#{conditionType.conditionIconUri}"/>
+                                                    <ice:panelGroup>
+                                                        <ice:outputText value="#{conditionType.title}"/>
+                                                    </ice:panelGroup>
+                                                </ice:panelGrid>
+                                            </ice:panelGroup>
+                                        </ice:panelSeries>
+                                    </ui:define>
+                                </o:multipanel>
+                            </ice:panelGroup>
                         </ice:panelGroup>
                     </ice:panelGrid>
                 </div>

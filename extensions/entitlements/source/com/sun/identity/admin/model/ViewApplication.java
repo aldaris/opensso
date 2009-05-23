@@ -104,6 +104,16 @@ public class ViewApplication implements Serializable {
         return ests;
     }
 
+    public List<ConditionType> getExpressionConditionTypes() {
+        List<ConditionType> ects = new ArrayList<ConditionType>();
+        for (ConditionType ct: conditionTypes) {
+            if (ct.isExpression()) {
+                ects.add(ct);
+            }
+        }
+        return ects;
+    }
+
     public String getName() {
         return name;
     }

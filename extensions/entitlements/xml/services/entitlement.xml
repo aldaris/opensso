@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.22 2009-05-23 18:58:19 farble1670 Exp $
+   $Id: entitlement.xml,v 1.23 2009-05-23 19:36:43 farble1670 Exp $
 
 -->
 
@@ -267,6 +267,9 @@
                             <Value>com.sun.identity.admin.model.IpRangeViewCondition</Value>
                             <Value>com.sun.identity.admin.model.TimeRangeCondition</Value>
                             <Value>com.sun.identity.admin.model.TimezoneCondition</Value>
+                            <Value>com.sun.identity.admin.model.OrViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.AndViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.NotViewCondition</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />
@@ -298,6 +301,9 @@
                             <Attribute name="conditions" />
                             <Value>com.sun.identity.admin.model.DnsNameViewCondition</Value>
                             <Value>com.sun.identity.admin.model.IpRangeViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.OrViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.AndViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.NotViewCondition</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />
@@ -332,6 +338,9 @@
                             <Value>com.sun.identity.admin.model.DaysOfWeekCondition</Value>
                             <Value>com.sun.identity.admin.model.TimeRangeCondition</Value>
                             <Value>com.sun.identity.admin.model.TimezoneCondition</Value>
+                            <Value>com.sun.identity.admin.model.OrViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.AndViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.NotViewCondition</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />
@@ -420,6 +429,8 @@
                             <Value>com.sun.identity.admin.model.DaysOfWeekCondition</Value>
                             <Value>com.sun.identity.admin.model.TimeRangeCondition</Value>
                             <Value>com.sun.identity.admin.model.TimezoneCondition</Value>
+                            <Value>com.sun.identity.admin.model.OrViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.AndViewCondition</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />
