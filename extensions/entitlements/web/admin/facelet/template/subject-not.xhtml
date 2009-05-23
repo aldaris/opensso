@@ -7,7 +7,7 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
     <c:if test="#{viewSubject != null &amp;&amp; viewSubject.subjectType.name == 'not'}">
-        <ice:outputText 
+        <ice:outputText
             value="None of the following subject:"/>
         <ice:panelGroup
             styleClass="conditions">
@@ -22,6 +22,7 @@
             rendered="#{viewSubject.viewSubjectsSize &lt; 1}"
             styleClass="drop-target"
             dropTarget="true"
+            dropMask="hover_start"
             dropValue="#{viewSubject}"
             dropListener="#{policyCreateWizardHandler.subjectDropListener}">
             Drop excluded subject here ...

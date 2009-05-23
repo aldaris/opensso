@@ -6,7 +6,7 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-        
+
     <c:if test="#{viewSubject != null &amp;&amp; viewSubject.subjectType.name == 'or'}">
         <ice:outputText value="Any of the following subjects:"/>
         <ice:panelGroup
@@ -21,6 +21,7 @@
         <ice:panelGroup
             styleClass="drop-target"
             dropTarget="true"
+            dropMask="hover_start"
             dropValue="#{viewSubject}"
             dropListener="#{policyCreateWizardHandler.subjectDropListener}">
             Drop ORed subjects here ...
