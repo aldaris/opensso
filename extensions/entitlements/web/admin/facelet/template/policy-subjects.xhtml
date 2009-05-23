@@ -117,38 +117,40 @@
                                     style="height: 10px;">
                                 </ice:panelGroup>
                             </ice:panelSeries>
-                            <o:multipanel
-                                visible="true"
-                                expanded="#{subjectExpressionPanelBean.expanded}"
-                                bean="#{subjectExpressionPanelBean}"
-                                handler="#{basicMultiPanelHandler}"
-                                collapsible="true"
-                                removeable="false">
-                                <ui:define name="panel-title">
-                                    <ice:panelGroup>
-                                        <ice:outputText value="Subject Expressions"/>
-                                    </ice:panelGroup>
-                                </ui:define>
-                                <ui:define name="panel-body">
-                                    <ice:panelSeries
-                                        value="#{expressionSubjectTypes}"
-                                        var="subjectType">
-                                        <ice:panelGroup
-                                            styleClass="draggable"
-                                            draggable="true"
-                                            dragValue="#{subjectType}"
-                                            dragMask="dragging,drag_cancel,hover_start,hover_end"
-                                            dragOptions="dragGhost">
-                                            <ice:panelGrid columns="2">
-                                                <ice:graphicImage value="#{subjectType.subjectIconUri}"/>
-                                                <ice:panelGroup>
-                                                    <ice:outputText value="#{subjectType.title}"/>
-                                                </ice:panelGroup>
-                                            </ice:panelGrid>
+                            <ice:panelGroup
+                                rendered="#{o:size(policySubjectsBean.privilegeBean.viewEntitlement.viewApplication.expressionSubjectTypes) > 0}">
+                                <o:multipanel
+                                    expanded="#{subjectExpressionPanelBean.expanded}"
+                                    bean="#{subjectExpressionPanelBean}"
+                                    handler="#{basicMultiPanelHandler}"
+                                    collapsible="true"
+                                    removeable="false">
+                                    <ui:define name="panel-title">
+                                        <ice:panelGroup>
+                                            <ice:outputText value="Subject Expressions"/>
                                         </ice:panelGroup>
-                                    </ice:panelSeries>
-                                </ui:define>
-                            </o:multipanel>
+                                    </ui:define>
+                                    <ui:define name="panel-body">
+                                        <ice:panelSeries
+                                            value="#{policySubjectsBean.privilegeBean.viewEntitlement.viewApplication.expressionSubjectTypes}"
+                                            var="subjectType">
+                                            <ice:panelGroup
+                                                styleClass="draggable"
+                                                draggable="true"
+                                                dragValue="#{subjectType}"
+                                                dragMask="dragging,drag_cancel,hover_start,hover_end"
+                                                dragOptions="dragGhost">
+                                                <ice:panelGrid columns="2">
+                                                    <ice:graphicImage value="#{subjectType.subjectIconUri}"/>
+                                                    <ice:panelGroup>
+                                                        <ice:outputText value="#{subjectType.title}"/>
+                                                    </ice:panelGroup>
+                                                </ice:panelGrid>
+                                            </ice:panelGroup>
+                                        </ice:panelSeries>
+                                    </ui:define>
+                                </o:multipanel>
+                            </ice:panelGroup>
                         </ice:panelGroup>
                     </ice:panelGrid>
                 </div>

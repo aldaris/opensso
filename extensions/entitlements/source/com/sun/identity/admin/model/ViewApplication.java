@@ -94,6 +94,16 @@ public class ViewApplication implements Serializable {
         return subjectContainers;
     }
 
+    public List<SubjectType> getExpressionSubjectTypes() {
+        List<SubjectType> ests = new ArrayList<SubjectType>();
+        for (SubjectType st: subjectTypes) {
+            if (st.isExpression()) {
+                ests.add(st);
+            }
+        }
+        return ests;
+    }
+
     public String getName() {
         return name;
     }

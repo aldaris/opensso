@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.21 2009-05-23 17:52:53 farble1670 Exp $
+   $Id: entitlement.xml,v 1.22 2009-05-23 18:58:19 farble1670 Exp $
 
 -->
 
@@ -254,6 +254,9 @@
                             <Value>com.sun.identity.admin.model.IdRepoRoleViewSubject</Value>
                             <Value>com.sun.identity.admin.model.IdRepoUserViewSubject</Value>
                             <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.OrViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.AndViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.NotViewSubject</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="conditions" />
@@ -288,6 +291,8 @@
                             <Value>com.sun.identity.admin.model.IdRepoRoleViewSubject</Value>
                             <Value>com.sun.identity.admin.model.IdRepoUserViewSubject</Value>
                             <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.OrViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.AndViewSubject</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="conditions" />
@@ -318,6 +323,8 @@
                             <Value>com.sun.identity.admin.model.IdRepoRoleViewSubject</Value>
                             <Value>com.sun.identity.admin.model.IdRepoUserViewSubject</Value>
                             <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.OrViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.NotViewSubject</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="conditions" />
@@ -404,6 +411,7 @@
                             <Attribute name="subjects" />
                             <Value>com.sun.identity.admin.model.BankingViewSubject</Value>
                             <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.NotViewSubject</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="conditions" />

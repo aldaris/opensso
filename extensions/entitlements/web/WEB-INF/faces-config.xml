@@ -424,18 +424,6 @@
     </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>expressionSubjectTypes</managed-bean-name>
-        <managed-bean-class>java.util.ArrayList</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <list-entries>
-            <value-class>com.sun.identity.admin.model.SubjectType</value-class>
-            <value>#{orSubjectType}</value>
-            <value>#{andSubjectType}</value>
-            <value>#{notSubjectType}</value>
-        </list-entries>
-    </managed-bean>
-
-    <managed-bean>
         <managed-bean-name>entitlementSubjectToSubjectTypeMap</managed-bean-name>
         <managed-bean-class>java.util.HashMap</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
