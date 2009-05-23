@@ -58,4 +58,19 @@ public abstract class SubjectType implements Serializable {
         }
         return title;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof SubjectType)) {
+            return false;
+        }
+        SubjectType st = (SubjectType)other;
+
+        return st.getName().equals(getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
 }

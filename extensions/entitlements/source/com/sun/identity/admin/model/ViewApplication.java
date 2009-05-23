@@ -20,6 +20,7 @@ public class ViewApplication implements Serializable {
     private List<Resource> resources = new ArrayList<Resource>();
     private List<Action> actions = new ArrayList<Action>();
     private List<ConditionType> conditionTypes = new ArrayList<ConditionType>();
+    private List<SubjectType> subjectTypes = new ArrayList<SubjectType>();
 
     public ViewApplication(Application a) {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
@@ -69,6 +70,28 @@ public class ViewApplication implements Serializable {
             assert (ct != null);
             conditionTypes.add(ct);
         }
+
+        // subjects
+        SubjectFactory sf = (SubjectFactory) mbr.resolve("subjectFactory");
+        for (String viewSubjectClassName : a.getSubjects()) {
+            SubjectType st = sf.getSubjectType(viewSubjectClassName);
+            assert (st != null);
+            subjectTypes.add(st);
+        }
+    }
+
+    public List<SubjectContainer> getSubjectContainers() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        SubjectFactory sf = (SubjectFactory) mbr.resolve("subjectFactory");
+        List<SubjectContainer> subjectContainers = new ArrayList<SubjectContainer>();
+        for (SubjectType st : subjectTypes) {
+            SubjectContainer sc = sf.getSubjectContainer(st);
+            if (sc != null && sc.isVisible()) {
+                subjectContainers.add(sc);
+            }
+        }
+
+        return subjectContainers;
     }
 
     public String getName() {

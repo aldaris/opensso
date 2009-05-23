@@ -63,10 +63,9 @@
                         <ice:panelGroup
                             style="width: 100%">
                             <ice:panelSeries
-                                value="#{subjectContainers}"
+                                value="#{policySubjectsBean.privilegeBean.viewEntitlement.viewApplication.subjectContainers}"
                                 var="subjectContainer">
                                 <o:multipanel
-                                    visible="#{subjectContainer.visible}"
                                     expanded="#{subjectContainer.expanded}"
                                     bean="#{subjectContainer}"
                                     handler="#{basicMultiPanelHandler}"
