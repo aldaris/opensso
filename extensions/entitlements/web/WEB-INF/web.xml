@@ -42,6 +42,10 @@
             /WEB-INF/admin/facelet/opensso.taglib.xml
         </param-value>
     </context-param>
+    <context-param>
+        <param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name>
+        <param-value>true</param-value>
+    </context-param>
 
     <filter>
         <filter-name>AdminAuthFilter</filter-name>
