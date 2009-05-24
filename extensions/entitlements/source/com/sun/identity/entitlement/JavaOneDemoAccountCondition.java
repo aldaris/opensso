@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JavaOneDemoCondition.java,v 1.3 2009-05-24 05:25:29 superpat7 Exp $
+ * $Id: JavaOneDemoAccountCondition.java,v 1.1 2009-05-24 05:25:29 superpat7 Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -45,7 +45,7 @@ import javax.security.auth.Subject;
  *
  * @author dennis
  */
-public class JavaOneDemoCondition implements EntitlementCondition {
+public class JavaOneDemoAccountCondition implements EntitlementCondition {
 
     public void setState(String state) {
         //DO NOTHING
@@ -88,42 +88,28 @@ public class JavaOneDemoCondition implements EntitlementCondition {
         }
     }
 
-    private String getAccountNumber(String resourceName)
-        throws EntitlementException {
-        try {
-            /*
-             * Resource name can be of form
-             * http://localhost:8080/C1DemoServer2/resources/phones/1234567890
-             * http://localhost:8080/C1DemoServer2/resources/phones/1234567890/
-             * http://localhost:8080/C1DemoServer2/resources/phones/1234567890/accountNumber/
-             * etc
-             */
-            String prefix = "/resources/phones/";
-            String telNumber;
-            int start = resourceName.indexOf(prefix) + prefix.length();
-            if ( start >= resourceName.length() ) {
-                return null;
-            }
-            int end = resourceName.indexOf("/", start);
-            if ( end == -1 ) {
-                // No trailing slash
-                telNumber = resourceName.substring(start);
-            } else {
-                telNumber = resourceName.substring(start, end);
-            }
-
-            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-            AMIdentity amid = new AMIdentity(adminToken, telNumber,
-                IdType.USER, "/", null);
-            Set<String> accountNumbers = amid.getAttribute("account_number");
-            return ((accountNumbers != null) && !accountNumbers.isEmpty()) ?
-                accountNumbers.iterator().next() : null;
-        } catch (IdRepoException ex) {
-            return null;
-        } catch (SSOException ex) {
+    private String getAccountNumber(String resourceName) {
+        /*
+         * Resource name can be of form
+         * http://localhost:8080/C1DemoServer2/resources/accounts/123456789012345
+         * http://localhost:8080/C1DemoServer2/resources/accounts/123456789012345/
+         * http://localhost:8080/C1DemoServer2/resources/accounts/123456789012345/phoneCollection/
+         * etc
+         */
+        String prefix = "/resources/accounts/";
+        String accountNumber;
+        int start = resourceName.indexOf(prefix) + prefix.length();
+        if ( start >= resourceName.length() ) {
             return null;
         }
+        int end = resourceName.indexOf("/", start);
+        if ( end == -1 ) {
+            // No trailing slash
+            accountNumber = resourceName.substring(start);
+        } else {
+            accountNumber = resourceName.substring(start, end);
+        }
+        return accountNumber;
     }
 
     public static String getUUID(Subject subject) {
