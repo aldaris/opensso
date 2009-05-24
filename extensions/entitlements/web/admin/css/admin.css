@@ -218,13 +218,15 @@ div.button img.left {
 #header {
     height: 150px;
     background: transparent url(../image/curve_right.png) no-repeat;
+    z-index: 999;
+    position: relative;
 }
 
 #logo {
     height: 60px;
     width: 240px;
     position: absolute;
-    left: 90px;
+    left: 80px;
     top: 50px;
     z-index: 10;
     background: transparent url(../image/logo.png) no-repeat;
@@ -271,6 +273,75 @@ div.button img.left {
     text-align: right;
     padding-right: 10px;
     color: white;
+}
+
+#status {
+    background-color: #8299AF;
+    color: white;
+    float: left;
+    position: relative;
+    width: 100%;
+}
+
+#status * > span,
+#status * > label {
+    color: white;
+}
+
+#status * > a {
+    position: relative;
+    z-index: 9999;
+}
+
+.status {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.status-server {
+    padding-right: 5px;
+    border-right: 2px solid #fff;
+}
+
+.status-version {
+    padding-left: 5px;
+    border-right: 2px solid #fff;
+    padding-right: 5px;
+}
+
+.status-user {
+    padding-left: 5px;
+}
+
+
+.status-left {
+    padding-left: 80px;
+}
+
+.status-left table {
+    border-collapse: collapse;
+}
+
+.status-server,
+.status-user,
+.status-version {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.status-help {
+    padding-right: 5px;
+    border-right: 2px solid #fff;
+}
+
+.status-logout {
+    padding-left: 5px;
+}
+
+.status-links {
+    position: relative;
+    float: right;
+    padding-right: 10px;
 }
 
 .clear {
@@ -470,7 +541,7 @@ div.button img.left {
     clear: both;
     float: right;
     position: relative;
-    top: 60px;
+    top: 40px;
 }
 
 .policy-create-conditions {

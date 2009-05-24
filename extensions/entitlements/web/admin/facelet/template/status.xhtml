@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<span xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ice="http://www.icesoft.com/icefaces/component">
+    <ice:panelGrid
+        styleClass="status"
+        columnClasses="status-left,status-links"
+        columns="2">
+        <ice:panelGrid
+            columns="3"
+            columnClasses="status-server,status-version,status-user">
+            <ice:panelGroup>
+                <ice:outputLabel
+                    for="status-server"
+                    value="Server: "/>
+                <ice:outputText
+                    id="status-server"
+                    value="#{statusBean.serverName}"/>
+            </ice:panelGroup>
+            <ice:panelGroup>
+                <ice:outputLabel
+                    for="status-version"
+                    value="Version: "/>
+                <ice:outputText
+                    id="status-version"
+                    value="#{statusBean.version}"/>
+            </ice:panelGroup>
+            <ice:panelGroup>
+                <ice:outputLabel
+                    for="status-user"
+                    value="User: "/>
+                <ice:outputText
+                    id="status-user"
+                    value="#{statusBean.shortUserName}"/>
+            </ice:panelGroup>
+        </ice:panelGrid>
+        <ice:panelGrid
+            columnClasses="status-help,status-logout"
+            columns="2">
+            <ice:outputLink
+                value="#{statusBean.helpLink}">
+                <ice:outputText
+                    value="Help"/>
+            </ice:outputLink>
+            <ice:outputLink
+                value="#{statusBean.logoutLink}">
+                <ice:outputText
+                    value="Logout"/>
+            </ice:outputLink>
+        </ice:panelGrid>
+    </ice:panelGrid>
+</span>
