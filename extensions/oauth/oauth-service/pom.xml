@@ -24,16 +24,34 @@
         </profile>
     </profiles>
     <name>oauth-service</name>
+    <build>
+        <finalName>oauth-service</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.glassfish</groupId>
+                <artifactId>maven-glassfish-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>${jersey-version}</version>
+            <version>1.1.1-ea-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>${jersey-version}</version>
+            <version>1.1.1-ea-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -61,12 +79,12 @@
         <dependency>
             <groupId>com.sun.jersey.oauth</groupId>
             <artifactId>oauth-signature</artifactId>
-            <version>${jersey-version}</version>
+            <version>1.1.1-ea-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.oauth</groupId>
             <artifactId>oauth-server</artifactId>
-            <version>${jersey-version}</version>
+            <version>1.1.1-ea-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax.transaction</groupId>
