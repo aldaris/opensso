@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceEnvIPCondition.java,v 1.1 2009-05-05 18:29:01 mrudul_uchil Exp $
+ * $Id: ResourceEnvIPCondition.java,v 1.2 2009-05-26 18:59:56 mrudul_uchil Exp $
  *
  */
 
@@ -74,7 +74,7 @@ public class ResourceEnvIPCondition implements Condition {
     
     public static final String IP = "IP";
     public static final String THEN = "THEN";
-    private ArrayList ipList = new ArrayList();
+    private ArrayList envList = new ArrayList();
     private ArrayList adviceList = new ArrayList();
     private List propertyNames;
     private Map properties;
@@ -160,7 +160,7 @@ public class ResourceEnvIPCondition implements Condition {
 
     public void setProperties(Map properties) throws PolicyException {
         this.properties = properties;
-        ipList.clear();
+        envList.clear();
         adviceList.clear();
         
         if ( (properties == null) || ( properties.keySet() == null) ) {
@@ -186,21 +186,26 @@ public class ResourceEnvIPCondition implements Condition {
         
         while ( envCondValIter.hasNext()) {
             String envKey = (String) envCondValIter.next();
-            if ( envKey != null && envKey.contains(IP) ) {
-                int bIndex = envKey.indexOf("[");
-                int lIndex = envKey.indexOf("]");
-                String ipVal = envKey.substring(bIndex+1, lIndex);
+            if ( envKey != null ) {
+                int ifIndex = envKey.indexOf("IF");
+                if (ifIndex == -1) {
+                    ifIndex = envKey.indexOf("if");
+                }
                 int adviceIndex = envKey.indexOf(THEN);
-                String adviceVal = envKey.substring(adviceIndex+5);                
-                ipList.add(i, ipVal);
+                if (adviceIndex == -1) {
+                    adviceIndex = envKey.indexOf("then");
+                }
+                String envVal = envKey.substring(ifIndex+2, adviceIndex-1);
+                String adviceVal = envKey.substring(adviceIndex+5);
+                envList.add(i, envVal);
                 adviceList.add(i, adviceVal);
                 i++;
             }
         }
         if ( DEBUG.messageEnabled()) {
-            DEBUG.message("ResourceEnvIPCondition:setProperties ipList : " 
-                + ipList);
-            DEBUG.message("ResourceEnvIPCondition:setProperties ipList : " 
+            DEBUG.message("ResourceEnvIPCondition:setProperties envList : "
+                + envList);
+            DEBUG.message("ResourceEnvIPCondition:setProperties adviceList : " 
                 + adviceList);
         }
         
@@ -258,127 +263,109 @@ public class ResourceEnvIPCondition implements Condition {
 	boolean allowed = false;
         Map advices = new HashMap();
         
-        Set ipSet = (Set) env.get(REQUEST_IP);
-        String strIP = null;
-        if ( (ipSet == null) || (ipSet.isEmpty()) ) {
-            if (token != null) {
-                strIP = token.getIPAddress().getHostAddress();
-            } else {
-                throw new PolicyException(
-                    ResBundleUtils.rbName,"client_ip_null", 
-                    null, null);
-            }
-        } else {
-            Iterator names = ipSet.iterator();
-            strIP = (String) names.next();                
-        }
-        
-        if ( (strIP != null) && (strIP.length() != 0) ) {
-            String adviceStr = getAdviceStrForIP(strIP);
+        String adviceStr = getAdviceStrForEnv(env,token);
  
-            String adviceName = null;
-            String adviceValue = null;
-            if (adviceStr != null && adviceStr.contains("=")) {
-                int index = adviceStr.indexOf("=");
-                adviceName = adviceStr.substring(0, index);
-                adviceValue = adviceStr.substring(index+1);
+        String adviceName = null;
+        String adviceValue = null;
+        if (adviceStr != null && adviceStr.contains("=")) {
+            int index = adviceStr.indexOf("=");
+            adviceName = adviceStr.substring(0, index);
+            adviceValue = adviceStr.substring(index+1);
 
-            } else if (adviceStr != null) {
-                String args[] = { adviceStr };
-                throw new PolicyException(ResBundleUtils.rbName,
-                    "invalid_property_value", args, null);
-            } else {
-                throw new PolicyException(
-                    ResBundleUtils.rbName,"adviceName_adviceValue_not_valid", 
-                    null, null);
-            }
-            
-            if ( DEBUG.messageEnabled()) {
-                DEBUG.message("ResourceEnvIPCondition:getConditionDecision - " + 
-                "adviceName : " + adviceName + " and adviceValue : " 
-                + adviceValue);
-            }
-            if ((adviceName != null) && (adviceName.length() != 0) && 
-                    (adviceValue != null) && (adviceValue.length() != 0)) {
-                if (adviceName.equalsIgnoreCase(ISAuthConstants.MODULE_PARAM)) {
-                    Set adviceMessages = 
-                        getAdviceMessagesforAuthScheme(adviceValue,token,env);
-                    if (adviceMessages.isEmpty()) {
-                        allowed = true;
-                    } else {
-                        advices.put(AUTH_SCHEME_CONDITION_ADVICE, 
-                            adviceMessages);
-                    }
+        } else if (adviceStr != null) {
+            String args[] = { adviceStr };
+            throw new PolicyException(ResBundleUtils.rbName,
+                "invalid_property_value", args, null);
+        } else {
+            throw new PolicyException(
+                ResBundleUtils.rbName,"adviceName_adviceValue_not_valid",
+                null, null);
+        }
 
-                } else if (adviceName.equalsIgnoreCase(
-                        ISAuthConstants.SERVICE_PARAM)) {
-                    Set adviceMessages = 
-                        getAdviceMessagesforAuthService(adviceValue,token,env);
-                    if (adviceMessages.isEmpty()) {
-                        allowed = true;
-                    } else {
-                        advices.put(AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE, 
-                            adviceMessages);
-                    }
-
-                } else if (adviceName.equalsIgnoreCase(
-                        ISAuthConstants.AUTH_LEVEL_PARAM)) {
-                    Set adviceMessages = 
-                        getAdviceMessagesforAuthLevel(adviceValue,token,env);
-                    if (adviceMessages.isEmpty()) {
-                        allowed = true;
-                    } else {
-                        advices.put(AUTH_LEVEL_CONDITION_ADVICE, 
-                            adviceMessages);
-                    }
-                } else if (adviceName.equalsIgnoreCase(
-                        ISAuthConstants.ROLE_PARAM)) {
-                    Set adviceMessages = 
-                        getAdviceMessagesforRole(adviceValue,token,env);
-                    if (adviceMessages.isEmpty()) {
-                        allowed = true;
-                    } else {
-                        advices.put(PolicyDecisionUtils.AUTH_ROLE_ADVICE, 
-                            adviceMessages);
-                    }
-                } else if (adviceName.equalsIgnoreCase(
-                        ISAuthConstants.USER_PARAM)) {
-                    Set adviceMessages = 
-                        getAdviceMessagesforUser(adviceValue,token,env);
-                    if (adviceMessages.isEmpty()) {
-                        allowed = true;
-                    } else {
-                        advices.put(PolicyDecisionUtils.AUTH_USER_ADVICE, 
-                            adviceMessages);
-                    }
-                } else if (adviceName.equalsIgnoreCase(
-                        ISAuthConstants.REDIRECT_URL_PARAM)) {
-                    Set adviceMessages = 
-                        getAdviceMessagesforRedirectURL(adviceValue,token,env);
-                    if (adviceMessages.isEmpty()) {
-                        allowed = true;
-                    } else {
-                        advices.put(PolicyDecisionUtils.AUTH_REDIRECTION_ADVICE, 
-                            adviceMessages);
-                    }
+        if ( DEBUG.messageEnabled()) {
+            DEBUG.message("ResourceEnvIPCondition:getConditionDecision - " +
+            "adviceName : " + adviceName + " and adviceValue : "
+            + adviceValue);
+        }
+        if ((adviceName != null) && (adviceName.length() != 0) &&
+                (adviceValue != null) && (adviceValue.length() != 0)) {
+            if (adviceName.equalsIgnoreCase(ISAuthConstants.MODULE_PARAM)) {
+                Set adviceMessages =
+                    getAdviceMessagesforAuthScheme(adviceValue,token,env);
+                if (adviceMessages.isEmpty()) {
+                    allowed = true;
                 } else {
-                    if ( DEBUG.messageEnabled()) {
-                        DEBUG.message("At ResourceEnvIPCondition."
-                                + "getConditionDecision(): "
-                                + "adviceName is invalid");
-                    }
+                    advices.put(AUTH_SCHEME_CONDITION_ADVICE,
+                        adviceMessages);
+                }
+
+            } else if (adviceName.equalsIgnoreCase(
+                    ISAuthConstants.SERVICE_PARAM)) {
+                Set adviceMessages =
+                    getAdviceMessagesforAuthService(adviceValue,token,env);
+                if (adviceMessages.isEmpty()) {
+                    allowed = true;
+                } else {
+                    advices.put(AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE,
+                        adviceMessages);
+                }
+
+            } else if (adviceName.equalsIgnoreCase(
+                    ISAuthConstants.AUTH_LEVEL_PARAM)) {
+                Set adviceMessages =
+                    getAdviceMessagesforAuthLevel(adviceValue,token,env);
+                if (adviceMessages.isEmpty()) {
+                    allowed = true;
+                } else {
+                    advices.put(AUTH_LEVEL_CONDITION_ADVICE,
+                        adviceMessages);
+                }
+            } else if (adviceName.equalsIgnoreCase(
+                    ISAuthConstants.ROLE_PARAM)) {
+                Set adviceMessages =
+                    getAdviceMessagesforRole(adviceValue,token,env);
+                if (adviceMessages.isEmpty()) {
+                    allowed = true;
+                } else {
+                    advices.put(PolicyDecisionUtils.AUTH_ROLE_ADVICE,
+                        adviceMessages);
+                }
+            } else if (adviceName.equalsIgnoreCase(
+                    ISAuthConstants.USER_PARAM)) {
+                Set adviceMessages =
+                    getAdviceMessagesforUser(adviceValue,token,env);
+                if (adviceMessages.isEmpty()) {
+                    allowed = true;
+                } else {
+                    advices.put(PolicyDecisionUtils.AUTH_USER_ADVICE,
+                        adviceMessages);
+                }
+            } else if (adviceName.equalsIgnoreCase(
+                    ISAuthConstants.REDIRECT_URL_PARAM)) {
+                Set adviceMessages =
+                    getAdviceMessagesforRedirectURL(adviceValue,token,env);
+                if (adviceMessages.isEmpty()) {
+                    allowed = true;
+                } else {
+                    advices.put(PolicyDecisionUtils.AUTH_REDIRECTION_ADVICE,
+                        adviceMessages);
                 }
             } else {
                 if ( DEBUG.messageEnabled()) {
-                        DEBUG.message("At ResourceEnvIPCondition."
-                                + "getConditionDecision(): "
-                                + "adviceName OR adviceValue is NULL");
+                    DEBUG.message("At ResourceEnvIPCondition."
+                            + "getConditionDecision(): "
+                            + "adviceName is invalid");
                 }
-                throw new PolicyException(
-                    ResBundleUtils.rbName,"adviceName_adviceValue_not_valid", 
-                    null, null);
             }
-
+        } else {
+            if ( DEBUG.messageEnabled()) {
+                    DEBUG.message("At ResourceEnvIPCondition."
+                            + "getConditionDecision(): "
+                            + "adviceName OR adviceValue is NULL");
+            }
+            throw new PolicyException(
+                ResBundleUtils.rbName,"adviceName_adviceValue_not_valid",
+                null, null);
         }
 
 	return new ConditionDecision(allowed, advices);
@@ -756,44 +743,44 @@ public class ResourceEnvIPCondition implements Condition {
         String schemeInstance = null;
         String authSchemeType = null;
         try {
-        for (Iterator iter = requestAuthSchemes.iterator();
-            iter.hasNext(); ) {
-            String requestAuthnScheme = (String)iter.next();
-            schemeInstance = AMAuthUtils.getDataFromRealmQualifiedData(
-                    requestAuthnScheme);
-            String realm = AMAuthUtils.getRealmFromRealmQualifiedData(
-                    requestAuthnScheme);
-            if ((realm == null) || (realm.length() == 0)) {
-                nullRealm = true;
-                break;
-            } else {
-                AMAuthenticationManager authManager = 
-                    new AMAuthenticationManager(token,orgName);
-                AMAuthenticationInstance authInstance = 
-                    authManager.getAuthenticationInstance(schemeInstance);
-                authSchemeType = authInstance.getType();
-                if ("Federation".equals(authSchemeType)) {
-                    allow = true;
-                    break;
-                }
-            }
-        }
-        
-        if (nullRealm) {
-            for (Iterator iter = requestAuthSchemesIgnoreRealm.iterator();
+            for (Iterator iter = requestAuthSchemes.iterator();
                 iter.hasNext(); ) {
-                schemeInstance = (String)iter.next();
-                AMAuthenticationManager authManager = 
-                    new AMAuthenticationManager(token,orgName);
-                AMAuthenticationInstance authInstance = 
-                    authManager.getAuthenticationInstance(schemeInstance);
-                authSchemeType = authInstance.getType();
-                if ("Federation".equals(authSchemeType)) {
-                    allow = true;
+                String requestAuthnScheme = (String)iter.next();
+                schemeInstance = AMAuthUtils.getDataFromRealmQualifiedData(
+                        requestAuthnScheme);
+                String realm = AMAuthUtils.getRealmFromRealmQualifiedData(
+                        requestAuthnScheme);
+                if ((realm == null) || (realm.length() == 0)) {
+                    nullRealm = true;
                     break;
+                } else {
+                    AMAuthenticationManager authManager = 
+                        new AMAuthenticationManager(token,orgName);
+                    AMAuthenticationInstance authInstance = 
+                        authManager.getAuthenticationInstance(schemeInstance);
+                    authSchemeType = authInstance.getType();
+                    if ("Federation".equals(authSchemeType)) {
+                        allow = true;
+                        break;
+                    }
                 }
             }
-        }
+
+            if (nullRealm) {
+                for (Iterator iter = requestAuthSchemesIgnoreRealm.iterator();
+                    iter.hasNext(); ) {
+                    schemeInstance = (String)iter.next();
+                    AMAuthenticationManager authManager = 
+                        new AMAuthenticationManager(token,orgName);
+                    AMAuthenticationInstance authInstance = 
+                        authManager.getAuthenticationInstance(schemeInstance);
+                    authSchemeType = authInstance.getType();
+                    if ("Federation".equals(authSchemeType)) {
+                        allow = true;
+                        break;
+                    }
+                }
+            }
 
         } catch (AMConfigurationException ace) {
             if (DEBUG.warningEnabled()) {
@@ -991,62 +978,123 @@ public class ResourceEnvIPCondition implements Condition {
         }
         return levelInt;
     }
-    
+
     /**
      * Returns the advice string that satisfies or matches for the client
-     * IP address.
+     * environment parameter, including client's IP Address.
      */
-    private String getAdviceStrForIP(String ip) throws PolicyException {
+    private String getAdviceStrForEnv(Map env, SSOToken token) 
+        throws PolicyException, SSOException {
         String adviceStr = null;
-        long requestIp = stringToIp(ip);
-        
+
         //Check if all the keys are valid
-        for (int i=0; i < ipList.size(); i++) {
-            String key = (String) ipList.get(i);
+        for (int i=0; i < envList.size(); i++) {
+            String key = (String) envList.get(i);
             if (key != null) {
-                if (key.contains("-")) {
-                    
-                    StringTokenizer st = new StringTokenizer(key, "-");
+                if (key.contains("=")) {
+
+                    StringTokenizer st = new StringTokenizer(key, "=");
                     int tokenCount = st.countTokens();
-                    if ( tokenCount > 2 ) {
+                    if ( tokenCount != 2 ) {
                         String args[] = { key };
                         throw new PolicyException(ResBundleUtils.rbName,
                         "invalid_property_value", args, null);
                     }
 
-                    String startIp = st.nextToken();
-                    String endIp = startIp;
+                    String envParamName = st.nextToken().trim();
+                    String envParamValue = envParamName;
                     if ( tokenCount == 2 ) {
-                        endIp = st.nextToken();
+                        envParamValue = st.nextToken().trim();
                     }
+
+                    Set envSet = (Set) env.get(envParamName);
+                    String strEnv = null;
+                    if ((envSet != null) && (!envSet.isEmpty())){
+                        Iterator names = envSet.iterator();
+                        while (names.hasNext()) {
+                            strEnv = (String) names.next();
+                            if ((strEnv != null) &&
+                                (strEnv.equalsIgnoreCase(envParamValue)) ){
+                                adviceStr = (String) adviceList.get(i);
+                                break;
+                            }
+                        }
+                    } else {
+                        Set ipSet = (Set) env.get(REQUEST_IP);
+                        String strIP = null;
+                        if ( (ipSet == null) || (ipSet.isEmpty()) ) {
+                            if (token != null) {
+                                strIP = token.getIPAddress().getHostAddress();
+                            } else {
+                                throw new PolicyException(
+                                    ResBundleUtils.rbName,"client_ip_null", 
+                                    null, null);
+                            }
+                        } else {
+                            Iterator names = ipSet.iterator();
+                            strIP = (String) names.next();                
+                        }
+        
+                        long requestIp = stringToIp(strIP);
+                        
+                        int bIndex = envParamValue.indexOf("[");
+                        int lIndex = envParamValue.indexOf("]");
+                        String ipVal = 
+                            envParamValue.substring(bIndex+1, lIndex);
                     
-                    long lStartIP = stringToIp(startIp);
-                    long lEndIP = stringToIp(endIp);
-            
-                    if ( (requestIp >= lStartIP) && ( requestIp <= lEndIP) ) {
-                        adviceStr = (String) adviceList.get(i);
-                        break;
+                        if (ipVal.contains("-")) {                  
+                            StringTokenizer stIP = 
+                                new StringTokenizer(ipVal, "-");
+                            int tokenCnt = stIP.countTokens();
+                            if ( tokenCnt > 2 ) {
+                                String args[] = { ipVal };
+                                throw new PolicyException(ResBundleUtils.rbName,
+                                "invalid_property_value", args, null);
+                            }
+
+                            String startIp = stIP.nextToken();
+                            String endIp = startIp;
+                            if ( tokenCnt == 2 ) {
+                                endIp = stIP.nextToken();
+                            }
+
+                            long lStartIP = stringToIp(startIp);
+                            long lEndIP = stringToIp(endIp);
+
+                            if ( (requestIp >= lStartIP) && 
+                                ( requestIp <= lEndIP) ) {
+                                adviceStr = (String) adviceList.get(i);
+                                break;
+                            }
+
+                        } else if (ipVal.contains(".")) {
+                            long longIp = stringToIp(ipVal);
+                            if (requestIp == longIp) {
+                                adviceStr = (String) adviceList.get(i);
+                                break;
+                            }
+
+                        } else if (ipVal.contains("*")) {
+                            adviceStr = (String) adviceList.get(i);
+                            break;
+                        } else {
+                            String args[] = {ipVal};
+                            throw new PolicyException(
+                                ResBundleUtils.rbName, 
+                                "resource_env_not_known",
+                                args, null);
+                        }
                     }
-                    
-                } else if (key.contains(".")) {
-                    long longIp = stringToIp(key);
-                    if (requestIp == longIp) {
-                        adviceStr = (String) adviceList.get(i);
-                        break;
-                    }
-                    
-                } else if (key.contains("*")) {
-                    adviceStr = (String) adviceList.get(i);
-                    break;
+
                 } else {
                     String args[] = {key};
                     throw new PolicyException(
-                        ResBundleUtils.rbName, 
+                        ResBundleUtils.rbName,
                         "resource_env_not_known",
                         args, null);
                 }
             }
-        }        
+        }
 
         return adviceStr;
     }
