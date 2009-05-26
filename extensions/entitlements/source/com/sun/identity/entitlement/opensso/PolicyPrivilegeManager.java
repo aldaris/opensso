@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.12 2009-05-21 08:17:49 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.13 2009-05-26 21:20:06 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -36,6 +36,8 @@ import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
+import com.sun.identity.security.AdminTokenAction;
+import java.security.AccessController;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -49,7 +51,10 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     private PolicyManager pm;
 
     static {
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            SubjectUtils.createSubject(adminToken), "/");
         migratedToEntitlementSvc = ec.migratedToEntitlementService();
     }
 
@@ -98,7 +103,8 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 policy = pm.getPolicy(privilegeName);
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                policy = (Policy)pdb.getPolicy(getRealm(), privilegeName);
+                policy = (Policy)pdb.getPolicy(getAdminSubject(), getRealm(),
+                    privilegeName);
                 //TODO XACML
             }
 
@@ -117,6 +123,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
 
     /**
      * Adds a privilege
+     *
      * @param privilege privilege to be added
      * @throws com.sun.identity.entitlement.EntitlementException if the
      * privilege could not be added
@@ -133,7 +140,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 pm.addPolicy(policy);
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                pdb.addPolicy(getRealm(), policy);
+                pdb.addPolicy(getAdminSubject(), getRealm(), policy);
             }
         } catch (PolicyException e) {
             Object[] params = {name};
@@ -157,7 +164,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 pm.removePolicy(privilegeName);
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                pdb.removePolicy(getRealm(), privilegeName);
+                pdb.removePolicy(getAdminSubject(), getRealm(), privilegeName);
             }
         } catch (PolicyException e) {
             Object[] params = {privilegeName};
@@ -185,7 +192,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 pm.addPolicy(PrivilegeUtils.privilegeToPolicy(realm, privilege));
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                pdb.modifyPolicy(getRealm(), 
+                pdb.modifyPolicy(getAdminSubject(), getRealm(),
                     PrivilegeUtils.privilegeToPolicy(realm, privilege));
             }
         } catch (PolicyException e) {

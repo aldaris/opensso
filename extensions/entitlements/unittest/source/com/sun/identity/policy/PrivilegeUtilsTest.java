@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.8 2009-05-21 08:17:50 veiming Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.9 2009-05-26 21:20:08 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -49,8 +49,6 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.sm.ServiceManager;
-import com.sun.identity.unittest.UnittestLog;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -208,10 +206,4 @@ public class PrivilegeUtilsTest {
         }
         amir.deleteIdentities(identities);
     }
-
-    public static void main(String[] args) throws Exception {
-        new PrivilegeUtilsTest().testPrivilegeToPolicy();
-        UnittestLog.flush(new Date().toString());
-    }
-
 }

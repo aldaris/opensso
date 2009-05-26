@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPolicyDataStore.java,v 1.4 2009-05-21 08:17:49 veiming Exp $
+ * $Id: OpenSSOPolicyDataStore.java,v 1.5 2009-05-26 21:20:06 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -31,12 +31,10 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PolicyDataStore;
-import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
-import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSEntry;
@@ -44,12 +42,12 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import java.io.ByteArrayInputStream;
-import java.security.AccessController;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.Subject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -61,16 +59,20 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
          ",ou=default,ou=OrganizationConfig,ou=1.0,ou=" +
          PolicyManager.POLICY_SERVICE_NAME + ",ou=services,{0}";
 
-    public void addPolicy(String realm, Object policy)
+    public void addPolicy(Subject adminSubject, String realm, Object policy)
         throws EntitlementException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
 
         //TODO XACML
         if (policy instanceof Policy) {
             Policy policyObj = (Policy) policy;
             String name = policyObj.getName();
             String dn = getPolicyDistinguishedName(realm, name);
+
+            if (adminToken == null) {
+                Object[] params = {name};
+                throw new EntitlementException(207, params);
+            }
 
             try {
                 createParentNode(adminToken, realm);
@@ -90,7 +92,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
                 s.save();
 
                 PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                    realm);
+                    adminSubject, realm);
                 pis.add(PrivilegeUtils.policyToPrivileges(policyObj));
             } catch (SSOException e) {
                 Object[] params = {name};
@@ -129,11 +131,17 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         return orgConf;
     }
 
-    public Object getPolicy(String realm, String name)
+    public Object getPolicy(Subject adminSubject, String realm, String name)
         throws EntitlementException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        
+        if (adminToken == null) {
+            Object[] params = {name};
+            throw new EntitlementException(209, params);
+        }
+
         String dn = getPolicyDistinguishedName(realm, name);
+
         if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
             Object[] params = {name};
             throw new EntitlementException(203, params);
@@ -167,10 +175,15 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         return new Policy(pm, rootNode);
     }
 
-    public void removePolicy(String realm, String name)
+    public void removePolicy(Subject adminSubject, String realm, String name)
         throws EntitlementException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+
+        if (adminToken == null) {
+            Object[] params = {name};
+            throw new EntitlementException(211, params);
+        }
+        
         String dn = getPolicyDistinguishedName(realm, name);
         if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
             Object[] params = {name};
@@ -180,7 +193,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             SMSEntry s = new SMSEntry(adminToken, dn);
             s.delete();
             PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                realm);
+                adminSubject, realm);
             pis.delete(name);
         } catch (SSOException ex) {
             Object[] params = {name};
@@ -202,16 +215,21 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         return MessageFormat.format(REALM_DN_TEMPLATE, args);
     }
 
-    public void modifyPolicy(String realm, Object policy)
+    public void modifyPolicy(Subject adminSubject, String realm, Object policy)
         throws EntitlementException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+
 
         //TODO XACML
         if (policy instanceof Policy) {
             Policy policyObj = (Policy) policy;
             String name = policyObj.getName();
             String dn = getPolicyDistinguishedName(realm, name);
+
+            if (adminToken == null) {
+                Object[] params = {name};
+                throw new EntitlementException(208, params);
+            }
 
             try {
                 SMSEntry s = new SMSEntry(adminToken, dn);
@@ -230,7 +248,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
                 s.save();
 
                 PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                    realm);
+                    adminSubject, realm);
                 pis.delete(name);
                 pis.add(PrivilegeUtils.policyToPrivileges(policyObj));
             } catch (SSOException e) {

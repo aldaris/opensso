@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestEvaluator.java,v 1.10 2009-05-21 08:17:50 veiming Exp $
+ * $Id: TestEvaluator.java,v 1.11 2009-05-26 21:20:07 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -59,21 +59,23 @@ public class TestEvaluator {
 
     private AMIdentity user1;
     private AMIdentity user2;
+    private Subject adminSubject;
 
     @BeforeClass
     public void setup() throws Exception {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        adminSubject = SubjectUtils.createSubject(adminToken);
         Application appl = new Application("/", APPL_NAME,
-            ApplicationTypeManager.getAppplicationType(
+            ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
 
         Set<String> avaliableResources = new HashSet<String>();
         avaliableResources.add("http://www.testevaluator.com:80/*");
         appl.addResources(avaliableResources);
         appl.setEntitlementCombiner(DenyOverride.class);
-        ApplicationManager.saveApplication("/", appl);
+        ApplicationManager.saveApplication(adminSubject, "/", appl);
 
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
         PrivilegeManager pm = new PolicyPrivilegeManager();
         pm.initialize("/", SubjectUtils.createSubject(adminToken));
         Map<String, Boolean> actions = new HashMap<String, Boolean>();
@@ -108,7 +110,7 @@ public class TestEvaluator {
         identities.add(user2);
         amir.deleteIdentities(identities);
 
-        ApplicationManager.deleteApplication("/", APPL_NAME);
+        ApplicationManager.deleteApplication(adminSubject, "/", APPL_NAME);
     }
 
     @Test

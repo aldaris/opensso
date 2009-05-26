@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.12 2009-05-23 00:58:15 veiming Exp $
+ * $Id: Rule.java,v 1.13 2009-05-26 21:20:07 veiming Exp $
  *
  */
 package com.sun.identity.policy;
@@ -33,7 +33,11 @@ import org.w3c.dom.*;
 
 import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementConfiguration;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.security.AdminTokenAction;
+import java.security.AccessController;
 
 /**
  * The class <code>Rule</code> provides interfaces to manage
@@ -160,8 +164,13 @@ public class Rule extends Object implements Cloneable {
             resourceNames.add(EMPTY_RESOURCE_NAME);
         } else {
             resourceName = resourceName.trim();
+
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+
             EntitlementConfiguration ec =
-                EntitlementConfiguration.getInstance("/");
+                EntitlementConfiguration.getInstance(
+                SubjectUtils.createSubject(adminToken), "/");
             if (ec.hasEntitlementDITs()) {
                 resourceNames.add(resourceName);
             } else {
@@ -247,7 +256,12 @@ public class Rule extends Object implements Cloneable {
             applicationName = XMLUtils.getNodeAttributeValue(
                 applicationNameNode, PolicyManager.NAME_ATTRIBUTE);
         }
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            SubjectUtils.createSubject(adminToken), "/");
         boolean entitlementDIT = ec.hasEntitlementDITs();
 
         resourceNames = new HashSet<String>();

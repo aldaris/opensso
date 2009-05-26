@@ -22,19 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementServiceTest.java,v 1.3 2009-05-08 00:48:16 veiming Exp $
+ * $Id: EntitlementServiceTest.java,v 1.4 2009-05-26 21:20:07 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementConfiguration;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.unittest.UnittestLog;
+import java.security.AccessController;
 import org.testng.annotations.Test;
 
 public class EntitlementServiceTest {
     @Test
     public void hasEntitlementDITs() {
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            SubjectUtils.createSubject(adminToken), "/");
         boolean result = ec.hasEntitlementDITs();
         UnittestLog.logMessage(
             "EntitlementServiceTest.hasEntitlementDITs: returns " + result);
@@ -42,7 +49,11 @@ public class EntitlementServiceTest {
     
     @Test
     public void migratedToEntitlementService() {
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            SubjectUtils.createSubject(adminToken), "/");
         boolean result = ec.migratedToEntitlementService();
         UnittestLog.logMessage(
             "EntitlementServiceTest.migratedToEntitlementService: returns " +

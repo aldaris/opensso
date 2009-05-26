@@ -14,7 +14,9 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.security.AdminTokenAction;
 import java.io.Serializable;
+import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -166,14 +168,20 @@ public class PolicyDao implements Serializable {
     }
 
     private void validateAction(Entitlement e) {
-        Application app = e.getApplication("/"); // TODO : hardcode realm
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance()); //TODO
+        Subject adminSubject = SubjectUtils.createSubject(adminToken);
+
+        Application app = e.getApplication(adminSubject, "/"); // TODO : hardcode realm
         Set<String> validActionName = app.getActions().keySet();
 
         Map<String, Boolean> actionValues = e.getActionValues();
+
         for (String actionName : actionValues.keySet()) {
             if (!validActionName.contains(actionName)) {
                 try {
-                    app.addAction(actionName, actionValues.get(actionName));
+                    app.addAction(adminSubject, actionName,
+                        actionValues.get(actionName));
                 } catch (EntitlementException ee) {
                     throw new RuntimeException(ee);
                 }

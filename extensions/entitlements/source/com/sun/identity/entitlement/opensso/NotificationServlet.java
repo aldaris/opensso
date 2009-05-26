@@ -22,16 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationServlet.java,v 1.4 2009-05-21 08:17:49 veiming Exp $
+ * $Id: NotificationServlet.java,v 1.1 2009-05-26 21:20:05 veiming Exp $
  */
 
-package com.sun.identity.entitlement.util;
+package com.sun.identity.entitlement.opensso;
 
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.security.AdminTokenAction;
 import java.io.IOException;
 import java.io.Writer;
+import java.security.AccessController;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -70,8 +73,11 @@ public class NotificationServlet extends HttpServlet {
             if (action.equals(PRIVILEGE_DELETED)) {
                 String privilegeName = req.getParameter(ATTR_NAME);
                 String realm = req.getParameter(ATTR_REALM_NAME);
-                PrivilegeIndexStore pis =
-                    PrivilegeIndexStore.getInstance(realm);
+
+                SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+                PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+                    SubjectUtils.createSubject(adminToken), realm);
                 try {
                     pis.delete(privilegeName, false);
                 } catch (EntitlementException e) {

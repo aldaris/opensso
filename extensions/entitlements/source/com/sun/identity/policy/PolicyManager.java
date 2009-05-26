@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.14 2009-05-09 01:08:46 veiming Exp $
+ * $Id: PolicyManager.java,v 1.15 2009-05-26 21:20:06 veiming Exp $
  *
  */
 
@@ -38,6 +38,7 @@ import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.ldap.util.DN;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -594,7 +595,7 @@ public final class PolicyManager {
             namedPolicy.addSubConfig(policy.getName(),
                 NAMED_POLICY_ID, 0, attrs);
             PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                realmName);
+                SubjectUtils.createSubject(token), realmName);
             pis.add(PrivilegeUtils.policyToPrivileges(policy));
         } catch (EntitlementException e) {
             String[] objs = { policy.getName(), org };
@@ -731,7 +732,7 @@ public final class PolicyManager {
                 policyEntry.setAttributes(attrs);
                 if (oldPolicy != null) {
                     PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                        realm);
+                        SubjectUtils.createSubject(token), realm);
                     pis.delete(PrivilegeUtils.policyToPrivileges(oldPolicy));
                     pis.add(PrivilegeUtils.policyToPrivileges(policy));
                 }
@@ -805,7 +806,7 @@ public final class PolicyManager {
                 // do the removal in resources tree
                 if (policy != null) {
                     PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                        getOrganizationDN());
+                        SubjectUtils.createSubject(token), getOrganizationDN());
                     pis.delete(PrivilegeUtils.policyToPrivileges(policy));
                 }
             }

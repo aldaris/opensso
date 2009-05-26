@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCombiner.java,v 1.10 2009-05-21 08:17:48 veiming Exp $
+ * $Id: EntitlementCombiner.java,v 1.11 2009-05-26 21:20:05 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.Subject;
 
 /**
  * This is the base class for entitlement combiner. >code>DenyOverride</code>
@@ -60,6 +61,7 @@ public abstract class EntitlementCombiner {
     /**
      * Initializes the combiner.
      *
+     * @param adminSubject Admin Subject.
      * @param realm Realm name.
      * @param applicationName Application Name.
      * @param resourceName Resource name to be evaluated.
@@ -67,6 +69,7 @@ public abstract class EntitlementCombiner {
      * @param isRecursive <code>true<</code> for sub stree evaluation.
      */
     public void init(
+        Subject adminSubject,
         String realm,
         String applicationName,
         String resourceName,
@@ -77,8 +80,8 @@ public abstract class EntitlementCombiner {
         this.isRecursive = isRecursive;
         this.actions = new HashSet<String>();
 
-        Application application = ApplicationManager.getApplication(realm,
-            applicationName);
+        Application application = ApplicationManager.getApplication(
+            adminSubject, realm, applicationName);
         rootE = new Entitlement(applicationName, resourceName,
             Collections.EMPTY_MAP);
         resourceComparator = application.getResourceComparator();

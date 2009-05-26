@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.18 2009-05-23 00:58:15 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.19 2009-05-26 21:20:05 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -92,7 +92,7 @@ class PrivilegeEvaluator {
         this.resourceName = resourceName;
         this.envParameters = envParameters;
 
-        Application appl = getApplication();
+        Application appl = getApplication(adminSubject);
         
         this.actionNames = new HashSet<String>();
         if ((actions == null) || actions.isEmpty()) {
@@ -102,8 +102,8 @@ class PrivilegeEvaluator {
         }
 
         entitlementCombiner = appl.getEntitlementCombiner();
-        entitlementCombiner.init(realm, applicationName, resourceName,
-            this.actionNames, recursive);
+        entitlementCombiner.init(adminSubject, realm, applicationName,
+            resourceName, this.actionNames, recursive);
         this.recursive = recursive;
         threadPool = new EntitlementThreadPool(); //TODO QOS
     }
@@ -134,7 +134,7 @@ class PrivilegeEvaluator {
             entitlement.getResourceName(), 
             entitlement.getActionValues().keySet(), envParameters, false);
 
-        indexes = entitlement.getResourceSearchIndexes(realm);
+        indexes = entitlement.getResourceSearchIndexes(adminSubject, realm);
         List<Entitlement> results = evaluate(realm);
         Entitlement result = results.get(0);
         for (String action : entitlement.getActionValues().keySet()) {
@@ -171,7 +171,8 @@ class PrivilegeEvaluator {
     ) throws EntitlementException {
         init(adminSubject, subject, realm, applicationName,
             resourceName, null, envParameters, recursive);
-        indexes = getApplication().getResourceSearchIndex(resourceName);
+        indexes = getApplication(adminSubject).getResourceSearchIndex(
+            resourceName);
         return evaluate(realm);
     }
 
@@ -179,10 +180,12 @@ class PrivilegeEvaluator {
         throws EntitlementException {
 
         int totalCount = 0;
-        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(realm);
-        Iterator<Privilege> i = pis.search(indexes,
-            SubjectAttributesManager.getSubjectSearchFilter(
-                subject, applicationName), recursive, threadPool);
+        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+            adminSubject, realm);
+        SubjectAttributesManager sam = SubjectAttributesManager.getInstance(
+            adminSubject, realm);
+        Iterator<Privilege> i = pis.search(indexes, sam.getSubjectSearchFilter(
+            subject, applicationName), recursive, threadPool);
         Set<Privilege> privileges = new HashSet<Privilege>(20);
         while (i.hasNext()) {
             privileges.add(i.next());
@@ -225,9 +228,9 @@ class PrivilegeEvaluator {
     }
 
     
-    private Application getApplication() {
+    private Application getApplication(Subject adminSubject) {
         if (application == null) {
-            application = ApplicationManager.getApplication(
+            application = ApplicationManager.getApplication(adminSubject,
                 realm, applicationName);
         }
         return application;
@@ -247,6 +250,7 @@ class PrivilegeEvaluator {
             try {
                 for (Privilege privilege : privileges) {
                     List<Entitlement> entitlements = privilege.evaluate(
+                        parent.adminSubject,
                         parent.realm, parent.subject, parent.resourceName,
                         parent.actionNames, parent.envParameters,
                         parent.recursive);

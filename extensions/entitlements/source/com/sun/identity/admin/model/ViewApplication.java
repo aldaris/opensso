@@ -1,17 +1,22 @@
 package com.sun.identity.admin.model;
 
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.ViewApplicationTypeDao;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.security.AdminTokenAction;
 import java.io.Serializable;
+import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.Subject;
 
 public class ViewApplication implements Serializable {
 
@@ -157,8 +162,13 @@ public class ViewApplication implements Serializable {
         // this is really just modifies the applications.
         //
 
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance()); //TODO
+        Subject adminSubject = SubjectUtils.createSubject(adminToken);
+
         // TODO: realm
-        Application app = ApplicationManager.getApplication("/", name);
+        Application app = ApplicationManager.getApplication(adminSubject,
+            "/", name);
 
         // resources
         Set<String> resourceStrings = new HashSet<String>();
@@ -169,10 +179,12 @@ public class ViewApplication implements Serializable {
 
         // actions
         Map appActions = app.getActions();
+
         for (Action action : actions) {
             if (!appActions.containsKey(action.getName())) {
                 try {
-                    app.addAction(action.getName(), (Boolean) action.getValue());
+                    app.addAction(adminSubject, action.getName(),
+                        (Boolean) action.getValue());
                 } catch (EntitlementException ex) {
                     //TODO
                 }

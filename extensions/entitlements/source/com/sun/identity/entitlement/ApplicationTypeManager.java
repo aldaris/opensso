@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeManager.java,v 1.9 2009-05-08 00:48:14 veiming Exp $
+ * $Id: ApplicationTypeManager.java,v 1.10 2009-05-26 21:20:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -32,6 +32,7 @@ import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
 import java.util.HashSet;
 import java.util.Set;
+import javax.security.auth.Subject;
 
 /**
  * Application Type manager.
@@ -45,11 +46,14 @@ public class ApplicationTypeManager {
     /**
      * Returns application type names.
      *
+     * @param adminSubject Admin Subject who has the rights to access
+     *        configuration datastore.
      * @return application type names.
      */
-    public static Set<String> getApplicationTypeNames() {
+    public static Set<String> getApplicationTypeNames(Subject adminSubject) {
         Set<String> names = new HashSet<String>();
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            adminSubject, "/");
         Set<ApplicationType> applications = ec.getApplicationTypes();
         for (ApplicationType a : applications) {
             names.add(a.getName());
@@ -60,11 +64,17 @@ public class ApplicationTypeManager {
     /**
      * Returns application type.
      *
+     * @param adminSubject Admin Subject who has the rights to access
+     *        configuration datastore.
      * @param name Name of application type.
      * @return application type.
      */
-    public static ApplicationType getAppplicationType(String name) {
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+    public static ApplicationType getAppplicationType(
+        Subject adminSubject,
+        String name
+    ) {
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            adminSubject, "/");
         Set<ApplicationType> applications = ec.getApplicationTypes();
 
         for (ApplicationType a : applications) {
@@ -78,23 +88,33 @@ public class ApplicationTypeManager {
     /**
      * Removes application type.
      *
+     * @param adminSubject Admin Subject who has the rights to access
+     *        configuration datastore.
      * @param name Name of application type.
      * @throws EntitlementException if application type cannot be removed.
      */
-    public static void removeApplicationType(String name
+    public static void removeApplicationType(
+        Subject adminSubject,
+        String name
     ) throws EntitlementException {
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            adminSubject, "/");
         ec.removeApplicationType(name);
     }
 
     /**
      * Stores application type.
      *
+     * @param adminSubject Admin Subject who has the rights to access
+     *        configuration datastore.
      * @param appType Application type.
      */
-    public static void saveApplicationType(ApplicationType appType)
-        throws EntitlementException {
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance("/");
+    public static void saveApplicationType(
+        Subject adminSubject,
+        ApplicationType appType
+    ) throws EntitlementException {
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            adminSubject, "/");
         ec.storeApplicationType(appType);
     }
 

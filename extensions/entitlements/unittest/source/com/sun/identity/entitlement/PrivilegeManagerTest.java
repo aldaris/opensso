@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.23 2009-05-21 08:17:49 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.24 2009-05-26 21:20:07 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.Subject;
 import org.json.JSONObject;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -54,18 +55,23 @@ public class PrivilegeManagerTest {
     private static final String PRIVILEGE_NAME1 = "PrivilegeManagerTest1";
     private static final String PRIVILEGE_DESC = "Test Description";
     private Privilege privilege;
+    private Subject adminSubject;
     
 
     @BeforeClass
-    public void setup() throws SSOException, IdRepoException, EntitlementException {
+    public void setup() 
+        throws SSOException, IdRepoException, EntitlementException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        adminSubject = SubjectUtils.createSubject(adminToken);
         Application appl = new Application("/", APPL_NAME,
-            ApplicationTypeManager.getAppplicationType(
+            ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
         Set<String> appResources = new HashSet<String>();
         appResources.add("http://www.privilegemanagertest.*");
         appl.addResources(appResources);
         appl.setEntitlementCombiner(DenyOverride.class);
-        ApplicationManager.saveApplication("/", appl);
+        ApplicationManager.saveApplication(adminSubject, "/", appl);
     }
 
     @AfterClass
@@ -76,12 +82,13 @@ public class PrivilegeManagerTest {
             SubjectUtils.createSubject(adminToken));
         prm.removePrivilege(PRIVILEGE_NAME);
         
-        ApplicationManager.deleteApplication("/", APPL_NAME);
+        ApplicationManager.deleteApplication(adminSubject, "/", APPL_NAME);
     }
 
     @Test
     public void testResourceValidationPrivilege() throws Exception {
-        Application appl = ApplicationManager.getApplication("/", APPL_NAME);
+        Application appl = ApplicationManager.getApplication(adminSubject,
+            "/", APPL_NAME);
 
         ValidateResourceResult res =
             appl.validateResourceName("http://www.privilegemanagertest.com/hr");

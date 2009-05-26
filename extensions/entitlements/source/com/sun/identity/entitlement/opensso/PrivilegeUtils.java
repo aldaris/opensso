@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.25 2009-05-21 08:17:49 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.26 2009-05-26 21:20:06 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -423,7 +423,11 @@ public class PrivilegeUtils {
     ) throws PolicyException, SSOException {
         Set<Rule> rules = new HashSet<Rule>();
         String appName = entitlement.getApplicationName();
-        Application appl = ApplicationManager.getApplication(realm, appName);
+
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance()); //TODO
+        Application appl = ApplicationManager.getApplication(
+            SubjectUtils.createSubject(adminToken), realm, appName);
         String serviceName = appl.getApplicationType().getName();
 
         Set<String> resourceNames = entitlement.getResourceNames();

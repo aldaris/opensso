@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.17 2009-05-22 23:52:05 veiming Exp $
+ * $Id: Application.java,v 1.18 2009-05-26 21:20:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.Subject;
 
 /**
  * Application class contains the information on how an application behaves
@@ -284,14 +285,15 @@ public class Application {
     /**
      * Adds a new action with its default value.
      *
+     * @param adminSubject Admin Subject who has the rights to access datastore
      * @param name Action name.
      * @param val Default value.
      * @throws EntitlementException if action cannot be added.
      */
-    public void addAction(String name, boolean val)
+    public void addAction(Subject adminSubject, String name, boolean val)
         throws EntitlementException {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            realm);
+            adminSubject, realm);
         ec.addApplicationAction(this.name, name, val);
     }
 

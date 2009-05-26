@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.19 2009-05-23 00:58:15 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.20 2009-05-26 21:20:05 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -52,9 +52,11 @@ public abstract class PrivilegeManager {
      * operations
      * @return instance of configured <code>PrivilegeManager</code>
      */
-    static public PrivilegeManager getInstance(String realm, Subject subject) {
+    static public PrivilegeManager getInstance(
+        String realm,
+        Subject subject) {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            "/");
+            subject, realm);
         if (!ec.migratedToEntitlementService()) {
             throw new UnsupportedOperationException(
                 "Updating of DITs is required before using the entitlement service");
@@ -111,7 +113,7 @@ public abstract class PrivilegeManager {
     public void addPrivilege(Privilege privilege)
         throws EntitlementException {
         Date date = new Date();
-        privilege.validateResourceNames(realm);
+        privilege.validateResourceNames(adminSubject, realm);
         privilege.setCreationDate(date.getTime());
         privilege.setLastModifiedDate(date.getTime());
 
@@ -144,7 +146,7 @@ public abstract class PrivilegeManager {
      */
     public void modifyPrivilege(Privilege privilege)
         throws EntitlementException {
-        privilege.validateResourceNames(realm);
+        privilege.validateResourceNames(adminSubject, realm);
         Privilege origPrivilege = getPrivilege(privilege.getName());
         if (origPrivilege != null) {
             privilege.setCreatedBy(origPrivilege.getCreatedBy());
@@ -173,7 +175,8 @@ public abstract class PrivilegeManager {
         int searchSizeLimit,
         int searchTimeLimit
     ) throws EntitlementException {
-        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(realm);
+        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+            adminSubject, realm);
         return pis.searchPrivilegeNames(filter, true, searchSizeLimit,
             false, false);//TODO Search size and time limit
     }
@@ -188,7 +191,8 @@ public abstract class PrivilegeManager {
     public Set<String> searchPrivilegeNames(
         Set<PrivilegeSearchFilter> filter
     ) throws EntitlementException {
-        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(realm);
+        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+            adminSubject, realm);
         return pis.searchPrivilegeNames(filter, true, 0, false, false);
         //TODO Search size and time limit
     }
@@ -212,4 +216,8 @@ public abstract class PrivilegeManager {
      */
     public abstract String getPrivilegeXML(String name)
         throws EntitlementException;
+
+    protected Subject getAdminSubject() {
+        return adminSubject;
+    }
 }

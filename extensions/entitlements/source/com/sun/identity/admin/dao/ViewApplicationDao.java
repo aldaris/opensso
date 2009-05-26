@@ -1,14 +1,19 @@
 package com.sun.identity.admin.dao;
 
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewApplicationType;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.security.AdminTokenAction;
 import java.io.Serializable;
+import java.security.AccessController;
 import java.util.HashMap;
 import java.util.Map;
+import javax.security.auth.Subject;
 
 public class ViewApplicationDao implements Serializable {
     private ViewApplicationTypeDao viewApplicationTypeDao;
@@ -23,9 +28,14 @@ public class ViewApplicationDao implements Serializable {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         Map<String,ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String,ViewApplicationType>)mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
         // TODO: realm
-        for (String name : ApplicationManager.getApplicationNames("/")) {
+
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance()); //TODO
+        Subject adminSubject = SubjectUtils.createSubject(adminToken);
+
+        for (String name : ApplicationManager.getApplicationNames(adminSubject, "/")) {
             // TODO: realm
-            Application a = ApplicationManager.getApplication("/", name);
+            Application a = ApplicationManager.getApplication(adminSubject, "/", name);
             // application type
             ViewApplicationType vat = entitlementApplicationTypeToViewApplicationTypeMap.get(a.getApplicationType().getName());
             if (vat == null) {
@@ -44,7 +54,11 @@ public class ViewApplicationDao implements Serializable {
         try {
             Application a = va.toApplication(viewApplicationTypeDao);
             // TODO: realm
-            ApplicationManager.saveApplication("/", a);
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance()); //TODO
+            Subject adminSubject = SubjectUtils.createSubject(adminToken);
+            
+            ApplicationManager.saveApplication(adminSubject, "/", a);
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }

@@ -22,23 +22,33 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeTest.java,v 1.5 2009-05-22 23:52:06 veiming Exp $
+ * $Id: ApplicationTypeTest.java,v 1.6 2009-05-26 21:20:07 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.security.AdminTokenAction;
+import java.security.AccessController;
 import java.util.HashSet;
 import java.util.Set;
+import javax.security.auth.Subject;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class ApplicationTypeTest {
     private static final String APPL_NAME = "ApplicationTypeTestApp";
+    private Subject adminSubject;
+
     @BeforeClass
     public void setup() throws EntitlementException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        adminSubject = SubjectUtils.createSubject(adminToken);
         Application appl = new Application("/", APPL_NAME,
-            ApplicationTypeManager.getAppplicationType(
+            ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
         Set<String> resources = new HashSet<String>();
         resources.add("http://*");
@@ -48,23 +58,23 @@ public class ApplicationTypeTest {
         Set<String> subjects = new HashSet<String>();
         subjects.add("com.sun.identity.admin.model.OrViewSubject");
         appl.setSubjects(subjects);
-        ApplicationManager.saveApplication("/", appl);
+        ApplicationManager.saveApplication(adminSubject, "/", appl);
     }
 
     @AfterClass
     public void cleanup() throws EntitlementException {
-        ApplicationManager.deleteApplication("/", APPL_NAME);
+        ApplicationManager.deleteApplication(adminSubject, "/", APPL_NAME);
     }
 
     @Test
     public void testApplicationType() throws Exception {
         ApplicationType appType = ApplicationTypeManager.getAppplicationType(
-            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
+            adminSubject, ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
         if (appType == null) {
             throw new Exception("ApplicationTypeTest.testApplicationType cannot get application type");
         }
-        ApplicationTypeManager.saveApplicationType(appType);
-        appType = ApplicationTypeManager.getAppplicationType(
+        ApplicationTypeManager.saveApplicationType(adminSubject, appType);
+        appType = ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
         if (appType == null) {
             throw new Exception("ApplicationTypeTest.testApplicationType application type lost");
@@ -73,13 +83,14 @@ public class ApplicationTypeTest {
     
     @Test
     public void testApplication() throws Exception {
-        Application app = ApplicationManager.getApplication("/", APPL_NAME);
+        Application app = ApplicationManager.getApplication(adminSubject,
+            "/", APPL_NAME);
         if (app == null) {
             throw new Exception("ApplicationTypeTest.testApplication cannot get application");
         }
 
-        ApplicationManager.saveApplication("/", app);
-        app = ApplicationManager.getApplication("/",
+        ApplicationManager.saveApplication(adminSubject,"/", app);
+        app = ApplicationManager.getApplication(adminSubject, "/",
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
         if (app == null) {
             throw new Exception("ApplicationTypeTest.testApplication application lost");

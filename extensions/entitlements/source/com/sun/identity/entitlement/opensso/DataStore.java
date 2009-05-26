@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.15 2009-05-23 00:58:15 veiming Exp $
+ * $Id: DataStore.java,v 1.16 2009-05-26 21:20:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -40,7 +40,6 @@ import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.NetworkMonitor;
-import com.sun.identity.entitlement.util.NotificationServlet;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.shared.ldap.LDAPDN;
@@ -68,6 +67,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.persistence.EntityExistsException;
+import javax.security.auth.Subject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -191,29 +191,31 @@ public class DataStore {
         }
     }
 
-    private int getIndexCount(String realm) {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+    private int getIndexCount(Subject adminSubject, String realm) {
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
         int count = 0;
-        try {
-            ServiceConfigManager mgr = new ServiceConfigManager(
-                SERVICE_NAME, adminToken);
-            ServiceConfig orgConf = mgr.getOrganizationConfig(realm, null);
-            if (orgConf != null) {
-                Map<String, Set<String>> map = orgConf.getAttributes();
-                Set<String> set = map.get(INDEX_COUNT);
 
-                if ((set != null) && !set.isEmpty()) {
-                    String strCount = (String) set.iterator().next();
-                    count = Integer.parseInt(strCount);
+        if (adminToken != null) {
+            try {
+                ServiceConfigManager mgr = new ServiceConfigManager(
+                    SERVICE_NAME, adminToken);
+                ServiceConfig orgConf = mgr.getOrganizationConfig(realm, null);
+                if (orgConf != null) {
+                    Map<String, Set<String>> map = orgConf.getAttributes();
+                    Set<String> set = map.get(INDEX_COUNT);
+
+                    if ((set != null) && !set.isEmpty()) {
+                        String strCount = (String) set.iterator().next();
+                        count = Integer.parseInt(strCount);
+                    }
                 }
+            } catch (NumberFormatException ex) {
+                PrivilegeManager.debug.error("DataStore.getIndexCount", ex);
+            } catch (SMSException ex) {
+                PrivilegeManager.debug.error("DataStore.getIndexCount", ex);
+            } catch (SSOException ex) {
+                PrivilegeManager.debug.error("DataStore.getIndexCount", ex);
             }
-        } catch (NumberFormatException ex) {
-            PrivilegeManager.debug.error("DataStore.getIndexCount", ex);
-        } catch (SMSException ex) {
-            PrivilegeManager.debug.error("DataStore.getIndexCount", ex);
-        } catch (SSOException ex) {
-            PrivilegeManager.debug.error("DataStore.getIndexCount", ex);
         }
         return count;
     }
@@ -221,22 +223,23 @@ public class DataStore {
     /**
      * Adds a privilege.
      *
+     * @param adminSubject Admin Subject who has the rights to write to
+     *        datastore.
      * @param realm Realm name.
      * @param p Privilege object.
      * @return the DN of added privilege.
      * @throws com.sun.identity.entitlement.EntitlementException if privilege
      * cannot be added.
      */
-    public String add(String realm, Privilege p)
+    public String add(Subject adminSubject, String realm, Privilege p)
         throws EntitlementException {
 
         ResourceSaveIndexes indexes =
-            p.getEntitlement().getResourceSaveIndexes(realm);
+            p.getEntitlement().getResourceSaveIndexes(adminSubject, realm);
         Set<String> subjectIndexes =
             SubjectAttributesManager.getSubjectSearchIndexes(p);
 
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
         String dn = null;
         try {
             createDefaultSubConfig(adminToken, realm, null);
@@ -326,16 +329,27 @@ public class DataStore {
     /**
      * Removes privilege.
      *
+     * @param adminSubject Admin Subject who has the rights to write to
+     *        datastore.
      * @param realm Realm name.
      * @param name Privilege name.
      * @param notify <code>true</code> to send notification.
      * @throws com.sun.identity.entitlement.EntitlementException if privilege
      * cannot be removed.
      */
-    public void remove(String realm, String name, boolean notify)
-        throws EntitlementException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+    public void remove(
+        Subject adminSubject,
+        String realm,
+        String name,
+        boolean notify
+    ) throws EntitlementException {
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+
+        if (adminToken == null) {
+            Object[] arg = {name};
+            throw new EntitlementException(55, arg);
+        }
+
         String dn = null;
         try {
             dn = getPrivilegeDistinguishedName(name, realm, null);
@@ -366,6 +380,7 @@ public class DataStore {
     /**
      * Returns a set of privilege names that satifies a search filter.
      *
+     * @parma adminSubject Subject who has the rights to read datastore.
      * @param realm Realm name
      * @param filter Search filter.
      * @param numOfEntries Number of max entries.
@@ -376,6 +391,7 @@ public class DataStore {
      * @throws EntityExistsException if search failed.
      */
     public Set<String> search(
+        Subject adminSubject,
         String realm,
         String filter,
         int numOfEntries,
@@ -385,8 +401,12 @@ public class DataStore {
         Set<String> results = new HashSet<String>();
 
         try {
-            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+            SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+
+            if (adminToken == null) {
+                throw new EntitlementException(216);
+            }
+
             String baseDN = getSearchBaseDN(realm, null);
 
             if (SMSEntry.checkIfEntryExists(baseDN, adminToken)) {
@@ -418,6 +438,7 @@ public class DataStore {
      * Returns a set of privilege that satifies the resource and subject
      * indexes.
      *
+     * @param adminSubject Subject who has the rights to read datastore.
      * @param realm Realm name
      * @param iterator Buffered iterator to have the result fed to it.
      * @param indexes Resource search indexes.
@@ -428,6 +449,7 @@ public class DataStore {
      * indexes.
      */
     public Set<Privilege> search(
+        Subject adminSubject,
         String realm,
         BufferedIterator iterator,
         ResourceSearchIndexes indexes,
@@ -441,8 +463,13 @@ public class DataStore {
 
         if (filter != null) {
             long start = DB_MONITOR.start();
-            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+            SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+
+            if (adminToken == null) {
+                Object[] arg = {baseDN};
+                throw new EntitlementException(56, arg);
+            }
+
             try {
                 Iterator i = SMSEntry.search(
                     adminToken, baseDN, filter, excludeDNs);

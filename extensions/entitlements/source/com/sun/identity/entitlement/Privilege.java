@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.26 2009-05-23 00:58:15 veiming Exp $
+ * $Id: Privilege.java,v 1.27 2009-05-26 21:20:05 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -122,8 +122,9 @@ public abstract class Privilege {
         validateSubject();
     }
 
-    void validateResourceNames(String realm) throws EntitlementException {
-        entitlement.validateResourceNames(realm);
+    void validateResourceNames(Subject adminSubject, String realm
+        ) throws EntitlementException {
+        entitlement.validateResourceNames(adminSubject, realm);
     }
 
     private void validateSubject()
@@ -206,6 +207,7 @@ public abstract class Privilege {
      * Returns a list of entitlement for a given subject, resource name
      * and environment.
      *
+     * @param adminSubject Admin Subject
      * @param realm Realm Name
      * @param subject Subject who is under evaluation.
      * @param resourceName Resource name.
@@ -218,6 +220,7 @@ public abstract class Privilege {
      * @throws EntitlementException if the result cannot be determined.
      */
     public abstract List<Entitlement> evaluate(
+        Subject adminSubject,
         String realm,
         Subject subject,
         String resourceName,
@@ -651,11 +654,12 @@ public abstract class Privilege {
     /**
      * Canonicalizes resource name before persistence.
      *
+     * @param adminSubject Admin Subject.
      * @param realm Realm Name
      */
-    public void canonicalizeResources(String realm)
+    public void canonicalizeResources(Subject adminSubject, String realm)
         throws EntitlementException {
-        entitlement.canonicalizeResources(realm);
+        entitlement.canonicalizeResources(adminSubject, realm);
     }
 }
 

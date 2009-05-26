@@ -100,7 +100,7 @@
     </servlet>
     <servlet>
         <servlet-name>notificationservlet</servlet-name>
-        <servlet-class>com.sun.identity.entitlement.util.NotificationServlet</servlet-class>
+        <servlet-class>com.sun.identity.entitlement.opensso.NotificationServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>entitlementmonitor</servlet-name>

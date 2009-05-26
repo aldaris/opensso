@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.8 2009-05-21 08:17:48 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.9 2009-05-26 21:20:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
+
+import javax.security.auth.Subject;
 
 /**
  * This class implements method to persist policy in datastore.
@@ -55,36 +57,56 @@ public abstract class PolicyDataStore {
     /**
      * Adds policy.
      *
+     * @param adminSubject Administrator subject that has the credential to
+     *        add the policy.
      * @param realm Realm name.
      * @param policy policy object.
      */
-    public abstract void addPolicy(String realm, Object policy)
-        throws EntitlementException;
+    public abstract void addPolicy(
+        Subject adminSubject,
+        String realm,
+        Object policy
+    ) throws EntitlementException;
 
     /**
      * Modifies policy.
      *
+     * @param adminSubject Administrator subject that has the credential to
+     *        add the policy.
      * @param realm Realm name.
      * @param policy policy object.
      */
-    public abstract void modifyPolicy(String realm, Object policy)
-        throws EntitlementException;
+    public abstract void modifyPolicy(
+        Subject adminSubject,
+        String realm,
+        Object policy
+    ) throws EntitlementException;
 
     /**
      * Returns policy object.
      *
+     * @param adminSubject Administrator subject that has the credential to
+     *        add the policy.
      * @param realm Realm name.
      * @param name Policy name.
      */
-    public abstract Object getPolicy(String realm, String name)
-        throws EntitlementException;
+    public abstract Object getPolicy(
+        Subject adminSubject,
+        String realm,
+        String name
+    ) throws EntitlementException;
 
     /**
      * Removes policy.
      *
+     * @param adminSubject Administrator subject that has the credential to
+     *        add the policy.
      * @param realm Realm name.
      * @param name Policy name.
      */
-    public abstract void removePolicy(String realm, String name)
-        throws EntitlementException;
+    public abstract void removePolicy(
+        Subject adminSubject,
+        String realm,
+        String name
+    ) throws EntitlementException;
 }

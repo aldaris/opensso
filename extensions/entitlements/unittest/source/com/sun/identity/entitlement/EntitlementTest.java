@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementTest.java,v 1.2 2009-03-30 18:58:59 dillidorai Exp $
+ * $Id: EntitlementTest.java,v 1.3 2009-05-26 21:20:07 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.unittest.UnittestLog;
 
-import com.sun.identity.entitlement.Entitlement;
 import java.util.Date;
 
 import java.util.HashMap;

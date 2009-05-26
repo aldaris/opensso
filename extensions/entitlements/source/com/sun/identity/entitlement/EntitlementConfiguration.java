@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementConfiguration.java,v 1.3 2009-05-21 08:17:48 veiming Exp $
+ * $Id: EntitlementConfiguration.java,v 1.4 2009-05-26 21:20:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -32,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.Subject;
 
 /**
  * Entitlement Configuration
@@ -45,6 +46,7 @@ public abstract class EntitlementConfiguration {
     private static Class clazz;
     private static Map<String, EntitlementConfiguration> instances =
         new HashMap<String, EntitlementConfiguration>();
+    private Subject adminSubject;
 
     static {
         try {
@@ -59,10 +61,13 @@ public abstract class EntitlementConfiguration {
     /**
      * Returns an instance of entitlement configuration.
      *
+     * @param adminSubject Admin Subject who has rights to query and modify
+     *        configuration datastore.
      * @param realm Realm name.
      * @return an instance of entitlement configuration.
      */
-    public static EntitlementConfiguration getInstance(String realm) {
+    public static EntitlementConfiguration getInstance(
+        Subject adminSubject, String realm) {
         if (clazz == null) {
             return null;
         }
@@ -74,6 +79,7 @@ public abstract class EntitlementConfiguration {
                 Constructor constructor = clazz.getConstructor(parameterTypes);
                 Object[] args = {realm};
                 impl = (EntitlementConfiguration)constructor.newInstance(args);
+                impl.adminSubject = adminSubject;
                 instances.put(realm, impl);
             } catch (InstantiationException ex) {
                 PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
@@ -226,4 +232,7 @@ public abstract class EntitlementConfiguration {
      */
     public abstract boolean migratedToEntitlementService();
 
+    protected Subject getAdminSubject() {
+        return adminSubject;
+    }
 }

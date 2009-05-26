@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.9 2009-05-21 23:29:55 veiming Exp $
+ * $Id: SubjectAttributesManager.java,v 1.10 2009-05-26 21:20:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -49,12 +49,14 @@ public class SubjectAttributesManager {
         "com.sun.identity.entitlement.opensso.OpenSSOSubjectAttributesCollector";
     private static Map<String, SubjectAttributesManager> instances =
         new HashMap<String, SubjectAttributesManager>();
+    private Subject adminSubject;
 
-    private SubjectAttributesManager(String realmName) {
+    private SubjectAttributesManager(Subject adminSubject, String realmName) {
         this.realmName = realmName;
-
+        this.adminSubject = adminSubject;
+        
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            realmName);
+            adminSubject, realmName);
 
         Map<String, Set<String>> configMap =
             ec.getSubjectAttributesCollectorConfiguration(
@@ -91,34 +93,40 @@ public class SubjectAttributesManager {
     /**
      * Returns an instance of <code>SubjectAttributesManager</code>.
      *
+     * @param adminSubject subject who has rights to access PIP.
      * @return an instance of <code>SubjectAttributesManager</code>.
      */
-    public static SubjectAttributesManager getInstance() {
-        return getInstance("/");
+    public static SubjectAttributesManager getInstance(Subject adminSubject) {
+        return getInstance(adminSubject, "/");
     }
 
     /**
      * Returns the <code>SubjectAttributesManager</code> of a given subject.
      *
+     * @param adminSubject subject who has rights to access PIP.
      * @param subject Subject
      * @return <code>SubjectAttributesManager</code> of a given subject.
      */
-    public static SubjectAttributesManager getInstance(Subject subject) {
+    public static SubjectAttributesManager getInstance(
+        Subject adminSubject,
+        Subject subject) {
         //TOFIX get realm from subject;
-        return getInstance("/");
+        return getInstance(adminSubject,"/");
     }
 
     /**
      * Returns the <code>SubjectAttributesManager</code> of a given realm.
-     * 
+     *
+     * @param adminSubject subject who has rights to access PIP.
      * @param realmName Name of realm.
      * @return <code>SubjectAttributesManager</code> of a given realm.
      */
     public synchronized static SubjectAttributesManager getInstance(
+        Subject adminSubject,
         String realmName) {
         SubjectAttributesManager sam = instances.get(realmName);
         if (sam == null) {
-            sam = new SubjectAttributesManager(realmName);
+            sam = new SubjectAttributesManager(adminSubject, realmName);
             instances.put(realmName, sam);
         }
         return sam;
@@ -169,7 +177,7 @@ public class SubjectAttributesManager {
      * @throws com.sun.identity.entitlement.EntitlementException if search
      * filter cannot be obtained.
      */
-    public static Set<String> getSubjectSearchFilter(
+    public Set<String> getSubjectSearchFilter(
         Subject subject,
         String applicationName)
         throws EntitlementException {
@@ -178,10 +186,10 @@ public class SubjectAttributesManager {
             SubjectAttributesCollector.ATTR_NAME_ALL_ENTITIES);
         String realm = "/"; //TOFIX
         if (subject != null) {
-            Set<String> names = getApplicationAttributeNames(realm,
-                applicationName);
+            Set<String> names = getApplicationAttributeNames(
+                realm, applicationName);
             SubjectAttributesManager sam = SubjectAttributesManager.getInstance(
-                realm);
+                adminSubject, realm);
             Map<String, Set<String>> values = sam.getAttributes(subject, names);
 
             if (values != null) {
@@ -240,12 +248,12 @@ public class SubjectAttributesManager {
      * @throws EntitlementException if application attributes cannot be
      * returned.
      */
-    public static Set<String> getApplicationAttributeNames(
+    public Set<String> getApplicationAttributeNames(
         String realm,
         String applicationName
     ) throws EntitlementException {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            realm);
+            adminSubject, realm);
         return ec.getSubjectAttributeNames(applicationName);
     }
 

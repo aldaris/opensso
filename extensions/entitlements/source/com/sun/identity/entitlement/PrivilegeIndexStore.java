@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeIndexStore.java,v 1.4 2009-05-21 08:17:48 veiming Exp $
+ * $Id: PrivilegeIndexStore.java,v 1.5 2009-05-26 21:20:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.Subject;
 
 /**
  * Privilege Index Store is responsible to storing privilege in
@@ -44,6 +45,8 @@ public abstract class PrivilegeIndexStore {
     private static Map<String, PrivilegeIndexStore> instances = new
         HashMap<String, PrivilegeIndexStore>();
     private static Class clazz;
+    private Subject adminSubject;
+    private String realm;
 
     static {
         try {
@@ -55,13 +58,30 @@ public abstract class PrivilegeIndexStore {
         }
     }
 
+
+    protected PrivilegeIndexStore(Subject adminSubject, String realm) {
+        this.adminSubject = adminSubject;
+        this.realm = realm;
+    }
+
+    protected Subject getAdminSubject() {
+        return adminSubject;
+    }
+
+    protected String getRealm() {
+        return realm;
+    }
+
     /**
      * Returns an instance of the privilege index store.
      *
+     * @param adminSubject Admin Subject who has the privilege to write to
+     *        index datastore.
      * @param realm Realm Name.
      * @return an instance of the privilege index store.
      */
     public synchronized static PrivilegeIndexStore getInstance(
+        Subject adminSubject,
         String realm) {
         if (clazz == null) {
             return null;
@@ -69,10 +89,10 @@ public abstract class PrivilegeIndexStore {
         PrivilegeIndexStore impl = instances.get(realm);
 
         if (impl == null) {
-            Class[] parameterTypes = {String.class};
+            Class[] parameterTypes = {Subject.class, String.class};
             try {
                 Constructor constructor = clazz.getConstructor(parameterTypes);
-                Object[] args = {realm};
+                Object[] args = {adminSubject, realm};
                 impl = (PrivilegeIndexStore) constructor.newInstance(args);
                 instances.put(realm, impl);
             } catch (InstantiationException ex) {
