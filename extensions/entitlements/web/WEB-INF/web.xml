@@ -46,7 +46,7 @@
         <param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name>
         <param-value>true</param-value>
     </context-param>
-
+ 
     <filter>
         <filter-name>AdminAuthFilter</filter-name>
         <filter-class>com.sun.identity.admin.AuthFilter</filter-class>
@@ -63,6 +63,11 @@
         <filter-name>AdminAuthFilter</filter-name>
         <url-pattern>/admin/test/*</url-pattern>
     </filter-mapping>
+
+    <listener>
+        <listener-class>com.sun.faces.config.ConfigureListener</listener-class>
+    </listener>
+
     <servlet>
         <servlet-name>PrivilegeXmlServlet</servlet-name>
         <servlet-class>com.sun.identity.admin.PrivilegeXmlServlet</servlet-class>

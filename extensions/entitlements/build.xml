@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.55 2009-05-22 23:10:49 veiming Exp $
+  $Id: build.xml,v 1.56 2009-05-26 19:41:30 farble1670 Exp $
 
 -->
 
@@ -177,6 +177,13 @@
             <arg value="${entitlements.basedir}/web/WEB-INF/web.xml" />
             <arg value="${war.package.dir}/WEB-INF/web.xml" />
             <arg value="&lt;!-- filter declaration --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;listener&gt;.+?&lt;/listener&gt;" />
+            <arg value="${entitlements.basedir}/web/WEB-INF/web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- listener declaration --&gt;" />
         </java>
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
