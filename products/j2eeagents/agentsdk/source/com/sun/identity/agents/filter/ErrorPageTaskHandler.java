@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ErrorPageTaskHandler.java,v 1.3 2008-09-15 19:27:01 huacui Exp $
+ * $Id: ErrorPageTaskHandler.java,v 1.4 2009-05-26 22:47:58 leiming Exp $
  *
  */
 
@@ -63,7 +63,7 @@ implements IErrorPageTaskHandler {
         super.initialize(context, mode);
         initErrorPageList();
         CommonFactory cf = new CommonFactory(getModule());
-        setMatcher(cf.newPatternMatcher(getErrorPageList()));
+        setMatcher(cf.newURLPatternMatcher(getErrorPageList()));
     }
 
     /**

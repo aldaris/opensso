@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotenforcedURIHelper.java,v 1.4 2008-08-07 18:04:46 huacui Exp $
+ * $Id: NotenforcedURIHelper.java,v 1.5 2009-05-26 22:47:57 leiming Exp $
  *
  */
 
@@ -62,7 +62,7 @@ public class NotenforcedURIHelper extends SurrogateBase
              }
         }
         CommonFactory cf = new CommonFactory(getModule());
-        setMatcher(cf.newPatternMatcher(notenforcedURIEntries));
+        setMatcher(cf.newURLPatternMatcher(notenforcedURIEntries));
 
         if (notenforcedURIEntries.length == 0 && !isInverted())
         {

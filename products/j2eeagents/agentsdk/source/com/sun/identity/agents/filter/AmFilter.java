@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilter.java,v 1.7 2008-09-15 19:27:01 huacui Exp $
+ * $Id: AmFilter.java,v 1.8 2009-05-26 22:47:58 leiming Exp $
  *
  */
 
@@ -79,7 +79,7 @@ public class AmFilter extends AgentBase
                 CONFIG_REDIRECT_PARAM_NAME, DEFAULT_REDIRECT_PARAM_NAME));
         
         CommonFactory cf = new CommonFactory(getModule());
-        setMatcher(cf.newPatternMatcher(getFormLoginList()));
+        setMatcher(cf.newURLPatternMatcher(getFormLoginList()));
         initLoginURLFailoverHelper(cf);
         initLogoutURLFailoverHelper(cf);
         initSSOContext(cf);

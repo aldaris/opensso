@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommonFactory.java,v 1.5 2008-08-07 18:04:46 huacui Exp $
+ * $Id: CommonFactory.java,v 1.6 2009-05-26 22:47:57 leiming Exp $
  *
  */
 
@@ -217,7 +217,21 @@ public class CommonFactory {
         }
         return result;
     }
-    
+
+    public IPatternMatcher newURLPatternMatcher(String[] patternList)
+    throws AgentException {
+        IPatternMatcher result = null;
+        String className = getResolver().getURLPatternMatcherImpl();
+        try {
+            result = (IPatternMatcher) getObject(className);
+            result.initialize(patternList);
+        } catch (Exception ex) {
+            throw new AgentException("Unable to initialize IPatternMatcher: "
+                    + className, ex);
+        }
+        return result;
+    }
+
     public INotenforcedIPHelper newNotenforcedIPHelper(
             boolean cacheEnabled, int maxSize,
             boolean invertList, String[] notenforcedIPs)

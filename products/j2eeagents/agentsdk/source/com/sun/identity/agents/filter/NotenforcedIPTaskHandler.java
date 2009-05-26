@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotenforcedIPTaskHandler.java,v 1.2 2008-06-25 05:51:48 qcheng Exp $
+ * $Id: NotenforcedIPTaskHandler.java,v 1.3 2009-05-26 22:47:58 leiming Exp $
  *
  */
 
@@ -133,6 +133,11 @@ public class NotenforcedIPTaskHandler extends AmFilterTaskHandler
      * specified list of IP addresses and enforcement is <b>not required</b>
      */
     private boolean isNotEnforceIP(AmFilterRequestContext ctx) {
+
+        // form login url should not be in not-enforced-list
+        if (ctx.isFormLoginRequest()) {
+            return false;
+        }
         //return true is there is a match
         String clientIP = getClientIP(ctx);
         boolean notEnforced = getNotenforcedIPHelper().isNotenforced(clientIP);

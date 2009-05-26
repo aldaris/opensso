@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceResolver.java,v 1.6 2008-10-07 17:32:30 huacui Exp $
+ * $Id: ServiceResolver.java,v 1.7 2009-05-26 22:47:57 leiming Exp $
  *
  */
 
@@ -37,6 +37,7 @@ import com.sun.identity.agents.common.HttpServletRequestHelper;
 import com.sun.identity.agents.common.LibertyAuthnResponseHelper;
 import com.sun.identity.agents.common.NotenforcedIPHelper;
 import com.sun.identity.agents.common.NotenforcedURIHelper;
+import com.sun.identity.agents.common.PatternMatcher;
 import com.sun.identity.agents.common.URLPatternMatcher;
 import com.sun.identity.agents.common.ProfileAttributeHelper;
 import com.sun.identity.agents.common.SSOTokenValidator;
@@ -108,6 +109,10 @@ public abstract class ServiceResolver {
     }
     
     public String getPatternMatcherImpl() {
+        return PatternMatcher.class.getName();
+    }
+
+    public String getURLPatternMatcherImpl() {
         return URLPatternMatcher.class.getName();
     }
     
