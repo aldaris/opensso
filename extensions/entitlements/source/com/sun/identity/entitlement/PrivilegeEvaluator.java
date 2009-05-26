@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.19 2009-05-26 21:20:05 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.20 2009-05-26 21:46:28 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -215,7 +215,7 @@ class PrivilegeEvaluator {
                 }
             }
         } catch (InterruptedException ex) {
-            Evaluator.debug.error("PrivilegeEvaluator.evaluate", ex);
+            PrivilegeManager.debug.error("PrivilegeEvaluator.evaluate", ex);
         } finally {
             lock.unlock();
         }

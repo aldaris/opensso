@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLConstants.java,v 1.2 2009-05-14 22:33:10 dillidorai Exp $
+ * $Id: XACMLConstants.java,v 1.3 2009-05-26 21:46:29 veiming Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 

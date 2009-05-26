@@ -22,14 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.15 2009-05-02 08:53:59 veiming Exp $
+ * $Id: Evaluator.java,v 1.16 2009-05-26 21:46:28 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.util.DebugFactory;
 import com.sun.identity.entitlement.util.NetworkMonitor;
-import com.sun.identity.shared.debug.IDebug;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,8 +47,6 @@ public class Evaluator {
         NetworkMonitor.getInstance("evalSingleLevelMonitor");
     private static final NetworkMonitor EVAL_SUB_TREE_MONITOR =
         NetworkMonitor.getInstance("evalSubTreeMonitor");
-    public static IDebug debug = DebugFactory.getDebug(
-        "entitlementEvaluation");
     
     /**
      * Constructor to create an evaluator of default service type.

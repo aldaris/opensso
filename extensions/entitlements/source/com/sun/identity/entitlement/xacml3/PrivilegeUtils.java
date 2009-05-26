@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.15 2009-05-21 01:04:02 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.16 2009-05-26 21:46:29 veiming Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -30,6 +30,7 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ResourceAttribute;
 
 import com.sun.identity.entitlement.UserSubject;
@@ -49,9 +50,6 @@ import com.sun.identity.entitlement.xacml3.core.Target;
 import com.sun.identity.entitlement.xacml3.core.VariableDefinition;
 import com.sun.identity.entitlement.xacml3.core.Version;
 
-import com.sun.identity.entitlement.util.DebugFactory;
-
-import com.sun.identity.shared.debug.IDebug;
 
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -73,9 +71,6 @@ import javax.xml.bind.Marshaller;
  * </code>com.sun.identity.xacml3.core.Policy</code>
  */
 public class PrivilegeUtils {
-    
-    static IDebug debug = DebugFactory.getDebug("Entitlement");
-
     /**
      * Constructs PrivilegeUtils
      */
@@ -97,7 +92,8 @@ public class PrivilegeUtils {
             marshaller.marshal(policyElement, stringWriter);
         } catch (JAXBException je) {
             //TOODO: handle, propogate exception
-            debug.error("JAXBException while mapping privilege to policy:", je);
+            PrivilegeManager.debug.error(
+                "JAXBException while mapping privilege to policy:", je);
         }
         return stringWriter.toString();
     }

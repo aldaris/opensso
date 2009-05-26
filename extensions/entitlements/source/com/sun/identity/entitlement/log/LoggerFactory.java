@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoggerFactory.java,v 1.2 2009-04-07 10:25:10 veiming Exp $
+ * $Id: LoggerFactory.java,v 1.3 2009-05-26 21:46:28 veiming Exp $
  */
 
 package com.sun.identity.entitlement.log;
 
 
-import com.sun.identity.entitlement.util.DebugFactory;
-import com.sun.identity.shared.debug.IDebug;
+import com.sun.identity.entitlement.PrivilegeManager;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -45,7 +44,6 @@ import java.util.logging.Logger;
 public class LoggerFactory {
     private static LoggerFactory instance = new LoggerFactory();
     private ILoggerProvider provider;
-    private IDebug debug = DebugFactory.getDebug("loggerfactory");
 
     private LoggerFactory() {
         String prop = System.getProperty(
@@ -67,11 +65,11 @@ public class LoggerFactory {
             Class clazz = Class.forName(className);
             return (ILoggerProvider) clazz.newInstance();
         } catch (InstantiationException ex) {
-            debug.error("LoggerFactory.<init>", ex);
+            PrivilegeManager.debug.error("LoggerFactory.<init>", ex);
         } catch (IllegalAccessException ex) {
-            debug.error("LoggerFactory.<init>", ex);
+            PrivilegeManager.debug.error("LoggerFactory.<init>", ex);
         } catch (ClassNotFoundException ex) {
-            debug.error("LoggerFactory.<init>", ex);
+            PrivilegeManager.debug.error("LoggerFactory.<init>", ex);
         }
         return null;
     }

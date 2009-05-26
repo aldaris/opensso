@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOSubjectAttributesCollector.java,v 1.5 2009-05-21 01:23:49 hengming Exp $
+ * $Id: OpenSSOSubjectAttributesCollector.java,v 1.6 2009-05-26 21:46:29 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -31,6 +31,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.SubjectAttributesCollector;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdConstants;
@@ -38,7 +39,6 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.SMSException;
@@ -58,7 +58,6 @@ public class OpenSSOSubjectAttributesCollector
     implements SubjectAttributesCollector {
 
     static ServiceConfigManager idRepoServiceConfigManager;
-    static Debug debug = Debug.getInstance("Entitlement");
     private static final String LDAPv3Config_USER_ATTR = 
         "sun-idrepo-ldapv3-config-user-attributes";
     private String realm;
@@ -70,9 +69,11 @@ public class OpenSSOSubjectAttributesCollector
             idRepoServiceConfigManager = new ServiceConfigManager(adminToken,
                 IdConstants.REPO_SERVICE, "1.0");
         } catch (SSOException ssoex) {
-            debug.error("OpenSSOSubjectAttributesCollector.static:", ssoex);
+            PrivilegeManager.debug.error(
+                "OpenSSOSubjectAttributesCollector.static:", ssoex);
         } catch (SMSException smsex) {
-            debug.error("OpenSSOSubjectAttributesCollector.static:", smsex);
+            PrivilegeManager.debug.error(
+                "OpenSSOSubjectAttributesCollector.static:", smsex);
         }
     }
 

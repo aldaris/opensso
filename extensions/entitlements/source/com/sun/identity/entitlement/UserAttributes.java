@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAttributes.java,v 1.6 2009-05-21 06:35:31 veiming Exp $
+ * $Id: UserAttributes.java,v 1.7 2009-05-26 21:46:28 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.util.JSONUtils;
-import com.sun.identity.shared.debug.Debug;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -136,9 +135,8 @@ public class UserAttributes implements ResourceAttribute {
         try {
             s = toJSONObject().toString(2);
         } catch (JSONException joe) {
-            Debug debug = Debug.getInstance("Entitlement");
-            debug.error("UserESubject.toString(), JSONException:" +
-                    joe.getMessage());
+            PrivilegeManager.debug.error(
+                "UserESubject.toString(), JSONException:", joe);
         }
         return s;
     }
