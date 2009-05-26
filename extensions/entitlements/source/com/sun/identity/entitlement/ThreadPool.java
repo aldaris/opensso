@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.5 2009-05-26 06:18:58 veiming Exp $
+ * $Id: ThreadPool.java,v 1.6 2009-05-26 07:14:22 veiming Exp $
  *
  */
 package com.sun.identity.entitlement;
@@ -145,20 +145,23 @@ public class ThreadPool {
         @Override
         public void run() {
             while (true) {
+                Runnable task = null;
                 try {
-                    pool.lock.lock();
-                    if (!pool.taskList.isEmpty()) {
-                        Runnable task = taskList.remove(0);
-                        task.run();
-                    }
-
                     if (!shouldTerminate) {
-                        pool.hasTasks.await();
+                        pool.lock.lock();
+                        if (!pool.taskList.isEmpty()) {
+                            task = taskList.remove(0);
+                        } else {
+                            pool.hasTasks.await();
+                        }
                     }
                 } catch (InterruptedException ex) {
                     PrivilegeManager.debug.error("WorkerThread.run", ex);
                 } finally {
                     pool.lock.unlock();
+                }
+                if (task != null) {
+                    task.run();
                 }
             }
         }
