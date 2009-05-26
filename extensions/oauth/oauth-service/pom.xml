@@ -7,14 +7,81 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>oauth-service</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
+    <profiles>
+        <profile>
+            <id>jdk-1.5</id>
+            <activation>
+                <jdk>1.5</jdk>
+            </activation>
+            <dependencies>
+                <dependency> <!-- depend on JAXB to enable WADL support -->
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                    <version>2.1.10</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
     <name>oauth-service</name>
     <dependencies>
         <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>${jersey-version}</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>3.8.2</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.distributions</groupId>
+            <artifactId>web-all</artifactId>
+            <version>10.0-build-20080430</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.embedded</groupId>
+            <artifactId>gf-embedded-api</artifactId>
+            <version>1.0-alpha-4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.oauth</groupId>
+            <artifactId>oauth-signature</artifactId>
+            <version>${jersey-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.oauth</groupId>
+            <artifactId>oauth-server</artifactId>
+            <version>${jersey-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>toplink.essentials</groupId>
+            <artifactId>toplink-essentials-agent</artifactId>
+            <version>2.0-36</version>
+        </dependency>
+        <dependency>
+            <groupId>toplink.essentials</groupId>
+            <artifactId>toplink-essentials</artifactId>
+            <version>2.0-36</version>
         </dependency>
     </dependencies>
 </project>
