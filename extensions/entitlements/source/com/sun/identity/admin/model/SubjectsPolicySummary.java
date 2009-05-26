@@ -12,7 +12,11 @@ public class SubjectsPolicySummary extends PolicySummary {
     }
 
     public String getValue() {
-        return Integer.toString(getPolicyWizardBean().getPrivilegeBean().getViewSubject().getSizeLeafs());
+        ViewSubject vs = getPolicyWizardBean().getPrivilegeBean().getViewSubject();
+        if (vs == null) {
+            return "0";
+        }
+        return Integer.toString(vs.getSizeLeafs());
     }
 
     public boolean isExpandable() {
