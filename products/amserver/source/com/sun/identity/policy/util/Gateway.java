@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Gateway.java,v 1.5 2008-06-25 05:43:54 qcheng Exp $
+ * $Id: Gateway.java,v 1.6 2009-05-26 08:02:07 kiran_gonipati Exp $
  *
  */
 
@@ -182,7 +182,21 @@ public class Gateway extends HttpServlet {
             forwardUrl.append('?').append(queryString);
             String advice = getPolicyAdvice(ad) ;   
  
-            info = getGWServletUtilsFromMap(advices);           
+            info = getGWServletUtilsFromMap(advices);
+            if (advice != null) {
+                StringBuffer adv = new StringBuffer();
+                int index1 = advice.indexOf("=");
+                if (index1 != -1) {
+                    adv = adv.append(advice.substring(0 , index1 + 1));
+                    int index2 = advice.indexOf(":");
+                    if (index2 != -1) {
+                        orgName = advice.substring(index1 + 1 , index2);
+                        adv = adv.append(advice.substring(index2 + 1));
+                        advice = adv.toString();
+                    }
+                }
+            }
+
             if (debug.messageEnabled()) {
                 debug.message("GatewayServlet: advice from getPolicyAdvice(): "
                     + advice);

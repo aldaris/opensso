@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthLevelCondition.java,v 1.8 2009-05-05 18:29:01 mrudul_uchil Exp $
+ * $Id: AuthLevelCondition.java,v 1.9 2009-05-26 08:06:23 kiran_gonipati Exp $
  *
  */
 
@@ -485,8 +485,11 @@ public class AuthLevelCondition implements Condition {
                 }
             }
         } else {
-            Set qualifiedLevels 
-                    = AMAuthUtils.getRealmQualifiedAuthenticatedLevels(token);
+            Set qualifiedLevels = null;
+            if (token != null) {
+                qualifiedLevels =
+                    AMAuthUtils.getRealmQualifiedAuthenticatedLevels(token);
+            }
             if (DEBUG.messageEnabled()) {
                 DEBUG.message("AuthLevelCondition.getMaxRequestAuthLevel("
                         + "): qualifiedLeves from token= " 
