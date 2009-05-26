@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.sun.identity.oauth.service;
+package com.sun.identity.oauth.service.persistence;
 
 import java.io.Serializable;
 import java.util.Date;

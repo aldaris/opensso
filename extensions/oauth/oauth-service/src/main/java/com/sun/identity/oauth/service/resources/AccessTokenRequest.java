@@ -25,7 +25,7 @@ import com.sun.jersey.oauth.signature.OAuthParameters;
 import com.sun.jersey.oauth.signature.OAuthSecrets;
 import com.sun.jersey.oauth.signature.OAuthSignature;
 import com.sun.jersey.oauth.signature.OAuthSignatureException;
-import com.sun.oauth.TokenService.util.UniqueRandomString;
+import com.sun.identity.oauth.service.util.UniqueRandomString;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 
