@@ -83,7 +83,7 @@
                                             styleClass="draggable"
                                             rendered="#{!conditionType.expression}"
                                             draggable="true"
-                                            dragMask="dragging,drag_cancel,hover_start,hover_end"
+                                            dragMask="dragging,drag_cancel,dropped,hover_start,hover_end"
                                             dragValue="#{conditionType}"
                                             dragOptions="dragGhost">
                                             <ice:panelGrid columns="2">
@@ -122,6 +122,7 @@
                                             <ice:panelGroup
                                                 styleClass="draggable"
                                                 draggable="true"
+                                                dragMask="dragging,drag_cancel,dropped,hover_start,hover_end"
                                                 dragValue="#{conditionType}"
                                                 dragOptions="dragGhost">
                                                 <ice:panelGrid columns="2">

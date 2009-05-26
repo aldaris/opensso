@@ -1163,6 +1163,10 @@
         <managed-bean-class>com.sun.identity.admin.handler.BankingResourcesHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+        <managed-property>
             <property-name>bankingResourcesBean</property-name>
             <value>#{bankingResourcesBean}</value>
         </managed-property>

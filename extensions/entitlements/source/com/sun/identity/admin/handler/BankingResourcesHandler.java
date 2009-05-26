@@ -2,6 +2,7 @@ package com.sun.identity.admin.handler;
 
 import com.icesoft.faces.component.selectinputtext.SelectInputText;
 import com.sun.identity.admin.ManagedBeanResolver;
+import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.SubjectDao;
 import com.sun.identity.admin.model.BankingResource;
 import com.sun.identity.admin.model.BankingResourcesBean;
@@ -23,6 +24,7 @@ public class BankingResourcesHandler implements Serializable {
     private BankingResourcesBean bankingResourcesBean;
     private SubjectDao subjectDao = null;
     private SubjectType subjectType;
+    private MessagesBean messagesBean;
 
     private BankingResource getBankingResource(FacesEvent event) {
         BankingResource br = (BankingResource) event.getComponent().getAttributes().get("bankingResource");
@@ -81,9 +83,18 @@ public class BankingResourcesHandler implements Serializable {
                 BankingResource br = new BankingResource();
                 br.setName(idus.getEmployeeNumber());
                 br.setOwner(idus);
-                ve.getResources().add(br);
-
-                bankingResourcesBean.reset();
+                if (!ve.getResources().contains(br)) {
+                    ve.getResources().add(br);
+                    bankingResourcesBean.reset();
+                } else {
+                    MessageBean mb = new MessageBean();
+                    Resources r = new Resources();
+                    mb.setSummary(r.getString(this, "noDuplicateSummary"));
+                    mb.setDetail(r.getString(this, "noDuplicateDetail"));
+                    mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+                    messagesBean.addMessageBean(mb);
+                    bankingResourcesBean.setAddPopupVisible(false);
+                }
             }
         }
     }
@@ -132,5 +143,9 @@ public class BankingResourcesHandler implements Serializable {
 
     public void setSubjectType(SubjectType subjectType) {
         this.subjectType = subjectType;
+    }
+
+    public void setMessagesBean(MessagesBean messagesBean) {
+        this.messagesBean = messagesBean;
     }
 }

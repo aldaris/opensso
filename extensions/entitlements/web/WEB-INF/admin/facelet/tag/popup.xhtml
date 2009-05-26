@@ -9,8 +9,9 @@
     <ice:panelPopup
         styleClass="popup-#{type == null ? 'info' : type}#{width != null ? ' width-' : ''}#{width != null ? width : ''}"
         draggable="false"
-        autoCentre="true"
+        autoCentre="#{autoCentre == null ? 'true' : autoCentre}"
         modal="#{modal == null ? 'true' : modal}"
+        positionOnLoadOnly="true"
         visible="#{visible == null ? 'true' : visible}">
         <f:facet name="header">
             <ice:panelGrid

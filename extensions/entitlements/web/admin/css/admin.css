@@ -445,6 +445,23 @@ div.button img.left {
     vertical-align: middle;
 }
 
+
+.popup-info {
+    z-index: 25001 !important;
+}
+.popup-question {
+    z-index: 25002 !important;
+}
+
+.popup-warning {
+    z-index: 25003 !important;
+}
+
+.popup-error {
+    z-index: 25004 !important;
+}
+
+
 .popup-info,
 .popup-question,
 .popup-warning,

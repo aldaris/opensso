@@ -80,14 +80,23 @@ public class UrlResourcesHandler implements Serializable {
     public void addPopupOkListener(ActionEvent event) {
         ViewEntitlement ve = getViewEntitlement(event);
         UrlResource ur = urlResourcesBean.getAddPopupUrlResourceParts().getUrlResource();
-        ve.getResources().add(ur);
+        if (!ve.getResources().contains(ur)) {
+            ve.getResources().add(ur);
+            List<Resource> ar = getAvailableResources(event);
+            if (!ar.contains(ur)) {
+                ar.add(ur);
+            }
 
-        List<Resource> ar = getAvailableResources(event);
-        if (!ar.contains(ur)) {
-            ar.add(ur);
+            resetAddPopup();
+        } else {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "noDuplicateSummary"));
+            mb.setDetail(r.getString(this, "noDuplicateDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            messagesBean.addMessageBean(mb);
+            urlResourcesBean.setAddPopupVisible(false);
         }
-
-        resetAddPopup();
     }
 
     public void addExceptionPopupOkListener(ActionEvent event) {
@@ -98,10 +107,20 @@ public class UrlResourcesHandler implements Serializable {
         ur.setName(prefix + name);
 
         ViewEntitlement ve = getViewEntitlement(event);
-        ve.getExceptions().add(ur);
+        if (!ve.getExceptions().contains(ur)) {
+            ve.getExceptions().add(ur);
 
-        urlResourcesBean.setAddExceptionPopupName(null);
-        urlResourcesBean.setAddExceptionPopupVisible(false);
+            urlResourcesBean.setAddExceptionPopupName(null);
+            urlResourcesBean.setAddExceptionPopupVisible(false);
+        } else {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "noDuplicateExceptionSummary"));
+            mb.setDetail(r.getString(this, "noDuplicateExceptionDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            messagesBean.addMessageBean(mb);
+            urlResourcesBean.setAddExceptionPopupVisible(false);
+        }
     }
 
     public void removeExceptionListener(ActionEvent event) {
