@@ -18,7 +18,7 @@
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  *
- * $Id: NonceManager.java,v 1.1 2009-05-26 22:17:45 pbryan Exp $
+ * $Id: NonceManager.java,v 1.2 2009-05-27 22:36:17 pbryan Exp $
  */
 
 package com.sun.identity.oauth.filter;
@@ -87,7 +87,7 @@ class NonceManager
 
         // no nonce exists for key; create a new one
         synchronized(map) {
-            if (nonce == null) {
+            if (nonces == null) {
                 nonces = new Nonces();
                 map.put(key, nonces);
             }
@@ -117,10 +117,6 @@ class NonceManager
         return nonces.values.add(nonce);
     }
 
-    /**
-     * Converts a string into a long value, returning -1 if it could not be
-     * converted.
-     */
     private long longValue(String value) {
         try { return Long.valueOf(value); }
         catch (NumberFormatException nfe) { return -1; }

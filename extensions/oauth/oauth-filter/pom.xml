@@ -36,6 +36,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.1.1-ea-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>com.sun.jersey.oauth</groupId>
             <artifactId>oauth-signature</artifactId>
             <version>1.1.1-ea-SNAPSHOT</version>

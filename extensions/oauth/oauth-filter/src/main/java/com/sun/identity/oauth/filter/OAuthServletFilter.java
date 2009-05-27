@@ -18,7 +18,7 @@
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  *
- * $Id: OAuthServletFilter.java,v 1.1 2009-05-26 22:17:45 pbryan Exp $
+ * $Id: OAuthServletFilter.java,v 1.2 2009-05-27 22:36:17 pbryan Exp $
  */
 
 package com.sun.identity.oauth.filter;
@@ -26,6 +26,7 @@ package com.sun.identity.oauth.filter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -34,6 +35,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MultivaluedMap;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.UniformInterfaceException;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.uri.UriComponent;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.oauth.signature.OAuthParameters;
 import com.sun.jersey.oauth.signature.OAuthSecrets;
 import com.sun.jersey.oauth.signature.OAuthSignature;
@@ -41,20 +48,25 @@ import com.sun.jersey.oauth.signature.OAuthSignatureException;
 
 public class OAuthServletFilter implements Filter
 {
-    /** The OAuth protection realm to advertise in www-authenticate header. */
-    private String realm;
+    private static final String PARAM_REALM = "realm";
+    private static final String PARAM_SIGNATURE_METHOD = "signatureMethod";
+    private static final String PARAM_CONSUMER_KEY_PATTERN = "consumerKeyPattern";
+    private static final String PARAM_ACCESS_TOKEN_PATTERN = "accessTokenPattern";
+    private static final String PARAM_MAX_AGE = "maxAge";
+    private static final String PARAM_GC_PERIOD = "gcPeriod";
+    private static final String PARAM_NONCE_INDEX = "nonceIndex";
+
+    /** Jersey client to make REST calls to token services. */
+    private Client client = Client.create();
+
+    /** Servlet filter configuration. */
+    FilterConfig config = null;
 
     /** Manages and validates incoming nonces. */
     private NonceManager nonces;
 
-    /** OAuth signature methods that are supported. */
-    private HashSet<String> methods = new HashSet<String>();
-
-    /** OAuth protocol versions that are supported. */
-    private HashSet<String> versions = new HashSet<String>();
-
-    /** Attributes used to index nonces in nonce manager. */
-    private HashSet<String> nonceKeys = new HashSet<String>();
+    /** The OAuth protection realm to advertise in www-authenticate header. */
+    private String realm = null;
 
     /** Maximum age (in milliseconds) of timestamp to accept in incoming messages. */
     private int maxAge = -1;
@@ -65,6 +77,18 @@ public class OAuthServletFilter implements Filter
     /** Value to return in www-authenticate header when 401 response returned. */
     private String wwwAuthenticateHeader = null;
 
+    /** OAuth protocol versions that are supported. */
+    private HashSet<String> versions = new HashSet<String>();
+
+    /** Regular expression pattern for acceptable consumer key. */
+    private Pattern consumerKeyPattern = null;
+
+    /** Regular expression pattern for acceptable access token. */
+    private Pattern accessTokenPattern = null;
+
+    /** Attribute used to index nonces in nonce manager. */
+    private String nonceIndex = null;
+
     /**
      * Called by the web container to indicate to the filter that it is being
      * placed into service.
@@ -73,27 +97,27 @@ public class OAuthServletFilter implements Filter
      * @throws ServletException if an error occurs.
      */
     public void init(FilterConfig config) throws ServletException {
-    
-        // directly supported OAuth protocol versions
+
+        this.config = config;
+
+        // establish supported OAuth protocol versions
         versions.add(null);
         versions.add("1.0");
 
-realm = "REALM"; // FIXME: configurable
-methods.add("HMAC-SHA1"); // FIXME: configurable
+        // required initialization parameters
+        realm = requiredInitParam(PARAM_REALM);
+        consumerKeyPattern = Pattern.compile(requiredInitParam(PARAM_CONSUMER_KEY_PATTERN));;
+        accessTokenPattern = Pattern.compile(requiredInitParam(PARAM_ACCESS_TOKEN_PATTERN));
 
-        // set some reasonable defaults if not supplied
-        if (maxAge == -1) { maxAge = 5 * 60 * 1000; } // 5 minutes
-        if (gcPeriod == -1) { gcPeriod = 100; } // every 100 requests (average)
-        if (nonceKeys.isEmpty()) { nonceKeys.add("consumerKey"); } // consumer index for nonces
-
-        // mandatory configuration properties
-        if (realm == null) { throw new ServletException("realm required"); }
-        if (methods.isEmpty()) { throw new ServletException("methods required"); }
+        // optional initialization parameters (defaulted)
+        maxAge = intValue(defaultInitParam(PARAM_MAX_AGE, "300000")); // 5 minutes
+        gcPeriod = intValue(defaultInitParam(PARAM_GC_PERIOD, "100")); // every 100 on average
+        nonceIndex = defaultInitParam(PARAM_NONCE_INDEX, "consumerKey"); // consumer index for nonces
 
         nonces = new NonceManager(maxAge, gcPeriod);
 
-        // static www-authenticate header for the life of the object
-        wwwAuthenticateHeader = "OAuth realm = \"" + realm + "\"";
+        // www-authenticate header for the life of the object
+        wwwAuthenticateHeader = "OAuth realm=\"" + realm + "\"";
     }
 
     /**
@@ -114,11 +138,11 @@ methods.add("HMAC-SHA1"); // FIXME: configurable
         HttpServletResponse hsResponse = (HttpServletResponse)response;    
 
         try {
-            doFilter(request, response, chain);
+            filter(hsRequest, hsResponse, chain);
         }
     
         catch (BadRequestException bre) {
-            hsResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            hsResponse.sendError(HttpServletResponse.SC_BAD_REQUEST); // 400
         }
 
         catch (UnauthorizedException ue) {
@@ -127,42 +151,58 @@ methods.add("HMAC-SHA1"); // FIXME: configurable
         }
     }
 
-    private String required(String value) throws BadRequestException {
-        if (value == null) { throw new BadRequestException(); }
-        return value;
+    /**
+     * Called by the web container to indicate to the filter that it is being
+     * taken out of service.
+     */
+    public void destroy() {
     }
 
-    private String supported(String value, HashSet<String> set) throws BadRequestException {
-        if (!set.contains(value)) { throw new BadRequestException(); }
-        return value;
-    }
-
-    private void doFilter(HttpServletRequest request,
-    HttpServletResponse response, FilterChain chain) throws IOException, ServletException
+    private void filter(HttpServletRequest request, HttpServletResponse response,
+    FilterChain chain) throws IOException, ServletException
     {
         OAuthServletRequest osr = new OAuthServletRequest(request);
 
         OAuthParameters params = new OAuthParameters().readRequest(osr);
 
+        // apparently not signed with any OAuth parameters; unauthorized
+        if (params.size() == 0) { throw new UnauthorizedException(); }
+
         // get required OAuth parameters
-        String consumerKey = required(params.getConsumerKey());
-        String token = required(params.getToken());
-        String timestamp = required(params.getTimestamp());
-        String nonce = required(params.getNonce());
+        String consumerKey = requiredOAuthParam(params.getConsumerKey());
+        String token = requiredOAuthParam(params.getToken());
+        String timestamp = requiredOAuthParam(params.getTimestamp());
+        String nonce = requiredOAuthParam(params.getNonce());
+        String signatureMethod = requiredOAuthParam(params.getSignatureMethod());
 
         // enforce other supported and required OAuth parameters
-        supported(params.getSignatureMethod(), methods);
-        required(params.getSignature());
-        supported(params.getVersion(), versions);
+        requiredOAuthParam(params.getSignature());
+        supportedOAuthParam(params.getVersion(), versions);
 
-// TODO: retrieve consumer key secret
-        String consumerSecret = null;
+        // consumer key or token do not match the expected patterns; signature is invalid
+        if (!consumerKeyPattern.matcher(consumerKey).matches()
+        || !accessTokenPattern.matcher(token).matches()) {
+            throw new UnauthorizedException();
+        }
 
-// TODO: retrieve access token secret
-        String tokenSecret = null;
+        MultivaluedMap<String, String> query;
+        MultivaluedMap<String, String> mvmResponse;
 
-// TODO: retrieve OpenSSO subject behind access token
-        String subject = null;
+        // retrieve secret for consumer key
+        WebResource consumerResource = client.resource(consumerKey);
+        query = new MultivaluedMapImpl();
+        query.add("signature_method", signatureMethod);
+        mvmResponse = get(consumerResource, query);
+        String consumerSecret = requiredForAuthorization(mvmResponse.getFirst("secret"));
+
+        // retrieve subject and shared secret for access token
+        WebResource tokenResource = client.resource(token);
+        query = new MultivaluedMapImpl();
+        query.add("subject", "1");
+        query.add("shared_secret", "1");
+        mvmResponse = get(tokenResource, query);
+        String tokenSecret = requiredForAuthorization(mvmResponse.getFirst("shared_secret"));
+        String subject = requiredForAuthorization(mvmResponse.getFirst("subject"));
 
         if (consumerSecret == null || tokenSecret == null) {
             throw new UnauthorizedException();
@@ -174,13 +214,10 @@ methods.add("HMAC-SHA1"); // FIXME: configurable
             throw new UnauthorizedException();
         }
 
-        // assemble key that will be used to index nonce
-        StringBuffer key = new StringBuffer();
-        if (nonceKeys.contains("consumerKey")) { key.append(consumerKey); } // TODO: make more efficient? boolean?
-        key.append('&');
-        if (nonceKeys.contains("token")) { key.append(token); }
+// TODO: make specifying and testing this easier
+        String key = (nonceIndex.equals("consumerKey") ? consumerKey : token);
 
-        if (!nonces.verify(key.toString(), timestamp, nonce)) {
+        if (!nonces.verify(key, timestamp, nonce)) {
             throw new UnauthorizedException();
         }
 
@@ -188,13 +225,51 @@ methods.add("HMAC-SHA1"); // FIXME: configurable
         chain.doFilter(new PrincipalRequestWrapper(request, new NamedPrincipal(subject)), response);
     }
 
-    /**
-     * Called by the web container to indicate to the filter that it is being
-     * taken out of service.
-     */
-    public void destroy() {
+    @SuppressWarnings("unchecked")
+    private static MultivaluedMap<String, String> get(WebResource resource, MultivaluedMap params)
+    throws UnauthorizedException {
+        String response;
+        try { response = resource.queryParams(params).get(String.class); }
+        catch (UniformInterfaceException uie) { throw new UnauthorizedException(); }
+        return UriComponent.decodeQuery(response, true);
     }
-    
+
+    private static String requiredForAuthorization(String value) throws UnauthorizedException {
+        if (value == null || value.length() == 0) { throw new UnauthorizedException(); }
+        return value;
+    }
+
+    private String requiredInitParam(String name) throws ServletException {
+        String v = config.getInitParameter(name);
+        if (v == null || v.length() == 0) { throw new ServletException(name + " init parameter required"); }
+        return v;
+    }        
+
+    private String defaultInitParam(String name, String value) {
+        String v = config.getInitParameter(name);
+        if (v == null || v.length() == 0) { v = value; }
+        return v;
+    }
+
+    private int intValue(String value) {
+        try { return Integer.valueOf(value); }
+        catch (NumberFormatException nfe) { return -1; }
+    }
+
+    private String requiredOAuthParam(String value) throws BadRequestException {
+        if (value == null) { throw new BadRequestException(); }
+        return value;
+    }
+
+    private String supportedOAuthParam(String value, HashSet<String> set) throws BadRequestException {
+        if (!set.contains(value)) { throw new BadRequestException(); }
+        return value;
+    }
+
+    private boolean matches(Pattern pattern, String value) {
+        return pattern.matcher(value).matches();
+    }
+
     private static boolean verifySignature(OAuthServletRequest osr,
     OAuthParameters params, OAuthSecrets secrets) throws ServletException {
         try { return OAuthSignature.verify(osr, params, secrets); }
