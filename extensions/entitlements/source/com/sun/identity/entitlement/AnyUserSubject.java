@@ -29,7 +29,7 @@ public class AnyUserSubject extends VirtualSubject {
     public Map<String, Set<String>> getSearchIndexAttributes() {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
         Set<String> set = new HashSet<String>();
-        set.add(getVirtualId().toString());
+        set.add(SubjectAttributesCollector.ATTR_NAME_ALL_ENTITIES);
         map.put(SubjectAttributesCollector.NAMESPACE_IDENTITY, set);
         return map;
     }
