@@ -881,7 +881,7 @@ div.button img.left {
     border-right-style: solid;
     border-right-width: 1px;
     margin: 0; 
-    overflow: hidden;
+    overflow: visible;
     border-left-color: #aaa;
     border-right-color: #aaa;
 }

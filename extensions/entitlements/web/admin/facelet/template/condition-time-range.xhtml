@@ -14,6 +14,7 @@
             <ice:outputLabel
                 value="#{resources['condition-time-range.startTimeLabel']}"/>
             <ice:selectOneMenu
+                style="width: 50px"
                 value="#{viewCondition.startHour}">
                 <f:selectItem
                     itemValue="0"
@@ -54,6 +55,7 @@
             </ice:selectOneMenu>
             <ice:outputText value=":"/>
             <ice:selectOneMenu
+                style="width: 50px"
                 value="#{viewCondition.startMinute}">
                 <f:selectItem
                     itemValue="0"
@@ -69,6 +71,7 @@
                     itemLabel="45"/>
             </ice:selectOneMenu>
             <ice:selectOneMenu
+                style="width: 50px"
                 value="#{viewCondition.startPeriod}">
                 <f:selectItem itemValue="AM" itemLabel="AM"/>
                 <f:selectItem itemValue="PM" itemLabel="PM"/>
@@ -76,6 +79,7 @@
             <ice:outputLabel
                 value="#{resources['condition-time-range.endTimeLabel']}"/>
             <ice:selectOneMenu
+                style="width: 50px"
                 value="#{viewCondition.endHour}">
                 <f:selectItem
                     itemValue="0"
@@ -116,6 +120,7 @@
             </ice:selectOneMenu>
             <ice:outputText value=":"/>
             <ice:selectOneMenu
+                style="width: 50px"
                 value="#{viewCondition.endMinute}">
                 <f:selectItem
                     itemValue="0"
@@ -131,6 +136,7 @@
                     itemLabel="45"/>
             </ice:selectOneMenu>
             <ice:selectOneMenu
+                style="width: 50px"
                 value="#{viewCondition.endPeriod}">
                 <f:selectItem 
                     itemValue="AM"
