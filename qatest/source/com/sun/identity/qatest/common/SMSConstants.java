@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSConstants.java,v 1.6 2008-06-26 20:10:39 rmisra Exp $
+ * $Id: SMSConstants.java,v 1.7 2009-05-27 23:06:35 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,11 +93,6 @@ public interface SMSConstants {
      */
     static final String UM_DATASTORE_ROOT_SUFFIX = "datastore-root-suffix";
 
-    /**
-     * Datastore schema type name for embedded (OpenDS)
-     */
-    static final String UM_DATASTORE_SCHEMA_TYPE_OPENDS = "LDAPv3ForOpenDS";
-    
     /**
      * Datastore schema type name for Sun DS
      */

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AssertionQueryTests.java,v 1.2 2009-01-27 00:14:07 nithyas Exp $
+ * $Id: SAMLv2AssertionQueryTests.java,v 1.3 2009-05-27 23:09:05 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -176,6 +176,7 @@ public class  SAMLv2AssertionQueryTests extends TestCommon {
                     "Federation&level=3&do=true";
             log(Level.FINEST, "setup", "Debug URL:" + debugURL);
             HtmlPage aipage = (HtmlPage)spWebClient.getPage(debugURL);
+            assertionCacheSetup();
         } catch(Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
@@ -190,34 +191,9 @@ public class  SAMLv2AssertionQueryTests extends TestCommon {
     /**
      * Enable Assertion cache
      */
-    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
-      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void assertionCacheSetup()
     throws Exception {
         entering("assertionCacheSetup", null);
-        String spurl;
-        String idpurl;
-        try {
-            configMap = new HashMap<String, String>();
-            getWebClient();
-            configMap = getMapFromResourceBundle("samlv2" + fileseparator
-                    + "samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator
-                    + "samlv2TestData"));
-            log(Level.FINEST, "assertionCacheSetup", "Map:" + configMap);
-            spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
-                    "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
-                    configMap.get(TestConstants.KEY_SP_PORT) +
-                    configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
-            idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
-                    "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
-                    configMap.get(TestConstants.KEY_IDP_PORT) +
-                    configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
-        } catch (Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
         try {
             //get sp & idp extended metadata
             FederationManager spfm = new FederationManager(spurl);
@@ -231,12 +207,13 @@ public class  SAMLv2AssertionQueryTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     false, false, true, "saml2");
             if (FederationManager.getExitCode(spmetaPage) != 0) {
-                log(Level.SEVERE, "setup", "exportEntity famadm command failed");
+                log(Level.SEVERE, "setup",
+                        "exportEntity famadm command failed");
                 assert false;
             }
             spmetadata = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
-            String spmetadataMod = spmetadata.replaceAll(ATTRIB_ASSERT_CACHE_DEFAULT,
-                    ATTRIB_ASSERT_CACHE_ENABLE);
+            String spmetadataMod = spmetadata.replaceAll(
+                    ATTRIB_ASSERT_CACHE_DEFAULT, ATTRIB_ASSERT_CACHE_ENABLE);
             log(Level.FINEST, "assertionCacheSetup", "Modified" +
                     " metadata:" + spmetadataMod);
             if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
@@ -264,16 +241,17 @@ public class  SAMLv2AssertionQueryTests extends TestCommon {
             
             HtmlPage idpmetaPage = idpfm.exportEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false, false,
-                    true, "saml2");
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
+                    false, false, true, "saml2");
             if (FederationManager.getExitCode(idpmetaPage) != 0) {
-                log(Level.SEVERE, "setup", "exportEntity famadm command failed");
+                log(Level.SEVERE, "setup", "exportEntity famadm command" +
+                        " failed");
                 assert false;
             }
             idpmetadata =
                     MultiProtocolCommon.getExtMetadataFromPage(idpmetaPage);
-            String idpmetadataMod = idpmetadata.replaceAll(ATTRIB_ASSERT_CACHE_DEFAULT,
-                    ATTRIB_ASSERT_CACHE_ENABLE);
+            String idpmetadataMod = idpmetadata.replaceAll(
+                    ATTRIB_ASSERT_CACHE_DEFAULT, ATTRIB_ASSERT_CACHE_ENABLE);
             log(Level.FINEST, "autoFedTransientUserSetup", "Modified IDP" +
                     " metadata:" + idpmetadataMod);
             
@@ -368,8 +346,10 @@ public class  SAMLv2AssertionQueryTests extends TestCommon {
             asserId = aidLine.substring(i,j);
             // Query and get the response
             String asstQueryURL = spurl + "/aIDReqTest.jsp?aID=" + asserId +
-                    "&spMetaAlias=" + configMap.get(TestConstants.KEY_SP_METAALIAS) +
-                    "&idpEntityID=" + configMap.get(TestConstants.KEY_IDP_ENTITY_NAME);
+                    "&spMetaAlias=" +
+                    configMap.get(TestConstants.KEY_SP_METAALIAS) +
+                    "&idpEntityID=" +
+                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME);
             URL aurl = new URL(asstQueryURL);
             HtmlPage page = (HtmlPage)webClient.getPage(aurl);
             if(!page.getWebResponse().getContentAsString().contains(result)) {
@@ -449,3 +429,4 @@ public class  SAMLv2AssertionQueryTests extends TestCommon {
         }
     }
 }
+

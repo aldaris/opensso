@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AttributeQueryTests.java,v 1.7 2009-04-29 05:28:16 vimal_67 Exp $
+ * $Id: SAMLv2AttributeQueryTests.java,v 1.8 2009-05-27 23:09:05 rmisra Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,12 +92,14 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             + "            <Value>givenname=givenname</Value>\n"
             + "            <Value>postaladdress=postaladdress</Value>\n"
             + "            <Value>employeenumber=employeenumber</Value>\n"
-            + "            <Value>sunIdentityMSISDNNumber=sunIdentityMSISDNNumber" 
+            + "            <Value>sunIdentityMSISDNNumber="
+            + "sunIdentityMSISDNNumber" 
             +"</Value>\n"
             + "            <Value>telephonenumber=telephonenumber</Value>\n"
             + "            <Value>cn=cn</Value>\n"
             + "            <Value>sn=sn</Value>\n"
-            + "            <Value>facsimileTelephoneNumber=facsimileTelephoneNumber" 
+            + "            <Value>facsimileTelephoneNumber="
+            + "facsimileTelephoneNumber" 
             +"</Value>\n"
             + "            <Value>homePhone=homePhone</Value>\n"
             + "            <Value>homePostalAddress=homePostalAddress</Value>\n"
@@ -118,12 +120,14 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             + "            <Value>givenname=givenname</Value>\n"
             + "            <Value>postaladdress=postaladdress</Value>\n"
             + "            <Value>employeenumber=employeenumber</Value>\n"
-            + "            <Value>sunIdentityMSISDNNumber=sunIdentityMSISDNNumber" 
+            + "            <Value>sunIdentityMSISDNNumber="
+            + "sunIdentityMSISDNNumber" 
             +"</Value>\n"
             + "            <Value>telephonenumber=telephonenumber</Value>\n"
             + "            <Value>cn=cn</Value>\n"
             + "            <Value>sn=sn</Value>\n"
-            + "            <Value>facsimileTelephoneNumber=facsimileTelephoneNumber" 
+            + "            <Value>facsimileTelephoneNumber="
+            + "facsimileTelephoneNumber" 
             +"</Value>\n"
             + "            <Value>homePhone=homePhone</Value>\n"
             + "            <Value>homePostalAddress=homePostalAddress</Value>\n"
@@ -417,6 +421,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_METAALIAS) +
                     "&idpEntityID=" +
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME);
+            attributeQueryMapSetup();
         } catch(Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
@@ -431,32 +436,9 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     /**
      * Enable Attribute Query
      */
-    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", 
-    "amsdk_sec", "jdbc_sec"})
     public void attributeQueryMapSetup()
     throws Exception {
         entering("attributeQueryMapSetup", null);
-        try {
-            configMap = new HashMap<String, String>();
-            getWebClient();
-            configMap = getMapFromResourceBundle("samlv2" + fileseparator 
-                    + "samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator 
-                    + "samlv2TestData"));
-            log(Level.FINEST, "attributeQueryMapSetup", "Map:" + configMap);        
-            spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
-                    "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
-                    configMap.get(TestConstants.KEY_SP_PORT) +
-                    configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
-            idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
-                    "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
-                    configMap.get(TestConstants.KEY_IDP_PORT) +
-                    configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
-        } catch (Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
         try {
             //get sp & idp extended metadata
             FederationManager spfm = new FederationManager(spurl);

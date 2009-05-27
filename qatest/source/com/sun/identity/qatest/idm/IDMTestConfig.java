@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMTestConfig.java,v 1.5 2009-01-27 00:05:42 nithyas Exp $
+ * $Id: IDMTestConfig.java,v 1.6 2009-05-27 23:07:57 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,19 +26,19 @@ package com.sun.identity.qatest.idm;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.SMSConstants;
-import com.sun.identity.qatest.common.IDMCommon;
-import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.AfterSuite;
-import com.sun.identity.idm.IdType;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Parameters;
 
 /**
  * <code>IDMTestConfig</code> runs before each test suite to set up and clean 
@@ -76,7 +76,8 @@ public class IDMTestConfig extends IDMCommon {
      * @param dsindex index in the properties file to be created
      * @param setupds true to create a datastore
      */
-    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+    "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     @Parameters({"dsindex","setupidm"})
     public void setupIdmTest(String dsindex, boolean setupidm)
     throws Exception {
@@ -102,25 +103,39 @@ public class IDMTestConfig extends IDMCommon {
                 }
             }
 
-            Set listDataStore = smsObj.listDataStore(subRealm);
-            Iterator iterSet = listDataStore.iterator();
-            String eds;
-            while (iterSet.hasNext()) {
-                eds = (String)iterSet.next();
-                log(Level.FINE, "setupIdmTest", "Deleting existing datastore " + 
-                        eds);
-                smsObj.deleteDataStore(subRealm, eds);
-            }
+            ResourceBundle gblCfgData = ResourceBundle.getBundle("config" +
+                    fileseparator + "default" + fileseparator +
+                    "UMGlobalConfig");
 
-            // Create a datastore
-            log(Level.FINE, "setupIdmTest", "Creating datastore..."); 
-            Map<String, String> umDatastoreTypes = new HashMap<String, String>();
-            umDatastoreTypes.put("1", serverName);
-            smsObj.createUMDatastoreGlobalMap(
+            ResourceBundle cfgData =
+                ResourceBundle.getBundle("Configurator-" + serverName +
+                "-Generated");
+            String umdatastore = cfgData.getString("umdatastore");
+
+            if ((gblCfgData.getString("UMGlobalConfig." +
+                            "createNewDatastores")).equals("true") &&
+                            (!umdatastore.equals("embedded"))) {
+                Set listDataStore = smsObj.listDataStore(subRealm);
+                Iterator iterSet = listDataStore.iterator();
+                String eds;
+                while (iterSet.hasNext()) {
+                    eds = (String)iterSet.next();
+                    log(Level.FINE, "setupIdmTest", "Deleting existing" +
+                            " datastore " +  eds);
+                    smsObj.deleteDataStore(subRealm, eds);
+                }
+                
+                // Create a datastore
+                log(Level.FINE, "setupIdmTest", "Creating datastore..."); 
+                Map<String, String> umDatastoreTypes =
+                        new HashMap<String, String>();
+                umDatastoreTypes.put("1", serverName);
+                smsObj.createUMDatastoreGlobalMap(
                     SMSConstants.UM_DATASTORE_PARAMS_PREFIX, umDatastoreTypes,
                     SMSConstants.QATEST_EXEC_MODE_SINGLE, "idm");
-            smsObj.createDataStore(1, "idm" + fileseparator +
+                smsObj.createDataStore(1, "idm" + fileseparator +
                     SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "-Generated");
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "setupIdmTest", e.getMessage());
             e.printStackTrace();
@@ -134,7 +149,8 @@ public class IDMTestConfig extends IDMCommon {
      * properties file by index number.
      * @param setupds true to create a datastore
      */
-    @AfterSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @AfterSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+    "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     @Parameters({"cleanupidm"})
     public void cleanupIdmTest(boolean cleanupidm)
     throws Exception {

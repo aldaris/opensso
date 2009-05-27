@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.35 2009-05-07 22:31:18 vimal_67 Exp $
+ * $Id: TestConstants.java,v 1.36 2009-05-27 23:06:35 rmisra Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,7 +142,7 @@ public interface TestConstants {
      * Property key for <code>subrealm_recursive_delete</code>.
      */
     String KEY_ATT_SUBREALM_RECURSIVE_DELETE = "subrealm_recursive_delete";
-    
+
     /**
      * Property key for <code>testservername</code>.
      */
@@ -466,7 +466,18 @@ public interface TestConstants {
      */
     String KEY_SP_USER_MSISDN = "sp_sunIdentityMSISDNNumber";
     
-    
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_server_alias</code>
+     * This is server alias used for server alias configuration file under
+     * resources directory
+     */
+    String KEY_IDP_SERVER_ALIAS = "idp_server_alias";
+
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_title</code>
+     */
+    String KEY_IDP_USER_TITLE = "idp_title";
+
     /**
      * SAMLv2, IDFF Property key for <code>idp_employeenumber</code>
      */
@@ -547,12 +558,14 @@ public interface TestConstants {
     String KEY_ATTRMAP = "attrmap";    
     
     /**
-     * SAMLv1 attribute map for sp user multivalue attribute for <code>sp_user_attribute</code>
+     * SAMLv1 attribute map for sp user multivalue attribute for
+     * <code>sp_user_attribute</code>
      */
     String KEY_SP_USER_MULTIVALUE_ATTRIBUTE = "sp_user_attribute";
     
     /**
-     * SAMLv1 attribute map for idp user multivalue attribute for <code>idp_user_attribute</code>
+     * SAMLv1 attribute map for idp user multivalue attribute for
+     * <code>idp_user_attribute</code>
      */
     String KEY_IDP_USER_MULTIVALUE_ATTRIBUTE = "idp_user_attribute";
 
@@ -915,11 +928,6 @@ public interface TestConstants {
      * SAMLv2, IDFF Property key for <code>idpProxy_load_ums</code>
      */
     String KEY_IDP_PROXY_LOAD_UMS = "idpProxy_load_ums";
-    
-    /**
-     * SAMLv2, IDFF Property key for <code>idpProxy_cookiedomain</code>
-     */
-    String KEY_IDP_PROXY_COOKIE_DOMAIN = "idpProxy_cookiedomain";
     
     /**
      * SAMLv2, IDFF Property key for <code>idpProxy_user</code>

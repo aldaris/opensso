@@ -1,4 +1,5 @@
 /* The contents of this file are subject to the terms
+ (updated)
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -17,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.75 2009-03-26 14:42:39 cmwesley Exp $
+ * $Id: TestCommon.java,v 1.76 2009-05-27 23:06:35 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +100,6 @@ public class TestCommon implements TestConstants {
     static protected String uri;
     static protected String realm;
     static protected String serverName;
-    static protected String cookieDomain;
     static protected int notificationSleepTime;
     static protected Level logLevel;
     static protected boolean distAuthEnabled = false;
@@ -151,7 +151,7 @@ public class TestCommon implements TestConstants {
                     TestConstants.KEY_AMC_PROTOCOL);
             serverHost = rb_amconfig.getString(TestConstants.KEY_AMC_HOST);
             serverPort = rb_amconfig.getString(TestConstants.KEY_AMC_PORT);
-            serverUri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);             
+            serverUri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);
             keyAlias = rb_amconfig.getString(
                     TestConstants.KEY_AMC_XMLSIG_CERTALIAS);
             distAuthEnabled = ((String)rb_amconfig.getString(
@@ -181,8 +181,6 @@ public class TestCommon implements TestConstants {
                         strDistAuthURL.substring(iThirdSep + 1, iFourthSep);
             }
             realm = rb_amconfig.getString(TestConstants.KEY_ATT_REALM);
-            cookieDomain = rb_amconfig.getString(
-                    TestConstants.KEY_ATT_COOKIE_DOMAIN);
             notificationSleepTime = new Integer(rb_amconfig.getString(
                     TestConstants.KEY_ATT_NOTIFICATION_SLEEP)).intValue();
         } catch (Exception e) {
@@ -467,8 +465,6 @@ public class TestCommon implements TestConstants {
         map.put("serverurl", strProtocol + ":" + "//" + strHost + ":" +
                 strPort);
         map.put("serveruri", strURI);
-        map.put(TestConstants.KEY_ATT_COOKIE_DOMAIN, cfg.getString(
-                TestConstants.KEY_ATT_COOKIE_DOMAIN));
         map.put(TestConstants.KEY_ATT_AMADMIN_USER, cfg.getString(
                 TestConstants.KEY_ATT_AMADMIN_USER));
         map.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD, cfg.getString(
@@ -518,135 +514,175 @@ public class TestCommon implements TestConstants {
         // Forming the Server protocol, host & port
         StringBuffer strBuff = new StringBuffer();
         String strServerURL = (String)map.get("serverurl");
-        String strServerURI = (String)map.get("serveruri");        
-        log(Level.FINEST, "getPostString", "serverurl=" + strServerURL + 
-                "serveruri=" + strServerURI);
+        String strServerURI = (String)map.get("serveruri");
+        log(Level.FINEST, "getPostString", "serverurl=" + strServerURL +
+                " serveruri=" + strServerURI);
         String strLocalURL = strServerURL;
         int iIndex;
         iIndex = strServerURL.indexOf("://");
         String strServerProtocol = strLocalURL.substring(0, iIndex);
-        log(Level.FINEST, "getPostString", "strServerProtocol=" + 
+        log(Level.FINEST, "getPostString", "strServerProtocol=" +
                 strServerProtocol);
         strLocalURL = strLocalURL.substring(iIndex + 3, strLocalURL.length());
         iIndex = strLocalURL.indexOf(":");
         String strServerHost = strLocalURL.substring(0, iIndex);
-        log(Level.FINEST, "getPostString", "strServerHost=" + 
+        log(Level.FINEST, "getPostString", "strServerHost=" +
                 strServerHost);
+        int iDot = strServerHost.indexOf(".");
+        String cookieDomain;
+        if (iDot == -1)
+            cookieDomain = strServerHost;
+        else
+            cookieDomain = strServerHost.substring(iDot,
+                    strServerHost.length());
+
         strLocalURL = strLocalURL.substring(iIndex + 1, strLocalURL.length());
         String strServerPort = strLocalURL;
-        log(Level.FINEST, "getPostString", "strServerPort=" + 
+        log(Level.FINEST, "getPostString", "strServerPort=" +
                 strServerPort);
         String strURL = strServerURL + strServerURI + "/config/configurator";
-        log(Level.FINEST, "getPostString", "strURL: " + strURL);          
-        strBuff.append(URLEncoder.encode("SERVER_URL", "UTF-8"))
-		.append("=")
-		.append(URLEncoder.encode(strServerURL, "UTF-8"))
+        log(Level.FINEST, "getPostString", "strURL: " + strURL);
+        strBuff.append(URLEncoder.encode("deployuri", "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(strServerURI, "UTF-8"))
+                .append("&")
+                .append(URLEncoder.encode("SERVER_URL", "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(strServerURL, "UTF-8"))
                 .append("&")
                 .append(URLEncoder.encode("SERVER_PORT", "UTF-8"))
-		.append("=")
-		.append(URLEncoder.encode(strServerPort, "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(strServerPort, "UTF-8"))
                 .append("&")
                 .append(URLEncoder.encode("SERVER_HOST", "UTF-8"))
-		.append("=")
-		.append(URLEncoder.encode(strServerHost, "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(strServerHost, "UTF-8"))
                 .append("&")
                 .append(URLEncoder.encode("COOKIES_DOMAIN", "UTF-8"))
- 		.append("=")
-                .append(URLEncoder.encode(
-                    (String)map.get(
-                        TestConstants.KEY_ATT_COOKIE_DOMAIN), "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(cookieDomain, "UTF-8"))
                 .append("&")
                 .append(URLEncoder.encode("BASE_DIR", "UTF-8"))
-		.append("=")
-     		.append(URLEncoder.encode(
+                .append("=")
+                .append(URLEncoder.encode(
                     (String)map.get(TestConstants.KEY_ATT_CONFIG_DIR), "UTF-8"))
                 .append("&");
-        
+
         String strEncryptKey = (String)map.get(
                 TestConstants.KEY_ATT_AM_ENC_PWD);
         if (!(strEncryptKey.equals(null)) && !(strEncryptKey.equals(""))) {
             strBuff.append(URLEncoder.encode("AM_ENC_KEY", "UTF-8"))
-                    .append("=")		
-                    .append(URLEncoder.encode(strEncryptKey, "UTF-8")); 
+                    .append("=")
+                    .append(URLEncoder.encode(strEncryptKey, "UTF-8"));
         } else {
             strBuff.append(URLEncoder.encode("AM_ENC_KEY", "UTF-8"))
-                    .append("=")		
+                    .append("=")
                     .append(URLEncoder.encode(
-                        "FederatedAccessManagerEncryptionKey", "UTF-8")); 
+                        "FederatedAccessManagerEncryptionKey", "UTF-8"));
         }
 
-        String strDirServerFQDN = (String) map.get(
-                TestConstants.KEY_ATT_DIRECTORY_SERVER);
-        strBuff.append("&")
+       strBuff.append("&")
                 .append(URLEncoder.encode("PLATFORM_LOCALE", "UTF-8"))
-		.append("=")
-		.append(URLEncoder.encode("en_US", "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode("en_US", "UTF-8"))
                 .append("&")
                 .append(URLEncoder.encode("ADMIN_PWD", "UTF-8"))
-		.append("=")
-		.append(URLEncoder.encode( 
+                .append("=")
+                .append(URLEncoder.encode(
                     (String)map.get(
                     TestConstants.KEY_ATT_AMADMIN_PASSWORD), "UTF-8"))
                 .append("&")
                 .append(URLEncoder.encode("ADMIN_CONFIRM_PWD", "UTF-8"))
-		.append("=")		
-		.append(URLEncoder.encode( 
+                .append("=")
+                .append(URLEncoder.encode(
                     (String)map.get(
                     TestConstants.KEY_ATT_AMADMIN_PASSWORD), "UTF-8"))
                 .append("&");
-        
+
         //DIRECTORY SERVER PARAMETERS
         String strConfigStore = (String)map.get(
                     TestConstants.KEY_ATT_CONFIG_DATASTORE);
-        log(Level.FINE, "configureProduct", "Config store is: " +
+        log(Level.FINE, "getPostString", "Config store is: " +
                 strConfigStore);
-        strBuff.append(URLEncoder.encode("DIRECTORY_SSL", "UTF-8"))
-                .append("=")
-                .append(URLEncoder.encode("SIMPLE", "UTF-8"))
-                .append("&");
+        String strConfigDirPort = (String)map.get(
+                            TestConstants.KEY_ATT_DIRECTORY_PORT);
+        if (strConfigStore.equals("embedded")) {
+            strBuff.append(URLEncoder.encode("DIRECTORY_SERVER", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(host, "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("DIRECTORY_PORT", "UTF-8"))
+                    .append("=");
+                    strConfigDirPort = Integer.toString(getUnusedPort());
+                    strBuff.append(URLEncoder.encode(strConfigDirPort,
+                            "UTF-8"));
+                    log(Level.FINEST, "getPostString", "Config datastore" +
+                            "port is: " + strConfigDirPort);
+                    strBuff.append("&")
+                    .append(URLEncoder.encode("DS_DIRMGRPASSWD", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(
+                        (String)map.get(
+                        TestConstants.KEY_ATT_AMADMIN_PASSWORD), "UTF-8"));
+        } else if (strConfigStore.equals("dirServer")) {
+            strBuff.append(URLEncoder.encode("DIRECTORY_SSL", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode("SIMPLE", "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("DIRECTORY_SERVER", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(
+                        (String)map.get(TestConstants.KEY_ATT_DIRECTORY_SERVER),
+                        "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("DS_DIRMGRDN", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(
+                        (String)map.get(TestConstants.KEY_ATT_DS_DIRMGRDN),
+                        "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("DIRECTORY_PORT", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(
+                        (String)map.get(
+                        TestConstants.KEY_ATT_DIRECTORY_PORT), "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("DS_DIRMGRPASSWD", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(
+                        (String)map.get(
+                        TestConstants.KEY_ATT_DS_DIRMGRPASSWD), "UTF-8"));
+        }
+        strBuff.append("&")
+            .append(URLEncoder.encode("ROOT_SUFFIX", "UTF-8"))
+            .append("=")
+            .append(URLEncoder.encode((String)map.get(
+                TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX), "UTF-8"))
+            .append("&")
+            .append(URLEncoder.encode("DATA_STORE", "UTF-8"))
+            .append("=")
+            .append(URLEncoder.encode(strConfigStore, "UTF-8"));
 
-        strBuff.append(URLEncoder.encode("DIRECTORY_SERVER", "UTF-8"))
-                .append("=")
-                .append(URLEncoder.encode(strDirServerFQDN, "UTF-8"))
-                .append("&");        
-        strBuff.append(URLEncoder.encode("DS_DIRMGRDN", "UTF-8"))
-                .append("=")
-                .append(URLEncoder.encode(
-                    (String)map.get(TestConstants.KEY_ATT_DS_DIRMGRDN),
-                    "UTF-8"))
-                .append("&")
-                .append(URLEncoder.encode("ROOT_SUFFIX", "UTF-8"))
-                .append("=")
-                .append(URLEncoder.encode((String)map.get(
-                    TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX), "UTF-8"))
-                .append("&")
-                .append(URLEncoder.encode("DATA_STORE", "UTF-8"))
-                .append("=")
-                .append(URLEncoder.encode(strConfigStore, "UTF-8"))        
-                .append("&")
-                .append(URLEncoder.encode("DIRECTORY_PORT", "UTF-8"))
-                .append("=")
-                .append(URLEncoder.encode(
-                    (String)map.get(
-                    TestConstants.KEY_ATT_DIRECTORY_PORT), "UTF-8"))
-                .append("&")
-                .append(URLEncoder.encode("DS_DIRMGRPASSWD", "UTF-8"))
-                .append("=")
-                .append(URLEncoder.encode(
-                    (String)map.get(
-                    TestConstants.KEY_ATT_DS_DIRMGRPASSWD), "UTF-8"));
- 
         //USER STORE PARAMETERS
         ResourceBundle umCfgData = ResourceBundle.getBundle("config" +
-                    fileseparator + "UMGlobalDatastoreConfig");      
+                    fileseparator + "UMGlobalDatastoreConfig");
         ResourceBundle umGblCfgData = ResourceBundle.getBundle("config" +
                     fileseparator + "default" + fileseparator +
-                    "UMGlobalDatastoreConfig");      
+                    "UMGlobalDatastoreConfig");
         String strUMStore = (String)map.get(
                     TestConstants.KEY_ATT_CONFIG_UMDATASTORE);
-        log(Level.FINE, "configureProduct", "UM store is: " + strUMStore + 
-                ". Defaulting to Config Store parameters");
-        if (strUMStore.equals("embedded")) {
+        log(Level.FINE, "getPostString", "UM data store is: " + strUMStore);
+
+        if (strUMStore.equals("embedded") &&
+                (strConfigStore.equals("dirServer"))) {
+            log(Level.SEVERE, "getPostString", "User config datastore cannot" +
+                    " be set to embedded if config datastore is not set to" +
+                    " embedded");
+            return "blank";
+        }
+
+        if (strUMStore.equals("embedded") &&
+                (strConfigStore.equals("embedded"))) {
             strBuff.append("&")
                     .append(URLEncoder.encode("USERSTORE_TYPE", "UTF-8"))
                     .append("=")
@@ -654,19 +690,17 @@ public class TestCommon implements TestConstants {
                     .append("&")
                     .append(URLEncoder.encode("USERSTORE_MGRDN", "UTF-8"))
                     .append("=")
-                    .append(URLEncoder.encode(
-                        (String)map.get(
-                        TestConstants.KEY_ATT_DS_DIRMGRDN), "UTF-8"))
+                    .append(URLEncoder.encode("cn=Directory Manager", "UTF-8"))
                     .append("&")
                     .append(URLEncoder.encode("USERSTORE_HOST", "UTF-8"))
                     .append("=")
-                    .append(URLEncoder.encode(strDirServerFQDN, "UTF-8"))       
+                    .append(URLEncoder.encode(host, "UTF-8"))
                     .append("&")
                     .append(URLEncoder.encode("USERSTORE_PASSWD", "UTF-8"))
                     .append("=")
                     .append(URLEncoder.encode(
                         (String)map.get(
-                        TestConstants.KEY_ATT_DS_DIRMGRPASSWD), "UTF-8"))
+                        TestConstants.KEY_ATT_AMADMIN_PASSWORD), "UTF-8"))
                     .append("&")
                     .append(URLEncoder.encode("USERSTORE_SSL", "UTF-8"))
                     .append("=")
@@ -674,24 +708,22 @@ public class TestCommon implements TestConstants {
                     .append("&")
                     .append(URLEncoder.encode("USERSTORE_PORT", "UTF-8"))
                     .append("=")
-                    .append(URLEncoder.encode((String)map.get(
-                        TestConstants.KEY_ATT_DIRECTORY_PORT), "UTF-8"))
+                    .append(URLEncoder.encode(strConfigDirPort, "UTF-8"))
                     .append("&")
                     .append(URLEncoder.encode("USERSTORE_SUFFIX", "UTF-8"))
                     .append("=")
                     .append(URLEncoder.encode((String)map.get(
-                        TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX), "UTF-8"));                            
-                    
+                        TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX), "UTF-8"));
         } else {
             String strUMDSType = umCfgData.getString(
-                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX + strServerNo + "." 
+                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX + strServerNo + "."
                     + SMSConstants.UM_DATASTORE_TYPE + ".0");
             String strUMSSL = "SIMPLE";
-            if (umGblCfgData.getString(SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
-                    + "." + strUMDSType + "." + 
+            if (umGblCfgData.getString(SMSConstants.UM_DATASTORE_PARAMS_PREFIX
+                    + "." + strUMDSType + "." +
                     SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED).equals("true")) {
                 strUMSSL = "SSL";
-            } 
+            }
             strBuff.append("&")
                     .append(URLEncoder.encode("USERSTORE_TYPE", "UTF-8"))
                     .append("=")
@@ -700,23 +732,23 @@ public class TestCommon implements TestConstants {
                     .append(URLEncoder.encode("USERSTORE_MGRDN", "UTF-8"))
                     .append("=")
                     .append(URLEncoder.encode(umGblCfgData.getString(
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
-                            + "." + strUMDSType + "." + 
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX
+                            + "." + strUMDSType + "." +
                             SMSConstants.UM_DATASTORE_ADMINID), "UTF-8"))
                     .append("&")
                     .append(URLEncoder.encode("USERSTORE_HOST", "UTF-8"))
                     .append("=")
                     .append(URLEncoder.encode(umCfgData.getString(
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + 
-                            strServerNo + "." + 
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            strServerNo + "." +
                             SMSConstants.UM_LDAPv3_LDAP_SERVER + ".0"),
-                            "UTF-8"))        
+                            "UTF-8"))
                     .append("&")
                     .append(URLEncoder.encode("USERSTORE_PASSWD", "UTF-8"))
                     .append("=")
                     .append(URLEncoder.encode(umCfgData.getString(
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + 
-                             strServerNo + "." + 
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                             strServerNo + "." +
                              SMSConstants.UM_DATASTORE_ADMINPW + ".0"),
                             "UTF-8"))
                     .append("&")
@@ -728,33 +760,33 @@ public class TestCommon implements TestConstants {
                     .append("=")
                     .append(URLEncoder.encode(umCfgData.getString(
                             SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                             strServerNo + "." + 
+                             strServerNo + "." +
                              SMSConstants.UM_LDAPv3_LDAP_PORT + ".0"),
                             "UTF-8"))
                     .append("&")
                     .append(URLEncoder.encode("USERSTORE_SUFFIX", "UTF-8"))
                     .append("=")
                     .append(URLEncoder.encode(umCfgData.getString(
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + 
-                             strServerNo + "." + 
-                             SMSConstants.UM_DATASTORE_ROOT_SUFFIX + 
-                            ".0" ), "UTF-8"));        
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                             strServerNo + "." +
+                             SMSConstants.UM_DATASTORE_ROOT_SUFFIX +
+                            ".0" ), "UTF-8"));
         }
             //AMLDAPUSERPASSWD
-	strBuff.append("&")
+        strBuff.append("&")
                 .append(URLEncoder.encode("AMLDAPUSERPASSWD", "UTF-8"))
-		.append("=")
-		.append(URLEncoder.encode((String)map.get(
+                .append("=")
+                .append(URLEncoder.encode((String)map.get(
                     TestConstants.KEY_AMC_SERVICE_PASSWORD), "UTF-8"))
                 .append("&")
                 .append(URLEncoder.encode("AMLDAPUSERPASSWD_CONFIRM", "UTF-8"))
-		.append("=")
-		.append(URLEncoder.encode((String)map.get(
+                .append("=")
+                .append(URLEncoder.encode((String)map.get(
                     TestConstants.KEY_AMC_SERVICE_PASSWORD), "UTF-8"))
                 .append("&")
                 .append("LB_SITE_NAME=")
                 .append("&")
-                .append("LB_PRIMARY_URL=")        
+                .append("LB_PRIMARY_URL=")
                 .append("&")
                 .append("DS_EMB_REPL_HOST2=")
                 .append("&")
@@ -765,10 +797,8 @@ public class TestCommon implements TestConstants {
                 .append("DS_EMB_REPL_FLAG=")
                 .append("&")
                 .append("DS_EMB_REPL_PORT2=");
-      
-        
+
         return strBuff.toString();
-        
     }
     
     /** 
@@ -781,6 +811,9 @@ public class TestCommon implements TestConstants {
     protected boolean postConfigData(String strURL, Map map, String strServerNo) 
     throws Exception{
         String strURLParameters = getPostString(map, strServerNo);
+        if (strURLParameters.equals("blank"))
+            return false;
+
         URL url = new URL(strURL);
         log(Level.FINEST, "postConfigData", "Configuration strURLParameters: "
                 + strURLParameters);        
@@ -823,8 +856,7 @@ public class TestCommon implements TestConstants {
             return true;
         } else {
             return false;
-        }
-         
+        }         
     }
     
     /**
@@ -1381,8 +1413,8 @@ public class TestCommon implements TestConstants {
             strToken = stk.nextToken();
             idx = strToken.indexOf("=");
             if (idx != -1) {
-            	map.put(strToken.substring(0, idx), strToken.substring(idx + 1,
-            			strToken.length()));
+                map.put(strToken.substring(0, idx), strToken.substring(idx + 1,
+                        strToken.length()));
             }
         }
         log(Level.FINEST, "getAttributeMap", map);
@@ -1763,7 +1795,8 @@ public class TestCommon implements TestConstants {
     protected String deployClientSDKWar(ResourceBundle rb_client)
     throws Exception {
         cltWarDeployPort = getUnusedPort();
-        log(Level.FINE, "deployClientSDKWar", "Deploy port: " + cltWarDeployPort);
+        log(Level.FINE, "deployClientSDKWar", "Deploy port: " +
+                cltWarDeployPort);
 
         String strWarType = rb_client.getString("warfile_type");
         String strClientDomain = rb_client.getString("client_domain_name");
@@ -2830,5 +2863,44 @@ public class TestCommon implements TestConstants {
             }
         }
         return success;
+    }
+
+    /**
+     * Get config datastore details by making a call to get serverconfig.xml
+     * details using famadm.jsp
+     * @param famadm
+     * @param webClient
+     * @param url
+     * @return
+     * @throws java.lang.Exception
+     */
+    protected Map getSvrcfgDetails(FederationManager famadm,
+            WebClient webClient, String url)
+    throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        HtmlPage page = (HtmlPage) famadm.getSvrcfgXml(webClient, url);
+        String strPage = page.asXml();
+        int i1 = strPage.indexOf("sms");
+        int i2 = strPage.indexOf("port", i1);
+        int i21 = strPage.indexOf("&", i2 + 7);
+        String strPort = strPage.substring(i2 + 11, i21);
+        map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                SMSConstants.UM_LDAPv3_LDAP_PORT, strPort);
+        int i3 = strPage.indexOf("DirDN", i1);
+        int i4 = strPage.indexOf("&", i3 + 7);
+        String strDirDN = strPage.substring(i3 + 9, i4);
+        map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                SMSConstants.UM_LDAPv3_AUTHID, strDirDN);
+        int i5 = strPage.indexOf("BaseDN", i1);
+        int i6 = strPage.indexOf("&", i5 + 7);
+        String strBaseDN = strPage.substring(i5 + 10, i6);
+        map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                SMSConstants.UM_LDAPv3_ORGANIZATION_NAME, strBaseDN);
+        int i7 = strPage.indexOf("host", i1);
+        int i8 = strPage.indexOf("&", i7 + 7);
+        String strDirHost = strPage.substring(i7 + 11, i8);
+        map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                SMSConstants.UM_LDAPv3_LDAP_SERVER, strDirHost);
+        return (map);
     }
 }

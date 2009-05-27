@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-properties.xml,v 1.7 2009-01-26 23:39:54 nithyas Exp $
+ $Id: opensso-properties.xml,v 1.8 2009-05-27 23:04:18 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -44,6 +44,10 @@
             <pathelement location="${built.classes.dir}"/>
 	    <fileset dir="./lib">
 		    <include name="**/*.jar"/>
+		    <exclude name="**/opensso-sharedlib.jar"/>
+	    </fileset>
+	    <fileset dir="./lib">
+		    <include name="**/opensso-sharedlib.jar"/>
 	    </fileset>
         </path>
         <property name="client.cp" refid="client.classpath"/>

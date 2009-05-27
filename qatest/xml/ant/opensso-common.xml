@@ -18,18 +18,37 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.23 2009-03-25 19:44:40 mrudulahg Exp $
+ $Id: opensso-common.xml,v 1.24 2009-05-27 23:04:18 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <project>
+    <dirname property="QATEST_HOME" file="build.xml"/>
+    <echo message="QATEST_HOME=${QATEST_HOME}"/>
+
     <property 
       name="configurator.server1.properties" 
       value="${QATEST_HOME}/resources/Configurator-${SERVER_NAME1}.properties"/>
     <property 
       name="configurator.server2.properties" 
       value="${QATEST_HOME}/resources/Configurator-${SERVER_NAME2}.properties"/>
+
+    <condition property="report_dir.set" else="false">
+        <isset property="REPORT_DIR"/>
+    </condition>
+    <echo message="report_dir.set=${report_dir.set}"/>
+
+    <target name="checkReportDir">
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+        <if>
+            <equals arg1="${report_dir.set}" arg2="false"/>
+            <then>
+                <property name="REPORT_DIR" value="${QATEST_HOME}"/>
+            </then>
+        </if>
+        <echo message="REPORT_DIR=${REPORT_DIR}"/>
+    </target>
 
     <target name="copyDebugFiles" depends="init-common">
         <copy file="${SERVER_DIR}/test_env.txt" todir="${base.report.dir}"/>
@@ -43,7 +62,7 @@
         </copy>
      </target>
      
-    <target name="report" if="REPORT_DIR" depends="init-common">
+    <target name="report" depends="checkReportDir">
         <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
         <if>
             <equals arg1="${multimodule}" arg2="true"/>
@@ -364,9 +383,7 @@
         <antcall target="print-test-env-start"/>
 
         <java classname="com.sun.identity.qatest.setup.ClientConfigCreator">
-            <classpath>
-                <pathelement path="${built.classes.dir}" />
-            </classpath>
+            <classpath refid="client.classpath"/>
             <arg value="${QATEST_HOME}" />
             <arg value="${SERVER_NAME1}" />
             <arg value="${SERVER_NAME2}" />

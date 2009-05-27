@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.15 2008-05-30 01:40:51 sridharev Exp $
+ * $Id: SAMLv2Common.java,v 1.16 2009-05-27 23:06:35 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,6 +38,9 @@ import java.util.logging.Level;
  */
 public class SAMLv2Common extends TestCommon {
     
+    public static String fileseparator =
+            System.getProperty("file.separator");
+
     /** Creates a new instance of SAMLv2Common */
     public SAMLv2Common() {
         super("SAMLv2Common");

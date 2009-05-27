@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AuthNAuthorityTests.java,v 1.4 2009-04-29 05:31:22 vimal_67 Exp $
+ * $Id: SAMLv2AuthNAuthorityTests.java,v 1.5 2009-05-27 23:09:05 rmisra Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.SAMLv2Common;
+import com.sun.identity.qatest.common.SMSConstants;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
@@ -93,12 +94,15 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
             + "        </Attribute>";
     private String ATTRIB_AuthNCONTEXTCLASSREF_DEFAULT = "<Attribute name=\""
             + "idpAuthncontextClassrefMapping\">\n"
-            + "            <Value>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport|0||default</Value>\n"
+            + "            <Value>urn:oasis:names:tc:SAML:2.0:ac:classes:"
+            + "PasswordProtectedTransport|0||default</Value>\n"
             + "        </Attribute>";
     private String ATTRIB_AuthNCONTEXTCLASSREF_IDP_ENABLE = "<Attribute name=\""
             + "idpAuthncontextClassrefMapping\">\n"
-            + "            <Value>urn:oasis:names:tc:SAML:2.0:ac:classes:Password|6|module=ldap-2|</Value>\n"
-            + "            <Value>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport|10|module=ldap-1|default</Value>\n"
+            + "            <Value>urn:oasis:names:tc:SAML:2.0:ac:classes:"
+            + "Password|6|module=ldap-2|</Value>\n"
+            + "            <Value>urn:oasis:names:tc:SAML:2.0:ac:classes:"
+            + "PasswordProtectedTransport|10|module=ldap-1|default</Value>\n"
             + "        </Attribute>";
     /**
      * Constructor SAMLv2AuthNAuthorityTests
@@ -141,8 +145,8 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
                     + "samlv2TestData", configMap);
             SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
                     + "samlv2TestConfigData", configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("authentication" + fileseparator 
-                    + "authenticationConfigData", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("authentication" +
+                    fileseparator + "authenticationConfigData", configMap);
             SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
                     + "SAMLv2AuthNAuthorityTests", configMap);
             configMap.put(TestConstants.KEY_SP_USER, "sp" + testName);
@@ -545,16 +549,63 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
                     ".module-service-name");
             moduleSubConfigId = "serverconfig";
             List mapModDataList = new ArrayList();
+
+            String serverName =
+                    configMap.get(TestConstants.KEY_IDP_SERVER_ALIAS);
+            ResourceBundle cfgData =
+                    ResourceBundle.getBundle("Configurator-" + serverName +
+                    "-Generated");
+
+            String umdatastore = cfgData.getString("umdatastore");
+            boolean bEmb = false;
+
+            Map mCfgData = null;
+            if (umdatastore.equals("embedded")) {
+                bEmb = true;
+                mCfgData = getSvrcfgDetails(fmIDP, idpWebClient, idpurl);
+            }
+
             Enumeration bundleKeys = modData.getKeys();
+            String value = null;
             while (bundleKeys.hasMoreElements()) {
                 String key = (String) bundleKeys.nextElement();
                 if (key.startsWith(strModname) && !(key.contains("module-"))) {
                     String actualKey = key.substring(key.indexOf(".") + 1,
                             key.length());
-                    String value = modData.getString(key);
+
+                    if (bEmb) {
+                        if (actualKey.equals("iplanet-am-auth-ldap-server")) {
+                            value = (String) mCfgData.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_SERVER) +
+                                    ":" + (String) mCfgData.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_PORT);
+                        } else if (actualKey.
+                                equals("iplanet-am-auth-ldap-base-dn")) {
+                            value = (String) mCfgData.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." +
+                                    SMSConstants.UM_LDAPv3_ORGANIZATION_NAME);
+                        } else if (actualKey.
+                                equals("iplanet-am-auth-ldap-bind-dn")) {
+                            value = (String) mCfgData.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_AUTHID);
+                        } else if (actualKey.
+                                equals("iplanet-am-auth-ldap-bind-passwd")) {
+                            value = configMap.get(
+                                    TestConstants.KEY_IDP_AMADMIN_PASSWORD);
+                        } else {
+                            value = modData.getString(key);
+                        }
+                    } else {
+                        value = modData.getString(key);
+                    }
                     mapModDataList.add(actualKey + "=" + value);
                 }
             }
+
             if (FederationManager.getExitCode(
                     fmIDP.createSubCfg(idpWebClient, moduleServiceName,
                     strInsname, mapModDataList, idptestRealm,

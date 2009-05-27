@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationTest.java,v 1.7 2009-01-27 00:03:01 nithyas Exp $
+ * $Id: DelegationTest.java,v 1.8 2009-05-27 23:07:57 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,12 +31,9 @@ import com.sun.identity.qatest.common.DelegationCommon;
 import com.sun.identity.qatest.common.PolicyCommon;
 import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.SMSConstants;
-import com.sun.identity.qatest.common.TestConstants;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import org.testng.Reporter;
@@ -649,7 +646,7 @@ public class DelegationTest extends DelegationCommon {
      * @return Return true if realm creation is successfull
      */
     private boolean createRealm(SSOToken ssoToken, String realm, int dsConfIdx)
-    throws Exception {
+            throws Exception {
         try {
             if ((realm != null) && !realm.equals("/")) {
                 String childRealm =
@@ -659,44 +656,60 @@ public class DelegationTest extends DelegationCommon {
                     SMSCommon smsc = new SMSCommon(ssoToken, "config" +
                             fileseparator + "default" + fileseparator +
                             "UMGlobalConfig");
-                    Map<String, String> umDatastoreTypes = new HashMap<String,
-                            String>();
+                    Map<String, String> umDatastoreTypes =
+                            new HashMap<String, String>();
                     umDatastoreTypes.put("1", serverName);
-                    log(Level.FINE, "createRealm", 
+                    log(Level.FINE, "createRealm",
                             "Creating delegation realm " + realm + "...");
                     int secIdx = realm.substring(1,
                             realm.length()).indexOf("/");
                     log(Level.FINEST, "createRealm", "secIdx: " + secIdx);
-                    
+
                     // If there is sub sub realm, do not try to create a 
                     // datastore in it. Just use the one inherited from the
                     // sub realm
                     if (secIdx != -1) {
-                        createIdentity(ssoToken, getParentRealm(realm), 
+                        createIdentity(ssoToken, getParentRealm(realm),
                                 IdType.REALM, childRealm, new HashMap());
-                                //This sleep required to let the SMS to
-                                //self notify the realm creation and its
-                                //associated components such as services
-                                //and datastores
-                                Thread.sleep(notificationSleepTime);
+                        //This sleep required to let the SMS to
+                        //self notify the realm creation and its
+                        //associated components such as services
+                        //and datastores
+                        Thread.sleep(notificationSleepTime);
                     } else {
-                        createIdentity(ssoToken, getParentRealm(realm), 
+                        createIdentity(ssoToken, getParentRealm(realm),
                                 IdType.REALM, childRealm, new HashMap());
 
-                        smsc.deleteAllDataStores(realm, -1);
-                        smsc.createUMDatastoreGlobalMap(
-                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX,
-                                umDatastoreTypes,
-                                SMSConstants.QATEST_EXEC_MODE_SINGLE,
-                                "delegation");
-                        smsc.createDataStore(1, "delegation" + fileseparator +
-                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                                "-Generated");
-                                //This sleep required to let the SMS to
-                                //self notify the realm creation and its
-                                //associated components such as services
-                                //and datastores
-                                Thread.sleep(notificationSleepTime);
+                        ResourceBundle gblCfgData =
+                                ResourceBundle.getBundle("config" +
+                                fileseparator + "default" + fileseparator +
+                                "UMGlobalConfig");
+
+                        ResourceBundle cfgData =
+                                ResourceBundle.getBundle("Configurator-" +
+                                serverName + "-Generated");
+                        String umdatastore = cfgData.getString("umdatastore");
+
+                        if ((gblCfgData.getString("UMGlobalConfig." +
+                                "createNewDatastores")).equals("true") &&
+                                (!umdatastore.equals("embedded"))) {
+
+                            smsc.deleteAllDataStores(realm, -1);
+                            smsc.createUMDatastoreGlobalMap(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX,
+                                    umDatastoreTypes,
+                                    SMSConstants.QATEST_EXEC_MODE_SINGLE,
+                                    "delegation");
+                            smsc.createDataStore(1, "delegation" +
+                                    fileseparator +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "-Generated");
+                            //This sleep required to let the SMS to
+                            //self notify the realm creation and its
+                            //associated components such as services
+                            //and datastores
+                            Thread.sleep(notificationSleepTime);
+                        }
                     }
                 }
             }

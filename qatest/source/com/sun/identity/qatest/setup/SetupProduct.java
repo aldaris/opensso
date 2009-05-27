@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.21 2009-01-27 00:17:32 nithyas Exp $
+ * $Id: SetupProduct.java,v 1.22 2009-05-27 23:07:19 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.sun.identity.qatest.setup;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.LDAPCommon;
 import com.sun.identity.qatest.common.SMSCommon;
@@ -36,16 +35,6 @@ import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
-import com.sun.identity.sm.ServiceManager;
-import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchemaManager;
-import com.sun.identity.sm.SMSException;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.ArrayList;
@@ -54,21 +43,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * This class configures the product. This means calling the configurator to
@@ -101,10 +77,25 @@ public class SetupProduct extends TestCommon {
             boolean bserver2 = false;
             boolean bserver3 = false;
 
-            String namingProtocol = "";
-            String namingHost = "";
-            String namingPort = "";
-            String namingURI = "";
+            String namingProtocol0 = "";
+            String namingHost0 = "";
+            String namingPort0 = "";
+            String namingURI0 = "";
+
+            String namingProtocol1 = "";
+            String namingHost1 = "";
+            String namingPort1 = "";
+            String namingURI1 = "";
+
+            String namingProtocol2 = "";
+            String namingHost2 = "";
+            String namingPort2 = "";
+            String namingURI2 = "";
+
+            String namingProtocol3 = "";
+            String namingHost3 = "";
+            String namingPort3 = "";
+            String namingURI3 = "";
 
             String serverName2 = null;
             String serverName3 = null;
@@ -114,6 +105,8 @@ public class SetupProduct extends TestCommon {
             ResourceBundle cfg2 = null;
             ResourceBundle cfg3 = null;
             ResourceBundle cfgData = null;
+           
+            SMSCommon smscSS = null;
 
             Map<String, String> umDatastoreTypes = new HashMap<String,
                     String>();
@@ -130,6 +123,7 @@ public class SetupProduct extends TestCommon {
             // both entries are sepcified.
             if ((serverName0.indexOf("SERVER_NAME1") == -1) &&
                     (serverName1.indexOf("SERVER_NAME2") == -1)) {
+
 
                 if (serverName0.indexOf(".") != -1) {
                     log(Level.SEVERE, "SetupProduct", "Server configuration " +
@@ -158,7 +152,6 @@ public class SetupProduct extends TestCommon {
 
                 cfg0 = ResourceBundle.getBundle("Configurator-" + serverName0 +
                         "-Generated");
-                umDatastoreTypes.put("0", serverName0);
 
                 Map<String, String> configMapServer1 = new HashMap<String,
                         String>();
@@ -174,7 +167,6 @@ public class SetupProduct extends TestCommon {
 
                 cfg1 = ResourceBundle.getBundle("Configurator-" + serverName1 +
                         "-Generated");
-                umDatastoreTypes.put("1", serverName1);
                 
                 log(Level.FINE, "SetupProduct", "Multiprotocol " +
                         "flag is set to: " +
@@ -219,7 +211,6 @@ public class SetupProduct extends TestCommon {
 
                     cfg2 = ResourceBundle.getBundle("Configurator-" +
                             serverName2 + "-Generated");
-                    umDatastoreTypes.put("2", serverName2);
 
                     Map<String, String> configMapServer3 = new HashMap<String,
                             String>();
@@ -235,7 +226,6 @@ public class SetupProduct extends TestCommon {
 
                     cfg3 = ResourceBundle.getBundle("Configurator-" +
                             serverName3 + "-Generated");
-                    umDatastoreTypes.put("3", serverName3);
                 }
                 
                 // Initiating setp for server index 0. This is with refrence to
@@ -249,61 +239,371 @@ public class SetupProduct extends TestCommon {
                 Map map = getURLComponents(strURL);
                 log(Level.FINE, "SetupProduct", "Server URL Components: " +
                         map);
-                namingProtocol = (String)map.get("protocol");
-                namingHost = (String)map.get("host");
-                namingPort = (String)map.get("port");
-                namingURI = (String)map.get("uri");
+                namingProtocol0 = (String)map.get("protocol");
+                namingHost0 = (String)map.get("host");
+                namingPort0 = (String)map.get("port");
+                namingURI0 = (String)map.get("uri");
                 
                 list = new ArrayList();
                 
                 bserver0 = configureProduct(getConfigurationMap("Configurator-"
-                        + serverName0 + "-Generated", namingProtocol,
-                        namingHost, namingPort, namingURI), "0");
+                        + serverName0 + "-Generated", namingProtocol0,
+                        namingHost0, namingPort0, namingURI0), "0");
                 if (!bserver0) {
                     log(Level.FINE, "SetupProduct",
                             "Configuration failed for " + serverName0);
                     assert false;
-                } else {
-                    if (bMulti)
-                        createGlobalDatastoreFile(umDatastoreTypes,
-                                SMSConstants.QATEST_EXEC_MODE_ALL);
-                    else
-                        createGlobalDatastoreFile(umDatastoreTypes,
-                                SMSConstants.QATEST_EXEC_MODE_DUAL);
-                    
-                    cfgData = ResourceBundle.getBundle("config" +
-                            fileseparator +
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                }
+
+                // Initiating setp for server index 1. This is with refrence to
+                // definitions in resources/config/UMGlobalDatstoreConfig 
+                // resource bundle. This is for single server tests and uses
+                // client api's to do all the configuration.
+                log(Level.FINE, "SetupProduct", "Initiating setup for " +
+                        serverName1);
+                bserver1 = configureProduct(
+                        getConfigurationMap("Configurator-" + serverName1 +
+                        "-Generated"), "1");
+                if (!bserver1) {
+                    log(Level.FINE, "SetupProduct", "Configuration failed" +
+                            " for " + serverName1);
+                    assert false;
+                }
+
+                if (bMulti) {
+                    //configure multiple sp's
+                    log(Level.FINE, "SetupProduct", "Initiating setup for " +
+                            "multiple SP's");
+
+                    // Initiating setp for server index 2. This is with refrence
+                    // to definitions in resources/config/UMGlobalDatstoreConfig
+                    // resource bundle. This is done using famadm.jsp.
+                    log(Level.FINE, "SetupProduct", "Initiating setup for " +
+                            serverName2);
+                    cfg2 = ResourceBundle.
+                            getBundle("Configurator-" + serverName2 +
                             "-Generated");
-                    String adminUser = cfg0.getString(
-                            TestConstants.KEY_ATT_AMADMIN_USER);
-                    String adminPassword = cfg0.getString(
-                            TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+                    strURL = cfg2.
+                            getString(TestConstants.KEY_AMC_NAMING_URL);
+                    log(Level.FINE, "SetupProduct", "Server URL: " + strURL);
+                    map = getURLComponents(strURL);
+                    log(Level.FINE, "SetupProduct", "Server URL Components: " +
+                            map);
+                    namingProtocol2 = (String)map.get("protocol");
+                    namingHost2 = (String)map.get("host");
+                    namingPort2 = (String)map.get("port");
+                    namingURI2 = (String)map.get("uri");
 
-                    String loginURL = namingProtocol + ":" + "//" + 
-                            namingHost + ":" + namingPort + namingURI + 
-                            "/UI/Login";
-                    String logoutURL = namingProtocol + ":" + "//" + 
-                            namingHost + ":" + namingPort + namingURI + 
-                            "/UI/Logout";
-                    String famadmURL = namingProtocol + ":" + "//" + 
-                            namingHost + ":" + namingPort + namingURI;
-                        
-                    int dCount = new Integer(cfgData.getString(
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "0." +
-                            SMSConstants.UM_DATASTORE_COUNT)).intValue();
-                    WebClient webClient = null;
-                    try {
-                        FederationManager famadm =
-                                    new FederationManager(famadmURL);
-                            webClient = new WebClient();
-                            consoleLogin(webClient, loginURL, adminUser,
-                                    adminPassword);
+                    bserver2 = configureProduct(
+                            getConfigurationMap("Configurator-" + serverName2 +
+                            "-Generated", namingProtocol2, namingHost2,
+                            namingPort2, namingURI2), "2");
+                    if (!bserver2) {
+                        log(Level.FINE, "SetupProduct", "Configuration failed" +
+                                " for " + serverName2);
+                        assert false;
+                    }
 
-                            if (createDataStoreUsingfamadm(webClient,
-                                    famadm, cfgData, 0, dCount)) {
+                    // Initiating setp for server index 3. This is with refrence
+                    // to definitions in resources/config/UMGlobalDatstoreConfig
+                    // resource bundle. This is done using famadm.jsp.
+                    log(Level.FINE, "SetupProduct", "Initiating setup for " +
+                            serverName3);
+                    cfg3 = ResourceBundle.getBundle("Configurator-" +
+                            serverName3 + "-Generated");
+                    strURL = cfg3.
+                            getString(TestConstants.KEY_AMC_NAMING_URL);
+                    log(Level.FINE, "SetupProduct", "Server URL: " + strURL);
+                    map = getURLComponents(strURL);
+                    log(Level.FINE, "SetupProduct", "Server URL Components:" +
+                            " " +  map);
+                    namingProtocol3 = (String)map.get("protocol");
+                    namingHost3 = (String)map.get("host");
+                    namingPort3 = (String)map.get("port");
+                    namingURI3 = (String)map.get("uri");
+
+                    bserver3 = configureProduct(
+                            getConfigurationMap("Configurator-" + serverName3 +
+                            "-Generated",
+                            namingProtocol3, namingHost3, namingPort3,
+                            namingURI3), "3");
+                    if (!bserver3) {
+                        log(Level.FINE, "SetupProduct", "Configuration failed" +
+                                " for " + serverName3);
+                        assert false;
+                    }
+                }
+
+                WebClient webClient0 = null;
+                WebClient webClient2 = null;
+                WebClient webClient3 = null;
+                
+                FederationManager famadm0 = null;
+                FederationManager famadm2 = null;
+                FederationManager famadm3 = null;
+                
+                String logoutURL0 = null;
+                String logoutURL2 = null;
+                String logoutURL3 = null;
+                
+                if (bserver0) {
+                    if ((gblCfgData.getString("UMGlobalConfig." +
+                            "createNewDatastores")).equals("true")) {
+                        String adminUser0 = cfg0.getString(
+                                TestConstants.KEY_ATT_AMADMIN_USER);
+                        String adminPassword0 = cfg0.getString(
+                                TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+                        String loginURL0 = namingProtocol0 + ":" + "//" + 
+                                namingHost0 + ":" + namingPort0 + namingURI0 + 
+                                "/UI/Login";
+                        logoutURL0 = namingProtocol0 + ":" + "//" + 
+                                namingHost0 + ":" + namingPort0 + namingURI0 + 
+                                "/UI/Logout";
+                        String famadmURL0 = namingProtocol0 + ":" + "//" + 
+                                namingHost0 + ":" + namingPort0 + namingURI0;
+                        famadm0 =  new FederationManager(famadmURL0);
+                        webClient0 = new WebClient();
+                        consoleLogin(webClient0, loginURL0, adminUser0,
+                                adminPassword0);
+                        Map mCfgData0 =  getSvrcfgDetails(famadm0, webClient0,
+                                namingProtocol0 + ":" + "//" + namingHost0 +
+                                ":" + namingPort0 + namingURI0);
+                        umDatastoreTypes.put("0", serverName0);
+                        umDatastoreTypes.put("0." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_SERVER,
+                                (String)mCfgData0.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_SERVER));
+                        umDatastoreTypes.put("0." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_PORT,
+                                (String)mCfgData0.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_PORT));
+                        umDatastoreTypes.put("0." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_ORGANIZATION_NAME,
+                                (String)mCfgData0.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_ORGANIZATION_NAME));
+                        umDatastoreTypes.put("0." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_AUTHID,
+                                (String)mCfgData0.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_AUTHID));
+                    }
+                }
+
+                if (bserver1) {
+                    if ((gblCfgData.getString("UMGlobalConfig." +
+                            "createNewDatastores")).equals("true")) {
+                        String namingURL = cfg1.getString(KEY_AMC_NAMING_URL);
+                        Map namingURLMap = getURLComponents(namingURL);
+
+                        namingProtocol1 = (String) namingURLMap.get("protocol");
+                        namingHost1 = (String) namingURLMap.get("host");
+                        namingPort1 = (String) namingURLMap.get("port");
+                        namingURI1 = (String) namingURLMap.get("uri");
+
+                            log(Level.FINE, "SetupProduct", "UM Datastore for " +
+                                    serverName1 + " is " +
+                                    cfg1.getString("umdatastore"));
+
+                            admintoken = getToken(adminUser, adminPassword,
+                                    basedn);
+                            smscSS = new SMSCommon(admintoken, "config" +
+                                    fileseparator + "default" + fileseparator +
+                                    "UMGlobalConfig");
+                            String url = namingProtocol1 + "://" + namingHost1
+                                    + ":" + namingPort1 + namingURI1 ;
+                            log(Level.FINEST, "SetuProduct",
+                                    "serverconfig.xml details for " +
+                                    namingURL + ":  " +
+                                    (smscSS.getServerConfigData(url)).
+                                    toString());
+                            Map mCfgData1 = smscSS.getServerConfigData(url);
+                            umDatastoreTypes.put("1", serverName0);
+                            umDatastoreTypes.put("1." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_SERVER,
+                                    (String)mCfgData1.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_SERVER));
+                            umDatastoreTypes.put("1." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_PORT,
+                                    (String)mCfgData1.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_PORT));
+                            umDatastoreTypes.put("1." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + 
+                                    SMSConstants.UM_LDAPv3_ORGANIZATION_NAME,
+                                    (String)mCfgData1.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." +
+                                    SMSConstants.UM_LDAPv3_ORGANIZATION_NAME));
+                            umDatastoreTypes.put("1." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_AUTHID,
+                                    (String)mCfgData1.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_AUTHID));
+                    }
+                }
+
+                if (bMulti) {
+                    if (bserver2) {
+                        if ((gblCfgData.getString("UMGlobalConfig." +
+                                "createNewDatastores")).equals("true")) {
+                            String adminUser2 = cfg2.getString(
+                                    TestConstants.KEY_ATT_AMADMIN_USER);
+                            String adminPassword2 = cfg2.getString(
+                                    TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+
+                            String loginURL2 = namingProtocol2 + ":" + "//" +
+                                    namingHost2 + ":" + namingPort2 +
+                                    namingURI2 + "/UI/Login";
+                            logoutURL2 = namingProtocol2 + ":" + "//" +
+                                    namingHost2 + ":" + namingPort2 +
+                                    namingURI2 + "/UI/Logout";
+                            String famadmURL2 = namingProtocol2 + ":" + "//" +
+                                    namingHost2 + ":" + namingPort2 +
+                                    namingURI2;
+                            famadm2 = new FederationManager(famadmURL2);
+                            webClient2 = new WebClient();
+                            consoleLogin(webClient2, loginURL2, adminUser2,
+                                    adminPassword2);
+                            Map mCfgData2 =  getSvrcfgDetails(famadm2,
+                                    webClient2, namingProtocol2 + ":" + "//" +
+                                    namingHost2 + ":" + namingPort2 +
+                                    namingURI2);
+                            umDatastoreTypes.put("2", serverName2);
+                            umDatastoreTypes.put("2." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_SERVER,
+                                    (String)mCfgData2.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_SERVER));
+                            umDatastoreTypes.put("2." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_PORT,
+                                    (String)mCfgData2.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_PORT));
+                            umDatastoreTypes.put("2." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." +
+                                    SMSConstants.UM_LDAPv3_ORGANIZATION_NAME,
+                                    (String)mCfgData2.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." +
+                                    SMSConstants.UM_LDAPv3_ORGANIZATION_NAME));
+                            umDatastoreTypes.put("2." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_AUTHID,
+                                    (String)mCfgData2.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_AUTHID));
+                        }
+                    }
+
+                    if (bserver3) {
+                        if ((gblCfgData.getString("UMGlobalConfig." +
+                                "createNewDatastores")).equals("true")) {
+                            String adminUser3 = cfg3.getString(
+                                    TestConstants.KEY_ATT_AMADMIN_USER);
+                            String adminPassword3 = cfg3.getString(
+                                    TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+
+                            String loginURL3 = namingProtocol3 + ":" + "//" +
+                                    namingHost3 + ":" + namingPort3 +
+                                    namingURI3 + "/UI/Login";
+                            logoutURL3 = namingProtocol3 + ":" + "//" +
+                                    namingHost3 + ":" + namingPort3 +
+                                    namingURI3 + "/UI/Logout";
+                            String famadmURL3 = namingProtocol3 + ":" + "//" +
+                                    namingHost3 + ":" + namingPort3 +
+                                    namingURI3;
+
+                            WebClient webClient = null;
+                            famadm3 = new FederationManager(famadmURL3);
+                            webClient3 = new WebClient();
+                            consoleLogin(webClient3, loginURL3, adminUser3,
+                                    adminPassword3);
+                            Map mCfgData3 =  getSvrcfgDetails(famadm3,
+                                    webClient3, namingProtocol3 + ":" + "//" +
+                                    namingHost3 + ":" + namingPort3 +
+                                    namingURI3);
+                            umDatastoreTypes.put("3", serverName3);
+                            umDatastoreTypes.put("3." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_SERVER,
+                                    (String)mCfgData3.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_SERVER));
+                            umDatastoreTypes.put("3." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_PORT,
+                                    (String)mCfgData3.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_PORT));
+                            umDatastoreTypes.put("3." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." +
+                                    SMSConstants.UM_LDAPv3_ORGANIZATION_NAME,
+                                    (String)mCfgData3.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." +
+                                    SMSConstants.UM_LDAPv3_ORGANIZATION_NAME));
+                            umDatastoreTypes.put("3." +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_AUTHID,
+                                    (String)mCfgData3.get(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_AUTHID));
+                        }
+                    }
+                }
+
+                if (bMulti)
+                    createGlobalDatastoreFile(umDatastoreTypes,
+                            SMSConstants.QATEST_EXEC_MODE_ALL);
+                else
+                    createGlobalDatastoreFile(umDatastoreTypes,
+                            SMSConstants.QATEST_EXEC_MODE_DUAL);
+
+                if (bserver0) {
+                    if ((gblCfgData.getString("UMGlobalConfig." +
+                            "createNewDatastores")).equals("true")) {
+                        try {
+                            boolean bDSCreate = false;
+                            if (cfg0.getString(
+                                    TestConstants.KEY_ATT_CONFIG_UMDATASTORE).
+                                    equals("dirServer")) {
+                            cfgData = ResourceBundle.getBundle("config" +
+                                    fileseparator +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "-Generated");
+                            int dCount = new Integer(cfgData.getString(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "0." + SMSConstants.UM_DATASTORE_COUNT)).
+                                    intValue();
+
+                                    bDSCreate = createDataStoreUsingfamadm(
+                                            webClient0, famadm0, cfgData, 0,
+                                            dCount);
+                             } else {
+                                    bDSCreate = createDataStoreUsingfamadm(
+                                            webClient0, famadm0, cfg0,
+                                            umDatastoreTypes, 0);
+                             }
+                            if (bDSCreate) {
                                 HtmlPage pageDStore =
-                                        famadm.listDatastores(webClient, realm);
+                                        famadm0.listDatastores(webClient0,
+                                        realm);
                                 if (FederationManager.
                                         getExitCode(pageDStore) != 0) {
                                     log(Level.SEVERE, "SetupProduct",
@@ -319,8 +619,8 @@ public class SetupProduct extends TestCommon {
                                             getListFromHtmlPage(pageDStore), 0);
                                     if (datastoreList.size() != 0) {
                                         if (FederationManager.getExitCode(
-                                                famadm.deleteDatastores(
-                                                webClient, realm,
+                                                famadm0.deleteDatastores(
+                                                webClient0, realm,
                                                 datastoreList)) != 0) {
                                             log(Level.SEVERE, "SetupProduct",
                                                     "deleteDatastores famadm" +
@@ -332,244 +632,191 @@ public class SetupProduct extends TestCommon {
                             } else {
                                 log(Level.SEVERE, "SetupProduct", "DataStore" +
                                     " configuration didn't succeed for " +
-                                    namingHost);
+                                    namingHost0);
                             }
                         } catch (Exception e) {
                             log(Level.SEVERE, "SetupProduct", e.getMessage());
                             e.printStackTrace();
                         } finally {
-                            consoleLogout(webClient, logoutURL);
+                            consoleLogout(webClient0, logoutURL0);
                         }
+                    }
                 }
                 
-                // Initiating setp for server index 1. This is with refrence to
-                // definitions in resources/config/UMGlobalDatstoreConfig 
-                // resource bundle. This is for single server tests and uses
-                // client api's to do all the configuration.
-                log(Level.FINE, "SetupProduct", "Initiating setup for " +
-                        serverName1);
-                bserver1 = configureProduct(
-                        getConfigurationMap("Configurator-" + serverName1 +
-                        "-Generated"), "1");
-                if (!bserver1) {
-                    log(Level.FINE, "SetupProduct", "Configuration failed" +
-                            " for " + serverName1);
-                    assert false;
-                } else {
-                    cfg1 = ResourceBundle.getBundle("Configurator-" +
-                            serverName1 + "-Generated");
-                    String strUMDatastore1 = cfg1.getString("umdatastore");
-                    log(Level.FINE, "SetupProduct", "UM Datastore for " +
-                            serverName1 + " is " + strUMDatastore1);
-                        admintoken = getToken(adminUser, adminPassword, basedn);
-                        SMSCommon smsc = new SMSCommon(admintoken, "config" +
-                                fileseparator + "default" + fileseparator +
-                                "UMGlobalConfig");
-                        smsc.createDataStore(1, "config" + fileseparator +
+                if (bserver1) {
+                    String namingURL = cfg1.getString(KEY_AMC_NAMING_URL);
+                    Map namingURLMap = getURLComponents(namingURL);
+
+                    namingProtocol1 = (String) namingURLMap.get("protocol");
+                    namingHost1 = (String) namingURLMap.get("host");
+                    namingPort1 = (String) namingURLMap.get("port");
+                    namingURI1 = (String) namingURLMap.get("uri");
+
+                    if ((gblCfgData.getString("UMGlobalConfig." +
+                            "createNewDatastores")).equals("true")) {
+                        smscSS.createDataStore(1, "config" + fileseparator +
                                 SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
                                 "-Generated");
                         if ((gblCfgData.getString("UMGlobalConfig." +
                                 "deleteExistingDatastores")).equals("true"))
-                            smsc.deleteAllDataStores(realm, 1);
-                        modifyPolicyService(smsc, serverName1, 1, 0);
+                            smscSS.deleteAllDataStores(realm, 1);
+                        if ((cfg1.getString("umdatastore")).equals("embedded"))
+                        {
+                            String url = namingProtocol1 + "://" + namingHost1 +
+                                    ":" + namingPort1 + namingURI1 ;
+                            Map dmap = smscSS.getServerConfigData(url);
+                            cfgData = ResourceBundle.getBundle("config" +
+                                    fileseparator +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "-Generated");
+                            dmap.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_AUTHID,
+                                    cfgData.getString(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "1." + SMSConstants.UM_LDAPv3_AUTHID +
+                                    ".0"));
+                            dmap.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_AUTHPW,
+                                    cfgData.getString(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "1." + SMSConstants.UM_LDAPv3_AUTHPW +
+                                    ".0"));
+                            modifyAuthConfigproperties(dmap);
+                        }
+                        modifyPolicyService(smscSS, serverName0, 1, 0);
+                    }
                 }
                 
-                // Configure other two servers (index 2 and 3 in resources/
-                // config/UMGlobalDatstoreConfig only if multiprotocol is 
-                // enabled. This flag is set in the server configuration file
-                // for server index 0.
                 if (bMulti) {
-                    //configure multiple sp's
-                    log(Level.FINE, "SetupProduct", "Initiating setup for " +
-                            "multiple SP's");
-
-                    // Initiating setp for server index 2. This is with refrence
-                    // to definitions in resources/config/UMGlobalDatstoreConfig 
-                    // resource bundle. This is done using famadm.jsp.
-                    log(Level.FINE, "SetupProduct", "Initiating setup for " +
-                            serverName2);                    
-                    cfg2 = ResourceBundle.
-                            getBundle("Configurator-" + serverName2 +
-                            "-Generated");
-                    strURL = cfg2.
-                            getString(TestConstants.KEY_AMC_NAMING_URL);
-                    log(Level.FINE, "SetupProduct", "Server URL: " + strURL);
-                    map = getURLComponents(strURL);
-                    log(Level.FINE, "SetupProduct", "Server URL Components: " +
-                            map);
-                    namingProtocol = (String)map.get("protocol");
-                    namingHost = (String)map.get("host");
-                    namingPort = (String)map.get("port");
-                    namingURI = (String)map.get("uri");
-                    
-                    bserver2 = configureProduct(
-                            getConfigurationMap("Configurator-" + serverName2 +
-                            "-Generated", namingProtocol, namingHost, 
-                            namingPort, namingURI), "2");
-                    if (!bserver2) {
-                        log(Level.FINE, "SetupProduct", "Configuration failed" +
-                                " for " + serverName2);
-                        assert false;
-                    } else {
-                        String adminUser = cfg2.getString(
-                                TestConstants.KEY_ATT_AMADMIN_USER);
-                        String adminPassword = cfg2.getString(
-                                TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-
-                        String loginURL = namingProtocol + ":" + "//" + 
-                                namingHost + ":" + namingPort + 
-                                namingURI + "/UI/Login";
-                        String logoutURL = namingProtocol + ":" + "//" + 
-                                namingHost + ":" + namingPort + 
-                                namingURI + "/UI/Logout";
-                        String famadmURL = namingProtocol + ":" + "//" + 
-                                namingHost + ":" + namingPort + 
-                                namingURI;
-                        int dCount = new Integer(cfgData.getString(
-                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                                "2." +
-                                SMSConstants.UM_DATASTORE_COUNT)).
-                                intValue();
-                        WebClient webClient = null;
-                        try {
-                            FederationManager famadm =
-                                    new FederationManager(famadmURL);
-                            webClient = new WebClient();
-                            consoleLogin(webClient, loginURL, adminUser,
-                                    adminPassword);
-
-                            if (createDataStoreUsingfamadm(webClient,
-                                    famadm, cfgData, 2, dCount)) { 
-                            HtmlPage pageDStore = famadm.listDatastores(
-                                    webClient, realm);
-                            if (FederationManager.
+                    if (bserver2) {
+                        if ((gblCfgData.getString("UMGlobalConfig." +
+                                "createNewDatastores")).equals("true")) {
+                         try {
+                             boolean bDSCreate = false;
+                             if (cfg2.getString(
+                                    TestConstants.KEY_ATT_CONFIG_UMDATASTORE).
+                                    equals("dirServer")) {
+                                 int dCount = new Integer(cfgData.getString(
+                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX
+                                        + "2." +
+                                        SMSConstants.UM_DATASTORE_COUNT)).
+                                        intValue();
+                                 bDSCreate = createDataStoreUsingfamadm(
+                                            webClient2, famadm2, cfgData, 2,
+                                            dCount);
+                             } else {
+                                    bDSCreate = createDataStoreUsingfamadm(
+                                            webClient2, famadm2, cfg2,
+                                            umDatastoreTypes, 2);
+                             }
+                             if (bDSCreate) {
+                                 HtmlPage pageDStore =
+                                        famadm2.listDatastores(webClient2,
+                                        realm);
+                                 if (FederationManager.
                                     getExitCode(pageDStore) != 0) {
-                                log(Level.SEVERE, "SetupProduct",
-                                        "listDatastores famadm command failed");
-                                assert false;
-                            }
-                            if ((gblCfgData.getString("UMGlobalConfig." +
-                                    "deleteExistingDatastores")).
-                                    equals("true")) {
-                                List datastoreList = 
-                                        smscGbl.getDatastoreDeleteList(
-                                        getListFromHtmlPage(pageDStore), 2);
-                                if (datastoreList.size() != 0) {
-                                    if (FederationManager.getExitCode(
-                                            famadm.deleteDatastores(
-                                            webClient, realm, datastoreList))
-                                            != 0) {
                                         log(Level.SEVERE, "SetupProduct",
-                                                "deleteDatastores famadm" +
+                                                "listDatastores famadm" +
                                                 " command failed");
                                         assert false;
+                                 }
+                                 if ((gblCfgData.getString("UMGlobalConfig." +
+                                        "deleteExistingDatastores")).
+                                        equals("true")) {
+                                    List datastoreList = 
+                                            smscGbl.getDatastoreDeleteList(
+                                            getListFromHtmlPage(pageDStore), 2);
+                                    if (datastoreList.size() != 0) {
+                                        if (FederationManager.getExitCode(
+                                                famadm2.deleteDatastores(
+                                                webClient2, realm,
+                                                datastoreList)) != 0) {
+                                            log(Level.SEVERE, "SetupProduct",
+                                                    "deleteDatastores famadm" +
+                                                    " command failed");
+                                            assert false;
+                                        }
                                     }
                                 }
+                            } else
+                                log(Level.SEVERE, "SetupProduct", "DataStore" +
+                                    " configuration didn't succeed for " + 
+                                    namingHost2);
+                            } catch (Exception e) {
+                                log(Level.SEVERE, "SetupProduct",
+                                        e.getMessage());
+                                e.printStackTrace();
+                            } finally {
+                                consoleLogout(webClient2, logoutURL2);
                             }
-                        } else
-                            log(Level.SEVERE, "SetupProduct", "DataStore" +
-                                " configuration didn't succeed for " + 
-                                namingHost);
-                        } catch (Exception e) {
-                            log(Level.SEVERE, "SetupProduct", e.getMessage());
-                            e.printStackTrace();
-                        } finally {
-                            consoleLogout(webClient, logoutURL);
                         }
                     }
                     
-                    // Initiating setp for server index 3. This is with refrence
-                    // to definitions in resources/config/UMGlobalDatstoreConfig 
-                    // resource bundle. This is done using famadm.jsp.
-                    log(Level.FINE, "SetupProduct", "Initiating setup for " +
-                            serverName3);                    
-                    cfg3 = ResourceBundle.getBundle("Configurator-" +
-                            serverName3 + "-Generated");
-                    strURL = cfg3.
-                            getString(TestConstants.KEY_AMC_NAMING_URL);
-                    log(Level.FINE, "SetupProduct", "Server URL: " + strURL);
-                    map = getURLComponents(strURL);
-                    log(Level.FINE, "SetupProduct", "Server URL Components:" +
-                            " " +  map);
-                    namingProtocol = (String)map.get("protocol");
-                    namingHost = (String)map.get("host");
-                    namingPort = (String)map.get("port");
-                    namingURI = (String)map.get("uri");
-                    
-                    bserver3 = configureProduct(
-                            getConfigurationMap("Configurator-" + serverName3 +
-                            "-Generated",
-                            namingProtocol, namingHost, namingPort,
-                            namingURI), "3");
-                    if (!bserver3) {
-                        log(Level.FINE, "SetupProduct", "Configuration failed" +
-                                " for " + serverName3);
-                        assert false;
-                    } else {
-                        String adminUser = cfg3.getString(
-                                TestConstants.KEY_ATT_AMADMIN_USER);
-                        String adminPassword = cfg3.getString(
-                                TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-
-                        String loginURL = namingProtocol + ":" + "//" + 
-                                namingHost + ":" + namingPort + 
-                                namingURI + "/UI/Login";
-                        String logoutURL = namingProtocol + ":" + "//" + 
-                                namingHost + ":" + namingPort + 
-                                namingURI + "/UI/Logout";
-                        String famadmURL = namingProtocol + ":" + "//" + 
-                                namingHost + ":" + namingPort + 
-                                namingURI;
-
-                        int dCount = new Integer(cfgData.getString(
-                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                                "3." + SMSConstants.UM_DATASTORE_COUNT)).
-                                intValue();
-                        WebClient webClient = null;
-                        try {
-                            FederationManager famadm =
-                                    new FederationManager(famadmURL);
-                            webClient = new WebClient();
-                            consoleLogin(webClient, loginURL, adminUser,
-                                    adminPassword);
-
-                            if (createDataStoreUsingfamadm(webClient,
-                                    famadm, cfgData, 3, dCount)) {
-                            HtmlPage pageDStore = famadm.listDatastores(
-                                    webClient, realm);
-                            if (FederationManager.
-                                    getExitCode(pageDStore) != 0) {
-                                log(Level.SEVERE, "SetupProduct",
-                                        "listDatastores famadm command failed");
-                                assert false;
-                            }
-                            if ((gblCfgData.getString("UMGlobalConfig." +
-                                    "deleteExistingDatastores")).
-                                    equals("true")) {
-                                List datastoreList = 
-                                        smscGbl.getDatastoreDeleteList(
-                                        getListFromHtmlPage(pageDStore), 3);
-                                if (datastoreList.size() != 0) {
-                                    if (FederationManager.getExitCode(
-                                            famadm.deleteDatastores(
-                                            webClient, realm, datastoreList))
-                                            != 0) {
+                    if (bserver3) {
+                        if ((gblCfgData.getString("UMGlobalConfig." +
+                                "createNewDatastores")).equals("true")) {
+                            try {
+                                boolean bDSCreate = false;
+                                if (cfg3.getString(TestConstants.
+                                        KEY_ATT_CONFIG_UMDATASTORE).
+                                        equals("dirServer")) {
+                                    int dCount = new Integer(cfgData.getString(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "3." +
+                                    SMSConstants.UM_DATASTORE_COUNT)).
+                                    intValue();
+                                    bDSCreate = createDataStoreUsingfamadm(
+                                            webClient3, famadm3, cfgData, 3,
+                                            dCount);
+                                } else {
+                                    bDSCreate = createDataStoreUsingfamadm(
+                                            webClient3, famadm3, cfg3,
+                                            umDatastoreTypes, 3);
+                                }
+                                if (bDSCreate) {
+                                    HtmlPage pageDStore =
+                                            famadm3.listDatastores(webClient3,
+                                            realm);
+                                    if (FederationManager.
+                                        getExitCode(pageDStore) != 0) {
                                         log(Level.SEVERE, "SetupProduct",
-                                                "deleteDatastores famadm" +
-                                                " command failed");
+                                            "listDatastores famadm command" +
+                                            " failed");
                                         assert false;
                                     }
-                                }
+                                    if ((gblCfgData.getString(
+                                            "UMGlobalConfig." +
+                                        "deleteExistingDatastores")).
+                                        equals("true")) {
+                                        List datastoreList = 
+                                            smscGbl.getDatastoreDeleteList(
+                                            getListFromHtmlPage(pageDStore), 3);
+                                        if (datastoreList.size() != 0) {
+                                            if (FederationManager.getExitCode(
+                                                famadm3.deleteDatastores(
+                                                webClient3, realm,
+                                                datastoreList))
+                                                != 0) {
+                                                log(Level.SEVERE,
+                                                        "SetupProduct",
+                                                        "deleteDatastores" +
+                                                        " famadm command" +
+                                                        " failed");
+                                                assert false;
+                                            }
+                                        }
+                                    }
+                                } else
+                                    log(Level.SEVERE, "SetupProduct",
+                                            "DataStore configuration didn't" +
+                                            " succeed for " +  namingHost3);
+                            } catch (Exception e) {
+                                log(Level.SEVERE, "SetupProduct",
+                                        e.getMessage());
+                                e.printStackTrace();
+                            } finally {
+                                consoleLogout(webClient3, logoutURL3);
                             }
-                        } else
-                            log(Level.SEVERE, "SetupProduct", "DataStore" +
-                                " configuration didn't succeed for " +
-                                namingHost);
-                        } catch (Exception e) {
-                            log(Level.SEVERE, "SetupProduct", e.getMessage());
-                            e.printStackTrace();
-                        } finally {
-                            consoleLogout(webClient, logoutURL);
                         }
                     }
                 }
@@ -605,10 +852,10 @@ public class SetupProduct extends TestCommon {
                 String namingURL = cfg1.getString(KEY_AMC_NAMING_URL);
                 Map namingURLMap = getURLComponents(namingURL);
                 
-                namingProtocol = (String) namingURLMap.get("protocol");
-                namingHost = (String) namingURLMap.get("host");
-                namingPort = (String) namingURLMap.get("port");
-                namingURI = (String) namingURLMap.get("uri");
+                namingProtocol1 = (String) namingURLMap.get("protocol");
+                namingHost1 = (String) namingURLMap.get("host");
+                namingPort1 = (String) namingURLMap.get("port");
+                namingURI1 = (String) namingURLMap.get("uri");
                 
                 // Initiating setp for server index 1. This is with refrence
                 // to definitions in resources/config/UMGlobalDatstoreConfig 
@@ -617,28 +864,84 @@ public class SetupProduct extends TestCommon {
                         serverName0);   
                 
                 bserver1 = configureProduct(getConfigurationMap("Configurator-"
-                        + serverName0 + "-Generated", namingProtocol,
-                        namingHost, namingPort, namingURI), "1");
+                        + serverName0 + "-Generated", namingProtocol1,
+                        namingHost1, namingPort1, namingURI1), "1");
                 if (!bserver1) {
                     log(Level.FINE, "SetupProduct", "Configuration failed for" +
                             " " + serverName0);
                     setSingleServerSetupFailedFlag();
                     assert false;
                 } else {
-                    umDatastoreTypes.put("1", serverName0);
-                    createGlobalDatastoreFile(umDatastoreTypes,
-                            SMSConstants.QATEST_EXEC_MODE_SINGLE);
-                    admintoken = getToken(adminUser, adminPassword, basedn);
-                    SMSCommon smsc = new SMSCommon(admintoken, "config" +
-                            fileseparator + "default" + fileseparator +
-                            "UMGlobalConfig");
-                    smsc.createDataStore(1, "config" + fileseparator +
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            "-Generated");
                     if ((gblCfgData.getString("UMGlobalConfig." +
-                            "deleteExistingDatastores")).equals("true"))
-                        smsc.deleteAllDataStores(realm, 1);
-                    modifyPolicyService(smsc, serverName0, 1, 0);
+                            "createNewDatastores")).equals("true")) {
+                        admintoken = getToken(adminUser, adminPassword, basedn);
+                        smscSS = new SMSCommon(admintoken, "config" +
+                                fileseparator + "default" + fileseparator +
+                                "UMGlobalConfig");
+                        String url = namingProtocol1 + "://" + namingHost1 +
+                                ":" +  namingPort1 + namingURI1 ;
+                        log(Level.FINEST, "SetuProduct",
+                                "serverconfig.xml details for " + url + ":  " +
+                                (smscSS.getServerConfigData(url)).toString());
+                        Map mCfgData = smscSS.getServerConfigData(url);
+                        umDatastoreTypes.put("1", serverName0);
+                        umDatastoreTypes.put("1." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_SERVER,
+                                (String)mCfgData.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_SERVER));
+                        umDatastoreTypes.put("1." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_PORT,
+                                (String)mCfgData.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_PORT));
+                        umDatastoreTypes.put("1." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_ORGANIZATION_NAME,
+                                (String)mCfgData.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_ORGANIZATION_NAME));
+                        umDatastoreTypes.put("1." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_AUTHID,
+                                (String)mCfgData.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_AUTHID));
+                        createGlobalDatastoreFile(umDatastoreTypes,
+                                SMSConstants.QATEST_EXEC_MODE_SINGLE);
+                        smscSS.createDataStore(1, "config" + fileseparator +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                "-Generated");
+                        if ((gblCfgData.getString("UMGlobalConfig." +
+                                "deleteExistingDatastores")).equals("true"))
+                            smscSS.deleteAllDataStores(realm, 1);
+                        if ((cfg1.getString("umdatastore")).equals("embedded"))
+                        {
+                            url = namingProtocol1 + "://" + namingHost1 + ":" +
+                                    namingPort1 + namingURI1 ;
+                            Map dmap = smscSS.getServerConfigData(url);
+                            cfgData = ResourceBundle.getBundle("config" +
+                                    fileseparator +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "-Generated");
+                            dmap.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_AUTHID,
+                                    cfgData.getString(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "1." + SMSConstants.UM_LDAPv3_AUTHID +
+                                    ".0"));
+                            dmap.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_AUTHPW,
+                                    cfgData.getString(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "1." + SMSConstants.UM_LDAPv3_AUTHPW +
+                                    ".0"));
+                            modifyAuthConfigproperties(dmap);
+                        }
+                        modifyPolicyService(smscSS, serverName0, 1, 0);
+                    }
                 }
             // Checks if both SERVER_NAME1 and SERVER_NAME2 are specified while
             // executing ant command for qatest. If only SERVER_NAME2 is 
@@ -667,8 +970,8 @@ public class SetupProduct extends TestCommon {
                         "iplanet-am-auth-login-success-url: " + 
                         oriAuthAttrValues);
                 Set newAuthValues = new HashSet();
-                newAuthValues.add(namingProtocol + "://" + namingHost + ":" + 
-                        namingPort + namingURI + "/console");
+                newAuthValues.add(namingProtocol1 + "://" + namingHost1 + ":" + 
+                        namingPort1 + namingURI1 + "/console");
                 Map newAuthValuesMap = new HashMap();
                 newAuthValuesMap.put("iplanet-am-auth-login-success-url", 
                         newAuthValues);
@@ -737,24 +1040,21 @@ public class SetupProduct extends TestCommon {
         String ldapServer;
         String ldapPort;
         String dsAdminPassword;
-        String dsAuthPassword;
         String orgName;
-        String sslEnabled;
-        String authId;
-        String psearchBase;
-        String groupAtt;
-        String roleAtt;
-        String userObjClass;
-        String userAtt;
-        String supportedOps;
         boolean dsCreated = false;
         
+        Map stdLDAPv3Data = getMapFromResourceBundle("config" +
+                        fileseparator +
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "-Generated",
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + index);
+
         for (int i = 0; i < dCount; i++) {
             dsCreated = false;
             dsType = cfgData.getString(SMSConstants.
                     UM_DATASTORE_PARAMS_PREFIX + index + "." +
                     SMSConstants.UM_DATASTORE_TYPE + "." +
                     i);
+
             dsName = cfgData.getString(SMSConstants.
                     UM_DATASTORE_PARAMS_PREFIX + index + "." +
                     SMSConstants.UM_DATASTORE_NAME + "." +
@@ -780,180 +1080,217 @@ public class SetupProduct extends TestCommon {
                     UM_DATASTORE_PARAMS_PREFIX + index + "." +
                     SMSConstants.UM_DATASTORE_ADMINPW +
                     "." + i);
-            dsAuthPassword = cfgData.getString(
-                    SMSConstants.
-                    UM_DATASTORE_PARAMS_PREFIX + index + "." +
-                    SMSConstants.UM_LDAPv3_AUTHPW +
-                    "." + i);
             orgName = cfgData.getString(SMSConstants.
                     UM_DATASTORE_PARAMS_PREFIX + index + "." +
                     SMSConstants.
                     UM_LDAPv3_ORGANIZATION_NAME + "." + i);
-            sslEnabled = cfgData.getString(SMSConstants.
-                    UM_DATASTORE_PARAMS_PREFIX + index + "." +
-                    SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED
-                    + "." + i);
-            authId = cfgData.getString(SMSConstants.
-                    UM_DATASTORE_PARAMS_PREFIX + index + "." +
-                    SMSConstants.UM_LDAPv3_AUTHID
-                    + "." + i);
-            psearchBase = cfgData.getString(SMSConstants.
-                    UM_DATASTORE_PARAMS_PREFIX + index + "." +
-                    SMSConstants.UM_LDAPv3_LDAP_PSEARCHBASE
-                    + "." + i);
-            groupAtt = cfgData.getString(SMSConstants.
-                    UM_DATASTORE_PARAMS_PREFIX + index + "." +
-                    SMSConstants.UM_LDAPv3_GROUP_ATTR
-                    + "." + i);
-            roleAtt = cfgData.getString(SMSConstants.
-                    UM_DATASTORE_PARAMS_PREFIX + index + "." +
-                    SMSConstants.UM_LDAPv3_ROLE_ATTR
-                    + "." + i);
-            userObjClass = cfgData.getString(SMSConstants.
-                    UM_DATASTORE_PARAMS_PREFIX + index + "." +
-                    SMSConstants.UM_LDAPv3_USER_OBJECT_CLASS
-                    + "." + i);
-            userAtt = cfgData.getString(SMSConstants.
-                    UM_DATASTORE_PARAMS_PREFIX + index + "." +
-                    SMSConstants.UM_LDAPv3_USER_ATTR
-                    + "." + i);
-            supportedOps = cfgData.getString(SMSConstants.
-                    UM_DATASTORE_PARAMS_PREFIX + index + "." +
-                    SMSConstants.UM_LDAPv3_SUPPORT_OPERATION
-                    + "." + i);
-            list.add(SMSConstants.
-                    UM_LDAPv3_LDAP_SERVER + "=" +
-                    ldapServer + ":" + ldapPort);
-            list.add(SMSConstants.
-                    UM_LDAPv3_AUTHPW + "=" +
-                    dsAuthPassword);
-            list.add(SMSConstants.
-                    UM_LDAPv3_ORGANIZATION_NAME + "=" +
-                    orgName);
-            list.add(SMSConstants.
-                    UM_LDAPv3_LDAP_SSL_ENABLED + "=" +
-                    sslEnabled);
-            list.add(SMSConstants.
-                    UM_LDAPv3_AUTHID + "=" +
-                    authId);
-            list.add(SMSConstants.
-                    UM_LDAPv3_LDAP_PSEARCHBASE + "=" +
-                    psearchBase);
-            if (groupAtt.indexOf("|") != 0) {
-                List locList = getAttributeList(groupAtt, "|");
-                for (int j = 0; j < locList.size(); j++) {
-                    list.add(SMSConstants.
-                            UM_LDAPv3_GROUP_ATTR + "=" +
-                            (String)locList.get(j));
+            
+            Set s = stdLDAPv3Data.keySet();
+            Iterator it = s.iterator();
+            String key;
+            String newkey = null;
+            String value = null;
+            while (it.hasNext()) {
+                key = (String)it.next();
+                if ((key.contains(".sun")) && (key.contains("." + i))) {
+                    newkey = key.substring(key.indexOf(index + ".sun") + 2,
+                            key.length() - 2);
+                value = (String)stdLDAPv3Data.get(key);
+                if (value.indexOf("|") != 0) {
+                    List locList = getAttributeList(value, "|");
+                    for (int j = 0; j < locList.size(); j++) {
+                        list.add(newkey + "=" + (String)locList.get(j));
+                    }
+                } else
+                    list.add(newkey + "=" + value);
                 }
-            } else {
-                list.add(SMSConstants.
-                        UM_LDAPv3_GROUP_ATTR + "=" +
-                        groupAtt);
             }
-            if (roleAtt.indexOf("|") != 0) {
-                List locList = getAttributeList(roleAtt, "|");
-                for (int j = 0; j < locList.size(); j++) {
-                    list.add(SMSConstants.
-                            UM_LDAPv3_ROLE_ATTR + "=" +
-                            (String)locList.get(j));
-                }
-            } else {
-                list.add(SMSConstants.
-                        UM_LDAPv3_ROLE_ATTR + "=" +
-                        roleAtt);
-            }
-            if (userObjClass.indexOf("|") != 0) {
-                List locList = getAttributeList(userObjClass, "|");
-                for (int j = 0; j < locList.size(); j++) {
-                    list.add(SMSConstants.
-                            UM_LDAPv3_USER_OBJECT_CLASS + "=" +
-                            (String)locList.get(j));
-                }
-            } else {
-                list.add(SMSConstants.
-                        UM_LDAPv3_USER_OBJECT_CLASS + "=" +
-                        userObjClass);
-            }
-            if (userAtt.indexOf("|") != 0) {
-                List locList = getAttributeList(userAtt, "|");
-                for (int j = 0; j < locList.size(); j++) {
-                    list.add(SMSConstants.
-                            UM_LDAPv3_USER_ATTR + "=" +
-                            (String)locList.get(j));
-                }
-            } else {
-                list.add(SMSConstants.
-                        UM_LDAPv3_USER_ATTR + "=" +
-                        userAtt);
-            }
-            if (supportedOps.indexOf("|") != 0) {
-                List locList = getAttributeList(supportedOps, "|");
-                for (int j = 0; j < locList.size(); j++) {
-                    list.add(SMSConstants.
-                            UM_LDAPv3_SUPPORT_OPERATION + "=" +
-                            (String)locList.get(j));
-                }
-            } else {
-                list.add(SMSConstants.
-                        UM_LDAPv3_SUPPORT_OPERATION + "=" +
-                        supportedOps);
-            }
+
+            list.remove(SMSConstants.UM_LDAPv3_LDAP_SERVER + "=" + ldapServer);
+            list.remove(SMSConstants.UM_LDAPv3_LDAP_PORT + "=" + ldapPort);
+            list.add(SMSConstants.UM_LDAPv3_LDAP_SERVER + "=" + ldapServer +
+                    ":" + ldapPort);
+
+
             log(Level.FINEST, "createDataStoreUsingfamadm", "Datastore" +
                     " attributes list:" + list);
-            HtmlPage page = famadm.listDatastores(webClient,
-                    dsRealm);
+            HtmlPage page = famadm.listDatastores(webClient, dsRealm);
             if (FederationManager.getExitCode(page) != 0) {
                 log(Level.SEVERE, "createDataStoreUsingfamadm",
-                        "listDatastores famadm command" +
-                        " failed");
+                        "listDatastores famadm command failed");
                 assert false;
             }
-            LDAPCommon ldc = null;
-	    ldc = new LDAPCommon(ldapServer,
-                    ldapPort, adminId, dsAdminPassword,
-                    orgName);
-            ResourceBundle smsGblCfg = ResourceBundle.
-                    getBundle("config" + fileseparator + "default" +
-                    fileseparator + "UMGlobalConfig");
-            String schemaString = (String)smsGblCfg.
-                    getString(SMSConstants.UM_SCHEMNA_LIST
-                    + "." +
-                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMDS);
-            String schemaAttributes = (String)smsGblCfg.
-                    getString(SMSConstants.UM_SCHEMNA_ATTR
-                    + "." +
-                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMDS);
-            ldc.loadAMUserSchema(schemaString,
-                    schemaAttributes);
-            ldc.disconnectDServer();
-	    Thread.sleep(5000);
+
+            // Do nothing if a database by the chosen name already exists
 	    if (getHtmlPageStringIndex(
-                    page, dsName) == -1)
+                    page, dsName) == -1) {
+                LDAPCommon ldc = null;
+                ldc = new LDAPCommon(ldapServer, ldapPort, adminId,
+                        dsAdminPassword, orgName);
+                ResourceBundle smsGblCfg = ResourceBundle.
+                        getBundle("config" + fileseparator + "default" +
+                        fileseparator + "UMGlobalConfig");
+                String schemaString = (String)smsGblCfg.
+                        getString(SMSConstants.UM_SCHEMNA_LIST
+                        + "." +
+                        SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMDS);
+                String schemaAttributes = (String)smsGblCfg.
+                        getString(SMSConstants.UM_SCHEMNA_ATTR
+                        + "." +
+                        SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMDS);
+                ldc.loadAMUserSchema(schemaString, schemaAttributes);
+                ldc.disconnectDServer();
+                Thread.sleep(5000);
                 if (FederationManager.getExitCode(famadm.createDatastore(
                 webClient, dsRealm, dsName, dsType, list)) != 0) {
                     log(Level.SEVERE, "createDataStoreUsingfamadm",
-                            "createDatastore famadm" +
-                            " command failed");
+                            "createDatastore famadm command failed");
                     assert false;
                 }
-            page = famadm.listDatastores(webClient,
-                    dsRealm);
-            if (FederationManager.getExitCode(page) != 0) {
-                log(Level.SEVERE, "createDataStoreUsingfamadm",
-                        "listDatastores famadm command" +
-                        " failed");
-                assert false;
-            }
-            if (getHtmlPageStringIndex(
-                    page, dsName) == -1) {
-                log(Level.SEVERE, "createDataStoreUsingfamadm", "Datastore" +
-                    " creation failed: " + list);
-                 assert false;
+                page = famadm.listDatastores(webClient, dsRealm);
+                if (FederationManager.getExitCode(page) != 0) {
+                    log(Level.SEVERE, "createDataStoreUsingfamadm",
+                            "listDatastores famadm command failed");
+                    assert false;
+                }
+                if (getHtmlPageStringIndex(page, dsName) == -1) {
+                    log(Level.SEVERE, "createDataStoreUsingfamadm",
+                            "Datastore creation failed: " + list);
+                     assert false;
+                }
             }
             dsCreated = true;
 	    list.clear();
         }
+        return (dsCreated);
+    }
+
+    /**
+     * This method creates the datastore using famadm.jsp
+     */
+    private boolean createDataStoreUsingfamadm(WebClient webClient,
+            FederationManager famadm, ResourceBundle cfgData, Map umDMap, int
+            index)
+    throws Exception {
+        String dsRealm = null;
+        String dsType;
+        String dsName;
+        String adminId;
+        String ldapServer;
+        String ldapPort;
+        String dsAdminPassword;
+        String dsAuthPassword;
+        String orgName;
+        boolean dsCreated = false;
+
+        Map stdLDAPv3Data = getMapFromResourceBundle("config" + fileseparator +
+                "default" + fileseparator +
+                SMSConstants.UM_DATASTORE_PARAMS_PREFIX,
+                SMSConstants.UM_DATASTORE_SCHEMA_TYPE_LDAP);
+        
+            dsCreated = false;
+            dsType = SMSConstants.UM_DATASTORE_SCHEMA_TYPE_LDAP;
+            dsName = (String)stdLDAPv3Data.get(SMSConstants.
+                    UM_DATASTORE_PARAMS_PREFIX + "." + dsType + "." +
+                    SMSConstants.UM_DATASTORE_NAME);
+            adminId = (String)umDMap.get(index + "." + SMSConstants.
+                    UM_DATASTORE_PARAMS_PREFIX + "." +
+                    SMSConstants.UM_LDAPv3_AUTHID);
+            dsRealm = (String)stdLDAPv3Data.get(SMSConstants.
+                    UM_DATASTORE_PARAMS_PREFIX + "." + dsType + "." +
+                    SMSConstants.UM_DATASTORE_REALM);
+            ldapServer = (String)umDMap.get(index + "." + SMSConstants.
+                    UM_DATASTORE_PARAMS_PREFIX +  "." +
+                    SMSConstants.UM_LDAPv3_LDAP_SERVER);
+            ldapPort = (String)umDMap.get(index + "." + SMSConstants.
+                    UM_DATASTORE_PARAMS_PREFIX + "." +
+                    SMSConstants.UM_LDAPv3_LDAP_PORT);
+            dsAdminPassword =
+                    cfgData.getString(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+            dsAuthPassword =
+                    cfgData.getString(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+            orgName = (String)umDMap.get(index + "." + SMSConstants.
+                    UM_DATASTORE_PARAMS_PREFIX + "." + SMSConstants.
+                    UM_LDAPv3_ORGANIZATION_NAME);
+
+            Set s = stdLDAPv3Data.keySet();
+            Iterator it = s.iterator();
+            String key;
+            String newkey = null;
+            String value = null;
+            while (it.hasNext()) {
+                key = (String)it.next();
+                if (key.contains(".sun")) {
+                    newkey = key.substring(key.indexOf(".sun") + 1,
+                            key.length());
+/*
+                if (newkey.equals(SMSConstants.UM_LDAPv3_AUTHPW))
+                    value = dsAuthPassword;
+                else 
+*/
+                    value = (String)stdLDAPv3Data.get(key);
+                if (value.indexOf("ROOT_SUFFIX") != -1)
+                    value = value.replace("ROOT_SUFFIX", orgName);
+                if (value.indexOf("|") != 0) {
+                    List locList = getAttributeList(value, "|");
+                    for (int j = 0; j < locList.size(); j++) {
+                        list.add(newkey + "=" + (String)locList.get(j));
+                    }
+                } else
+                    list.add(newkey + "=" + value);
+                }
+            }
+
+            list.add(SMSConstants.UM_LDAPv3_LDAP_SERVER + "=" + ldapServer +
+                    ":" + ldapPort);
+
+
+            log(Level.FINEST, "createDataStoreUsingfamadm", "Datastore" +
+                    " attributes list:" + list);
+            HtmlPage page = famadm.listDatastores(webClient, dsRealm);
+            if (FederationManager.getExitCode(page) != 0) {
+                log(Level.SEVERE, "createDataStoreUsingfamadm",
+                        "listDatastores famadm command failed");
+                assert false;
+            }
+
+            // Do nothing if a database by the chosen name already exists
+	    if (getHtmlPageStringIndex(
+                    page, dsName) == -1) {
+                LDAPCommon ldc = new LDAPCommon(ldapServer, ldapPort, adminId,
+                        dsAdminPassword, orgName);
+                ResourceBundle smsGblCfg = ResourceBundle.
+                        getBundle("config" + fileseparator + "default" +
+                        fileseparator + "UMGlobalConfig");
+                String schemaString = (String)smsGblCfg.
+                        getString(SMSConstants.UM_SCHEMNA_LIST + "." + dsType);
+                String schemaAttributes = (String)smsGblCfg.
+                        getString(SMSConstants.UM_SCHEMNA_ATTR + "." + dsType);
+                ldc.loadAMUserSchema(schemaString, schemaAttributes);
+                ldc.disconnectDServer();
+                Thread.sleep(5000);
+                if (FederationManager.getExitCode(famadm.createDatastore(
+                webClient, dsRealm, dsName, dsType, list)) != 0) {
+                    log(Level.SEVERE, "createDataStoreUsingfamadm",
+                            "createDatastore famadm command failed");
+                    assert false;
+                }
+                page = famadm.listDatastores(webClient, dsRealm);
+                if (FederationManager.getExitCode(page) != 0) {
+                    log(Level.SEVERE, "createDataStoreUsingfamadm",
+                            "listDatastores famadm command failed");
+                    assert false;
+                }
+                if (getHtmlPageStringIndex(
+                        page, dsName) == -1) {
+                    log(Level.SEVERE, "createDataStoreUsingfamadm",
+                            "Datastore creation failed: " + list);
+                     assert false;
+                }
+            }
+            dsCreated = true;
+	    list.clear();
+            
         return (dsCreated);
     }
 
@@ -1097,33 +1434,31 @@ public class SetupProduct extends TestCommon {
             String namingPort = "";
             String namingURI = "";
 
-            ResourceBundle cfg1 = null;
-            Map<String, String> umDatastoreTypes = new HashMap<String,
-                    String>();
             ResourceBundle gblCfgData = ResourceBundle.getBundle("config" +
                     fileseparator + "default" + fileseparator +
                     "UMGlobalConfig");
-            SMSCommon smscGbl = new SMSCommon("config" + fileseparator +
-                    "default" + fileseparator + "UMGlobalConfig");
+
+            Map<String, String> umDatastoreTypes = new HashMap<String,
+                    String>();
             
             // Checks if both SERVER_NAME1 and SERVER_NAME2 are specified while
             // executing ant command for qatest. This loop is executed only if
             // both entries are sepcified.
             if (strModuleName.equalsIgnoreCase("sanity")) {
+                // Checks if both SERVER_NAME1 and SERVER_NAME2 are specified
+                // while executing ant command for qatest. This loop is executed
+                // only if SERVER_NAME1 is sepcified. This setup refers to
+                // single server tests only.                
                 if ((serverName0.indexOf("SERVER_NAME1") == -1) &&
                         (serverName1.indexOf("SERVER_NAME2") == -1)) {
                     log(Level.SEVERE, "SetupProduct", "Sanity module supports" +
                             "only single server execution.");
                     assert false;
-                // Checks if both SERVER_NAME1 and SERVER_NAME2 are specified while
-                // executing ant command for qatest. This loop is executed only if
-                // SERVER_NAME1 is sepcified. This setup refers to single server 
-                // tests only.
                 } else if ((serverName0.indexOf("SERVER_NAME1") == -1) &&
                         (serverName1.indexOf("SERVER_NAME2") != -1)) {
-                    log(Level.FINEST, "SetupProduct", "Sanity module, " +
-                            "SetupProduct - UMDS with defaulted " +
-                            "to ConfigStore");
+                    log(Level.FINEST, "SetupProduct", "Sanity module: " +
+                            "User config datastore will be default to config" +
+                            "datastore.");
                     Map<String, String> configMapServer1 = new HashMap<String,
                         String>();
                     configMapServer1 = getMapFromResourceBundle(
@@ -1131,12 +1466,17 @@ public class SetupProduct extends TestCommon {
                         "ConfiguratorCommon");
                     configMapServer1.putAll(getMapFromResourceBundle(
                         "Configurator-" + serverName0));
+                    configMapServer1.put(
+                            TestConstants.KEY_ATT_CONFIG_DATASTORE, "embedded");
+                    configMapServer1.put(
+                            TestConstants.KEY_ATT_CONFIG_UMDATASTORE,
+                            "embedded");
                     createFileFromMap(configMapServer1, serverName + 
                         fileseparator + "built" + fileseparator + "classes" + 
                         fileseparator + "Configurator-" + serverName0 +
                         "-Generated.properties");
-                    cfg1 = ResourceBundle.getBundle("Configurator-" +
-                        serverName0 + "-Generated");
+                    ResourceBundle cfg1 = ResourceBundle.getBundle(
+                            "Configurator-" + serverName0 + "-Generated");
                     String namingURL = cfg1.getString(KEY_AMC_NAMING_URL);
                     Map namingURLMap = getURLComponents(namingURL);
 
@@ -1149,271 +1489,94 @@ public class SetupProduct extends TestCommon {
                     String loginURL = url + "/UI/Login";
                     log(Level.FINE, "SetupProduct", "Initiating setup for " +
                             serverName0);
-                    bserver1 = configureProduct(
-                            getConfigurationMap("Configurator-" + serverName0 +
-                            "-Generated"), "1");
+                    bserver1 = configureProduct(getConfigurationMap(
+                            "Configurator-" + serverName0 + "-Generated"), "1");
                     if (!bserver1) {
                         log(Level.FINE, "SetupProduct", "Configuration failed" +
                                 " for " + serverName0);
                         assert false;
                     } else {
-                            umDatastoreTypes.put("1", serverName0);
-                            String strUMDSFileName = getBaseDir() + 
-                                    fileseparator + serverName + fileseparator +
-                                    "built" + fileseparator + "classes" + 
-                                    fileseparator + "config" + fileseparator + 
-                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX + 
-                                    ".properties";
-                            Map globalMap = getMapFromProperties(
-                                    strUMDSFileName);
-
-                            //Getting using SM details from server apis
-                            admintoken = getToken(adminUser, adminPassword, 
-                                    basedn);
-                            ServiceConfigManager scm = new ServiceConfigManager(
-                                    "iPlanetAMPlatformService", admintoken);
-                            ServiceConfig globalSvcConfig = scm.getGlobalConfig(
-                                    null);
-                            ServiceConfig all = (globalSvcConfig != null) ?
-                                    globalSvcConfig.getSubConfig(
-                                    "com-sun-identity-servers") : null;
-                            ServiceConfig cfg = (all != null) ?
-                                    all.getSubConfig(url) : null;
-                            Properties prop = getPropertiesFromXML((Set)
-                                    (cfg.getAttributes()).get("serverconfigxml")
-                                    );
-                            String strServerXML = prop.toString();
-                            int StartIndx = strServerXML.indexOf("{");
-                            strServerXML = strServerXML.substring(StartIndx + 1, 
-                                    strServerXML.indexOf("}"));
-                            StartIndx = strServerXML.indexOf("<!--");
-                            strServerXML = strServerXML.substring(0, StartIndx) 
-                                    + strServerXML.substring(
-                                    strServerXML.indexOf("-->") + 3, 
-                                    strServerXML.length());
-                            StartIndx = strServerXML.indexOf("<!--");
-                            strServerXML = strServerXML.substring(0, StartIndx) 
-                                    + strServerXML.substring(
-                                    strServerXML.indexOf("-->") + 3, 
-                                    strServerXML.length());
-                            SMSCommon smsc = new SMSCommon(admintoken, "config" +
-                                    fileseparator + "default" + fileseparator +
-                                    "UMGlobalConfig");
-                            Map serverconfigMap = getConfigServerDetails(
-                                    strServerXML);
-                            serverconfigMap.put(
-                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                                    "1." + SMSConstants.UM_DATASTORE_COUNT , "1");
-                            WebClient webclient = new WebClient();
-                            consoleLogin(webclient, loginURL, adminUser,
-                                            adminPassword);
-                            HtmlPage page = (HtmlPage)webclient.getPage(url 
-                                    + "/showServerConfig.jsp");
-                            String pageAsString = page.getWebResponse().
-                                        getContentAsString();
-                            log(Level.FINEST, "SetupProduct", "showServer" +
-                                    "Config \n" + pageAsString);
-
-                            if (!pageAsString.contains("Embedded")) {
-                            //Config Server is remote. Getting adminpw from 
-                            //ServerName.properties file
-                                serverconfigMap.put(
-                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
-                                        + "1." + SMSConstants.
-                                        UM_DATASTORE_ADMINPW + ".0", (
-                                        cfg1.getString(
-                                        TestConstants.KEY_ATT_DS_DIRMGRPASSWD)));
-                                serverconfigMap.remove(
-                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
-                                        + "1." + SMSConstants.UM_LDAPv3_AUTHID 
-                                        + ".0");
-
-                            } else {
-                            //Config Server is embedded. 
-                                serverconfigMap.put(
-                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
-                                        + "1." + SMSConstants.UM_DATASTORE_TYPE 
-                                        + ".0", SMSConstants.
-                                        UM_DATASTORE_SCHEMA_TYPE_OPENDS);
-                                serverconfigMap.put(
-                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
-                                        + "1." + SMSConstants.UM_DATASTORE_REALM 
-                                        + ".0", "/");
-                                serverconfigMap.put(
-                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
-                                        + "1." + SMSConstants.UM_LDAPv3_AUTHPW + 
-                                        ".0", adminPassword);
-                                serverconfigMap.put(
-                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
-                                        + "1." + SMSConstants.
-                                        UM_DATASTORE_ADMINPW + ".0", 
-                                        adminPassword);
-                            }
-                            globalMap.putAll(serverconfigMap);
-                            createFileFromMap(globalMap, getBaseDir() + 
-                                    fileseparator + serverName + fileseparator + 
-                                    "built" + fileseparator + "classes" + 
-                                    fileseparator + "config" + fileseparator +
-                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                                    ".properties");
-                            createGlobalDatastoreFile(umDatastoreTypes,
-                                    SMSConstants.QATEST_EXEC_MODE_SINGLE);
-                            smsc.createDataStore(smsc.getDataStoreConfigByIndex
-                                    (1, "config" + fileseparator +
-                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                                    "-Generated"));
-                            if ((gblCfgData.getString("UMGlobalConfig." +
-                                    "deleteExistingDatastores")).equals("true"))
-                            {
-                                smsc.deleteAllDataStores(realm, 1);
-                            }
-                            modifyPolicyService(smsc, serverName0, 1, 0);
-                            modifyAuthConfigproperties(serverconfigMap);
-                       }
-                    } else if ((serverName0.indexOf("SERVER_NAME1") != -1) &&
-                        (serverName1.indexOf("SERVER_NAME2") == -1)) {
-                        log(Level.FINE, "SetupProduct", "Unsupported " +
-                                "configuration." + " Cannot have SERVER_NAME2 " 
-                                + "specified without SERVER_NAME1.");
-                        assert false;
+                        admintoken = getToken(adminUser, adminPassword, basedn);
+                        SMSCommon smscSS = new SMSCommon(admintoken, "config" +
+                                fileseparator + "default" + fileseparator +
+                                "UMGlobalConfig");
+                        url = namingProtocol + "://" + namingHost + ":" +
+                                namingPort + namingURI ;
+                        log(Level.FINEST, "SetuProduct", "serverconfig.xml" +
+                                " details for " + namingURL + ":  " +
+                                (smscSS.getServerConfigData(url)).toString());
+                        Map mCfgData = smscSS.getServerConfigData(url);
+                        umDatastoreTypes.put("1", serverName0);
+                        umDatastoreTypes.put("1." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_SERVER,
+                                (String)mCfgData.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_SERVER));
+                        umDatastoreTypes.put("1." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_PORT,
+                                (String)mCfgData.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_LDAP_PORT));
+                        umDatastoreTypes.put("1." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_ORGANIZATION_NAME,
+                                (String)mCfgData.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_ORGANIZATION_NAME));
+                        umDatastoreTypes.put("1." +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_AUTHID,
+                                (String)mCfgData.get(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                SMSConstants.UM_LDAPv3_AUTHID));
+                        createGlobalDatastoreFile(umDatastoreTypes,
+                                SMSConstants.QATEST_EXEC_MODE_SINGLE);
+                        smscSS.createDataStore(1, "config" + fileseparator +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                "-Generated");
+                        if ((gblCfgData.getString("UMGlobalConfig." +
+                                "deleteExistingDatastores")).equals("true"))
+                            smscSS.deleteAllDataStores(realm, 1);
+                        modifyPolicyService(smscSS, serverName0, 1, 0);
+                        ResourceBundle cfgData = ResourceBundle.getBundle(
+                                "config" + fileseparator +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                "-Generated");
+                        mCfgData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                "." + SMSConstants.UM_LDAPv3_AUTHID,
+                                cfgData.getString(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                "1." + SMSConstants.UM_LDAPv3_AUTHID + ".0"));
+                        mCfgData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                "." + SMSConstants.UM_LDAPv3_AUTHPW,
+                                cfgData.getString(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                "1." + SMSConstants.UM_LDAPv3_AUTHPW + ".0"));
+                        modifyAuthConfigproperties(mCfgData);
                     }
-                } else {
-                    log(Level.SEVERE, "SetupProduct", "This part of the code " +
-                            "should never be reached.Contact QA administrator");
-              }
+                } else if ((serverName0.indexOf("SERVER_NAME1") != -1) &&
+                    (serverName1.indexOf("SERVER_NAME2") == -1)) {
+                    log(Level.FINE, "SetupProduct", "Unsupported " +
+                            "configuration." + " Cannot have SERVER_NAME2 " 
+                            + "specified without SERVER_NAME1.");
+                    assert false;
+                }
+            } else {
+                log(Level.SEVERE, "SetupProduct", "This part of the code " +
+                        "should never be reached.Contact QA administrator");
+            }
          } catch (Exception e) {
             log(Level.SEVERE, "SetupProduct", e.getMessage());
             e.printStackTrace();
             throw e;
+        } finally {
+            destroyToken(admintoken);
         }
         exiting("SetupProduct");
 }
 
-    /**
-     * This method parses the ServerConfigXML
-     * @param Set set containing the ServerConfigXML
-     * @return set of properties
-     */
-    public Map getConfigServerDetails(String strXMLFile) 
-    throws Exception {
-        try {
-            DocumentBuilderFactory factory =
-            DocumentBuilderFactory.newInstance();
-            factory.setValidating(false);
-            factory.setNamespaceAware(false);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(
-                    new StringReader(strXMLFile)));
-            Element topElement = document.getDocumentElement();
-            Map map = parseServerConfigXML(
-                (Node)topElement);
-            return map;
-        } catch (Exception e) {
-            log(Level.SEVERE, "getConfigServerDetails", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-    }
-    
-    /**
-     * This method parses the ServerConfigXML
-     * @param Set set containing the ServerConfigXML
-     * @return set of properties
-     */
-    public static Properties getPropertiesFromXML(Set set)
-          throws IOException {
-        Properties prop = new Properties();
-        for (Iterator i = set.iterator(); i.hasNext(); ) {
-            String str = (String)i.next();
-            int idx = str.indexOf('=');
-            if (idx != -1) {
-                prop.setProperty(str.substring(0, idx), str.substring(idx+1));
-            }
-        }
-        return prop;
-    }
-
-    /**
-     * This method parses the ServerConfigXML
-     * @param Node parentNode of the ServerConfigXML
-     * @return map
-     */
-    public static Map parseServerConfigXML(Node parentNode) {
-
-        Set smSet = new HashSet();
-        NodeList avList = parentNode.getChildNodes();
-        Map map = new HashMap();
-        int numAVPairs = avList.getLength();
-
-        if (numAVPairs <= 0) {
-            return EMPTY_MAP;
-        }
-
-        for (int l = 0; l < numAVPairs; l++) {
-            Node avPair = avList.item(l);
-            // now reset values to prepare for the next AV pair.
-            if ((avPair.getNodeType() == Node.ELEMENT_NODE) &&
-                avPair.getNodeName().equals("ServerGroup")
-            ) {
-                NamedNodeMap nnmap = avPair.getAttributes();
-                if (((nnmap.getNamedItem("name")).getNodeValue()).
-                        contains("sms")) {
-                    NodeList smsList = avPair.getChildNodes();
-                    for (int j = 0; j < smsList.getLength(); j++) {
-                        Node smsNode = smsList.item(j);
-                        if (smsNode.getNodeName().equals("Server")) {
-                            NamedNodeMap mappy = smsNode.getAttributes();
-                            map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                                "1." + SMSConstants.UM_LDAPv3_LDAP_SERVER + 
-                                ".0", (mappy.getNamedItem("host")).
-                                getNodeValue());
-                            map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                                "1." + SMSConstants.UM_LDAPv3_LDAP_PORT + ".0", 
-                                    (mappy.getNamedItem("port")).
-                                    getNodeValue());
-                            if (((mappy.getNamedItem("type")).getNodeValue()).
-                                    contains("@")) {
-                                map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
-                                    + "1." + 
-                                    SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED + 
-                                    ".0", "false");
-                            } else {
-                                 map.put(
-                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                                    "1." + 
-                                    SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED 
-                                    + ".0", "false");                                
-                            }
-                        }
-                        if (smsNode.getNodeName().equals("User")) {
-                            NodeList userList = smsNode.getChildNodes();
-                            for (int m = 0; m < userList.getLength(); m ++){
-                                Node userNode = userList.item(m);
-                                if ((userNode.getNodeName()).equals("DirDN")) {
-                                    map.put(
-                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
-                                        + "1." + SMSConstants.UM_LDAPv3_AUTHID + 
-                                        ".0", userNode.getTextContent());
-                                    map.put(
-                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
-                                        + "1." + 
-                                        SMSConstants.UM_DATASTORE_ADMINID + ".0"
-                                        , userNode.getTextContent());
-                                }
-                            }
-                        }
-                        if (smsNode.getNodeName().equals("BaseDN")) {
-                            map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                                "1." + SMSConstants.UM_LDAPv3_ORGANIZATION_NAME 
-                                + ".0", smsNode.getTextContent());
-                        }
-                    }
-                }
-            }
-         }
-        return (map == null) ? EMPTY_MAP : map;
-    }
-    
     /**
      * This method modifies the generated 
      * authenticationConfigData.properties file with the details of the embedded
@@ -1425,7 +1588,7 @@ public class SetupProduct extends TestCommon {
         StringBuffer buff;
         StringBuffer buffer;
         
-        try{
+        try {
             String strAuthConfigFileName = getBaseDir() + fileseparator +
                 serverName + fileseparator + "built" + 
                 fileseparator + "classes" + fileseparator + 
@@ -1434,54 +1597,54 @@ public class SetupProduct extends TestCommon {
             authConfigMap = getMapFromProperties(strAuthConfigFileName);
             buff = new StringBuffer();
             buffer = new StringBuffer();
+            
             buff.append(SMSConstants.UM_DATASTORE_PARAMS_PREFIX)
-                    .append("1.")
-                    .append(SMSConstants.UM_LDAPv3_LDAP_SERVER)
-                    .append(".0");
+                    .append(".")
+                    .append(SMSConstants.UM_LDAPv3_LDAP_SERVER);
             buffer.append(serverconfigMap.get(buff.toString()));
             buff.setLength(0);
             buff.append(SMSConstants.UM_DATASTORE_PARAMS_PREFIX)
-                    .append("1.")
-                    .append(SMSConstants.UM_LDAPv3_LDAP_PORT)
-                    .append(".0");
+                    .append(".")
+                    .append(SMSConstants.UM_LDAPv3_LDAP_PORT);
             buffer.append(":")
                     .append(serverconfigMap.get(buff.toString()));
             authConfigMap.put("ldap.iplanet-am-auth-ldap-server", 
                     buffer.toString());
+            
             buffer.setLength(0);
             buff.setLength(0);
             buff.append(SMSConstants.UM_DATASTORE_PARAMS_PREFIX)
-                    .append("1.")
-                    .append(SMSConstants.UM_LDAPv3_ORGANIZATION_NAME)
-                    .append(".0");
+                    .append(".")
+                    .append(SMSConstants.UM_LDAPv3_ORGANIZATION_NAME);
             authConfigMap.put("ldap.iplanet-am-auth-ldap-base-dn", 
                     serverconfigMap.get(buff.toString()));
+            
             buffer.append(SMSConstants.UM_DATASTORE_PARAMS_PREFIX)
-                    .append("1.")
-                    .append(SMSConstants.UM_DATASTORE_ADMINID)
-                    .append(".0");
+                    .append(".")
+                    .append(SMSConstants.UM_LDAPv3_AUTHID);
             authConfigMap.put("ldap.iplanet-am-auth-ldap-bind-dn", 
                     serverconfigMap.get(buffer.toString()));
+            
             buff.setLength(0);
             buff.append(SMSConstants.UM_DATASTORE_PARAMS_PREFIX)
-                    .append("1.")
-                    .append(SMSConstants.UM_DATASTORE_ADMINPW)
-                    .append(".0");
+                    .append(".")
+                    .append(SMSConstants.UM_LDAPv3_AUTHPW);
             authConfigMap.put("ldap.iplanet-am-auth-ldap-bind-passwd", 
                     serverconfigMap.get(buff.toString()));
+            
             log(Level.FINEST, "modifyAuthConfigproperties", "authConfigMap :" +
                     " \n" + authConfigMap);
             createFileFromMap(authConfigMap, serverName + fileseparator +
                         "built" + fileseparator + "classes" + fileseparator +
                         "authentication" + fileseparator +
                         "authenticationConfigData.properties");
-        }catch (Exception e) {
+        } catch (Exception e) {
             log(Level.SEVERE, "modifyAuthConfigproperties", "Exception when " +
                     "changing AuthConfig properties");
             e.printStackTrace();
         }
     }
-        
+
     public static void main(String args[]) {
         try {
             if (args.length == 3) {

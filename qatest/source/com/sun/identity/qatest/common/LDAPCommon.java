@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPCommon.java,v 1.10 2009-01-30 01:42:45 inthanga Exp $
+ * $Id: LDAPCommon.java,v 1.11 2009-05-27 23:06:35 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,8 @@ import com.sun.identity.shared.ldap.LDAPException;
 import com.sun.identity.shared.ldap.LDAPModification;
 import com.sun.identity.shared.ldap.LDAPModificationSet;
 import com.sun.identity.shared.ldap.LDAPSchema;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPv3;
 import com.sun.identity.shared.ldap.util.LDIF;
 import com.sun.identity.shared.ldap.util.LDIFAddContent;
 import com.sun.identity.shared.ldap.util.LDIFAttributeContent;
@@ -185,9 +187,9 @@ public class LDAPCommon extends TestCommon {
                     else 
                         schemaAttrItem = "";
                     log(Level.FINEST,
-                            "loadAMUserSchema", "Loading schema file " +
-                            schemaFile + " with attribute " + schemaAttrItem + 
-                            "...");
+                            "loadAMUserSchema", "Checking whether to load" +
+                            " schema file " + schemaFile + " with attribute " +
+                            schemaAttrItem + "...");
                     if (schemaAttrItem.length() == 0 ||
                             !isAMUserSchemaLoad(schemaAttrItem)) {
                         log(Level.FINEST,
@@ -376,6 +378,28 @@ public class LDAPCommon extends TestCommon {
     }
 
     /**
+     * This method gets vendor info for the directory server
+     */
+    public String getVendorInfo()
+    throws Exception {
+        LDAPEntry ldapEntry = null;
+        String strAttrs[] = new String[1];
+        strAttrs[0] = "vendorVersion";
+        LDAPSearchResults srchRes = ld.search("", LDAPv3.SCOPE_BASE,
+                "objectclass=*", strAttrs, false);
+        while (srchRes.hasMoreElements()) {
+            ldapEntry = (LDAPEntry)srchRes.nextElement();
+        }
+        if (ldapEntry != null) {
+            LDAPAttributeSet ldapAS = ldapEntry.getAttributeSet();
+            LDAPAttribute ldapAtt = ldapAS.getAttribute("vendorVersion");
+            String[] strAttVal = ldapAtt.getStringValueArray();
+            return (strAttVal[0]);
+        } else
+            return ("");
+    }
+
+    /**
      * This method creates a LDAP connection.
      */
     private LDAPConnection getLDAPConnection()
@@ -405,8 +429,15 @@ public class LDAPCommon extends TestCommon {
         return ld;
     }
     
+    /**
+     * This method return the ldif containing custom attributes used by qatest 
+     * for configuring user config datastore attributes.
+     */
     private String getQatestLDIF() 
     throws Exception {
+
+        String strVendor = getVendorInfo();
+        log(Level.FINEST, "getQatestLDIF", "strVendor: " + strVendor);
     
         StringBuffer buff = new StringBuffer();
         buff.append("dn: ou=people, @ROOT_SUFFIX@\n")
@@ -432,9 +463,16 @@ public class LDAPCommon extends TestCommon {
             .append("objectclass: top\n")
             .append("cn: dsameuser\n")
             .append("sn: dsameuser\n")
-            .append("userPassword: amsecret12\n\n")
+            .append("userPassword: amsecret12\n\n");
 
-            .append("dn: cn=amldapuser,ou=DSAME Users, @ROOT_SUFFIX@\n")
+            if (strVendor.contains("OpenDS")) {
+                buff.append("dn: cn=dsameuser,ou=DSAME Users,@ROOT_SUFFIX@\n")
+                .append("changetype: modify\n")
+                .append("add: ds-privilege-name\n")
+                .append("ds-privilege-name: password-reset\n\n");
+            }
+
+            buff.append("dn: cn=amldapuser,ou=DSAME Users, @ROOT_SUFFIX@\n")
             .append("objectclass: inetuser\n")
             .append("objectclass: organizationalperson\n")
             .append("objectclass: person\n")
@@ -446,12 +484,76 @@ public class LDAPCommon extends TestCommon {
             .append("dn: @ROOT_SUFFIX@\n")
             .append("changetype:modify\n")
             .append("add:aci\n")
-            .append("aci: (target=\"ldap:///@ROOT_SUFFIX@\")(targetattr=\"*\")(version 3.0; acl \"S1IS special dsame user rights for all under the root suffix\"; allow (all) userdn = \"ldap:///cn=dsameuser,ou=DSAME Users, @ROOT_SUFFIX@\"; )\n\n")
+            .append("aci: (target=\"ldap:///@ROOT_SUFFIX@\")" +
+                    "(targetattr=\"*\")(version 3.0; acl \"S1IS special dsame" +
+                    " user rights for all under the root suffix\";" +
+                    " allow (all) userdn = \"ldap:///cn=dsameuser," +
+                    "ou=DSAME Users, @ROOT_SUFFIX@\"; )\n\n")
 
             .append("dn:@ROOT_SUFFIX@\n")
             .append("changetype:modify\n")
             .append("add:aci\n")
-            .append("aci: (target=\"ldap:///@ROOT_SUFFIX@\")(targetattr=\"*\")(version 3.0; acl \"S1IS special ldap auth user rights\"; allow (read,search) userdn = \"ldap:///cn=amldapuser,ou=DSAME Users, @ROOT_SUFFIX@\"; );\n\n");        
+            .append("aci: (target=\"ldap:///@ROOT_SUFFIX@\")" +
+                    "(targetattr=\"*\")(version 3.0; acl \"S1IS special" +
+                    " ldap auth user rights\"; allow (read,search) userdn =" +
+                    " \"ldap:///cn=amldapuser,ou=DSAME Users," +
+                    " @ROOT_SUFFIX@\"; );\n\n");        
+
+            if (strVendor.contains("OpenDS")) {
+                buff.append("dn:@ROOT_SUFFIX@\n")
+                .append("changetype:modify\n")
+                .append("delete:aci\n")
+                .append("aci: (target=\"ldap:///@ROOT_SUFFIX@\")(targetattr =" +
+                        " \"*\")(version 3.0; acl \"OpenSSO-FAM Services" +
+                        " anonymous access\"; deny (all) userdn =" +
+                        " \"ldap:///anyone\";)\n\n")
+
+                .append("dn:@ROOT_SUFFIX@\n")
+                .append("changetype:modify\n")
+                .append("add:aci\n")
+                .append("aci: (target=\"ldap:///ou=services,@ROOT_SUFFIX@\")" +
+                        "(targetattr = \"*\")(version 3.0; acl \"OpenSSO-FAM" +
+                        " Services anonymous access\"; deny (all) userdn =" +
+                        " \"ldap:///anyone\";)\n\n")
+
+                .append("dn:@ROOT_SUFFIX@\n")
+                .append("changetype:modify\n")
+                .append("add:aci\n")
+                .append("aci:(targetcontrol = \"2.16.840.1.113730.3.4.3\")" +
+                        "(version 3.0; acl \"Allow Persistent Search for the" +
+                        " OpenSSO datastore config bind user\"; allow (all)" +
+                        " userdn = \"ldap:///cn=dsameuser,ou=DSAME Users," +
+                        "@ROOT_SUFFIX@\";)\n\n")
+
+                .append("dn:@ROOT_SUFFIX@\n")
+                .append("changetype:modify\n")
+                .append("add:aci\n")
+                .append("aci: (targetattr = \"objectclass || inetuserstatus" +
+                        " || iplanet-am-user-login-status ||" +
+                        " iplanet-am-user-account-life ||" +
+                        " iplanet-am-session-quota-limit ||" +
+                        " iplanet-am-user-alias-list ||" +
+                        " iplanet-am-session-max-session-time ||" +
+                        " iplanet-am-session-max-idle-time ||" +
+                        " iplanet-am-session-get-valid-sessions ||" +
+                        " iplanet-am-session-destroy-sessions ||" +
+                        " iplanet-am-session-add-session-listener-" +
+                        "on-all-sessions || iplanet-am-user-admin-start-dn ||" +
+                        " iplanet-am-auth-post-login-process-class ||" +
+                        " iplanet-am-saml-user || iplanet-am-saml-password ||" +
+                        " iplanet-am-user-federation-info ||" +
+                        " iplanet-am-user-federation-info-key ||" +
+                        " ds-pwp-account-disabled ||" +
+                        " sun-fm-saml2-nameid-info ||" +
+                        " sun-fm-saml2-nameid-infokey ||" +
+                        " sunAMAuthInvalidAttemptsData || memberof ||" +
+                        " member\")(targetfilter=\"(!(userdn=cn=dsameuser," +
+                        "ou=DSAME Users,@ROOT_SUFFIX@))\")(version 3.0;" +
+                        " acl \"OpenSSO User self modification denied for" +
+                        " these attributes\"; deny (write) userdn =" +
+                        "\"ldap:///self\";)\n\n");
+            }
+            
         return buff.toString();
     }
 }

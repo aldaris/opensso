@@ -17,13 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.26 2009-03-17 19:30:56 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.27 2009-05-27 23:07:19 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.setup;
 
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.TestConstants;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -33,6 +35,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -150,7 +153,7 @@ public class ClientConfigCreator {
         configMap.putAll(getMapFromResourceBundle(testDir + fileseparator + 
                 "resources" + fileseparator + "Configurator-" + serverName
                 + ".properties"));
-        CheckValues(configMap);
+        CheckValues(configMap, serverName);
         
         String strNamingURL = configMap.get(
                 TestConstants.KEY_AMC_NAMING_URL);
@@ -245,7 +248,7 @@ public class ClientConfigCreator {
         configMap1.putAll(getMapFromResourceBundle(testDir + fileseparator + 
                 "resources" + fileseparator + "Configurator-" + serverName1 
                 + ".properties"));
-        CheckValues(configMap1);
+        CheckValues(configMap1, serverName1);
 
         String strNamingURL = configMap1.get(TestConstants.KEY_AMC_NAMING_URL);
 
@@ -262,8 +265,16 @@ public class ClientConfigCreator {
         String strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
 
+        int iDot = strHost.indexOf(".");
+        String cookieDomain;
+        if (iDot == -1)
+            cookieDomain = strHost;
+        else
+            cookieDomain = strHost.substring(iDot,
+                    strHost.length());
+
         for (Iterator iter = configMap1.entrySet().iterator(); 
-                iter.hasNext();) { 
+                iter.hasNext();) {
             Map.Entry entry = (Map.Entry)iter.next();
             String key = (String)entry.getKey();
             String value = (String)entry.getValue();
@@ -303,6 +314,10 @@ public class ClientConfigCreator {
                     !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
             properties_protocol.put("idp_" + key, value);
         }
+        properties_protocol.put(TestConstants.KEY_IDP_COOKIE_DOMAIN,
+                cookieDomain);
+        properties_protocol.put(TestConstants.KEY_IDP_SERVER_ALIAS,
+                serverName1);
 
         Map<String, String> configMap2 = new HashMap<String, String>();
         configMap2 = getMapFromResourceBundle(testDir + fileseparator 
@@ -316,7 +331,7 @@ public class ClientConfigCreator {
             new FileInputStream(testDir + fileseparator + "resources" +
                 fileseparator + "Configurator-" +
                 serverName2 + ".properties"));
-        CheckValues(configMap2);
+        CheckValues(configMap2, serverName2);
 
         strNamingURL = configMap2.get(TestConstants.KEY_AMC_NAMING_URL);
  
@@ -332,6 +347,13 @@ public class ClientConfigCreator {
         iFourthSep = strNamingURL.indexOf(uriseparator, iThirdSep + 1);
         strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
+
+        iDot = strHost.indexOf(".");
+        if (iDot == -1)
+            cookieDomain = strHost;
+        else
+            cookieDomain = strHost.substring(iDot,
+                    strHost.length());
 
         for (Iterator iter = configMap2.entrySet().iterator(); 
                 iter.hasNext();) { 
@@ -418,6 +440,9 @@ public class ClientConfigCreator {
 
             properties_ss.put(key, value);
         }
+        properties_protocol.put(TestConstants.KEY_SP_COOKIE_DOMAIN,
+                cookieDomain);
+
         properties_ss.put(TestConstants.KEY_ATT_SERVER_NAME, serverName1 + "_" +
                 serverName2);
                 int unusedPort = getUnusedPort();
@@ -438,8 +463,8 @@ public class ClientConfigCreator {
      * serverName3 will be used as IDP proxy
      */
     public void getDefaultValues(String testDir, String serverName1, String 
-            serverName2, String serverName3, Map properties_protocol, String strModule)
-            throws Exception
+            serverName2, String serverName3, Map properties_protocol,
+            String strModule) throws Exception
     {
         getDefaultValues(testDir, serverName1, serverName2, 
                 properties_protocol, strModule);
@@ -451,7 +476,7 @@ public class ClientConfigCreator {
         configMap3.putAll(getMapFromResourceBundle(testDir + fileseparator + 
                 "resources" + fileseparator + "Configurator-" + serverName3 
                 + ".properties"));
-        CheckValues(configMap3);
+        CheckValues(configMap3, serverName3);
 
         String strNamingURL = configMap3.get(TestConstants.KEY_AMC_NAMING_URL);
 
@@ -519,20 +544,13 @@ public class ClientConfigCreator {
      * Reads data from a Map object, creates a new file and writes data to that
      * file
      */
-    private void CheckValues(Map properties)
+    private void CheckValues(Map properties, String serverName)
         throws Exception
     {
         if ((properties.get(TestConstants.KEY_AMC_NAMING_URL).equals(null)) ||
                (properties.get(TestConstants.KEY_AMC_NAMING_URL).equals(""))) {
             System.out.println(TestConstants.KEY_AMC_NAMING_URL + 
                     " should have some value\n");
-            assert false;
-        }
-        if ((properties.get(TestConstants.KEY_ATT_COOKIE_DOMAIN).equals(null)) 
-                || (properties.get(TestConstants.KEY_ATT_COOKIE_DOMAIN).
-                equals(""))) {
-            System.out.println(TestConstants.KEY_ATT_COOKIE_DOMAIN + 
-                    " value should not be empty\n");
             assert false;
         }
                
@@ -551,42 +569,120 @@ public class ClientConfigCreator {
                     " value should not be empty\n");
             assert false;
         }
-            
-        if ((properties.get(TestConstants.KEY_ATT_CONFIG_DIR).
-                equals(null)) || (properties.get(TestConstants.
-                KEY_ATT_CONFIG_DIR).equals(""))) {
-            System.out.println(TestConstants.KEY_ATT_CONFIG_DIR + 
-                    " value should not be empty\n");
+
+        String strNamingURL =
+                (String)properties.get(TestConstants.KEY_AMC_NAMING_URL);
+
+        int iFirstSep = strNamingURL.indexOf(":");
+        String strProtocol = strNamingURL.substring(0, iFirstSep);
+
+        int iSecondSep = strNamingURL.indexOf(":", iFirstSep + 1);
+        String strHost = strNamingURL.substring(iFirstSep + 3, iSecondSep);
+
+        int iThirdSep = strNamingURL.indexOf(uriseparator, iSecondSep + 1);
+        String strPort = strNamingURL.substring(iSecondSep + 1, iThirdSep);
+
+        int iFourthSep = strNamingURL.indexOf(uriseparator, iThirdSep + 1);
+        String strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
+                iFourthSep);
+
+        WebClient webclient = new WebClient();
+        String strURL = strProtocol + "://" + strHost + ":" + strPort +
+                strURI +  "/config/options.htm";
+        URL url = new URL(strURL);
+        HtmlPage page = null;
+        try {
+            page = (HtmlPage)webclient.getPage(url);
+        } catch (java.net.UnknownHostException e) {
+            System.out.println("Product configuration was not" +
+                    " successfull." + strURL + " was not found." +
+                    " Please check if war is deployed properly" +
+                    " or url name parameters are correct.");
             assert false;
         }
 
-        if ((properties.get(TestConstants.KEY_ATT_CONFIG_DIR).
-                equals(null)) || (properties.get(TestConstants.
-                KEY_ATT_CONFIG_DIR).equals(""))) {
-            System.out.println(TestConstants.KEY_ATT_CONFIG_DIR + 
-                    " value should not be empty\n");
-            assert false;
+        String strDSPassword = (String)properties.get(
+                TestConstants.KEY_ATT_DS_DIRMGRPASSWD);
+        String strDSHost = (String)properties.get(
+                TestConstants.KEY_ATT_DIRECTORY_SERVER);
+        
+        // The logic below checks if the FQDN specified for config directory
+        // server name is same as server host name or not.
+        boolean hMatch = true;
+        if (!strDSHost.equals(null) || !strDSHost.equals("")) {
+            String strHostAdd = InetAddress.getByName(strHost).toString();
+            String strHostIPAdd = strHostAdd.substring(strHostAdd.indexOf("/") +
+                    1, strHostAdd.length());
+            String strDSAdd = InetAddress.getByName(strDSHost).toString();
+            String strDSIPAdd = strDSAdd.substring(strDSAdd.indexOf("/") + 1,
+                    strDSAdd.length());
+            if (strDSIPAdd.indexOf("127") == -1) {
+                if (!strHostIPAdd.equals(strDSIPAdd))
+                    hMatch = false;
+            }
         }
-        if ((properties.get(TestConstants.KEY_ATT_DIRECTORY_PORT).
-                equals(null)) || (properties.get(TestConstants.
-                KEY_ATT_DIRECTORY_PORT).equals(""))) {
-            System.out.println(TestConstants.KEY_ATT_DIRECTORY_PORT + 
-                    " value should not be empty\n");
-            assert false;
+        
+        // The logic below checks that directory server password has to be 
+        // specified if we are using external directory when embedded mode is
+        // set for config directory server
+        if (((properties.get(TestConstants.KEY_ATT_CONFIG_DATASTORE)).
+                    equals("embedded")) && ((strDSPassword.equals(null)) ||
+                    (strDSPassword.equals(""))) && (!hMatch)) {
+                System.out.println(TestConstants.KEY_ATT_DS_DIRMGRPASSWD +
+                        " value should not be empty for server " + serverName +
+                        "\n");
+                assert false;
         }
-        if ((properties.get(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX).
-                equals(null)) || (properties.get(TestConstants.
-                KEY_ATT_CONFIG_ROOT_SUFFIX).equals(""))) {
-            System.out.println(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX + 
-                    " value should not be empty\n");
-            assert false;
-        }
-         if ((properties.get(TestConstants.KEY_ATT_DS_DIRMGRPASSWD).
-                equals(null)) || (properties.get(TestConstants.
-                KEY_ATT_DS_DIRMGRPASSWD).equals(""))) {
-            System.out.println(TestConstants.KEY_ATT_DS_DIRMGRPASSWD + 
-                    " value should not be empty\n");
-            assert false;
+        if ((page != null) && ((page.asXml()).indexOf("configuration") != -1)) {
+
+            if ((properties.get(TestConstants.KEY_ATT_CONFIG_DATASTORE)).
+                    equals("dirServer")) {
+
+                if ((properties.get(TestConstants.KEY_ATT_DIRECTORY_SERVER).
+                        equals(null)) || (properties.get(TestConstants.
+                        KEY_ATT_DIRECTORY_SERVER).equals(""))) {
+                    System.out.println(TestConstants.KEY_ATT_DIRECTORY_SERVER +
+                            " value should not be empty for server " +
+                            serverName + "\n");
+                    assert false;
+                }
+
+                if ((properties.get(TestConstants.KEY_ATT_DIRECTORY_PORT).
+                        equals(null)) || (properties.get(TestConstants.
+                        KEY_ATT_DIRECTORY_PORT).equals(""))) {
+                    System.out.println(TestConstants.KEY_ATT_DIRECTORY_PORT +
+                            " value should not be empty for server " +
+                            serverName + "\n");
+                    assert false;
+                }
+
+                 if ((properties.get(TestConstants.KEY_ATT_DS_DIRMGRPASSWD).
+                        equals(null)) || (properties.get(TestConstants.
+                        KEY_ATT_DS_DIRMGRPASSWD).equals(""))) {
+                    System.out.println(TestConstants.KEY_ATT_DS_DIRMGRPASSWD +
+                            " value should not be empty for server " +
+                            serverName + "\n");
+                    assert false;
+                }
+            }
+
+            if ((properties.get(TestConstants.KEY_ATT_CONFIG_DIR).
+                    equals(null)) || (properties.get(TestConstants.
+                    KEY_ATT_CONFIG_DIR).equals(""))) {
+                System.out.println(TestConstants.KEY_ATT_CONFIG_DIR +
+                        " value should not be empty for server " +
+                        serverName + "\n");
+                assert false;
+            }
+
+            if ((properties.get(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX).
+                    equals(null)) || (properties.get(TestConstants.
+                    KEY_ATT_CONFIG_ROOT_SUFFIX).equals(""))) {
+                System.out.println(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX +
+                        " value should not be empty for server " +
+                        serverName + "\n");
+                assert false;
+            }
         }
    }
 

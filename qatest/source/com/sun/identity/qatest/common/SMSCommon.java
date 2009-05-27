@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.20 2009-01-26 23:58:11 nithyas Exp $
+ * $Id: SMSCommon.java,v 1.21 2009-05-27 23:06:35 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,15 +37,28 @@ import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SMSException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 /**
  * This class has helper functions related to service management and
@@ -487,46 +500,39 @@ public class SMSCommon extends TestCommon {
             if (!doesDataStoreExists(realmName, dsName)) {
                 String dsType = (String)cdsiMap.
                         get(SMSConstants.UM_DATASTORE_TYPE);
-                if (dsType.equalsIgnoreCase(
-                        SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMDS) ||
-                        dsType.equalsIgnoreCase(
-                        SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AD)) {
-                    // Retrieve the LDAP server information and call the
-                    // method to load the AM user schema
-                    String dsHost = (String)cdsiMap.
-                            get(SMSConstants.UM_LDAPv3_LDAP_SERVER);
-                    String dsPort = (String)cdsiMap.
-                            get(SMSConstants.UM_LDAPv3_LDAP_PORT);
-                    String dsDirmgrdn = (String)cdsiMap.
-                            get(SMSConstants.UM_DATASTORE_ADMINID);
-                    String dsDirmgrpwd = (String)cdsiMap.
-                            get(SMSConstants.UM_DATASTORE_ADMINPW);
-                    String dsRootSuffix = (String)cdsiMap.
-                            get(SMSConstants.UM_LDAPv3_ORGANIZATION_NAME);
-                    String sslmode = (String)cdsiMap.
-                            get(SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED);
-                    String keystore = null;
-                    if (sslmode.equals("true"))
-                        keystore = (String)cdsiMap.
-                                get(SMSConstants.UM_DATASTORE_KEYSTORE);
-                    ldc = new LDAPCommon(dsHost, dsPort,
-                            dsDirmgrdn, dsDirmgrpwd, dsRootSuffix, keystore);
-                    String schemaString = (String)globalCfgMap.
-                            get(SMSConstants.UM_SCHEMNA_LIST + "." + dsType);
-                    log(Level.FINEST, "createDataStoreImpl", "Schema files to" +
-                            " be loaded into the datastore: " + schemaString);
-                    String schemaAttributes = (String)globalCfgMap.
-                            get(SMSConstants.UM_SCHEMNA_ATTR + "." + dsType);
-                    log(Level.FINEST, "createDataStoreImpl", "Schema" +
-                            " attributes to check whether schema is  already" +
-                            "loaded: " + schemaAttributes);                    
+                
+                // Retrieve the LDAP server information and call the
+                // method to load the AM user schema
+                String dsHost = (String)cdsiMap.
+                        get(SMSConstants.UM_LDAPv3_LDAP_SERVER);
+                String dsPort = (String)cdsiMap.
+                        get(SMSConstants.UM_LDAPv3_LDAP_PORT);
+                String dsDirmgrdn = (String)cdsiMap.
+                        get(SMSConstants.UM_DATASTORE_ADMINID);
+                String dsDirmgrpwd = (String)cdsiMap.
+                        get(SMSConstants.UM_DATASTORE_ADMINPW);
+                String dsRootSuffix = (String)cdsiMap.
+                        get(SMSConstants.UM_LDAPv3_ORGANIZATION_NAME);
+                String sslmode = (String)cdsiMap.
+                        get(SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED);
+                String keystore = null;
+                if (sslmode.equals("true"))
+                    keystore = (String)cdsiMap.
+                            get(SMSConstants.UM_DATASTORE_KEYSTORE);
+                ldc = new LDAPCommon(dsHost, dsPort,
+                        dsDirmgrdn, dsDirmgrpwd, dsRootSuffix, keystore);
+                String schemaString = (String)globalCfgMap.
+                        get(SMSConstants.UM_SCHEMNA_LIST + "." + dsType);
+                log(Level.FINEST, "createDataStoreImpl", "Schema files to" +
+                        " be loaded into the datastore: " + schemaString);
+                String schemaAttributes = (String)globalCfgMap.
+                        get(SMSConstants.UM_SCHEMNA_ATTR + "." + dsType);
+                log(Level.FINEST, "createDataStoreImpl", "Schema" +
+                        " attributes to check whether schema is  already" +
+                        "loaded: " + schemaAttributes);                    
+                if (schemaString != null && schemaAttributes != null ) {
                     ldc.loadAMUserSchema(schemaString, schemaAttributes);
                     ldc.disconnectDServer();
-                } else if (dsType.equalsIgnoreCase(
-                        SMSConstants.UM_DATASTORE_SCHEMA_TYPE_OPENDS)) {
-                    cdsiMap.put(SMSConstants.UM_DATASTORE_TYPE,(String) 
-                            SMSConstants.UM_DATASTORE_SCHEMA_TYPE_LDAP);
-                    dsType = SMSConstants.UM_DATASTORE_SCHEMA_TYPE_LDAP;
                 }
                 log(Level.FINE, "createDataStoreImpl", "Creating datastore " +
                         dsName +  "..." + cdsiMap);
@@ -643,11 +649,13 @@ public class SMSCommon extends TestCommon {
                         assert false;
                     }
                 } else {
-                    log(Level.SEVERE, "updateDataStore", "Datastore not found: " + udsName);
+                    log(Level.SEVERE, "updateDataStore", "Datastore not" +
+                            " found: " + udsName);
                     assert false;
                 }
             } else {
-                log(Level.SEVERE, "UpdateDataStore", "Datastore not found: " + udsName);
+                log(Level.SEVERE, "UpdateDataStore", "Datastore not found: " +
+                        udsName);
                 assert false;
             }
         } catch (Exception e) {
@@ -732,7 +740,7 @@ public class SMSCommon extends TestCommon {
         List list = new ArrayList();
         List dList = getCreatedDatastoreNames(idx);
         log(Level.FINEST, "getDatastoreDeleteList", "Datastores not to be" +
-                "deleted: " + dList.toString());   
+                " deleted: " + dList.toString());   
         Iterator key = set.iterator();
         String item;
         while (key.hasNext()) {
@@ -979,7 +987,7 @@ public class SMSCommon extends TestCommon {
         Map globalMap = null;
         Map finalMap = null;
 
-            globalMap = getMapFromResourceBundle("config" + fileseparator +
+        globalMap = getMapFromResourceBundle("config" + fileseparator +
                     fileName);
         log(Level.FINEST, "createUMDatastoreGlobalMap", "Map containing end" +
                 "user specified values: " + globalMap.toString());
@@ -1045,9 +1053,9 @@ public class SMSCommon extends TestCommon {
         String key;
         String newKey;
         String value;
-        String dataType;
-        String rootSuffix;
-        String strPassword;
+        String dataType = null;
+        String rootSuffix = null;
+        String strPassword = null;
         int minD = -1;
         int maxD = -1;
 
@@ -1070,174 +1078,216 @@ public class SMSCommon extends TestCommon {
         for (int mCount = minD; mCount < maxD; mCount++) {
             log(Level.FINEST, "createSwappedMap", "Server index for which " +
                     "datastore is being configured: " + mCount);
-            if (!gblMap.containsKey(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                    mCount + "." + SMSConstants.UM_DATASTORE_COUNT)) {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_DATASTORE_COUNT + " key is" +
-                            " mandatory.");
-                    assert false;
-            }
-            if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                    "." + SMSConstants.UM_DATASTORE_COUNT).toString()).
-                    equals("")) {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_DATASTORE_COUNT + " value" +
-                            " is mandatory.");
-                    assert false;
-            }
+  
+            String serverName = (String)umDMap.get(Integer.toString(mCount)); 
+            ResourceBundle cfgData =
+                ResourceBundle.getBundle("Configurator-" + serverName +
+                "-Generated");
+            String umdatastore = cfgData.getString("umdatastore");
 
-            // Get number of datastores to be configured for this server
-            int dCount = new Integer(gblMap.get(
-                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount + "." +
-                    SMSConstants.UM_DATASTORE_COUNT).toString()).intValue();
-            for (int i = 0; i < dCount; i++) {
-                log(Level.FINEST, "createSwappedMap", "Datastore index being" +
-                        " configured: " + dCount);
+            if (!umdatastore.equals("embedded")) {
                 if (!gblMap.containsKey(
-                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                        "." + SMSConstants.UM_DATASTORE_TYPE + "." + i)) {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            mCount + "." + SMSConstants.UM_DATASTORE_TYPE +
-                            "." + i + " key is mandatory.");
-                    assert false;
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_DATASTORE_COUNT)) {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                mCount + "." + SMSConstants.UM_DATASTORE_COUNT +
+                                " key is mandatory.");
+                        assert false;
                 }
-                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                        mCount + "." + SMSConstants.UM_DATASTORE_TYPE + "." +
-                        i).toString()).equals("")) {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            mCount + "." + SMSConstants.UM_DATASTORE_TYPE +
-                            "." + i + " value is mandatory.");
-                    assert false;
-                }
-                
-                // Check that datatype key and value are specified
-                dataType = (String)gblMap.get(
-                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                        "." + SMSConstants.UM_DATASTORE_TYPE + "." + i);
-                if (!gblMap.containsKey(
-                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                        "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." + i))
-                {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." +
-                            i + " key is mandatory.");
-                    assert false;
-                }
-                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                        mCount + "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX +
-                        "." + i).toString()).equals("")) {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." +
-                            i + " value is mandatory.");
-                    assert false;
-                }
-                
-                // Check that root suffix key and value are specified
-                rootSuffix = (String)gblMap.get(
-                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                        "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." + i);
-                if (!gblMap.containsKey(
-                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                        "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i)) {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i +
-                            " key is mandatory.");
-                    assert false;
-                }
-                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                        mCount + "." + SMSConstants.UM_DATASTORE_ADMINPW +
-                        "." + i).toString()).equals("")) {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i +
-                            " value is mandatory.");
-                    assert false;
-                }
-                
-                // Check that datastore admin password key and value are
-                // specified
-                strPassword = (String)gblMap.get(
-                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                        "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i);
-                if (!gblMap.containsKey(
-                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                        "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i)) {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i +
-                            " key is mandatory.");
-                    assert false;
-                }
-                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                        mCount + "." + SMSConstants.UM_DATASTORE_ADMINPW +
-                        "." + i).toString()).equals("")) {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i +
-                            " value is mandatory.");
-                    assert false;
-                }
-                
-                // Check that datastore server name key and value are specified
-                if (!gblMap.containsKey(
-                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                        "." + SMSConstants.UM_LDAPv3_LDAP_SERVER + "." + i)) {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_LDAPv3_LDAP_SERVER + "." +
-                            i + " key is mandatory.");
-                    assert false;
-                }
-                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                        mCount + "." + SMSConstants.UM_LDAPv3_LDAP_SERVER +
-                        "." + i).toString()).equals("")) {
-                    log(Level.SEVERE, "createSwappedMap",
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_LDAPv3_LDAP_SERVER + "." +
-                            i + " value is mandatory.");
-                    assert false;
+                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                        + "." + SMSConstants.UM_DATASTORE_COUNT).toString()).
+                        equals("")) {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + "." + SMSConstants.UM_DATASTORE_COUNT +
+                                " value is mandatory.");
+                        assert false;
                 }
 
-                // Check that datastore server port key and value are specified
-                if (!gblMap.containsKey(
-                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                        "." + SMSConstants.UM_LDAPv3_LDAP_PORT + "." + i)) {
-                    log(Level.SEVERE, "createSwappedMap",
+                // Get number of datastores to be configured for this server
+                int dCount = new Integer(gblMap.get(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount + "." +
+                        SMSConstants.UM_DATASTORE_COUNT).toString()).intValue();
+                for (int i = 0; i < dCount; i++) {
+                    log(Level.FINEST, "createSwappedMap", "Datastore index" +
+                            " being configured: " + dCount);
+
+                    if (!gblMap.containsKey(
                             SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_LDAPv3_LDAP_PORT + "." + i +
-                            " key is mandatory.");
-                    assert false;
-                }
-                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                        mCount + "." + SMSConstants.UM_LDAPv3_LDAP_PORT + "." +
-                        i).toString()).equals("")) {
-                    log(Level.SEVERE, "createSwappedMap",
+                            "." + SMSConstants.UM_DATASTORE_TYPE + "." + i)) {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                mCount + "." + SMSConstants.UM_DATASTORE_TYPE +
+                                "." + i + " key is mandatory.");
+                        assert false;
+                    }
+                    if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_DATASTORE_TYPE +
+                            "." + i).toString()).equals("")) {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                mCount + "." + SMSConstants.UM_DATASTORE_TYPE +
+                                "." + i + " value is mandatory.");
+                        assert false;
+                    }
+
+                    // Check that datatype key and value are specified
+                    dataType = (String)gblMap.get(
                             SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
-                            "." + SMSConstants.UM_LDAPv3_LDAP_PORT + "." + i +
-                            " value is mandatory.");
-                    assert false;
+                            "." + SMSConstants.UM_DATASTORE_TYPE + "." + i);
+                    if (!gblMap.containsKey(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." +
+                            i)) {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX +
+                                "." + i + " key is mandatory.");
+                        assert false;
+                    }
+                    if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX
+                            + "." + i).toString()).equals("")) {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX +
+                                "." + i + " value is mandatory.");
+                        assert false;
+                    }
+
+                    // Check that root suffix key and value are specified
+                    rootSuffix = (String)gblMap.get(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." +
+                            i);
+                    if (!gblMap.containsKey(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i))
+                    {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + "." + SMSConstants.UM_DATASTORE_ADMINPW + "."
+                                + i + " key is mandatory.");
+                        assert false;
+                    }
+                    if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_DATASTORE_ADMINPW +
+                            "." + i).toString()).equals("")) {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + "." + SMSConstants.UM_DATASTORE_ADMINPW + "."
+                                + i + " value is mandatory.");
+                        assert false;
+                    }
+
+                    // Check that datastore admin password key and value are
+                    // specified
+                    strPassword = (String)gblMap.get(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i);
+                    if (!gblMap.containsKey(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i))
+                    {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + "." + SMSConstants.UM_DATASTORE_ADMINPW + "."
+                                + i + " key is mandatory.");
+                        assert false;
+                    }
+                    if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_DATASTORE_ADMINPW +
+                            "." + i).toString()).equals("")) {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + "." + SMSConstants.UM_DATASTORE_ADMINPW + "."
+                                + i + " value is mandatory.");
+                        assert false;
+                    }
+
+                    // Check that datastore server name key and value are
+                    // specified
+                    if (!gblMap.containsKey(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_LDAPv3_LDAP_SERVER + "." + i))
+                    {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + "." + SMSConstants.UM_LDAPv3_LDAP_SERVER +
+                                "." + i + " key is mandatory.");
+                        assert false;
+                    }
+                    if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_LDAPv3_LDAP_SERVER +
+                            "." + i).toString()).equals("")) {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + "." + SMSConstants.UM_LDAPv3_LDAP_SERVER +
+                                "." + i + " value is mandatory.");
+                        assert false;
+                    }
+
+                    // Check that datastore server port key and value are
+                    // specified
+                    if (!gblMap.containsKey(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_LDAPv3_LDAP_PORT + "." + i)) {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + "." + SMSConstants.UM_LDAPv3_LDAP_PORT + "."
+                                + i + " key is mandatory.");
+                        assert false;
+                    }
+                    if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_LDAPv3_LDAP_PORT +
+                            "." + i).toString()).equals("")) {
+                        log(Level.SEVERE, "createSwappedMap",
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + "." + SMSConstants.UM_LDAPv3_LDAP_PORT + "."
+                                + i + " value is mandatory.");
+                        assert false;
+                    }
+                    Map defaultMap = getMapFromResourceBundle("config" +
+                            fileseparator + "default" + fileseparator +
+                            fileName, dataType);
+                    log(Level.FINEST, "createSwappedMap", "Default datastore" +
+                            " properties and values: " + defaultMap.toString());
+
+                    keys = defaultMap.keySet();
+                    keyIter = keys.iterator();
+
+                    while (keyIter.hasNext()) {
+                        key = keyIter.next().toString();
+                        if (key.indexOf(dataType) != -1) {
+                            value = defaultMap.get(key).toString().trim();
+
+                            // One can specify ROOT_SUFFIX tag in any key in the
+                            // default datastore properties. That tag will be
+                            // replaced by user specified value for root suffix
+                            if (value.indexOf("ROOT_SUFFIX") != -1)
+                                value = value.replace("ROOT_SUFFIX",
+                                        rootSuffix);
+
+                            if (key.indexOf(SMSConstants.UM_LDAPv3_AUTHPW) != -1
+                                    &&  value.equals(""))
+                                value = strPassword;
+
+                            newKey = key.replace(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + dataType,
+                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX
+                                        +  mCount) + "." + i;
+                            newDefaultMap.put(newKey, value);
+                        }
+                    }
                 }
+                newDefaultMap.putAll(gblMap);
+            } else {
+                dataType = SMSConstants.UM_DATASTORE_SCHEMA_TYPE_LDAP;
 
                 log(Level.FINEST, "createSwappedMap", "Server name and index" +
                     " map: " + umDMap.toString());
-                String serverName = (String)umDMap.get(Integer.toString(mCount)); 
-                ResourceBundle cfgData =
-                        ResourceBundle.getBundle("Configurator-" + serverName +
-                        "-Generated");
-                String umdatastore = cfgData.getString("umdatastore");
-
-                String strCfgServer;
-                String strCfgPort;
-                String strCfgRootSuffix;
-                String strCfgPassword;
-                String strCfgDirMgrDN;
 
                 Map defaultMap = getMapFromResourceBundle("config" +
                         fileseparator + "default" + fileseparator + fileName,
@@ -1249,53 +1299,76 @@ public class SMSCommon extends TestCommon {
                 // to point to configuration server details and remove filtered
                 // role and normal role from supported operations as they are
                 // supported by any other datastore except Sun Directory Server
-                if (umdatastore.equals("embedded")) {
-                    strCfgServer = cfgData.getString("directory_server"); 
-                    strCfgPort =  cfgData.getString("directory_port");
-                    strCfgRootSuffix =  cfgData.getString("config_root_suffix");
-                    strCfgPassword =  cfgData.getString("amadmin_password");
-                    strCfgDirMgrDN =  cfgData.getString("ds_dirmgrdn");
+                String strCfgServer = (String)umDMap.get(mCount + "." +
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                        SMSConstants.UM_LDAPv3_LDAP_SERVER);
+                String strCfgPort =  (String)umDMap.get(mCount + "." +
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                        SMSConstants.UM_LDAPv3_LDAP_PORT);
+                String strCfgRootSuffix =  (String)umDMap.get(mCount + "." +
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                        SMSConstants.UM_LDAPv3_ORGANIZATION_NAME);
 
-                    Map chgGblData = new HashMap();
-                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            mCount + "." +
-                            SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." + i,
-                            strCfgRootSuffix);
-                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            mCount + "." + SMSConstants.UM_DATASTORE_ADMINPW +
-                            "." + i, strCfgPassword);
-                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            mCount + "." + SMSConstants.UM_DATASTORE_ADMINID +
-                            "." + i, strCfgDirMgrDN);
-                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            mCount + "." + SMSConstants.UM_LDAPv3_LDAP_SERVER +
-                            "." + i, strCfgServer);
-                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            mCount + "." + SMSConstants.UM_LDAPv3_LDAP_PORT +
-                            "." + i, strCfgPort);
-                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            mCount + "." + SMSConstants.UM_LDAPv3_AUTHID + "." +
-                            i, strCfgDirMgrDN);
+                String strNamingURL =
+                        (String)cfgData.getString(
+                        TestConstants.KEY_AMC_NAMING_URL);
 
-                    gblMap.putAll(chgGblData);
+                int iFirstSep = strNamingURL.indexOf(":");
+                int iSecondSep = strNamingURL.indexOf(":", iFirstSep + 1);
+                String strHost = strNamingURL.substring(iFirstSep + 3,
+                        iSecondSep);
 
-                    // Remove role and filtered role plugin support of user
-                    // datastore is set to embedded
-                    Map opendsMap = getMapFromResourceBundle("config" +
-                            fileseparator + "default" + fileseparator +
-                            fileName, 
-                            SMSConstants.UM_DATASTORE_SCHEMA_TYPE_OPENDS); 
-                    defaultMap.remove(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            "." + dataType + "." +
-                            SMSConstants.UM_LDAPv3_SUPPORT_OPERATION);
-                    defaultMap.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            "." + dataType + "." +
-                            SMSConstants.UM_LDAPv3_SUPPORT_OPERATION,
-                            opendsMap.get(
-                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                            "." + SMSConstants.UM_DATASTORE_SCHEMA_TYPE_OPENDS +
-                            "." + SMSConstants.UM_LDAPv3_SUPPORT_OPERATION));
+                boolean hMatch = true;
+                if (!strCfgServer.equals(null) || !strCfgServer.equals("")) {
+                    String strHostAdd =
+                            InetAddress.getByName(strHost).toString();
+                    String strHostIPAdd = strHostAdd.substring(
+                            strHostAdd.indexOf("/") + 1, strHostAdd.length());
+                    String strDSAdd =
+                            InetAddress.getByName(strCfgServer).toString();
+                    String strDSIPAdd = strDSAdd.substring(
+                            strDSAdd.indexOf("/") + 1, strDSAdd.length());
+                    if (strDSIPAdd.indexOf("127") == -1) {
+                        if (!strHostIPAdd.equals(strDSIPAdd))
+                            hMatch = false;
+                    }
                 }
+
+                String strCfgPassword = null;
+                if (!hMatch)
+                    strCfgPassword =  cfgData.getString(
+                            TestConstants.KEY_ATT_DS_DIRMGRPASSWD);
+                else
+                    strCfgPassword =  cfgData.getString(
+                            TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+
+                String strCfgDirMgrDN =  (String)umDMap.get(mCount + "." +
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                        SMSConstants.UM_LDAPv3_AUTHID);
+                Map chgGblData = new HashMap();
+                chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." +
+                        SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." + 0,
+                        strCfgRootSuffix);
+                chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_DATASTORE_ADMINPW +
+                        "." + 0, strCfgPassword);
+                chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_DATASTORE_ADMINID +
+                        "." + 0, strCfgDirMgrDN);
+                chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_LDAPv3_LDAP_SERVER +
+                        "." + 0, strCfgServer);
+                chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_LDAPv3_LDAP_PORT +
+                        "." + 0, strCfgPort);
+                if (!hMatch) {
+                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_LDAPv3_AUTHID + "." +
+                        0, strCfgDirMgrDN);
+                }
+                chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_DATASTORE_COUNT, 1);
 
                 keys = defaultMap.keySet();
                 keyIter = keys.iterator();
@@ -1309,24 +1382,24 @@ public class SMSCommon extends TestCommon {
                         // default datastore properties. That tag will be
                         // replaced by user specified value for root suffix
                         if (value.indexOf("ROOT_SUFFIX") != -1)
-                            value = value.replace("ROOT_SUFFIX", rootSuffix);
+                            value = value.replace("ROOT_SUFFIX",
+                                    strCfgRootSuffix);
 
                         if (key.indexOf(SMSConstants.UM_LDAPv3_AUTHPW) != -1 &&
                                 value.equals(""))
-                            value = strPassword;
-
+                            value = strCfgPassword;
                         newKey = key.replace(
                                 SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
                                 dataType,
                                 SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
-                                mCount) + "." + i;
+                                mCount) + "." + 0;
                         newDefaultMap.put(newKey, value);
                     }
                 }
+                newDefaultMap.putAll(chgGblData);
             }
         }
 
-        newDefaultMap.putAll(gblMap);
         log(Level.FINEST, "createSwappedMap", "Final datastore properties" +
                 " and values: " + newDefaultMap.toString());
 
@@ -1455,6 +1528,163 @@ public class SMSCommon extends TestCommon {
         return result;
     }    
   
+    /**
+     * Returns a map containing the config store datastore attributes. These
+     * values are retrived from serverconfig.xml file.
+     * @param url server url
+     * @return Map containing config store configuration attributes
+     * @throws java.lang.Exception
+     */
+    public Map getServerConfigData(String url)
+    throws Exception {
+        ServiceConfigManager scm = new ServiceConfigManager(
+                "iPlanetAMPlatformService", admintoken);
+        ServiceConfig globalSvcConfig = scm.getGlobalConfig(null);
+        ServiceConfig all = (globalSvcConfig != null) ?
+            globalSvcConfig.getSubConfig("com-sun-identity-servers") : null;
+        ServiceConfig cfg = (all != null) ? all.getSubConfig(url) : null;
+        Properties prop = getPropertiesFromXML(
+                (Set)(cfg.getAttributes()).get("serverconfigxml"));
+        String strServerXML = prop.toString();
+        int StartIndx = strServerXML.indexOf("{");
+        strServerXML = strServerXML.substring(StartIndx + 1,
+                strServerXML.indexOf("}"));
+        StartIndx = strServerXML.indexOf("<!--");
+        strServerXML = strServerXML.substring(0, StartIndx)
+                + strServerXML.substring(strServerXML.indexOf("-->") + 3,
+                strServerXML.length());
+        StartIndx = strServerXML.indexOf("<!--");
+        strServerXML = strServerXML.substring(0, StartIndx)
+                + strServerXML.substring(strServerXML.indexOf("-->") + 3,
+                strServerXML.length());
+
+        return (getConfigServerDetails(strServerXML));
+    }
+
+    /**
+     * This method parses the ServerConfigXML
+     * @param Set set containing the ServerConfigXML
+     * @return set of properties
+     */
+    public Map getConfigServerDetails(String strXMLFile)
+    throws Exception {
+        try {
+            DocumentBuilderFactory factory =
+            DocumentBuilderFactory.newInstance();
+            factory.setValidating(false);
+            factory.setNamespaceAware(false);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new InputSource(
+                    new StringReader(strXMLFile)));
+            Element topElement = document.getDocumentElement();
+            Map map = parseServerConfigXML(
+                (Node)topElement);
+            return map;
+        } catch (Exception e) {
+            log(Level.SEVERE, "getConfigServerDetails", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * This method parses the ServerConfigXML
+     * @param Set set containing the ServerConfigXML
+     * @return set of properties
+     */
+    public Properties getPropertiesFromXML(Set set)
+          throws IOException {
+        Properties prop = new Properties();
+        for (Iterator i = set.iterator(); i.hasNext(); ) {
+            String str = (String)i.next();
+            int idx = str.indexOf('=');
+            if (idx != -1) {
+                prop.setProperty(str.substring(0, idx), str.substring(idx+1));
+            }
+        }
+        return prop;
+    }
+
+    /**
+     * This method parses the ServerConfigXML
+     * @param Node parentNode of the ServerConfigXML
+     * @return map
+     */
+    public Map parseServerConfigXML(Node parentNode) {
+
+        Set smSet = new HashSet();
+        NodeList avList = parentNode.getChildNodes();
+        Map<String, String> map = new HashMap<String, String>();
+        int numAVPairs = avList.getLength();
+
+        if (numAVPairs <= 0) {
+            return null;
+        }
+
+        for (int l = 0; l < numAVPairs; l++) {
+            Node avPair = avList.item(l);
+            // now reset values to prepare for the next AV pair.
+            if ((avPair.getNodeType() == Node.ELEMENT_NODE) &&
+                    avPair.getNodeName().equals("ServerGroup")) {
+                NamedNodeMap nnmap = avPair.getAttributes();
+                if (((nnmap.getNamedItem("name")).getNodeValue()).
+                        contains("sms")) {
+                    NodeList smsList = avPair.getChildNodes();
+                    for (int j = 0; j < smsList.getLength(); j++) {
+                        Node smsNode = smsList.item(j);
+                        if (smsNode.getNodeName().equals("Server")) {
+                            NamedNodeMap mappy = smsNode.getAttributes();
+                            map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_SERVER,
+                                    (mappy.getNamedItem("host")).
+                                    getNodeValue());
+                            map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." + SMSConstants.UM_LDAPv3_LDAP_PORT,
+                                    (mappy.getNamedItem("port")).
+                                    getNodeValue());
+                            if (((mappy.getNamedItem("type")).getNodeValue()).
+                                    contains("@")) {
+                                map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX
+                                        + "." +
+                                        SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED,
+                                        "false");
+                            } else {
+                                map.put(
+                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX
+                                        + "." +
+                                        SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED,
+                                        "true");
+                            }
+                        }
+                        if (smsNode.getNodeName().equals("User")) {
+                            NodeList userList = smsNode.getChildNodes();
+                            for (int m = 0; m < userList.getLength(); m++) {
+                                Node userNode = userList.item(m);
+                                if ((userNode.getNodeName()).equals("DirDN")) {
+                                    map.put(SMSConstants.
+                                            UM_DATASTORE_PARAMS_PREFIX + "." +
+                                            SMSConstants.UM_LDAPv3_AUTHID,
+                                            userNode.getTextContent());
+                                    map.put(SMSConstants.
+                                            UM_DATASTORE_PARAMS_PREFIX + "." +
+                                            SMSConstants.UM_DATASTORE_ADMINID,
+                                            userNode.getTextContent());
+                                }
+                            }
+                        }
+                        if (smsNode.getNodeName().equals("BaseDN")) {
+                            map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "." +
+                                    SMSConstants.UM_LDAPv3_ORGANIZATION_NAME,
+                                    smsNode.getTextContent());
+                        }
+                    }
+                }
+            }
+        }
+        return (map == null) ? null : map;
+    }
+
     /**
      * This method applies only when configuring datatsores for a module.
      * Current qatest framework allowes a module to create a datastore only at a
@@ -1645,14 +1875,14 @@ public class SMSCommon extends TestCommon {
                         key.substring(0, posOfLastPeriodIndex) : key;
                     dsMap.put(newTempKey, value);
                 }
-                log(Level.FINEST, "setDataStoreConfigData", dsMap.toString());
             }
             if (dsMap.isEmpty()) {
                 log(Level.SEVERE, "setDataStoreConfigData",
                         "Could not find config data for datastore " +
                         sdscdIndex);
                 assert false;
-            }
+            } else
+                log(Level.FINEST, "setDataStoreConfigData", dsMap.toString());
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
