@@ -8,8 +8,8 @@
     xmlns:o="http://opensso.dev.java.net">
     <c:if
         test="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'and'}">
-        <ice:outputText
-            value="All of the following conditions:"/>
+        <ice:outputLabel
+            value="#{resources['condition-and.label']}"/>
         <ice:panelGroup
             styleClass="conditions">
             <c:forEach
@@ -25,8 +25,8 @@
             dropMask="hover_start"
             dropValue="#{viewCondition}"
             dropListener="#{policyCreateWizardHandler.conditionDropListener}">
-            <ice:outputText
-                value="#{resources['condition-and.dropText']}"/>
+            <ice:outputLabel
+                value="#{resources['condition-and.dropTextLabel']}"/>
         </ice:panelGroup>
     </c:if>
 </span>
