@@ -3,8 +3,9 @@ package com.sun.identity.admin.model;
 import com.sun.identity.admin.handler.StaticAttributesHandler;
 import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.StaticAttributes;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import static com.sun.identity.admin.model.AttributesBean.AttributeType.*;
 
@@ -41,21 +42,24 @@ public class StaticAttributesBean extends AttributesBean {
     }
 
     public Set<ResourceAttribute> toResourceAttributesSet() {
-        Set<ResourceAttribute> resAttributes = new HashSet<ResourceAttribute>();
+        Map<String,ResourceAttribute> resAttributes = new HashMap<String,ResourceAttribute>();
 
         for (ViewAttribute va: getViewAttributes()) {
             if (!(va instanceof StaticViewAttribute)) {
                 continue;
             }
             StaticViewAttribute sva = (StaticViewAttribute)va;
-            StaticAttributes sas = new StaticAttributes();
-            
-            sas.setPropertyName(sva.getName());
-            sas.setPropertyValues(Collections.singleton(sva.getValue()));
-            resAttributes.add(sas);
+            StaticAttributes sas = (StaticAttributes)resAttributes.get(sva.getName());
+            if (sas == null ){
+                sas = new StaticAttributes();
+                sas.setPropertyName(sva.getName());
+                sas.setPropertyValues(new HashSet());
+                resAttributes.put(sas.getPropertyName(), sas);
+            }
+            sas.getPropertyValues().add(sva.getValue());
         }
 
-        return resAttributes;
+        return new HashSet(resAttributes.values());
     }
 
     @Override

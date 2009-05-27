@@ -31,7 +31,10 @@
                                 </span>
                             </span>
                             <div class="clear"></div>
-                            <div class="section-details">Need text here.</div>
+                            <div class="section-details">
+                                <ice:outputText
+                                    value="#{resources['policy-attributes-static.sectionDetails']}"/>
+                            </div>
                             <ice:panelGroup
                                 visible="#{o:size(attributesBean.viewAttributes) == 0}">
                                 <ice:outputText
