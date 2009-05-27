@@ -6,8 +6,6 @@ DROP TABLE consumer;
 CREATE TABLE consumer (
     id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     cons_name VARCHAR(128),
-    cons_svc_uri VARCHAR(2048) NOT NULL UNIQUE,
-    cons_icon_uri VARCHAR(2048),
     cons_secret VARCHAR(1024),
     cons_rsakey VARCHAR(2048),
     cons_key VARCHAR(1024)
