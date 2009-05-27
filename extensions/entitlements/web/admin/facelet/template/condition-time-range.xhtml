@@ -11,7 +11,8 @@
 
         <ice:panelGrid
             columns="5">
-            <ice:outputText value="Start Time:"/>
+            <ice:outputLabel
+                value="#{resources['condition-time-range.startTimeLabel']}"/>
             <ice:selectOneMenu
                 value="#{viewCondition.startHour}">
                 <f:selectItem
@@ -72,7 +73,8 @@
                 <f:selectItem itemValue="AM" itemLabel="AM"/>
                 <f:selectItem itemValue="PM" itemLabel="PM"/>
             </ice:selectOneMenu>
-            <ice:outputText value="End Time:"/>
+            <ice:outputLabel
+                value="#{resources['condition-time-range.endTimeLabel']}"/>
             <ice:selectOneMenu
                 value="#{viewCondition.endHour}">
                 <f:selectItem
@@ -130,8 +132,12 @@
             </ice:selectOneMenu>
             <ice:selectOneMenu
                 value="#{viewCondition.endPeriod}">
-                <f:selectItem itemValue="AM" itemLabel="AM"/>
-                <f:selectItem itemValue="PM" itemLabel="PM"/>
+                <f:selectItem 
+                    itemValue="AM"
+                    itemLabel="AM"/>
+                <f:selectItem 
+                    itemValue="PM"
+                    itemLabel="PM"/>
             </ice:selectOneMenu>
         </ice:panelGrid>
     </ice:panelGroup>

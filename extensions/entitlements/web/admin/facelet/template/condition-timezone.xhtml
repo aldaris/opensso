@@ -8,9 +8,9 @@
     xmlns:o="http://opensso.dev.java.net">
     <ice:panelGroup
         rendered="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'timezone'}">
-
         <ice:panelGrid columns="2">
-            <ice:outputText value="Time zone:"/>
+            <ice:outputLabel
+                value="#{resources['condition-timezone.timezoneLabel']}"/>
             <ice:selectOneMenu
                 value="#{viewCondition.timezoneId}">
                 <f:selectItems

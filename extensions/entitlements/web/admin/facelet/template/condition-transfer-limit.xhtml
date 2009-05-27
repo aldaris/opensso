@@ -9,11 +9,11 @@
 
     <ice:panelGroup
         rendered="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'transferLimit'}">
-
         <ice:panelGrid
             styleClass="inline-input"
             columns="3">
-            <ice:outputText value="Transfer amount is"/>
+            <ice:outputLabel
+                value="#{resources['condition-transfer-limit.transferLimitLabel']}"/>
             <ice:selectOneMenu
                 value="#{viewCondition.limitTypeString}">
                 <f:selectItems
