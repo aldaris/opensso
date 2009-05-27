@@ -8,27 +8,57 @@
     xmlns:o="http://opensso.dev.java.net">
     <ice:panelGroup
         rendered="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'ipRange'}">
-        <span class="condition-section-head">
-            <span class="condition-section-title">
-                <ice:outputText value="Address Range"/>
+        <span
+            class="condition-section-head">
+            <span
+                class="condition-section-title">
+                <ice:outputText
+                    value="Address Range"/>
             </span>
         </span>
         <div class="clear"></div>
         <ice:panelGrid
             columns="2">
-            <ice:outputText value="From"/>
+            <ice:outputLabel
+                value="#{resources['condition-ip-range.fromLabel']}"/>
             <ice:panelGrid columns="4">
-                <ice:inputText value="#{viewCondition.startIp[0]}" size="3" maxlength="3"/>
-                <ice:inputText value="#{viewCondition.startIp[1]}" size="3" maxlength="3"/>
-                <ice:inputText value="#{viewCondition.startIp[2]}" size="3" maxlength="3"/>
-                <ice:inputText value="#{viewCondition.startIp[3]}" size="3" maxlength="3"/>
+                <ice:inputText
+                    value="#{viewCondition.startIp[0]}"
+                    size="3"
+                    maxlength="3"/>
+                <ice:inputText
+                    value="#{viewCondition.startIp[1]}"
+                    size="3"
+                    maxlength="3"/>
+                <ice:inputText
+                    value="#{viewCondition.startIp[2]}"
+                    size="3"
+                    maxlength="3"/>
+                <ice:inputText
+                    value="#{viewCondition.startIp[3]}"
+                    size="3"
+                    maxlength="3"/>
             </ice:panelGrid>
-            <ice:outputText value="To"/>
-            <ice:panelGrid columns="4">
-                <ice:inputText value="#{viewCondition.endIp[0]}" size="3" maxlength="3"/>
-                <ice:inputText value="#{viewCondition.endIp[1]}" size="3" maxlength="3"/>
-                <ice:inputText value="#{viewCondition.endIp[2]}" size="3" maxlength="3"/>
-                <ice:inputText value="#{viewCondition.endIp[3]}" size="3" maxlength="3"/>
+            <ice:outputLabel
+                value="#{resources['condition-ip-range.toLabel']}"/>
+            <ice:panelGrid
+                columns="4">
+                <ice:inputText
+                    value="#{viewCondition.endIp[0]}"
+                    size="3"
+                    maxlength="3"/>
+                <ice:inputText
+                    value="#{viewCondition.endIp[1]}"
+                    size="3"
+                    maxlength="3"/>
+                <ice:inputText
+                    value="#{viewCondition.endIp[2]}"
+                    size="3"
+                    maxlength="3"/>
+                <ice:inputText
+                    value="#{viewCondition.endIp[3]}"
+                    size="3"
+                    maxlength="3"/>
             </ice:panelGrid>
         </ice:panelGrid>
     </ice:panelGroup>
