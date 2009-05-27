@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.23 2009-05-23 19:36:43 farble1670 Exp $
+   $Id: entitlement.xml,v 1.24 2009-05-27 23:06:36 hengming Exp $
 
 -->
 
@@ -142,6 +142,10 @@
                         <AttributeSchema name="class"
                             type="single"
                             syntax="string"
+                            i18nKey="" />
+                        <AttributeSchema name="groupMembershipSearchIndexEnabled"
+                            type="single"
+                            syntax="boolean"
                             i18nKey="" />
                     </SubSchema>
                 </SubSchema>
@@ -445,6 +449,10 @@
                         <AttributeValuePair>
                             <Attribute name="class" />
                             <Value>com.sun.identity.entitlement.opensso.OpenSSOSubjectAttributesCollector</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="groupMembershipSearchIndexEnabled" />
+                            <Value>false</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>

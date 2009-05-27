@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesCollector.java,v 1.5 2009-05-21 01:23:49 hengming Exp $
+ * $Id: SubjectAttributesCollector.java,v 1.6 2009-05-27 23:06:09 hengming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -104,4 +104,13 @@ public interface SubjectAttributesCollector {
      */
     public Set<String> getAvailableSubjectAttributeNames()
         throws EntitlementException;
+
+    /**
+     * Returns true if group membership search index is enabled or false
+     * otherwise.
+     *
+     * @return true if group membership search index is enabled or false
+     * otherwise.
+     */
+    public boolean isGroupMembershipSearchIndexEnabled();
 }

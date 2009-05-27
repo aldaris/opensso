@@ -22,19 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.13 2009-05-26 21:46:28 veiming Exp $
+ * $Id: GroupSubject.java,v 1.14 2009-05-27 23:06:09 hengming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
-import com.sun.identity.idm.IdUtils;
-import com.sun.identity.security.AdminTokenAction;
 
-import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -93,40 +88,18 @@ public class GroupSubject extends EntitlementSubjectImpl {
         String resourceName,
         Map<String, Set<String>> environment)
         throws EntitlementException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+
         boolean satified = false;
-
-        try {
-            AMIdentity idGroup = IdUtils.getIdentity(adminToken, getID());
-            Set<IdType> supportedType = IdType.GROUP.canHaveMembers();
-            for (IdType type : supportedType) {
-                if (isMember(subject, type, idGroup)) {
-                    satified = true;
-                    break;
-                }
-            }
-        } catch (IdRepoException e) {
-            PrivilegeManager.debug.error("GroupSubject.evaluate", e);
-        } catch (SSOException e) {
-            PrivilegeManager.debug.error("GroupSubject.evaluate", e);
+        Set publicCreds = subject.getPublicCredentials();
+        if ((publicCreds != null) && !publicCreds.isEmpty()) {
+            Map<String, Set<String>> attributes = (Map<String, Set<String>>)
+                publicCreds.iterator().next();
+            Set<String> values = attributes.get(
+                SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
+                IdType.GROUP.getName());
+            satified = (values != null) ? values.contains(getID()) : false;
         }
-
         return new SubjectDecision(satified, Collections.EMPTY_MAP);
-    }
-    
-    private boolean isMember(
-        Subject subject,
-        IdType type, 
-        AMIdentity idGroup
-    ) throws IdRepoException, SSOException {
-        Set<AMIdentity> members = idGroup.getMembers(type);
-        for (AMIdentity amid : members) {
-            if (hasPrincipal(subject, amid.getUniversalId())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -136,17 +109,10 @@ public class GroupSubject extends EntitlementSubjectImpl {
      */
     public Map<String, Set<String>> getSearchIndexAttributes() {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>(4);
-        {
-            Set<String> set = new HashSet<String>();
-            set.add(getID());
-            map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
-                IdType.GROUP.getName(), set);
-        }
-        {
-            Set<String> set = new HashSet<String>();
-            set.add(SubjectAttributesCollector.ATTR_NAME_ALL_ENTITIES);
-            map.put(SubjectAttributesCollector.NAMESPACE_IDENTITY, set);
-        }
+        Set<String> set = new HashSet<String>();
+        set.add(getID());
+        map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
+            IdType.GROUP.getName(), set);
         
         return map;
     }
@@ -157,7 +123,10 @@ public class GroupSubject extends EntitlementSubjectImpl {
      * @return required attribute names.
      */
     public Set<String> getRequiredAttributeNames() {
-        return(Collections.EMPTY_SET);
+        Set<String> set = new HashSet<String>(2);
+        set.add(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
+            IdType.GROUP.getName());
+        return set;
     }
 
     /**

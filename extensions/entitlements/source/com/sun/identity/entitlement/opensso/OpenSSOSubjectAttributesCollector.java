@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOSubjectAttributesCollector.java,v 1.6 2009-05-26 21:46:29 veiming Exp $
+ * $Id: OpenSSOSubjectAttributesCollector.java,v 1.7 2009-05-27 23:05:40 hengming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -58,9 +58,12 @@ public class OpenSSOSubjectAttributesCollector
     implements SubjectAttributesCollector {
 
     static ServiceConfigManager idRepoServiceConfigManager;
+    private static final String GROUP_MEMBERSHIP_SEARCH_INDEX_ENABLED_ATTR = 
+        "groupMembershipSearchIndexEnabled";
     private static final String LDAPv3Config_USER_ATTR = 
         "sun-idrepo-ldapv3-config-user-attributes";
     private String realm;
+    private boolean groupMembershipSearchIndexEnabled = false;
 
     static {
         try {
@@ -85,6 +88,12 @@ public class OpenSSOSubjectAttributesCollector
      */
     public void init(String realm, Map<String, Set<String>> configMap) {
         this.realm = realm;
+        Set<String> values =
+            configMap.get(GROUP_MEMBERSHIP_SEARCH_INDEX_ENABLED_ATTR);
+        if ((values != null) && (!values.isEmpty())) {
+            groupMembershipSearchIndexEnabled = Boolean.valueOf(
+                values.iterator().next()).booleanValue();
+        }
     }
 
     /**
@@ -258,5 +267,16 @@ public class OpenSSOSubjectAttributesCollector
         } catch (SSOException e) {
             throw new EntitlementException(602, e);
         }
+    }
+
+    /**
+     * Returns true if group membership search index is enabled or false
+     * otherwise.
+     *
+     * @return true if group membership search index is enabled or false
+     * otherwise.
+     */
+    public boolean isGroupMembershipSearchIndexEnabled() {
+        return groupMembershipSearchIndexEnabled;
     }
 }
