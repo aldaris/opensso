@@ -67,15 +67,10 @@ public class ConsumerResource {
             }
             if (cons.getConsName() != null)
                 name = URLEncoder.encode(cons.getConsName());
-            String svc = URLEncoder.encode(cons.getConsSvcUri());
-            if (cons.getConsIconUri() != null)
-                icon = URLEncoder.encode(cons.getConsIconUri());
 
-            String resp = "service=" + svc;
+            String resp = "cons_key=" + URLEncoder.encode(ckey);
             if (name != null)
                 resp += "&name=" + name;
-            if (icon != null)
-                resp += "&icon=" + icon;
             if (cs != null)
                 resp += "&secret=" + cs;
 

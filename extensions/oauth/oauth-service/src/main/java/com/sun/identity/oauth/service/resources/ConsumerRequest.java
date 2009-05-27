@@ -95,17 +95,8 @@ public class ConsumerRequest {
                     if (pname.equalsIgnoreCase("name"))
                             cons.setConsName(URLDecoder.decode(pval));
                     else
-                        if (pname.equalsIgnoreCase("icon"))
-                            cons.setConsIconUri(URLDecoder.decode(pval));
-                        else
-                            if (pname.equalsIgnoreCase("service")) {
-                                Consumer tmpc = getConsumerByUri(Consumer.class, URLDecoder.decode(pval));
-                                if (tmpc != null)
-                                    throw new WebApplicationException(new Throwable("Service already registered."));
-                                cons.setConsSvcUri(URLDecoder.decode(pval));
-                            } else
-                                if (pname.equalsIgnoreCase("rsapublickey"))
-                                    cons.setConsRsakey(URLDecoder.decode(pval));
+                        if (pname.equalsIgnoreCase("rsapublickey"))
+                            cons.setConsRsakey(URLDecoder.decode(pval));
                 }
             }
 

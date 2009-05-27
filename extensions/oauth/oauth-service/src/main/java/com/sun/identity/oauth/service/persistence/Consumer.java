@@ -25,7 +25,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "CONSUMER")
-@NamedQueries({@NamedQuery(name = "Consumer.findAll", query = "SELECT c FROM Consumer c"), @NamedQuery(name = "Consumer.findById", query = "SELECT c FROM Consumer c WHERE c.id = :id"), @NamedQuery(name = "Consumer.findByConsName", query = "SELECT c FROM Consumer c WHERE c.consName = :consName"), @NamedQuery(name = "Consumer.findByConsSvcUri", query = "SELECT c FROM Consumer c WHERE c.consSvcUri = :consSvcUri"), @NamedQuery(name = "Consumer.findByConsIconUri", query = "SELECT c FROM Consumer c WHERE c.consIconUri = :consIconUri"), @NamedQuery(name = "Consumer.findByConsSecret", query = "SELECT c FROM Consumer c WHERE c.consSecret = :consSecret"), @NamedQuery(name = "Consumer.findByConsRsakey", query = "SELECT c FROM Consumer c WHERE c.consRsakey = :consRsakey"), @NamedQuery(name = "Consumer.findByConsKey", query = "SELECT c FROM Consumer c WHERE c.consKey = :consKey")})
+@NamedQueries({@NamedQuery(name = "Consumer.findAll", query = "SELECT c FROM Consumer c"), @NamedQuery(name = "Consumer.findById", query = "SELECT c FROM Consumer c WHERE c.id = :id"), @NamedQuery(name = "Consumer.findByConsName", query = "SELECT c FROM Consumer c WHERE c.consName = :consName"), @NamedQuery(name = "Consumer.findByConsSecret", query = "SELECT c FROM Consumer c WHERE c.consSecret = :consSecret"), @NamedQuery(name = "Consumer.findByConsRsakey", query = "SELECT c FROM Consumer c WHERE c.consRsakey = :consRsakey"), @NamedQuery(name = "Consumer.findByConsKey", query = "SELECT c FROM Consumer c WHERE c.consKey = :consKey")})
 public class Consumer implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -35,11 +35,6 @@ public class Consumer implements Serializable {
     private Integer id;
     @Column(name = "CONS_NAME")
     private String consName;
-    @Basic(optional = false)
-    @Column(name = "CONS_SVC_URI")
-    private String consSvcUri;
-    @Column(name = "CONS_ICON_URI")
-    private String consIconUri;
     @Column(name = "CONS_SECRET")
     private String consSecret;
     @Column(name = "CONS_RSAKEY")
@@ -47,20 +42,15 @@ public class Consumer implements Serializable {
     @Column(name = "CONS_KEY")
     private String consKey;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "consumerId")
-    private Collection<RequestToken> reqtokenCollection;
+    private Collection<RequestToken> requestTokenCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "consumerId")
-    private Collection<AccessToken> acctokenCollection;
+    private Collection<AccessToken> accessTokenCollection;
 
     public Consumer() {
     }
 
     public Consumer(Integer id) {
         this.id = id;
-    }
-
-    public Consumer(Integer id, String consSvcUri) {
-        this.id = id;
-        this.consSvcUri = consSvcUri;
     }
 
     public Integer getId() {
@@ -77,22 +67,6 @@ public class Consumer implements Serializable {
 
     public void setConsName(String consName) {
         this.consName = consName;
-    }
-
-    public String getConsSvcUri() {
-        return consSvcUri;
-    }
-
-    public void setConsSvcUri(String consSvcUri) {
-        this.consSvcUri = consSvcUri;
-    }
-
-    public String getConsIconUri() {
-        return consIconUri;
-    }
-
-    public void setConsIconUri(String consIconUri) {
-        this.consIconUri = consIconUri;
     }
 
     public String getConsSecret() {
@@ -119,20 +93,20 @@ public class Consumer implements Serializable {
         this.consKey = consKey;
     }
 
-    public Collection<RequestToken> getReqtokenCollection() {
-        return reqtokenCollection;
+    public Collection<RequestToken> getRequestTokenCollection() {
+        return requestTokenCollection;
     }
 
-    public void setReqtokenCollection(Collection<RequestToken> reqtokenCollection) {
-        this.reqtokenCollection = reqtokenCollection;
+    public void setRequestTokenCollection(Collection<RequestToken> requestTokenCollection) {
+        this.requestTokenCollection = requestTokenCollection;
     }
 
-    public Collection<AccessToken> getAcctokenCollection() {
-        return acctokenCollection;
+    public Collection<AccessToken> getAccessTokenCollection() {
+        return accessTokenCollection;
     }
 
-    public void setAcctokenCollection(Collection<AccessToken> acctokenCollection) {
-        this.acctokenCollection = acctokenCollection;
+    public void setAccessTokenCollection(Collection<AccessToken> accessTokenCollection) {
+        this.accessTokenCollection = accessTokenCollection;
     }
 
     @Override
@@ -157,7 +131,7 @@ public class Consumer implements Serializable {
 
     @Override
     public String toString() {
-        return "com.sun.oauth.persistence.Consumer[id=" + id + "]";
+        return "com.sun.identity.oauth.service.persistence.Consumer[id=" + id + "]";
     }
 
 }
