@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationType.java,v 1.7 2009-04-29 18:14:14 veiming Exp $
+ * $Id: ApplicationType.java,v 1.8 2009-05-27 07:31:56 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -37,7 +37,7 @@ import java.util.Map;
  * Application Type defines the default supported action names; search and save
  * index generators; and resource comparator.
  */
-public class ApplicationType {
+public final class ApplicationType {
     private String name;
     private Map<String, Boolean> actions;
     private ISearchIndex searchIndex;

@@ -9,8 +9,6 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 public class AnyUserSubject extends VirtualSubject {
-    private static final long serialVersionUID = -403250971215465050L;
-
     public VirtualId getVirtualId() {
         return VirtualId.ANY_USER;
     }

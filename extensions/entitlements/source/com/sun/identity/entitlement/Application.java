@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.18 2009-05-26 21:20:05 veiming Exp $
+ * $Id: Application.java,v 1.19 2009-05-27 07:31:56 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -42,7 +42,7 @@ import javax.security.auth.Subject;
  * e.g. how to combine decision and how to compare resources;
  * and the supported actions.
  */
-public class Application {
+public final class Application {
     private String realm = "/";
     private String name;
     private ApplicationType applicationType;

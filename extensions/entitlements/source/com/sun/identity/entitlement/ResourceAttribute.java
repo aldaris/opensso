@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceAttribute.java,v 1.1 2009-05-21 01:04:02 veiming Exp $
+ * $Id: ResourceAttribute.java,v 1.2 2009-05-27 07:31:56 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -34,7 +33,7 @@ import javax.security.auth.Subject;
 /**
  * Interface specification for entitlement <code>ResourceAttribute</code>
  */
-public interface ResourceAttribute extends Serializable {
+public interface ResourceAttribute {
 
     /**
      * Sets property name.
