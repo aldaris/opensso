@@ -7,7 +7,7 @@ Configuring the Token Service Database:
 - Move to the /etc directory of the OAuth Service extension - you should see the dbsetup.sql file.
 - Create the network DB (using Derby's command line tool ij).
   For instance, assuming the db server is run locally:
-  ij> connect 'jdbc:derby://localhost:1527/MyDbTest;create=true';
+  ij> connect 'jdbc:derby://localhost:1527/TokenServiceDB;user=username;password=password;create=true';
 - Create tables by running the following commands:
   ij> run 'dbsetup.sql';
 
