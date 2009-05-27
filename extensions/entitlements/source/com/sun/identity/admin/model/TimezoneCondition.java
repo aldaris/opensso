@@ -32,12 +32,23 @@ public class TimezoneCondition
             TimeZone tz = TimeZone.getTimeZone(id);
             SelectItem si = new SelectItem();
             si.setValue(id);
-            si.setLabel(tz.getDisplayName() + " (" + tz.getID() + ")");
+            si.setLabel(tz.getID());
 
             items.add(si);
         }
 
         return items;
+    }
+
+    public String getTimezoneTitle() {
+        String title = null;
+        if (timezoneId != null && timezoneId.length() > 0) {
+            TimeZone tz = TimeZone.getTimeZone(timezoneId);
+            if (tz != null) {
+                title = tz.getDisplayName();
+            }
+        }
+        return title;
     }
 
     public List<String> getTimezoneIds() {
@@ -69,7 +80,9 @@ public class TimezoneCondition
         Locale l = new Resources().getLocale();
         String s = getTitle();
         if (timezoneId != null) {
-            s += ":{" + TimeZone.getTimeZone(timezoneId).getDisplayName(l) + "}";
+            TimeZone tz = TimeZone.getTimeZone(timezoneId);
+            // TODO: localize
+            s += ":{" + tz.getID() + "(" + tz.getDisplayName(l) +")}";
         }
 
         return s;
