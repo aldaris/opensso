@@ -54,11 +54,11 @@ public class AccessTokenResource {
             AccessToken token = getAcctokenByUri(AccessToken.class, turi);
             if (token == null)
                 return Response.noContent().build();
-            if (sub == 1) {
+            if ((sub == 1) && (token.getAcctPpalid() != null)) {
                 p = URLEncoder.encode(token.getAcctPpalid());
                 resp = "subject=" + p;
             }
-            if (shsec == 1) {
+            if ((shsec == 1) && (token.getAcctSecret() != null)) {
                 s = URLEncoder.encode(token.getAcctSecret());
                 if (shsec == 1)
                     resp += "&";
