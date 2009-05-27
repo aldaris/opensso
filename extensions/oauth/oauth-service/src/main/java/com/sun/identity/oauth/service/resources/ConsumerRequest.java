@@ -109,6 +109,10 @@ public class ConsumerRequest {
                                 if (pname.equalsIgnoreCase("cons_key")) {
                                     keyed = true;
                                     cons.setConsKey(URLDecoder.decode(pval));
+                                    Consumer tmpcons = getConsumerByKey(Consumer.class, URLDecoder.decode(pval));
+                                    if (tmpcons != null) {
+                                        service.removeEntity(tmpcons);
+                                    }
                                 }
                 }
             }
@@ -144,9 +148,9 @@ public class ConsumerRequest {
         }
     }
 
-    protected <T> T getConsumerByUri(Class<T> type, String uri) {
+    protected <T> T getConsumerByKey(Class<T> type, String uri) {
         try {
-            return (T) PersistenceService.getInstance().createQuery("SELECT e FROM " + type.getSimpleName()+" e where e.consSvcUri = :uri").setParameter("uri", uri).getSingleResult();
+            return (T) PersistenceService.getInstance().createQuery("SELECT e FROM " + type.getSimpleName()+" e where e.consKey = :uri").setParameter("uri", uri).getSingleResult();
         } catch (NoResultException ex) {
             return null;
         }
