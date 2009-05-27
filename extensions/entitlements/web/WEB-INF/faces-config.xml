@@ -418,12 +418,12 @@
             <value>#{orSubjectType}</value>
             <value>#{andSubjectType}</value>
             <value>#{notSubjectType}</value>
-            <value>#{userSubjectType}</value>
-            <value>#{idRepoUserSubjectType}</value>
             <value>#{roleSubjectType}</value>
-            <value>#{idRepoRoleSubjectType}</value>
             <value>#{groupSubjectType}</value>
+            <value>#{userSubjectType}</value>
+            <value>#{idRepoRoleSubjectType}</value>
             <value>#{idRepoGroupSubjectType}</value>
+            <value>#{idRepoUserSubjectType}</value>
             <value>#{bankingSubjectType}</value>
             <value>#{virtualSubjectType}</value>
         </list-entries>
@@ -449,10 +449,6 @@
                 <value>#{notSubjectType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.entitlement.UserSubject</key>
-                <value>#{userSubjectType}</value>
-            </map-entry>
-            <map-entry>
                 <key>com.sun.identity.entitlement.RoleSubject</key>
                 <value>#{roleSubjectType}</value>
             </map-entry>
@@ -461,8 +457,8 @@
                 <value>#{groupSubjectType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.entitlement.IdRepoUserSubject</key>
-                <value>#{idRepoUserSubjectType}</value>
+                <key>com.sun.identity.entitlement.UserSubject</key>
+                <value>#{userSubjectType}</value>
             </map-entry>
             <map-entry>
                 <key>com.sun.identity.entitlement.IdRepoRoleSubject</key>
@@ -471,6 +467,10 @@
             <map-entry>
                 <key>com.sun.identity.entitlement.IdRepoGroupSubject</key>
                 <value>#{idRepoGroupSubjectType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.IdRepoUserSubject</key>
+                <value>#{idRepoUserSubjectType}</value>
             </map-entry>
             <map-entry>
                 <key>com.sun.identity.entitlement.BankingSubject</key>
@@ -519,16 +519,16 @@
                 <value>#{groupSubjectType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.model.IdRepoUserViewSubject</key>
-                <value>#{idRepoUserSubjectType}</value>
-            </map-entry>
-            <map-entry>
                 <key>com.sun.identity.admin.model.IdRepoRoleViewSubject</key>
                 <value>#{idRepoRoleSubjectType}</value>
             </map-entry>
             <map-entry>
                 <key>com.sun.identity.admin.model.IdRepoGroupViewSubject</key>
                 <value>#{idRepoGroupSubjectType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.IdRepoUserViewSubject</key>
+                <value>#{idRepoUserSubjectType}</value>
             </map-entry>
             <map-entry>
                 <key>com.sun.identity.admin.model.BankingViewSubject</key>
@@ -549,16 +549,16 @@
             <key-class>java.lang.String</key-class>
             <value-class>com.sun.identity.admin.dao.SubjectDao</value-class>
             <map-entry>
-                <key>com.sun.identity.admin.model.IdRepoUserViewSubject</key>
-                <value>#{idRepoUserSubjectDao}</value>
-            </map-entry>
-            <map-entry>
                 <key>com.sun.identity.admin.model.IdRepoRoleViewSubject</key>
                 <value>#{idRepoRoleSubjectDao}</value>
             </map-entry>
             <map-entry>
                 <key>com.sun.identity.admin.model.IdRepoGroupViewSubject</key>
                 <value>#{idRepoRoleSubjectDao}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.IdRepoUserViewSubject</key>
+                <value>#{idRepoUserSubjectDao}</value>
             </map-entry>
             <map-entry>
                 <key>com.sun.identity.admin.model.BankingViewSubject</key>
@@ -764,16 +764,16 @@
         <map-entries>
             <key-class>com.sun.identity.admin.model.SubjectType</key-class>
             <value-class>com.sun.identity.admin.model.SubjectContainer</value-class>
-            <map-entry>
-                <key>#{idRepoGroupSubjectType}</key>
-                <value>#{idRepoGroupSubjectContainer}</value>
-            </map-entry>
             <!--
             <map-entry>
                 <key>#{idRepoRoleSubjectType}</key>
                 <value>#{idRepoRoleSubjectContainer}</value>
             </map-entry>
             -->
+            <map-entry>
+                <key>#{idRepoGroupSubjectType}</key>
+                <value>#{idRepoGroupSubjectContainer}</value>
+            </map-entry>
             <map-entry>
                 <key>#{idRepoUserSubjectType}</key>
                 <value>#{idRepoUserSubjectContainer}</value>
