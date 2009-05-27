@@ -6,35 +6,30 @@
 package com.sun.identity.oauth.service.resources;
 
 import com.sun.identity.oauth.service.persistence.RequestToken;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.NoResultException;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.UniformInterfaceException;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 /**
- *
  * @author Hubert A. Le Van Gong <hubert.levangong at Sun.COM>
+ * @author Paul C. Bryan <pbryan@sun.com>
  */
 @Path(PathDefs.NoBrowserAuthorizationPath)
 public class NoBrowserAuthorization {
-    @Context
-    private UriInfo context;
 
+    private Client client = Client.create();
+    
+    // FIXME: make this configurable
+    private WebResource authenticateResource =
+     client.resource("http://localhost:8080/entitlement/identity/authenticate");
 
     /** Creates a new instance of AuthorizationFactory */
     public NoBrowserAuthorization() {
@@ -53,60 +48,45 @@ public class NoBrowserAuthorization {
      * @return 200 in case of success, 400 otherwise.
      */
     @GET
-    @Consumes("application/x-www-form-urlencoded")
     public Response NoBrowserAuthorization(
-            @QueryParam("username") String name,
-            @QueryParam("password") String pwd,
-            @QueryParam("request_token") String reqtoken) {
-        try {
-            if ((name == null) || (pwd == null) || (reqtoken == null)) {
-                throw new WebApplicationException(new Throwable("Request invalid."));
-            }
-            String userid = null;
-            //URL url = new URL(PathDefs.OpenSSOAuthenticationEndpoint);
-            URL url = new URL("http://www.cnn.com");
-            URLConnection conn = url.openConnection();
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            conn.setUseCaches(false);
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-            String msg = "username=" + URLEncoder.encode (name) +
-                    "&password=" + URLEncoder.encode (pwd);
-            dos.writeBytes(msg);
-            dos.flush();
-            dos.close();
-            BufferedReader bufr = new BufferedReader(new InputStreamReader((InputStream) conn.getContent()));
-            String line;
-            while ((line = bufr.readLine()) != null) {
-                int index = line.indexOf("token");
-                if (index != -1)
-                    userid = line.substring(9);
-            }
-            if (userid != null) {
-                PersistenceService service = PersistenceService.getInstance();
-                try {
-                    service.beginTx();
-                    RequestToken rt = getReqtokenByURI(RequestToken.class, reqtoken);
-                    if (rt == null)
-                        throw new WebApplicationException(new Throwable("Request token invalid."));
-                    rt.setReqtPpalid(userid);
-                    service.persistEntity(rt);
-                    service.commitTx();
+    @QueryParam("username") String username,
+    @QueryParam("password") String password,
+    @QueryParam("request_token") String requestToken)
+    {
+        if (username == null || password == null || requestToken == null) {
+            throw new WebApplicationException(new Throwable("Request invalid."));
+        }
 
-                    return Response.ok().build();
-                } finally {
-                    service.close();
-                }
-            } else {
-                return Response.status(400).build();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(NoBrowserAuthorization.class.getName()).log(Level.SEVERE, null, ex);
-            return Response.serverError().build();
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("username", username);
+        params.add("password", password);
+        
+        String response;
+        try { response = authenticateResource.queryParams(params).get(String.class); }
+        catch (UniformInterfaceException uie) { return Response.status(400).build(); }
+
+        // ensure response is in expected format
+        if (!response.startsWith("token.id=")) { return Response.status(400).build(); }
+
+        // FIXME: get fully-qualified subject universal id from opensso
+        String subject = "id=" + username + ",ou=user,dc=opensso,dc=java,dc=net";
+
+        PersistenceService service = PersistenceService.getInstance();
+
+        try {
+            service.beginTx();
+            RequestToken rt = getReqtokenByURI(RequestToken.class, requestToken);
+            if (rt == null) { throw new WebApplicationException(new Throwable("Request token invalid.")); }
+            rt.setReqtPpalid(subject);
+            service.persistEntity(rt);
+            service.commitTx();
+            return Response.ok().build();
+        }
+
+        finally {
+            service.close();
         }
     }
-
 
     protected <T> T getReqtokenByURI(Class<T> type, String uri) {
         try {
