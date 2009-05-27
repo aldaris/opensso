@@ -11,15 +11,21 @@
 
         <ice:panelGrid
             columns="2">
-            <ice:outputText value="Start Date:"/>
+            <ice:outputLabel
+                for="start-date-input"
+                value="#{resources['condition-date-range.startDateLabel']}"/>
             <ice:selectInputDate
+                id="start-date-input"
                 renderAsPopup="true"
                 value="#{viewCondition.startDate}">
                 <f:convertDateTime
                     timeZone="#{timeZoneBean.timeZone.ID}"/>
             </ice:selectInputDate>
-            <ice:outputText value="End Date:"/>
+            <ice:outputLabel
+                for="end-date-input"
+                value="#{resources['condition-date-range.endDateLabel']}"/>
             <ice:selectInputDate
+                id="end-date-label"
                 renderAsPopup="true"
                 value="#{viewCondition.endDate}">
                 <f:convertDateTime
