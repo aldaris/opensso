@@ -49,6 +49,8 @@ public class ConsumerResource {
             @QueryParam("signature_method") String sigmethod) {
         PersistenceService service = PersistenceService.getInstance();
         try {
+            String name =null;
+            String icon = null;
             service.beginTx();
             String ckey = context.getAbsolutePath().toString();
             Consumer cons = getConsumerByKey(Consumer.class, ckey);
@@ -63,16 +65,17 @@ public class ConsumerResource {
                     if (sigmethod.equalsIgnoreCase(HMAC_SHA1.NAME))
                         cs = URLEncoder.encode(cons.getConsSecret());
             }
+            if (cons.getConsName() != null)
+                name = URLEncoder.encode(cons.getConsName());
+            String svc = URLEncoder.encode(cons.getConsSvcUri());
+            if (cons.getConsIconUri() != null)
+                icon = URLEncoder.encode(cons.getConsIconUri());
 
-            String n = URLEncoder.encode(cons.getConsName());
-            String s = URLEncoder.encode(cons.getConsSvcUri());
-            String i = URLEncoder.encode(cons.getConsIconUri());
-
-            String resp = "service=" + s;
-            if (n != null)
-                resp += "&name=" + n;
-            if (i != null)
-                resp += "&icon=" + i;
+            String resp = "service=" + svc;
+            if (name != null)
+                resp += "&name=" + name;
+            if (icon != null)
+                resp += "&icon=" + icon;
             if (cs != null)
                 resp += "&secret=" + cs;
 
