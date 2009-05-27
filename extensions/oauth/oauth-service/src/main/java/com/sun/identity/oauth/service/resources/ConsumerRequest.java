@@ -7,6 +7,8 @@ package com.sun.identity.oauth.service.resources;
 
 import com.sun.identity.oauth.service.persistence.Consumer;
 import com.sun.identity.oauth.service.util.UniqueRandomString;
+import com.sun.jersey.oauth.signature.HMAC_SHA1;
+import com.sun.jersey.oauth.signature.RSA_SHA1;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -79,6 +81,9 @@ public class ConsumerRequest {
             // We might want to check whether this Consumer already exists,
             // but for now we let consumers register ad nauseum...
             Consumer cons = new Consumer();
+            String sigmeth = null;
+            String tmpsecret = null;
+            Boolean keyed = false;
 
             StringTokenizer tokenizer = new StringTokenizer(content, "&");
             while (tokenizer.hasMoreTokens()) {
@@ -95,26 +100,45 @@ public class ConsumerRequest {
                     if (pname.equalsIgnoreCase("name"))
                             cons.setConsName(URLDecoder.decode(pval));
                     else
-                        if (pname.equalsIgnoreCase("rsapublickey"))
-                            cons.setConsRsakey(URLDecoder.decode(pval));
+                        if (pname.equalsIgnoreCase("signature_method"))
+                            sigmeth = URLDecoder.decode(pval);
+                        else
+                            if (pname.equalsIgnoreCase("secret"))
+                                tmpsecret = URLDecoder.decode(pval);
+                            else
+                                if (pname.equalsIgnoreCase("cons_key")) {
+                                    keyed = true;
+                                    cons.setConsKey(URLDecoder.decode(pval));
+                                }
                 }
             }
 
+            if (tmpsecret != null) {
+                if (sigmeth.equalsIgnoreCase(RSA_SHA1.NAME)) {
+                    cons.setConsRsakey(tmpsecret);
+                    cons.setConsSecret(new UniqueRandomString().getString());
+                }
+                else
+                    if (sigmeth.equalsIgnoreCase(HMAC_SHA1.NAME))
+                        cons.setConsSecret(tmpsecret);
+            } else {
+                cons.setConsSecret(new UniqueRandomString().getString());
+            }
+            
             //URI consKeyURI = URI.create(endOfConsKey.toString());
-            String baseUri = context.getBaseUri().toString();
-            if (baseUri.endsWith("/"))
-                    baseUri = baseUri.substring(0, baseUri.length() - 1);
-            URI loc = URI.create(baseUri + PathDefs.ConsumersPath + "/" + new UniqueRandomString().getString());
-            String consKey =  loc.toString();
-            cons.setConsKey(consKey);
-
-            cons.setConsSecret(new UniqueRandomString().getString());
-
+            if (!keyed) {
+                String baseUri = context.getBaseUri().toString();
+                if (baseUri.endsWith("/"))
+                        baseUri = baseUri.substring(0, baseUri.length() - 1);
+                URI loc = URI.create(baseUri + PathDefs.ConsumersPath + "/" + new UniqueRandomString().getString());
+                String consKey =  loc.toString();
+                cons.setConsKey(consKey);
+            }
             service.persistEntity(cons);
             service.commitTx();
 
             String resp = "consumer_key=" + URLEncoder.encode(cons.getConsKey()) + "&consumer_secret=" + URLEncoder.encode(cons.getConsSecret());
-            return Response.created(loc).entity(resp).type(MediaType.APPLICATION_FORM_URLENCODED).build();
+            return Response.created(URI.create(cons.getConsKey())).entity(resp).type(MediaType.APPLICATION_FORM_URLENCODED).build();
         } finally {
             service.close();
         }
