@@ -114,7 +114,6 @@ public class PolicyManageTableBean implements Serializable {
         columnsVisible.add("resources");
         columnsVisible.add("subject");
         columnsVisible.add("modified");
-        columnsVisible.add("remove");
     }
 
     public SortKey getSortKey() {
@@ -180,13 +179,5 @@ public class PolicyManageTableBean implements Serializable {
 
     public boolean isModifierColumnVisible() {
         return getColumnsVisible().contains("modifier");
-    }
-
-    public boolean isRemoveColumnVisible() {
-        return getColumnsVisible().contains("remove");
-    }
-
-    public boolean isExportColumnVisible() {
-        return getColumnsVisible().contains("export");
     }
 }

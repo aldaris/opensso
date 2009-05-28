@@ -418,41 +418,6 @@
                                         </ui:define>
                                     </o:tooltip>
                                 </ice:column>
-                                <ice:column
-                                    rendered="#{policyManageBean.policyManageTableBean.exportColumnVisible}"
-                                    style="text-align: center">
-                                    <f:facet name="header">
-                                        <ice:outputText value="Export"/>
-                                    </f:facet>
-                                    <ice:panelGroup
-                                        styleClass="policy-manage-cell"
-                                        visible="#{true}">
-                                        <ice:outputLink
-                                            value="../pxml?name=#{privilegeBean.name}">
-                                            <ice:graphicImage
-                                                value="../image/xml.png"/>
-                                        </ice:outputLink>
-                                    </ice:panelGroup>
-                                </ice:column>
-                                <ice:column
-                                    rendered="#{policyManageBean.policyManageTableBean.removeColumnVisible}"
-                                    style="text-align: center">
-                                    <f:facet name="header">
-                                        <ice:outputText value="Remove"/>
-                                    </f:facet>
-                                    <ice:panelGroup
-                                        styleClass="policy-manage-cell"
-                                        visible="#{true}">
-                                        <ice:commandLink
-                                            actionListener="#{policyManageHandler.removeListener}">
-                                            <f:attribute
-                                                name="privilegeBean"
-                                                value="#{privilegeBean}"/>
-                                            <ice:graphicImage
-                                                value="../image/remove-16.png"/>
-                                        </ice:commandLink>
-                                    </ice:panelGroup>
-                                </ice:column>
                             </ice:dataTable>
                             <center>
                                 <ice:panelGrid
