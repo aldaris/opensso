@@ -45,7 +45,7 @@ public class NoBrowserAuthorization {
      * instance
      * @param password (@String) is the user's password
      * @param reqtoken (@String) is the request token to authorize
-     * @return 200 in case of success, 400 otherwise.
+     * @return 200 in case of success, 403 if authentications fails, 400 otherwise.
      */
     @GET
     public Response NoBrowserAuthorization(
@@ -67,7 +67,7 @@ public class NoBrowserAuthorization {
             response = authenticateResource.queryParams(params).get(String.class);
         }
         catch (UniformInterfaceException uie) {
-            return Response.status(400).build();
+            return Response.status(403).build();
         }
 
         // ensure response is in expected format
