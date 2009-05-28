@@ -66,15 +66,24 @@ body {
 .section-head {
     font-size: 14px;
     font-weight: bold;
-    border-bottom: 1px solid;
+    border: 1px solid #bbb;
     margin-bottom: 5px;
     float: left;
     width: 100%;
+    background: transparent url('../image/section-bg.gif') repeat-x scroll left;
+}
+
+.section-head * > table {
+    border-collapse: collapse;
 }
 
 .section-title {
     float: left;
     clear: left;
+    position: relative;
+    top: 2px;
+    padding-left: 5px;
+    height: 22px;
 }
 
 .section-links {
@@ -85,6 +94,13 @@ body {
 .section-links img {
 }
 
+.section-links td {
+    border-right: 1px solid #bbb;
+    padding-right: 5px;
+    padding-left: 5px;
+    height: 22px;
+}
+
 .section-input {
     margin: 0;
     padding: 0;
@@ -93,6 +109,11 @@ body {
 
 .section-details {
     margin-bottom: 10px;
+    padding-left: 10px;
+}
+
+.section-details span {
+    color: #606060;
 }
 
 .packed-input {
@@ -163,7 +184,7 @@ div.button {
     border-left-color: #CCCCCC;
     padding: 4px 8px 6px 8px;
     background-color: #FFFFFF;
-    background-image: url(../image/background_form_element.gif);
+    background-image: url(../image/section-bg.gif);
     background-repeat: repeat-x;
 }
 
@@ -322,9 +343,20 @@ div.button img.left {
     border-collapse: collapse;
 }
 
+.status-links table {
+    border-collapse: collapse;
+    float: right;
+}
+
 .status-server,
 .status-user,
 .status-version {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.status-help,
+.status-logout {
     padding-top: 2px;
     padding-bottom: 2px;
 }
@@ -340,7 +372,6 @@ div.button img.left {
 
 .status-links {
     position: relative;
-    float: right;
     padding-right: 10px;
 }
 
@@ -789,6 +820,7 @@ div.button img.left {
 
 .policy-manage {
     width: 100%;
+    margin: 0;
 }
 
 .policy-manageCol1,
@@ -812,6 +844,21 @@ div.button img.left {
     min-width: 40px;
 }
 
+.policy-manageCol1 {
+    width: 5px;
+    min-width: 5px;
+    text-align: center;
+}
+
+.policy-manage-table-actions-container {
+    width: 100%;
+    height: 16px;
+}
+
+.policy-manage-table-actions {
+    position: relative;
+    float: right;
+}
 .tooltip .icon {
     padding-left: 5px;
 }
@@ -842,7 +889,6 @@ div.button img.left {
 }
 
 .box, .box b.tc, .box b.bc {
-    background-color: transparent;
 }
 
 .box b.tc, .box b.bc,.box b.tc b.L1, .box b.tc b.L2, .box b.tc b.L3,.box b.bc b.L1, .box b.bc b.L2, .box b.bc b.L3 {
@@ -880,10 +926,12 @@ div.button img.left {
     border-left-width: 1px;
     border-right-style: solid;
     border-right-width: 1px;
-    margin: 0; 
+    margin: 0;
+    padding: 0;
     overflow: visible;
     border-left-color: #aaa;
     border-right-color: #aaa;
+    background: transparent;
 }
 
 .box b.tc b.L1 { 
@@ -902,22 +950,13 @@ div.button img.left {
     border-color: #aaa;
 }
 
-.box .content { 
-    background: transparent;
-}
-
 .box b b.L2, .box b b.L3 {
     background-color: transparent;
 }
 
 .box {
-    margin: 0px;
+    margin: 0;
     width: 100%;
-
-}
-
-.box .content { 
-    padding: 0px;
 }
 
 .feed-title {
@@ -1016,6 +1055,16 @@ div.button img.left {
 .user-attributes-available {
     vertical-align: top;
     width: 30%;
+}
+
+.action-radios * > label {
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+.action-radios * > input {
+    margin-right: 5px;
+    vertical-align: middle;
 }
 
 /*

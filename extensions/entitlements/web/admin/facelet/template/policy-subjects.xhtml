@@ -16,23 +16,20 @@
                         </span>
                         <span class="section-links">
                             <ice:panelGrid
-                                columns="3">
+                                columns="2">
                                 <ice:commandLink
                                     actionListener="#{policySubjectsHandler.anyOfSubjectListener}"
                                     styleClass="section-input command-link">
                                     <ice:graphicImage
-                                        value="/admin/image/or-16.png"/>
+                                        value="/admin/image/or.png"/>
                                     <ice:outputText
                                         value="Any of"/>
                                 </ice:commandLink>
-                                <ice:outputText
-                                    style="font-weight: bold"
-                                    value="|"/>
                                 <ice:commandLink
                                     actionListener="#{policySubjectsHandler.allOfSubjectListener}"
                                     styleClass="section-input command-link">
                                     <ice:graphicImage
-                                        value="/admin/image/and-16.png"/>
+                                        value="/admin/image/and.png"/>
                                     <ice:outputText
                                         value="All of"/>
                                 </ice:commandLink>

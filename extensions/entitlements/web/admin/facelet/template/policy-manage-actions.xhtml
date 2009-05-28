@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+
+    <o:popup
+        width="300"
+        type="question"
+        closeImmediate="true"
+        handler="#{policyManageHandler}"
+        title="Policy Actions"
+        visible="#{policyManageBean.actionPopupVisible}"
+        closeListenerMethod="actionListener">
+
+        <ui:define name="body">
+            <ice:panelGroup
+                style="text-align: left; padding-bottom: 10px">
+                <ice:outputFormat
+                    escape="false"
+                    value="#{resources['policy-manage-actions.info']}">
+                        <f:param
+                            value="#{policyManageBean.sizeSelected}"/>
+                    </ice:outputFormat>
+            </ice:panelGroup>
+            <ice:panelGroup>
+                <ice:selectOneRadio
+                    id="actions-select"
+                    layout="spread"
+                    partialSubmit="false"
+                    value="#{policyManageBean.action}">
+                    <f:selectItem itemValue="export" itemLabel="Export to XML"/>
+                    <f:selectItem itemValue="remove" itemLabel="Remove"/>
+                </ice:selectOneRadio>
+                <ice:panelGrid
+                    styleClass="action-radios"
+                    columns="1">
+                    <ice:radio
+                        for="actions-select"
+                        index="0"/>
+                    <ice:radio
+                        for="actions-select"
+                        index="1"/>
+                </ice:panelGrid>
+            </ice:panelGroup>
+            <ice:panelGrid
+                styleClass="button-group"
+                columns="2">
+                <o:button
+                    type="cancel"
+                    handler="#{policyManageHandler}"
+                    listenerMethod="actionPopupCancelListener"/>
+                <o:button
+                    type="ok"
+                    handler="#{policyManageHandler}"
+                    listenerMethod="actionPopupOkListener">
+                    <ui:define name="attributes">
+                    </ui:define>
+                </o:button>
+            </ice:panelGrid>
+
+        </ui:define>
+    </o:popup>
+</span>

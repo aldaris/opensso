@@ -32,18 +32,24 @@ public class PrivilegeXmlServlet extends HttpServlet {
         response.setContentType("text/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
 
-        String name = request.getParameter("name");
-        if (name == null) {
-            throw new ServletException("no name specified");
+        String[] names = request.getParameterValues("name");
+        if (names == null || names.length == 0) {
+            throw new ServletException("no names specified");
         }
 
         SSOToken t = getSSOToken(request);
         Subject s = SubjectUtils.createSubject(t);
 
         try {
-            //TODO realm is fixed to /
+            //TODO: realm
             PrivilegeManager pm = PrivilegeManager.getInstance("/", s);
-            String xml = pm.getPrivilegeXML(name);
+            StringBuffer xml = new StringBuffer();
+
+            // TODO: fetch single policy set
+            for (String name: names) {
+                xml.append(pm.getPrivilegeXML(name));
+            }
+            
             out.print(xml);
         } catch (EntitlementException ee) {
             throw new ServletException(ee);

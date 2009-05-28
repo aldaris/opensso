@@ -18,12 +18,14 @@
     <ui:define name="panel-body">
         <ui:include
             src="/admin/facelet/template/policy-manage-view-options-popup.xhtml"/>
+        <ui:include
+            src="/admin/facelet/template/policy-manage-actions.xhtml"/>
         <div class="section-outer">
             <o:box>
                 <ui:define name="body">
                     <div class="section-inner">
-                        <span class="section-head">
-                            <span class="section-title">
+                        <div class="section-head">
+                            <div class="section-title">
                                 <ice:dataPaginator
                                     for="policyManageTable"
                                     rowsCountVar="rowsCount"
@@ -39,17 +41,22 @@
                                         <f:param value="#{rowsCount}" />
                                     </ice:outputFormat>
                                 </ice:dataPaginator>
-                            </span>
+                            </div>
                             <span class="section-links">
                                 <ice:panelGrid
                                     columns="3">
+                                    <ice:commandLink
+                                        actionListener="#{policyManageHandler.actionListener}"
+                                        styleClass="command-link">
+                                        <ice:graphicImage
+                                            value="/admin/image/action.png"/>
+                                        <ice:outputText
+                                            value="Actions"/>
+                                    </ice:commandLink>
                                     <o:clink
                                         type="view-options"
                                         handler="#{policyManageHandler}"
                                         listenerMethod="viewOptionsListener"/>
-                                    <ice:outputText
-                                        style="font-weight: bold"
-                                        value="|"/>
                                     <ice:panelGroup>
                                         <ice:graphicImage
                                             value="/admin/image/search.png"/>
@@ -60,7 +67,7 @@
                                     </ice:panelGroup>
                                 </ice:panelGrid>
                             </span>
-                        </span>
+                        </div>
                         <div class="clear"></div>
                         <div class="section-details">
                             <ice:outputText
@@ -72,7 +79,7 @@
                             style="padding-top: 10px"
                             rendered="#{o:size(policyManageHandler.policyManageBean.privilegeBeans) == 0}">
                             <ice:outputText
-                                value="No policies"/>
+                                value="No policies."/>
                         </ice:panelGroup>
                         <ice:panelGroup
                             rendered="#{o:size(policyManageHandler.policyManageBean.privilegeBeans) > 0}">
@@ -86,6 +93,18 @@
                                 sortAscending="#{policyManageBean.policyManageTableBean.sortKey.ascending}"
                                 resizable="true">
 
+                                <ice:column>
+                                    <f:facet name="header">
+                                        <ice:commandLink
+                                            actionListener="#{policyManageHandler.selectAllListener}">
+                                            <ice:graphicImage
+                                                value="../image/select-all.png"/>
+                                        </ice:commandLink>
+                                    </f:facet>
+                                    <ice:selectBooleanCheckbox
+                                        value="#{privilegeBean.selected}">
+                                    </ice:selectBooleanCheckbox>
+                                </ice:column>
                                 <ice:column>
                                     <f:facet name="header">
                                         <ice:commandSortHeader

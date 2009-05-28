@@ -1358,6 +1358,10 @@
             <property-name>policyEditWizardBean</property-name>
             <value>#{policyEditWizardBean}</value>
         </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
     </managed-bean>
     <!-- policy manage -->
 

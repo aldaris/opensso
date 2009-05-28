@@ -13,9 +13,12 @@ public class PolicyManageBean implements Serializable {
     private PolicyDao policyDao;
     private PolicyManageTableBean policyManageTableBean = new PolicyManageTableBean();
     private boolean viewOptionsPopupVisible = false;
+    private boolean actionPopupVisible = false;
     private String searchFilter = "";
     private List<PolicyFilterHolder> policyFilterHolders = new ArrayList<PolicyFilterHolder>();
     private Map<String, PolicyFilterType> policyFilterTypes;
+    private String action;
+    private boolean selectAll;
 
     public List<PrivilegeBean> getPrivilegeBeans() {
         return privilegeBeans;
@@ -63,9 +66,9 @@ public class PolicyManageBean implements Serializable {
         }
         NullComparator n = new NullComparator();
         if (n.compare(this.searchFilter, searchFilter) != 0) {
+            this.searchFilter = searchFilter;
             reset();
         }
-        this.searchFilter = searchFilter;
     }
 
     public List<PolicyFilterHolder> getPolicyFilterHolders() {
@@ -78,5 +81,40 @@ public class PolicyManageBean implements Serializable {
 
     public void setPolicyFilterTypes(Map<String, PolicyFilterType> policyFilterTypes) {
         this.policyFilterTypes = policyFilterTypes;
+    }
+
+    public int getSizeSelected() {
+        int size = 0;
+        for (PrivilegeBean pb: privilegeBeans) {
+            if (pb.isSelected()) {
+                size++;
+            }
+        }
+
+        return size;
+    }
+
+    public boolean isActionPopupVisible() {
+        return actionPopupVisible;
+    }
+
+    public void setActionPopupVisible(boolean actionPopupVisible) {
+        this.actionPopupVisible = actionPopupVisible;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public boolean isSelectAll() {
+        return selectAll;
+    }
+
+    public void setSelectAll(boolean selectAll) {
+        this.selectAll = selectAll;
     }
 }

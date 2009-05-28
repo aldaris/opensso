@@ -55,6 +55,14 @@ public class PrivilegeBean implements Serializable {
         return attributesBeans;
     }
 
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
     public static abstract class PrivilegeComparator implements Comparator {
         private boolean ascending;
 
@@ -212,6 +220,7 @@ public class PrivilegeBean implements Serializable {
     private Date modified;
     private String author;
     private String modifier;
+    private boolean selected;
 
     public PrivilegeBean() {
         AttributesBean ab;
