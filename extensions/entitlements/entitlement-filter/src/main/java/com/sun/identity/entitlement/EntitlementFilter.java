@@ -18,12 +18,13 @@
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  *
- * $Id: EntitlementFilter.java,v 1.2 2009-05-28 16:01:13 pbryan Exp $
+ * $Id: EntitlementFilter.java,v 1.3 2009-05-28 16:52:56 pbryan Exp $
  */
 
 package com.sun.identity.entitlement.filter;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 import java.security.Principal;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -43,10 +44,9 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 public class EntitlementFilter implements Filter {
 
-    /** Initialization parameter to specify decision resource. */
-    public static final String PARAM_DECISION_RESOURCE = "decisionResource";
-
-    /** Initialization parameter to specify OpenSSO realm. */
+    // TODO: time to seriously consider switching to a configuration file?
+    private static final String PARAM_DECISION_RESOURCE = "decisionResource";
+    private static final String PARAM_IGNORE_PATH_PATTERN = "ignorePathPattern";
     public static final String PARAM_REALM = "realm";
 
     /** Jersey client to make REST calls to token services. */
@@ -61,6 +61,9 @@ public class EntitlementFilter implements Filter {
     /** OpenSSO realm to request entitlement decisions for. */
     private String realm = null;
 
+    /** Regular expression pattern for path to ignore. */
+    private Pattern ignorePathPattern = null;
+
     /**
      * Called by the web container to indicate to the filter that it is being
      * placed into service.
@@ -72,6 +75,7 @@ public class EntitlementFilter implements Filter {
         this.config = config;
         decisionResource = client.resource(requiredInitParam(PARAM_DECISION_RESOURCE));
         realm = defaultInitParam(PARAM_REALM, "/"); // default to root realm if not specified
+        ignorePathPattern = pattern(defaultInitParam(PARAM_IGNORE_PATH_PATTERN, null)); // no pattern
     }
 
     /**
@@ -90,6 +94,12 @@ public class EntitlementFilter implements Filter {
     {
         HttpServletRequest hsRequest = (HttpServletRequest)request;
         HttpServletResponse hsResponse = (HttpServletResponse)response;
+
+        // do not filter if the request path matches pattern to ignore
+        if (match(ignorePathPattern, hsRequest.getRequestURI())) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         StringBuffer url = hsRequest.getRequestURL();
         String query = hsRequest.getQueryString();
@@ -136,6 +146,17 @@ public class EntitlementFilter implements Filter {
      * taken out of service.
      */
     public void destroy() {
+    }
+
+    private static Pattern pattern(String p) {
+        if (p == null) {
+            return null;
+        }
+        return Pattern.compile(p);
+    }
+
+    private static boolean match(Pattern pattern, String value) {
+        return (pattern != null && value != null && pattern.matcher(value).matches());
     }
 
     private String requiredInitParam(String name) throws ServletException {
