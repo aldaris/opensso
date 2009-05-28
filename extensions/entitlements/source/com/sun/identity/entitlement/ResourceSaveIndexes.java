@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceSaveIndexes.java,v 1.2 2009-05-04 20:57:06 veiming Exp $
+ * $Id: ResourceSaveIndexes.java,v 1.3 2009-05-28 00:57:19 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -33,9 +34,9 @@ import java.util.Set;
  * These indexes are created to boost performance (policy evaluation).
  */
 public class ResourceSaveIndexes {
-    private Set<String> hostIndexes;
-    private Set<String> pathIndexes;
-    private Set<String> parentPath;
+    private Set<String> hostIndexes = new HashSet<String>();
+    private Set<String> pathIndexes = new HashSet<String>();
+    private Set<String> parentPath = new HashSet<String>();
 
     /**
      * Constructor.
@@ -49,9 +50,15 @@ public class ResourceSaveIndexes {
         Set<String> pathIndexes,
         Set<String> parentPath
     ) {
-        this.hostIndexes = hostIndexes;
-        this.pathIndexes = pathIndexes;
-        this.parentPath = parentPath;
+        if (hostIndexes != null) {
+            this.hostIndexes.addAll(hostIndexes);
+        }
+        if (pathIndexes != null) {
+            this.pathIndexes.addAll(pathIndexes);
+        }
+        if (parentPath != null) {
+            this.parentPath.addAll(parentPath);
+        }
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementTest.java,v 1.3 2009-05-26 21:20:07 veiming Exp $
+ * $Id: EntitlementTest.java,v 1.4 2009-05-28 00:57:19 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -56,19 +56,21 @@ public class EntitlementTest {
         excludedResourceNames.add("http://www.sun.com/legal");
         ent.setExcludedResourceNames(excludedResourceNames);
         ent.setName("entitlement1");
-        UnittestLog.logMessage(
-                "EntitlementTest.testConstruction():" + "ent.toString()="
-                + ent.toString());
+
         Entitlement ent1 = new Entitlement(SERVICE_NAME,
                 resourceName, actionValues);
-        UnittestLog.logMessage(
-                "EntitlementTest.testConstruction():equality test for false:"
-                + ent.equals(ent1) );
+
+        if (ent.equals(ent1)) {
+            throw new Exception("EntitlementTest.testConstruction(): " +
+                "equality test for false failed.");
+        }
         ent1.setExcludedResourceNames(excludedResourceNames);
         ent1.setName("entitlement1");
-         UnittestLog.logMessage(
-                "EntitlementTest.testConstruction():equality test for true:"
-                + ent.equals(ent1) );
+
+        if (!ent.equals(ent1)) {
+            throw new Exception("EntitlementTest.testConstruction(): " +
+                "equality test for true failed.");
+        }
         
 
     }

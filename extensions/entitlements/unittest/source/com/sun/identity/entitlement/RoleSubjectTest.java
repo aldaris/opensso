@@ -22,42 +22,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleSubjectTest.java,v 1.2 2009-04-21 13:08:03 veiming Exp $
+ * $Id: RoleSubjectTest.java,v 1.3 2009-05-28 00:57:19 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.unittest.UnittestLog;
-import java.util.Date;
 import org.testng.annotations.Test;
 
-/**
- *
- * @author dillidorai
- */
 public class RoleSubjectTest {
 
     @Test
     public void testConstruction() throws Exception {
         RoleSubject role = new RoleSubject("role1");
         role.setPSubjectName("r1");
-        UnittestLog.logMessage(
-                "RoleSubjectTest.testConstruction():" + "role.toString()=" + role.toString());
 
         RoleSubject role1 = new RoleSubject();
         role1.setState(role.getState());
-        UnittestLog.logMessage(
-                "RoleSubject.testConstruction():" + "role1.toString()=" + role1.toString());
 
-
-        UnittestLog.logMessage(
-                "RoleSubjectTest.testConstruction():" + "resetting role name");
-        role1.setID("role1");
-        UnittestLog.logMessage(
-                "RoleSubjectTest.testConstruction():" + "role1.toString()=" + role1.toString());
-    }
-
-    public static void main(String[] args) throws Exception {
-        new RoleSubjectTest().testConstruction();
-        UnittestLog.flush(new Date().toString());
+        if (!role1.equals(role)) {
+            throw new Exception(
+                "RoleSubjectTest.testConstruction: setState failed");
+        }
     }
 }

@@ -22,76 +22,36 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSubjectTest.java,v 1.4 2009-04-21 13:08:03 veiming Exp $
+ * $Id: UserSubjectTest.java,v 1.5 2009-05-28 00:57:19 veiming Exp $
  */
+
 package com.sun.identity.entitlement;
-
-import com.sun.identity.unittest.UnittestLog;
-
-import java.util.Date;
 
 import org.testng.annotations.Test;
 
-/**
- *
- * @author dillidorai
- */
 public class UserSubjectTest {
-
     @Test
     public void testConstruction() throws Exception {
         UserSubject us = new UserSubject("user1");
         us.setPSubjectName("u1");
-        UnittestLog.logMessage(
-                "UserSubjectTest.testConstruction():" + "us.toString()="
-                + us.toString());
 
         UserSubject us1 = new UserSubject();
         us1.setState(us.getState());
-        UnittestLog.logMessage(
-                "UserSubject.testConstruction():" + "us1.toString()="
-                + us1.toString());
-
-
-        UnittestLog.logMessage(
-                "UserSubjectTest.testConstruction():" + "resetting user name");
         us1.setID("user2");
-        UnittestLog.logMessage(
-                "UserSubjectTest.testConstruction():" + "us1.toString()="
-                + us1.toString());
 
         UserSubject us3 = new UserSubject("user1");
-        UnittestLog.logMessage(
-                "UserSubjectTest.testConstruction(): equality test for false:"
-                + us.equals(us3));
         us3.setPSubjectName("u1");
         boolean result = us.equals(us3);
-        UnittestLog.logMessage(
-                "UserSubjectTest.testConstruction(): equality test for true:"
-                + result);
         if (!result) {
-             UnittestLog.logMessage(
-                "UserSubjectTest.testConstruction(): equality test for true failed");
              throw new Exception(
                      "UserSubjectTest.testConstruction(): equality test for true failed");
         }
 
         result = us1.equals(us3);
-        UnittestLog.logMessage(
-                "UserSubjectTest.testConstruction(): equality test for false:"
-                + result);
         if (result) {
-             UnittestLog.logMessage(
-                "UserSubjectTest.testConstruction(): "
-                + " equality test for false failed");
              throw new Exception(
                      "UserSubjectTest.testConstruction(): "
                      +  "equality test for false failed");
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        new UserSubjectTest().testConstruction();
-        UnittestLog.flush(new Date().toString());
     }
 }

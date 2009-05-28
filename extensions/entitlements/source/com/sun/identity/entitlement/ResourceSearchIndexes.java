@@ -22,20 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceSearchIndexes.java,v 1.4 2009-05-04 20:57:06 veiming Exp $
+ * $Id: ResourceSearchIndexes.java,v 1.5 2009-05-28 00:57:19 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * This class encapsulates the result of resource splitting.
  */
 public class ResourceSearchIndexes {
-    private Set<String> hostIndexes;
-    private Set<String> pathIndexes;
-    private Set<String> parentPathIndexes;
+    private Set<String> hostIndexes = new HashSet();
+    private Set<String> pathIndexes = new HashSet();
+    private Set<String> parentPathIndexes = new HashSet();
 
     /**
      * Constructor.
@@ -49,9 +50,26 @@ public class ResourceSearchIndexes {
         Set<String> pathIndexes,
         Set<String> parentPathIndexes
     ) {
-        this.hostIndexes = hostIndexes;
-        this.pathIndexes = pathIndexes;
-        this.parentPathIndexes = parentPathIndexes;
+        if (hostIndexes != null) {
+            this.hostIndexes.addAll(hostIndexes);
+        }
+        if (pathIndexes != null) {
+            this.pathIndexes.addAll(pathIndexes);
+        }
+        if (parentPathIndexes != null) {
+            this.parentPathIndexes = parentPathIndexes;
+        }
+    }
+
+    /**
+     * Appends indexes.
+     *
+     * @param other Other indexes
+     */
+    public void addAll(ResourceSearchIndexes other) {
+        this.hostIndexes.addAll(other.hostIndexes);
+        this.pathIndexes.addAll(other.pathIndexes);
+        this.parentPathIndexes.addAll(other.parentPathIndexes);
     }
 
     /**

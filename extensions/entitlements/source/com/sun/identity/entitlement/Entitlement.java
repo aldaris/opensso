@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.41 2009-05-26 21:20:05 veiming Exp $
+ * $Id: Entitlement.java,v 1.42 2009-05-28 00:57:19 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -702,8 +702,19 @@ public class Entitlement {
         Subject adminSubject, 
         String realm
     ) {
-        return getApplication(adminSubject, realm).getApplicationType()
-            .getResourceSearchIndex(resourceNames.iterator().next()); //TODO: recheck
+        ResourceSearchIndexes result = null;
+        ApplicationType applType = getApplication(
+            adminSubject, realm).getApplicationType();
+
+        for (String r : resourceNames) {
+            ResourceSearchIndexes rsi = applType.getResourceSearchIndex(r);
+            if (result == null) {
+                result = rsi;
+            } else {
+                result.addAll(rsi);
+            }
+        }
+        return result;
     }
 
     /**
@@ -717,8 +728,19 @@ public class Entitlement {
         Subject adminSubject, 
         String realm
     ) {
-        return getApplication(adminSubject, realm).getApplicationType()
-            .getResourceSaveIndex(resourceNames.iterator().next()); //TODO: recheck
+        ResourceSaveIndexes result = null;
+        ApplicationType applType = getApplication(
+            adminSubject, realm).getApplicationType();
+
+        for (String r : resourceNames) {
+            ResourceSaveIndexes rsi = applType.getResourceSaveIndex(r);
+            if (result == null) {
+                result = rsi;
+            } else {
+                result.addAll(rsi);
+            }
+        }
+        return result;
     }
 
     /**
