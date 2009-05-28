@@ -18,7 +18,7 @@
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  *
- * $Id: OAuthServletFilter.java,v 1.3 2009-05-28 16:00:33 pbryan Exp $
+ * $Id: OAuthServletFilter.java,v 1.4 2009-05-28 20:28:24 pbryan Exp $
  */
 
 package com.sun.identity.oauth.filter;
@@ -46,11 +46,12 @@ import com.sun.jersey.oauth.signature.OAuthSecrets;
 import com.sun.jersey.oauth.signature.OAuthSignature;
 import com.sun.jersey.oauth.signature.OAuthSignatureException;
 
-public class OAuthServletFilter implements Filter
-{
+public class OAuthServletFilter implements Filter {
+
     // TODO: time to seriously consider switching to a configuration file?
     private static final String PARAM_REALM = "realm";
     private static final String PARAM_SIGNATURE_METHOD = "signatureMethod";
+    private static final String PARAM_IGNORE_PATH_PATTERN = "ignorePathPattern";
     private static final String PARAM_CONSUMER_KEY_PATTERN = "consumerKeyPattern";
     private static final String PARAM_ACCESS_TOKEN_PATTERN = "accessTokenPattern";
     private static final String PARAM_MAX_AGE = "maxAge";
@@ -87,6 +88,9 @@ public class OAuthServletFilter implements Filter
     /** Regular expression pattern for acceptable access token. */
     private Pattern accessTokenPattern = null;
 
+    /** Regular expression pattern for path to ignore. */
+    private Pattern ignorePathPattern = null;
+
     /** Attribute used to index nonces in nonce manager. */
     private String nonceIndex = null;
 
@@ -107,13 +111,14 @@ public class OAuthServletFilter implements Filter
 
         // required initialization parameters
         realm = requiredInitParam(PARAM_REALM);
-        consumerKeyPattern = Pattern.compile(requiredInitParam(PARAM_CONSUMER_KEY_PATTERN));;
-        accessTokenPattern = Pattern.compile(requiredInitParam(PARAM_ACCESS_TOKEN_PATTERN));
+        consumerKeyPattern = pattern(requiredInitParam(PARAM_CONSUMER_KEY_PATTERN));;
+        accessTokenPattern = pattern(requiredInitParam(PARAM_ACCESS_TOKEN_PATTERN));
 
         // optional initialization parameters (defaulted)
         maxAge = intValue(defaultInitParam(PARAM_MAX_AGE, "300000")); // 5 minutes
         gcPeriod = intValue(defaultInitParam(PARAM_GC_PERIOD, "100")); // every 100 on average
         nonceIndex = defaultInitParam(PARAM_NONCE_INDEX, "consumerKey"); // consumer index for nonces
+        ignorePathPattern = pattern(defaultInitParam(PARAM_IGNORE_PATH_PATTERN, null)); // no pattern
 
         nonces = new NonceManager(maxAge, gcPeriod);
 
@@ -162,6 +167,12 @@ public class OAuthServletFilter implements Filter
     private void filter(HttpServletRequest request, HttpServletResponse response,
     FilterChain chain) throws IOException, ServletException {
 
+        // do not filter if the request path matches pattern to ignore
+        if (match(ignorePathPattern, request.getRequestURI())) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         OAuthServletRequest osr = new OAuthServletRequest(request);
 
         OAuthParameters params = new OAuthParameters().readRequest(osr);
@@ -183,8 +194,7 @@ public class OAuthServletFilter implements Filter
         supportedOAuthParam(params.getVersion(), versions);
 
         // consumer key or token do not match the expected patterns; signature is invalid
-        if (!consumerKeyPattern.matcher(consumerKey).matches() ||
-        !accessTokenPattern.matcher(token).matches()) {
+        if (!match(consumerKeyPattern, consumerKey) || !match(accessTokenPattern, token)) {
             throw new UnauthorizedException();
         }
 
@@ -243,7 +253,9 @@ public class OAuthServletFilter implements Filter
     }
 
     private static String requiredForAuthorization(String value) throws UnauthorizedException {
-        if (value == null || value.length() == 0) { throw new UnauthorizedException(); }
+        if (value == null || value.length() == 0) {
+            throw new UnauthorizedException();
+        }
         return value;
     }
 
@@ -263,7 +275,7 @@ public class OAuthServletFilter implements Filter
         return v;
     }
 
-    private int intValue(String value) {
+    private static int intValue(String value) {
         try {
             return Integer.valueOf(value);
         }
@@ -272,22 +284,29 @@ public class OAuthServletFilter implements Filter
         }
     }
 
-    private String requiredOAuthParam(String value) throws BadRequestException {
+    private static String requiredOAuthParam(String value) throws BadRequestException {
         if (value == null) {
             throw new BadRequestException();
         }
         return value;
     }
 
-    private String supportedOAuthParam(String value, HashSet<String> set) throws BadRequestException {
+    private static String supportedOAuthParam(String value, HashSet<String> set) throws BadRequestException {
         if (!set.contains(value)) {
             throw new BadRequestException();
         }
         return value;
     }
 
-    private boolean matches(Pattern pattern, String value) {
-        return pattern.matcher(value).matches();
+    private static Pattern pattern(String p) {
+        if (p == null) {
+            return null;
+        }
+        return Pattern.compile(p);
+    }
+
+    private static boolean match(Pattern pattern, String value) {
+        return (pattern != null && value != null && pattern.matcher(value).matches());
     }
 
     private static boolean verifySignature(OAuthServletRequest osr,

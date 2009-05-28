@@ -18,7 +18,7 @@
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  *
- * $Id: EntitlementFilter.java,v 1.3 2009-05-28 16:52:56 pbryan Exp $
+ * $Id: EntitlementFilter.java,v 1.4 2009-05-28 20:28:51 pbryan Exp $
  */
 
 package com.sun.identity.entitlement.filter;
