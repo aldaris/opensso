@@ -51,8 +51,8 @@ public class NoBrowserAuthorization {
     public Response NoBrowserAuthorization(
     @QueryParam("username") String username,
     @QueryParam("password") String password,
-    @QueryParam("request_token") String requestToken)
-    {
+    @QueryParam("request_token") String requestToken) {
+
         if (username == null || password == null || requestToken == null) {
             throw new WebApplicationException(new Throwable("Request invalid."));
         }
@@ -62,11 +62,18 @@ public class NoBrowserAuthorization {
         params.add("password", password);
         
         String response;
-        try { response = authenticateResource.queryParams(params).get(String.class); }
-        catch (UniformInterfaceException uie) { return Response.status(400).build(); }
+
+        try {
+            response = authenticateResource.queryParams(params).get(String.class);
+        }
+        catch (UniformInterfaceException uie) {
+            return Response.status(400).build();
+        }
 
         // ensure response is in expected format
-        if (!response.startsWith("token.id=")) { return Response.status(400).build(); }
+        if (!response.startsWith("token.id=")) {
+            return Response.status(400).build();
+        }
 
         // FIXME: get fully-qualified subject universal id from opensso
         String subject = "id=" + username + ",ou=user,dc=opensso,dc=java,dc=net";
@@ -76,13 +83,14 @@ public class NoBrowserAuthorization {
         try {
             service.beginTx();
             RequestToken rt = getReqtokenByURI(RequestToken.class, requestToken);
-            if (rt == null) { throw new WebApplicationException(new Throwable("Request token invalid.")); }
+            if (rt == null) {
+                throw new WebApplicationException(new Throwable("Request token invalid."));
+            }
             rt.setReqtPpalid(subject);
             service.persistEntity(rt);
             service.commitTx();
             return Response.ok().build();
         }
-
         finally {
             service.close();
         }
@@ -91,7 +99,8 @@ public class NoBrowserAuthorization {
     protected <T> T getReqtokenByURI(Class<T> type, String uri) {
         try {
             return (T) PersistenceService.getInstance().createQuery("SELECT e FROM " + type.getSimpleName() + " e where e.reqtUri = :uri").setParameter("uri", uri).getSingleResult();
-        } catch (NoResultException ex) {
+        }
+        catch (NoResultException ex) {
             return null;
         }
     }

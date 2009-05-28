@@ -18,7 +18,7 @@
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  *
- * $Id: OAuthServletFilter.java,v 1.2 2009-05-27 22:36:17 pbryan Exp $
+ * $Id: OAuthServletFilter.java,v 1.3 2009-05-28 16:00:33 pbryan Exp $
  */
 
 package com.sun.identity.oauth.filter;
@@ -48,6 +48,7 @@ import com.sun.jersey.oauth.signature.OAuthSignatureException;
 
 public class OAuthServletFilter implements Filter
 {
+    // TODO: time to seriously consider switching to a configuration file?
     private static final String PARAM_REALM = "realm";
     private static final String PARAM_SIGNATURE_METHOD = "signatureMethod";
     private static final String PARAM_CONSUMER_KEY_PATTERN = "consumerKeyPattern";
@@ -132,8 +133,8 @@ public class OAuthServletFilter implements Filter
      * @throws ServletException if an error occurs.
      */
     public void doFilter(ServletRequest request,
-    ServletResponse response, FilterChain chain) throws IOException, ServletException
-    {
+    ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
         HttpServletRequest hsRequest = (HttpServletRequest)request;
         HttpServletResponse hsResponse = (HttpServletResponse)response;    
 
@@ -159,14 +160,16 @@ public class OAuthServletFilter implements Filter
     }
 
     private void filter(HttpServletRequest request, HttpServletResponse response,
-    FilterChain chain) throws IOException, ServletException
-    {
+    FilterChain chain) throws IOException, ServletException {
+
         OAuthServletRequest osr = new OAuthServletRequest(request);
 
         OAuthParameters params = new OAuthParameters().readRequest(osr);
 
         // apparently not signed with any OAuth parameters; unauthorized
-        if (params.size() == 0) { throw new UnauthorizedException(); }
+        if (params.size() == 0) {
+            throw new UnauthorizedException();
+        }
 
         // get required OAuth parameters
         String consumerKey = requiredOAuthParam(params.getConsumerKey());
@@ -180,8 +183,8 @@ public class OAuthServletFilter implements Filter
         supportedOAuthParam(params.getVersion(), versions);
 
         // consumer key or token do not match the expected patterns; signature is invalid
-        if (!consumerKeyPattern.matcher(consumerKey).matches()
-        || !accessTokenPattern.matcher(token).matches()) {
+        if (!consumerKeyPattern.matcher(consumerKey).matches() ||
+        !accessTokenPattern.matcher(token).matches()) {
             throw new UnauthorizedException();
         }
 
@@ -201,11 +204,12 @@ public class OAuthServletFilter implements Filter
         query.add("subject", "1");
         query.add("shared_secret", "1");
         mvmResponse = get(tokenResource, query);
-        String tokenSecret = requiredForAuthorization(mvmResponse.getFirst("shared_secret"));
+        String tokenSecret = mvmResponse.getFirst("shared_secret");
         String subject = requiredForAuthorization(mvmResponse.getFirst("subject"));
 
-        if (consumerSecret == null || tokenSecret == null) {
-            throw new UnauthorizedException();
+        // unsupported signature method results in 400 bad request
+        if (tokenSecret == null) {
+            throw new BadRequestException();
         }
 
         OAuthSecrets secrets = new OAuthSecrets().consumerSecret(consumerSecret).tokenSecret(tokenSecret);
@@ -214,7 +218,7 @@ public class OAuthServletFilter implements Filter
             throw new UnauthorizedException();
         }
 
-// TODO: make specifying and testing this easier
+        // TODO: make specifying and testing this easier
         String key = (nonceIndex.equals("consumerKey") ? consumerKey : token);
 
         if (!nonces.verify(key, timestamp, nonce)) {
@@ -229,8 +233,12 @@ public class OAuthServletFilter implements Filter
     private static MultivaluedMap<String, String> get(WebResource resource, MultivaluedMap params)
     throws UnauthorizedException {
         String response;
-        try { response = resource.queryParams(params).get(String.class); }
-        catch (UniformInterfaceException uie) { throw new UnauthorizedException(); }
+        try {
+            response = resource.queryParams(params).get(String.class);
+        }
+        catch (UniformInterfaceException uie) {
+            throw new UnauthorizedException();
+        }
         return UriComponent.decodeQuery(response, true);
     }
 
@@ -241,28 +249,40 @@ public class OAuthServletFilter implements Filter
 
     private String requiredInitParam(String name) throws ServletException {
         String v = config.getInitParameter(name);
-        if (v == null || v.length() == 0) { throw new ServletException(name + " init parameter required"); }
+        if (v == null || v.length() == 0) {
+            throw new ServletException(name + " init parameter required");
+        }
         return v;
     }        
 
     private String defaultInitParam(String name, String value) {
         String v = config.getInitParameter(name);
-        if (v == null || v.length() == 0) { v = value; }
+        if (v == null || v.length() == 0) {
+            v = value;
+        }
         return v;
     }
 
     private int intValue(String value) {
-        try { return Integer.valueOf(value); }
-        catch (NumberFormatException nfe) { return -1; }
+        try {
+            return Integer.valueOf(value);
+        }
+        catch (NumberFormatException nfe) {
+           return -1;
+        }
     }
 
     private String requiredOAuthParam(String value) throws BadRequestException {
-        if (value == null) { throw new BadRequestException(); }
+        if (value == null) {
+            throw new BadRequestException();
+        }
         return value;
     }
 
     private String supportedOAuthParam(String value, HashSet<String> set) throws BadRequestException {
-        if (!set.contains(value)) { throw new BadRequestException(); }
+        if (!set.contains(value)) {
+            throw new BadRequestException();
+        }
         return value;
     }
 
@@ -272,7 +292,11 @@ public class OAuthServletFilter implements Filter
 
     private static boolean verifySignature(OAuthServletRequest osr,
     OAuthParameters params, OAuthSecrets secrets) throws ServletException {
-        try { return OAuthSignature.verify(osr, params, secrets); }
-        catch (OAuthSignatureException ose) { throw new ServletException(ose); }
+        try {
+            return OAuthSignature.verify(osr, params, secrets);
+        }
+        catch (OAuthSignatureException ose) {
+            throw new ServletException(ose);
+        }
     }
 }

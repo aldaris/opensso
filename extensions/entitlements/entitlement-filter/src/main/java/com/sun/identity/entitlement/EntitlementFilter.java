@@ -18,7 +18,7 @@
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  *
- * $Id: EntitlementFilter.java,v 1.1 2009-05-28 15:38:07 pbryan Exp $
+ * $Id: EntitlementFilter.java,v 1.2 2009-05-28 16:01:13 pbryan Exp $
  */
 
 package com.sun.identity.entitlement.filter;
@@ -93,7 +93,9 @@ public class EntitlementFilter implements Filter {
 
         StringBuffer url = hsRequest.getRequestURL();
         String query = hsRequest.getQueryString();
-        if (query != null) { url.append('?').append(query); }
+        if (query != null) {
+            url.append('?').append(query);
+        }
 
         String action = hsRequest.getMethod();
         String subject = subjectFromRequest(hsRequest);
@@ -104,11 +106,19 @@ public class EntitlementFilter implements Filter {
         params.add("action", action);
         params.add("resource", resource);
 
-        if (subject != null) { params.add("subject", subject); } // optional
+        // optional
+        if (subject != null) {
+            params.add("subject", subject);
+        }
 
         String decision = "deny"; // fail safe to deny access if exception occurs
-        try { decision = decisionResource.queryParams(params).accept("text/plain").get(String.class); }
-        catch (UniformInterfaceException uie) {} // the fail safe of "deny" stands
+        try {
+            decision = decisionResource.queryParams(params).accept("text/plain").get(String.class);
+        }
+
+        // the fail safe of "deny" stands
+        catch (UniformInterfaceException uie) {
+        }
 
         if (decision == null || !decision.equals("allow")) {
             hsResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -129,22 +139,39 @@ public class EntitlementFilter implements Filter {
     }
 
     private String requiredInitParam(String name) throws ServletException {
+ 
         String v = config.getInitParameter(name);
-        if (v == null || v.length() == 0) { throw new ServletException(name + " init parameter required"); }
+ 
+        if (v == null || v.length() == 0) {
+            throw new ServletException(name + " init parameter required");
+        }
+ 
         return v;
     }        
 
     private String defaultInitParam(String name, String value) {
+ 
         String v = config.getInitParameter(name);
-        if (v == null || v.length() == 0) { v = value; }
+ 
+        if (v == null || v.length() == 0) {
+            v = value;
+        }
+ 
         return v;
     }
 
     private String subjectFromRequest(HttpServletRequest request) {
-        if (request == null) { return null; }
+
+        if (request == null) {
+            return null;
+        }
+
         Principal principal = request.getUserPrincipal();
-        if (principal == null) { return null; }
+
+        if (principal == null) {
+            return null;
+        }
+
         return principal.getName();
     }
 }
-

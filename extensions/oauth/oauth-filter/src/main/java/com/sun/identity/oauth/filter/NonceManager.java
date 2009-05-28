@@ -18,7 +18,7 @@
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  *
- * $Id: NonceManager.java,v 1.2 2009-05-27 22:36:17 pbryan Exp $
+ * $Id: NonceManager.java,v 1.3 2009-05-28 16:00:33 pbryan Exp $
  */
 
 package com.sun.identity.oauth.filter;
@@ -59,8 +59,12 @@ class NonceManager
      * @param maxAge the maximum valid age of a nonce timestamp, in milliseconds.
      * @param gcPeriod verifications to perform on average before performing garbage collection.
      */
-    public NonceManager(long maxAge, int gcPeriod) {
-        if (maxAge <= 0 || gcPeriod <= 0) { throw new IllegalArgumentException(); }
+    public NonceManager(long maxAge, int gcPeriod)
+    {
+        if (maxAge <= 0 || gcPeriod <= 0) {
+            throw new IllegalArgumentException();
+        }
+
         this.maxAge = maxAge;
         this.gcPeriod = gcPeriod;
     }
@@ -81,7 +85,9 @@ class NonceManager
         long stamp = longValue(timestamp) * 1000;
 
         // invalid timestamp supplied; automatically invalid
-        if (stamp + maxAge < now) { return false; }
+        if (stamp + maxAge < now) {
+            return false;
+        }
 
         Nonces nonces = map.get(key);
 
@@ -94,7 +100,9 @@ class NonceManager
         }
 
         // timestamp not monotonically increasing; timestamp invalid
-        if (stamp < nonces.timestamp) { return false; }
+        if (stamp < nonces.timestamp) {
+            return false;
+        }
 
         // new timestamp enountered for this key
         synchronized(nonces) {
@@ -109,7 +117,9 @@ class NonceManager
             gcCounter = 0;
             for (String k : map.keySet()) {
                 Nonces n = map.get(k);
-                if (n.timestamp + maxAge < now) { map.remove(k); }
+                if (n.timestamp + maxAge < now) {
+                    map.remove(k);
+                }
             }
         }
 
@@ -118,8 +128,12 @@ class NonceManager
     }
 
     private long longValue(String value) {
-        try { return Long.valueOf(value); }
-        catch (NumberFormatException nfe) { return -1; }
+        try {
+            return Long.valueOf(value);
+        }
+        catch (NumberFormatException nfe) {
+            return -1;
+        }
     }
 }
 
