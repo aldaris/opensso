@@ -4,6 +4,24 @@
     border: 0;
 }
 
+*:focus
+{
+  -moz-outline: 1px dashed #9999ff !important;
+  -moz-outline-offset: 2px         !important;
+  -moz-outline-radius: 2px         !important;
+}
+
+textarea:focus, button:focus, select:focus, input:focus
+{
+  -moz-outline-offset: 2px        !important;
+}
+
+input[type="radio"]:focus
+{
+  -moz-outline-radius: 12px        !important;
+  -moz-outline-offset: 0px         !important;
+}
+
 body {
     font: 80% arial, helvetica, sans-serif;
 }
@@ -178,37 +196,38 @@ textarea.policy-description {
 }
 
 
-div.button {
+span.button {
     border: 1px solid #999999;
     border-top-color: #CCCCCC;
     border-left-color: #CCCCCC;
-    padding: 4px 8px 6px 8px;
+    padding: 5px 10px 5px 10px;
     background-color: #FFFFFF;
     background-image: url(../image/section-bg.gif);
     background-repeat: repeat-x;
 }
 
-div.button span {
+span.button span {
     color: #333333;
     font-size: 100%;
     font-weight: bold;
     font-family: Verdana, Helvetica, Arial, sans-serif;
 }
 
-div.button:active {
+span.button:active {
     border: 1px solid #CCCCCC;
     border-top-color: #999999;
     border-left-color: #999999;
+    background-image: url(../image/section-bg-dark.gif);
 }
 
-div.button img.right {
+span.button img.right {
     position: relative;
     left: 3px;
     top: 3px;
     margin-right: 3px;
 }
 
-div.button img.left {
+span.button img.left {
     position: relative;
     left: -3px;
     top: 3px;

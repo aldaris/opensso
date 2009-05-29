@@ -6,59 +6,55 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component">
 
     <ice:commandLink
+        tabindex="-1"
         partialSubmit="false"
         immediate="true"
         action="#{handler.cancelAction}">
-
         <f:attribute name="step" value="#{step}"/>
-
-        <ice:panelGroup
-            styleClass="button">
+        <span
+            class="button">
             <img class="left" src="../image/cancel.png"/>
             <ice:outputText
                 value="Cancel"/>
-        </ice:panelGroup>
+        </span>
     </ice:commandLink>
     <ice:commandLink
         rendered="#{step != 0}"
+        tabindex="10000"
         partialSubmit="false"
         actionListener="#{handler.previousListener}">
-
         <f:attribute name="step" value="#{step}"/>
-
-        <ice:panelGroup
-            styleClass="button">
+        <span
+            class="button">
             <img class="left" src="../image/go-previous.png"/>
             <ice:outputText
                 value="Previous"/>
-        </ice:panelGroup>
+        </span>
     </ice:commandLink>
     <ice:commandLink
         rendered="#{bean.finishRendered}"
+        tabindex="10001"
         partialSubmit="false"
         action="#{handler.finishAction}">
-
         <f:attribute name="step" value="#{step}"/>
-
-        <ice:panelGroup
-            styleClass="button">
+        <span
+            class="button">
             <img class="left" src="../image/execute.png"/>
             <ice:outputText
                 value="Finish"/>
-        </ice:panelGroup>
+        </span>
     </ice:commandLink>
     <ice:commandLink
         rendered="#{step &lt; steps-1}"
+        tabindex="10002"
         partialSubmit="false"
         actionListener="#{handler.nextListener}">
-
         <f:attribute name="step" value="#{step}"/>
-
-        <ice:panelGroup
-            styleClass="button">
+        <span
+            class="button">
             <ice:outputText
                 value="Next"/>
             <img class="right" src="../image/go-next.png"/>
-        </ice:panelGroup>
+        </span>
     </ice:commandLink>
 </ui:composition>
