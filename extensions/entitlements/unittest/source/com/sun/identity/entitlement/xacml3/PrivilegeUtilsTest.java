@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.5 2009-05-21 01:04:03 veiming Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.6 2009-05-29 22:17:16 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -154,7 +154,7 @@ public class PrivilegeUtilsTest {
         UnittestLog.logMessage("PrivilegeUtils.testPrivilegeToXACMLPolicy():" +
                 "converting to xacml policy");
         // TODO(jtb): not compiling
-        String xacmlString = PrivilegeUtils.toXACML(privilege);
+        String xacmlString = XACMLPrivilegeUtils.toXACML(privilege);
         UnittestLog.logMessage("xacml policy=" + xacmlString);
         } catch (Throwable t) {
             UnittestLog.logError("Throable:",  t);
