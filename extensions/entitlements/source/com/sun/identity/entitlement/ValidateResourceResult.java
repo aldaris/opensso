@@ -22,10 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidateResourceResult.java,v 1.3 2009-05-13 21:55:29 veiming Exp $
+ * $Id: ValidateResourceResult.java,v 1.4 2009-05-29 23:03:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
+
+import java.text.MessageFormat;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * This class has an error code which indicates why the resource name is
@@ -38,6 +42,8 @@ public class ValidateResourceResult {
 
     private int validCode;
     private String message;
+    private Object[] args;
+
 
     /**
      * Constructor.
@@ -51,12 +57,38 @@ public class ValidateResourceResult {
     }
 
     /**
+     * Constructor.
+     *
+     * @param validCode valid code.
+     * @param message Message.
+     * @param args Arguments for the message.
+     */
+    public ValidateResourceResult(int validCode, String message, Object[] args){
+        this.validCode = validCode;
+        this.message = message;
+        this.args = args;
+    }
+
+    /**
      * Returns message.
      *
      * @return message.
      */
     public String getMessage() {
-        return message;
+        return getLocalizedMessage(Locale.getDefault());
+    }
+
+    /**
+     * Returns localized message.
+     *
+     * @param locale Locale.
+     * @return localized message.
+     */
+    public String getLocalizedMessage(Locale locale) {
+        ResourceBundle rb = ResourceBundle.getBundle("entitlement", locale);
+        String str = rb.getString(message);
+        return ((args != null) && (args.length > 0)) ?
+            MessageFormat.format(str, args) : str;
     }
 
     /**

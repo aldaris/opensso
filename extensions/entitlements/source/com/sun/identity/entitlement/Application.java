@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.19 2009-05-27 07:31:56 veiming Exp $
+ * $Id: Application.java,v 1.20 2009-05-29 23:03:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -360,9 +360,10 @@ public final class Application {
         }
 
         if (!match) {
+            Object[] args = {resource};
             return new ValidateResourceResult(
                 ValidateResourceResult.VALID_CODE_DOES_NOT_MATCH_VALID_RESOURCES,
-                "");
+                "resource.validation.does.not.match.valid.resources", args);
         }
 
         try {
@@ -370,8 +371,10 @@ public final class Application {
             return new ValidateResourceResult( 
                 ValidateResourceResult.VALID_CODE_VALID, "");
         } catch (EntitlementException ex) {
+            Object[] args = {resource};
             return new ValidateResourceResult(
-                ValidateResourceResult.VALID_CODE_INVALID, ex.getMessage());
+                ValidateResourceResult.VALID_CODE_INVALID,
+                "resource.validation.invalid.resource", args);
         }
     }
 }

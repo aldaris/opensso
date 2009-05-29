@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeTest.java,v 1.6 2009-05-26 21:20:07 veiming Exp $
+ * $Id: ApplicationTypeTest.java,v 1.7 2009-05-29 23:03:16 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -105,6 +105,10 @@ public class ApplicationTypeTest {
         if (r.isValid()) {
             throw new Exception(
                 "ApplicationTypeTest.testApplication, validateResourceName (-ve test) is incorrect");
+        }
+        if (r.getMessage().length() == 0) {
+            throw new Exception(
+                "ApplicationTypeTest.testApplication, validateResourceName (-ve test) without message.");
         }
 
         Set<String> subjects = app.getSubjects();
