@@ -47,7 +47,7 @@
                 </o:wstep>
                 <o:wstep
                     step="2"
-                    label="Step 3: Subjects (#{policyCreateWizardBean.privilegeBean.viewSubject != null ? policyCreateWizardBean.privilegeBean.viewSubject.size : 0})">
+                    label="Step 3: Subjects (#{policyCreateWizardBean.privilegeBean.viewSubject == null ? 0 : policyCreateWizardBean.privilegeBean.viewSubject.sizeLeafs})">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-subjects.xhtml">
                             <ui:param

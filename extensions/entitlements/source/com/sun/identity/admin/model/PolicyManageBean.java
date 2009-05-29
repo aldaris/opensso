@@ -19,6 +19,8 @@ public class PolicyManageBean implements Serializable {
     private List<PolicyFilterHolder> policyFilterHolders = new ArrayList<PolicyFilterHolder>();
     private Map<String, PolicyFilterType> policyFilterTypes;
     private boolean selectAll;
+    private List<String> viewOptionsPopupColumnsVisible = new ArrayList<String>();
+    private int viewOptionsPopupRows = 10;
 
     public List<PrivilegeBean> getPrivilegeBeans() {
         return privilegeBeans;
@@ -116,5 +118,21 @@ public class PolicyManageBean implements Serializable {
 
     public void setExportPopupVisible(boolean exportPopupVisible) {
         this.exportPopupVisible = exportPopupVisible;
+    }
+
+    public List<String> getViewOptionsPopupColumnsVisible() {
+        return viewOptionsPopupColumnsVisible;
+    }
+
+    public void setViewOptionsPopupColumnsVisible(List<String> viewOptionsPopupColumnsVisible) {
+        this.viewOptionsPopupColumnsVisible = viewOptionsPopupColumnsVisible;
+    }
+
+    public int getViewOptionsPopupRows() {
+        return viewOptionsPopupRows;
+    }
+
+    public void setViewOptionsPopupRows(int viewOptionsPopupRows) {
+        this.viewOptionsPopupRows = viewOptionsPopupRows;
     }
 }

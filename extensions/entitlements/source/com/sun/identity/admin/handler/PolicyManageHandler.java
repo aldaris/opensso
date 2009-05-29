@@ -20,7 +20,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
-import javax.servlet.http.HttpServletResponse;
 
 public class PolicyManageHandler implements Serializable {
 
@@ -83,7 +82,23 @@ public class PolicyManageHandler implements Serializable {
     }
 
     public void viewOptionsListener(ActionEvent event) {
-        policyManageBean.setViewOptionsPopupVisible(!policyManageBean.isViewOptionsPopupVisible());
+        policyManageBean.getViewOptionsPopupColumnsVisible().clear();
+        policyManageBean.getViewOptionsPopupColumnsVisible().addAll(policyManageBean.getPolicyManageTableBean().getColumnsVisible());
+        policyManageBean.setViewOptionsPopupRows(policyManageBean.getPolicyManageTableBean().getRows());
+
+        policyManageBean.setViewOptionsPopupVisible(true);
+    }
+
+    public void viewOptionsPopupOkListener(ActionEvent event) {
+        policyManageBean.getPolicyManageTableBean().getColumnsVisible().clear();
+        policyManageBean.getPolicyManageTableBean().getColumnsVisible().addAll(policyManageBean.getViewOptionsPopupColumnsVisible());
+        policyManageBean.getPolicyManageTableBean().setRows(policyManageBean.getViewOptionsPopupRows());
+
+        policyManageBean.setViewOptionsPopupVisible(false);
+    }
+
+    public void viewOptionsPopupCancelListener(ActionEvent event) {
+        policyManageBean.setViewOptionsPopupVisible(false);
     }
 
     public void removePopupOkListener(ActionEvent event) {

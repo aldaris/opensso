@@ -19,7 +19,7 @@
                     value="#{policyWizardBean.privilegeBean.viewEntitlement.booleanActionsHandler}"/>
             </ui:include>
         </ice:panelTab>
-        <ice:panelTab label="Conditions (#{policyWizardBean.privilegeBean.viewCondition == null ? 0 : policyWizardBean.privilegeBean.viewCondition.size})">
+        <ice:panelTab label="Conditions (#{policyWizardBean.privilegeBean.viewCondition == null ? 0 : policyWizardBean.privilegeBean.viewCondition.sizeLeafs})">
             <ui:include src="policy-conditions.xhtml">
                 <ui:param
                     name="policyConditionsBean"
