@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.24 2009-05-27 23:06:36 hengming Exp $
+   $Id: entitlement.xml,v 1.25 2009-05-29 22:25:42 dillidorai Exp $
 
 -->
 
@@ -42,6 +42,14 @@
                     i18nKey="">
                     <DefaultValues>
                         <Value>true</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="xacml-privilege-enabled"
+                    type="single"
+                    syntax="boolean"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>false</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="threadSize"
