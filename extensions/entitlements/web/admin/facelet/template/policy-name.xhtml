@@ -8,84 +8,68 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <div class="section-outer">
-        <o:box>
-            <ui:define name="body">
-                <div class="section-inner">
-                    <span class="section-head">
-                        <span class="section-title">
-                            <ice:outputText value="Policy Name, Description"/>
-                        </span>
-                    </span>
-                    <div class="clear"></div>
-                    <div class="section-details">Need text here.</div>
-                    <ice:panelGrid
-                        columns="2"
-                        columnClasses="label-column,input-column">
-                        <ice:panelGroup>
-                            <ice:outputLabel
-                                for="policyNameInput"
-                                value="Policy Name"/>
-                        </ice:panelGroup>
-                        <ice:panelGroup>
-                            <ice:inputText
-                                id="policyNameInput"
-                                readonly="#{!policyNameBean.policyNameEditable}"
-                                partialSubmit="false"
-                                value="#{policyNameBean.privilegeBean.name}"
-                                effect="#{policyNameBean.policyNameInputEffect}"/>
-                        </ice:panelGroup>
-                        <ice:panelGroup>
-                            <ice:outputLabel
-                                for="policyDescriptionInput"
-                                value="Policy Description"/>
-                            <ice:panelGroup>
-                                <ice:outputLabel
-                                    for="policyDescriptionInput"
-                                    value="(optional)"/>
-                            </ice:panelGroup>
-                        </ice:panelGroup>
-                        <ice:inputTextarea
-                            id="policyDescriptionInput"
-                            value="#{policyNameBean.privilegeBean.description}"
-                            styleClass="policy-description"/>
-                        <ice:message for="policyDescriptionInput"/>
-                    </ice:panelGrid>
-                </div>
-            </ui:define>
-        </o:box>
-    </div>
-    <div class="section-outer">
-        <o:box>
-            <ui:define name="body">
-                <div class="section-inner">
-                    <span class="section-head">
-                        <span class="section-title">
-                            <ice:outputText
-                                value="Application"/>
-                        </span>
-                    </span>
-                    <div class="clear"></div>
-                    <div class="section-details">Need text here.</div>
-                    <ice:panelGrid
-                        columns="2"
-                        columnClasses="label-column,input-column">
-                        <ice:panelGroup>
-                            <ice:outputLabel
-                                for="application-select"
-                                value="Application"/>
-                        </ice:panelGroup>
-                        <ice:panelGroup>
-                            <ice:selectOneMenu
-                                id="application-select"
-                                value="#{policyNameBean.viewApplicationName}">
-                                <f:selectItems
-                                    value="#{policyNameBean.viewApplicationNameItems}"/>
-                            </ice:selectOneMenu>
-                        </ice:panelGroup>
-                    </ice:panelGrid>
-                </div>
-            </ui:define>
-        </o:box>
-    </div>
+    <o:section>
+        <ui:define name="section-title">
+            <ice:outputText value="Policy Name, Description"/>
+        </ui:define>
+        <ui:define name="section-body">
+            <ice:panelGrid
+                columns="2"
+                columnClasses="label-column,input-column">
+                <ice:panelGroup>
+                    <ice:outputLabel
+                        for="policyNameInput"
+                        value="Policy Name"/>
+                </ice:panelGroup>
+                <ice:panelGroup>
+                    <ice:inputText
+                        id="policyNameInput"
+                        readonly="#{!policyNameBean.policyNameEditable}"
+                        partialSubmit="false"
+                        value="#{policyNameBean.privilegeBean.name}"
+                        effect="#{policyNameBean.policyNameInputEffect}"/>
+                </ice:panelGroup>
+                <ice:panelGroup>
+                    <ice:outputLabel
+                        for="policyDescriptionInput"
+                        value="Policy Description"/>
+                    <ice:panelGroup>
+                        <ice:outputLabel
+                            for="policyDescriptionInput"
+                            value="(optional)"/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+                <ice:inputTextarea
+                    id="policyDescriptionInput"
+                    value="#{policyNameBean.privilegeBean.description}"
+                    styleClass="policy-description"/>
+                <ice:message for="policyDescriptionInput"/>
+            </ice:panelGrid>
+        </ui:define>
+    </o:section>
+    <o:section>
+        <ui:define name="section-title">
+            <ice:outputText
+                value="Application"/>
+        </ui:define>
+        <ui:define name="section-body">
+            <ice:panelGrid
+                columns="2"
+                columnClasses="label-column,input-column">
+                <ice:panelGroup>
+                    <ice:outputLabel
+                        for="application-select"
+                        value="Application"/>
+                </ice:panelGroup>
+                <ice:panelGroup>
+                    <ice:selectOneMenu
+                        id="application-select"
+                        value="#{policyNameBean.viewApplicationName}">
+                        <f:selectItems
+                            value="#{policyNameBean.viewApplicationNameItems}"/>
+                    </ice:selectOneMenu>
+                </ice:panelGroup>
+            </ice:panelGrid>
+        </ui:define>
+    </o:section>
 </span>

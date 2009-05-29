@@ -11,153 +11,145 @@
     <ui:include src="resources-url-add-popup.xhtml"/>
     <ui:include src="resources-url-add-exception-popup.xhtml"/>
 
-    <div class="section-outer">
-        <o:box>
-            <ui:define name="body">
-                <div class="section-inner">
-                    <span class="section-head">
-                        <span class="section-title">
-                            <ice:outputText value="URL Resources"/>
-                        </span>
-                        <span class="section-links">
-                            <ice:panelGrid
-                                columns="2">
-                                <ice:commandLink
-                                    styleClass="command-link"
-                                    actionListener="#{urlResourcesHandler.addListener}">
-                                    <f:attribute
-                                        name="availableResources"
-                                        value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResources}"/>
-                                    <ice:graphicImage
-                                        value="../image/add.png"/>
+    <o:section>
+        <ui:define name="section-title">
+            <ice:outputText
+                value="URL Resources"/>
+        </ui:define>
+        <ui:define name="section-links">
+            <ice:panelGrid
+                columns="2">
+                <ice:commandLink
+                    styleClass="command-link"
+                    actionListener="#{urlResourcesHandler.addListener}">
+                    <f:attribute
+                        name="availableResources"
+                        value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResources}"/>
+                    <ice:graphicImage
+                        value="../image/add.png"/>
+                    <ice:outputText
+                        value="Add"/>
+                </ice:commandLink>
+                <ice:panelGroup>
+                    <ice:graphicImage
+                        value="/admin/image/search.png"/>
+                    <ice:inputText
+                        styleClass="section-input"
+                        onkeyup="submitNow(this);"
+                        value="#{urlResourcesBean.searchFilter}"
+                        valueChangeListener="#{urlResourcesHandler.searchFilterChangedListener}">
+                        <f:attribute
+                            name="viewEntitlement"
+                            value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
+                    </ice:inputText>
+                </ice:panelGroup>
+            </ice:panelGrid>
+        </ui:define>
+        <ui:define name="section-body">
+            <ice:selectManyCheckbox
+                id="resource-select"
+                layout="spread"
+                partialSubmit="true"
+                value="#{policyResourcesBean.privilegeBean.viewEntitlement.resources}"
+                converter="urlResourceConverter">
+                <f:selectItems
+                    value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResourceItems}"/>
+            </ice:selectManyCheckbox>
+            <ice:panelGroup
+                scrollHeight="200px">
+                <ice:panelSeries
+                    var="urlResource"
+                    value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResources}">
+                    <ice:panelGroup
+                        styleClass="url-resource-outer"
+                        visible="#{urlResource.visible}">
+                        <o:box>
+                            <ui:define name="body">
+                                <ice:panelGrid
+                                    columns="2"
+                                    styleClass="url-resource inline-input"
+                                    columnClasses="url-resource-tableCol1,url-resource-tableCol2">
+                                    <ice:checkbox
+                                        styleClass="url-resource-checkbox"
+                                        for="resource-select"
+                                        index="#{o:indexOf(policyResourcesBean.privilegeBean.viewEntitlement.availableResources,urlResource)}">
+                                    </ice:checkbox>
+                                    <ice:panelGroup
+                                        styleClass="float-right"
+                                        rendered="#{urlResource.exceptable &amp;&amp; o:contains(policyResourcesBean.privilegeBean.viewEntitlement.resources, urlResource)}">
+                                        <o:clink
+                                            type="add"
+                                            linkLabel="Add Exception"
+                                            handler="#{urlResourcesHandler}"
+                                            listenerMethod="addExceptionListener">
+                                            <ui:define name="attributes">
+                                                <f:attribute
+                                                    name="urlResource"
+                                                    value="#{urlResource}"/>
+                                            </ui:define>
+                                        </o:clink>
+                                    </ice:panelGroup>
+                                </ice:panelGrid>
+                            </ui:define>
+                        </o:box>
+                    </ice:panelGroup>
+                </ice:panelSeries>
+            </ice:panelGroup>
+        </ui:define>
+    </o:section>
+
+    <o:section
+        visible="#{o:size(policyResourcesBean.privilegeBean.viewEntitlement.exceptions) > 0}">
+        <ui:define name="section-title">
+            <ice:outputText
+                value="Exceptions"/>
+        </ui:define>
+        <ui:define name="section-details">
+            <ice:outputText
+                value="Need text here."/>
+        </ui:define>
+        <ui:define name="section-link">
+        </ui:define>
+        <ui:define name="section-body">
+            <ice:panelGroup
+                scrollHeight="100px">
+                <ice:panelSeries
+                    var="urlResource"
+                    styleClass="inline-input"
+                    value="#{policyResourcesBean.privilegeBean.viewEntitlement.exceptions}">
+                    <ice:panelGroup
+                        styleClass="url-resource-outer"
+                        visible="#{urlResource.visible}">
+                        <o:box>
+                            <ui:define name="body">
+                                <ice:panelGrid
+                                    styleClass="url-resource"
+                                    columnClasses="url-resource-tableCol1,url-resource-tableCol2"
+                                    columns="2">
                                     <ice:outputText
-                                        value="Add"/>
-                                </ice:commandLink>
-                                <ice:panelGroup>
-                                    <ice:graphicImage
-                                        value="/admin/image/search.png"/>
-                                    <ice:inputText
-                                        styleClass="section-input"
-                                        onkeyup="submitNow(this);"
-                                        value="#{urlResourcesBean.searchFilter}"
-                                        valueChangeListener="#{urlResourcesHandler.searchFilterChangedListener}">
-                                        <f:attribute
-                                            name="viewEntitlement"
-                                            value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
-                                    </ice:inputText>
-                                </ice:panelGroup>
-                            </ice:panelGrid>
-                        </span>
-                    </span>
-                    <div class="clear"></div>
-                    <div class="section-details">Need text here.</div>
-                    <ice:selectManyCheckbox
-                        id="resource-select"
-                        layout="spread"
-                        partialSubmit="true"
-                        value="#{policyResourcesBean.privilegeBean.viewEntitlement.resources}"
-                        converter="urlResourceConverter">
-                        <f:selectItems
-                            value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResourceItems}"/>
-                    </ice:selectManyCheckbox>
-                    <ice:panelGroup
-                        scrollHeight="200px">
-                        <ice:panelSeries
-                            var="urlResource"
-                            value="#{policyResourcesBean.privilegeBean.viewEntitlement.availableResources}">
-                            <ice:panelGroup
-                                styleClass="url-resource-outer"
-                                visible="#{urlResource.visible}">
-                                <o:box>
-                                    <ui:define name="body">
-                                        <ice:panelGrid
-                                            columns="2"
-                                            styleClass="url-resource inline-input"
-                                            columnClasses="url-resource-tableCol1,url-resource-tableCol2">
-                                            <ice:checkbox
-                                                styleClass="url-resource-checkbox"
-                                                for="resource-select"
-                                                index="#{o:indexOf(policyResourcesBean.privilegeBean.viewEntitlement.availableResources,urlResource)}">
-                                            </ice:checkbox>
-                                            <ice:panelGroup
-                                                styleClass="float-right"
-                                                rendered="#{urlResource.exceptable &amp;&amp; o:contains(policyResourcesBean.privilegeBean.viewEntitlement.resources, urlResource)}">
-                                                <o:clink
-                                                    type="add"
-                                                    linkLabel="Add Exception"
-                                                    handler="#{urlResourcesHandler}"
-                                                    listenerMethod="addExceptionListener">
-                                                    <ui:define name="attributes">
-                                                        <f:attribute
-                                                            name="urlResource"
-                                                            value="#{urlResource}"/>
-                                                    </ui:define>
-                                                </o:clink>
-                                            </ice:panelGroup>
-                                        </ice:panelGrid>
-                                    </ui:define>
-                                </o:box>
-                            </ice:panelGroup>
-                        </ice:panelSeries>
+                                        value="#{urlResource.name}"/>
+                                    <ice:panelGroup
+                                        styleClass="float-right">
+                                        <o:clink
+                                            type="remove"
+                                            handler="#{urlResourcesHandler}"
+                                            listenerMethod="removeExceptionListener">
+                                            <ui:define name="attributes">
+                                                <f:attribute
+                                                    name="urlResource"
+                                                    value="#{urlResource}"/>
+                                                <f:attribute
+                                                    name="viewEntitlement"
+                                                    value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
+                                            </ui:define>
+                                        </o:clink>
+                                    </ice:panelGroup>
+                                </ice:panelGrid>
+                            </ui:define>
+                        </o:box>
                     </ice:panelGroup>
-                </div>
-            </ui:define>
-        </o:box>
-    </div>
-    <ice:panelGroup
-        visible="#{o:size(policyResourcesBean.privilegeBean.viewEntitlement.exceptions) > 0}"
-        styleClass="section-outer">
-        <o:box>
-            <ui:define name="body">
-                <div class="section-inner">
-                    <span class="section-head">
-                        <span class="section-title">
-                            <ice:outputText value="Exceptions"/>
-                        </span>
-                    </span>
-                    <div class="clear"></div>
-                    <div class="section-details">Need text here.</div>
-                    <ice:panelGroup
-                        scrollHeight="100px">
-                        <ice:panelSeries
-                            var="urlResource"
-                            styleClass="inline-input"
-                            value="#{policyResourcesBean.privilegeBean.viewEntitlement.exceptions}">
-                            <ice:panelGroup
-                                styleClass="url-resource-outer"
-                                visible="#{urlResource.visible}">
-                                <o:box>
-                                    <ui:define name="body">
-                                        <ice:panelGrid
-                                            styleClass="url-resource"
-                                            columnClasses="url-resource-tableCol1,url-resource-tableCol2"
-                                            columns="2">
-                                            <ice:outputText
-                                                value="#{urlResource.name}"/>
-                                            <ice:panelGroup
-                                                styleClass="float-right">
-                                                <o:clink
-                                                    type="remove"
-                                                    handler="#{urlResourcesHandler}"
-                                                    listenerMethod="removeExceptionListener">
-                                                    <ui:define name="attributes">
-                                                        <f:attribute
-                                                            name="urlResource"
-                                                            value="#{urlResource}"/>
-                                                        <f:attribute
-                                                            name="viewEntitlement"
-                                                            value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
-                                                    </ui:define>
-                                                </o:clink>
-                                            </ice:panelGroup>
-                                        </ice:panelGrid>
-                                    </ui:define>
-                                </o:box>
-                            </ice:panelGroup>
-                        </ice:panelSeries>
-                    </ice:panelGroup>
-                </div>
-            </ui:define>
-        </o:box>
-    </ice:panelGroup>
+                </ice:panelSeries>
+            </ice:panelGroup>
+        </ui:define>
+    </o:section>
 </span>

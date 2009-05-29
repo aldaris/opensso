@@ -4,18 +4,27 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
-        
+
     <f:subview>
         <div id="panel-title">
-            <ui:insert name="panel-title"/>
+            <ui:insert name="panel-title">
+                <ice:outputText
+                    value="Panel title goes here."/>
+            </ui:insert>
         </div>
         <div id="panel-details">
             <p>
-                <ui:insert name="panel-details"/>
+                <ui:insert name="panel-details">
+                    <ice:outputText
+                        value="Panel details go here."/>
+                </ui:insert>
             </p>
         </div>
         <div id="panel-body">
-            <ui:insert name="panel-body"/>
+            <ui:insert name="panel-body">
+                <ice:outputText
+                    value="Panel body goes here."/>
+            </ui:insert>
         </div>
     </f:subview>
 </span>

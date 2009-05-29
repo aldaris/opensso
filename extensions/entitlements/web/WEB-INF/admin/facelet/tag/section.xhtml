@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+
+    <ice:panelGroup
+        visible="#{visible == null ? 'true' : visible}"
+        styleClass="section-outer">
+        <o:box>
+            <ui:define name="body">
+                <div class="section-inner">
+                    <div class="section-head">
+                        <div class="section-title">
+                            <ui:insert name="section-title">
+                                <ice:outputText
+                                    value="Section title goes here."/>
+                            </ui:insert>
+                        </div>
+                        <span class="section-links">
+                            <ui:insert name="section-links"/>
+                        </span>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="section-details">
+                        <ui:insert name="section-details">
+                            <ice:outputText
+                                value="Section details go here."/>
+                        </ui:insert>
+                    </div>
+                    <ui:insert name="section-body">
+                        <ice:outputText
+                            value="Section body goes here."/>
+                    </ui:insert>
+                </div>
+            </ui:define>
+        </o:box>
+    </ice:panelGroup>
+</ui:composition>

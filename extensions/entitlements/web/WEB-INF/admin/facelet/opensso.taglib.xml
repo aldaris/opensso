@@ -70,6 +70,10 @@
         <tag-name>policyfilterholder</tag-name>
         <source>tag/policyfilterholder.xhtml</source>
     </tag>
+    <tag>
+        <tag-name>section</tag-name>
+        <source>tag/section.xhtml</source>
+    </tag>
     <function>
         <function-name>indexOf</function-name>
         <function-class>com.sun.identity.admin.Functions</function-class>
