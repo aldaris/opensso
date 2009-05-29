@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeTest.java,v 1.7 2009-05-29 23:03:16 veiming Exp $
+ * $Id: ApplicationTypeTest.java,v 1.8 2009-05-29 23:13:51 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -101,7 +101,7 @@ public class ApplicationTypeTest {
             throw new Exception(
                 "ApplicationTypeTest.testApplication, validateResourceName (+ve test) is incorrect");
         }
-        r = app.validateResourceName("http://www.appplicationtypetest.com:abc");
+        r = app.validateResourceName("www.appplicationtypetest.com");
         if (r.isValid()) {
             throw new Exception(
                 "ApplicationTypeTest.testApplication, validateResourceName (-ve test) is incorrect");

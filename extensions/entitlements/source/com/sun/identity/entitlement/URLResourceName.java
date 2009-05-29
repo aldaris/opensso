@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLResourceName.java,v 1.4 2009-05-13 21:24:10 veiming Exp $
+ * $Id: URLResourceName.java,v 1.5 2009-05-29 23:13:50 veiming Exp $
  *
  */
 
@@ -77,16 +77,13 @@ public class URLResourceName
     public String canonicalize(String urlStr)
         throws EntitlementException {
 
-         /* if no http or https protocol resources
-         * only call super.canonicalize() 
-         * to validate the wildcard usage and
-         * remove extra delimiters.
-         */
-        if ((!urlStr.startsWith(DEFAULT_WEB_PROTOCOL + "://")) 
-             && (!urlStr.startsWith(SECURE_WEB_PROTOCOL + "://"))) {
+        try {
+            new URL(urlStr);
+        } catch (MalformedURLException e) {
             Object[] params = {urlStr};
             throw new EntitlementException(303, params);
         }
+        
         int index = urlStr.indexOf("://"); 
         String proto = urlStr.substring(0, index);
         String resource = urlStr.substring(index + 3); // host.sample.com...
