@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegePolicyMapping.java,v 1.4 2009-05-21 08:17:50 veiming Exp $
+ * $Id: PrivilegePolicyMapping.java,v 1.5 2009-05-29 22:16:17 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -50,6 +50,7 @@ import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.policy.plugins.PrivilegeCondition;
 import com.sun.identity.policy.plugins.PrivilegeSubject;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.unittest.UnittestLog;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,26 +82,39 @@ public class PrivilegePolicyMapping {
 
     @BeforeClass
     public void setup() throws Exception {
-        ipConditionEnvMap = new HashMap<String, Set<String>>();
-        Set<String> set = new HashSet<String>();
-        set.add("whatever.whatever");
-        ipConditionEnvMap.put(Condition.DNS_NAME, set);
+        try {
+            UnittestLog.logMessage("PrivilgePOlicyMapping.setUp():" +
+                    "entered");
+            ipConditionEnvMap = new HashMap<String, Set<String>>();
+            Set<String> set = new HashSet<String>();
+            set.add("whatever.whatever");
+            ipConditionEnvMap.put(Condition.DNS_NAME, set);
 
-        ipConditionEnvMap1 = new HashMap<String, Set<String>>();
-        set = new HashSet<String>();
-        set.add("whatever1.whatever1");
-        ipConditionEnvMap1.put(Condition.DNS_NAME, set);
+            ipConditionEnvMap1 = new HashMap<String, Set<String>>();
+            set = new HashSet<String>();
+            set.add("whatever1.whatever1");
+            ipConditionEnvMap1.put(Condition.DNS_NAME, set);
 
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        testUser = createUser(adminToken);
-        PolicyManager pm = new PolicyManager(adminToken, "/");
-        policy = new Policy(POLICY_NAME, "", false, true);
-        policy.addRule(createRule());
-        policy.addSubject("subjectName", createSubject(pm));
-        policy.addCondition("conditionName", createIPCondition(pm));
-        policy.addCondition("conditionName1", createIPCondition1(pm));
-        pm.addPolicy(policy);
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+            testUser = createUser(adminToken);
+            PolicyManager pm = new PolicyManager(adminToken, "/");
+            policy = new Policy(POLICY_NAME, "", false, true);
+            policy.addRule(createRule());
+            policy.addSubject("subjectName", createSubject(pm));
+            policy.addCondition("conditionName", createIPCondition(pm));
+            policy.addCondition("conditionName1", createIPCondition1(pm));
+            pm.addPolicy(policy);
+        } catch (Exception e) {
+            UnittestLog.logError("PrivilgePOlicyMapping.setUp();" +
+                    "Exception STACKTRACE:" + e.getMessage());
+            StackTraceElement[] elems = e.getStackTrace();
+            for (StackTraceElement elem : elems) {
+                UnittestLog.logMessage(elem.toString());
+            }
+            UnittestLog.logMessage("END STACKTRACE");
+            throw e;
+        }
     }
 
     @AfterClass
