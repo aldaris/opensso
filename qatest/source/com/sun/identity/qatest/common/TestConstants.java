@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.36 2009-05-27 23:06:35 rmisra Exp $
+ * $Id: TestConstants.java,v 1.37 2009-05-29 16:20:13 rmisra Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -531,11 +531,6 @@ public interface TestConstants {
      * SAMLv2, IDFF Property key for <code>idp_nsrole</code>
      */
     String KEY_IDP_USER_NSROLE = "idp_nsrole";
-    
-    /**
-     * SAMLv2, IDFF Property key for <code>idp_title</code>
-     */
-    String KEY_IDP_USER_TITLE = "idp_title";
     
     /**
      * SAMLv2, IDFF Property key for <code>sp_sunIdentityMSISDNNumber</code>
