@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestListener.java,v 1.5 2009-02-27 16:11:36 veiming Exp $
+ * $Id: TestListener.java,v 1.6 2009-05-29 22:13:21 dillidorai Exp $
  */
 
 package com.sun.identity.unittest;
@@ -51,18 +51,51 @@ public class TestListener implements ITestListener {
         UnittestLog.logError("Failed " +
             result.getTestClass().getName() + "." +
             result.getMethod().getMethodName());
+        Throwable t = result.getThrowable();
+        if (t != null) {
+            UnittestLog.logError("Exception STACKTRACE:" + t.getMessage());
+            StackTraceElement[] elems = t.getStackTrace();
+            for (StackTraceElement elem : elems) {
+                UnittestLog.logError(elem.toString());
+            }
+            UnittestLog.logMessage("END STACKTRACE");
+        } else {
+            UnittestLog.logMessage("No Exception Stacktrace:");
+        }
     }
     
     public void onTestSkipped(ITestResult result) {
-        UnittestLog.logError("Failed " +
+        UnittestLog.logError("Skipped, " +
             result.getTestClass().getName() + "." +
             result.getMethod().getMethodName());
+        Throwable t = result.getThrowable();
+        if (t != null) {
+            UnittestLog.logError("Exception STACKTRACE:" + t.getMessage());
+            StackTraceElement[] elems = t.getStackTrace();
+            for (StackTraceElement elem : elems) {
+                UnittestLog.logMessage(elem.toString());
+            }
+            UnittestLog.logMessage("END STACTRACE");
+        } else {
+                UnittestLog.logMessage("No Exception Stacktrace:");
+        }
     }
     
     public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-        UnittestLog.logError("Failed " +
+        UnittestLog.logError("Failed within success percentage," +
             result.getTestClass().getName() + "." +
             result.getMethod().getMethodName());
+        Throwable t = result.getThrowable();
+        if (t != null) {
+            UnittestLog.logError("Exception STACKTRACE:" + t.getMessage());
+            StackTraceElement[] elems = t.getStackTrace();
+            for (StackTraceElement elem : elems) {
+                UnittestLog.logMessage(elem.toString());
+            }
+            UnittestLog.logMessage("END STACKTRACE");
+        } else {
+                UnittestLog.logMessage("No Exception Stacktrace:");
+        }
     }
     
     public void onStart(ITestContext context) {
