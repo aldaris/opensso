@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.13 2009-05-26 21:20:06 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.14 2009-05-29 22:21:46 dillidorai Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -47,6 +47,7 @@ import javax.security.auth.Subject;
  */
 public class PolicyPrivilegeManager extends PrivilegeManager {
     private static boolean migratedToEntitlementSvc = false;
+    private static boolean xacmlEnabled = false;
     private String realm = "/";
     private PolicyManager pm;
 
@@ -56,6 +57,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             SubjectUtils.createSubject(adminToken), "/");
         migratedToEntitlementSvc = ec.migratedToEntitlementService();
+        xacmlEnabled = ec.xacmlPrivilegeEnabled();
     }
 
     /**
@@ -97,7 +99,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         throws EntitlementException {
         Privilege privilege = null;
         try {
-            Policy policy = null;
+            Object policy = null;
             
             if (!migratedToEntitlementSvc) {
                 policy = pm.getPolicy(privilegeName);
@@ -105,7 +107,6 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
                 policy = (Policy)pdb.getPolicy(getAdminSubject(), getRealm(),
                     privilegeName);
-                //TODO XACML
             }
 
             Set<Privilege> privileges =
@@ -135,12 +136,13 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         String name = privilege.getName();
 
         try {
-            Policy policy = PrivilegeUtils.privilegeToPolicy(realm, privilege);
+            Object policyObject = PrivilegeUtils.privilegeToPolicyObject(
+                    realm, privilege);
             if (!migratedToEntitlementSvc) {
-                pm.addPolicy(policy);
+                pm.addPolicy((Policy)policyObject);
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                pdb.addPolicy(getAdminSubject(), getRealm(), policy);
+                pdb.addPolicy(getAdminSubject(), getRealm(), policyObject);
             }
         } catch (PolicyException e) {
             Object[] params = {name};
@@ -192,8 +194,12 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 pm.addPolicy(PrivilegeUtils.privilegeToPolicy(realm, privilege));
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                pdb.modifyPolicy(getAdminSubject(), getRealm(),
-                    PrivilegeUtils.privilegeToPolicy(realm, privilege));
+                pdb.removePolicy(getAdminSubject(), getRealm(),
+                        privilege.getName());
+                pdb.addPolicy(getAdminSubject(),
+                        getRealm(),
+                        PrivilegeUtils.privilegeToPolicyObject(
+                                getRealm(), privilege));
             }
         } catch (PolicyException e) {
             Object[] params = {privilegeName};
@@ -214,28 +220,38 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      */
     @Override
     public String getPrivilegeXML(String name)
-        throws EntitlementException {
-	/* TODO: restore the behaviour after implementing XACMLPrivilegeManager
+            throws EntitlementException {
+        String xmlString = "";
         try {
-            Policy policy = null;
-
+            Object policy = null;
             if (!migratedToEntitlementSvc) {
                 policy = pm.getPolicy(name);
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                policy = (Policy)pdb.getPolicy(getRealm(), name);
+                policy = (Policy)pdb.getPolicy(getAdminSubject(),
+                        getRealm(), name);
             }
-
-            return policy.toXML();
+            xmlString = PrivilegeUtils.policyToXML(policy);
         } catch (PolicyException pe) {
             throw new EntitlementException(102, pe);
         } catch (SSOException ssoe) {
             throw new EntitlementException(102, ssoe);
         }
-	*/
-	Privilege privilege = getPrivilege(name);
-	return com.sun.identity.entitlement.xacml3.PrivilegeUtils.toXACML(privilege);
+        return xmlString;
     }
+
+    /**
+     * Returns <code>true</code> if the system stores privileges in
+     * XACML format and supports exporting privileges in XACML format
+     *
+     *
+     * @return <code>true</code> if the system stores privileges in
+     * XACML format and supports exporting privileges in XACML format
+     */
+    public static boolean xacmlPrivilegeEnabled() {
+        return xacmlEnabled;
+    }
+
 }
 
 

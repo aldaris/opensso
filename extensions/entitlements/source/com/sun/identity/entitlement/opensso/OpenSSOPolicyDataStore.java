@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPolicyDataStore.java,v 1.5 2009-05-26 21:20:06 veiming Exp $
+ * $Id: OpenSSOPolicyDataStore.java,v 1.6 2009-05-29 22:21:46 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PolicyDataStore;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
@@ -60,13 +61,12 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
          PolicyManager.POLICY_SERVICE_NAME + ",ou=services,{0}";
 
     public void addPolicy(Subject adminSubject, String realm, Object policy)
-        throws EntitlementException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+            throws EntitlementException {
+            SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
 
-        //TODO XACML
-        if (policy instanceof Policy) {
-            Policy policyObj = (Policy) policy;
-            String name = policyObj.getName();
+        if (policy instanceof Policy ||
+                policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
+            String name = PrivilegeUtils.getPolicyName(policy);
             String dn = getPolicyDistinguishedName(realm, name);
 
             if (adminToken == null) {
@@ -87,23 +87,25 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
 
                 Set<String> setValue = new HashSet<String>(2);
                 map.put(SMSEntry.ATTR_KEYVAL, setValue);
-                setValue.add(policyObj.toXML());
+                setValue.add(PrivilegeUtils.policyToXML(policy));
                 s.setAttributes(map);
                 s.save();
 
                 PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
                     adminSubject, realm);
-                pis.add(PrivilegeUtils.policyToPrivileges(policyObj));
+                pis.add(PrivilegeUtils.policyObjectToPrivileges(policy));
+            } catch (PolicyException e) {
+                Object[] params = {name};
+                throw new EntitlementException(202, params, e);
             } catch (SSOException e) {
                 Object[] params = {name};
                 throw new EntitlementException(202, params, e);
             } catch (SMSException e) {
                 Object[] params = {name};
                 throw new EntitlementException(202, params, e);
-            } catch (PolicyException e) {
-                Object[] params = {name};
-                throw new EntitlementException(202, params, e);
             }
+        } else {
+            //TODO: log error, unsupported policy type
         }
     }
 
@@ -164,15 +166,23 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         }
     }
 
-    private Policy createPolicy(SSOToken adminToken, String realm, String xml)
+    private Object createPolicy(SSOToken adminToken, String realm, String xml)
         throws Exception, 
         SSOException, PolicyException {
-        PolicyManager pm = new PolicyManager(adminToken, realm);
+        Object policy = null;
         Document doc = XMLUtils.getXMLDocument(
             new ByteArrayInputStream(xml.getBytes("UTF8")));
-        Node rootNode = XMLUtils.getRootNode(doc, 
-            PolicyManager.POLICY_ROOT_NODE);
-        return new Policy(pm, rootNode);
+        if (EntitlementConfiguration.getInstance(
+                SubjectUtils.createSubject(adminToken),
+                "/").xacmlPrivilegeEnabled()) {
+            //TODO: create xacml policy from xml document
+        } else {
+            PolicyManager pm = new PolicyManager(adminToken, realm);
+            Node rootNode = XMLUtils.getRootNode(doc, 
+                PolicyManager.POLICY_ROOT_NODE);
+            policy = new Policy(pm, rootNode);
+        }
+        return policy;
     }
 
     public void removePolicy(Subject adminSubject, String realm, String name)
@@ -220,10 +230,9 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
 
 
-        //TODO XACML
-        if (policy instanceof Policy) {
-            Policy policyObj = (Policy) policy;
-            String name = policyObj.getName();
+        if (policy instanceof Policy ||
+                policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
+            String name = PrivilegeUtils.getPolicyName(policy);
             String dn = getPolicyDistinguishedName(realm, name);
 
             if (adminToken == null) {
@@ -243,14 +252,14 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
 
                 Set<String> setValue = new HashSet<String>(2);
                 map.put(SMSEntry.ATTR_KEYVAL, setValue);
-                setValue.add(policyObj.toXML());
+                setValue.add(PrivilegeUtils.policyToXML(policy));
                 s.setAttributes(map);
                 s.save();
 
                 PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
                     adminSubject, realm);
                 pis.delete(name);
-                pis.add(PrivilegeUtils.policyToPrivileges(policyObj));
+                pis.add(PrivilegeUtils.policyToPrivileges(policy));
             } catch (SSOException e) {
                 Object[] params = {name};
                 throw new EntitlementException(206, params, e);

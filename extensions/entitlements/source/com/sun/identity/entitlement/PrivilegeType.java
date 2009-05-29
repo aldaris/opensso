@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeType.java,v 1.2 2009-04-14 00:24:18 veiming Exp $
+ * $Id: PrivilegeType.java,v 1.3 2009-05-29 22:21:45 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -35,6 +35,11 @@ public class PrivilegeType {
      * OpenSSO privilege.
      */
     public static final PrivilegeType OPENSSO = new PrivilegeType("opensso");
+
+    /**
+     * XACML OpenSSO privilege.
+     */
+    public static final PrivilegeType XACML3_OPENSSO = new PrivilegeType("xacml_opensso");
 
     /**
      * Unknown type.

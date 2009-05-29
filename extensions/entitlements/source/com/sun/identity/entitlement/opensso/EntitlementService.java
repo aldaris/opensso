@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.16 2009-05-26 21:20:05 veiming Exp $
+ * $Id: EntitlementService.java,v 1.17 2009-05-29 22:21:45 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -77,6 +77,8 @@ public class EntitlementService extends EntitlementConfiguration {
         "subjectAttributesCollectors";
     private static final String MIGRATED_TO_ENTITLEMENT_SERVICES =
         "migratedtoentitlementservice";
+    private static final String XACML_PRIVILEGE_ENABLED =
+        "xacml-privilege-enabled";
 
     private String realm;
 
@@ -830,4 +832,26 @@ public class EntitlementService extends EntitlementConfiguration {
             setMigrated.iterator().next() : null;
         return (migrated != null) ? Boolean.parseBoolean(migrated) : false;
     }
+
+    /**
+     * Returns <code>true</code> if the system stores privileges in
+     * XACML format and supports exporting privileges in XACML format
+     *
+     *
+     * @return <code>true</code> if the system stores privileges in
+     * XACML format and supports exporting privileges in XACML format
+     */
+    public boolean xacmlPrivilegeEnabled() {
+        if (!hasEntitlementDITs()) {
+            return false;
+        }
+        Set<String> xacmlEnabledSet = getConfiguration(
+            XACML_PRIVILEGE_ENABLED);
+        String xacmlEnabled = ((xacmlEnabledSet != null)
+                && !xacmlEnabledSet.isEmpty()) ?
+                xacmlEnabledSet.iterator().next() : null;
+        return (xacmlEnabled != null) ? Boolean.parseBoolean(xacmlEnabled)
+                : false;
+    }
+
 }

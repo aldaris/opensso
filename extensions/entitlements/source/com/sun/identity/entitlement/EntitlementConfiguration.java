@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementConfiguration.java,v 1.4 2009-05-26 21:20:05 veiming Exp $
+ * $Id: EntitlementConfiguration.java,v 1.5 2009-05-29 22:21:45 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -235,4 +235,15 @@ public abstract class EntitlementConfiguration {
     protected Subject getAdminSubject() {
         return adminSubject;
     }
+    
+    /**
+     * Returns <code>true</code> if the system stores privileges in
+     * XACML format and supports exporting privileges in XACML format
+     *
+     *
+     * @return <code>true</code> if the system stores privileges in
+     * XACML format and supports exporting privileges in XACML format
+     */
+    public abstract boolean xacmlPrivilegeEnabled();
+
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.26 2009-05-26 21:20:06 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.27 2009-05-29 22:21:46 dillidorai Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -44,6 +44,7 @@ import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserAttributes;
+import com.sun.identity.entitlement.xacml3.XACMLPrivilegeUtils;
 import com.sun.identity.policy.ActionSchema;
 import com.sun.identity.policy.InvalidNameException;
 import com.sun.identity.policy.Policy;
@@ -89,7 +90,7 @@ public class PrivilegeUtils {
     }
 
     /**
-     * Constructs PrivilegeUtils
+     * Constructs XACMLPrivilegeUtils
      */
     private PrivilegeUtils() {
     }
@@ -100,31 +101,41 @@ public class PrivilegeUtils {
      * @return entitlement Privilege object
      * @throws com.sun.identity.policy.PolicyException if the mapping fails
      */
-    public static Set<Privilege> policyToPrivileges(Policy policy)
+    public static Set<Privilege> policyToPrivileges(Object policyObject)
         throws SSOException, PolicyException, EntitlementException {
-        if (policy == null) {
+        if (policyObject == null) {
             return Collections.EMPTY_SET;
         }
 
         Set<Privilege> privileges = new HashSet<Privilege>();
+        if (policyObject instanceof
+                com.sun.identity.entitlement.xacml3.core.Policy) {
+             Privilege p = XACMLPrivilegeUtils.policyToPrivilege(
+                    (com.sun.identity.entitlement.xacml3.core.Policy)policyObject);
+             privileges.add(p);
+        } else if (policyObject instanceof Policy) {
+            Policy policy = (Policy) policyObject;
+            String policyName = policy.getName();
+            Set<Entitlement> entitlements = rulesToEntitlement(policy);
+            EntitlementSubject eSubject = toEntitlementSubject(policy);
+            EntitlementCondition eCondition = toEntitlementCondition(policy);
+            Set<ResourceAttribute> resourceAttributesSet =
+                    toResourceAttributes(policy);
 
-        String policyName = policy.getName();
-        Set<Entitlement> entitlements = rulesToEntitlement(policy);
-        EntitlementSubject eSubject = toEntitlementSubject(policy);
-        EntitlementCondition eCondition = toEntitlementCondition(policy);
-        Set<ResourceAttribute> resourceAttributesSet =
-            toResourceAttributes(policy);
-
-        if (entitlements.size() == 1) {
-            privileges.add(createPrivilege(policyName, policyName,
-                entitlements.iterator().next(), eSubject,
-                eCondition, resourceAttributesSet, policy));
-        } else {
-            for (Entitlement e : entitlements) {
-                String pName = policyName + "_" + e.getName();
-                privileges.add(createPrivilege(pName, policyName, e, eSubject,
-                    eCondition, resourceAttributesSet, policy));
+            if (entitlements.size() == 1) {
+                privileges.add(createPrivilege(policyName, policyName,
+                        entitlements.iterator().next(), eSubject,
+                        eCondition, resourceAttributesSet, policy));
+            } else {
+                for (Entitlement e : entitlements) {
+                    String pName = policyName + "_" + e.getName();
+                    privileges.add(createPrivilege(pName, policyName, e,
+                            eSubject,
+                            eCondition, resourceAttributesSet, policy));
+                }
             }
+        } else { //TODO: log error, unsupported policy type
+
         }
         
         return privileges;
@@ -375,6 +386,19 @@ public class PrivilegeUtils {
         return null;
     }
 
+    public static Object privilegeToPolicyObject(
+            String realm,
+            Privilege privilege) throws PolicyException, SSOException {
+        Object policyObject = null;
+        if (PolicyPrivilegeManager.xacmlPrivilegeEnabled()) {
+            policyObject = XACMLPrivilegeUtils.privilegeToPolicy(privilege);
+
+        } else {
+             policyObject = privilegeToPolicy(realm, privilege);
+        }
+        return policyObject;
+    }
+    
     public static Policy privilegeToPolicy(String realm, Privilege privilege)
             throws PolicyException, SSOException {
         Policy policy = null;
@@ -425,7 +449,7 @@ public class PrivilegeUtils {
         String appName = entitlement.getApplicationName();
 
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance()); //TODO
+            AdminTokenAction.getInstance()); //TODO - who added?
         Application appl = ApplicationManager.getApplication(
             SubjectUtils.createSubject(adminToken), realm, appName);
         String serviceName = appl.getApplicationType().getName();
@@ -724,4 +748,47 @@ public class PrivilegeUtils {
         }
         return av;
     }
+
+    static public String policyToXML(Object policy) {
+        String xmlString = "";
+        if (policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
+            com.sun.identity.entitlement.xacml3.core.Policy xacmlPolicy =
+                    (com.sun.identity.entitlement.xacml3.core.Policy) policy;
+            xmlString = com.sun.identity.entitlement.xacml3.XACMLPrivilegeUtils.toXML(
+                    xacmlPolicy);
+        } else if (policy instanceof com.sun.identity.policy.Policy) {
+            xmlString = ((com.sun.identity.policy.Policy) policy).toXML();
+        } else {
+            //TODO: log error, unsupported policy type
+        }
+        return xmlString;
+    }
+
+    static public String getPolicyName(Object policy) {
+        String name = "";
+        if (policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
+            name = ((com.sun.identity.entitlement.xacml3.core.Policy)policy).getPolicyId();
+        } else if (policy instanceof Policy) {
+            name = ((Policy)policy).getName();
+        } else {
+            //TODO: log error, unsupported policy type
+        }
+        return name;
+    }
+
+    static public Set<Privilege> policyObjectToPrivileges(Object policy) 
+            throws EntitlementException, PolicyException, SSOException {
+        //TODO: implement method, objectToPrivileges(Object object)
+        Set<Privilege> privileges = null;
+        if (policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
+            Privilege privilege = XACMLPrivilegeUtils.policyToPrivilege(
+                    (com.sun.identity.entitlement.xacml3.core.Policy)policy);
+        } else if (policy instanceof Policy) {
+             privileges = policyToPrivileges((Policy)policy);
+        } else {
+            //TODO: log error, unsupported policy type
+        }
+        return privileges;
+    }
+
 }
