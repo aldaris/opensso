@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.56 2009-05-26 19:41:30 farble1670 Exp $
+  $Id: build.xml,v 1.57 2009-05-29 22:12:13 dillidorai Exp $
 
 -->
 
@@ -135,17 +135,18 @@
        </javac>
    </target -->
    
-   <target name="src-policy" depends="init">
+   <target name="src-policy" depends="init, src-ent, xjc.xacml3">
        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
               debug="${build.debug}" debuglevel="${build.debuglevel}">
            <src path="${entitlements.src.dir}/com/sun/identity/entitlement/opensso"/>
            <src path="${entitlements.src.dir}/com/sun/identity/policy"/>
+           <src path="${entitlements.src.dir}/com/sun/identity/entitlement/xacml3"/>
            <classpath refid="build.class.path"/>
        </javac>
    </target>
 
-   <target name="src" depends="src-xacml3,src-policy,src-admin"/>
+   <target name="src" depends="src-policy,src-admin"/>
 
    <target name="unwar" depends="init">
        <unjar
@@ -337,19 +338,8 @@
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
               debug="${build.debug}" debuglevel="${build.debuglevel}" >
 	      <src path="${entitlements.built.src.dir}/com/sun/identity/entitlement/xacml3/core" />
-	      <src path="${entitlements.built.src.dir}/com/sun/identity/entitlement/xacml3/core" />
        </javac>
     </target>
-
-   <target name="src-xacml3" depends="src-ent, xjc.xacml3">
-       <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-              destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
-              debug="${build.debug}" debuglevel="${build.debuglevel}" >
-	      <src path="${entitlements.built.src.dir}/com/sun/identity/entitlement/xacml3" />
-	      <src path="${entitlements.src.dir}/com/sun/identity/entitlement/xacml3" />
-           <classpath refid="build.class.path"/>
-       </javac>
-   </target>
 
    <target name="clean-lib">
        <delete dir="${entitlements.war.lib.local.dir}"/>
