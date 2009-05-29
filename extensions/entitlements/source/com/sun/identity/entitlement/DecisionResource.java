@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.7 2009-05-28 20:28:51 pbryan Exp $
+ * $Id: DecisionResource.java,v 1.8 2009-05-29 16:22:30 pbryan Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -57,7 +57,9 @@ public class DecisionResource {
      @QueryParam("action") String action,
      @QueryParam("resource") String resource) {
 
-        Subject caller = toSubject(security.getUserPrincipal());
+// FIXME: once OAuth filter comes stock, let's use it to authenticate the caller
+Subject caller = toSubject("id=amAdmin,ou=user,dc=opensso,dc=java,dc=net");
+//        Subject caller = toSubject(security.getUserPrincipal());
 
          try {
             return p(new Evaluator(caller).hasEntitlement(realm,
