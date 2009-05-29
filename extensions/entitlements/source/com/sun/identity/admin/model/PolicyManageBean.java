@@ -13,11 +13,11 @@ public class PolicyManageBean implements Serializable {
     private PolicyDao policyDao;
     private PolicyManageTableBean policyManageTableBean = new PolicyManageTableBean();
     private boolean viewOptionsPopupVisible = false;
-    private boolean actionPopupVisible = false;
+    private boolean removePopupVisible = false;
+    private boolean exportPopupVisible = false;
     private String searchFilter = "";
     private List<PolicyFilterHolder> policyFilterHolders = new ArrayList<PolicyFilterHolder>();
     private Map<String, PolicyFilterType> policyFilterTypes;
-    private String action;
     private boolean selectAll;
 
     public List<PrivilegeBean> getPrivilegeBeans() {
@@ -94,27 +94,27 @@ public class PolicyManageBean implements Serializable {
         return size;
     }
 
-    public boolean isActionPopupVisible() {
-        return actionPopupVisible;
-    }
-
-    public void setActionPopupVisible(boolean actionPopupVisible) {
-        this.actionPopupVisible = actionPopupVisible;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
     public boolean isSelectAll() {
         return selectAll;
     }
 
     public void setSelectAll(boolean selectAll) {
         this.selectAll = selectAll;
+    }
+
+    public boolean isRemovePopupVisible() {
+        return removePopupVisible;
+    }
+
+    public void setRemovePopupVisible(boolean removePopupVisible) {
+        this.removePopupVisible = removePopupVisible;
+    }
+
+    public boolean isExportPopupVisible() {
+        return exportPopupVisible;
+    }
+
+    public void setExportPopupVisible(boolean exportPopupVisible) {
+        this.exportPopupVisible = exportPopupVisible;
     }
 }

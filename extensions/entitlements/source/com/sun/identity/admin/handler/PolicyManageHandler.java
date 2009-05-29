@@ -86,28 +86,29 @@ public class PolicyManageHandler implements Serializable {
         policyManageBean.setViewOptionsPopupVisible(!policyManageBean.isViewOptionsPopupVisible());
     }
 
-    public void actionPopupOkListener(ActionEvent event) {
-        String action = policyManageBean.getAction();
-        if (action.equals("remove")) {
-            PhaseEventAction pea = new PhaseEventAction();
-            pea.setDoBeforePhase(true);
-            pea.setPhaseId(PhaseId.RENDER_RESPONSE);
-            pea.setAction("#{policyManageHandler.handleRemoveAction}");
-            pea.setParameters(new Class[]{});
-            pea.setArguments(new Object[]{});
+    public void removePopupOkListener(ActionEvent event) {
+        PhaseEventAction pea = new PhaseEventAction();
+        pea.setDoBeforePhase(true);
+        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+        pea.setAction("#{policyManageHandler.handleRemoveAction}");
+        pea.setParameters(new Class[]{});
+        pea.setArguments(new Object[]{});
 
-            queuedActionBean.getPhaseEventActions().add(pea);
-        } else if (action.equals("export")) {
-            FacesContext fc = FacesContext.getCurrentInstance();
-            ExternalContext ec = fc.getExternalContext();
-            try {
-                String exportUrl = getExportUrl();
-                ec.redirect(exportUrl);
-            } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
-            }
+        queuedActionBean.getPhaseEventActions().add(pea);
+
+        policyManageBean.setRemovePopupVisible(false);
+    }
+
+    public void exportPopupOkListener(ActionEvent event) {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ExternalContext ec = fc.getExternalContext();
+        try {
+            String exportUrl = getExportUrl();
+            ec.redirect(exportUrl);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
         }
-        policyManageBean.setActionPopupVisible(false);
+        policyManageBean.setExportPopupVisible(false);
     }
 
     private String getExportUrl() {
@@ -116,7 +117,7 @@ public class PolicyManageHandler implements Serializable {
         ExternalContext ec = fc.getExternalContext();
         b.append(ec.getRequestContextPath());
         b.append("/admin/pxml?");
-        for (PrivilegeBean pb: policyManageBean.getPrivilegeBeans()) {
+        for (PrivilegeBean pb : policyManageBean.getPrivilegeBeans()) {
             if (pb.isSelected()) {
                 b.append("name=");
                 b.append(pb.getName());
@@ -130,13 +131,17 @@ public class PolicyManageHandler implements Serializable {
 
     public void selectAllListener(ActionEvent event) {
         policyManageBean.setSelectAll(!policyManageBean.isSelectAll());
-        for (PrivilegeBean pb: policyManageBean.getPrivilegeBeans()) {
+        for (PrivilegeBean pb : policyManageBean.getPrivilegeBeans()) {
             pb.setSelected(policyManageBean.isSelectAll());
         }
     }
 
-    public void actionPopupCancelListener(ActionEvent event) {
-        policyManageBean.setActionPopupVisible(false);
+    public void removePopupCancelListener(ActionEvent event) {
+        policyManageBean.setRemovePopupVisible(false);
+    }
+
+    public void exportPopupCancelListener(ActionEvent event) {
+        policyManageBean.setExportPopupVisible(false);
     }
 
     public void addPolicyFilterListener(ActionEvent event) {
@@ -166,33 +171,38 @@ public class PolicyManageHandler implements Serializable {
         policyEditWizardBean.gotoStep(4);
     }
 
-    public void actionListener(ActionEvent event) {
-        if (!policyManageBean.isActionPopupVisible()) {
+    public void removeListener(ActionEvent event) {
+        if (!policyManageBean.isRemovePopupVisible()) {
             if (policyManageBean.getSizeSelected() == 0) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
-                mb.setSummary(r.getString(this, "actionNoneSelectedSummary"));
-                mb.setDetail(r.getString(this, "actionNoneSelectedDetail"));
+                mb.setSummary(r.getString(this, "removeNoneSelectedSummary"));
+                mb.setDetail(r.getString(this, "removeNoneSelectedDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
                 messagesBean.addMessageBean(mb);
             } else {
-                policyManageBean.setActionPopupVisible(true);
+                policyManageBean.setRemovePopupVisible(true);
             }
         } else {
-            policyManageBean.setActionPopupVisible(false);
+            policyManageBean.setRemovePopupVisible(false);
         }
     }
 
-    public void removeListener(ActionEvent event) {
-        PrivilegeBean pb = getPrivilegeBean(event);
-        assert (pb != null);
-
-        addRemoveAction(pb);
-    }
-
-    public void handlePolicyRemove(PrivilegeBean pb) {
-        policyManageBean.getPrivilegeBeans().remove(pb);
-        policyDao.removePrivilege(pb.getName());
+    public void exportListener(ActionEvent event) {
+        if (!policyManageBean.isExportPopupVisible()) {
+            if (policyManageBean.getSizeSelected() == 0) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "exportNoneSelectedSummary"));
+                mb.setDetail(r.getString(this, "exportNoneSelectedDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+                messagesBean.addMessageBean(mb);
+            } else {
+                policyManageBean.setExportPopupVisible(true);
+            }
+        } else {
+            policyManageBean.setExportPopupVisible(false);
+        }
     }
 
     public void handleRemoveAction() {
@@ -205,17 +215,6 @@ public class PolicyManageHandler implements Serializable {
             pb.setSelected(false);
         }
         policyManageBean.getPrivilegeBeans().removeAll(removed);
-    }
-
-    private void addRemoveAction(PrivilegeBean pb) {
-        PhaseEventAction pea = new PhaseEventAction();
-        pea.setDoBeforePhase(false);
-        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
-        pea.setAction("#{policyManageHandler.handlePolicyRemove}");
-        pea.setParameters(new Class[]{PrivilegeBean.class});
-        pea.setArguments(new Object[]{pb});
-
-        queuedActionBean.getPhaseEventActions().add(pea);
     }
 
     public void setQueuedActionBean(QueuedActionBean queuedActionBean) {

@@ -26,3 +26,8 @@
 .iceMnuItm a img {
     padding-left: 3px;
 }
+
+.iceCmdSrtHdr * {
+    font-weight: bold;
+}
+
