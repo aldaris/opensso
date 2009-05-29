@@ -7,136 +7,129 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <div class="section-outer">
-        <o:box>
-            <ui:define name="body">
-                <div class="section-inner">
-                    <span class="section-head">
-                        <span class="section-title">
-                            <ice:outputText value="Policy Conditions"/>
-                        </span>
-                        <span class="section-links">
-                            <ice:panelGrid
-                                columns="2">
-                                <ice:commandLink
-                                    actionListener="#{policyConditionsHandler.anyOfConditionListener}"
-                                    styleClass="section-input command-link">
-                                    <ice:graphicImage
-                                        value="/admin/image/or.png"/>
-                                    <ice:outputText
-                                        value="Any of"/>
-                                </ice:commandLink>
-                                <ice:commandLink
-                                    actionListener="#{policyConditionsHandler.allOfConditionListener}"
-                                    styleClass="section-input command-link">
-                                    <ice:graphicImage
-                                        value="/admin/image/and.png"/>
-                                    <ice:outputText
-                                        value="All of"/>
-                                </ice:commandLink>
-                            </ice:panelGrid>
-                        </span>
-                    </span>
-                    <div class="clear"></div>
-                    <div class="section-details">Need text here.</div>
-                    <ice:panelGrid
-                        columns="3"
-                        styleClass="policy-create-conditions"
-                        columnClasses="conditions-selected conditions-gutter conditions-available">
-                        <ice:panelGroup
-                            style="width: 100%">
-                            <o:conditionpanel
-                                viewCondition="#{policyConditionsBean.privilegeBean.viewCondition}"/>
-                            <ice:panelGroup
-                                visible="#{policyConditionsBean.privilegeBean.viewCondition == null}"
-                                styleClass="drop-target"
-                                dropTarget="true"
-                                dropMask="hover_start"
-                                dropListener="#{policyConditionsHandler.conditionDropListener}">
-                                <ice:outputText
-                                    value="Drop condition or expression here ..."/>
+    <o:section>
+        <ui:define name="section-title">
+            <ice:outputText
+                value="Policy Conditions"/>
+        </ui:define>
+        <ui:define name="section-link">
+            <ice:panelGrid
+                columns="2">
+                <ice:commandLink
+                    actionListener="#{policyConditionsHandler.anyOfConditionListener}"
+                    styleClass="section-input command-link">
+                    <ice:graphicImage
+                        value="/admin/image/or.png"/>
+                    <ice:outputText
+                        value="Any of"/>
+                </ice:commandLink>
+                <ice:commandLink
+                    actionListener="#{policyConditionsHandler.allOfConditionListener}"
+                    styleClass="section-input command-link">
+                    <ice:graphicImage
+                        value="/admin/image/and.png"/>
+                    <ice:outputText
+                        value="All of"/>
+                </ice:commandLink>
+            </ice:panelGrid>
+        </ui:define>
+        <ui:define name="section-body">
+            <ice:panelGrid
+                columns="3"
+                styleClass="policy-create-conditions"
+                columnClasses="conditions-selected conditions-gutter conditions-available">
+                <ice:panelGroup
+                    style="width: 100%">
+                    <o:conditionpanel
+                        viewCondition="#{policyConditionsBean.privilegeBean.viewCondition}"/>
+                    <ice:panelGroup
+                        visible="#{policyConditionsBean.privilegeBean.viewCondition == null}"
+                        styleClass="drop-target"
+                        dropTarget="true"
+                        dropMask="hover_start"
+                        dropListener="#{policyConditionsHandler.conditionDropListener}">
+                        <ice:outputText
+                            value="Drop condition or expression here ..."/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+                <ice:panelGroup/>
+                <ice:panelGroup
+                    style="width: 100%">
+                    <o:multipanel
+                        visible="true"
+                        expanded="#{conditionTypePanelBean.expanded}"
+                        bean="#{conditionTypePanelBean}"
+                        handler="#{basicMultiPanelHandler}"
+                        collapsible="true"
+                        removeable="false">
+                        <ui:define name="panel-title">
+                            <ice:panelGroup>
+                                <ice:outputText value="Conditions"/>
                             </ice:panelGroup>
-                        </ice:panelGroup>
-                        <ice:panelGroup/>
-                        <ice:panelGroup
-                            style="width: 100%">
-                            <o:multipanel
-                                visible="true"
-                                expanded="#{conditionTypePanelBean.expanded}"
-                                bean="#{conditionTypePanelBean}"
-                                handler="#{basicMultiPanelHandler}"
-                                collapsible="true"
-                                removeable="false">
-                                <ui:define name="panel-title">
-                                    <ice:panelGroup>
-                                        <ice:outputText value="Conditions"/>
-                                    </ice:panelGroup>
-                                </ui:define>
-                                <ui:define name="panel-body">
-                                    <ice:panelSeries
-                                        value="#{policyConditionsBean.privilegeBean.viewEntitlement.viewApplication.conditionTypes}"
-                                        var="conditionType">
-                                        <ice:panelGroup
-                                            styleClass="draggable"
-                                            rendered="#{!conditionType.expression}"
-                                            draggable="true"
-                                            dragMask="dragging,drag_cancel,dropped,hover_start,hover_end"
-                                            dragValue="#{conditionType}"
-                                            dragOptions="dragGhost">
-                                            <ice:panelGrid columns="2">
-                                                <ice:graphicImage
-                                                    value="#{conditionType.conditionIconUri}"/>
-                                                <ice:panelGroup>
-                                                    <ice:outputText
-                                                        value="#{conditionType.title}"/>
-                                                </ice:panelGroup>
-                                            </ice:panelGrid>
-                                        </ice:panelGroup>
-                                    </ice:panelSeries>
-                                </ui:define>
-                            </o:multipanel>
-                            <ice:panelGroup
-                                style="height: 10px;">
-                            </ice:panelGroup>
-                            <ice:panelGroup
-                                rendered="#{o:size(policyConditionsBean.privilegeBean.viewEntitlement.viewApplication.expressionConditionTypes) > 0}">
-                                <o:multipanel
-                                    visible="true"
-                                    expanded="#{conditionExpressionPanelBean.expanded}"
-                                    bean="#{conditionExpressionPanelBean}"
-                                    handler="#{basicMultiPanelHandler}"
-                                    collapsible="true"
-                                    removeable="false">
-                                    <ui:define name="panel-title">
+                        </ui:define>
+                        <ui:define name="panel-body">
+                            <ice:panelSeries
+                                value="#{policyConditionsBean.privilegeBean.viewEntitlement.viewApplication.conditionTypes}"
+                                var="conditionType">
+                                <ice:panelGroup
+                                    styleClass="draggable"
+                                    rendered="#{!conditionType.expression}"
+                                    draggable="true"
+                                    dragMask="dragging,drag_cancel,dropped,hover_start,hover_end"
+                                    dragValue="#{conditionType}"
+                                    dragOptions="dragGhost">
+                                    <ice:panelGrid columns="2">
+                                        <ice:graphicImage
+                                            value="#{conditionType.conditionIconUri}"/>
                                         <ice:panelGroup>
-                                            <ice:outputText value="Expressions"/>
+                                            <ice:outputText
+                                                value="#{conditionType.title}"/>
                                         </ice:panelGroup>
-                                    </ui:define>
-                                    <ui:define name="panel-body">
-                                        <ice:panelSeries
-                                            value="#{policyConditionsBean.privilegeBean.viewEntitlement.viewApplication.expressionConditionTypes}"
-                                            var="conditionType">
-                                            <ice:panelGroup
-                                                styleClass="draggable"
-                                                draggable="true"
-                                                dragMask="dragging,drag_cancel,dropped,hover_start,hover_end"
-                                                dragValue="#{conditionType}"
-                                                dragOptions="dragGhost">
-                                                <ice:panelGrid columns="2">
-                                                    <ice:graphicImage value="#{conditionType.conditionIconUri}"/>
-                                                    <ice:panelGroup>
-                                                        <ice:outputText value="#{conditionType.title}"/>
-                                                    </ice:panelGroup>
-                                                </ice:panelGrid>
+                                    </ice:panelGrid>
+                                </ice:panelGroup>
+                            </ice:panelSeries>
+                        </ui:define>
+                    </o:multipanel>
+                    <ice:panelGroup
+                        style="height: 10px;">
+                    </ice:panelGroup>
+                    <ice:panelGroup
+                        rendered="#{o:size(policyConditionsBean.privilegeBean.viewEntitlement.viewApplication.expressionConditionTypes) > 0}">
+                        <o:multipanel
+                            visible="true"
+                            expanded="#{conditionExpressionPanelBean.expanded}"
+                            bean="#{conditionExpressionPanelBean}"
+                            handler="#{basicMultiPanelHandler}"
+                            collapsible="true"
+                            removeable="false">
+                            <ui:define name="panel-title">
+                                <ice:panelGroup>
+                                    <ice:outputText value="Expressions"/>
+                                </ice:panelGroup>
+                            </ui:define>
+                            <ui:define name="panel-body">
+                                <ice:panelSeries
+                                    value="#{policyConditionsBean.privilegeBean.viewEntitlement.viewApplication.expressionConditionTypes}"
+                                    var="conditionType">
+                                    <ice:panelGroup
+                                        styleClass="draggable"
+                                        draggable="true"
+                                        dragMask="dragging,drag_cancel,dropped,hover_start,hover_end"
+                                        dragValue="#{conditionType}"
+                                        dragOptions="dragGhost">
+                                        <ice:panelGrid columns="2">
+                                            <ice:graphicImage value="#{conditionType.conditionIconUri}"/>
+                                            <ice:panelGroup>
+                                                <ice:outputText value="#{conditionType.title}"/>
                                             </ice:panelGroup>
-                                        </ice:panelSeries>
-                                    </ui:define>
-                                </o:multipanel>
-                            </ice:panelGroup>
-                        </ice:panelGroup>
-                    </ice:panelGrid>
-                </div>
-            </ui:define>
-        </o:box>
-    </div>
+                                        </ice:panelGrid>
+                                    </ice:panelGroup>
+                                </ice:panelSeries>
+                            </ui:define>
+                        </o:multipanel>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </ice:panelGrid>
+        </ui:define>
+    </o:section>
 </span>

@@ -6,152 +6,146 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-    <div class="section-outer">
-        <o:box>
-            <ui:define name="body">
-                <div class="section-inner">
-                    <span class="section-head">
-                        <span class="section-title">
-                            <ice:outputText value="Policy Subjects"/>
-                        </span>
-                        <span class="section-links">
-                            <ice:panelGrid
-                                columns="2">
-                                <ice:commandLink
-                                    actionListener="#{policySubjectsHandler.anyOfSubjectListener}"
-                                    styleClass="section-input command-link">
-                                    <ice:graphicImage
-                                        value="/admin/image/or.png"/>
-                                    <ice:outputText
-                                        value="Any of"/>
-                                </ice:commandLink>
-                                <ice:commandLink
-                                    actionListener="#{policySubjectsHandler.allOfSubjectListener}"
-                                    styleClass="section-input command-link">
-                                    <ice:graphicImage
-                                        value="/admin/image/and.png"/>
-                                    <ice:outputText
-                                        value="All of"/>
-                                </ice:commandLink>
-                            </ice:panelGrid>
-                        </span>
-                    </span>
-                    <div class="clear"></div>
-                    <div class="section-details">Need text here.</div>
-                    <ice:panelGrid
-                        columns="3"
-                        styleClass="policy-create-conditions"
-                        columnClasses="conditions-selected conditions-gutter conditions-available">
-                        <ice:panelGroup
-                            style="width: 100%">
-                            <o:subjectpanel
-                                viewSubject="#{policySubjectsBean.privilegeBean.viewSubject}"/>
-                            <ice:panelGroup
-                                visible="#{policySubjectsBean.privilegeBean.viewSubject == null}"
-                                styleClass="drop-target"
-                                dropTarget="true"
-                                dropMask="hover_start"
-                                dropListener="#{policySubjectsHandler.subjectDropListener}">
-                                <ice:outputText
-                                    value="Drop condition or expression here ..."/>
-                            </ice:panelGroup>
-                        </ice:panelGroup>
-                        <ice:panelGroup/>
-                        <ice:panelGroup
-                            style="width: 100%">
-                            <ice:panelSeries
-                                value="#{policySubjectsBean.privilegeBean.viewEntitlement.viewApplication.subjectContainers}"
-                                var="subjectContainer">
-                                <o:multipanel
-                                    expanded="#{subjectContainer.expanded}"
-                                    bean="#{subjectContainer}"
-                                    handler="#{basicMultiPanelHandler}"
-                                    collapsible="true"
-                                    removeable="false">
-                                    <ui:define name="panel-title">
-                                        <ice:panelGroup>
-                                            <ice:outputText value="#{subjectContainer.subjectType.title}"/>
-                                        </ice:panelGroup>
-                                    </ui:define>
-                                    <ui:define name="panel-body">
-                                        <ice:panelGrid
-                                            visible="#{subjectContainer.searchVisible}"
-                                            columns="2">
-                                            <ice:graphicImage
-                                                value="../image/search.png"/>
-                                            <ice:inputText
-                                                value="#{subjectContainer.filter}"
-                                                onkeyup="submitNow(this);"/>
-                                        </ice:panelGrid>
-                                        <ice:panelGroup
-                                            scrollHeight="100px">
-                                            <ice:panelGroup
-                                                visible="#{o:size(subjectContainer.viewSubjects) == 0}">
-                                                <ice:outputText
-                                                    value="No subjects. Try widening your search."/>
-                                            </ice:panelGroup>
-                                            <ice:panelSeries
-                                                value="#{subjectContainer.viewSubjects}"
-                                                var="viewSubject">
-                                                <ice:panelGroup
-                                                    styleClass="draggable"
-                                                    draggable="true"
-                                                    dragMask="dragging,drag_cancel,dropped,hover_start,hover_end"
-                                                    dragValue="#{viewSubject}"
-                                                    dragOptions="dragGhost">
-                                                    <ice:panelGrid columns="2">
-                                                        <ice:graphicImage value="#{viewSubject.subjectType.subjectIconUri}"/>
-                                                        <ice:panelGroup>
-                                                            <ice:outputText value="#{viewSubject.title}"/>
-                                                        </ice:panelGroup>
-                                                    </ice:panelGrid>
-                                                </ice:panelGroup>
-                                            </ice:panelSeries>
-                                        </ice:panelGroup>
-                                    </ui:define>
-                                </o:multipanel>
-                                <ice:panelGroup
-                                    style="height: 10px;">
+    
+    <o:section>
+        <ui:define name="section-title">
+            <ice:outputText
+                value="Policy Subjects"/>
+        </ui:define>
+        <ui:define name="section-link">
+            <ice:panelGrid
+                columns="2">
+                <ice:commandLink
+                    actionListener="#{policySubjectsHandler.anyOfSubjectListener}"
+                    styleClass="section-input command-link">
+                    <ice:graphicImage
+                        value="/admin/image/or.png"/>
+                    <ice:outputText
+                        value="Any of"/>
+                </ice:commandLink>
+                <ice:commandLink
+                    actionListener="#{policySubjectsHandler.allOfSubjectListener}"
+                    styleClass="section-input command-link">
+                    <ice:graphicImage
+                        value="/admin/image/and.png"/>
+                    <ice:outputText
+                        value="All of"/>
+                </ice:commandLink>
+            </ice:panelGrid>
+        </ui:define>
+        <ui:define name="section-body">
+            <ice:panelGrid
+                columns="3"
+                styleClass="policy-create-conditions"
+                columnClasses="conditions-selected conditions-gutter conditions-available">
+                <ice:panelGroup
+                    style="width: 100%">
+                    <o:subjectpanel
+                        viewSubject="#{policySubjectsBean.privilegeBean.viewSubject}"/>
+                    <ice:panelGroup
+                        visible="#{policySubjectsBean.privilegeBean.viewSubject == null}"
+                        styleClass="drop-target"
+                        dropTarget="true"
+                        dropMask="hover_start"
+                        dropListener="#{policySubjectsHandler.subjectDropListener}">
+                        <ice:outputText
+                            value="Drop condition or expression here ..."/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+                <ice:panelGroup/>
+                <ice:panelGroup
+                    style="width: 100%">
+                    <ice:panelSeries
+                        value="#{policySubjectsBean.privilegeBean.viewEntitlement.viewApplication.subjectContainers}"
+                        var="subjectContainer">
+                        <o:multipanel
+                            expanded="#{subjectContainer.expanded}"
+                            bean="#{subjectContainer}"
+                            handler="#{basicMultiPanelHandler}"
+                            collapsible="true"
+                            removeable="false">
+                            <ui:define name="panel-title">
+                                <ice:panelGroup>
+                                    <ice:outputText value="#{subjectContainer.subjectType.title}"/>
                                 </ice:panelGroup>
-                            </ice:panelSeries>
-                            <ice:panelGroup
-                                rendered="#{o:size(policySubjectsBean.privilegeBean.viewEntitlement.viewApplication.expressionSubjectTypes) > 0}">
-                                <o:multipanel
-                                    expanded="#{subjectExpressionPanelBean.expanded}"
-                                    bean="#{subjectExpressionPanelBean}"
-                                    handler="#{basicMultiPanelHandler}"
-                                    collapsible="true"
-                                    removeable="false">
-                                    <ui:define name="panel-title">
-                                        <ice:panelGroup>
-                                            <ice:outputText value="Subject Expressions"/>
+                            </ui:define>
+                            <ui:define name="panel-body">
+                                <ice:panelGrid
+                                    visible="#{subjectContainer.searchVisible}"
+                                    columns="2">
+                                    <ice:graphicImage
+                                        value="../image/search.png"/>
+                                    <ice:inputText
+                                        value="#{subjectContainer.filter}"
+                                        onkeyup="submitNow(this);"/>
+                                </ice:panelGrid>
+                                <ice:panelGroup
+                                    scrollHeight="100px">
+                                    <ice:panelGroup
+                                        visible="#{o:size(subjectContainer.viewSubjects) == 0}">
+                                        <ice:outputText
+                                            value="No subjects. Try widening your search."/>
+                                    </ice:panelGroup>
+                                    <ice:panelSeries
+                                        value="#{subjectContainer.viewSubjects}"
+                                        var="viewSubject">
+                                        <ice:panelGroup
+                                            styleClass="draggable"
+                                            draggable="true"
+                                            dragMask="dragging,drag_cancel,dropped,hover_start,hover_end"
+                                            dragValue="#{viewSubject}"
+                                            dragOptions="dragGhost">
+                                            <ice:panelGrid columns="2">
+                                                <ice:graphicImage value="#{viewSubject.subjectType.subjectIconUri}"/>
+                                                <ice:panelGroup>
+                                                    <ice:outputText value="#{viewSubject.title}"/>
+                                                </ice:panelGroup>
+                                            </ice:panelGrid>
                                         </ice:panelGroup>
-                                    </ui:define>
-                                    <ui:define name="panel-body">
-                                        <ice:panelSeries
-                                            value="#{policySubjectsBean.privilegeBean.viewEntitlement.viewApplication.expressionSubjectTypes}"
-                                            var="subjectType">
-                                            <ice:panelGroup
-                                                styleClass="draggable"
-                                                draggable="true"
-                                                dragValue="#{subjectType}"
-                                                dragMask="dragging,drag_cancel,dropped,hover_start,hover_end"
-                                                dragOptions="dragGhost">
-                                                <ice:panelGrid columns="2">
-                                                    <ice:graphicImage value="#{subjectType.subjectIconUri}"/>
-                                                    <ice:panelGroup>
-                                                        <ice:outputText value="#{subjectType.title}"/>
-                                                    </ice:panelGroup>
-                                                </ice:panelGrid>
-                                            </ice:panelGroup>
-                                        </ice:panelSeries>
-                                    </ui:define>
-                                </o:multipanel>
-                            </ice:panelGroup>
+                                    </ice:panelSeries>
+                                </ice:panelGroup>
+                            </ui:define>
+                        </o:multipanel>
+                        <ice:panelGroup
+                            style="height: 10px;">
                         </ice:panelGroup>
-                    </ice:panelGrid>
-                </div>
-            </ui:define>
-        </o:box>
-    </div>
+                    </ice:panelSeries>
+                    <ice:panelGroup
+                        rendered="#{o:size(policySubjectsBean.privilegeBean.viewEntitlement.viewApplication.expressionSubjectTypes) > 0}">
+                        <o:multipanel
+                            expanded="#{subjectExpressionPanelBean.expanded}"
+                            bean="#{subjectExpressionPanelBean}"
+                            handler="#{basicMultiPanelHandler}"
+                            collapsible="true"
+                            removeable="false">
+                            <ui:define name="panel-title">
+                                <ice:panelGroup>
+                                    <ice:outputText value="Subject Expressions"/>
+                                </ice:panelGroup>
+                            </ui:define>
+                            <ui:define name="panel-body">
+                                <ice:panelSeries
+                                    value="#{policySubjectsBean.privilegeBean.viewEntitlement.viewApplication.expressionSubjectTypes}"
+                                    var="subjectType">
+                                    <ice:panelGroup
+                                        styleClass="draggable"
+                                        draggable="true"
+                                        dragValue="#{subjectType}"
+                                        dragMask="dragging,drag_cancel,dropped,hover_start,hover_end"
+                                        dragOptions="dragGhost">
+                                        <ice:panelGrid columns="2">
+                                            <ice:graphicImage value="#{subjectType.subjectIconUri}"/>
+                                            <ice:panelGroup>
+                                                <ice:outputText value="#{subjectType.title}"/>
+                                            </ice:panelGroup>
+                                        </ice:panelGrid>
+                                    </ice:panelGroup>
+                                </ice:panelSeries>
+                            </ui:define>
+                        </o:multipanel>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+            </ice:panelGrid>
+        </ui:define>
+    </o:section>
 </span>
