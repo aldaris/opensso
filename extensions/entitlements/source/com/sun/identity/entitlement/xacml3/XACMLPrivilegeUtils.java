@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.16 2009-05-26 21:46:29 veiming Exp $
+ * $Id: XACMLPrivilegeUtils.java,v 1.1 2009-05-29 22:19:38 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
+import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
@@ -35,6 +36,7 @@ import com.sun.identity.entitlement.ResourceAttribute;
 
 import com.sun.identity.entitlement.UserSubject;
 
+import com.sun.identity.entitlement.opensso.XACMLOpenSSOPrivilege;
 import com.sun.identity.entitlement.xacml3.core.AllOf;
 import com.sun.identity.entitlement.xacml3.core.Apply;
 import com.sun.identity.entitlement.xacml3.core.AnyOf;
@@ -70,17 +72,27 @@ import javax.xml.bind.Marshaller;
  * to
  * </code>com.sun.identity.xacml3.core.Policy</code>
  */
-public class PrivilegeUtils {
+public class XACMLPrivilegeUtils {
     /**
-     * Constructs PrivilegeUtils
+     * Constructs XACMLPrivilegeUtils
      */
-    private PrivilegeUtils() {
+    private XACMLPrivilegeUtils() {
     }
 
     public static String toXACML(Privilege privilege) {
+        if (privilege == null) {
+            return "";
+        }
+        Policy policy = privilegeToPolicy(privilege);
+        return toXML(policy);
+    }
+
+    public static String toXML(Policy policy) {
+        if (policy == null) {
+            return "";
+        }
         StringWriter stringWriter = new StringWriter();
         try {
-            Policy policy = privilegeToPolicy(privilege);
             ObjectFactory objectFactory = new ObjectFactory();
             JAXBContext jaxbContext = JAXBContext.newInstance(
                     XACMLConstants.XACML3_CORE_PKG);
@@ -98,7 +110,17 @@ public class PrivilegeUtils {
         return stringWriter.toString();
     }
 
-    public static Policy privilegeToPolicy(Privilege privilege) throws
+    public static Policy privilegeToPolicy(Privilege privilege)  {
+        Policy policy = null;
+        try {
+            policy = privilegeToPolicyInternal(privilege);
+        } catch (JAXBException je) {
+            //TODO: log error, jaxbexception
+        }
+        return policy;
+    }
+
+    private static Policy privilegeToPolicyInternal(Privilege privilege) throws
             JAXBException  {
 
         /*
@@ -342,6 +364,7 @@ public class PrivilegeUtils {
 
     public static String privilegeNameToPolicyId(String privilegeName,
             String applicationName) {
+         //TODO: implement privilegeNameToPolicyId() correctly
         return privilegeName;
     }
 
@@ -635,6 +658,42 @@ public class PrivilegeUtils {
     public static String getRuleCombiningAlgId(String applicationName) {
         // TODO: return the correct alogrithm id based on application
         return XACMLConstants.XACML_RULE_DENY_OVERRIDES;
+    }
+
+    static public Privilege policyToPrivilege(Policy policy) throws EntitlementException {
+        //TODO: implement method, policyToPrivilege(Policy)
+        String policyId = policy.getPolicyId();
+        String privilegeName = policyIdToPrivilegeName(policyId);
+        String description = policy.getDescription();
+
+        //value of variable XACMLConstants.PRIVILIEGE_CREATED_BY
+        String createdBy = null; 
+
+        //value of variable XACMLConstants.PRIVILEGE_CREATION_DATE
+        String createdAt = null; 
+
+        //value of variable XACMLConstants.PRIVILEGE_LAST_MODIFIED_BY
+        String lastModifiedBy = null; 
+
+        //value of variable XACMLConstants.PRIVILEGE_LAST_MODFICATION_DATE
+        String lastModifiedAt = null; 
+
+        Entitlement entitlement = null;
+
+        EntitlementSubject es = null;
+
+        EntitlementCondition ec = null;
+
+        Set<ResourceAttribute> ra = null;
+
+        Privilege privilege = new XACMLOpenSSOPrivilege(privilegeName, entitlement, es, ec, ra);
+
+        return privilege;
+    }
+
+    public static String policyIdToPrivilegeName(String policyId) {
+        //TODO: implement policyIdToPrivilegeName(String) correctly
+        return policyId;
     }
 
 }
