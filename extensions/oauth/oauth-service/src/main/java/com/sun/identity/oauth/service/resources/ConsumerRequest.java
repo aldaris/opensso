@@ -12,14 +12,15 @@ import com.sun.jersey.oauth.signature.RSA_SHA1;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.StringTokenizer;
+import java.util.Iterator;
+import java.util.Set;
 import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -73,7 +74,7 @@ public class ConsumerRequest {
      */
     @POST
     @Consumes("application/x-www-form-urlencoded")
-    public Response postConsumerRegistrations(String content) {
+    public Response postConsumerRegistrations(MultivaluedMap<String, String> formParams) {
         PersistenceService service = PersistenceService.getInstance();
         try {
             service.beginTx();
@@ -85,36 +86,28 @@ public class ConsumerRequest {
             String tmpsecret = null;
             Boolean keyed = false;
 
-            StringTokenizer tokenizer = new StringTokenizer(content, "&");
-            while (tokenizer.hasMoreTokens()) {
-                String token = tokenizer.nextToken();
-                if (token.contains("=")) {
-                    String kv[] = token.split("=");
-                    if (kv.length > 2) {
-                        throw new WebApplicationException(new Throwable("Authorization header element has more than one value."), 400);
-                    }
-                    String pname = kv[0];
-                    String pval = "";
-                    if (kv.length == 2)
-                        pval = kv[1];
-                    if (pname.equalsIgnoreCase("name"))
-                            cons.setConsName(URLDecoder.decode(pval));
+            Set<String> pnames = formParams.keySet();
+            Iterator iter = pnames.iterator();
+            while (iter.hasNext()) {
+                String key = (String) iter.next();
+                String val = formParams.getFirst(key);
+                if (key.equalsIgnoreCase("name"))
+                    cons.setConsName(URLDecoder.decode(val));
+                else
+                    if (key.equalsIgnoreCase("signature_method"))
+                        sigmeth = URLDecoder.decode(val);
                     else
-                        if (pname.equalsIgnoreCase("signature_method"))
-                            sigmeth = URLDecoder.decode(pval);
+                        if (key.equalsIgnoreCase("secret"))
+                            tmpsecret = URLDecoder.decode(val);
                         else
-                            if (pname.equalsIgnoreCase("secret"))
-                                tmpsecret = URLDecoder.decode(pval);
-                            else
-                                if (pname.equalsIgnoreCase("cons_key")) {
-                                    keyed = true;
-                                    cons.setConsKey(URLDecoder.decode(pval));
-                                    Consumer tmpcons = getConsumerByKey(Consumer.class, URLDecoder.decode(pval));
-                                    if (tmpcons != null) {
-                                        service.removeEntity(tmpcons);
-                                    }
+                            if (key.equalsIgnoreCase("cons_key")) {
+                                keyed = true;
+                                cons.setConsKey(URLDecoder.decode(val));
+                                Consumer tmpcons = getConsumerByKey(Consumer.class, URLDecoder.decode(val));
+                                if (tmpcons != null) {
+                                    service.removeEntity(tmpcons);
                                 }
-                }
+                            }
             }
 
             if (tmpsecret != null) {
