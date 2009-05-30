@@ -1,16 +1,13 @@
 package com.sun.identity.admin.dao;
 
-import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
+import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.Action;
 import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.ViewApplicationType;
 import com.sun.identity.entitlement.ApplicationType;
 import com.sun.identity.entitlement.ApplicationTypeManager;
-import com.sun.identity.entitlement.opensso.SubjectUtils;
-import com.sun.identity.security.AdminTokenAction;
 import java.io.Serializable;
-import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +18,8 @@ public class ViewApplicationTypeDao implements Serializable {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         Map<String,ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String,ViewApplicationType>)mbr.resolve("entitlementApplicationNameToViewApplicationTypeMap");
 
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance()); //TODO
-        Subject adminSubject = SubjectUtils.createSubject(adminToken);
+        Token token = new Token();
+        Subject adminSubject = token.getAdminSubject();
 
         List<ViewApplicationType> viewApplicationTypes = new ArrayList<ViewApplicationType>();
         for (String entitlementApplicationType: entitlementApplicationTypeToViewApplicationTypeMap.keySet()) {

@@ -18,6 +18,10 @@ public class ViewApplicationsBean implements Serializable {
     }
 
     public void reset() {
-        viewApplications = viewApplicationDao.getViewApplications();
+        viewApplications = getViewApplicationDao().getViewApplications();
+    }
+
+    public ViewApplicationDao getViewApplicationDao() {
+        return viewApplicationDao;
     }
 }

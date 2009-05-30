@@ -2,6 +2,7 @@ package com.sun.identity.admin.dao;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
+import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewApplicationType;
 import com.sun.identity.entitlement.Application;
@@ -16,6 +17,7 @@ import java.util.Map;
 import javax.security.auth.Subject;
 
 public class ViewApplicationDao implements Serializable {
+
     private ViewApplicationTypeDao viewApplicationTypeDao;
 
     public void setViewApplicationTypeDao(ViewApplicationTypeDao viewApplicationTypeDao) {
@@ -23,19 +25,23 @@ public class ViewApplicationDao implements Serializable {
     }
 
     public Map<String, ViewApplication> getViewApplications() {
-        Map<String,ViewApplication> viewApplications = new HashMap<String, ViewApplication>();
+        Map<String, ViewApplication> viewApplications = new HashMap<String, ViewApplication>();
 
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        Map<String,ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String,ViewApplicationType>)mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
-        // TODO: realm
+        Map<String, ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String, ViewApplicationType>) mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
 
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance()); //TODO
-        Subject adminSubject = SubjectUtils.createSubject(adminToken);
+        Token token = new Token();
+        Subject adminSubject = token.getAdminSubject();
 
+        // TODO realm
         for (String name : ApplicationManager.getApplicationNames(adminSubject, "/")) {
             // TODO: realm
             Application a = ApplicationManager.getApplication(adminSubject, "/", name);
+            if (a.getResources() == null || a.getResources().size() == 0) {
+                // TODO: log
+                continue;
+            }
+
             // application type
             ViewApplicationType vat = entitlementApplicationTypeToViewApplicationTypeMap.get(a.getApplicationType().getName());
             if (vat == null) {
@@ -55,12 +61,21 @@ public class ViewApplicationDao implements Serializable {
             Application a = va.toApplication(viewApplicationTypeDao);
             // TODO: realm
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance()); //TODO
+                    AdminTokenAction.getInstance()); //TODO
             Subject adminSubject = SubjectUtils.createSubject(adminToken);
-            
+
             ApplicationManager.saveApplication(adminSubject, "/", a);
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }
+    }
+
+    public Application getApplication(ViewApplication va) {
+        String name = va.getName();
+        Token token = new Token();
+        Subject adminSubject = token.getAdminSubject();
+        // TODO: realm
+        Application a = ApplicationManager.getApplication(adminSubject, "/", name);
+        return a;
     }
 }

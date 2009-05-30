@@ -2,8 +2,11 @@ package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.DeepCloneableArrayList;
 import com.sun.identity.admin.ManagedBeanResolver;
+import com.sun.identity.admin.dao.ViewApplicationDao;
 import com.sun.identity.admin.handler.BooleanActionsHandler;
+import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.Entitlement;
+import com.sun.identity.entitlement.ValidateResourceResult;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +26,6 @@ public class ViewEntitlement implements Serializable {
     private ViewApplication viewApplication;
     private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();;
     private List<Resource> availableResources = new ArrayList<Resource>();
-    private ViewApplicationsBean viewApplicationsBean;
 
     public ViewEntitlement() {
         booleanActionsHandler.setBooleanActionsBean(booleanActionsBean);
@@ -242,11 +244,11 @@ public class ViewEntitlement implements Serializable {
         return items;
     }
 
-    public ViewApplicationsBean getViewApplicationsBean() {
-        return viewApplicationsBean;
-    }
-
-    public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
-        this.viewApplicationsBean = viewApplicationsBean;
+    public ValidateResourceResult validateResource(Resource r) {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        ViewApplicationDao vad = (ViewApplicationDao)mbr.resolve("viewApplicationDao");
+        Application a = vad.getApplication(viewApplication);
+        ValidateResourceResult vrr = a.validateResourceName(r.getName());
+        return vrr;
     }
 }

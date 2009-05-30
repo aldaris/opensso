@@ -11,7 +11,7 @@ public class UrlResourcePart implements Serializable {
     }
 
     public void setPart(String part) {
-        this.part = part;
+        this.part = part == null ? null : part.trim();
     }
 
     public String getValue() {
@@ -19,7 +19,7 @@ public class UrlResourcePart implements Serializable {
     }
 
     public void setValue(String value) {
-        this.value = value;
+        this.value = value == null ? null : value.trim();
     }
 
     public int getValueLength() {

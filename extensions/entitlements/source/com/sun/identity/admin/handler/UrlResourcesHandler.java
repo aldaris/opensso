@@ -8,6 +8,7 @@ import com.sun.identity.admin.model.UrlResource;
 import com.sun.identity.admin.model.UrlResourceParts;
 import com.sun.identity.admin.model.UrlResourcesBean;
 import com.sun.identity.admin.model.ViewEntitlement;
+import com.sun.identity.entitlement.ValidateResourceResult;
 import java.io.Serializable;
 import java.util.List;
 import javax.faces.application.FacesMessage;
@@ -79,8 +80,30 @@ public class UrlResourcesHandler implements Serializable {
 
     public void addPopupOkListener(ActionEvent event) {
         ViewEntitlement ve = getViewEntitlement(event);
-        UrlResource ur = urlResourcesBean.getAddPopupUrlResourceParts().getUrlResource();
-        if (!ve.getResources().contains(ur)) {
+        UrlResourceParts urps = urlResourcesBean.getAddPopupUrlResourceParts();
+        if (!urps.isValid()) {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "invalidPartsSummary"));
+            mb.setDetail(r.getString(this, "invalidPartsDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            messagesBean.addMessageBean(mb);
+            urlResourcesBean.setAddPopupVisible(false);
+            return;
+        }
+
+        UrlResource ur = urps.getUrlResource();
+        ValidateResourceResult vrr = ve.validateResource(ur);
+        
+        if (!vrr.isValid()) {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "invalidResourceSummary"));
+            mb.setDetail(vrr.getLocalizedMessage(r.getLocale()));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            messagesBean.addMessageBean(mb);
+            urlResourcesBean.setAddPopupVisible(false);            
+        } else if (!ve.getResources().contains(ur)) {
             ve.getResources().add(ur);
             List<Resource> ar = getAvailableResources(event);
             if (!ar.contains(ur)) {
@@ -101,13 +124,34 @@ public class UrlResourcesHandler implements Serializable {
 
     public void addExceptionPopupOkListener(ActionEvent event) {
         String name = urlResourcesBean.getAddExceptionPopupName();
+        if (name == null || name.length() == 0) {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "emptyExceptionNameSummary"));
+            mb.setDetail(r.getString(this, "emptyExceptionNameDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            messagesBean.addMessageBean(mb);
+            urlResourcesBean.setAddExceptionPopupVisible(false);
+            return;
+        }
+
         String prefix = urlResourcesBean.getAddExceptionPopupResource().getExceptionPrefix();
 
         UrlResource ur = new UrlResource();
         ur.setName(prefix + name);
 
         ViewEntitlement ve = getViewEntitlement(event);
-        if (!ve.getExceptions().contains(ur)) {
+        ValidateResourceResult vrr = ve.validateResource(ur);
+
+        if (!vrr.isValid()) {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "invalidExceptionSummary"));
+            mb.setDetail(vrr.getLocalizedMessage(r.getLocale()));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            messagesBean.addMessageBean(mb);
+            urlResourcesBean.setAddPopupVisible(false);
+        } else if (!ve.getExceptions().contains(ur)) {
             ve.getExceptions().add(ur);
 
             urlResourcesBean.setAddExceptionPopupName(null);

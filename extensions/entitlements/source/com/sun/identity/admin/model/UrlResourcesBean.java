@@ -55,7 +55,7 @@ public class UrlResourcesBean implements Serializable {
     }
 
     public void setAddExceptionPopupName(String addExceptionPopupName) {
-        this.addExceptionPopupName = addExceptionPopupName;
+        this.addExceptionPopupName = addExceptionPopupName == null ? null : addExceptionPopupName.trim();
     }
 
     public List<SelectItem> getAddPopupAvailableResourceNameItems() {

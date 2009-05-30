@@ -29,7 +29,7 @@ public class UrlResourceParts implements Serializable {
             if (urp.getPart().equals("*")) {
                 String val = urp.getValue();
                 if (val == null || val.length() == 0) {
-                    b.append("*");
+                    throw new AssertionError("part value(s) are null");
                 } else {
                     b.append(val);
                 }
@@ -50,5 +50,16 @@ public class UrlResourceParts implements Serializable {
 
     public List<UrlResourcePart> getUrlResourceParts() {
         return urlResourceParts;
+    }
+
+    public boolean isValid() {
+        for (UrlResourcePart urp : getUrlResourceParts()) {
+            if (urp.getPart().equals("*")) {
+                if (urp.getValue() == null || urp.getValue().length() == 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

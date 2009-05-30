@@ -3,9 +3,11 @@ package com.sun.identity.admin;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
 import javax.faces.context.FacesContext;
+import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 
 public class Token {
@@ -30,4 +32,8 @@ public class Token {
         return (SSOToken) AccessController.doPrivileged(AdminTokenAction.getInstance());
     }
 
+    public Subject getAdminSubject() {
+        Subject adminSubject = SubjectUtils.createSubject(getAdminSSOToken());
+        return adminSubject;
+    }
 }
