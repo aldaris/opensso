@@ -22,18 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrCondition.java,v 1.9 2009-05-23 00:58:14 veiming Exp $
+ * $Id: OrCondition.java,v 1.10 2009-05-30 00:12:47 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONException;
 
 /**
  * <code>EntitlementCondition</code> wrapper on a set of
@@ -41,14 +37,12 @@ import org.json.JSONException;
  * Membership is of OrCondition is satisfied if the user is a member of any
  * of the wrapped EntitlementCondition
  */
-public class OrCondition implements EntitlementCondition {
-    private Set<EntitlementCondition> eConditions;
-    private String pConditionName;
-
+public class OrCondition extends LogicalCondition {
     /**
      * Constructor.
      */
     public OrCondition() {
+        super();
     }
 
     /**
@@ -57,7 +51,7 @@ public class OrCondition implements EntitlementCondition {
      * @param eConditions wrapped EntitlementCondition(s)
      */
     public OrCondition(Set<EntitlementCondition> eConditions) {
-        this.eConditions = eConditions;
+        super(eConditions);
     }
 
     /**
@@ -72,52 +66,9 @@ public class OrCondition implements EntitlementCondition {
         Set<EntitlementCondition> eConditions,
         String pConditionName
     ) {
-        this.eConditions = eConditions;
-        this.pConditionName = pConditionName;
+        super(eConditions, pConditionName);
     }
 
-    /**
-     * Sets state of the object
-     * @param state State of the object encoded as string
-     */
-    public void setState(String state) {
-        try {
-            JSONObject jo = new JSONObject(state);
-            pConditionName = (jo.has("pConditionName")) ?
-                jo.optString("pConditionName") : null;
-            JSONArray memberConditions = jo.optJSONArray("memberECondition");
-            if (memberConditions != null) {
-                eConditions = new HashSet<EntitlementCondition>();
-                int len = memberConditions.length();
-                for (int i = 0; i < len; i++) {
-                    JSONObject memberCondition =
-                        memberConditions.getJSONObject(i);
-                    String className = memberCondition.getString("className");
-                    Class cl = Class.forName(className);
-                    EntitlementCondition ec =
-                        (EntitlementCondition) cl.newInstance();
-                    ec.setState(memberCondition.getString("state"));
-                    eConditions.add(ec);
-                }
-            }
-        } catch (InstantiationException ex) {
-            PrivilegeManager.debug.error("OrCondition.setState", ex);
-        } catch (IllegalAccessException ex) {
-            PrivilegeManager.debug.error("OrCondition.setState", ex);
-        } catch (ClassNotFoundException ex) {
-            PrivilegeManager.debug.error("OrCondition.setState", ex);
-        } catch (JSONException ex) {
-            PrivilegeManager.debug.error("OrCondition.setState", ex);
-        }
-    }
-
-    /**
-     * Returns state of the object
-     * @return state of the object encoded as string
-     */
-    public String getState() {
-        return toString();
-    }
 
     /**
      * Returns <code>ConditionDecision</code> of
@@ -140,6 +91,7 @@ public class OrCondition implements EntitlementCondition {
     ) throws EntitlementException {
         ConditionDecision results = new ConditionDecision(false, 
             Collections.EMPTY_MAP);
+        Set<EntitlementCondition> eConditions = getEConditions();
         if ((eConditions == null) || eConditions.isEmpty()) {
             return new ConditionDecision(true,
                 Collections.EMPTY_MAP);
@@ -168,136 +120,5 @@ public class OrCondition implements EntitlementCondition {
             }
         }
         return results;
-    }
-
-    /**
-     * Sets the nested EntitlementCondition(s).
-     *
-     * @param eConditions the nested EntitlementCondition(s).
-     */
-    public void setEConditions(Set<EntitlementCondition> eConditions) {
-        this.eConditions = eConditions;
-    }
-
-    /**
-     * Returns the nested EntitlementCondition(s)
-     * @return  the nested EntitlementCondition(s)
-     */
-    public Set<EntitlementCondition> getEConditions() {
-        return eConditions;
-    }
-
-    /**
-     * Sets OpenSSO policy Condition name
-     * @param pConditionName subject name as used in OpenSSO policy,
-     * this is releavant only when UserECondition was created from
-     * OpenSSO policy Condition
-     */
-    public void setPConditionName(String pConditionName) {
-        this.pConditionName = pConditionName;
-    }
-
-    /**
-     * Returns OpenSSO policy Condition name
-     * @return  subject name as used in OpenSSO policy,
-     * this is releavant only when UserECondition was created from
-     * OpenSSO policy Condition
-     */
-    public String getPConditionName() {
-        return pConditionName;
-    }
-
-    /**
-     * Returns JSONObject mapping of the object
-     * @return JSONObject mapping of the object
-     * @throws org.json.JSONException if can not map to JSONObject
-     */
-    public JSONObject toJSONObject() throws JSONException {
-        JSONObject jo = new JSONObject();
-        jo.put("pConditionName", pConditionName);
-
-        if ((eConditions != null) && !eConditions.isEmpty()) {
-            for (EntitlementCondition eCondition : eConditions) {
-                JSONObject subjo = new JSONObject();
-                subjo.put("className", eCondition.getClass().getName());
-                subjo.put("state", eCondition.getState());
-                jo.append("memberECondition", subjo);
-            }
-        }
-        return jo;
-    }
-
-    /**
-     * Returns string representation of the object
-     * @return string representation of the object
-     */
-    @Override
-    public String toString() {
-        String s = null;
-        try {
-            JSONObject jo = toJSONObject();
-            s = (jo == null) ? super.toString() : jo.toString(2);
-        } catch (JSONException e) {
-            PrivilegeManager.debug.error("OrCondition.toString", e);
-        }
-        return s;
-    }
-
-    /**
-     * Returns <code>true</code> if the passed in object is equal to this object
-     * @param obj object to check for equality
-     * @return  <code>true</code> if the passed in object is equal to this object
-     */
-    @Override
-    public boolean equals(Object obj) {
-        boolean equalled = true;
-        if (obj == null) {
-            return false;
-        }
-        if (!getClass().equals(obj.getClass())) {
-            return false;
-        }
-        OrCondition object = (OrCondition) obj;
-        if (eConditions == null) {
-            if (object.getEConditions() != null) {
-                return false;
-            }
-        } else { // eConditions not null
-            if ((object.getEConditions()) == null) {
-                return false;
-            } else if (!eConditions.containsAll(object.getEConditions())) {
-                return false;
-            } else if (!object.getEConditions().containsAll(eConditions)) {
-                return false;
-            }
-        }
-        if (pConditionName == null) {
-            if (object.getPConditionName() != null) {
-                return false;
-            }
-        } else {
-            if (!pConditionName.equals(object.getPConditionName())) {
-                return false;
-            }
-        }
-        return equalled;
-    }
-
-    /**
-     * Returns hash code of the object
-     * @return hash code of the object
-     */
-    @Override
-    public int hashCode() {
-        int code = 0;
-        if (eConditions != null) {
-            for (EntitlementCondition eCondition : eConditions) {
-                code += eCondition.hashCode();
-            }
-        }
-        if (pConditionName != null) {
-            code += pConditionName.hashCode();
-        }
-        return code;
     }
 }
