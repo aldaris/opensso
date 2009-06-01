@@ -11,10 +11,13 @@ public class RealmsBean implements Serializable {
     private List<RealmBean> realmBeans;
     private RealmBean realmBean;
     private RealmDao realmDao;
+    private RealmBean baseRealmBean;
 
     public void setRealmDao(RealmDao realmDao) {
         this.realmDao = realmDao;
         setRealmBeans(realmDao.getRealmBeans());
+        setRealmBean(realmBeans.get(0));
+        baseRealmBean = realmDao.getBaseRealmBean();
     }
 
     public List<SelectItem> getRealmBeanItems() {
@@ -45,5 +48,9 @@ public class RealmsBean implements Serializable {
 
     public void setRealmBean(RealmBean realmBean) {
         this.realmBean = realmBean;
+    }
+
+    public RealmBean getBaseRealmBean() {
+        return baseRealmBean;
     }
 }

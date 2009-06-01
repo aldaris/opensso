@@ -66,6 +66,10 @@
             <property-name>realmsBean</property-name>
             <value>#{realmsBean}</value>
         </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>
@@ -1215,7 +1219,7 @@
     <!-- policy create -->
     <managed-bean>
         <managed-bean-name>policyCreateWizardBean</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.PolicyWizardBean</managed-bean-class>
+        <managed-bean-class>com.sun.identity.admin.model.PolicyCreateWizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>conditionTypes</property-name>
@@ -1273,7 +1277,7 @@
     <!-- policy edit -->
     <managed-bean>
         <managed-bean-name>policyEditWizardBean</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.PolicyWizardBean</managed-bean-class>
+        <managed-bean-class>com.sun.identity.admin.model.PolicyEditWizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>conditionTypes</property-name>

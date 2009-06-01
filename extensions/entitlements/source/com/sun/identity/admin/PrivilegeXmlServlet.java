@@ -36,13 +36,16 @@ public class PrivilegeXmlServlet extends HttpServlet {
         if (names == null || names.length == 0) {
             throw new ServletException("no names specified");
         }
+        String realm = request.getParameter("realm");
+        if (realm == null || realm.length() == 0) {
+            throw new ServletException("no realm specified");
+        }
 
         SSOToken t = getSSOToken(request);
         Subject s = SubjectUtils.createSubject(t);
 
         try {
-            //TODO: realm
-            PrivilegeManager pm = PrivilegeManager.getInstance("/", s);
+            PrivilegeManager pm = PrivilegeManager.getInstance(realm, s);
             StringBuffer xml = new StringBuffer();
 
             // TODO: fetch single policy set

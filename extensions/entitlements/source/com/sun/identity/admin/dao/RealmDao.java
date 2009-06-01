@@ -27,13 +27,13 @@ public class RealmDao implements Serializable {
     }
 
     public List<RealmBean> getRealmBeans() {
-        return getRealmBeans("/", "");
+        return getRealmBeans(null, "");
     }
 
     public List<RealmBean> getRealmBeans(String base, String filter) {
         String pattern = getPattern(filter);
         if ((base == null) || (base.length() == 0)) {
-            base = getStartDN();
+            base = getBaseRealmName();
         }
 
         try {
@@ -41,12 +41,10 @@ public class RealmDao implements Serializable {
             OrganizationConfigManager orgMgr = new OrganizationConfigManager(ssot, base);
             Set<String> names = orgMgr.getSubOrganizationNames(pattern, true);
             List<RealmBean> realmBeans = new ArrayList<RealmBean>();
-            RealmBean baseRb = new RealmBean();
-            baseRb.setName("/");
-            realmBeans.add(baseRb);
+            realmBeans.add(getBaseRealmBean());
             for (String name: names) {
                 RealmBean rb = new RealmBean();
-                rb.setName("/"+name);
+                rb.setName(base+name);
                 realmBeans.add(rb);
             }
             return realmBeans;
@@ -55,7 +53,13 @@ public class RealmDao implements Serializable {
         }
     }
 
-    public String getStartDN() {
+    public RealmBean getBaseRealmBean() {
+        RealmBean rb = new RealmBean();
+        rb.setName(getBaseRealmName());
+        return rb;
+    }
+
+    public String getBaseRealmName() {
         String startDN = "/";
         try {
             Token t = new Token();

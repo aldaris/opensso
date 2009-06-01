@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.dao.PolicyDao;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -134,5 +135,11 @@ public class PolicyManageBean implements Serializable {
 
     public void setViewOptionsPopupRows(int viewOptionsPopupRows) {
         this.viewOptionsPopupRows = viewOptionsPopupRows;
+    }
+
+    public static PolicyManageBean getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        PolicyManageBean pmb = (PolicyManageBean)mbr.resolve("policyManageBean");
+        return pmb;
     }
 }

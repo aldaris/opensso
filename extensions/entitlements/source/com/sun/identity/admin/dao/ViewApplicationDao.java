@@ -3,6 +3,8 @@ package com.sun.identity.admin.dao;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
+import com.sun.identity.admin.model.RealmBean;
+import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewApplicationType;
 import com.sun.identity.entitlement.Application;
@@ -33,10 +35,10 @@ public class ViewApplicationDao implements Serializable {
         Token token = new Token();
         Subject adminSubject = token.getAdminSubject();
 
-        // TODO realm
-        for (String name : ApplicationManager.getApplicationNames(adminSubject, "/")) {
-            // TODO: realm
-            Application a = ApplicationManager.getApplication(adminSubject, "/", name);
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+
+        for (String name : ApplicationManager.getApplicationNames(adminSubject, realmBean.getName())) {
+            Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
             if (a.getResources() == null || a.getResources().size() == 0) {
                 // TODO: log
                 continue;
@@ -58,13 +60,10 @@ public class ViewApplicationDao implements Serializable {
 
     public void setViewApplication(ViewApplication va) {
         try {
-            Application a = va.toApplication(viewApplicationTypeDao);
-            // TODO: realm
-            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                    AdminTokenAction.getInstance()); //TODO
-            Subject adminSubject = SubjectUtils.createSubject(adminToken);
-
-            ApplicationManager.saveApplication(adminSubject, "/", a);
+            Application a = va.toApplication();
+            RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+            Subject adminSubject = new Token().getAdminSubject();
+            ApplicationManager.saveApplication(adminSubject, realmBean.getName(), a);
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }
@@ -74,8 +73,8 @@ public class ViewApplicationDao implements Serializable {
         String name = va.getName();
         Token token = new Token();
         Subject adminSubject = token.getAdminSubject();
-        // TODO: realm
-        Application a = ApplicationManager.getApplication(adminSubject, "/", name);
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
         return a;
     }
 }

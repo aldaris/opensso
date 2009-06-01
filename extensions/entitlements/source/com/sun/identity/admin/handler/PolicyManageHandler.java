@@ -10,6 +10,8 @@ import com.sun.identity.admin.model.PolicyManageBean;
 import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.QueuedActionBean;
+import com.sun.identity.admin.model.RealmBean;
+import com.sun.identity.admin.model.RealmsBean;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -140,6 +142,10 @@ public class PolicyManageHandler implements Serializable {
             }
         }
 
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        b.append("realm=");
+        b.append(realmBean.getName());
+        
         String u = ec.encodeResourceURL(b.toString());
         return u;
     }

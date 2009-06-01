@@ -5,6 +5,8 @@ import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.ConditionTypeFactory;
 import com.sun.identity.admin.model.PolicyFilterHolder;
 import com.sun.identity.admin.model.PrivilegeBean;
+import com.sun.identity.admin.model.RealmBean;
+import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.SubjectFactory;
 import com.sun.identity.admin.model.ViewApplicationsBean;
 import com.sun.identity.entitlement.Application;
@@ -100,13 +102,9 @@ public class PolicyDao implements Serializable {
         Set<PrivilegeSearchFilter> psfs = getPrivilegeSearchFilters(policyFilterHolders);
         String pattern = getPattern(filter);
         psfs.add(new PrivilegeSearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
-
         PrivilegeManager pm = getPrivilegeManager();
-        List<PrivilegeBean> privilegeBeans = null;
-
         Set<String> privilegeNames;
         try {
-            // TODO: realm
             privilegeNames = pm.searchPrivilegeNames(psfs, limit, timeout);
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
@@ -118,8 +116,8 @@ public class PolicyDao implements Serializable {
     private PrivilegeManager getPrivilegeManager() {
         SSOToken t = new Token().getSSOToken();
         Subject s = SubjectUtils.createSubject(t);
-        // TODO: realm
-        PrivilegeManager pm = PrivilegeManager.getInstance("/", s);
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        PrivilegeManager pm = PrivilegeManager.getInstance(realmBean.getName(), s);
 
         return pm;
     }
@@ -168,11 +166,10 @@ public class PolicyDao implements Serializable {
     }
 
     private void validateAction(Entitlement e) {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance()); //TODO
-        Subject adminSubject = SubjectUtils.createSubject(adminToken);
+        Subject adminSubject = new Token().getAdminSubject();
 
-        Application app = e.getApplication(adminSubject, "/"); // TODO : hardcode realm
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        Application app = e.getApplication(adminSubject, realmBean.getName());
         Set<String> validActionName = app.getActions().keySet();
 
         Map<String, Boolean> actionValues = e.getActionValues();

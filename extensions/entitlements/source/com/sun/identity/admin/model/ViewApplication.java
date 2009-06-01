@@ -1,16 +1,12 @@
 package com.sun.identity.admin.model;
 
-import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Resources;
-import com.sun.identity.admin.dao.ViewApplicationTypeDao;
+import com.sun.identity.admin.Token;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.opensso.SubjectUtils;
-import com.sun.identity.security.AdminTokenAction;
 import java.io.Serializable;
-import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -157,18 +153,14 @@ public class ViewApplication implements Serializable {
         this.actions = actions;
     }
 
-    public Application toApplication(ViewApplicationTypeDao viewApplicationTypeDao) {
+    public Application toApplication() {
         //
         // this is really just modifies the applications.
         //
+        Subject adminSubject = new Token().getAdminSubject();
 
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance()); //TODO
-        Subject adminSubject = SubjectUtils.createSubject(adminToken);
-
-        // TODO: realm
-        Application app = ApplicationManager.getApplication(adminSubject,
-            "/", name);
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        Application app = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
 
         // resources
         Set<String> resourceStrings = new HashSet<String>();
@@ -192,7 +184,10 @@ public class ViewApplication implements Serializable {
         }
 
         // conditions
-        //TODO
+        // TODO
+
+        // subjects
+        // TODO
 
         return app;
     }
