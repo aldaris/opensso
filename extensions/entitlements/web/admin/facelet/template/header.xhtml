@@ -8,6 +8,11 @@
     <div id="java-logo"></div>
     <div id="connection-status">
         <ice:outputConnectionStatus
+            inactiveLabel="#{resources['header.statusInactive']}"
+            activeLabel="#{resources['header.statusActive']}"
+            cautionLabel="#{resources['header.statusCaution']}"
+            disconnectedLabel="#{resources['header.statusDisconnect']}"
+            styleClass="connection-status"
             displayHourglassWhenActive="true"
             showPopupOnDisconnect="true"/>
     </div>

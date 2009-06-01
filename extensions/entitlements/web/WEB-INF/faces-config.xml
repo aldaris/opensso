@@ -14,9 +14,14 @@
         </locale-config>
         <message-bundle>com.sun.identity.admin.Messages</message-bundle>
     </application>
+
     <converter>
         <converter-id>urlResourceConverter</converter-id>
         <converter-class>com.sun.identity.admin.model.UrlResourceConverter</converter-class>
+    </converter>
+    <converter>
+        <converter-id>realmBeanConverter</converter-id>
+        <converter-class>com.sun.identity.admin.model.RealmBeanConverter</converter-class>
     </converter>
 
     <managed-bean>
@@ -35,6 +40,32 @@
         <managed-bean-name>timeZoneBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.TimeZoneBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>realmDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.RealmDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>realmsBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.RealmsBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>realmDao</property-name>
+            <value>#{realmDao}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>realmsHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.RealmsHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>realmsBean</property-name>
+            <value>#{realmsBean}</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>

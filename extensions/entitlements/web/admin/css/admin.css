@@ -292,7 +292,6 @@ span.button img.left {
 
 #panel {
     margin: 8px;
-    padding: 8px;
 }
 
 #panel-title {
@@ -609,6 +608,20 @@ span.button img.left {
     float: right;
     position: relative;
     top: 40px;
+    width: 120px;
+}
+
+.connection-statusCaution,
+.connection-statusDisconnect,
+.connection-statusActv,
+.connection-statusInactv {
+    padding-left: 30px;
+    font-weight: bold;
+    font-size: larger;
+    color: #606060;
+    width: 80px;
+    background-position: left top;
+    margin-left: 0;
 }
 
 .policy-create-conditions {
@@ -1084,6 +1097,18 @@ span.button img.left {
 .action-radios * > input {
     margin-right: 5px;
     vertical-align: middle;
+}
+
+#realm-select {
+}
+
+#realm-select table {
+    float: right;
+}
+
+#realm-select table tr td select {
+    padding: 0;
+    margin: 0;
 }
 
 /*
