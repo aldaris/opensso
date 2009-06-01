@@ -28,7 +28,7 @@ public class RealmsHandler implements Serializable {
 
     public void handleReset() {
         PolicyManageBean pmb = PolicyManageBean.getInstance();
-        pmb.reset();;
+        pmb.reset();
         PolicyCreateWizardBean pcwb = PolicyCreateWizardBean.getInstance();
         pcwb.reset();
         PolicyEditWizardBean pewb = PolicyEditWizardBean.getInstance();

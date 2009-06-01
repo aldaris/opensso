@@ -249,6 +249,7 @@ span.button img.left {
 
 .command-link:hover span {
     color: #0066FF;
+    text-decoration: underline;
 }
 
 #page {
