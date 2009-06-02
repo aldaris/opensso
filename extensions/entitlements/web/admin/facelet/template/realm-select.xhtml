@@ -3,17 +3,18 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ice="http://www.icesoft.com/icefaces/component">
-    <ice:panelGrid
-        columns="2">
-        <ice:outputLabel
-            value="Realm:"/>
-        <ice:selectOneMenu
-            partialSubmit="true"
-            converter="realmBeanConverter"
-            valueChangeListener="#{realmsHandler.realmChanged}"
-            value="#{realmsBean.realmBean}">
-            <f:selectItems
-                value="#{realmsBean.realmBeanItems}"/>
-        </ice:selectOneMenu>
-    </ice:panelGrid>
+
+    <ui:include src="realm-select-popup.xhtml"/>
+    
+    <ice:panelGroup
+        styleClass="realm-select">
+        <ice:commandLink
+            styleClass="command-link"
+            actionListener="#{realmsHandler.realmSelectListener}">
+            <ice:outputLabel
+                value="Realm:"/>
+            <ice:outputText
+                value="#{realmsBean.realmBean.title}"/>
+        </ice:commandLink>
+    </ice:panelGroup>
 </span>

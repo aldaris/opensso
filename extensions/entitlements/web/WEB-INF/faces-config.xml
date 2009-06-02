@@ -70,6 +70,10 @@
             <property-name>queuedActionBean</property-name>
             <value>#{queuedActionBean}</value>
         </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>

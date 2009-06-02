@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+
+    <o:popup
+        width="300"
+        type="question"
+        handler="#{booleanActionsHandler}"
+        modal="true"
+        title="Select Realm"
+        visible="#{realmsBean.realmSelectPopupVisible}"
+        closeListenerMethod="realmSelectPopupCancelListener">
+        <ui:define name="body">
+            <ice:panelGroup
+                styleClass="realm-select-popup">
+                <ice:panelGroup
+                    style="text-align: left; padding-bottom: 10px">
+                    <ice:outputFormat
+                        escape="false"
+                        value="#{resources['realm-select-popup.info']}"/>
+                </ice:panelGroup>
+                <ice:panelGroup
+                    styleClass="realm-select-popup-search">
+                    <ice:panelGrid
+                        columns="2">
+                        <ice:graphicImage
+                            value="../image/search.png"/>
+                        <ice:inputText
+                            onkeyup="submitNow(this)"
+                            value="#{realmsBean.realmSelectPopupFilter}"/>
+                    </ice:panelGrid>
+                </ice:panelGroup>
+                <ice:panelGrid
+                    columns="2"
+                    styleClass="realm-select-popup-realm-table">
+                    <ice:outputLabel
+                        value="Realm"/>
+                    <ice:inputText
+                        style="width: 100%"
+                        readonly="true"
+                        value="#{realmsBean.realmSelectPopupRealmBean == null ? '' : realmsBean.realmSelectPopupRealmBean.title}"/>
+                    <ice:panelGroup/>
+                    <ice:selectOneListbox
+                        styleClass="realm-select-popup-select"
+                        size="10"
+                        value="#{realmsBean.realmSelectPopupRealmBean}"
+                        converter="realmBeanConverter">
+                        <f:selectItems
+                            value="#{realmsBean.realmBeanItems}"/>
+                    </ice:selectOneListbox>
+                </ice:panelGrid>
+                <ice:panelGrid
+                    styleClass="button-group"
+                    columns="2">
+                    <o:button
+                        type="cancel"
+                        handler="#{realmsHandler}"
+                        listenerMethod="realmSelectPopupCancelListener"/>
+                    <o:button
+                        type="ok"
+                        handler="#{realmsHandler}"
+                        listenerMethod="realmSelectPopupOkListener">
+                        <ui:define name="attributes">
+                        </ui:define>
+                    </o:button>
+                </ice:panelGrid>
+            </ice:panelGroup>
+        </ui:define>
+    </o:popup>
+</span>

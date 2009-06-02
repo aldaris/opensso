@@ -1100,16 +1100,30 @@ span.button img.left {
     vertical-align: middle;
 }
 
-#realm-select {
-}
-
-#realm-select table {
+.realm-select {
     float: right;
+    padding-right: 10px;
 }
 
-#realm-select table tr td select {
-    padding: 0;
-    margin: 0;
+.realm-select-popup div {
+    text-align: left;
+    width: 100%;
+}
+
+.realm-select-popup-select {
+    width: 100%;
+    overflow: auto;
+}
+
+.realm-select-popup-search {
+    padding-bottom: 20px;
+}
+
+.realm-select-popup-realm-tableCol1 {
+}
+
+.realm-select-popup-realm-tableCol2 {
+    width: 100%;
 }
 
 /*
