@@ -14,7 +14,7 @@
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="URL Resources"/>
+                value="#{resources['resources-url.sectionTitle']}"/>
         </ui:define>
         <ui:define name="section-links">
             <ice:panelGrid
@@ -28,7 +28,7 @@
                     <ice:graphicImage
                         value="../image/add.png"/>
                     <ice:outputText
-                        value="Add"/>
+                        value="#{resources['resources-url.add']}"/>
                 </ice:commandLink>
                 <ice:panelGroup>
                     <ice:graphicImage
@@ -79,7 +79,7 @@
                                         rendered="#{urlResource.exceptable &amp;&amp; o:contains(policyResourcesBean.privilegeBean.viewEntitlement.resources, urlResource)}">
                                         <o:clink
                                             type="add"
-                                            linkLabel="Add Exception"
+                                            linkLabel="#{resources['resources-url.addException']}"
                                             handler="#{urlResourcesHandler}"
                                             listenerMethod="addExceptionListener">
                                             <ui:define name="attributes">
@@ -101,7 +101,7 @@
         visible="#{o:size(policyResourcesBean.privilegeBean.viewEntitlement.exceptions) > 0}">
         <ui:define name="section-title">
             <ice:outputText
-                value="Exceptions"/>
+                value="#{resources['resources-url.exceptionSectionTitle']}"/>
         </ui:define>
         <ui:define name="section-body">
             <ice:panelGroup

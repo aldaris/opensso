@@ -13,7 +13,7 @@
             <ice:panelGroup>
                 <ice:outputLabel
                     for="status-server"
-                    value="Server: "/>
+                    value="#{resources['status.server']}"/>
                 <ice:outputText
                     id="status-server"
                     value="#{statusBean.serverName}"/>
@@ -21,7 +21,7 @@
             <ice:panelGroup>
                 <ice:outputLabel
                     for="status-version"
-                    value="Version: "/>
+                    value="#{resources['status.version']}"/>
                 <ice:outputText
                     id="status-version"
                     value="#{statusBean.version}"/>
@@ -29,7 +29,7 @@
             <ice:panelGroup>
                 <ice:outputLabel
                     for="status-user"
-                    value="User: "/>
+                    value="#{resources['status.user']}"/>
                 <ice:outputText
                     id="status-user"
                     value="#{statusBean.shortUserName}"/>
@@ -41,12 +41,12 @@
             <ice:outputLink
                 value="#{statusBean.helpLink}">
                 <ice:outputText
-                    value="Help"/>
+                    value="#{resources['status.help']}"/>
             </ice:outputLink>
             <ice:outputLink
                 value="#{statusBean.logoutLink}">
                 <ice:outputText
-                    value="Logout"/>
+                    value="#{resources['status.logout']}"/>
             </ice:outputLink>
         </ice:panelGrid>
     </ice:panelGrid>
