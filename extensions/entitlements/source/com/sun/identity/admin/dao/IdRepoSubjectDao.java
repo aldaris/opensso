@@ -2,8 +2,8 @@ package com.sun.identity.admin.dao;
 
 import com.iplanet.sso.SSOException;
 import com.sun.identity.admin.Token;
-import com.sun.identity.admin.model.IdRepoUserViewSubject;
 import com.sun.identity.admin.model.IdRepoViewSubject;
+import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.ViewSubject;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -70,7 +70,7 @@ public abstract class IdRepoSubjectDao extends SubjectDao {
 
     protected IdSearchResults getIdSearchResults(IdSearchControl idsc, String pattern) {
         IdType idType = getIdType();
-        String realmName = "/";
+        String realmName = RealmsBean.getInstance().getRealmBean().getName();
 
         try {
             AMIdentityRepository repo = new AMIdentityRepository(new Token().getSSOToken(), realmName);

@@ -2,6 +2,7 @@ package com.sun.identity.admin.dao;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.Token;
+import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.UserViewAttribute;
 import com.sun.identity.admin.model.ViewAttribute;
 import com.sun.identity.entitlement.EntitlementException;
@@ -17,7 +18,8 @@ public class UserAttributeDao implements Serializable {
     private SubjectAttributesManager getSubjectAttributesManager() {
         SSOToken t = new Token().getSSOToken();
         Subject s = SubjectUtils.createSubject(t);
-        SubjectAttributesManager sam = SubjectAttributesManager.getInstance(s);
+        String realmName = RealmsBean.getInstance().getRealmBean().getName();
+        SubjectAttributesManager sam = SubjectAttributesManager.getInstance(s, realmName);
 
         return sam;
     }

@@ -2,6 +2,7 @@ package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.DeepCloneableArrayList;
+import com.sun.identity.admin.Resources;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -242,5 +243,46 @@ public class PolicyWizardBean
 
     public PolicySummary getUserAttributesPolicySummary() {
         return userAttributesPolicySummary;
+    }
+
+    private String getAdvancedTabPanelLabel(PolicyWizardAdvancedTabIndex i) {
+        Resources r = new Resources();
+        String val;
+
+        switch (i) {
+            case ACTIONS:
+                val = actionsPolicySummary.getValue();
+                break;
+            case CONDITIONS:
+                val = conditionsPolicySummary.getValue();
+                break;
+            case RESOURCE_ATTRIBUTES:
+                val = staticAttributesPolicySummary.getValue();
+                break;
+            case USER_ATTRIBUTES:
+                val = userAttributesPolicySummary.getValue();
+                break;
+            default:
+                throw new AssertionError("unhandled tab index: " + i);
+        }
+
+        String label = r.getString(this, i + ".tabPanelLabel", val);
+        return label;
+    }
+
+    public String getActionsTabPanelLabel() {
+        return getAdvancedTabPanelLabel(PolicyWizardAdvancedTabIndex.ACTIONS);
+    }
+
+    public String getConditionsTabPanelLabel() {
+        return getAdvancedTabPanelLabel(PolicyWizardAdvancedTabIndex.CONDITIONS);
+    }
+
+    public String getResourceAttributesTabPanelLabel() {
+        return getAdvancedTabPanelLabel(PolicyWizardAdvancedTabIndex.RESOURCE_ATTRIBUTES);
+    }
+
+    public String getUserAttributesTabPanelLabel() {
+        return getAdvancedTabPanelLabel(PolicyWizardAdvancedTabIndex.USER_ATTRIBUTES);
     }
 }

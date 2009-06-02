@@ -9,7 +9,8 @@
 
     <ice:panelTabSet
         selectedIndex="#{policyWizardBean.advancedTabsetIndex}">
-        <ice:panelTab label="Actions (#{o:size(policyWizardBean.privilegeBean.viewEntitlement.booleanActionsBean.actions)})">
+        <ice:panelTab 
+            label="#{policyWizardBean.actionsTabPanelLabel}">
             <ui:include src="policy-actions.xhtml">
                 <ui:param
                     name="booleanActionsBean"
@@ -19,7 +20,8 @@
                     value="#{policyWizardBean.privilegeBean.viewEntitlement.booleanActionsHandler}"/>
             </ui:include>
         </ice:panelTab>
-        <ice:panelTab label="Conditions (#{policyWizardBean.privilegeBean.viewCondition == null ? 0 : policyWizardBean.privilegeBean.viewCondition.sizeLeafs})">
+        <ice:panelTab
+            label="#{policyWizardBean.conditionsTabPanelLabel}">
             <ui:include src="policy-conditions.xhtml">
                 <ui:param
                     name="policyConditionsBean"
@@ -29,14 +31,16 @@
                     value="#{policyWizardHandler}"/>
             </ui:include>
         </ice:panelTab>
-        <ice:panelTab label="User Attributes">
+        <ice:panelTab
+            label="#{policyWizardBean.userAttributesTabPanelLabel}">
             <ui:include src="policy-attributes-user.xhtml">
                 <ui:param
                     name="attributesBeans"
                     value="#{policyWizardBean.privilegeBean.attributesBeans}"/>
             </ui:include>
         </ice:panelTab>
-        <ice:panelTab label="Resource Attributes">
+        <ice:panelTab
+            label="#{policyWizardBean.resourceAttributesTabPanelLabel}">
             <ui:include src="policy-attributes-static.xhtml">
                 <ui:param
                     name="attributesBeans"

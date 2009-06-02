@@ -21,11 +21,13 @@ public class ViewApplicationTypeDao implements Serializable {
         Token token = new Token();
         Subject adminSubject = token.getAdminSubject();
 
-        List<ViewApplicationType> viewApplicationTypes = new ArrayList<ViewApplicationType>();
+        List<ViewApplicationType> viewApplicationTypes =
+                new ArrayList<ViewApplicationType>();
         for (String entitlementApplicationType: entitlementApplicationTypeToViewApplicationTypeMap.keySet()) {
-            ViewApplicationType vat = entitlementApplicationTypeToViewApplicationTypeMap.get(entitlementApplicationType);
-            ApplicationType at = ApplicationTypeManager.getAppplicationType(
-                adminSubject, entitlementApplicationType);
+            ViewApplicationType vat =
+                    entitlementApplicationTypeToViewApplicationTypeMap.get(entitlementApplicationType);
+            ApplicationType at =
+                    ApplicationTypeManager.getAppplicationType(adminSubject, entitlementApplicationType);
             List<Action> actions = new ArrayList<Action>();
             for (String actionName: at.getActions().keySet()) {
                 Boolean value = at.getActions().get(actionName);
