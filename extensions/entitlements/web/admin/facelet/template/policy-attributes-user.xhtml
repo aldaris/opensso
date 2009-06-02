@@ -14,11 +14,11 @@
             rendered="#{attributesBean.attributeType.toString == 'USER'}">
             <ui:define name="section-title">
                 <ice:outputText
-                    value="User Attributes"/>
+                    value="#{resources['policy-attributes-user.sectionTitle']}"/>
             </ui:define>
             <ui:define name="section-details">
                 <ice:outputText
-                value="#{resources['policy-attributes-user.sectionDetails']}"/></ui:define>
+                    value="#{resources['policy-attributes-user.sectionDetails']}"/></ui:define>
             <ui:define name="section-body">
                 <ice:panelGrid
                     styleClass="user-attributes"
@@ -34,7 +34,7 @@
                             var="attribute">
                             <ice:column>
                                 <f:facet name="header">
-                                    <ice:outputText value="Name"/>
+                                    <ice:outputText value="#{resources['policy-attributes-user.name']}"/>
                                 </f:facet>
                                 <ice:panelGroup>
                                     <ice:outputText
@@ -43,7 +43,7 @@
                             </ice:column>
                             <ice:column>
                                 <f:facet name="header">
-                                    <ice:outputText value="Remove"/>
+                                    <ice:outputText value="#{resources['policy-attributes-user.remove']}"/>
                                 </f:facet>
                                 <ice:panelGroup>
                                     <ice:commandLink
@@ -60,7 +60,7 @@
                         <ice:panelGroup
                             styleClass="drop-target">
                             <ice:outputText
-                                value="Drag user attribute keys here ..."/>
+                                value="#{resources['policy-attributes-user.drop']}"/>
                         </ice:panelGroup>
                     </ice:panelGroup>
                     <ice:panelGroup/>
@@ -74,7 +74,8 @@
                             removeable="false">
                             <ui:define name="panel-title">
                                 <ice:panelGroup>
-                                    <ice:outputText value="User Attributes"/>
+                                    <ice:outputText 
+                                        value="#{resources['policy-attributes-user.available']}"/>
                                 </ice:panelGroup>
                             </ui:define>
                             <ui:define name="panel-body">
@@ -89,7 +90,7 @@
                                 <ice:panelGroup
                                     visible="#{o:size(attributesBean.availableViewAttributes) == 0}">
                                     <ice:outputText
-                                        value="No user attributes. Try widening your search."/>
+                                        value="#{resources['policy-attributes-user.noAvailable']}"/>
                                 </ice:panelGroup>
                                 <ice:panelGroup
                                     scrollHeight="200px">
