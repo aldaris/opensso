@@ -10,7 +10,8 @@
 
     <o:section>
         <ui:define name="section-title">
-            <ice:outputText value="Policy Name, Description"/>
+            <ice:outputText
+                value="#{resources['policy-name.sectionTitleName']}"/>
         </ui:define>
         <ui:define name="section-body">
             <ice:panelGrid
@@ -19,7 +20,7 @@
                 <ice:panelGroup>
                     <ice:outputLabel
                         for="policyNameInput"
-                        value="Policy Name"/>
+                        value="#{resources['policy-name.name']}"/>
                 </ice:panelGroup>
                 <ice:panelGroup>
                     <ice:inputText
@@ -32,11 +33,11 @@
                 <ice:panelGroup>
                     <ice:outputLabel
                         for="policyDescriptionInput"
-                        value="Policy Description"/>
+                        value="#{resources['policy-name.description']}"/>
                     <ice:panelGroup>
                         <ice:outputLabel
                             for="policyDescriptionInput"
-                            value="(optional)"/>
+                            value="#{resources['policy-name.optional']}"/>
                     </ice:panelGroup>
                 </ice:panelGroup>
                 <ice:inputTextarea
@@ -50,7 +51,7 @@
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="Application"/>
+                value="#{resources['policy-name.sectionTitleApplication']}"/>
         </ui:define>
         <ui:define name="section-body">
             <ice:panelGrid
@@ -59,7 +60,7 @@
                 <ice:panelGroup>
                     <ice:outputLabel
                         for="application-select"
-                        value="Application"/>
+                        value="#{resources['policy-name.application']}"/>
                 </ice:panelGroup>
                 <ice:panelGroup>
                     <ice:selectOneMenu
