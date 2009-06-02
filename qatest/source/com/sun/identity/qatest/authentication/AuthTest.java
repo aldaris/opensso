@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.20 2009-06-02 17:08:18 cmwesley Exp $
+ * $Id: AuthTest.java,v 1.21 2009-06-02 17:41:42 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -482,7 +482,7 @@ public class AuthTest extends AuthenticationCommon {
                 }      
             }
         } else {
-            log(Level.FINEST, "setup", "Skipping cleanup for " + testModule + 
+            log(Level.FINEST, "cleanup", "Skipping cleanup for " + testModule +
                      " auth module test on a Windows based server");            
         }
     }
