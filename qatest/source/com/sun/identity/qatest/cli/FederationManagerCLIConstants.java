@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLIConstants.java,v 1.13 2009-02-05 01:26:25 srivenigan Exp $
+ * $Id: FederationManagerCLIConstants.java,v 1.14 2009-06-02 21:34:14 vimal_67 Exp $
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.cli;
@@ -359,4 +359,305 @@ public interface FederationManagerCLIConstants {
      * Short prefix argument/option
      */
     String SHORT_PREFIX_ARGUMENT = "-p";
+
+    /**
+     * Entity ID argument/option
+     */
+    String ENTITYID_ARGUMENT = "--entityid";
+
+    /**
+     * Short Entity ID argument/option
+     */
+    String SHORT_ENTITYID_ARGUMENT = "-y";
+    
+    /**
+     * Standard metadata argument/option
+     */
+    String METADATAFILE_ARGUMENT = "--meta-data-file";
+
+    /**
+     * Short Standard metadata argument/option
+     */
+    String SHORT_METADATAFILE_ARGUMENT = "-m";
+
+    /**
+     * Extended metadata argument/option
+     */
+    String EXTENDEDDATAFILE_ARGUMENT = "--extended-data-file";
+
+    /**
+     * Short Extended metadata argument/option
+     */
+    String SHORT_EXTENDEDDATAFILE_ARGUMENT = "-x";
+
+    /**
+     * Service Provider metaalias argument/option
+     */
+    String SP_METAALIAS_ARGUMENT = "--serviceprovider";
+
+    /**
+     * Short Service Provider metaalias argument/option
+     */
+    String SHORT_SP_METAALIAS_ARGUMENT = "-s";
+                 
+    /**
+     * Identity Provider metaalias argument/option
+     */
+    String IDP_METAALIAS_ARGUMENT = "--identityprovider";
+
+    /**
+     * Short Identity Provider metaalias argument/option
+     */
+    String SHORT_IDP_METAALIAS_ARGUMENT = "-i";
+
+    /**
+     * Attribute Query Provider metaalias argument/option
+     */
+    String ATTRQP_METAALIAS_ARGUMENT = "--attrqueryprovider";
+
+    /**
+     * Short Attribute Query Provider metaalias argument/option
+     */
+    String SHORT_ATTRQP_METAALIAS_ARGUMENT = "-S";
+
+    /**
+     * Attribute Authority metaalias argument/option
+     */
+    String ATTRAUTH_METAALIAS_ARGUMENT = "--attrauthority";
+
+    /**
+     * Short Attribute Authority metaalias argument/option
+     */
+    String SHORT_ATTRAUTH_METAALIAS_ARGUMENT = "-I";
+
+    /**
+     * AuthN Authority metaalias argument/option
+     */
+    String AUTHNAUTH_METAALIAS_ARGUMENT = "--authnauthority";
+
+    /**
+     * Short AuthN Authority metaalias argument/option
+     */
+    String SHORT_AUTHNAUTH_METAALIAS_ARGUMENT = "-C";
+
+    /**
+     * Policy Enforcement Point metaalias argument/option
+     */
+    String XACMLPEP_METAALIAS_ARGUMENT = "--xacmlpep";
+
+    /**
+     * Short Policy Enforcement Point metaalias argument/option
+     */
+    String SHORT_XACMLPEP_METAALIAS_ARGUMENT = "-e";
+
+    /**
+     * Policy Decision Point metaalias argument/option
+     */
+    String XACMLPDP_METAALIAS_ARGUMENT = "--xacmlpdp";
+
+    /**
+     * Short Policy Decision Point metaalias argument/option
+     */
+    String SHORT_XACMLPDP_METAALIAS_ARGUMENT = "-p";
+
+    /**
+     * Hosted Affiliation metaalias argument/option
+     */
+    String AFFILIATION_METAALIAS_ARGUMENT = "--affiliation";
+
+    /**
+     * Short Hosted Affiliation metaalias argument/option
+     */
+    String SHORT_AFFILIATION_METAALIAS_ARGUMENT = "-F";
+
+    /**
+     * Affiliation Owner ID argument/option
+     */
+    String AFFILIATION_OWNERID_ARGUMENT = "--affiownerid";
+
+    /**
+     * Short Affiliation Owner ID argument/option
+     */
+    String SHORT_AFFILIATION_OWNERID_ARGUMENT = "-N";
+
+    /**
+     * Affiliation members argument/option
+     */
+    String AFFILIATION_MEMBERS_ARGUMENT = "--affimembers";
+
+    /**
+     * Short Affiliation members argument/option
+     */
+    String SHORT_AFFILIATION_MEMBERS_ARGUMENT = "-M";
+
+    /**
+     * Service provider signing certificate alias argument/option
+     */
+    String SP_SCERTALIAS_ARGUMENT = "--spscertalias";
+
+    /**
+     * Short Service provider signing certificate alias argument/option
+     */
+    String SHORT_SP_SCERTALIAS_ARGUMENT = "-a";
+
+    /**
+     * Identity provider signing certificate alias argument/option
+     */
+    String IDP_SCERTALIAS_ARGUMENT = "--idpscertalias";
+
+    /**
+     * Short Identity provider signing certificate alias argument/option
+     */
+    String SHORT_IDP_SCERTALIAS_ARGUMENT = "-b";
+
+    /**
+     * Attribute query provider signing certificate alias argument/option
+     */
+    String ATTRQSCERTALIAS_ARGUMENT = "--attrqscertalias";
+
+    /**
+     * Short Attribute query provider signing certificate alias argument/option
+     */
+    String SHORT_ATTRQSCERTALIAS_ARGUMENT = "-A";
+
+    /**
+     * Attribute authority signing certificate alias argument/option
+     */
+    String ATTRASCERTALIAS_ARGUMENT = "--attrascertalias";
+
+    /**
+     * Short Attribute authority signing certificate alias argument/option
+     */
+    String SHORT_ATTRASCERTALIAS_ARGUMENT = "-B";
+
+    /**
+     * Authentication authority signing certificate alias argument/option
+     */
+    String AUTHNASCERTALIAS_ARGUMENT = "--authnascertalias";
+
+    /**
+     * Short Authentication authority signing certificate alias argument/option
+     */
+    String SHORT_AUTHNASCERTALIAS_ARGUMENT = "-D";
+
+    /**
+     * Affiliation signing certificate alias argument/option
+     */
+    String AFFISCERTALIAS_ARGUMENT = "--affiscertalias";
+
+    /**
+     * Short Affiliation signing certificate alias argument/option
+     */
+    String SHORT_AFFISCERTALIAS_ARGUMENT = "-J";
+
+    /**
+     * Policy decision point signing certificate alias argument/option
+     */
+    String XACMLPDPSCERTALIAS_ARGUMENT = "--xacmlpdpscertalias";
+
+    /**
+     * Short Policy decision point signing certificate alias argument/option
+     */
+    String SHORT_XACMLPDPSCERTALIAS_ARGUMENT = "-t";
+
+    /**
+     * Service provider encryption certificate alias argument/option
+     */
+    String SP_ECERTALIAS_ARGUMENT = "--specertalias";
+
+    /**
+     * Short Service provider encryption certificate alias argument/option
+     */
+    String SHORT_SP_ECERTALIAS_ARGUMENT = "-r";
+
+    /**
+     * Identity provider encryption certificate alias argument/option
+     */
+    String IDP_ECERTALIAS_ARGUMENT = "--idpecertalias";
+                                       
+    /**
+     * Short Identity provider encryption certificate alias argument/option
+     */
+    String SHORT_IDP_ECERTALIAS_ARGUMENT = "-g";
+
+    /**
+     * Attribute query provider encryption certificate alias argument/option
+     */
+    String ATTRQECERTALIAS_ARGUMENT = "--attrqecertalias";
+
+    /**
+     * Short Attribute query provider encryption certificate alias argument/option
+     */
+    String SHORT_ATTRQECERTALIAS_ARGUMENT = "-R";
+
+    /**
+     * Attribute authority encryption certificate alias argument/option
+     */
+    String ATTRAECERTALIAS_ARGUMENT = "--attraecertalias";
+
+    /**
+     * Short Attribute authority encryption certificate alias argument/option
+     */
+    String SHORT_ATTRAECERTALIAS_ARGUMENT = "-G";
+
+    /**
+     * Authentication authority encryption certificate alias argument/option
+     */
+    String AUTHNAECERTALIAS_ARGUMENT = "--authnaecertalias";
+
+    /**
+     * Short Authentication authority encryption certificate alias argument/option
+     */
+    String SHORT_AUTHNAECERTALIAS_ARGUMENT = "-E";
+
+    /**
+     * Affiliation encryption certificate alias argument/option
+     */
+    String AFFIECERTALIAS_ARGUMENT = "--affiecertalias";
+                                        
+    /**
+     * Short Affiliation encryption certificate alias argument/option
+     */
+    String SHORT_AFFIECERTALIAS_ARGUMENT = "-K";
+
+    /**
+     * Policy decision point encryption certificate alias argument/option
+     */
+    String XACMLPDPECERTALIAS_ARGUMENT = "--xacmlpdpecertalias";
+
+    /**
+     * Short Policy decision point encryption certificate alias argument/option
+     */
+    String SHORT_XACMLPDPECERTALIAS_ARGUMENT = "-j";
+
+    /**
+     * Policy enforcement point encryption certificate alias argument/option
+     */
+    String XACMLPEPECERTALIAS_ARGUMENT = "--xacmlpepecertalias";
+
+    /**
+     * Short Policy enforcement point encryption certificate alias argument/option
+     */
+    String SHORT_XACMLPEPECERTALIAS_ARGUMENT = "-z";
+
+    /**
+     * Specify metadata specification, either idff or saml2, defaults to saml2 argument/option
+     */
+    String SPEC_ARGUMENT = "--spec";
+
+    /**
+     * Short Specify metadata specification, either idff or saml2, defaults to saml2 argument/option
+     */
+    String SHORT_SPEC_ARGUMENT = "-c";
+
+    /**
+     * Specify to set this flag to sign the metadata argument/option
+     */
+    String SIGN_ARGUMENT = "--sign";
+
+    /**
+     * Short Specify to set this flag to sign the metadata argument/option
+     */
+    String SHORT_SIGN_ARGUMENT = "-g";
+   
 }
