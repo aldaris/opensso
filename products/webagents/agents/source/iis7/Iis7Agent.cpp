@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Iis7Agent.cpp,v 1.3 2009-03-06 01:55:08 robertis Exp $
+ * $Id: Iis7Agent.cpp,v 1.4 2009-06-02 22:59:00 robertis Exp $
  *
  *
  */
@@ -475,6 +475,12 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
         request_hdrs = NULL;
     }
 
+    if(dpro_cookie){
+        free(dpro_cookie);
+        dpro_cookie = NULL;
+    }
+
+    OphResourcesFree(pOphResources);
     return retStatus;
 }
 
@@ -894,6 +900,11 @@ am_status_t get_request_url(IHttpContext* pHttpContext,
         requestURL = pOphResources->url;
         if (!requestURL.empty()) {
            am_web_log_debug("%s: Constructed request url = %s", thisfunc, requestURL.c_str());
+        }
+
+        if(pOphResources->url){
+            free(pOphResources->url);
+            pOphResources->url = NULL;
         }
     }
 

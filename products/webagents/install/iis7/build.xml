@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2009-02-13 23:50:41 robertis Exp $
+   $Id: build.xml,v 1.2 2009-06-02 23:00:21 robertis Exp $
 
 -->
 
@@ -98,10 +98,10 @@
         <delete file="${container.web_agent.bin.dir}/agentadmin.bat"/>
 
         <!-- Generate IIS7 agent install archive -->
-        <zip destfile="${webagents.dist.dir}/iis_v7_${build.os}_agent_${agentversion}.zip"
+        <zip destfile="${webagents.dist.dir}/iis_v7_${build.os}${winnt.ext}_agent_${agentversion}.zip"
              basedir="${webagents.container.scratch.dir}"
         /> 
-        <checksum file="${webagents.dist.dir}/iis_v7_${build.os}_agent_${agentversion}.zip"
+        <checksum file="${webagents.dist.dir}/iis_v7_${build.os}${winnt.ext}_agent_${agentversion}.zip"
             algorithm="SHA" fileext=".sha" />
 
     </target>

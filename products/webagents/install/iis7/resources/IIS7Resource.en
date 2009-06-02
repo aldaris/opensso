@@ -17,7 +17,7 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS7Resource.en,v 1.1 2009-02-13 23:51:48 robertis Exp $
+' $Id: IIS7Resource.en,v 1.2 2009-06-02 23:01:29 robertis Exp $
 '
 ' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 '
@@ -75,3 +75,4 @@
 
 143 = Removing the Agent Bootstrap file
 144 = Unable to find Agent Bootstrap file
+145 = Please enter the Agent Profile name :

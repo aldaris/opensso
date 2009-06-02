@@ -17,7 +17,7 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS7CreateConfig.vbs,v 1.2 2009-02-16 23:13:05 robertis Exp $
+' $Id: IIS7CreateConfig.vbs,v 1.3 2009-06-02 23:02:04 robertis Exp $
 '
 ' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 '
@@ -283,7 +283,9 @@ Function GetAccessManagerDetails(oFSO, dict, WshShell)
      setPrimaryServerConsoleURI = primaryServerConsoleURI
   end if
 
-  setUserName = "UrlAccessAgent"
+  WScript.Echo ""
+  WScript.Echo dict("145")
+  setUserName = WScript.StdIn.ReadLine
 
   WScript.Echo ""
 
@@ -316,7 +318,7 @@ Function GetAccessManagerDetails(oFSO, dict, WshShell)
 
   '// Encrypt the password
   encryptFile = configInstallDir + "\encryptPasswd"
-  setPasswdKey = "x5uThMxwF"
+  setPasswdKey = GetRandomString(10)
   WshShell.Run "cmd /c cd " + configInstallDir + "\bin" + "& cryptit.exe " + setUserPassword + " "+ setPasswdKey + " > " + encryptFile, 0, true
 
   Set encrypt = oFSO.OpenTextFile(encryptFile,ForReading,True)
@@ -385,3 +387,21 @@ Function WriteConfigFile(oFSO, configFile)
   Set oFSO = nothing
 
 End Function
+
+' Return a random string 
+Function GetRandomString(len) 
+  dim i, s, a, rndm, rndm1, tmp, tmp1
+  a=Array("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9")
+
+  const startChr ="a", range = 36 
+  Randomize 
+  s = "" 
+  for i = 0 to len-1   
+     rndm1 = Rnd()
+     rndm = rndm1 * range
+     rndm = rndm Mod 35
+     s = s + a(rndm)
+  next 
+  GetRandomString = s 
+end function  
+' 
