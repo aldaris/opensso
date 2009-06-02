@@ -10,9 +10,9 @@
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="Policy Conditions"/>
+                value="#{resources['policy-conditions.sectionTitle']}"/>
         </ui:define>
-        <ui:define name="section-link">
+        <ui:define name="section-links">
             <ice:panelGrid
                 columns="2">
                 <ice:commandLink
@@ -21,7 +21,7 @@
                     <ice:graphicImage
                         value="/admin/image/or.png"/>
                     <ice:outputText
-                        value="Any of"/>
+                        value="#{resources['policy-conditions.anyOf']}"/>
                 </ice:commandLink>
                 <ice:commandLink
                     actionListener="#{policyConditionsHandler.allOfConditionListener}"
@@ -29,7 +29,7 @@
                     <ice:graphicImage
                         value="/admin/image/and.png"/>
                     <ice:outputText
-                        value="All of"/>
+                        value="#{resources['policy-conditions.allOf']}"/>
                 </ice:commandLink>
             </ice:panelGrid>
         </ui:define>
@@ -49,7 +49,7 @@
                         dropMask="hover_start"
                         dropListener="#{policyConditionsHandler.conditionDropListener}">
                         <ice:outputText
-                            value="Drop condition or expression here ..."/>
+                            value="#{resources['policy-conditions.drop']}"/>
                     </ice:panelGroup>
                 </ice:panelGroup>
                 <ice:panelGroup/>
@@ -64,7 +64,8 @@
                         removeable="false">
                         <ui:define name="panel-title">
                             <ice:panelGroup>
-                                <ice:outputText value="Conditions"/>
+                                <ice:outputText 
+                                    value="#{resources['policy-conditions.conditionPanelTitle']}"/>
                             </ice:panelGroup>
                         </ui:define>
                         <ui:define name="panel-body">
@@ -104,7 +105,8 @@
                             removeable="false">
                             <ui:define name="panel-title">
                                 <ice:panelGroup>
-                                    <ice:outputText value="Expressions"/>
+                                    <ice:outputText 
+                                        value="#{resources['policy-conditions.expressionPanelTitle']}"/>
                                 </ice:panelGroup>
                             </ui:define>
                             <ui:define name="panel-body">

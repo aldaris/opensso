@@ -11,7 +11,9 @@
         rendered="#{policyFilter != null &amp;&amp; policyFilter.policyFilterType.name == 'description'}">
         <ui:include
             src="/admin/facelet/template/policy-filter-pattern.xhtml">
-            <ui:param name="policyFilter" value="#{policyFilter}"/>
+            <ui:param 
+                name="policyFilter"
+                value="#{policyFilter}"/>
         </ui:include>
     </ice:panelGroup>
 </span>

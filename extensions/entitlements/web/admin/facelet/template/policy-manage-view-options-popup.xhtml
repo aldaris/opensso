@@ -28,36 +28,88 @@
                     rendered="#{policyManageBean.viewOptionsPopupVisible}"
                     partialSubmit="false"
                     value="#{policyManageBean.viewOptionsPopupColumnsVisible}">
-                    <f:selectItem itemValue="description" itemLabel="Description"/>
-                    <f:selectItem itemValue="application" itemLabel="Application"/>
-                    <f:selectItem itemValue="author" itemLabel="Author"/>
-                    <f:selectItem itemValue="birth" itemLabel="Created"/>
-                    <f:selectItem itemValue="modifier" itemLabel="Modified By"/>
-                    <f:selectItem itemValue="modified" itemLabel="Last Modified"/>
-                    <f:selectItem itemValue="resources" itemLabel="Resources"/>
-                    <f:selectItem itemValue="exceptions" itemLabel="Exceptions"/>
-                    <f:selectItem itemValue="subject" itemLabel="Subjects"/>
-                    <f:selectItem itemValue="action" itemLabel="Actions"/>
-                    <f:selectItem itemValue="condition" itemLabel="Conditions"/>
-                    <f:selectItem itemValue="attributes-static" itemLabel="Resource Attributes"/>
-                    <f:selectItem itemValue="attributes-user" itemLabel="User Attributes"/>
+                    <f:selectItem
+                        itemValue="description"
+                        itemLabel="#{resources['policy-manage-view-options-popup.description']}"/>
+                    <f:selectItem 
+                        itemValue="application"
+                        itemLabel="#{resources['policy-manage-view-options-popup.application']}"/>
+                    <f:selectItem 
+                        itemValue="author"
+                        itemLabel="#{resources['policy-manage-view-options-popup.author']}"/>
+                    <f:selectItem 
+                        itemValue="birth"
+                        itemLabel="#{resources['policy-manage-view-options-popup.birth']}"/>
+                    <f:selectItem 
+                        itemValue="modifier"
+                        itemLabel="#{resources['policy-manage-view-options-popup.modifier']}"/>
+                    <f:selectItem 
+                        itemValue="modified"
+                        itemLabel="#{resources['policy-manage-view-options-popup.modified']}"/>
+                    <f:selectItem 
+                        itemValue="resources"
+                        itemLabel="#{resources['policy-manage-view-options-popup.resources']}"/>
+                    <f:selectItem 
+                        itemValue="exceptions"
+                        itemLabel="#{resources['policy-manage-view-options-popup.exceptions']}"/>
+                    <f:selectItem 
+                        itemValue="subject"
+                        itemLabel="#{resources['policy-manage-view-options-popup.subjects']}"/>
+                    <f:selectItem 
+                        itemValue="action"
+                        itemLabel="#{resources['policy-manage-view-options-popup.action']}"/>
+                    <f:selectItem 
+                        itemValue="condition"
+                        itemLabel="#{resources['policy-manage-view-options-popup.condition']}"/>
+                    <f:selectItem 
+                        itemValue="attributes-static"
+                        itemLabel="#{resources['policy-manage-view-options-popup.attributes-static']}"/>
+                    <f:selectItem 
+                        itemValue="attributes-user"
+                        itemLabel="#{resources['policy-manage-view-options-popup.attributes-user']}"/>
                 </ice:selectManyCheckbox>
                 <ice:panelGrid
                     columns="2"
                     styleClass="view-options-table">
-                    <ice:checkbox for="columns-visible" index="0"/>
-                    <ice:checkbox for="columns-visible" index="1"/>
-                    <ice:checkbox for="columns-visible" index="2"/>
-                    <ice:checkbox for="columns-visible" index="3"/>
-                    <ice:checkbox for="columns-visible" index="4"/>
-                    <ice:checkbox for="columns-visible" index="5"/>
-                    <ice:checkbox for="columns-visible" index="6"/>
-                    <ice:checkbox for="columns-visible" index="7"/>
-                    <ice:checkbox for="columns-visible" index="8"/>
-                    <ice:checkbox for="columns-visible" index="9"/>
-                    <ice:checkbox for="columns-visible" index="10"/>
-                    <ice:checkbox for="columns-visible" index="11"/>
-                    <ice:checkbox for="columns-visible" index="12"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="0"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="1"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="2"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="3"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="4"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="5"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="6"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="7"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="8"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="9"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="10"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="11"/>
+                    <ice:checkbox 
+                        for="columns-visible"
+                        index="12"/>
                 </ice:panelGrid>
             </ice:panelGroup>
             <ice:panelGroup>
