@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.11 2009-02-05 01:23:44 srivenigan Exp $
+ * $Id: CLIConstants.java,v 1.12 2009-06-02 21:32:15 vimal_67 Exp $
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.cli;
@@ -110,6 +110,18 @@ public interface CLIConstants {
      */
     public static final String ADD_CIRCLE_OF_TRUST_MEMBER_SUBCOMMAND = 
             "add-cot-member";
+
+    /**
+     * String for the "remove-cot-member" sub-command
+     */
+    public static final String REMOVE_CIRCLE_OF_TRUST_MEMBER_SUBCOMMAND =
+            "remove-cot-member";
+
+    /**
+     * String for the "list-cot-members" sub-command
+     */
+    public static final String LIST_CIRCLE_OF_TRUST_MEMBERS_SUBCOMMAND =
+            "list-cot-members";
     
     /**
      * String for the "add-plugin-interface" sub-command
@@ -169,6 +181,26 @@ public interface CLIConstants {
     public static final String CREATE_METADATA_TEMPLATE_SUBCOMMAND = 
             "create-metadata-templ";
     
+    /**
+     * String for the "import-entity" sub-command
+     */
+    public static final String IMPORT_ENTITY_SUBCOMMAND = "import-entity";
+
+    /**
+     * String for the "export-entity" sub-command
+     */
+    public static final String EXPORT_ENTITY_SUBCOMMAND = "export-entity";
+
+    /**
+     * String for the "list-entities" sub-command
+     */
+    public static final String LIST_ENTITIES_SUBCOMMAND = "list-entities";
+
+    /**
+     * String for the "delete-entity" sub-command
+     */
+    public static final String DELETE_ENTITY_SUBCOMMAND = "delete-entity";
+
     /**
      * String for the "create-policies" sub-command
      */
