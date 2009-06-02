@@ -31,3 +31,6 @@
     font-weight: bold;
 }
 
+.iceDatTbl td span.iceOutTxt {
+    display: inline;
+}
