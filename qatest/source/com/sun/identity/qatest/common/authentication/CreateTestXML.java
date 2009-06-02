@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateTestXML.java,v 1.7 2008-02-28 04:03:42 inthanga Exp $ 
+ * $Id: CreateTestXML.java,v 1.8 2009-06-02 17:10:59 cmwesley Exp $ 
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common.authentication;
 
+import com.sun.identity.qatest.common.TestCommon;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -37,46 +38,50 @@ import java.util.StringTokenizer;
  * form based validation for each of the forms.
  * This is xml used by the <code>WebTest</code> to verify the test.
  */
-public class CreateTestXML {
-    
-    private static String newline = System.getProperty("line.separator");
-    private static String fileseparator = System.getProperty("file.separator");
-    private String fileName;
+public class CreateTestXML extends TestCommon {
+
+    private String testURL;
+    private String testLogoutURL;
+    private String baseDirectory;
     
     /**
      * Default constructor
      */
-    public CreateTestXML() {
+    public CreateTestXML() 
+    throws Exception {
+        super("authentication");
+        testURL = getLoginURL("/");
+        testLogoutURL = protocol + ":" + "//" + host + ":" + port +
+                        uri + "/UI/Logout";
+
+        baseDirectory = getTestBase();
     }
     
     /**
      * Creates the service based form Login XML
-     * @param Map contains test related data
-     * @param true if is is negative test
-     * @return xml file name
+     * @param testMap - a Map object containing test related data.
+     * @param testNegative - a boolean indicating if the current test is a
+     * negative test.
+     * @return the file name of the generated XML file.
      */
     public String createServiceXML(Map testMap, boolean testNegative)
     throws Exception {
+        String fileName = "";
         String users = (String)testMap.get("users");
-        String passMsg = (String)testMap.get("passmessage");
-        String failMsg = (String)testMap.get("failmessage");
-        String testURL = (String)testMap.get("url");
-        String baseDirectory = (String)testMap.get("baseDir");
+        String successMsg = (String)testMap.get("successMsg");
         String loginService = (String)testMap.get("servicename");
-        if (!testNegative) {
-            fileName = baseDirectory + loginService + "-positive.xml";
-        } else {
-            fileName = baseDirectory + loginService + "-negative.xml";
-        }
+        String strIdentifier = (String)testMap.get("uniqueIdentifier");
+
+        fileName = baseDirectory + strIdentifier + ".xml";
         PrintWriter out = new PrintWriter(new BufferedWriter
                 (new FileWriter(fileName)));
         out.write("<url href=\"" + testURL + "?service=" +
                 loginService);
         out.write("\">");
-        out.write(newline);
+        out.write(System.getProperty("line.separator"));
         StringTokenizer testUsers = new StringTokenizer(users,"|");
         List<String> testUserList = new ArrayList<String>();
-        int tokennumber = testUsers.countTokens();
+
         while (testUsers.hasMoreTokens()) {
             testUserList.add(testUsers.nextToken());
         }
@@ -93,26 +98,26 @@ public class CreateTestXML {
             if (testNegative) {
                  tpass = tpass + "fail";
             }
-            out.write("<form name=\"Login\" IDButton=\"\" >");
-            out.write(newline);
-            out.write("<input name=\"IDToken1\" value=\"" + tuser + "\" />");
-            out.write(newline);
-            out.write("<input name=\"IDToken2\" value=\"" + tpass + "\" />");
-            out.write(newline);
+            out.write("<form name=\"Login\" IDButton=\"\">");
+            out.write(System.getProperty("line.separator"));
+            out.write("<input name=\"IDToken1\" value=\"" + tuser + "\"/>");
+            out.write(System.getProperty("line.separator"));
+            out.write("<input name=\"IDToken2\" value=\"" + tpass + "\"/>");
+            out.write(System.getProperty("line.separator"));
             if (formcount == totalforms) {
                 if (!testNegative) {
-                    out.write("<result text=\"" + passMsg + "\" />");
+                    out.write("<result text=\"" + successMsg + "\"/>");
                 } else {
-                    out.write("<result text=\"" + failMsg + "\" />");
+                    out.write("<result text=\"" + successMsg + "\"/>");
                 }
-                out.write(newline);
+                out.write(System.getProperty("line.separator"));
                 out.write("</form>");
-                out.write(newline);
+                out.write(System.getProperty("line.separator"));
                 out.write("</url>");
-                out.write(newline);
+                out.write(System.getProperty("line.separator"));
             } else {
                 out.write("</form>");
-                out.write(newline);
+                out.write(System.getProperty("line.separator"));
             }
         }
         out.flush();
@@ -120,115 +125,76 @@ public class CreateTestXML {
         
         return fileName;
     }
-    
+
     /**
-     * Creates the module based authentication form Login XML
-     * @param Map contains test related data
-     * @param true if it is negative test
+     * Creates the form login XML
+     * @param testMap contains test related data
      * @return xml file name
      */
-    public String createModuleXML(Map testMap, boolean testNegative)
+    public String createAuthXML(Map testMap)
     throws Exception {
-        String userName = (String)testMap.get("userName");
-        String password = (String)testMap.get("password");
-        String passmessage = (String)testMap.get("modulePassMsg");
-        String failmessage = (String)testMap.get("moduleFailMsg");
+        String fileName = "";
+        String users = (String)testMap.get("users");
         String redirectURL = (String)testMap.get("redirectURL");
-        String baseDirectory = (String)testMap.get("baseDir");
         String strIdentifier = (String)testMap.get("uniqueIdentifier");
-        if (!testNegative) {
-            fileName = baseDirectory  + strIdentifier + "-module-positive.xml";
-        } else {
-            fileName = baseDirectory + strIdentifier + "-module-negative.xml";
-            password = password + "tofail";
-        }
-        PrintWriter out = new PrintWriter(new BufferedWriter
-                (new FileWriter(fileName)));
+        String successMsg = (String)testMap.get("successMsg");
+
+        fileName = baseDirectory + strIdentifier + ".xml";
+
+        PrintWriter out =
+                new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
         out.write("<url href=\"" + redirectURL);
         out.write("\">");
-        out.write(newline);
-        out.write("<form name=\"Login\" IDButton=\"\" >");
-        out.write(newline);
-        out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
-        out.write(newline);
-        out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
-        out.write(newline);
-        if (!testNegative) {
-            out.write("<result text=\"" + passmessage + "\" />");
-        } else {
-            out.write("<result text=\"" + failmessage + "\" />");
+        out.write(System.getProperty("line.separator"));
+        String[] testUsers = users.split("\\|");
+        int formCount = 0;
+        for (String testUser: testUsers) {
+            formCount++;
+            int tokenIndex = testUser.indexOf(":");
+            String userName = testUser.substring(0, tokenIndex);
+            String password = testUser.substring(tokenIndex + 1,
+                    testUser.length());
+            out.write("<form name=\"Login\" IDButton=\"\">");
+            out.write(System.getProperty("line.separator"));
+            out.write("<input name=\"IDToken1\" value=\"" + userName + "\"/>");
+            out.write(System.getProperty("line.separator"));
+            out.write("<input name=\"IDToken2\" value=\"" + password + "\"/>");
+            out.write(System.getProperty("line.separator"));
+            if (formCount == testUsers.length) {
+                out.write("<result text=\"" + successMsg + "\"/>");
+                out.write(System.getProperty("line.separator"));
+                out.write("</form>");
+                out.write(System.getProperty("line.separator"));
+                out.write("</url>");
+                out.write(System.getProperty("line.separator"));
+            } else {
+                out.write("</form>");
+                out.write(System.getProperty("line.separator"));
+            }
         }
-        out.write(newline);
-        out.write("</form>");
-        out.write(newline);
-        out.write("</url>");
-        out.write(newline);
+
         out.flush();
         out.close();
-        
         return fileName;
     }
     
     /**
-     * Creates the Module based Goto or GotoOnFail URL form Login XML
-     * @param Map contains test related data
-     * @param true if is is negative test
-     * @return xml file name
-     */
-    public String createModuleGotoXML(Map testMap, boolean testNegative)
-    throws Exception {
-        String userName = (String)testMap.get("userName");
-        String password = (String)testMap.get("password");
-        String passmessage = (String)testMap.get("modulePassMsg");
-        String failmessage = (String)testMap.get("moduleFailMsg");
-        String redirectURL = (String)testMap.get("redirectURL");
-        String baseDirectory = (String)testMap.get("baseDir");
-        String strIdentifier = (String)testMap.get("uniqueIdentifier");
-        String gotoURL = (String)testMap.get("gotoURL");
-        if (!testNegative) {
-            fileName = baseDirectory + strIdentifier + "-goto.xml";
-        } else {
-            fileName = baseDirectory  + strIdentifier + "-gotofail.xml";
-            password = password + "tofail";
-        }
-        PrintWriter out = new PrintWriter(new BufferedWriter
-                (new FileWriter(fileName)));
-        out.write("<url href=\"" + gotoURL);
-        out.write("\">");
-        out.write(newline);
-        out.write("<form name=\"Login\" IDButton=\"\" >");
-        out.write(newline);
-        out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
-        out.write(newline);
-        out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
-        out.write(newline);
-        if (!testNegative) {
-            out.write("<result text=\"" + passmessage + "\" />");
-        } else {
-            out.write("<result text=\"" + failmessage + "\" />");
-        }
-        out.write(newline);
-        out.write("</form>");
-        out.write(newline);
-        out.write("</url>");
-        out.write(newline);
-        out.flush();
-        out.close();
-        
-        return fileName;
-    }
-    
-    /*
      * Create the required XML files for the Account Lockout/warning tests
+     * @param testMap - a Map object containing the properties to generate the
+     * XML file
+     * @param isWarning - a boolean indicating if the XML file should generate
+     * an account lockout warning.  This should be set to true if a warning
+     * should be generated.
+     * @return a String containing the file name of the generated XML file.
      */
     public String createLockoutXML(Map testMap, boolean isWarning)
     throws Exception {
+        String fileName = "";
         String userName = (String)testMap.get("Loginuser");
         String password = (String)testMap.get("Loginpassword");
         password = password + "tofail";
         String attempts = (String)testMap.get("Loginattempts");
         String Passmsg = (String)testMap.get("Passmsg");
-        String baseDirectory = (String)testMap.get("baseDir");
         String loginurl = (String)testMap.get("loginurl");
         int ilockattempts = Integer.parseInt(attempts);
         if (!isWarning) {
@@ -240,100 +206,27 @@ public class CreateTestXML {
                 (new FileWriter(fileName)));
         out.write("<url href=\"" + loginurl);
         out.write("\">");
-        out.write(newline);
+        out.write(System.getProperty("line.separator"));
         int formcount = 0;
         for (int i=0; i < ilockattempts ; i ++) {
             formcount = formcount + 1;
             out.write("<form name=\"Login\" IDButton=\"\" >");
-            out.write(newline);
+            out.write(System.getProperty("line.separator"));
             out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
-            out.write(newline);
+            out.write(System.getProperty("line.separator"));
             out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
-            out.write(newline);
+            out.write(System.getProperty("line.separator"));
             if(formcount == ilockattempts){
                 out.write("<result text=\"" + Passmsg + "\" />");
-                out.write(newline);
+                out.write(System.getProperty("line.separator"));
             }
             out.write("</form>");
-            out.write(newline);
+            out.write(System.getProperty("line.separator"));
             out.write(" <form anchorpattern=\"/UI/Login?\" />");
-            out.write(newline);
+            out.write(System.getProperty("line.separator"));
         }
         out.write("</url>");
-        out.write(newline);
-        out.flush();
-        out.close();
-        
-        return fileName;
-    }
-    
-    /**
-     * Creates the XML file for the profile attribute tests
-     */
-    public String createProfileXML(Map testMap)
-    throws Exception {
-        String userName = (String)testMap.get("Loginuser");
-        String password = (String)testMap.get("Loginpassword");
-        String attempts = (String)testMap.get("Loginattempts");
-        String Passmsg = (String)testMap.get("Passmsg");
-        String baseDirectory = (String)testMap.get("baseDir");
-        String loginurl = (String)testMap.get("loginurl");
-        String profileattribute = (String)testMap.get("profileattr");
-        fileName = baseDirectory  + profileattribute + "-test.xml";
-        PrintWriter out = new PrintWriter(new BufferedWriter
-                (new FileWriter(fileName)));
-        out.write("<url href=\"" + loginurl);
-        out.write("\">");
-        out.write(newline);
-        out.write("<form name=\"Login\" IDButton=\"\" >");
-        out.write(newline);
-        out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
-        out.write(newline);
-        out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
-        out.write(newline);
-        out.write("<result text=\"" + Passmsg + "\" />");
-        out.write(newline);
-        out.write("</form>");
-        out.write(newline);
-        out.write("</url>");
-        out.write(newline);
-        out.flush();
-        out.close();
-        
-        return fileName;
-    }
-    
-    /**
-     * Creates the authentication form Login XML
-     * @param Map contains test related data
-     * @return xml file name
-     */
-    public String createAccountLoginXML(Map testMap)
-    throws Exception {
-        String userName = (String)testMap.get("username");
-        String password = (String)testMap.get("password");
-        String passmessage = (String)testMap.get("passmsg");
-        String redirectURL = (String)testMap.get("url");
-        String baseDirectory = (String)testMap.get("baseDir");
-        String strIdentifier = (String)testMap.get("uniqueIdentifier");
-        fileName = baseDirectory  + strIdentifier + "-createAccountLogin.xml";
-        PrintWriter out = new PrintWriter(new BufferedWriter
-                (new FileWriter(fileName)));
-        out.write("<url href=\"" + redirectURL);
-        out.write("\">");
-        out.write(newline);
-        out.write("<form name=\"Login\" IDButton=\"\" >");
-        out.write(newline);
-        out.write("<input name=\"IDToken1\" value=\"" + userName + "\" />");
-        out.write(newline);
-        out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
-        out.write(newline);
-        out.write("<result text=\"" + passmessage + "\" />");
-        out.write(newline);
-        out.write("</form>");
-        out.write(newline);
-        out.write("</url>");
-        out.write(newline);
+        out.write(System.getProperty("line.separator"));
         out.flush();
         out.close();
         

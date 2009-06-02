@@ -8,14 +8,19 @@ package com.sun.identity.qatest.authentication;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IDMCommon;
-import com.sun.identity.qatest.common.TestCommon;
-import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
+import com.sun.identity.qatest.idm.IDMConstants;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -27,24 +32,17 @@ import org.testng.annotations.Test;
  *
  * @author cmwesley
  */
-public class NewSessionArgTest extends TestCommon {
+public class NewSessionArgTest extends AuthenticationCommon {
 
-    private AuthTestConfigUtil moduleConfig;
     private IDMCommon idmc;
-    private List moduleDataList;
     private ResourceBundle testRb;
-    private String configrbName = "authenticationConfigData";
+    private SSOToken adminToken;
     private String absoluteRealm;
-    private String moduleServiceName;
-    private String moduleSubConfigName;
-    private String moduleSubConfigId;
     private String testUser;
     private String testPassword;
 
-
     public NewSessionArgTest() {
         super("NewSessionArgTest");
-        moduleConfig = new AuthTestConfigUtil(configrbName);
         idmc = new IDMCommon();
     }
 
@@ -71,43 +69,58 @@ public class NewSessionArgTest extends TestCommon {
             Reporter.log("TestUser: " + testUser);
             Reporter.log("TestPassword: " + testPassword);
 
+            adminToken = getToken(adminUser, adminPassword, basedn);
             absoluteRealm = testRealm;
             if (!testRealm.equals("/")) {
-                if (testRealm.indexOf("/") != 0) {
-                    absoluteRealm = "/" + testRealm;
+                if (realm.endsWith("/")) {
+                    absoluteRealm = realm + testRealm;
+                } else {
+                    absoluteRealm = realm + "/" + testRealm;
                 }
-                log(Level.FINE, "setup", "Creating the sub-realm " + testRealm);
-                moduleConfig.createRealms(absoluteRealm);
+                Map realmAttrMap = new HashMap();
+                Set realmSet = new HashSet();
+                realmSet.add("Active");
+                realmAttrMap.put("sunOrganizationStatus", realmSet);
+                log(Level.FINE, "setup", "Creating the realm " + testRealm);
+                AMIdentity amid = idmc.createIdentity(adminToken,
+                        realm, IdType.REALM, testRealm, realmAttrMap);
+                log(Level.FINE, "setup",
+                        "Verifying the existence of sub-realm " +
+                        testRealm);
+                if (amid == null) {
+                    log(Level.SEVERE, "setup", "Creation of sub-realm " +
+                            testRealm + " failed!");
+                    assert false;
+                }
+            }            
+
+            StringBuffer attrBuffer =  new StringBuffer("sn=" + testUser).
+                    append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                    append("cn=" + testUser).
+                    append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                    append("userpassword=" + testPassword).
+                    append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                    append("inetuserstatus=Active");
+
+            log(Level.FINE, "setup",
+                    "Creating user " + testUser + " ...");
+            if (!idmc.createID(testUser, "user", attrBuffer.toString(),
+                    adminToken, testRealm)) {
+                log(Level.SEVERE, "createUser", "Failed to create user " +
+                        "identity " + testUser + "...");
+                assert false;
             }
-
-            moduleDataList = moduleConfig.getModuleDataAsList(testModule);
-            moduleServiceName = (String)testRb.getString(testModule +
-                            ".module_servicename");
-            moduleSubConfigName = (String)testRb.getString(testModule +
-                            ".module_SubConfigname");
-            moduleSubConfigId = (String)testRb.getString(testModule +
-                            ".module_SubConfigid");
-
-            log(Level.FINE, "setup", "Creating the authentication module " +
-                    moduleSubConfigId);
-            moduleConfig.createModuleInstances(testRealm, moduleServiceName,
-                        moduleSubConfigName, moduleDataList, moduleSubConfigId);
-
-            log(Level.FINE, "setup", "Creating user " + testUser + "...");
-            List<String> userList = new ArrayList<String>();
-            userList.add("sn=" + testUser);
-            userList.add("cn=" + testUser);
-            userList.add("userpassword=" + testPassword);
-            userList.add("inetuserstatus=Active");            
-            moduleConfig.setTestConfigRealm(testRealm);
-            moduleConfig.createUser(userList, testUser);
             exiting("setup");
         } catch (Exception e) {
             cleanup(testRealm, testModule);
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
-        } 
+        } finally {
+            if (adminToken != null) {
+                destroyToken(adminToken);
+            }
+        }
     }
 
     @Parameters({"testRealm", "testModule"})
@@ -131,7 +144,8 @@ public class NewSessionArgTest extends TestCommon {
             if (!testRealm.equals("/")) {
                 loginBuffer.append("realm=").append(testRealm).append("&");
             }
-            loginBuffer.append("module=").append(moduleSubConfigId).
+            String moduleInstance = getAuthInstanceName(testModule);
+            loginBuffer.append("module=").append(moduleInstance).
                     append("&IDToken1=").append(testUser);
             
             if (!testModule.equals("anonymous")) {
@@ -161,15 +175,16 @@ public class NewSessionArgTest extends TestCommon {
                         afterLoginTitle);
                 assert false;
             }
+            exiting("testNewSessionArg");
         } catch (Exception e) {
             log(Level.SEVERE, "testNewSessionArg", e.getMessage(), params);
             e.printStackTrace();
+            cleanup(testRealm, testModule);
             throw e;
         } finally {
             consoleLogout(wc, protocol + ":" + "//" + host + ":" + port + uri +
                     "/UI/Logout");
         }
-        exiting("testNewSessionArg");
     }
 
     @Parameters({"testRealm", "testModule"})
@@ -179,9 +194,6 @@ public class NewSessionArgTest extends TestCommon {
     throws Exception {
         Object[] params = {testModule, testRealm};
         entering("cleanup", params);
-        SSOToken adminToken = null;
-        SSOToken realmToken = null;
-
 
         try {
             log(Level.FINEST, "cleanup", "TestRealm: " + testRealm);
@@ -195,23 +207,19 @@ public class NewSessionArgTest extends TestCommon {
             idNameList.add(testUser);
             log(Level.FINE, "cleanup", "Deleting the user " + testUser);
             adminToken = getToken(adminUser, adminPassword, realm);
-            idmc.deleteIdentity(adminToken, absoluteRealm, idTypeList,
+            idmc.deleteIdentity(adminToken, testRealm, idTypeList,
                     idNameList);
 
-            log(Level.FINE, "cleanup", "Deleting the auth module " +
-                    moduleSubConfigId);
-            moduleConfig.deleteModuleInstances(testRealm, moduleServiceName,
-                    moduleSubConfigName);
 
-            if (!absoluteRealm.equals("/")) {
-                if (absoluteRealm.indexOf("/") != 0) {
-                    absoluteRealm = "/" + testRealm;
+            if (!testRealm.equals("/")) {
+                if (!absoluteRealm.startsWith("/")) {
+                    absoluteRealm = "/" + absoluteRealm;
                 }
                 log(Level.FINE, "cleanup", "Deleting the sub-realm " +
                         absoluteRealm);
-                realmToken = getToken(adminUser, adminPassword, realm);
-                idmc.deleteRealm(realmToken, absoluteRealm);
+                idmc.deleteRealm(adminToken, absoluteRealm);
             }
+            exiting("cleanup");
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
@@ -220,10 +228,7 @@ public class NewSessionArgTest extends TestCommon {
             if (adminToken != null) {
                 destroyToken(adminToken);
             }
-            if (realmToken != null) {
-                destroyToken(realmToken);
-            }
         }
-        exiting("cleanup");
+
     }
 }

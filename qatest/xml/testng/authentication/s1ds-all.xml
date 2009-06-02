@@ -1,87 +1,7 @@
 
-   <test name="AuthTestLDAPUser">
-        <parameter name="testModule" value="ldap"/>
-        <parameter name="testMode" value="user"/>
-        <groups>
-            <run>
-                <include name="@mode@"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
-        </classes>
-   </test>
-   <test name="AuthTestAnonymousUser">
-        <parameter name="testModule" value="anonymous"/>
-        <parameter name="testMode" value="user"/>
-        <groups>
-            <run>
-                <include name="@mode@"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
-        </classes>
-   </test>
-   <test name="AuthTestDataStoreUser">
-        <parameter name="testModule" value="datastore"/>
-        <parameter name="testMode" value="user"/>
-        <groups>
-            <run>
-                <include name="@mode@"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
-        </classes>
-   </test>
-   <test name="AuthTestMembershipUser">
-        <parameter name="testModule" value="membership"/>
-        <parameter name="testMode" value="user"/>
-        <groups>
-            <run>
-                <include name="@mode@"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
-        </classes>
-    </test>
-    <test name="SanityChainTestRequired">
-        <parameter name="testChainName" value="chain8"/>
-        <groups>
-            <run>
-                <include name="@mode@"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
-        </classes>
-    </test>
-    <test name="SanityChainTestRequisite">
-        <parameter name="testChainName" value="chain9"/>
-        <groups>
-            <run>
-                <include name="@mode@"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
-        </classes>
-    </test>
-    <test name="SanityChainTestOptional">
-        <parameter name="testChainName" value="chain11"/>
-        <groups>
-            <run>
-                <include name="@mode@"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
-        </classes>
-    </test>
     <test name="UserAuthAttributeTest_loginstatusNegative">
-        <parameter name="testcaseName" value="loginstatusNegative"/>
+        <parameter name="testCaseName" value="loginstatusNegative"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -92,7 +12,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_lifeNegative">
-        <parameter name="testcaseName" value="lifeNegative"/>
+        <parameter name="testCaseName" value="lifeNegative"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -103,7 +24,8 @@
         </classes>
     </test>  
    <test name="UserAuthAttributeTest_nsaccountlockPositive">
-        <parameter name="testcaseName" value="nsaccountlockPositive"/>
+        <parameter name="testCaseName" value="nsaccountlockPositive"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -114,7 +36,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_nsaccountlockNegative">
-        <parameter name="testcaseName" value="nsaccountlockNegative"/>
+        <parameter name="testCaseName" value="nsaccountlockNegative"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -125,7 +48,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_inetPositiveComb">
-        <parameter name="testcaseName" value="inetPositiveComb"/>
+        <parameter name="testCaseName" value="inetPositiveComb"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -136,7 +60,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_lifePositiveComb">
-        <parameter name="testcaseName" value="lifePositiveComb"/>
+        <parameter name="testCaseName" value="lifePositiveComb"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -147,7 +72,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_loginPositiveComb">
-        <parameter name="testcaseName" value="loginPositiveComb"/>
+        <parameter name="testCaseName" value="loginPositiveComb"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -158,7 +84,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_lockPositiveComb">
-        <parameter name="testcaseName" value="lockPositiveComb"/>
+        <parameter name="testCaseName" value="lockPositiveComb"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -169,7 +96,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_inetNegativeComb">
-        <parameter name="testcaseName" value="inetNegativeComb"/>
+        <parameter name="testCaseName" value="inetNegativeComb"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -180,7 +108,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_lifeNegativeComb">
-        <parameter name="testcaseName" value="lifeNegativeComb"/>
+        <parameter name="testCaseName" value="lifeNegativeComb"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -191,7 +120,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_loginNegativeComb">
-        <parameter name="testcaseName" value="loginNegativeComb"/>
+        <parameter name="testCaseName" value="loginNegativeComb"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -202,7 +132,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_lockNegativeComb">
-        <parameter name="testcaseName" value="lockNegativeComb"/>
+        <parameter name="testCaseName" value="lockNegativeComb"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -213,7 +144,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_inet_lock_Positive">
-        <parameter name="testcaseName" value="inet_lock_Positive"/>
+        <parameter name="testCaseName" value="inet_lock_Positive"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -224,7 +156,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_life_login_Positive">
-        <parameter name="testcaseName" value="life_login_Positive"/>
+        <parameter name="testCaseName" value="life_login_Positive"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -235,7 +168,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_inet_login_Positive">
-        <parameter name="testcaseName" value="inet_login_Positive"/>
+        <parameter name="testCaseName" value="inet_login_Positive"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -246,7 +180,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_lock_login_Positive">
-        <parameter name="testcaseName" value="lock_login_Positive"/>
+        <parameter name="testCaseName" value="lock_login_Positive"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -257,7 +192,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_lock_life_Positive">
-        <parameter name="testcaseName" value="lock_life_Positive"/>
+        <parameter name="testCaseName" value="lock_life_Positive"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -268,7 +204,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_life_inet_Positive">
-        <parameter name="testcaseName" value="life_inet_Positive"/>
+        <parameter name="testCaseName" value="life_inet_Positive"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -279,7 +216,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_allPositive">
-        <parameter name="testcaseName" value="allPositive"/>
+        <parameter name="testCaseName" value="allPositive"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -290,7 +228,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_allNegative">
-        <parameter name="testcaseName" value="allNegative"/>
+        <parameter name="testCaseName" value="allNegative"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -300,4 +239,3 @@
             <class name="com.sun.identity.qatest.authentication.UserAuthAttributeTest"/>
         </classes>
     </test>
-

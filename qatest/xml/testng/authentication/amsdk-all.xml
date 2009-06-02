@@ -2,6 +2,7 @@
     <test name="AuthTestLDAPRole">
         <parameter name="testModule" value="ldap"/>
         <parameter name="testMode" value="role"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -14,6 +15,7 @@
     <test name="AuthTestAnonymousRole">
         <parameter name="testModule" value="anonymous"/>
         <parameter name="testMode" value="role"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -26,6 +28,7 @@
     <test name="AuthTestDataStoreRole">
         <parameter name="testModule" value="datastore"/>
         <parameter name="testMode" value="role"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -38,6 +41,7 @@
     <test name="AuthTestMembershipRole">
         <parameter name="testModule" value="membership"/>
         <parameter name="testMode" value="role"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>

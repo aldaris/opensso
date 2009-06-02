@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PostAuthProcessingTest.java,v 1.5 2009-01-26 23:47:47 nithyas Exp $
+ * $Id: PostAuthProcessingTest.java,v 1.6 2009-06-02 17:08:18 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,16 +27,13 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
-import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.SMSCommon;
-import com.sun.identity.qatest.common.TestCommon;
-import com.sun.identity.sm.ServiceConfig;
-import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
+import com.sun.identity.qatest.idm.IDMConstants;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.ResourceBundle;
@@ -57,17 +54,13 @@ import org.testng.annotations.Test;
  * in the <code>SSOToken</code>.  This should result in an 
  * <code>SSOException</code>.
  */
-public class PostAuthProcessingTest extends TestCommon {
+public class PostAuthProcessingTest extends AuthenticationCommon {
 
-    private AuthTestConfigUtil moduleConfig;
     private ResourceBundle testResources;
-    private List moduleConfigData;
     private Set oriAuthAttrValues;
-    private Set userProfileValSet;    
-    private String moduleServiceName;
-    private String moduleSubConfig;
-    private String moduleSubConfigId;
-    private String configrbName = "authenticationConfigData";
+    private Set userProfileValSet; 
+    private SSOToken adminToken;
+    private String moduleInstance;
     private String strServiceName = "iPlanetAMAuthService";
     private String mappingAttrName = "sunAMUserAttributesSessionMapping";
     private IDMCommon idmc;
@@ -84,7 +77,6 @@ public class PostAuthProcessingTest extends TestCommon {
         testResources = ResourceBundle.getBundle("authentication" +
                 fileseparator + "PostAuthProcessingTest");
         idmc = new IDMCommon();
-        moduleConfig = new AuthTestConfigUtil(configrbName);
         userProfileValSet = new HashSet();
     }
 
@@ -131,23 +123,26 @@ public class PostAuthProcessingTest extends TestCommon {
                         absoluteRealm.lastIndexOf("/") + 1);
                 String parentRealm = idmc.getParentRealm(absoluteRealm);
                 Map realmAttrMap = new HashMap();
+                Set realmSet = new HashSet();
+                realmSet.add("Active");
+                realmAttrMap.put("sunOrganizationStatus", realmSet);
                 if (realmToken != null) {
-                    log(Level.FINEST, "setup", 
+                    log(Level.FINEST, "setup",
                             "SSOToken used for realm creation = " + realmToken);
                 } else {
-                    log(Level.SEVERE, "setup", 
+                    log(Level.SEVERE, "setup",
                             "The SSOToken for realm creation is null!");
                 }
-                log(Level.FINEST, "setup", 
+                log(Level.FINEST, "setup",
                         "Parent realm for realm creaetion = " + parentRealm);
-                log(Level.FINEST, "setup", "Realm entity name to create = " + 
-                        childRealm);              
-                AMIdentity amid = idmc.createIdentity(realmToken, parentRealm, 
+                log(Level.FINEST, "setup", "Realm entity name to create = " +
+                        childRealm);
+                AMIdentity amid = idmc.createIdentity(realmToken, parentRealm,
                         IdType.REALM, childRealm, realmAttrMap);
-                log(Level.FINE, "setup", "Searching for the sub-realm " + 
+                log(Level.FINE, "setup", "Searching for the sub-realm " +
                         testRealm);
                 if (amid == null) {
-                    log(Level.SEVERE, "setup", "Creation of sub-realm " + 
+                    log(Level.SEVERE, "setup", "Creation of sub-realm " +
                             testRealm + " failed!");
                     assert false;
                 }
@@ -160,48 +155,41 @@ public class PostAuthProcessingTest extends TestCommon {
             valSet.add(testUserPass);
             userAttrMap.put("userpassword", valSet);
 
+            StringBuffer userAttrs = new StringBuffer("userpassword=");
+            userAttrs.append(testUserPass);
+            userAttrs.append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER);
             for (int i = 0; i < noOfAttributes; i++) {
                 String testAttrName = (testResources.getString(
                         "am-auth-postprocessing-attr" + i + "-name")).trim();
                 String testAttrValue = (testResources.getString(
                         "am-auth-postprocessing-attr" + i + "-value")).trim();
+                userAttrs.append(testAttrName).append("=");
+                userAttrs.append(testAttrValue);
+                if (i < noOfAttributes - 1) {
+                    userAttrs.append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER);
+                }
                 valSet = new HashSet();
                 valSet.add(testAttrValue);
-                log(Level.FINE, "setup", "Setting user attribute " + 
+                log(Level.FINE, "setup", "Setting user attribute " +
                         testAttrName + " to \'" + testAttrValue + "\'.");
                 userAttrMap.put(testAttrName, valSet);
                 userProfileValSet.add(testAttrName + "|user." + testAttrName);
             }
 
-            Map modMap = moduleConfig.getModuleData(testModule);
-            moduleServiceName = moduleConfig.getModuleServiceName();
-            moduleSubConfig = moduleConfig.getModuleSubConfigName();
-            moduleSubConfigId = moduleConfig.getModuleSubConfigId();
-            moduleConfigData = moduleConfig.getListFromMap(modMap, testModule);
-
-            log(Level.FINEST, "setup", "ModuleServiceName: " +
-                    moduleServiceName);
-            log(Level.FINEST, "setup", "ModuleSubConfig: " +
-                    moduleSubConfig);
-            log(Level.FINEST, "setup", "ModuleSubConfigId: " +
-                    moduleSubConfigId);
-            log(Level.FINE, "setup", "Creating the authentication module " + 
-                    moduleSubConfigId);
-            moduleConfig.createModuleInstances(testRealm, moduleServiceName,
-                    moduleSubConfig, moduleConfigData, moduleSubConfigId);
-            
-            log(Level.FINE, "setup", "Creating user " + testUserName + "...");
+            moduleInstance = getAuthInstanceName(testModule);
+            Thread.sleep(notificationSleepTime);
+            log(Level.FINE, "setup", "Creating user " + testUserName + 
+                    " in realm " + testRealm + " with attributes " +
+                    userAttrs + " ...");
             idToken = getToken(adminUser, adminPassword, realm);
-            idmc.createIdentity(idToken, testRealm, IdType.USER, 
-                    testUserName, userAttrMap);
-            Set idSearchResults = idmc.searchIdentities(idToken, testUserName,
-                    IdType.USER, testRealm);
-            if ((idSearchResults == null) || idSearchResults.isEmpty()) {
-                log(Level.SEVERE, "setup", "Failed to create user identity " +
-                        testUserName + "...");
+            if (!idmc.createID(testUserName, "user", userAttrs.toString(),
+                    idToken, testRealm)) {
+                log(Level.SEVERE, "setup",
+                        "Failed to create user identity " +
+                        testUserName + " ...");
                 assert false;
             }
-                      
+
             serviceToken = getToken(adminUser, adminPassword, realm);
             SMSCommon smsc = new SMSCommon(serviceToken);
             log(Level.FINE, "setup", "Retrieving the attribute value of " + 
@@ -215,6 +203,7 @@ public class PostAuthProcessingTest extends TestCommon {
                     userProfileValSet);
             smsc.updateSvcAttribute(testRealm, strServiceName, mappingAttrName,
                     userProfileValSet, "Organization");
+            exiting("setup");
         } catch (Exception e) {
             log(Level.SEVERE, "setup", "Exception message = " + e.getMessage());
             e.printStackTrace();
@@ -234,7 +223,6 @@ public class PostAuthProcessingTest extends TestCommon {
                 destroyToken(serviceToken);
             }
         }
-        exiting("setup");
     }
 
     /**
@@ -261,8 +249,9 @@ public class PostAuthProcessingTest extends TestCommon {
         entering("testUserProfileMapping", params);
 
         try {
-            userToken = moduleConfig.moduleLogin(testRealm, moduleSubConfig,
-                    testUserName, testUserPass);
+            userToken = performRemoteLogin(testRealm, "module",
+                            moduleInstance, testUserName, testUserPass);
+
             if (userToken != null) {
                 for (Iterator i = userProfileValSet.iterator(); i.hasNext(); ) {
                     String mapping = (String) i.next();
@@ -307,6 +296,7 @@ public class PostAuthProcessingTest extends TestCommon {
                         " was not retrieved!");
                 userPropsFound = false;
             }
+            exiting("testUserProfileMapping");
         } catch (Exception e) {
             log(Level.SEVERE, "loginModule", "Exception message: " +
                     e.getMessage());
@@ -315,10 +305,11 @@ public class PostAuthProcessingTest extends TestCommon {
             cleanup(testModule, testRealm);
             throw e;
         } finally {
-            destroyToken(userToken);
+            if (userToken != null) {
+                destroyToken(userToken);
+            }
             assert userPropsFound;
         }
-        exiting("testUserProfileMapping");
     }
     
     /**
@@ -347,8 +338,9 @@ public class PostAuthProcessingTest extends TestCommon {
         Reporter.log("TestCaseDescription: " + testCaseDesc);
 
         try {
-            userToken = moduleConfig.moduleLogin(testRealm, moduleSubConfig,
-                    testUserName, testUserPass);
+            userToken = performRemoteLogin(testRealm, "module",
+                            moduleInstance, testUserName, testUserPass);
+
             if (userToken != null) {
                 Iterator i = userProfileValSet.iterator();
                 String mapping = (String) i.next();
@@ -412,18 +404,13 @@ public class PostAuthProcessingTest extends TestCommon {
         SSOToken serviceToken = null;
         
         try {
-            log(Level.FINE, "cleanup", "Deleting module instance " + 
-                    moduleSubConfig + " in realm " + testRealm + " ...");
-            moduleConfig.deleteModuleInstances(testRealm, moduleServiceName,
-                    moduleSubConfig);
-            
             log(Level.FINE, "cleanup", "Deleting user " + testUserName + "...");
             idToken = getToken(adminUser, adminPassword, realm);
             idmc.deleteIdentity(idToken, testRealm, IdType.USER, testUserName);
             
             log(Level.FINE, "cleanup", "Restoring original value of " +
                     "sunAMUserAttributesSessionMapping");
-            serviceToken = getToken(adminUser, adminPassword, realm); 
+            serviceToken = getToken(adminUser, adminPassword, realm);
             SMSCommon smsc = new SMSCommon(serviceToken);
             log(Level.FINE, "setup", "Set " + mappingAttrName + " to " + 
                     oriAuthAttrValues);
@@ -434,27 +421,27 @@ public class PostAuthProcessingTest extends TestCommon {
             if (!absoluteRealm.equals("/")) {
                 if (absoluteRealm.indexOf("/") != 0) {
                     absoluteRealm = "/" + testRealm;
-                }             
+                }
                 log(Level.FINE, "cleanup", "Deleting the sub-realm " + 
                         absoluteRealm);
                 realmToken = getToken(adminUser, adminPassword, realm);
                 idmc.deleteRealm(realmToken, absoluteRealm);
             }
+            exiting("cleanup");
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
+            if (realmToken != null) {
+                destroyToken(realmToken);
+            }
             if (idToken != null) {
                 destroyToken(idToken);
             }
             if (serviceToken != null) {
                 destroyToken(serviceToken);
             }
-            if (realmToken != null) {
-                destroyToken(realmToken);
-            }
         }
-        exiting("cleanup");
     }
 }

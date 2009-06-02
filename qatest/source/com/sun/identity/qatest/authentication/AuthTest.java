@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.19 2009-04-10 01:49:39 inthanga Exp $
+ * $Id: AuthTest.java,v 1.20 2009-06-02 17:08:18 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,14 +25,19 @@
 package com.sun.identity.qatest.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.sun.identity.qatest.common.FederationManager;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.SMSConstants;
-import com.sun.identity.qatest.common.TestCommon;
-import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
-import java.util.ArrayList;
-import java.util.List;
+import com.sun.identity.qatest.idm.IDMConstants;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -52,26 +57,20 @@ import org.testng.annotations.Test;
  * (7) Repeat the following scenarios for Active Directory, LDAP, 
  * Membership, Anonymous, NT and JDBC modules)
  */
-public class AuthTest extends TestCommon {
-
-    private AuthenticationCommon ac;
+public class AuthTest extends AuthenticationCommon {
+    private IDMCommon idmc;
     private ResourceBundle rb;
-    private String moduleServiceName;
-    private String moduleSubConfigName;
-    private String moduleSubConfigId;
+    private SMSCommon smsc;
+    private SSOToken idToken;
+    private String modeValue;
     private String serviceName;
     private String serviceSubConfigName;
-    private String serviceSubConfigId;
     private String rolename;
-    private String user;
-    private String password;
+    private String loginUser;
+    private String loginPassword;
     private String svcName;
-    private String loginURL;
     private String logoutURL;
-    private String amadmURL;
-    private List list;
-    private AuthTestConfigUtil moduleConfigData;
-    private String configrbName = "authenticationConfigData";
+    private String userRealm;
     private boolean isValidTest = true;
     private WebClient webClient;
 
@@ -79,21 +78,25 @@ public class AuthTest extends TestCommon {
      * Constructor for the class.
      */
     public AuthTest() {
-        super("AuthTest");
-        ac = new AuthenticationCommon();
-        moduleConfigData = new AuthTestConfigUtil(configrbName);
-        logoutURL = protocol + ":" + "//" + host + ":" + port + uri + 
-                "/UI/Logout";
+        super();
+        idmc = new IDMCommon("authentication");
     }
 
     /**
      * This method is to configure the initial setup. It does the following:
-     * (1) Create a module instance with a given auth level
-     * (2) Create an auth service using the auth module
-     * (3) Create a new user and assign the auth service to the user
-     * (4) Create a new role
-     * (5) Assign the auth service and the user to that role
-     * This is called only once per auth module.
+     * (1) Creates an authentication configuration  using the auth module for
+     *     user, realm, role, and service based authentication.
+     * (2) Create a new user.
+     * (3) For user based authentication, assign the authentication
+     *     configuration to the user.
+     * (4) For role based authentication, create a new role and assign the auth
+     *     service and the user to that role
+     * (5) For realm based authentication, create a new realm and assign an
+     *     authentication configuration to the new realm.
+     * @param testModule - the type of authentication module instance which
+     * will be used for authentication.
+     * @param testMode - the type of authentication which should be performed
+     * (e.g. "module", "user", "service", "realm", "role", "authlevel").
      */
     @Parameters({"testModule", "testMode"})
     @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
@@ -102,149 +105,124 @@ public class AuthTest extends TestCommon {
     throws Exception {
         Object[] params = {testModule, testMode};
         entering("setup", params);
-        webClient = new WebClient();
+        logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
+                "/UI/Logout";
+
         try {
-            isValidTest = moduleConfigData.isValidModuleTest(testModule);
+            isValidTest = isValidModuleTest(testModule);
             if (isValidTest) {
                 rb = ResourceBundle.getBundle("authentication" + fileseparator +
                         "AuthTest");
-                list = moduleConfigData.getModuleDataAsList(testModule);
-                moduleServiceName = (String)rb.getString(testModule +
-                        ".module_servicename");
-                moduleSubConfigName = (String)rb.getString(testModule +
-                        ".module_subconfigname");
-                moduleSubConfigId = (String)rb.getString(testModule +
-                        ".module_subconfigid");
 
-                serviceName = (String)rb.getString(testModule +
-                        ".service_servicename");
                 serviceSubConfigName = (String)rb.getString(testModule +
-                        ".service_subconfigname");
-                serviceSubConfigId = (String)rb.getString(testModule +
-                        ".service_subconfigid");
+                        ".service-subconfigname");
+                String serviceDetails = (String)rb.getString(testModule +
+                        ".service-details");
 
                 rolename = (String)rb.getString(testModule + ".rolename");
-                user = (String)rb.getString(testModule + ".user");
-                password = (String)rb.getString(testModule + ".password");
+                loginUser = (String)rb.getString(testModule + ".user");
+                loginPassword = (String)rb.getString(testModule + ".password");
 
-                log(Level.FINEST, "setup", "moduleServiceName: " +
-                            moduleServiceName);
-                log(Level.FINEST, "setup", "moduleSubConfigName: " +
-                            moduleSubConfigName);
-                log(Level.FINEST, "setup", "moduleSubConfigId: " +
-                            moduleSubConfigId);
-
-                log(Level.FINEST, "setup", "serviceName: " +
-                            serviceName);
-                log(Level.FINEST, "setup", "serviceSubConfigName: " +
-                            serviceSubConfigName);
-                log(Level.FINEST, "setup", "serviceSubConfigId: " +
-                            serviceSubConfigId);
-                log(Level.FINEST, "setup", "module_subconfig_list: " + list);
+                modeValue = (String)rb.getString(testModule + ".modevalue." +
+                        testMode);
 
                 log(Level.FINEST, "setup", "rolename: " + rolename);
-                log(Level.FINEST, "setup", "username: " + user);
-                log(Level.FINEST, "setup", "userpassword: " + password);
-
-                Reporter.log("ModuleServiceName: " + moduleServiceName);
-                Reporter.log("ModuleSubConfigName: " + moduleSubConfigName);
-                Reporter.log("ModuleSubConfigId: " + moduleSubConfigId);
-
-                Reporter.log("ServiceServiceName: " + serviceName);
-                Reporter.log("ServiceSubConfigName: " + serviceSubConfigName);
-                Reporter.log("ServiceSubConfigId: " + serviceSubConfigId);
-
-                Reporter.log("ModuleSubConfigList: " + list);
+                log(Level.FINEST, "setup", "username: " + loginUser);
+                log(Level.FINEST, "setup", "userpassword: " + loginPassword);
 
                 Reporter.log("RoleName: " + rolename);
-                Reporter.log("UserName: " + user);
-                Reporter.log("UserPassword: " + password);
+                Reporter.log("UserName: " + loginUser);
+                Reporter.log("UserPassword: " + loginPassword);
 
-                loginURL = getLoginURL("/");
-                amadmURL = protocol + ":" + "//" + host + ":" + port +
-                            uri;
-                log(Level.FINEST, "setup", loginURL);
-                log(Level.FINEST, "setup", logoutURL);
-                log(Level.FINEST, "setup", amadmURL);
-                if (moduleServiceName.equals("iPlanetAMAuthAnonymousService"))
-                    list.add("iplanet-am-auth-anonymous-users-list=" + user);
-                FederationManager am = new FederationManager(amadmURL);
-                consoleLogin(webClient, loginURL, adminUser, adminPassword);
-                log(Level.FINE, "setup", "Creating module sub-configuration " + 
-                        moduleSubConfigName + "...");
-                if (FederationManager.getExitCode(am.createSubCfg(webClient, 
-                        moduleServiceName, moduleSubConfigName, list, realm,
-                        moduleSubConfigId, "0")) != 0) {
-                    log(Level.SEVERE, "setup", 
-                            "createSubCfg (module) ssoadm command failed");
+                idToken = getToken(adminUser, adminPassword, basedn);
+                smsc = new SMSCommon(idToken);
+                
+                userRealm = realm;
+                if (testMode.equals("realm")) {
+                    userRealm = modeValue;
+                    Map realmAttrMap = new HashMap();
+                    Set realmSet = new HashSet();
+                    realmSet.add("Active");
+                    realmAttrMap.put("sunOrganizationStatus", realmSet);
+                    log(Level.FINE, "setup", "Creating the realm " + userRealm);
+                    AMIdentity amid = idmc.createIdentity(idToken,
+                            realm, IdType.REALM, userRealm, realmAttrMap);
+                    log(Level.FINE, "setup", 
+                            "Verifying the existence of sub-realm " +
+                            userRealm);
+                    if (amid == null) {
+                        log(Level.SEVERE, "setup", "Creation of sub-realm " +
+                                userRealm + " failed!");
+                        assert false;
+                    }
+                }
+
+                log(Level.FINEST, "setup", "modeValue: " + modeValue);
+                Reporter.log("ModeValue: " + modeValue);
+
+                if (!testMode.equals("module") &&
+                        !testMode.equals("authlevel")) {
+                    String[] configInstances = {serviceDetails};
+                    Map configMap = new HashMap();
+                    createAuthConfig(userRealm, serviceSubConfigName,
+                            configInstances, configMap);
+                }
+            
+                StringBuffer attrBuffer = new StringBuffer("sn=" + loginUser).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("cn=" + loginUser).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("userpassword=" + loginPassword).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("inetuserstatus=Active").
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("iplanet-am-user-auth-config=" + 
+                        serviceSubConfigName);
+
+                log(Level.FINE, "setup", "Creating user " + loginUser + " ...");
+                if (!idmc.createID(loginUser, "user", attrBuffer.toString(),
+                        idToken, userRealm)) {
+                    log(Level.SEVERE, "setup",
+                            "Failed to create user identity " + 
+                            loginUser + " ...");
                     assert false;
                 }
 
-                list.clear();
-                String svcData = "iplanet-am-auth-configuration=" + 
-                        "<AttributeValuePair><Value>" + moduleSubConfigName +
-                        " REQUIRED</Value></AttributeValuePair>";
-                log(Level.FINEST, "setup", "ServiceData: " + svcData);
-                list.add(svcData);
-                log(Level.FINE, "setup", "Creating service sub-configuration " + 
-                        serviceSubConfigName + "...");
-                if (FederationManager.getExitCode(am.createSubCfg(webClient, 
-                        serviceName, serviceSubConfigName, list, realm,
-                        serviceSubConfigId, "0")) != 0) {
-                    log(Level.SEVERE, "setup", 
-                            "createSubCfg (service) ssoadm command failed");
-                    assert false;
+                if (testMode.equals("realm")) {
+                    log(Level.FINE, "setup",
+                            "Setting the authentication configuration of realm "
+                            + userRealm + " to " + serviceSubConfigName);
+                    Map realmAttrs = new HashMap();
+                    Set attrValue = new HashSet();
+                    attrValue.add(serviceSubConfigName);
+                    realmAttrs.put("iplanet-am-auth-org-config", attrValue);
+                    smsc.updateServiceAttrsRealm(
+                            "iPlanetAMAuthService", userRealm, realmAttrs);
                 }
 
-                int iIdx = serviceSubConfigName.indexOf("/");
-                svcName = serviceSubConfigName.substring(iIdx+1,
-                            serviceSubConfigName.length());
-                log(Level.FINEST, "setup", "svcName:" + svcName);
-
-                list.clear();
-                list.add("sn=" + user);
-                list.add("cn=" + user);
-                list.add("userpassword=" + password);
-                list.add("inetuserstatus=Active");
-                list.add("iplanet-am-user-auth-config=" + svcName);
-                log(Level.FINE, "setup", "Creating user " + user + " ...");
-                if (FederationManager.getExitCode(am.createIdentity(webClient, 
-                        realm, user, "User", list)) != 0) {
-                    log(Level.SEVERE, "setup", 
-                            "createIdentity (User) ssoadm command failed");
-                    assert false;
-                }
-
-                if (ac.getSMSCommon().isPluginConfigured(
+                if (testMode.equals("role") && smsc.isPluginConfigured(
                         SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm)) {           
                     log(Level.FINE, "setup", "Creating role " + rolename + 
                             " ...");
-                    if (FederationManager.getExitCode(am.createIdentity(
-                            webClient, realm, rolename, "Role", null)) != 0) {
-                        log(Level.SEVERE, "setup", 
-                                "createIdentity (Role) ssoadm command failed");
+                    if (!idmc.createID(rolename, "role", null, idToken,
+                            userRealm)) {
+                        log(Level.SEVERE, "createUser", "Failed to create role "
+                                + rolename + " ...");
                         assert false;
                     }
-                    log(Level.FINE, "setup", "Assigning the user " + user + 
+
+                    log(Level.FINE, "setup", "Assigning the user " + loginUser +
                             " to role " + rolename + " ...");
-                    if (FederationManager.getExitCode(am.addMember(webClient, 
-                            realm, user, "User", rolename, "Role")) != 0) {
-                        log(Level.SEVERE, "setup", 
-                                "addMember ssoadm (User) call failed");
-                        assert false;
-                    }
-                    list.clear();
-                    list.add("iplanet-am-auth-configuration=" + svcName);
+                    idmc.addUserMember(idToken, loginUser, rolename,
+                            IdType.ROLE, userRealm);
+
                     log(Level.FINE, "setup", "Assigning the service " + 
-                            serviceName + " to the role " +
+                            serviceSubConfigName + " to the role " +
                             rolename + "...");
-                    if (FederationManager.getExitCode(am.addSvcIdentity(
-                            webClient, realm, rolename, "Role", 
-                            serviceName, list)) != 0) {
-                        log(Level.SEVERE, "setup", 
-                                "addSvcIdentity ssoadm command failed");
-                        assert false;
-                    }                
+                    idmc.assignSvcIdentity(idToken, rolename, "role",
+                            AUTH_CONFIGURATION_SERVICE_NAME, userRealm,
+                            "iplanet-am-auth-configuration=" +
+                            serviceSubConfigName);
                 } else {
                     log(Level.FINEST, "setup", 
                             "Creation of a role, assignment of user to role, " +
@@ -255,193 +233,257 @@ public class AuthTest extends TestCommon {
                 log(Level.FINEST, "setup", "Skipping setup of " + testModule + 
                      " auth module test on a Windows based server");
             }
-        } catch(AssertionError ae) {
-            log(Level.SEVERE, "setup", 
-                    "Calling cleanup due to failed ssoadm exit code ...");
-            cleanup(testModule);
-            throw ae;
+            exiting("setup");
         } catch(Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
+            cleanup(testModule, testMode);
             throw e;
         } finally {
             if (isValidTest) {
-                consoleLogout(webClient, logoutURL);
-            Thread.sleep(notificationSleepTime);
+                if (idToken != null) {
+                    destroyToken(idToken);
+                }
             }
         } 
-        exiting("setup");
     }
 
     /**
-     * Tests for successful login into the system using correct
-     * credentials
+     * Tests for successful login into the system using correct credentials.
+     * @param testModule - the type of authentication module instance which
+     * will be used for authentication.
+     * @param testMode - the type of authentication which should be performed
+     * (e.g. "module", "user", "service", "realm", "role", "authlevel").
+     * @param instanceIndex - an instance index to specify which authentication
+     * module instance should be used for this test.
      */
-    @Parameters({"testModule", "testMode"})
+    @Parameters({"testModule", "testMode", "instanceIndex"})
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
         "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void testLoginPositive(String testModule, String testMode)
+    public void testLoginPositive(String testModule, 
+            String testMode,
+            String instanceIndex)
     throws Exception {
-        Object[] params = {testModule};
+        Object[] params = {testModule, testMode, instanceIndex};
         entering("testLoginPositive", params);
+        SSOToken userToken = null;
 
+        log(Level.FINEST, "testLoginPositive", "testModule = " + testModule);
+        log(Level.FINEST, "testLoginPositive", "testMode = " + testMode);
+        log(Level.FINEST, "testLoginPositive", "instanceIndex = " +
+                instanceIndex);
+
+        Reporter.log("Test Module: " + testModule);
+        Reporter.log("Test Mode: " + testMode);
+        Reporter.log("Instance Index: " + instanceIndex);
+        
         if (isValidTest) {
-            webClient = new WebClient();
-            try {
-                String loginUser = (String)rb.getString(testModule + ".user");
-                String loginPassword = (String)rb.getString(testModule +
-                        ".password");
-                String modevalue = (String)rb.getString(testModule +
-                        ".modevalue." + testMode);
-                String msg = (String)rb.getString(testModule + ".passmsg");
-
-                if (moduleServiceName.equals(
-                        "iPlanetAMAuthAnonymousService")) {
-                    ac.testZeroPageLogin(webClient, loginUser, testMode,
-                            modevalue, msg);
-                } else {
-                    ac.testZeroPageLogin(webClient, loginUser, loginPassword,
-                            testMode, modevalue, msg);
+            if (!testMode.equals("authlevel")) {
+                webClient = new WebClient();
+                try {
+                    String msg = (String)rb.getString(testModule + ".passmsg");
+                    if (testModule.startsWith("anonymous")) {
+                        testZeroPageLogin(webClient, loginUser, testMode,
+                                modeValue, msg);
+                    } else {
+                        testZeroPageLogin(webClient, loginUser, loginPassword,
+                                testMode, modeValue, msg);
+                    }
+                    exiting("testLoginPositive");
+                } catch (Exception e) {
+                    log(Level.SEVERE, "testLoginPositive", e.getMessage());
+                    e.printStackTrace();
+                    cleanup(testModule, testMode);
+                    throw e;
+                } finally {
+                    consoleLogout(webClient, logoutURL);
                 }
-
-            } catch (Exception e) {
-                log(Level.SEVERE, "testLoginPositive", e.getMessage());
-                e.printStackTrace();
-                throw e;
-            } finally {
-                consoleLogout(webClient, logoutURL);                
+            } else {
+                try {
+                    String instanceName = getAuthInstanceName(
+                            testModule, instanceIndex);
+                    userToken = performRemoteLogin(userRealm, testMode,
+                            modeValue, loginUser, loginPassword, instanceName);
+                    if (userToken != null) {
+                        log(Level.FINEST, "testLoginPositive",
+                                "userToken principal = " +
+                                userToken.getPrincipal());
+                    }
+                    assert (userToken != null);
+                    exiting("testLoginPositive");
+                } catch (Exception e) {
+                    log(Level.SEVERE, "testLoginPositive", e.getMessage());
+                    e.printStackTrace();
+                    cleanup(testModule, testMode);
+                    throw e;
+                } finally {
+                    if (userToken != null) {
+                        destroyToken(userToken);
+                    }
+                }
             }
         } else {
             log(Level.FINEST, "testLoginPositive", "Skipping " + testModule + 
                     " auth module test on a Windows based server");                
         }
-        exiting("testLoginPositive");
     }
 
     /**
      * Tests for unsuccessful login into the system using incorrect
-     * credentials
+     * credentials.
+     * @param testModule - the type of authentication module instance which
+     * will be used for authentication.
+     * @param testMode - the type of authentication which should be performed
+     * (e.g. "module", "user", "service", "realm", "role", "authlevel").
+     * @param instanceIndex - an instance index to specify which authentication
+     * module instance should be used for this test.
      */
-    @Parameters({"testModule", "testMode"})
+    @Parameters({"testModule", "testMode", "instanceIndex"})
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
         "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void testLoginNegative(String testModule, String testMode)
+    public void testLoginNegative(String testModule, 
+            String testMode,
+            String instanceIndex)
     throws Exception {
-        Object[] params = {testModule};
+        Object[] params = {testModule, testMode, instanceIndex};
         entering("testLoginNegative", params);
-        webClient = new WebClient();        
+        SSOToken userToken = null;
+
+        log(Level.FINEST, "testLoginNegative", "testModule = " + testModule);
+        log(Level.FINEST, "testLoginNegative", "testMode = " + testMode);
+        log(Level.FINEST, "testLoginNegative", "instanceIndex = " +
+                instanceIndex);
+
+        Reporter.log("Test Module: " + testModule);
+        Reporter.log("Test Mode: " + testMode);
+        Reporter.log("Instance Index: " + instanceIndex);
+
         if (isValidTest) {
-            try {
-                String loginUser = (String)rb.getString(testModule + ".user");
-                String loginPassword = (String)rb.getString(testModule +
-                        ".password");
-                String modevalue = (String)rb.getString(testModule +
-                        ".modevalue." + testMode);
-                String msg = (String)rb.getString(testModule + ".failmsg");
-                if (!moduleServiceName.equals("iPlanetAMAuthAnonymousService")) 
-                {
-                    ac.testZeroPageLogin(webClient, loginUser, "not" +
-                            loginPassword, testMode, modevalue, msg);
-                } else {
-                    ac.testZeroPageLogin(webClient, loginUser + "negative",
-                            testMode, modevalue, msg);
+            if (!testMode.equals("authlevel")) {
+                webClient = new WebClient();
+                try {
+                    String modevalue = (String)rb.getString(testModule +
+                            ".modevalue." + testMode);
+                    String msg = (String)rb.getString(testModule + ".failmsg");
+                    if (!testModule.startsWith("anonymous")) {
+                        testZeroPageLogin(webClient, loginUser, "not" +
+                                loginPassword, testMode, modevalue, msg);
+                    } else {
+                        testZeroPageLogin(webClient, loginUser + "negative",
+                                testMode, modevalue, msg);
+                    }
+                    exiting("testLoginNegative");
+                } catch (Exception e) {
+                    log(Level.SEVERE, "testLoginNegative", e.getMessage());
+                    e.printStackTrace();
+                    cleanup(testModule, testMode);
+                    throw e;
+                } finally {
+                    consoleLogout(webClient, logoutURL);
                 }
-            } catch (Exception e) {
-                log(Level.SEVERE, "testLoginNegative", e.getMessage());
-                e.printStackTrace();
-                throw e;
-            } finally {
-                consoleLogout(webClient, logoutURL);                
+            } else {
+                try {
+                    String instanceName = getAuthInstanceName(
+                            testModule, instanceIndex);
+                    if (!testModule.startsWith("anonymous")) {
+                        userToken = performRemoteLogin(userRealm, testMode,
+                                modeValue, loginUser, "not" + loginPassword,
+                                instanceName);
+                    } else {
+                        userToken = performRemoteLogin(userRealm, testMode,
+                                modeValue, "not" + loginUser, loginPassword,
+                                instanceName);
+                    }
+                    assert (userToken == null);
+                    exiting("testLoginNegative");
+                } catch (Exception e) {
+                    log(Level.SEVERE, "testLoginNegative", e.getMessage());
+                    e.printStackTrace();
+                    cleanup(testModule, testMode);
+                    throw e;
+                } finally {
+                    if (userToken != null) {
+                        destroyToken(userToken);
+                    }
+                }
             }
         } else {
             log(Level.FINEST, "testLoginNegative", "Skipping " + testModule + 
                     " auth module test on a Windows based server");           
         }
-        exiting("testLoginNegative");
     }
 
     /**
      * This method is to clear the initial setup. It does the following:
      * (1) Delete authentication service
-     * (2) Delete authentication instance
-     * (3) Delete all users and roles
-     * This is called only once per auth module.
+     * (2) Delete all users and roles
+     * @param testModule - the type of authentication module instance which
+     * will be used for authentication.
+     * @param testMode - the type of authentication which should be performed
+     * (e.g. "module", "user", "service", "realm", "role", "authlevel").
      */
-    @Parameters({"testModule"})
+    @Parameters({"testModule", "testMode"})
     @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
         "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void cleanup(String testModule)
+    public void cleanup(String testModule, String testMode)
     throws Exception {
-        Object[] params = {testModule};
+        Object[] params = {testModule, testMode};
         entering("cleanup", params);
         webClient = new WebClient();
         if (isValidTest) {
             try {
-                user = (String)rb.getString(testModule + ".user");
-                rolename = (String)rb.getString(testModule + ".rolename");
+                log(Level.FINEST, "cleanup", "UserName: " + loginUser);
+                log(Level.FINEST, "cleanup", "TestMode: " + testMode);
 
-                log(Level.FINEST, "cleanup", "UserName:" + user);
-                log(Level.FINEST, "cleanup", "RoleName:" + rolename);
+                Reporter.log("UserName:" + loginUser);
+                Reporter.log("TestMode: " + testMode);
 
-                Reporter.log("UserName:" + user);
-                Reporter.log("RoleName:" + rolename);
+                log(Level.FINE, "cleanup", "Deleting user " +
+                        loginUser + " ...");
+                idToken = getToken(adminUser, adminPassword, basedn);
+                idmc.deleteIdentity(idToken, userRealm, IdType.USER, loginUser);
 
-                FederationManager am = new FederationManager(amadmURL);
-                consoleLogin(webClient, loginURL, adminUser, adminPassword);
-                list = new ArrayList();
-                list.add(user);
-                log(Level.FINE, "cleanup", "Deleting user " + user + " ...");
-                if (FederationManager.getExitCode(am.deleteIdentities(webClient, 
-                        realm, list, "User")) != 0) {
-                    log(Level.SEVERE, "cleanup", 
-                            "deleteIdentities (User) ssoadm command failed");
-                }
-                list.clear();
-                list.add(rolename);
-
-                if (ac.getSMSCommon().isPluginConfigured(
+                smsc = new SMSCommon(idToken);
+                if (testMode.equals("role") &&
+                        smsc.isPluginConfigured(
                         SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm)) {
+                    rolename = (String)rb.getString(testModule + ".rolename");
+
+                    log(Level.FINEST, "cleanup", "rolename = " + rolename);
+                    Reporter.log("RoleName: " + rolename);
+
                     log(Level.FINE, "cleanup", "Deleting role " + rolename + 
                             " ...");
-                    if (FederationManager.getExitCode(
-                            am.deleteIdentities(webClient, realm, list, 
-                            "Role")) !=0) {
-                        log(Level.SEVERE, "cleanup", 
-                                "deleteIdentities(Role) ssoadm command failed");
-                    }
+                    idmc.deleteIdentity(idToken, userRealm, IdType.ROLE,
+                            rolename);
                 }
 
-                log(Level.FINE, "cleanup", 
-                        "Deleting service sub-configuration " + 
-                        serviceSubConfigName + " ...");
-                if (FederationManager.getExitCode(am.deleteSubCfg(webClient, 
-                        serviceName, serviceSubConfigName, realm))
-                        != 0 ) {
-                    log(Level.SEVERE, "cleanup", 
-                            "deleteSubCfg (Service) ssoadm command failed");
+                if (!testMode.equals("module") &&
+                        !testMode.equals("authlevel")) {
+                    log(Level.FINE, "cleanup",
+                            "Deleting service sub-configuration " +
+                            serviceSubConfigName + " ...");
+                    deleteAuthConfig(userRealm, serviceSubConfigName);
                 }
-                list.clear();
-                list.add(moduleSubConfigName);
 
-                log(Level.FINE, "cleanup", "Deleting module instance(s) " + 
-                        list + " ...");               
-                if (FederationManager.getExitCode(
-                        am.deleteAuthInstances(webClient, realm, list)) != 0) {
-                    log(Level.SEVERE, "cleanup", 
-                            "deleteAuthInstances ssoadm command failed");
+                if (testMode.equals("realm")) {
+                    log(Level.FINE, "cleanup", "Deleting the sub-realm " +
+                            userRealm);
+                    idmc.deleteRealm(idToken, realm + userRealm);
                 }
+                exiting("cleanup");
             } catch (Exception e) {
                 log(Level.SEVERE, "cleanup", e.getMessage());
                 e.printStackTrace();
                 throw e;
             } finally {
-                consoleLogout(webClient, logoutURL);
-                Thread.sleep(5000);            
+                if (idToken != null) {
+                    destroyToken(idToken);
+                }      
             }
         } else {
             log(Level.FINEST, "setup", "Skipping cleanup for " + testModule + 
                      " auth module test on a Windows based server");            
         }
-        exiting("cleanup");
     }
 }

@@ -2,6 +2,7 @@
     <test name="AuthTestLDAPModule">
         <parameter name="testModule" value="ldap"/>
         <parameter name="testMode" value="module"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -15,6 +16,7 @@
     <test name="AuthTestLDAPService">
         <parameter name="testModule" value="ldap"/>
         <parameter name="testMode" value="service"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -27,6 +29,20 @@
     <test name="AuthTestLDAPAuthLevel">
         <parameter name="testModule" value="ldap"/>
         <parameter name="testMode" value="authlevel"/>
+        <parameter name="instanceIndex" value="1"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestLDAPRealm">
+        <parameter name="testModule" value="ldap"/>
+        <parameter name="testMode" value="realm"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -39,6 +55,7 @@
     <test name="AuthTestAnonymousModule">
         <parameter name="testModule" value="anonymous"/>
         <parameter name="testMode" value="module"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -51,6 +68,7 @@
     <test name="AuthTestAnonymousService">
         <parameter name="testModule" value="anonymous"/>
         <parameter name="testMode" value="service"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -63,6 +81,7 @@
     <test name="AuthTestAnonymousAuthLevel">
         <parameter name="testModule" value="anonymous"/>
         <parameter name="testMode" value="authlevel"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -75,6 +94,7 @@
     <test name="AuthTestDataStoreModule">
         <parameter name="testModule" value="datastore"/>
         <parameter name="testMode" value="module"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -87,6 +107,7 @@
     <test name="AuthTestDataStoreService">
         <parameter name="testModule" value="datastore"/>
         <parameter name="testMode" value="service"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -99,6 +120,20 @@
     <test name="AuthTestDataStoreAuthLevel">
         <parameter name="testModule" value="datastore"/>
         <parameter name="testMode" value="authlevel"/>
+        <parameter name="instanceIndex" value="1"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestDataStoreRealm">
+        <parameter name="testModule" value="datastore"/>
+        <parameter name="testMode" value="realm"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -111,6 +146,7 @@
     <test name="AuthTestMembershipModule">
         <parameter name="testModule" value="membership"/>
         <parameter name="testMode" value="module"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -123,6 +159,7 @@
     <test name="AuthTestMembershipService">
         <parameter name="testModule" value="membership"/>
         <parameter name="testMode" value="service"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -135,6 +172,72 @@
     <test name="AuthTestMembershipAuthLevel">
         <parameter name="testModule" value="membership"/>
         <parameter name="testMode" value="authlevel"/>
+        <parameter name="instanceIndex" value="1"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+   </test>
+    <test name="AuthTestMembershipRealm">
+        <parameter name="testModule" value="membership"/>
+        <parameter name="testMode" value="realm"/>
+        <parameter name="instanceIndex" value="1"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+   </test>
+   <test name="AuthTestLDAPUser">
+        <parameter name="testModule" value="ldap"/>
+        <parameter name="testMode" value="user"/>
+        <parameter name="instanceIndex" value="1"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+   </test>
+   <test name="AuthTestAnonymousUser">
+        <parameter name="testModule" value="anonymous"/>
+        <parameter name="testMode" value="user"/>
+        <parameter name="instanceIndex" value="1"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+   </test>
+   <test name="AuthTestDataStoreUser">
+        <parameter name="testModule" value="datastore"/>
+        <parameter name="testMode" value="user"/>
+        <parameter name="instanceIndex" value="1"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+   </test>
+   <test name="AuthTestMembershipUser">
+        <parameter name="testModule" value="membership"/>
+        <parameter name="testMode" value="user"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -144,8 +247,45 @@
             <class name="com.sun.identity.qatest.authentication.AuthTest"/>
         </classes>
     </test>
+    <test name="SanityChainTestRequired">
+        <parameter name="testChainName" value="chain8"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="SanityChainTestRequisite">
+        <parameter name="testChainName" value="chain9"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="SanityChainTestOptional">
+        <parameter name="testChainName" value="chain11"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
     <test name="SanityChainTestOneUsernamePassword">
         <parameter name="testChainName" value="chain10"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -157,6 +297,7 @@
     </test>
     <test name="SanityChainTestSufficient">
         <parameter name="testChainName" value="chain12"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -169,6 +310,7 @@
     <test name="RedirectTestLDAPRootRealm">
         <parameter name="testModule" value="ldap"/>
         <parameter name="testRealm" value="/"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -180,7 +322,8 @@
     </test>
      <test name="RedirectTestLDAPSubRealm">
         <parameter name="testModule" value="ldap"/>
-        <parameter name="testRealm" value="blue"/>
+        <parameter name="testRealm" value="gotoldaprealm"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -193,6 +336,7 @@
     <test name="RedirectTestDataStoreRootRealm">
         <parameter name="testModule" value="datastore"/>
         <parameter name="testRealm" value="/"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -204,7 +348,8 @@
     </test>
      <test name="RedirectTestDataStoreSubRealm">
         <parameter name="testModule" value="datastore"/>
-        <parameter name="testRealm" value="blue"/>
+        <parameter name="testRealm" value="gotodsrealm"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -217,6 +362,7 @@
     <test name="RedirectTestMembershipRootRealm">
         <parameter name="testModule" value="membership"/>
         <parameter name="testRealm" value="/"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -228,7 +374,8 @@
     </test>
      <test name="RedirectTestMembershipSubRealm">
         <parameter name="testModule" value="membership"/>
-        <parameter name="testRealm" value="blue"/>
+        <parameter name="testRealm" value="gotomemrealm"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -239,7 +386,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_noneExist">
-        <parameter name="testcaseName" value="noneExist"/>
+        <parameter name="testCaseName" value="noneExist"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -250,7 +398,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_inetuserPositive">
-        <parameter name="testcaseName" value="inetuserPositive"/>
+        <parameter name="testCaseName" value="inetuserPositive"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -261,7 +410,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_loginPositive">
-        <parameter name="testcaseName" value="loginPositive"/> 
+        <parameter name="testCaseName" value="loginPositive"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -272,7 +422,8 @@
         </classes>
     </test>
     <test name="UserAuthAttributeTest_lifePositive">
-        <parameter name="testcaseName" value="lifePositive"/>
+        <parameter name="testCaseName" value="lifePositive"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -283,7 +434,8 @@
         </classes>
     </test> 
     <test name="UserAuthAttributeTest_inetuserNegative">
-        <parameter name="testcaseName" value="inetuserNegative"/>
+        <parameter name="testCaseName" value="inetuserNegative"/>
+        <parameter name="testRealm" value="/"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -295,6 +447,7 @@
     </test>                  
     <test name="ProfileAttributesRequiredTest">
         <parameter name="testProfile" value="required"/>
+        <parameter name="instanceIndex" value="1"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -338,7 +491,7 @@
    </test>
    <test name="SessionUpgradeSanityTestSubRealm">
         <parameter name="forceAuth" value="false"/>
-        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testRealm" value="upgradeRealm1"/>
         <parameter name="testMode" value="module"/>
         <parameter name="useDifferentModules" value="true"/>
         <parameter name="createUserProfile" value="required"/>
@@ -354,7 +507,7 @@
     </test>
     <test name="SessionUpgradeSanityTestForceAuthSubRealm">
         <parameter name="forceAuth" value="true"/>
-        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testRealm" value="upgradeRealm2"/>
         <parameter name="testMode" value="module"/>
         <parameter name="useDifferentModules" value="true"/>
         <parameter name="createUserProfile" value="required"/>
@@ -402,7 +555,7 @@
    </test>
    <test name="SessionUpgradeLevelSanityTestSubRealm">
         <parameter name="forceAuth" value="false"/>
-        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testRealm" value="upgradeRealm3"/>
         <parameter name="testMode" value="level"/>
         <parameter name="useDifferentModules" value="true"/>
         <parameter name="createUserProfile" value="required"/>
@@ -418,7 +571,7 @@
     </test>
     <test name="SessionUpgradeLevelSanityTestForceAuthSubRealm">
         <parameter name="forceAuth" value="true"/>
-        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testRealm" value="upgradeRealm4"/>
         <parameter name="testMode" value="level"/>
         <parameter name="useDifferentModules" value="true"/>
         <parameter name="createUserProfile" value="required"/>
@@ -469,7 +622,7 @@
         </classes>
     </test>
     <test name="ApplicationAuthTestSubRealmNegative">
-        <parameter name="testRealm" value="apprealm"/>
+        <parameter name="testRealm" value="apprealm2"/>
         <parameter name="negativeTest" value="true"/>
         <groups>
             <run>
@@ -528,7 +681,7 @@
         </classes>
     </test>
     <test name="NewSessionArgTestSubRealm">
-        <parameter name="testRealm" value="nssubrealm"/>
+        <parameter name="testRealm" value="nssubrealm2"/>
         <parameter name="testModule" value="anonymous"/>
         <groups>
             <run>

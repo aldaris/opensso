@@ -17,24 +17,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectTest.java,v 1.12 2009-01-26 23:47:48 nithyas Exp $
+ * $Id: RedirectTest.java,v 1.13 2009-06-02 17:08:18 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.authentication;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.sun.identity.qatest.common.FederationManager;
-import com.sun.identity.qatest.common.TestCommon;
-import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
-import com.sun.identity.qatest.common.authentication.AuthTestsValidator;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
+import com.sun.identity.qatest.idm.IDMConstants;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -63,15 +65,15 @@ import org.testng.annotations.Test;
  * OpenSSO_AuthModule(Membership)_17a-d, OpenSSO_AuthModule(Membership)_18a-d,
  * OpenSSO_AuthModule(Unix)_11a-d, and OpenSSO_AuthModule(Unix)_12a-d.
  */
-public class RedirectTest extends TestCommon {
-    
+public class RedirectTest extends AuthenticationCommon {
+    private IDMCommon idmc;
     private ResourceBundle testResources;
     private String moduleOnSuccess;
     private String moduleOnFail;
     private String modulePassMsg;
     private String moduleFailMsg;
     private String moduleGotoPassMsg;
-    private String moduleOnFailPassMsg;
+    private String moduleGotoOnFailMsg;
     private String createUserProp;
     private boolean userExists;
     private String cleanupFlag;
@@ -80,40 +82,35 @@ public class RedirectTest extends TestCommon {
     private String password;
     private String redirectURL;
     private String uniqueIdentifier;
-    private List moduleConfigData;
-    private String moduleServiceName;
     private String moduleSubConfig;
-    private String moduleSubConfigId;
-    private String configrbName = "authenticationConfigData";
     private List<String> testUserList = new ArrayList<String>();
     private boolean isValidTest = true;
-    private AuthTestConfigUtil moduleConfig;
+    private SSOToken adminToken;
     
     /**
      * Default Constructor
      **/
     public RedirectTest() {
-        super("RedirectTest");
-        moduleConfig = new AuthTestConfigUtil(configrbName);        
+        super();  
     }
         
     /**
      * Reads the necessary test configuration and prepares the system
      * for module/goto/gotoOnFail redirection tests.The following are done
      * in the setup
-     * - Create module instances
      * - Create realm
      * - Create Users , If needed
      */
-    @Parameters({"testModule", "testRealm"})    
+    @Parameters({"testModule", "testRealm", "instanceIndex"})
     @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
       "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void setup(String testModule, String testRealm) 
+    public void setup(String testModule, String testRealm,
+            String instanceIndex)
     throws Exception {
-        Object[] params = {testModule, testRealm};
+        Object[] params = {testModule, testRealm, instanceIndex};
         entering("setup", params);
         try {
-            isValidTest = moduleConfig.isValidModuleTest(testModule);            
+            isValidTest = isValidModuleTest(testModule);
             if (isValidTest) {
                 testResources = ResourceBundle.getBundle("authentication" +
                         fileseparator + "RedirectTest");
@@ -127,13 +124,10 @@ public class RedirectTest extends TestCommon {
                         testModule + "-module-failmsg");
                 moduleGotoPassMsg = testResources.getString("am-auth-test-" +
                         testModule + "-goto-passmsg");
-                moduleOnFailPassMsg = testResources.getString("am-auth-test-" +
+                moduleGotoOnFailMsg = testResources.getString("am-auth-test-" +
                         testModule + "-gotoOnFail-passmsg");
-                ResourceBundle configBundle = 
-                        ResourceBundle.getBundle("authentication" + 
-                        fileseparator + configrbName);
-                moduleSubConfig = configBundle.getString(testModule + 
-                        ".module-subconfig-name");
+                moduleSubConfig = this.getAuthInstanceName(testModule,
+                        instanceIndex);
                 userName = testResources.getString("am-auth-test-" +
                         testModule + "-user");
                 userName.trim();
@@ -142,31 +136,51 @@ public class RedirectTest extends TestCommon {
                 password.trim();
                 cleanupFlag = testResources.getString("am-auth-test-debug");
                 debug = new Boolean(cleanupFlag).booleanValue();
+                
                 log(Level.FINEST, "setup", "ModuleName: " + testModule);
                 log(Level.FINEST, "setup", "RealmName: " + testRealm);
                 log(Level.FINEST, "setup", "Success URL: " + moduleOnSuccess);
                 log(Level.FINEST, "setup", "Failure URL: " + moduleOnFail);
                 log(Level.FINEST, "setup", "modulePassMsg: " + modulePassMsg);
                 log(Level.FINEST, "setup", "moduleFailMsg: " + moduleFailMsg);
-                log(Level.FINEST, "setup", "modulePassMsg: " + moduleGotoPassMsg);
-                log(Level.FINEST, "setup", "modulePassMsg: " + moduleOnFailPassMsg);
+                log(Level.FINEST, "setup", "modulePassMsg: " +
+                        moduleGotoPassMsg);
+                log(Level.FINEST, "setup", "modulePassMsg: " +
+                        moduleGotoOnFailMsg);
                 log(Level.FINEST, "setup", "userName: " + userName);
                 log(Level.FINEST, "setup", "password: " + password);
                 log(Level.FINEST, "setup", "debug: " + debug);
+                
                 Reporter.log("testModuleName: " + testModule);
                 Reporter.log("Realm: " + testRealm);
                 Reporter.log("testModuleName: " + moduleOnSuccess);
                 Reporter.log("moduleOnFail: " + moduleOnFail);
                 Reporter.log("modulePassMsg: " + modulePassMsg);
                 Reporter.log("moduleFailMsg: " + moduleFailMsg);
-                Reporter.log("moduleFailMsg: " + moduleGotoPassMsg);
-                Reporter.log("moduleFailMsg: " + moduleOnFailPassMsg);
+                Reporter.log("moduleGotoPassMsg: " + moduleGotoPassMsg);
+                Reporter.log("moduleGotoFailMsg: " + moduleGotoOnFailMsg);
                 Reporter.log("moduleuserName: " + userName);
                 Reporter.log("modulepassword: " + password);
                 Reporter.log("cleanupFlag: " + debug);
 
+                adminToken = getToken(adminUser, adminPassword, basedn);
+                idmc = new IDMCommon();
                 if (!testRealm.equals("/")) {
-                    createTestRealm(testRealm);
+                    Map realmAttrMap = new HashMap();
+                    Set realmSet = new HashSet();
+                    realmSet.add("Active");
+                    realmAttrMap.put("sunOrganizationStatus", realmSet);
+                    log(Level.FINE, "setup", "Creating the realm " + testRealm);
+                    AMIdentity amid = idmc.createIdentity(adminToken,
+                            realm, IdType.REALM, testRealm, realmAttrMap);
+                    log(Level.FINE, "setup",
+                            "Verifying the existence of sub-realm " +
+                            testRealm);
+                    if (amid == null) {
+                        log(Level.SEVERE, "setup", "Creation of sub-realm " +
+                                testRealm + " failed!");
+                        assert false;
+                    }
                     uniqueIdentifier = testRealm + "_" + testModule;
                     redirectURL = getLoginURL(testRealm) + "&amp;"
                             + "module=" + moduleSubConfig;
@@ -176,144 +190,159 @@ public class RedirectTest extends TestCommon {
                     uniqueIdentifier = "rootrealm" + "_" + testModule;
                 }
 
-                createModule(testRealm, testModule);
                 createUserProp = testResources.getString("am-auth-test-" +
                         testModule + "-createTestUser");
                 userExists = new Boolean(createUserProp).booleanValue();
                 testUserList.add(userName);
                 if (!userExists) {
-                    createUser(testRealm, userName, password);
+                    StringBuffer attrBuffer =
+                            new StringBuffer("sn=" + userName).
+                            append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                            append("cn=" + userName).
+                            append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                            append("userpassword=" + password).
+                            append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                            append("inetuserstatus=Active");
+
+                    log(Level.FINE, "setup",
+                            "Creating user " + userName + " ...");
+                    if (!idmc.createID(userName, "user", attrBuffer.toString(),
+                            adminToken, testRealm)) {
+                        log(Level.SEVERE, "createUser", "Failed to create " +
+                                "user identity " + userName + "...");
+                        assert false;
+                    }
                 }
             } else {
                 log(Level.FINEST, "setup", "Skipping setup of " + testModule + 
                      " auth module test on a Windows based server");                
             }
-        } catch (AssertionError ae) {
+            exiting("setup");
+        } catch (Exception e) {
             log(Level.SEVERE, "setup", 
-                    "Calling cleanup due to failed ssoadm exit code ...");
+                    "Unexpected setup failure has occured ...");
             cleanup(testModule, testRealm); 
-            throw ae;
+            throw e;
+        } finally {
+            if (adminToken != null) {
+                destroyToken(adminToken);
+            }
         }
-        exiting("setup");
     }
     
-    /*
-     * Validate the module based authentication for the module
-     * under test for correct user and password behaviour
+    /**
+     * Validate positive module based authentication with the correct user
+     * and password.
+     * @param testModule - the authentication module used for authentication.
+     * @param testRealm - the realm in which the authentication should be
+     * performed.
      */
     @Parameters({"testModule", "testRealm"})    
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
       "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void validateModuleTestsPositive(String testModule, String testRealm)
+    public void validateModuleTest(String testModule, String testRealm)
     throws Exception {
         Object[] params = {testModule, testRealm};        
-        entering("validateModuleTestsPositive", params);
+        entering("validateModuleTest", params);
         if (isValidTest) {
             Map executeMap = new HashMap();
             executeMap.put("redirectURL", redirectURL);
-            executeMap.put("userName", userName);
-            executeMap.put("password", password);
-            executeMap.put("modulePassMsg", modulePassMsg);
-            executeMap.put("moduleFailMsg", moduleFailMsg);
-            executeMap.put("uniqueIdentifier", uniqueIdentifier);
-            AuthTestsValidator authTestValidator =
-                    new AuthTestsValidator(executeMap);
-            authTestValidator.testModulebasedPostive();
+            executeMap.put("users", userName + ":" + password);
+            executeMap.put("successMsg", modulePassMsg);
+            executeMap.put("uniqueIdentifier", uniqueIdentifier + "_positive");
+
+            testFormBasedAuth(executeMap);
         } else {
-            log(Level.FINEST, "validateModuleTestsPositive", "Skipping " + 
-                    testModule + " auth module test on a Windows based server");             
+            log(Level.FINEST, "validateModuleTest", "Skipping " + testModule +
+                    " auth module test on a Windows based server");
         }
-        exiting("validateModuleTestsPositive");
+        exiting("validateModuleTest");
     }
     
-    /*
+    /**
      * Validate the module based authentication for the module
      * under test for incorrect user and password behaviour
+     * @param testModule - the authentication module used for authentication.
+     * @param testRealm - the realm in which the authentication should be
+     * performed.
      */
-    @Parameters({"testModule", "testRealm"})        
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+    @Parameters({"testModule", "testRealm"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
       "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void validateModuleTestsNegative(String testModule, String testRealm)
+    public void validateModuleTestNegative(String testModule, String testRealm)
     throws Exception {
         Object[] params = {testModule, testRealm};
-        entering("validateModuleTestsNegative", params);
-        if (isValidTest) {        
+        entering("validateModuleTestNegative", params);
+        if (isValidTest) {
             Map executeMap = new HashMap();
             executeMap.put("redirectURL", redirectURL);
-            executeMap.put("userName", userName);
-            executeMap.put("password", password);
-            executeMap.put("modulePassMsg", modulePassMsg);
-            executeMap.put("moduleFailMsg", moduleFailMsg);
-            executeMap.put("uniqueIdentifier", uniqueIdentifier);
-            AuthTestsValidator authTestValidator =
-                    new AuthTestsValidator(executeMap);
-            authTestValidator.testModulebasedNegative();
+            executeMap.put("users", userName + ":not" + password);
+            executeMap.put("successMsg", moduleFailMsg);
+            executeMap.put("uniqueIdentifier", uniqueIdentifier + "_negative");
+            testFormBasedAuth(executeMap);
         } else {
-            log(Level.FINEST, "validateModuleTestsNegative", "Skipping " + 
-                    testModule + " auth module test on a Windows based server");             
+            log(Level.FINEST, "validateModuleTestNegative", "Skipping " +
+                    testModule + " auth module test on a Windows based server");
         }
-        exiting("validateModuleTestsNegative");
+        exiting("validateModuleTestNegative");
     }
-    
-    /*
+
+    /**
      * Validate the module based authentication for the module
-     * under test for "goto" param when auth success behaviour
+     * under test for "goto" param when auth success behaviour.
+     * @param testModule - the authentication module used for authentication.
+     * @param testRealm - the realm in which the authentication should be
+     * performed.
      */
-    @Parameters({"testModule", "testRealm"})        
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+    @Parameters({"testModule", "testRealm"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
       "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void validateGotoTests(String testModule, String testRealm)
+    public void validateGotoTest(String testModule, String testRealm)
     throws Exception {
         Object params[] = {testModule, testRealm};
         entering("validateGotoTests", params);
         if (isValidTest) {
             Map executeMap = new HashMap();
             String gotoURL = redirectURL + "&amp;goto=" + moduleOnSuccess;
-            executeMap.put("redirectURL", redirectURL);
-            executeMap.put("userName", userName);
-            executeMap.put("password", password);
-            executeMap.put("modulePassMsg", moduleGotoPassMsg);
-            executeMap.put("moduleFailMsg", moduleOnFailPassMsg);
-            executeMap.put("gotoURL", gotoURL);
-            executeMap.put("uniqueIdentifier", uniqueIdentifier);
-            AuthTestsValidator authTestValidator =
-                    new AuthTestsValidator(executeMap);
-            authTestValidator.testModuleGoto();
+            executeMap.put("redirectURL", gotoURL);
+            executeMap.put("users", userName + ":" + password);
+            executeMap.put("successMsg", moduleGotoPassMsg);
+            executeMap.put("uniqueIdentifier", uniqueIdentifier + "_goto");
+            testFormBasedAuth(executeMap);
         } else {
-            log(Level.FINEST, "validateGotoTests", "Skipping " + testModule + 
-                    " auth module test on a Windows based server");             
+            log(Level.FINEST, "validateGotoTests", "Skipping " + testModule +
+                    " auth module test on a Windows based server");
         }
         exiting("validateGotoTests");
     }
-    
-    /*
+
+    /**
      * Validate the module based authentication for the module
      * under test for "GotoOnfail" param with unsuccessful authentication
      * behaviour
+     * @param testModule - the authentication module used for authentication.
+     * @param testRealm - the realm in which the authentication should be
+     * performed.
      */
-    @Parameters({"testModule", "testRealm"})       
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+    @Parameters({"testModule", "testRealm"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
       "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void validateGotoOnFailTests(String testModule, String testRealm)
+    public void validateGotoOnFailTest(String testModule, String testRealm)
     throws Exception {
         Object[] params = {testModule, testRealm};
         entering("validateGotoOnFailTests", params);
-        if (isValidTest) {        
+        if (isValidTest) {
             Map executeMap = new HashMap();
             String gotoURL = redirectURL + "&amp;gotoOnFail=" + moduleOnFail;
-            executeMap.put("redirectURL", redirectURL);
-            executeMap.put("userName", userName);
-            executeMap.put("password", password);
-            executeMap.put("modulePassMsg", moduleGotoPassMsg);
-            executeMap.put("moduleFailMsg", moduleOnFailPassMsg);
-            executeMap.put("gotoURL", gotoURL);
-            executeMap.put("uniqueIdentifier", uniqueIdentifier);
-            AuthTestsValidator authTestValidator = 
-                    new AuthTestsValidator(executeMap);
-            authTestValidator.testModuleGotoOnFail();
+            executeMap.put("redirectURL", gotoURL);
+            executeMap.put("users", userName + ":not" + password);
+            executeMap.put("successMsg", moduleGotoOnFailMsg);
+            executeMap.put("uniqueIdentifier", 
+                    uniqueIdentifier + "_gotoOnFail");
+            testFormBasedAuth(executeMap);
         } else {
-            log(Level.FINEST, "validateGotoOnFailTests", "Skipping " + 
-                    testModule + " auth module test on a Windows based server");               
+            log(Level.FINEST, "validateGotoOnFailTests", "Skipping " +
+                    testModule + " auth module test on a Windows based server");
         }
         exiting("validateGotoOnFailTests");
     }
@@ -340,49 +369,36 @@ public class RedirectTest extends TestCommon {
                 try {
                     log(Level.FINEST, "cleanup", "TestRealm: " + testRealm);
                     log(Level.FINEST, "cleanup", "TestModule: " + testModule);
+
                     Reporter.log("TestRealm: " + testRealm);
-                    Reporter.log("TestModule: " + testModule);                
-                    String url = getLoginURL("/"); 
-                    String ssoadmURL  = protocol + ":" + "//" + host + ":"
-                                    + port + uri ;
-                    log(Level.FINE, "cleanup", "Login URL: " + url);
-                    log(Level.FINE, "cleanup", "ssoadm.jsp URL" + ssoadmURL);
-                    FederationManager am = new FederationManager(ssoadmURL);
-                    WebClient webClient = new WebClient();
-                    deleteModule(testRealm, testModule);                
-                    consoleLogin(webClient, url, adminUser, adminPassword);
+                    Reporter.log("TestModule: " + testModule);
 
                     String delRealm = testRealm;
                     if (!testRealm.equals("/")) {
                         delRealm = "/" + testRealm;
                     }
+                    adminToken = getToken(adminUser, adminPassword, basedn);
                     if ((testUserList != null) && !testUserList.isEmpty()) {
                         log(Level.FINE, "cleanup", "Deleting user " + userName + 
                                 " from realm " + delRealm + " ...");
-                        if (FederationManager.getExitCode(am.deleteIdentities(
-                                webClient, delRealm, testUserList, "User")) != 0) {
-                            log(Level.SEVERE, "cleanup", 
-                                    "deleteIdentities ssoadm command failed");
-                        }
+                        idmc.deleteIdentity(adminToken, testRealm,
+                                IdType.USER, userName);
                     }
 
                     if (!testRealm.equals("/")) {
-                        log(Level.FINE, "cleanup", "Deleting realm " + 
-                                delRealm + " ...");                    
-                        if (FederationManager.getExitCode(am.deleteRealm(
-                                webClient, delRealm, true)) != 0) {
-                            log(Level.SEVERE, "cleanup", 
-                                    "deleteRealm ssoadm command failed");
-                        }
+                        log(Level.FINE, "cleanup", "Deleting the sub-realm " +
+                                testRealm);
+                        idmc.deleteRealm(adminToken, "/" + testRealm);
                     }
-
-                    String logoutUrl = protocol + ":" + "//" + host + ":" + 
-                            port + uri + "/UI/Logout";
-                    consoleLogout(webClient, logoutUrl);
+                    exiting("cleanup");
                 } catch(Exception e) {
                     log(Level.SEVERE, "cleanup", e.getMessage());
                     e.printStackTrace();
                     throw e;
+                } finally {
+                    if (adminToken != null) {
+                        destroyToken(adminToken);
+                    }
                 }
             } else {
                 log(Level.FINEST, "cleanup", 
@@ -392,148 +408,5 @@ public class RedirectTest extends TestCommon {
             log(Level.FINEST, "setup", "Skipping cleanup for " + testModule + 
                      " auth module test on a Windows based server");                
         }
-        exiting("cleanup");
-    }
-    
-    /**
-     * Call Authentication Utility class to create the module instances
-     * for a given module instance name
-     * @param mRealm - the realm in which the module sub-configuration will be 
-     * created.
-     * @param moduleName - the name of the module sub-configuration to be 
-     * created
-     */
-    private void createModule(String mRealm, String mName) {
-        try {
-            moduleConfig.setTestConfigRealm(mRealm);
-            Map modMap = moduleConfig.getModuleData(mName);
-            moduleServiceName = moduleConfig.getModuleServiceName();
-            moduleSubConfig = moduleConfig.getModuleSubConfigName();
-            moduleSubConfigId = moduleConfig.getModuleSubConfigId();
-            log(Level.FINEST, "createModule", "ModuleServiceName: " +
-                    moduleServiceName);
-            log(Level.FINEST, "createModule", "ModuleSubConfig: " +
-                    moduleSubConfig);
-            log(Level.FINEST, "createModule", "ModuleSubConfigId: " +
-                    moduleSubConfigId);
-            moduleConfigData = getListFromMap(modMap, mName);
-            moduleConfig.createModuleInstances(mRealm, moduleServiceName,
-                    moduleSubConfig, moduleConfigData, moduleSubConfigId);
-        } catch(AssertionError ae) {
-            log(Level.SEVERE, "createModule", 
-                    "Creation of the sub-configuration " + moduleSubConfig + 
-                    " failed");
-            throw ae;
-        } catch(Exception e) {
-            log(Level.SEVERE, "createModule", e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Call Authentication Utility class to create the module instances
-     * for a given module instance name
-     * @param mRealm - the realm in which the module sub-configuration will be 
-     * created.
-     * @param moduleName - the name of the module sub-configuration to be 
-     * created
-     */
-    private void deleteModule(String mRealm, String mName)
-    throws Exception {
-        WebClient webClient = new WebClient();
-        try {
-            moduleConfig.setTestConfigRealm(mRealm);
-            Map modMap = moduleConfig.getModuleData(mName);
-            moduleServiceName = moduleConfig.getModuleServiceName();
-            moduleSubConfig = moduleConfig.getModuleSubConfigName();
-            log(Level.FINEST, "deleteModule", "ModuleServiceName: " +
-                    moduleServiceName);
-            log(Level.FINEST, "deleteModule", "ModuleSubConfig: " +
-                    moduleSubConfig);
-            moduleConfigData = getListFromMap(modMap, mName);
-            moduleConfig.deleteModuleInstances(mRealm, moduleServiceName,
-                    moduleSubConfig);
-        } catch(AssertionError ae) {
-            log(Level.SEVERE, "deleteModule", 
-                    "Deletion of the sub-configuration " + moduleSubConfig + 
-                    " failed");
-        } catch(Exception e) {
-            log(Level.SEVERE, "deleteModule", e.getMessage());
-            e.printStackTrace();
-        } finally {
-            String logoutUrl = protocol + ":" + "//" + host + ":" + port + uri +
-                    "/UI/Logout";
-            consoleLogout(webClient, logoutUrl);            
-        }
-    }    
-    
-    /**
-     * Creates the required test users on the system for each
-     * Chain to be executed
-     * @param user map to be created
-     * @param ChainName
-     **/
-    private void createUser(String userRealm, String newUser, 
-            String userpassword) {
-        List<String> userList = new ArrayList<String>();
-        userList.add("sn=" + newUser);
-        userList.add("cn=" + newUser);
-        userList.add("userpassword=" + userpassword);
-        userList.add("inetuserstatus=Active");
-        log(logLevel, "createUser", "userList " + userList);
-        testUserList.add(newUser);
-        try {
-            AuthTestConfigUtil userConfig =
-                    new AuthTestConfigUtil(configrbName);
-            userConfig.setTestConfigRealm(userRealm);
-            userConfig.createUser(userList, newUser);
-        } catch(Exception e) {
-            log(Level.SEVERE, "createUsers", e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Create the test realm
-     * @param realm
-     */
-    private void createTestRealm(String newRealm){
-        try {
-            AuthTestConfigUtil realmConfig =
-                    new AuthTestConfigUtil(configrbName);
-            realmConfig.createRealms("/" + newRealm);
-        } catch(Exception e) {
-            log(Level.SEVERE, "createTestRealm", e.getMessage(), null);
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Get the list of users from Map, to create the
-     * users.This is need for the <code>FederationManager</code> to
-     * create users on the System
-     * @param Map of users to be creared
-     * @param moduleName
-     */
-    private List getListFromMap(Map lMap, String moduleName){
-        Object escapeModServiceName = moduleName + ".module-service-name";
-        Object escapeModSubConfigName = moduleName + ".module-subconfig-name";
-        lMap.remove(escapeModServiceName);
-        lMap.remove(escapeModSubConfigName);
-        List<String> list = new ArrayList<String>();
-        for (Iterator iter = lMap.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = ( Map.Entry)iter.next();
-            String userkey = (String)entry.getKey();
-            int sindex = userkey.indexOf(".");
-            CharSequence cseq = userkey.subSequence(0, sindex + 1);
-            userkey = userkey.replace(cseq , "");
-            userkey.trim();
-            String userval = (String)entry.getValue();
-            String uadd = userkey + "=" + userval;
-            uadd.trim();
-            list.add(uadd);
-        }
-        log(Level.FINEST, "getListFromMap", "UserList: " + list);        
-        return list;
     }
 }

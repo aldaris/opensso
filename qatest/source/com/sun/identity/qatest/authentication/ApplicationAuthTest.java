@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationAuthTest.java,v 1.7 2009-02-03 19:54:20 cmwesley Exp $
+ * $Id: ApplicationAuthTest.java,v 1.8 2009-06-02 17:08:18 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,6 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.TestCommon;
-import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -66,12 +65,11 @@ public class ApplicationAuthTest extends TestCommon {
     private IDMCommon idmc;
     private String agentId;
     private String agentPassword;
-    private AMIdentity amid;
+    private AMIdentity amid, agentAMId;
     private AMIdentityRepository idrepo;
     private String strGblRB = "ApplicationAuthTest";
-    private AuthTestConfigUtil moduleConfig;
-    private String configrbName = "authenticationConfigData";
     private String absoluteRealm;
+    private boolean hasAMDIT;
 
     /**
      * Default Constructor
@@ -84,7 +82,6 @@ public class ApplicationAuthTest extends TestCommon {
         agentPassword = rbg.getString("am-auth-applicationauth-test-" +
                 "agentPassword");
         idmc = new IDMCommon();
-        moduleConfig = new AuthTestConfigUtil(configrbName);
     }
     
     /**
@@ -107,16 +104,30 @@ public class ApplicationAuthTest extends TestCommon {
             Reporter.log("AgentID: " + agentId);
             Reporter.log("AgentPassword: " + agentPassword);
 
-            absoluteRealm = testRealm;
+            adminToken = getToken(adminUser, adminPassword, realm);
             if (!testRealm.equals("/")) {
-                if (testRealm.indexOf("/") != 0) {
-                    absoluteRealm = "/" + testRealm;
+                if (realm.endsWith("/")) {
+                    absoluteRealm = realm + testRealm;
+                } else {
+                    absoluteRealm = realm + "/" + testRealm;
                 }
-                log(Level.FINE, "setup", "Creating the sub-realm " + testRealm);
-                moduleConfig.createRealms(absoluteRealm);
+                Map realmAttrMap = new HashMap();
+                Set realmSet = new HashSet();
+                realmSet.add("Active");
+                realmAttrMap.put("sunOrganizationStatus", realmSet);
+                log(Level.FINE, "setup", "Creating the realm " + testRealm);
+                amid = idmc.createIdentity(adminToken,
+                        realm, IdType.REALM, testRealm, realmAttrMap);
+                log(Level.FINE, "setup",
+                        "Verifying the existence of sub-realm " +
+                        testRealm);
+                if (amid == null) {
+                    log(Level.SEVERE, "setup", "Creation of sub-realm " +
+                            testRealm + " failed!");
+                    assert false;
+                }
             }
             
-            adminToken = getToken(adminUser, adminPassword, realm);
             idrepo = new AMIdentityRepository(adminToken, realm);            
             Map map = new HashMap();
             Set set = new HashSet();
@@ -128,7 +139,8 @@ public class ApplicationAuthTest extends TestCommon {
             map.put("sunIdentityServerDeviceStatus", set);
             set = new HashSet();
             SMSCommon smsC = new SMSCommon(adminToken);
-            if ((smsC.isAMDIT())) {
+            hasAMDIT = smsC.isAMDIT();
+            if ((hasAMDIT)) {
                  idmc.createIdentity(adminToken, testRealm, IdType.AGENT,
                          agentId, map);
             } else {
@@ -139,17 +151,19 @@ public class ApplicationAuthTest extends TestCommon {
                 idmc.createIdentity(adminToken, testRealm, IdType.AGENTONLY,
                         agentId, map);
             }
-            amid = idmc.getFirstAMIdentity(adminToken, agentId, 
+            agentAMId = idmc.getFirstAMIdentity(adminToken, agentId,
                     IdType.AGENTONLY, testRealm);
+            exiting("createAgentProfile");
         } catch (Exception e) {
             log(Level.SEVERE, "createAgentProfile", e.getMessage());
             deleteAgentProfile(testRealm);
             e.printStackTrace();
             throw e;
         } finally {
-            destroyToken(adminToken);
+            if (adminToken != null) {
+                destroyToken(adminToken);
+            }
         }
-        exiting("createAgentProfile");
     }
     
     /**
@@ -164,9 +178,11 @@ public class ApplicationAuthTest extends TestCommon {
     @Parameters({"testRealm", "negativeTest"})
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
         "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void testApplicationAuthPositive(String testRealm,
+    public void testApplicationAuth(String testRealm,
             String negativeTest)
     throws Exception {
+        Object[] params = {testRealm, negativeTest};
+        entering("testApplicationAuth", params);
         String authPassword = agentPassword;
         boolean testFailedAuth = Boolean.parseBoolean(negativeTest);
         if (testFailedAuth) {
@@ -174,7 +190,7 @@ public class ApplicationAuthTest extends TestCommon {
         }
         try {
             AuthContext authContext = new AuthContext(testRealm);
-            authContext.login(AuthContext.IndexType.MODULE_INSTANCE, 
+            authContext.login(AuthContext.IndexType.MODULE_INSTANCE,
                     "Application");
             if (authContext.hasMoreRequirements()) {
                 Callback[] callbacks = authContext.getRequirements();
@@ -191,22 +207,23 @@ public class ApplicationAuthTest extends TestCommon {
                 if (ssoToken != null) {
                     assert (ssoToken.getTimeLeft() > Long.MAX_VALUE/100);
                 } else {
-                    log(Level.SEVERE, "testApplicationAuthPositive",
+                    log(Level.SEVERE, "testApplicationAuth",
                             "SSOToken is null!");
                     assert false;
                 }
             } else {
                 assert (authStatus == AuthContext.Status.FAILED);
             }
-        } catch (AuthLoginException ale) {
-            log(Level.SEVERE, "testApplicationAuthPositive", ale.getMessage());
-            ale.printStackTrace();
+            exiting("testApplicationAuth");
         } catch (Exception e) {
-            log(Level.SEVERE, "testApplicationAuthPositive", e.getMessage());
+            log(Level.SEVERE, "testApplicationAuth", e.getMessage());
             e.printStackTrace();
+            deleteAgentProfile(testRealm);
             throw e;
         } finally {
-           destroyToken(ssoToken);
+            if (ssoToken != null) {
+                destroyToken(ssoToken);
+            }
         }
     }
 
@@ -220,35 +237,54 @@ public class ApplicationAuthTest extends TestCommon {
         "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void deleteAgentProfile(String testRealm)
     throws Exception {
-        entering("deleteAgentProfile", null);
+        Object[] params = {testRealm};
+        entering("deleteAgentProfile", params);
         try {
             log(Level.FINE, "deleteAgentProfile", 
                     "Deleting the agent identity " + agentId + " ...");  
             adminToken = getToken(adminUser, adminPassword, realm);
-            if (amid == null) {
-                amid = idmc.getFirstAMIdentity(adminToken, agentId, 
-                        IdType.AGENTONLY, testRealm);
-            }            
-            idrepo = new AMIdentityRepository(adminToken, testRealm);
-            Set idDelete = new HashSet();
-            idDelete.add(amid);
-            idrepo.deleteIdentities(idDelete);
-            if (!absoluteRealm.equals("/")) {
+            
+            if (agentAMId == null) {
+                if (!hasAMDIT) {
+                    agentAMId = idmc.getFirstAMIdentity(adminToken, agentId,
+                            IdType.AGENTONLY, testRealm);
+                } else {
+                    agentAMId = idmc.getFirstAMIdentity(adminToken, agentId,
+                            IdType.AGENT, testRealm);
+                }
+            }
+            if (agentAMId != null) {
+                idrepo = new AMIdentityRepository(adminToken, testRealm);
+                Set idDelete = new HashSet();
+                idDelete.add(agentAMId);
+                idrepo.deleteIdentities(idDelete);
+            } else {
+                log(Level.SEVERE, "cleanup",
+                        "Unable to delete agent identity " + agentId + "!");
+            }
+
+            if (!testRealm.equals("/")) {
+                if (!absoluteRealm.startsWith("/")) {
+                    absoluteRealm = "/" + absoluteRealm;
+                }
                 log(Level.FINE, "cleanup", "Deleting the sub-realm " +
                         absoluteRealm);
                 idmc.deleteRealm(adminToken, absoluteRealm);
             }
+            exiting("deleteAgentProfile");
         } catch (Exception e) {
             log(Level.SEVERE, "deleteAgentProfile", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            destroyToken(adminToken);
+            if (adminToken != null) {
+                destroyToken(adminToken);
+            }
         }
-        exiting("deleteAgentProfile");
     }
     
     /**
+     * Method to update callbacks for the Application authentication.
      * @param callbacks  array of callbacks
      * @param appUserName  application user name
      * @param appPassword for application user

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.21 2009-05-27 23:06:35 rmisra Exp $
+ * $Id: SMSCommon.java,v 1.22 2009-06-02 17:09:26 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -574,7 +575,8 @@ public class SMSCommon extends TestCommon {
     public Set getAttributeValueServiceConfig(String udsRealm,
             String serviceName, String subConfigName, String attributeName)
     throws Exception {
-        entering("getAttributeValueServiceConfig", null);
+        Object[] params = {udsRealm, serviceName, subConfigName, attributeName};
+        entering("getAttributeValueServiceConfig", params);
         Set valSet = null;
         try {
             ServiceConfig cfg = getServiceConfig(admintoken, udsRealm,
@@ -1763,8 +1765,7 @@ public class SMSCommon extends TestCommon {
     private ServiceConfig getServiceConfig(SSOToken admToken,
             String gscRealm, String serviceName)
             throws Exception {
-        return (getServiceConfig(admToken, gscRealm, false,
-                IdConstants.REPO_SERVICE));
+        return (getServiceConfig(admToken, gscRealm, false, serviceName));
     }
 
     /**
@@ -1937,5 +1938,253 @@ public class SMSCommon extends TestCommon {
             values.put(as.getName(), as.getDefaultValues());
         }
         return values;
-    }    
+    }
+
+    /**
+     * Create a service sub-configuration in a realm.
+     * @param realmName - the realm in which the subconfiguration should be
+     * created.
+     * @param serviceName - the name of the service
+     * @param subConfigName - the name of the subconfiguration to be created.
+     * @param subConfigId - the ID of parent configuration
+     * @param attrValues - a Map containing the attributes values to be set
+     * in the authentication module to be created
+     */
+    public void addSubConfig(String realmName,
+            String serviceName,
+            String subConfigName,
+            String subConfigId,
+            Map attrValues)
+    throws Exception {
+        Object[] params = {realmName, serviceName, subConfigName,
+                subConfigId, attrValues};
+        entering("addSubConfig", params);
+        SSOToken serviceToken = getToken(adminUser, adminPassword, basedn);
+
+        try {
+            log(Level.FINE, "addSubConfig",
+                    "Retrieving ServiceConfigManager for service " +
+                    serviceName + " ...");
+            ServiceConfigManager scm = new ServiceConfigManager(
+                    serviceName, serviceToken);
+
+            ServiceConfig sc = scm.getOrganizationConfig(realmName, null);
+            if (sc == null) {
+                sc = scm.createOrganizationConfig(realmName, null);
+            }
+
+            if ((subConfigName != null) && (subConfigName.length() > 0)) {
+                StringTokenizer st = new StringTokenizer(subConfigName, "/");
+                int tokenCount = st.countTokens();
+
+                for (int i = 1; i <= tokenCount; i++) {
+                    String scn = unescapeName(st.nextToken());
+                    log(Level.FINEST, "addSubConfig",
+                            "Sub Config Name = " + scn);
+                    if (i != tokenCount) {
+                        sc = sc.getSubConfig(scn);
+                    } else {
+                        if (subConfigId == null) {
+                            subConfigId = subConfigName;
+                        }
+                        log(Level.FINEST, "addSubConfig",
+                                "Sub Config ID = " + subConfigId);
+                        sc.addSubConfig(scn, subConfigId, 0, attrValues);
+                    }
+                }
+            } else {
+                log(Level.SEVERE, "addSubConfig",
+                        "subConfigName is set to null or has a 0 length");
+                assert false;
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "addSubConfig", "Exception message = " +
+                    e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (serviceToken != null) {
+                destroyToken(serviceToken);
+            }
+        }
+    }
+
+    /**
+     * The method reverses the escape sequence "&#47;" to the character "/".
+     * @param txtName - the String to be unescaped
+     */
+    private static String unescapeName(String txtName) {
+        if (txtName == null) {
+            return txtName;
+        }
+
+        int len = txtName.length();
+        if (len == 0) {
+            return txtName;
+        }
+
+        int indx;
+        for (int i = 0; i < txtName.length(); i++) {
+            indx = txtName.indexOf("&#47;");
+            if (indx >= 0) {
+                String prefixID = txtName.substring(0, indx);
+                String postfixID = txtName.substring(indx + 5);
+                txtName = prefixID + "/" + postfixID;
+            }
+        }
+        return (txtName);
+    }
+
+    /**
+     * Get the absolute realm
+     * @param realmName - a String containing the name of the realm
+     * @return the absolute realm name
+     */
+    protected String getAbsoluteRealm(String realmName) {
+        String absoluteRealm = realmName;
+        if ((realmName != null) && (realmName.indexOf("/") != 0)) {
+            absoluteRealm = "/" + realmName;
+        }
+        return absoluteRealm;
+    }
+
+     /**
+      * Delete a subconfiguration in a realm.
+      * @param realmName - the name of the realm in which the subconfiguration
+      * should be removed.
+      * @param serviceName - the name of the service
+      * @param subConfigName - the name of the subconfiguration to be removed.
+      * @throws Exception
+      */
+     public void deleteSubConfig(String realmName,
+             String serviceName,
+             String subConfigName)
+     throws Exception {
+         Object[] params = {realmName, serviceName, subConfigName};
+         entering("deleteSubConfig", params);
+         SSOToken serviceToken = null;
+         try {
+            serviceToken = getToken(adminUser, adminPassword, basedn);
+            ServiceConfigManager scm = new ServiceConfigManager(serviceName,
+                    serviceToken);
+            ServiceConfig sc = scm.getOrganizationConfig(realmName, null);
+            if (sc == null) {
+                sc = scm.createOrganizationConfig(realmName, null);
+            }
+
+            StringTokenizer st = new StringTokenizer(subConfigName, "/");
+            int tokenCount = st.countTokens();
+
+            for (int i = 1; i <= tokenCount; i++) {
+                String scn = unescapeName(st.nextToken());
+
+                if (i != tokenCount) {
+                    sc = sc.getSubConfig(scn);
+                } else {
+                    sc.removeSubConfig(scn);
+                }
+            }
+         } catch (Exception e) {
+            log(Level.SEVERE, "deleteSubConfig", "Exception message = " +
+                    e.getMessage());
+            e.printStackTrace();
+         } finally {
+             if (serviceToken != null) {
+                 destroyToken(serviceToken);
+             }
+         }
+     }
+
+     /**
+      * Modify attribute values in a service sub configuration
+      * @param realmName - the realm in which the service sub configuration
+      * exists
+      * @param serviceName - the name of the service
+      * @param subConfigName - the name of the subconfiguration to be updated
+      * @param attrValues - a <code>Map</code> containing the attribute names
+      * as keys and <code>Set</code> objects containing attribute values as
+      * values in the <code>Map</code>
+      * @throws Exception
+      */
+     public void modifySubConfig(String realmName, String serviceName,
+             String subConfigName, Map attrValues)
+     throws Exception {
+         Object[] params = {realmName, serviceName, subConfigName, attrValues};
+         entering("modifySubConfig", params);
+         SSOToken serviceToken = null;
+         try {
+            serviceToken = getToken(adminUser, adminPassword, basedn);
+            ServiceConfigManager scm = new ServiceConfigManager(serviceName,
+                    serviceToken);
+            ServiceConfig sc = scm.getOrganizationConfig(realmName, null);
+            if (sc == null) {
+                sc = scm.createOrganizationConfig(realmName, null);
+            }
+
+            StringTokenizer st = new StringTokenizer(subConfigName, "/");
+            int tokenCount = st.countTokens();
+            for (int i = 1; i <= tokenCount; i++) {
+                String scn = unescapeName(st.nextToken());
+                sc = sc.getSubConfig(scn);
+            }
+            sc.setAttributes(attrValues);
+         } catch (Exception e) {
+            log(Level.SEVERE, "modifySubConfig", "Exception message = " +
+                    e.getMessage());
+            e.printStackTrace();
+         } finally {
+             if (serviceToken != null) {
+                 destroyToken(serviceToken);
+             }
+         }
+     }
+
+     /**
+      * Retrieve the attribute values of a sub-configuration.
+      * @param realmName - the name of the realm in which the sub-configuration
+      * exists.
+      * @param serviceName - the name of the service for the sub-configuration
+      * @param subConfigName - the name of the sub-configuration
+      * @return a <code>Map</code> containing the attribute values for the
+      * sub-configuration.
+      * @throws Exception
+      */
+     public Map getSubConfigAttrs(String realmName,
+             String serviceName,
+             String subConfigName)
+     throws Exception {
+         Object[] params = {realmName, serviceName, subConfigName};
+         entering("getSubConfigAttrs", params);
+         SSOToken serviceToken = null;
+         Map attrValues = null;
+
+         try {
+            serviceToken = getToken(adminUser, adminPassword, basedn);
+            ServiceConfig cfg = getServiceConfig(serviceToken, realmName,
+                    serviceName);
+            if (cfg != null) {
+                ServiceConfig sc = cfg.getSubConfig(subConfigName);
+                if (sc != null) {
+                    attrValues = sc.getAttributes();
+                    log(Level.FINEST, "getSubConfigAttrs",
+                            "Attribute map = " + attrValues);
+                }
+            } else {
+                log(Level.SEVERE, "getSubConfigAttrs",
+                        "Unable to retrieve the ServiceConfig for sub-config " +
+                        subConfigName + " of service " + serviceName +
+                        " in realm " + realmName);
+                assert false;
+            }
+            exiting("getSubConfigAttrs");
+        } catch (Exception e) {
+            log(Level.SEVERE, "getSubConfigAttrs", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (serviceToken != null) {
+                destroyToken(serviceToken);
+            }
+            return (attrValues);
+        }
+     }
 }

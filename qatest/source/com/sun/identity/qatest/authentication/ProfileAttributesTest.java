@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributesTest.java,v 1.11 2009-01-26 23:47:48 nithyas Exp $
+ * $Id: ProfileAttributesTest.java,v 1.12 2009-06-02 17:08:18 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,15 +25,19 @@
 package com.sun.identity.qatest.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.sun.identity.qatest.common.FederationManager;
-import com.sun.identity.qatest.common.TestCommon;
-import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
-import com.sun.identity.qatest.common.authentication.AuthTestsValidator;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.SMSCommon;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
+import com.sun.identity.qatest.idm.IDMConstants;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -48,50 +52,39 @@ import org.testng.annotations.Test;
  * AMSubRealmAuth,Core_5,Core_7
  * 
  */
-public class ProfileAttributesTest extends TestCommon {
-    
+public class ProfileAttributesTest extends AuthenticationCommon {
+
+    private IDMCommon idmc;
+    private SMSCommon smsc;
     private ResourceBundle testResources;
     private String testModule;
-    private String locTestProfile;
     private String testAttribute;
     private boolean createTestUser;
     private String testUser;
     private String testUserpass;
     private String testPassmsg;
-    private String testURL;
-    private String servicename = "iPlanetAMAuthService";
-    private List<String> attributevalues = new ArrayList<String>();
-    private FederationManager fm;
-    private WebClient webClient;
-    private List moduleConfigData;
-    private String moduleServiceName;
-    private String moduleSubConfig;
-    private String moduleSubConfigId;
-    private String testModName;
-    private String url;
-    private String ssoadmURL;
-    private String logoutURL;
-    private String configrbName = "authenticationConfigData";
+    private SSOToken adminToken;
+    private String strServiceName = "iPlanetAMAuthService";
+    private String profileAttrName = "iplanet-am-auth-dynamic-profile-creation";
+    private Set oriAuthAttrValues;
     private List<String> testUserList = new ArrayList<String>();
+    private List<IdType> idTypeList = new ArrayList<IdType>();
     
     /**
      * Default Constructor
      **/
     public ProfileAttributesTest() {
         super("ProfileAttributesTest");
-        url = getLoginURL("/");
-        logoutURL = protocol + ":" + "//" + host + ":" + port + 
-                uri + "/UI/Logout";
-        ssoadmURL  = protocol + ":" + "//" + host + ":" + port + uri ;
-        fm = new FederationManager(ssoadmURL);
+        idmc = new IDMCommon();
     }
     
     /**
      * Reads the necessary test configuration and prepares the system
      * for user profile testing
-     * - Create module instances
      * - Sets the profile attribute
      * - Create Users , If needed
+     * @param testProfile - a String used to set the "User Profile" attribute in
+     * the Authentication service.
      */
     @Parameters({"testProfile"})
     @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
@@ -100,10 +93,8 @@ public class ProfileAttributesTest extends TestCommon {
     throws Exception {
         Object[] params = {testProfile};
         entering("setup", params);
-        webClient = new WebClient();
         try {
-            locTestProfile = testProfile;
-            testAttribute = "am-auth-" + locTestProfile ;
+            testAttribute = "am-auth-" + testProfile ;
             testResources = ResourceBundle.getBundle("authentication" +
                     fileseparator + "ProfileAttributesTest");
             testModule = testResources.getString(testAttribute + 
@@ -120,191 +111,150 @@ public class ProfileAttributesTest extends TestCommon {
             testPassmsg = testResources.getString(testAttribute + 
                     "-test-passmsg");
             
-            log(Level.FINEST, "setup", "profileAttribute: " + locTestProfile);
+            log(Level.FINEST, "setup", "profileAttribute: " + testProfile);
             log(Level.FINEST, "setup", "testModule: " + testModule);
             log(Level.FINEST, "setup", "createTestUser: " + createTestUser);
             log(Level.FINEST, "setup", "testUser: " + testUser);
             log(Level.FINEST, "setup", "testUserPassword: " + testUserpass);
             log(Level.FINEST, "setup", "testPassmsg: " + testPassmsg);
-            Reporter.log("Profile Creation Attribute: " + locTestProfile);
+
+            Reporter.log("Profile Creation Attribute: " + testProfile);
             Reporter.log("Auth Module: " + testModule);
             Reporter.log("Test Creates User: " + createTestUser);
             Reporter.log("User: " + testUser);
             Reporter.log("User Password: " + testUserpass);
             Reporter.log("Test Passed Msg: " + testPassmsg);
             
-            createModule(testModule);
-            testURL = url + "?module=" + moduleSubConfig;
-            String attributeVal = getProfileAttribute(locTestProfile);
-            attributevalues.add(attributeVal);
-            consoleLogin(webClient, url, adminUser, adminPassword);
-            log(Level.FINE, "setup", "Setting profile attribute to " + 
-                    locTestProfile + " in the " + servicename + " service.");
-            if (FederationManager.getExitCode(fm.setSvcAttrs(webClient, realm, 
-                    servicename, attributevalues)) != 0) {
-                log(Level.SEVERE, "setup", "setSvcAttrs ssoadm command failed");
-                assert false;
-            }
+            adminToken = getToken(adminUser, adminPassword, basedn);
+            smsc = new SMSCommon(adminToken);
+            log(Level.FINE, "setup", "Retrieving the attribute value of " +
+                    profileAttrName + " from " + strServiceName + " in realm " +
+                    realm + "...");
+            oriAuthAttrValues = (Set) smsc.getAttributeValue(realm,
+                    strServiceName, profileAttrName, "Organization");
+            log(Level.FINEST, "setup", "Original value of " + profileAttrName +
+                    ": "  + oriAuthAttrValues);
+
+            String testAttrValue = getProfileAttribute(testProfile);
+            Set valSet = new HashSet();
+            valSet.add(testAttrValue);
+            log(Level.FINE, "setup", "Setting authentication attribute " +
+                    profileAttrName + " to \'" + testAttrValue + "\'.");
+            smsc.updateSvcAttribute(realm, strServiceName, profileAttrName,
+                    valSet, "Organization");
             
             testUserList.add(testUser);
             if (createTestUser) {
-                createUser(testUser, testUserpass);
-            }           
+                idTypeList.add(IdType.USER);
+                StringBuffer attrBuffer = new StringBuffer("sn=" + testUser).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("cn=" + testUser).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("userpassword=" + testUserpass).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("inetuserstatus=Active");
+
+                log(Level.FINE, "setup", "Creating user " + testUser + " ...");
+                if (!idmc.createID(testUser, "user", attrBuffer.toString(),
+                        adminToken, realm)) {
+                    log(Level.SEVERE, "setup",
+                            "Failed to create user identity " + testUser);
+                    assert false;
+                }
+            }
+            exiting("setup");
         } catch(Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
-            cleanup();
+            cleanup(testProfile);
             throw e;
         } finally {
-            consoleLogout(webClient, logoutURL);
+            if (adminToken != null) {
+                destroyToken(adminToken);
+            }
         }
-        exiting("setup");
+
     }
     
-    /*
+    /**
      * Validate the profile tests
+     * @param testProfile - a String used to set the "User Profile" attribute in
+     * the Authentication service.
+     * @param instanceIndex - the index of the auth module instance from
+     * AuthenticationConfig.properties
      */
+    @Parameters({"testProfile", "instanceIndex"})
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
       "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void testProfile()
+    public void testProfile(String testProfile, String instanceIndex)
     throws Exception {
-        entering("testProfile", null);
-        log(Level.FINEST, "testProfile", "Description: Test authentication " +
-                "with iplanet-am-auth-dynamic-profile-creation set to " + 
-                locTestProfile);
-        Reporter.log("Description: Test authentication with " + 
-                "iplanet-am-auth-dynamic-profile-creation set to " + 
-                locTestProfile);
-        Map executeMap = new HashMap();
-        executeMap.put("Loginuser", testUser);
-        executeMap.put("Loginpassword", testUserpass);
-        executeMap.put("Passmsg", testPassmsg);
-        executeMap.put("loginurl", testURL);
-        executeMap.put("profileattr", locTestProfile);
-        AuthTestsValidator profileTestValidator =
-                new AuthTestsValidator(executeMap);
-        profileTestValidator.testProfile();
-        exiting("testProfile");
+        Object[] params = {testProfile, instanceIndex};
+        entering("testProfile", params);
+
+        try {
+            log(Level.FINEST, "testProfile",
+                    "Description: Test authentication " +
+                    "with iplanet-am-auth-dynamic-profile-creation set to " +
+                    testProfile);
+            Reporter.log("Description: Test authentication with " +
+                    "iplanet-am-auth-dynamic-profile-creation set to " +
+                    testProfile);
+            Map executeMap = new HashMap();
+            String moduleSubConfig = getAuthInstanceName(testModule,
+                    instanceIndex);
+            executeMap.put("redirectURL",
+                    getLoginURL("/") + "?module=" + moduleSubConfig);
+            executeMap.put("users", testUser + ":" + testUserpass);
+            executeMap.put("successMsg", testPassmsg);
+            executeMap.put("uniqueIdentifier", testProfile + "-test");
+            executeMap.put("Loginuser", testUser);
+            executeMap.put("Loginpassword", testUserpass);
+            executeMap.put("Passmsg", testPassmsg);
+            executeMap.put("profileattr", testProfile);
+            testFormBasedAuth(executeMap);
+            exiting("testProfile");
+        } catch (Exception e) {
+            log(Level.SEVERE, "testProfile", e.getMessage());
+            e.printStackTrace();
+            cleanup(testProfile);
+            throw e;
+        }
     }
     
     /**
      * performs cleanup after tests are done.
+     * @param testProfile - testProfile - a String used to set the
+     * "User Profile" attribute in the Authentication service.
      */
+    @Parameters({"testProfile"})
     @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
       "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void cleanup()
+    public void cleanup(String testProfile)
     throws Exception {
-        entering("cleanup", null);
-        if (webClient == null) {
-            webClient = new WebClient();
-        }
+        Object[] params = {testProfile};
+        entering("cleanup", params);
+
         try {
-            log(Level.FINEST, "cleanup", url);
-            List<String> listModInstance = new ArrayList<String>();
-            listModInstance.add(moduleSubConfig);
-            consoleLogin(webClient, url, adminUser, adminPassword);
-            String attributeVal = getProfileAttribute("required");
-            attributevalues.clear();
-            attributevalues.add(attributeVal);
-            log(Level.FINE, "cleanup", "Resetting attribute value " + 
-                    attributeVal + " in service " + servicename + ".");
-            if (FederationManager.getExitCode(fm.setSvcAttrs(webClient, realm, 
-                    servicename, attributevalues)) != 0) {
-                log(Level.SEVERE, "setup", "setSvcAttrs ssoadm command failed");
+            adminToken = getToken(adminUser, adminPassword, basedn);
+            smsc = new SMSCommon(adminToken);
+            log(Level.FINE, "cleanup", "Set " + profileAttrName + " to " +
+                    oriAuthAttrValues);
+            smsc.updateSvcAttribute(realm, strServiceName, profileAttrName,
+                    oriAuthAttrValues, "Organization");
+
+            if (!testProfile.equals("ignored")) {
+                idmc.deleteIdentity(adminToken, realm, IdType.USER, testUser);
             }
-            
-            log(Level.FINE, "cleanup", "Deleting authentication module(s) " +
-                    listModInstance + "...");
-            if (FederationManager.getExitCode(fm.deleteAuthInstances(webClient,
-                    realm, listModInstance)) != 0) {
-                log(Level.SEVERE, "cleanup", 
-                        "deleteAuthInstances ssoadm command failed");
-            }
-            
-            if (testUserList != null && !testUserList.isEmpty()) {
-                log(Level.FINE, "cleanup", "Deleting user(s) " + testUserList + 
-                        " ...");
-                if (FederationManager.getExitCode(fm.deleteIdentities(webClient, 
-                        realm, testUserList, "User")) != 0) {
-                    log(Level.SEVERE, "cleanup", 
-                            "deleteIdentities ssoadm command failed");
-                }
-            }
+                        
+            exiting("cleanup");
         } catch(Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            consoleLogout(webClient, logoutURL);
-        }
-        exiting("cleanup");
-    }
-    
-    /**
-     * Call Authentication Utility class to create the module instances
-     * for a given module instance name
-     * @param moduleName
-     */
-    private void createModule(String mName) {
-        try {
-            AuthTestConfigUtil moduleConfig =
-                    new AuthTestConfigUtil(configrbName);
-            Map modMap = moduleConfig.getModuleData(mName);
-            moduleServiceName = moduleConfig.getModuleServiceName();
-            moduleSubConfig = moduleConfig.getModuleSubConfigName();
-            moduleSubConfigId = moduleConfig.getModuleSubConfigId();
-            moduleConfigData = moduleConfig.getListFromMap(modMap, mName);
-            moduleConfig.createModuleInstances(moduleServiceName,
-                    moduleSubConfig, moduleConfigData, moduleSubConfigId);
-        } catch(Exception e) {
-            log(Level.SEVERE, "createModule", e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Creates the required test users on the system
-     * @param username
-     * @param password
-     **/
-    private void createUser(String newUser, String userpassword) {
-        List<String> userList = new ArrayList<String>();
-        userList.add("sn=" + newUser);
-        userList.add("cn=" + newUser);
-        userList.add("userpassword=" + userpassword);
-        userList.add("inetuserstatus=Active");
-        log(Level.FINE, "createUser", "Creating user " + newUser + " ...");
-        
-        try {
-            if (FederationManager.getExitCode(fm.createIdentity(webClient, 
-                    realm, newUser, "User", userList)) != 0) {
-                log(Level.SEVERE, "createUser", 
-                        "createIdentity ssoadm command failed");
-                assert false;
+            if (adminToken != null) {
+                destroyToken(adminToken);
             }
-        } catch(Exception e) {
-            log(Level.SEVERE, "createUser", e.getMessage());
-            e.printStackTrace();
         }
-    }
-    
-    /**
-     * Returns the profile attribute based on the profile test performed
-     * @param profile - the value which indicates how the profile creation 
-     * should be set.
-     * @return a String containing the profile creation attribute name/value 
-     * pair to update in the authentication service.
-     */
-    private String getProfileAttribute(String profile){
-        String profileAttribute = null;
-        if (profile.equals("dynamic")) {
-            profileAttribute = "iplanet-am-auth-dynamic-profile-creation=true";
-        } else if(profile.equals("required")) {
-            profileAttribute = "iplanet-am-auth-dynamic-profile-creation=false";
-        } else {
-            profileAttribute = 
-                    "iplanet-am-auth-dynamic-profile-creation=ignore";
-        }
-        return profileAttribute;
     }
 }

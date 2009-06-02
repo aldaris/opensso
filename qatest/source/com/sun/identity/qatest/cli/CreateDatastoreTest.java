@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateDatastoreTest.java,v 1.3 2009-03-18 21:34:24 srivenigan Exp $
+ * $Id: CreateDatastoreTest.java,v 1.4 2009-06-02 17:08:40 cmwesley Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,10 +35,10 @@ package com.sun.identity.qatest.cli;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.qatest.common.LDAPCommon;
 import com.sun.identity.qatest.common.SMSConstants;
-import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +76,6 @@ public class CreateDatastoreTest extends TestCommon implements CLIExitCodes {
     private String description;
     private FederationManagerCLI cli;
     private boolean authInstanceCreated = false;
-    private AuthTestConfigUtil authConfig;
     private boolean identityCreated = false;
     private String ldapServerSchemaName = 
             "sun-idrepo-ldapv3-config-ldap-server=";
@@ -348,9 +347,9 @@ public class CreateDatastoreTest extends TestCommon implements CLIExitCodes {
                         "sunAMAuthDataStoreAuthLevel=15", false);
                 cli.logCommand("testDatastoreCreation");
                 assert (exitStatus ==
-                        new Integer(expectedExitCode).intValue());  
-                authConfig = new AuthTestConfigUtil("authenticationConfigData");
-                SSOToken token = authConfig.moduleLogin(realmName, 
+                        new Integer(expectedExitCode).intValue());
+                AuthenticationCommon ac = new AuthenticationCommon("cli");
+                SSOToken token = ac.performRemoteLogin(realmName, "module",
                         "DataStore", "testDatastoreUser", "testDatastoreUser");
                 if (token != null) {
                     log(Level.FINEST, "testDatastoreCreation", 

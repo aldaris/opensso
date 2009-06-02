@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.16 2009-05-08 21:05:16 nithyas Exp $
+ * $Id: IDMCommon.java,v 1.17 2009-06-02 17:09:26 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1127,5 +1127,113 @@ public class IDMCommon extends TestCommon {
             e.printStackTrace();
             throw e;
         } 
+    }
+
+    /**
+     * Assign a service to an identity such as a user or a role.
+     * @param ssoToken - an <code>SSOToken</code> used to obtain the
+     * <code>AMIdentity</code> object.
+     * @param idName - the name of the identity to which the service should be
+     * assigned.
+     * @param idType - the type of the identity to which the service should be
+     * assigned.
+     * @param serviceName - the name of the service which should be assigned to
+     * the identity.
+     * @param idRealm - the name of the realm which the identity exist.
+     * @param attrValues - a <code>String</code> containing the attribute values
+     * which should be set in the service to be assigned.
+     * @throws java.lang.Exception
+     */
+    public void assignSvcIdentity(SSOToken ssoToken, String idName,
+            String idType, String serviceName, String idRealm,
+            String attrValues)
+    throws Exception {
+        try {
+            if (idName == null) {
+                log(Level.SEVERE, "assignSvcIdentity",
+                        "The identity name is null.");
+                assert false;
+            }
+            if (idType == null) {
+                log(Level.SEVERE, "assignSvcIdentity",
+                        "The identity type is null.");
+                assert false;
+            }
+            if (idRealm == null) {
+                log(Level.SEVERE, "assignSvcIdentity",
+                        "The identity realm is null.");
+                assert false;
+            }
+            if (serviceName == null) {
+                log(Level.SEVERE, "assignSvcIdentity",
+                        "The service name is null.");
+                assert false;
+            }
+            if (attrValues == null) {
+                log(Level.SEVERE, "assignSvcIdentity",
+                        "The attribute values is null.");
+                assert false;
+            }
+            IdType type = getIdType(idType);
+            if (!doesIdentityExists(idRealm, "realm", ssoToken, realm)) {
+                log(Level.SEVERE, "assignSvcIdentity", "The realm " +
+                        idRealm + " does not exist.");
+                assert false;
+            }
+            if (!doesIdentityExists(idName, type, ssoToken, idRealm)) {
+                log(Level.SEVERE, "assignSvcIdentity", "The " + idType +
+                        " identity " + idName + " does not exist in realm " +
+                        idRealm);
+                assert false;
+            }
+            if (!doesRealmServiceExist(ssoToken, idRealm, serviceName)) {
+                log(Level.SEVERE, "assignSvcIdentity", "The service " +
+                        serviceName + " does not exist in realm " + idRealm);
+                assert false;
+            }
+            AMIdentity amid = new AMIdentity(
+                    ssoToken, idName, type, idRealm, null);
+            amid.assignService(serviceName, setIDAttributes(attrValues));
+        } catch (Exception e) {
+            log(Level.SEVERE, "assignSvcIdentity", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * Retrieve the services that can be assigned to a realm
+     * @param idToken - an <code>SSOToken</code>
+     * @param idRealm - a String containing the name of a realm
+     * @param serviceName - a String containing the name of the service
+     * which should be found in the realm
+     * @return a <code>boolean</code> indicating whether the service can be
+     * assigned in the realm
+     * @throws Exception
+     */
+    public boolean doesRealmServiceExist(SSOToken idToken, String realm,
+            String serviceName)
+    throws Exception {
+        try {
+            OrganizationConfigManager ocm =
+                    new OrganizationConfigManager(idToken, realm);
+            Set serviceNames = ocm.getAssignableServices();
+            AMIdentityRepository repo =
+                    new AMIdentityRepository(idToken, realm);
+            AMIdentity realmID = repo.getRealmIdentity();
+            Set dynamicServices = realmID.getAssignableServices();
+            if ((dynamicServices != null) && (!dynamicServices.isEmpty())) {
+                if ((serviceNames != null) && (!serviceNames.isEmpty())) {
+                    serviceNames.addAll(dynamicServices);
+                } else {
+                    serviceNames = dynamicServices;
+                }
+            }
+            return serviceNames.contains(serviceName);
+        } catch (Exception e) {
+            log(Level.SEVERE, "doesRealmServiceExist", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

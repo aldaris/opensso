@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTest.java,v 1.11 2009-01-26 23:47:45 nithyas Exp $
+ * $Id: ChainTest.java,v 1.12 2009-06-02 17:08:18 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,18 +35,20 @@
 
 package com.sun.identity.qatest.authentication;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.sun.identity.qatest.common.FederationManager;
-import com.sun.identity.qatest.common.TestCommon;
-import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
+import com.sun.identity.qatest.idm.IDMConstants;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
+import java.util.Set;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -64,29 +66,31 @@ import org.testng.annotations.Test;
  * - Create services (Chain) for the number of modules involved in the chain.
  * - Validates each chain
  */
-public class ChainTest extends TestCommon {
-    
+public class ChainTest extends AuthenticationCommon {
+    private IDMCommon idmc;
     private ResourceBundle testResources;
-    private String chainModules;
+    private SSOToken idToken;
     private String chainService;
     private String chainUserNames;
     private String chainModInstances;
     private String chainSuccessURL;
     private String chainFailureURL;
-    private List moduleConfigData;
-    private String moduleServiceName;
-    private String moduleSubConfig;
-    private String moduleSubConfigId;
     private String testDescription;
+    private String redirectURL;
+    private static String SUCCESS_URL_PROPERTY_NAME =
+            "iplanet-am-auth-login-success-url";
+    private static String FAILURE_URL_PROPERTY_NAME =
+            "iplanet-am-auth-login-failure-url";
     private int numOfSufficientUsers = -1;
-    private String configrbName = "authenticationConfigData";
     private List<String> testUserList = new ArrayList<String>();
+    private List<IdType> idTypeList = new ArrayList<IdType>();
     
     /**
      * Default Constructor
      **/
     public ChainTest() {
        super("ChainTest");
+       idmc = new IDMCommon();
     }
     
     /**
@@ -94,17 +98,16 @@ public class ChainTest extends TestCommon {
      * creating module instances and chain service by the given service name
      * before performing the tests.
      */
-    @Parameters({"testChainName"})
+    @Parameters({"testChainName", "testRealm"})
     @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
        "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void setup(String testChainName)
+    public void setup(String testChainName, String testRealm)
     throws Exception {
-        Object[] params = {testChainName};
+        Object[] params = {testChainName, testRealm};
+        entering("setup", params);
+
         testResources = ResourceBundle.getBundle("authentication" +
                 fileseparator + "ChainTest");
-        entering("setup", params);
-        chainModules = testResources.getString("am-auth-test-" + 
-                testChainName + "-modules");
         chainService = testResources.getString("am-auth-test-" +
                 testChainName + "-servicename");
         chainUserNames = testResources.getString("am-auth-test-" +
@@ -129,7 +132,6 @@ public class ChainTest extends TestCommon {
         log(Level.FINEST, "setup", "testChainName: " + testChainName);
         log(Level.FINEST, "setup", "Description of Chain Test: " + 
                 testDescription);
-        log(Level.FINEST, "setup", "Modules for Chain: " + chainModules);
         log(Level.FINEST, "setup", "Service Name for Chain: " + chainService);
         log(Level.FINEST, "setup", "Users for the Chain: " +
                 chainUserNames);
@@ -139,118 +141,204 @@ public class ChainTest extends TestCommon {
                 + chainSuccessURL);
         log(Level.FINEST, "setup", "Failure URL for the Chain: " 
                 + chainFailureURL);
+
         Reporter.log("ChainName: " + testChainName);
         Reporter.log("Test Description: " + testDescription);
-        Reporter.log("Modules for Chain: " + chainModules);
         Reporter.log("Service Name for Chain: " + chainService);
         Reporter.log("Users for the Chain: " + chainUserNames);
         Reporter.log("Module Intances for Chain: " + chainModInstances);
         Reporter.log("SuccessURL for the Chain: " + chainSuccessURL);
         Reporter.log("Failure URL for the Chain: " + chainFailureURL);
         
-        String[] modTokens = chainModules.split(",");
-        List<String> chainList = new ArrayList<String>();
         try {
-            for (String modName: modTokens){
-                if (!chainList.add(modName)) {
-                    log(Level.SEVERE, "setup", 
-                            "Module could not be added to list");
-                }                
-                log(Level.FINE, "setup", "Creating auth module " + 
-                        modName + " ...");
-                createModule(modName);
+            idToken = getToken(adminUser, adminPassword, basedn);
+            if (!testRealm.equals("/")) {
+                Map realmAttrMap = new HashMap();
+                Set realmSet = new HashSet();
+                realmSet.add("Active");
+                realmAttrMap.put("sunOrganizationStatus", realmSet);
+                log(Level.FINE, "setup", "Creating the realm " + testRealm);
+                AMIdentity amid = idmc.createIdentity(idToken,
+                        realm, IdType.REALM, testRealm, realmAttrMap);
+                log(Level.FINE, "setup",
+                        "Verifying the existence of sub-realm " +
+                        testRealm);
+                if (amid == null) {
+                    log(Level.SEVERE, "setup", "Creation of sub-realm " +
+                            testRealm + " failed!");
+                    assert false;
+                }
+                redirectURL = getLoginURL(testRealm) +
+                        "&amp;service=" + chainService;
+            } else {
+                redirectURL = getLoginURL(testRealm) +
+                        "?service=" + chainService;
+
             }
-            createService(chainService, chainModInstances, chainSuccessURL,
-                    chainFailureURL);
-            log(Level.FINEST, "setup", "ChainName " + testChainName);
-            Map users = createUserMap(chainUserNames);
-            createUsers(users, testChainName);
+
+            Map configMap = new HashMap();
+            configMap.put(SUCCESS_URL_PROPERTY_NAME, chainSuccessURL);
+            configMap.put(FAILURE_URL_PROPERTY_NAME, chainFailureURL);
+            String[] configInstances = chainModInstances.split("\\|");
+            createAuthConfig(testRealm, chainService,
+                    configInstances, configMap);
+
+            String[] userTokens = chainUserNames.split("\\|");
+            for (String userEntry: userTokens){
+                int uLength = userEntry.length();
+                int uIndex = userEntry.indexOf(":");
+                String userName = userEntry.substring(0, uIndex);
+                String userPass = userEntry.substring(uIndex + 1, uLength);
+                testUserList.add(userName);
+                idTypeList.add(IdType.USER);
+                String aliasName = testResources.getString("am-auth-test-" +
+                        testChainName + "-" + userName + "-alias");
+                StringBuffer attrBuffer = new StringBuffer("sn=" + userName).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("cn=" + userName).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("userpassword=" + userPass).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("inetuserstatus=Active").
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("iplanet-am-user-alias-list=" + aliasName);
+
+                log(Level.FINE, "setup", "Creating user " + userName + " ...");
+                if (!idmc.createID(userName, "user", attrBuffer.toString(),
+                        idToken, testRealm)) {
+                    log(Level.SEVERE, "setup", "Failed to create user " +
+                            "identity " + userName + " in realm " + testRealm +
+                            "...");
+                    assert false;
+                }
+            }
+            exiting("setup");
         } catch (Exception e) {
-            log(Level.SEVERE, "setup", 
-                    "Calling cleanup due to failed ssoadm exit code ...");
-            cleanup(testChainName); 
+            log(Level.SEVERE, "setup", "Exception stack msg = " +
+                    e.getMessage());
+            e.printStackTrace();
+            cleanup(testChainName, testRealm);
             throw e;            
+        } finally {
+            if (idToken != null) {
+                destroyToken(idToken);
+            }
         }
-        exiting("setup");
+        
     }
 
     /**
      * Peform the test validation for this chain/service. This method
      * performs the positive test validation by calling
-     * <code>ChainTestValidation</code> and its appropriate method.
+     * <code>AuthenticationCommon.testFormBasedAuth()</code>.
+     * @param testChainName - the name of the authentication configuration that
+     * will be used for authentication.
      */
-    @Parameters({"testChainName"})
+    @Parameters({"testChainName", "testRealm"})
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
         "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void validatePositiveTests(String testChainName) 
+    public void validatePositiveTests(String testChainName, String testRealm)
     throws Exception {
-        Object[] params = {testChainName};
+        Object[] params = {testChainName, testRealm};
         entering("validatePositiveTests", params);
-        Map executeMap;
-        executeMap = new HashMap();
-        executeMap.put("Chainname", testChainName);
-        executeMap.put("passmessage", testResources.getString("am-auth-test-" +
-                testChainName + "-passmsg"));
-        executeMap.put("failmessage", testResources.getString("am-auth-test-" + 
-                testChainName + "-failmsg"));
-        String testUsers = testResources.getString("am-auth-test-" +
-                testChainName + "-users");
-        if (numOfSufficientUsers == -1) {
-            executeMap.put("users", testUsers);
-        } else {
-            String[] sufficientUsers = testUsers.split("\\|");
-            StringBuffer userBuffer = new StringBuffer();
-            for (int i=0; i < numOfSufficientUsers && 
-                    i < sufficientUsers.length; ) {
-                userBuffer.append(sufficientUsers[i++]);
-                if (i < numOfSufficientUsers) {
-                    userBuffer.append("|");
+
+        try {
+            Map executeMap = new HashMap();
+            log(Level.FINEST, "validatePositiveTests", "redirectURL = " +
+                    redirectURL);
+            executeMap.put("redirectURL", redirectURL);
+            executeMap.put("successMsg", testResources.getString(
+                    "am-auth-test-" + testChainName + "-passmsg"));
+            executeMap.put("uniqueIdentifier", testChainName + "-positive");
+            String testUsers = testResources.getString("am-auth-test-" +
+                    testChainName + "-users");
+            if (numOfSufficientUsers == -1) {
+                executeMap.put("users", testUsers);
+            } else {
+                String[] sufficientUsers = testUsers.split("\\|");
+                StringBuffer userBuffer = new StringBuffer();
+                for (int i=0; i < numOfSufficientUsers &&
+                        i < sufficientUsers.length; ) {
+                    userBuffer.append(sufficientUsers[i++]);
+                    if (i < numOfSufficientUsers) {
+                        userBuffer.append("|");
+                    }
                 }
+                executeMap.put("users", userBuffer.toString());
             }
-            executeMap.put("users", userBuffer.toString());
+            executeMap.put("servicename", testResources.getString(
+                    "am-auth-test-" + testChainName + "-servicename"));
+            log(Level.FINEST, "validatePositiveTests",
+                    "ExecuteMap: " + executeMap);
+            log(Level.FINEST, "validatePositiveTests", "TestDescription: " +
+                    testDescription);
+            Reporter.log("Test Description: " + testDescription);
+
+            testServicebasedPositive(executeMap);
+            exiting("validatePositiveTests");
+        } catch (Exception e) {
+            log(Level.SEVERE, "validatePositiveTests", e.getMessage());
+            e.printStackTrace();
+            cleanup(testChainName, testRealm);
+            throw e;
         }
-        executeMap.put("servicename", testResources.getString("am-auth-test-" +
-                testChainName + "-servicename"));
-        log(Level.FINEST, "validatePositiveTests", "ExecuteMap: " + executeMap);
-        log(Level.FINEST, "validatePositiveTests", "TestDescription: " + 
-                testDescription);
-        Reporter.log("Test Description: " + testDescription);
-        ChainTestValidation ct = new ChainTestValidation(executeMap);
-        ct.testServicebasedPositive();
-        exiting("validatePositiveTests");
     }
     
     /**
      * Peform the test validation for this chain/service. This method
      * performs the Negative test validation by calling
-     * <code>ChainTestValidation</code> and its appropriate method.
+     * <code>AuthenticationCommon.testFormBasedAuth()</code>.
+     * @param testChainName - the name of the authentication configuration that
+     * will be used for authentication.
      */
-    @Parameters({"testChainName"})
+    @Parameters({"testChainName", "testRealm"})
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
         "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void validateNegativeTests(String testChainName) 
+    public void validateNegativeTests(String testChainName, String testRealm)
     throws Exception {
         Object[] params = {testChainName};
         entering("validateNegativeTests", params);
-        Map executeMap;
-        executeMap = new HashMap();
-        executeMap.put("Chainname",testChainName);
-        executeMap.put("passmessage", testResources.getString("am-auth-test-" +
-                testChainName + "-passmsg"));
-        executeMap.put("failmessage", testResources.getString("am-auth-test-" + 
-                testChainName + "-failmsg"));
-        executeMap.put("users", testResources.getString("am-auth-test-" +
-                testChainName + "-users"));
-        executeMap.put("servicename", testResources.getString("am-auth-test-" +
-                testChainName + "-servicename"));
-        log(Level.FINEST, "validateNegativeTests", "ExecuteMap:" + executeMap);
-        log(Level.FINEST, "validateNegativeTests", "ExecuteMap: " + executeMap);
-        log(Level.FINEST, "validateNegativeTests", "TestDescription: " + 
-                testDescription);
-        Reporter.log("Test Description: " + testDescription);        
-        ChainTestValidation ct = new ChainTestValidation(executeMap);
-        ct.testServicebasedNegative();
-        exiting("validateNegativeTests");
+
+        try {
+            Map executeMap = new HashMap();
+            log(Level.FINEST, "validateNegativeTests", "redirectURL = " +
+                    redirectURL);
+            executeMap.put("redirectURL", redirectURL);
+            executeMap.put("successMsg", testResources.getString(
+                    "am-auth-test-" + testChainName + "-failmsg"));
+            executeMap.put("uniqueIdentifier", testChainName + "-negative");
+
+            String configUsers = testResources.getString("am-auth-test-" +
+                    testChainName + "-users");
+            String[] userEntries = configUsers.split("\\|");
+            StringBuffer updatedUsers = new StringBuffer();
+            for (int i=0; i < userEntries.length; i++) {
+                String userEntry = userEntries[i];
+                String[] userTokens = userEntry.split(":");
+                String negativePassword = "not" + userTokens[1];
+                updatedUsers.append(userTokens[0]).append(":");
+                updatedUsers.append(negativePassword);
+                if (i < (userEntries.length - 1)) {
+                    updatedUsers.append("|");
+                }
+            }
+            executeMap.put("users", updatedUsers.toString());
+            executeMap.put("servicename", testResources.getString(
+                    "am-auth-test-" + testChainName + "-servicename"));
+            log(Level.FINEST, "validateNegativeTests", "ExecuteMap:" +
+                    executeMap);
+            log(Level.FINEST, "validateNegativeTests", "TestDescription: " +
+                    testDescription);
+            Reporter.log("Test Description: " + testDescription);
+
+            testServicebasedNegative(executeMap);
+            exiting("validateNegativeTests");
+        } catch (Exception e) {
+            log(Level.SEVERE, "validateNegativeTests", e.getMessage());
+            e.printStackTrace();
+            cleanup(testChainName, testRealm);
+            throw e;
+        }
     }
 
     /**
@@ -259,236 +347,47 @@ public class ChainTest extends TestCommon {
      * after executing each test scenario, in this case each chain/service
      * authentication is done.This processed in this method are:
      * 1. Delete the authentication service/Chain
-     * 2. Delete the modules involved in that service/chain
-     * 3. Delete the users involved/create for this chain.
+     * 2. Delete the users involved/create for this chain.
      */
-    @Parameters({"testChainName"})
+    @Parameters({"testChainName", "testRealm"})
     @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
         "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void cleanup(String testChainName)
+    public void cleanup(String testChainName, String testRealm)
         throws Exception {
-        Object[] params = {testChainName};
+        Object[] params = {testChainName, testRealm};
         entering("cleanup", params);
+
         try {
-            String url = getLoginURL("/") ;
-            log(Level.FINEST, "cleanup", url);
+            idToken = getToken(adminUser, adminPassword, basedn);
+
             log(Level.FINEST, "cleanup", "chainName: " + testChainName);
-            log(Level.FINEST, "validateNegativeTests", "TestDescription: " + 
-                    testDescription);
-            Reporter.log("chainName:" + testChainName);
-            Reporter.log("Test Description: " + testDescription);
-            StringTokenizer moduleInstances = new StringTokenizer
-                    (chainModInstances,"|");
-            List<String> chainList = new ArrayList<String>();
-            chainList.add(chainService);
-            log(Level.FINEST, "cleanup", "ChainList: " + chainList);
-            List<String> instanceNames = new ArrayList<String>();
-            while (moduleInstances.hasMoreTokens()) {
-                String[] instanceData = moduleInstances.nextToken().split(",");
-                instanceNames.add(instanceData[0]);
-            }
-            String ssoadmURL = protocol + ":" + "//" + host + ":" + port + uri ;
-            FederationManager am = new FederationManager(ssoadmURL);
-            WebClient webClient = new WebClient();
-            consoleLogin(webClient, url, adminUser, adminPassword);
-            log(Level.FINE, "cleanup", "Deleting auth configurations " + 
-                    chainList + " ...");
-            if (FederationManager.getExitCode(am.deleteAuthCfgs(webClient, 
-                    realm, chainList)) != 0) {
-                log(Level.SEVERE, "cleanup", 
-                        "deleteAuthCfgs ssoadm command failed");
-            }
+            log(Level.FINEST, "cleanup", "testRealm: " + testRealm);
             
-            log(Level.FINE, "cleanup", "Deleting auth instances " + 
-                    instanceNames);
-            if (FederationManager.getExitCode(am.deleteAuthInstances(webClient, 
-                    realm, instanceNames)) != 0) {
-                log(Level.SEVERE, "cleanup", 
-                        "deleteAuthInstances ssoadm command failed");
-            }
+            Reporter.log("chainName:" + testChainName);
+            Reporter.log("Realm: " + testRealm);
+ 
+            log(Level.FINE, "cleanup", "Deleting auth configuration " + 
+                    chainService + " ...");
+            deleteAuthConfig(testRealm, chainService);
             
             log(Level.FINE, "cleanup", "Deleting user(s) " + testUserList + 
                     " ...");
-            if (FederationManager.getExitCode(am.deleteIdentities(webClient, 
-                    realm, testUserList, "User")) != 0) {
-                log(Level.SEVERE, "cleanup", 
-                        "deleteIdentities (User) ssoadm command failed");
-            }            
-            String logoutURL = protocol + ":" + "//" + host + ":" + port + uri 
-                    +  "/UI/Logout";
-            consoleLogout(webClient, logoutURL);
+            idmc.deleteIdentity(idToken, testRealm, idTypeList, testUserList);
+
+            if (!testRealm.equals("/")) {
+                log(Level.FINE, "cleanup", "Deleting the sub-realm " +
+                        testRealm);
+                idmc.deleteRealm(idToken, realm + testRealm);
+            }
+            exiting("cleanup");
         } catch(Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
-        }
-        exiting("cleanup");
-    }
-
-    /**
-     * Call Authentication Utility class to create the module instances
-     * for a given module instance name
-     * @param moduleName
-     */
-    private void createModule(String mName) {
-        try {
-            AuthTestConfigUtil moduleConfig = 
-                    new AuthTestConfigUtil(configrbName);
-            Map modMap = moduleConfig.getModuleData(mName);
-            moduleServiceName = moduleConfig.getModuleServiceName();
-            moduleSubConfig = moduleConfig.getModuleSubConfigName();
-            moduleSubConfigId = moduleConfig.getModuleSubConfigId();
-            log(Level.FINEST,"createModule", "ModuleServiceName :" + 
-                    moduleServiceName);
-            log(Level.FINEST,"createModule", "ModuleSubConfig :" + 
-                    moduleSubConfig);
-            log(Level.FINEST,"createModule", "ModuleSubConfigId :" + 
-                    moduleSubConfigId);
-            moduleConfigData = getListFromMap(modMap, mName);
-            moduleConfig.createModuleInstances(moduleServiceName,
-                    moduleSubConfig, moduleConfigData, moduleSubConfigId);
-        } catch(AssertionError ae) {
-            log(Level.SEVERE, "createModule", 
-                    "Creation of the sub-configuration " + moduleSubConfig + 
-                    " failed");
-            throw ae;            
-        } catch(Exception e) {
-            log(Level.SEVERE, "createModule", e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Creates authentication service for the given module instances
-     * by instantiating the authentication utility class
-     * @param name of service
-     * @param module instances for this service
-     * @param service successURL
-     * @param service FailureURL
-     **/
-    private void createService(String mService, String mInstances,
-            String mSuccess, String mFailure){
-        try {
-            String srv_attribute_name = "iplanet-am-auth-configuration=" +
-                    "<AttributeValuePair>";
-            List<String> chainList = new ArrayList<String>();
-            String[] testChainInstances = mInstances.split("\\|");
-            StringBuffer reqModules = new StringBuffer(); 
-            for (String instance: testChainInstances) {
-                log(Level.FINEST, "createService", "ModuleInstance: " +
-                         instance);
-                String[] instanceFields = instance.split(","); 
-                reqModules.append("<Value>");
-                for (String field: instanceFields) {
-                    log(Level.FINEST, "createService", "ModuleField: " +
-                            field);
-                     reqModules.append(field);
-                     reqModules.append(" ");                   
-                }
-                reqModules.append("</Value>");
-            }
-            String srvData = srv_attribute_name + reqModules + 
-                    "</AttributeValuePair>";
-            log(Level.FINEST, "createService", "ServiceData: " + srvData);
-            chainList.add(srvData);
-            chainList.add("iplanet-am-auth-login-success-url=" + mSuccess);
-            chainList.add("iplanet-am-auth-login-failure-url=" + mFailure);
-            AuthTestConfigUtil serviceConfig = 
-                    new AuthTestConfigUtil(configrbName);
-            serviceConfig.createServices(mService, chainList);
-        } catch(AssertionError ae) {
-            log(Level.SEVERE, "createService", 
-                    "Creation of the service " + mService + " failed");
-            throw ae;            
-        } catch(Exception e) {
-            log(Level.SEVERE, "createService", e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Creates the required test users on the system for each
-     * Chain to be executed
-     * @param user map to be created
-     * @param ChainName
-     **/
-    private void createUsers(Map testUsers, String testChain){
-        for (Iterator iter = testUsers.entrySet().iterator(); iter.hasNext(); )
-        {
-            List<String> userList = new ArrayList<String>();
-            Map.Entry entry = (Map.Entry)iter.next();
-            String newUser = (String)entry.getKey();
-            newUser.trim();
-            testUserList.add(newUser);
-            String userPassword = (String)entry.getValue();
-            userPassword.trim();
-            String aliasName = testResources.getString("am-auth-test-" +
-                    testChain + "-" + newUser + "-alias");
-            userList.add("sn=" + newUser);
-            userList.add("cn=" + newUser);
-            userList.add("userpassword=" + userPassword);
-            userList.add("iplanet-am-user-alias-list=" + aliasName);
-            userList.add("inetuserstatus=Active");
-            try {
-                AuthTestConfigUtil userConfig = 
-                        new AuthTestConfigUtil(configrbName);
-                userConfig.createUser(userList, newUser);
-            } catch(AssertionError ae) {
-                log(Level.SEVERE, "createUsers", 
-                        "Creation of the user " + newUser + " failed");
-                throw ae;                
-            } catch(Exception e) {
-                log(Level.SEVERE, "createUsers", e.getMessage());
-                e.printStackTrace();
+        } finally {
+            if (idToken != null) {
+                destroyToken(idToken);
             }
         }
-    }
-    
-    /**
-     * Creates users map
-     * @param Row of users:password with a delimeter for each user involved
-     */
-    private Map createUserMap(String sUsers) 
-    throws MissingResourceException {
-        Map userMap = new HashMap();
-        String[] userTokens = sUsers.split("\\|");
-        for (String uName: userTokens){
-            int uLength = uName.length();
-            int uIndex = uName.indexOf(":");
-            String userName = uName.substring(0, uIndex);
-            String userPass = uName.substring(uIndex + 1, uLength);
-            userMap.put(userName, userPass);
-        }
-        log(Level.FINEST, "createUserMap", "User Map: " + userMap);
-        return userMap;
-    }
-    
-    /**
-     * Get the list of users from Map, to create the
-     * users.This is need for the <code>FederationManager</code> to
-     * create users on the System
-     * @param Map of users to be creared
-     * @param moduleName
-     */
-    private List getListFromMap(Map lMap, String moduleName) {
-        Object escapeModServiceName = moduleName + ".module-service-name";
-        Object escapeModSubConfigName = moduleName + ".module-subconfig-name";
-        lMap.remove(escapeModServiceName);
-        lMap.remove(escapeModSubConfigName);
-        List<String> list = new ArrayList<String>();
-        for (Iterator iter = lMap.entrySet().iterator(); iter.hasNext(); ) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            String userkey = (String)entry.getKey();
-            int sindex=userkey.indexOf(".");
-            CharSequence cseq = userkey.subSequence(0, sindex + 1);
-            userkey=userkey.replace(cseq, "");
-            userkey.trim();
-            String userval = (String)entry.getValue();
-            String uadd = userkey + "=" + userval;
-            uadd.trim();
-            list.add(uadd);
-        }
-        log(Level.FINEST, "getListFromMap", "UserList: " + list);        
-        return list;
     }
 }

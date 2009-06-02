@@ -17,25 +17,29 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLogout.java,v 1.3 2009-01-26 23:47:44 nithyas Exp $
+ * $Id: AuthContextLogout.java,v 1.4 2009-06-02 17:08:18 cmwesley Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.authentication;
 
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.spi.AuthLoginException;
-import com.sun.identity.qatest.common.FederationManager;
-import com.sun.identity.qatest.common.TestCommon;
-import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
+import com.sun.identity.qatest.idm.IDMConstants;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javax.security.auth.callback.Callback;
@@ -56,23 +60,16 @@ import org.testng.annotations.Test;
  * <code>AuthContext.logout</code> destroys the underlying session for a 
  * successfully authenticated user.
  */
-public class AuthContextLogout extends TestCommon {
+public class AuthContextLogout extends AuthenticationCommon {
+    private IDMCommon idmc;
     private ResourceBundle testResources;
-    private String url;
     private String moduleName;
-    private String configrbName = "authenticationConfigData";
-    private WebClient webClient;
-    private List moduleConfigData;
-    private String moduleServiceName;
+    private SSOToken adminToken;
     private String moduleSubConfig;
-    private String moduleSubConfigId;
     private String userName;
     private String password;
-    private String logoutURL;
     private String absoluteRealm;
-    private FederationManager fm;
     private List<String> testUserList = new ArrayList<String>();
-    private AuthTestConfigUtil moduleConfig;
     private String testDescription;
     
     /**
@@ -80,20 +77,16 @@ public class AuthContextLogout extends TestCommon {
      */
     public AuthContextLogout() {
         super("AuthContextLogout");
-        url = getLoginURL("/");
-        logoutURL = protocol + ":" + "//" + host + ":" + port + uri 
-                + "/UI/Logout";
-        String famadmURL = protocol + ":" + "//" + host + ":" + port + uri;
-        fm = new FederationManager(famadmURL);
+        idmc = new IDMCommon();
         testResources = ResourceBundle.getBundle("authentication" + 
                 fileseparator + "AuthContextLogout");
-        moduleConfig = new AuthTestConfigUtil(configrbName);
     }
     
     /**
      * Set up the system for testing.  Create an authentication instance,
      * a user, and a realm before the logout test.
-     * 
+     * @param testRealm - the realm in which the test should be executed.  If
+     * this realm is not the top-level realm then it will be created.
      */
     @Parameters({"testRealm"}) 
     @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
@@ -102,28 +95,37 @@ public class AuthContextLogout extends TestCommon {
     throws Exception {
         Object[] params = {testRealm};
         entering("setup", params);
-        SSOToken idToken = getToken(adminUser, adminPassword, realm);
-        webClient = new WebClient();
+
         try {
+            adminToken = getToken(adminUser, adminPassword, realm);
             moduleName = testResources.getString("am-auth-logout-module");
             userName = testResources.getString("am-auth-logout-user");
             password = testResources.getString("am-auth-logout-password");
             testDescription = testResources.getString(
                     "am-auth-logout-test-description");
 
-            Map modMap = moduleConfig.getModuleData(moduleName);
-            moduleServiceName = moduleConfig.getModuleServiceName();
-            moduleSubConfig = moduleConfig.getModuleSubConfigName();
-            moduleSubConfigId = moduleConfig.getModuleSubConfigId();
-            moduleConfigData = moduleConfig.getListFromMap(modMap, moduleName);
-            
-            absoluteRealm = testRealm;
+            moduleSubConfig = getAuthInstanceName(moduleName);
             if (!testRealm.equals("/")) {
-                if (testRealm.indexOf("/") != 0) {
-                    absoluteRealm = "/" + testRealm;
+                if (realm.endsWith("/")) {
+                    absoluteRealm = realm + testRealm;
+                } else {
+                    absoluteRealm = realm + "/" + testRealm;
                 }
-                log(Level.FINE, "setup", "Creating the sub-realm " + testRealm);
-                moduleConfig.createRealms(absoluteRealm);
+                Map realmAttrMap = new HashMap();
+                Set realmSet = new HashSet();
+                realmSet.add("Active");
+                realmAttrMap.put("sunOrganizationStatus", realmSet);
+                log(Level.FINE, "setup", "Creating the realm " + testRealm);
+                AMIdentity amid = idmc.createIdentity(adminToken,
+                        realm, IdType.REALM, testRealm, realmAttrMap);
+                log(Level.FINE, "setup",
+                        "Verifying the existence of sub-realm " +
+                        testRealm);
+                if (amid == null) {
+                    log(Level.SEVERE, "setup", "Creation of sub-realm " +
+                            testRealm + " failed!");
+                    assert false;
+                }
             }
             
             log(Level.FINEST, "setup", "moduleName = " + moduleName);
@@ -136,37 +138,33 @@ public class AuthContextLogout extends TestCommon {
             Reporter.log("User: " + userName);
             Reporter.log("Password: " + password);
 
-            log(Level.FINEST, "setup", "ModuleServiceName: " +
-                    moduleServiceName);
-            log(Level.FINEST, "setup", "ModuleSubConfig: " +
-                    moduleSubConfig);
-            log(Level.FINEST, "setup", "ModuleSubConfigId: " +
-                    moduleSubConfigId);
-            log(Level.FINE, "setup", "Creating the authentication module " + 
-                    moduleSubConfigId);            
-            moduleConfig.createModuleInstances(testRealm, moduleServiceName,
-                    moduleSubConfig, moduleConfigData, moduleSubConfigId);
+            StringBuffer attrBuffer =  new StringBuffer("sn=" + userName).
+                    append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                    append("cn=" + userName).
+                    append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                    append("userpassword=" + password).
+                    append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                    append("inetuserstatus=Active");
 
-            log(Level.FINE, "setup", "Creating user " + userName + "...");
-            List<String> userList = new ArrayList<String>();
-            userList.add("sn=" + userName);
-            userList.add("cn=" + userName);
-            userList.add("userpassword=" + password);
-            userList.add("inetuserstatus=Active");            
-            moduleConfig.setTestConfigRealm(testRealm);
-            moduleConfig.createUser(userList, userName);
+            log(Level.FINE, "setup",
+                    "Creating user " + userName + " ...");
+            if (!idmc.createID(userName, "user", attrBuffer.toString(),
+                    adminToken, testRealm)) {
+                log(Level.SEVERE, "createUser", "Failed to create user " +
+                        "identity " + userName + "...");
+                assert false;
+            }
+            exiting("setup");
         } catch(Exception e) {
             cleanup(testRealm);
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            if (idToken != null) {
-                destroyToken(idToken);
+            if (adminToken != null) {
+                destroyToken(adminToken);
             }
-            consoleLogout(webClient, logoutURL);
         }
-        exiting("setup");
     }
     
     /**
@@ -174,7 +172,7 @@ public class AuthContextLogout extends TestCommon {
      * module-based authentication, retrieving the user's <code>SSOToken</code>,
      * invoking <code>AuthContext.logout</code> on the token, and verifying that
      * the token is no longer valid.
-     * testRealm - the realm in which the logout test will take place
+     * @param testRealm - the realm in which the logout test will take place
      */
     @Parameters({"testRealm"}) 
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
@@ -268,17 +266,18 @@ public class AuthContextLogout extends TestCommon {
                             "Token for user " + userName + 
                             " is still valid after logout");
                 }
-                assert !sessionValid;        
+                assert !sessionValid;  
+                exiting("testAuthContextLogout");
             } catch (Exception ex) {
                 log(Level.SEVERE, "testAuthContextLogout", ex.getMessage());
                 ex.printStackTrace();
+                cleanup(testRealm);
                 throw ex;
             } finally {
                 if (sessionValid) {
                     destroyToken(userToken);
                 }
             }
-            exiting("testAuthContextLogout");
         } else {
             log(Level.SEVERE, "testAuthContextLogout", "The user " + userName + 
                     " did not authenticate successfully.");
@@ -290,7 +289,7 @@ public class AuthContextLogout extends TestCommon {
      * Performs cleanup after tests are done.
      * Deletes the authentication instances, users, and realms created by this 
      * test scenario.
-     * testRealm - the realm which will be deleted 
+     * @param testRealm - the realm which will be deleted
      */
     @Parameters({"testRealm"})
     @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
@@ -299,55 +298,29 @@ public class AuthContextLogout extends TestCommon {
     throws Exception {
         Object[] params = {testRealm};
         entering("cleanup", params);
-        SSOToken idToken = getToken(adminUser, adminPassword, realm);
 
-        if (webClient == null) {
-            webClient = new WebClient();
-        }
         try {
-            log(Level.FINEST, "cleanup", url);
-            List<String> listModInstance = new ArrayList<String>();
-            listModInstance.add(moduleSubConfig);
-            consoleLogin(webClient, url, adminUser, adminPassword);
-
-            log(Level.FINE, "cleanup", "Deleting auth instance(s) " + 
-                    listModInstance + " ...");
-            if (FederationManager.getExitCode(fm.deleteAuthInstances(
-                    webClient, testRealm, listModInstance)) != 0) {
-                log(Level.SEVERE, "cleanup", 
-                        "deleteAuthInstances famadm command failed");
-            }
-
-            testUserList.add(userName);
-            log(Level.FINE, "cleanup", "Deleting user(s) " + testUserList + 
-                        "...");                                
-            if (FederationManager.getExitCode(fm.deleteIdentities(webClient, 
-                    testRealm, testUserList, "User")) != 0) {
-                log(Level.SEVERE, "cleanup", 
-                            "deleteIdentities famadm command failed");
-            }
-            absoluteRealm = testRealm;
-            if (!absoluteRealm.equals("/")) {
-                if (absoluteRealm.indexOf("/") != 0) {
-                    absoluteRealm = "/" + testRealm;
-                }             
-                log(Level.FINE, "cleanup", "Deleting the sub-realm " + 
-                        absoluteRealm);
-                if (FederationManager.getExitCode(fm.deleteRealm(webClient, 
-                        absoluteRealm, true)) != 0) {
-                    log(Level.SEVERE, "cleanup", 
-                            "deleteRealm famadm command failed");
+            adminToken = getToken(adminUser, adminPassword, realm);
+            log(Level.FINE, "cleanup", "Deleting user " + testUserList + "...");
+            idmc.deleteIdentity(adminToken, testRealm, IdType.USER, userName);
+            
+            if (!testRealm.equals("/")) {
+                if (!absoluteRealm.startsWith("/")) {
+                    absoluteRealm = "/" + absoluteRealm;
                 }
+                log(Level.FINE, "cleanup", "Deleting the sub-realm " +
+                        absoluteRealm);
+                idmc.deleteRealm(adminToken, absoluteRealm);
             }
+            exiting("cleanup");
         } catch(Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            destroyToken(idToken);
-            consoleLogout(webClient, logoutURL);
+            if (adminToken != null) {
+                destroyToken(adminToken);
+            }
         }
-        exiting("cleanup");
-    }
-    
+    }    
 }
