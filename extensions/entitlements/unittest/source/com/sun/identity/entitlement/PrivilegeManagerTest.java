@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.24 2009-05-26 21:20:07 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.25 2009-06-02 20:36:47 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -33,8 +33,11 @@ import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceManager;
 import java.security.AccessController;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -54,24 +57,39 @@ public class PrivilegeManagerTest {
     private static final String PRIVILEGE_NAME = "PrivilegeManagerTest";
     private static final String PRIVILEGE_NAME1 = "PrivilegeManagerTest1";
     private static final String PRIVILEGE_DESC = "Test Description";
+    private static final String startIp = "100.100.100.100";
+    private static final String endIp = "200.200.200.200";
+    private static final String SUB_REALM = "/PrivilegeManagerTestsub";
+
     private Privilege privilege;
     private Subject adminSubject;
-    
+    private UserSubject ua1;
+    private UserSubject ua2;
 
     @BeforeClass
     public void setup() 
-        throws SSOException, IdRepoException, EntitlementException {
+        throws SSOException, IdRepoException, EntitlementException,
+        SMSException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         adminSubject = SubjectUtils.createSubject(adminToken);
-        Application appl = new Application("/", APPL_NAME,
+        createApplication("/");
+        OrganizationConfigManager orgMgr = new OrganizationConfigManager(
+            adminToken, "/");
+        String subRealm = SUB_REALM.substring(1);
+        orgMgr.createSubOrganization(subRealm, Collections.EMPTY_MAP);
+        createApplication(SUB_REALM);
+    }
+
+    private void createApplication(String realm) throws EntitlementException {
+        Application appl = new Application(realm, APPL_NAME,
             ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
         Set<String> appResources = new HashSet<String>();
         appResources.add("http://www.privilegemanagertest.*");
         appl.addResources(appResources);
         appl.setEntitlementCombiner(DenyOverride.class);
-        ApplicationManager.saveApplication(adminSubject, "/", appl);
+        ApplicationManager.saveApplication(adminSubject, realm, appl);
     }
 
     @AfterClass
@@ -81,8 +99,13 @@ public class PrivilegeManagerTest {
         PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
         prm.removePrivilege(PRIVILEGE_NAME);
-        
         ApplicationManager.deleteApplication(adminSubject, "/", APPL_NAME);
+        ApplicationManager.deleteApplication(adminSubject, SUB_REALM,
+            APPL_NAME);
+        
+        OrganizationConfigManager orgMgr = new OrganizationConfigManager(
+            adminToken, "/");
+        orgMgr.deleteSubOrganization(SUB_REALM, true);
     }
 
     @Test
@@ -134,13 +157,10 @@ public class PrivilegeManagerTest {
             "PrivilegeManagerTest.testNoSubjectInPrivilege failed");
     }
 
-    @Test
-    public void testAddPrivilege() throws Exception {
+    private Privilege createPrivilege() throws EntitlementException {
         Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
         actionValues.put("GET", Boolean.TRUE);
         actionValues.put("POST", Boolean.FALSE);
-        // The port is required for passing equals  test
-        // opensso policy would add default port if port not specified
         String resourceName = "http://www.privilegemanagertest.com:80";
         Entitlement entitlement = new Entitlement(APPL_NAME,
                 resourceName, actionValues);
@@ -148,9 +168,9 @@ public class PrivilegeManagerTest {
 
         String user11 = "id=user11,ou=user," + ServiceManager.getBaseDN();
         String user12 = "id=user12,ou=user," + ServiceManager.getBaseDN();
-        UserSubject ua1 = new IdRepoUserSubject();
+        ua1 = new IdRepoUserSubject();
         ua1.setID(user11);
-        UserSubject ua2 = new IdRepoUserSubject();
+        ua2 = new IdRepoUserSubject();
         ua2.setID(user12);
         Set<EntitlementSubject> subjects = new HashSet<EntitlementSubject>();
         subjects.add(ua1);
@@ -160,8 +180,6 @@ public class PrivilegeManagerTest {
         Set<String> excludedResourceNames = new HashSet<String>();
         entitlement.setExcludedResourceNames(excludedResourceNames);
 
-        String startIp = "100.100.100.100";
-        String endIp = "200.200.200.200";
         IPCondition ipc = new IPCondition(startIp, endIp);
         ipc.setPConditionName("ipc");
         DNSNameCondition dnsc = new DNSNameCondition("*.sun.com");
@@ -179,7 +197,7 @@ public class PrivilegeManagerTest {
         sa1.setPropertyName("a");
         sa1.setPropertyValues(aValues);
         sa1.setPResponseProviderName("sa");
-        
+
         StaticAttributes sa2 = new StaticAttributes();
         Set<String> bValues = new HashSet<String>();
         bValues.add("b10");
@@ -202,14 +220,40 @@ public class PrivilegeManagerTest {
         ra.add(uat1);
         ra.add(uat2);
 
-        privilege = new OpenSSOPrivilege(PRIVILEGE_NAME, entitlement, os,
+        Privilege priv = new OpenSSOPrivilege(PRIVILEGE_NAME, entitlement, os,
             ipc, ra);
-        privilege.setDescription(PRIVILEGE_DESC);
+        priv.setDescription(PRIVILEGE_DESC);
+        return priv;
+    }
+
+    @Test(dependsOnMethods = {"testAddPrivilege"})
+    public void subRealmTest() throws Exception {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        PrivilegeManager prm = PrivilegeManager.getInstance(SUB_REALM,
+            SubjectUtils.createSubject(adminToken));
+
+        try {
+            Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
+        } catch (EntitlementException e){
+            //ok
+        }
+
+        prm.addPrivilege(privilege);
+        Thread.sleep(1000);
+        Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
+        prm.removePrivilege(PRIVILEGE_NAME);
+    }
+
+    @Test
+    public void testAddPrivilege() throws Exception {
+        privilege = createPrivilege();
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
         prm.addPrivilege(privilege);
+        Thread.sleep(1000);
 
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
 

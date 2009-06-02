@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.17 2009-05-29 22:21:45 dillidorai Exp $
+ * $Id: EntitlementService.java,v 1.18 2009-06-02 20:36:47 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -62,6 +62,7 @@ public class EntitlementService extends EntitlementConfiguration {
         "subjectAttributeNames";
     private static final String CONFIG_APPLICATIONS = "registeredApplications";
     private static final String CONFIG_APPLICATION = "application";
+    private static final String SCHEMA_APPLICATIONS = "applications";
     private static final String CONFIG_APPLICATIONTYPE = "applicationType";
     private static final String CONFIG_ACTIONS = "actions";
     private static final String CONFIG_RESOURCES = "resources";
@@ -458,6 +459,26 @@ public class EntitlementService extends EntitlementConfiguration {
         return null;
     }
 
+    private ServiceConfig createApplicationCollectionConfig(String realm)
+        throws SMSException, SSOException {
+        ServiceConfig sc = null;
+        SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+        ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
+            adminToken);
+        ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
+        if (orgConfig != null) {
+            sc = orgConfig.getSubConfig(CONFIG_APPLICATIONS);
+        }
+
+        if (sc == null) {
+            orgConfig.addSubConfig(CONFIG_APPLICATIONS, SCHEMA_APPLICATIONS, 0,
+                Collections.EMPTY_MAP);
+            sc = orgConfig.getSubConfig(CONFIG_APPLICATIONS);
+        }
+        return sc;
+    }
+
+
     /**
      * Stores the application to data store.
      *
@@ -467,16 +488,13 @@ public class EntitlementService extends EntitlementConfiguration {
     public void storeApplication(Application appl)
         throws EntitlementException {
         try {
-            ServiceConfig orgConfig = getApplicationCollectionConfig(realm);
-            if (orgConfig != null) {
-                ServiceConfig appConfig = 
-                    orgConfig.getSubConfig(appl.getName());
-                if (appConfig == null) {
-                    orgConfig.addSubConfig(appl.getName(),
-                        CONFIG_APPLICATION, 0, getApplicationData(appl));
-                } else {
-                    appConfig.setAttributes(getApplicationData(appl));
-                }
+            ServiceConfig orgConfig = createApplicationCollectionConfig(realm);
+            ServiceConfig appConfig = orgConfig.getSubConfig(appl.getName());
+            if (appConfig == null) {
+                orgConfig.addSubConfig(appl.getName(),
+                    CONFIG_APPLICATION, 0, getApplicationData(appl));
+            } else {
+                appConfig.setAttributes(getApplicationData(appl));
             }
         } catch (SMSException ex) {
             Object[] arg = {appl.getName()};

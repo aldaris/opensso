@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.27 2009-05-29 22:21:46 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.28 2009-06-02 20:36:47 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -387,12 +387,12 @@ public class PrivilegeUtils {
     }
 
     public static Object privilegeToPolicyObject(
-            String realm,
-            Privilege privilege) throws PolicyException, SSOException {
+        String realm,
+        Privilege privilege
+    ) throws PolicyException, SSOException, EntitlementException {
         Object policyObject = null;
         if (PolicyPrivilegeManager.xacmlPrivilegeEnabled()) {
             policyObject = XACMLPrivilegeUtils.privilegeToPolicy(privilege);
-
         } else {
              policyObject = privilegeToPolicy(realm, privilege);
         }
@@ -400,7 +400,7 @@ public class PrivilegeUtils {
     }
     
     public static Policy privilegeToPolicy(String realm, Privilege privilege)
-            throws PolicyException, SSOException {
+            throws PolicyException, SSOException, EntitlementException {
         Policy policy = null;
         policy = new Policy(privilege.getName());
         policy.setDescription(privilege.getDescription());
@@ -444,7 +444,7 @@ public class PrivilegeUtils {
     private static Set<Rule> entitlementToRule(
         String realm,
         Entitlement entitlement
-    ) throws PolicyException, SSOException {
+    ) throws PolicyException, SSOException, EntitlementException {
         Set<Rule> rules = new HashSet<Rule>();
         String appName = entitlement.getApplicationName();
 
@@ -452,6 +452,10 @@ public class PrivilegeUtils {
             AdminTokenAction.getInstance()); //TODO - who added?
         Application appl = ApplicationManager.getApplication(
             SubjectUtils.createSubject(adminToken), realm, appName);
+        if (appl == null) {
+            Object[] params = {appName, realm};
+            throw new EntitlementException(105, params);
+        }
         String serviceName = appl.getApplicationType().getName();
 
         Set<String> resourceNames = entitlement.getResourceNames();
