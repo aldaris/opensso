@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.19 2009-02-05 01:34:25 srivenigan Exp $
+ * $Id: FederationManagerCLI.java,v 1.20 2009-06-02 20:56:04 vimal_67 Exp $
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common.cli;
@@ -288,14 +288,123 @@ public class FederationManagerCLI extends CLIUtility
     public void addCotArguments(String cot) {
         String cotArg;
         if (useLongOptions) {
-            cotArg = PREFIX_ARGUMENT_LONG + COT_ARGUMENT;
+            cotArg = COT_ARGUMENT;
         } else {
-            cotArg = PREFIX_ARGUMENT_SHORT + SHORT_COT_ARGUMENT;
+            cotArg = SHORT_COT_ARGUMENT;
         }      
         addArgument(cotArg);
         addArgument(cot);
     }
-    
+
+    /**
+     * Adds the "--entityid" argument and entityid value to the argument list
+     * @param entityid - entity id
+     */
+    public void addEntityIDArguments(String entityid) {
+        String entityidArg;
+        if (useLongOptions) {
+            entityidArg = ENTITYID_ARGUMENT;
+        } else {
+            entityidArg = SHORT_ENTITYID_ARGUMENT;
+        }
+        addArgument(entityidArg);
+        addArgument(entityid);
+    }
+
+    /**
+     * Adds the "--meta-data-file" argument and metadatafile value to
+     * the argument list
+     * @param metadatafile - Standard metadata file
+     */
+    public void addMetadataFileArguments(String metadatafile) {
+        String metadatafileArg;
+        if (useLongOptions) {
+            metadatafileArg = METADATAFILE_ARGUMENT;
+        } else {
+            metadatafileArg = SHORT_METADATAFILE_ARGUMENT;
+        }
+        addArgument(metadatafileArg);
+        addArgument(metadatafile);
+    }
+
+    /**
+     * Adds the "--extended-data-file" argument and entityid value to
+     * the argument list
+     * @param extendeddatafile - Extended metadata file
+     */
+    public void addExtendeddataFileArguments(String extendeddatafile) {
+        String extendeddatafileArg;
+        if (useLongOptions) {
+            extendeddatafileArg = EXTENDEDDATAFILE_ARGUMENT;
+        } else {
+            extendeddatafileArg = SHORT_EXTENDEDDATAFILE_ARGUMENT;
+        }
+        addArgument(extendeddatafileArg);
+        addArgument(extendeddatafile);
+    }
+
+    /**
+     * Adds the "--identityprovider" argument and identityprovider value to
+     * the argument list
+     * @param identityprovider - metaalias of identity provider
+     */
+    public void addIDPMetaaliasArguments(String idpmetaalias) {
+        String idpmetaaliasArg;
+        if (useLongOptions) {
+            idpmetaaliasArg = IDP_METAALIAS_ARGUMENT;
+        } else {
+            idpmetaaliasArg = SHORT_IDP_METAALIAS_ARGUMENT;
+        }
+        addArgument(idpmetaaliasArg);
+        addArgument(idpmetaalias);
+    }
+
+    /**
+     * Adds the "--serviceprovider" argument and serviceprovider value to
+     * the argument list
+     * @param serviceprovider - metaalias of service provider
+     */
+    public void addSPMetaaliasArguments(String spmetaalias) {
+        String spmetaaliasArg;
+        if (useLongOptions) {
+            spmetaaliasArg = SP_METAALIAS_ARGUMENT;
+        } else {
+            spmetaaliasArg = SHORT_SP_METAALIAS_ARGUMENT;
+        }
+        addArgument(spmetaaliasArg);
+        addArgument(spmetaalias);
+    }
+
+    /**
+     * Adds the "--spec" argument and spec value to the argument list
+     * @param spec - specification of the metadata
+     */
+    public void addSpecArguments(String spec) {
+        String specArg;
+        if (useLongOptions) {
+            specArg = SPEC_ARGUMENT;
+        } else {
+            specArg = SHORT_SPEC_ARGUMENT;
+        }
+        addArgument(specArg);
+        addArgument(spec);
+    }
+
+    /**
+     * Adds the "--sign" argument and sign value to the argument list
+     * @param sign - Flag to sign the metadata
+     */
+    public void addSignArguments(String sign) {
+        String signArg;
+        if (useLongOptions) {
+            signArg = SIGN_ARGUMENT;
+        } else {
+            signArg = SHORT_SIGN_ARGUMENT;
+        }
+        addArgument(signArg);
+        addArgument(sign);
+    }
+
     /**
      * Adds the "--prefix" argument and prefix value to argument list
      * @param prefix - prefix string.
@@ -303,9 +412,9 @@ public class FederationManagerCLI extends CLIUtility
     public void addPrefixArguments(String prefix) {
         String prefixArg;
         if (useLongOptions) {
-            prefixArg = PREFIX_ARGUMENT_LONG + PREFIX_ARGUMENT;
+            prefixArg = PREFIX_ARGUMENT;
         } else {
-            prefixArg = PREFIX_ARGUMENT_SHORT + SHORT_PREFIX_ARGUMENT;
+            prefixArg = SHORT_PREFIX_ARGUMENT;
         }      
         addArgument(prefixArg);
         addArgument(prefix);        
@@ -319,11 +428,9 @@ public class FederationManagerCLI extends CLIUtility
     public void addTrustedProvidersArguments(String trustedproviders) {
         String trustedprovidersArg;
         if (useLongOptions) {
-            trustedprovidersArg = PREFIX_ARGUMENT_LONG + 
-                    TRUSTEDPROVIDERS_ARGUMENT;
+            trustedprovidersArg = TRUSTEDPROVIDERS_ARGUMENT;
         } else {
-            trustedprovidersArg = PREFIX_ARGUMENT_SHORT + 
-                    SHORT_TRUSTEDPROVIDERS_ARGUMENT;
+            trustedprovidersArg = SHORT_TRUSTEDPROVIDERS_ARGUMENT;
         }      
         addArgument(trustedprovidersArg);
         String[] providerList = trustedproviders.split(";");
@@ -353,6 +460,232 @@ public class FederationManagerCLI extends CLIUtility
     }
     
     /**
+     * Creates circle of trust.
+     * @param cot - Name of circle of trust.
+     * @param realm - Name of realm.    
+     * @return int - command status 
+     * @throws java.lang.Exception
+     */
+    public int createCot(String cot, String realm) throws Exception {
+        setSubcommand(CREATE_COT);
+        addCotArguments(cot);
+        addRealmArguments(realm); 
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Creates metadata template
+     * @param entityid - Name of entityid.
+     * @param metadatafile - Location of standard metadata file
+     * @param extendeddatafile - Location of extended data file
+     * @param midp - metaalias of identity provider
+     * @param msp - metaalias of service provider
+     * @param spec - specification of metadata
+     * @return int - command status
+     * @throws java.lang.Exception
+     */
+    public int createMetadataTempl(String entityid,
+            String metadatafile, String extendeddatafile, String midp,
+            String msp, String spec) throws Exception {
+        setSubcommand(CREATE_METADATA_TEMPLATE_SUBCOMMAND);
+        addEntityIDArguments(entityid);
+        addMetadataFileArguments(metadatafile);
+        addExtendeddataFileArguments(extendeddatafile);
+        if (midp.equals("")) {
+            addSPMetaaliasArguments(msp);
+        } else if (msp.equals("")) {
+            addIDPMetaaliasArguments(midp);
+        } else {
+            addIDPMetaaliasArguments(midp);
+            addSPMetaaliasArguments(msp);
+        }
+        addSpecArguments(spec);      
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Imports the metadata to create a entity
+     * @param realm - Realm where the cot is created
+     * @param metadatafile - Location of standard metadata file
+     * @param extendeddatafile - Location of extended data file
+     * @param cot - name of the circle of trust
+     * @param spec - specification of metadata
+     * @return int - command status
+     * @throws java.lang.Exception
+     */
+    public int importEntity(String realm,
+            String metadatafile, String extendeddatafile, String cot,
+            String spec) throws Exception {
+        setSubcommand(IMPORT_ENTITY_SUBCOMMAND);
+        addRealmArguments(realm);
+        addMetadataFileArguments(metadatafile);
+        addExtendeddataFileArguments(extendeddatafile);
+        if (!cot.equals("")) {
+            addCotArguments(cot);
+        }        
+        addSpecArguments(spec);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Exports the metadata's in the form of xml's
+     * @param entityid - Name of entityid.
+     * @param realm - Realm where the cot is created
+     * @param sign - To sign the metadata
+     * @param metadatafile - Location of standard metadata file
+     * @param extendeddatafile - Location of extended data file     
+     * @param spec - specification of metadata
+     * @return int - command status
+     * @throws java.lang.Exception
+     */
+    public int exportEntity(String entityid, String realm, String sign,
+            String metadatafile, String extendeddatafile,
+            String spec) throws Exception {
+        setSubcommand(EXPORT_ENTITY_SUBCOMMAND);
+        addEntityIDArguments(entityid);
+        addRealmArguments(realm);
+        if (sign.equalsIgnoreCase("true")) {
+            addSignArguments(sign);
+        }
+        addMetadataFileArguments(metadatafile);
+        addExtendeddataFileArguments(extendeddatafile);        
+        addSpecArguments(spec);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Lists the entities
+     * @param realm - Realm where the cot is created     
+     * @param spec - specification of metadata
+     * @return int - command status
+     * @throws java.lang.Exception
+     */
+    public int listEntities(String realm, String spec) throws Exception {
+        setSubcommand(LIST_ENTITIES_SUBCOMMAND);
+        addRealmArguments(realm);
+        addSpecArguments(spec);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Deletes the entity
+     * @param entityid - Name of the entity
+     * @param realm - Realm where the cot is created
+     * @param extendeddatafile - Location of extended data file
+     * @param extendedonly - Flag to delete extended file only
+     * @param spec - specification of metadata
+     * @return int - command status
+     * @throws java.lang.Exception
+     */
+    public int deleteEntity(String entityid, String realm,
+            String extendeddatafile, String extendedonly,
+            String spec) throws Exception {
+        setSubcommand(DELETE_ENTITY_SUBCOMMAND);
+        addEntityIDArguments(entityid);
+        addRealmArguments(realm);
+        if (extendedonly.equalsIgnoreCase("true")) {
+            addExtendeddataFileArguments(extendeddatafile);
+        }
+        addSpecArguments(spec);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Adds the entity to the cot
+     * @param cot - name of the circle of trust
+     * @param entityid - Name of the entity
+     * @param realm - Realm where the cot is created          
+     * @param spec - specification of metadata
+     * @return int - command status
+     * @throws java.lang.Exception
+     */
+    public int addCotMember(String cot, String entityid, String realm,
+            String spec) throws Exception {
+        setSubcommand(ADD_CIRCLE_OF_TRUST_MEMBER_SUBCOMMAND);
+        addCotArguments(cot);
+        addEntityIDArguments(entityid);
+        addRealmArguments(realm);
+        addSpecArguments(spec);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Lists the members of cot
+     * @param cot - name of the circle of trust     
+     * @param realm - Realm where the cot is created
+     * @param spec - specification of metadata
+     * @return int - command status
+     * @throws java.lang.Exception
+     */
+    public int listCotMembers(String cot, String realm,
+            String spec) throws Exception {
+        setSubcommand(LIST_CIRCLE_OF_TRUST_MEMBERS_SUBCOMMAND);
+        addCotArguments(cot);        
+        addRealmArguments(realm);
+        addSpecArguments(spec);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Removes the entity from the cot
+     * @param cot - name of the circle of trust
+     * @param entityid - Name of the entity
+     * @param realm - Realm where the cot is created
+     * @param spec - specification of metadata
+     * @return int - command status
+     * @throws java.lang.Exception
+     */
+    public int removeCotMember(String cot, String entityid, String realm,
+            String spec) throws Exception {
+        setSubcommand(REMOVE_CIRCLE_OF_TRUST_MEMBER_SUBCOMMAND);
+        addCotArguments(cot);
+        addEntityIDArguments(entityid);
+        addRealmArguments(realm);
+        addSpecArguments(spec);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Creates circle of trust.
+     * @param cot - Name of circle of trust.
+     * @param realm - Name of realm.
+     * @param prefix - Prefix URL for idp discovery reader and writer URL.
+     * @return int - command status
+     * @throws java.lang.Exception
+     */
+    public int createCot(String cot, String realm,
+            String prefix) throws Exception {
+        setSubcommand(CREATE_COT);
+        addCotArguments(cot);
+        addRealmArguments(realm);
+        addPrefixArguments(prefix);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Lists circle of trust.
+     * @param realm - Name of realm.
+     * @return int - command status
+     * @throws java.lang.Exception
+     */
+    public int listCots(String realm) throws Exception {
+        setSubcommand(LIST_COTS);
+        addRealmArguments(realm);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
      * Deletes circle of trust.
      * 
      * @param cot - Name of circle of trust.
@@ -368,20 +701,6 @@ public class FederationManagerCLI extends CLIUtility
         addGlobalOptions();
         return (executeCommand(commandTimeout));
     }
-    
-    /**
-     * Lists circle of trust.
-     * 
-     * @param realm - Name of realm.
-     * @return int - command status.
-     * @throws java.lang.Exception
-     */
-    public int listCots(String realm) 
-            throws Exception {
-        setSubcommand(LIST_COTS);
-        addRealmArguments(realm);
-        return (executeCommand(commandTimeout));
-    }    
     
     /**
      * Deletes the service with a given service name.
