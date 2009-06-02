@@ -8,12 +8,13 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <ui:include src="resources-banking-add-popup.xhtml"/>
+    <ui:include
+        src="resources-banking-add-popup.xhtml"/>
 
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="Banking Resources"/>
+                value="#{resources['resources-banking.sectionTitle']}"/>
         </ui:define>
         <ui:define name="section-links">
             <ice:panelGrid
@@ -27,7 +28,7 @@
                 <ice:graphicImage
                     value="../image/add.png"/>
                 <ice:outputText
-                    value="Add"/>
+                    value="#{resources['resources-banking.add']}"/>
             </ice:commandLink>
             </ice:panelGrid>
         </ui:define>
@@ -35,7 +36,7 @@
             <ice:panelGroup
                 rendered="#{o:size(policyResourcesBean.privilegeBean.viewEntitlement.resources) == 0}">
                 <ice:outputText
-                    value="No resources."/>
+                    value="#{resources['resources-banking.noResources']}"/>
             </ice:panelGroup>
             <ice:panelGroup
                 rendered="#{o:size(policyResourcesBean.privilegeBean.viewEntitlement.resources) > 0}">
@@ -47,7 +48,7 @@
                     <ice:column>
                         <f:facet name="header">
                             <ice:outputText
-                                value="Account Number"/>
+                                value="#{resources['resources-banking.accountNumber']}"/>
                         </f:facet>
                         <ice:panelGroup>
                             <ice:outputText
@@ -57,7 +58,7 @@
                     <ice:column>
                         <f:facet name="header">
                             <ice:outputText
-                                value="Account Owner"/>
+                                value="#{resources['resources-banking.accountOwner']}"/>
                         </f:facet>
                         <ice:panelGroup>
                             <ice:outputText
@@ -67,7 +68,8 @@
                     </ice:column>
                     <ice:column>
                         <f:facet name="header">
-                            <ice:outputText value="Remove"/>
+                            <ice:outputText 
+                                value="#{resources['resources-banking.remove']}"/>
                         </f:facet>
                         <ice:panelGroup>
                             <ice:commandLink

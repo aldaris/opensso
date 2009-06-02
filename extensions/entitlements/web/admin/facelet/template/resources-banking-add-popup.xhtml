@@ -11,7 +11,7 @@
         width="400"
         handler="#{bankingResourcesHandler}"
         modal="true"
-        title="Add Banking Resource"
+        title="#{resources['resources-banking-add-popup.title']}"
         visible="#{bankingResourcesBean.addPopupVisible}"
         closeListenerMethod="addPopupCancelListener">
 
@@ -28,7 +28,7 @@
                     columns="2">
                     <ice:outputLabel
                         for="banking-resource-select"
-                        value="Account"/>
+                        value="#{resources['resources-banking-add-popup.account']}"/>
                     <ice:selectInputText
                         disabled="#{bankingResourcesBean.allAccounts}"
                         width="300px"
@@ -63,7 +63,7 @@
                         valueChangeListener="#{bankingResourcesHandler.allAccountsListener}"/>
                     <ice:outputLabel
                         for="all-accounts-select"
-                        value="All accounts"/>
+                        value="#{resources['resources-banking-add-popup.allAccounts']}"/>
                 </ice:panelGroup>
                 <ice:panelGrid
                     styleClass="button-group"
