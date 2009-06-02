@@ -14,8 +14,8 @@
             <ice:panelGroup
                 rendered="#{o:size(policySummary.policyWizardBean.privilegeBean.viewEntitlement.resources) > 0}">
                 <ice:panelGroup>
-                    <ice:outputText
-                        value="Resources"/>
+                    <ice:outputLabel
+                        value="#{resources['policy-summary-resources.resources']}"/>
                 </ice:panelGroup>
                 <ice:panelGroup
                     styleClass="summary-strings">
@@ -28,8 +28,8 @@
             <ice:panelGroup
                 rendered="#{o:size(policySummary.policyWizardBean.privilegeBean.viewEntitlement.exceptions) > 0}">
                 <ice:panelGroup>
-                    <ice:outputText
-                        value="Exceptions"/>
+                    <ice:outputLabel
+                        value="#{resources['policy-summary-resources.exceptions']}"/>
                 </ice:panelGroup>
                 <ice:panelGroup
                     styleClass="summary-strings">

@@ -10,7 +10,7 @@
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="Policy Subjects"/>
+                value="#{resources['policy-subjects.sectionTitle']}"/>
         </ui:define>
         <ui:define name="section-link">
             <ice:panelGrid
@@ -21,7 +21,7 @@
                     <ice:graphicImage
                         value="/admin/image/or.png"/>
                     <ice:outputText
-                        value="Any of"/>
+                        value="#{resources['policy-subjects.anyOf']}"/>
                 </ice:commandLink>
                 <ice:commandLink
                     actionListener="#{policySubjectsHandler.allOfSubjectListener}"
@@ -29,7 +29,7 @@
                     <ice:graphicImage
                         value="/admin/image/and.png"/>
                     <ice:outputText
-                        value="All of"/>
+                        value="#{resources['policy-subjects.allOf']}"/>
                 </ice:commandLink>
             </ice:panelGrid>
         </ui:define>
@@ -49,7 +49,7 @@
                         dropMask="hover_start"
                         dropListener="#{policySubjectsHandler.subjectDropListener}">
                         <ice:outputText
-                            value="Drop condition or expression here ..."/>
+                            value="#{resources['policy-subjects.drop']}"/>
                     </ice:panelGroup>
                 </ice:panelGroup>
                 <ice:panelGroup/>
@@ -84,7 +84,7 @@
                                     <ice:panelGroup
                                         visible="#{o:size(subjectContainer.viewSubjects) == 0}">
                                         <ice:outputText
-                                            value="No subjects. Try widening your search."/>
+                                            value="#{resources['policy-subjects.noSubjects']}"/>
                                     </ice:panelGroup>
                                     <ice:panelSeries
                                         value="#{subjectContainer.viewSubjects}"
@@ -120,7 +120,8 @@
                             removeable="false">
                             <ui:define name="panel-title">
                                 <ice:panelGroup>
-                                    <ice:outputText value="Subject Expressions"/>
+                                    <ice:outputText 
+                                        value="#{resources['policy-subjects.expressions']}"/>
                                 </ice:panelGroup>
                             </ui:define>
                             <ui:define name="panel-body">
