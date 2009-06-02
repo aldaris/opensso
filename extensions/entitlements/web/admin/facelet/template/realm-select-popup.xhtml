@@ -8,7 +8,7 @@
 
     <o:popup
         width="300"
-        type="question"
+        type="warning"
         handler="#{booleanActionsHandler}"
         modal="true"
         title="Select Realm"
@@ -18,34 +18,29 @@
             <ice:panelGroup
                 styleClass="realm-select-popup">
                 <ice:panelGroup
-                    style="text-align: left; padding-bottom: 10px">
+                    style="text-align: left; padding-bottom: 20px">
+                    <ice:outputFormat
+                        escape="false"
+                        value="#{resources['realm-select-popup.warning']}"/>
+                </ice:panelGroup>
+                <ice:panelGroup
+                    style="text-align: left; padding-bottom: 20px">
                     <ice:outputFormat
                         escape="false"
                         value="#{resources['realm-select-popup.info']}"/>
                 </ice:panelGroup>
-                <ice:panelGroup
-                    styleClass="realm-select-popup-search">
-                    <ice:panelGrid
-                        columns="2">
-                        <ice:graphicImage
-                            value="../image/search.png"/>
-                        <ice:inputText
-                            onkeyup="submitNow(this)"
-                            value="#{realmsBean.realmSelectPopupFilter}"/>
-                    </ice:panelGrid>
-                </ice:panelGroup>
                 <ice:panelGrid
                     columns="2"
                     styleClass="realm-select-popup-realm-table">
-                    <ice:outputLabel
-                        value="Realm"/>
+                    <ice:graphicImage
+                        value="../image/search.png"/>
                     <ice:inputText
                         style="width: 100%"
-                        readonly="true"
-                        value="#{realmsBean.realmSelectPopupRealmBean == null ? '' : realmsBean.realmSelectPopupRealmBean.title}"/>
+                        onkeyup="submitNow(this)"
+                        value="#{realmsBean.realmSelectPopupFilter}"/>
                     <ice:panelGroup/>
                     <ice:selectOneListbox
-                        styleClass="realm-select-popup-select"
+                        style="width: 100%"
                         size="10"
                         value="#{realmsBean.realmSelectPopupRealmBean}"
                         converter="realmBeanConverter">
@@ -54,6 +49,7 @@
                     </ice:selectOneListbox>
                 </ice:panelGrid>
                 <ice:panelGrid
+                    style="padding-top: 20px"
                     styleClass="button-group"
                     columns="2">
                     <o:button
