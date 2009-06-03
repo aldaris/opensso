@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.60 2009-05-13 21:25:14 hengming Exp $
+   $Id: build.xml,v 1.61 2009-06-03 19:45:00 goodearth Exp $
 
 -->
 
@@ -196,20 +196,35 @@
                 <exclude name="**/build.xml"/>
                 <exclude name="**/index.jsp"/>
             </zipfileset>
-            <zipfileset dir="${amserver.warbase.dir}/ldif" prefix="WEB-INF/template/sms">
-                <include name="am_sm_ds_schema.ldif" />
-                <include name="am_sm_ad_schema.ldif" />
-                <include name="ds_remote_schema.ldif" />
-                <include name="ds_remote_s1ds_schema.ldif" />
-                <include name="am_remote_opends_schema.ldif" />
-                <include name="index.ldif" />
-                <include name="install.ldif" />
-                <include name="plugin.ldif" />
-                <include name="sunone_schema2.ldif" />
-                <include name="opends_config_index_template.ldif" />
+            <zipfileset dir="${amserver.warbase.dir}/ldif/sunds" prefix="WEB-INF/template/ldif/sunds">
+                <include name="sunds_config_schema.ldif" />
+                <include name="sunds_config_index.ldif" />
+                <include name="sunds_user_schema.ldif" />
+                <include name="sunds_user_index.ldif" />
+                <include name="sunds_plugin.ldif" />
+                <include name="sunds_userinit.ldif" />
+            </zipfileset>
+            <zipfileset dir="${amserver.warbase.dir}/ldif/sunds/amsdk_plugin" prefix="WEB-INF/template/ldif/sunds/amsdk_plugin">
+                <include name="amsdk_init_template.ldif" />
+                <include name="amsdk_sunone_schema2.ldif" />
+            </zipfileset>
+            <zipfileset dir="${amserver.warbase.dir}/ldif/ad" prefix="WEB-INF/template/ldif/ad">
+                <include name="ad_config_schema.ldif" />
+                <include name="ad_user_schema.ldif" />
+            </zipfileset>
+            <zipfileset dir="${amserver.warbase.dir}/ldif/tivoli" prefix="WEB-INF/template/ldif/tivoli">
+                <include name="tivoli_user_schema.ldif" />
+            </zipfileset>
+            <zipfileset dir="${amserver.warbase.dir}/ldif/opends" prefix="WEB-INF/template/ldif/opends">
+                <include name="opends_config_schema.ldif" />
+                <include name="opends_user_schema.ldif" />
+                <include name="opends_user_index.ldif" />
+                <include name="opends_userinit.ldif" />
+                <include name="opends_embinit.ldif" />
+                <include name="opends_plugin.ldif" />
+                <include name="opends_remove_user_schema.ldif" />
             </zipfileset>
             <zipfileset dir="${amserver.warbase.dir}/opends/config" prefix="WEB-INF/template/opends/config">
-                <include name="am_sm_ds_schema.ldif" />
                 <include name="config.ldif" />
                 <include name="admin-backend.ldif" />
                 <include name="famsuffix.ldif" />

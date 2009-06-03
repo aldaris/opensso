@@ -101,12 +101,20 @@
         AjaxUtils.doPost(null, callUrl, param, validateUserFields, null, null);
     }   
     
-    function setAMDS() {
-        setType(document.getElementById("ldapv3amds").value);
+    function setAD() {
+        setType(document.getElementById("ldapv3ad").value);
     }
 
-    function setGeneric() {
-        setType(document.getElementById("ldapv3").value);
+    function setSUNDS() {
+        setType(document.getElementById("ldapv3sunds").value);
+    }
+
+    function setOpenDS() {
+        setType(document.getElementById("ldapv3opends").value);
+    }
+
+    function setTivoli() {
+        setType(document.getElementById("ldapv3tivoli").value);
     }
 
     function setType(type) {
@@ -244,8 +252,10 @@
                     <tr>
                         <td valign="top"><label for="userStoreType"><em>*&nbsp;</em>$page.getLocalizedString("store.type.label")</label></td>
                         <td>
-                            <input type="radio" id="ldapv3amds" name="userStoreType" value="LDAPv3ForAMDS" $selectLDAPv3amds onclick="setAMDS();"/>&nbsp;$page.getLocalizedString("am.ldap.schema")<br>
-                            <input type="radio" id="ldapv3" name="userStoreType" value="LDAPv3" $selectLDAPv3 onclick="setGeneric();"/>&nbsp;$page.getLocalizedString("generic.ldap.schema")
+                            <input type="radio" id="ldapv3ad" name="userStoreType" value="LDAPv3ForAD" $selectLDAPv3ad onclick="setAD();"/>&nbsp;$page.getLocalizedString("activedirectory.ldap.schema")<br>
+                            <input type="radio" id="ldapv3sunds" name="userStoreType" value="LDAPv3ForSUNDS" $selectLDAPv3sunds onclick="setSUNDS();"/>&nbsp;$page.getLocalizedString("sunds.ldap.schema")<br>
+                            <input type="radio" id="ldapv3opends" name="userStoreType" value="LDAPv3ForOpenDS" $selectLDAPv3opends onclick="setOpenDS();"/>&nbsp;$page.getLocalizedString("opends.ldap.schema")<br>
+                            <input type="radio" id="ldapv3tivoli" name="userStoreType" value="LDAPv3ForTivoli" $selectLDAPv3tivoli onclick="setTivoli();"/>&nbsp;$page.getLocalizedString("tivoli.ldap.schema")
                         </td>
                     </tr>            
                 </table>
