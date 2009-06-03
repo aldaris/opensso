@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDIFTemplates.java,v 1.2 2009-05-02 23:07:18 kevinserwin Exp $
+ * $Id: LDIFTemplates.java,v 1.3 2009-06-03 19:44:31 goodearth Exp $
  */
 
 
@@ -39,22 +39,30 @@ import javax.servlet.ServletContext;
 
 /**
  * This utility class manages LDIF template files.
- * @author dennis
  */
 public class LDIFTemplates {
     private static List templates;
     
     static {
         templates = new ArrayList();
-        templates.add("am_remote_opends_schema.ldif");
-        templates.add("index.ldif");
-        templates.add("am_sm_ad_schema.ldif");
-        templates.add("install.ldif");
-        templates.add("am_sm_ds_schema.ldif");
-        templates.add("plugin.ldif");
-        templates.add("ds_remote_s1ds_schema.ldif");
-        templates.add("ds_remote_schema.ldif");
-        templates.add("sunone_schema2.ldif");
+	templates.add("ad/ad_config_schema.ldif");
+	templates.add("ad/ad_user_schema.ldif");
+	templates.add("opends/opends_config_schema.ldif");
+	templates.add("opends/opends_user_schema.ldif");
+	templates.add("opends/opends_embinit.ldif");
+	templates.add("opends/opends_userinit.ldif");
+	templates.add("opends/opends_user_index.ldif");
+	templates.add("opends/opends_plugin.ldif");
+	templates.add("opends/opends_remove_user_schema.ldif");
+	templates.add("sunds/sunds_config_schema.ldif");
+	templates.add("sunds/sunds_config_index.ldif");
+	templates.add("sunds/sunds_user_index.ldif");
+	templates.add("sunds/sunds_user_schema.ldif");
+	templates.add("sunds/sunds_plugin.ldif");
+	templates.add("sunds/sunds_userinit.ldif");
+	templates.add("sunds/amsdk_plugin/amsdk_init_template.ldif");
+	templates.add("sunds/amsdk_plugin/amsdk_sunone_schema2.ldif");
+	templates.add("tivoli/tivoli_user_schema.ldif");
     }
     
     private LDIFTemplates() {
@@ -67,8 +75,11 @@ public class LDIFTemplates {
         for (Iterator i = templates.iterator(); i.hasNext(); ) {
             String templ = (String) i.next();
             String content = getContent(templ, servletCtx);
+            String newFile = 
+                templ.substring(templ.lastIndexOf("/") + 1);
             try {
-                AMSetupServlet.writeToFile(dir + "/" + templ, content);
+                AMSetupServlet.writeToFile(dir + "/" + newFile, 
+                    content);
             } catch (IOException e) {
                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                     "LDIFTemplates.copy", e);
@@ -84,8 +95,9 @@ public class LDIFTemplates {
         StringBuffer sbuf = new StringBuffer();
 
         try {
-            fin = new InputStreamReader(AMSetupServlet.getResourceAsStream(
-                servletCtx, "/WEB-INF/template/sms/" + templateName));
+            fin = new InputStreamReader(
+                AMSetupServlet.getResourceAsStream(servletCtx, 
+                "/WEB-INF/template/ldif/" + templateName));
             char[] cbuf = new char[1024];
             int len;
             while ((len = fin.read(cbuf)) > 0) {

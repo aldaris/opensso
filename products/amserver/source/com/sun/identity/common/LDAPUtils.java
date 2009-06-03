@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUtils.java,v 1.7 2009-01-28 05:34:56 ww203982 Exp $
+ * $Id: LDAPUtils.java,v 1.8 2009-06-03 19:42:57 goodearth Exp $
  *
  */
 
@@ -160,23 +160,30 @@ public class LDAPUtils {
         String dbName = null;
         String filter = "cn=" + suffix; 
 
-        LDAPSearchResults results = ld.search("cn=mapping tree,cn=config",
-            LDAPConnection.SCOPE_SUB, filter, null, false);
-        while (results.hasMoreElements()) {
-            LDAPEntry entry = results.next();
-            String dn = entry.getDN();
-            LDAPAttributeSet set = entry.getAttributeSet();
-            Enumeration e = set.getAttributes();
-            while (e.hasMoreElements() && (dbName == null)) {
-                LDAPAttribute attr = (LDAPAttribute) e.nextElement();
-                String name = attr.getName();
-                if (name.equals("nsslapd-backend")) {
-                    String[] value = attr.getStringValueArray();
-                    if (value.length > 0) {
-                        dbName = value[0];
+        try {
+            LDAPSearchResults results = 
+                ld.search("cn=mapping tree,cn=config",
+                LDAPConnection.SCOPE_SUB, filter, null, false);
+            while (results.hasMoreElements()) {
+                LDAPEntry entry = results.next();
+                String dn = entry.getDN();
+                LDAPAttributeSet set = entry.getAttributeSet();
+                Enumeration e = set.getAttributes();
+                while (e.hasMoreElements() && (dbName == null)) {
+                    LDAPAttribute attr = 
+                        (LDAPAttribute) e.nextElement();
+                    String name = attr.getName();
+                    if (name.equals("nsslapd-backend")) {
+                        String[] value = attr.getStringValueArray();
+                        if (value.length > 0) {
+                            dbName = value[0];
+                        }
                     }
                 }
             }
+        } catch (LDAPException lde) {
+            // If not S1DS, then cn=mapping tree wouldn't exist.
+            // Hence return userRoot as DBNAME.
         }
         return (dbName != null) ? dbName : "userRoot";
     }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.102 2009-05-13 21:26:35 hengming Exp $
+ * $Id: AMSetupServlet.java,v 1.103 2009-06-03 19:44:31 goodearth Exp $
  *
  */
 
@@ -119,7 +119,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This class is the first class to get loaded by the Servlet container. 
+ * This class is the first class to get loaded by the Servlet 
+ * container. 
  * It has helper methods to determine the status of Access Manager 
  * configuration when deployed as a single web-application. If 
  * Access Manager is not deployed as single web-application then the 
@@ -168,10 +169,12 @@ public class AMSetupServlet extends HttpServlet {
             // due startup; and also register the observer.
             ServerConfigXMLObserver.getInstance().update(true);
 
-            // Syncup embedded opends replication with current server instances
+            // Syncup embedded opends replication with current 
+            // server instances.
             if (syncServerInfoWithRelication() == false) {
                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                    "AMSetupServlet.init: embedded replication sync failed.");
+                    "AMSetupServlet.init: embedded replication sync" 
+                     + "failed.");
             }
         }
     }
@@ -190,7 +193,8 @@ public class AMSetupServlet extends HttpServlet {
             try {
                 isConfiguredFlag = Bootstrap.load(
                     new BootstrapData(baseDir), false);
-                    LoginLogoutMapping.setProductInitialized(isConfiguredFlag);
+                    LoginLogoutMapping.setProductInitialized(
+                        isConfiguredFlag);
                 return isConfiguredFlag;
             } catch (Exception e) {
                 //ignore
@@ -202,8 +206,8 @@ public class AMSetupServlet extends HttpServlet {
     }
 
     /**
-     * Checks if the product is already configured. This is required when
-     * the container on which WAR is deployed is restarted. If  
+     * Checks if the product is already configured. This is required 
+     * when the container on which WAR is deployed is restarted. If  
      * product is configured the flag is set true. Also the flag is
      * set to true in case of non-single war deployment.
      */
@@ -223,7 +227,8 @@ public class AMSetupServlet extends HttpServlet {
                 } else {                    
                     if (baseDir != null) {
                         isConfiguredFlag = loadAMConfigProperties(
-                            baseDir + "/" + SetupConstants.AMCONFIG_PROPERTIES);
+                            baseDir + "/" + 
+                            SetupConstants.AMCONFIG_PROPERTIES);
                     }
                 }
             } catch (ConfiguratorException e) {
@@ -276,26 +281,32 @@ public class AMSetupServlet extends HttpServlet {
 
     static String configure(ServletContext servletct, Map data) {
         servletCtx = servletct;
-        HttpServletRequestWrapper req = new HttpServletRequestWrapper(data);
-        HttpServletResponseWrapper res = new HttpServletResponseWrapper(null);
+        HttpServletRequestWrapper req = 
+            new HttpServletRequestWrapper(data);
+        HttpServletResponseWrapper res = 
+            new HttpServletResponseWrapper(null);
         boolean result = processRequest(req, res);
-        return (result) ?
-            (String)req.getParameter(SetupConstants.CONFIG_VAR_BASE_DIR) : null;
+        return (result) ? (String)req.getParameter(
+            SetupConstants.CONFIG_VAR_BASE_DIR) : null;
+            
     }
 
     public void doPost(HttpServletRequest request,
-                HttpServletResponse response)
-                throws IOException, ServletException, ConfiguratorException {       
+        HttpServletResponse response)
+        throws IOException, ServletException, ConfiguratorException {
         
-        
-        HttpServletRequestWrapper req = new HttpServletRequestWrapper(request);
-        HttpServletResponseWrapper res = new HttpServletResponseWrapper(
-            response);
-        String loadBalancerHost = request.getParameter("LB_SITE_NAME");
+        HttpServletRequestWrapper req = 
+            new HttpServletRequestWrapper(request);
+        HttpServletResponseWrapper res = 
+            new HttpServletResponseWrapper(response);
+           
+        String loadBalancerHost = 
+            request.getParameter("LB_SITE_NAME");
         String primaryURL = request.getParameter("LB_PRIMARY_URL");
         
         if (loadBalancerHost != null) {     
-            // site configuration is passed as a map of the site information 
+            // site configuration is passed as a map of the site 
+            // information 
             Map siteConfig = new HashMap(5);
             siteConfig.put(SetupConstants.LB_SITE_NAME, loadBalancerHost);
             siteConfig.put(SetupConstants.LB_PRIMARY_URL, primaryURL);
@@ -741,25 +752,30 @@ public class AMSetupServlet extends HttpServlet {
                 }
             } 
             SystemProperties.setServerInstanceName(serverInstanceName);
-            LDIFTemplates.copy(basedir + "/template/ldif", servletCtx);
-            ServiceXMLTemplates.copy(basedir + "/template/xml", servletCtx);
+            LDIFTemplates.copy(basedir, servletCtx);
+            ServiceXMLTemplates.copy(basedir + "/template/xml", 
+                servletCtx);
             createDotVersionFile(basedir);
             handlePostPlugins(adminSSOToken);
             postInitialize(adminSSOToken);
            
-            if (!isDITLoaded && (userRepo != null) && !userRepo.isEmpty()) {
-                // Construct the SMSEntry for the node to check to see if 
-                // this is an existing configuration store, or new store
-                ServiceConfig sc = UserIdRepo.getOrgConfig(adminSSOToken);
+            if (!isDITLoaded && (userRepo != null) && 
+                !userRepo.isEmpty()) {
+                // Construct the SMSEntry for the node to check to 
+                // see if this is an existing configuration store, 
+                // or new store.
+                ServiceConfig sc = 
+                    UserIdRepo.getOrgConfig(adminSSOToken);
                 if (sc != null) {
-                    CachedSMSEntry cEntry = CachedSMSEntry.getInstance(
-                        adminSSOToken,
-                        ("ou=" + userRepo.get("userStoreHostName") + "," +
-                        sc.getDN()));
+                    CachedSMSEntry cEntry = 
+                        CachedSMSEntry.getInstance(adminSSOToken,
+                        ("ou=" + userRepo.get("userStoreHostName") 
+                        + "," + sc.getDN()));
                     SMSEntry entry = cEntry.getClonedSMSEntry();
                     if (entry.isNewEntry()) {
                         UserIdRepo.getInstance().configure(
-                            userRepo, basedir, servletCtx, adminSSOToken);
+                            userRepo, basedir, servletCtx, 
+                            adminSSOToken);
                     } else {
                         existingConfiguration = true;
                     }
@@ -767,9 +783,9 @@ public class AMSetupServlet extends HttpServlet {
             }
 
             /*
-             * requiring the keystore.jks file in OpenSSO workspace. The
-             * createIdentitiesForWSSecurity is for the JavaEE/NetBeans 
-             * integration that we had done.
+             * Requiring the keystore.jks file in OpenSSO workspace.
+             * The createIdentitiesForWSSecurity is for the 
+             * JavaEE/NetBeans integration that we had done.
              */
             createPasswordFiles(basedir, deployuri);
             if (!isDITLoaded) {
@@ -2387,18 +2403,22 @@ public class AMSetupServlet extends HttpServlet {
      * @param servername
      * @returns <code>ServerGroup</code> instance
      */
-    private static ServerGroup getSMSServerGroup(String sname) throws Exception
+    private static ServerGroup getSMSServerGroup(String sname) 
+        throws Exception
     {
-        String xml = ServerConfiguration.getServerConfigXML(adminToken, sname);
+        String xml = 
+            ServerConfiguration.getServerConfigXML(adminToken, sname);
         ServerConfigXML scc = new ServerConfigXML(xml);
         return scc.getSMSServerGroup() ;
     }
     /**
      * Gets clear password of SMS datastore
-     * @param <code>ServerGroup</code> instance representing SMS datastore
+     * @param <code>ServerGroup</code> instance representing SMS 
+     * or Configuration datastore.
      * @returns clear password
      */
-    private static String getSMSPassword(ServerGroup ssg) throws Exception
+    private static String getSMSPassword(ServerGroup ssg) throws 
+        Exception
     {
         DirUserObject sduo = (DirUserObject) ssg.dsUsers.get(0);
         String epass = sduo.password;
@@ -2408,7 +2428,8 @@ public class AMSetupServlet extends HttpServlet {
     }
     /**
      * Gets port number of SMS datastore
-     * @param <code>ServerGroup</code> instance representing SMS datastore
+     * @param <code>ServerGroup</code> instance representing SMS 
+     * or Configuration datastore.
      * @returns port
      */
     private static String getSMSPort(ServerGroup ssg) throws Exception
@@ -2424,19 +2445,20 @@ public class AMSetupServlet extends HttpServlet {
             Map newValues = new HashMap();
             // Update this instance first...
             newValues.put("com.sun.embedded.replicationport", 
-                      (String) map.get(SetupConstants.DS_EMB_REPL_REPLPORT1));
+                (String) map.get(
+                    SetupConstants.DS_EMB_REPL_REPLPORT1));
             ServerConfiguration.setServerInstance(
                     getAdminSSOToken(),
                     instanceName,
                     newValues);
 
             // Update remote instance
-            instanceName = 
-                (String) map.get(SetupConstants.DS_EMB_EXISTING_SERVERID);
+            instanceName = (String) map.get(
+                SetupConstants.DS_EMB_EXISTING_SERVERID);
             newValues.put("com.sun.embedded.replicationport", 
-                      (String) map.get(SetupConstants.DS_EMB_REPL_REPLPORT2));
-
-            // Updaet remote instance ...
+                (String) map.get(
+                    SetupConstants.DS_EMB_REPL_REPLPORT2));
+            // Update remote instance ...
             ServerConfiguration.setServerInstance(
                     getAdminSSOToken(),
                     instanceName,
@@ -2448,8 +2470,8 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
 
-    static InputStream getResourceAsStream(ServletContext servletContext,
-        String file) {
+    static InputStream getResourceAsStream(ServletContext 
+        servletContext, String file) {
 
         if (servletContext == null) {
             // remove leading '/'

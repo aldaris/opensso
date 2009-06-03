@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.41 2009-05-13 21:26:36 hengming Exp $
+ * $Id: SetupConstants.java,v 1.42 2009-06-03 19:44:31 goodearth Exp $
  *
  */
 
@@ -150,19 +150,47 @@ public interface SetupConstants {
     String SUNDS_LDIF = "sundsSchema";
 
     /**
+     * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file.
+     * OpenDS Schema File for user management data.
+     */
+    String OpenDS_LDIF = "opendsUserSchema";
+
+    /**
+     * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file.
+     * Active Directory Schema File for user management data.
+     */
+    String AD_LDIF = "adUserSchema";
+
+    /**
+     * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file.
+     * IBM Tivoli Directory Schema File for user management data.
+     */
+    String TIVOLI_LDIF = "tivoliUserSchema";
+
+    /**
      * User Management datastore option - Embedded DS
      */
     String UM_EMBEDDED = "embedded";
 
     /**
-     * User Management datastore option - Sun DS with OpenSSO Schema.
+     * User Management datastore option - Sun DS.
      */
-    String UM_LDAPv3ForAMDS = "LDAPv3ForAMDS";
+    String UM_LDAPv3ForSUNDS = "LDAPv3ForSUNDS";
 
     /**
-     * User Management datastore option - Generic LDAPv3.
+     * User Management datastore option - OpenDS.
      */
-    String UM_LDAPv3 = "LDAPv3";
+    String UM_LDAPv3ForOpenDS = "LDAPv3ForOpenDS";
+
+    /**
+     * User Management datastore option - AD.
+     */
+    String UM_LDAPv3ForAD = "LDAPv3ForAD";
+
+    /**
+     * User Management datastore option - IBM Tivoli DS.
+     */
+    String UM_LDAPv3ForTivoli = "LDAPv3ForTivoli";
 
     /**
      * Type of Data store used for storing the configuration files.

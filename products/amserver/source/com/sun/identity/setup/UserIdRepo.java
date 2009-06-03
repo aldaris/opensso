@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.16 2009-05-02 23:07:18 kevinserwin Exp $
+ * $Id: UserIdRepo.java,v 1.17 2009-06-03 19:44:31 goodearth Exp $
  *
  */
 
@@ -58,6 +58,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.ServletContext;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.ldap.LDAPConnection;
 import com.sun.identity.shared.ldap.LDAPException;
 
@@ -90,14 +91,26 @@ class UserIdRepo {
         ServletContext servletCtx,
         SSOToken adminToken
     ) throws Exception {
-        String type = (String) userRepo.get(SetupConstants.USER_STORE_TYPE);
+        String type = 
+            (String) userRepo.get(SetupConstants.USER_STORE_TYPE);
         if (type == null) {
-            type = SetupConstants.UM_LDAPv3ForAMDS;
+            type = SetupConstants.UM_LDAPv3ForSUNDS;
         }
 
-        boolean bFAMUserSchema = type.equals(SetupConstants.UM_LDAPv3ForAMDS);
-        if (bFAMUserSchema) {
-            loadSchema(userRepo, basedir, servletCtx);
+        ResourceBundle rb = ResourceBundle.getBundle(
+            SetupConstants.SCHEMA_PROPERTY_FILENAME);
+        String strFiles = rb.getString(SetupConstants.SUNDS_LDIF);
+        if (type.equals(SetupConstants.UM_LDAPv3ForSUNDS)) {
+            loadSchema(userRepo, basedir, servletCtx, strFiles);
+        } else if (type.equals(SetupConstants.UM_LDAPv3ForOpenDS)) {
+            strFiles = rb.getString(SetupConstants.OpenDS_LDIF);
+            loadSchema(userRepo, basedir, servletCtx, strFiles);
+        } else if (type.equals(SetupConstants.UM_LDAPv3ForAD)) {
+            strFiles = rb.getString(SetupConstants.AD_LDIF);
+            loadSchema(userRepo, basedir, servletCtx, strFiles);
+        } else if (type.equals(SetupConstants.UM_LDAPv3ForTivoli)) {
+            strFiles = rb.getString(SetupConstants.TIVOLI_LDIF);
+            loadSchema(userRepo, basedir, servletCtx, strFiles);
         }
 
         addSubConfig(userRepo, type, adminToken);
@@ -109,9 +122,9 @@ class UserIdRepo {
         SSOToken adminToken
     ) throws SMSException, SSOException, IOException {
         String xml = null;
-        if (type.equals(SetupConstants.UM_LDAPv3ForAMDS)) {
+        if (type.equals(SetupConstants.UM_LDAPv3ForSUNDS)) {
             xml = getResourceContent(umSunDSForAM);
-        } else if (type.equals(SetupConstants.UM_LDAPv3)) {
+        } else {
             xml = getResourceContent(umSunDSGeneric);
         }
 
@@ -199,13 +212,15 @@ class UserIdRepo {
     private void loadSchema(
         Map userRepo, 
         String basedir,
-        ServletContext servletCtx
+        ServletContext servletCtx,
+        String strFiles
     ) throws Exception {
         LDAPConnection ld = null;
         try {
             ld = getLDAPConnection(userRepo);
             String dbName = getDBName(userRepo, ld);
-            List schemas = writeSchemaFiles(basedir, dbName, servletCtx);
+            List schemas = writeSchemaFiles(basedir, dbName, 
+                servletCtx, strFiles, userRepo);
             for (Iterator i = schemas.iterator(); i.hasNext(); ) {
                 String file = (String)i.next();
                 LDAPUtils.createSchemaFromLDIF(file, ld);
@@ -218,12 +233,11 @@ class UserIdRepo {
     private List writeSchemaFiles(
         String basedir, 
         String dbName,
-        ServletContext servletCtx
+        ServletContext servletCtx,
+        String strFiles,
+        Map userRepo
     ) throws IOException {
         List files = new ArrayList();
-        ResourceBundle rb = ResourceBundle.getBundle(
-            SetupConstants.SCHEMA_PROPERTY_FILENAME);
-        String strFiles = rb.getString(SetupConstants.SUNDS_LDIF);
 
         StringTokenizer st = new StringTokenizer(strFiles);
         while (st.hasMoreTokens()) {
@@ -239,11 +253,19 @@ class UserIdRepo {
             FileWriter fout = null;
             try {
                 int idx = file.lastIndexOf("/");
-                String absFile = (idx != -1) ? file.substring(idx+1) : file;
+                String absFile = (idx != -1) ? file.substring(idx+1) 
+                    : file;
                 String outfile = basedir + "/" + absFile;
                 fout = new FileWriter(outfile);
                 String inpStr = sbuf.toString();
-                inpStr = StringUtils.strReplaceAll(inpStr, "@DB_NAME@", dbName);
+                inpStr = StringUtils.strReplaceAll(inpStr, 
+                    "@DB_NAME@", dbName);
+                String suffix = (String) userRepo.get(
+                    SetupConstants.USER_STORE_ROOT_SUFFIX);
+                if (suffix != null) {
+                    inpStr = StringUtils.strReplaceAll(inpStr, 
+                        "@userStoreRootSuffix@", suffix);
+                }
                 fout.write(ServicesDefaultValues.tagSwap(inpStr));
                 files.add(outfile);
             } finally {

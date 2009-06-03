@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.17 2009-01-28 05:34:56 ww203982 Exp $
+ * $Id: Step4.java,v 1.18 2009-06-03 19:43:42 goodearth Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -102,7 +102,7 @@ public class Step4 extends AjaxPage {
             ctx.setSessionAttribute(SessionAttributeNames.EXT_DATA_STORE,
                 "true");
             ctx.setSessionAttribute(SessionAttributeNames.USER_STORE_TYPE,
-                "LDAPv3ForAMDS");
+                "LDAPv3ForSUNDS");
         }
 
         String smsType = getAttribute(SetupConstants.CONFIG_VAR_DATA_STORE,
@@ -143,13 +143,27 @@ public class Step4 extends AjaxPage {
             val);
         addModel("userStoreRootSuffix", val);
 
-        val = getAttribute(SetupConstants.USER_STORE_TYPE, "LDAPv3ForAMDS");
-        if (val.equals("LDAPv3ForAMDS")) {
-            addModel("selectLDAPv3amds", "checked=\"checked\"");
-            addModel("selectLDAPv3", "");
+        val = getAttribute(SetupConstants.USER_STORE_TYPE, "LDAPv3ForSUNDS");
+        if (val.equals("LDAPv3ForAD")) {
+            addModel("selectLDAPv3ad", "checked=\"checked\"");
+            addModel("selectLDAPv3sunds", "");
+            addModel("selectLDAPv3opends", "");
+            addModel("selectLDAPv3tivoli", "");
+        } else if (val.equals("LDAPv3ForSUNDS")) {
+            addModel("selectLDAPv3sunds", "checked=\"checked\"");
+            addModel("selectLDAPv3ad", "");
+            addModel("selectLDAPv3opends", "");
+            addModel("selectLDAPv3tivoli", "");
+        } else if (val.equals("LDAPv3ForOpenDS")) {
+            addModel("selectLDAPv3opends", "checked=\"checked\"");
+            addModel("selectLDAPv3ad", "");
+            addModel("selectLDAPv3sunds", "");
+            addModel("selectLDAPv3tivoli", "");
         } else {
-            addModel("selectLDAPv3", "checked=\"checked\"");
-            addModel("selectLDAPv3amds", "");
+            addModel("selectLDAPv3tivoli", "checked=\"checked\"");
+            addModel("selectLDAPv3ad", "");
+            addModel("selectLDAPv3sunds", "");
+            addModel("selectLDAPv3opends", "");
         }
 
         val = getAttribute("EXT_DATA_STORE", "true");
