@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSGateway.java,v 1.1 2009-03-24 23:52:12 pluo Exp $
+ * $Id: SMSGateway.java,v 1.2 2009-06-03 20:46:51 veiming Exp $
  *
  */
 package com.sun.identity.authentication.modules.hotp;
@@ -42,10 +42,9 @@ public interface SMSGateway {
      * @param code The code in the SMS message
      * @param options The SMS gateway options defined in the HOTP authentication
      * module
-     *
-     * @return none
      */
-    public void sendSMSMessage(String from, String to, String subject, String message, String code, Map options);
+    void sendSMSMessage(String from, String to, String subject,
+        String message, String code, Map options);
 
     /**
      * Sends an email  message to the mail with the code
@@ -58,9 +57,8 @@ public interface SMSGateway {
      * @param code The code in the E-mail message
      * @param options The SMS gateway options defined in the HOTP authentication
      * module
-     *
-     * @return none
      */
-    public void sendEmail(String from, String to, String subject, String message, String code, Map options);
+    void sendEmail(String from, String to, String subject,
+        String message, String code, Map options);
 }
 

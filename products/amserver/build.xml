@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.74 2009-05-19 14:27:54 kevinserwin Exp $
+   $Id: build.xml,v 1.75 2009-06-03 20:46:49 veiming Exp $
 
 -->
 
@@ -98,6 +98,7 @@
             <src path="${amserver.src.dir}"/>
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
+            <exclude name="**/com/sun/identity/diagnostic/**"/>
         </javac>
         <antcall target="jaxrpc" />
         

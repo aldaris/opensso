@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionID.java,v 1.8 2009-02-19 05:39:24 bhavnab Exp $
+ * $Id: SessionID.java,v 1.9 2009-06-03 20:46:50 veiming Exp $
  *
  */
 
@@ -183,7 +183,7 @@ public class SessionID implements Serializable {
       * This method returns the boolean representing if this session id
       * is a regular auth token, generated via AuthContext API
       * and not a restricted one.
-      * @param None.
+      *
       * @return The boolean representing if this session id
       * is that of a regular auth token, generated via AuthContext API
       */

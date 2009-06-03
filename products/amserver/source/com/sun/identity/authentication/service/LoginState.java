@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.48 2009-03-06 22:09:40 hengming Exp $
+ * $Id: LoginState.java,v 1.49 2009-06-03 20:46:52 veiming Exp $
  *
  */
 
@@ -5836,7 +5836,7 @@ public class LoginState {
     /**
      * Sets remote locale passed by client
      *
-     * @param remote client locale string.
+     * @param localeStr remote client locale string.
      */
     public void setRemoteLocale(String localeStr) {
         localeContext.setLocale(ISLocaleContext.URL_LOCALE, localeStr);

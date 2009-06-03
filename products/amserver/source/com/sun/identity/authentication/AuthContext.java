@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.21 2009-05-21 21:57:33 qcheng Exp $
+ * $Id: AuthContext.java,v 1.22 2009-06-03 20:46:50 veiming Exp $
  *
  */
 
@@ -1580,10 +1580,9 @@ public class AuthContext extends Object implements java.io.Serializable {
 
     /**
      * Sets locale based on user locale preferemce.
-     * @param locale - locale preference of user
      *
+     * @param loc locale preference of user
      */
-    
     public void setLocale (java.util.Locale loc) {
         clientLocale = loc;
     }

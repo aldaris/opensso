@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUtils.java,v 1.8 2009-01-16 06:07:04 lakshman_abburi Exp $
+ * $Id: SessionUtils.java,v 1.9 2009-06-03 20:46:52 veiming Exp $
  *
  */
 
@@ -396,11 +396,10 @@ public class SessionUtils {
      * Helper method to compare if the user token passed is same as admin
      * token. It does not check if user token or admin token is valid.
      *
-     * @param: admToken
-     *            Admin SSOToken
-     * @param: usrToken
-     *            User SSOToken to compare against admin SSOToken
-     * @return true if they both are same else false.
+     * @param admToken Admin Single Sign-On token.
+     * @param usrToken User Single Sign-On token to compare against admin
+     *        Single Sign-On token.
+     * @return <code>true</code> if they both are same.
      */
     public static boolean isAdmin(SSOToken admToken, SSOToken usrToken) {
         if (usrToken == null) {
@@ -451,12 +450,10 @@ public class SessionUtils {
     /**
      * Helper method to check if client has taken permission to
      * set value to it. If
-     * @param SSOToken
-     *            Token of the client setting protected property.
-     * @param key
-     *            Property key
-     * @exception SessionException is thrown if the key is protected property.
-     *
+     * @param clientToken Token of the client setting protected property.
+     * @param key Property key
+     * @param value Property value.
+     * @throws SessionException if the key is protected property.
      */
     public static void checkPermissionToSetProperty(SSOToken clientToken,
         String key, String value) throws SessionException {
@@ -465,7 +462,7 @@ public class SessionUtils {
                 // Throw Ex. Client should identify itself.
                 if (SessionService.sessionDebug.warningEnabled()) {
                     SessionService.sessionDebug.warning(
-						"SessionUtils.checkPermissionToSetProperty(): "
+                        "SessionUtils.checkPermissionToSetProperty(): "
                         + "Attempt to set protected property without client "
                         + "token [" + key + "=" + value + "]");
                 }
@@ -480,7 +477,7 @@ public class SessionUtils {
             } catch (SSOException ssoEx) {
                 // Throw Ex. Not able to get SSOTokenManager instance.
                 SessionService.sessionDebug.error(
-					"SessionUtils.checkPermissionToSetProperty(): "
+                    "SessionUtils.checkPermissionToSetProperty(): "
                     + "Cannot get instance of SSOTokenManager.");
                 throw new SessionException(
                     SessionBundle.getString(
@@ -491,7 +488,7 @@ public class SessionUtils {
                 // Throw Ex. Client should identify itself.
                 if (SessionService.sessionDebug.warningEnabled()) {
                     SessionService.sessionDebug.warning(
-						"SessionUtils.checkPermissionToSetProperty(): "
+                        "SessionUtils.checkPermissionToSetProperty(): "
                         + "Attempt to set protected property with invalid client"
                         + " token [" + key + "=" + value + "]");
                 }
@@ -506,7 +503,7 @@ public class SessionUtils {
             } catch (SSOException ssoEx) {
                 // Throw Ex. Server not able to get Admin Token.
                 SessionService.sessionDebug.error(
-					"SessionUtils.checkPermissionToSetProperty(): "
+                    "SessionUtils.checkPermissionToSetProperty(): "
                     + "Cannot get Admin Token for validation to set protected "
                     + "property [" + key + "=" + value + "]");
                 throw new SessionException(
@@ -516,7 +513,7 @@ public class SessionUtils {
             if (!SessionUtils.isAdmin(admToken, clientToken)) {
                 // Throw Ex. Client not authorized to set this property.
                 SessionService.sessionDebug.error(
-					"SessionUtils.checkPermissionToSetProperty(): "
+                    "SessionUtils.checkPermissionToSetProperty(): "
                     + "Client does not have permission to set protected "
                     + "property" + key + "=" + value + "]");
                 throw new SessionException(
@@ -524,6 +521,5 @@ public class SessionUtils {
                     + " " + key);
             }
         }
-	}
-
+    }
 }

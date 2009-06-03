@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSMSGatewayImpl.java,v 1.1 2009-03-24 23:52:12 pluo Exp $
+ * $Id: DefaultSMSGatewayImpl.java,v 1.2 2009-06-03 20:46:51 veiming Exp $
  *
  */
 package com.sun.identity.authentication.modules.hotp;
@@ -63,9 +63,9 @@ public class DefaultSMSGatewayImpl implements SMSGateway {
      * @param code The code in the SMS message
      * @param options The SMS gateway options defined in the HOTP authentication
      * module
-     * @return none
      */
-    public void sendSMSMessage(String from, String to, String subject, String message, String code, Map options) {
+    public void sendSMSMessage(String from, String to, String subject,
+        String message, String code, Map options) {
         if (to == null) {
             return;
         }
@@ -82,22 +82,23 @@ public class DefaultSMSGatewayImpl implements SMSGateway {
             }
             tos[0] = to;
             AMSendMail sendMail = new AMSendMail();
+
             if (smtpHostName == null || smtpHostPort == null ||
                     smtpUserName == null || smtpUserPassword == null ||
                     smtpSSLEnabled == null) {
                 sendMail.postMail(tos, subject, msg, from);
-            }
-            else {
+            } else {
                 sendMail.postMail(tos, subject, msg, from, null, smtpHostName,
                         smtpHostPort, smtpUserName, smtpUserPassword,
                         sslEnabled);
             }
             if (debug.messageEnabled()) {
-                debug.message("DefaultSMSGatewayImpl.sendSMSMessage() : " + "HOTP sent to : " + to + ".");
+                debug.message("DefaultSMSGatewayImpl.sendSMSMessage() : " +
+                    "HOTP sent to : " + to + ".");
             }
-        }
-        catch (Exception e) {
-            debug.error("DefaultSMSGatewayImpl.sendSMSMessage() : " + "Exception in sending HOTP code : " , e);
+        } catch (Exception e) {
+            debug.error("DefaultSMSGatewayImpl.sendSMSMessage() : " +
+                "Exception in sending HOTP code : " , e);
         }
 
     }
@@ -113,9 +114,9 @@ public class DefaultSMSGatewayImpl implements SMSGateway {
     * @param code The code in the E-mail message
     * @param options The SMS gateway options defined in the HOTP authentication
     * module
-    * @return none
     */
-    public void sendEmail(String from, String to, String subject, String message, String code, Map options) {
+    public void sendEmail(String from, String to, String subject, 
+        String message, String code, Map options) {
         sendSMSMessage(from, to, subject, message, code, options);
     }
 

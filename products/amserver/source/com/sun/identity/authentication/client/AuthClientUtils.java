@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.30 2009-05-05 18:32:37 mrudul_uchil Exp $
+ * $Id: AuthClientUtils.java,v 1.31 2009-06-03 20:46:51 veiming Exp $
  *
  */
 
@@ -1156,8 +1156,9 @@ public class AuthClientUtils {
     /**
      * Find the cookie domains from the cookie domain list based on
      * the hostname of the incoming request
-     * @param HttpServletRequest request
-     * @return Set a set of the cookie domains
+     *
+     * @param request HttpServletRequest request
+     * @return a set of the cookie domains
      */
     public static Set getCookieDomainsForReq(HttpServletRequest request) {
         String host = request.getServerName();

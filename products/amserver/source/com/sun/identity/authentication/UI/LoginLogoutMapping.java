@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginLogoutMapping.java,v 1.10 2009-05-02 22:09:51 kevinserwin Exp $
+ * $Id: LoginLogoutMapping.java,v 1.11 2009-06-03 20:46:50 veiming Exp $
  *
  */
 
@@ -66,7 +66,8 @@ public class LoginLogoutMapping extends HttpServlet {
 
     /** 
      * Initializes the servlet.
-     * @param config servlet config
+     *
+     * @param servletCtx servlet config
      * @throws ServletException if it fails to get servlet context.
     */  
     public void init(ServletContext servletCtx) throws ServletException {
