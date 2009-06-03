@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Iis7Agent.h,v 1.1 2009-02-13 23:58:05 robertis Exp $
+ * $Id: Iis7Agent.h,v 1.2 2009-06-03 00:25:32 robertis Exp $
  *
  *
  */
