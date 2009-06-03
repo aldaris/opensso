@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.27 2009-03-10 20:14:13 exu Exp $
+   $Id: build.xml,v 1.28 2009-06-03 20:45:33 veiming Exp $
 
 -->
 
@@ -48,84 +48,17 @@
     <property name="clientsamples.packages.temp2.dir" location="${openfm.built.dir}/clientsamples/.AMConfig"/>
     <property name="amserver.samples.dir" location="${amserver.base.dir}/samples"/>
 
-    <target name="all" depends="preparebuild, client-properties, jdk15-client-war-samples, jdk14-client-war-samples, client-sdk-samples">
+    <target name="all" depends="preparebuild, client-properties, jdk15-client-war-samples, client-sdk-samples">
         <delete dir="${clientsamples.packages.temp.dir}" />
         <delete dir="${clientsamples.war.packages.dir}" />
         <mkdir dir="${clientsamples.war.packages.dir}" />
         <copy file="${fm.dist.dir}/opensso-client-jdk15.war" todir="${clientsamples.war.packages.dir}" />
-        <copy file="${fm.dist.dir}/opensso-client-jdk14.war" todir="${clientsamples.war.packages.dir}" />
         <copy todir="${clientsamples.packages.dir}/"
               file="${openfm.clientsamples.dir}/README"/>
         <zip destfile="${fm.dist.dir}/opensso-client.zip" basedir="${clientsamples.packages.dir}" />
 
         <checksum file="${fm.dist.dir}/opensso-client.zip" algorithm="SHA" fileext=".sha" />
         <delete dir="${clientsamples.packages.temp2.dir}" />
-    </target>
-
-    <target name="jdk14-client-war-samples">
-        <delete dir="${clientsamples.war.packages.dir}" />
-        <unjar src="${fm.dist.dir}/opensso.war" dest="${clientsamples.war.packages.dir}">
-            <patternset>
-                <include name="com_sun_web_ui/css/css_ns6up.css"/>
-                <include name="com_sun_web_ui/images/other/javalogo.gif"/>
-                <include name="com_sun_web_ui/images/masthead/masthead-sunname.gif"/>
-                <include name="com_sun_web_ui/images/masthead/masthead-background.jpg"/>
-                <include name="com_sun_web_ui/images/masthead/masthead-sun-background.jpg"/>
-                <include name="com_sun_web_ui/images/other/dot.gif"/>
-                <include name="console/images/PrimaryProductName.png"/>
-            </patternset>
-        </unjar>
-        <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/classes"/>
-        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes"
-              file="${clientsamples.packages.temp2.dir}/AMConfig.properties.template"/>
-        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes">
-            <fileset dir="${openfm.classes.dir}" includes="com/sun/identity/setup/ClientConfiguratorFilter.class, com/sun/identity/setup/SetupClientWARSamples.class" />
-        </copy>
-        <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/lib" />
-        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib"
-              file="${fm.dist.dir}/openssoclientsdk.jar"/>
-        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib">
-            <fileset dir="${extlib.dir}" includes="jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,webservices-rt.jar,xsdlib.jar" />
-        </copy>
-        <copy todir="${clientsamples.war.packages.dir}">
-            <fileset dir="${openfm.clientsamples.dir}/war"
-                 excludes="**/CVS build.xml" />
-        </copy>
-        <!-- copy SAE sample -->
-        <mkdir dir="${clientsamples.war.packages.dir}/saml2" /> 
-        <mkdir dir="${clientsamples.war.packages.dir}/saml2/sae" /> 
-        <copy todir="${clientsamples.war.packages.dir}/saml2/sae">
-            <fileset dir="${openfm.dir}/samples/war/saml2/sae" includes="dumpcookies.jsp saeIDPApp.jsp saeSPApp.jsp header.jspf Readme.html" />
-        </copy>
-        <!-- copy client samples from OpenSSO (amserver) -->
-        <delete dir="${clientsamples.packages.temp.dir}" />
-        <mkdir dir="${clientsamples.packages.temp.dir}" />
-        <unzip src="${openfm.extlib.dir}/openssosamples.zip" dest="${clientsamples.packages.temp.dir}">
-            <patternset>
-                <include name="war/**"/>
-            </patternset>
-        </unzip>
-        <copy todir="${clientsamples.war.packages.dir}">
-            <fileset dir="${clientsamples.packages.temp.dir}/war"
-                 excludes="index.html" />
-        </copy>
-        <copy file="${clientsamples.packages.temp.dir}/war/index.html" tofile="${clientsamples.war.packages.dir}/am-samples.html" />
-        <move file="${clientsamples.war.packages.dir}/index.html.1.4" tofile="${clientsamples.war.packages.dir}/index.html" />
-
-        <delete dir="META-INF" />
-	<mkdir dir="${clientsamples.packages.temp.dir}" />
-	<move file="${clientsamples.war.packages.dir}/WEB-INF/web.xml" tofile="${clientsamples.packages.temp.dir}/web.xml" />
-        <war destfile="${fm.dist.dir}/opensso-client-jdk14.war" webxml="${clientsamples.packages.temp.dir}/web.xml">
-            <manifest>
-                <attribute name="Version" value="${openfm.version}"/>
-                <attribute name="Create-On" value="${touch.time}"/>
-            </manifest>
-            <zipfileset dir="${clientsamples.war.packages.dir}" />
-        </war>
-	<move file="${clientsamples.packages.temp.dir}/web.xml" tofile="${clientsamples.war.packages.dir}/WEB-INF/web.xml" />
-	<delete dir="${clientsamples.packages.temp.dir}" />
-        <checksum file="${fm.dist.dir}/opensso-client-jdk14.war" algorithm="SHA" fileext=".sha" />
-        <delete dir="${clientsamples.war.packages.dir}" />
     </target>
 
     <target name="jdk15-client-war-samples">
