@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.14 2009-04-07 01:01:21 madan_ranganath Exp $
+   $Id: README,v 1.15 2009-06-03 22:40:33 madan_ranganath Exp $
 
 -->
 
@@ -171,12 +171,16 @@ A. To run the automated scripts, please follow the steps mentioned in README.con
 B. To configure the providers manually, follow the steps starting from 3 in this README.
 
 3. Modify <unzip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties as follows: (Also please keep the rest of the setting as it is)
+Note: For all the URLs mentioned, please make sure you provide the port 
+number even if it is the default (i.e 80 for http and 443 for https).
 
 # OpenSSO Server Information (where WSC or WSP profile is located resp)
 # Protocol can be either http or https
 com.iplanet.am.server.protocol=openssoserver_protocol
 com.iplanet.am.server.host=openssoserver_host
 com.iplanet.am.server.port=openssoserver_port
+
+# Example: com.iplanet.am.services.deploymentDescriptor=/opensso
 com.iplanet.am.services.deploymentDescriptor=openssoserver_deploy_uri
 
 # Application username and password
@@ -503,12 +507,16 @@ A. To run the automated scripts, please follow the steps mentioned in README.con
 B. To configure the providers manually, follow the steps starting from 3 in this README.
 
 3. Modify <unzip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties as follows: (Also please keep the rest of the setting as it is)
+Note: For all the URLs mentioned, please make sure you provide the port 
+number even if it is the default (i.e 80 for http and 443 for https).
 
 # OpenSSO Server Information (where WSC or WSP profile is located resp)
 # Protocol can be either http or https
 com.iplanet.am.server.protocol=openssoserver_protocol
 com.iplanet.am.server.host=openssoserver_host
 com.iplanet.am.server.port=openssoserver_port
+
+# Example: com.iplanet.am.services.deploymentDescriptor=/opensso
 com.iplanet.am.services.deploymentDescriptor=openssoserver_deploy_uri
 
 # Application username and password
