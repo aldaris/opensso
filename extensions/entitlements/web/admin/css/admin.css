@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: admin.css,v 1.90 2009-06-04 11:49:26 veiming Exp $
+ * $Id: admin.css,v 1.91 2009-06-04 17:45:04 farble1670 Exp $
  *
  */
 
@@ -354,6 +354,10 @@ span.button img.left {
 #status * > span,
 #status * > label {
     color: white;
+}
+
+#status * > label {
+    font-weight: bold;
 }
 
 #status * > a {

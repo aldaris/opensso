@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: subject-not.xhtml,v 1.5 2009-06-04 11:49:29 veiming Exp $
+   $Id: subject-not.xhtml,v 1.6 2009-06-04 17:45:04 farble1670 Exp $
 
 -->
 
@@ -53,7 +53,8 @@
             dropMask="hover_start"
             dropValue="#{viewSubject}"
             dropListener="#{policyCreateWizardHandler.subjectDropListener}">
-            Drop excluded subject here ...
+            <ice:outputText
+                value="#{resources['subject-not.drop']}"/>
         </ice:panelGroup>
     </c:if>
 </span>
