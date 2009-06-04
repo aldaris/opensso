@@ -1,4 +1,4 @@
-/*
+/**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexTest.java,v 1.6 2009-05-04 20:57:08 veiming Exp $
+ * $Id: ResourceNameIndexTest.java,v 1.7 2009-06-04 11:49:22 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;

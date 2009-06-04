@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOSubjectAttributesCollector.java,v 1.7 2009-05-27 23:05:40 hengming Exp $
+ * $Id: OpenSSOSubjectAttributesCollector.java,v 1.8 2009-06-04 11:49:21 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -88,11 +88,13 @@ public class OpenSSOSubjectAttributesCollector
      */
     public void init(String realm, Map<String, Set<String>> configMap) {
         this.realm = realm;
-        Set<String> values =
-            configMap.get(GROUP_MEMBERSHIP_SEARCH_INDEX_ENABLED_ATTR);
-        if ((values != null) && (!values.isEmpty())) {
-            groupMembershipSearchIndexEnabled = Boolean.valueOf(
-                values.iterator().next()).booleanValue();
+        if (configMap != null) { //TODO do not know if this is right fix
+            Set<String> values =
+                configMap.get(GROUP_MEMBERSHIP_SEARCH_INDEX_ENABLED_ATTR);
+            if ((values != null) && (!values.isEmpty())) {
+                groupMembershipSearchIndexEnabled = Boolean.valueOf(
+                    values.iterator().next()).booleanValue();
+            }
         }
     }
 
