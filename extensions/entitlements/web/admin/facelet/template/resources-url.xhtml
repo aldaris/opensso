@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: resources-url.xhtml,v 1.27 2009-06-04 11:49:28 veiming Exp $
+   $Id: resources-url.xhtml,v 1.28 2009-06-04 15:21:10 farble1670 Exp $
 
 -->
 
@@ -43,6 +43,10 @@
         <ui:define name="section-title">
             <ice:outputText
                 value="#{resources['resources-url.sectionTitle']}"/>
+        </ui:define>
+        <ui:define name="section-description">
+            <ice:outputText
+                value="#{resources['resources-url.sectionDescription']}"/>
         </ui:define>
         <ui:define name="section-links">
             <ice:panelGrid

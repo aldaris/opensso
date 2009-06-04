@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: realm-select.xhtml,v 1.4 2009-06-04 11:49:28 veiming Exp $
+   $Id: realm-select.xhtml,v 1.5 2009-06-04 15:21:10 farble1670 Exp $
 
 -->
 
@@ -38,6 +38,7 @@
         styleClass="realm-select">
         <ice:commandLink
             styleClass="command-link"
+            immediate="true"
             actionListener="#{realmsHandler.realmSelectListener}">
             <ice:outputLabel
                 value="#{resources['realm-select.realm']}"/>

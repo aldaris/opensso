@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-summary.xhtml,v 1.18 2009-06-04 11:49:28 veiming Exp $
+   $Id: policy-summary.xhtml,v 1.19 2009-06-04 15:21:10 farble1670 Exp $
 
 -->
 
@@ -39,6 +39,10 @@
         <ui:define name="section-title">
             <ice:outputText
                 value="#{resources['policy-summary.sectionTitle']}"/>
+        </ui:define>
+        <ui:define name="section-details">
+            <ice:outputText
+                value="#{resources['policy-summary.sectionDetails']}"/>
         </ui:define>
         <ui:define name="section-body">
             <o:summarypanel

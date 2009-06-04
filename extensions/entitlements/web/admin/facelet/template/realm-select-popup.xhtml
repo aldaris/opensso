@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: realm-select-popup.xhtml,v 1.4 2009-06-04 11:49:28 veiming Exp $
+   $Id: realm-select-popup.xhtml,v 1.5 2009-06-04 15:21:10 farble1670 Exp $
 
 -->
 
@@ -70,6 +70,8 @@
                     <ice:selectOneListbox
                         style="width: 100%"
                         size="10"
+                        immediate="true"
+                        partialSubmit="false"
                         value="#{realmsBean.realmSelectPopupRealmBean}"
                         converter="realmBeanConverter">
                         <f:selectItems
@@ -84,13 +86,18 @@
                         type="cancel"
                         handler="#{realmsHandler}"
                         listenerMethod="realmSelectPopupCancelListener"/>
-                    <o:button
-                        type="ok"
-                        handler="#{realmsHandler}"
-                        listenerMethod="realmSelectPopupOkListener">
-                        <ui:define name="attributes">
-                        </ui:define>
-                    </o:button>
+                    <ice:commandLink
+                        actionListener="#{realmsHandler.realmSelectPopupOkListener}"
+                        action="home">
+                        <span
+                            class="button">
+                            <ice:graphicImage
+                                styleClass="left"
+                                value="../image/execute.png"/>
+                            <ice:outputText
+                                value="#{resources['realm-select-popup.ok']}"/>
+                        </span>
+                    </ice:commandLink>
                 </ice:panelGrid>
             </ice:panelGroup>
         </ui:define>

@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewEntitlement.java,v 1.21 2009-06-04 11:49:19 veiming Exp $
+ * $Id: ViewEntitlement.java,v 1.22 2009-06-04 15:21:09 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.DeepCloneableArrayList;
@@ -37,6 +36,7 @@ import com.sun.identity.entitlement.ValidateResourceResult;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,7 +51,8 @@ public class ViewEntitlement implements Serializable {
     private List<Resource> exceptions = new ArrayList<Resource>();
     private BooleanActionsBean booleanActionsBean = new BooleanActionsBean();
     private ViewApplication viewApplication;
-    private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();;
+    private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();
+    ;
     private List<Resource> availableResources = new ArrayList<Resource>();
 
     public ViewEntitlement() {
@@ -60,7 +61,7 @@ public class ViewEntitlement implements Serializable {
 
     public ViewEntitlement(Entitlement e, Map<String, ViewApplication> viewApplications) {
         this();
-        
+
         if (e == null) {
             return;
         }
@@ -70,7 +71,7 @@ public class ViewEntitlement implements Serializable {
 
         // resources
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        Map<String,ResourceDecorator> resourceDecorators = (Map<String,ResourceDecorator>)mbr.resolve("resourceDecorators");
+        Map<String, ResourceDecorator> resourceDecorators = (Map<String, ResourceDecorator>) mbr.resolve("resourceDecorators");
         for (String rs : e.getResourceNames()) {
             String resourceClassName = viewApplication.getViewApplicationType().getResourceClassName();
             Resource r;
@@ -90,7 +91,7 @@ public class ViewEntitlement implements Serializable {
             if (rd != null) {
                 rd.decorate(r);
             }
-            
+
             resources.add(r);
         }
 
@@ -112,10 +113,10 @@ public class ViewEntitlement implements Serializable {
             r.setName(rs);
             exceptions.add(r);
         }
-        
+
 
         // actions
-        for (String actionName: e.getActionValues().keySet()) {
+        for (String actionName : e.getActionValues().keySet()) {
             Boolean actionValue = e.getActionValues().get(actionName);
             BooleanAction ba = new BooleanAction();
             ba.setName(actionName);
@@ -125,10 +126,14 @@ public class ViewEntitlement implements Serializable {
     }
 
     private void resetAvailableResources() {
-        availableResources = new DeepCloneableArrayList<Resource>(viewApplication.getResources()).deepClone();
-        for (Resource r: resources) {
-            if (!availableResources.contains(r)) {
-                availableResources.add(r);
+        if (viewApplication == null) {
+            availableResources = Collections.emptyList();
+        } else {
+            availableResources = new DeepCloneableArrayList<Resource>(viewApplication.getResources()).deepClone();
+            for (Resource r : resources) {
+                if (!availableResources.contains(r)) {
+                    availableResources.add(r);
+                }
             }
         }
     }
@@ -188,7 +193,7 @@ public class ViewEntitlement implements Serializable {
         Map<String, Boolean> actionMap = new HashMap<String, Boolean>();
 
         for (Action a : booleanActionsBean.getActions()) {
-            actionMap.put(a.getName(), (Boolean)a.getValue());
+            actionMap.put(a.getName(), (Boolean) a.getValue());
         }
 
         return actionMap;
@@ -273,7 +278,7 @@ public class ViewEntitlement implements Serializable {
 
     public ValidateResourceResult validateResource(Resource r) {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        ViewApplicationDao vad = (ViewApplicationDao)mbr.resolve("viewApplicationDao");
+        ViewApplicationDao vad = (ViewApplicationDao) mbr.resolve("viewApplicationDao");
         Application a = vad.getApplication(viewApplication);
         ValidateResourceResult vrr = a.validateResourceName(r.getName());
         return vrr;

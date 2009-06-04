@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardHandler.java,v 1.19 2009-06-04 11:49:13 veiming Exp $
+ * $Id: PolicyWizardHandler.java,v 1.20 2009-06-04 15:21:09 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -127,7 +127,7 @@ public abstract class PolicyWizardHandler
         Resources r = new Resources();
         mb.setSummary(r.getString(this, "finish"));
         mb.setSeverity(FacesMessage.SEVERITY_INFO);
-        messagesBean.addMessageBean(mb);
+        getMessagesBean().addMessageBean(mb);
 
         getPolicyWizardBean().reset();
         getPolicyManageBean().reset();
@@ -141,7 +141,7 @@ public abstract class PolicyWizardHandler
         Resources r = new Resources();
         mb.setSummary(r.getString(this, "cancel"));
         mb.setSeverity(FacesMessage.SEVERITY_INFO);
-        messagesBean.addMessageBean(mb);
+        getMessagesBean().addMessageBean(mb);
 
         getPolicyWizardBean().reset();
 
@@ -434,7 +434,7 @@ public abstract class PolicyWizardHandler
             e = new MessageErrorEffect();
             getPolicyWizardBean().setPolicyNameMessageEffect(e);
 
-            messagesBean.addMessageBean(mb);
+            getMessagesBean().addMessageBean(mb);
             getPolicyWizardBean().gotoStep(PolicyWizardStep.NAME.toInt());
 
             return false;
@@ -458,7 +458,7 @@ public abstract class PolicyWizardHandler
             mb.setDetail(r.getString(this, "noSubjectsDetail"));
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-            messagesBean.addMessageBean(mb);
+            getMessagesBean().addMessageBean(mb);
             getPolicyWizardBean().gotoStep(PolicyWizardStep.SUBJECTS.toInt());
 
             return false;
@@ -559,12 +559,16 @@ public abstract class PolicyWizardHandler
             mb.setDetail(r.getString(this, "noResourcesDetail"));
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-            messagesBean.addMessageBean(mb);
+            getMessagesBean().addMessageBean(mb);
             getPolicyWizardBean().gotoStep(PolicyWizardStep.RESOURCES.toInt());
 
             return false;
         }
 
         return true;
+    }
+
+    public MessagesBean getMessagesBean() {
+        return messagesBean;
     }
 }

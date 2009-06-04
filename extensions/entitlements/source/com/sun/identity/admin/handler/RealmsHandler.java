@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmsHandler.java,v 1.5 2009-06-04 11:49:13 veiming Exp $
+ * $Id: RealmsHandler.java,v 1.6 2009-06-04 15:21:09 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -86,14 +86,14 @@ public class RealmsHandler implements Serializable {
     }
 
     public void handleReset() {
+        ViewApplicationsBean vasb = ViewApplicationsBean.getInstance();
+        vasb.reset();
         PolicyManageBean pmb = PolicyManageBean.getInstance();
         pmb.reset();
         PolicyCreateWizardBean pcwb = PolicyCreateWizardBean.getInstance();
         pcwb.reset();
         PolicyEditWizardBean pewb = PolicyEditWizardBean.getInstance();
         pewb.reset();
-        ViewApplicationsBean vasb = ViewApplicationsBean.getInstance();
-        vasb.reset();
     }
 
     public void setRealmsBean(RealmsBean realmsBean) {
