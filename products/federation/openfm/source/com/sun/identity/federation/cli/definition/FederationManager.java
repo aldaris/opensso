@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.36 2009-01-07 21:51:29 veiming Exp $
+ * $Id: FederationManager.java,v 1.37 2009-06-04 20:04:33 veiming Exp $
  *
  */
 
@@ -91,7 +91,7 @@ public class FederationManager {
             "affiecertalias|K|s|i|Affiliation encryption certificate alias",
             "xacmlpdpecertalias|j|s|Policy decision point encryption certificate alias",
             "xacmlpepecertalias|z|s|Policy enforcement point encryption certificate alias",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "spec|c|s|Specify metadata specification, either wsfed, idff or saml2, defaults to saml2"},
         resourceStrings={
             "create-meta-template-exception-role-null=Identity or Service Provider or Policy Enforcement Point or Policy Decision Point or Attribute Query Provider or Attribute Authority or Authentication Authority or Affiliation are required.",
             "create-meta-template-exception-affi-conflict=Affiliation and other providers can't coexist.",
@@ -126,7 +126,7 @@ public class FederationManager {
             "idpscertalias|b|s|Identity provider signing certificate alias",
             "specertalias|r|s|Service provider encryption certificate alias",
             "idpecertalias|g|s|Identity provider encryption certificate alias.",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "spec|c|s|Specify metadata specification, either wsfed, idff or saml2, defaults to saml2"},
         resourceStrings={
             "update-keyinfo-succeeded=Update entity keyinfo succeeded : {0}",
             "update-meta-keyinfo-exception-alias-null=Singing or encryption certificate alias for Identity or Service Provider is required.",
@@ -146,7 +146,7 @@ public class FederationManager {
             "meta-data-file|m|s|t|Specify file name for the standard metadata to be imported.<web>Standard metadata to be imported.",
             "extended-data-file|x|s|t|Specify file name for the extended entity configuration to be imported.<web>Extended entity configuration to be imported.",
             "cot|t|s|Specify name of the Circle of Trust this entity belongs.",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "spec|c|s|Specify metadata specification, either wsfed, idff or saml2, defaults to saml2"},
         resourceStrings={
             "import-entity-exception-cot-no-exist=Circle of Trust did not exist.",
             "import-entity-exception-no-datafile=metadata or extended data file is required.",
@@ -168,7 +168,7 @@ public class FederationManager {
             "sign|g|u|Set this flag to sign the metadata",
             "meta-data-file|m|s|c|Metadata",
             "extended-data-file|x|s|c|Extended data",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "spec|c|s|Specify metadata specification, either wsfed, idff or saml2, defaults to saml2"},
         resourceStrings={
             "export-entity-exception-no-datafile=Missing export files, metadata or extended option needs to be set.",
             "export-entity-exception-entity-descriptor-not-exist=Entity descriptor, {0} under realm, {1} did not exist.",
@@ -190,7 +190,7 @@ public class FederationManager {
         optionalOptions={
             "realm|e|s|Realm where data resides",
             "extendedonly|x|u|Set to flag to delete only extended data.",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "spec|c|s|Specify metadata specification, either wsfed, idff or saml2, defaults to saml2"},
         resourceStrings={
             "delete-entity-entity-not-exist=Entity, {0} did not exist.",
             "delete-entity-config-deleted=Configuration was deleted for entity, {0}.",
@@ -206,7 +206,7 @@ public class FederationManager {
         macro="authentication",
         optionalOptions={
             "realm|e|s|Realm where entities reside.",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "spec|c|s|Specify metadata specification, either wsfed, idff or saml2, defaults to saml2"},
         resourceStrings={
             "list-entities-no-entities=There are no entities.",
             "list-entities-entity-listing=List of entity IDs:"})
@@ -266,7 +266,7 @@ public class FederationManager {
         macro="authentication",
         optionalOptions={
             "realm|e|s|Realm where circle of trust resides",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "spec|c|s|Specify metadata specification, either wsfed, idff or saml2, defaults to saml2"},
         resourceStrings={
             "list-circle-of-trust-members-no-members=There are no trusted entities in the circle of trust, {0}.",
             "list-circle-of-trust-members-cot-does-not-exists=Circle of trust, {0} did not exist.",
@@ -284,7 +284,7 @@ public class FederationManager {
         macro="authentication",
         optionalOptions={
             "realm|e|s|Realm where circle of trust resides",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "spec|c|s|Specify metadata specification, either wsfed, idff or saml2, defaults to saml2"},
         resourceStrings={
             "remove-circle-of-trust-member-succeeded=Entity, {1} was removed from the circle of trust, {0}."})
     private String remove_cot_member;
@@ -300,7 +300,7 @@ public class FederationManager {
         macro="authentication",
         optionalOptions={
             "realm|e|s|Realm where circle of trust resides",
-            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+            "spec|c|s|Specify metadata specification, either wsfed, idff or saml2, defaults to saml2"},
         resourceStrings={
             "add-circle-of-trust-member-succeeded=Entity, {2} was added to the circle of trust, {1}, in realm {3}."})
     private String add_cot_member;
