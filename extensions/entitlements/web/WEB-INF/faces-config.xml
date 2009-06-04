@@ -23,8 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.83 2009-06-04 11:49:23 veiming Exp $
-
+  $Id: faces-config.xml,v 1.84 2009-06-04 21:18:37 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1364,6 +1363,32 @@
     </managed-bean>
     <!-- policy create -->
 
+    <!-- referral create -->
+    <managed-bean>
+        <managed-bean-name>referralCreateWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ReferralCreateWizardBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>4</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>referralCreateWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.ReferralCreateWizardHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{referralCreateWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- referral create -->
+
     <!-- policy manage -->
     <managed-bean>
         <managed-bean-name>policyDao</managed-bean-name>
@@ -1591,6 +1616,10 @@
         <navigation-case>
             <from-outcome>policy-manage</from-outcome>
             <to-view-id>/admin/facelet/policy-manage.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>referral-create</from-outcome>
+            <to-view-id>/admin/facelet/referral-create.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>policy-edit</from-outcome>

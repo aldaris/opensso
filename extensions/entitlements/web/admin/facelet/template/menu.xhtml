@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.12 2009-06-04 15:21:10 farble1670 Exp $
+   $Id: menu.xhtml,v 1.13 2009-06-04 21:18:38 farble1670 Exp $
 
 -->
 
@@ -31,7 +31,7 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ice="http://www.icesoft.com/icefaces/component">
-    <ice:menuBar 
+    <ice:menuBar
         orientation="horizontal"
         styleClass="menu">
         <ice:menuItem
@@ -50,8 +50,12 @@
             value="#{resources['menu.policyManageItemValue']}"
             action="policy-manage"
             icon="../image/manage.png"/>
+        <ice:menuItem
+            value="#{resources['menu.referralCreateItemValue']}"
+            action="referral-create"
+            icon="../image/new.png"/>
         </ice:menuItem>
-        
+
         <ice:menuItem
             value="#{resources['menu.federationItemValue']}"
             action="federation"
