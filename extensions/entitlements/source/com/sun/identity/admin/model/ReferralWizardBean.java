@@ -22,11 +22,39 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardBean.java,v 1.1 2009-06-04 21:18:37 farble1670 Exp $
+ * $Id: ReferralWizardBean.java,v 1.2 2009-06-04 21:41:44 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-public class ReferralWizardBean extends WizardBean {
+import com.icesoft.faces.context.effects.Effect;
 
+public abstract class ReferralWizardBean extends WizardBean {
+    private ReferralBean referralBean;
+    private Effect nameInputEffect;
+
+    public ReferralWizardBean() {
+        super();
+        reset();
+    }
+
+    public abstract boolean isNameEditable();
+
+    public ReferralBean getReferralBean() {
+        return referralBean;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        referralBean = new ReferralBean();
+    }
+
+    public Effect getNameInputEffect() {
+        return nameInputEffect;
+    }
+
+    public void setNameInputEffect(Effect nameInputEffect) {
+        this.nameInputEffect = nameInputEffect;
+    }
 }
