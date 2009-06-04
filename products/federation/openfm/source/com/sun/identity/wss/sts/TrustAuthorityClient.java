@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.22 2008-10-08 22:53:58 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.23 2009-06-04 01:16:50 mallas Exp $
  *
  */
 
@@ -538,7 +538,8 @@ public class TrustAuthorityClient {
             }
             rst.setTokenType(tokenType);
             RequestSecurityTokenResponse rstR = 
-                   getTrustResponse(rst, stsEndPoint, stsAgentName, wstVersion); 
+                   getTrustResponse(rst, stsEndPoint, stsAgentName, 
+                   wstVersion, credential); 
             Element secTokenE = 
                     (Element)rstR.getRequestedSecurityToken().getFirstChild();
             return parseSecurityToken(secTokenE);
@@ -554,7 +555,8 @@ public class TrustAuthorityClient {
             RequestSecurityToken rst,
             String url,
             String stsAgentName,
-            String wstVersion) throws FAMSTSException {
+            String wstVersion,
+            Object credential) throws FAMSTSException {
         
         SOAPMessage soapMsg = STSUtils.prepareSOAPMessage(url, wstVersion);
         if(soapMsg == null) {
@@ -567,9 +569,13 @@ public class TrustAuthorityClient {
             SOAPRequestHandler handler = new SOAPRequestHandler();
             Map config = new HashMap();
             config.put("providername", stsAgentName);
-            handler.init(config);
+            handler.init(config);            
+            Subject subject = new Subject();
+            if(credential != null) {
+               subject.getPrivateCredentials().add(credential);
+            }
             SOAPMessage secureMsg = handler.secureRequest(
-                    soapMsg, new Subject(), null);           
+                    soapMsg, subject, config);           
             SOAPMessage response = getSOAPResponse(secureMsg, url);            
             handler.validateResponse(response, config);
             return getRequestSecurityTokenResponse(response, wstVersion);

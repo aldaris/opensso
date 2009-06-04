@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2TokenUtils.java,v 1.5 2008-09-08 21:50:14 mallas Exp $
+ * $Id: SAML2TokenUtils.java,v 1.6 2009-06-04 01:16:49 mallas Exp $
  *
  */
 
@@ -38,6 +38,7 @@ import com.sun.identity.saml2.assertion.AttributeStatement;
 import com.sun.identity.saml2.assertion.Attribute;
 import com.sun.identity.saml2.assertion.Subject;
 import com.sun.identity.saml2.assertion.SubjectConfirmation;
+import com.sun.identity.saml2.assertion.SubjectConfirmationData;
 import com.sun.identity.saml2.assertion.NameID;
 import java.security.Principal;
 
@@ -73,14 +74,26 @@ public class SAML2TokenUtils {
         try {
             Subject subj = assertion.getSubject();
             List list = subj.getSubjectConfirmation();
-            
+            if(list == null) {
+               return null; 
+            }
             SubjectConfirmation subjConfirmation =
                            (SubjectConfirmation)list.get(0);
-            List content =  subjConfirmation.getSubjectConfirmationData().
-                    getContent();
+            SubjectConfirmationData subjConfirmationData = 
+                    subjConfirmation.getSubjectConfirmationData();
+            if(subjConfirmationData == null) {
+               if(WSSUtils.debug.messageEnabled()) {
+                  WSSUtils.debug.message("SAML2TokenUtils.getKeyInfo: " +
+                          "No subject confirmation data");
+               }
+               return null; 
+            }
+            List content =  subjConfirmationData.getContent();
             if(content == null || content.isEmpty()) {
-               WSSUtils.debug.error("SAMLTokenUtils.getKeyInfo: " +
+               if(WSSUtils.debug.messageEnabled()) {
+                  WSSUtils.debug.message("SAMLTokenUtils.getKeyInfo: " +
                        "KeyInfo not found");
+               }
                return null;
             }
             
@@ -102,7 +115,7 @@ public class SAML2TokenUtils {
 
         if((assertion.getConditions() != null) &&
                   !(assertion.getConditions().checkDateValidity(
-                    System.currentTimeMillis())) ) {
+                    System.currentTimeMillis() + WSSUtils.getTimeSkew())) ) {
            if(WSSUtils.debug.messageEnabled()) {
               WSSUtils.debug.message("SAML2TokenUtils.validateAssertionToken::"
                       + " assertion time is not valid");
@@ -125,7 +138,7 @@ public class SAML2TokenUtils {
         }
 
         Principal principal = new SecurityPrincipal(ni.getValue()); 
-        subject.getPrincipals().add(principal);
+        subject.getPrincipals().add(principal);       
         Element keyInfo = getKeyInfo(assertion);
         if(keyInfo != null) {
            X509Certificate cert = WSSUtils.getCertificate(keyInfo);

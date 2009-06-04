@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.38 2009-05-15 18:02:59 huacui Exp $
+ * $Id: SOAPRequestHandler.java,v 1.39 2009-06-04 01:16:49 mallas Exp $
  *
  */
 
@@ -101,6 +101,7 @@ import com.sun.identity.wss.security.SAML2Token;
 import com.sun.identity.wss.sts.STSConstants;
 import com.sun.identity.wss.logging.LogUtil;
 import com.iplanet.services.util.Crypt;
+import com.sun.identity.saml.common.SAMLUtilsCommon;
 
 /* iPlanet-PUBLIC-CLASS */
 
@@ -662,7 +663,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
 
         soapMessage = secureMessage.getSOAPMessage();
-        
+                
         String[] data2 = {providerName,uri};
         LogUtil.access(Level.INFO,
                 LogUtil.SUCCESS_SECURE_REQUEST,
@@ -958,6 +959,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                }
                return securityToken;
             }
+            String issuer = SystemConfigurationUtil.getProperty(
+                            ASSERTION_ISSUER);
             NameIdentifier ni = null;
             Map samlAttributes = new HashMap();
             try {
@@ -994,8 +997,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                           samlAttributes.putAll(memberships);
                       }
                     }
-                } else {                    
-                    ni = new NameIdentifier(config.getProviderName());
+                } else {
+                    if(issuer != null && issuer.length() != 0) {
+                       ni = new NameIdentifier(issuer); 
+                    } else {
+                       ni = new NameIdentifier(
+                            SystemConfigurationUtil.getProperty(
+                            Constants.AM_SERVER_HOST));                        
+                    }
                 }
                 
             } catch (Exception ex) {
@@ -1006,14 +1015,19 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                         
             AssertionTokenSpec tokenSpec = new AssertionTokenSpec(ni,
                     secMech, certAlias);
-            String issuer = SystemConfigurationUtil.getProperty(
-                            ASSERTION_ISSUER);
+           
             if(issuer != null && issuer.length() !=0 ) {
                tokenSpec.setIssuer(issuer);
             }
             if(!samlAttributes.isEmpty()) {
                tokenSpec.setClaimedAttributes(samlAttributes); 
             }
+            tokenSpec.setSigningAlias(certAlias);
+            String appliesTo = config.getWSPEndpoint();
+            if(appliesTo != null) {
+               tokenSpec.setAppliesTo(appliesTo);
+            }
+            tokenSpec.setAssertionID(SAMLUtilsCommon.generateID());
             securityToken = factory.getSecurityToken(tokenSpec); 
 
         } else if(
@@ -1094,6 +1108,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                }
                return securityToken;
             }
+            String issuer = SystemConfigurationUtil.getProperty(
+                            ASSERTION_ISSUER);
             NameID ni = null;
             Map samlAttributes = new HashMap();
             try {
@@ -1131,7 +1147,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                       samlAttributes.putAll(memberships); 
                    }
                 } else {
-                  ni.setValue(config.getProviderName());
+                   if(issuer != null && issuer.length() !=0 ) {
+                      ni.setValue(issuer);
+                   } else {
+                      ni.setValue(SystemConfigurationUtil.getProperty(
+                              Constants.AM_SERVER_HOST)); 
+                   }
                 }
 
             } catch (Exception ex) {
@@ -1141,8 +1162,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             SAML2TokenSpec tokenSpec = new SAML2TokenSpec(ni,
                     secMech, certAlias);
 
-            String issuer = SystemConfigurationUtil.getProperty(
-                            ASSERTION_ISSUER);
+
             if(issuer != null && issuer.length() !=0 ) {
                tokenSpec.setIssuer(issuer);
             }
@@ -1150,6 +1170,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             if(!samlAttributes.isEmpty()) {
                tokenSpec.setClaimedAttributes(samlAttributes); 
             }
+            String appliesTo = config.getWSPEndpoint();
+            if(appliesTo != null) {
+               tokenSpec.setAppliesTo(appliesTo);
+            }
+            tokenSpec.setSigningAlias(certAlias);
+            tokenSpec.setAssertionID(SAMLUtilsCommon.generateID());
             securityToken = factory.getSecurityToken(tokenSpec);                                 
 
         } else if(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI.equals(uri) ||
@@ -1475,6 +1501,11 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 pc.setEncryptionAlgorithm(stsConfig.getEncryptionAlgorithm());
                 pc.setEncryptionStrength(stsConfig.getEncryptionStrength());
                 pc.setSigningRefType(stsConfig.getSigningRefType());
+                pc.setSAMLAttributeMapping(stsConfig.getSAMLAttributeMapping());
+                pc.setSAMLAttributeNamespace(
+                        stsConfig.getSAMLAttributeNamespace());
+                pc.setIncludeMemberships(stsConfig.shouldIncludeMemberships());
+                pc.setNameIDMapper(stsConfig.getNameIDMapper());
 
                 return pc;
             }
@@ -1678,17 +1709,39 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
     private List getUserCredentialsFromSSOToken(SSOToken ssoToken) {
         
         if(ssoToken == null) {
+           if(debug.messageEnabled()) {
+              debug.message("SOAPRequestHandler.getUserCredentialsFrom" +
+                      "SSOToken. ssotoken is null"); 
+           }
            return null; 
         }        
         try {
             if(SSOTokenManager.getInstance().isValidToken(ssoToken)) {
-               String encryptedPassword = ssoToken.getProperty(
+               String password = null;
+               boolean useHashedPassword = Boolean.valueOf(
+                    SystemConfigurationUtil.getProperty(
+                    "com.sun.identity.wss.security.useHashedPassword", "true"));
+               if(useHashedPassword) {
+                  password = ssoToken.getProperty(
+                          WSSConstants.HASHED_USER_PASSWORD); 
+               } else {
+                  String encryptedPassword = ssoToken.getProperty(
                        WSSConstants.ENCRYPTED_USER_PASSWORD);
-               if(encryptedPassword == null) {
-                  return null;          
+                  if(encryptedPassword == null) {
+                     if(debug.messageEnabled()) {
+                        debug.message("SOAPRequestHandler.getUserCredentials" +
+                                "FromSSOToken. encrypted password is null"); 
+                     }
+                     return null;          
+                  }
+                  password = Crypt.decrypt(encryptedPassword);
                }
-               String password = Crypt.decrypt(encryptedPassword);
+                            
                if(password == null) {
+                  if(debug.messageEnabled()) {
+                        debug.message("SOAPRequestHandler.getUserCredentials" +
+                                "FromSSOToken. password is null"); 
+                  }
                   return null;
                }
                String userId = ssoToken.getProperty("UserId");
@@ -1698,6 +1751,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                return list;
             }
         } catch (SSOException se) {
+            if(debug.warningEnabled()) {
+               debug.warning("SOAPRequestHandler.getUserCredentials" +
+                                "FromSSOToken. ssoexception", se); 
+            }
             return null;
         }        
         return null;

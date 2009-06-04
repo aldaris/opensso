@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionToken.java,v 1.7 2009-05-09 15:44:00 mallas Exp $
+ * $Id: AssertionToken.java,v 1.8 2009-06-04 01:16:49 mallas Exp $
  *
  */
 
@@ -67,6 +67,8 @@ import com.sun.identity.saml.common.SAMLException;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.assertion.AttributeStatement;
 import com.sun.identity.saml.assertion.Attribute;
+import com.sun.identity.saml.assertion.Conditions;
+import com.sun.identity.saml.assertion.AudienceRestrictionCondition;
 
 
 /**
@@ -165,6 +167,27 @@ public class AssertionToken implements SecurityToken {
                 statements.add(attrStatement);
              }
           }
+          
+          Conditions conditions = null;
+          Date expiryTime = new Date(issueInstant.getTime() 
+                  + spec.getAssertionInterval());
+          try {
+              conditions = new Conditions(issueInstant, expiryTime);
+              String appliesTo = spec.getAppliesTo();
+              if(appliesTo != null) {
+                 List list = new ArrayList();
+                 list.add(appliesTo);
+                 AudienceRestrictionCondition arc =
+                         new AudienceRestrictionCondition(list);
+                 conditions.addAudienceRestrictionCondition(arc);
+              }
+          } catch (SAMLException se) {
+             WSSUtils.debug.error("AssertionToken.createAssertion: " +
+               "SAMLException in creating the assertion.", se);
+              throw new SecurityException(
+                   WSSUtils.bundle.getString("unabletoGenerateAssertion")); 
+          }
+          
 
           if(WSSUtils.debug.messageEnabled()) {
              WSSUtils.debug.message("AssertionToken.createAssertion: " +
@@ -175,7 +198,7 @@ public class AssertionToken implements SecurityToken {
 
           try {
               assertion = new Assertion(spec.getAssertionID(), issuer,
-                      issueInstant, statements); 
+                      issueInstant, conditions, statements); 
           } catch (SAMLException se) {
               WSSUtils.debug.error("AssertionToken.createAssertion: " +
                "SAMLException in creating the assertion.", se);
@@ -378,7 +401,8 @@ public class AssertionToken implements SecurityToken {
         Element keyInfo = doc.createElementNS(
                             SAMLConstants.XMLSIG_NAMESPACE_URI,
                             SAMLConstants.TAG_KEYINFO);
-        keyInfo.setAttribute("xmlns", SAMLConstants.XMLSIG_NAMESPACE_URI);
+        //keyInfo.setAttribute("xmlns", SAMLConstants.XMLSIG_NAMESPACE_URI);
+        keyInfo.setPrefix("ds");
 
         if ( (keyInfoType!=null) && 
                (keyInfoType.equalsIgnoreCase("certificate")) ) {
@@ -386,9 +410,11 @@ public class AssertionToken implements SecurityToken {
             Element x509Data = doc.createElementNS(
                                 SAMLConstants.XMLSIG_NAMESPACE_URI,
                                 SAMLConstants.TAG_X509DATA);
+            x509Data.setPrefix("ds");
             Element x509Certificate = doc.createElementNS(
                                 SAMLConstants.XMLSIG_NAMESPACE_URI,
                                 SAMLConstants.TAG_X509CERTIFICATE);
+            x509Certificate.setPrefix("ds");
             Text certText = doc.createTextNode(base64CertString);
             x509Certificate.appendChild(certText);
             keyInfo.appendChild(x509Data).appendChild(x509Certificate);
@@ -397,11 +423,13 @@ public class AssertionToken implements SecurityToken {
             Element keyName = doc.createElementNS(
                             SAMLConstants.XMLSIG_NAMESPACE_URI,
                             SAMLConstants.TAG_KEYNAME);
+            keyName.setPrefix("ds");
             Text keyNameText = doc.createTextNode(keyNameTextString);
-
+            
             Element keyvalue = doc.createElementNS(
                             SAMLConstants.XMLSIG_NAMESPACE_URI,
                             SAMLConstants.TAG_KEYVALUE);
+            keyvalue.setPrefix("ds");
 
             if (pk.getAlgorithm().equals("DSA")) {
                 DSAPublicKey dsakey = (DSAPublicKey) pk;
@@ -413,8 +441,10 @@ public class AssertionToken implements SecurityToken {
                 Element DSAKeyValue = doc.createElementNS(
                             SAMLConstants.XMLSIG_NAMESPACE_URI
                             , "DSAKeyValue");
+                DSAKeyValue.setPrefix("ds");
                 Element p = doc.createElementNS(
                                 SAMLConstants.XMLSIG_NAMESPACE_URI, "P");
+                p.setPrefix("ds");
                 Text value_p =
                         doc.createTextNode(Base64.encode(_p.toByteArray()));
                 p.appendChild(value_p);
@@ -422,6 +452,7 @@ public class AssertionToken implements SecurityToken {
 
                 Element q = doc.createElementNS(
                                 SAMLConstants.XMLSIG_NAMESPACE_URI, "Q");
+                q.setPrefix("ds");
                 Text value_q =
                         doc.createTextNode(Base64.encode(_q.toByteArray()));
                 q.appendChild(value_q);
@@ -429,6 +460,7 @@ public class AssertionToken implements SecurityToken {
 
                 Element g = doc.createElementNS(
                                 SAMLConstants.XMLSIG_NAMESPACE_URI, "G");
+                g.setPrefix("ds");
                 Text value_g =
                         doc.createTextNode(Base64.encode(_g.toByteArray()));
                 g.appendChild(value_g);
@@ -436,6 +468,7 @@ public class AssertionToken implements SecurityToken {
 
                 Element y = doc.createElementNS(
                                 SAMLConstants.XMLSIG_NAMESPACE_URI, "Y");
+                y.setPrefix("ds");
                 Text value_y =
                         doc.createTextNode(Base64.encode(_y.toByteArray()));
                 y.appendChild(value_y);
@@ -450,12 +483,15 @@ public class AssertionToken implements SecurityToken {
                 Element RSAKeyValue = doc.createElementNS(
                                         SAMLConstants.XMLSIG_NAMESPACE_URI
                                         , "RSAKeyValue");
+                RSAKeyValue.setPrefix("ds");
                 Element modulusNode = doc.createElementNS(
                                         SAMLConstants.XMLSIG_NAMESPACE_URI
                                         , "Modulus");
+                modulusNode.setPrefix("ds");
                 Element exponentNode = doc.createElementNS(
                                         SAMLConstants.XMLSIG_NAMESPACE_URI
                                         , "Exponent");
+                exponentNode.setPrefix("ds");
                 RSAKeyValue.appendChild(modulusNode);
                 RSAKeyValue.appendChild(exponentNode);
                 Text modulusValue =

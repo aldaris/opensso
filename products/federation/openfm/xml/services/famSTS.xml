@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.15 2009-04-21 17:49:10 mallas Exp $
+   $Id: famSTS.xml,v 1.16 2009-06-04 01:16:50 mallas Exp $
                                                                                 
 -->
 
@@ -78,7 +78,7 @@
                    syntax="number"
                    i18nKey="a105">
                    <DefaultValues>
-                       <Value>36000</Value>
+                       <Value>300000</Value>
                    </DefaultValues>
                </AttributeSchema>
                <AttributeSchema name="stsTokenImplClass"

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSReplayPasswd.java,v 1.1 2008-09-08 23:04:26 mallas Exp $
+ * $Id: WSSReplayPasswd.java,v 1.2 2009-06-04 01:16:47 mallas Exp $
  *
  */
 
@@ -32,8 +32,15 @@ import com.iplanet.services.util.Crypt;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import java.util.Map;
+import java.util.Set;
+import java.security.AccessController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * This class is used to set the encrypted password as a session property.
@@ -43,6 +50,12 @@ import javax.servlet.http.HttpServletResponse;
 public class WSSReplayPasswd implements AMPostAuthProcessInterface {
    
     private static final String PASSWORD_TOKEN = "IDToken2";
+    private static boolean useHashedPassword = 
+            Boolean.valueOf(SystemConfigurationUtil.getProperty(
+            "com.sun.identity.wss.security.useHashedPassword", "true"));
+    private static Debug debug = Debug.getInstance("WebServicesSecurity");
+            
+            
     
     /** 
      * Post processing on successful authentication.
@@ -57,16 +70,35 @@ public class WSSReplayPasswd implements AMPostAuthProcessInterface {
         HttpServletRequest request,
         HttpServletResponse response,
         SSOToken ssoToken) throws AuthenticationException {
-
-        String userpasswd = request.getParameter(PASSWORD_TOKEN);
+        
         try {
-            if (userpasswd != null) {
-                ssoToken.setProperty("EncryptedUserPassword", 
+            if(!useHashedPassword) {
+               String userpasswd = request.getParameter(PASSWORD_TOKEN);
+               if (userpasswd != null) {
+                   ssoToken.setProperty("EncryptedUserPassword", 
                        Crypt.encrypt(userpasswd));
+               }
+            } else {
+               String userName = ssoToken.getPrincipal().getName();
+               if(debug.messageEnabled()) {
+                  debug.message("WSSReplayPassword:Authenticated user. " 
+                          + userName);
+               }
+               AMIdentity amId = new AMIdentity(getAdminToken(), userName);
+               Set tmp = amId.getAttribute("userPassword");
+               if(tmp != null && !tmp.isEmpty()) {
+                  String userPassword = (String)tmp.iterator().next();                  
+                  ssoToken.setProperty("HashedUserPassword", userPassword);
+               }                
             }
         } catch (SSOException sse) {
-            System.out.println("WSSReplayPasswd.onLoginSuccess: " +
-                    "sso exception" + sse.getMessage());
+            debug.warning("WSSReplayPasswd.onLoginSuccess: " +
+                    "sso exception", sse);
+        } catch (IdRepoException ire) {
+            if(debug.warningEnabled()) {
+               debug.warning("WSSReplayPassword.onLoginSuccess: ", ire); 
+            }
+            
         }
     }
 
@@ -93,5 +125,10 @@ public class WSSReplayPasswd implements AMPostAuthProcessInterface {
     public void onLogout(HttpServletRequest req,
         HttpServletResponse res,
         SSOToken ssoToken) throws AuthenticationException {           
+    }
+    
+     private static SSOToken getAdminToken() {
+        return (SSOToken) AccessController.doPrivileged(
+                         AdminTokenAction.getInstance());                            
     }
 }

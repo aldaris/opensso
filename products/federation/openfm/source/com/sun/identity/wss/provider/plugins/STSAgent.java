@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.19 2009-02-28 00:59:43 mrudul_uchil Exp $
+ * $Id: STSAgent.java,v 1.20 2009-06-04 01:16:48 mallas Exp $
  *
  */
 
@@ -83,6 +83,11 @@ public class STSAgent extends STSConfig {
     private static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
     private static final String SIGNING_REF_TYPE = "SigningRefType";
     private static final String PROTOCOL_VERSION = "WSTrustVersion";
+    private static final String SAML_ATTRIBUTE_MAPPING = 
+                                 "SAMLAttributeMapping";
+    private static final String INCLUDE_MEMBERSHIPS = "includeMemberships";
+    private static final String SAML_ATTRIBUTE_NS = "AttributeNamespace";
+    private static final String NAMEID_MAPPER = "NameIDMapper";
      
     private static Debug debug = ProviderUtils.debug;
     
@@ -111,6 +116,10 @@ public class STSAgent extends STSConfig {
         attrNames.add(ENCRYPTION_STRENGTH);
         attrNames.add(SIGNING_REF_TYPE);
         attrNames.add(PROTOCOL_VERSION);
+        attrNames.add(INCLUDE_MEMBERSHIPS);
+        attrNames.add(SAML_ATTRIBUTE_MAPPING);
+        attrNames.add(SAML_ATTRIBUTE_NS);
+        attrNames.add(NAMEID_MAPPER);
     }
 
     /** Creates a new instance of STSAgent */
@@ -291,7 +300,27 @@ public class STSAgent extends STSConfig {
         } else if (attr.equals(PROTOCOL_VERSION)) {
             if(value != null && value.length() != 0) {
                this.protocolVersion = value;
+            }        
+        } else if(attr.equals(SAML_ATTRIBUTE_MAPPING)) {
+            if(samlAttributes == null) {
+               samlAttributes = new HashSet();
             }
+            if(value == null) {
+               return;
+            }
+            StringTokenizer st = new StringTokenizer(value, ","); 
+            while(st.hasMoreTokens()) {
+               samlAttributes.add(st.nextToken());
+            }
+            
+        } else if(attr.equals(INCLUDE_MEMBERSHIPS)) {
+            if ((value != null) && (value.length() != 0)) {
+                this.includeMemberships = Boolean.valueOf(value).booleanValue();
+            }
+        } else if(attr.equals(SAML_ATTRIBUTE_NS)) {
+           this.attributeNS = value;
+        } else if(attr.equals(NAMEID_MAPPER)) {
+           this.nameIDMapper = value;
         }
     }
         
@@ -412,6 +441,19 @@ public class STSAgent extends STSConfig {
            config.put(PROTOCOL_VERSION, protocolVersion); 
         }
         
+        if(attributeNS != null) {
+           config.put(SAML_ATTRIBUTE_NS, attributeNS); 
+        }
+        
+        if(nameIDMapper != null) {
+           config.put(NAMEID_MAPPER, nameIDMapper);
+        }
+        
+        if(includeMemberships) {
+           config.put(INCLUDE_MEMBERSHIPS,
+                       Boolean.toString(includeMemberships));
+        }
+        
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();
@@ -428,6 +470,9 @@ public class STSAgent extends STSConfig {
                 attributes.put(SEC_MECH, secMechSet);
             }
 
+            if(samlAttributes != null && !samlAttributes.isEmpty()) {
+               attributes.put(SAML_ATTRIBUTE_MAPPING,samlAttributes); 
+            }
             if (profilePresent) {
                 attributes.remove(AGENT_TYPE_ATTR);
                 // Construct AMIdentity object and save

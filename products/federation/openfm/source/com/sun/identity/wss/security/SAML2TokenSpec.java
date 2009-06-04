@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2TokenSpec.java,v 1.5 2008-08-27 19:05:52 mrudul_uchil Exp $
+ * $Id: SAML2TokenSpec.java,v 1.6 2009-06-04 01:16:49 mallas Exp $
  *
  */
 
@@ -48,7 +48,7 @@ public class SAML2TokenSpec implements SecurityTokenSpec {
     private String confirmationMethod = null;
     private Map<QName, List<String>> claims = null;
     private String appliesTo = null;
-    private int assertionInterval = 0;
+    private long assertionInterval = 300000;
     private String authnContextClassRef = null;
     private String assertionID = null;
     private String signingAlias = null;
@@ -179,7 +179,7 @@ public class SAML2TokenSpec implements SecurityTokenSpec {
      * Returns the assertion interval
      * @return the assertion interval
      */
-    public int getAssertionInterval() {
+    public long getAssertionInterval() {
         return assertionInterval;
     }
     
@@ -187,7 +187,7 @@ public class SAML2TokenSpec implements SecurityTokenSpec {
      * Sets the assertion interval
      * @param interval the assertion interval.
      */
-    public void setAssertionInterval(int interval) {
+    public void setAssertionInterval(long interval) {
         this.assertionInterval = interval;
     }
     

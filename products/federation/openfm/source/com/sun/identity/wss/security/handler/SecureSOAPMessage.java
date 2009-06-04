@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.23 2009-04-21 17:41:25 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.24 2009-06-04 01:16:49 mallas Exp $
  *
  */
 
@@ -1330,8 +1330,7 @@ public class SecureSOAPMessage {
          }
          try {
              msgTimestamp = DateUtils.stringToDate(created).getTime();
-             // Add a time skew for the createdTS for 5 sec.
-             long createdTS = msgTimestamp - 5000;
+             long createdTS = msgTimestamp - WSSUtils.getTimeSkew();
              long expiresTS = DateUtils.stringToDate(expires).getTime();
              long now = new Date().getTime();
              if (created == null ) {

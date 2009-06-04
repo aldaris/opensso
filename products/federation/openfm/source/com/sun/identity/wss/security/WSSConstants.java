@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.13 2009-04-21 17:41:24 mallas Exp $
+ * $Id: WSSConstants.java,v 1.14 2009-06-04 01:16:49 mallas Exp $
  *
  */
 
@@ -204,6 +204,8 @@ public class WSSConstants {
     public static final String wsaNS = "http://www.w3.org/2005/08/addressing";
     
     public static final String wsaMessageID = "MessageID";
+    
+    public static final String HASHED_USER_PASSWORD = "HashedUserPassword";
         
 }
 

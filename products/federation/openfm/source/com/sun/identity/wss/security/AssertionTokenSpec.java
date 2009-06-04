@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionTokenSpec.java,v 1.4 2008-08-27 19:05:52 mrudul_uchil Exp $
+ * $Id: AssertionTokenSpec.java,v 1.5 2009-06-04 01:16:49 mallas Exp $
  *
  */
 
@@ -50,7 +50,7 @@ public class AssertionTokenSpec implements SecurityTokenSpec {
     private String confirmationMethod = null;
     private Map<QName, List<String>> claims = null;
     private String appliesTo = null;
-    private int assertionInterval = 0;
+    private long assertionInterval = 300000;
     private String authMethod = null;
     private String assertionID = null;
     private String signingAlias = null;
@@ -190,7 +190,7 @@ public class AssertionTokenSpec implements SecurityTokenSpec {
      * Returns the assertion interval
      * @return the assertion interval
      */
-    public int getAssertionInterval() {
+    public long getAssertionInterval() {
         return assertionInterval;
     }
     
@@ -198,7 +198,7 @@ public class AssertionTokenSpec implements SecurityTokenSpec {
      * Sets the assertion interval
      * @param interval the assertion interval.
      */
-    public void setAssertionInterval(int interval) {
+    public void setAssertionInterval(long interval) {
         this.assertionInterval = interval;
     }
     

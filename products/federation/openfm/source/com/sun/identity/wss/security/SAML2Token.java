@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Token.java,v 1.7 2009-05-09 15:44:01 mallas Exp $
+ * $Id: SAML2Token.java,v 1.8 2009-06-04 01:16:49 mallas Exp $
  *
  */
 
@@ -85,6 +85,7 @@ public class SAML2Token implements SecurityToken {
     private String authTime = "";
     private Assertion assertion;
     private String certAlias = "";
+    private String signingAlias = "";
     private Element assertionE = null;
     private static final String KEY_INFO_TYPE =
          "com.sun.identity.liberty.ws.security.keyinfotype";
@@ -182,6 +183,12 @@ public class SAML2Token implements SecurityToken {
               assertion.setIssuer(issuer);
           
               Date issueInstant = new Date();
+              Date expiryTime = null;
+              long assertionInterval = spec.getAssertionInterval();
+              if(assertionInterval != 0) {
+                 expiryTime = new Date(issueInstant.getTime() 
+                         + assertionInterval);
+              }
               assertion.setIssueInstant(issueInstant);
               assertion.setSubject(
                     createSubject(nameIdentifier, confirmationMethod));
@@ -205,7 +212,11 @@ public class SAML2Token implements SecurityToken {
                  "Issuer: " + issuer + "\n");
                }
                                         
-               
+               Conditions conds = factory.createConditions();
+               conds.setNotBefore(issueInstant);
+               if(expiryTime != null) {
+                  conds.setNotOnOrAfter(expiryTime); 
+               }
                String appliesTo = spec.getAppliesTo();
                if(appliesTo != null) {
                   AudienceRestriction arc = factory.createAudienceRestriction();
@@ -213,12 +224,10 @@ public class SAML2Token implements SecurityToken {
                   auds.add(appliesTo);
                   arc.setAudience(auds);
                   List list = new ArrayList();
-                  list.add(arc);
-                  Conditions conds = factory.createConditions();
-                  conds.setAudienceRestrictions(list);
-                  assertion.setConditions(conds);
+                  list.add(arc);                  
+                  conds.setAudienceRestrictions(list);                  
                }
-               
+               assertion.setConditions(conds);
                
           } catch (SAML2Exception se) {
               WSSUtils.debug.error("SAML2Token.createAssertion:", se);
@@ -362,7 +371,8 @@ public class SAML2Token implements SecurityToken {
           Element keyInfo = doc.createElementNS(
                             SAML2Constants.NS_XMLSIG,
                             WSSConstants.TAG_KEYINFO);
-          keyInfo.setAttribute("xmlns", SAML2Constants.NS_XMLSIG);
+          keyInfo.setPrefix("ds");
+          //keyInfo.setAttribute("xmlns", SAML2Constants.NS_XMLSIG);
 
           if ( (keyInfoType!=null) && 
                (keyInfoType.equalsIgnoreCase("certificate")) ) {
@@ -370,9 +380,11 @@ public class SAML2Token implements SecurityToken {
                 Element x509Data = doc.createElementNS(
                                 SAML2Constants.NS_XMLSIG,
                                 WSSConstants.TAG_X509DATA);
+                x509Data.setPrefix("ds");
                 Element x509Certificate = doc.createElementNS(
                                 SAML2Constants.NS_XMLSIG,
                                 WSSConstants.TAG_X509CERTIFICATE);
+                x509Certificate.setPrefix("ds");
                 Text certText = doc.createTextNode(base64CertString);
             x509Certificate.appendChild(certText);
             keyInfo.appendChild(x509Data).appendChild(x509Certificate);
@@ -381,11 +393,13 @@ public class SAML2Token implements SecurityToken {
             Element keyName = doc.createElementNS(
                             SAML2Constants.NS_XMLSIG,
                             WSSConstants.TAG_KEYNAME);
+            keyName.setPrefix("ds");
             Text keyNameText = doc.createTextNode(keyNameTextString);
 
             Element keyvalue = doc.createElementNS(
                             SAML2Constants.NS_XMLSIG,
                             WSSConstants.TAG_KEYVALUE);
+            keyvalue.setPrefix("ds");
 
             if (pk.getAlgorithm().equals("DSA")) {
                 DSAPublicKey dsakey = (DSAPublicKey) pk;
@@ -397,8 +411,10 @@ public class SAML2Token implements SecurityToken {
                 Element DSAKeyValue = doc.createElementNS(
                             SAML2Constants.NS_XMLSIG
                             , "DSAKeyValue");
+                DSAKeyValue.setPrefix("ds");
                 Element p = doc.createElementNS(
                                 SAML2Constants.NS_XMLSIG, "P");
+                p.setPrefix("ds");
                 Text value_p =
                         doc.createTextNode(Base64.encode(_p.toByteArray()));
                 p.appendChild(value_p);
@@ -406,6 +422,7 @@ public class SAML2Token implements SecurityToken {
 
                 Element q = doc.createElementNS(
                                 SAML2Constants.NS_XMLSIG, "Q");
+                q.setPrefix("ds");
                 Text value_q =
                         doc.createTextNode(Base64.encode(_q.toByteArray()));
                 q.appendChild(value_q);
@@ -413,6 +430,7 @@ public class SAML2Token implements SecurityToken {
 
                 Element g = doc.createElementNS(
                                 SAML2Constants.NS_XMLSIG, "G");
+                g.setPrefix("ds");
                 Text value_g =
                         doc.createTextNode(Base64.encode(_g.toByteArray()));
                 g.appendChild(value_g);
@@ -420,6 +438,7 @@ public class SAML2Token implements SecurityToken {
 
                 Element y = doc.createElementNS(
                                 SAML2Constants.NS_XMLSIG, "Y");
+                y.setPrefix("ds");
                 Text value_y =
                         doc.createTextNode(Base64.encode(_y.toByteArray()));
                 y.appendChild(value_y);
@@ -434,12 +453,15 @@ public class SAML2Token implements SecurityToken {
                 Element RSAKeyValue = doc.createElementNS(
                                         SAML2Constants.NS_XMLSIG
                                         , "RSAKeyValue");
+                RSAKeyValue.setPrefix("ds");
                 Element modulusNode = doc.createElementNS(
                                         SAML2Constants.NS_XMLSIG
                                         , "Modulus");
+                modulusNode.setPrefix("ds");
                 Element exponentNode = doc.createElementNS(
                                         SAML2Constants.NS_XMLSIG
                                         , "Exponent");
+                exponentNode.setPrefix("ds");
                 RSAKeyValue.appendChild(modulusNode);
                 RSAKeyValue.appendChild(exponentNode);
                 Text modulusValue =
@@ -506,7 +528,8 @@ public class SAML2Token implements SecurityToken {
      public void sign(String alias) throws SecurityException {
          try {             
              X509Certificate x509Cert = 
-                 AMTokenProvider.getKeyProvider().getX509Certificate(certAlias);
+                 AMTokenProvider.getKeyProvider().getX509Certificate(
+                 spec.getSigningAlias());
              PrivateKey privateKey = 
                      AMTokenProvider.getKeyProvider().getPrivateKey(alias);
              assertion.sign(privateKey, x509Cert);            

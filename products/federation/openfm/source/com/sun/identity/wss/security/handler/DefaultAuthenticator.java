@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.20 2009-05-15 18:03:32 huacui Exp $
+ * $Id: DefaultAuthenticator.java,v 1.21 2009-06-04 01:16:49 mallas Exp $
  *
  */
 
@@ -571,7 +571,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
 
         if((assertion.getConditions() != null) &&
                   !(assertion.getConditions().checkDateValidity(
-                    System.currentTimeMillis())) ) {
+                    System.currentTimeMillis() + WSSUtils.getTimeSkew())) ) {
            if(debug.messageEnabled()) {
               debug.message("DefaultAuthenticator.validateAssertionToken:: " +
               " assertion time is not valid");
@@ -898,7 +898,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             return false;
         }
         //5sec for time skew
-        long now = (new Date()).getTime() + 5000;       
+        long now = (new Date()).getTime() + WSSUtils.getTimeSkew();       
         if(now - tokentime >= 0) {
             return true; 
         }

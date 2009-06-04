@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.17 2009-05-09 15:44:01 mallas Exp $
+ * $Id: WSSUtils.java,v 1.18 2009-06-04 01:16:49 mallas Exp $
  *
  */
 
@@ -863,5 +863,10 @@ public class WSSUtils {
         QName qName = new QName(namespace, MEMBERSHIPS);
         map.put(qName, roles);
         return map;
+    }
+    
+    public static long getTimeSkew() {
+        return Long.parseLong(SystemConfigurationUtil.getProperty(
+                "com.sun.identity.wss.security.timeskew", "5000"));                
     }
 }
