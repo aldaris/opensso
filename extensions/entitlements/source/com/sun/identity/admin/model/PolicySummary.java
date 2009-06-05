@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicySummary.java,v 1.4 2009-06-05 20:36:40 farble1670 Exp $
+ * $Id: PolicySummary.java,v 1.5 2009-06-05 21:39:27 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -58,7 +58,8 @@ public abstract class PolicySummary
 
     protected PolicyWizardAdvancedTabIndex getGotoTabIndex(ActionEvent event) {
         Object o = event.getComponent().getAttributes().get("gotoTabIndex");
-        PolicyWizardAdvancedTabIndex index = (PolicyWizardAdvancedTabIndex) o;
+        Integer i = (Integer)o;
+        PolicyWizardAdvancedTabIndex index = PolicyWizardAdvancedTabIndex.valueOf(i.intValue());
 
         return index;
     }
