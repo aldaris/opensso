@@ -22,19 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardHandler.java,v 1.2 2009-06-05 16:45:44 farble1670 Exp $
+ * $Id: ReferralWizardHandler.java,v 1.3 2009-06-05 21:46:58 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
 
+import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
-import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.ReferralWizardBean;
 import java.util.List;
+import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.PhaseId;
 
 public abstract class ReferralWizardHandler extends WizardHandler {
     private MessagesBean messagesBean;
@@ -52,6 +53,13 @@ public abstract class ReferralWizardHandler extends WizardHandler {
     public String finishAction() {
         // TODO
         getWizardBean().reset();
+
+        MessageBean mb = new MessageBean();
+        Resources r = new Resources();
+        mb.setSummary(r.getString(this, "finish"));
+        mb.setSeverity(FacesMessage.SEVERITY_INFO);
+        messagesBean.addMessageBean(mb);
+
         return getFinishAction();
     }
 
@@ -59,6 +67,13 @@ public abstract class ReferralWizardHandler extends WizardHandler {
     public String cancelAction() {
         // TODO
         getWizardBean().reset();
+
+        MessageBean mb = new MessageBean();
+        Resources r = new Resources();
+        mb.setSummary(r.getString(this, "cancel"));
+        mb.setSeverity(FacesMessage.SEVERITY_INFO);
+        messagesBean.addMessageBean(mb);
+
         return getCancelAction();
     }
 
