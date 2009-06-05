@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSSchema.java,v 1.10 2009-01-13 06:56:08 mahesh_prasad_r Exp $
+ * $Id: SMSSchema.java,v 1.11 2009-06-05 19:25:27 veiming Exp $
  *
  */
 
@@ -503,6 +503,9 @@ public class SMSSchema {
                 break;
             case '/':
                 buf.append("&#47;");
+                break;
+            case '\u00A0':
+                buf.append("&#x00A0;");
                 break;
             default:
                 buf.append(c);
