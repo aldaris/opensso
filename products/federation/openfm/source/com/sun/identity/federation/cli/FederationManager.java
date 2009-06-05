@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.8 2008-08-19 19:12:21 veiming Exp $
+ * $Id: FederationManager.java,v 1.9 2009-06-05 19:33:43 veiming Exp $
  *
  */
 
@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class FederationManager extends CLIDefinitionBase {
     private static final String DEFINITION_CLASS =
-        "com.sun.identity.federation.cli.stubs.FederationManagerCLI";
+        "com.sun.identity.federation.cli.definition.FederationManager";
 
     static final String DEFAULT_SPECIFICATION = 
         FedCLIConstants.SAML2_SPECIFICATION;

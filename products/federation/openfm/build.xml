@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.54 2009-05-19 14:27:58 kevinserwin Exp $
+   $Id: build.xml,v 1.55 2009-06-05 19:33:43 veiming Exp $
 
 -->
 
@@ -78,25 +78,6 @@
         </copy>
 
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-            destdir="${openfm.classes.dir}" source="1.5" target="1.5" 
-            srcdir="${openfm.src.dir}"
-            debug="${build.debug}" debuglevel="${build.debuglevel}"
-            includes="com/sun/identity/federation/cli/definition/FederationManager.java">
-            <classpath refid="build.class.path"/>
-            <compilerarg value="-Xlint:deprecation" />
-        </javac>
-        <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
-            <classpath refid="build.class.path"/>
-            <arg value="${openfm.res.i18n.dir}"/>
-            <arg value="com.sun.identity.federation.cli.definition.FederationManager"/>
-        </java>
-        <java classname="com.sun.identity.cli.tools.DefinitionStubCreator">
-            <classpath refid="build.class.path"/>
-            <arg value="com.sun.identity.federation.cli.definition.FederationManager"/>
-            <arg value="${openfm.src.dir}/com/sun/identity/federation/cli/stubs/FederationManagerCLI.java"/>
-            <arg value="com.sun.identity.federation.cli.stubs"/>
-        </java>
-        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
             destdir="${openfm.classes.dir}" source="1.5" target="1.5"
             debug="${build.debug}" debuglevel="${build.debuglevel}"
             srcdir="${openfm.src.dir}">
@@ -104,6 +85,11 @@
             <compilerarg value="-Xlint:deprecation" />
         </javac>
 
+        <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
+            <classpath refid="build.class.path"/>
+            <arg value="${openfm.res.i18n.dir}"/>
+            <arg value="com.sun.identity.federation.cli.definition.FederationManager"/>
+        </java>
     </target>
 
     <target name="clihelper" depends="preparebuild">

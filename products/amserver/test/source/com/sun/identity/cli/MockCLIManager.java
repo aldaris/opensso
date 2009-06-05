@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MockCLIManager.java,v 1.3 2008-06-25 05:44:16 qcheng Exp $
+ * $Id: MockCLIManager.java,v 1.4 2009-06-05 19:33:42 veiming Exp $
  *
  */
 
@@ -33,7 +33,7 @@ package com.sun.identity.cli;
  */
 public class MockCLIManager extends CLIDefinitionBase {
     private static String DEFINITION_CLASS =
-        "com.sun.identity.cli.stubs.MockCLI";
+        "com.sun.identity.cli.defintion.MockCLI";
 
     /**
      * Constructs an instance of this class.

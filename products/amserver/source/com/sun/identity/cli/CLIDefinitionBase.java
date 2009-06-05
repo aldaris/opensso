@@ -22,14 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionBase.java,v 1.8 2008-10-09 04:28:56 veiming Exp $
+ * $Id: CLIDefinitionBase.java,v 1.9 2009-06-05 19:33:41 veiming Exp $
  *
  */
 
 package com.sun.identity.cli;
 
-import com.sun.identity.cli.stubs.ICLIStub;
-import com.sun.identity.cli.stubs.SubCommandStub;
+import com.sun.identity.cli.annotation.DefinitionClassInfo;
+import com.sun.identity.cli.annotation.Macro;
+import com.sun.identity.cli.annotation.SubCommandInfo;
+import com.sun.identity.cli.tools.CLIDefinitionGenerator;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,10 +43,9 @@ import java.util.ResourceBundle;
  * This is the base class for CLI definition class.
  */
 public abstract class CLIDefinitionBase implements IDefinition {
-    private List subCommands = new ArrayList();
+    private List<SubCommand> subCommands = new ArrayList<SubCommand>();
     private String definitionClass;
     private String logName;
-    private ICLIStub defObject;
     protected ResourceBundle rb;
 
     /**
@@ -54,8 +56,87 @@ public abstract class CLIDefinitionBase implements IDefinition {
     public CLIDefinitionBase(String definitionClass)
         throws CLIException {
         this.definitionClass = definitionClass;
-        defObject = getDefinitionObject();
-        logName = defObject.getLogName();
+    }
+
+    private Class getDefinitionClass()
+        throws CLIException {
+        try {
+            return Class.forName(definitionClass);
+        } catch (ClassNotFoundException e) {
+            throw new CLIException(e, ExitCodes.MISSING_DEFINITION_CLASS);
+        }
+    }
+
+    private void getProductName(Class clazz) 
+        throws CLIException {
+        try {
+            Field pdtField = clazz.getDeclaredField(
+            CLIConstants.FLD_PRODUCT_NAME);
+
+            if (pdtField != null) {
+                DefinitionClassInfo classInfo = pdtField.getAnnotation(
+                    DefinitionClassInfo.class);
+            
+                rb = ResourceBundle.getBundle(classInfo.resourceBundle());
+            } else {
+                throw new CLIException("Incorrect Definiton, class" +
+                    definitionClass + " missing product field",
+                    ExitCodes.INCORRECT_DEFINITION_CLASS);
+            }
+        } catch (NoSuchFieldException e) {
+            throw new CLIException(e,
+                ExitCodes.INCORRECT_DEFINITION_CLASS);
+        }
+    }
+  
+    private void getCommands(Class clazz) 
+        throws CLIException 
+    {
+        Field[] fields = clazz.getDeclaredFields();
+
+        for (Field fld : fields) {
+            SubCommandInfo info = fld.getAnnotation(SubCommandInfo.class);
+ 
+            if (info != null) {
+                if ((info.implClassName() == null) ||
+                    (info.description() == null)
+                ) {
+                    throw new CLIException("Incorrect Definiton, class" +
+                        definitionClass + " missing product field",
+                        ExitCodes.INCORRECT_DEFINITION_CLASS);
+                }
+ 
+                List<String> mandatoryOptions = CLIDefinitionGenerator.toList(
+                    info.mandatoryOptions());
+                List<String> optionalOptions = CLIDefinitionGenerator.toList(
+                    info.optionalOptions());
+                List<String> optionAliases = CLIDefinitionGenerator.toList(
+                    info.optionAliases());
+
+                if ((info.macro() != null) && (info.macro().length() > 0)) {
+                    try {
+                        Field fldMarco = clazz.getDeclaredField(info.macro());
+                        Macro macroInfo =(Macro)fldMarco.getAnnotation(
+                            Macro.class);
+                        CLIDefinitionGenerator.appendToList(mandatoryOptions,
+                            macroInfo.mandatoryOptions());
+                        CLIDefinitionGenerator.appendToList(optionalOptions,
+                            macroInfo.optionalOptions());
+                        CLIDefinitionGenerator.appendToList(optionAliases,
+                            macroInfo.optionAliases());
+                    } catch (NoSuchFieldException e) {
+                        throw new CLIException(e,
+                            ExitCodes.INCORRECT_DEFINITION_CLASS);
+                    }
+                }
+
+                boolean webSupport = info.webSupport().equals("true");
+                String subcmdName = fld.getName().replace('_', '-');
+                subCommands.add(new SubCommand(
+                    this, rb, subcmdName, mandatoryOptions, optionalOptions,
+                    optionAliases, info.implClassName(), webSupport));
+            }
+        }
     }
     
     /**
@@ -65,41 +146,11 @@ public abstract class CLIDefinitionBase implements IDefinition {
      * @throws CLIException if command definition cannot initialized.
      */    
     public void init(Locale locale) throws CLIException {
-        String rbName = defObject.getResourceBundleName();
-        rb = ResourceBundle.getBundle(rbName, locale);
-        getCommands();
+        Class defClass = getDefinitionClass();
+        getProductName(defClass);
+        getCommands(defClass);
     }
     
-    private ICLIStub getDefinitionObject()
-        throws CLIException {
-        try {
-            Class clazz = Class.forName(definitionClass);
-            return (ICLIStub)clazz.newInstance();
-        } catch (ClassNotFoundException e) {
-            throw new CLIException(e, ExitCodes.MISSING_DEFINITION_CLASS);
-        } catch (IllegalAccessException e) {
-            throw new CLIException(e, ExitCodes.INSTANTIATION_DEFINITION_CLASS);
-        } catch (InstantiationException e) {
-            throw new CLIException(e, ExitCodes.INSTANTIATION_DEFINITION_CLASS);
-        }
-
-    }
-
-    private void getCommands() 
-        throws CLIException 
-    {
-        List subCommandStubs = defObject.getSubCommandStubs();
-        for (Iterator i = subCommandStubs.iterator(); i.hasNext(); ) {
-            SubCommandStub stub = (SubCommandStub)i.next();
-            String subcmdName = stub.name;
-            subcmdName = subcmdName.replace('_', '-');
-            subCommands.add(new SubCommand(
-                this, rb, subcmdName, stub.mandatoryOptions, 
-                stub.optionalOptions, stub.aliasOptions, stub.implClassName,
-                stub.webSupport));
-        }
-    }
-
     /**
      * Returns a list of sub commands.
      *

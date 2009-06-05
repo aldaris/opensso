@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.75 2009-06-03 20:46:49 veiming Exp $
+   $Id: build.xml,v 1.76 2009-06-05 19:33:40 veiming Exp $
 
 -->
 
@@ -88,6 +88,11 @@
     <target name="build" depends="checkjar, preparebuild, sharedlib">        
         <antcall target="enterprise" />
         <antcall target="not-enterprise" />
+        <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
+            <classpath refid="build.class.path"/>
+            <arg value="${amserver.res.i18n.dir}"/>
+            <arg value="com.sun.identity.cli.definition.AccessManager"/>
+        </java>
     </target>
     
     <target name="enterprise" if="enterprise.authmodules.present">   
@@ -206,9 +211,6 @@
             <exclude name="**/package-info.java"/>
             <exclude name="**/com/sun/identity/tools/logdoc/*.java"/>
             <exclude name="**/com/sun/identity/diagnostic/**"/>
-            <exclude name="**/com/sun/identity/cli/tools/*.java"/>
-            <exclude name="**/com/sun/identity/cli/annotation/*.java"/>
-            <exclude name="**/com/sun/identity/cli/definition/*.java"/>
             <exclude name="**/com/sun/identity/authentication/modules/safeword/*.java"/>
             <exclude name="**/com/sun/identity/authentication/modules/securid/*.java"/>
             <exclude name="**/com/sun/identity/authentication/modules/unix/*.java"/>       
@@ -470,49 +472,6 @@
         <mkdir dir="${amserver.built.publicapidocs.dir}"/>
         <copy file="${amserver.config.res.dir}/serverAttributeMap.properties"
               toFile="${amserver.classes.dir}/serverAttributeMap.properties" />
-        <antcall target="preparecli" />
-    </target>
-    
-    <target name="preparecli" unless="amserver.preparecli.done">
-        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${amserver.classes.dir}" source="1.5" target="1.5"
-               srcdir="${amserver.src.dir}/com/sun/identity/cli/annotation"
-               debug="${build.debug}" debuglevel="${build.debuglevel}">
-            <classpath refid="build.class.path"/>
-            <include name="*.java"/>
-        </javac>
-        
-        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${amserver.classes.dir}" source="1.5" target="1.5"
-               srcdir="${amserver.src.dir}/com/sun/identity/cli/tools"
-               debug="${build.debug}" debuglevel="${build.debuglevel}">
-            <classpath refid="build.class.path"/>
-            <include name="*.java"/>
-        </javac>
-        
-        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${amserver.classes.dir}" source="1.5" target="1.5"
-               srcdir="${amserver.src.dir}/com/sun/identity/cli/definition"
-               debug="${build.debug}" debuglevel="${build.debuglevel}">
-            <classpath refid="build.class.path"/>
-            <include name="*.java"/>
-        </javac>
-        
-        <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
-            <classpath refid="build.class.path"/>
-            <arg value="${amserver.res.i18n.dir}"/>
-            <arg value="com.sun.identity.cli.definition.AccessManager"/>
-        </java>
-        
-        <java classname="com.sun.identity.cli.tools.DefinitionStubCreator">
-            <classpath refid="build.class.path"/>
-            <arg value="com.sun.identity.cli.definition.AccessManager"/>
-            <arg value="${amserver.src.dir}/com/sun/identity/cli/stubs/AccessManagerCLI.java"/>
-            <arg value="com.sun.identity.cli.stubs"/>
-        </java>
-        
-        <property name="amserver.preparecli.done" value="true" />
-        <concat destfile="${tracker}" append="true">amserver.preparecli.done=true&#10;</concat>
     </target>
     
     <target name="clean" depends="nightly-clean,war-clean,jars-clean,clientsdk-clean,demo-clean,samples-clean,distauth-clean,unittest-clean">
@@ -523,8 +482,6 @@
         <delete dir="${amserver.classes.dir}/jaxrpc"/>
         <delete dir="${amserver.classes.dir}"/>
         <delete dir="${amserver.built.dir}"/>
-        <delete file="${amserver.src.dir}/com/sun/identity/cli/stubs/AccessManagerCLI.java"/>
-        <delete file="${amserver.unittest.dir}/source/com/sun/identity/cli/stubs/MockCLI.java"/>
         <delete file="${tracker}" />
     </target>
     

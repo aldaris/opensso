@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.6 2008-06-25 05:42:07 qcheng Exp $
+ * $Id: AccessManager.java,v 1.7 2009-06-05 19:33:40 veiming Exp $
  *
  */
 
@@ -33,7 +33,7 @@ package com.sun.identity.cli;
  */
 public class AccessManager extends CLIDefinitionBase {
     private static String DEFINITION_CLASS =
-        "com.sun.identity.cli.stubs.AccessManagerCLI";
+        "com.sun.identity.cli.definition.AccessManager";
 
     /**
      * Constructs an instance of this class.
