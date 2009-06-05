@@ -22,55 +22,51 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionsPolicySummary.java,v 1.4 2009-06-05 20:36:40 farble1670 Exp $
+ * $Id: ResourcesReferralSummary.java,v 1.1 2009-06-05 20:36:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-public class ConditionsPolicySummary extends PolicySummary {
+import java.util.List;
 
-    public ConditionsPolicySummary(PolicyWizardBean policyWizardBean) {
-        super(policyWizardBean);
+public class ResourcesReferralSummary extends ReferralSummary {
+
+    public ResourcesReferralSummary(ReferralWizardBean referralWizardBean) {
+        super(referralWizardBean);
     }
 
     public String getLabel() {
         // TODO: localize
-        return "Conditions";
+        return "Applications";
     }
 
-    private int getCount() {
-        ViewCondition vc = getPolicyWizardBean().getPrivilegeBean().getViewCondition();
-        if (vc == null) {
+    private int getSize() {
+        List<Resource> resources = getReferralWizardBean().getReferralBean().getResources();
+        if (resources == null) {
             return 0;
         }
-        return vc.getSizeLeafs();
+
+        return resources.size();
     }
 
     public String getValue() {
-        int count = getCount();
-
-        return Integer.toString(count);
+        return Integer.toString(getSize());
     }
 
     public boolean isExpandable() {
-        int count = getCount();
-        return count > 0;
-    }
+        return getSize() > 0;
 
+    }
     public String getIcon() {
-        return "../image/and.png";
+        return "../image/application.png";
     }
 
     public String getTemplate() {
-        return "/admin/facelet/template/policy-summary-conditions.xhtml";
+        return "/admin/facelet/template/referral-summary-resources.xhtml";
     }
 
     public int getGotoStep() {
-        return PolicyWizardStep.ADVANCED.toInt();
+        return ReferralWizardStep.RESOURCES.toInt();
     }
 
-    @Override
-    public int getTabIndex() {
-        return PolicyWizardAdvancedTabIndex.CONDITIONS.toInt();
-    }
 }

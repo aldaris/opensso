@@ -22,40 +22,40 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamePolicySummary.java,v 1.4 2009-06-05 20:36:40 farble1670 Exp $
+ * $Id: ReferralWizardStep.java,v 1.1 2009-06-05 20:36:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-public class NamePolicySummary extends PolicySummary {
+import java.util.HashMap;
+import java.util.Map;
 
-    public NamePolicySummary(PolicyWizardBean policyWizardBean) {
-        super(policyWizardBean);
+public enum ReferralWizardStep {
+
+    NAME(0),
+    RESOURCES(1),
+    SUBJECTS(2),
+    SUMMARY(4);
+
+    private final int stepNumber;
+    private static final Map<Integer, ReferralWizardStep> intValues = new HashMap<Integer, ReferralWizardStep>() {
+        {
+            put(NAME.toInt(), NAME);
+            put(RESOURCES.toInt(), RESOURCES);
+            put(SUBJECTS.toInt(), SUBJECTS);
+            put(SUMMARY.toInt(), SUMMARY);
+        }
+    };
+
+    ReferralWizardStep(int stepNumber) {
+        this.stepNumber = stepNumber;
     }
 
-    public String getLabel() {
-        // TODO: localize
-        return "Name";
+    public int toInt() {
+        return stepNumber;
     }
 
-    public String getValue() {
-        return getPolicyWizardBean().getPrivilegeBean().getName();
-    }
-
-    public boolean isExpandable() {
-        return false;
-    }
-
-    public String getIcon() {
-        // TODO
-        return "../image/edit.png";
-    }
-
-    public String getTemplate() {
-        return null;
-    }
-
-    public int getGotoStep() {
-        return PolicyWizardStep.NAME.toInt();
+    public static ReferralWizardStep valueOf(int i) {
+        return intValues.get(Integer.valueOf(i));
     }
 }

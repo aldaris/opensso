@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StaticAttributesPolicySummary.java,v 1.3 2009-06-04 11:49:17 veiming Exp $
+ * $Id: StaticAttributesPolicySummary.java,v 1.4 2009-06-05 20:36:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -50,7 +50,7 @@ public class StaticAttributesPolicySummary extends AttributesPolicySummary {
     }
 
     @Override
-    public PolicyWizardAdvancedTabIndex getAdvancedTabIndex() {
-        return PolicyWizardAdvancedTabIndex.RESOURCE_ATTRIBUTES;
+    public int getTabIndex() {
+        return PolicyWizardAdvancedTabIndex.RESOURCE_ATTRIBUTES.toInt();
     }
 }

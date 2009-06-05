@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
@@ -23,28 +23,24 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: realm-select.xhtml,v 1.6 2009-06-05 20:36:42 farble1670 Exp $
+   $Id: referral-summary-subjects.xhtml,v 1.1 2009-06-05 20:36:42 farble1670 Exp $
 
 -->
 
-<span xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ice="http://www.icesoft.com/icefaces/component">
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
 
-    <ui:include src="realm-select-popup.xhtml"/>
-    
-    <ice:panelGroup
-        visible="#{o:size(realmsBean.realmBeans) > 1}"
-        styleClass="realm-select">
-        <ice:commandLink
-            styleClass="command-link"
-            immediate="true"
-            actionListener="#{realmsHandler.realmSelectListener}">
-            <ice:outputLabel
-                value="#{resources['realm-select.realm']}"/>
+    <ice:panelGroup>
+        <ice:panelGrid
+            styleClass="summary-strings">
+            <pre>
             <ice:outputText
-                value="#{realmsBean.realmBean.title}"/>
-        </ice:commandLink>
-    </ice:panelGroup>
-</span>
+                value="#{summary.referralWizardBean.referralBean.subjectsToFormattedString}"/>
+            </pre>
+        </ice:panelGrid>
+    </ice:panelGroup></span>

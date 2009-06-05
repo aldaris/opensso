@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralBean.java,v 1.3 2009-06-05 16:45:44 farble1670 Exp $
+ * $Id: ReferralBean.java,v 1.4 2009-06-05 20:36:40 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.faces.model.SelectItem;
 
@@ -78,5 +79,49 @@ public class ReferralBean {
 
     public void setRealmBeans(List<RealmBean> realmBeans) {
         this.realmBeans = realmBeans;
+    }
+
+    public String getListToString(List list) {
+        StringBuffer b = new StringBuffer();
+
+        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
+            b.append(i.next());
+            if (i.hasNext()) {
+                b.append(",");
+            }
+
+        }
+
+        return b.toString();
+    }
+
+    public String getResourcesToString() {
+        return getListToString(resources);
+    }
+
+    public String getSubjectsToString() {
+        return getListToString(realmBeans);
+    }
+
+    public String getListToFormattedString(List list) {
+        StringBuffer b = new StringBuffer();
+
+        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
+            b.append(i.next());
+            if (i.hasNext()) {
+                b.append("\n");
+            }
+
+        }
+
+        return b.toString();
+    }
+
+    public String getResourcesToFormattedString() {
+        return getListToFormattedString(resources);
+    }
+
+    public String getSubjectsToFormattedString() {
+        return getListToFormattedString(realmBeans);
     }
 }

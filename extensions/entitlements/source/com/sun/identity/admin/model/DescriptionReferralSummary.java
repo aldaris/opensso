@@ -22,55 +22,39 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionsPolicySummary.java,v 1.4 2009-06-05 20:36:40 farble1670 Exp $
+ * $Id: DescriptionReferralSummary.java,v 1.1 2009-06-05 20:36:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-public class ConditionsPolicySummary extends PolicySummary {
+public class DescriptionReferralSummary extends ReferralSummary {
 
-    public ConditionsPolicySummary(PolicyWizardBean policyWizardBean) {
-        super(policyWizardBean);
+    public DescriptionReferralSummary(ReferralWizardBean referralWizardBean) {
+        super(referralWizardBean);
     }
 
     public String getLabel() {
         // TODO: localize
-        return "Conditions";
-    }
-
-    private int getCount() {
-        ViewCondition vc = getPolicyWizardBean().getPrivilegeBean().getViewCondition();
-        if (vc == null) {
-            return 0;
-        }
-        return vc.getSizeLeafs();
+        return "Description";
     }
 
     public String getValue() {
-        int count = getCount();
-
-        return Integer.toString(count);
+        return getReferralWizardBean().getReferralBean().getDescription();
     }
 
     public boolean isExpandable() {
-        int count = getCount();
-        return count > 0;
+        return false;
     }
 
     public String getIcon() {
-        return "../image/and.png";
+        return "../image/description.png";
     }
 
     public String getTemplate() {
-        return "/admin/facelet/template/policy-summary-conditions.xhtml";
+        return null;
     }
 
     public int getGotoStep() {
-        return PolicyWizardStep.ADVANCED.toInt();
-    }
-
-    @Override
-    public int getTabIndex() {
-        return PolicyWizardAdvancedTabIndex.CONDITIONS.toInt();
+        return ReferralWizardStep.NAME.toInt();
     }
 }

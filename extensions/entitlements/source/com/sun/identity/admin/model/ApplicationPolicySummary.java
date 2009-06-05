@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationPolicySummary.java,v 1.3 2009-06-04 11:49:14 veiming Exp $
+ * $Id: ApplicationPolicySummary.java,v 1.4 2009-06-05 20:36:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -55,8 +55,8 @@ public class ApplicationPolicySummary extends PolicySummary {
         return null;
     }
 
-    public PolicyWizardStep getGotoStep() {
-        return PolicyWizardStep.NAME;
+    public int getGotoStep() {
+        return PolicyWizardStep.NAME.toInt();
     }
 
 }

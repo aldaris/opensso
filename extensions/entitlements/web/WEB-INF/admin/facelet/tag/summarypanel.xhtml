@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: summarypanel.xhtml,v 1.4 2009-06-04 11:49:24 veiming Exp $
+   $Id: summarypanel.xhtml,v 1.5 2009-06-05 20:36:41 farble1670 Exp $
 
 -->
 
@@ -39,12 +39,12 @@
             styleClass="summary-panel">
 
             <o:multipanel
-                collapsible="#{policySummary.expandable}"
+                collapsible="#{summary.expandable}"
                 removeable="false"
-                visible="#{policySummary.panelVisible}"
-                expanded="#{policySummary.panelExpanded}"
-                bean="#{policySummary}"
-                handler="#{policySummary}">
+                visible="#{summary.panelVisible}"
+                expanded="#{summary.panelExpanded}"
+                bean="#{summary}"
+                handler="#{summary}">
 
                 <ui:define name="panel-title">
                     <ice:panelGrid
@@ -52,31 +52,31 @@
                         columnClasses="summary-tableCol1,summary-tableCol2"
                         columns="2">
                         <ice:commandLink
-                            actionListener="#{policySummary.editListener}"
+                            actionListener="#{summary.editListener}"
                             partialSubmit="true"
                             styleClass="command-link">
                             <f:attribute
                                 name="gotoStep"
-                                value="#{policySummary.gotoStep}"/>
+                                value="#{summary.gotoStep}"/>
                             <f:attribute
-                                name="gotoAdvancedTabIndex"
-                                value="#{policySummary.advancedTabIndex}"/>
+                                name="gotoTabIndex"
+                                value="#{summary.tabIndex}"/>
                             <ice:graphicImage
                                 style="padding-right: 2px"
-                                value="#{policySummary.icon}"/>
+                                value="#{summary.icon}"/>
                             <ice:outputText
                                 style="font-weight: bold"
-                                value="#{policySummary.label}"/>
+                                value="#{summary.label}"/>
                         </ice:commandLink>
                         <ice:outputText
-                            value="#{policySummary.value}"/>
+                            value="#{summary.value}"/>
                     </ice:panelGrid>
                 </ui:define>
                 <ui:define name="panel-body">
                     <ice:panelGroup
-                        rendered="#{policySummary.template != null}">
+                        rendered="#{summary.template != null}">
                         <ui:include
-                            src="#{policySummary.template}"/>
+                            src="#{summary.template}"/>
                         </ice:panelGroup>
                 </ui:define>
             </o:multipanel>

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributesPolicySummary.java,v 1.2 2009-06-04 11:49:14 veiming Exp $
+ * $Id: AttributesPolicySummary.java,v 1.3 2009-06-05 20:36:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -80,7 +80,7 @@ public abstract class AttributesPolicySummary extends PolicySummary {
         return "../image/device.png";
     }
 
-    public PolicyWizardStep getGotoStep() {
-        return PolicyWizardStep.ADVANCED;
+    public int getGotoStep() {
+        return PolicyWizardStep.ADVANCED.toInt();
     }
 }
