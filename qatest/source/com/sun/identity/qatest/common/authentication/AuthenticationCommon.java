@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.12 2009-06-02 17:10:59 cmwesley Exp $
+ * $Id: AuthenticationCommon.java,v 1.13 2009-06-05 20:48:02 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,34 +134,33 @@ public class AuthenticationCommon extends TestCommon implements AuthConstants {
                     "Updated globalAuthInstancesMap = " +
                     globalAuthInstancesMap);
 
-            if (!moduleName.equals("authentication")) {
-                StringBuffer moduleFileName = new StringBuffer(getBaseDir()).
-                        append(fileseparator).append("resources").
-                        append(fileseparator).append(moduleName).
-                        append(fileseparator).
-                        append("AuthenticationConfig.properties");
+            StringBuffer moduleFileName = new StringBuffer(getBaseDir()).
+                    append(fileseparator).append("resources").
+                    append(fileseparator).append(moduleName).
+                    append(fileseparator).
+                    append("AuthenticationConfig.properties");
+            log(Level.FINE, "createAuthInstancesMap",
+                    "Checking if the file " +
+                    moduleFileName.toString() + " exists ...");
+            File moduleAuthFile = new File(moduleFileName.toString());
+            if (moduleAuthFile.exists()) {
                 log(Level.FINE, "createAuthInstancesMap",
-                        "Checking if the file " +
-                        moduleFileName.toString() + " exists ...");
-                File moduleAuthFile = new File(moduleFileName.toString());
-                if (moduleAuthFile.exists()) {
-                    log(Level.FINE, "createAuthInstancesMap",
-                            "Creating a Map from " + moduleAuthFile);
-                    moduleSpecificMap =
-                            getMapFromProperties(moduleFileName.toString());
-                    log(Level.FINEST, "createAuthInstancesMap",
-                            "moduleSpecificMap = " + moduleSpecificMap);
-                    log(Level.FINE, "createAuthInstancesMap",
-                            "Updating the globalAuthInstancesMap with the " +
-                            "module specific values");
-                    globalAuthInstancesMap.putAll(moduleSpecificMap);
-                    log(Level.FINEST, "createAuthInstancesMap",
-                            "Updated globalAuthInstancesMap = " +
-                            globalAuthInstancesMap);
-                }
-                createFileFromMap(globalAuthInstancesMap, 
-                        AUTH_CONFIGURATION_GENERATED_PROPS);
+                        "Creating a Map from " + moduleAuthFile);
+                moduleSpecificMap =
+                        getMapFromProperties(moduleFileName.toString());
+                log(Level.FINEST, "createAuthInstancesMap",
+                        "moduleSpecificMap = " + moduleSpecificMap);
+                log(Level.FINE, "createAuthInstancesMap",
+                        "Updating the globalAuthInstancesMap with the " +
+                        "module specific values");
+                globalAuthInstancesMap.putAll(moduleSpecificMap);
+                log(Level.FINEST, "createAuthInstancesMap",
+                        "Updated globalAuthInstancesMap = " +
+                        globalAuthInstancesMap);
             }
+            createFileFromMap(globalAuthInstancesMap,
+                    AUTH_CONFIGURATION_GENERATED_PROPS);
+
         } catch (Exception e) {
             log(Level.SEVERE, "createAuthInstancesMap", e.getMessage());
             e.printStackTrace();
@@ -188,9 +187,6 @@ public class AuthenticationCommon extends TestCommon implements AuthConstants {
                     String indexString = Integer.toString(iIndex);
                     Map<String, String> instanceMap =
                             getModuleInstanceMap(instancePrefix, indexString);
-//                    log(Level.FINE, "createAuthInstances", "Removing key " +
-//                            NUMBER_OF_INSTANCES + " from the instance map");
-//                    instanceMap.remove(NUMBER_OF_INSTANCES);
                     log(Level.FINEST, "createAuthInstances",
                             "instanceMap = " + instanceMap);
                     if (!instanceMap.containsKey(INSTANCE_REALM)) {
@@ -741,6 +737,8 @@ public class AuthenticationCommon extends TestCommon implements AuthConstants {
       */
      public void deleteAuthConfig(String realmName, String configName)
      throws Exception {
+        Object[] params = {realmName, configName};
+        entering("deleteAuthConfig", params);
         try {
             if (configName == null) {
                 log(Level.SEVERE, "deleteAuthConfig",
@@ -752,6 +750,7 @@ public class AuthenticationCommon extends TestCommon implements AuthConstants {
             smsCommon.deleteSubConfig(realmName,
                     AUTH_CONFIGURATION_SERVICE_NAME,
                     subConfigName);
+            exiting("deleteAuthConfig");
         } catch (Exception e) {
             log(Level.SEVERE, "deleteAuthConfig", "Exception message = " +
                     e.getMessage());
