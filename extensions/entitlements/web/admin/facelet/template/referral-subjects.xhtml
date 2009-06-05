@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-subjects.xhtml,v 1.1 2009-06-05 05:21:09 farble1670 Exp $
+   $Id: referral-subjects.xhtml,v 1.2 2009-06-05 16:45:46 farble1670 Exp $
 
 -->
 
@@ -47,11 +47,15 @@
         </ui:define>
         <ui:define name="section-body">
             <o:multiselect
-                converter="#{realmBeanConverter}"
+                handler="#{referralSubjectsHandler}"
+                addListenerMethod="subjectsAddListener"
+                removeListenerMethod="subjectsRemoveListener"
+                converterId="realmBeanConverter"
+                searchFilter="#{referralSubjectsBean.subjectFilter}"
                 availableItems="#{referralSubjectsBean.availableRealmBeanItems}"
                 availableValue="#{referralSubjectsBean.selectedAvailableRealmBeans}"
                 selectedItems="#{referralSubjectsBean.referralBean.realmBeanItems}"
-                selectedValue="#{referralSubjectsBean.referralBean.realmBeans}"/>
+                selectedValue="#{referralSubjectsBean.selectedRealmBeans}"/>
         </ui:define>
     </o:section>
 </span>

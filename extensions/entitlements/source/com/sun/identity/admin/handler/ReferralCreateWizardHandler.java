@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralCreateWizardHandler.java,v 1.1 2009-06-04 21:18:36 farble1670 Exp $
+ * $Id: ReferralCreateWizardHandler.java,v 1.2 2009-06-05 16:45:44 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -36,5 +36,9 @@ public class ReferralCreateWizardHandler extends ReferralWizardHandler {
     @Override
     public String getCancelAction() {
         return "home";
+    }
+
+    public String getBeanName() {
+        return "referralCreateWizardHandler";
     }
 }

@@ -22,24 +22,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardBean.java,v 1.3 2009-06-05 05:21:07 farble1670 Exp $
+ * $Id: ReferralWizardBean.java,v 1.4 2009-06-05 16:45:44 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
+import com.sun.identity.admin.dao.RealmDao;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.model.SelectItem;
+import org.apache.commons.collections.comparators.NullComparator;
 
 public abstract class ReferralWizardBean extends WizardBean {
+
     private ReferralBean referralBean;
     private Effect nameInputEffect;
     private List<Resource> availableResources;
     private ViewApplicationsBean viewApplicationsBean;
-    private List<RealmBean> availableRealmBeans;
-    private List<RealmBean> selectedAvailableRealmBeans;
-    private List<RealmBean> selectedRealmBeans;
+    private List<RealmBean> availableRealmBeans = new ArrayList<RealmBean>();
+    private List<RealmBean> selectedAvailableRealmBeans = new ArrayList<RealmBean>();
+    private List<RealmBean> selectedRealmBeans = new ArrayList<RealmBean>();
+    private String subjectFilter = "";
+    private RealmDao realmDao;
 
     public ReferralWizardBean() {
         super();
@@ -47,9 +51,11 @@ public abstract class ReferralWizardBean extends WizardBean {
 
     public List<SelectItem> getAvailableResourceItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
-        for (Resource r: getAvailableResources()) {
-            ReferralResource rr = (ReferralResource)r;
-            items.add(new SelectItem(rr, rr.getTitle()));
+        if (getAvailableResources() != null) {
+            for (Resource r : getAvailableResources()) {
+                ReferralResource rr = (ReferralResource) r;
+                items.add(new SelectItem(rr, rr.getTitle()));
+            }
         }
 
         return items;
@@ -57,8 +63,10 @@ public abstract class ReferralWizardBean extends WizardBean {
 
     public List<SelectItem> getAvailableRealmBeanItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
-        for (RealmBean rb: availableRealmBeans) {
-            items.add(new SelectItem(rb, rb.getTitle()));
+        if (availableRealmBeans != null) {
+            for (RealmBean rb : availableRealmBeans) {
+                items.add(new SelectItem(rb, rb.getTitle()));
+            }
         }
 
         return items;
@@ -75,12 +83,12 @@ public abstract class ReferralWizardBean extends WizardBean {
         super.reset();
         referralBean = new ReferralBean();
         resetAvailableResources();
-        availableRealmBeans = RealmsBean.getInstance().getRealmBeans();
+        resetAvailableRealmBeans();
     }
 
     private void resetAvailableResources() {
         availableResources = new ArrayList<Resource>();
-        for (ViewApplication va: viewApplicationsBean.getViewApplications().values()) {
+        for (ViewApplication va : viewApplicationsBean.getViewApplications().values()) {
             ReferralResource rr = new ReferralResource();
             rr.setName(va.getName());
             rr.getViewEntitlement().setResources(rr.getViewEntitlement().getAvailableResources());
@@ -123,5 +131,30 @@ public abstract class ReferralWizardBean extends WizardBean {
 
     public void setSelectedRealmBeans(List<RealmBean> selectedRealmBeans) {
         this.selectedRealmBeans = selectedRealmBeans;
+    }
+
+    public String getSubjectFilter() {
+        return subjectFilter;
+    }
+
+    public void resetAvailableRealmBeans() {
+        availableRealmBeans = realmDao.getRealmBeans(null, subjectFilter);
+        availableRealmBeans.removeAll(referralBean.getRealmBeans());
+        selectedAvailableRealmBeans = new ArrayList<RealmBean>();
+    }
+
+    public void setSubjectFilter(String subjectFilter) {
+        if (subjectFilter == null) {
+            subjectFilter = "";
+        }
+        NullComparator n = new NullComparator();
+        if (n.compare(this.subjectFilter, subjectFilter) != 0) {
+            this.subjectFilter = subjectFilter;
+            resetAvailableRealmBeans();
+        }
+    }
+
+    public void setRealmDao(RealmDao realmDao) {
+        this.realmDao = realmDao;
     }
 }

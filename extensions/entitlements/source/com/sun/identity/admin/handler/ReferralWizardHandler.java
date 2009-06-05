@@ -22,15 +22,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardHandler.java,v 1.1 2009-06-04 21:18:36 farble1670 Exp $
+ * $Id: ReferralWizardHandler.java,v 1.2 2009-06-05 16:45:44 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
 
 import com.sun.identity.admin.model.MessagesBean;
+import com.sun.identity.admin.model.PhaseEventAction;
+import com.sun.identity.admin.model.QueuedActionBean;
+import com.sun.identity.admin.model.RealmBean;
+import com.sun.identity.admin.model.ReferralWizardBean;
+import java.util.List;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.PhaseId;
 
 public abstract class ReferralWizardHandler extends WizardHandler {
     private MessagesBean messagesBean;
+    private QueuedActionBean queuedActionBean;
 
     public void setMessagesBean(MessagesBean messagesBean) {
         this.messagesBean = messagesBean;
@@ -52,5 +60,63 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         // TODO
         getWizardBean().reset();
         return getCancelAction();
+    }
+
+    public ReferralWizardBean getReferralWizardBean() {
+        return (ReferralWizardBean)getWizardBean();
+    }
+
+    public abstract String getBeanName();
+
+    public void subjectsAddListener(ActionEvent event) {
+        /*
+        PhaseEventAction pea = new PhaseEventAction();
+        pea.setDoBeforePhase(true);
+        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+        pea.setAction("#{" + getBeanName() + ".handleSubjectsAdd}");
+        pea.setParameters(new Class[]{});
+        pea.setArguments(new Object[]{});
+
+        queuedActionBean.getPhaseEventActions().add(pea);
+        */
+        handleSubjectsAdd();
+    }
+
+    public void handleSubjectsAdd() {
+        List<RealmBean> availableValue = getReferralWizardBean().getSelectedAvailableRealmBeans();
+        getReferralWizardBean().setSelectedAvailableRealmBeans(null);
+        List<RealmBean> available = getReferralWizardBean().getAvailableRealmBeans();
+        List<RealmBean> selected = getReferralWizardBean().getReferralBean().getRealmBeans();
+
+        available.removeAll(availableValue);
+        selected.addAll(availableValue);
+    }
+
+    public void subjectsRemoveListener(ActionEvent event) {
+        /*
+        PhaseEventAction pea = new PhaseEventAction();
+        pea.setDoBeforePhase(true);
+        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+        pea.setAction("#{" + getBeanName() + ".handleSubjectsRemove}");
+        pea.setParameters(new Class[]{});
+        pea.setArguments(new Object[]{});
+
+        queuedActionBean.getPhaseEventActions().add(pea);
+        */
+        handleSubjectsRemove();
+    }
+
+    public void handleSubjectsRemove() {
+        List<RealmBean> selectedValue = getReferralWizardBean().getSelectedRealmBeans();
+        getReferralWizardBean().setSelectedRealmBeans(null);
+        List<RealmBean> available = getReferralWizardBean().getAvailableRealmBeans();
+        List<RealmBean> selected = getReferralWizardBean().getReferralBean().getRealmBeans();
+
+        getReferralWizardBean().resetAvailableRealmBeans();
+        selected.removeAll(selectedValue);
+    }
+
+    public void setQueuedActionBean(QueuedActionBean queuedActionBean) {
+        this.queuedActionBean = queuedActionBean;
     }
 }

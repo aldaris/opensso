@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.85 2009-06-05 05:21:08 farble1670 Exp $
+  $Id: faces-config.xml,v 1.86 2009-06-05 16:45:45 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1377,6 +1377,10 @@
             <value>#{viewApplicationsBean}</value>
         </managed-property>
         <managed-property>
+            <property-name>realmDao</property-name>
+            <value>#{realmDao}</value>
+        </managed-property>
+        <managed-property>
             <property-name>steps</property-name>
             <value>4</value>
         </managed-property>
@@ -1393,6 +1397,10 @@
         <managed-property>
             <property-name>messagesBean</property-name>
             <value>#{messagesBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
         </managed-property>
     </managed-bean>
     <!-- referral create -->

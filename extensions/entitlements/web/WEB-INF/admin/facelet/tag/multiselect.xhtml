@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: multiselect.xhtml,v 1.1 2009-06-05 05:21:08 farble1670 Exp $
+   $Id: multiselect.xhtml,v 1.2 2009-06-05 16:45:45 farble1670 Exp $
 
 -->
 
@@ -39,14 +39,25 @@
         columnClasses="multi-select-available,multi-select-buttons,multi-select-selected"
         columns="3">
         <ice:panelGroup>
-            <ice:panelGroup>
+            <ice:panelGrid
+                columns="3"
+                styleClass="multi-select-search">
                 <ice:outputLabel
                     value="Available"/>
-            </ice:panelGroup>
+                <ice:graphicImage
+                    value="../image/search.png"/>
+                <ice:inputText
+                    onkeyup="submitNow(this)"
+                    styleClass="inline-input"
+                    value="#{searchFilter}"
+                    style="width: 100%"/>
+            </ice:panelGrid>
             <ice:panelGroup>
                 <ice:selectManyListbox
                     size="10"
                     value="#{availableValue}">
+                    <f:converter
+                        converterId="#{converterId}"/>
                     <f:selectItems
                         value="#{availableItems}"/>
                 </ice:selectManyListbox>
@@ -55,7 +66,8 @@
         <ice:panelGroup>
             <ice:panelGroup
                 styleClass="button-group">
-                <ice:commandLink>
+                <ice:commandLink
+                    actionListener="#{handler[addListenerMethod]}">
                     <span class="button">
                         <ice:outputText
                             value="Add"/>
@@ -67,7 +79,8 @@
             </ice:panelGroup>
             <ice:panelGroup
                 styleClass="button-group">
-                <ice:commandLink>
+                <ice:commandLink
+                    actionListener="#{handler[removeListenerMethod]}">
                     <span class="button">
                         <ice:graphicImage
                             styleClass="left"
@@ -79,14 +92,19 @@
             </ice:panelGroup>
         </ice:panelGroup>
         <ice:panelGroup>
-            <ice:panelGroup>
+            <ice:panelGrid
+                columns="1"
+                styleClass="multi-select-search"
+                width="100%">
                 <ice:outputLabel
                     value="Selected"/>
-            </ice:panelGroup>
+            </ice:panelGrid>
             <ice:panelGroup>
                 <ice:selectManyListbox
                     size="10"
                     value="#{selectedValue}">
+                    <f:converter
+                        converterId="#{converterId}"/>
                     <f:selectItems
                         value="#{selectedItems}"/>
                 </ice:selectManyListbox>
