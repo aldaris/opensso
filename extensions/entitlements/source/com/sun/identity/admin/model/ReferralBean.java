@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralBean.java,v 1.4 2009-06-05 20:36:40 farble1670 Exp $
+ * $Id: ReferralBean.java,v 1.5 2009-06-05 21:29:00 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -106,7 +106,7 @@ public class ReferralBean {
     public String getListToFormattedString(List list) {
         StringBuffer b = new StringBuffer();
 
-        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
+        for (Iterator i = list.iterator(); i.hasNext();) {
             b.append(i.next());
             if (i.hasNext()) {
                 b.append("\n");
@@ -118,7 +118,23 @@ public class ReferralBean {
     }
 
     public String getResourcesToFormattedString() {
-        return getListToFormattedString(resources);
+        StringBuffer b = new StringBuffer();
+        for (Iterator<Resource> i = resources.iterator(); i.hasNext();) {
+            ReferralResource rr = (ReferralResource)i.next();
+            List<Resource> rs = rr.getViewEntitlement().getResources();
+
+            b.append(rr.getTitle());
+            b.append("\n");
+            if (rs != null) {
+                for (Resource r: rs) {
+                    b.append("    ");
+                    b.append(r.getTitle());
+                    b.append("\n");
+                }
+            }
+        }
+
+        return b.toString();
     }
 
     public String getSubjectsToFormattedString() {

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-resources.xhtml,v 1.1 2009-06-05 05:21:09 farble1670 Exp $
+   $Id: referral-resources.xhtml,v 1.2 2009-06-05 21:29:01 farble1670 Exp $
 
 -->
 
@@ -49,8 +49,9 @@
             <ice:selectManyCheckbox
                 id="referral-resource-select"
                 layout="spread"
-                value="#{referralResourcesBean.referralBean.resources}"
-                converter="#{referralResourceConverter}">
+                partialSubmit="true"
+                value="#{referralResourcesBean.resources}"
+                converter="referralResourceConverter">
                 <f:selectItems
                     value="#{referralResourcesBean.availableResourceItems}"/>
             </ice:selectManyCheckbox>
