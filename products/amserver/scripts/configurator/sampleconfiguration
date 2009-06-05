@@ -108,8 +108,12 @@ DS_DIRMGRPASSWD=11111111
 ### The following properties will not be used in a multi-server setup.
 ###
 ### USERSTORE_TYPE is the type of user data store. Valid values are
-### 'LDAPv3ForAMDS' - LDAP with OpenSSO Schema
-### 'LDAPv3' - Generic LDAP (no OpenSSO Schema)
+###
+### 'LDAPv3ForSUNDS'  - Sun Java System Directory Server.
+### 'LDAPv3ForAD'     - Active Directory Server.
+### 'LDAPv3ForOpenDS' - Sun OpenDS Server.
+### 'LDAPv3ForTivoli' - IBM Tivoli Directory Server.
+###
 ### If DATA_STORE is 'embedded', this property can be commented out or can be
 ### with no value. In this case, the configuration data store will be used as
 ### user data store. The remaining user data store propreties will be ignored.
