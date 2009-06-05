@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.45 2009-03-25 00:10:48 kevinserwin Exp $
+   $Id: build.xml,v 1.46 2009-06-05 22:26:36 veiming Exp $
 
 -->
 
@@ -44,8 +44,12 @@
         <not><isset property="build.number"/></not>
     </condition>
     <echo message="OpenSSO Build Number: ${build.number.set}"/>
+
+    <delete file="${products.basedir}/federation/openfm/source/com/sun/identity/federation/cli/stubs/FederationManagerCLI.java" />
+    <delete file="${products.basedir}/amserver/test/source/com/sun/identity/cli/stubs/MockCLI.java" />
+    <delete file="${products.basedir}/amserver/source/com/sun/identity/cli/stubs/AccessManagerCLI.java" />
   
-  <target name="enterprise">
+   <target name="enterprise">
         <property name="build.enterprise" value="true"/>
         <property name="enterprise.authmodules.present" value="true" />
         <antcall target="create-version" />
