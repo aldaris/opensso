@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteAddViewBean.java,v 1.3 2008-11-04 22:32:18 asyhuang Exp $
+ * $Id: SiteAddViewBean.java,v 1.4 2009-06-05 19:22:56 veiming Exp $
  *
  */
 
@@ -40,7 +40,6 @@ import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.service.model.ServerSiteModel;
 import com.sun.identity.console.service.model.ServerSiteModelImpl;
-import com.sun.identity.shared.FQDNUrl;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.html.CCTextField;
@@ -160,28 +159,15 @@ public class SiteAddViewBean
 
         if ((name.length() > 0) && (url.length() > 0)) {
             try {
-                FQDNUrl test = new FQDNUrl(url);
-                if ((!test.isFullyQualified()) ||
-                    (test.getPort().length() == 0) ||
-                    (test.getURI().length() == 0)) {
-                    setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                            "serverconfig.create.site.invalid.url");
-                    forwardTo();
-                } else {
-                    model.createSite(name, url);
-                    backTrail();
-                    ServerSiteViewBean vb = (ServerSiteViewBean)getViewBean(
-                        ServerSiteViewBean.class);
-                    passPgSessionMap(vb);
-                    vb.forwardTo(getRequestContext());
-                }
+                model.createSite(name, url);
+                backTrail();
+                ServerSiteViewBean vb = (ServerSiteViewBean)getViewBean(
+                    ServerSiteViewBean.class);
+                passPgSessionMap(vb);
+                vb.forwardTo(getRequestContext());
             } catch (AMConsoleException e) {
                 setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     e.getMessage());
-                forwardTo();
-            } catch (MalformedURLException mue) {
-                setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                        mue.getMessage());
                 forwardTo();
             }
         } else {

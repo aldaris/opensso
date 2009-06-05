@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteConfiguration.java,v 1.7 2008-08-13 17:37:11 veiming Exp $
+ * $Id: SiteConfiguration.java,v 1.8 2009-06-05 19:22:56 veiming Exp $
  *
  */
 
@@ -31,13 +31,13 @@ package com.sun.identity.common.configuration;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.FQDNUrl;
 import com.sun.identity.shared.NormalizedURL;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -255,7 +255,6 @@ public class SiteConfiguration extends ConfigurationBase {
         return created;
     }
 
-    
     /**
      * Creates a site.
      *
@@ -281,7 +280,13 @@ public class SiteConfiguration extends ConfigurationBase {
         
         if (sc != null) {
             try {
-                new URL(siteURL);
+                FQDNUrl test = new FQDNUrl(siteURL.trim());
+                if ((!test.isFullyQualified()) ||
+                    (test.getPort().length() == 0) ||
+                    (test.getURI().length() == 0)) {
+                    String[] param = {siteURL};
+                    throw new ConfigurationException("invalid.site.url", param);
+                }
             } catch (MalformedURLException ex) {
                 String[] param = {siteURL};
                 throw new ConfigurationException("invalid.site.url", param);
@@ -300,6 +305,21 @@ public class SiteConfiguration extends ConfigurationBase {
                         String[] param = {url};
                         throw new ConfigurationException("duplicated.site.url", 
                             param);                
+                    }
+
+                    try {
+                        FQDNUrl test = new FQDNUrl(url);
+                        if ((!test.isFullyQualified()) ||
+                            (test.getPort().length() == 0) ||
+                                (test.getURI().length() == 0)) {
+                            String[] param = {url};
+                            throw new ConfigurationException(
+                                "invalid.site.secondary.url", param);
+                        }
+                    } catch (MalformedURLException ex) {
+                        String[] param = {url};
+                        throw new ConfigurationException(
+                            "invalid.site.secondary.url", param);
                     }
                 }
             }
@@ -461,10 +481,18 @@ public class SiteConfiguration extends ConfigurationBase {
         for (Iterator i = secondaryURLs.iterator(); i.hasNext(); ) {
             String url = (String)i.next();
             try {
-                new URL(url);
+                FQDNUrl test = new FQDNUrl(url);
+                if ((!test.isFullyQualified()) ||
+                    (test.getPort().length() == 0) ||
+                    (test.getURI().length() == 0)) {
+                    String[] param = {url};
+                    throw new ConfigurationException(
+                        "invalid.site.secondary.url", param);
+                }
             } catch (MalformedURLException ex) {
                 String[] param = {url};
-                throw new ConfigurationException("invalid.site.url", param);
+                throw new ConfigurationException(
+                    "invalid.site.secondary.url", param);
             }
         }
         
