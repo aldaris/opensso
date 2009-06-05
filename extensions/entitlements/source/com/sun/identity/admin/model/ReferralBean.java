@@ -22,14 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralBean.java,v 1.1 2009-06-04 21:41:44 farble1670 Exp $
+ * $Id: ReferralBean.java,v 1.2 2009-06-05 05:21:07 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.faces.model.SelectItem;
+
 public class ReferralBean {
+
     private String name;
     private String description;
+    private List<Resource> resources;
+    private List<RealmBean> realmBeans;
 
     public String getName() {
         return name;
@@ -45,5 +51,32 @@ public class ReferralBean {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Resource> getResources() {
+        return resources;
+    }
+
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
+    }
+
+    public List<SelectItem> getRealmBeanItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        if (realmBeans != null) {
+            for (RealmBean rb : realmBeans) {
+                items.add(new SelectItem(rb, rb.getTitle()));
+            }
+        }
+
+        return items;
+    }
+
+    public List<RealmBean> getRealmBeans() {
+        return realmBeans;
+    }
+
+    public void setRealmBeans(List<RealmBean> realmBeans) {
+        this.realmBeans = realmBeans;
     }
 }

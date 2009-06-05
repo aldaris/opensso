@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: admin.css,v 1.92 2009-06-04 21:18:37 farble1670 Exp $
+ * $Id: admin.css,v 1.93 2009-06-05 05:21:09 farble1670 Exp $
  *
  */
 
@@ -211,6 +211,11 @@ textarea.policy-description {
     height: 100px;
 }
 
+textarea.referral-description {
+    width: 320px;
+    height: 100px;
+}
+
 
 .button-container {
     height: 50px;
@@ -260,6 +265,7 @@ span.button img.left {
     left: -3px;
     top: 3px;
 }
+
 
 .subject-list span {
 }
@@ -496,6 +502,21 @@ span.button img.left {
 
 .url-resource-add-popup {
     text-align: left;
+}
+
+.referral-resource {
+    width: 100%;
+}
+
+.referral-resource-outer {
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+.referral-resource span label,
+.referral-resource span input {
+    padding-left: 5px;
+    vertical-align: middle;
 }
 
 .banking-resources-add-popup {
@@ -1151,6 +1172,39 @@ span.button img.left {
 
 .realm-select-popup-realm-tableCol2 {
     width: 100%;
+}
+
+.multi-select {
+    margin: 10px;
+}
+
+.multi-select select {
+    width: 200px;
+}
+
+.multi-select label {
+    padding-left: 5px;
+}
+
+.multi-select div.button-group {
+    float: none;
+    margin-bottom: 20px;
+}
+
+.multi-select-available {
+    text-align: center;
+}
+
+.multi-select-buttons {
+    text-align: center;
+}
+
+.multi-select-buttons span.button {
+    width: 60px;
+}
+
+.multi-select-selected {
+    text-align: center;
 }
 
 /*

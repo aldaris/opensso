@@ -22,11 +22,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyResourcesBean.java,v 1.4 2009-06-05 05:21:07 farble1670 Exp $
+ * $Id: ReferralResourceConverter.java,v 1.1 2009-06-05 05:21:07 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-public interface PolicyResourcesBean {
-    public ViewEntitlement getViewEntitlement();
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+
+public class ReferralResourceConverter implements Converter {
+
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        ReferralResource rr = new ReferralResource();
+        rr.setName(value);
+
+        return rr;
+    }
+
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+        return ((ReferralResource)value).getName();
+    }
 }

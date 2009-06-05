@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: resources-banking.xhtml,v 1.8 2009-06-04 11:49:28 veiming Exp $
+   $Id: resources-banking.xhtml,v 1.9 2009-06-05 05:21:09 farble1670 Exp $
 
 -->
 
@@ -36,85 +36,89 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <ui:include
-        src="resources-banking-add-popup.xhtml"/>
+    <ice:panelGroup
+        rendered="#{policyResourcesBean.viewEntitlement.viewApplication.viewApplicationType.name == 'banking'}">
 
-    <o:section>
-        <ui:define name="section-title">
-            <ice:outputText
-                value="#{resources['resources-banking.sectionTitle']}"/>
-        </ui:define>
-        <ui:define name="section-links">
-            <ice:panelGrid
-                columns="1">
-            <ice:commandLink
-                styleClass="command-link"
-                actionListener="#{bankingResourcesHandler.addListener}">
-                <f:attribute
-                    name="viewEntitlement"
-                    value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
-                <ice:graphicImage
-                    value="../image/add.png"/>
+        <ui:include
+            src="resources-banking-add-popup.xhtml"/>
+
+        <o:section>
+            <ui:define name="section-title">
                 <ice:outputText
-                    value="#{resources['resources-banking.add']}"/>
-            </ice:commandLink>
-            </ice:panelGrid>
-        </ui:define>
-        <ui:define name="section-body">
-            <ice:panelGroup
-                rendered="#{o:size(policyResourcesBean.privilegeBean.viewEntitlement.resources) == 0}">
-                <ice:outputText
-                    value="#{resources['resources-banking.noResources']}"/>
-            </ice:panelGroup>
-            <ice:panelGroup
-                rendered="#{o:size(policyResourcesBean.privilegeBean.viewEntitlement.resources) > 0}">
-                <ice:dataTable
-                    styleClass="banking-resources"
-                    columnClasses="banking-resourcesCol1,banking-resourcesCol2,banking-resourcesCol3"
-                    var="bankingResource"
-                    value="#{policyResourcesBean.privilegeBean.viewEntitlement.resources}">
-                    <ice:column>
-                        <f:facet name="header">
-                            <ice:outputText
-                                value="#{resources['resources-banking.accountNumber']}"/>
-                        </f:facet>
-                        <ice:panelGroup>
-                            <ice:outputText
-                                value="#{bankingResource.title}"/>
-                        </ice:panelGroup>
-                    </ice:column>
-                    <ice:column>
-                        <f:facet name="header">
-                            <ice:outputText
-                                value="#{resources['resources-banking.accountOwner']}"/>
-                        </f:facet>
-                        <ice:panelGroup>
-                            <ice:outputText
-                                rendered="#{bankingResource.owner != null}"
-                                value="#{bankingResource.owner.title}"/>
-                        </ice:panelGroup>
-                    </ice:column>
-                    <ice:column>
-                        <f:facet name="header">
-                            <ice:outputText 
-                                value="#{resources['resources-banking.remove']}"/>
-                        </f:facet>
-                        <ice:panelGroup>
-                            <ice:commandLink
-                                actionListener="#{bankingResourcesHandler.removeListener}">
-                                <f:attribute
-                                    name="bankingResource"
-                                    value="#{bankingResource}"/>
-                                <f:attribute
-                                    name="viewEntitlement"
-                                    value="#{policyResourcesBean.privilegeBean.viewEntitlement}"/>
-                                <ice:graphicImage
-                                    value="../image/remove-16.png"/>
-                            </ice:commandLink>
-                        </ice:panelGroup>
-                    </ice:column>
-                </ice:dataTable>
-            </ice:panelGroup>
-        </ui:define>
-    </o:section>
+                    value="#{resources['resources-banking.sectionTitle']}"/>
+            </ui:define>
+            <ui:define name="section-links">
+                <ice:panelGrid
+                    columns="1">
+                    <ice:commandLink
+                        styleClass="command-link"
+                        actionListener="#{bankingResourcesHandler.addListener}">
+                        <f:attribute
+                            name="viewEntitlement"
+                            value="#{policyResourcesBean.viewEntitlement}"/>
+                        <ice:graphicImage
+                            value="../image/add.png"/>
+                        <ice:outputText
+                            value="#{resources['resources-banking.add']}"/>
+                    </ice:commandLink>
+                </ice:panelGrid>
+            </ui:define>
+            <ui:define name="section-body">
+                <ice:panelGroup
+                    rendered="#{o:size(policyResourcesBean.viewEntitlement.resources) == 0}">
+                    <ice:outputText
+                        value="#{resources['resources-banking.noResources']}"/>
+                </ice:panelGroup>
+                <ice:panelGroup
+                    rendered="#{o:size(policyResourcesBean.viewEntitlement.resources) > 0}">
+                    <ice:dataTable
+                        styleClass="banking-resources"
+                        columnClasses="banking-resourcesCol1,banking-resourcesCol2,banking-resourcesCol3"
+                        var="bankingResource"
+                        value="#{policyResourcesBean.viewEntitlement.resources}">
+                        <ice:column>
+                            <f:facet name="header">
+                                <ice:outputText
+                                    value="#{resources['resources-banking.accountNumber']}"/>
+                            </f:facet>
+                            <ice:panelGroup>
+                                <ice:outputText
+                                    value="#{bankingResource.title}"/>
+                            </ice:panelGroup>
+                        </ice:column>
+                        <ice:column>
+                            <f:facet name="header">
+                                <ice:outputText
+                                    value="#{resources['resources-banking.accountOwner']}"/>
+                            </f:facet>
+                            <ice:panelGroup>
+                                <ice:outputText
+                                    rendered="#{bankingResource.owner != null}"
+                                    value="#{bankingResource.owner.title}"/>
+                            </ice:panelGroup>
+                        </ice:column>
+                        <ice:column>
+                            <f:facet name="header">
+                                <ice:outputText
+                                    value="#{resources['resources-banking.remove']}"/>
+                            </f:facet>
+                            <ice:panelGroup>
+                                <ice:commandLink
+                                    actionListener="#{bankingResourcesHandler.removeListener}">
+                                    <f:attribute
+                                        name="bankingResource"
+                                        value="#{bankingResource}"/>
+                                    <f:attribute
+                                        name="viewEntitlement"
+                                        value="#{policyResourcesBean.viewEntitlement}"/>
+                                    <ice:graphicImage
+                                        value="../image/remove-16.png"/>
+                                </ice:commandLink>
+                            </ice:panelGroup>
+                        </ice:column>
+                    </ice:dataTable>
+                </ice:panelGroup>
+            </ui:define>
+        </o:section>
+    </ice:panelGroup>
 </span>

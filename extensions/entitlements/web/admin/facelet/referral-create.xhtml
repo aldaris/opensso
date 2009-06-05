@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-create.xhtml,v 1.2 2009-06-04 21:41:44 farble1670 Exp $
+   $Id: referral-create.xhtml,v 1.3 2009-06-05 05:21:09 farble1670 Exp $
 
 -->
 
@@ -63,14 +63,30 @@
                 </o:wstep>
                 <o:wstep
                     step="1"
-                    label="Step 2: Applications (?)">
+                    label="Step 2: Applications (#{o:size(referralCreateWizardBean.referralBean.resources)})">
                     <ui:define name="wizard-step-body">
+                        <ui:include src="template/referral-resources.xhtml">
+                            <ui:param
+                                name="referralResourcesBean"
+                                value="#{referralCreateWizardBean}"/>
+                            <ui:param
+                                name="referralResourcesHandler"
+                                value="#{referralCreateWizardHandler}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="2"
                     label="Step 3: Realms (?)">
                     <ui:define name="wizard-step-body">
+                        <ui:include src="template/referral-subjects.xhtml">
+                            <ui:param
+                                name="referralSubjectsBean"
+                                value="#{referralCreateWizardBean}"/>
+                            <ui:param
+                                name="referralSubjectsHandler"
+                                value="#{referralCreateWizardHandler}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep

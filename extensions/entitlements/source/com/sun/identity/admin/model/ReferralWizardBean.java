@@ -22,20 +22,46 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardBean.java,v 1.2 2009-06-04 21:41:44 farble1670 Exp $
+ * $Id: ReferralWizardBean.java,v 1.3 2009-06-05 05:21:07 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
+import java.util.ArrayList;
+import java.util.List;
+import javax.faces.model.SelectItem;
 
 public abstract class ReferralWizardBean extends WizardBean {
     private ReferralBean referralBean;
     private Effect nameInputEffect;
+    private List<Resource> availableResources;
+    private ViewApplicationsBean viewApplicationsBean;
+    private List<RealmBean> availableRealmBeans;
+    private List<RealmBean> selectedAvailableRealmBeans;
+    private List<RealmBean> selectedRealmBeans;
 
     public ReferralWizardBean() {
         super();
-        reset();
+    }
+
+    public List<SelectItem> getAvailableResourceItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        for (Resource r: getAvailableResources()) {
+            ReferralResource rr = (ReferralResource)r;
+            items.add(new SelectItem(rr, rr.getTitle()));
+        }
+
+        return items;
+    }
+
+    public List<SelectItem> getAvailableRealmBeanItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        for (RealmBean rb: availableRealmBeans) {
+            items.add(new SelectItem(rb, rb.getTitle()));
+        }
+
+        return items;
     }
 
     public abstract boolean isNameEditable();
@@ -48,6 +74,19 @@ public abstract class ReferralWizardBean extends WizardBean {
     public void reset() {
         super.reset();
         referralBean = new ReferralBean();
+        resetAvailableResources();
+        availableRealmBeans = RealmsBean.getInstance().getRealmBeans();
+    }
+
+    private void resetAvailableResources() {
+        availableResources = new ArrayList<Resource>();
+        for (ViewApplication va: viewApplicationsBean.getViewApplications().values()) {
+            ReferralResource rr = new ReferralResource();
+            rr.setName(va.getName());
+            rr.getViewEntitlement().setResources(rr.getViewEntitlement().getAvailableResources());
+
+            getAvailableResources().add(rr);
+        }
     }
 
     public Effect getNameInputEffect() {
@@ -56,5 +95,33 @@ public abstract class ReferralWizardBean extends WizardBean {
 
     public void setNameInputEffect(Effect nameInputEffect) {
         this.nameInputEffect = nameInputEffect;
+    }
+
+    public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
+        this.viewApplicationsBean = viewApplicationsBean;
+    }
+
+    public List<Resource> getAvailableResources() {
+        return availableResources;
+    }
+
+    public List<RealmBean> getAvailableRealmBeans() {
+        return availableRealmBeans;
+    }
+
+    public List<RealmBean> getSelectedAvailableRealmBeans() {
+        return selectedAvailableRealmBeans;
+    }
+
+    public void setSelectedAvailableRealmBeans(List<RealmBean> selectedAvailableRealmBeans) {
+        this.selectedAvailableRealmBeans = selectedAvailableRealmBeans;
+    }
+
+    public List<RealmBean> getSelectedRealmBeans() {
+        return selectedRealmBeans;
+    }
+
+    public void setSelectedRealmBeans(List<RealmBean> selectedRealmBeans) {
+        this.selectedRealmBeans = selectedRealmBeans;
     }
 }

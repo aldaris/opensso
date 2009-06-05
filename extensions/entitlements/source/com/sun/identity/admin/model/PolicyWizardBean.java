@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardBean.java,v 1.18 2009-06-04 11:49:16 veiming Exp $
+ * $Id: PolicyWizardBean.java,v 1.19 2009-06-05 05:21:07 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -64,6 +64,10 @@ public class PolicyWizardBean
 
     public PolicyWizardBean() {
         super();
+    }
+
+    public ViewEntitlement getViewEntitlement() {
+        return privilegeBean.getViewEntitlement();
     }
 
     @Override

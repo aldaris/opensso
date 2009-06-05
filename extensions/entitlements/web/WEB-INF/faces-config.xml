@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.84 2009-06-04 21:18:37 farble1670 Exp $
+  $Id: faces-config.xml,v 1.85 2009-06-05 05:21:08 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -49,6 +49,10 @@
     <converter>
         <converter-id>realmBeanConverter</converter-id>
         <converter-class>com.sun.identity.admin.model.RealmBeanConverter</converter-class>
+    </converter>
+    <converter>
+        <converter-id>referralResourceConverter</converter-id>
+        <converter-class>com.sun.identity.admin.model.ReferralResourceConverter</converter-class>
     </converter>
 
     <managed-bean>
@@ -138,7 +142,7 @@
         </managed-property>
         <managed-property>
             <property-name>resourceTemplate</property-name>
-            <value>template/resources-url.xhtml</value>
+            <value>/admin/facelet/template/resources-url.xhtml</value>
         </managed-property>
         <managed-property>
             <property-name>resourceClassName</property-name>
@@ -159,7 +163,7 @@
         </managed-property>
         <managed-property>
             <property-name>resourceTemplate</property-name>
-            <value>template/resources-banking.xhtml</value>
+            <value>/admin/facelet/template/resources-banking.xhtml</value>
         </managed-property>
         <managed-property>
             <property-name>resourceClassName</property-name>
@@ -1368,6 +1372,10 @@
         <managed-bean-name>referralCreateWizardBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.ReferralCreateWizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>viewApplicationsBean</property-name>
+            <value>#{viewApplicationsBean}</value>
+        </managed-property>
         <managed-property>
             <property-name>steps</property-name>
             <value>4</value>
