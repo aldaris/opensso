@@ -23,18 +23,18 @@
  */
 package com.sun.identity.qatest.csdk;
 
-import com.gargoylesoftware.htmlunit.WebClient;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.CSDKCommon;
-import com.sun.identity.qatest.common.FederationManager;
+import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.SMSConstants;
-import com.sun.identity.qatest.common.TestCommon;
-import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
+import com.sun.identity.qatest.idm.IDMConstants;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -56,44 +56,33 @@ import org.testng.annotations.Test;
  * (7) Repeat the following scenarios for Active Directory, LDAP, 
  * Membership, Anonymous, NT and JDBC modules)
  */
-public class CSDKAuthTest extends TestCommon {
+public class CSDKAuthTest extends AuthenticationCommon {
 
-    private AuthenticationCommon ac;
-    private AuthTestConfigUtil moduleConfigData;
     private boolean isValidTest = true;
     private CSDKCommon cc;
-    private List list;
     private ResourceBundle rb;
     private String moduleServiceName;
     private String moduleSubConfigName;
-    private String moduleSubConfigId;
     private String serviceName;
     private String serviceSubConfigName;
-    private String serviceSubConfigId;
     private String rolename;
     private String user;
     private String password;
-    private String svcName;
-    private String loginURL;
-    private String logoutURL;
-    private String amadmURL;
     private String libraryPath;
     private String directoryPath;
     private String bootstrapFile;
     private String configurationFile;
-    private String configrbName = "authenticationConfigData";
-    private WebClient webClient;
+    private IDMCommon idmc;
+    private SSOToken adminToken;
+    private SMSCommon smsc;
 
     /**
      * Constructor for the class.
      */
     public CSDKAuthTest() {
         super("CSDKAuthTest");
-        ac = new AuthenticationCommon();
         cc = new CSDKCommon();
-        moduleConfigData = new AuthTestConfigUtil(configrbName);
-        logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
-                "/UI/Logout";
+        idmc = new IDMCommon();
     }
 
     /**
@@ -117,25 +106,20 @@ public class CSDKAuthTest extends TestCommon {
         directoryPath = (String) ldMap.get("directoryPath");
         bootstrapFile = cc.getBootStrapFilePath();
         configurationFile = cc.getConfigurationFilePath();
-        webClient = new WebClient();
+
         try {
-            isValidTest = moduleConfigData.isValidModuleTest(testModule);
+            isValidTest = isValidModuleTest(testModule);
             if (isValidTest) {
                 rb = ResourceBundle.getBundle("csdk" + fileseparator +
                         "CSDKAuthTest");
-                list = moduleConfigData.getModuleDataAsList(testModule);
                 moduleServiceName = (String) rb.getString("CSDKAuthTest" + "."
-                        + testModule + ".module_servicename");
-                moduleSubConfigName = (String) rb.getString("CSDKAuthTest" + 
-                        "." + testModule + ".module_subconfigname");
-                moduleSubConfigId = (String) rb.getString("CSDKAuthTest" + "." 
-                        + testModule + ".module_subconfigid");
-                serviceName = (String) rb.getString("CSDKAuthTest" + "." +
-                        testModule + ".service_servicename");
+                        + testModule + ".module-servicename");
+                moduleSubConfigName = (String) rb.getString("CSDKAuthTest" +
+                        "." + testModule + ".module-subconfigname");
                 serviceSubConfigName = (String) rb.getString("CSDKAuthTest" +
-                        "." + testModule + ".service_subconfigname");
-                serviceSubConfigId = (String) rb.getString("CSDKAuthTest" + 
-                        "." + testModule + ".service_subconfigid");
+                        "." + testModule + ".service-subconfigname");
+                String serviceDetails = (String)rb.getString("CSDKAuthTest" +
+                        "." + testModule + ".service-details");
                 rolename = (String) rb.getString("CSDKAuthTest" + "." +
                         testModule + ".rolename");
                 user = (String) rb.getString("CSDKAuthTest" + "." +
@@ -147,16 +131,8 @@ public class CSDKAuthTest extends TestCommon {
                         moduleServiceName);
                 log(Level.FINEST, "setup", "moduleSubConfigName: " +
                         moduleSubConfigName);
-                log(Level.FINEST, "setup", "moduleSubConfigId: " +
-                        moduleSubConfigId);
-
-                log(Level.FINEST, "setup", "serviceName: " +
-                        serviceName);
                 log(Level.FINEST, "setup", "serviceSubConfigName: " +
                         serviceSubConfigName);
-                log(Level.FINEST, "setup", "serviceSubConfigId: " +
-                        serviceSubConfigId);
-                log(Level.FINEST, "setup", "module_subconfig_list: " + list);
 
                 log(Level.FINEST, "setup", "rolename: " + rolename);
                 log(Level.FINEST, "setup", "username: " + user);
@@ -164,103 +140,69 @@ public class CSDKAuthTest extends TestCommon {
 
                 Reporter.log("ModuleServiceName: " + moduleServiceName);
                 Reporter.log("ModuleSubConfigName: " + moduleSubConfigName);
-                Reporter.log("ModuleSubConfigId: " + moduleSubConfigId);
-
-                Reporter.log("ServiceServiceName: " + serviceName);
                 Reporter.log("ServiceSubConfigName: " + serviceSubConfigName);
-                Reporter.log("ServiceSubConfigId: " + serviceSubConfigId);
-
-                Reporter.log("ModuleSubConfigList: " + list);
 
                 Reporter.log("RoleName: " + rolename);
                 Reporter.log("UserName: " + user);
                 Reporter.log("UserPassword: " + password);
 
-                loginURL = getLoginURL("/");
-                amadmURL = protocol + ":" + "//" + host + ":" + port +
-                        uri;
-                log(Level.FINEST, "setup", loginURL);
-                log(Level.FINEST, "setup", logoutURL);
-                log(Level.FINEST, "setup", amadmURL);
-                if (moduleServiceName.equals("iPlanetAMAuthAnonymousService")) {
-                    list.add("iplanet-am-auth-anonymous-users-list=" + user);
-                }
-                FederationManager am = new FederationManager(amadmURL);
-                consoleLogin(webClient, loginURL, adminUser, adminPassword);
-                log(Level.FINE, "setup", "Creating module sub-configuration " +
-                        moduleSubConfigName + "...");
-                if (FederationManager.getExitCode(am.createSubCfg(webClient,
-                        moduleServiceName, moduleSubConfigName, list, realm,
-                        moduleSubConfigId, "0")) != 0) {
-                    log(Level.SEVERE, "setup",
-                            "createSubCfg (module) ssoadm command failed");
-                    assert false;
-                }
-                list.clear();
-                String svcData = "iplanet-am-auth-configuration=" +
-                        "<AttributeValuePair><Value>" + moduleSubConfigName +
-                        " REQUIRED</Value></AttributeValuePair>";
-                log(Level.FINEST, "setup", "ServiceData: " + svcData);
-                list.add(svcData);
-                log(Level.FINE, "setup", "Creating service sub-configuration " +
-                        serviceSubConfigName + "...");
-                if (FederationManager.getExitCode(am.createSubCfg(webClient,
-                        serviceName, serviceSubConfigName, list, realm,
-                        serviceSubConfigId, "0")) != 0) {
-                    log(Level.SEVERE, "setup",
-                            "createSubCfg (service) ssoadm command failed");
-                    assert false;
+                Map<String,String> globalUpdateMap = new HashMap();
+                globalUpdateMap.put("instances-to-create", testModule + ",1");
+                this.setPropsInGlobalAuthInstancesMap(globalUpdateMap);
+                createAuthInstances();
+
+                if (!testMode.equals("module") &&
+                        !testMode.equals("authlevel")) {
+                    String[] configInstances = {serviceDetails};
+                    Map configMap = new HashMap();
+                    createAuthConfig(realm, serviceSubConfigName,
+                            configInstances, configMap);
                 }
 
-                int iIdx = serviceSubConfigName.indexOf("/");
-                svcName = serviceSubConfigName.substring(iIdx + 1,
-                        serviceSubConfigName.length());
-                log(Level.FINEST, "setup", "svcName:" + svcName);
+                StringBuffer attrBuffer = new StringBuffer("sn=" + user).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("cn=" + user).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("userpassword=" + password).
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("inetuserstatus=Active").
+                        append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                        append("iplanet-am-user-auth-config=" +
+                        serviceSubConfigName);
 
-                list.clear();
-                list.add("sn=" + user);
-                list.add("cn=" + user);
-                list.add("userpassword=" + password);
-                list.add("inetuserstatus=Active");
-                list.add("iplanet-am-user-auth-config=" + svcName);
                 log(Level.FINE, "setup", "Creating user " + user + " ...");
-                if (FederationManager.getExitCode(am.createIdentity(webClient,
-                        realm, user, "User", list)) != 0) {
+                adminToken = getToken(adminUser, adminPassword, basedn);
+                if (!idmc.createID(user, "user", attrBuffer.toString(),
+                        adminToken, realm)) {
                     log(Level.SEVERE, "setup",
-                            "createIdentity (User) ssoadm command failed");
+                            "Failed to create user identity " + user + " ...");
                     assert false;
                 }
 
-                if (ac.getSMSCommon().isPluginConfigured(
+                smsc = new SMSCommon(adminToken);
+                if (testMode.equals("role") && smsc.isPluginConfigured(
                         SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm)) {
                     log(Level.FINE, "setup", "Creating role " + rolename +
                             " ...");
-                    if (FederationManager.getExitCode(am.createIdentity(
-                            webClient, realm, rolename, "Role", null)) != 0) {
-                        log(Level.SEVERE, "setup",
-                                "createIdentity (Role) ssoadm command failed");
+                    if (!idmc.createID(rolename, "role", null, adminToken,
+                            realm)) {
+                        log(Level.SEVERE, "createUser", "Failed to create role "
+                                + rolename + " ...");
                         assert false;
                     }
+
                     log(Level.FINE, "setup", "Assigning the user " + user +
                             " to role " + rolename + " ...");
-                    if (FederationManager.getExitCode(am.addMember(webClient,
-                            realm, user, "User", rolename, "Role")) != 0) {
-                        log(Level.SEVERE, "setup",
-                                "addMember ssoadm (User) call failed");
-                        assert false;
-                    }
-                    list.clear();
-                    list.add("iplanet-am-auth-configuration=" + svcName);
+                    idmc.addUserMember(adminToken, user, rolename,
+                            IdType.ROLE, realm);
+
                     log(Level.FINE, "setup", "Assigning the service " +
                             serviceName + " to the role " +
                             rolename + "...");
-                    if (FederationManager.getExitCode(am.addSvcIdentity(
-                            webClient, realm, rolename, "Role",
-                            serviceName, list)) != 0) {
-                        log(Level.SEVERE, "setup",
-                                "addSvcIdentity ssoadm command failed");
-                        assert false;
-                    }
+                    idmc.assignSvcIdentity(adminToken, rolename, "role",
+                            AUTH_CONFIGURATION_SERVICE_NAME, realm,
+                            "iplanet-am-auth-configuration=" + 
+                            serviceSubConfigName);
                 } else {
                     log(Level.FINEST, "setup",
                             "Creation of a role, assignment of user to role, " +
@@ -269,24 +211,19 @@ public class CSDKAuthTest extends TestCommon {
                 }
             } else {
                 log(Level.FINEST, "setup", "Skipping setup of " + testModule +
-                        " auth module test on a Windows based server");
+                     " auth module test on a Windows based server");
             }
-        } catch (AssertionError ae) {
-            log(Level.SEVERE, "setup",
-                    "Calling cleanup due to failed ssoadm exit code ...");
-            cleanup(testModule);
-            throw ae;
+            exiting("setup");
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
+            cleanup(testModule, testMode);
             throw e;
         } finally {
             if (isValidTest) {
-                consoleLogout(webClient, logoutURL);
-                Thread.sleep(notificationSleepTime);
+                destroyToken(adminToken);
             }
         }
-        exiting("setup");
     }
 
     /**
@@ -342,22 +279,30 @@ public class CSDKAuthTest extends TestCommon {
                 while ((error = stdError.readLine()) != null) {
                     sbResults = sbResults.append(error);
                 }
-                if (sbResults.toString().contains("Succeeded!")) {
-                    assert true;
+                if (sbResults != null && sbResults.length() > 0) {
+                    log(Level.FINEST, "testCSDKAuthPositive",
+                            "Result of command = " + sbResults);
+                    if (sbResults.toString().contains("Succeeded!")) {
+                        assert true;
+                    } else {
+                        assert false;
+                    }
                 } else {
+                    log(Level.SEVERE, "testCSDKAuthPositive",
+                            "Output buffer sbResults is null or empty");
                     assert false;
                 }
-                log(Level.FINEST, "testCSDKAuthPositive", sbResults);
+                exiting("testCSDKAuthPositive");
             } catch (Exception e) {
                 log(Level.SEVERE, "testCSDKAuthPositive", e.getMessage());
-                cleanup(testModule);
+                cleanup(testModule, testMode);
                 throw e;
             }
         } else {
             log(Level.FINEST, "testCSDKAuthPositive", "Skipping " + testModule +
                     " auth module test on a Windows based server");
         }
-        exiting("testCSDKAuthPositive");
+
     }
 
     /**
@@ -381,6 +326,9 @@ public class CSDKAuthTest extends TestCommon {
                 String loginPassword = (String) rb.getString("CSDKAuthTest" +
                         "." + testModule +
                         ".password");
+                if (testModule.equals("anonymous")) {
+                    loginUser = loginUser + "negative";
+                }
                 String modevalue = (String) rb.getString("CSDKAuthTest" + 
                         "." + testModule + ".modevalue." + testMode);
                 Reporter.log("Test Description : " + (String) rb.getString
@@ -389,14 +337,13 @@ public class CSDKAuthTest extends TestCommon {
                         ("CSDKAuthTest.negativeTestMessage"));
                 Reporter.log("Execution command :" + " am_auth_test " +
                         " -u " + loginUser + " -p " +
-                        loginPassword +
+                        loginPassword + "negative" +
                         " -f " + "  bootstrapFile " + " -o " + realm +
                         " -t " + testModeNo + " -m " + modevalue);
                 ProcessBuilder pb = new ProcessBuilder(directoryPath +
-                        fileseparator + "am_auth_test", "-u", loginUser +
-                        "negative", "-p", loginPassword, "-f",
-                        ".." + fileseparator + "config" + fileseparator +
-                        "OpenSSOAgentBootstrap.properties", "-o", realm,
+                        fileseparator + "am_auth_test", "-u", loginUser,
+                        "-p", loginPassword + "negative", "-f",
+                        bootstrapFile, "-o", realm,
                         "-t", testModeNo,
                         "-m", modevalue);
                 pb.environment().put("LD_LIBRARY_PATH", libraryPath);
@@ -413,22 +360,29 @@ public class CSDKAuthTest extends TestCommon {
                 while ((error = stdError.readLine()) != null) {
                     sbResults = sbResults.append(error);
                 }
-                if (sbResults.toString().contains("Succeeded!")) {
-                    assert false;
+                if (sbResults != null && sbResults.length() > 0) {
+                    log(Level.FINEST, "testCSDKAuthNegative",
+                            "Result of command = " + sbResults);
+                    if (sbResults.toString().contains("AM_AUTH_FAILURE")) {
+                        assert true;
+                    } else {
+                        assert false;
+                    }
                 } else {
-                    assert true;
+                    log(Level.SEVERE, "testCSDKAuthNegative",
+                            "Output buffer sbResults is null or empty");
+                    assert false;
                 }
-                log(Level.FINEST, "testCSDKAuthNegative", error);
+                exiting("testCSDKAuthNegative");
             } catch (Exception e) {
                 log(Level.SEVERE, "testCSDKAuthNegative", e.getMessage());
-                cleanup(testModule);
+                cleanup(testModule, testMode);
                 throw e;
             }
         } else {
             log(Level.FINEST, "testCSDKAuthNegative", "Skipping " + testModule +
                     " auth module test on a Windows based server");
         }
-        exiting("testCSDKAuthNegative");
     }
 
     /**
@@ -438,14 +392,14 @@ public class CSDKAuthTest extends TestCommon {
      * (3) Delete all users and roles
      * This is called only once per auth module.
      */
-    @Parameters({"testModule"})
+    @Parameters({"testModule", "testMode"})
     @AfterClass(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
         "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void cleanup(String testModule)
+    public void cleanup(String testModule, String testMode)
             throws Exception {
         Object[] params = {testModule};
         entering("cleanup", params);
-        webClient = new WebClient();
+
         if (isValidTest) {
             try {
                 user = (String) rb.getString("CSDKAuthTest" + "." +
@@ -459,61 +413,46 @@ public class CSDKAuthTest extends TestCommon {
                 Reporter.log("UserName:" + user);
                 Reporter.log("RoleName:" + rolename);
 
-                FederationManager am = new FederationManager(amadmURL);
-                consoleLogin(webClient, loginURL, adminUser, adminPassword);
-                list = new ArrayList();
-                list.add(user);
                 log(Level.FINE, "cleanup", "Deleting user " + user + " ...");
-                if (FederationManager.getExitCode(am.deleteIdentities(webClient,
-                        realm, list, "User")) != 0) {
-                    log(Level.SEVERE, "cleanup",
-                            "deleteIdentities (User) ssoadm command failed");
-                }
-                list.clear();
-                list.add(rolename);
+                adminToken = getToken(adminUser, adminPassword, basedn);
+                idmc.deleteIdentity(adminToken, realm, IdType.USER, user);
 
-                if (ac.getSMSCommon().isPluginConfigured(
+                smsc = new SMSCommon(adminToken);
+                if (testMode.equals("role") &&
+                        smsc.isPluginConfigured(
                         SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm)) {
+                    rolename = (String)rb.getString(testModule + ".rolename");
+
+                    log(Level.FINEST, "cleanup", "rolename = " + rolename);
+                    Reporter.log("RoleName: " + rolename);
+
                     log(Level.FINE, "cleanup", "Deleting role " + rolename +
                             " ...");
-                    if (FederationManager.getExitCode(
-                            am.deleteIdentities(webClient, realm, list,
-                            "Role")) != 0) {
-                        log(Level.SEVERE, "cleanup",
-                                "deleteIdentities(Role) ssoadm command failed");
-                    }
+                    idmc.deleteIdentity(adminToken, realm, IdType.ROLE,
+                            rolename);
                 }
 
-                log(Level.FINE, "cleanup",
-                        "Deleting service sub-configuration " +
-                        serviceSubConfigName + " ...");
-                if (FederationManager.getExitCode(am.deleteSubCfg(webClient,
-                        serviceName, serviceSubConfigName, realm)) != 0) {
-                    log(Level.SEVERE, "cleanup",
-                            "deleteSubCfg (Service) ssoadm command failed");
+                if (!testMode.equals("module") &&
+                        !testMode.equals("authlevel")) {
+                    log(Level.FINE, "cleanup",
+                            "Deleting authentication configuration " +
+                            serviceSubConfigName + " ...");
+                    deleteAuthConfig(serviceSubConfigName);
                 }
-                list.clear();
-                list.add(moduleSubConfigName);
-
-                log(Level.FINE, "cleanup", "Deleting module instance(s) " +
-                        list + " ...");
-                if (FederationManager.getExitCode(
-                        am.deleteAuthInstances(webClient, realm, list)) != 0) {
-                    log(Level.SEVERE, "cleanup",
-                            "deleteAuthInstances ssoadm command failed");
-                }
+                log(Level.FINE, "cleanup", "Deleting authentication instance " +
+                        moduleSubConfigName + " in realm " + realm);
+                deleteAuthInstances();
+                exiting("cleanup");
             } catch (Exception e) {
                 log(Level.SEVERE, "cleanup", e.getMessage());
                 e.printStackTrace();
                 throw e;
             } finally {
-                consoleLogout(webClient, logoutURL);
-                Thread.sleep(5000);
+                destroyToken(adminToken);
             }
         } else {
             log(Level.FINEST, "setup", "Skipping cleanup for " + testModule +
                     " auth module test on a Windows based server");
         }
-        exiting("cleanup");
     }
 }

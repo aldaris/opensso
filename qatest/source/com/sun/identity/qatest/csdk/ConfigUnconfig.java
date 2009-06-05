@@ -31,6 +31,7 @@ import com.sun.identity.qatest.common.CSDKCommon;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.TestCommon;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -62,6 +63,7 @@ public class ConfigUnconfig extends TestCommon {
     String configKey = "secret12";
     String encryptedKey;
     private SMSCommon smsc;
+    private AuthenticationCommon ac;
 
     /**
      * Creates a new instance of ConfigUnconfig
@@ -70,6 +72,7 @@ public class ConfigUnconfig extends TestCommon {
         super("ConfigUnconfig");
         cc = new CSDKCommon();
         idmc = new IDMCommon();
+        ac = new AuthenticationCommon("csdk");
     }
 
     /**
@@ -81,7 +84,7 @@ public class ConfigUnconfig extends TestCommon {
     public void startServer()
             throws Exception {
         entering("startServer", null);
-        notificationMap = startNotificationServer();       
+        notificationMap = startNotificationServer();
         exiting("startServer");
     }
 
@@ -105,6 +108,7 @@ public class ConfigUnconfig extends TestCommon {
             throws Exception {
         entering("setup", null);
         try {
+            ac.createAuthInstancesMap();
             CreateAgentProfile createAgent = new CreateAgentProfile();
             token = getToken(adminUser, adminPassword, realm);
             idrepo = new AMIdentityRepository(token, realm);
