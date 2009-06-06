@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardHandler.java,v 1.20 2009-06-04 15:21:09 farble1670 Exp $
+ * $Id: PolicyWizardHandler.java,v 1.21 2009-06-06 18:04:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -34,6 +34,7 @@ import com.icesoft.faces.context.effects.Fade;
 import com.icesoft.faces.context.effects.Highlight;
 import com.icesoft.faces.context.effects.SlideDown;
 import com.icesoft.faces.context.effects.SlideUp;
+import com.sun.identity.admin.NamePattern;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.ConditionType;
@@ -52,7 +53,6 @@ import com.sun.identity.admin.model.OrViewSubject;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PolicyManageBean;
-import com.sun.identity.admin.model.PolicyWizardAdvancedTabIndex;
 import com.sun.identity.admin.model.PolicyWizardStep;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.Resource;
@@ -65,7 +65,6 @@ import com.sun.identity.entitlement.Privilege;
 import java.io.Serializable;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
@@ -75,7 +74,6 @@ public abstract class PolicyWizardHandler
         implements Serializable, PolicyNameHandler, PolicySubjectsHandler,
         PolicyConditionsHandler, PolicySummaryHandler, PolicyResourcesHandler {
 
-    private Pattern POLICY_NAME_PATTERN = Pattern.compile("[0-9a-zA-Z]+");
     private PolicyDao policyDao;
     private PolicyManageBean policyManageBean;
     private QueuedActionBean queuedActionBean;
@@ -417,7 +415,7 @@ public abstract class PolicyWizardHandler
 
     public boolean validatePolicyName() {
         String policyName = getPolicyWizardBean().getPrivilegeBean().getName();
-        Matcher matcher = POLICY_NAME_PATTERN.matcher(policyName);
+        Matcher matcher = NamePattern.get().matcher(policyName);
 
         if (!matcher.matches()) {
             MessageBean mb = new MessageBean();
