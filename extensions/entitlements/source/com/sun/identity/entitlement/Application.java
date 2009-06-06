@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.20 2009-05-29 23:03:15 veiming Exp $
+ * $Id: Application.java,v 1.21 2009-06-06 00:34:42 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -56,6 +56,9 @@ public final class Application {
     private ResourceName resourceComparator;
     private Set<String> attributeNames;
 
+    private Application() {
+    }
+
     /**
      * Constructs an instance.
      *
@@ -70,6 +73,46 @@ public final class Application {
         this.realm = realm;
         this.name = name;
         this.applicationType = applicationType;
+    }
+
+    @Override
+    public Application clone() {
+        Application clone = new Application();
+        clone.name = name;
+        clone.realm = realm;
+        clone.applicationType = applicationType;
+
+        if (actions != null) {
+            clone.actions = new HashMap<String, Boolean>();
+            clone.actions.putAll(actions);
+        }
+
+        if (conditions != null) {
+            clone.conditions = new HashSet<String>();
+            clone.conditions.addAll(conditions);
+        }
+
+        if (subjects != null) {
+            clone.subjects = new HashSet<String>();
+            clone.subjects.addAll(subjects);
+        }
+
+        if (resources != null) {
+            clone.resources = new HashSet<String>();
+            clone.resources.addAll(resources);
+        }
+
+        clone.entitlementCombiner = entitlementCombiner;
+        clone.searchIndex = searchIndex;
+        clone.saveIndex = saveIndex;
+        clone.resourceComparator = resourceComparator;
+
+        if (attributeNames != null) {
+            clone.attributeNames = new HashSet<String>();
+            clone.attributeNames.addAll(attributeNames);
+        }
+
+        return clone;
     }
 
     /**
@@ -193,7 +236,9 @@ public final class Application {
      */
     public void setResources(Set<String> resources) {
         this.resources = new HashSet<String>();
-        this.resources.addAll(resources);
+        if (resources != null) {
+            this.resources.addAll(resources);
+        }
     }
 
     /**
@@ -376,5 +421,11 @@ public final class Application {
                 ValidateResourceResult.VALID_CODE_INVALID,
                 "resource.validation.invalid.resource", args);
         }
+    }
+
+    void refers(String realm, Set<String> res) {
+        this.realm = realm;
+        resources.clear();
+        resources.addAll(res);
     }
 }

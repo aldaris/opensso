@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementConfiguration.java,v 1.5 2009-05-29 22:21:45 dillidorai Exp $
+ * $Id: EntitlementConfiguration.java,v 1.6 2009-06-06 00:34:42 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -110,6 +110,16 @@ public abstract class EntitlementConfiguration {
      * @return a set of registered applications.
      */
     public abstract Set<Application> getApplications();
+
+    /**
+     * Removes application.
+     *
+     * @param name name of application to be removed.
+     * @param resources Resource name to be removed.
+     * @throws EntitlementException if application cannot be removed.
+     */
+    public abstract void removeApplication(String name, Set<String> resources)
+        throws EntitlementException;
 
     /**
      * Removes application.

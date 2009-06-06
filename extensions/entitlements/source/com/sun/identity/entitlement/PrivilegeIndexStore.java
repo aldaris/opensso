@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeIndexStore.java,v 1.5 2009-05-26 21:20:05 veiming Exp $
+ * $Id: PrivilegeIndexStore.java,v 1.6 2009-06-06 00:34:42 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -31,9 +31,7 @@ import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -42,8 +40,6 @@ import javax.security.auth.Subject;
  * a persistent data store.
  */
 public abstract class PrivilegeIndexStore {
-    private static Map<String, PrivilegeIndexStore> instances = new
-        HashMap<String, PrivilegeIndexStore>();
     private static Class clazz;
     private Subject adminSubject;
     private String realm;
@@ -59,7 +55,9 @@ public abstract class PrivilegeIndexStore {
     }
 
 
-    protected PrivilegeIndexStore(Subject adminSubject, String realm) {
+    protected PrivilegeIndexStore(
+        Subject adminSubject,
+        String realm) {
         this.adminSubject = adminSubject;
         this.realm = realm;
     }
@@ -86,36 +84,32 @@ public abstract class PrivilegeIndexStore {
         if (clazz == null) {
             return null;
         }
-        PrivilegeIndexStore impl = instances.get(realm);
 
-        if (impl == null) {
-            Class[] parameterTypes = {Subject.class, String.class};
-            try {
-                Constructor constructor = clazz.getConstructor(parameterTypes);
-                Object[] args = {adminSubject, realm};
-                impl = (PrivilegeIndexStore) constructor.newInstance(args);
-                instances.put(realm, impl);
-            } catch (InstantiationException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            } catch (IllegalAccessException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            } catch (IllegalArgumentException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            } catch (InvocationTargetException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            } catch (NoSuchMethodException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            } catch (SecurityException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            }
+        Class[] parameterTypes = {Subject.class, String.class};
+        try {
+            Constructor constructor = clazz.getConstructor(parameterTypes);
+            Object[] args = {adminSubject, realm};
+            return (PrivilegeIndexStore) constructor.newInstance(args);
+        } catch (InstantiationException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
+        } catch (IllegalAccessException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
+        } catch (IllegalArgumentException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
+        } catch (InvocationTargetException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
+        } catch (NoSuchMethodException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
+        } catch (SecurityException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
         }
-        return impl;
+        return null;
     }
 
     /**
@@ -123,10 +117,19 @@ public abstract class PrivilegeIndexStore {
      * created to speed up policy evaluation.
      *
      * @param privileges Privileges to be added.
-     * @throws com.sun.identity.entitlement.EntitlementException if addition
-     * failed.
+     * @throws EntitlementException if addition failed.
      */
     public abstract void add(Set<Privilege> privileges)
+        throws EntitlementException;
+
+    /**
+     * Adds a referral privilege to the data store. Proper indexes will be
+     * created to speed up policy evaluation.
+     *
+     * @param referral referral privileges to be added.
+     * @throws EntitlementException if addition failed.
+     */
+    public abstract void addReferral(ReferralPrivilege referral)
         throws EntitlementException;
 
     /**
@@ -150,6 +153,27 @@ public abstract class PrivilegeIndexStore {
         throws EntitlementException;
 
     /**
+     * Deletes a referralprivilege from data store.
+     *
+     * @param privilegeName name of privilege to be deleted.
+     * @throws com.sun.identity.entitlement.EntitlementException if deletion
+     * failed.
+     */
+    public abstract void deleteReferral(String privilegeName)
+        throws EntitlementException;
+
+    /**
+     * Deletes a referralprivilege from data store.
+     *
+     * @param privilegeName name of privilege to be deleted.
+     * @param notify <code>true</code> to notify changes.
+     * @throws com.sun.identity.entitlement.EntitlementException if deletion
+     * failed.
+     */
+    public abstract String deleteReferral(String privilegeName, boolean notify)
+        throws EntitlementException;
+
+    /**
      * Deletes a privilege from data store.
      *
      * @param privilegeName name of privilege to be deleted.
@@ -159,7 +183,6 @@ public abstract class PrivilegeIndexStore {
      */
     public abstract String delete(String privilegeName, boolean notify)
         throws EntitlementException;
-
 
     /**
      * Returns an iterator of matching privilege objects.
@@ -179,6 +202,23 @@ public abstract class PrivilegeIndexStore {
         IThreadPool threadPool
     ) throws EntitlementException;
 
+    /**
+     * Returns an iterator of matching referral privilege objects.
+     *
+     * @param indexes Resource search indexes.
+     * @param subjectIndexes Subject search indexes.
+     * @param bSubTree <code>true</code> for sub tree evaluation.
+     * @param threadPool Thread pool for executing threads.
+     * @return an iterator of matching referral privilege objects.
+     * @throws com.sun.identity.entitlement.EntitlementException if results
+     * cannot be obtained.
+     */
+    public abstract Iterator<ReferralPrivilege> searchReferrals(
+        ResourceSearchIndexes indexes,
+        Set<String> subjectIndexes,
+        boolean bSubTree,
+        IThreadPool threadPool
+    ) throws EntitlementException;
 
     /**
      * Returns a set of privilege names that matched a set of search criteria.
@@ -193,6 +233,28 @@ public abstract class PrivilegeIndexStore {
      * @throws EntitlementException if search failed.
      */
     public abstract Set<String> searchPrivilegeNames(
+        Set<PrivilegeSearchFilter> filters,
+        boolean boolAnd,
+        int numOfEntries,
+        boolean sortResults,
+        boolean ascendingOrder
+    ) throws EntitlementException;
+
+    /**
+     * Returns a set of referral privilege names that matched a set of search
+     * criteria.
+     *
+     * @param filters Set of search filter (criteria).
+     * @param boolAnd <code>true</code> to be inclusive.
+     * @param numOfEntries Number of maximum search entries.
+     * @param sortResults <code>true</code> to have the result sorted.
+     * @param ascendingOrder  <code>true</code> to have the result sorted in
+     *        ascending order.
+     * @return a set of referral privilege names that matched a set of search
+     *         criteria.
+     * @throws EntitlementException if search failed.
+     */
+    public abstract Set<String> searchReferralPrivilegeNames(
         Set<PrivilegeSearchFilter> filters,
         boolean boolAnd,
         int numOfEntries,

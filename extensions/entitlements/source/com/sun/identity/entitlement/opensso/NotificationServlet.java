@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationServlet.java,v 1.1 2009-05-26 21:20:05 veiming Exp $
+ * $Id: NotificationServlet.java,v 1.2 2009-06-06 00:34:43 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletResponse;
 public class NotificationServlet extends HttpServlet {
     public static final String CONTEXT_PATH = "/notification";
     public static final String PRIVILEGE_DELETED = "privilegedeleted";
+    public static final String REFERRAL_DELETED = "referraldeleted";
     public static final String ATTR_REALM_NAME = "realm";
     public static final String ATTR_NAME = "name";
 
@@ -80,6 +81,19 @@ public class NotificationServlet extends HttpServlet {
                     SubjectUtils.createSubject(adminToken), realm);
                 try {
                     pis.delete(privilegeName, false);
+                } catch (EntitlementException e) {
+                    //ignore
+                }
+            } else if (action.equals(REFERRAL_DELETED)) {
+                String referralName = req.getParameter(ATTR_NAME);
+                String realm = req.getParameter(ATTR_REALM_NAME);
+
+                SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+                PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+                    SubjectUtils.createSubject(adminToken), realm);
+                try {
+                    pis.deleteReferral(referralName, false);
                 } catch (EntitlementException e) {
                     //ignore
                 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPolicyDataStore.java,v 1.6 2009-05-29 22:21:46 dillidorai Exp $
+ * $Id: OpenSSOPolicyDataStore.java,v 1.7 2009-06-06 00:34:43 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -33,6 +33,7 @@ import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PolicyDataStore;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
+import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
@@ -49,6 +50,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -56,18 +58,19 @@ import org.w3c.dom.Node;
  */
 public class OpenSSOPolicyDataStore extends PolicyDataStore {
     private static final String REALM_DN_TEMPLATE =
-         "ou=" + PolicyManager.NAMED_POLICY +
-         ",ou=default,ou=OrganizationConfig,ou=1.0,ou=" +
+         "ou={1},ou=default,ou=OrganizationConfig,ou=1.0,ou=" +
          PolicyManager.POLICY_SERVICE_NAME + ",ou=services,{0}";
 
     public void addPolicy(Subject adminSubject, String realm, Object policy)
-            throws EntitlementException {
-            SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        throws EntitlementException {
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
 
         if (policy instanceof Policy ||
-                policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
+            policy instanceof com.sun.identity.entitlement.xacml3.core.Policy
+        ) {
             String name = PrivilegeUtils.getPolicyName(policy);
-            String dn = getPolicyDistinguishedName(realm, name);
+            String dn = getPolicyDistinguishedName(realm, name,
+                PolicyDataStore.POLICIES);
 
             if (adminToken == null) {
                 Object[] params = {name};
@@ -75,7 +78,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             }
 
             try {
-                createParentNode(adminToken, realm);
+                createParentNode(adminToken, realm, PolicyDataStore.POLICIES);
 
                 SMSEntry s = new SMSEntry(adminToken, dn);
                 Map<String, Set<String>> map = new HashMap<String, Set<String>>();
@@ -109,16 +112,15 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         }
     }
 
-
-
-    private void createParentNode(SSOToken adminToken, String realm)
-        throws SSOException, SMSException {
-
+    private void createParentNode(
+        SSOToken adminToken,
+        String realm,
+        String domain
+    ) throws SSOException, SMSException {
         ServiceConfig orgConf = getOrgConfig(adminToken, realm);
         Set<String> subConfigNames = orgConf.getSubConfigNames();
-        if (!subConfigNames.contains(PolicyManager.NAMED_POLICY)) {
-            orgConf.addSubConfig(PolicyManager.NAMED_POLICY,
-                PolicyManager.NAMED_POLICY, 0, null);
+        if (!subConfigNames.contains(domain)) {
+            orgConf.addSubConfig(domain, PolicyDataStore.POLICIES, 0, null);
         }
     }
 
@@ -136,13 +138,14 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
     public Object getPolicy(Subject adminSubject, String realm, String name)
         throws EntitlementException {
         SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
-        
+
         if (adminToken == null) {
             Object[] params = {name};
             throw new EntitlementException(209, params);
         }
 
-        String dn = getPolicyDistinguishedName(realm, name);
+        String dn = getPolicyDistinguishedName(realm, name,
+            PolicyDataStore.POLICIES);
 
         if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
             Object[] params = {name};
@@ -154,6 +157,43 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             Set<String> xml = map.get(SMSEntry.ATTR_KEYVAL);
             String strXML = xml.iterator().next();
             return createPolicy(adminToken, realm, strXML);
+        } catch (SSOException ex) {
+            Object[] params = {name};
+            throw new EntitlementException(204, params, ex);
+        } catch (SMSException ex) {
+            Object[] params = {name};
+            throw new EntitlementException(204, params, ex);
+        } catch (Exception ex) {
+            Object[] params = {name};
+            throw new EntitlementException(204, params, ex);
+        }
+    }
+
+    public ReferralPrivilege getReferral(
+        Subject adminSubject,
+        String realm,
+        String name
+    ) throws EntitlementException {
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        
+        if (adminToken == null) {
+            Object[] params = {name};
+            throw new EntitlementException(262, params);
+        }
+
+        String dn = getPolicyDistinguishedName(realm, name,
+            PolicyDataStore.REFERRALS);
+
+        if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
+            Object[] params = {name};
+            throw new EntitlementException(263, params);
+        }
+        try {
+            SMSEntry s = new SMSEntry(adminToken, dn);
+            Map<String, Set<String>> map = s.getAttributes();
+            Set<String> jsonSet = map.get(SMSEntry.ATTR_KEYVAL);
+            String json = jsonSet.iterator().next();
+            return ReferralPrivilege.getInstance(new JSONObject(json));
         } catch (SSOException ex) {
             Object[] params = {name};
             throw new EntitlementException(204, params, ex);
@@ -194,7 +234,8 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             throw new EntitlementException(211, params);
         }
         
-        String dn = getPolicyDistinguishedName(realm, name);
+        String dn = getPolicyDistinguishedName(realm, name,
+            PolicyDataStore.POLICIES);
         if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
             Object[] params = {name};
             throw new EntitlementException(203, params);
@@ -216,12 +257,13 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
 
     private static String getPolicyDistinguishedName(
         String realm,
-        String name) {
-        return "ou=" + name + "," + getStoreBaseDN(realm);
+        String name,
+        String domain) {
+        return "ou=" + name + "," + getStoreBaseDN(realm, domain);
     }
 
-    private static String getStoreBaseDN(String realm) {
-        Object[] args = {DNMapper.orgNameToDN(realm)};
+    private static String getStoreBaseDN(String realm, String domain) {
+        Object[] args = {DNMapper.orgNameToDN(realm), domain};
         return MessageFormat.format(REALM_DN_TEMPLATE, args);
     }
 
@@ -233,7 +275,8 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         if (policy instanceof Policy ||
                 policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
             String name = PrivilegeUtils.getPolicyName(policy);
-            String dn = getPolicyDistinguishedName(realm, name);
+            String dn = getPolicyDistinguishedName(realm, name,
+                PolicyDataStore.POLICIES);
 
             if (adminToken == null) {
                 Object[] params = {name};
@@ -270,6 +313,123 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
                 Object[] params = {name};
                 throw new EntitlementException(206, params, e);
             }
+        }
+    }
+
+    public void addReferral(
+        Subject adminSubject,
+        String realm,
+        ReferralPrivilege referral)
+        throws EntitlementException {
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+
+        String name = referral.getName();
+        String dn = getPolicyDistinguishedName(realm, name,
+            PolicyDataStore.REFERRALS);
+
+        if (adminToken == null) {
+            Object[] params = {name};
+            throw new EntitlementException(260, params);
+        }
+        try {
+            createParentNode(adminToken, realm, PolicyDataStore.REFERRALS);
+
+            SMSEntry s = new SMSEntry(adminToken, dn);
+            Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+
+            Set<String> setObjectClass = new HashSet<String>(4);
+            map.put(SMSEntry.ATTR_OBJECTCLASS, setObjectClass);
+            setObjectClass.add(SMSEntry.OC_TOP);
+            setObjectClass.add(SMSEntry.OC_SERVICE_COMP);
+
+            Set<String> setValue = new HashSet<String>(2);
+            map.put(SMSEntry.ATTR_KEYVAL, setValue);
+            setValue.add(referral.toXML()); //TODO toXML
+            s.setAttributes(map);
+            s.save();
+
+            PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+                adminSubject, realm);
+            pis.addReferral(referral);
+        } catch (SSOException e) {
+            Object[] params = {name};
+            throw new EntitlementException(261, params, e);
+        } catch (SMSException e) {
+            Object[] params = {name};
+            throw new EntitlementException(261, params, e);
+        }
+    }
+
+    public void modifyReferral(
+        Subject adminSubject,
+        String realm,
+        ReferralPrivilege referral
+    ) throws EntitlementException {
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        String name = referral.getName();
+        String dn = getPolicyDistinguishedName(realm, name,
+            PolicyDataStore.REFERRALS);
+
+        if (adminToken == null) {
+            Object[] params = {name};
+            throw new EntitlementException(264, params);
+        }
+
+        try {
+            SMSEntry s = new SMSEntry(adminToken, dn);
+            Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+
+            Set<String> setObjectClass = new HashSet<String>(4);
+            map.put(SMSEntry.ATTR_OBJECTCLASS, setObjectClass);
+            setObjectClass.add(SMSEntry.OC_TOP);
+            setObjectClass.add(SMSEntry.OC_SERVICE_COMP);
+
+            Set<String> setValue = new HashSet<String>(2);
+            map.put(SMSEntry.ATTR_KEYVAL, setValue);
+            setValue.add(referral.toJSON());
+            s.setAttributes(map);
+            s.save();
+
+            PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+                adminSubject, realm);
+            pis.deleteReferral(name);
+            pis.addReferral(referral);
+        } catch (SSOException e) {
+            Object[] params = {name};
+            throw new EntitlementException(265, params, e);
+        } catch (SMSException e) {
+            Object[] params = {name};
+            throw new EntitlementException(265, params, e);
+        }
+    }
+
+    public void removeReferral(Subject adminSubject, String realm, String name)
+        throws EntitlementException {
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+
+        if (adminToken == null) {
+            Object[] params = {name};
+            throw new EntitlementException(266, params);
+        }
+
+        String dn = getPolicyDistinguishedName(realm, name,
+            PolicyDataStore.REFERRALS);
+        if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
+            Object[] params = {name};
+            throw new EntitlementException(263, params);
+        }
+        try {
+            SMSEntry s = new SMSEntry(adminToken, dn);
+            s.delete();
+            PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+                adminSubject, realm);
+            pis.deleteReferral(name);
+        } catch (SSOException ex) {
+            Object[] params = {name};
+            throw new EntitlementException(205, params, ex);
+        } catch (SMSException ex) {
+            Object[] params = {name};
+            throw new EntitlementException(205, params, ex);
         }
     }
 }

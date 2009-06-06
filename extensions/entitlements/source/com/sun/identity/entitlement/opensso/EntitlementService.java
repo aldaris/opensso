@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.19 2009-06-02 20:42:36 veiming Exp $
+ * $Id: EntitlementService.java,v 1.20 2009-06-06 00:34:43 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -215,12 +215,56 @@ public class EntitlementService extends EntitlementConfiguration {
         return set;
     }
 
+    private Application getRawApplication(String name) {
+        Set<Application> applications = getRawApplications();
+        for (Application a : applications) {
+            if (a.getName().equals(name)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    private Application getApplication(String name) {
+        Set<Application> applications = getApplications();
+        for (Application a : applications) {
+            if (a.getName().equals(name)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
     /**
      * Returns a set of registered applications.
      *
      * @return a set of registered applications.
      */
     public Set<Application> getApplications() {
+        Set<Application> results = getRawApplications();
+        for (Application app : results) {
+            Set<String> resources = app.getResources();
+            Set<String> res = new HashSet<String>();
+            
+            for (String r : resources) {
+                int idx = r.indexOf('\t');
+                if (idx != -1) {
+                    res.add(r.substring(idx+1));
+                } else {
+                    res.add(r);
+                }
+            }
+            app.setResources(res);
+        }
+        return results;
+    }
+
+    /**
+     * Returns a set of registered applications.
+     *
+     * @return a set of registered applications.
+     */
+    public Set<Application> getRawApplications() {
         Set<Application> results = new HashSet<Application>();
         try {
             SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
@@ -423,6 +467,27 @@ public class EntitlementService extends EntitlementConfiguration {
     }
 
     /**
+     * Removes application.
+     *
+     * @param name name of application to be removed.
+     * @param resources Resource name to be removed.
+     * @throws EntitlementException if application cannot be removed.
+     */
+    public void removeApplication(String name, Set<String> resources)
+        throws EntitlementException {
+        Application appl = getApplication(name);
+        if (appl != null) {
+            Application store = getStorableApplication(appl, false);
+
+            if (store.getResources().isEmpty()) {
+                removeApplication(name);
+            } else {
+                storeApplication(appl, false);
+            }
+        }
+    }
+
+    /**
      * Removes application type.
      *
      * @param name name of application type to be removed.
@@ -490,14 +555,24 @@ public class EntitlementService extends EntitlementConfiguration {
      */
     public void storeApplication(Application appl)
         throws EntitlementException {
+        storeApplication(appl, true);
+    }
+    /**
+     * Stores the application to data store.
+     *
+     * @param application Application object.
+     * @throws EntitlementException if application cannot be stored.
+     */
+    public void storeApplication(Application appl, boolean add)
+        throws EntitlementException {
         try {
             ServiceConfig orgConfig = createApplicationCollectionConfig(realm);
             ServiceConfig appConfig = orgConfig.getSubConfig(appl.getName());
             if (appConfig == null) {
                 orgConfig.addSubConfig(appl.getName(),
-                    CONFIG_APPLICATION, 0, getApplicationData(appl));
+                    CONFIG_APPLICATION, 0, getApplicationData(appl, add));
             } else {
-                appConfig.setAttributes(getApplicationData(appl));
+                appConfig.setAttributes(getApplicationData(appl, add));
             }
         } catch (SMSException ex) {
             Object[] arg = {appl.getName()};
@@ -570,13 +645,71 @@ public class EntitlementService extends EntitlementConfiguration {
         return data;
     }
 
-    private Map<String, Set<String>> getApplicationData(Application app) {
+    private Map<String, Integer> getResourceCount(Set<String> res) {
+        Map<String, Integer> results = new HashMap<String, Integer>();
+        for (String r : res) {
+            int idx = r.indexOf('\t');
+            if (idx != -1) {
+                try {
+                    String resource = r.substring(idx + 1);
+                    int cnt = Integer.parseInt(r.substring(0, idx));
+                    results.put(resource, cnt);
+                } catch (NumberFormatException e) {
+                    results.put(r, 1);
+                }
+            }
+        }
+        return results;
+    }
+
+    private Application getStorableApplication(Application app, boolean add) {
+        Application existing = getRawApplication(app.getName());
+        Map<String, Integer> existingRes = (existing != null) ?
+            getResourceCount(existing.getResources()) :
+            Collections.EMPTY_MAP;
+        Set<String> resources = app.getResources();
+        Set<String> res = new HashSet<String>();
+
+        if (resources != null) {
+            for (String r : resources) {
+                if (add) {
+                    int cnt = (existingRes.containsKey(r)) ?
+                        existingRes.get(r) +1 : 1;
+                    res.add(cnt + "\t" + r);
+                } else {
+                    int cnt = (existingRes.containsKey(r)) ?
+                        existingRes.get(r) -1 : 0;
+                    if (cnt > 0) {
+                        res.add(cnt + "\t" + r);
+                    }
+                }
+            }
+            for (String r : existingRes.keySet()) {
+               if (!resources.contains(r)) {
+                   int cnt = existingRes.get(r);
+                   res.add(cnt + "\t" + r);
+               }
+            }
+        } else {
+            for (String r : existingRes.keySet()) {
+                int cnt = existingRes.get(r);
+                res.add(cnt + "\t" + r);
+            }
+        }
+        Application clone = app.clone();
+        clone.setResources(res);
+        return clone;
+    }
+
+    private Map<String, Set<String>> getApplicationData(Application appl,
+        boolean add) {
+        Application app = getStorableApplication(appl, add);
+        Set<String> resources = app.getResources();
+        
         Map<String, Set<String>> data = new HashMap<String, Set<String>>();
         data.put(CONFIG_APPLICATIONTYPE, 
             getSet(app.getApplicationType().getName()));
         data.put(CONFIG_ACTIONS, getActionSet(app.getActions()));
-
-        Set<String> resources = app.getResources();
         data.put(CONFIG_RESOURCES, (resources == null) ? Collections.EMPTY_SET :
             resources);
         data.put(CONFIG_ENTITLEMENT_COMBINER,
@@ -874,5 +1007,4 @@ public class EntitlementService extends EntitlementConfiguration {
         return (xacmlEnabled != null) ? Boolean.parseBoolean(xacmlEnabled)
                 : false;
     }
-
 }

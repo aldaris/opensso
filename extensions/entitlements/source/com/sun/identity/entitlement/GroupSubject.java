@@ -22,12 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.14 2009-05-27 23:06:09 hengming Exp $
+ * $Id: GroupSubject.java,v 1.15 2009-06-06 00:34:42 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.IdType;
 
 import java.util.Collections;

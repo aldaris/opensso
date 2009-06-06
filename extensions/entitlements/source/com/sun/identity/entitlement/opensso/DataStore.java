@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.16 2009-05-26 21:20:05 veiming Exp $
+ * $Id: DataStore.java,v 1.17 2009-06-06 00:34:43 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -35,6 +35,7 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.EntitlementThreadPool;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
@@ -75,6 +76,9 @@ import org.json.JSONObject;
  * This class *talks* to SMS to get the configuration information.
  */
 public class DataStore {
+    public static final String POLICY_STORE = "default";
+    public static final String REFERRAL_STORE = "referrals";
+
     private static final String SERVICE_NAME = "PolicyIndex";
     private static final String INDEX_COUNT = "indexCount";
     private static final String REALM_DN_TEMPLATE =
@@ -106,7 +110,7 @@ public class DataStore {
      *
      * @param name Privilege name.
      * @param realm Realm name.
-     * @param indexName Index name (default is "default");
+     * @param indexName Index name.
      * @return the distingished name of a privilege.
      */
     public static String getPrivilegeDistinguishedName(
@@ -120,12 +124,12 @@ public class DataStore {
      * Returns the base search DN.
      *
      * @param realm Realm name.
-     * @param indexName Index name (default is "default")
+     * @param indexName Index name.
      * @return
      */
     public static String getSearchBaseDN(String realm, String indexName) {
         if (indexName == null) {
-            indexName = "default";
+            indexName = POLICY_STORE;
         }
         Object[] args = {indexName, DNMapper.orgNameToDN(realm)};
         return MessageFormat.format(REALM_DN_TEMPLATE, args);
@@ -137,7 +141,7 @@ public class DataStore {
         String indexName)
         throws SMSException, SSOException {
         if (indexName == null) {
-            indexName = "default";
+            indexName = POLICY_STORE;
         }
         ServiceConfig orgConf = getOrgConfig(adminToken, realm);
 
@@ -325,6 +329,105 @@ public class DataStore {
         }
         return dn;
     }
+    /**
+     * Adds a referral.
+     *
+     * @param adminSubject Admin Subject who has the rights to write to
+     *        datastore.
+     * @param realm Realm name.
+     * @param referral Referral Privilege object.
+     * @return the DN of added privilege.
+     * @throws EntitlementException if privilege cannot be added.
+     */
+    public String addReferral(
+        Subject adminSubject,
+        String realm,
+        ReferralPrivilege referral
+    ) throws EntitlementException {
+        ResourceSaveIndexes indexes = referral.getResourceSaveIndexes(
+            adminSubject, realm);
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        String dn = null;
+        try {
+            createDefaultSubConfig(adminToken, realm, REFERRAL_STORE);
+            dn = getPrivilegeDistinguishedName(referral.getName(), realm,
+                REFERRAL_STORE);
+
+            SMSEntry s = new SMSEntry(adminToken, dn);
+            Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+
+            Set<String> searchable = new HashSet<String>();
+            map.put(SMSEntry.ATTR_XML_KEYVAL, searchable);
+
+            for (String i : indexes.getHostIndexes()) {
+                searchable.add(HOST_INDEX_KEY + "=" + i);
+            }
+            for (String i : indexes.getPathIndexes()) {
+                searchable.add(PATH_INDEX_KEY + "=" + i);
+            }
+            for (String i : indexes.getParentPathIndexes()) {
+                searchable.add(PATH_PARENT_INDEX_KEY + "=" + i);
+            }
+
+            Set<String> set = new HashSet<String>(2);
+            map.put(SMSEntry.ATTR_KEYVAL, set);
+            set.add(SERIALIZABLE_INDEX_KEY + "=" + referral.toJSON());
+
+            Set<String> setObjectClass = new HashSet<String>(4);
+            map.put(SMSEntry.ATTR_OBJECTCLASS, setObjectClass);
+            setObjectClass.add(SMSEntry.OC_TOP);
+            setObjectClass.add(SMSEntry.OC_SERVICE_COMP);
+
+            Set<String> info = new HashSet<String>(8);
+
+            String privilegeName = referral.getName();
+            if (privilegeName != null) {
+                info.add(Privilege.NAME_ATTRIBUTE + "=" + privilegeName);
+            }
+
+            String privilegeDesc = referral.getDescription();
+            if (privilegeDesc != null) {
+                info.add(Privilege.DESCRIPTION_ATTRIBUTE + "=" + privilegeDesc);
+            }
+
+            String createdBy = referral.getCreatedBy();
+            if (createdBy != null) {
+                info.add(Privilege.CREATED_BY_ATTRIBUTE + "=" + createdBy);
+            }
+
+            String lastModifiedBy = referral.getLastModifiedBy();
+            if (lastModifiedBy != null) {
+                info.add(Privilege.LAST_MODIFIED_BY_ATTRIBUTE + "=" +
+                    lastModifiedBy);
+            }
+
+            long creationDate = referral.getCreationDate();
+            if (creationDate > 0) {
+                String data = Long.toString(creationDate) + "=" +
+                    Privilege.CREATION_DATE_ATTRIBUTE;
+                info.add(data);
+                info.add("|" + data);
+            }
+
+            long lastModifiedDate = referral.getLastModifiedDate();
+            if (lastModifiedDate > 0) {
+                String data = Long.toString(lastModifiedDate) + "=" +
+                    Privilege.LAST_MODIFIED_DATE_ATTRIBUTE;
+                info.add(data);
+                info.add("|" + data);
+            }
+            map.put("ou", info);
+
+            s.setAttributes(map);
+            s.save();
+            updateIndexCount(adminToken, realm, 1);
+        } catch (SSOException e) {
+            throw new EntitlementException(270, e);
+        } catch (SMSException e) {
+            throw new EntitlementException(270, e);
+        }
+        return dn;
+    }
 
     /**
      * Removes privilege.
@@ -378,6 +481,56 @@ public class DataStore {
     }
 
     /**
+     * Removes referral privilege.
+     *
+     * @param adminSubject Admin Subject who has the rights to write to
+     *        datastore.
+     * @param realm Realm name.
+     * @param name Referral privilege name.
+     * @param notify <code>true</code> to send notification.
+     * @throws EntitlementException if privilege cannot be removed.
+     */
+    public void removeReferral(
+        Subject adminSubject,
+        String realm,
+        String name,
+        boolean notify
+    ) throws EntitlementException {
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+
+        if (adminToken == null) {
+            Object[] arg = {name};
+            throw new EntitlementException(55, arg);
+        }
+
+        String dn = null;
+        try {
+            dn = getPrivilegeDistinguishedName(name, realm, REFERRAL_STORE);
+
+            if (SMSEntry.checkIfEntryExists(dn, adminToken)) {
+                SMSEntry s = new SMSEntry(adminToken, dn);
+                s.delete();
+                updateIndexCount(adminToken, realm, -1);
+
+                if (notify) {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put(NotificationServlet.ATTR_NAME, name);
+                    params.put(NotificationServlet.ATTR_REALM_NAME, realm);
+                    Notifier notifier = new Notifier(
+                        NotificationServlet.REFERRAL_DELETED, params);
+                    threadPool.submit(notifier);
+                }
+            }
+        } catch (SMSException e) {
+            Object[] arg = {dn};
+            throw new EntitlementException(51, arg, e);
+        } catch (SSOException e) {
+            throw new EntitlementException(10, null, e);
+        }
+    }
+
+
+    /**
      * Returns a set of privilege names that satifies a search filter.
      *
      * @parma adminSubject Subject who has the rights to read datastore.
@@ -408,6 +561,57 @@ public class DataStore {
             }
 
             String baseDN = getSearchBaseDN(realm, null);
+
+            if (SMSEntry.checkIfEntryExists(baseDN, adminToken)) {
+                Set<String> dns = SMSEntry.search(adminToken, baseDN, filter);
+                for (String dn : dns) {
+                    if (!areDNIdentical(baseDN, dn)) {
+                        String rdns[] = LDAPDN.explodeDN(dn, true);
+                        if ((rdns != null) && rdns.length > 0) {
+                            results.add(rdns[0]);
+                        }
+                    }
+                }
+            } else {
+                return Collections.EMPTY_SET;
+            }
+        } catch (SMSException ex) {
+            throw new EntitlementException(215, ex);
+        }
+        return results;
+    }
+    
+    /**
+     * Returns a set of referral privilege names that satifies a search filter.
+     *
+     * @parma adminSubject Subject who has the rights to read datastore.
+     * @param realm Realm name
+     * @param filter Search filter.
+     * @param numOfEntries Number of max entries.
+     * @param sortResults <code>true</code> to have result sorted.
+     * @param ascendingOrder <code>true</code> to have result sorted in
+     * ascending order.
+     * @return a set of privilege names that satifies a search filter.
+     * @throws EntityExistsException if search failed.
+     */
+    public Set<String> searchReferral(
+        Subject adminSubject,
+        String realm,
+        String filter,
+        int numOfEntries,
+        boolean sortResults,
+        boolean ascendingOrder
+    ) throws EntitlementException {
+        Set<String> results = new HashSet<String>();
+
+        try {
+            SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+
+            if (adminToken == null) {
+                throw new EntitlementException(216);
+            }
+
+            String baseDN = getSearchBaseDN(realm, REFERRAL_STORE);
 
             if (SMSEntry.checkIfEntryExists(baseDN, adminToken)) {
                 Set<String> dns = SMSEntry.search(adminToken, baseDN, filter);
@@ -476,6 +680,67 @@ public class DataStore {
                 while (i.hasNext()) {
                     SMSDataEntry e = (SMSDataEntry)i.next();
                     Privilege privilege = Privilege.getInstance(
+                        new JSONObject(e.getAttributeValue(
+                        SERIALIZABLE_INDEX_KEY)));
+                    iterator.add(privilege);
+                    results.add(privilege);
+                }
+                iterator.isDone();
+            } catch (JSONException e) {
+                Object[] arg = {baseDN};
+                throw new EntitlementException(52, arg, e);
+            } catch (SMSException e) {
+                Object[] arg = {baseDN};
+                throw new EntitlementException(52, arg, e);
+            }
+
+            DB_MONITOR.end(start);
+        }
+        return results;
+    }
+
+    /**
+     * Returns a set of referral privilege that satifies the resource and
+     * subject indexes.
+     *
+     * @param adminSubject Subject who has the rights to read datastore.
+     * @param realm Realm name
+     * @param iterator Buffered iterator to have the result fed to it.
+     * @param indexes Resource search indexes.
+     * @param subjectIndexes Subject search indexes.
+     * @param bSubTree <code>true</code> to do sub tree search
+     * @param excludeDNs Set of DN to be excluded from the search results.
+     * @return a set of privilege that satifies the resource and subject
+     * indexes.
+     */
+    public Set<ReferralPrivilege> searchReferral(
+        Subject adminSubject,
+        String realm,
+        BufferedIterator iterator,
+        ResourceSearchIndexes indexes,
+        Set<String> subjectIndexes,
+        boolean bSubTree,
+        Set<String> excludeDNs
+    ) throws EntitlementException {
+        Set<ReferralPrivilege> results = new HashSet<ReferralPrivilege>();
+        String filter = getFilter(indexes, subjectIndexes, bSubTree);
+        String baseDN = getSearchBaseDN(realm, REFERRAL_STORE);
+
+        if (filter != null) {
+            long start = DB_MONITOR.start();
+            SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+
+            if (adminToken == null) {
+                Object[] arg = {baseDN};
+                throw new EntitlementException(56, arg);
+            }
+
+            try {
+                Iterator i = SMSEntry.search(
+                    adminToken, baseDN, filter, excludeDNs);
+                while (i.hasNext()) {
+                    SMSDataEntry e = (SMSDataEntry)i.next();
+                    ReferralPrivilege privilege = ReferralPrivilege.getInstance(
                         new JSONObject(e.getAttributeValue(
                         SERIALIZABLE_INDEX_KEY)));
                     iterator.add(privilege);

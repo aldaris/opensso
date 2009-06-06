@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.25 2009-06-02 20:36:47 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.26 2009-06-06 00:34:43 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -54,6 +54,8 @@ import org.testng.annotations.BeforeClass;
  */
 public class PrivilegeManagerTest {
     private static final String APPL_NAME = "PrivilegeManagerTestAppl";
+    private static final String REFERRAL_PRIVILEGE_NAME =
+        "PrivilegeManagerTestReferral";
     private static final String PRIVILEGE_NAME = "PrivilegeManagerTest";
     private static final String PRIVILEGE_NAME1 = "PrivilegeManagerTest1";
     private static final String PRIVILEGE_DESC = "Test Description";
@@ -78,7 +80,6 @@ public class PrivilegeManagerTest {
             adminToken, "/");
         String subRealm = SUB_REALM.substring(1);
         orgMgr.createSubOrganization(subRealm, Collections.EMPTY_MAP);
-        createApplication(SUB_REALM);
     }
 
     private void createApplication(String realm) throws EntitlementException {
@@ -239,10 +240,24 @@ public class PrivilegeManagerTest {
             //ok
         }
 
+        ReferralPrivilegeManager referralM = new ReferralPrivilegeManager("/",
+            SubjectUtils.createSubject(adminToken));
+        Set<String> realms = new HashSet<String>();
+        realms.add(SUB_REALM);
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        Set<String> referResources = new HashSet<String>();
+        referResources.add("http://www.privilegemanagertest.*");
+        map.put(APPL_NAME, referResources);
+        ReferralPrivilege referral = new ReferralPrivilege(
+            REFERRAL_PRIVILEGE_NAME, map, realms);
+        referralM.add(referral);
+
         prm.addPrivilege(privilege);
         Thread.sleep(1000);
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
         prm.removePrivilege(PRIVILEGE_NAME);
+
+        referralM.delete(REFERRAL_PRIVILEGE_NAME);
     }
 
     @Test

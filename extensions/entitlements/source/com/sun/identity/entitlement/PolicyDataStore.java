@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.9 2009-05-26 21:20:05 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.10 2009-06-06 00:34:42 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -34,6 +34,8 @@ import javax.security.auth.Subject;
  */
 public abstract class PolicyDataStore {
     private static PolicyDataStore instance;
+    protected static final String POLICIES = "Policies";
+    protected static final String REFERRALS = "Referrals";
 
     static {
         try {
@@ -83,6 +85,20 @@ public abstract class PolicyDataStore {
     ) throws EntitlementException;
 
     /**
+     * Modifies referral privilege.
+     *
+     * @param adminSubject Administrator subject that has the credential to
+     *        add the policy.
+     * @param realm Realm name.
+     * @param referral referral privilege object.
+     */
+    public abstract void modifyReferral(
+        Subject adminSubject,
+        String realm,
+        ReferralPrivilege referral
+    ) throws EntitlementException;
+
+     /**
      * Returns policy object.
      *
      * @param adminSubject Administrator subject that has the credential to
@@ -97,6 +113,20 @@ public abstract class PolicyDataStore {
     ) throws EntitlementException;
 
     /**
+     * Returns referral privilege object.
+     *
+     * @param adminSubject Administrator subject that has the credential to
+     *        add the policy.
+     * @param realm Realm name.
+     * @param name Policy name.
+     */
+    public abstract ReferralPrivilege getReferral(
+        Subject adminSubject,
+        String realm,
+        String name
+    ) throws EntitlementException;
+
+    /**
      * Removes policy.
      *
      * @param adminSubject Administrator subject that has the credential to
@@ -105,6 +135,27 @@ public abstract class PolicyDataStore {
      * @param name Policy name.
      */
     public abstract void removePolicy(
+        Subject adminSubject,
+        String realm,
+        String name
+    ) throws EntitlementException;
+
+    /**
+     * Adds a referral privilege.
+     *
+     * @param adminSubject Administrator subject that has the credential to
+     *        add the policy.
+     * @param realm Realm name.
+     * @param referral Referral Privilege
+     * @throws EntitlementException if referral privilege cannot be added
+     */
+    public abstract void addReferral(
+        Subject adminSubject,
+        String realm,
+        ReferralPrivilege referral
+    ) throws EntitlementException;
+
+    public abstract void removeReferral(
         Subject adminSubject,
         String realm,
         String name

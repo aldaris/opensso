@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.2 2009-05-07 23:00:25 veiming Exp $
+ * $Id: PolicyCache.java,v 1.3 2009-06-06 00:34:43 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.am.util.Cache;
 import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.ReferralPrivilege;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -53,6 +54,21 @@ class PolicyCache {
      * @param p Privilege.
      */
     public void cache(String dn, Privilege p) {
+        rwlock.writeLock().lock();
+        try {
+            cache.put(dn, p);
+        } finally {
+            rwlock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Caches a referral privilege.
+     *
+     * @param dn DN of the referral privilege object.
+     * @param p Referral privilege.
+     */
+    public void cache(String dn, ReferralPrivilege p) {
         rwlock.writeLock().lock();
         try {
             cache.put(dn, p);
@@ -92,6 +108,15 @@ class PolicyCache {
         rwlock.readLock().lock();
         try {
             return (Privilege)cache.get(dn);
+        } finally {
+            rwlock.readLock().unlock();
+        }
+    }
+
+    public ReferralPrivilege getReferral(String dn) {
+        rwlock.readLock().lock();
+        try {
+            return (ReferralPrivilege)cache.get(dn);
         } finally {
             rwlock.readLock().unlock();
         }
