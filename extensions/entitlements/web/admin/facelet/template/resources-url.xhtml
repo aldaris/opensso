@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: resources-url.xhtml,v 1.30 2009-06-05 05:21:09 farble1670 Exp $
+   $Id: resources-url.xhtml,v 1.31 2009-06-06 05:35:09 farble1670 Exp $
 
 -->
 
@@ -110,7 +110,7 @@
                                         </ice:checkbox>
                                         <ice:panelGroup
                                             styleClass="float-right"
-                                            rendered="#{urlResource.exceptable &amp;&amp; o:contains(policyResourcesBean.viewEntitlement.resources,urlResource)}">
+                                            rendered="#{allowExceptions &amp;&amp; urlResource.exceptable &amp;&amp; o:contains(policyResourcesBean.viewEntitlement.resources,urlResource)}">
                                             <o:clink
                                                 type="add"
                                                 linkLabel="#{resources['resources-url.addException']}"
