@@ -22,13 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralCreateWizardBean.java,v 1.2 2009-06-04 21:41:44 farble1670 Exp $
+ * $Id: ReferralCreateWizardBean.java,v 1.3 2009-06-06 17:39:15 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.ManagedBeanResolver;
+
 public class ReferralCreateWizardBean extends ReferralWizardBean {
     public boolean isNameEditable() {
         return true;
+    }
+
+    public static ReferralCreateWizardBean getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        return (ReferralCreateWizardBean)mbr.resolve("referralCreateWizardBean");
     }
 }

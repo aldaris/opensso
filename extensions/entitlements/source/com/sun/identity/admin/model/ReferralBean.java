@@ -22,13 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralBean.java,v 1.5 2009-06-05 21:29:00 farble1670 Exp $
+ * $Id: ReferralBean.java,v 1.6 2009-06-06 17:39:15 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
+import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.ReferralPrivilege;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.faces.model.SelectItem;
 
 public class ReferralBean {
@@ -139,5 +145,35 @@ public class ReferralBean {
 
     public String getSubjectsToFormattedString() {
         return getListToFormattedString(realmBeans);
+    }
+
+    public ReferralPrivilege toReferrealPrivilege() {
+        // applications, resources
+        Map<String, Set<String>> applicationNames = new HashMap<String,Set<String>>();
+        for (Resource r: resources) {
+            ReferralResource rr = (ReferralResource)r;
+            String an = rr.getViewEntitlement().getViewApplication().getName();
+            Set<String> rs = new HashSet<String>();
+            for (Resource ar: rr.getViewEntitlement().getResources()) {
+                rs.add(ar.getName());
+            }
+            applicationNames.put(an, rs);
+        }
+
+        // subjects (realms)
+        Set<String> realmNames = new HashSet<String>();
+        for (RealmBean rb: realmBeans) {
+            realmNames.add(rb.getName());
+        }
+
+        ReferralPrivilege rp;
+        try {
+            rp = new ReferralPrivilege(name, applicationNames, realmNames);
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
+        rp.setDescription(description);
+
+        return rp;
     }
 }

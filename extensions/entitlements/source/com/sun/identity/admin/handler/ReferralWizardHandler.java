@@ -22,16 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardHandler.java,v 1.3 2009-06-05 21:46:58 farble1670 Exp $
+ * $Id: ReferralWizardHandler.java,v 1.4 2009-06-06 17:39:15 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
 
 import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.dao.ReferralDao;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.RealmBean;
+import com.sun.identity.admin.model.ReferralBean;
 import com.sun.identity.admin.model.ReferralWizardBean;
 import java.util.List;
 import javax.faces.application.FacesMessage;
@@ -40,6 +42,7 @@ import javax.faces.event.ActionEvent;
 public abstract class ReferralWizardHandler extends WizardHandler {
     private MessagesBean messagesBean;
     private QueuedActionBean queuedActionBean;
+    private ReferralDao referralDao;
 
     public void setMessagesBean(MessagesBean messagesBean) {
         this.messagesBean = messagesBean;
@@ -51,8 +54,8 @@ public abstract class ReferralWizardHandler extends WizardHandler {
 
     @Override
     public String finishAction() {
-        // TODO
-        getWizardBean().reset();
+        ReferralBean rb = getReferralWizardBean().getReferralBean();
+        referralDao.add(rb);
 
         MessageBean mb = new MessageBean();
         Resources r = new Resources();
@@ -60,6 +63,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         mb.setSeverity(FacesMessage.SEVERITY_INFO);
         messagesBean.addMessageBean(mb);
 
+        getWizardBean().reset();
         return getFinishAction();
     }
 
@@ -133,5 +137,9 @@ public abstract class ReferralWizardHandler extends WizardHandler {
 
     public void setQueuedActionBean(QueuedActionBean queuedActionBean) {
         this.queuedActionBean = queuedActionBean;
+    }
+
+    public void setReferralDao(ReferralDao referralDao) {
+        this.referralDao = referralDao;
     }
 }

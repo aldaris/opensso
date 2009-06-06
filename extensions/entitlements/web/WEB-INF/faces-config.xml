@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.86 2009-06-05 16:45:45 farble1670 Exp $
+  $Id: faces-config.xml,v 1.87 2009-06-06 17:39:15 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -76,6 +76,12 @@
     <managed-bean>
         <managed-bean-name>realmDao</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.dao.RealmDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>referralDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.ReferralDao</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
@@ -1401,6 +1407,10 @@
         <managed-property>
             <property-name>queuedActionBean</property-name>
             <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>referralDao</property-name>
+            <value>#{referralDao}</value>
         </managed-property>
     </managed-bean>
     <!-- referral create -->
