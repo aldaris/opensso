@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardHandler.java,v 1.5 2009-06-06 18:04:16 farble1670 Exp $
+ * $Id: ReferralWizardHandler.java,v 1.6 2009-06-06 19:04:59 farble1670 Exp $
  */
-
 package com.sun.identity.admin.handler;
 
 import com.icesoft.faces.context.effects.Effect;
@@ -37,14 +36,18 @@ import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.ReferralBean;
+import com.sun.identity.admin.model.ReferralResource;
 import com.sun.identity.admin.model.ReferralWizardBean;
 import com.sun.identity.admin.model.ReferralWizardStep;
+import com.sun.identity.admin.model.Resource;
+import com.sun.identity.admin.model.ViewEntitlement;
 import java.util.List;
 import java.util.regex.Matcher;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 
 public abstract class ReferralWizardHandler extends WizardHandler {
+
     private MessagesBean messagesBean;
     private QueuedActionBean queuedActionBean;
     private ReferralDao referralDao;
@@ -57,8 +60,26 @@ public abstract class ReferralWizardHandler extends WizardHandler {
 
     public abstract String getCancelAction();
 
+    private boolean validateSteps() {
+        if (!validateName()) {
+            return false;
+        }
+        if (!validateResources()) {
+            return false;
+        }
+        if (!validateSubjects()) {
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     public String finishAction() {
+        if (!validateSteps()) {
+            return null;
+        }
+
         ReferralBean rb = getReferralWizardBean().getReferralBean();
         referralDao.add(rb);
 
@@ -74,16 +95,23 @@ public abstract class ReferralWizardHandler extends WizardHandler {
 
     @Override
     public String cancelAction() {
-        // TODO
-        getWizardBean().reset();
-
         MessageBean mb = new MessageBean();
         Resources r = new Resources();
         mb.setSummary(r.getString(this, "cancel"));
         mb.setSeverity(FacesMessage.SEVERITY_INFO);
         messagesBean.addMessageBean(mb);
 
+        getWizardBean().reset();
         return getCancelAction();
+    }
+
+    @Override
+    public void expandListener(ActionEvent event) {
+        if (!validateSteps()) {
+            return;
+        }
+
+        super.expandListener(event);
     }
 
     private boolean validateName() {
@@ -111,6 +139,44 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         return true;
     }
 
+    private boolean validateResources() {
+        List<Resource> resources = getReferralWizardBean().getReferralBean().getResources();
+        if (resources != null) {
+            for (Resource r : getReferralWizardBean().getReferralBean().getResources()) {
+                ReferralResource rr = (ReferralResource) r;
+                ViewEntitlement ve = rr.getViewEntitlement();
+                if (ve.getResources() != null && ve.getResources().size() > 0) {
+                    return true;
+                }
+            }
+        }
+
+        MessageBean mb = new MessageBean();
+        Resources r = new Resources();
+        mb.setSummary(r.getString(this, "noResourcesSummary"));
+        mb.setDetail(r.getString(this, "noResourcesDetail"));
+        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+        messagesBean.addMessageBean(mb);
+
+        return false;
+    }
+
+    private boolean validateSubjects() {
+        List<RealmBean> realmBeans = getReferralWizardBean().getReferralBean().getRealmBeans();
+        if (realmBeans == null || realmBeans.size() == 0) {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "noSubjectsSummary"));
+            mb.setDetail(r.getString(this, "noSubjectsDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            messagesBean.addMessageBean(mb);
+            
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     public void nextListener(ActionEvent event) {
         int step = getStep(event);
@@ -124,9 +190,15 @@ public abstract class ReferralWizardHandler extends WizardHandler {
                 break;
 
             case RESOURCES:
+                if (!validateResources()) {
+                    return;
+                }
                 break;
 
             case SUBJECTS:
+                if (!validateSubjects()) {
+                    return;
+                }
                 break;
 
             default:
@@ -136,8 +208,39 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         super.nextListener(event);
     }
 
+    @Override
+    public void previousListener(ActionEvent event) {
+        int step = getStep(event);
+        ReferralWizardStep rws = ReferralWizardStep.valueOf(step);
+
+        switch (rws) {
+            case NAME:
+                if (!validateName()) {
+                    return;
+                }
+                break;
+
+            case RESOURCES:
+                if (!validateResources()) {
+                    return;
+                }
+                break;
+
+            case SUBJECTS:
+                if (!validateSubjects()) {
+                    return;
+                }
+                break;
+
+            default:
+                throw new AssertionError("unhandled step: " + rws);
+        }
+
+        super.previousListener(event);
+    }
+
     public ReferralWizardBean getReferralWizardBean() {
-        return (ReferralWizardBean)getWizardBean();
+        return (ReferralWizardBean) getWizardBean();
     }
 
     public abstract String getBeanName();
@@ -152,7 +255,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         pea.setArguments(new Object[]{});
 
         queuedActionBean.getPhaseEventActions().add(pea);
-        */
+         */
         handleSubjectsAdd();
     }
 
@@ -176,7 +279,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         pea.setArguments(new Object[]{});
 
         queuedActionBean.getPhaseEventActions().add(pea);
-        */
+         */
         handleSubjectsRemove();
     }
 
