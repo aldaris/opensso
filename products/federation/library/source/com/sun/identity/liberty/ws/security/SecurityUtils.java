@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityUtils.java,v 1.4 2008-08-06 17:28:12 exu Exp $
+ * $Id: SecurityUtils.java,v 1.5 2009-06-08 23:42:33 madan_ranganath Exp $
  *
  */
 
@@ -49,8 +49,6 @@ import com.sun.identity.saml.assertion.SubjectStatement;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
 
-import com.sun.identity.saml.xmlsig.AMSignatureProvider;
-import com.sun.identity.saml.xmlsig.JKSKeyProvider;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml.xmlsig.XMLSignatureException;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
@@ -96,8 +94,6 @@ import org.w3c.dom.NodeList;
 public class SecurityUtils {
     
     private static SecurityUtils securityManager = null;
-    private static JKSKeyProvider keys = null;
-    private static AMSignatureProvider asp = null;
     private static XMLSignatureManager sm = null;
     private static Debug debug = null;
     private static String PROP_TRUSTED_CA_CERT_ALIASES =
@@ -150,11 +146,10 @@ public class SecurityUtils {
             }
         }
         
-        keys=new JKSKeyProvider();
-        asp = new AMSignatureProvider();
-        sm = XMLSignatureManager.getInstance(keys, asp);
-        keystore = sm.getKeyProvider();
-        
+        sm = XMLSignatureManager.getInstance();
+	if (sm != null) {
+            keystore = sm.getKeyProvider();
+        }
     }
     
     /*

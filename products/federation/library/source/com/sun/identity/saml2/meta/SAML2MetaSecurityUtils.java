@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaSecurityUtils.java,v 1.5 2008-12-09 02:18:51 qcheng Exp $
+ * $Id: SAML2MetaSecurityUtils.java,v 1.6 2009-06-08 23:43:18 madan_ranganath Exp $
  *
  */
 
@@ -59,7 +59,6 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
 
 import com.sun.identity.saml.common.SAMLUtils;
-import com.sun.identity.saml.xmlsig.JKSKeyProvider;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml.xmlsig.XMLSignatureException;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
@@ -119,8 +118,8 @@ public final class SAML2MetaSecurityUtils {
         com.sun.org.apache.xml.internal.security.Init.init();
 
         keyProvider = KeyUtil.getKeyProviderInstance();
-        if (keyProvider instanceof JKSKeyProvider) {
-            keyStore = ((JKSKeyProvider)keyProvider).getKeyStore();
+        if (keyProvider != null) {
+            keyStore = keyProvider.getKeyStore();
         }
 
         try {
@@ -346,10 +345,9 @@ public final class SAML2MetaSecurityUtils {
                     throw new SAML2MetaException("verify_no_cert", objs);
                 }
 
-                if (checkCert &&
-                    keyProvider.getCertificateAlias(x509cert) == null) {
-
-                    throw new SAML2MetaException("untrusted_cert", objs);
+                if (checkCert && ((keyProvider == null) ||
+                   (keyProvider.getCertificateAlias(x509cert) == null))) {
+                        throw new SAML2MetaException("untrusted_cert", objs);
                 }
 
                 PublicKey pk = x509cert.getPublicKey();

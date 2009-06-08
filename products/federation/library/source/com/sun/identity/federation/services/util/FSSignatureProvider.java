@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSignatureProvider.java,v 1.4 2008-07-17 16:56:39 exu Exp $
+ * $Id: FSSignatureProvider.java,v 1.5 2009-06-08 23:41:51 madan_ranganath Exp $
  *
  */
 
@@ -38,6 +38,7 @@ import java.security.*;
 import java.security.cert.*;
 import com.sun.identity.saml.xmlsig.*;
 import com.sun.identity.federation.common.*;
+import com.sun.identity.federation.key.KeyUtil;
 
 /**
  * This class implements interface <code>SignatureProviderSPI</code>.
@@ -51,7 +52,8 @@ public class FSSignatureProvider implements SignatureProviderSPI {
      * Default Constructor.
      */
     public FSSignatureProvider() {        
-        keystore = new JKSKeyProvider();
+
+        keystore = KeyUtil.getKeyProviderInstance();
     }
     
     /**

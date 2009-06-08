@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.4 2008-11-10 22:56:57 veiming Exp $
+ * $Id: KeyUtil.java,v 1.5 2009-06-08 23:41:03 madan_ranganath Exp $
  *
  */
 
@@ -75,7 +75,8 @@ public class KeyUtil {
     static {
         try {
             kp = (KeyProvider)Class.forName(SystemConfigurationUtil.getProperty(
-                SAMLConstants.KEY_PROVIDER_IMPL_CLASS)).newInstance();
+                SAMLConstants.KEY_PROVIDER_IMPL_CLASS,
+                SAMLConstants.JKS_KEY_PROVIDER)).newInstance();
         } catch (ClassNotFoundException cnfe) {
             FSUtils.debug.error(
                 "KeyUtil static block:" +

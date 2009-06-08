@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaSecurityUtils.java,v 1.4 2008-08-29 04:57:16 exu Exp $
+ * $Id: IDFFMetaSecurityUtils.java,v 1.5 2009-06-08 23:40:42 madan_ranganath Exp $
  *
  */
 
@@ -90,8 +90,8 @@ public final class IDFFMetaSecurityUtils {
         com.sun.org.apache.xml.internal.security.Init.init();
 
         keyProvider = KeyUtil.getKeyProviderInstance();
-        if (keyProvider instanceof JKSKeyProvider) {
-            keyStore = ((JKSKeyProvider)keyProvider).getKeyStore();
+        if (keyProvider != null) {
+            keyStore = keyProvider.getKeyStore();
         }
 
         keyProviderInitialized = true;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEncryptionProvider.java,v 1.5 2008-06-25 05:48:16 qcheng Exp $
+ * $Id: AMEncryptionProvider.java,v 1.6 2009-06-08 23:43:57 madan_ranganath Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import java.security.Key;
+import java.security.KeyStore;
 import java.security.PublicKey;
 import java.security.PrivateKey;
 import java.security.Provider;
@@ -90,7 +91,6 @@ import com.sun.org.apache.xml.internal.security.keys.keyresolver.
 public class AMEncryptionProvider implements EncryptionProvider {
     
     protected KeyProvider keyProvider = null;
-    private boolean isJKSKeyStore = false;
     
     /**
      * A static map contains provider id and symmetric keys as key value pairs.
@@ -106,17 +106,14 @@ public class AMEncryptionProvider implements EncryptionProvider {
     /**
      * Initializes encryption provider.
      */
-    public void initialize(KeyProvider keystore) throws EncryptionException {
-        if(keystore == null) {
+    public void initialize(KeyProvider keyprovider) throws EncryptionException {
+        if(keyprovider == null) {
             EncryptionUtils.debug.error("AMSignatureProvider.initialize: "+
-                    "keystore is null");
+                    "keyprovider is null");
             throw new EncryptionException(EncryptionUtils.bundle.getString(
                     "nullValues"));
         }
-        this.keyProvider = keystore;
-        if (keystore instanceof JKSKeyProvider) {
-            isJKSKeyStore=true;
-        }
+        this.keyProvider = keyprovider;
     }
     
     
@@ -656,19 +653,16 @@ public class AMEncryptionProvider implements EncryptionProvider {
         PrivateKey pk = null;
         try {
             if (keyinfo != null) {
-                if (isJKSKeyStore) {
-                    StorageResolver storageResolver = new StorageResolver(
-                            new KeyStoreResolver(((JKSKeyProvider)
-                            keyProvider).getKeyStore()));
-                    keyinfo.addStorageResolver(storageResolver);
-                    keyinfo.registerInternalKeyResolver(new
+                StorageResolver storageResolver = new StorageResolver(
+                            new KeyStoreResolver(keyProvider.getKeyStore()));
+                keyinfo.addStorageResolver(storageResolver);
+                keyinfo.registerInternalKeyResolver(new
                             X509IssuerSerialResolver());
-                    keyinfo.registerInternalKeyResolver(new
+                keyinfo.registerInternalKeyResolver(new
                             X509CertificateResolver());
-                    keyinfo.registerInternalKeyResolver(new X509SKIResolver());
-                    keyinfo.registerInternalKeyResolver(new
+                keyinfo.registerInternalKeyResolver(new X509SKIResolver());
+                keyinfo.registerInternalKeyResolver(new
                             X509SubjectNameResolver());
-                }
                 if (keyinfo.containsX509Data()) {
                     if (EncryptionUtils.debug.messageEnabled()) {
                         EncryptionUtils.debug.message("Found X509Data" +

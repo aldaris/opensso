@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLCertUtils.java,v 1.2 2008-06-25 05:47:34 qcheng Exp $
+ * $Id: SAMLCertUtils.java,v 1.3 2009-06-08 23:42:59 madan_ranganath Exp $
  *
  */
 
@@ -38,21 +38,46 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 
-import com.sun.identity.saml.xmlsig.JKSKeyProvider;
+import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.saml.xmlsig.KeyProvider;
  
 /**
  * This class finds any matching cert in the jks store. 
  */
 public class SAMLCertUtils { 
 
+    private static KeyProvider kp = null;
+
     private static Map certdbCerts =
         Collections.synchronizedMap(new HashMap());
     static {
         if (SAMLUtils.debug.messageEnabled()) {
             SAMLUtils.debug.message(
-                "Start loading certs from jks key store");
+                "Start loading certs from key store");
         }
-        JKSKeyProvider kp = new JKSKeyProvider();
+        try {
+            kp = (KeyProvider)Class.forName(SystemConfigurationUtil.getProperty(
+                SAMLConstants.KEY_PROVIDER_IMPL_CLASS,
+                SAMLConstants.JKS_KEY_PROVIDER)).newInstance();
+        } catch (ClassNotFoundException cnfe) {
+            SAMLUtils.debug.error(
+                "SAMLCertUtils static block:" +
+                " Couldn't find the class.",
+                cnfe);
+            kp = null;
+        } catch (InstantiationException ie) {
+            SAMLUtils.debug.error(
+                "SAMLCertUtils static block:" +
+                " Couldn't instantiate the key provider instance.",
+                ie);
+            kp = null;
+        } catch (IllegalAccessException iae) {
+            SAMLUtils.debug.error(
+                "SAMLCertUtils static block:" +
+                " Couldn't access the default constructor.",
+                iae);
+            kp = null;
+        }
         if (kp != null) {
             KeyStore ks = kp.getKeyStore();
             if (ks != null) {
