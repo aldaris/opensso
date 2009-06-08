@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.58 2009-06-08 21:02:01 farble1670 Exp $
+  $Id: build.xml,v 1.59 2009-06-08 22:06:52 farble1670 Exp $
 
 -->
 
@@ -226,7 +226,7 @@
         </java>
     </target>
 
-    <target name="merge-web" depends="unwar,merge-webxml" if="merge.web">
+    <target name="merge-web" depends="unwar,merge-webxml" unless="lite">
         <copy todir="${war.package.dir}">
             <fileset dir="${entitlements.web.dir}" includes="**" excludes="WEB-INF/web.xml" />
         </copy>

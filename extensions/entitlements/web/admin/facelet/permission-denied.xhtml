@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: permission-denied.xhtml,v 1.1 2009-06-08 18:06:13 farble1670 Exp $
+   $Id: permission-denied.xhtml,v 1.2 2009-06-08 22:06:54 farble1670 Exp $
 
 -->
 
@@ -34,8 +34,32 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
-        
+
     <ui:define name="panel-body">
-        Permission denied.
+        <ice:panelGroup
+            styleClass="permission-denied">
+            <o:box>
+                <ui:define
+                    name="body">
+                    <ice:panelGrid
+                        columns="2">
+                        <ice:panelGroup>
+                            <ice:graphicImage
+                                value="../image/error-24.png"/>
+                        </ice:panelGroup>
+                        <ice:panelGroup>
+                            <ice:panelGroup>
+                                <ice:outputLabel
+                                    value="#{resources['permission-denied.label']}"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup>
+                                <ice:outputText
+                                    value="#{resources['permission-denied.details']}"/>
+                            </ice:panelGroup>
+                        </ice:panelGroup>
+                    </ice:panelGrid>
+                </ui:define>
+            </o:box>
+        </ice:panelGroup>
     </ui:define>
 </ui:composition>

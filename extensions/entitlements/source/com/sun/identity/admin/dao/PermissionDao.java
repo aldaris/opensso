@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionDao.java,v 1.2 2009-06-08 21:02:02 farble1670 Exp $
+ * $Id: PermissionDao.java,v 1.3 2009-06-08 22:06:53 farble1670 Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -37,7 +37,7 @@ public class PermissionDao implements Serializable {
     public List<Permission> getPermissions() {
         // TODO
         List<Permission> permissions = new ArrayList<Permission>(Arrays.asList(Permission.values()));
-        permissions.remove(Permission.NEWS);
+        //permissions.remove(Permission.NEWS);
         return permissions;
     }
 }
