@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.87 2009-06-06 17:39:15 farble1670 Exp $
+  $Id: faces-config.xml,v 1.88 2009-06-08 18:06:13 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -31,6 +31,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
     <application>
+        <navigation-handler>
+            com.sun.identity.admin.PermissionNavigationHandler
+        </navigation-handler>
         <view-handler>
                 com.icesoft.faces.facelets.D2DFaceletViewHandler
         </view-handler>
@@ -40,7 +43,7 @@
             <supported-locale>en_US</supported-locale>
         </locale-config>
         <message-bundle>com.sun.identity.admin.Messages</message-bundle>
-    </application>
+  </application>
 
     <converter>
         <converter-id>urlResourceConverter</converter-id>
@@ -132,6 +135,23 @@
             <value>news.url</value>
         </managed-property>
     </managed-bean>
+
+    <!-- permissions -->
+    <managed-bean>
+        <managed-bean-name>permissionDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.PermissionDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>permissionsBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.PermissionsBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>permissionDao</property-name>
+            <value>#{permissionDao}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- permissions -->
 
     <!-- application types -->
     <managed-bean>
@@ -1654,6 +1674,10 @@
         <navigation-case>
             <from-outcome>news</from-outcome>
             <to-view-id>/admin/facelet/news.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>permission-denied</from-outcome>
+            <to-view-id>/admin/facelet/permission-denied.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 

@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: web.xml,v 1.21 2009-06-04 11:49:23 veiming Exp $
+  $Id: web.xml,v 1.22 2009-06-08 18:06:13 farble1670 Exp $
 
 -->
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
@@ -78,8 +78,16 @@
         <filter-name>AdminAuthFilter</filter-name>
         <filter-class>com.sun.identity.admin.AuthFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>AdminPermissionFilter</filter-name>
+        <filter-class>com.sun.identity.admin.PermissionFilter</filter-class>
+    </filter>
     <filter-mapping>
         <filter-name>AdminAuthFilter</filter-name>
+        <url-pattern>/admin/facelet/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AdminPermissionFilter</filter-name>
         <url-pattern>/admin/facelet/*</url-pattern>
     </filter-mapping>
     <filter-mapping>

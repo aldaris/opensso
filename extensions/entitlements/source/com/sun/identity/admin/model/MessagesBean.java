@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MessagesBean.java,v 1.3 2009-06-04 11:49:15 veiming Exp $
+ * $Id: MessagesBean.java,v 1.4 2009-06-08 18:06:12 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.ManagedBeanResolver;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -137,5 +138,11 @@ public class MessagesBean implements Serializable {
         FacesMessage fm = mb.toFacesMessage();
         FacesContext fc = FacesContext.getCurrentInstance();
         fc.addMessage(null, fm);
+    }
+
+    public static MessagesBean getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        MessagesBean msb = (MessagesBean)mbr.resolve("messagesBean");
+        return msb;
     }
 }

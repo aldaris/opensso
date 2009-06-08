@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-manage.xhtml,v 1.50 2009-06-04 11:49:26 veiming Exp $
+   $Id: policy-manage.xhtml,v 1.51 2009-06-08 18:06:13 farble1670 Exp $
 
 -->
 
@@ -154,6 +154,7 @@
                                 styleClass="policy-manage-cell"
                                 visible="#{true}">
                                 <ice:commandLink
+                                    rendered="#{permissionsBean.policyEditAllowed}"
                                     styleClass="command-link"
                                     actionListener="#{policyManageHandler.editListener}"
                                     action="policy-edit">
@@ -163,6 +164,9 @@
                                     <ice:outputText
                                         value="#{privilegeBean.name}"/>
                                 </ice:commandLink>
+                                <ice:outputLabel
+                                    rendered="#{!permissionsBean.policyEditAllowed}"
+                                    value="#{privilegeBean.name}"/>
                             </ice:panelGroup>
                         </ice:column>
                         <ice:column
