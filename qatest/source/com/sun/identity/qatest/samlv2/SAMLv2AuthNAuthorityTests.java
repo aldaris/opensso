@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AuthNAuthorityTests.java,v 1.5 2009-05-27 23:09:05 rmisra Exp $
+ * $Id: SAMLv2AuthNAuthorityTests.java,v 1.6 2009-06-08 23:28:39 mrudulahg Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,9 +100,9 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
     private String ATTRIB_AuthNCONTEXTCLASSREF_IDP_ENABLE = "<Attribute name=\""
             + "idpAuthncontextClassrefMapping\">\n"
             + "            <Value>urn:oasis:names:tc:SAML:2.0:ac:classes:"
-            + "Password|6|module=ldap-2|</Value>\n"
+            + "Password|6|module=ldap-samlv2-2|</Value>\n"
             + "            <Value>urn:oasis:names:tc:SAML:2.0:ac:classes:"
-            + "PasswordProtectedTransport|10|module=ldap-1|default</Value>\n"
+            + "PasswordProtectedTransport|10|module=ldap-samlv2-1|default</Value>\n"
             + "        </Attribute>";
     /**
      * Constructor SAMLv2AuthNAuthorityTests
@@ -129,8 +129,8 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
             testModulename = ptestModule;
             testClassType = pACClassType;
             testCompareType = pACCompareType;
-            firstModInstance = testModulename + "-1";
-            secondModInstance = testModulename + "-2";
+            firstModInstance = testModulename + "-samlv2" + "-1";
+            secondModInstance = testModulename + "-samlv2" + "-2";
             ResourceBundle rb_amconfig = ResourceBundle.getBundle(
                     TestConstants.TEST_PROPERTY_AMCONFIG);
             baseDir = getBaseDir() + SAMLv2Common.fileseparator 
@@ -138,15 +138,16 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
                     + SAMLv2Common.fileseparator + "built" 
                     + SAMLv2Common.fileseparator + "classes" 
                     + SAMLv2Common.fileseparator;
-            modData = ResourceBundle.getBundle("authentication" + fileseparator 
-                    + "authenticationConfigData");
+            modData = ResourceBundle.getBundle("config" + fileseparator +
+                    "AuthenticationConfig-Generated");
             configMap = new HashMap<String, String>();
             SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
                     + "samlv2TestData", configMap);
             SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
                     + "samlv2TestConfigData", configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("authentication" +
-                    fileseparator + "authenticationConfigData", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("config" +
+                    fileseparator + "AuthenticationConfig-Generated",
+                    configMap);
             SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
                     + "SAMLv2AuthNAuthorityTests", configMap);
             configMap.put(TestConstants.KEY_SP_USER, "sp" + testName);
@@ -206,6 +207,8 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
             //Create Authentication modules on IDP
             authNAuthorityModuleSetup(testModulename, firstModInstance);
             authNAuthorityModuleSetup(testModulename, secondModInstance);
+
+            authNAuthorityMapSetup();
             //Federated SSO URL
             fedSSOURL = spurl + "/saml2/jsp/spSSOInit.jsp?metaAlias=" +
                     configMap.get(TestConstants.KEY_SP_METAALIAS) +
@@ -225,24 +228,9 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
     /**
      * Enable AuthNAuthority setup
      */
-    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void authNAuthorityMapSetup()
             throws Exception {
         entering("authNAuthorityMapSetup", null);
-        try {
-            spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
-                    "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
-                    configMap.get(TestConstants.KEY_SP_PORT) +
-                    configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
-            idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
-                    "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
-                    configMap.get(TestConstants.KEY_IDP_PORT) +
-                    configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
-        } catch (Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
         try {
             //get sp & idp extended metadata
             FederationManager spfm = new FederationManager(spurl);
@@ -602,10 +590,14 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
                     } else {
                         value = modData.getString(key);
                     }
-                    mapModDataList.add(actualKey + "=" + value);
+                    if (!actualKey.equalsIgnoreCase("realm.1")) {
+                        mapModDataList.add(actualKey + "=" + value);
+                    } 
                 }
             }
 
+            log(Level.FINEST, "authNAuthorityModuleSetup", "mapModDataList : "
+                    + mapModDataList);
             if (FederationManager.getExitCode(
                     fmIDP.createSubCfg(idpWebClient, moduleServiceName,
                     strInsname, mapModDataList, idptestRealm,

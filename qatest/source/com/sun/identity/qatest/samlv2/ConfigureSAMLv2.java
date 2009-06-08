@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.19 2009-02-05 01:46:06 vimal_67 Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.20 2009-06-08 23:28:39 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -117,6 +118,11 @@ public class ConfigureSAMLv2 extends TestCommon {
         }
         
         try {
+            //Instantiate AuthenticationCommon class to 
+            //create AuthenticationConfig-Generated.properties
+            AuthenticationCommon authComm = new AuthenticationCommon("samlv2");
+            authComm.createAuthInstancesMap();
+
             FederationManager spfm = new FederationManager(spurl);
             FederationManager idpfm = new FederationManager(idpurl);
             
