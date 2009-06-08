@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.26 2009-06-06 00:34:43 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.27 2009-06-08 19:11:46 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -62,6 +62,7 @@ public class PrivilegeManagerTest {
     private static final String startIp = "100.100.100.100";
     private static final String endIp = "200.200.200.200";
     private static final String SUB_REALM = "/PrivilegeManagerTestsub";
+    private static final String RESOURCE = "http://www.privilegemanagertest.*";
 
     private Privilege privilege;
     private Subject adminSubject;
@@ -87,7 +88,7 @@ public class PrivilegeManagerTest {
             ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
         Set<String> appResources = new HashSet<String>();
-        appResources.add("http://www.privilegemanagertest.*");
+        appResources.add(RESOURCE);
         appl.addResources(appResources);
         appl.setEntitlementCombiner(DenyOverride.class);
         ApplicationManager.saveApplication(adminSubject, realm, appl);
@@ -97,6 +98,15 @@ public class PrivilegeManagerTest {
     public void cleanup() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
+
+        //Sub Realm
+        PrivilegeManager prmSubReam = PrivilegeManager.getInstance(SUB_REALM,
+            SubjectUtils.createSubject(adminToken));
+        ReferralPrivilegeManager referralM = new ReferralPrivilegeManager("/",
+            SubjectUtils.createSubject(adminToken));
+        prmSubReam.removePrivilege(PRIVILEGE_NAME);
+        referralM.delete(REFERRAL_PRIVILEGE_NAME);
+
         PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
         prm.removePrivilege(PRIVILEGE_NAME);
@@ -246,18 +256,21 @@ public class PrivilegeManagerTest {
         realms.add(SUB_REALM);
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
         Set<String> referResources = new HashSet<String>();
-        referResources.add("http://www.privilegemanagertest.*");
+        referResources.add(RESOURCE);
         map.put(APPL_NAME, referResources);
         ReferralPrivilege referral = new ReferralPrivilege(
             REFERRAL_PRIVILEGE_NAME, map, realms);
         referralM.add(referral);
 
+        if (!referral.getMapApplNameToResources().get(
+            APPL_NAME).contains(RESOURCE)) {
+            throw new Exception(
+                "PrivilegeManagerTest.subRealmTest, resource is likely to be canonicalized");
+        }
+
         prm.addPrivilege(privilege);
         Thread.sleep(1000);
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
-        prm.removePrivilege(PRIVILEGE_NAME);
-
-        referralM.delete(REFERRAL_PRIVILEGE_NAME);
     }
 
     @Test

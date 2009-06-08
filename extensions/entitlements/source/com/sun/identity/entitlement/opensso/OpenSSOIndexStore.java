@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.8 2009-06-06 00:34:43 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.9 2009-06-08 19:11:46 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -124,9 +124,12 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         throws EntitlementException {
         Subject adminSubject = getAdminSubject();
         String realm = getRealm();
-        referral.canonicalizeResources(adminSubject,
+
+        // clone so that canonicalized resource name will be localized.
+        ReferralPrivilege clone = (ReferralPrivilege)referral.clone();
+        clone.canonicalizeResources(adminSubject,
             DNMapper.orgNameToRealmName(realm));
-        dataStore.addReferral(adminSubject, realm, referral);
+        dataStore.addReferral(adminSubject, realm, clone);
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.1 2009-06-06 00:34:42 veiming Exp $
+ * $Id: ReferralPrivilege.java,v 1.2 2009-06-08 19:11:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -73,6 +73,34 @@ public final class ReferralPrivilege {
         this.name = name;
         setMapApplNameToResources(map);
         setRealms(realms);
+    }
+
+    @Override
+    public Object clone() {
+        ReferralPrivilege clone = new ReferralPrivilege();
+        clone.name = name;
+        clone.description = description;
+
+        if (realms != null) {
+            clone.realms = new HashSet<String>();
+            clone.realms.addAll(realms);
+        }
+
+        clone.creationDate = creationDate;
+        clone.lastModifiedDate = lastModifiedDate;
+        clone.lastModifiedBy = lastModifiedBy;
+        clone.createdBy = createdBy;
+
+        if (mapApplNameToResources != null) {
+            clone.mapApplNameToResources = new HashMap<String, Set<String>>();
+            for (String k : mapApplNameToResources.keySet()) {
+                Set<String> s = new HashSet<String>();
+                s.addAll(mapApplNameToResources.get(k));
+                clone.mapApplNameToResources.put(k, s);
+            }
+        }
+
+        return clone;
     }
 
     public static ReferralPrivilege getInstance(JSONObject jo) {
