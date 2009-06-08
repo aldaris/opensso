@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NetworkMonitor.java,v 1.3 2009-04-07 03:55:35 arviranga Exp $
+ * $Id: NetworkMonitor.java,v 1.4 2009-06-08 05:04:51 arviranga Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Set;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -66,6 +68,10 @@ public class NetworkMonitor extends HttpServlet {
      */
     public static void setCollectStats(boolean aCollectStats) {
         collectStats = aCollectStats;
+    }
+    
+    public static Set<String> getInstanceNames() {
+    	return (stats.keySet());
     }
 
     public static NetworkMonitor getInstance(String name) {
