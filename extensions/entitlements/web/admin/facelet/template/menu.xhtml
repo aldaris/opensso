@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.14 2009-06-08 18:06:13 farble1670 Exp $
+   $Id: menu.xhtml,v 1.15 2009-06-08 21:02:02 farble1670 Exp $
 
 -->
 
@@ -67,6 +67,7 @@
         </ice:menuItem>
 
         <ice:menuItem
+            rendered="#{permissionsBean.newsAllowed}"
             value="#{resources['menu.newsItemValue']}"
             action="news"
             icon="../image/rss.png">

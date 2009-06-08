@@ -10,6 +10,7 @@ public enum FromAction {
     POLICY_MANAGE("policy-manage"),
     POLICY_EDIT("policy-edit"),
     REFERRAL_CREATE("referral-create"),
+    NEWS("news"),
     PERMISSION_DENIED("permission-denied");
 
     private static final Map<String,FromAction> actionValues = new HashMap<String,FromAction>() {
@@ -20,6 +21,7 @@ public enum FromAction {
             put(POLICY_MANAGE.getAction(), POLICY_MANAGE);
             put(POLICY_EDIT.getAction(), POLICY_EDIT);
             put(REFERRAL_CREATE.getAction(), REFERRAL_CREATE);
+            put(NEWS.getAction(), NEWS);
             put(PERMISSION_DENIED.getAction(), PERMISSION_DENIED);
         }
     };
