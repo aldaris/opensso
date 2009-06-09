@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutInit.jsp,v 1.8 2009-03-03 01:54:15 qcheng Exp $
+   $Id: spSingleLogoutInit.jsp,v 1.9 2009-06-09 19:37:37 exu Exp $
 
 --%>
 
@@ -49,6 +49,8 @@
     - binding - binding used for this request
 
     Some of the other optional parameters are :
+    "idpEntityID" - Identifier for Identity Provider, if binding is not set,
+                    this parameter is used to find the default binding
     "RelayState" - the target URL on successful Single Logout
     "goto" - the target URL on successful Single Logout.
              "RelayState" takes precedence to "goto" parameter.
@@ -113,14 +115,6 @@
         }
 
         String idpEntityID = request.getParameter("idpEntityID");
-
-        if ((idpEntityID == null) || (idpEntityID.length() == 0)) {
-            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
-                "nullIDPEntityID", 
-                SAML2Utils.bundle.getString("nullIDPEntityID"));
-            return;
-        }
-
         String binding = LogoutUtil.getSLOBindingInfo(request, metaAlias,
                                         SAML2Constants.SP_ROLE, idpEntityID);
         /**
