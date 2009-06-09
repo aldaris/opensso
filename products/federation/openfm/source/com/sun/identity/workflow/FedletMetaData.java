@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletMetaData.java,v 1.7 2009-05-07 23:21:35 exu Exp $
+ * $Id: FedletMetaData.java,v 1.8 2009-06-09 20:29:25 exu Exp $
  *
  */
 
@@ -39,24 +39,48 @@ public class FedletMetaData {
 
     public static String createStandardMetaData(
         String entityId,
-        String AssertConsumerURL
+        String fedletBaseURL
     ) {
         String xml = STANDARD_METADATA.replaceAll(TAG_ENTITY_ID, entityId);
-        return xml.replaceAll(TAG_ASSSERT_CONSUMER_URL, AssertConsumerURL);
+        return xml.replaceAll(TAG_BASE_URL, fedletBaseURL);
     }
 
     public static String createExtendedMetaData(
         String realm,
         String entityId,
-        List attrMapping
+        List attrMapping,
+        String fedletBaseUrl
     ) throws WorkflowException {
         Map map = new HashMap();
-        map.put(MetaTemplateParameters.P_SP,Task.generateMetaAliasForSP(realm));
+        // For fedlet, we have root realm only
+        map.put(MetaTemplateParameters.P_SP,Task.generateMetaAliasForSP("/"));
         String extendedData =
             CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
             entityId, map, null, false);
         
         int idx = extendedData.indexOf("<Attribute name=\"spAccountMapper\">");
+        if (idx != -1) {
+            extendedData = extendedData.substring(0, idx) +
+                "<Attribute name=\"fedletAdapter\">\n" +
+                "            <Value>com.sun.identity.saml2.plugins.DefaultFedletAdapter</Value>\n" +
+                "        </Attribute>\n" +
+                "        <Attribute name=\"fedletAdapterEnv\">\n" +
+                "            <Value></Value>\n" +
+                "        </Attribute>\n" +
+                "        " +
+                extendedData.substring(idx);
+        }
+
+        idx = extendedData.indexOf("<Attribute name=\"appLogoutUrl\">");
+        if (idx != -1) {
+            idx = extendedData.indexOf("<Value>", idx);
+            int idx1 = extendedData.indexOf("</Value>", idx);
+            extendedData = extendedData.substring(0, idx+7) +
+                fedletBaseUrl + "/logout" +
+                extendedData.substring(idx1);
+        }
+        
+        idx = extendedData.indexOf("<Attribute name=\"spAccountMapper\">");
         if (idx != -1) {
             idx = extendedData.indexOf("<Value>", idx);
             int idx1 = extendedData.indexOf("</Value>", idx);
@@ -105,8 +129,8 @@ public class FedletMetaData {
     }
 
     private static final String TAG_ENTITY_ID = "@ENTITY_ID@";
-    private static final String TAG_ASSSERT_CONSUMER_URL = "@ASSSERT_CONSUMER_URL@";
+    private static final String TAG_BASE_URL = "@BASE_URL@";
 
     private static final String STANDARD_METADATA = 
-        "<EntityDescriptor entityID=\"@ENTITY_ID@\" xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"><SPSSODescriptor AuthnRequestsSigned=\"false\" WantAssertionsSigned=\"false\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\"><NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat><AssertionConsumerService isDefault=\"true\" index=\"0\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"@ASSSERT_CONSUMER_URL@\"/><AssertionConsumerService index=\"1\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact\" Location=\"@ASSSERT_CONSUMER_URL@\"/></SPSSODescriptor></EntityDescriptor>";
+        "<EntityDescriptor entityID=\"@ENTITY_ID@\" xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"><SPSSODescriptor AuthnRequestsSigned=\"false\" WantAssertionsSigned=\"false\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\"><SingleLogoutService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\" Location=\"@BASE_URL@/fedletSloRedirect\" ResponseLocation=\"@BASE_URL@/fedletSloRedirect\"/><SingleLogoutService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"@BASE_URL@/fedletSloPOST\" ResponseLocation=\"@BASE_URL@/fedletSloPOST\"/><SingleLogoutService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\" Location=\"@BASE_URL@/fedletSloSoap\"/><NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat><AssertionConsumerService isDefault=\"true\" index=\"0\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"@BASE_URL@/fedletapplication\"/><AssertionConsumerService index=\"1\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact\" Location=\"@BASE_URL@/fedletapplication\"/></SPSSODescriptor></EntityDescriptor>";
 }

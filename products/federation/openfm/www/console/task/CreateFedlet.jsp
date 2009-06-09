@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateFedlet.jsp,v 1.10 2009-04-02 21:02:55 asyhuang Exp $
+   $Id: CreateFedlet.jsp,v 1.11 2009-06-09 20:29:25 exu Exp $
 
 --%>
 
@@ -184,7 +184,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
         var idp = frm.elements['CreateFedlet.choiceIDP'].value;
         var realm = frm.elements['CreateFedlet.tfRealm'].value;
         var entityId = frm.elements['CreateFedlet.tfEntityId'].value;
-        var assertConsumer = frm.elements['CreateFedlet.tfAssertConsumer'].value + '/fedletapplication';
+        var assertConsumer = frm.elements['CreateFedlet.tfAssertConsumer'].value;
 
         return "&realm=" + escapeEx(realm) +
             "&cot=" + escapeEx(cot) +
