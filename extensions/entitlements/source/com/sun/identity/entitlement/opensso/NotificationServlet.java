@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationServlet.java,v 1.2 2009-06-06 00:34:43 veiming Exp $
+ * $Id: NotificationServlet.java,v 1.3 2009-06-09 19:10:24 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.PrivilegeManager;
@@ -47,6 +48,7 @@ public class NotificationServlet extends HttpServlet {
     public static final String CONTEXT_PATH = "/notification";
     public static final String PRIVILEGE_DELETED = "privilegedeleted";
     public static final String REFERRAL_DELETED = "referraldeleted";
+    public static final String APPLICATIONS_CHANGED = "applicationsChanged";
     public static final String ATTR_REALM_NAME = "realm";
     public static final String ATTR_NAME = "name";
 
@@ -72,31 +74,11 @@ public class NotificationServlet extends HttpServlet {
             action = action.substring(CONTEXT_PATH.length() +1);
 
             if (action.equals(PRIVILEGE_DELETED)) {
-                String privilegeName = req.getParameter(ATTR_NAME);
-                String realm = req.getParameter(ATTR_REALM_NAME);
-
-                SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                    AdminTokenAction.getInstance());
-                PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                    SubjectUtils.createSubject(adminToken), realm);
-                try {
-                    pis.delete(privilegeName, false);
-                } catch (EntitlementException e) {
-                    //ignore
-                }
+                handlePrivilegeDeleted(req);
             } else if (action.equals(REFERRAL_DELETED)) {
-                String referralName = req.getParameter(ATTR_NAME);
-                String realm = req.getParameter(ATTR_REALM_NAME);
-
-                SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                    AdminTokenAction.getInstance());
-                PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                    SubjectUtils.createSubject(adminToken), realm);
-                try {
-                    pis.deleteReferral(referralName, false);
-                } catch (EntitlementException e) {
-                    //ignore
-                }
+                handleReferralPrivilegeDeleted(req);
+            } else if (action.equals(APPLICATIONS_CHANGED)) {
+                handleApplicationsChanged(req);
             }
 
             writer = res.getWriter();
@@ -115,6 +97,39 @@ public class NotificationServlet extends HttpServlet {
         }
     }
 
-    
+    private void handlePrivilegeDeleted(HttpServletRequest req) {
+        String privilegeName = req.getParameter(ATTR_NAME);
+        String realm = req.getParameter(ATTR_REALM_NAME);
+
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+            SubjectUtils.createSubject(adminToken), realm);
+        try {
+            pis.delete(privilegeName, false);
+        } catch (EntitlementException e) {
+            //ignore
+        }
+    }
+
+    private void handleReferralPrivilegeDeleted(HttpServletRequest req) {
+        String referralName = req.getParameter(ATTR_NAME);
+        String realm = req.getParameter(ATTR_REALM_NAME);
+
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+            SubjectUtils.createSubject(adminToken), realm);
+        try {
+            pis.deleteReferral(referralName, false);
+        } catch (EntitlementException e) {
+            //ignore
+        }
+    }
+
+    private void handleApplicationsChanged(HttpServletRequest req) {
+        String realm = req.getParameter(ATTR_REALM_NAME);
+        ApplicationManager.clearCache(realm);
+    }
 
 }

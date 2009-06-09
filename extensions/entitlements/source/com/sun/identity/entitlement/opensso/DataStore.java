@@ -22,17 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.19 2009-06-09 09:44:27 veiming Exp $
+ * $Id: DataStore.java,v 1.20 2009-06-09 19:10:24 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.EntitlementThreadPool;
 import com.sun.identity.entitlement.Evaluate;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
@@ -40,9 +37,7 @@ import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
-import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.NetworkMonitor;
-import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.shared.ldap.LDAPDN;
 import com.sun.identity.shared.ldap.util.DN;
@@ -53,15 +48,6 @@ import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.security.AccessController;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
@@ -104,9 +90,6 @@ public class DataStore {
         NetworkMonitor.getInstance("dbLookupPrivileges");
     private static final NetworkMonitor DB_MONITOR_REFERRAL =
         NetworkMonitor.getInstance("dbLookupReferrals");
-    private static IThreadPool threadPool = new EntitlementThreadPool();
-    private static final String currentServerInstance =
-        SystemProperties.getServerInstanceName();
     
     // count of number of policies per realm
     static HashMap<String, Integer> policiesPerRealm =
@@ -534,9 +517,8 @@ public class DataStore {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put(NotificationServlet.ATTR_NAME, name);
                     params.put(NotificationServlet.ATTR_REALM_NAME, realm);
-                    Notifier notifier = new Notifier(
-                        NotificationServlet.PRIVILEGE_DELETED, params);
-                    threadPool.submit(notifier);
+                    Notifier.submit(NotificationServlet.PRIVILEGE_DELETED,
+                        params);
                 }
             }
         } catch (SMSException e) {
@@ -584,9 +566,8 @@ public class DataStore {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put(NotificationServlet.ATTR_NAME, name);
                     params.put(NotificationServlet.ATTR_REALM_NAME, realm);
-                    Notifier notifier = new Notifier(
-                        NotificationServlet.REFERRAL_DELETED, params);
-                    threadPool.submit(notifier);
+                    Notifier.submit(NotificationServlet.REFERRAL_DELETED,
+                        params);
                 }
             }
         } catch (SMSException e) {
@@ -890,92 +871,5 @@ public class DataStore {
 
         String result = filter.toString();
         return (result.length() > 0) ? "(&" + result + ")" : null;
-    }
-
-    public class Notifier implements Runnable {
-        private String action;
-        private Map<String, String> params;
-
-        public Notifier(String action, Map<String, String> params) {
-            this.action = action;
-            this.params = params;
-        }
-
-        public void run() {
-            try {
-                SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                    AdminTokenAction.getInstance());
-                Set<String> serverURLs =
-                    ServerConfiguration.getServerInfo(adminToken);
-
-                for (String url : serverURLs) {
-                    int idx = url.indexOf("|");
-                    if (idx != -1) {
-                        url = url.substring(0, idx);
-                    }
-
-                    if (!url.equals(currentServerInstance)) {
-                        String strURL = url + NotificationServlet.CONTEXT_PATH +
-                            "/" + action;
-
-                        StringBuffer buff = new StringBuffer();
-                        boolean bFirst = true;
-                        for (String k : params.keySet()) {
-                            if (bFirst) {
-                                bFirst = false;
-                            } else {
-                                buff.append("&");
-                            }
-                            buff.append(URLEncoder.encode(k, "UTF-8"))
-                                .append("=")
-                                .append(URLEncoder.encode(params.get(k),
-                                    "UTF-8"));
-                        }
-                        postRequest(strURL, buff.toString());
-                    }
-                }
-            } catch (UnsupportedEncodingException ex) {
-                PrivilegeManager.debug.error("DataStore.notifyChanges", ex);
-            } catch (IOException ex) {
-                PrivilegeManager.debug.error("DataStore.notifyChanges", ex);
-            } catch (SMSException ex) {
-                PrivilegeManager.debug.error("DataStore.notifyChanges", ex);
-            } catch (SSOException ex) {
-                PrivilegeManager.debug.error("DataStore.notifyChanges", ex);
-            }
-        }
-
-        private String postRequest(String strURL, String data)
-            throws IOException {
-
-            OutputStreamWriter wr = null;
-            BufferedReader rd = null;
-
-            try {
-                URL url = new URL(strURL);
-                URLConnection conn = url.openConnection();
-                conn.setDoOutput(true);
-                wr = new OutputStreamWriter(
-                    conn.getOutputStream());
-                wr.write(data);
-                wr.flush();
-
-                rd = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
-                StringBuffer result = new StringBuffer();
-                String line;
-                while ((line = rd.readLine()) != null) {
-                    result.append(line).append("\n");
-                }
-                return result.toString();
-            } finally {
-                if (wr != null) {
-                    wr.close();
-                }
-                if (rd != null) {
-                    rd.close();
-                }
-            }
-        }
     }
 }

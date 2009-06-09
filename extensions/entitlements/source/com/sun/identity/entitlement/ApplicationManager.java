@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.15 2009-06-09 05:29:15 arviranga Exp $
+ * $Id: ApplicationManager.java,v 1.16 2009-06-09 19:10:24 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -37,7 +37,7 @@ import javax.security.auth.Subject;
  * for each realm.
  */
 public final class ApplicationManager {
-    private static Object lock = new Object();
+    private final static Object lock = new Object();
     private static Map<String, Set<Application>> applications =
         new HashMap<String, Set<Application>>();
 
@@ -63,20 +63,19 @@ public final class ApplicationManager {
         }
         return results;
     }
-    
-    private static Set<Application>
-        getApplications(Subject adminSubject, String realm) {
+
+    private static Set<Application> getApplications(Subject adminSubject,
+        String realm) {
         Set<Application> appls = applications.get(realm);
-        if (appls == null) {
-            synchronized (lock) {
-                appls = applications.get(realm);
-                if (appls == null) {
-                    EntitlementConfiguration ec = 
-                        EntitlementConfiguration.getInstance(
-                          adminSubject, realm);
-                    appls = ec.getApplications();
-                    applications.put(realm, appls);
-                }
+
+        synchronized (lock) {
+            appls = applications.get(realm);
+            if (appls == null) {
+                EntitlementConfiguration ec =
+                    EntitlementConfiguration.getInstance(
+                    adminSubject, realm);
+                appls = ec.getApplications();
+                applications.put(realm, appls);
             }
         }
         return appls;
@@ -125,7 +124,7 @@ public final class ApplicationManager {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, realm);
         ec.removeApplication(name);
-        clearCache();
+        clearCache(realm);
     }
 
     /**
@@ -144,18 +143,15 @@ public final class ApplicationManager {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, realm);
         ec.storeApplication(application);
-        clearCache();
+        clearCache(realm);
     }
     
     /**
      * Clears the cached applications. Must be called when notifications are
      * received for changes to applications.
      */
-    public static void clearCache() {
-        // Reset cache
-        synchronized (lock) {
-            applications.clear();
-        }
+    public static synchronized void clearCache(String realm) {
+        applications.remove(realm);
     }
 
     public static void referApplication(
