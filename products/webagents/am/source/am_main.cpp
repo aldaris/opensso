@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_main.cpp,v 1.9 2009-05-19 21:25:46 dknab Exp $
+ * $Id: am_main.cpp,v 1.10 2009-06-09 00:22:24 subbae Exp $
  *
  */
 
@@ -343,6 +343,10 @@ void get_status_info(am_status_t status, const char ** name, const char ** msg)
         case AM_REST_ATTRS_SERVICE_FAILURE:
             if (name) *name = "AM_REST_ATTRS_SERVICE_FAILURE";
 	    if (msg) *msg = "REST attributes service encountered an error";
+	    break;
+        case AM_REDIRECT_LOGOUT:
+            if (name) *name = "AM_REDIRECT_LOGOUT";
+	    if (msg) *msg = "redirect to logout";
 	    break;
 	default:
 	    if (name) *name = "unrecognized status code";

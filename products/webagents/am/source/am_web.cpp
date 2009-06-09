@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.48 2009-05-20 23:31:25 subbae Exp $
+ * $Id: am_web.cpp,v 1.49 2009-06-09 00:22:24 subbae Exp $
  *
  */
 
@@ -5586,7 +5586,16 @@ process_access_redirect(char *url,
     am_web_result_t result = AM_WEB_RESULT_REDIRECT;
 
     // Get the redirect url.
-    if (result != AM_WEB_RESULT_ERROR) {
+    if(access_check_status == AM_REDIRECT_LOGOUT) {
+        sts = am_web_get_logout_url(redirect_url, agent_config);
+        if(sts == AM_SUCCESS) {
+            result = AM_WEB_RESULT_REDIRECT;
+        } else {
+            result = AM_WEB_RESULT_ERROR;
+            am_web_log_debug("process_access_redirect(): "
+                                "am_web_get_logout_url failed. ");
+        }
+    } else if (result != AM_WEB_RESULT_ERROR) {
         sts = am_web_get_url_to_redirect(access_check_status,
                       policy_result.advice_map,
                       url,
@@ -5830,6 +5839,20 @@ process_request(am_web_request_params_t *req_params,
                                 req_func,
                                 &redirect_url,
                                 &advice_response, agent_config);
+                break;
+            case AM_REDIRECT_LOGOUT:
+                result = process_access_success(req_params->url, 
+                              policy_result, req_params, req_func,
+                              agent_config);
+                result = process_access_redirect(req_params->url, 
+                             orig_method,
+                             sts, 
+                             policy_result,
+                             req_func,
+                             &redirect_url,
+                             NULL, 
+                             agent_config);
+
                 break;
             case AM_INVALID_ARGUMENT:
             case AM_NO_MEMORY:
