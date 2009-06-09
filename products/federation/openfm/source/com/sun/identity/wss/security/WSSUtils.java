@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.18 2009-06-04 01:16:49 mallas Exp $
+ * $Id: WSSUtils.java,v 1.19 2009-06-09 00:42:07 madan_ranganath Exp $
  *
  */
 
@@ -69,6 +69,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.locale.Locale;
+import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml.xmlsig.XMLSignatureException;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 import com.sun.identity.saml.xmlsig.JKSKeyProvider;
@@ -437,28 +438,54 @@ public class WSSUtils {
     // Returns WSSEncryptionProvider
     public static XMLEncryptionManager getXMLEncryptionManager() {
 
+        KeyProvider keyprovider = null;
+        try {
+            String kprovider = SystemConfigurationUtil.getProperty(
+                                SAMLConstants.KEY_PROVIDER_IMPL_CLASS,
+                                SAMLConstants.JKS_KEY_PROVIDER);
+            keyprovider = (KeyProvider)
+                          (Thread.currentThread().getContextClassLoader())
+                                            .loadClass(kprovider).newInstance();
+        } catch (Exception e) {
+            debug.error("getXMLEncryptionManager : " +
+                        "get keyprovider error", e);
+                        throw new RuntimeException(e.getMessage());
+        }
         if (xmlEncManager == null) {
-	    synchronized (XMLEncryptionManager.class) {
-		if (xmlEncManager == null) {		    
-	            xmlEncManager = XMLEncryptionManager.getInstance(
-                          new WSSEncryptionProvider(),
-                          new JKSKeyProvider());	    
-		}
+	        synchronized (XMLEncryptionManager.class) {
+		        if (xmlEncManager == null) {
+	                xmlEncManager = XMLEncryptionManager.getInstance(
+                                  new WSSEncryptionProvider(),
+                                  keyprovider);
+		        }
+	        }
 	    }
-	}
         return xmlEncManager;        	
     }
 
     // Returns WSSSignatureProvider
     public static XMLSignatureManager getXMLSignatureManager() {
 
-        if (xmlSigManager == null) {
+    KeyProvider keyprovider = null;
+    try {
+        String kprovider = SystemConfigurationUtil.getProperty(
+                                SAMLConstants.KEY_PROVIDER_IMPL_CLASS,
+                                SAMLConstants.JKS_KEY_PROVIDER);
+        keyprovider = (KeyProvider)
+                      (Thread.currentThread().getContextClassLoader())
+                                            .loadClass(kprovider).newInstance();
+    } catch (Exception e) {
+        debug.error("getXMLSignatureManager : " +
+                    "get keystore error", e);
+                     throw new RuntimeException(e.getMessage());
+    }
+    if (xmlSigManager == null) {
 	    synchronized (XMLSignatureManager.class) {
-		if (xmlSigManager == null) {		    
+		    if (xmlSigManager == null) {
 	            xmlSigManager = XMLSignatureManager.getInstance(
-                          new JKSKeyProvider(),
+                          keyprovider,
                           new WSSSignatureProvider());	    
-		}
+		   }
 	    }
 	}
         return xmlSigManager;        	

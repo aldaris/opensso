@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServicesClients.java,v 1.6 2008-08-19 19:12:23 veiming Exp $
+ * $Id: WebServicesClients.java,v 1.7 2009-06-09 00:41:37 madan_ranganath Exp $
  *
  */
 
@@ -47,6 +47,7 @@ import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.iplanet.security.x509.CertUtils;
+import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.ValidValues;
 import com.sun.identity.policy.interfaces.Subject;
@@ -54,7 +55,8 @@ import com.sun.identity.policy.ResBundleUtils;
 import com.sun.identity.policy.Syntax;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.InvalidNameException;
-import com.sun.identity.saml.xmlsig.JKSKeyProvider;
+import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.shared.debug.Debug;
 
 /**
@@ -128,38 +130,61 @@ public class WebServicesClients implements Subject {
             throws SSOException, PolicyException {
 	// TODO: ignoring the pattern for now. Do we need to take care of it?
 	// probably we can ignore for this subject.
-	Set subjects = new HashSet();
-	try {
- 	    // TODO: perf, may need to move the initilization to initialize
-	    // method. A new method may be needed in JKSProvider to load the
-	    // keystore data everytime. Ideally xmlsig should move to common
-	    // package too.
-	    JKSKeyProvider jkskp = new JKSKeyProvider();
-            KeyStore ks = jkskp.getKeyStore();
-	    Enumeration aliases = ks.aliases();
-	    while (aliases.hasMoreElements()) {
-		String alias = (String) aliases.nextElement();
-		if (debug.messageEnabled()) {
-		    debug.message("WSClient.getValidValues: alias=" + alias);
-		}
-		// TODO: need to take care of certificate chaining
-		if (ks.isCertificateEntry(alias)) {
-		    debug.message("WSClient.getValidValues: alias is trusted.");
-		    X509Certificate cert = 
-				(X509Certificate)ks.getCertificate(alias);
-		    if (cert != null) {
-			debug.message("WSClient.getValidValues:cert not null");
-                        String name = CertUtils.getSubjectName(cert);
-			if (name != null && name.length() != 0) {
-			    subjects.add(name); 
-	 	        }
-		    } else {
-			debug.message("WSClient.getValidValues: cert is null");
-		    }
-		} else {
-		    debug.message("WSClient.getValidValues:alias not trusted.");
-		}
-	    }
+        Set subjects = new HashSet();
+        try {
+	    KeyProvider kp = null;
+            try {
+                kp = (KeyProvider)Class.forName(SystemConfigurationUtil.getProperty(
+                    SAMLConstants.KEY_PROVIDER_IMPL_CLASS,
+                    SAMLConstants.JKS_KEY_PROVIDER)).newInstance();
+            } catch (ClassNotFoundException cnfe) {
+                debug.error("WebServicesClients.getValidValues(): " +
+                        " Couldn't find the class.", cnfe);
+                kp = null;
+            } catch (InstantiationException ie) {
+                debug.error("WebServicesClients.getValidValues(): " +
+                            " Couldn't instantiate the key provider instance.", 
+                            ie);
+                kp = null;
+            } catch (IllegalAccessException iae) {
+                debug.error("WebServicesClients.getValidValues(): " +
+                            " Couldn't access the default constructor.", iae);
+                kp = null;
+            }
+            if (kp != null) {
+                KeyStore ks = kp.getKeyStore();
+                if (ks != null) {
+                    Enumeration aliases = ks.aliases();
+                    while (aliases.hasMoreElements()) {
+		        String alias = (String) aliases.nextElement();
+                        if (debug.messageEnabled()) {
+		            debug.message("WSClient.getValidValues: alias=" +
+                                          alias);
+		        }
+		        // TODO: need to take care of certificate chaining
+		        if (ks.isCertificateEntry(alias)) {
+		            debug.message("WSClient.getValidValues: " +
+                                       "alias is trusted.");
+		            X509Certificate cert =
+                                (X509Certificate)ks.getCertificate(alias);
+		            if (cert != null) {
+			        debug.message("WSClient.getValidValues:cert " +
+                                              "not null");
+                                String name = CertUtils.getSubjectName(cert);
+			        if (name != null && name.length() != 0) {
+			            subjects.add(name);
+	 	                }
+		            } else {
+                                debug.message("WSClient.getValidValues: " +
+                                              "cert is null");
+		            }
+		        } else {
+		            debug.message("WSClient.getValidValues:alias " +
+                                          "not trusted.");
+                        }
+                    }
+                }
+            }
 	} catch (KeyStoreException kse) {
             if (debug.warningEnabled()) {
                 debug.warning("WebServicesClients: couldn't get subjects", 

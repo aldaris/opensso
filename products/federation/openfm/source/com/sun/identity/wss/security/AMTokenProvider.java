@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTokenProvider.java,v 1.8 2008-08-22 04:07:55 mallas Exp $
+ * $Id: AMTokenProvider.java,v 1.9 2009-06-09 00:41:57 madan_ranganath Exp $
  *
  */
 package com.sun.identity.wss.security;
@@ -49,7 +49,6 @@ import com.sun.identity.common.SystemConfigurationUtil;
 
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 import com.sun.identity.saml.xmlsig.KeyProvider;
-import com.sun.identity.saml.xmlsig.JKSKeyProvider;
 import com.sun.identity.shared.Constants;
 
 import com.sun.org.apache.xml.internal.security.keys.content.X509Data;
@@ -246,8 +245,10 @@ public class AMTokenProvider implements TokenProvider {
         Certificate cert = null;
 
         try {
-            JKSKeyProvider jksProvider = (JKSKeyProvider)getKeyProvider();
-            KeyStore keystore = jksProvider.getKeyStore();
+            KeyStore keystore = null;
+            if (keyProvider != null) {
+                keystore = keyProvider.getKeyStore();
+            }
             for (Enumeration e = keystore.aliases(); e.hasMoreElements();) {
                 String alias = (String) e.nextElement();
                 Certificate[] certs = keystore.getCertificateChain(alias);
@@ -292,8 +293,10 @@ public class AMTokenProvider implements TokenProvider {
         Certificate cert = null;
 
         try {
-            JKSKeyProvider jksProvider = (JKSKeyProvider)getKeyProvider();
-            KeyStore keystore = jksProvider.getKeyStore();
+            KeyStore keystore = null;
+            if (keyProvider != null) {
+                keystore = keyProvider.getKeyStore();
+            }
             for (Enumeration e = keystore.aliases(); e.hasMoreElements();) {
                 String alias = (String) e.nextElement();
                 Certificate[] certs = keystore.getCertificateChain(alias);
