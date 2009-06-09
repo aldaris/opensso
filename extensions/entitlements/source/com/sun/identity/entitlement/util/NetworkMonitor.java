@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NetworkMonitor.java,v 1.4 2009-06-08 05:04:51 arviranga Exp $
+ * $Id: NetworkMonitor.java,v 1.5 2009-06-09 05:29:16 arviranga Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -52,7 +52,7 @@ public class NetworkMonitor extends HttpServlet {
     int maxHistory = 600; // 10 minutes
     LinkedList<StatsData> history = new LinkedList<StatsData>();
 
-    // Current stats
+    // Current statistics
     float throughput;
     float totalResponseTime;
     
@@ -91,7 +91,7 @@ public class NetworkMonitor extends HttpServlet {
         return (System.currentTimeMillis());
     }
 
-    public void end(long start) {
+    public synchronized void end(long start) {
         if (isCollectStats()) {
             long rs = 0;
             throughput++;

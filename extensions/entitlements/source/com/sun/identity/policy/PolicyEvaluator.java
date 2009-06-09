@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.8 2009-04-30 23:23:02 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.9 2009-06-09 05:29:16 arviranga Exp $
  *
  */
 
@@ -1210,6 +1210,7 @@ public class PolicyEvaluator {
                 }
             }
         } catch (Exception e) {
+            DEBUG.error("Error in getResourceResults", e);
             throw new PolicyException(e.getMessage()); //TOFIX
         }
 

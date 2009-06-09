@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.9 2009-06-08 19:11:46 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.10 2009-06-09 05:29:15 arviranga Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -38,6 +38,7 @@ import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.sm.DNMapper;
+
 import java.util.Iterator;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -49,6 +50,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     private IndexCache indexCache;
     private IndexCache referralIndexCache;
     private DataStore dataStore = new DataStore();
+    private String realmDN;
 
     /**
      * Constructor.
@@ -57,6 +59,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
      */
     public OpenSSOIndexStore(Subject adminSubject, String realm) {
         super(adminSubject, realm);
+        realmDN = DNMapper.orgNameToDN(realm);
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, realm);
 
@@ -105,7 +108,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         for (Privilege p : privileges) {
             p.canonicalizeResources(adminSubject,
                 DNMapper.orgNameToRealmName(realm));
-            dataStore.add(adminSubject, realm, p);
+            dataStore.add(adminSubject, realmDN, p);
             EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
                 adminSubject, realm);
             ec.addSubjectAttributeNames(p.getEntitlement().getApplicationName(),
@@ -181,8 +184,8 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         String realm = getRealm();
         String dn = DataStore.getPrivilegeDistinguishedName(
             privilegeName, realm, null);
-        dataStore.remove(adminSubject, realm, privilegeName, notify);
-        policyCache.decache(dn);
+        dataStore.remove(adminSubject, realmDN, privilegeName, notify);
+        policyCache.decache(dn, realmDN);
         return dn;
     }
 
@@ -193,7 +196,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         String dn = DataStore.getPrivilegeDistinguishedName(
             privilegeName, realm, DataStore.REFERRAL_STORE);
         dataStore.removeReferral(adminSubject, realm, privilegeName, notify);
-        referralCache.decache(dn);
+        referralCache.decache(dn, realmDN);
         return dn;
     }
 
@@ -204,10 +207,10 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     ) throws EntitlementException {
         String dn = DataStore.getPrivilegeDistinguishedName(
             p.getName(), realm, null);
+        String realmName = DNMapper.orgNameToRealmName(realm);
         indexCache.cache(p.getEntitlement().getResourceSaveIndexes(
-            getAdminSubject(),
-            DNMapper.orgNameToRealmName(realm)), subjectSearchIndexes, dn);
-        policyCache.cache(dn, p);
+            getAdminSubject(), realmName), subjectSearchIndexes, dn);
+        policyCache.cache(dn, p, realmDN);
     }
 
     private void cache(
@@ -219,7 +222,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
             p.getName(), realm, null);
         referralIndexCache.cache(p.getResourceSaveIndexes(getAdminSubject(),
             DNMapper.orgNameToRealmName(realm)), subjectSearchIndexes, dn);
-        referralCache.cache(dn, p);
+        referralCache.cache(dn, p, realmDN);
     }
 
     /**
@@ -233,16 +236,13 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
      * @throws com.sun.identity.entitlement.EntitlementException if results
      * cannot be obtained.
      */
-    public Iterator<Privilege> search(
-        ResourceSearchIndexes indexes,
-        Set<String> subjectIndexes,
-        boolean bSubTree,
-        IThreadPool threadPool
-    ) throws EntitlementException {
+    public Iterator<Privilege> search(ResourceSearchIndexes indexes,
+        Set<String> subjectIndexes, boolean bSubTree, IThreadPool threadPool)
+        throws EntitlementException {
         BufferedIterator iterator = new BufferedIterator();
         Set<String> setDNs = indexCache.getMatchingEntries(indexes,
             subjectIndexes, bSubTree);
-        for (Iterator i = setDNs.iterator(); i.hasNext();) {
+        for (Iterator<String> i = setDNs.iterator(); i.hasNext();) {
             String dn = (String) i.next();
             Privilege p = policyCache.getPolicy(dn);
             if (p != null) {
@@ -251,9 +251,17 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 i.remove();
             }
         }
-        SearchTask st = new SearchTask(this, iterator, indexes,
-            subjectIndexes, bSubTree, setDNs, false);
-        threadPool.submit(st);
+        // check if PolicyCache has all the entries for the realm
+        int cacheEntries = policyCache.getCount(getRealm());
+        int totalPolicies = dataStore.getNumberOfPolicies(getAdminSubject(),
+            getRealm());
+        if (cacheEntries < totalPolicies) {
+            SearchTask st = new SearchTask(this, iterator, indexes,
+                subjectIndexes, bSubTree, setDNs, false);
+            threadPool.submit(st);
+        } else {
+            iterator.isDone();
+        }
         return iterator;
     }
 
@@ -291,7 +299,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         threadPool.submit(st);
         return iterator;
     }
-
+    
     /**
      * Returns a set of privilege names that satifies a search filter.
      *

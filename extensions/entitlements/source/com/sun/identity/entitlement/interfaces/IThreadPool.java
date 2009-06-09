@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IThreadPool.java,v 1.1 2009-04-14 00:24:19 veiming Exp $
+ * $Id: IThreadPool.java,v 1.2 2009-06-09 05:29:15 arviranga Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
@@ -38,4 +38,13 @@ public interface IThreadPool {
      * @param r Runnable task.
      */
     void submit(Runnable r);
+    
+    /**
+     * Returns true if the thread pool is has multiple runnable threads.
+     * If the thread pool has multiple threads, the caller has to use monitors
+     * to determine if the runnable task has completed its operation.
+     *  
+     * @return true if there are more than one thread configured.
+     */
+    boolean isMutiTreaded();
 }

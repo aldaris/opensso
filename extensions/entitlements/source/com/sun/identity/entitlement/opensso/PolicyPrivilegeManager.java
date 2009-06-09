@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.16 2009-06-08 05:09:06 arviranga Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.17 2009-06-09 05:29:15 arviranga Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -61,11 +61,6 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
             SubjectUtils.createSubject(adminToken), "/");
         migratedToEntitlementSvc = ec.migratedToEntitlementService();
         xacmlEnabled = ec.xacmlPrivilegeEnabled();
-        
-        // Initialize stats collection
-        Stats stats = Stats.getInstance("Entitlements");
-        EntitlementsStats es = new EntitlementsStats(stats);
-        stats.addStatsListener(es);
     }
 
     /**

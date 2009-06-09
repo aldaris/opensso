@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.16 2009-05-26 21:46:28 veiming Exp $
+ * $Id: Evaluator.java,v 1.17 2009-06-09 05:29:15 arviranga Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -41,6 +41,8 @@ public class Evaluator {
     private Subject adminSubject;
     private String applicationName =
         ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
+    
+    // Statistics monitors
     private static final NetworkMonitor HAS_ENTITLEMENT_MONITOR =
         NetworkMonitor.getInstance("hasEntitltmentMonitor");
     private static final NetworkMonitor EVAL_SINGLE_LEVEL_MONITOR =
@@ -133,7 +135,7 @@ public class Evaluator {
         boolean recursive
     ) throws EntitlementException {
         long start = (recursive) ? EVAL_SUB_TREE_MONITOR.start() :
-            EVAL_SINGLE_LEVEL_MONITOR.start();
+            EVAL_SINGLE_LEVEL_MONITOR.start();        
         PrivilegeEvaluator evaluator = new PrivilegeEvaluator();
         List<Entitlement> results = evaluator.evaluate(realm, adminSubject,
             subject, applicationName, resourceName, environment, recursive);

@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.3 2009-06-06 00:34:43 veiming Exp $
+ * $Id: PolicyCache.java,v 1.4 2009-06-09 05:29:15 arviranga Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.am.util.Cache;
 import com.sun.identity.entitlement.Privilege;
+import java.util.HashMap;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -38,13 +39,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Policy Cache
  */
 class PolicyCache {
-    private int size;
     private Cache cache;
+    static HashMap<String, Integer> countByRealm;
     private ReadWriteLock rwlock = new ReentrantReadWriteLock();
 
     PolicyCache(int size) {
-        this.size = size;
         cache = new Cache(size);
+        countByRealm = new HashMap<String, Integer>();
     }
 
     /**
@@ -53,10 +54,16 @@ class PolicyCache {
      * @param dn DN of the privilege object.
      * @param p Privilege.
      */
-    public void cache(String dn, Privilege p) {
+    public void cache(String dn, Privilege p, String realm) {
         rwlock.writeLock().lock();
         try {
-            cache.put(dn, p);
+            Object e = cache.put(dn, p);
+            if (e == null) {
+                // Update count only if added, not if replaced
+                Integer i = countByRealm.get(realm);
+                int count = (i == null) ? 1 : i.intValue() + 1;
+                countByRealm.put(realm, count);
+            }
         } finally {
             rwlock.writeLock().unlock();
         }
@@ -68,7 +75,7 @@ class PolicyCache {
      * @param dn DN of the referral privilege object.
      * @param p Referral privilege.
      */
-    public void cache(String dn, ReferralPrivilege p) {
+    public void cache(String dn, ReferralPrivilege p, String realm) {
         rwlock.writeLock().lock();
         try {
             cache.put(dn, p);
@@ -95,10 +102,17 @@ class PolicyCache {
         }
     }
 
-    public void decache(String dn) {
+    public void decache(String dn, String realm) {
         rwlock.writeLock().lock();
         try {
-            cache.remove(dn);
+            Object p = cache.remove(dn);
+            if (p != null) {
+                // Update cache only if entry removed from cache
+                Integer i = countByRealm.get(realm);
+                if (i != null) {
+                    countByRealm.put(realm, i.intValue() - 1);
+                }
+            }
         } finally {
             rwlock.writeLock().unlock();
         }
@@ -111,6 +125,21 @@ class PolicyCache {
         } finally {
             rwlock.readLock().unlock();
         }
+    }
+    
+    /**
+     * Returns the number of cached policies in the given realm
+     * 
+     * @param realm
+     *            realm name
+     * @return cached policies for the realm
+     */
+    int getCount(String realm) {
+        Integer integer = countByRealm.get(realm);
+        if (integer != null) {
+            return (integer.intValue());
+        }
+        return 0;
     }
 
     public ReferralPrivilege getReferral(String dn) {

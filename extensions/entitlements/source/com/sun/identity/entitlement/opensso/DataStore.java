@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.17 2009-06-06 00:34:43 veiming Exp $
+ * $Id: DataStore.java,v 1.18 2009-06-09 05:29:15 arviranga Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -45,6 +45,7 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.shared.ldap.LDAPDN;
 import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.stats.Stats;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSDataEntry;
 import com.sun.identity.sm.SMSEntry;
@@ -103,8 +104,19 @@ public class DataStore {
     private static IThreadPool threadPool = new EntitlementThreadPool();
     private static final String currentServerInstance =
         SystemProperties.getServerInstanceName();
+    
+    // count of number of policies per realm
+    static HashMap<String, Integer> policiesPerRealm =
+        new HashMap<String, Integer>();
+    
+    static {
+        // Initialize statistics collection
+        Stats stats = Stats.getInstance("Entitlements");
+        EntitlementsStats es = new EntitlementsStats(stats);
+        stats.addStatsListener(es);
+    }
 
-
+    
     /**
      * Returns distingished name of a privilege.
      *
@@ -167,8 +179,6 @@ public class DataStore {
 
     private void updateIndexCount(SSOToken adminToken, String realm, int num) {
         try {
-            ServiceConfigManager mgr = new ServiceConfigManager(
-                SERVICE_NAME, adminToken);
             ServiceConfig orgConf = getOrgConfig(adminToken, realm);
             Map<String, Set<String>> map = orgConf.getAttributes();
             Set<String> set = map.get(INDEX_COUNT);
@@ -180,12 +190,14 @@ public class DataStore {
                 set.clear();
                 set.add(Integer.toString(count));
             } else {
-                set = new HashSet();
+                set = new HashSet<String>();
                 set.add(Integer.toString(num));
             }
             map = new HashMap<String, Set<String>>();
             map.put(INDEX_COUNT, set);
             orgConf.setAttributes(map);
+            // update cache for policies count
+            policiesPerRealm.put(realm, count);
         } catch (NumberFormatException ex) {
             PrivilegeManager.debug.error("DataStore.updateIndexCount", ex);
         } catch (SMSException ex) {
@@ -198,7 +210,6 @@ public class DataStore {
     private int getIndexCount(Subject adminSubject, String realm) {
         SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
         int count = 0;
-
         if (adminToken != null) {
             try {
                 ServiceConfigManager mgr = new ServiceConfigManager(
@@ -222,6 +233,16 @@ public class DataStore {
             }
         }
         return count;
+    }
+
+    int getNumberOfPolicies(Subject subject, String realm) {
+        int totalPolicies = 0;
+        Integer tp = policiesPerRealm.get(realm);
+        if (tp == null) {
+            totalPolicies = getIndexCount(subject, realm);
+            policiesPerRealm.put(realm, new Integer(totalPolicies));
+        }
+        return (totalPolicies);
     }
 
     /**

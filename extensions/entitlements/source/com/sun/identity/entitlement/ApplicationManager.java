@@ -22,11 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.14 2009-06-06 00:34:42 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.15 2009-06-09 05:29:15 arviranga Exp $
  */
 package com.sun.identity.entitlement;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -35,6 +37,9 @@ import javax.security.auth.Subject;
  * for each realm.
  */
 public final class ApplicationManager {
+    private static Object lock = new Object();
+    private static Map<String, Set<Application>> applications =
+        new HashMap<String, Set<Application>>();
 
     private ApplicationManager() {
     }
@@ -51,14 +56,30 @@ public final class ApplicationManager {
         Subject adminSubject,
         String realm
     ) {
+        Set<Application> appls = getApplications(adminSubject, realm);
         Set<String> results = new HashSet<String>();
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            adminSubject, realm);
-        Set<Application> applications = ec.getApplications();
-        for (Application appl : applications) {
+        for (Application appl : appls) {
             results.add(appl.getName());
         }
         return results;
+    }
+    
+    private static Set<Application>
+        getApplications(Subject adminSubject, String realm) {
+        Set<Application> appls = applications.get(realm);
+        if (appls == null) {
+            synchronized (lock) {
+                appls = applications.get(realm);
+                if (appls == null) {
+                    EntitlementConfiguration ec = 
+                        EntitlementConfiguration.getInstance(
+                          adminSubject, realm);
+                    appls = ec.getApplications();
+                    applications.put(realm, appls);
+                }
+            }
+        }
+        return appls;
     }
 
     /**
@@ -78,10 +99,8 @@ public final class ApplicationManager {
         if ((name == null) || (name.length() == 0)) {
             name = ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
         }
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            adminSubject, realm);
-        Set<Application> applications = ec.getApplications();
-        for (Application appl : applications) {
+        Set<Application> appls = getApplications(adminSubject, realm);
+        for (Application appl : appls) {
             if (appl.getName().equals(name)) {
                 return appl;
             }
@@ -106,6 +125,7 @@ public final class ApplicationManager {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, realm);
         ec.removeApplication(name);
+        clearCache();
     }
 
     /**
@@ -124,6 +144,18 @@ public final class ApplicationManager {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, realm);
         ec.storeApplication(application);
+        clearCache();
+    }
+    
+    /**
+     * Clears the cached applications. Must be called when notifications are
+     * received for changes to applications.
+     */
+    public static void clearCache() {
+        // Reset cache
+        synchronized (lock) {
+            applications.clear();
+        }
     }
 
     public static void referApplication(

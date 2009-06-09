@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementsStats.java,v 1.1 2009-06-08 05:09:06 arviranga Exp $
+ * $Id: EntitlementsStats.java,v 1.2 2009-06-09 05:29:15 arviranga Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -44,18 +44,23 @@ public class EntitlementsStats implements StatsListener {
 	@Override
 	public void printStats() {
 		StringBuffer sb = new StringBuffer(100);
-		sb.append("Entitlements statistics:\n");
-		sb.append("-----------------------------");
+		sb.append("Entitlements statistics:");
+		sb.append("\n-----------------------------");
 		Set<String> ntwStats = NetworkMonitor.getInstanceNames();
 		for (String ntwStat : ntwStats) {
 			NetworkMonitor nm = NetworkMonitor.getInstance(ntwStat);
-			sb.append("NetworkMonitor: " + ntwStat);
-			sb.append("Response Time(ms): " + nm.responseTime());
-			sb.append("Throughput: " + nm.throughput());
+			sb.append("\nNetworkMonitor: " + ntwStat);
+			sb.append("\nResponse Time(ms): " + nm.responseTime());
+			sb.append("\nThroughput: " + nm.throughput());
 			nm.reset();
-			sb.append("-----------------------------");
+			sb.append("\n-----------------------------");
 		}
-		sb.append("-----------------------------");
+		// Cache statistics
+		sb.append("\nPolicyCache: ");
+		sb.append(PolicyCache.countByRealm);
+		sb.append("\nTotal policies: ");
+		sb.append(DataStore.policiesPerRealm);
+		sb.append("\n-----------------------------\n");
 		stats.record(sb.toString());
 	}
 }
