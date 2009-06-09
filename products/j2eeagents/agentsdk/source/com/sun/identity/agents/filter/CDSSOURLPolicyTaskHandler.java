@@ -71,7 +71,7 @@ implements ICDSSOURLPolicyTaskHandler {
         return AM_FILTER_CDSSO_URL_POLICY_TASK_HANDLER_NAME;
     }
    
-    public AmFilterResult getRedirectResult(AmFilterRequestContext ctx,
+    public AmFilterResult getServeDataResult(AmFilterRequestContext ctx,
                                                AmWebPolicyResult policyResult)
         throws AgentException 
     {
