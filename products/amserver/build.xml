@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.76 2009-06-05 19:33:40 veiming Exp $
+   $Id: build.xml,v 1.77 2009-06-09 19:08:03 veiming Exp $
 
 -->
 
@@ -88,11 +88,6 @@
     <target name="build" depends="checkjar, preparebuild, sharedlib">        
         <antcall target="enterprise" />
         <antcall target="not-enterprise" />
-        <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
-            <classpath refid="build.class.path"/>
-            <arg value="${amserver.res.i18n.dir}"/>
-            <arg value="com.sun.identity.cli.definition.AccessManager"/>
-        </java>
     </target>
     
     <target name="enterprise" if="enterprise.authmodules.present">   
@@ -105,6 +100,11 @@
             <exclude name="**/package-info.java"/>
             <exclude name="**/com/sun/identity/diagnostic/**"/>
         </javac>
+        <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
+            <classpath refid="build.class.path"/>
+            <arg value="${amserver.res.i18n.dir}"/>
+            <arg value="com.sun.identity.cli.definition.AccessManager"/>
+        </java>
         <antcall target="jaxrpc" />
         
         <filter token="DATESTAMP" value="${war.time.stamp}"/>        
