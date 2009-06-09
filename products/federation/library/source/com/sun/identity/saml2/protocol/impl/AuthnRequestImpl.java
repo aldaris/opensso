@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnRequestImpl.java,v 1.7 2008-11-10 22:57:03 veiming Exp $
+ * $Id: AuthnRequestImpl.java,v 1.8 2009-06-09 20:28:32 exu Exp $
  *
  */
 
@@ -551,7 +551,7 @@ public class AuthnRequestImpl extends RequestAbstractImpl
 			 .append(SAML2Constants.ASSERTION_CONSUMER_SVC_URL)
 		         .append(SAML2Constants.EQUAL)
 			 .append(SAML2Constants.QUOTE)
-			 .append( assertionConsumerServiceURL)
+			 .append(XMLUtils.escapeSpecialCharacters(assertionConsumerServiceURL))
 			 .append(SAML2Constants.QUOTE);
 	    }
 	}
@@ -737,8 +737,8 @@ public class AuthnRequestImpl extends RequestAbstractImpl
 	    validateAssertionConsumerServiceIndex(assertionConsumerSvcIndex);
 	}
         
-        assertionConsumerServiceURL=element.getAttribute(
-                SAML2Constants.ASSERTION_CONSUMER_SVC_URL);
+        assertionConsumerServiceURL=XMLUtils.unescapeSpecialCharacters(
+            element.getAttribute(SAML2Constants.ASSERTION_CONSUMER_SVC_URL));
 
         index = element.getAttribute(SAML2Constants.ATTR_CONSUMING_SVC_INDEX);
 	if ( (index != null) && (index.length() > 0)) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.40 2009-06-09 05:11:17 mallas Exp $
+ * $Id: SPACSUtils.java,v 1.41 2009-06-09 20:28:32 exu Exp $
  *
  */
 
@@ -1999,7 +1999,7 @@ public class SPACSUtils {
                     se);
             if (se.isRedirectionDone()) {
                 // response had been redirected already.
-                return createMapForFedlet(respInfo, null);
+                return createMapForFedlet(respInfo, null, hostEntityId);
             }
             throw new SAML2Exception(
                     SAML2SDKUtils.bundle.getString("SSOFailed"));
@@ -2011,7 +2011,7 @@ public class SPACSUtils {
                 redirected[0].equals("true")) {
             SAML2SDKUtils.debug.message("Already redirected in SPAdapter.");
             // response redirected already in SPAdapter
-            return createMapForFedlet(respInfo, null);
+            return createMapForFedlet(respInfo, null, hostEntityId);
         }
         // redirect to relay state
         String finalUrl = SPACSUtils.getRelayState(
@@ -2052,11 +2052,11 @@ public class SPACSUtils {
         } else {
             realRedirectUrl = finalUrl;
         }
-        return createMapForFedlet(respInfo, realRedirectUrl); 
+        return createMapForFedlet(respInfo, realRedirectUrl, hostEntityId); 
     }
 
     private static Map createMapForFedlet(
-        ResponseInfo respInfo, String relayUrl) {
+        ResponseInfo respInfo, String relayUrl, String hostedEntityId) {
         Map map = new HashMap();
         if (relayUrl != null) {
             map.put(SAML2Constants.RELAY_STATE, relayUrl);
@@ -2067,6 +2067,7 @@ public class SPACSUtils {
         map.put(SAML2Constants.ASSERTION, assertion); 
         map.put(SAML2Constants.SUBJECT, assertion.getSubject());
         map.put(SAML2Constants.IDPENTITYID, assertion.getIssuer().getValue()); 
+        map.put(SAML2Constants.SPENTITYID, hostedEntityId);
         map.put(SAML2Constants.NAMEID, respInfo.getNameId());
         map.put(SAML2Constants.ATTRIBUTE_MAP, respInfo.getAttributeMap());
         return map;

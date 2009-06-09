@@ -33,6 +33,12 @@
         <Attribute name="spAdapterEnv">
             <Value></Value>
         </Attribute>
+        <Attribute name="fedletAdapter">
+            <Value>com.sun.identity.saml2.plugins.DefaultFedletAdapter</Value>
+        </Attribute>
+        <Attribute name="fedletAdapterEnv">
+            <Value></Value>
+        </Attribute>
         <Attribute name="spAccountMapper">
             <Value>com.sun.identity.saml2.plugins.DefaultLibrarySPAccountMapper</Value>
         </Attribute>
@@ -62,6 +68,9 @@
        </Attribute>
        <Attribute name="defaultRelayState">
            <Value></Value>
+       </Attribute>
+       <Attribute name="appLogoutUrl">
+           <Value>FEDLET_PROTOCOL://FEDLET_HOST:FEDLET_PORT/FEDLET_DEPLOY_URI/logout</Value>
        </Attribute>
        <Attribute name="assertionTimeSkew">
            <Value>300</Value>

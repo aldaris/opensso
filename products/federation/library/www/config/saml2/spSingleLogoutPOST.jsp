@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutPOST.jsp,v 1.4 2009-03-03 01:54:16 qcheng Exp $
+   $Id: spSingleLogoutPOST.jsp,v 1.5 2009-06-09 20:28:33 exu Exp $
 
 --%>
 
@@ -158,8 +158,10 @@
         if (samlRequest != null) {
             // Logout SP app via SAE first. App is obligated to redirect back
             // to complete this SLO request.
-            if (processSAELogout(request, response)) {
-                return;
+            if (!SPCache.isFedlet) {
+                if (processSAELogout(request, response)) {
+                    return;
+                }
             }
 
             try {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.39 2009-05-06 19:49:52 madan_ranganath Exp $
+ * $Id: SAML2Constants.java,v 1.40 2009-06-09 20:28:31 exu Exp $
  *
  */
 
@@ -689,6 +689,18 @@ public interface SAML2Constants {
      * Map to the implementation class for initialization.
      */
     public String SP_ADAPTER_ENV = "spAdapterEnv";
+    
+    /**
+     * Fedlet adapter implementation class.
+     */
+    public String FEDLET_ADAPTER_CLASS = "fedletAdapter";
+    
+    /**
+     * Environment (attribute/value pair) for fedlet adapter 
+     * implementation class. Those variables will be passed down as
+     * Map to the implementation class for initialization.
+     */
+    public String FEDLET_ADAPTER_ENV = "fedletAdapterEnv";
     
     /**
      * Service provider account mapper.

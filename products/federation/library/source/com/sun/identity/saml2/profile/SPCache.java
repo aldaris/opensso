@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.16 2009-01-28 05:35:07 ww203982 Exp $
+ * $Id: SPCache.java,v 1.17 2009-06-09 20:28:32 exu Exp $
  *
  */
 
@@ -174,6 +174,14 @@ public class SPCache {
      * (<code>SAML2ServiceProviderAdapter</code>)
      */
     public static Hashtable spAdapterClassCache = new Hashtable();
+
+    /**
+     * Cache saves the fedlet adapter class instance.
+     * Key : realm + spEntityID + adapterClassName
+     * Value : fedlet adapter class instance 
+     * (<code>FedletAdapter</code>)
+     */
+    public static Hashtable fedletAdapterClassCache = new Hashtable();
 
     /**
      * Cache saves the ecp request IDP list finder.

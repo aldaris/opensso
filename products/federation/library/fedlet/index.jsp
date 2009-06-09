@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.13 2009-05-04 18:15:50 exu Exp $
+   $Id: index.jsp,v 1.14 2009-06-09 20:28:30 exu Exp $
 
 --%>
 
@@ -44,7 +44,9 @@
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
 
+<%@ include file="header.jspf" %>
 <%--
     index.jsp contains links to test SP or IDP initiated Single Sign-on
 --%>
@@ -254,54 +256,12 @@
                     }
                 } else {
                     // IDP base URL
-                    String idpBaseUrl = null;
-                    // find out IDP meta alias
-                    IDPSSODescriptorElement idp = 
-                        manager.getIDPSSODescriptor("/", idpEntityID);
-                    List ssoServiceList = idp.getSingleSignOnService();
-                    if ((ssoServiceList != null) 
-                        && (!ssoServiceList.isEmpty())) {
-                        Iterator i = ssoServiceList.iterator();
-                        while (i.hasNext()) {
-                            SingleSignOnServiceElement sso =
-                                (SingleSignOnServiceElement) i.next();
-                            if ((sso != null) && (sso.getBinding() != null)) {
-                                String ssoURL = sso.getLocation();
-                                int loc = ssoURL.indexOf("/metaAlias/");
-                                if (loc == -1) {
-                                    continue;
-                                } else {
-                                    idpMetaAlias = ssoURL.substring(loc + 10);
-                                    String tmp = ssoURL.substring(0, loc);
-                                    loc = tmp.lastIndexOf("/");
-                                    idpBaseUrl = tmp.substring(0, loc);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    String fedletBaseUrl = null;
-                    SPSSODescriptorElement sp =
-                        manager.getSPSSODescriptor("/", spEntityID);
-                    List acsList = sp.getAssertionConsumerService();
-                    if ((acsList != null) && (!acsList.isEmpty())) {
-                        Iterator j = acsList.iterator();
-                        while (j.hasNext()) {
-                            AssertionConsumerServiceElement acs =
-                                (AssertionConsumerServiceElement) j.next();
-                            if ((acs != null) && (acs.getBinding() != null)) {
-                               String acsURL = acs.getLocation();
-                                int loc = acsURL.indexOf(deployuri + "/");
-                                if (loc == -1) {
-                                    continue;
-                                } else {
-                                    fedletBaseUrl = acsURL.substring(
-                                        0, loc + deployuri.length());
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    Map idpMap = getIDPBaseUrlAndMetaAlias(
+                        idpEntityID, deployuri);
+                    String idpBaseUrl = (String)idpMap.get("idpBaseUrl");
+                    idpMetaAlias = (String)idpMap.get("idpMetaAlias");
+                    String fedletBaseUrl = 
+                        getFedletBaseUrl(spEntityID,deployuri);
 %>
     <h2>Validate Fedlet Setup</h2>
     <p><br>

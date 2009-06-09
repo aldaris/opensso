@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSampleApp.jsp,v 1.7 2009-05-07 23:31:48 vimal_67 Exp $
+   $Id: fedletSampleApp.jsp,v 1.8 2009-06-09 20:28:33 exu Exp $
 
 --%>
 
@@ -41,9 +41,11 @@ java.io.IOException,
 java.util.Iterator,
 java.util.List,
 java.util.Map,
+java.util.HashMap,
 java.util.HashSet,
 java.util.Set"
 %>
+<%@ include file="header.jspf" %>
 <%
     String deployuri = request.getRequestURI();
     int slashLoc = deployuri.indexOf("/", 1);
@@ -120,6 +122,7 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
     Assertion assertion = (Assertion) map.get(SAML2Constants.ASSERTION);
     Subject subject = (Subject) map.get(SAML2Constants.SUBJECT);
     String entityID = (String) map.get(SAML2Constants.IDPENTITYID);
+    String spEntityID = (String) map.get(SAML2Constants.SPENTITYID);
     NameID nameId = (NameID) map.get(SAML2Constants.NAMEID);
     String value = nameId.getValue();
     String format = nameId.getFormat();
@@ -171,6 +174,17 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
     if ((relayUrl != null) && (relayUrl.length() != 0)) {
         out.println("<br><br>Click <a href=\"" + relayUrl 
             + "\">here</a> to redirect to final destination.");
+    }
+
+    Map idpMap = getIDPBaseUrlAndMetaAlias(entityID, deployuri);
+    String idpBaseUrl = (String) idpMap.get("idpBaseUrl");
+    String idpMetaAlias = (String) idpMap.get("idpMetaAlias");
+    String fedletBaseUrl = getFedletBaseUrl(spEntityID, deployuri);
+    out.println("<br><b>Test Single Logout:</b></br>");
+    if (idpMetaAlias != null) {
+        out.println("<br><b><a href=\"" + idpBaseUrl + "/IDPSloInit?metaAlias=" + idpMetaAlias + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:SOAP&RelayState=" + fedletBaseUrl + "/index.jsp\">Run Identity Provider initiated Single Logout using SOAP binding</a></b></br>");
+        out.println("<br><b><a href=\"" + idpBaseUrl + "/IDPSloInit?metaAlias=" + idpMetaAlias + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect&RelayState=" + fedletBaseUrl + "/index.jsp\">Run Identity Provider initiated Single Logout using HTTP-Redirect binding</a></b></br>");
+        out.println("<br><b><a href=\"" + idpBaseUrl + "/IDPSloInit?metaAlias=" + idpMetaAlias + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST&RelayState=" + fedletBaseUrl + "/index.jsp\">Run Identity Provider initiated Single Logout using HTTP-POST binding</a></b></br>");
     }
 %>
 <script>

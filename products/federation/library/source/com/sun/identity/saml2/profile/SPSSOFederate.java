@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.24 2009-03-03 01:52:51 qcheng Exp $
+ * $Id: SPSSOFederate.java,v 1.25 2009-06-09 20:28:32 exu Exp $
  *
  */
 
@@ -71,6 +71,7 @@ import com.sun.identity.saml2.protocol.IDPEntry;
 import com.sun.identity.saml2.protocol.IDPList;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.PrivateKey;
@@ -741,7 +742,7 @@ public class SPSSOFederate {
          authnReq.setForceAuthn(isforceAuthn);
          authnReq.setAttributeConsumingServiceIndex(attrIndex);
          authnReq.setAssertionConsumerServiceIndex(acsIndex);
-         authnReq.setAssertionConsumerServiceURL(acsURL);
+         authnReq.setAssertionConsumerServiceURL(XMLUtils.escapeSpecialCharacters(acsURL));
          authnReq.setProtocolBinding(protocolBinding);
          authnReq.setIssuer(issuer);
          authnReq.setNameIDPolicy(nameIDPolicy);

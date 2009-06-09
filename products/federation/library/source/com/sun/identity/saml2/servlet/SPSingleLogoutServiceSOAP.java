@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogoutServiceSOAP.java,v 1.6 2009-03-03 01:52:59 qcheng Exp $
+ * $Id: SPSingleLogoutServiceSOAP.java,v 1.7 2009-06-09 20:28:33 exu Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.profile.LogoutUtil;
+import com.sun.identity.saml2.profile.SPCache;
 import com.sun.identity.saml2.profile.SPSingleLogout;
 import com.sun.identity.saml2.protocol.LogoutRequest;
 import com.sun.identity.saml2.protocol.LogoutResponse;
@@ -42,6 +43,7 @@ import com.sun.identity.saml.common.SAMLUtils;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -71,6 +73,17 @@ public class SPSingleLogoutServiceSOAP extends HttpServlet {
             // Get SP entity ID
             String spMetaAlias = SAML2MetaUtils.getMetaAliasByUri(
                 req.getRequestURI());
+            if (SPCache.isFedlet) {
+                if ((spMetaAlias ==  null) || (spMetaAlias.length() == 0)) {
+                    // pick the first available one
+                    List spMetaAliases = SAML2Utils.getSAML2MetaManager().
+                        getAllHostedServiceProviderMetaAliases("/");
+                    if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
+                        // get first one
+                        spMetaAlias = (String) spMetaAliases.get(0);
+                    }
+                }
+            }
             String spEntityID = SAML2Utils.getSAML2MetaManager().
                 getEntityByMetaAlias(spMetaAlias);
             String realm = SAML2MetaUtils.getRealmByMetaAlias(spMetaAlias);

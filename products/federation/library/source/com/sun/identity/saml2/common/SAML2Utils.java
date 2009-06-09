@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.46 2009-05-12 22:41:31 madan_ranganath Exp $
+ * $Id: SAML2Utils.java,v 1.47 2009-06-09 20:28:31 exu Exp $
  *
  */
 
@@ -71,6 +71,7 @@ import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.saml2.plugins.DefaultSPAuthnContextMapper;
 import com.sun.identity.saml2.plugins.IDPAccountMapper;
 import com.sun.identity.saml2.plugins.SAML2ServiceProviderAdapter;
+import com.sun.identity.saml2.plugins.FedletAdapter;
 import com.sun.identity.saml2.plugins.SAML2IDPFinder;
 import com.sun.identity.saml2.plugins.SPAccountMapper;
 import com.sun.identity.saml2.plugins.SPAuthnContextMapper;
@@ -3183,6 +3184,82 @@ public class SAML2Utils extends SAML2SDKUtils {
         
         return spAdapterClass;
     }
+
+    /**
+     * Returns a <code>Fedlet</code> adapter class.
+     *
+     * @param spEntityID the entity id of the service provider
+     * @param realm the realm name
+     *
+     * @return the <code>Fedlet</code> adapter class
+     * @exception SAML2Exception if the operation is not successful
+     */
+    public static FedletAdapter getFedletAdapterClass(
+            String spEntityID, String realm)
+            throws SAML2Exception {
+        String classMethod = "SAML2Utils.getFedletAdapterClass: ";
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message(classMethod +
+               "get FedletAdapter for " + spEntityID + " under realm " + realm);
+        }
+        String fedletAdapterClassName = null;
+        FedletAdapter fedletAdapterClass = null;
+        try {
+            fedletAdapterClassName = getAttributeValueFromSSOConfig(
+                    realm, spEntityID, SAML2Constants.SP_ROLE,
+                    SAML2Constants.FEDLET_ADAPTER_CLASS);
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message(classMethod +
+                   "get FedletAdapter class " + fedletAdapterClassName);
+            }
+            if ((fedletAdapterClassName != null) && 
+                (fedletAdapterClassName.length() != 0)) {
+                fedletAdapterClass = (FedletAdapter)
+                SPCache.fedletAdapterClassCache.get(realm + spEntityID +
+                    fedletAdapterClassName);
+                if (fedletAdapterClass == null) {
+                    fedletAdapterClass = (FedletAdapter)
+                        Class.forName(fedletAdapterClassName).newInstance();
+                    List env = getAllAttributeValueFromSSOConfig(
+                        realm, spEntityID, SAML2Constants.SP_ROLE,
+                        SAML2Constants.FEDLET_ADAPTER_ENV);
+                    Map map = parseEnvList(env);
+                    map.put(FedletAdapter.HOSTED_ENTITY_ID,
+                        spEntityID);
+                    fedletAdapterClass.initialize(map);
+                    SPCache.fedletAdapterClassCache.put(
+                        realm + spEntityID + fedletAdapterClassName, 
+                        fedletAdapterClass);
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(classMethod +
+                            "create new FedletAdapter " + 
+                            fedletAdapterClassName +
+                            " for " + spEntityID + " under realm " + realm);
+                    }
+                } else {
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(classMethod +
+                            "got the FedletAdapter " + fedletAdapterClassName +
+                            " from cache");
+                    }
+                }
+            }
+        } catch (InstantiationException ex) {
+            SAML2Utils.debug.error(classMethod +
+                "Unable to get Fedlet Adapter class instance.", ex);
+            throw new SAML2Exception(ex);
+        } catch (ClassNotFoundException ex) {
+            SAML2Utils.debug.error(classMethod +
+                "Fedlet Adapter class not found.", ex);
+            throw new SAML2Exception(ex);
+        } catch (IllegalAccessException ex) {
+            SAML2Utils.debug.error(classMethod +
+                "Unable to get Fedlet Adapter class.", ex);
+            throw new SAML2Exception(ex);
+        }
+        
+        return fedletAdapterClass;
+    }
     
     /**
      * Returns map based on A/V pair.
@@ -4130,7 +4207,7 @@ public class SAML2Utils extends SAML2SDKUtils {
     }
 
     // Get cookies string from HTTP request object
-    private static String getCookiesString(HttpServletRequest request) {
+    public static String getCookiesString(HttpServletRequest request) {
         String method = "SAML2Utils.getCookiesString: ";
         Cookie cookies[] = request.getCookies();
         StringBuffer cookieStr = null;

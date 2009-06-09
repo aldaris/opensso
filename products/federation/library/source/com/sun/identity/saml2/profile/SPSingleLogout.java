@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.22 2009-04-01 17:47:15 madan_ranganath Exp $
+ * $Id: SPSingleLogout.java,v 1.23 2009-06-09 20:28:32 exu Exp $
  *
  */
 
@@ -49,6 +49,7 @@ import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.plugins.SAML2ServiceProviderAdapter;
+import com.sun.identity.saml2.plugins.FedletAdapter;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.LogoutResponse;
 import com.sun.identity.saml2.protocol.LogoutRequest;
@@ -685,10 +686,26 @@ public class SPSingleLogout {
             return;
         }
     
-        String metaAlias =
-            SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
-        String realm = 
-            SAML2Utils.getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
+        String metaAlias = SAML2MetaUtils.getMetaAliasByUri(
+            request.getRequestURI()) ;
+
+        if ((SPCache.isFedlet) && 
+            ((metaAlias == null) || (metaAlias.length() == 0)))
+        {
+            SAML2MetaManager manager = new SAML2MetaManager();
+            List spMetaAliases =
+                manager.getAllHostedServiceProviderMetaAliases("/");
+            if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
+                // get first one
+                metaAlias = (String) spMetaAliases.get(0);
+            }
+            if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("nullSPEntityID"));
+            }
+        }
+        String realm = SAML2Utils.getRealm(
+            SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
         String spEntityID = sm.getEntityByMetaAlias(metaAlias);
         String location = null;
         String idpEntityID = logoutReq.getIssuer().getValue();
@@ -893,6 +910,35 @@ public class SPSingleLogout {
                          spEntityID, idpEntity)).toValueString(); 
                 if (debug.messageEnabled()) {
                     debug.message(method + "infokey=" + infoKeyString);
+                }
+                if (SPCache.isFedlet) {
+                    // verify request
+                    if(!isVerified &&
+                        !LogoutUtil.verifySLORequest(logoutReq, realm,
+                        idpEntity, spEntityID, SAML2Constants.SP_ROLE)) 
+                    {
+                        throw new SAML2Exception(
+                           SAML2Utils.bundle.getString("invalidSignInRequest"));
+                    }
+
+                    // obtain fedlet adapter
+                    FedletAdapter fedletAdapter = 
+                        SAML2Utils.getFedletAdapterClass(spEntityID, realm);
+                    boolean result = false;
+                    if (fedletAdapter != null) {
+                        // call adapter to do real logout
+                        result = fedletAdapter.doFedletSLO(request, response,
+                            logoutReq, spEntityID, idpEntity, siList,
+                            nameID.getValue());
+                    }
+                    if (result) {
+                        status = SUCCESS_STATUS;
+                    } else {
+                        status = SAML2Utils.generateStatus(
+                            SAML2Constants.RESPONDER,
+                            SAML2Utils.bundle.getString("appLogoutFailed"));
+                    }
+                    break;
                 }
                 List list = (List)SPCache.fedSessionListsByNameIDInfoKey
                                          .get(infoKeyString);
