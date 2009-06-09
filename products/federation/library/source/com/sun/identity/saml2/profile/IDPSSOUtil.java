@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.49 2009-05-14 17:23:45 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.50 2009-06-09 05:11:17 mallas Exp $
  *
  */
 
@@ -1590,18 +1590,160 @@ public class IDPSSOUtil {
                 if (authnReq != null) {
                     Integer acsIndexInteger = 
                         authnReq.getAssertionConsumerServiceIndex();
-                    acsIndex = acsIndexInteger.intValue();
-                    if (acsIndex < 0 || acsIndex > 65535) {
-                        acsIndex = 0;
+                    if(acsIndexInteger == null) {
+                       acsURL = getDefaultACSurl(spEntityID,realm, 
+                               returnedBinding);                       
+                    } else {
+                       acsIndex = acsIndexInteger.intValue();                     
+                       if (acsIndex < 0 || acsIndex > 65535) {
+                           acsIndex = 0;
+                       }
+                       acsURL = IDPSSOUtil.getACSurlFromMetaByIndex(
+                                spEntityID, realm, acsIndex, returnedBinding);
                     }
-                }
-                acsURL = IDPSSOUtil.getACSurlFromMetaByIndex(
-                        spEntityID, realm, acsIndex, returnedBinding);
+                } else {
+                    acsURL = getDefaultACSurl(spEntityID, 
+                            realm, returnedBinding); 
+                }                
             }
             acsBinding = returnedBinding.toString();
+        } else {
+           if(acsBinding == null || acsBinding.length() == 0) {
+              acsBinding = getBindingForAcsUrl(spEntityID, realm, acsURL);
+           }
         }
         rBinding.append(acsBinding);
         return acsURL;
+    }
+
+    /**
+     * Returns the default assertion consumer service url and binding
+     * from the metadata.
+     *
+     * @param spEntityID the entity id of the service provider
+     * @param realm the realm name of the identity provider           
+     * @return the assertion consumer service url with returned binding.
+     * @exception SAML2Exception if the operation is not successful
+     */   
+    public static String getDefaultACSurl(
+                  String spEntityID,
+                  String realm,
+                  StringBuffer returnedBinding) throws SAML2Exception {
+        
+        String classMethod = "IDPSSOUtil.getDefaultACSurl: ";
+        SPSSODescriptorElement spSSODescriptorElement = null;
+        if (metaManager == null) {
+            SAML2Utils.debug.error(classMethod
+                + "Unable to get meta manager.");
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("errorMetaManager")); 
+        }
+
+        try {
+            spSSODescriptorElement = metaManager.getSPSSODescriptor(
+                                            realm, spEntityID);
+            if (spSSODescriptorElement == null) {
+                SAML2Utils.debug.error(classMethod
+                    + "Unable to get SP SSO Descriptor from meta.");
+                String[] data = { spEntityID };
+                LogUtil.error(Level.INFO,
+                    LogUtil.SP_METADATA_ERROR, data, null);
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("metaDataError")); 
+            }
+        } catch (SAML2MetaException sme) {
+            SAML2Utils.debug.error(classMethod
+                + "Unable to get SP SSO Descriptor from meta.");
+            String[] data = { spEntityID };
+            LogUtil.error(Level.INFO,
+                LogUtil.SP_METADATA_ERROR, data, null);
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("metaDataError")); 
+        }
+        List acsList = spSSODescriptorElement.getAssertionConsumerService();
+        AssertionConsumerServiceElement acs = null;
+        String acsURL = null;
+        String binding = null;
+        String firstAcsURL = null;
+        String firstBinding = null;
+        for (int i = 0; i < acsList.size(); i++) {
+             acs = (AssertionConsumerServiceElement)acsList.get(i);                         
+             if (acs.isIsDefault()) {
+                 acsURL = acs.getLocation();
+                 binding = acs.getBinding();
+            }
+            if (i == 0) {
+                firstAcsURL = acs.getLocation();
+                firstBinding = acs.getBinding();
+            }
+        }
+        
+        if(acsURL == null) {
+           acsURL = firstAcsURL;
+           binding = firstBinding;
+        }
+        
+        if(binding != null) {
+           returnedBinding.append(binding); 
+        }
+        return acsURL;
+    }
+    
+    /**
+     * Returns the assertion consumer service url binding from
+     * the metadata.
+     *
+     * @param spEntityID the entity id of the service provider
+     * @param realm the realm name of the identity provider           
+     * @return the assertion consumer service url binding
+     * @exception SAML2Exception if the operation is not successful
+     */
+    public static String getBindingForAcsUrl(
+            String spEntityID,
+            String realm,
+            String acsURL) throws SAML2Exception {
+        
+        String classMethod = "IDPSSOUtil.getBindingForAcsUrl: ";
+        SPSSODescriptorElement spSSODescriptorElement = null;
+        if (metaManager == null) {
+            SAML2Utils.debug.error(classMethod
+                + "Unable to get meta manager.");
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("errorMetaManager")); 
+        }
+
+        try {
+            spSSODescriptorElement = metaManager.getSPSSODescriptor(
+                                            realm, spEntityID);
+            if (spSSODescriptorElement == null) {
+                SAML2Utils.debug.error(classMethod
+                    + "Unable to get SP SSO Descriptor from meta.");
+                String[] data = { spEntityID };
+                LogUtil.error(Level.INFO,
+                    LogUtil.SP_METADATA_ERROR, data, null);
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("metaDataError")); 
+            }
+        } catch (SAML2MetaException sme) {
+            SAML2Utils.debug.error(classMethod
+                + "Unable to get SP SSO Descriptor from meta.");
+            String[] data = { spEntityID };
+            LogUtil.error(Level.INFO,
+                LogUtil.SP_METADATA_ERROR, data, null);
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("metaDataError")); 
+        }
+        List acsList = spSSODescriptorElement.getAssertionConsumerService();
+        AssertionConsumerServiceElement acs = null;        
+        String binding = null;
+        for (int i = 0; i < acsList.size(); i++) {
+            acs = (AssertionConsumerServiceElement)acsList.get(i);
+            String location = acs.getLocation();
+            if(location != null && location.equals(acsURL)) {
+               return acs.getBinding(); 
+            }            
+        }
+        return null;
     }
 
     /**

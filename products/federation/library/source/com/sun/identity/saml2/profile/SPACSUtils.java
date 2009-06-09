@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.39 2009-05-12 22:44:45 madan_ranganath Exp $
+ * $Id: SPACSUtils.java,v 1.40 2009-06-09 05:11:17 mallas Exp $
  *
  */
 
@@ -1592,7 +1592,12 @@ public class SPACSUtils {
                     boolean found = false;
                     while (iter.hasNext()) {
                         SPFedSession temp = (SPFedSession) iter.next();
-                        if (temp.idpSessionIndex.equals(sessionIndex)) {
+                        String idpSessionIndex = null;
+                        if(temp != null) {
+                           idpSessionIndex = temp.idpSessionIndex; 
+                        }
+                        if ((idpSessionIndex != null) &&
+                                (idpSessionIndex.equals(sessionIndex))) {
                             temp.spTokenID = tokenID;
                             temp.info = info;
                             found = true;
