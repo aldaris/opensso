@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionsBean.java,v 1.2 2009-06-08 21:02:02 farble1670 Exp $
+ * $Id: PermissionsBean.java,v 1.3 2009-06-09 22:40:37 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -34,8 +34,17 @@ import java.util.List;
 import static com.sun.identity.admin.model.Permission.*;
 
 public class PermissionsBean implements Serializable {
+
     private List<Permission> permissions;
     private PermissionDao permissionDao;
+    private RealmBean realmBean = null;
+
+    public PermissionsBean() {
+    }
+
+    public PermissionsBean(RealmBean realmBean) {
+        this.realmBean = realmBean;
+    }
 
     public boolean isAllowed(Permission p) {
         boolean allowed = permissions.contains(p);
@@ -54,7 +63,7 @@ public class PermissionsBean implements Serializable {
         ViewId vid = ViewId.valueOfId(viewId);
         return isViewAllowed(vid);
     }
-    
+
     public boolean isActionAllowed(String action) {
         if (action == null) {
             return true;
@@ -69,7 +78,7 @@ public class PermissionsBean implements Serializable {
 
     public static PermissionsBean getInstance() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        PermissionsBean psb = (PermissionsBean)mbr.resolve("permissionsBean");
+        PermissionsBean psb = (PermissionsBean) mbr.resolve("permissionsBean");
         return psb;
     }
 
@@ -79,7 +88,11 @@ public class PermissionsBean implements Serializable {
 
     public void setPermissionDao(PermissionDao permissionDao) {
         this.permissionDao = permissionDao;
-        permissions = permissionDao.getPermissions();
+        RealmBean rb = realmBean;
+        if (rb == null) {
+            rb = RealmsBean.getInstance().getRealmBean();
+        }
+        permissions = permissionDao.getPermissions(rb);
     }
 
     public boolean isPolicyAllowed() {

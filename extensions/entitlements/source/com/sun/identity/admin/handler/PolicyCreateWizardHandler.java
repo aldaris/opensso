@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCreateWizardHandler.java,v 1.32 2009-06-04 15:21:09 farble1670 Exp $
+ * $Id: PolicyCreateWizardHandler.java,v 1.33 2009-06-09 22:40:37 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -51,7 +51,7 @@ public class PolicyCreateWizardHandler extends PolicyWizardHandler {
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
             getMessagesBean().addMessageBean(mb);
 
-            return "failure";
+            return null;
         } else {
             return "policy-create";
         }

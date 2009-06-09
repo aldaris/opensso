@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Token.java,v 1.3 2009-06-04 11:49:11 veiming Exp $
+ * $Id: Token.java,v 1.4 2009-06-09 22:40:36 farble1670 Exp $
  */
 
 package com.sun.identity.admin;
@@ -44,6 +44,10 @@ public class Token {
         request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
     }
 
+    public Token(HttpServletRequest request) {
+        this.request = request;
+    }
+    
     public SSOToken getSSOToken() {
         try {
             SSOTokenManager manager = SSOTokenManager.getInstance();

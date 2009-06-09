@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardHandler.java,v 1.6 2009-06-06 19:04:59 farble1670 Exp $
+ * $Id: ReferralWizardHandler.java,v 1.7 2009-06-09 22:40:37 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -87,7 +87,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         Resources r = new Resources();
         mb.setSummary(r.getString(this, "finish"));
         mb.setSeverity(FacesMessage.SEVERITY_INFO);
-        messagesBean.addMessageBean(mb);
+        getMessagesBean().addMessageBean(mb);
 
         getWizardBean().reset();
         return getFinishAction();
@@ -99,7 +99,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         Resources r = new Resources();
         mb.setSummary(r.getString(this, "cancel"));
         mb.setSeverity(FacesMessage.SEVERITY_INFO);
-        messagesBean.addMessageBean(mb);
+        getMessagesBean().addMessageBean(mb);
 
         getWizardBean().reset();
         return getCancelAction();
@@ -130,7 +130,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
             e = new InputFieldErrorEffect();
             getReferralWizardBean().setNameInputEffect(e);
 
-            messagesBean.addMessageBean(mb);
+            getMessagesBean().addMessageBean(mb);
             getReferralWizardBean().gotoStep(ReferralWizardStep.NAME.toInt());
 
             return false;
@@ -156,7 +156,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         mb.setSummary(r.getString(this, "noResourcesSummary"));
         mb.setDetail(r.getString(this, "noResourcesDetail"));
         mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-        messagesBean.addMessageBean(mb);
+        getMessagesBean().addMessageBean(mb);
 
         return false;
     }
@@ -169,7 +169,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
             mb.setSummary(r.getString(this, "noSubjectsSummary"));
             mb.setDetail(r.getString(this, "noSubjectsDetail"));
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-            messagesBean.addMessageBean(mb);
+            getMessagesBean().addMessageBean(mb);
             
             return false;
         }
@@ -299,5 +299,9 @@ public abstract class ReferralWizardHandler extends WizardHandler {
 
     public void setReferralDao(ReferralDao referralDao) {
         this.referralDao = referralDao;
+    }
+
+    public MessagesBean getMessagesBean() {
+        return messagesBean;
     }
 }

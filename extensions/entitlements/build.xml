@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.59 2009-06-08 22:06:52 farble1670 Exp $
+  $Id: build.xml,v 1.60 2009-06-09 22:40:36 farble1670 Exp $
 
 -->
 
@@ -100,9 +100,6 @@
                 </not>
             </and>
         </condition>
-        <echo>lite=${lite}</echo>
-        <echo>war.package.dir.exists=${war.package.dir.exists}</echo>
-        <echo>merge.web=${merge.web}</echo>
     </target>
 
     <target name="war-lib" unless="war.lib.local.exists">

@@ -22,14 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionFilter.java,v 1.1 2009-06-08 18:06:12 farble1670 Exp $
+ * $Id: PermissionFilter.java,v 1.2 2009-06-09 22:40:36 farble1670 Exp $
  */
 
 package com.sun.identity.admin;
 
 import com.sun.identity.admin.dao.PermissionDao;
-import com.sun.identity.admin.model.Permission;
+import com.sun.identity.admin.dao.RealmDao;
 import com.sun.identity.admin.model.PermissionsBean;
+import com.sun.identity.admin.model.RealmBean;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -40,21 +41,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletResponse;
 import com.sun.identity.admin.model.ViewId;
-import java.util.List;
 
 public class PermissionFilter implements Filter {
     private FilterConfig filterConfig = null;
-    private PermissionsBean permissionsBean;
 
     public void doFilter(
             ServletRequest request,
             ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        if (isAllowed(httpRequest)) {
+        if (isAllowed(httpRequest, httpResponse)) {
             chain.doFilter(request, response);
         } else {
             String deniedUrl = getDeniedUrl(httpRequest);
@@ -62,7 +62,7 @@ public class PermissionFilter implements Filter {
         }
     }
 
-    private boolean isAllowed(HttpServletRequest request) {
+    private boolean isAllowed(HttpServletRequest request, HttpServletResponse response) {
         String viewId = request.getServletPath();
         ViewId vid = ViewId.valueOfId(viewId);
         if (vid == null) {
@@ -72,8 +72,11 @@ public class PermissionFilter implements Filter {
         if (vid == ViewId.PERMISSION_DENIED) { 
             return true;
         }
-        
-        return permissionsBean.isViewAllowed(vid);
+
+        ManagedBeanResolver mbr = new ManagedBeanResolver(filterConfig.getServletContext(), request, response);
+        PermissionsBean psb = (PermissionsBean)mbr.resolve("permissionsBean");
+
+        return psb.isViewAllowed(vid);
     }
 
     private String getDeniedUrl(HttpServletRequest request) {
@@ -109,8 +112,5 @@ public class PermissionFilter implements Filter {
 
     public void init(FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
-        PermissionDao pdao = new PermissionDao();
-        permissionsBean = new PermissionsBean();
-        permissionsBean.setPermissionDao(pdao);
     }
 }

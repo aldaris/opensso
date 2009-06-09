@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmsBean.java,v 1.5 2009-06-06 00:12:37 farble1670 Exp $
+ * $Id: RealmsBean.java,v 1.6 2009-06-09 22:40:37 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.ManagedBeanResolver;
@@ -36,6 +35,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.collections.comparators.NullComparator;
 
 public class RealmsBean implements Serializable {
+
     private List<RealmBean> realmBeans;
     private RealmBean realmBean;
     private RealmDao realmDao;
@@ -51,33 +51,36 @@ public class RealmsBean implements Serializable {
         realmChange = false;
     }
 
+    private void resetRealmBeans() {
+        realmBeans = realmDao.getSubRealmBeans(baseRealmBean, realmSelectPopupFilter, true);
+        realmBeans.add(baseRealmBean);
+    }
+
     public void setRealmDao(RealmDao realmDao) {
         this.realmDao = realmDao;
-        setRealmBeans(realmDao.getRealmBeans());
-        setRealmBean(realmBeans.get(0));
         baseRealmBean = realmDao.getBaseRealmBean();
+        realmBean = baseRealmBean;
+        resetRealmBeans();
     }
 
     public List<SelectItem> getRealmBeanItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
-        for (RealmBean rb: realmBeans) {
-            items.add(new SelectItem(rb, rb.getTitle()));
+        for (RealmBean rb : realmBeans) {
+            if (!rb.equals(realmBean)) {
+                items.add(new SelectItem(rb, rb.getTitle()));
+            }
         }
         return items;
     }
 
     public static RealmsBean getInstance() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        RealmsBean realmsBean = (RealmsBean)mbr.resolve("realmsBean");
+        RealmsBean realmsBean = (RealmsBean) mbr.resolve("realmsBean");
         return realmsBean;
     }
 
     public List<RealmBean> getRealmBeans() {
         return realmBeans;
-    }
-
-    public void setRealmBeans(List<RealmBean> realmBeans) {
-        this.realmBeans = realmBeans;
     }
 
     public RealmBean getRealmBean() {
@@ -119,7 +122,8 @@ public class RealmsBean implements Serializable {
         NullComparator n = new NullComparator();
         if (n.compare(this.realmSelectPopupFilter, realmSelectPopupFilter) != 0) {
             this.realmSelectPopupFilter = realmSelectPopupFilter;
-            setRealmBeans(realmDao.getRealmBeans(null,realmSelectPopupFilter));
+            realmBeans = realmDao.getSubRealmBeans(baseRealmBean, realmSelectPopupFilter, true);
+            resetRealmBeans();
         }
     }
 

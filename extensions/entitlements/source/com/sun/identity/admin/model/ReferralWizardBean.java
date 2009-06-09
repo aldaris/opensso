@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardBean.java,v 1.6 2009-06-05 21:29:00 farble1670 Exp $
+ * $Id: ReferralWizardBean.java,v 1.7 2009-06-09 22:40:37 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -156,7 +156,9 @@ public abstract class ReferralWizardBean extends WizardBean {
     }
 
     public void resetAvailableRealmBeans() {
-        availableRealmBeans = realmDao.getRealmBeans(null, subjectFilter);
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        availableRealmBeans = realmDao.getSubRealmBeans(realmBean, subjectFilter, false);
+        availableRealmBeans.addAll(realmDao.getPeerRealmBeans(realmBean, subjectFilter));
         availableRealmBeans.removeAll(referralBean.getRealmBeans());
         selectedAvailableRealmBeans = new ArrayList<RealmBean>();
     }
@@ -190,5 +192,16 @@ public abstract class ReferralWizardBean extends WizardBean {
 
     public ReferralSummary getDescriptionReferralSummary() {
         return descriptionReferralSummary;
+    }
+
+    public int getAvailableResourceSize() {
+        int size = 0;
+        for (Resource r : getAvailableResources()) {
+            ReferralResource rr = (ReferralResource)r;
+            if (rr.getViewEntitlement().getResources() != null) {
+                size += rr.getViewEntitlement().getResources().size();
+            }
+        }
+        return size;
     }
 }

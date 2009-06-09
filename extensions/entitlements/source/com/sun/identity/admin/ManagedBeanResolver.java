@@ -22,15 +22,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ManagedBeanResolver.java,v 1.3 2009-06-04 11:49:11 veiming Exp $
+ * $Id: ManagedBeanResolver.java,v 1.4 2009-06-09 22:40:36 farble1670 Exp $
  */
 
 package com.sun.identity.admin;
 
 import javax.el.ELResolver;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 public class ManagedBeanResolver {
+
+    public ManagedBeanResolver() {
+    }
+
+    public ManagedBeanResolver(ServletContext context, ServletRequest request, ServletResponse response) {
+        ServletFacesContext.getInstance(context, request, response);
+    }
 
     public Object resolve(String name) {
         FacesContext fcontext = FacesContext.getCurrentInstance();
