@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.21 2009-06-09 05:29:14 arviranga Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.22 2009-06-09 09:44:27 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -216,13 +216,13 @@ class PrivilegeEvaluator {
         int totalCount = 0;
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             adminSubject, realm);
-        Iterator<Privilege> i = pis.search(indexes, sam.getSubjectSearchFilter(
+        Iterator<Evaluate> i = pis.search(indexes, sam.getSubjectSearchFilter(
             subject, applicationName), recursive, threadPool);
         PRIVILEGE_EVAL_MONITOR_SEARCH.end(start);
         
         // Submit the privileges for evaluation
         start = PRIVILEGE_EVAL_MONITOR_SUBMIT.start();
-        Set<Privilege> privileges = new HashSet<Privilege>(20);
+        Set<Evaluate> privileges = new HashSet<Evaluate>(20);
         while (i.hasNext()) {
             privileges.add(i.next());
             totalCount++;
@@ -286,20 +286,21 @@ class PrivilegeEvaluator {
 
     class PrivilegeTask implements Runnable {
         final PrivilegeEvaluator parent;
-        private Set<Privilege> privileges;
+        private Set<Evaluate> privileges;
 
-        PrivilegeTask(PrivilegeEvaluator parent, Set<Privilege> privileges) {
+        PrivilegeTask(PrivilegeEvaluator parent, Set<Evaluate> privileges) {
             this.parent = parent;
-            this.privileges = new HashSet<Privilege>(privileges.size() *2);
+            this.privileges = new HashSet<Evaluate>(privileges.size() *2);
             this.privileges.addAll(privileges);
         }
 
         public void run() {
             try {
-                for (Privilege privilege : privileges) {
-                    List<Entitlement> entitlements = privilege.evaluate(
+                for (Evaluate eval : privileges) {
+                    List<Entitlement> entitlements = eval.evaluate(
                         parent.adminSubject,
-                        parent.realm, parent.subject, parent.resourceName,
+                        parent.realm, parent.subject,
+                        parent.applicationName, parent.resourceName,
                         parent.actionNames, parent.envParameters,
                         parent.recursive);
 

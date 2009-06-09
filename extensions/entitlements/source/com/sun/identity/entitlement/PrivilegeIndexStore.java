@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeIndexStore.java,v 1.6 2009-06-06 00:34:42 veiming Exp $
+ * $Id: PrivilegeIndexStore.java,v 1.7 2009-06-09 09:44:27 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -195,25 +195,7 @@ public abstract class PrivilegeIndexStore {
      * @throws com.sun.identity.entitlement.EntitlementException if results
      * cannot be obtained.
      */
-    public abstract Iterator<Privilege> search(
-        ResourceSearchIndexes indexes,
-        Set<String> subjectIndexes,
-        boolean bSubTree,
-        IThreadPool threadPool
-    ) throws EntitlementException;
-
-    /**
-     * Returns an iterator of matching referral privilege objects.
-     *
-     * @param indexes Resource search indexes.
-     * @param subjectIndexes Subject search indexes.
-     * @param bSubTree <code>true</code> for sub tree evaluation.
-     * @param threadPool Thread pool for executing threads.
-     * @return an iterator of matching referral privilege objects.
-     * @throws com.sun.identity.entitlement.EntitlementException if results
-     * cannot be obtained.
-     */
-    public abstract Iterator<ReferralPrivilege> searchReferrals(
+    public abstract Iterator<Evaluate> search(
         ResourceSearchIndexes indexes,
         Set<String> subjectIndexes,
         boolean bSubTree,

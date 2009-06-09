@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.17 2009-05-26 21:20:08 veiming Exp $
+ * $Id: PolicyIndexTest.java,v 1.18 2009-06-09 09:44:28 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -34,6 +34,7 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.EntitlementThreadPool;
+import com.sun.identity.entitlement.Evaluate;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.policy.interfaces.Subject;
@@ -98,10 +99,15 @@ public class PolicyIndexTest {
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             SubjectUtils.createSubject(adminToken), "/");
         IThreadPool threadPoool = new EntitlementThreadPool();
-        for (Iterator<Privilege> i = pis.search(indexes,
+        for (Iterator<Evaluate> i = pis.search(indexes,
             Collections.EMPTY_SET, false, threadPoool); i.hasNext();
         ) {
-            Privilege p = i.next();
+            Evaluate eval = i.next();
+            if (!(eval instanceof Privilege)) {
+                throw new Exception(
+                    "incorrect deserialized policy, wrong type");
+            }
+            Privilege p = (Privilege)eval;
             if (!p.getEntitlement().getResourceName().equals(URL_RESOURCE)) {
                 throw new Exception("incorrect deserialized policy");
             }

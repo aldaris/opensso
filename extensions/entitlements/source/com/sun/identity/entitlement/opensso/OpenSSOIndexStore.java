@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.10 2009-06-09 05:29:15 arviranga Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.11 2009-06-09 09:44:27 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.Evaluate;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.PrivilegeManager;
@@ -201,6 +202,18 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     }
 
     private void cache(
+        Evaluate eval,
+        Set<String> subjectSearchIndexes,
+        String realm
+    ) throws EntitlementException {
+        if (eval instanceof Privilege) {
+            cache((Privilege)eval, subjectSearchIndexes, realm);
+        } else if (eval instanceof ReferralPrivilege) {
+            cache((ReferralPrivilege)eval, realm);
+        }
+    }
+
+    private void cache(
         Privilege p,
         Set<String> subjectSearchIndexes,
         String realm
@@ -215,13 +228,12 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
 
     private void cache(
         ReferralPrivilege p,
-        Set<String> subjectSearchIndexes,
         String realm
     ) throws EntitlementException {
         String dn = DataStore.getPrivilegeDistinguishedName(
-            p.getName(), realm, null);
+            p.getName(), realm, DataStore.REFERRAL_STORE);
         referralIndexCache.cache(p.getResourceSaveIndexes(getAdminSubject(),
-            DNMapper.orgNameToRealmName(realm)), subjectSearchIndexes, dn);
+            DNMapper.orgNameToRealmName(realm)), null, dn);
         referralCache.cache(dn, p, realmDN);
     }
 
@@ -236,10 +248,64 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
      * @throws com.sun.identity.entitlement.EntitlementException if results
      * cannot be obtained.
      */
-    public Iterator<Privilege> search(ResourceSearchIndexes indexes,
+    public Iterator<Evaluate> search(ResourceSearchIndexes indexes,
         Set<String> subjectIndexes, boolean bSubTree, IThreadPool threadPool)
         throws EntitlementException {
         BufferedIterator iterator = new BufferedIterator();
+        Set setDNs = searchPrivileges(indexes, subjectIndexes, bSubTree,
+            iterator);
+        setDNs.addAll(searchReferrals(indexes, bSubTree, iterator));
+
+        if (doDSSearch()) {
+            SearchTask st = new SearchTask(this, iterator, indexes,
+                subjectIndexes, bSubTree, setDNs);
+            threadPool.submit(st);
+        } else {
+            iterator.isDone();
+        }
+        return iterator;
+    }
+
+    private boolean doDSSearch() {
+        String realm = getRealm();
+        Subject sbj = getAdminSubject();
+
+        // check if PolicyCache has all the entries for the realm
+        int cacheEntries = policyCache.getCount(realm);
+        int totalPolicies = dataStore.getNumberOfPolicies(sbj, realm);
+        if (cacheEntries < totalPolicies) {
+            return true;
+        }
+
+        cacheEntries = referralCache.getCount(realm);
+        int totalReferrals = dataStore.getNumberOfReferrals(sbj, realm);
+        if (cacheEntries < totalReferrals) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private Set<String> searchReferrals(ResourceSearchIndexes indexes,
+        boolean bSubTree, BufferedIterator iterator)
+    {
+        Set<String> setDNs = referralIndexCache.getMatchingEntries(indexes,
+            null, bSubTree);
+        for (Iterator<String> i = setDNs.iterator(); i.hasNext();) {
+            String dn = (String) i.next();
+            ReferralPrivilege r = referralCache.getReferral(dn);
+            if (r != null) {
+                iterator.add(r);
+            } else {
+                i.remove();
+            }
+        }
+        return setDNs;
+    }
+
+    private Set<String> searchPrivileges(ResourceSearchIndexes indexes,
+        Set<String> subjectIndexes, boolean bSubTree, BufferedIterator iterator)
+    {
         Set<String> setDNs = indexCache.getMatchingEntries(indexes,
             subjectIndexes, bSubTree);
         for (Iterator<String> i = setDNs.iterator(); i.hasNext();) {
@@ -251,55 +317,9 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 i.remove();
             }
         }
-        // check if PolicyCache has all the entries for the realm
-        int cacheEntries = policyCache.getCount(getRealm());
-        int totalPolicies = dataStore.getNumberOfPolicies(getAdminSubject(),
-            getRealm());
-        if (cacheEntries < totalPolicies) {
-            SearchTask st = new SearchTask(this, iterator, indexes,
-                subjectIndexes, bSubTree, setDNs, false);
-            threadPool.submit(st);
-        } else {
-            iterator.isDone();
-        }
-        return iterator;
+        return setDNs;
     }
 
-    /**
-     * Returns an iterator of matching referralprivilege objects.
-     *
-     * @param indexes Resource search indexes.
-     * @param subjectIndexes Subject search indexes.
-     * @param bSubTree <code>true</code> for sub tree evaluation.
-     * @param threadPool Thread pool for executing threads.
-     * @return an iterator of matching referral privilege objects.
-     * @throws com.sun.identity.entitlement.EntitlementException if results
-     * cannot be obtained.
-     */
-    public Iterator<ReferralPrivilege> searchReferrals(
-        ResourceSearchIndexes indexes,
-        Set<String> subjectIndexes,
-        boolean bSubTree,
-        IThreadPool threadPool
-    ) throws EntitlementException {
-        BufferedIterator iterator = new BufferedIterator();
-        Set<String> setDNs = referralIndexCache.getMatchingEntries(indexes,
-            subjectIndexes, bSubTree);
-        for (Iterator i = setDNs.iterator(); i.hasNext();) {
-            String dn = (String) i.next();
-            Privilege p = referralCache.getPolicy(dn);
-            if (p != null) {
-                iterator.add(p);
-            } else {
-                i.remove();
-            }
-        }
-        SearchTask st = new SearchTask(this, iterator, indexes,
-            subjectIndexes, bSubTree, setDNs, true);
-        threadPool.submit(st);
-        return iterator;
-    }
-    
     /**
      * Returns a set of privilege names that satifies a search filter.
      *
@@ -396,7 +416,6 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         private Set<String> subjectIndexes;
         private boolean bSubTree;
         private Set<String> excludeDNs;
-        private boolean bReferral;
 
         public SearchTask(
             OpenSSOIndexStore parent,
@@ -404,8 +423,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
             ResourceSearchIndexes indexes,
             Set<String> subjectIndexes,
             boolean bSubTree,
-            Set<String> excludeDNs,
-            boolean bReferral
+            Set<String> excludeDNs
         ) {
             this.parent = parent;
             this.iterator = iterator;
@@ -413,48 +431,22 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
             this.subjectIndexes = subjectIndexes;
             this.bSubTree = bSubTree;
             this.excludeDNs = excludeDNs;
-            this.bReferral = bReferral;
         }
 
         public void run() {
-            if (bReferral) {
-                runReferral();
-            } else {
-                runPolicy();
-            }
-        }
-
-        private void runPolicy() {
             try {
                 String realm = parent.getRealm();
 
-                Set<Privilege> results = parent.dataStore.search(
+                Set<Evaluate> results = parent.dataStore.search(
                     parent.getAdminSubject(), realm, iterator,
                     indexes, subjectIndexes, bSubTree, excludeDNs);
-                for (Privilege p : results) {
-                    parent.cache(p, subjectIndexes, realm);
+                for (Evaluate eval : results) {
+                    parent.cache(eval, subjectIndexes, realm);
                 }
             } catch (EntitlementException ex) {
                 iterator.isDone();
                 PrivilegeManager.debug.error(
                     "OpenSSOIndexStore.SearchTask.runPolicy", ex);
-            }
-        }
-
-        private void runReferral() {
-            try {
-                String realm = parent.getRealm();
-
-                Set<ReferralPrivilege> results = parent.dataStore.searchReferral(
-                    parent.getAdminSubject(), realm, iterator,
-                    indexes, subjectIndexes, bSubTree, excludeDNs);
-                for (ReferralPrivilege p : results) {
-                    parent.cache(p, subjectIndexes, realm);
-                }
-            } catch (EntitlementException ex) {
-                iterator.isDone();
-                PrivilegeManager.debug.error(
-                    "OpenSSOIndexStore.SearchTask.runReferral", ex);
             }
         }
     }

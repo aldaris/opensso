@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MetaDataTest.java,v 1.5 2009-05-09 01:08:47 veiming Exp $
+ * $Id: MetaDataTest.java,v 1.6 2009-06-09 09:44:28 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -70,6 +70,7 @@ public class MetaDataTest {
         policy.addRule(createRule());
         policy.addSubject("subjectName", createSubject(pm));
         pm.addPolicy(policy);
+        Thread.sleep(1000);
     }
 
     @AfterClass
@@ -92,6 +93,7 @@ public class MetaDataTest {
 
         testPolicy.addCondition("cond", createIPCondition(pm));
         pm.replacePolicy(testPolicy);
+        Thread.sleep(1000);
 
         long lastModifiedDate = testPolicy.getLastModifiedDate();
         String lastModifiedBy = testPolicy.getLastModifiedBy();

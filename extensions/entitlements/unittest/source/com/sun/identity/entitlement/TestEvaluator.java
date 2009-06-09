@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestEvaluator.java,v 1.11 2009-05-26 21:20:07 veiming Exp $
+ * $Id: TestEvaluator.java,v 1.12 2009-06-09 09:44:28 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -31,13 +31,14 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
-import com.sun.identity.entitlement.opensso.PolicyPrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSException;
 import java.security.AccessController;
 import java.security.Principal;
 import java.util.Collections;
@@ -52,6 +53,8 @@ import org.testng.annotations.Test;
 
 public class TestEvaluator {
     private static final String APPL_NAME = "TestEvaluatorAppl";
+    private static final String SUB_REALM = "/TestEvaluator";
+    private static final String REFERRAL_NAME = "testEvaluatorReferral";
     private static final String PRIVILEGE1_NAME = "entitlementPrivilege1";
     private static final String USER1_NAME = "privilegeEvalTestUser1";
     private static final String USER2_NAME = "privilegeEvalTestUser2";
@@ -76,8 +79,34 @@ public class TestEvaluator {
         appl.setEntitlementCombiner(DenyOverride.class);
         ApplicationManager.saveApplication(adminSubject, "/", appl);
 
-        PrivilegeManager pm = new PolicyPrivilegeManager();
-        pm.initialize("/", SubjectUtils.createSubject(adminToken));
+        createReferral(adminToken, adminSubject);
+    }
+
+    private void createReferral(SSOToken adminToken, Subject adminSubject)
+        throws SMSException, EntitlementException, SSOException, IdRepoException,
+        InterruptedException {
+        OrganizationConfigManager orgMgr = new OrganizationConfigManager(
+            adminToken, "/");
+        String subRealm = SUB_REALM.substring(1);
+        orgMgr.createSubOrganization(subRealm, Collections.EMPTY_MAP);
+
+
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        Set<String> set = new HashSet<String>();
+        map.put(APPL_NAME, set);
+        set.add("http://www.testevaluator.com:80/*");
+
+        Set<String> realms = new HashSet<String>();
+        realms.add(SUB_REALM);
+        
+        ReferralPrivilege referral =
+            new ReferralPrivilege(REFERRAL_NAME, map, realms);
+        ReferralPrivilegeManager mgr = new ReferralPrivilegeManager("/",
+            adminSubject);
+        mgr.add(referral);
+
+        PrivilegeManager pm = PrivilegeManager.getInstance(SUB_REALM,
+            adminSubject);
         Map<String, Boolean> actions = new HashMap<String, Boolean>();
         actions.put("GET", Boolean.TRUE);
         Entitlement ent = new Entitlement(APPL_NAME, URL1, actions);
@@ -93,15 +122,20 @@ public class TestEvaluator {
         Privilege privilege = new OpenSSOPrivilege(
             PRIVILEGE1_NAME, ent, eSubject, null, Collections.EMPTY_SET);
         pm.addPrivilege(privilege);
+        Thread.sleep(1000);
     }
 
     @AfterClass
     public void cleanup() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        PrivilegeManager pm = new PolicyPrivilegeManager();
-        pm.initialize("/", SubjectUtils.createSubject(adminToken));
+        PrivilegeManager pm = PrivilegeManager.getInstance(SUB_REALM,
+            adminSubject);
         pm.removePrivilege(PRIVILEGE1_NAME);
+
+        ReferralPrivilegeManager mgr = new ReferralPrivilegeManager("/",
+            adminSubject);
+        mgr.delete(REFERRAL_NAME);
 
         AMIdentityRepository amir = new AMIdentityRepository(
             adminToken, "/");
@@ -111,11 +145,16 @@ public class TestEvaluator {
         amir.deleteIdentities(identities);
 
         ApplicationManager.deleteApplication(adminSubject, "/", APPL_NAME);
+
+        OrganizationConfigManager orgMgr = new OrganizationConfigManager(
+            adminToken, "/");
+        orgMgr.deleteSubOrganization(SUB_REALM, true);
     }
 
     @Test
     public void postiveTest()
         throws Exception {
+        Thread.sleep(1000);
         if (!evaluate(URL1)) {
             throw new Exception("TestEvaluator.postiveTest failed");
         }

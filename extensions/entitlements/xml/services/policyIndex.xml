@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policyIndex.xml,v 1.8 2009-04-30 23:23:03 veiming Exp $
+   $Id: policyIndex.xml,v 1.9 2009-06-09 09:44:28 veiming Exp $
 
 -->
 
@@ -37,6 +37,10 @@
         <Schema i18nFileName="" revisionNumber="10">
             <Organization>
                 <AttributeSchema name="indexCount"
+                    type="single"
+                    syntax="numeric"
+                    i18nKey="" />
+                <AttributeSchema name="referralIndexCount"
                     type="single"
                     syntax="numeric"
                     i18nKey="" />

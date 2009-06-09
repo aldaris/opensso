@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.27 2009-05-26 21:20:05 veiming Exp $
+ * $Id: Privilege.java,v 1.28 2009-06-09 09:44:27 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,7 +39,7 @@ import org.json.JSONObject;
 /**
  * Class representing entitlement privilege
  */
-public abstract class Privilege {
+public abstract class Privilege implements Evaluate {
     /**
      * Created by index key
      */
@@ -210,6 +210,7 @@ public abstract class Privilege {
      * @param adminSubject Admin Subject
      * @param realm Realm Name
      * @param subject Subject who is under evaluation.
+     * @param applicationName Application name.
      * @param resourceName Resource name.
      * @param actionNames Set of action names.
      * @param environment Environment parameters.
@@ -223,6 +224,7 @@ public abstract class Privilege {
         Subject adminSubject,
         String realm,
         Subject subject,
+        String applicationName,
         String resourceName,
         Set<String> actionNames,
         Map<String, Set<String>> environment,

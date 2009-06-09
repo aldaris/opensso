@@ -22,15 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.2 2009-06-08 19:11:46 veiming Exp $
+ * $Id: ReferralPrivilege.java,v 1.3 2009-06-09 09:44:27 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.entitlement.util.JSONUtils;
+import com.sun.identity.policy.ResourceMatch;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -40,7 +45,7 @@ import org.json.JSONObject;
 /**
  * Referral privilege allows application to be referred to peer and sub realm.
  */
-public final class ReferralPrivilege {
+public final class ReferralPrivilege implements Evaluate {
     private String name;
     private String description;
     private Map<String, Set<String>> mapApplNameToResources;
@@ -365,6 +370,94 @@ public final class ReferralPrivilege {
         Application appl = ApplicationManager.getApplication(
             adminSubject, realm, applName);
         return appl.getResourceComparator();
+    }
+
+    public List<Entitlement> evaluate(
+        Subject adminSubject,
+        String realm,
+        Subject subject,
+        String applicationName,
+        String resourceName,
+        Set<String> actionNames,
+        Map<String, Set<String>> environment,
+        boolean recursive
+    ) throws EntitlementException {
+        List<Entitlement> results = null;
+
+        for (String rlm : realms) {
+            for (String app : mapApplNameToResources.keySet()) {
+                if (app.equals(applicationName)) {
+                    Set<String> resourceNames = mapApplNameToResources.get(app);
+                    ResourceName comp = getResourceComparator(adminSubject, rlm,
+                        app);
+                    String resName = comp.canonicalize(resourceName);
+                    Set<String> resources = tagswapResourceNames(subject,
+                        resourceNames);
+
+                    boolean applicable = false;
+                    for (String r : resources) {
+                        ResourceMatch match = comp.compare(resName, r, true);
+                        applicable = match.equals(ResourceMatch.EXACT_MATCH) ||
+                            match.equals(ResourceMatch.WILDCARD_MATCH) ||
+                            match.equals(ResourceMatch.SUB_RESOURCE_MATCH);
+                        if (applicable) {
+                            break;
+                        }
+                    }
+
+                    if (applicable) {
+                        Application application = 
+                            ApplicationManager.getApplication(adminSubject, 
+                            realm, app);
+                        EntitlementCombiner entitlementCombiner = 
+                            application.getEntitlementCombiner();
+                        entitlementCombiner.init(adminSubject, rlm, 
+                            applicationName, resName, actionNames, recursive);
+                        
+                        PrivilegeEvaluator evaluator = new PrivilegeEvaluator();
+                        List<Entitlement> entitlements = evaluator.evaluate(rlm,
+                            adminSubject, subject, applicationName,
+                            resName, environment, recursive);
+                        if (results == null) {
+                            results = entitlements;
+                        } else if (entitlements != null) {
+                            entitlementCombiner.add(entitlements);
+                            results = entitlementCombiner.getResults();
+                        }
+                    }
+                }
+            }
+        }
+        return results;
+    }
+
+    private Set<String> tagswapResourceNames(Subject sbj, Set<String> set)
+        throws EntitlementException {
+        Set<String> resources = new HashSet<String>();
+        Set<String> userIds = new HashSet<String>();
+
+        Set<Principal> principals = sbj.getPrincipals();
+        if (!principals.isEmpty()) {
+            for (Principal p : principals) {
+                String pName = p.getName();
+                if (DN.isDN(pName)){
+                    String[] rdns = LDAPDN.explodeDN(pName, true);
+                    userIds.add(rdns[0]);
+                } else {
+                    userIds.add(pName);
+                }
+            }
+        }
+
+        if (!userIds.isEmpty()) {
+            for (String r : set) {
+                for (String uid : userIds) {
+                    resources.add(r.replaceAll("\\$SELF", uid));
+                }
+            }
+        }
+
+        return resources;
     }
 
 }

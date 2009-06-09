@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementsStats.java,v 1.2 2009-06-09 05:29:15 arviranga Exp $
+ * $Id: EntitlementsStats.java,v 1.3 2009-06-09 09:44:27 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -60,7 +60,10 @@ public class EntitlementsStats implements StatsListener {
 		sb.append(PolicyCache.countByRealm);
 		sb.append("\nTotal policies: ");
 		sb.append(DataStore.policiesPerRealm);
-		sb.append("\n-----------------------------\n");
+		sb.append("\nTotal referrals: ");
+		sb.append(DataStore.referralsPerRealm);
+
+        sb.append("\n-----------------------------\n");
 		stats.record(sb.toString());
 	}
 }

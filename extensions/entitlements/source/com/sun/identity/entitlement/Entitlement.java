@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.42 2009-05-28 00:57:19 veiming Exp $
+ * $Id: Entitlement.java,v 1.43 2009-06-09 09:44:27 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -389,6 +389,7 @@ public class Entitlement {
      * @param adminSubject Admin Subject.
      * @param realm Realm Name
      * @param subject Subject who is under evaluation.
+     * @param applicationName application name.
      * @param resourceNames Resource name.
      * @param environment Environment parameters.
      * @return a set of resource names that match the given resource.
@@ -398,6 +399,7 @@ public class Entitlement {
         Subject adminSubject,
         String realm,
         Subject subject,
+        String applicationName,
         String resourceName,
         Set<String> actionNames,
         Map<String, Set<String>> environment,
@@ -406,7 +408,7 @@ public class Entitlement {
         for (String a : actionNames) {
             if (actionValues.keySet().contains(a)) {
                 return getMatchingResources(adminSubject, realm,
-                    subject, resourceName, recursive);
+                    subject, applicationName, resourceName, recursive);
             }
         }
         return Collections.EMPTY_SET;
@@ -416,10 +418,15 @@ public class Entitlement {
         Subject adminSubject,
         String realm,
         Subject subject,
+        String applicationName,
         String resourceName,
         boolean recursive
     ) throws EntitlementException {
         if ((resourceNames == null) || resourceNames.isEmpty()) {
+            return Collections.EMPTY_SET;
+        }
+
+        if (!this.applicationName.endsWith(applicationName)){
             return Collections.EMPTY_SET;
         }
         
