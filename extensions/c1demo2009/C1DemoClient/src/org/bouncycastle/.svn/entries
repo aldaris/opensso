@@ -1,0 +1,19 @@
+8
+
+dir
+18
+https://kenai.com/svn/identitydemo2009~source-code-repository/C1DemoClient/src/org/bouncycastle
+https://kenai.com/svn/identitydemo2009~source-code-repository
+
+
+
+2009-05-29T18:14:17.475393Z
+18
+andrew.patterson@sun.com
+
+
+svn:special svn:externals svn:needs-lock
+
+crypto
+dir
+
