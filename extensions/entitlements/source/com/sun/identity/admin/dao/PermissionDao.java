@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionDao.java,v 1.4 2009-06-09 22:40:37 farble1670 Exp $
+ * $Id: PermissionDao.java,v 1.5 2009-06-10 17:47:54 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -34,6 +34,7 @@ import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.delegation.DelegationEvaluator;
 import com.sun.identity.delegation.DelegationException;
 import com.sun.identity.delegation.DelegationPermission;
+import com.sun.identity.entitlement.opensso.EntitlementService;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +47,6 @@ import static com.sun.identity.console.base.model.AMAdminConstants.*;
 
 public class PermissionDao implements Serializable {
 
-    private static final String ENTITLEMENT_SERVICE_NAME = "openssoEntitlement";
     private static final Map<String,Set<Permission>> permissionMap = new HashMap<String,Set<Permission>>();
 
     static {
@@ -69,9 +69,9 @@ public class PermissionDao implements Serializable {
     }
 
     public List<Permission> getPermissions(RealmBean realmBean) {
-        boolean read = isAllowed(realmBean, PERMISSION_READ, ENTITLEMENT_SERVICE_NAME);
-        boolean write = isAllowed(realmBean, PERMISSION_MODIFY, ENTITLEMENT_SERVICE_NAME);
-        // TODO: null svc?
+        boolean read = isAllowed(realmBean, PERMISSION_READ, EntitlementService.SERVICE_NAME);
+        boolean write = isAllowed(realmBean, PERMISSION_MODIFY, EntitlementService.SERVICE_NAME);
+        // TODO: null svc for delegation check?
         boolean delegate = isAllowed(realmBean, PERMISSION_DELEGATE, null);
 
         List<Permission> permissions = new ArrayList<Permission>();

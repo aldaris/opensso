@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmBean.java,v 1.2 2009-06-04 11:49:17 veiming Exp $
+ * $Id: RealmBean.java,v 1.3 2009-06-10 17:47:55 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,7 +30,7 @@ package com.sun.identity.admin.model;
 import com.sun.identity.admin.Resources;
 import java.io.Serializable;
 
-public class RealmBean implements Serializable {
+public class RealmBean implements Serializable, Comparable {
     private String name;
 
     public String getName() {
@@ -68,5 +68,10 @@ public class RealmBean implements Serializable {
     @Override
     public int hashCode() {
         return getName().hashCode();
+    }
+
+    public int compareTo(Object o) {
+        RealmBean other = (RealmBean)o;
+        return this.getName().compareTo(other.getName());
     }
 }

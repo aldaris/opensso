@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardHandler.java,v 1.9 2009-06-10 05:56:47 farble1670 Exp $
+ * $Id: ReferralWizardHandler.java,v 1.10 2009-06-10 17:47:55 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -31,10 +31,8 @@ import com.sun.identity.admin.NamePattern;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.ReferralDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
-import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
-import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.ReferralBean;
@@ -43,7 +41,6 @@ import com.sun.identity.admin.model.ReferralWizardBean;
 import com.sun.identity.admin.model.ReferralWizardStep;
 import com.sun.identity.admin.model.Resource;
 import com.sun.identity.admin.model.ViewEntitlement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import javax.faces.application.FacesMessage;
