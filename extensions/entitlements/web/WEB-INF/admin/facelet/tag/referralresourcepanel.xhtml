@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referralresourcepanel.xhtml,v 1.1 2009-06-05 05:21:08 farble1670 Exp $
+   $Id: referralresourcepanel.xhtml,v 1.2 2009-06-10 19:17:29 farble1670 Exp $
 
 -->
 
@@ -37,7 +37,7 @@
     <f:subview>
         <ice:panelGroup>
             <o:multipanel
-                collapsible="true"
+                collapsible="#{o:contains(referralResourcesBean.resources,referralResource)}"
                 removeable="false"
                 visible="#{referralResource.panelVisible}"
                 expanded="#{referralResource.panelExpanded}"

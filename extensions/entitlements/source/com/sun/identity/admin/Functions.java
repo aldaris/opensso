@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Functions.java,v 1.13 2009-06-10 04:46:21 farble1670 Exp $
+ * $Id: Functions.java,v 1.14 2009-06-10 19:17:29 farble1670 Exp $
  */
 package com.sun.identity.admin;
 
@@ -37,6 +37,9 @@ public class Functions {
     }
 
     public static boolean contains(Collection c, Object o) {
+        if (c == null) {
+            return false;
+        }
         return c.contains(o);
     }
 
