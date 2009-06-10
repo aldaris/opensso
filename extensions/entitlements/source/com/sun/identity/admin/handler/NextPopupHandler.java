@@ -58,7 +58,7 @@ public class NextPopupHandler implements Serializable {
         } else if (lb instanceof HrefLinkBean) {
             nextUrl = lb.getValue();
         } else {
-            throw new AssertionError("unknown link bean type");
+            throw new AssertionError("unknown link bean type: " + lb);
         }
 
         redirect(nextUrl);
