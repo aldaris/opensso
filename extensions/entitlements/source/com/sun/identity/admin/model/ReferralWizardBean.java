@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardBean.java,v 1.8 2009-06-10 20:59:07 farble1670 Exp $
+ * $Id: ReferralWizardBean.java,v 1.9 2009-06-10 21:01:40 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -245,7 +245,7 @@ public abstract class ReferralWizardBean extends WizardBean {
                 break;
 
             case SUMMARY:
-                label = r.getString(this, "subjectsPanelLabel");
+                label = r.getString(this, "summaryPanelLabel");
 
                 break;
             default:
