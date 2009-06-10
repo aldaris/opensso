@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.95 2009-06-08 22:06:53 farble1670 Exp $
+* $Id: admin.css,v 1.96 2009-06-10 04:46:23 farble1670 Exp $
 *
 */
 
@@ -1225,6 +1225,18 @@ span.button img.left {
 
 .permission-denied td {
     vertical-align: top;
+}
+
+.next-popup-links {
+}
+
+.next-popup-links div {
+    text-align: center;
+}
+
+.next-popup-links a img {
+    height: 16px;
+    width: 16px;
 }
 
 /*

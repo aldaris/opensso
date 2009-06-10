@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardHandler.java,v 1.21 2009-06-06 18:04:16 farble1670 Exp $
+ * $Id: PolicyWizardHandler.java,v 1.22 2009-06-10 04:46:22 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -45,9 +45,11 @@ import com.sun.identity.admin.model.AndViewSubject;
 import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.ContainerViewCondition;
 import com.sun.identity.admin.model.ContainerViewSubject;
+import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.MultiPanelBean;
+import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.OrViewCondition;
 import com.sun.identity.admin.model.OrViewSubject;
 import com.sun.identity.admin.model.PhaseEventAction;
@@ -63,6 +65,7 @@ import com.sun.identity.admin.model.ViewSubject;
 import com.sun.identity.admin.model.WizardBean;
 import com.sun.identity.entitlement.Privilege;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import javax.faces.application.FacesMessage;
@@ -85,9 +88,9 @@ public abstract class PolicyWizardHandler
         super.setWizardBean(wizardBean);
     }
 
-    protected abstract String getFinishAction();
+    public abstract void doFinishNext();
 
-    protected abstract String getCancelAction();
+    public abstract void doCancelNext();
 
     private boolean validateSteps() {
         if (!validatePolicyName()) {
@@ -113,37 +116,26 @@ public abstract class PolicyWizardHandler
     }
 
     @Override
-    public String finishAction() {
+    public void finishListener(ActionEvent event) {
         if (!validateSteps()) {
-            return null;
+            return;
         }
 
         Privilege privilege = getPolicyWizardBean().getPrivilegeBean().toPrivilege();
         policyDao.setPrivilege(privilege);
 
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "finish"));
-        mb.setSeverity(FacesMessage.SEVERITY_INFO);
-        getMessagesBean().addMessageBean(mb);
-
         getPolicyWizardBean().reset();
         getPolicyManageBean().reset();
 
-        return getFinishAction();
+
+        doFinishNext();
     }
 
     @Override
-    public String cancelAction() {
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "cancel"));
-        mb.setSeverity(FacesMessage.SEVERITY_INFO);
-        getMessagesBean().addMessageBean(mb);
-
+    public void cancelListener(ActionEvent event) {
         getPolicyWizardBean().reset();
 
-        return getCancelAction();
+        doCancelNext();
     }
 
     @Override

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardHandler.java,v 1.7 2009-06-09 22:40:37 farble1670 Exp $
+ * $Id: ReferralWizardHandler.java,v 1.8 2009-06-10 04:46:22 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -31,8 +31,10 @@ import com.sun.identity.admin.NamePattern;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.ReferralDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
+import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
+import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.ReferralBean;
@@ -41,6 +43,7 @@ import com.sun.identity.admin.model.ReferralWizardBean;
 import com.sun.identity.admin.model.ReferralWizardStep;
 import com.sun.identity.admin.model.Resource;
 import com.sun.identity.admin.model.ViewEntitlement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import javax.faces.application.FacesMessage;
@@ -56,10 +59,6 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         this.messagesBean = messagesBean;
     }
 
-    public abstract String getFinishAction();
-
-    public abstract String getCancelAction();
-
     private boolean validateSteps() {
         if (!validateName()) {
             return false;
@@ -74,35 +73,29 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         return true;
     }
 
+    public abstract void doFinishNext();
+
+    public abstract void doCancelNext();
+
     @Override
-    public String finishAction() {
+    public void finishListener(ActionEvent event) {
         if (!validateSteps()) {
-            return null;
+            return;
         }
 
         ReferralBean rb = getReferralWizardBean().getReferralBean();
         referralDao.add(rb);
 
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "finish"));
-        mb.setSeverity(FacesMessage.SEVERITY_INFO);
-        getMessagesBean().addMessageBean(mb);
-
         getWizardBean().reset();
-        return getFinishAction();
+
+        doFinishNext();
     }
 
     @Override
-    public String cancelAction() {
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "cancel"));
-        mb.setSeverity(FacesMessage.SEVERITY_INFO);
-        getMessagesBean().addMessageBean(mb);
-
+    public void cancelListener(ActionEvent event) {
         getWizardBean().reset();
-        return getCancelAction();
+
+        doCancelNext();
     }
 
     @Override

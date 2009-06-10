@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.88 2009-06-08 18:06:13 farble1670 Exp $
+  $Id: faces-config.xml,v 1.89 2009-06-10 04:46:23 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -113,6 +113,22 @@
         <managed-property>
             <property-name>messagesBean</property-name>
             <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>nextPopupBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.NextPopupBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>nextPopupHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.NextPopupHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>nextPopupBean</property-name>
+            <value>#{nextPopupBean}</value>
         </managed-property>
     </managed-bean>
 

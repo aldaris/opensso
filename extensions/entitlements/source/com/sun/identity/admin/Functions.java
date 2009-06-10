@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Functions.java,v 1.12 2009-06-04 11:49:11 veiming Exp $
+ * $Id: Functions.java,v 1.13 2009-06-10 04:46:21 farble1670 Exp $
  */
-
 package com.sun.identity.admin;
 
 import java.io.IOException;

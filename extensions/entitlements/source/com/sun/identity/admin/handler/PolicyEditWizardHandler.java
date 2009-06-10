@@ -22,17 +22,54 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEditWizardHandler.java,v 1.3 2009-06-04 11:49:13 veiming Exp $
+ * $Id: PolicyEditWizardHandler.java,v 1.4 2009-06-10 04:46:22 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
 
+import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.model.LinkBean;
+import com.sun.identity.admin.model.NextPopupBean;
+import java.util.ArrayList;
+import java.util.List;
+
 public class PolicyEditWizardHandler extends PolicyWizardHandler {
-    public String getFinishAction() {
-        return "policy-manage";
+    public void doFinishNext() {
+        NextPopupBean npb = NextPopupBean.getInstance();
+        npb.setVisible(true);
+        Resources r = new Resources();
+        npb.setTitle(r.getString(this, "finishTitle"));
+        npb.setMessage(r.getString(this, "finishMessage"));
+        npb.setLinkBeans(getFinishLinkBeans());
+
     }
 
-    public String getCancelAction() {
-        return "policy-manage";
+    public void doCancelNext() {
+        NextPopupBean npb = NextPopupBean.getInstance();
+        npb.setVisible(true);
+        Resources r = new Resources();
+        npb.setTitle(r.getString(this, "cancelTitle"));
+        npb.setMessage(r.getString(this, "cancelMessage"));
+        npb.setLinkBeans(getCancelLinkBeans());
+
     }
+
+    private List<LinkBean> getFinishLinkBeans() {
+        List<LinkBean> lbs = new ArrayList<LinkBean>();
+        lbs.add(LinkBean.HOME);
+        lbs.add(LinkBean.POLICY_CREATE);
+        lbs.add(LinkBean.POLICY_MANAGE);
+
+        return lbs;
+    }
+
+    private List<LinkBean> getCancelLinkBeans() {
+        List<LinkBean> lbs = new ArrayList<LinkBean>();
+        lbs.add(LinkBean.HOME);
+        lbs.add(LinkBean.POLICY_CREATE);
+        lbs.add(LinkBean.POLICY_MANAGE);
+
+        return lbs;
+    }
+
 }

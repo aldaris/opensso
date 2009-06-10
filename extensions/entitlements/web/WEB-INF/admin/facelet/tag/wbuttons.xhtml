@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wbuttons.xhtml,v 1.6 2009-06-04 11:49:24 veiming Exp $
+   $Id: wbuttons.xhtml,v 1.7 2009-06-10 04:46:23 farble1670 Exp $
 
 -->
 
@@ -37,7 +37,7 @@
         tabindex="-1"
         partialSubmit="false"
         immediate="true"
-        action="#{handler.cancelAction}">
+        actionListener="#{handler.cancelListener}">
         <f:attribute name="step" value="#{step}"/>
         <span
             class="button">
@@ -63,7 +63,7 @@
         rendered="#{bean.finishRendered}"
         tabindex="10001"
         partialSubmit="false"
-        action="#{handler.finishAction}">
+        actionListener="#{handler.finishListener}">
         <f:attribute name="step" value="#{step}"/>
         <span
             class="button">

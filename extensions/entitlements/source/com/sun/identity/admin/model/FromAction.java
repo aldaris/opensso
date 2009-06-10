@@ -43,4 +43,8 @@ public enum FromAction {
     public static FromAction valueOfAction(String action) {
         return actionValues.get(action);
     }
+
+    public ViewId getViewId() {
+        return ViewId.valueOf(this.toString());
+    }
 }
