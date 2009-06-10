@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.25 2009-01-28 05:35:03 ww203982 Exp $
+ * $Id: OrganizationConfigManager.java,v 1.26 2009-06-10 21:11:58 hengming Exp $
  *
  */
 
@@ -44,6 +44,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.shared.Constants;
 
@@ -1456,7 +1457,8 @@ public class OrganizationConfigManager {
             return;
         }
 
-        Set assignedServices = parentOrg.getAssignedServices();
+        Set assignedServices = new CaseInsensitiveHashSet(
+            parentOrg.getAssignedServices());
         if (SMSEntry.debug.messageEnabled()) {
             SMSEntry.debug.message("OrganizationConfigManager"
                     + "::loadDefaultServices " + "assignedServices : "
