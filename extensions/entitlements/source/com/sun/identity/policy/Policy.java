@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Policy.java,v 1.8 2009-05-26 21:20:06 veiming Exp $
+ * $Id: Policy.java,v 1.9 2009-06-10 20:48:19 veiming Exp $
  *
  */
 
@@ -599,14 +599,6 @@ public class Policy implements Cloneable {
             AdminTokenAction.getInstance()); //TODO
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             SubjectUtils.createSubject(adminToken), "/");
-        if (ec.migratedToEntitlementService()) {
-            if (rules.size() >= 1) {
-                throw new InvalidNameException(ResBundleUtils.rbName,
-                    "cannot_have_more_than_one_rule", null, rule.getName(),
-                    PolicyException.RULE);
-            }
-        }
-
         rules.put(rule.getName(), rule);
     }
 
