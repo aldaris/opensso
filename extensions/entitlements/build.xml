@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.60 2009-06-09 22:40:36 farble1670 Exp $
+  $Id: build.xml,v 1.61 2009-06-10 20:59:06 farble1670 Exp $
 
 -->
 
@@ -271,7 +271,7 @@
             file="${entitlements.dtd.dir}/policyAdmin.dtd" />
     </target>
 
-    <target name="merge-properties" depends="unwar">
+    <target name="merge-properties" depends="unwar" if="merge.web">
         <java classname="com.sun.identity.setup.MergeProperties" fork="true">
             <classpath refid="build.class.path"/>
             <classpath>

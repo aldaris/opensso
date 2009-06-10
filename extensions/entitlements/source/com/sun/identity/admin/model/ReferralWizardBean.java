@@ -22,16 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardBean.java,v 1.7 2009-06-09 22:40:37 farble1670 Exp $
+ * $Id: ReferralWizardBean.java,v 1.8 2009-06-10 20:59:07 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
+import com.sun.identity.admin.Functions;
+import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.RealmDao;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.model.SelectItem;
 import org.apache.commons.collections.comparators.NullComparator;
+import static com.sun.identity.admin.model.ReferralWizardStep.*;
 
 public abstract class ReferralWizardBean extends WizardBean {
 
@@ -59,9 +62,9 @@ public abstract class ReferralWizardBean extends WizardBean {
 
     public void setResources(List<Resource> resources) {
         referralBean.setResources(new ArrayList<Resource>());
-        for (Resource r: resources) {
+        for (Resource r : resources) {
             int i = availableResources.indexOf(r);
-            assert(i != -1);
+            assert (i != -1);
             r = availableResources.get(i);
             referralBean.getResources().add(r);
         }
@@ -194,14 +197,77 @@ public abstract class ReferralWizardBean extends WizardBean {
         return descriptionReferralSummary;
     }
 
-    public int getAvailableResourceSize() {
+    public int getAvailableResourcesSize() {
         int size = 0;
         for (Resource r : getAvailableResources()) {
-            ReferralResource rr = (ReferralResource)r;
+            ReferralResource rr = (ReferralResource) r;
             if (rr.getViewEntitlement().getResources() != null) {
                 size += rr.getViewEntitlement().getResources().size();
             }
         }
         return size;
+    }
+
+    public int getResourcesSize() {
+        int size = 0;
+        if (referralBean.getResources() != null) {
+            for (Resource r : referralBean.getResources()) {
+                ReferralResource rr = (ReferralResource) r;
+                if (rr.getViewEntitlement().getResources() != null) {
+                    size += rr.getViewEntitlement().getResources().size();
+                }
+            }
+        }
+        return size;
+    }
+
+    private String getPanelLabel(ReferralWizardStep rws) {
+        Resources r = new Resources();
+        String label;
+
+        switch (rws) {
+            case NAME:
+                label = r.getString(this, "namePanelLabel");
+
+                break;
+
+            case RESOURCES:
+                int applicationCount = Functions.size(referralBean.getResources());
+                int resourceCount = getResourcesSize();
+                label = r.getString(this, "resourcesPanelLabel", applicationCount, resourceCount);
+
+                break;
+
+            case SUBJECTS:
+                int subjectCount = Functions.size(referralBean.getRealmBeans());
+                label = r.getString(this, "subjectsPanelLabel", subjectCount);
+
+                break;
+
+            case SUMMARY:
+                label = r.getString(this, "subjectsPanelLabel");
+
+                break;
+            default:
+                throw new AssertionError("unhandled referral wizard step: " + rws);
+        }
+
+        return label;
+    }
+
+    public String getNamePanelLabel() {
+        return getPanelLabel(NAME);
+    }
+
+    public String getResourcesPanelLabel() {
+        return getPanelLabel(RESOURCES);
+    }
+
+    public String getSubjectsPanelLabel() {
+        return getPanelLabel(SUBJECTS);
+    }
+
+    public String getSummaryPanelLabel() {
+        return getPanelLabel(SUMMARY);
     }
 }
