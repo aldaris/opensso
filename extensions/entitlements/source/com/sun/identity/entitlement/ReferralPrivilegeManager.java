@@ -22,12 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilegeManager.java,v 1.1 2009-06-06 00:34:42 veiming Exp $
+ * $Id: ReferralPrivilegeManager.java,v 1.2 2009-06-10 17:49:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.policy.ResourceMatch;
 import java.security.Principal;
 import java.util.Date;
 import java.util.Map;
@@ -60,6 +62,7 @@ public final class ReferralPrivilegeManager {
      */
     public void add(ReferralPrivilege referral)
         throws EntitlementException {
+        validateReferral(referral);
         Date date = new Date();
         referral.setCreationDate(date.getTime());
         referral.setLastModifiedDate(date.getTime());
@@ -76,6 +79,43 @@ public final class ReferralPrivilegeManager {
         pdb.addReferral(adminSubject, realm, referral);
 
         addApplicationToSubRealm(referral);
+    }
+
+    private void validateReferral(ReferralPrivilege referral)
+        throws EntitlementException {
+        Map<String, Set<String>> map =
+            referral.getOriginalMapApplNameToResources();
+        for (String appName : map.keySet()) {
+            Application appl = ApplicationManager.getApplication(
+                adminSubject, realm, appName);
+            ResourceName comp = appl.getResourceComparator();
+            Set<String> resources = appl.getResources();
+            Set<String> refResources = map.get(appName);
+
+            for (String r : resources) {
+                validateReferral(referral, comp, r, refResources);
+            }
+        }
+    }
+
+    private void validateReferral(
+        ReferralPrivilege referral,
+        ResourceName comp,
+        String res,
+        Set<String> refResources) throws EntitlementException {
+        if (!res.endsWith("*")) {
+            res += "*";
+        }
+        for (String rr : refResources) {
+            ResourceMatch match = comp.compare(rr, res, true);
+            if (match.equals(ResourceMatch.EXACT_MATCH) ||
+                match.equals(ResourceMatch.WILDCARD_MATCH) ||
+                match.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
+                return;
+            }
+        }
+        Object[] param = {referral.getName()};
+        throw new EntitlementException(267, param);
     }
 
     private void addApplicationToSubRealm(ReferralPrivilege referral) 

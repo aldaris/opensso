@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.16 2009-06-09 19:10:24 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.17 2009-06-10 17:49:26 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.ResourceName;
+import com.sun.identity.policy.ResourceMatch;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -140,10 +142,44 @@ public final class ApplicationManager {
         String realm,
         Application application
     ) throws EntitlementException {
+        validateApplication(adminSubject, realm, application);
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, realm);
         ec.storeApplication(application);
         clearCache(realm);
+    }
+
+    private static void validateApplication(
+        Subject adminSubject,
+        String realm,
+        Application application
+    ) throws EntitlementException {
+        if (!realm.equals("/")) {
+            String applTypeName = application.getApplicationType().getName();
+            ResourceName comp = application.getResourceComparator();
+            Set<String> referredRes = getReferredResources(
+                adminSubject, realm, applTypeName);
+            for (String r : application.getResources()) {
+                validateApplication(application, comp, r, referredRes);
+            }
+        }
+    }
+
+    private static void validateApplication(
+        Application application,
+        ResourceName comp,
+        String res,
+        Set<String> referredRes) throws EntitlementException {
+        for (String r : referredRes) {
+            ResourceMatch match = comp.compare(res, r, true);
+            if (match.equals(ResourceMatch.EXACT_MATCH) ||
+                match.equals(ResourceMatch.WILDCARD_MATCH) ||
+                match.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
+                return;
+            }
+        }
+        Object[] param = {application.getName()};
+        throw new EntitlementException(247, param);
     }
     
     /**
@@ -154,6 +190,17 @@ public final class ApplicationManager {
         applications.remove(realm);
     }
 
+    /**
+     * Refers resources to another realm.
+     *
+     * @param adminSubject Admin Subject who has the rights to access
+     *        configuration datastore.
+     * @param parentRealm Parent realm name.
+     * @param referRealm Referred realm name.
+     * @param applicationName Application name.
+     * @param resources Referred resources.
+     * @throws EntitlementException if resources cannot be referred.
+     */
     public static void referApplication(
         Subject adminSubject,
         String parentRealm,
@@ -168,12 +215,23 @@ public final class ApplicationManager {
             throw new EntitlementException(280, params);
         }
 
-        appl.refers(referRealm, resources);
+        Application clone = appl.refers(referRealm, resources);
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, referRealm);
-        ec.storeApplication(appl);
+        ec.storeApplication(clone);
+        clearCache(referRealm);
     }
 
+    /**
+     * Derefers resources from a realm.
+     *
+     * @param adminSubject Admin Subject who has the rights to access
+     *        configuration datastore.
+     * @param referRealm Referred realm name,
+     * @param applicationName Application name.
+     * @param resources Resources to be dereferred.
+     * @throws EntitlementException if resources cannot be dereferred.
+     */
     public static void dereferApplication(
         Subject adminSubject,
         String referRealm,
@@ -183,5 +241,25 @@ public final class ApplicationManager {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, referRealm);
         ec.removeApplication(applicationName, resources);
+    }
+
+    /**
+     * Returns referred resources for a realm.
+     *
+     * @param adminSubject Admin Subject who has the rights to access
+     *        configuration datastore.
+     * @param realm Realm name
+     * @param applicationTypeName Application Type Name.
+     * @return referred resources for a realm.
+     * @throws EntitlementException if referred resources cannot be returned.
+     */
+    public static Set<String> getReferredResources(
+        Subject adminSubject,
+        String realm,
+        String applicationTypeName
+    ) throws EntitlementException {
+        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+            adminSubject, realm);
+        return pis.getReferredResources(applicationTypeName);
     }
 }

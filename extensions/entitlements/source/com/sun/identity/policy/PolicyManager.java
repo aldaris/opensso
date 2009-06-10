@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.15 2009-05-26 21:20:06 veiming Exp $
+ * $Id: PolicyManager.java,v 1.16 2009-06-10 17:49:27 veiming Exp $
  *
  */
 
@@ -153,11 +153,11 @@ public final class PolicyManager {
     static final long DEFAULT_SUBJECTS_RESULT_TTL = 10 * 60 * 1000;
 
     static final String WEB_AGENT_SERVICE = "iPlanetAMWebAgentService";
-    static final String ID_REPO_SERVICE = "sunIdentityRepositoryService";
-    static final String ORG_ALIAS = "sunOrganizationAliases";
-    static final String ORG_ALIAS_URL_HTTP_PREFIX = "http://";
-    static final String ORG_ALIAS_URL_HTTPS_PREFIX = "https://";
-    static final String ORG_ALIAS_URL_SUFFIX = ":*";
+    public static final String ID_REPO_SERVICE = "sunIdentityRepositoryService";
+    public static final String ORG_ALIAS = "sunOrganizationAliases";
+    public static final String ORG_ALIAS_URL_HTTP_PREFIX = "http://";
+    public static final String ORG_ALIAS_URL_HTTPS_PREFIX = "https://";
+    public static final String ORG_ALIAS_URL_SUFFIX = ":*";
 
     private String org = "/";
     private String givenOrgName = "";

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.21 2009-06-06 00:34:42 veiming Exp $
+ * $Id: Application.java,v 1.22 2009-06-10 17:49:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -423,9 +423,11 @@ public final class Application {
         }
     }
 
-    void refers(String realm, Set<String> res) {
-        this.realm = realm;
-        resources.clear();
-        resources.addAll(res);
+    Application refers(String realm, Set<String> res) {
+        Application clone = clone();
+        clone.realm = realm;
+        clone.resources.clear();
+        clone.resources.addAll(res);
+        return clone;
     }
 }

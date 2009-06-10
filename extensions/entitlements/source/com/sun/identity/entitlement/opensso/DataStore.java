@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.20 2009-06-09 19:10:24 veiming Exp $
+ * $Id: DataStore.java,v 1.21 2009-06-10 17:49:27 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -55,6 +55,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import javax.persistence.EntityExistsException;
 import javax.security.auth.Subject;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,6 +78,10 @@ public class DataStore {
     private static final String PATH_INDEX_KEY = "pathindex";
     private static final String PATH_PARENT_INDEX_KEY = "pathparentindex";
     private static final String SERIALIZABLE_INDEX_KEY = "serializable";
+
+    public static final String REFERRAL_REALMS = "referralrealms";
+    public static final String REFERRAL_APPLS = "referralappls";
+
     private static final String SUBJECT_FILTER_TEMPLATE =
         "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + SUBJECT_INDEX_KEY + "={0})";
     private static final String HOST_FILTER_TEMPLATE =
@@ -467,6 +472,15 @@ public class DataStore {
                 info.add(data);
                 info.add("|" + data);
             }
+
+            for (String rlm : referral.getRealms()) {
+                info.add(REFERRAL_REALMS + "=" + rlm);
+            }
+            for (String n : referral.getApplicationTypeNames(adminSubject,
+                realm)) {
+                info.add(REFERRAL_APPLS + "=" + n);
+            }
+
             map.put("ou", info);
 
             s.setAttributes(map);
@@ -871,5 +885,34 @@ public class DataStore {
 
         String result = filter.toString();
         return (result.length() > 0) ? "(&" + result + ")" : null;
+    }
+
+
+    public Set<ReferralPrivilege> searchReferrals(
+        SSOToken adminToken,
+        String realm,
+        String filter
+    ) throws EntitlementException {
+        Set<ReferralPrivilege> results = new HashSet<ReferralPrivilege>();
+        String baseDN = getSearchBaseDN(realm, REFERRAL_STORE);
+
+        try {
+            Iterator i = SMSEntry.search(
+                adminToken, baseDN, filter, Collections.EMPTY_SET);
+            while (i.hasNext()) {
+                SMSDataEntry e = (SMSDataEntry) i.next();
+                ReferralPrivilege referral = ReferralPrivilege.getInstance(
+                    new JSONObject(e.getAttributeValue(
+                    SERIALIZABLE_INDEX_KEY)));
+                results.add(referral);
+            }
+        } catch (JSONException e) {
+            Object[] arg = {baseDN};
+            throw new EntitlementException(52, arg, e);
+        } catch (SMSException e) {
+            Object[] arg = {baseDN};
+            throw new EntitlementException(52, arg, e);
+        }
+        return results;
     }
 }

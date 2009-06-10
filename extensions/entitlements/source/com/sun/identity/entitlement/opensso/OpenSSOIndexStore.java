@@ -22,10 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.11 2009-06-09 09:44:27 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.12 2009-06-10 17:49:27 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.Application;
+import com.sun.identity.entitlement.ApplicationManager;
+import com.sun.identity.entitlement.ApplicationTypeManager;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Evaluate;
@@ -37,10 +42,22 @@ import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.policy.PolicyConfig;
+import com.sun.identity.policy.PolicyManager;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.sm.DNMapper;
 
+import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
+import java.security.AccessController;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -383,6 +400,33 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         boolean sortResults,
         boolean ascendingOrder
     ) throws EntitlementException {
+        return searchReferralPrivilegeNames(filters, getAdminSubject(),
+            getRealm(), boolAnd, numOfEntries, sortResults, ascendingOrder);
+    }
+
+    /**
+     * Returns a set of referral privilege names that matched a set of search
+     * criteria.
+     *
+     * @param filters Set of search filter (criteria).
+     * @param boolAnd <code>true</code> to be inclusive.
+     * @param numOfEntries Number of maximum search entries.
+     * @param sortResults <code>true</code> to have the result sorted.
+     * @param ascendingOrder  <code>true</code> to have the result sorted in
+     *        ascending order.
+     * @return a set of referral privilege names that matched a set of search
+     *         criteria.
+     * @throws EntitlementException if search failed.
+     */
+    public Set<String> searchReferralPrivilegeNames(
+        Set<PrivilegeSearchFilter> filters,
+        Subject adminSubject,
+        String currentRealm,
+        boolean boolAnd,
+        int numOfEntries,
+        boolean sortResults,
+        boolean ascendingOrder
+    ) throws EntitlementException {
         StringBuffer strFilter = new StringBuffer();
         if (filters.isEmpty()) {
             strFilter.append("(ou=*)");
@@ -401,11 +445,163 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 strFilter.append(")");
             }
         }
-        Subject adminSubject = getAdminSubject();
-        String realm = getRealm();
-
-        return dataStore.searchReferral(adminSubject, realm,
+        return dataStore.searchReferral(adminSubject, currentRealm,
             strFilter.toString(), numOfEntries, sortResults, ascendingOrder);
+    }
+
+    /**
+     * Returns a set of resources that are referred to this realm.
+     *
+     * @param applicationTypeName Application type name,
+     * @return a set of resources that are referred to this realm.
+     * @throws EntitlementException if resources cannot be returned.
+     */
+    @Override
+    public Set<String> getReferredResources(String applicationTypeName)
+        throws EntitlementException {
+        String realm = getRealm();
+        if (realm.equals("/")) {
+            return Collections.EMPTY_SET;
+        }
+        Subject adminSubject = getAdminSubject();
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+
+        try {
+            Set<String> results = new HashSet<String>();
+            Set<String> realms = getPeerRealms(realm);
+            realms.addAll(getParentRealms(realm));
+            String filter = "(&(ou=" + DataStore.REFERRAL_APPLS + "="
+                + applicationTypeName + ")(ou=" + DataStore.REFERRAL_REALMS +
+                "=" + realm + "))";
+
+            Map<String, Set<ReferralPrivilege>> referrals = new
+                HashMap<String, Set<ReferralPrivilege>>();
+            for (String rlm : realms) {
+                referrals.put(rlm, dataStore.searchReferrals(adminToken, rlm,
+                    filter));
+            }
+
+            for (String rlm : referrals.keySet()) {
+                Set<ReferralPrivilege> rPrivileges = referrals.get(rlm);
+
+                for (ReferralPrivilege r : rPrivileges) {
+                    Map<String, Set<String>> map =
+                        r.getOriginalMapApplNameToResources();
+                    for (String a : map.keySet()) {
+                        Application appl = ApplicationManager.getApplication(
+                            adminSubject, rlm, a);
+                        if (appl.getApplicationType().getName().equals(
+                            applicationTypeName)) {
+                            results.addAll(map.get(a));
+                        }
+                    }
+                }
+            }
+
+            results.addAll(getOrgAliasMappingResources(
+                realm, applicationTypeName));
+
+            return results;
+        } catch (SMSException ex) {
+            PrivilegeManager.debug.error(
+                "OpenSSOIndexStore.getReferredResources", ex);
+            Object[] param = {realm};
+            throw new EntitlementException(275, param);
+        }
+    }
+
+    private Set<String> getParentRealms(String realm) throws SMSException {
+        Set<String> results = new HashSet<String>();
+        Subject adminSubject = getAdminSubject();
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        OrganizationConfigManager ocm = new OrganizationConfigManager(
+            adminToken, realm);
+        while (true) {
+            ocm = ocm.getParentOrgConfigManager();
+            String name = DNMapper.orgNameToRealmName(
+                ocm.getOrganizationName());
+            results.add(name);
+            if (name.equals("/")) {
+                break;
+            }
+        }
+        return results;
+    }
+
+    private Set<String> getPeerRealms(String realm) throws SMSException {
+        Subject adminSubject = getAdminSubject();
+        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        OrganizationConfigManager ocm = new OrganizationConfigManager(
+            adminToken, realm);
+        OrganizationConfigManager parentOrg = ocm.getParentOrgConfigManager();
+        String base = DNMapper.orgNameToRealmName(
+            parentOrg.getOrganizationName());
+        if (!base.endsWith("/")) {
+            base += "/";
+        }
+        Set<String> results = new HashSet<String>();
+        Set<String> subrealms = parentOrg.getSubOrganizationNames();
+        for (String s : subrealms) {
+            results.add(base + s);
+        }
+        results.remove(getRealm());
+        return results;
+    }
+
+    private Set<String> getOrgAliasMappingResources(
+        String realm, String applicationTypeName
+    ) throws SMSException {
+        Set<String> results = new HashSet<String>();
+
+        if (applicationTypeName.equalsIgnoreCase(
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME)) {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+
+            if (isOrgAliasMappingResourceEnabled(adminToken)) {
+                OrganizationConfigManager m = new
+                    OrganizationConfigManager(adminToken, realm);
+                Map<String, Set<String>> map = m.getAttributes(
+                    PolicyManager.ID_REPO_SERVICE);
+                Set<String> orgAlias = map.get(PolicyManager.ORG_ALIAS);
+
+                if ((orgAlias != null) && !orgAlias.isEmpty()) {
+                    for (String s : orgAlias) {
+                        results.add(PolicyManager.ORG_ALIAS_URL_HTTPS_PREFIX +
+                            s.trim() + PolicyManager.ORG_ALIAS_URL_SUFFIX);
+                        results.add(PolicyManager.ORG_ALIAS_URL_HTTP_PREFIX +
+                            s.trim() + PolicyManager.ORG_ALIAS_URL_SUFFIX);
+                    }
+                }
+            }
+        }
+        return results;
+    }
+
+    private boolean isOrgAliasMappingResourceEnabled(SSOToken adminToken) {
+        try {
+            ServiceSchemaManager ssm = new ServiceSchemaManager(
+                PolicyConfig.POLICY_CONFIG_SERVICE, adminToken);
+            ServiceSchema globalSchema = ssm.getGlobalSchema();
+            Map<String, Set<String>> map =
+                globalSchema.getAttributeDefaults();
+            Set<String> values = map.get(
+                PolicyConfig.ORG_ALIAS_MAPPED_RESOURCES_ENABLED);
+            if ((values != null) && !values.isEmpty()) {
+                String val = values.iterator().next();
+                return Boolean.valueOf(val);
+            } else {
+                return false;
+            }
+        } catch (SMSException ex) {
+            PrivilegeManager.debug.error(
+                "OpenSSOIndexStore.isOrgAliasMappingResourceEnabled", ex);
+            return false;
+        } catch (SSOException ex) {
+            PrivilegeManager.debug.error(
+                "OpenSSOIndexStore.isOrgAliasMappingResourceEnabled", ex);
+            return false;
+        }
     }
 
     public class SearchTask implements Runnable {

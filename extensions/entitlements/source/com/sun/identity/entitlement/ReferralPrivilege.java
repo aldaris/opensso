@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.3 2009-06-09 09:44:27 veiming Exp $
+ * $Id: ReferralPrivilege.java,v 1.4 2009-06-10 17:49:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -49,6 +49,7 @@ public final class ReferralPrivilege implements Evaluate {
     private String name;
     private String description;
     private Map<String, Set<String>> mapApplNameToResources;
+    private Map<String, Set<String>> origMapApplNameToResources;
     private Set<String> realms;
     private long creationDate;
     private long lastModifiedDate;
@@ -119,6 +120,8 @@ public final class ReferralPrivilege implements Evaluate {
             r.lastModifiedDate = JSONUtils.getLong(jo, "lastModifiedDate");
             r.mapApplNameToResources = JSONUtils.getMapStringSetString(jo,
                 "mapApplNameToResources");
+            r.origMapApplNameToResources = JSONUtils.getMapStringSetString(jo,
+                "origMapApplNameToResources");
             r.realms = JSONUtils.getSet(jo, "realms");
             return r;
         } catch (JSONException ex) {
@@ -171,14 +174,30 @@ public final class ReferralPrivilege implements Evaluate {
      * @return mapping of application name to resources.
      */
     public Map<String, Set<String>> getMapApplNameToResources() {
-        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
-        for (String k : mapApplNameToResources.keySet()) {
+        return deepCopyMap(mapApplNameToResources);
+    }
+
+    private static Map<String, Set<String>> deepCopyMap(
+        Map<String, Set<String>> map) {
+        Map<String, Set<String>> result = new HashMap<String, Set<String>>();
+        for (String k : map.keySet()) {
             Set<String> set = new HashSet<String>();
-            set.addAll(mapApplNameToResources.get(k));
-            map.put(k, set);
+            set.addAll(map.get(k));
+            result.put(k, set);
         }
 
-        return map;
+        return result;
+    }
+
+    /**
+     * Returns non canonicalized mapping of application name to resources.
+     *
+     * @return mapping of application name to resources.
+     */
+    public Map<String, Set<String>> getOriginalMapApplNameToResources() {
+        return (origMapApplNameToResources != null) ?
+            deepCopyMap(origMapApplNameToResources) :
+            deepCopyMap(mapApplNameToResources);
     }
 
     /**
@@ -335,6 +354,10 @@ public final class ReferralPrivilege implements Evaluate {
             jo.put("lastModifiedDate", lastModifiedDate);
 
             jo.put("mapApplNameToResources", mapApplNameToResources);
+            if (origMapApplNameToResources != null) {
+                jo.put("origMapApplNameToResources",
+                    origMapApplNameToResources);
+            }
             jo.put("realms", realms);
             return jo.toString(2);
         } catch (JSONException ex) {
@@ -351,6 +374,7 @@ public final class ReferralPrivilege implements Evaluate {
      */
     public void canonicalizeResources(Subject adminSubject, String realm)
         throws EntitlementException {
+        origMapApplNameToResources = deepCopyMap(mapApplNameToResources);
         for (String appName : mapApplNameToResources.keySet()) {
             ResourceName resComp = getResourceComparator(adminSubject, realm,
                 appName);
@@ -460,4 +484,16 @@ public final class ReferralPrivilege implements Evaluate {
         return resources;
     }
 
+    public Set<String> getApplicationTypeNames(
+        Subject adminSubject,
+        String realm
+    ) {
+        Set<String> results = new HashSet<String>();
+        for (String a : mapApplNameToResources.keySet()) {
+            Application appl = ApplicationManager.getApplication(
+                adminSubject, realm, a);
+            results.add(appl.getApplicationType().getName());
+        }
+        return results;
+    }
 }

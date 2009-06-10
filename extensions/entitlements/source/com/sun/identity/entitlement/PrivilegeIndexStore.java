@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeIndexStore.java,v 1.7 2009-06-09 09:44:27 veiming Exp $
+ * $Id: PrivilegeIndexStore.java,v 1.8 2009-06-10 17:49:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -243,4 +243,14 @@ public abstract class PrivilegeIndexStore {
         boolean sortResults,
         boolean ascendingOrder
     ) throws EntitlementException;
+
+    /**
+     * Returns a set of resources that are referred to this realm.
+     *
+     * @param applicationTypeName Application type name,
+     * @return a set of resources that are referred to this realm.
+     * @throws EntitlementException if resources cannot be returned.
+     */
+    public abstract Set<String> getReferredResources(String applicationTypeName)
+        throws EntitlementException;
 }
