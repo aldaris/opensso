@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JavaOneDemoAccountCondition.java,v 1.1 2009-05-24 05:25:29 superpat7 Exp $
+ * $Id: JavaOneDemoAccountCondition.java,v 1.2 2009-06-10 18:50:10 superpat7 Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -91,9 +91,9 @@ public class JavaOneDemoAccountCondition implements EntitlementCondition {
     private String getAccountNumber(String resourceName) {
         /*
          * Resource name can be of form
-         * http://localhost:8080/C1DemoServer2/resources/accounts/123456789012345
-         * http://localhost:8080/C1DemoServer2/resources/accounts/123456789012345/
-         * http://localhost:8080/C1DemoServer2/resources/accounts/123456789012345/phoneCollection/
+         * http://localhost:8080/C1DemoServer/resources/accounts/123456789012345
+         * http://localhost:8080/C1DemoServer/resources/accounts/123456789012345/
+         * http://localhost:8080/C1DemoServer/resources/accounts/123456789012345/phoneCollection/
          * etc
          */
         String prefix = "/resources/accounts/";

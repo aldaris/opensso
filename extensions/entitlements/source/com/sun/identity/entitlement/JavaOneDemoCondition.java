@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JavaOneDemoCondition.java,v 1.3 2009-05-24 05:25:29 superpat7 Exp $
+ * $Id: JavaOneDemoCondition.java,v 1.4 2009-06-10 18:50:10 superpat7 Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -93,9 +93,9 @@ public class JavaOneDemoCondition implements EntitlementCondition {
         try {
             /*
              * Resource name can be of form
-             * http://localhost:8080/C1DemoServer2/resources/phones/1234567890
-             * http://localhost:8080/C1DemoServer2/resources/phones/1234567890/
-             * http://localhost:8080/C1DemoServer2/resources/phones/1234567890/accountNumber/
+             * http://localhost:8080/C1DemoServer/resources/phones/1234567890
+             * http://localhost:8080/C1DemoServer/resources/phones/1234567890/
+             * http://localhost:8080/C1DemoServer/resources/phones/1234567890/accountNumber/
              * etc
              */
             String prefix = "/resources/phones/";
