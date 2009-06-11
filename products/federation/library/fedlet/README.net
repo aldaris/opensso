@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.net,v 1.2 2009-05-19 16:01:04 ggennaro Exp $
+$Id: README.net,v 1.3 2009-06-11 18:37:57 ggennaro Exp $
 
 %% Contents:
     %% 1. Contents of this directory 
@@ -34,6 +34,7 @@ $Id: README.net,v 1.2 2009-05-19 16:01:04 ggennaro Exp $
     %% 5. How to integrate with existing application after Single Sign-on
     %% 6. How to enable support for multiple Identity Providers
     %% 7. How to enable Identity Provider Discovery Service
+    %% 8. How to enable the Windows Event Log for debugging
 
 
 %% 1. Contents of this directory 
@@ -60,9 +61,11 @@ $Id: README.net,v 1.2 2009-05-19 16:01:04 ggennaro Exp $
                                   
 
 %% 2. What is currently supported
-   The Fedlet.dll currently supports IDP initiated SSO with POST binding. This
-   is accomplished by providing ASP.NET developers an API to retrieve an
-   AuthnResponse from their IDP.  Details are described in Section 5 below.
+   The Fedlet.dll currently supports IDP and SP initiated SSO with POST and
+   Artifact binding.  In addition, multiple IDP and IDP Discovery are also
+   supported. These features are made available by providing ASP.NET developers
+   an API to retrieve an AuthnResponse from their IDP.  Details are described in
+   Section 5 below.
 
 %% 3. How to configure and deploy the Fedlet for .NET
    The Fedlet.dll contains all the necessary bits for the Fedlet provide 
@@ -274,9 +277,51 @@ $Id: README.net,v 1.2 2009-05-19 16:01:04 ggennaro Exp $
       d) If you have performed the above with the Sample Application and have
          configured it with multiple Identity Providers, returning to the
          default page will now provide you a link to "use the IDP Discovery
-         Service".  Since no preferred IDP has been established, first proceed
-         with one of the available single sign-on services. Once authenticated,
-         navigate back to the homepage and then click the link to "use the IDP
-         Discovery Service".  You will be redirected to the discovery service to
-         determine the preferred IDP and then back to the Sample Application
-         with the preferred IDP designated in the list of IDPs.
+         Service".
+
+          i) If no IDP has been established as the preferred IDP,
+             clicking on this link will arbitrarily redirect you to one of the
+             configured IDPs for authentication.  Once authenticated, this IDP 
+             will be designated as the preferred IDP by the discovery service.
+         ii) If an IDP has already been established as the preferred IDP,
+             clicking on this link will again redirect you to this IDP for
+             authentication.
+
+%% 8. How to enable the Windows Event Log for debugging
+
+   Since the .NET Fedlet does not require an installer, minimal manual steps are
+   required to enable log messages to be written to the Windows Event Log.  The
+   steps below require edits to the Windows Registry so please take necesary
+   precautions as described in the Microsoft Knowledge Base article referenced
+   below.
+
+   To configure the .NET Fedlet to write to the Windows Event Log:
+
+      a) The instructions for enabling a .NET application to write events to the
+         Windows Event Log are described at the following Microsoft Help and
+         Support article:
+
+         http://support.microsoft.com/default.aspx?scid=kb;en-us;329291
+
+         Following these instructions, add a new key under
+         HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Eventlog\Application
+         with "Fedlet" as the key.
+
+      b) Edit the <appSettings/> element within your .NET application's
+         Web.config file to specify the .NET Fedlet log level.  The key to add
+         is called "fedletLogLevel" and the possible values are "info",
+         "warning", and "error".  An example for enabling "info" level logging
+         is shown below:
+
+            <appSettings>
+                <add key="fedletLogLevel" value="info"/>
+            </appSettings>
+
+      c) Restart the Application Pool associated with your .NET application to
+         make the change effective.
+
+   Current implementation will log AuthnRequests and AuthnResponses with the
+   "info" log level for successful SAML exchanges and AuthnResponses that are
+   not successful with "warning" log level.  Log messages for "error"
+   are not currently used since errors are thrown as exceptions (except for
+   the Saml2Exception captured with the "warning" log level noted above).

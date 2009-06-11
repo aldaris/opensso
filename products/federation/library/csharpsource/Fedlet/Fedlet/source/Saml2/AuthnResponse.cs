@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: AuthnResponse.cs,v 1.1 2009-05-01 15:19:55 ggennaro Exp $
+ * $Id: AuthnResponse.cs,v 1.2 2009-06-11 18:37:58 ggennaro Exp $
  */
 
 using System;
@@ -66,9 +66,9 @@ namespace Sun.Identity.Saml2
                 this.xml.PreserveWhitespace = true;
                 this.xml.LoadXml(samlResponse);
                 this.nsMgr = new XmlNamespaceManager(this.xml.NameTable);
-                this.nsMgr.AddNamespace("samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
-                this.nsMgr.AddNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion");
                 this.nsMgr.AddNamespace("ds", "http://www.w3.org/2000/09/xmldsig#");
+                this.nsMgr.AddNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion");
+                this.nsMgr.AddNamespace("samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
             }
             catch (ArgumentNullException ane)
             {
@@ -105,6 +105,27 @@ namespace Sun.Identity.Saml2
                 XmlNode root = this.xml.DocumentElement;
                 XmlNode signatureElement = root.SelectSingleNode(xpath, this.nsMgr);
                 return signatureElement;
+            }
+        }
+
+        /// <summary>
+        /// Gets the InResponseTo attribute value of the authn response, null
+        /// if not present.
+        /// </summary>
+        public string InResponseTo
+        {
+            get
+            {
+                string xpath = "/samlp:Response";
+                XmlNode root = this.xml.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.nsMgr);
+
+                if (node.Attributes["InResponseTo"] == null)
+                {
+                    return null;
+                }
+
+                return node.Attributes["InResponseTo"].Value.Trim();
             }
         }
 

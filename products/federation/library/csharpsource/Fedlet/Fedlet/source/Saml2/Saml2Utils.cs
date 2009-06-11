@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: Saml2Utils.cs,v 1.2 2009-05-21 23:46:56 ggennaro Exp $
+ * $Id: Saml2Utils.cs,v 1.3 2009-06-11 18:37:58 ggennaro Exp $
  */
 
 using System;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -109,6 +110,55 @@ namespace Sun.Identity.Saml2
             string issueInstant = DateTime.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", DateTimeFormatInfo.InvariantInfo);
 
             return issueInstant;
+        }
+
+        /// <summary>
+        /// Gets the request parameters and returns them within a NameValueCollection.
+        /// </summary>
+        /// <param name="request">HttpRequest containing desired parameters</param>
+        /// <returns>
+        /// NameValueCOllection of parameters found in QueryString and Form objects within 
+        /// the given Request.
+        /// </returns>
+        public static NameValueCollection GetRequestParameters(HttpRequest request)
+        {
+            NameValueCollection parameters = new NameValueCollection();
+
+            foreach (string name in request.QueryString.Keys)
+            {
+                parameters[name] = request.QueryString[name];
+            }
+
+            foreach (string name in request.Form.Keys)
+            {
+                parameters[name] = request.Form[name];
+            }
+
+            return parameters;
+        }
+
+        /// <summary>
+        /// Gets the boolean value from the string using Boolean.Parse(string)
+        /// but handles exception.
+        /// </summary>
+        /// <param name="value">String to parse.</param>
+        /// <returns>
+        /// Results from Boolean.Parse(string), false if exception thrown.
+        /// </returns>
+        public static bool GetBoolean(string value)
+        {
+            try
+            {
+                return Boolean.Parse(value);
+            }
+            catch (ArgumentNullException)
+            {
+                return false;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
 
         /// <summary>

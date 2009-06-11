@@ -22,13 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProvider.cs,v 1.1 2009-05-01 15:19:55 ggennaro Exp $
+ * $Id: ServiceProvider.cs,v 1.2 2009-06-11 18:37:58 ggennaro Exp $
  */
 
+using System;
+using System.Collections;
+using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Xml;
-using Sun.Identity.Saml2.Exceptions;
 using Sun.Identity.Properties;
+using Sun.Identity.Saml2.Exceptions;
 
 namespace Sun.Identity.Saml2
 {
@@ -79,9 +83,9 @@ namespace Sun.Identity.Saml2
         #region Methods
 
         /// <summary>
-        /// Constructor to load metadata files found in the specified home folder. 
+        /// Initializes a new instance of the ServiceProvider class. 
         /// </summary>
-        /// <param name="homeFolder"></param>
+        /// <param name="homeFolder">Home folder containing configuration and metadata.</param>
         public ServiceProvider(string homeFolder)
         {
             try
@@ -110,6 +114,155 @@ namespace Sun.Identity.Saml2
             }
         }
 
+        /// <summary>
+        /// Obtain the assertion consumer service location based on the given binding.
+        /// </summary>
+        /// <param name="binding">The binding associated with the desired consumer service.</param>
+        /// <returns>Service location as defined in the metadata for the binding, null if not found.</returns>
+        public string GetAssertionConsumerServiceLocation(string binding)
+        {
+            StringBuilder xpath = new StringBuilder();
+            xpath.Append("/md:EntityDescriptor/md:SPSSODescriptor/md:AssertionConsumerService");
+            xpath.Append("[@Binding='");
+            xpath.Append(binding);
+            xpath.Append("']");
+
+            XmlNode root = this.metadata.DocumentElement;
+            XmlNode node = root.SelectSingleNode(xpath.ToString(), this.metadataNsMgr);
+            if (node != null)
+            {
+                return node.Attributes["Location"].Value.Trim();
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Obtain the assertion consumer service location based on the given binding.
+        /// </summary>
+        /// <param name="binding">The binding associated with the desired consumer service.</param>
+        /// <param name="index">The index associated with the desired consumer service.</param>
+        /// <returns>Service location as defined in the metadata for the binding, null if not found.</returns>
+        public string GetAssertionConsumerServiceLocation(string binding, string index)
+        {
+            StringBuilder xpath = new StringBuilder();
+            xpath.Append("/md:EntityDescriptor/md:SPSSODescriptor/md:AssertionConsumerService");
+            xpath.Append("[@Binding='");
+            xpath.Append(binding);
+            xpath.Append("' and index='");
+            xpath.Append(index);
+            xpath.Append("']");
+
+            XmlNode root = this.metadata.DocumentElement;
+            XmlNode node = root.SelectSingleNode(xpath.ToString(), this.metadataNsMgr);
+            if (node != null)
+            {
+                return node.Attributes["Location"].Value.Trim();
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// <para>
+        /// Obtain the AuthLevel for the given uri reference found in the
+        /// service provider extended metadata. An example would like as
+        /// follows:
+        /// </para>
+        /// <para>
+        ///  &lt;Attribute name="spAuthncontextClassrefMapping"&gt;
+        ///    &lt;Value&gt;urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport|0|default&lt;/Value&gt;
+        ///  &lt;/Attribute&gt;
+        /// </para>
+        /// </summary>
+        /// <param name="classReference">
+        /// AuthnContextClassRef mapped to the desired Auth Level
+        /// </param>
+        /// <returns>Mapped integer for the given class reference.</returns>
+        public int GetAuthLevelFromAuthnContextClassRef(string classReference)
+        {
+            int authLevel = -1;
+
+            XmlNodeList nodes = this.GetAuthnContextClassRefMap();
+            IEnumerator i = nodes.GetEnumerator();
+
+            while (i.MoveNext())
+            {
+                XmlNode value = (XmlNode)i.Current;
+                char[] separators = { '|' };
+                string[] results = value.InnerText.Split(separators);
+                if (results.Length > 1 && results[0] == classReference)
+                {
+                    authLevel = Convert.ToInt32(results[1], CultureInfo.InvariantCulture);
+                    break;
+                }
+            }
+            
+            return authLevel;
+        }
+
+        /// <summary>
+        /// <para>
+        /// Obtain the AuthLevel for the given uri reference found in the
+        /// service provider extended metadata. An example would like as
+        /// follows:
+        /// </para>
+        /// <para>
+        ///  &lt;Attribute name="spAuthncontextClassrefMapping"&gt;
+        ///    &lt;Value&gt;urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport|0|default&lt;/Value&gt;
+        ///  &lt;/Attribute&gt;
+        /// </para>
+        /// </summary>
+        /// <param name="authLevel">
+        /// AuthLevel mapped to the desired AuthnContextClassRef
+        /// </param>
+        /// <returns>Class reference found for the specified AuthLevel</returns>
+        public string GetAuthnContextClassRefFromAuthLevel(int authLevel)
+        {
+            // Set to default if not found.
+            string classReference = Saml2Constants.AuthClassRefPasswordProtectedTransport;
+
+            XmlNodeList nodes = this.GetAuthnContextClassRefMap();
+            IEnumerator i = nodes.GetEnumerator();
+
+            while (i.MoveNext())
+            {
+                XmlNode value = (XmlNode)i.Current;
+                char[] separators = { '|' };
+                string[] results = value.InnerText.Split(separators);
+                if (results.Length > 1 && Convert.ToInt32(results[1], CultureInfo.InvariantCulture) == authLevel)
+                {
+                    classReference = results[0];
+                    break;
+                }
+            }
+
+            return classReference;
+        }
+
+        /// <summary>
+        /// <para>
+        /// Returns the XmlNodeList of "Values" maintained in the service
+        /// provider's extended metadata under the attribute named
+        /// "spAuthncontextClassrefMapping".  For example:
+        /// </para>
+        /// <para>
+        ///  &lt;Attribute name="spAuthncontextClassrefMapping"&gt;
+        ///    &lt;Value&gt;urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport|0|default&lt;/Value&gt;
+        ///  &lt;/Attribute&gt;
+        /// </para>
+        /// </summary>
+        /// <returns>Returns the XmlNodeList of values found in the metadata.</returns>
+        private XmlNodeList GetAuthnContextClassRefMap()
+        {
+            StringBuilder xpath = new StringBuilder();
+            xpath.Append("/mdx:EntityConfig/mdx:SPSSOConfig/mdx:Attribute");
+            xpath.Append("[@name='spAuthncontextClassrefMapping']/mdx:Value");
+
+            XmlNode root = this.extendedMetadata.DocumentElement;
+            XmlNodeList nodes = root.SelectNodes(xpath.ToString(), this.extendedMetadataNsMgr);
+            return nodes;
+        }
 
         #endregion
     }

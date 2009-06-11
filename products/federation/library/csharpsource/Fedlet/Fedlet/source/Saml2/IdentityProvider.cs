@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: IdentityProvider.cs,v 1.2 2009-05-06 21:44:33 ggennaro Exp $
+ * $Id: IdentityProvider.cs,v 1.3 2009-06-11 18:37:58 ggennaro Exp $
  */
 
 using System.Collections;
@@ -171,6 +171,51 @@ namespace Sun.Identity.Saml2
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Obtain the artifact resolution service location based on the given binding.
+        /// </summary>
+        /// <param name="binding">The binding associated with the desired service.</param>
+        /// <returns>Service location as defined in the metadata for the binding, null if not found.</returns>
+        public string GetArtifactResolutionServiceLocation(string binding)
+        {
+            StringBuilder xpath = new StringBuilder();
+            xpath.Append("/md:EntityDescriptor/md:IDPSSODescriptor/md:ArtifactResolutionService");
+            xpath.Append("[@Binding='");
+            xpath.Append(binding);
+            xpath.Append("']");
+
+            XmlNode root = this.metadata.DocumentElement;
+            XmlNode node = root.SelectSingleNode(xpath.ToString(), this.metadataNsMgr);
+            if (node != null)
+            {
+                return node.Attributes["Location"].Value.Trim();
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Obtain the single sign on location based on the given binding.
+        /// </summary>
+        /// <param name="binding">The binding (should be made into constants / types).</param>
+        /// <returns>Service location as defined in the metadata for the specified IDP and binding.</returns>
+        public string GetSingleSignOnServiceLocation(string binding)
+        {
+            StringBuilder xpath = new StringBuilder();
+            xpath.Append("/md:EntityDescriptor/md:IDPSSODescriptor/md:SingleSignOnService");
+            xpath.Append("[@Binding='");
+            xpath.Append(binding);
+            xpath.Append("']");
+
+            XmlNode root = this.metadata.DocumentElement;
+            XmlNode node = root.SelectSingleNode(xpath.ToString(), this.metadataNsMgr);
+            if (node != null)
+            {
+                return node.Attributes["Location"].Value.Trim();
+            }
+
+            return null;
+        }
         #endregion
     }
 }

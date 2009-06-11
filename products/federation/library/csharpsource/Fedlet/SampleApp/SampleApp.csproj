@@ -74,10 +74,10 @@
   <ItemGroup>
     <Content Include="App_Data\idp.xml" />
     <Content Include="default.aspx" />
-    <Content Include="discoveridp.aspx" />
     <Content Include="fedletapplication.aspx" />
     <Content Include="images\masthead-sunname.gif" />
     <Content Include="site.master" />
+    <Content Include="spinitiatedsso.aspx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App_Data\fedlet.cot" />

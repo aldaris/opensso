@@ -42,6 +42,22 @@
   <Settings />
  </Rules>
  <FxCopReport Version="1.36">
+  <Namespaces>
+   <Namespace Name="Sun.Identity.Common">
+    <Messages>
+     <Message TypeName="AvoidNamespacesWithFewTypes" Category="Microsoft.Design" CheckId="CA1020" Status="Excluded" Created="2009-06-05 21:02:13Z">
+      <Issue>
+       <Item>Sun.Identity.Common</Item>
+      </Issue>
+      <Notes>
+       <User Name="ggennaro">
+        <Note Id="4" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+  </Namespaces>
   <Targets>
    <Target Name="$(ProjectDir)/Fedlet/bin/Debug/Fedlet.dll">
     <Modules>
@@ -51,6 +67,22 @@
         <Types>
          <Type Name="IdentityProvider">
           <Members>
+           <Member Name="#GetSingleSignOnServiceLocation(System.String)">
+            <Messages>
+             <Message Id="SignOn" TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726" Status="Excluded" Created="2009-05-22 23:07:47Z">
+              <Issue Name="Member">
+               <Item>SignOn</Item>
+               <Item>'IdentityProvider.GetSingleSignOnServiceLocation(string)'</Item>
+               <Item>SignIn</Item>
+              </Issue>
+              <Notes>
+               <User Name="ggennaro">
+                <Note Id="0" />
+               </User>
+              </Notes>
+             </Message>
+            </Messages>
+           </Member>
            <Member Name="#SingleSignOnServiceLocations">
             <Messages>
              <Message Id="SignOn" TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726" Status="Excluded" Created="2009-03-26 17:15:30Z">
@@ -110,12 +142,17 @@
   </Targets>
   <Notes>
    <User Name="ggennaro">
+    <Note Id="0" Modified="2009-05-22 23:14:31Z">SignOn is a preferred term in the OpenSSO community.</Note>
     <Note Id="1" Modified="2009-03-26 17:16:05Z">Method maps to XSD definition SingleSignOnService for idp metadata.</Note>
     <Note Id="2" Modified="2009-05-06 23:16:25Z">Exclusion needed since SAML Artifacts are the exception to this rule.</Note>
     <Note Id="3" Modified="2009-05-06 23:16:28Z">Exclusion needed since SAML Artifacts are the exception to this rule.</Note>
+    <Note Id="4" Modified="2009-06-09 18:37:45Z">FedletLogger isn't really part of the SAML2 specification so will be excluded for now from the FxCop rules engine.</Note>
    </User>
   </Notes>
   <Rules>
+   <Rule TypeName="AvoidNamespacesWithFewTypes" Category="Microsoft.Design" CheckId="CA1020">
+    <Resolution Name="Default">Consider merging the types defined in '{0}' with another namespace.</Resolution>
+   </Rule>
    <Rule TypeName="UriReturnValuesShouldNotBeStrings" Category="Microsoft.Design" CheckId="CA1055">
     <Resolution Name="Default">Change the return type of {0} from string to System.Uri.</Resolution>
    </Rule>

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProviderException.cs,v 1.1 2009-05-01 15:19:53 ggennaro Exp $
+ * $Id: ServiceProviderException.cs,v 1.2 2009-06-11 18:37:59 ggennaro Exp $
  */
 
 using System;
@@ -73,5 +73,4 @@ namespace Sun.Identity.Saml2.Exceptions
         {
         }
     }
-
 }

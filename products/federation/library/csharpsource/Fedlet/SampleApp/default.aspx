@@ -23,15 +23,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: default.aspx,v 1.3 2009-05-21 23:46:55 ggennaro Exp $
+ * $Id: default.aspx,v 1.4 2009-06-11 18:38:00 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" MasterPageFile="~/site.master"%>
 <%@ Import Namespace="System.Xml" %>
 <%@ Import Namespace="Sun.Identity.Saml2" %>
 <%@ Import Namespace="Sun.Identity.Saml2.Exceptions" %>
-
 <asp:Content ID="Content1" ContentPlaceHolderID="content" runat="server">
+<%
+    string fedletUrl = Request.Url.AbsoluteUri;
+    fedletUrl = fedletUrl.Substring(0, fedletUrl.LastIndexOf("/")) + "/fedletapplication.aspx";
+%>
 
     <h1>Sample Application with OpenSSO and ASP.NET</h1>
     <p>
@@ -53,7 +56,7 @@
                     The HTTP-POST service location should have been edited appropriately
                     within your OpenSSO deployment for this Service Provider.<br />
                     For example:
-                    <span class="resource">http://sp.example.com/SampleApp/fedletapplication.aspx</span>
+                    <span class="resource"><%=Server.HtmlEncode(fedletUrl)%></span>
                 </li>
                 <li>
                     Optionally added attribute mappings to be passed within the assertion
@@ -70,10 +73,19 @@
     <h2>To try it out...</h2>
 
     <%
-        string idpLinks = "";
+        StringBuilder idpListItems = new StringBuilder();
+        string idpListItemFormat = "<li>IDP initiated SSO with <span class=\"resource\">{0}</span> using <a href=\"{1}\">{2}</a> or <a href=\"{3}\">{4}</a></li>";
+        string idpUrlFormat = "{0}/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias={1}&spEntityID={2}&binding={3}";
+
+        StringBuilder spListItems = new StringBuilder();
+        string spListItemFormat = "<li>SP initiated SSO with <span class=\"resource\">{0}</span> using {1}</li>";
+        string spLinkFormat = "<a href=\"{0}\">{1}</a>";
+        string spUrlFormat = "spinitiatedsso.aspx?idpEntityId={0}&binding={1}";
+
         string errorMessage = null;
         bool hasMultipleIdps = false;
-        string preferredIdpEntityId = null;
+        bool spSupportsPost = false;
+        bool spSupportsArtifact = false;
         
         try
         {
@@ -88,7 +100,8 @@
 
             ServiceProvider sp = serviceProviderUtility.ServiceProvider;
             hasMultipleIdps = (serviceProviderUtility.IdentityProviders.Count > 1);
-            preferredIdpEntityId = IdentityProviderDiscoveryUtils.GetPreferredIdentityProvider(Request);
+            spSupportsArtifact = (!String.IsNullOrEmpty(sp.GetAssertionConsumerServiceLocation(Saml2Constants.HttpArtifactProtocolBinding)));
+            spSupportsPost = (!String.IsNullOrEmpty(sp.GetAssertionConsumerServiceLocation(Saml2Constants.HttpPostProtocolBinding)));
 
             Hashtable identityProviders = serviceProviderUtility.IdentityProviders;
             foreach (string key in identityProviders.Keys)
@@ -115,17 +128,50 @@
                     }
                 }
 
-                if (ssoMetaAlias == null)
+                if (ssoMetaAlias != null)
                 {
-                    throw new ServiceProviderUtilityException("IDP initiated SSO is currently only supported with an OpenSSO deployment.");
+                    string postUrl = string.Format(idpUrlFormat, ssoDeployment, ssoMetaAlias, sp.EntityId, Saml2Constants.HttpPostProtocolBinding);
+                    string artifactUrl = string.Format(idpUrlFormat, ssoDeployment, ssoMetaAlias, sp.EntityId, Saml2Constants.HttpArtifactProtocolBinding);
+                    idpListItems.Append(string.Format(idpListItemFormat,
+                                                      Server.HtmlEncode(idp.EntityId),
+                                                      Server.HtmlEncode(postUrl),
+                                                      "HTTP Post",
+                                                      Server.HtmlEncode(artifactUrl),
+                                                      "HTTP Artifact" ));
                 }
-                
-                string idpAuthUrl = string.Format("{0}/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias={1}&spEntityID={2}&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
-                                                  ssoDeployment, ssoMetaAlias, sp.EntityId);
-                idpLinks += string.Format("<li><a href=\"{0}\">IDP initiated SSO with {1}</a>{2}</li>\n", 
-                                          Server.HtmlEncode(idpAuthUrl), 
-                                          Server.HtmlEncode(idp.EntityId),
-                                          (preferredIdpEntityId == idp.EntityId ? " (preferred)" : string.Empty) );
+
+                if ( spSupportsPost || spSupportsArtifact )
+                {
+                    StringBuilder spLinks = new StringBuilder();
+                    string urlValue = null;
+                    
+                    if (spSupportsPost)
+                    {
+                        urlValue = String.Format(spUrlFormat, idp.EntityId, Saml2Constants.HttpPostProtocolBinding);
+                        spLinks.Append(String.Format(spLinkFormat, Server.HtmlEncode(urlValue), "HTTP Post"));
+                    }
+                    if (spSupportsArtifact)
+                    {
+                        if (spLinks.Length != 0)
+                        {
+                            spLinks.Append(" or ");
+                        }
+
+                        urlValue = String.Format(spUrlFormat, idp.EntityId, Saml2Constants.HttpArtifactProtocolBinding);
+                        spLinks.Append(String.Format(spLinkFormat, Server.HtmlEncode(urlValue), "HTTP Artifact"));
+                    }
+
+                    spListItems.Append(String.Format(spListItemFormat, Server.HtmlEncode(idp.EntityId), spLinks.ToString()));
+                }
+            }
+
+            if (idpListItems.Length == 0)
+            {
+                idpListItems.Append("<li>IDP initiated SSO is currently only supported with an OpenSSO deployment.</li>");
+            }
+            if (spListItems.Length == 0)
+            {
+                spListItems.Append("<li>SP initiated SSO requires either HTTP-POST or HTTP-Artifact assertion consumer service locations to be configured.</li>");
             }
         }
         catch (ServiceProviderUtilityException spue)
@@ -138,27 +184,29 @@
     
         <p>
         Perform the IDP initiated Single Sign On to take you to the OpenSSO login form. 
-        Upon successfull login, you will be taken to the HTTP-POST destination configured 
-        for your Fedlet for this sample application.  
+        Upon successfull login, you will be taken to the location configured for your Fedlet
+        for this sample application.  
         </p>
         
         <ul>
-        <%=idpLinks%>
+        <%=idpListItems.ToString()%>
         </ul>
-        <%
-           if( hasMultipleIdps ) 
-           {
-               string currentPage = Request.Url.AbsoluteUri;
-               if( currentPage.IndexOf("?") > 0 ) 
-               {
-                   currentPage = currentPage.Substring(0, currentPage.IndexOf("?"));
-               }
-        %>
+        
+        <p>
+        Alternatively, you can perform SP initiated Single Sign On with the link(s) provided
+        below.
+        </p>
+        
+        <ul>
+        <%=spListItems.ToString()%>
+        </ul>
+        
+        <% if( hasMultipleIdps ) { %>
             <p>
             Since you have multiple identity providers specified, you can optionally
-            <a href="discoveridp.aspx?RelayState=<%=currentPage %>">use the IDP Discovery Service</a> to determine 
-            your preferred IDP if you have specified the reader service within your 
-            circle-of-trust file.
+            <a href="spinitiatedsso.aspx">use the IDP Discovery Service</a> 
+            to perform Single Sign On with your preferred IDP if you have specified 
+            the reader service within your circle-of-trust file.
             </p>
         <% } %>
 

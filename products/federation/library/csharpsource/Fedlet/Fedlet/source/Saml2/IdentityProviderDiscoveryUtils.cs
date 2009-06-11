@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: IdentityProviderDiscoveryUtils.cs,v 1.1 2009-05-21 23:46:56 ggennaro Exp $
+ * $Id: IdentityProviderDiscoveryUtils.cs,v 1.2 2009-06-11 18:37:58 ggennaro Exp $
  */
 
 using System;
@@ -129,7 +129,6 @@ namespace Sun.Identity.Saml2
                 }
             }
 
-            // context.Response.AppendHeader("X-COT-COUNT", cotList.Count.ToString(CultureInfo.InvariantCulture));
             IEnumerator enumerator = cotList.GetEnumerator();
             if (enumerator.MoveNext())
             {

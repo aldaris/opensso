@@ -183,4 +183,46 @@
   <data name="AuthnResponseInvalidSignatureCertsDontMatch" xml:space="preserve">
     <value>AuthnResponse failed validation due to the signature in the response not matching the signature in the IDP metadata.</value>
   </data>
+  <data name="ArtifactResolutionWebException" xml:space="preserve">
+    <value>An error occurred in resolving the SAML artifact.</value>
+  </data>
+  <data name="AuthnRequestAssertionConsumerServiceNotDefined" xml:space="preserve">
+    <value>AssertionConsumerService not defined (binding nor index).</value>
+  </data>
+  <data name="AuthnResponseInvalidSignatureMissing" xml:space="preserve">
+    <value>AuthnResponse failed validation due to missing signature.</value>
+  </data>
+  <data name="ServiceProviderUtilityIdentityProviderNotFound" xml:space="preserve">
+    <value>Specified IDP EntityID was not found in the available metadata.</value>
+  </data>
+  <data name="ServiceProviderUtilityIdpArtifactResSvcLocNotDefined" xml:space="preserve">
+    <value>Artifact Resolution Service Location not defined for the specified IDP.</value>
+  </data>
+  <data name="ServiceProviderUtilityIdpNotDeterminedFromArtifact" xml:space="preserve">
+    <value>Could not determine IDP from the obtained artifact.</value>
+  </data>
+  <data name="ServiceProviderUtilityIdpSingleSignOnSvcLocNotDefined" xml:space="preserve">
+    <value>Single Sign On Service Location not defined for the specified IDP.</value>
+  </data>
+  <data name="RequestedAuthnContextClassRefOrDeclRefNotDefined" xml:space="preserve">
+    <value>Neither AuthnContextClassRef or AuthnContextDeclRef defined.</value>
+  </data>
+  <data name="RequestedAuthnContextInvalidComparison" xml:space="preserve">
+    <value>An invalid comparison was specified for the RequestedAuthnContext.</value>
+  </data>
+  <data name="ArtifactFailedConversion" xml:space="preserve">
+    <value>Specified artifact could not be convered from base64.</value>
+  </data>
+  <data name="ArtifactInvalidLength" xml:space="preserve">
+    <value>Specified artifact did not have the correct unencoded length.</value>
+  </data>
+  <data name="ArtifactNullOrEmpty" xml:space="preserve">
+    <value>Specified artifact was null or empty.</value>
+  </data>
+  <data name="AuthnRequestIsNull" xml:space="preserve">
+    <value>AuthnRequest was null.</value>
+  </data>
+  <data name="AuthnResponseInvalidInResponseTo" xml:space="preserve">
+    <value>AuthnResponse failed validation due to unknown InResponseTo ID.</value>
+  </data>
 </root>

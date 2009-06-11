@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: Saml2Constants.cs,v 1.3 2009-05-21 23:46:56 ggennaro Exp $
+ * $Id: Saml2Constants.cs,v 1.4 2009-06-11 18:37:58 ggennaro Exp $
  */
 
 namespace Sun.Identity.Saml2
@@ -33,19 +33,125 @@ namespace Sun.Identity.Saml2
     public static class Saml2Constants
     {
         /// <summary>
-        /// Constant for the HTTP-POST form parameter for SAML responses.
+        /// Constant for the request parameter to specify AllowCreate
+        /// in the AuthnRequest.
         /// </summary>
-        public const string HttpPostParameter = "SAMLResponse";
+        public const string AllowCreate = "AllowCreate";
 
         /// <summary>
-        /// Constant for status codes used in SAML responses.
+        /// Constant for the artifact parameter for SAML responses.
         /// </summary>
-        public const string Success = "urn:oasis:names:tc:SAML:2.0:status:Success";
+        public const string ArtifactParameter = "SAMLart";
+
+        /// <summary>
+        /// Constant for the AssertionConsumerServiceIndex parameter.
+        /// </summary>
+        public const string AssertionConsumerServiceIndex = "AssertionConsumerServiceIndex";
+
+        /// <summary>
+        /// Constant for the AuthnContext Class Reference for Password
+        /// Protected Transport.
+        /// </summary>
+        public const string AuthClassRefPasswordProtectedTransport = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport";
+
+        /// <summary>
+        /// Constant for the request parameter for specifying the comparison
+        /// to be used by AuthnContextClassRef or AuthnContextDeclRef.
+        /// </summary>
+        public const string AuthComparison = "AuthComparison";
+
+        /// <summary>
+        /// Constant for the request parameter for specifying the 
+        /// auth level mapped to the corresponding AuthnContextClassRef
+        /// within the sp-extended.xml metadata.
+        /// </summary>
+        public const string AuthLevel = "AuthLevel";
+
+        /// <summary>
+        /// Constant for the request parameter for specifying the |
+        /// delimited list of values for AuthnContextClassRef.
+        /// </summary>
+        public const string AuthnContextClassRef = "AuthnContextClassRef";
+
+        /// <summary>
+        /// Constant for the request parameter for specifying the |
+        /// delimited list of values for AuthnContextDeclRef.
+        /// </summary>
+        public const string AuthnContextDeclRef = "AuthnContextDeclRef";
+
+        /// <summary>
+        /// Constant for the "binding" parameter name.
+        /// </summary>
+        public const string Binding = "Binding";
+
+        /// <summary>
+        /// Constant for the request parameter to specify the consent
+        /// in a SAML request.
+        /// </summary>
+        public const string Consent = "Consent";
+
+        /// <summary>
+        /// Constant for the request parameter to specify the destination
+        /// in a SAML request.
+        /// </summary>
+        public const string Destination = "Destination";
+
+        /// <summary>
+        /// Constant for the request parameter to specify ForceAuthn
+        /// in the AuthnRequest.
+        /// </summary>
+        public const string ForceAuthn = "ForceAuthn";
+
+        /// <summary>
+        /// Constant for specifying HTTP-Artifact protocol binding.
+        /// </summary>
+        public const string HttpArtifactProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact";
+
+        /// <summary>
+        /// Constant for specifying HTTP-POST protocol binding.
+        /// </summary>
+        public const string HttpPostProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
+
+        /// <summary>
+        /// Constant for specifying HTTP-Redirect protocol binding.
+        /// </summary>
+        public const string HttpRedirectProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";
+
+        /// <summary>
+        /// Constant for specifying SOAP protocol binding.
+        /// </summary>
+        public const string HttpSoapProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:SOAP";
 
         /// <summary>
         /// Constant for defining the length of IDs used in SAMLv2
         /// assertions, requests, and responses.
         /// </summary>
         public const int IdLength = 20;
+
+        /// <summary>
+        /// Constant for the request parameter for specifying if the 
+        /// AuthnRequest is passive.
+        /// </summary>
+        public const string IsPassive = "IsPassive";
+
+        /// <summary>
+        /// Constant for the response parameter for SAML responses.
+        /// </summary>
+        public const string ResponseParameter = "SAMLResponse";
+
+        /// <summary>
+        /// Constant for the request parameter for SAML requests.
+        /// </summary>
+        public const string RequestParameter = "SAMLRequest";
+
+        /// <summary>
+        /// Constant for the reqBinding parameter.
+        /// </summary>
+        public const string RequestBinding = "ReqBinding";
+
+        /// <summary>
+        /// Constant for status codes used in SAML responses.
+        /// </summary>
+        public const string Success = "urn:oasis:names:tc:SAML:2.0:status:Success";
     }
 }

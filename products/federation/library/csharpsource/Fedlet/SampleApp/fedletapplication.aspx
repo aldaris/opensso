@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: fedletapplication.aspx,v 1.2 2009-05-19 16:01:05 ggennaro Exp $
+ * $Id: fedletapplication.aspx,v 1.3 2009-06-11 18:38:00 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" MasterPageFile="~/site.master" %>
@@ -49,7 +49,7 @@
                 Cache["spu"] = serviceProviderUtility;
             }
 
-            authnResponse = serviceProviderUtility.GetAuthnResponse(Request);
+            authnResponse = serviceProviderUtility.GetAuthnResponse(Context);
         }
         catch (Saml2Exception se)
         {
@@ -78,7 +78,7 @@
     try
     {
         ServiceProviderUtility serviceProviderUtility = new ServiceProviderUtility(Context);
-        authnResponse = serviceProviderUtility.GetAuthnResponse(Request);
+        authnResponse = serviceProviderUtility.GetAuthnResponse(Context);
     }
     catch (Saml2Exception se)
     {
@@ -95,8 +95,8 @@
         However, an error occured:
         </p>
 <div class="code">
-<%=errorMessage %><br />
-<%=errorTrace %>
+<%=Server.HtmlEncode(errorMessage) %><br />
+<%=Server.HtmlEncode(errorTrace) %>
 </div>
 
     <% } else { %>
@@ -129,7 +129,7 @@
         <tr>
             <td>authnResponse.SubjectNameId</td>
             <td>System.String</td>
-            <td><%=authnResponse.SubjectNameId %></td>
+            <td><%=Server.HtmlEncode(authnResponse.SubjectNameId)%></td>
         </tr>
         <tr>
             <td>authnResponse.Attributes</td>
