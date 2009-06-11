@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccountResource.java,v 1.2 2009-06-11 05:29:44 superpat7 Exp $
+ * $Id: AccountResource.java,v 1.3 2009-06-11 18:38:12 superpat7 Exp $
  */
 
 package org.opensso.c1demoserver.service;
@@ -82,22 +82,22 @@ public class AccountResource {
             
             AccountConverter ac = new AccountConverter(getEntity(), uriInfo.getAbsolutePath(), expandLevel);
             
-            // Need to create a normalized account URL, as we might be being accessed as a subresource - i.e.
-            // with a URL such as http://localhost:8080/C1DemoServer/resources/phones/1112223333/accountNumber/
-            String protocol = request.isSecure() ? "https" : "http";
-            String resource = protocol + "://" + request.getServerName();
-            int port = request.getServerPort();
-            if ( ( protocol.equals("http") && port != 80 ) || 
-                ( protocol.equals("https") && port != 443 ) ) {
-                resource += ":" + Integer.toString(port);
-            }
-            resource += request.getContextPath() + request.getServletPath() + "/accounts/" + ac.getAccountNumber() + "/";
+            // Need to create a normalized account URL, such as 
+            // http://localhost:8080/C1DemoServer/resources/accounts/123456789012345
+            // as we might be being accessed as a subresource - i.e. with a URL
+            // such as
+            // http://localhost:8080/C1DemoServer/resources/phones/1112223333/accountNumber/
+            String resource = getNormalizedAccountUrl(request, ac.getAccountNumber());
             
-            // resource should now be in the form http://localhost:8080/C1DemoServer/resources/accounts/123456789012345
-
-            if ( ! EntitlementShim.isAllowed(request.getUserPrincipal().getName(), request.getMethod(),
-                resource)) {
-                throw new WebApplicationException(Response.Status.FORBIDDEN);
+            if ( request.getUserPrincipal() != null ) {
+                // Only do entitlements check if there is a principal - otherwise assume we're running without
+                // a filter, so no security required - this is a demo! :-)
+                if ( ! EntitlementShim.isAllowed(request.getUserPrincipal().getName(), request.getMethod(),
+                    resource)) {
+                    throw new WebApplicationException(Response.Status.FORBIDDEN);
+                }
+            } else {
+                // A real, non-demo application would likely throw an exception here
             }
 
             return ac;
@@ -234,5 +234,26 @@ public class AccountResource {
             }
             return result;
         }
+    }
+
+    /**
+     * Returns a normalized Account URL
+     * 
+     * @param request HttpServletRequest object
+     * @param accountNumber account number of the account in question
+     * @return a normalized Account URL of the form 
+     * http://localhost:8080/C1DemoServer/resources/accounts/123456789012345
+     */
+    private String getNormalizedAccountUrl(HttpServletRequest request, String accountNumber) {
+        String protocol = request.isSecure() ? "https" : "http";
+        String resource = protocol + "://" + request.getServerName();
+        int port = request.getServerPort();
+        if ( ( protocol.equals("http") && port != 80 ) ||
+            ( protocol.equals("https") && port != 443 ) ) {
+            resource += ":" + Integer.toString(port);
+        }
+        resource += request.getContextPath() + request.getServletPath() + "/accounts/" + accountNumber + "/";
+
+        return resource;
     }
 }
