@@ -1,0 +1,64 @@
+8
+
+dir
+28
+https://kenai.com/svn/identitydemo2009~source-code-repository/C1DemoServer/src/conf
+https://kenai.com/svn/identitydemo2009~source-code-repository
+
+
+
+2009-06-10T19:25:49.054338Z
+28
+andrew.patterson@sun.com
+
+
+svn:special svn:externals svn:needs-lock
+
+persistence.xml
+file
+
+
+
+
+2009-06-10T18:41:43.000000Z
+ea78f0b5c151f9d5b0879a4b8ad840a7
+2009-06-10T19:25:49.054338Z
+28
+andrew.patterson@sun.com
+
+C1DemoServer.dbschema
+file
+
+
+
+
+2009-06-10T19:07:33.000000Z
+02f65600cd2081dfe95156c10839173f
+2009-06-10T19:25:49.054338Z
+28
+andrew.patterson@sun.com
+
+MANIFEST.MF
+file
+
+
+
+
+2009-06-10T17:04:18.000000Z
+82a98c96aa8b54d631f3ddb23372b4f5
+2009-06-10T19:25:49.054338Z
+28
+andrew.patterson@sun.com
+
+setup.sql
+file
+
+
+
+
+2009-06-10T17:04:18.000000Z
+001688b1ab6b4abf5afef59919b17e0e
+2009-06-10T19:25:49.054338Z
+28
+andrew.patterson@sun.com
+

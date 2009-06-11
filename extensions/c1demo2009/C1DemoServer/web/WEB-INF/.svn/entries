@@ -1,0 +1,40 @@
+8
+
+dir
+28
+https://kenai.com/svn/identitydemo2009~source-code-repository/C1DemoServer/web/WEB-INF
+https://kenai.com/svn/identitydemo2009~source-code-repository
+
+
+
+2009-06-10T19:25:49.054338Z
+28
+andrew.patterson@sun.com
+
+
+svn:special svn:externals svn:needs-lock
+
+sun-web.xml
+file
+
+
+
+
+2009-06-10T17:05:00.000000Z
+9858f92db9d7678aaef6fff1c82660d0
+2009-06-10T19:25:49.054338Z
+28
+andrew.patterson@sun.com
+
+web.xml
+file
+
+
+
+
+2009-06-10T18:41:43.000000Z
+0a0e448e0ff7d445bdb0071c9a58624c
+2009-06-10T19:25:49.054338Z
+28
+andrew.patterson@sun.com
+
