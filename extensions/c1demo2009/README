@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2009-06-11 23:13:49 superpat7 Exp $
+$Id: README,v 1.2 2009-06-11 23:19:29 superpat7 Exp $
 
 ------------------------------------------------------------------------------
 
@@ -133,7 +133,7 @@ not possible to build the WAR file for OpenSSO with Entitlements unless you are
 on the Sun internal network. For this reason, I have uploaded the WAR file to
 mediacast.sun.com. You can download it from
 
-http://mediacast.sun.com/users/metadaddy/entitlement.war
+http://mediacast.sun.com/users/metadaddy/media/entitlement.war
 
 Deploy the WAR file by copying it into GlassFish's autodeploy directory - 
 <glassfish directory>/domains/domain1/autodeploy/. It will likely take a minute
