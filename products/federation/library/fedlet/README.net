@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.net,v 1.3 2009-06-11 18:37:57 ggennaro Exp $
+$Id: README.net,v 1.4 2009-06-11 20:44:20 ggennaro Exp $
 
 %% Contents:
     %% 1. Contents of this directory 
@@ -169,7 +169,7 @@ $Id: README.net,v 1.3 2009-06-11 18:37:57 ggennaro Exp $
        try 
        { 
            ServiceProviderUtility spu = new ServiceProviderUtility(Context); 
-           authnResponse = spu.GetAuthnResponse(Request); 
+           authnResponse = spu.GetAuthnResponse(Context);
        } 
        catch (Saml2Exception se) 
        { 
