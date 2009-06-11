@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.77 2009-06-09 19:08:03 veiming Exp $
+   $Id: build.xml,v 1.78 2009-06-11 00:09:09 veiming Exp $
 
 -->
 
@@ -215,6 +215,11 @@
             <exclude name="**/com/sun/identity/authentication/modules/securid/*.java"/>
             <exclude name="**/com/sun/identity/authentication/modules/unix/*.java"/>       
         </javac>
+        <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator">
+            <classpath refid="build.class.path"/>
+            <arg value="${amserver.res.i18n.dir}"/>
+            <arg value="com.sun.identity.cli.definition.AccessManager"/>
+        </java>
         <antcall target="jaxrpc" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
                destdir="${amserver.classes.dir}" source="1.5" target="1.5"
