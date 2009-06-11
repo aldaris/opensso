@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DescriptionReferralSummary.java,v 1.1 2009-06-05 20:36:40 farble1670 Exp $
+ * $Id: DescriptionReferralSummary.java,v 1.2 2009-06-11 19:20:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
+
+import com.sun.identity.admin.Resources;
 
 public class DescriptionReferralSummary extends ReferralSummary {
 
@@ -34,8 +36,9 @@ public class DescriptionReferralSummary extends ReferralSummary {
     }
 
     public String getLabel() {
-        // TODO: localize
-        return "Description";
+        Resources r = new Resources();
+        String label = r.getString(this, "label");
+        return label;
     }
 
     public String getValue() {

@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StaticAttributesPolicySummary.java,v 1.4 2009-06-05 20:36:40 farble1670 Exp $
+ * $Id: StaticAttributesPolicySummary.java,v 1.5 2009-06-11 19:20:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.AttributesBean.AttributeType;
 import static com.sun.identity.admin.model.AttributesBean.AttributeType.*;
 
@@ -41,8 +42,9 @@ public class StaticAttributesPolicySummary extends AttributesPolicySummary {
     }
 
     public String getLabel() {
-        // TODO: localize
-        return "Resource Attributes";
+        Resources r = new Resources();
+        String label = r.getString(this, "label");
+        return label;
     }
 
     public String getTemplate() {

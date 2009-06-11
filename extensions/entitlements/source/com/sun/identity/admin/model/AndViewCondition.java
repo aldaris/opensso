@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndViewCondition.java,v 1.7 2009-06-04 11:49:14 veiming Exp $
+ * $Id: AndViewCondition.java,v 1.8 2009-06-11 19:20:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -44,12 +44,12 @@ public class AndViewCondition
     public EntitlementCondition getEntitlementCondition() {
         AndCondition ac = new AndCondition();
         Set<EntitlementCondition> ecs = new HashSet<EntitlementCondition>();
-        ac.setEConditions(ecs);
 
         for (ViewCondition vc: getViewConditions()) {
             EntitlementCondition ec = vc.getEntitlementCondition();
             ecs.add(ec);
         }
+        ac.setEConditions(ecs);
 
         return ac;
     }

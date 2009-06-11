@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimezoneCondition.java,v 1.5 2009-06-04 11:49:18 veiming Exp $
+ * $Id: TimezoneCondition.java,v 1.6 2009-06-11 19:20:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -104,12 +104,12 @@ public class TimezoneCondition
 
     @Override
     public String toString() {
-        Locale l = new Resources().getLocale();
+        Resources r = new Resources();
+        Locale l = r.getLocale();
         String s = getTitle();
         if (timezoneId != null) {
             TimeZone tz = TimeZone.getTimeZone(timezoneId);
-            // TODO: localize
-            s += ":{" + tz.getID() + "(" + tz.getDisplayName(l) +")}";
+            s = r.getString(this, "toString", s, tz.getID(), tz.getDisplayName(l));
         }
 
         return s;

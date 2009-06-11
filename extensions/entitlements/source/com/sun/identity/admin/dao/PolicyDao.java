@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDao.java,v 1.22 2009-06-11 02:00:41 farble1670 Exp $
+ * $Id: PolicyDao.java,v 1.23 2009-06-11 19:20:39 farble1670 Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -43,9 +43,7 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
-import com.sun.identity.security.AdminTokenAction;
 import java.io.Serializable;
-import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;

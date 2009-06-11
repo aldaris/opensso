@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationPolicySummary.java,v 1.4 2009-06-05 20:36:40 farble1670 Exp $
+ * $Id: ApplicationPolicySummary.java,v 1.5 2009-06-11 19:20:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
+
+import com.sun.identity.admin.Resources;
 
 public class ApplicationPolicySummary extends PolicySummary {
 
@@ -34,8 +36,9 @@ public class ApplicationPolicySummary extends PolicySummary {
     }
 
     public String getLabel() {
-        // TODO: localize
-        return "Application";
+        Resources r = new Resources();
+        String label = r.getString(this, "label");
+        return label;
     }
 
     public String getValue() {
@@ -47,7 +50,6 @@ public class ApplicationPolicySummary extends PolicySummary {
     }
 
     public String getIcon() {
-        // TODO
         return "../image/application.png";
     }
 

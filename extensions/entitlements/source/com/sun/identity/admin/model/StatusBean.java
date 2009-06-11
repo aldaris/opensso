@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatusBean.java,v 1.2 2009-06-04 11:49:17 veiming Exp $
+ * $Id: StatusBean.java,v 1.3 2009-06-11 19:20:40 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -61,8 +61,7 @@ public class StatusBean implements Serializable {
             String name = t.getSSOToken().getPrincipal().getName();
             un = DNUtils.DNtoName(name);
         } catch (SSOException ssoe) {
-            // TODO: localize
-            un = "unknown";
+            throw new RuntimeException(ssoe);
         }
 
         return un;
