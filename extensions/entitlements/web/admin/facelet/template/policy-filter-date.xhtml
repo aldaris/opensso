@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-filter-date.xhtml,v 1.6 2009-06-04 11:49:27 veiming Exp $
+   $Id: policy-filter-date.xhtml,v 1.7 2009-06-11 19:54:32 farble1670 Exp $
 
 -->
 
@@ -37,7 +37,9 @@
 
     <ice:panelGrid
         styleClass="inline-input"
-        columns="3">
+        columns="4">
+        <ice:outputText
+            value="#{resources['policy-filter-pattern.is']}"/>
         <ice:panelGroup>
             <ice:selectOneMenu
                 valueChangeListener="#{policyManageHandler.policyFilterChangedListener}"
@@ -73,7 +75,7 @@
                 valueChangeListener="#{policyManageHandler.policyFilterChangedListener}"
                 value="#{policyFilter.date}"
                 renderAsPopup="true">
-                <f:convertDateTime 
+                <f:convertDateTime
                     timeZone="#{timeZoneBean.timeZone.ID}"/>
             </ice:selectInputDate>
         </ice:panelGroup>

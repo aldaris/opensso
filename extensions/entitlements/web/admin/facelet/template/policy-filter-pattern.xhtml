@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-filter-pattern.xhtml,v 1.3 2009-06-04 11:49:28 veiming Exp $
+   $Id: policy-filter-pattern.xhtml,v 1.4 2009-06-11 19:54:32 farble1670 Exp $
 
 -->
 
@@ -36,6 +36,8 @@
     xmlns:o="http://opensso.dev.java.net">
 
     <ice:panelGroup>
+        <ice:outputText
+            value="#{resources['policy-filter-pattern.contains']}"/>
         <ice:inputText
             styleClass="inline-input"
             value="#{policyFilter.filter}"
