@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.2 2009-06-11 05:29:44 superpat7 Exp $
+ * $Id: Main.java,v 1.3 2009-06-11 06:02:37 superpat7 Exp $
  */
 
 package c1demoharness;
@@ -58,8 +58,8 @@ public class Main
     private static final OAuthClientFilter filter = new OAuthClientFilter(client.getProviders(), params, secrets);
 
     public static void main(String[] args) {
-        if ( args.length < 3 ) {
-            System.err.println("Usage: c1demoharness username password protected_resource ...");
+        if ( args.length < 2 ) {
+            System.err.println("Usage: c1demoharness username password [protected_resource ...]");
         }
 
         newConsumer();
