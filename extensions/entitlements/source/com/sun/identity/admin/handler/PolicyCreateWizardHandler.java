@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCreateWizardHandler.java,v 1.34 2009-06-10 04:46:22 farble1670 Exp $
+ * $Id: PolicyCreateWizardHandler.java,v 1.35 2009-06-11 02:00:42 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -35,6 +35,7 @@ import com.sun.identity.admin.model.ViewApplicationsBean;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
+import com.sun.identity.admin.dao.PolicyDao;
 
 public class PolicyCreateWizardHandler extends PolicyWizardHandler {
     public String createAction() {
@@ -92,4 +93,23 @@ public class PolicyCreateWizardHandler extends PolicyWizardHandler {
         return lbs;
     }
 
+    @Override
+    public boolean validateName() {
+        if (!super.validateName()) {
+            return false;
+        }
+
+        if (getPolicyDao().privilegeExists(getPolicyWizardBean().getPrivilegeBean())) {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "existsSummary"));
+            mb.setDetail(r.getString(this, "existsDetail", getPolicyWizardBean().getPrivilegeBean().getName()));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+            getMessagesBean().addMessageBean(mb);
+            return false;
+        }
+
+        return true;
+    }
 }

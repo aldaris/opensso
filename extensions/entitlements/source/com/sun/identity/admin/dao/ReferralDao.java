@@ -30,4 +30,15 @@ public class ReferralDao implements Serializable {
             throw new RuntimeException(ee);
         }
     }
+
+    public boolean referralExists(ReferralBean rb) {
+        ReferralPrivilegeManager rpm = getReferralPrivilegeManager();
+        try {
+            ReferralPrivilege rp = rpm.getReferral(rb.getName());
+            return true;
+        } catch (EntitlementException ee) {
+            return false;
+        }
+
+    }
 }

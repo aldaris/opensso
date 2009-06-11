@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestServlet.java,v 1.3 2009-06-04 11:49:11 veiming Exp $
+ * $Id: TestServlet.java,v 1.4 2009-06-11 02:00:41 farble1670 Exp $
  */
 
 package com.sun.identity.admin;
@@ -65,7 +65,12 @@ public class TestServlet extends HttpServlet {
                 if (template == null) {
                     throw new ServletException("no privilege template specified");
                 }
-                PrivilegeManager pm = getPrivilegeManager(request);
+                String realm = request.getParameter("realm");
+                if (realm == null) {
+                    realm = "/";
+                }
+
+                PrivilegeManager pm = getPrivilegeManager(request, realm);
                 Privilege p = pm.getPrivilege(template);
                 if (p == null) {
                     throw new ServletException("template privilege did not exist");
@@ -88,11 +93,11 @@ public class TestServlet extends HttpServlet {
         }
     }
 
-    private PrivilegeManager getPrivilegeManager(HttpServletRequest request) throws ServletException {
+    private PrivilegeManager getPrivilegeManager(HttpServletRequest request, String realm) throws ServletException {
         try {
             SSOToken t = SSOTokenManager.getInstance().createSSOToken(request);
             Subject s = SubjectUtils.createSubject(t);
-            PrivilegeManager pm = PrivilegeManager.getInstance("/", s);
+            PrivilegeManager pm = PrivilegeManager.getInstance(realm, s);
 
             return pm;
         } catch (SSOException ssoe) {

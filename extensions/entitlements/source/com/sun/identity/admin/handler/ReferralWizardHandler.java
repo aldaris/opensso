@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardHandler.java,v 1.10 2009-06-10 17:47:55 farble1670 Exp $
+ * $Id: ReferralWizardHandler.java,v 1.11 2009-06-11 02:00:42 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -56,7 +56,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         this.messagesBean = messagesBean;
     }
 
-    private boolean validateSteps() {
+    protected boolean validateSteps() {
         if (!validateName()) {
             return false;
         }
@@ -81,7 +81,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         }
 
         ReferralBean rb = getReferralWizardBean().getReferralBean();
-        referralDao.add(rb);
+        getReferralDao().add(rb);
 
         getWizardBean().reset();
 
@@ -104,7 +104,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         super.expandListener(event);
     }
 
-    private boolean validateName() {
+    protected boolean validateName() {
         String name = getReferralWizardBean().getReferralBean().getName();
         Matcher matcher = NamePattern.get().matcher(name);
 
@@ -129,7 +129,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         return true;
     }
 
-    private boolean validateResources() {
+    protected boolean validateResources() {
         List<Resource> resources = getReferralWizardBean().getReferralBean().getResources();
         if (resources != null) {
             for (Resource r : getReferralWizardBean().getReferralBean().getResources()) {
@@ -151,7 +151,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         return false;
     }
 
-    private boolean validateSubjects() {
+    protected boolean validateSubjects() {
         List<RealmBean> realmBeans = getReferralWizardBean().getReferralBean().getRealmBeans();
         if (realmBeans == null || realmBeans.size() == 0) {
             MessageBean mb = new MessageBean();
@@ -293,5 +293,9 @@ public abstract class ReferralWizardHandler extends WizardHandler {
 
     public MessagesBean getMessagesBean() {
         return messagesBean;
+    }
+
+    public ReferralDao getReferralDao() {
+        return referralDao;
     }
 }
