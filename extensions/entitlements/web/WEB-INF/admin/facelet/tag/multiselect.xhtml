@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: multiselect.xhtml,v 1.2 2009-06-05 16:45:45 farble1670 Exp $
+   $Id: multiselect.xhtml,v 1.3 2009-06-11 15:25:50 farble1670 Exp $
 
 -->
 
@@ -43,7 +43,7 @@
                 columns="3"
                 styleClass="multi-select-search">
                 <ice:outputLabel
-                    value="Available"/>
+                    value="#{resources['multiselect.available']}"/>
                 <ice:graphicImage
                     value="../image/search.png"/>
                 <ice:inputText
@@ -70,7 +70,7 @@
                     actionListener="#{handler[addListenerMethod]}">
                     <span class="button">
                         <ice:outputText
-                            value="Add"/>
+                            value="#{resources['multiselect.add']}"/>
                         <ice:graphicImage
                             styleClass="right"
                             value="../image/add-select.png"/>
@@ -86,7 +86,7 @@
                             styleClass="left"
                             value="../image/remove-select.png"/>
                         <ice:outputText
-                            value="Remove"/>
+                            value="#{resources['multiselect.remove']}"/>
                     </span>
                 </ice:commandLink>
             </ice:panelGroup>
@@ -97,7 +97,7 @@
                 styleClass="multi-select-search"
                 width="100%">
                 <ice:outputLabel
-                    value="Selected"/>
+                    value="#{resources['multiselect.selected']}"/>
             </ice:panelGrid>
             <ice:panelGroup>
                 <ice:selectManyListbox

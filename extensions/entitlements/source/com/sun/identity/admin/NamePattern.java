@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamePattern.java,v 1.1 2009-06-06 18:04:15 farble1670 Exp $
+ * $Id: NamePattern.java,v 1.2 2009-06-11 15:25:50 farble1670 Exp $
  */
 
 package com.sun.identity.admin;
@@ -30,7 +30,7 @@ package com.sun.identity.admin;
 import java.util.regex.Pattern;
 
 public class NamePattern {
-    private static Pattern NAME_PATTERN = Pattern.compile("[0-9a-zA-Z]+");
+    private static Pattern NAME_PATTERN = Pattern.compile("[0-9a-zA-Z _]+");
 
     public static Pattern get() {
         return NAME_PATTERN;

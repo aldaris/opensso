@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: clink.xhtml,v 1.7 2009-06-04 11:49:24 veiming Exp $
+   $Id: clink.xhtml,v 1.8 2009-06-11 15:25:50 farble1670 Exp $
 
 -->
 
@@ -41,7 +41,8 @@
         <f:attribute name="bean" value="#{bean}"/>
         <ui:insert name="attributes"/>
         <img src="../image/add.png"/>
-        <ice:outputText value="#{linkLabel != null ? linkLabel : 'Add'}"/>
+        <ice:outputText 
+            value="#{linkLabel != null ? linkLabel : resources['clink.add']}"/>
     </ice:commandLink>
     <ice:commandLink
         actionListener="#{handler[listenerMethod]}"
@@ -52,7 +53,8 @@
         <f:attribute name="bean" value="#{bean}"/>
         <ui:insert name="attributes"/>
         <img src="../image/search.png"/>
-        <ice:outputText value="#{linkLabel != null ? linkLabel : 'Search'}"/>
+        <ice:outputText 
+            value="#{linkLabel != null ? linkLabel : resources['clink.search']}"/>
     </ice:commandLink>
     <ice:commandLink
         actionListener="#{handler[listenerMethod]}"
@@ -63,7 +65,8 @@
         <f:attribute name="bean" value="#{bean}"/>
         <ui:insert name="attributes"/>
         <img src="../image/remove.png"/>
-        <ice:outputText value="#{linkLabel != null ? linkLabel : 'Remove'}"/>
+        <ice:outputText 
+            value="#{linkLabel != null ? linkLabel : resources['clink.remove']}"/>
     </ice:commandLink>
     <ice:commandLink
         actionListener="#{handler[listenerMethod]}"
@@ -74,6 +77,7 @@
         <f:attribute name="bean" value="#{bean}"/>
         <ui:insert name="attributes"/>
         <img src="../image/view-options.png"/>
-        <ice:outputText value="#{linkLabel != null ? linkLabel : 'View Options'}"/>
+        <ice:outputText 
+            value="#{linkLabel != null ? linkLabel : resources['clink.view-options']}"/>
     </ice:commandLink>
 </ui:composition>

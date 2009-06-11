@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wbuttons.xhtml,v 1.7 2009-06-10 04:46:23 farble1670 Exp $
+   $Id: wbuttons.xhtml,v 1.8 2009-06-11 15:25:50 farble1670 Exp $
 
 -->
 
@@ -43,7 +43,7 @@
             class="button">
             <img class="left" src="../image/cancel.png"/>
             <ice:outputText
-                value="Cancel"/>
+                value="#{resources['wbuttons.cancel']}"/>
         </span>
     </ice:commandLink>
     <ice:commandLink
@@ -56,7 +56,7 @@
             class="button">
             <img class="left" src="../image/go-previous.png"/>
             <ice:outputText
-                value="Previous"/>
+                value="#{resources['wbuttons.previous']}"/>
         </span>
     </ice:commandLink>
     <ice:commandLink
@@ -69,7 +69,7 @@
             class="button">
             <img class="left" src="../image/execute.png"/>
             <ice:outputText
-                value="Finish"/>
+                value="#{resources['wbuttons.finish']}"/>
         </span>
     </ice:commandLink>
     <ice:commandLink
@@ -81,7 +81,7 @@
         <span
             class="button">
             <ice:outputText
-                value="Next"/>
+                value="#{resources['wbuttons.next']}"/>
             <img class="right" src="../image/go-next.png"/>
         </span>
     </ice:commandLink>
