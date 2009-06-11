@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PhoneResource.java,v 1.2 2009-06-11 05:29:44 superpat7 Exp $
+ * $Id: PhoneResource.java,v 1.3 2009-06-11 05:58:51 superpat7 Exp $
  */
 
 package org.opensso.c1demoserver.service;
@@ -93,18 +93,9 @@ public class PhoneResource {
     @Produces({"application/xml", "application/json"})
     public PhoneConverter get(@QueryParam("expandLevel")
     @DefaultValue("1")
-    int expandLevel,
-    @Context
-    HttpServletRequest request) {
+    int expandLevel) {
         Phone phone = getPhone(expandLevel);
         if(phone!=null) {
-            if ( request != null ) {
-                if ( ! EntitlementShim.isAllowed(request.getUserPrincipal().getName(), request.getMethod(),
-                    request.getRequestURL().toString())) {
-                    throw new WebApplicationException(Response.Status.FORBIDDEN);
-                }
-            }
-
             return new PhoneConverter(phone, uriInfo.getAbsolutePath(), expandLevel);
         }
         return null;
@@ -147,11 +138,6 @@ public class PhoneResource {
 
         // Get phone for this URI
         Phone phone = this.getEntity();
-
-        if ( ! EntitlementShim.isAllowed(request.getUserPrincipal().getName(), request.getMethod(),
-            request.getRequestURL().toString())) {
-            throw new WebApplicationException(Response.Status.FORBIDDEN);
-        }
 
         // Update phone resource and write it back
         if ( phonePatch.getAllocatedMinutes() != null ) {
