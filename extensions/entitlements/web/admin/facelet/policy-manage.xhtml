@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-manage.xhtml,v 1.51 2009-06-08 18:06:13 farble1670 Exp $
+   $Id: policy-manage.xhtml,v 1.52 2009-06-11 15:05:56 farble1670 Exp $
 
 -->
 
@@ -146,7 +146,7 @@
                                         columnName="name"
                                         actionListener="#{policyManageHandler.sortTableListener}">
                                         <ice:outputText
-                                            value="Name"/>
+                                            value="#{resources['policy-manage.nameColumn']}"/>
                                     </ice:commandSortHeader>
                                 </center>
                             </f:facet>
@@ -176,7 +176,7 @@
                                     columnName="description"
                                     actionListener="#{policyManageHandler.sortTableListener}">
                                     <ice:outputText
-                                        value="Description"/>
+                                        value="#{resources['policy-manage.descriptionColumn']}"/>
                                 </ice:commandSortHeader>
                             </f:facet>
                             <ice:panelGroup
@@ -202,7 +202,7 @@
                                     columnName="application"
                                     actionListener="#{policyManageHandler.sortTableListener}">
                                     <ice:outputText
-                                        value="Application"/>
+                                        value="#{resources['policy-manage.applicationColumn']}"/>
                                 </ice:commandSortHeader>
                             </f:facet>
                             <ice:panelGroup
@@ -219,7 +219,7 @@
                                     columnName="modifier"
                                     actionListener="#{policyManageHandler.sortTableListener}">
                                     <ice:outputText
-                                        value="Modified By"/>
+                                        value="#{resources['policy-manage.modifierColumn']}"/>
                                 </ice:commandSortHeader>
                             </f:facet>
                             <ice:panelGroup
@@ -236,7 +236,7 @@
                                     columnName="author"
                                     actionListener="#{policyManageHandler.sortTableListener}">
                                     <ice:outputText
-                                        value="Author"/>
+                                        value="#{resources['policy-manage.authorColumn']}"/>
                                 </ice:commandSortHeader>
                             </f:facet>
                             <ice:panelGroup
@@ -253,7 +253,7 @@
                                     columnName="modified"
                                     actionListener="#{policyManageHandler.sortTableListener}">
                                     <ice:outputText
-                                        value="Modified"/>
+                                        value="#{resources['policy-manage.modifiedColumn']}"/>
                                 </ice:commandSortHeader>
                             </f:facet>
                             <ice:panelGroup
@@ -275,7 +275,7 @@
                                     columnName="birth"
                                     actionListener="#{policyManageHandler.sortTableListener}">
                                     <ice:outputText
-                                        value="Created"/>
+                                        value="#{resources['policy-manage.birthColumn']}"/>
                                 </ice:commandSortHeader>
                             </f:facet>
                             <ice:panelGroup
@@ -294,7 +294,7 @@
                             rendered="#{policyManageBean.policyManageTableBean.resourcesColumnVisible}">
                             <f:facet name="header">
                                 <ice:outputText
-                                    value="Resources"/>
+                                    value="#{resources['policy-manage.resourceColumn']}"/>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -318,7 +318,7 @@
                             rendered="#{policyManageBean.policyManageTableBean.exceptionsColumnVisible}">
                             <f:facet name="header">
                                 <ice:outputText
-                                    value="Exceptions"/>
+                                    value="#{resources['policy-manage.exceptionColumn']}"/>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -342,7 +342,7 @@
                             rendered="#{policyManageBean.policyManageTableBean.subjectColumnVisible}">
                             <f:facet name="header">
                                 <ice:outputText
-                                    value="Subjects"/>
+                                    value="#{resources['policy-manage.subjectColumn']}"/>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -366,7 +366,7 @@
                             rendered="#{policyManageBean.policyManageTableBean.actionColumnVisible}">
                             <f:facet name="header">
                                 <ice:outputText
-                                    value="Actions"/>
+                                    value="#{resources['policy-manage.actionColumn']}"/>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -390,7 +390,7 @@
                             rendered="#{policyManageBean.policyManageTableBean.conditionColumnVisible}">
                             <f:facet name="header">
                                 <ice:outputText
-                                    value="Conditions"/>
+                                    value="#{resources['policy-manage.conditionColumn']}"/>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -414,7 +414,7 @@
                             rendered="#{policyManageBean.policyManageTableBean.staticAttributesColumnVisible}">
                             <f:facet name="header">
                                 <ice:outputText
-                                    value="Resource Attributes"/>
+                                    value="#{resources['policy-manage.staticAttributeColumn']}"/>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -438,7 +438,7 @@
                             rendered="#{policyManageBean.policyManageTableBean.userAttributesColumnVisible}">
                             <f:facet name="header">
                                 <ice:outputText
-                                    value="User Attributes"/>
+                                    value="#{resources['policy-manage.userAttributeColumn']}"/>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -472,29 +472,41 @@
                                 pageIndexVar="pageIndex"
                                 paginatorMaxPages="9"
                                 paginator="true">
-                                <f:facet name="first">
+                                <f:facet
+                                    name="first">
                                     <ice:graphicImage
-                                        url="/xmlhttp/css/rime/css-images/arrow-first.gif" style="border:none;"/>
+                                        url="/xmlhttp/css/rime/css-images/arrow-first.gif"
+                                        style="border:none;"/>
                                 </f:facet>
-                                <f:facet name="last">
+                                <f:facet
+                                    name="last">
                                     <ice:graphicImage
-                                        url="/xmlhttp/css/rime/css-images/arrow-last.gif" style="border:none;" />
+                                        url="/xmlhttp/css/rime/css-images/arrow-last.gif"
+                                        style="border:none;" />
                                 </f:facet>
-                                <f:facet name="previous">
+                                <f:facet
+                                    name="previous">
                                     <ice:graphicImage
-                                        url="/xmlhttp/css/rime/css-images/arrow-previous.gif" style="border:none;" />
+                                        url="/xmlhttp/css/rime/css-images/arrow-previous.gif"
+                                        style="border:none;" />
                                 </f:facet>
-                                <f:facet name="next">
+                                <f:facet
+                                    name="next">
                                     <ice:graphicImage
-                                        url="/xmlhttp/css/rime/css-images/arrow-next.gif" style="border:none;" />
+                                        url="/xmlhttp/css/rime/css-images/arrow-next.gif"
+                                        style="border:none;" />
                                 </f:facet>
-                                <f:facet name="fastforward">
+                                <f:facet
+                                    name="fastforward">
                                     <ice:graphicImage
-                                        url="/xmlhttp/css/rime/css-images/arrow-ff.gif" style="border:none;" />
+                                        url="/xmlhttp/css/rime/css-images/arrow-ff.gif"
+                                        style="border:none;" />
                                 </f:facet>
-                                <f:facet name="fastrewind">
+                                <f:facet
+                                    name="fastrewind">
                                     <ice:graphicImage
-                                        url="/xmlhttp/css/rime/css-images/arrow-fr.gif" style="border:none;" />
+                                        url="/xmlhttp/css/rime/css-images/arrow-fr.gif"
+                                        style="border:none;" />
                                 </f:facet>
                             </ice:dataPaginator>
                         </ice:panelGrid>

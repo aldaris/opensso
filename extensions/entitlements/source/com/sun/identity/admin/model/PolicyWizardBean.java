@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardBean.java,v 1.19 2009-06-05 05:21:07 farble1670 Exp $
+ * $Id: PolicyWizardBean.java,v 1.20 2009-06-11 15:05:55 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.DeepCloneableArrayList;
+import com.sun.identity.admin.Functions;
 import com.sun.identity.admin.Resources;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.faces.model.SelectItem;
+import static com.sun.identity.admin.model.PolicyWizardStep.*;
 
 public class PolicyWizardBean
         extends WizardBean
@@ -315,5 +317,63 @@ public class PolicyWizardBean
 
     public String getUserAttributesTabPanelLabel() {
         return getAdvancedTabPanelLabel(PolicyWizardAdvancedTabIndex.USER_ATTRIBUTES);
+    }
+
+    private String getPanelLabel(PolicyWizardStep pws) {
+        Resources r = new Resources();
+        String label;
+
+        switch (pws) {
+            case NAME:
+                label = r.getString(this, "namePanelLabel");
+
+                break;
+
+            case RESOURCES:
+                int resourceCount = Functions.size(privilegeBean.getViewEntitlement().getResources());
+                label = r.getString(this, "resourcesPanelLabel", resourceCount);
+
+                break;
+
+            case SUBJECTS:
+                int subjectCount = new Tree(privilegeBean.getViewSubject()).sizeLeafs();
+                label = r.getString(this, "subjectsPanelLabel", subjectCount);
+
+                break;
+
+            case ADVANCED:
+                label = r.getString(this, "advancedPanelLabel");
+
+                break;
+
+            case SUMMARY:
+                label = r.getString(this, "summaryPanelLabel");
+
+                break;
+            default:
+                throw new AssertionError("unhandled policy wizard step: " + pws);
+        }
+
+        return label;
+    }
+
+    public String getNamePanelLabel() {
+        return getPanelLabel(NAME);
+    }
+
+    public String getResourcesPanelLabel() {
+        return getPanelLabel(RESOURCES);
+    }
+
+    public String getSubjectsPanelLabel() {
+        return getPanelLabel(SUBJECTS);
+    }
+
+    public String getAdvancedPanelLabel() {
+        return getPanelLabel(ADVANCED);
+    }
+
+    public String getSummaryPanelLabel() {
+        return getPanelLabel(SUMMARY);
     }
 }

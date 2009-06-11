@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-edit.xhtml,v 1.9 2009-06-06 05:35:09 farble1670 Exp $
+   $Id: policy-edit.xhtml,v 1.10 2009-06-11 15:05:56 farble1670 Exp $
 
 -->
 
@@ -49,7 +49,7 @@
             <ui:define name="wizard-steps">
                 <o:wstep
                     step="0"
-                    label="Name, Description, and Application">
+                    label="#{policyEditWizardBean.namePanelLabel}">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-name.xhtml">
                             <ui:param
@@ -63,7 +63,7 @@
                 </o:wstep>
                 <o:wstep
                     step="1"
-                    label="Resources (#{o:size(policyEditWizardBean.privilegeBean.viewEntitlement.resources)})">
+                    label="#{policyEditWizardBean.resourcesPanelLabel}">
                     <ui:define name="wizard-step-body">
                         <ui:include
                             src="#{policyEditWizardBean.viewApplication.viewApplicationType.resourceTemplate}">
@@ -78,7 +78,7 @@
                 </o:wstep>
                 <o:wstep
                     step="2"
-                    label="Subjects (#{policyEditWizardBean.privilegeBean.viewSubject != null ? policyEditWizardBean.privilegeBean.viewSubject.size : 0})">
+                    label="#{policyEditWizardBean.subjectsPanelLabel}">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-subjects.xhtml">
                             <ui:param
@@ -92,7 +92,7 @@
                 </o:wstep>
                 <o:wstep
                     step="3"
-                    label="Advanced">
+                    label="#{policyEditWizardBean.advancedPanelLabel}">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-advanced.xhtml">
                             <ui:param
@@ -106,7 +106,7 @@
                 </o:wstep>
                 <o:wstep
                     step="4"
-                    label="Summary">
+                    label="#{policyEditWizardBean.summaryPanelLabel}">
                     <ui:define name="wizard-step-body">
                         <ui:include src="template/policy-summary.xhtml">
                             <ui:param
