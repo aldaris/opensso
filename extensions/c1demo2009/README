@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.2 2009-06-11 23:19:29 superpat7 Exp $
+$Id: README,v 1.3 2009-06-11 23:35:32 superpat7 Exp $
 
 ------------------------------------------------------------------------------
 
@@ -59,7 +59,8 @@ subscribe to 'users@opensso.dev.java.net'.
     
 %% 1. Prerequisites
 
-You must have the following software installed to run the demo:
+You must have the following software installed and running to be able to run 
+the demo:
 
 MySQL - I used 5.1.33, but I don't think the exact version is critical
 JDK 6 - http://java.sun.com/javase/downloads/index.jsp
@@ -324,6 +325,11 @@ Service WAR - <source location>/opensso/extensions/oauth/oauth-service/target/oa
 IMPORTANT - you MUST change the 'Context Root' from the default 'oauth-service' 
 to 'TokenService'. Hit 'OK' to deploy the OAuth Token Service.
 
+NOTE - there is currently a bug in the entitlements code which may result in a 
+null pointer exception when evaluating policy. To avoid this bug, you must 
+invoke http://demo.example.com:8080/entitlement/javaoneDemoEval.jsp after each 
+GlassFish restart.
+
 %% 7. Running the Demo Test Harness
 
 Now we have all of the infrastructure up and running, we can run the Demo Test 
@@ -351,6 +357,10 @@ password, then GET each URL in turn.
 Run the test harness from the command line:
 
 java -jar <source location>/opensso/extensions/c1demo2009/C1DemoHarness/dist/C1DemoHarness.jar 1112223333 abc123 http://localhost:8080/C1DemoServer/resources/phones/1112223333/
+
+NOTE - due to an as-yet unidentified bug in the OAuth Token Service, the 
+initial call to the token service will always return an error. That's ok - just 
+run it again.
 
 You should see output similar to
 
