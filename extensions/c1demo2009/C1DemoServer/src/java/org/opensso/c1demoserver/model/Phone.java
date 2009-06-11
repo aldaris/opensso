@@ -1,6 +1,28 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
+ *
+ * The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: Phone.java,v 1.2 2009-06-11 05:29:42 superpat7 Exp $
  */
 
 package org.opensso.c1demoserver.model;
@@ -19,10 +41,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-/**
- *
- * @author pat
- */
 @Entity
 @Table(name = "phone")
 @NamedQueries({@NamedQuery(name = "Phone.findAll", query = "SELECT p FROM Phone p"), @NamedQuery(name = "Phone.findByPhoneNumber", query = "SELECT p FROM Phone p WHERE p.phoneNumber = :phoneNumber"), @NamedQuery(name = "Phone.findByUserName", query = "SELECT p FROM Phone p WHERE p.userName = :userName"), @NamedQuery(name = "Phone.findByPassword", query = "SELECT p FROM Phone p WHERE p.password = :password"), @NamedQuery(name = "Phone.findByAllocatedMinutes", query = "SELECT p FROM Phone p WHERE p.allocatedMinutes = :allocatedMinutes"), @NamedQuery(name = "Phone.findByHeadOfHousehold", query = "SELECT p FROM Phone p WHERE p.headOfHousehold = :headOfHousehold"), @NamedQuery(name = "Phone.findByCanDownloadRingtones", query = "SELECT p FROM Phone p WHERE p.canDownloadRingtones = :canDownloadRingtones"), @NamedQuery(name = "Phone.findByCanDownloadMusic", query = "SELECT p FROM Phone p WHERE p.canDownloadMusic = :canDownloadMusic"), @NamedQuery(name = "Phone.findByCanDownloadVideo", query = "SELECT p FROM Phone p WHERE p.canDownloadVideo = :canDownloadVideo"), @NamedQuery(name = "Phone.findByOtp", query = "SELECT p FROM Phone p WHERE p.otp = :otp")})

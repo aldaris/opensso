@@ -1,14 +1,4 @@
-/*
- * SwingPasswordField.fx
- *
- * Created on May 15, 2009, 1:44:48 PM
- */
-
 package c1democlient.ui;
-
-/**
- * @author pat
- */
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,8 +41,6 @@ public class SwingPasswordField extends SwingComponent {
         });
 
         passwordField.getDocument().addDocumentListener(DocumentListener{
-
-
             public override function insertUpdate( e:DocumentEvent) {
                 external = true;
                 text = passwordField.getText();
@@ -67,7 +55,6 @@ public class SwingPasswordField extends SwingComponent {
                 external = true;
                 text = passwordField.getText();
             }
-
         });
 
         return passwordField;
