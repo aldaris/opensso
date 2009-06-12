@@ -28,7 +28,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "ACCTOKEN")
-@NamedQueries({@NamedQuery(name = "Acctoken.findAll", query = "SELECT a FROM Acctoken a"), @NamedQuery(name = "Acctoken.findById", query = "SELECT a FROM Acctoken a WHERE a.id = :id"), @NamedQuery(name = "Acctoken.findByAcctUri", query = "SELECT a FROM Acctoken a WHERE a.acctUri = :acctUri"), @NamedQuery(name = "Acctoken.findByAcctVal", query = "SELECT a FROM Acctoken a WHERE a.acctVal = :acctVal"), @NamedQuery(name = "Acctoken.findByAcctSecret", query = "SELECT a FROM Acctoken a WHERE a.acctSecret = :acctSecret"), @NamedQuery(name = "Acctoken.findByAcctPpalid", query = "SELECT a FROM Acctoken a WHERE a.acctPpalid = :acctPpalid"), @NamedQuery(name = "Acctoken.findByAcctLifetime", query = "SELECT a FROM Acctoken a WHERE a.acctLifetime = :acctLifetime"), @NamedQuery(name = "Acctoken.findByAcctOnetime", query = "SELECT a FROM Acctoken a WHERE a.acctOnetime = :acctOnetime")})
+@NamedQueries({@NamedQuery(name = "AccessToken.findAll", query = "SELECT a FROM AccessToken a"), @NamedQuery(name = "AccessToken.findById", query = "SELECT a FROM AccessToken a WHERE a.id = :id"), @NamedQuery(name = "AccessToken.findByAcctUri", query = "SELECT a FROM AccessToken a WHERE a.acctUri = :acctUri"), @NamedQuery(name = "AccessToken.findByAcctVal", query = "SELECT a FROM AccessToken a WHERE a.acctVal = :acctVal"), @NamedQuery(name = "AccessToken.findByAcctSecret", query = "SELECT a FROM AccessToken a WHERE a.acctSecret = :acctSecret"), @NamedQuery(name = "AccessToken.findByAcctPpalid", query = "SELECT a FROM AccessToken a WHERE a.acctPpalid = :acctPpalid"), @NamedQuery(name = "AccessToken.findByAcctLifetime", query = "SELECT a FROM AccessToken a WHERE a.acctLifetime = :acctLifetime"), @NamedQuery(name = "AccessToken.findByAcctOnetime", query = "SELECT a FROM AccessToken a WHERE a.acctOnetime = :acctOnetime")})
 public class AccessToken implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -146,7 +146,7 @@ public class AccessToken implements Serializable {
 
     @Override
     public String toString() {
-        return "com.sun.oauth.persistence.Acctoken[id=" + id + "]";
+        return "com.sun.oauth.persistence.AccessToken[id=" + id + "]";
     }
 
 }

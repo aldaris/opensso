@@ -27,7 +27,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "REQTOKEN")
-@NamedQueries({@NamedQuery(name = "Reqtoken.findAll", query = "SELECT r FROM Reqtoken r"), @NamedQuery(name = "Reqtoken.findById", query = "SELECT r FROM Reqtoken r WHERE r.id = :id"), @NamedQuery(name = "Reqtoken.findByReqtUri", query = "SELECT r FROM Reqtoken r WHERE r.reqtUri = :reqtUri"), @NamedQuery(name = "Reqtoken.findByReqtVal", query = "SELECT r FROM Reqtoken r WHERE r.reqtVal = :reqtVal"), @NamedQuery(name = "Reqtoken.findByReqtSecret", query = "SELECT r FROM Reqtoken r WHERE r.reqtSecret = :reqtSecret"), @NamedQuery(name = "Reqtoken.findByReqtPpalid", query = "SELECT r FROM Reqtoken r WHERE r.reqtPpalid = :reqtPpalid"), @NamedQuery(name = "Reqtoken.findByReqtLifetime", query = "SELECT r FROM Reqtoken r WHERE r.reqtLifetime = :reqtLifetime")})
+@NamedQueries({@NamedQuery(name = "RequestToken.findAll", query = "SELECT r FROM RequestToken r"), @NamedQuery(name = "RequestToken.findById", query = "SELECT r FROM RequestToken r WHERE r.id = :id"), @NamedQuery(name = "RequestToken.findByReqtUri", query = "SELECT r FROM RequestToken r WHERE r.reqtUri = :reqtUri"), @NamedQuery(name = "RequestToken.findByReqtVal", query = "SELECT r FROM RequestToken r WHERE r.reqtVal = :reqtVal"), @NamedQuery(name = "RequestToken.findByReqtSecret", query = "SELECT r FROM RequestToken r WHERE r.reqtSecret = :reqtSecret"), @NamedQuery(name = "RequestToken.findByReqtPpalid", query = "SELECT r FROM RequestToken r WHERE r.reqtPpalid = :reqtPpalid"), @NamedQuery(name = "RequestToken.findByReqtLifetime", query = "SELECT r FROM RequestToken r WHERE r.reqtLifetime = :reqtLifetime")})
 public class RequestToken implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -135,7 +135,7 @@ public class RequestToken implements Serializable {
 
     @Override
     public String toString() {
-        return "com.sun.oauth.persistence.Reqtoken[id=" + id + "]";
+        return "com.sun.oauth.persistence.RequestToken[id=" + id + "]";
     }
 
 }
