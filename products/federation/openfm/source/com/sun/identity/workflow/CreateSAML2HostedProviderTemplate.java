@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.27 2009-05-06 19:50:35 madan_ranganath Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.28 2009-06-12 22:04:37 veiming Exp $
  *
  */
 
@@ -1402,7 +1402,7 @@ public class CreateSAML2HostedProviderTemplate {
                 "            <KeyInfo xmlns=\"" +
                                     SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
                 "                <X509Data>\n" +
-                "                    <X509Certif5icate>\n" + pdpEX509Cert +
+                "                    <X509Certificate>\n" + pdpEX509Cert +
                 "                    </X509Certificate>\n" +
                 "                </X509Data>\n" +
                 "            </KeyInfo>\n" +
