@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.62 2009-06-12 00:02:32 veiming Exp $
+  $Id: build.xml,v 1.63 2009-06-12 06:25:33 veiming Exp $
 
 -->
 
@@ -143,6 +143,9 @@
                 <not>
                     <isset property="war.package.dir.exists"/>
                 </not>
+                <not>
+                    <isset property="lite"/>
+                </not>
             </and>
         </condition>
     </target>
@@ -210,7 +213,7 @@
 
     <target name="src" depends="src-policy,src-admin,cli-res"/>
 
-    <target name="unwar" depends="init" if="merge.web">
+    <target name="unwar" depends="init" unless="war.package.dir.exists">
         <unjar
            src="${entitlements.extlib.dir}/opensso.war"
            dest="${war.package.dir}" />
@@ -322,7 +325,8 @@
             file="${entitlements.dtd.dir}/policyAdmin.dtd" />
     </target>
 
-    <target name="merge-properties" depends="unwar" if="merge.web">
+    <target name="merge-properties" depends="unwar"
+        unless="war.package.dir.exists">
         <java classname="com.sun.identity.setup.MergeProperties" fork="true">
             <classpath refid="build.class.path"/>
             <classpath>
