@@ -21,7 +21,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.6 2009-06-12 00:02:32 veiming Exp $
+$Id: README,v 1.7 2009-06-12 00:20:41 veiming Exp $
 
 --------------------------------------------------------------------------------
 Ant 1.7.0+ is required.
@@ -30,7 +30,7 @@ Need these binaries in extlib directory
 
 1. opensso.war - for unwar to include entitlements.jar and resources
 2. ssoAdminTools.zip - for unzip to include entitlements related CLI
-3. testng-5.1-jdk15.jar - for unittest
+3. testng-5.9-jdk15.jar - for unittest
 
 The first time the workspace is built, you must be on SWAN and have access to
 /net/policy. The directories .../war-lib and .../build-lib will be populated.
