@@ -1,7 +1,7 @@
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
-   Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+   Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
   
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.18 2009-01-29 17:47:01 veiming Exp $
+   $Id: build.xml,v 1.19 2009-06-12 22:08:47 huacui Exp $
 
 -->
 
@@ -33,6 +33,7 @@
     <import file="../amserver/amserver.xml" />
     <import file="../federation/openfm/openfm.xml" />
     <import file="../federation/library/library.xml" />
+    <import file="../installtools/installtools.xml" />
     <import file="wssagents.xml" />
 
     <!-- user specific properties -->
@@ -53,6 +54,7 @@
         <pathelement location="${openfm.classes.dir}"/>
         <pathelement location="${library.classes.dir}"/>
         <pathelement location="${sharedlib.classes.dir}"/>
+        <pathelement location="${installtools.classes.dir}"/>
         
         <fileset dir="${extlib.dir}">
             <include name="**/*.jar"/>
@@ -76,6 +78,14 @@
             <classpath refid="build.class.path"/>
         </javac>
 
+        <copy todir="${wssagents.classes.dir}">
+            <fileset dir="${wssagents.basedir}">
+                <include name=".version"/>
+            </fileset>
+        </copy>
+
+        <concat destfile="${wssagents.classes.dir}/.version" append="true">Build Date: ${nightly.date}&#10;&#10;</concat>
+
         <copy todir="${wssagents.built.res.dir}">
             <fileset dir="${wssagents.res.i18n.dir}">
                 <include name="**/*.properties"/>
@@ -93,6 +103,7 @@
         <mkdir dir="${wssagents.built.res.dir}"/>
         <mkdir dir="${wssagents.built.docs.dir}"/>
         <mkdir dir="${wssagents.built.samples.dir}"/>
+        <ant antfile="${installtools.base.dir}/build.xml" inheritRefs="true" />
     </target>
     
     
@@ -121,7 +132,7 @@
             algorithm="SHA" fileext=".sha" />
     </target>
 
-    <target name="zip" depends="jars">
+    <target name="zip" depends="clean, jars">
         <delete dir="${zip.temp.dir}" />
         <mkdir dir="${zip.temp.dir}" />
 
@@ -133,13 +144,15 @@
             tofile="${zip.temp.dir}/README.glassfish" />
 
         <copy todir="${zip.temp.dir}/bin">
-            <fileset file="${wssagents.basedir}/scripts/encrypt_util" />
-            <fileset file="${wssagents.basedir}/scripts/encrypt_util.bat" />
+            <fileset file="${wssagents.basedir}/scripts/wssagentadmin" />
+            <fileset file="${wssagents.basedir}/scripts/wssagentadmin.bat" />
         </copy>
 
         <copy todir="${zip.temp.dir}/lib">
             <fileset file="${sharedlib.dist.dir}/opensso-sharedlib.jar" />
             <fileset file="${fm.dist.dir}/openssoclientsdk.jar" />
+            <fileset file="${installtools.dist.dir}/opensso-installtools.jar" />
+            <fileset file="${installtools.dist.dir}/opensso-installtools-launcher.jar" />
             <fileset file="${wssagents.dist.dir}/openssowssproviders.jar" />
         </copy>
         <copy todir="${zip.temp.dir}/lib">
@@ -150,14 +163,80 @@
         </copy>
         <copy todir="${zip.temp.dir}/config">
             <fileset file="${wssagents.config.dir}/**" />
+            <fileset file="${wssagents.xml.dir}/configure.xml" />
         </copy>
-        
-        <copy file="${openfm.built.dir}/clientsamples/package/sdk/resources/AMConfig.properties.template" tofile="${zip.temp.dir}/resources/AMConfig.properties" />
-        
+       
+        <copy file="${openfm.built.dir}/clientsamples/package/sdk/resources/AMConfig.properties.template" tofile="${zip.temp.dir}/config/AMConfig.properties" /> 
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@DEBUG_DIR@"
+            replace="@DEBUG_LOGS_DIR@"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.iplanet.am.sdk.caching.enabled=true"
+            replace="com.iplanet.am.sdk.caching.enabled=false"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.sun.identity.idm.cache.enabled=true"
+            replace="com.sun.identity.idm.cache.enabled=false"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.sun.identity.sm.cache.enabled=true"
+            replace="com.sun.identity.sm.cache.enabled=false"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@NAMING_URL@"
+            replace="@SERVER_PROTOCOL@://@SERVER_HOST@:@SERVER_PORT@@DEPLOY_URI@/namingservice"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@APPLICATION_USER@"
+            replace="@AGENT_PROFILE_NAME@"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@APPLICATION_PASSWD@"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@ENCODED_APPLICATION_PASSWORD@"
+            replace="@AGENT_ENCRYPTED_PASSWORD@"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@ENCRYPTION_KEY@"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@ENCRYPTION_KEY_LOCAL@"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@AM_COOKIE_NAME@"
+            replace="iPlanetDirectoryPro"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.sun.identity.saml.xmlsig.keystore=@BASE_DIR@"
+            replace="com.sun.identity.saml.xmlsig.keystore=@BASE_DIR@/resources"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.sun.identity.saml.xmlsig.storepass=@BASE_DIR@"
+            replace="com.sun.identity.saml.xmlsig.storepass=@BASE_DIR@/resources"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.sun.identity.saml.xmlsig.keypass=@BASE_DIR@"
+            replace="com.sun.identity.saml.xmlsig.keypass=@BASE_DIR@/resources"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@SERVER_PROTOCOL@://@SERVER_HOST@:@SERVER_PORT@/@DEPLOY_URI@"
+            replace="@SERVER_PROTOCOL@://@SERVER_HOST@:@SERVER_PORT@@DEPLOY_URI@"/>
         <copy todir="${zip.temp.dir}/resources">
             <fileset file="${openfm.clientsamples.dir}/war/keystore.jks" />
             <fileset file="${openfm.clientsamples.dir}/war/.keypass" />
             <fileset file="${openfm.clientsamples.dir}/war/.storepass" />
+        </copy>
+
+        <copy todir="${zip.temp.dir}/locale">
+            <fileset file="${wssagents.basedir}/resources/locale/amToolsMessages.properties" />
+            <fileset file="${wssagents.basedir}/resources/locale/asTools.properties" />
+            <fileset file="${wssagents.basedir}/resources/locale/as91Tools.properties" />
         </copy>
 
         <zip destfile="${wssagents.dist.dir}/openssowssproviders.zip" whenempty="create">
