@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.24 2009-05-13 21:26:36 hengming Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.25 2009-06-12 05:55:39 goodearth Exp $
  *
  */
 
@@ -1015,10 +1015,15 @@ public class EmbeddedOpenDS {
         return null;
     }
 
+    // Programmatic way of rebuilding indexes in OpenDS.
+    // This method simulates the OpenDS cli command rebuild-index.
+    // eg., rebuild-index -b dc=example,dc=com -i uid -i mail
+
     public static void rebuildIndex(Map map) throws Exception {
 
         shutdownServer("Rebuild index");
-        String basedir = (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR);
+        String basedir = 
+            (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR);
         String odsRoot = basedir + "/" +
             SetupConstants.SMS_OPENDS_DATASTORE;
         Debug debug = Debug.getInstance(SetupConstants.DEBUG_NAME);
@@ -1030,17 +1035,37 @@ public class EmbeddedOpenDS {
             "--baseDN",
             (String)map.get(SetupConstants.CONFIG_VAR_ROOT_SUFFIX),
             "--index",
-            "sunxmlkeyvalue" };
+            "sunxmlkeyvalue",
+            "--index",
+            "sunOrganizationAlias",
+            "--index",
+            "memberof",
+            "--index",
+            "iplanet-am-static-group-dn",
+            "--index",
+            "iplanet-am-modifiable-by",
+            "--index",
+            "iplanet-am-user-federation-info-key",
+            "--index",
+            "sun-fm-saml2-nameid-infokey" };
         OutputStream bos = new ByteArrayOutputStream();
         OutputStream boe = new ByteArrayOutputStream();
         RebuildIndex.mainRebuildIndex(args, true, bos, boe);
         String outStr = bos.toString();
         String errStr = boe.toString();
         if (errStr.length() != 0) {
-            debug.error("EmbeddedOpenDS:rebuildIndex:stderr=" + errStr);
+            debug.error("EmbeddedOpenDS:rebuildIndex:stderr=" + 
+                errStr);
         }
         if (debug.messageEnabled()) {
-            debug.message("EmbeddedOpenDS:rebuildIndex:Result:" + outStr);
+            String msg = "msg=Rebuild complete.";
+            int idx = outStr.indexOf(msg);
+            if (idx >= 0) {
+                debug.message("EmbeddedOpenDS:rebuildIndex: "+
+                    "Rebuild Status: "+ outStr.substring(idx));
+            }
+            debug.message("EmbeddedOpenDS:rebuildIndex:Result:" + 
+                outStr);
         }
         startServer(odsRoot);
     }
