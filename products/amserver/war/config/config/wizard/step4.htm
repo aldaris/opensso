@@ -188,6 +188,15 @@
             <span id="externalConfigSettings" style="display:none">
                 <table class="temp">
                     <tr>
+                        <td valign="top"><label for="userStoreType"><em>*&nbsp;</em>$page.getLocalizedString("store.type.label")</label></td>
+                        <td>
+                            <input type="radio" id="ldapv3sunds" name="userStoreType" value="LDAPv3ForSUNDS" $selectLDAPv3sunds onclick="setSUNDS();"/>&nbsp;$page.getLocalizedString("sunds.ldap.schema")<br>
+                            <input type="radio" id="ldapv3opends" name="userStoreType" value="LDAPv3ForOpenDS" $selectLDAPv3opends onclick="setOpenDS();"/>&nbsp;$page.getLocalizedString("opends.ldap.schema")<br>
+                            <input type="radio" id="ldapv3ad" name="userStoreType" value="LDAPv3ForAD" $selectLDAPv3ad onclick="setAD();"/>&nbsp;$page.getLocalizedString("activedirectory.ldap.schema")<br>
+                            <input type="radio" id="ldapv3tivoli" name="userStoreType" value="LDAPv3ForTivoli" $selectLDAPv3tivoli onclick="setTivoli();"/>&nbsp;$page.getLocalizedString("tivoli.ldap.schema")
+                        </td>
+                    </tr>            
+                    <tr>
                         <td><label for="userStoreSSL"><em>*&nbsp;</em>$page.getLocalizedString("directory.ssl.label")</label></td>
                         <td>
                             <input id="userStoreSSL" name="userStoreSSL"
@@ -249,15 +258,6 @@
                              <span id="userStorePasswordStatus"></span>
                         </td>
                     </tr>
-                    <tr>
-                        <td valign="top"><label for="userStoreType"><em>*&nbsp;</em>$page.getLocalizedString("store.type.label")</label></td>
-                        <td>
-                            <input type="radio" id="ldapv3ad" name="userStoreType" value="LDAPv3ForAD" $selectLDAPv3ad onclick="setAD();"/>&nbsp;$page.getLocalizedString("activedirectory.ldap.schema")<br>
-                            <input type="radio" id="ldapv3sunds" name="userStoreType" value="LDAPv3ForSUNDS" $selectLDAPv3sunds onclick="setSUNDS();"/>&nbsp;$page.getLocalizedString("sunds.ldap.schema")<br>
-                            <input type="radio" id="ldapv3opends" name="userStoreType" value="LDAPv3ForOpenDS" $selectLDAPv3opends onclick="setOpenDS();"/>&nbsp;$page.getLocalizedString("opends.ldap.schema")<br>
-                            <input type="radio" id="ldapv3tivoli" name="userStoreType" value="LDAPv3ForTivoli" $selectLDAPv3tivoli onclick="setTivoli();"/>&nbsp;$page.getLocalizedString("tivoli.ldap.schema")
-                        </td>
-                    </tr>            
                 </table>
             </span>
         </div>
