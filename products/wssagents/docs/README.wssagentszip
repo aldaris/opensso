@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagentszip,v 1.10 2008-08-29 21:10:30 arunav Exp $
+   $Id: README.wssagentszip,v 1.11 2009-06-12 22:10:13 huacui Exp $
 
 -->
 
@@ -32,7 +32,8 @@ openssowssproviders.zip
              |____ lib/openssoclientsdk.jar (complete OpenSSO clientsdk jar)
              |____ lib/openssowssproviders.jar (complete WSS Providers/Agents jar - currently supported on Glassfish / AS 9.1 only)
              |____ lib/*.jar (other jar files required for OpenSSO client and WSS Providers/Agents)
-             |____ resources/AMConfig.properties (complete OpenSSO client properties)
+             |____ config/AMConfig.properties (complete OpenSSO client properties)
+             |____ config/OpenSSOJavaPermissions.txt (Java permissions for OpenSSO)
              |____ resources/keystore.jks (client keystore file)
              |____ resources/.keypass (password file for key)
              |____ resources/.storepass (password file for keystore)
@@ -40,4 +41,5 @@ openssowssproviders.zip
              |____ README.glassfish (instructions to setup glassfish environment for WSS Providers/Agents)
              |____ license.txt
              |____ samples/glassfish/* (WSC/WSP samples using WSS Providers/Agents on Glassfish / AS 9.1 container)
-             |____ config/* (Automation Scripts to Configure the WSS Providers on Glassfish / AS 9.1 container )
+             |____ bin/wssagentadmin (installer for unix/linux)
+             |____ bin/wssagentadmin.bat (installer for Windows)

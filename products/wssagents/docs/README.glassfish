@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.glassfish,v 1.16 2008-12-22 21:59:01 mallas Exp $
+   $Id: README.glassfish,v 1.17 2009-06-12 22:11:19 huacui Exp $
 
 -->
 
@@ -44,160 +44,82 @@ This document assumes that users have already done the following:
 Follow the steps below to secure the web services using OpenSSO WSS
 providers.
 
-I. Add Java security permissions 
+I. Install WSS Agent
+Repeat the following steps on the machines where WSC and WSP are deployed:
+1. Unzip openssowssproviders.zip to a desired directory,
+   say <unzip_dir_of_openssowssproviders.zip>
 
-On the Application Server that hosts OpenSSO server (OpenSSO server),
+2. Run the installer to install the WSS Agent.
+ A. Stop the Application Server instance that the agent is to be
+    installed on.
+
+ B. On Unix/Linux machine,
+      change directory to <unzip_dir_of_openssowssproviders.zip>/bin
+      and chmod 755 wssagentadmin
+    On Windows machine,
+      change directory to <unzip_dir_of_openssowssproviders.zip>\bin
+
+ C. On Unix/Linux machine, run
+      ./wssagentadmin --install or ./wssagentadmin --custom-install
+    On Windows machine, run
+      wssagentadmin.bat --install or wssagentadmin.bat --custom-install
+   (both --install and --custom-install options install the agent,
+    however the --custom-install allows you to specify the application
+    server instance name that you want the agent to install on; the
+    --install assumes that the application server name is "server")
+
+ C. If this is the first run of the installer wssagentadmin, then it
+    asks you to read and agree the license information.
+
+ D. Installer prompts for "Application Server Config Directory Path",
+    enter the absolute path of the application server domain
+    configuration directory.
+
+ E. (only for --custom-install) Installer prompts for "name of the
+    Application Server instance", enter the application server instance
+    name.  In the case of Sun Application Server Enterprise Edition, a
+    domain can have more than one application server instances. Enter
+    the name of the application server instance that you want the agent
+    to be installed on. The default server instance name is "server".
+
+ F. Installer prompts for "URL where the OpenSSO server is running",
+    enter the OpenSSO deployemnt URL in the format of
+    protocol://host:port/deployURI.
+    The protocol is either http or https; the host is the FQDN of the
+    machine where OpenSSO server is running; the deployURI is the OpenSSO
+    deployment URI. e.g. http://opensso.sample.com:58080/opensso
+ G. Installer prompts for "Enter the Agent profile name", enter the 
+    agent profile name. This agent user needs to have the permission to
+    read the WSC and/or WSP profiles. Out of box, there is such an agent
+    user named "agentAuth". It has permission to read the default 
+    profiles "wsc", "wsp", and "SecurityTokenService".
+ H. Installer prompts for "Enter the path to the password file", create
+    a text file that contains the password of the agent profile user in
+    clear text. By default the password for agentAuth is "changeit".
+ I. This should conclude the user input process. The installer displays
+    the summary of your responses, and you can choose
+    "Continue with Installation" to start the agent installation.
+ J. Restart the Application Server instance after the installation
+    completes successfully.
+
+
+II. Add Java security permissions 
+
+On the Application Servers that host OpenSSO server (OpenSSO server),
 Web Service Client application and Web Service Provider application :
 
-If the Security Manager is "on", add the following as Java security permissions 
-to the server.policy file of the Application Server.
+If the Security Manager is "on", append the Java security permissions in
+<unzip_dir_of_openssowssproviders.zip>/config/OpenSSOJavaPermissions.txt
+to the server.policy file of the Application Server domain.
 
-Each Application Server domain has its own standard J2SE policy file named server.policy. 
-It is located in the /ApplicationServer-install/domains/<domain-name>/config directory. 
-More information can be found in The server.policy File in Sun Java System Application Server 9 .1 Developer's Guide.
+Each Application Server domain has its own standard J2SE policy file 
+named server.policy. It is located in the 
+/ApplicationServer-install/domains/<domain-name>/config directory. 
+More information can be found in The server.policy File in Sun Java 
+System Application Server 9 .1 Developer's Guide.
 
-// ADDITIONS FOR OpenSSO
-grant {
 
-permission java.net.SocketPermission "*", "listen,connect,accept,resolve";
-permission java.util.PropertyPermission "*", "read, write";
-permission java.lang.RuntimePermission "modifyThreadGroup";
-permission java.lang.RuntimePermission "setFactory";
-permission java.lang.RuntimePermission "accessClassInPackage.*";
-permission java.util.logging.LoggingPermission "control";
-permission java.lang.RuntimePermission "shutdownHooks";
-permission javax.security.auth.AuthPermission "getLoginConfiguration";
-permission javax.security.auth.AuthPermission "setLoginConfiguration";
-permission javax.security.auth.AuthPermission "modifyPrincipals";
-permission javax.security.auth.AuthPermission "modifyPrivateCredentials";
-permission javax.security.auth.PrivateCredentialPermission "com.iplanet.sso.providers.dpro.SSOTokenImpl * \"*\"","read";
-permission javax.security.auth.AuthPermission "createLoginContext.*";
-permission java.io.FilePermission "<<ALL FILES>>", "read,write,execute,delete";
-permission java.util.PropertyPermission "java.util.logging.config.class", "write";
-permission java.security.SecurityPermission "removeProvider.SUN";
-permission java.security.SecurityPermission "insertProvider.SUN";
-permission javax.security.auth.AuthPermission "doAs";
-permission java.util.PropertyPermission "java.security.krb5.realm", "write";
-permission java.util.PropertyPermission "java.security.krb5.kdc", "write";
-permission java.util.PropertyPermission "java.security.auth.login.config", "write";
-permission java.util.PropertyPermission "user.language", "write";
-permission javax.security.auth.kerberos.ServicePermission "*", "accept";
-permission javax.net.ssl.SSLPermission "setHostnameVerifier";
-permission java.security.SecurityPermission "putProviderProperty.IAIK";
-permission java.security.SecurityPermission "removeProvider.IAIK";
-permission java.security.SecurityPermission "insertProvider.IAIK";
-permission java.lang.RuntimePermission "setDefaultUncaughtExceptionHandler";
-permission javax.management.MBeanServerPermission "newMBeanServer";
-permission javax.management.MBeanPermission "*", "registerMBean";
-permission java.lang.RuntimePermission "createClassLoader";
-permission java.lang.RuntimePermission "accessDeclaredMembers";
-permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
-permission javax.security.auth.AuthPermission "getSubject";
-
-permission javax.management.MBeanTrustPermission "register";
-permission java.lang.management.ManagementPermission "monitor";
-permission javax.management.MBeanServerPermission "createMBeanServer";
-permission java.util.PropertyPermission "javax.xml.soap.MetaFactory", "write";
-permission java.util.PropertyPermission "javax.xml.soap.MessageFactory", "write";
-permission java.util.PropertyPermission "javax.xml.soap.SOAPConnectionFactory", "write";
-permission java.util.PropertyPermission "javax.xml.soap.SOAPFactory", "write";
-permission java.net.NetPermission "getProxySelector";
-permission java.security.SecurityPermission "getProperty.authconfigprovider.factory";
-permission java.security.SecurityPermission "setProperty.authconfigprovider.factory";
-permission javax.security.auth.AuthPermission "doAsPrivileged";
-permission javax.security.auth.AuthPermission "modifyPublicCredentials";
-permission java.security.SecurityPermission "insertProvider.XMLDSig";
-permission java.security.SecurityPermission "putProviderProperty.WSS_TRANSFORM";
-permission java.security.SecurityPermission "insertProvider.WSS_TRANSFORM";
-
-};
-// END OF ADDITIONS FOR OpenSSO
-   
-
-II. Unzip openssowssproviders.zip to a desired directory, 
-say <unizip_dir_of_openssowssproviders.zip>
-
-III. The automated scripts to configure the providers are located in 
-<unizip_dir_of_openssowssproviders.zip>/config directory. 
-A. To run the automated scripts, please follow the steps mentioned in README.config in 
-<unizip_dir_of_openssowssproviders.zip>/config directory
-B. To configure the providers manually, follow the steps starting from IV in this readme.
-
-IV. Modify <unizip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties as follows:
-
-# OpenSSO Server Information
-# Protocol can be either http or https
-com.iplanet.am.server.protocol=openssoserver_protocol
-com.iplanet.am.server.host=openssoserver_host
-com.iplanet.am.server.port=openssoserver_port
-com.iplanet.am.services.deploymentDescriptor=openssoserver_deploy_uri
-
-# Application username and password
-com.sun.identity.agents.app.username=agentAuth
-com.iplanet.am.service.password=changeit
-
-am.encryption.pwd=<empty or null value>
-
-com.iplanet.am.naming.url=openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/namingservice
-
-# Debug information
-com.iplanet.services.debug.level=message
-com.iplanet.services.debug.directory=/tmp/wssclient
-
-# Cookie information
-com.iplanet.am.cookie.name=iPlanetDirectoryPro
-
-# SAML xml signature keystore file, keystore password file,
-# key password file and Liberty trusted CA aliases.
-com.sun.identity.saml.xmlsig.keystore=<unizip_dir_of_openssowssproviders.zip>/resources/keystore.jks
-com.sun.identity.saml.xmlsig.storepass=<unizip_dir_of_openssowssproviders.zip>/resources/.storepass
-com.sun.identity.saml.xmlsig.keypass=<unizip_dir_of_openssowssproviders.zip>/resources/.keypass
-com.sun.identity.liberty.ws.trustedca.certaliases=test:<openssoserver_host>
-
-# Login URL and Authentication service URL for Liberty use case
-com.sun.identity.loginurl=openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/UI/Login
-com.sun.identity.liberty.authnsvc.url=openssoserver://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/Liberty/authnsvc
-
-NOTE : The directory specified as a value for DEBUG_DIR in AMConfig.properties should be different 
-than the one specified as the value for BASE_DIR (or CONFIG_DIR) in Installing OpenSSO.
-
-V. Copy files
-
-1. Copy <unizip_dir_of_openssowssproviders.zip>/lib/webservices-rt.jar to
-   /ApplicationServer-install/lib
-2. Copy <unizip_dir_of_openssowssproviders.zip>/lib/webservices-tools.jar to
-   /ApplicationServer-install/lib
-3. Copy <unizip_dir_of_openssowssproviders.zip>/lib/webservices-api.jar to
-   /ApplicationServer-install/lib/endorsed
-4. Create /ApplicationServer-install/addons/opensso directory if not already present.
-5. Copy <unizip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties to 
-   /ApplicationServer-install/addons/opensso
-6. Copy all jar files from <unizip_dir_of_openssowssproviders.zip>/lib/ directory 
-   to /ApplicationServer-install/addons/opensso
-7. Add the /ApplicationServer-install/addons/opensso/openssowssproviders.jar path in 
-   classpath suffix (global JVM settings) for Application server.
-    You can do this step (9) via Application Server's Admin Console -
-    For GF V2 : Application Server -> JVM Settings tab -> Path Settings tab
-    For AS 9.1 : Configurations -> server-config -> JVM Settings -> Path Settings tab
-
-VI. This step is required only if you are using end user authentication or Liberty security.
-   For end user authentication and liberty, JSR 196 HTTP provider is used and must need to
-   be configured in Glassfish.
-
-   1. Login into Application Server's Administration Console   
-   2. For GF V2 : Expand Configuration -> Security -> Click on Message Security -> New
-      For AS 9.1 : Expand Configurations -> server-config -> Security -> Click on Message Security -> New 
-   3. Choose Authentication layer as "HttpServlet", enter Provider Type as "Server"
-      ProviderID as "FAMHttpProvider", Class Name as
-      "com.sun.identity.wssagents.common.provider.FAMHttpAuthModule"
-   4. Save the configuration.
-   5. The stock quote client sample already has the required configuration
-     (sun-web.xml, web.xml) Essentially the client requires a J2EE constraint 
-     and the FAMHttpProvider id.      
-
-VII. Restart the SUN Application Server (Glassfish).
-
-VIII. Configure the web services client and the web services provider for Web services security.
+III. Configure the web services client and the web services provider for Web services security.
 
 1.  Login into the OpenSSO Console with user amadmin and <amadmin password>
 
@@ -223,3 +145,4 @@ VIII. Configure the web services client and the web services provider for Web se
         Save changes.
 
 2.  Logout of OpenSSO Administration console.
+
