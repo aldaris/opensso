@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.28 2009-06-12 00:02:34 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.29 2009-06-12 22:00:42 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -65,17 +65,23 @@ public class PrivilegeManagerTest {
     private static final String RESOURCE = "http://www.privilegemanagertest.*";
 
     private Privilege privilege;
-    private Subject adminSubject;
+    private SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+    private Subject adminSubject = SubjectUtils.createSubject(adminToken);
     private UserSubject ua1;
     private UserSubject ua2;
+    private boolean migrated = EntitlementConfiguration.getInstance(
+        adminSubject, "/").migratedToEntitlementService();
 
     @BeforeClass
     public void setup() 
         throws SSOException, IdRepoException, EntitlementException,
         SMSException, InstantiationException, IllegalAccessException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        adminSubject = SubjectUtils.createSubject(adminToken);
+
+        if (!migrated) {
+            return;
+        }
+        
         createApplication("/");
         OrganizationConfigManager orgMgr = new OrganizationConfigManager(
             adminToken, "/");
@@ -85,6 +91,11 @@ public class PrivilegeManagerTest {
 
     private void createApplication(String realm) throws EntitlementException,
         InstantiationException, IllegalAccessException {
+
+        if (!migrated) {
+            return;
+        }
+
         Application appl = new Application(realm, APPL_NAME,
             ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
@@ -97,8 +108,9 @@ public class PrivilegeManagerTest {
 
     @AfterClass
     public void cleanup() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+        if (!migrated) {
+            return;
+        }
 
         //Sub Realm
         PrivilegeManager prmSubReam = PrivilegeManager.getInstance(SUB_REALM,
@@ -122,6 +134,9 @@ public class PrivilegeManagerTest {
 
     @Test
     public void testResourceValidationPrivilege() throws Exception {
+        if (!migrated) {
+            return;
+        }
         Application appl = ApplicationManager.getApplication(adminSubject,
             "/", APPL_NAME);
 
@@ -143,6 +158,9 @@ public class PrivilegeManagerTest {
 
     @Test
     public void testNoSubjectInPrivilege() throws Exception {
+        if (!migrated) {
+            return;
+        }
         Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
         actionValues.put("GET", Boolean.TRUE);
         actionValues.put("POST", Boolean.FALSE);
@@ -240,8 +258,9 @@ public class PrivilegeManagerTest {
 
     @Test(dependsOnMethods = {"testAddPrivilege"})
     public void subRealmTest() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+        if (!migrated) {
+            return;
+        }
         PrivilegeManager prm = PrivilegeManager.getInstance(SUB_REALM,
             SubjectUtils.createSubject(adminToken));
 
@@ -276,9 +295,10 @@ public class PrivilegeManagerTest {
 
     @Test
     public void testAddPrivilege() throws Exception {
+        if (!migrated) {
+            return;
+        }
         privilege = createPrivilege();
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
         prm.addPrivilege(privilege);
@@ -320,6 +340,9 @@ public class PrivilegeManagerTest {
 
     @Test(dependsOnMethods = {"testAddPrivilege"})
     public void testSerializePrivilege() throws Exception {
+        if (!migrated) {
+            return;
+        }
         String serialized = privilege.toJSONObject().toString();
         Privilege p = Privilege.getInstance(new JSONObject(serialized));
         if (!p.equals(privilege)) {
@@ -330,8 +353,9 @@ public class PrivilegeManagerTest {
 
     @Test(dependsOnMethods = {"testAddPrivilege"})
     public void testListPrivilegeNames() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+        if (!migrated) {
+            return;
+        }
         PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
 
@@ -357,8 +381,9 @@ public class PrivilegeManagerTest {
 
     @Test(dependsOnMethods = {"testAddPrivilege"})
     public void testGetPrivilege() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+        if (!migrated) {
+            return;
+        }
         PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
@@ -382,8 +407,9 @@ public class PrivilegeManagerTest {
 
     @Test(dependsOnMethods = {"testAddPrivilege"})
     public void testLastModifiedDate() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+        if (!migrated) {
+            return;
+        }
         PrivilegeManager prm = PrivilegeManager.getInstance("/", 
             SubjectUtils.createSubject(adminToken));
         prm.modifyPrivilege(privilege);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferredResourcesTest.java,v 1.2 2009-06-12 00:02:34 veiming Exp $
+ * $Id: ReferredResourcesTest.java,v 1.3 2009-06-12 22:00:42 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -51,12 +51,19 @@ public class ReferredResourcesTest {
     private static final String SUB_REALM1 = "/ReferredResourcesTest1";
     private static final String SUB_REALM2 = "/ReferredResourcesTest2";
     private static final String SUB_REALM3 = "/ReferredResourcesTest3";
+    private SSOToken adminToken = (SSOToken)
+        AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+    private Subject adminSubject = SubjectUtils.createSubject(adminToken);
+    private boolean migrated = EntitlementConfiguration.getInstance(
+            adminSubject, "/").migratedToEntitlementService();;
 
     @BeforeClass
     public void setup() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        Subject adminSubject = SubjectUtils.createSubject(adminToken);
+        if (!migrated) {
+            return;
+        }
+        
         createOrgs();
         createAppl(adminSubject);
         createReferral1(adminSubject);
@@ -64,9 +71,6 @@ public class ReferredResourcesTest {
     }
 
     private void createOrgs() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-
         OrganizationConfigManager ocm = new OrganizationConfigManager(
             adminToken, "/");
         String subRealm = SUB_REALM1.substring(1);
@@ -132,6 +136,9 @@ public class ReferredResourcesTest {
 
     @AfterClass
     public void cleanup() throws Exception {
+        if (!migrated) {
+            return;
+        }
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         Subject adminSubject = SubjectUtils.createSubject(adminToken);
@@ -154,6 +161,9 @@ public class ReferredResourcesTest {
 
     @Test
     public void test() throws EntitlementException, Exception {
+        if (!migrated) {
+            return;
+        }
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         Subject adminSubject = SubjectUtils.createSubject(adminToken);

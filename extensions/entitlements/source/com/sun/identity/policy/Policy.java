@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Policy.java,v 1.9 2009-06-10 20:48:19 veiming Exp $
+ * $Id: Policy.java,v 1.10 2009-06-12 22:00:41 veiming Exp $
  *
  */
 
@@ -42,13 +42,9 @@ import org.w3c.dom.*;
 import com.iplanet.sso.*;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.Cache;
-import com.sun.identity.entitlement.EntitlementConfiguration;
-import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.policy.plugins.OrgReferral;
-import com.sun.identity.security.AdminTokenAction;
-import java.security.AccessController;
 
 /**
  * The class <code>Policy</code> represents a policy definition.
@@ -595,10 +591,6 @@ public class Policy implements Cloneable {
                 PolicyException.RULE));
         }
 
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance()); //TODO
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            SubjectUtils.createSubject(adminToken), "/");
         rules.put(rule.getName(), rule);
     }
 

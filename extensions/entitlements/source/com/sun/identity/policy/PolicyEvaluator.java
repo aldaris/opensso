@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.9 2009-06-09 05:29:16 arviranga Exp $
+ * $Id: PolicyEvaluator.java,v 1.10 2009-06-12 22:00:41 veiming Exp $
  *
  */
 
@@ -48,6 +48,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenListener;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.entitlement.Entitlement;
+import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Evaluator;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
@@ -267,7 +268,7 @@ public class PolicyEvaluator {
      */
      static final String SERVICE_TYPE_NAME = "serviceTypeName";
 
-     static Object lock = new Object();
+     static final Object lock = new Object();
 
     /**
      * Constructor to create a <code>PolicyEvaluator</code> given the <code>
@@ -449,11 +450,79 @@ public class PolicyEvaluator {
      * @supported.api
      */
     public boolean isAllowed(SSOToken token, String resourceName,
+        String actionName, Map envParameters) throws SSOException,
+        PolicyException {
+        if (PolicyManager.migratedToEntitlementService) {
+            return isAllowedE(token, resourceName, actionName, envParameters);
+        }
+        return isAllowedO(token, resourceName, actionName, envParameters);
+    }
+
+    public boolean isAllowedO(SSOToken token, String resourceName,
             String actionName, Map envParameters) throws SSOException,
             PolicyException {
 
-        String falseValue = getActionFalseBooleanValue(actionName);
-        String trueValue = getActionTrueBooleanValue(actionName);
+        ActionSchema schema = serviceType.getActionSchema(actionName);
+
+        // Cache the false values for the action names
+        if (booleanActionNameFalseValues == null) {
+            booleanActionNameFalseValues = new HashMap(10);
+        }
+        String falseValue = null;
+        if ((falseValue = (String)
+                booleanActionNameFalseValues.get(actionName)) == null) {
+            falseValue = schema.getFalseValue();
+            // Add it to the cache
+            booleanActionNameFalseValues.put(actionName, falseValue);
+        }
+
+
+        // Cache the true values for the action names
+        if (booleanActionNameTrueValues == null) {
+            booleanActionNameTrueValues = new HashMap(10);
+        }
+
+        String trueValue = null;
+        if ((trueValue = (String)
+                booleanActionNameTrueValues.get(actionName)) == null) {
+            trueValue = schema.getTrueValue();
+            // Add it to the cache
+            booleanActionNameTrueValues.put(actionName, trueValue);
+        }
+
+        if (!AttributeSchema.Syntax.BOOLEAN.equals(schema.getSyntax())) {
+            String objs[] = {actionName};
+            throw new PolicyException(
+                    ResBundleUtils.rbName,
+                    "action_does_not_have_boolean_syntax", objs, null);
+        }
+
+        boolean actionAllowed = false;
+        HashSet actionNames = new HashSet(2);
+        actionNames.add(actionName);
+        PolicyDecision policyDecision = getPolicyDecision(token, resourceName,
+                                   actionNames, envParameters);
+        ActionDecision actionDecision =
+                (ActionDecision) policyDecision.getActionDecisions()
+                .get(actionName);
+
+        if ( actionDecision != null ) {
+            Set set = (Set) actionDecision.getValues();
+            if ( (set != null) ) {
+                if ( set.contains(falseValue) ) {
+                    actionAllowed = false;
+                } else if ( set.contains(trueValue) ) {
+                    actionAllowed = true;
+                }
+            }
+        }
+
+        return actionAllowed;
+    }
+
+    private boolean isAllowedE(SSOToken token, String resourceName,
+        String actionName, Map envParameters) throws SSOException,
+        PolicyException {
         ActionSchema schema = serviceType.getActionSchema(actionName);
         
         if (!AttributeSchema.Syntax.BOOLEAN.equals(schema.getSyntax())) {
@@ -1158,6 +1227,41 @@ public class PolicyEvaluator {
     public Set getResourceResults(SSOToken token, 
             String resourceName, String scope, Map envParameters) 
             throws SSOException, PolicyException {
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            SubjectUtils.createSubject(token), realm);
+        return (ec.migratedToEntitlementService()) ?
+            getResourceResultsE(token, resourceName, scope, envParameters) :
+            getResourceResultsO(token, resourceName, scope, envParameters);
+    }
+    
+    private Set getResourceResultsO(SSOToken token,
+            String resourceName, String scope, Map envParameters)
+            throws SSOException, PolicyException {
+        Set resultsSet;
+
+        if (ResourceResult.SUBTREE_SCOPE.equals(scope)) {
+            resultsSet = getResourceResultTree(token, resourceName, scope,
+                                         envParameters).getResourceResults();
+        } else if (ResourceResult.STRICT_SUBTREE_SCOPE.equals(scope)
+                   || ResourceResult.SELF_SCOPE.equals(scope)) {
+            ResourceResult result = getResourceResultTree(token, resourceName,
+                                         scope, envParameters);
+            resultsSet = new HashSet();
+            resultsSet.add(result);
+        } else {
+            DEBUG.error("PolicyEvaluator: invalid request scope: " + scope);
+            String objs[] = {scope};
+            throw new PolicyException(ResBundleUtils.rbName,
+                "invalid_request_scope", objs, null);
+        }
+
+        return resultsSet;
+    }
+
+    private Set getResourceResultsE(SSOToken token,
+            String resourceName, String scope, Map envParameters)
+            throws SSOException, PolicyException {
+
         Set resultsSet;
         boolean subTreeSearch = false;
 

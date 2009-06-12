@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestGroupEvaluator.java,v 1.1 2009-05-27 23:07:14 hengming Exp $
+ * $Id: TestGroupEvaluator.java,v 1.2 2009-06-12 22:00:42 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -58,15 +58,22 @@ public class TestGroupEvaluator {
     private static final String GROUP1_NAME = "privilegeEvalTestGroup1";
     private static final String URL1 = "http://www.testevaluator.com:80/private";
 
+    private SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+    private Subject adminSubject = SubjectUtils.createSubject(adminToken);
+    private boolean migrated = EntitlementConfiguration.getInstance(
+        adminSubject, "/").migratedToEntitlementService();
+
     private AMIdentity user1;
     private AMIdentity group1;
-    private Subject adminSubject;
+    
 
     @BeforeClass
     public void setup() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        adminSubject = SubjectUtils.createSubject(adminToken);
+        if (!migrated) {
+            return;
+        }
+        
         Application appl = new Application("/", APPL_NAME,
             ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
@@ -93,8 +100,9 @@ public class TestGroupEvaluator {
 
     @AfterClass
     public void cleanup() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+        if (!migrated) {
+            return;
+        }
         PrivilegeManager pm = new PolicyPrivilegeManager();
         pm.initialize("/", SubjectUtils.createSubject(adminToken));
         pm.removePrivilege(PRIVILEGE1_NAME);
@@ -112,6 +120,9 @@ public class TestGroupEvaluator {
     @Test
     public void postiveTest()
         throws Exception {
+        if (!migrated) {
+            return;
+        }
         if (!evaluate(URL1)) {
             throw new Exception("TestEvaluator.postiveTest failed");
         }
@@ -122,8 +133,6 @@ public class TestGroupEvaluator {
         Subject subject = createSubject(user1.getUniversalId());
         Set actions = new HashSet();
         actions.add("GET");
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
         Evaluator evaluator = new Evaluator(
             SubjectUtils.createSubject(adminToken),
             APPL_NAME);
@@ -134,8 +143,6 @@ public class TestGroupEvaluator {
     
     private AMIdentity createUser(String name)
         throws SSOException, IdRepoException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
         AMIdentityRepository amir = new AMIdentityRepository(
             adminToken, "/");
         Map<String, Set<String>> attrValues =new HashMap<String, Set<String>>();
@@ -150,8 +157,6 @@ public class TestGroupEvaluator {
 
     private AMIdentity createGroup(String name)
         throws SSOException, IdRepoException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
         AMIdentityRepository amir = new AMIdentityRepository(
             adminToken, "/");
         Map<String, Set<String>> attrValues =new HashMap<String, Set<String>>();
@@ -161,7 +166,7 @@ public class TestGroupEvaluator {
         return amir.createIdentity(IdType.GROUP, name, attrValues);
     }
 
-    public static Subject createSubject(String uuid) {
+    private static Subject createSubject(String uuid) {
         Set<Principal> userPrincipals = new HashSet<Principal>(2);
         userPrincipals.add(new AuthSPrincipal(uuid));
         return new Subject(false, userPrincipals, new HashSet(),

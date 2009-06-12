@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.16 2009-06-10 17:49:27 veiming Exp $
+ * $Id: PolicyManager.java,v 1.17 2009-06-12 22:00:41 veiming Exp $
  *
  */
 
@@ -33,12 +33,14 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.ldap.util.DN;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -56,6 +58,7 @@ import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.ByteArrayInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.AccessController;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -179,6 +182,17 @@ public final class PolicyManager {
     // Can be shared by classes
     static Debug debug = Debug.getInstance(POLICY_DEBUG_NAME);
     static DN delegationRealm = new DN(DNMapper.orgNameToDN(DELEGATION_REALM));
+    static boolean migratedToEntitlementService = false;
+
+    static {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            SubjectUtils.createSubject(adminToken), "/");
+        migratedToEntitlementService = ec.migratedToEntitlementService();
+    }
+
+
 
     /**
      * Constructor for <code>PolicyManager</code> for the
@@ -451,7 +465,6 @@ public final class PolicyManager {
         // Check the cache %%% Need to have notification for policy changes
         Policy answer = null;
 
-
         try {
             ServiceConfig oConfig = scm.getOrganizationConfig(org, null);
             ServiceConfig namedPolicy = (oConfig == null) ? null :
@@ -594,9 +607,17 @@ public final class PolicyManager {
             //create the policy entry
             namedPolicy.addSubConfig(policy.getName(),
                 NAMED_POLICY_ID, 0, attrs);
-            PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                SubjectUtils.createSubject(token), realmName);
-            pis.add(PrivilegeUtils.policyToPrivileges(policy));
+            EntitlementConfiguration ec =EntitlementConfiguration.getInstance(
+                SubjectUtils.createSubject(token), "/");
+            if (ec.migratedToEntitlementService()) {
+                PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+                    SubjectUtils.createSubject(token), realmName);
+                pis.add(PrivilegeUtils.policyToPrivileges(policy));
+            } else {
+                // do the addition in resources tree
+                //rm.addPolicyToResourceTree(policy);
+                rim.addPolicyToResourceTree(svtm, token, policy);
+            }
         } catch (EntitlementException e) {
             String[] objs = { policy.getName(), org };
             throw (new PolicyException(ResBundleUtils.rbName, 
@@ -731,10 +752,23 @@ public final class PolicyManager {
                 validateReferrals(policy);
                 policyEntry.setAttributes(attrs);
                 if (oldPolicy != null) {
-                    PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                        SubjectUtils.createSubject(token), realm);
-                    pis.delete(PrivilegeUtils.policyToPrivileges(oldPolicy));
-                    pis.add(PrivilegeUtils.policyToPrivileges(policy));
+                    javax.security.auth.Subject adminSubject =
+                        SubjectUtils.createSubject(token);
+                    EntitlementConfiguration ec =
+                        EntitlementConfiguration.getInstance(adminSubject,
+                        "/");
+
+                    if (ec.migratedToEntitlementService()) {
+                        PrivilegeIndexStore pis = PrivilegeIndexStore.
+                            getInstance(adminSubject, realm);
+                        pis.delete(PrivilegeUtils.policyToPrivileges(
+                            oldPolicy));
+                        pis.add(PrivilegeUtils.policyToPrivileges(policy));
+                    } else {
+                        //rm.replacePolicyInResourceTree(oldPolicy, policy);
+                        rim.replacePolicyInResourceTree(svtm, token, oldPolicy,
+                            policy);
+                    }
                 }
             }
         } catch (EntitlementException e) {
@@ -803,11 +837,21 @@ public final class PolicyManager {
                 // do the removal of policy 
                 namedPolicy.removeSubConfig(policyName);
 
-                // do the removal in resources tree
                 if (policy != null) {
-                    PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                        SubjectUtils.createSubject(token), getOrganizationDN());
-                    pis.delete(PrivilegeUtils.policyToPrivileges(policy));
+                    EntitlementConfiguration ec =
+                        EntitlementConfiguration.getInstance(
+                        SubjectUtils.createSubject(token), "/");
+                    if (ec.migratedToEntitlementService()) {
+                        PrivilegeIndexStore pis = PrivilegeIndexStore.
+                            getInstance(
+                            SubjectUtils.createSubject(token),
+                            getOrganizationDN());
+                        pis.delete(PrivilegeUtils.policyToPrivileges(policy));
+                    } else {
+                        // do the removal in resources tree
+                        rim.removePolicyFromResourceTree(svtm, token, policy);
+
+                    }
                 }
             }
         } catch (EntitlementException e) {

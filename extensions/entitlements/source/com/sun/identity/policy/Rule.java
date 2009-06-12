@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.13 2009-05-26 21:20:07 veiming Exp $
+ * $Id: Rule.java,v 1.14 2009-06-12 22:00:42 veiming Exp $
  *
  */
 package com.sun.identity.policy;
@@ -33,11 +33,6 @@ import org.w3c.dom.*;
 
 import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.sun.identity.entitlement.EntitlementConfiguration;
-import com.sun.identity.entitlement.opensso.SubjectUtils;
-import com.sun.identity.security.AdminTokenAction;
-import java.security.AccessController;
 
 /**
  * The class <code>Rule</code> provides interfaces to manage
@@ -160,20 +155,22 @@ public class Rule extends Object implements Cloneable {
             ("rule" + ServiceTypeManager.generateRandomName());
         this.resourceNames = new HashSet<String>();
 
-        if ((resourceName == null) || (resourceName == "")) {
+        if ((resourceName == null) || (resourceName.length() == 0)) {
             resourceNames.add(EMPTY_RESOURCE_NAME);
         } else {
             resourceName = resourceName.trim();
 
-            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-
-            EntitlementConfiguration ec =
-                EntitlementConfiguration.getInstance(
-                SubjectUtils.createSubject(adminToken), "/");
-            if (ec.hasEntitlementDITs()) {
+            if (PolicyManager.migratedToEntitlementService) {
                 resourceNames.add(resourceName);
             } else {
+                // Check the service type name
+                checkAndSetServiceType(serviceName);
+                this.serviceTypeName = serviceName;
+                
+                // Verify the action names
+                serviceType.validateActionValues(actions);
+                this.actions = new HashMap(actions);
+
                 try {
                     resourceNames.add(serviceType.canonicalize(resourceName));
                 } catch (PolicyException pe) {
@@ -257,19 +254,14 @@ public class Rule extends Object implements Cloneable {
                 applicationNameNode, PolicyManager.NAME_ATTRIBUTE);
         }
 
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            SubjectUtils.createSubject(adminToken), "/");
-        boolean entitlementDIT = ec.hasEntitlementDITs();
-
         resourceNames = new HashSet<String>();
         resourceNames.addAll(getResources(ruleNode,
-            PolicyManager.POLICY_RULE_RESOURCE_NODE, entitlementDIT));
+            PolicyManager.POLICY_RULE_RESOURCE_NODE,
+                PolicyManager.migratedToEntitlementService));
         
         Set<String> excludeResources = getResources(ruleNode,
-            PolicyManager.POLICY_RULE_EXCLUDED_RESOURCE_NODE, entitlementDIT);
+            PolicyManager.POLICY_RULE_EXCLUDED_RESOURCE_NODE,
+                PolicyManager.migratedToEntitlementService);
         if (excludeResources != null) {
             excludedResourceNames = new HashSet<String>();
             excludedResourceNames.addAll(excludeResources);
@@ -307,7 +299,7 @@ public class Rule extends Object implements Cloneable {
     private Set<String> getResources(
         Node ruleNode,
         String childNodeName,
-        boolean entitlementDIT
+        boolean migratedToEntitlementService
     ) throws InvalidNameException {
         Set<String> container = null;
         Set children = XMLUtils.getChildNodes(ruleNode, childNodeName);
@@ -320,7 +312,7 @@ public class Rule extends Object implements Cloneable {
                     resourceNode, PolicyManager.NAME_ATTRIBUTE);
                 if (resourceName != null) {
                     resourceName = resourceName.trim();
-                    if (!entitlementDIT) {
+                    if (!migratedToEntitlementService) {
                         try {
                             resourceName = serviceType.canonicalize(
                                 resourceName);
@@ -534,6 +526,7 @@ public class Rule extends Object implements Cloneable {
      * @return <code>true</code> if the service type, resource, actions
      * and action values match, <code>false</code> otherwise.
      */
+    @Override
     public boolean equals(Object obj) {
         boolean matched = true;
         if (obj == null || !(obj instanceof Rule)) {
@@ -736,6 +729,7 @@ public class Rule extends Object implements Cloneable {
      *
      * @return xml string representation of the rule
      */
+    @Override
     public String toString() {
         return (toXML());
     }
@@ -751,6 +745,7 @@ public class Rule extends Object implements Cloneable {
      *
      * @return a copy of this object
      */
+    @Override
     public Object clone() {
         Rule answer = null;
         try {
@@ -805,7 +800,6 @@ public class Rule extends Object implements Cloneable {
     Map getActionValues(String resourceType, String resourceName,
             Set actionNames) throws NameNotFoundException {
         Map actionValues = null;
-        String serviceTypeName = getServiceTypeName();
         if ((serviceTypeName.equalsIgnoreCase(resourceType)) && (actionNames != null)) {
             ResourceMatch rm = isResourceMatch(resourceType, resourceName);
             if (ResourceMatch.EXACT_MATCH.equals(rm) || ResourceMatch.WILDCARD_MATCH.equals(rm)) {
