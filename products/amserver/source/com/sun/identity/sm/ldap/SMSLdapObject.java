@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.24 2009-04-02 19:41:01 veiming Exp $
+ * $Id: SMSLdapObject.java,v 1.25 2009-06-12 18:22:49 hengming Exp $
  *
  */
 
@@ -894,6 +894,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 synchronized (entriesPresent) {
                     Iterator items = entriesPresent.iterator();
                     if (items.hasNext()) {
+                        items.next();
                         items.remove();
                     }
                 }
@@ -905,6 +906,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 synchronized (entriesNotPresent) {
                     Iterator items = entriesNotPresent.iterator();
                     if (items.hasNext()) {
+                        items.next();
                         items.remove();
                     }
                 }

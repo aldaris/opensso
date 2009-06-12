@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: SMSEmbeddedLdapObject.java,v 1.1 2009-05-13 21:27:25 hengming Exp $
+* $Id: SMSEmbeddedLdapObject.java,v 1.2 2009-06-12 18:22:49 hengming Exp $
 */
 package com.sun.identity.sm.ldap;
 
@@ -601,6 +601,7 @@ public class SMSEmbeddedLdapObject extends SMSObjectDB
                 synchronized (entriesPresent) {
                     Iterator items = entriesPresent.iterator();
                     if (items.hasNext()) {
+                        items.next();
                         items.remove();
                     }
                 }
@@ -612,6 +613,7 @@ public class SMSEmbeddedLdapObject extends SMSObjectDB
                 synchronized (entriesNotPresent) {
                     Iterator items = entriesNotPresent.iterator();
                     if (items.hasNext()) {
+                        items.next();
                         items.remove();
                     }
                 }
