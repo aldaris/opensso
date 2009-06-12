@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.50 2009-06-09 05:11:17 mallas Exp $
+ * $Id: IDPSSOUtil.java,v 1.51 2009-06-12 22:21:40 mallas Exp $
  *
  */
 
@@ -38,6 +38,7 @@ import com.sun.identity.cot.COTException;
 import com.sun.identity.multiprotocol.MultiProtocolUtils;
 import com.sun.identity.multiprotocol.SingleLogoutManager;
 import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.Assertion;
 import com.sun.identity.saml2.assertion.AssertionFactory;
@@ -276,7 +277,7 @@ public class IDPSSOUtil {
             } catch (IOException ioe) {
                 SAML2Utils.debug.error(classMethod +
                     "Unable to redirect to authentication.", ioe);
-                SAML2Utils.sendError(request, response, 
+                SAMLUtils.sendError(request, response, 
                     response.SC_INTERNAL_SERVER_ERROR,
                     "UnableToRedirectToAuth",
                     SAML2Utils.bundle.getString("UnableToRedirectToAuth"));
@@ -2019,7 +2020,7 @@ public class IDPSSOUtil {
             String[] data = { idpEntityID };
             LogUtil.error(Level.INFO,
                 LogUtil.CANNOT_CREATE_ARTIFACT, data, session, props);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR, "errorCreateArtifact",
                 SAML2Utils.bundle.getString("errorCreateArtifact"));
             return;
@@ -2141,7 +2142,7 @@ public class IDPSSOUtil {
             String[] data = { idpEntityID, realm, acsURL };
             LogUtil.error(Level.INFO, LogUtil.SEND_ECP_RESPONSE_FAILED, data,
                 null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                 "failedToSendECPResponse", ex.getMessage());
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.21 2009-05-14 17:23:45 exu Exp $
+ * $Id: IDPSSOFederate.java,v 1.22 2009-06-12 22:21:40 mallas Exp $
  *
  */
 
@@ -55,6 +55,7 @@ import com.sun.identity.saml2.protocol.NameIDPolicy;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.protocol.Scoping;
+import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -774,7 +775,7 @@ public class IDPSSOFederate {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
         } else {
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR, rbKey,
                 SAML2Utils.bundle.getString(rbKey));
         }

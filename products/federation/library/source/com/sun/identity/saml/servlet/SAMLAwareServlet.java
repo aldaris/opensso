@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLAwareServlet.java,v 1.4 2008-06-25 05:47:38 qcheng Exp $
+ * $Id: SAMLAwareServlet.java,v 1.5 2009-06-12 22:21:39 mallas Exp $
  *
  */
 
@@ -81,8 +81,10 @@ public class SAMLAwareServlet extends HttpServlet {
             String[] data = {SAMLUtils.bundle.getString("nullInputParameter")};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.NULL_PARAMETER, data);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-            SAMLUtils.bundle.getString("nullInputParameter"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "nullInputParameter",
+                SAMLUtils.bundle.getString("nullInputParameter"));
             return;
         }
         // avoid dos attack
@@ -96,8 +98,10 @@ public class SAMLAwareServlet extends HttpServlet {
             String[] data = {SAMLUtils.bundle.getString("missingTargetSite")};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.MISSING_TARGET, data);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-            SAMLUtils.bundle.getString("invalidConfig"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "invalidConfig",
+                SAMLUtils.bundle.getString("invalidConfig"));
             return;
         }
         response.setContentType("text/html; charset=UTF-8");
@@ -184,8 +188,10 @@ public class SAMLAwareServlet extends HttpServlet {
                 SAMLUtils.debug.error("SAMLAwareServlet:IntersiteTransfer:" +
                 "Failed to get host name of target URL.");
             }
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-            SAMLUtils.bundle.getString("missingTargetHost"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "missingTargetHost",
+                SAMLUtils.bundle.getString("missingTargetHost"));
             return;
         }
         if (SAMLUtils.debug.messageEnabled()) {
@@ -197,8 +203,10 @@ public class SAMLAwareServlet extends HttpServlet {
         Set trustedserver = (Set) SAMLServiceManager.
         getAttribute(SAMLConstants.TRUSTED_SERVER_LIST);
         if (trustedserver == null) {
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-            SAMLUtils.bundle.getString("nullTrustedSite"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "nullTrustedSite",
+                SAMLUtils.bundle.getString("nullTrustedSite"));
             return;
         }
         Iterator iter = trustedserver.iterator();
@@ -255,8 +263,10 @@ public class SAMLAwareServlet extends HttpServlet {
             } catch (SAMLException se) {
                 SAMLUtils.debug.error("IntersiteTransfer:Failed to create" +
                 " AssertionArtifact(s)");
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                se.getMessage());
+                SAMLUtils.sendError(request, response,
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "errorCreateArtifact",
+                    se.getMessage());;
                 return;
             }
             
@@ -292,9 +302,10 @@ public class SAMLAwareServlet extends HttpServlet {
                 target};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.TARGET_FORBIDDEN, data);
-            response.sendError(response.SC_FORBIDDEN,
-            SAMLUtils.bundle.getString("targetForbidden") +
-            " " + target);
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_FORBIDDEN,
+                "targetForbidden",
+                SAMLUtils.bundle.getString("targetForbidden") + " " + target);
             return;
         }
     }
@@ -336,8 +347,10 @@ public class SAMLAwareServlet extends HttpServlet {
                 "failedCreateSSOToken")};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.FAILED_TO_CREATE_SSO_TOKEN, data);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-            SAMLUtils.bundle.getString("failedCreateSSOToken"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "failedCreateSSOToken",
+                SAMLUtils.bundle.getString("failedCreateSSOToken"));
             return;
         }
         

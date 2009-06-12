@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLSOAPReceiver.java,v 1.2 2008-06-25 05:47:38 qcheng Exp $
+ * $Id: SAMLSOAPReceiver.java,v 1.3 2009-06-12 22:21:39 mallas Exp $
  *
  */
 
@@ -86,6 +86,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPConstants;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -250,7 +252,16 @@ public class SAMLSOAPReceiver extends HttpServlet {
                 remoteAddr};
             LogUtils.error(java.util.logging.Level.INFO, 
                 LogUtils.UNTRUSTED_SITE, data);
-            resp.sendError(resp.SC_FORBIDDEN);
+            SOAPMessage faultReply = FormSOAPError(
+                resp, "Server", "untrustedSite", null);
+            SAMLUtils.setMimeHeaders(faultReply.getMimeHeaders(), resp);
+            ServletOutputStream sOutputStream = resp.getOutputStream();
+            try {
+                faultReply.writeTo(sOutputStream);
+            } catch (SOAPException se) {
+                throw new ServletException(se);
+            }
+            sOutputStream.flush();
         }
     }
 
@@ -923,7 +934,9 @@ public class SAMLSOAPReceiver extends HttpServlet {
             envelope = msg.getSOAPPart().getEnvelope();
             body = envelope.getBody();
             sf = body.addFault();
-            sf.setFaultCode(faultCode);
+            Name qName = envelope.createName(faultCode,null,
+                            SOAPConstants.URI_NS_SOAP_ENVELOPE);
+            sf.setFaultCode(qName);
             sf.setFaultString(SAMLUtils.bundle.getString(faultString));
             if ((detail != null) && !(detail.length() == 0)) {
                 Detail det = sf.addDetail();

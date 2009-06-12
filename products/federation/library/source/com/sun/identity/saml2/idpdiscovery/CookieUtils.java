@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieUtils.java,v 1.7 2009-03-26 19:41:29 madan_ranganath Exp $
+ * $Id: CookieUtils.java,v 1.8 2009-06-12 22:21:40 mallas Exp $
  *
  */
 
@@ -335,7 +335,7 @@ public class CookieUtils {
         String errorCode, String errorMsg) {
         if (!idpDiscoveryOnlyWar) {
             // hosted with server, use server method
-            com.sun.identity.saml2.common.SAML2Utils.sendError(
+            com.sun.identity.saml.common.SAMLUtils.sendError(
                 request, response, httpStatusCode, errorCode, errorMsg);
         } else {
             // IDP discovery only WAR

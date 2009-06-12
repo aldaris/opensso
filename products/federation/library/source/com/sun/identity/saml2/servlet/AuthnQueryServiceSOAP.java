@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnQueryServiceSOAP.java,v 1.4 2009-03-03 01:52:54 qcheng Exp $
+ * $Id: AuthnQueryServiceSOAP.java,v 1.5 2009-06-12 22:21:41 mallas Exp $
  *
  */
 
@@ -90,7 +90,7 @@ public class AuthnQueryServiceSOAP extends HttpServlet {
         } catch (Exception ex) {
             SAML2Utils.debug.error(
                 "AuthnQueryServiceSOAP.doGetPost:",  ex);
-            SAML2Utils.sendError(req, resp, 
+            SAMLUtils.sendError(req, resp, 
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                 "failedToCreateAttributeQuery", ex.getMessage());
             return;
@@ -111,7 +111,7 @@ public class AuthnQueryServiceSOAP extends HttpServlet {
             realm = SAML2MetaUtils.getRealmByMetaAlias(authnAuthorityMetaAlias);
         } catch (SAML2Exception sme) {
             SAML2Utils.debug.error("AuthnQueryServiceSOAP.doGetPost", sme);
-            SAML2Utils.sendError(req, resp, 
+            SAMLUtils.sendError(req, resp, 
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                 "invalidMetaAlias", sme.getMessage());
             return;
@@ -141,7 +141,7 @@ public class AuthnQueryServiceSOAP extends HttpServlet {
             os.flush();
         } catch (SOAPException soap) {
             SAML2Utils.debug.error("AuthnQueryServiceSOAP.doGetPost", soap);
-            SAML2Utils.sendError(req, resp, 
+            SAMLUtils.sendError(req, resp, 
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                 "soapError", soap.getMessage());
         }

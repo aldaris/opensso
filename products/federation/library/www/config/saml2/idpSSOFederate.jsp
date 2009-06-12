@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSSOFederate.jsp,v 1.3 2009-03-03 01:54:07 qcheng Exp $
+   $Id: idpSSOFederate.jsp,v 1.4 2009-06-12 22:21:42 mallas Exp $
 
 --%>
 
@@ -34,6 +34,7 @@
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
+<%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
 <%@ page import="com.sun.identity.saml2.profile.IDPSSOUtil" %>
 <%@ page import="com.sun.identity.saml2.profile.IDPSSOFederate" %>
 
@@ -44,7 +45,7 @@
 <%
     // check request, response
     if ((request == null) || (response == null)) {
-	SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+	SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
 	    "nullInput", SAML2Utils.bundle.getString("nullInput"));
 	return;
     }
@@ -60,7 +61,7 @@
         }
     } catch (SAML2Exception sse) {
         SAML2Utils.debug.error("Error processing request " , sse);
-        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+        SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
             "requestProcessingError",
             SAML2Utils.bundle.getString("requestProcessingError") + " " +
             sse.getMessage());

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDMappingServiceSOAP.java,v 1.4 2009-03-03 01:52:56 qcheng Exp $
+ * $Id: NameIDMappingServiceSOAP.java,v 1.5 2009-06-12 22:21:41 mallas Exp $
  *
  */
 
@@ -119,12 +119,12 @@ public class NameIDMappingServiceSOAP extends HttpServlet {
             }
         } catch (SAML2Exception ex) {
             SAML2Utils.debug.error("NameIDMappingServiceSOAP", ex);
-            SAML2Utils.sendError(req, resp, 
+            SAMLUtils.sendError(req, resp, 
                  HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                  "nameIDMappingFailed", ex.getMessage());
         } catch (SOAPException soap) {
             SAML2Utils.debug.error("NameIDMappingServiceSOAP", soap);
-            SAML2Utils.sendError(req, resp, 
+            SAMLUtils.sendError(req, resp, 
                  HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                  "nameIDMappingFailed", soap.getMessage());
         }

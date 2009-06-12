@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saml2error.jsp,v 1.1 2009-03-03 01:54:11 qcheng Exp $
+   $Id: saml2error.jsp,v 1.2 2009-06-12 22:21:42 mallas Exp $
 
 --%><%--
    This is the default error display page.
@@ -99,14 +99,31 @@
      * invalidRequestUri
      * noRedirectionURL
      * readerServiceFailed
+     Here is the list of error codes for SAML v1.x:
+     * untrustedSite
+     * nullInputParameter
+     * invalidConfig
+     * missingTargetHost
+     * nullTrustedSite
+     * errorCreateArtifact
+     * targetForbidden
+     * failedCreateSSOToken
+     * missingTargetSite
+     * couldNotCreateResponse
+     * errorSigningResponse
+     * errorEncodeResponse
+     * missingSAMLResponse
+     * errorDecodeResponse
+     * errorObtainResponse
+     * invalidResponse
 --%><%@ page language="java" 
-        import="com.sun.identity.saml2.common.SAML2Constants,
+        import="com.sun.identity.saml.common.SAMLConstants,                
                 com.sun.identity.saml2.common.SAML2Utils"
 %><%
-    String errorCode = request.getParameter(SAML2Constants.ERROR_CODE);
+    String errorCode = request.getParameter(SAMLConstants.ERROR_CODE);
     String httpStatusCode = 
-        request.getParameter(SAML2Constants.HTTP_STATUS_CODE);
-    String errorMessage = request.getParameter(SAML2Constants.ERROR_MESSAGE);
+        request.getParameter(SAMLConstants.HTTP_STATUS_CODE);
+    String errorMessage = request.getParameter(SAMLConstants.ERROR_MESSAGE);
     if (((errorMessage == null) || (errorMessage.length() == 0)) &&
         (errorCode != null)) {
         errorMessage = SAML2Utils.bundle.getString(errorCode);

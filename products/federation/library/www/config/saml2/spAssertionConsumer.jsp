@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spAssertionConsumer.jsp,v 1.12 2009-03-03 01:54:12 qcheng Exp $
+   $Id: spAssertionConsumer.jsp,v 1.13 2009-06-12 22:21:42 mallas Exp $
 
 --%>
 
@@ -89,7 +89,7 @@ com.sun.identity.plugin.session.SessionException
 <%
     // check request, response, content length
     if ((request == null) || (response == null)) {
-        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+        SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
             "nullInput", SAML2Utils.bundle.getString("nullInput"));
         return;
     }
@@ -98,7 +98,7 @@ com.sun.identity.plugin.session.SessionException
     try {
         SAMLUtils.checkHTTPContentLength(request);
     } catch (ServletException se) {
-        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST, 
+        SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST, 
             "largeContentLength", se.getMessage());
         return;
     }
@@ -113,7 +113,7 @@ com.sun.identity.plugin.session.SessionException
     SAML2MetaManager metaManager = SAML2Utils.getSAML2MetaManager();
     if (metaManager == null) {
         // logging?
-        SAML2Utils.sendError(request, response, 
+        SAMLUtils.sendError(request, response, 
             response.SC_INTERNAL_SERVER_ERROR, "errorMetaManager",
             SAML2Utils.bundle.getString("errorMetaManager"));
         return;
@@ -123,14 +123,14 @@ com.sun.identity.plugin.session.SessionException
         hostEntityId = metaManager.getEntityByMetaAlias(metaAlias);
     } catch (SAML2MetaException sme) {
         // logging?
-        SAML2Utils.sendError(request, response, 
+        SAMLUtils.sendError(request, response, 
             response.SC_INTERNAL_SERVER_ERROR, "metaDataError", 
             SAML2Utils.bundle.getString("metaDataError"));
         return;
     }
     if (hostEntityId == null) {
         // logging?
-        SAML2Utils.sendError(request, response, 
+        SAMLUtils.sendError(request, response, 
             response.SC_INTERNAL_SERVER_ERROR, "metaDataError",
             SAML2Utils.bundle.getString("metaDataError"));
         return;
@@ -147,7 +147,7 @@ com.sun.identity.plugin.session.SessionException
     try {
         sessionProvider = SessionManager.getProvider();
     } catch (SessionException se) {
-        SAML2Utils.sendError(request, response, 
+        SAMLUtils.sendError(request, response, 
             response.SC_INTERNAL_SERVER_ERROR, "nullSessionProvider",
             se.getMessage());
         return;
@@ -203,7 +203,7 @@ com.sun.identity.plugin.session.SessionException
                 requestURL, relayState));
             return;
         }
-        SAML2Utils.sendError(request, response, 
+        SAMLUtils.sendError(request, response, 
             response.SC_INTERNAL_SERVER_ERROR, "SSOFailed",
             SAML2Utils.bundle.getString("SSOFailed"));
         return;
@@ -214,7 +214,7 @@ com.sun.identity.plugin.session.SessionException
             SAML2Utils.debug.message("spAssertionConsumer.jsp:Login has "
                 + "failed!!");
         }
-        SAML2Utils.sendError(request, response, 
+        SAMLUtils.sendError(request, response, 
             response.SC_INTERNAL_SERVER_ERROR, "SSOFailed",
             SAML2Utils.bundle.getString("SSOFailed"));
         return;

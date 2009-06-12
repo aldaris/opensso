@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManagerServlet.java,v 1.2 2008-06-25 05:47:37 qcheng Exp $
+ * $Id: AssertionManagerServlet.java,v 1.3 2009-06-12 22:21:39 mallas Exp $
  *
  */
 
@@ -78,13 +78,11 @@ public class AssertionManagerServlet extends JAXRPCServlet {
             // its not trusted site
             String errMsg = DEBUG_FAILED_MSG + request.getRemoteAddr();
             SAMLUtils.debug.error(errMsg);
-            try {
-                response.sendError(response.SC_FORBIDDEN, errMsg);
-            } catch (IOException ioe) {
-                // For some reason JAXRPCServlets implementation
-                // does not throw IOException, hence being masked here
-                throw (new ServletException(ioe));
-            }
+            SAMLUtils.sendError(request, response, 
+                    HttpServletResponse.SC_FORBIDDEN,
+                    "untrustedSite",
+                    SAMLUtils.bundle.getString("untrustedSite")
+                    + request.getRemoteAddr());
         }
     }
 }

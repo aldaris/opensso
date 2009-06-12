@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPECPService.java,v 1.3 2009-03-03 01:52:57 qcheng Exp $
+ * $Id: SPECPService.java,v 1.4 2009-06-12 22:21:41 mallas Exp $
  *
  */
 
@@ -67,7 +67,7 @@ public class SPECPService extends HttpServlet {
 
         } catch (SAML2Exception ex) {
             SAML2Utils.debug.error("SPECPService", ex);
-            SAML2Utils.sendError(req, resp, 
+            SAMLUtils.sendError(req, resp, 
                  HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  "failedToInitECPRequest", ex.getMessage());
         }

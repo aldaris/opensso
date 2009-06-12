@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spMNIPOST.jsp,v 1.3 2009-03-03 01:54:12 qcheng Exp $
+   $Id: spMNIPOST.jsp,v 1.4 2009-06-12 22:21:42 mallas Exp $
 
 --%>
 
@@ -32,6 +32,7 @@
 <%@ page import="com.sun.identity.shared.debug.Debug" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
+<%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
 <%@ page import="com.sun.identity.saml2.profile.DoManageNameID" %>
 <%@ page import="java.util.HashMap" %>
@@ -75,14 +76,14 @@
                     <%
                 }
             } else {
-                SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                     "requestProcessingMNIError",
                     SAML2Utils.bundle.getString("requestProcessingMNIError"));
             }
         }
     } catch (SAML2Exception e) {
         SAML2Utils.debug.error("Error processing ManageNameIDRequest " , e);
-        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+        SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
             "requestProcessingMNIError",
             SAML2Utils.bundle.getString("requestProcessingMNIError") + " " +
             e.getMessage());

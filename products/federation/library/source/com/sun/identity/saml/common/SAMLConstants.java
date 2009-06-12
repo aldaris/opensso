@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.16 2009-01-16 19:28:00 asyhuang Exp $
+ * $Id: SAMLConstants.java,v 1.17 2009-06-12 22:21:39 mallas Exp $
  *
  */
 
@@ -1496,5 +1496,47 @@ public final class SAMLConstants
      * value is "true". 
      */
     public static final String ESCAPE_ATTR_VALUE = 
-        "com.sun.identity.saml.escapeattributevalue"; 
+        "com.sun.identity.saml.escapeattributevalue";
+    
+    /**
+     * HTTP POST binding.
+     */
+    public static final String HTTP_POST = "HTTP-POST";
+
+    /**
+     * HTTP Redirect binding.
+     */
+    public static final String HTTP_REDIRECT = "HTTP-Redirect";
+
+    /**
+     * Property to identity the HTTP binding for displaying error page.
+     */
+    public static final String ERROR_PAGE_HTTP_BINDING =
+                       "com.sun.identity.saml.errorpage.httpbinding";
+
+    /**
+     * Property to identify the error page url.
+     */
+    public static final String ERROR_PAGE_URL =
+                       "com.sun.identity.saml.errorpage.url";
+    /**
+     * Default error page url.
+     */
+    public static final String DEFAULT_ERROR_PAGE_URL =
+                                "/saml2/jsp/saml2error.jsp";
+    /**
+     * HTTP status code.
+     */
+    public static final String HTTP_STATUS_CODE = "httpstatuscode";
+
+    /**
+     * Error message.
+     */
+    public static final String ERROR_MESSAGE = "errormessage";
+
+    /**
+     * Error code.
+     */
+    public static final String ERROR_CODE = "errorcode";
+
 }

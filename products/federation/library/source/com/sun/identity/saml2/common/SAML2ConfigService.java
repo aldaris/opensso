@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2ConfigService.java,v 1.5 2009-03-03 01:52:39 qcheng Exp $
+ * $Id: SAML2ConfigService.java,v 1.6 2009-06-12 22:21:40 mallas Exp $
  *
  */
 
@@ -57,8 +57,7 @@ public class SAML2ConfigService implements ConfigurationListener {
     static Debug debug = Debug.getInstance("libSAML2");
     static ConfigurationInstance ci = null;
     static final String SAML2_FAILOVER_ATTR = "failOverEnabled"; 
-    static final String SAML2_BUFFER_LENGTH = "bufferLength"; 
-    static final String DEFAULT_ERROR_URL = "/saml2/jsp/saml2error.jsp";
+    static final String SAML2_BUFFER_LENGTH = "bufferLength";     
     private static Map attributes = new HashMap();
 
     static {
@@ -101,8 +100,7 @@ public class SAML2ConfigService implements ConfigurationListener {
         
         if (ci == null) {
             attributes.put(SAML2_FAILOVER_ATTR, "false"); 
-            attributes.put(SAML2_BUFFER_LENGTH, "2048"); 
-            attributes.put(SAML2Constants.SAML2_ERROR_URL, DEFAULT_ERROR_URL);
+            attributes.put(SAML2_BUFFER_LENGTH, "2048");             
         } else {
             Map attrMap = null; 
             try {
@@ -124,22 +122,14 @@ public class SAML2ConfigService implements ConfigurationListener {
                 if ((values != null) && (values.size() == 1)) {
                      value = (String) values.iterator().next(); 
                 } 
-                newAttributes.put(SAML2_BUFFER_LENGTH, value); 
-                values = (Set)attrMap.get(SAML2Constants.SAML2_ERROR_URL);
-                value = DEFAULT_ERROR_URL;
-                if ((values != null) && (values.size() == 1)) {
-                     value = (String) values.iterator().next(); 
-                } 
-                newAttributes.put(SAML2Constants.SAML2_ERROR_URL, value); 
+                newAttributes.put(SAML2_BUFFER_LENGTH, value);                 
             }
             attributes = newAttributes;
         } 
         if (debug.messageEnabled()) {
             debug.message("SAML2ConfigService.setValues : "
                 + "Failover attr = " + attributes.get(SAML2_FAILOVER_ATTR)
-                + "buffer length = " + attributes.get(SAML2_BUFFER_LENGTH)
-                + "Error URL = " 
-                + attributes.get(SAML2Constants.SAML2_ERROR_URL));
+                + "buffer length = " + attributes.get(SAML2_BUFFER_LENGTH));                
         }
     }
     

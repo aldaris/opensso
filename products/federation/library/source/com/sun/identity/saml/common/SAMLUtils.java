@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.14 2009-02-13 04:05:06 bina Exp $
+ * $Id: SAMLUtils.java,v 1.15 2009-06-12 22:21:39 mallas Exp $
  *
  */
 
@@ -73,6 +73,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.RequestDispatcher;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
@@ -108,6 +109,7 @@ import com.sun.identity.saml.SAMLClient;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
+import com.sun.identity.federation.common.FSUtils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -1721,4 +1723,116 @@ public class SAMLUtils  extends SAMLUtilsCommon {
               return null;
           }
       }
+      
+     /**
+      * Sends to error page URL for SAML protocols. If the error page is
+      * hosted in the same web application, forward is used with
+      * parameters. Otherwise, redirection or HTTP POST is used with
+      * parameters.
+      * Three parameters are passed to the error URL:
+      *  -- errorcode : Error key, this is the I18n key of the error message.
+      *  -- httpstatuscode : Http status code for the error
+      *  -- message : detailed I18n'd error message
+      * @param request HttpServletRequest object
+      * @param response HttpServletResponse object
+      * @param httpStatusCode Http Status code
+      * @param errorCode Error code
+      * @param errorMsg Detailed error message
+      */
+     public static void sendError(HttpServletRequest request,
+         HttpServletResponse response, int httpStatusCode,
+         String errorCode, String errorMsg) {
+                 String errorUrl = SystemConfigurationUtil.getProperty(
+               SAMLConstants.ERROR_PAGE_URL,
+               SAMLConstants.DEFAULT_ERROR_PAGE_URL);
+         if(debug.messageEnabled()) {
+            debug.message("SAMLUtils.sendError: error page" + errorUrl);
+         }
+         String tmp = errorUrl.toLowerCase();
+         if (!tmp.startsWith("http://") && !tmp.startsWith("https://")) {
+             // use forward
+             String jointString = "?";
+             if (errorUrl.indexOf("?") != -1) {
+                 jointString = "&";
+             }
+             String newUrl = errorUrl.trim() + jointString
+                  + SAMLConstants.ERROR_CODE + "=" + errorCode + "&"
+                  + SAMLConstants.HTTP_STATUS_CODE + "=" + httpStatusCode
+                  + "&" + SAMLConstants.ERROR_MESSAGE + "="
+                  + URLEncDec.encode(errorMsg);
+
+             RequestDispatcher dispatcher =
+                        request.getRequestDispatcher(newUrl);
+             try {
+                 dispatcher.forward(request, response);
+             } catch (ServletException e) {
+                 debug.error("SAMLUtils.sendError: Exception "
+                    + "occured while trying to forward to resource:"
+                    + newUrl , e);
+                try {
+                    response.sendError(
+                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        e.getMessage());
+                } catch (IOException ioe) {
+                  debug.error("SAMLUtils.sendError IOException", ioe);
+                }
+            } catch (IOException e) {
+                            debug.error("SAMLUtils.sendError: Exception "
+                    + "occured while trying to forward to resource:"
+                    + newUrl , e);
+                try {
+                    response.sendError(
+                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        e.getMessage());
+                } catch (IOException ioe) {
+                  debug.error("SAMLUtils.sendError IOException", ioe);
+                }
+            }
+         } else {
+           String binding = SystemConfigurationUtil.getProperty(
+                            SAMLConstants.ERROR_PAGE_HTTP_BINDING,
+                            SAMLConstants.HTTP_POST);
+           if(SAMLConstants.HTTP_REDIRECT.equals(binding)) {
+               // use FSUtils, this may be redirection or forward
+              String jointString = "?";
+              if (errorUrl.indexOf("?") != -1) {
+                  jointString = "&";
+              }
+              String newUrl = errorUrl.trim() + jointString
+                   + SAMLConstants.ERROR_CODE + "=" + errorCode + "&"
+                   + SAMLConstants.HTTP_STATUS_CODE + "=" + httpStatusCode
+                   + "&" + SAMLConstants.ERROR_MESSAGE + "="
+                   + URLEncDec.encode(errorMsg);
+
+              FSUtils.forwardRequest(request, response, newUrl) ;
+           } else {
+              try {
+                  response.setContentType("text/html; charset=UTF-8");
+                  PrintWriter out = response.getWriter();
+                  out.println("<HTML>");
+                  out.println("<BODY Onload=\"document.forms[0].submit()\">");
+                  out.println("<FORM METHOD=\"POST\" ACTION=\""
+                              + errorUrl + "\">");
+                  out.println("<INPUT TYPE=\"HIDDEN\" NAME=\"" +
+                  SAMLConstants.ERROR_CODE + "\" ");
+                  out.println("VALUE=\"" + errorCode + "\">");
+                  out.println("<INPUT TYPE=\"HIDDEN\" NAME=\"" +
+                  SAMLConstants.ERROR_MESSAGE + "\" VALUE=\"" +
+                  URLEncDec.encode(errorMsg) + "\">");
+                  out.println("<INPUT TYPE=\"HIDDEN\" NAME=\"" +
+                  SAMLConstants.HTTP_STATUS_CODE + "\" VALUE=\"" +
+                  httpStatusCode +  "\">");
+                  out.println("<NOSCRIPT><CENTER>");
+                  out.println("<INPUT TYPE=\"SUBMIT\" VALUE=\"" +
+                  bundle.getString("samlErrorKey") +
+                  "\"/></CENTER></NOSCRIPT>");
+                  out.println("</FORM></BODY></HTML>");
+                  out.close(); 
+                  return;
+              } catch (IOException ie) {
+                  debug.error("SAMLUtils.sendError IOException", ie);
+              }
+           }
+         }         
+     }
 }

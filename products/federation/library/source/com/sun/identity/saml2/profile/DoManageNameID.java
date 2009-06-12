@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.20 2009-04-01 17:47:14 madan_ranganath Exp $
+ * $Id: DoManageNameID.java,v 1.21 2009-06-12 22:21:40 mallas Exp $
  *
  */
 
@@ -2098,7 +2098,7 @@ public class DoManageNameID {
         String samlRequest = request.getParameter(SAML2Constants.SAML_REQUEST);
 
         if (samlRequest == null) {
-            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                 "MissingSAMLRequest",
                 SAML2Utils.bundle.getString("MissingSAMLRequest"));
             throw new SAML2Exception(SAML2Utils.bundle.getString(
@@ -2128,7 +2128,7 @@ public class DoManageNameID {
             }
         } catch (SAML2Exception se) {
             debug.error("DoManageNameID.processPOSTRequest:", se);
-            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                 "nullDecodedStrFromSamlResponse",
                 SAML2Utils.bundle.getString("nullDecodedStrFromSamlResponse") +
                 " " + se.getMessage());
@@ -2136,7 +2136,7 @@ public class DoManageNameID {
                 "nullDecodedStrFromSamlResponse"));
         } catch (Exception e) {
             debug.error("DoManageNameID.processPOSTRequest:", e);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "nullDecodedStrFromSamlResponse",
                 SAML2Utils.bundle.getString("nullDecodedStrFromSamlResponse") +

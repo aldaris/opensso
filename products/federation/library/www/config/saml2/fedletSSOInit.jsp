@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSSOInit.jsp,v 1.4 2009-03-03 01:53:34 qcheng Exp $
+   $Id: fedletSSOInit.jsp,v 1.5 2009-06-12 22:21:42 mallas Exp $
 
 --%>
 
@@ -32,6 +32,7 @@
 <%@ page import="com.sun.identity.shared.debug.Debug" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
+<%@ page import="com.sun.identity.saml2.common.SAMLUtils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
 <%@ page import="com.sun.identity.saml2.meta.SAML2MetaManager" %>
 <%@ page import="com.sun.identity.saml2.profile.SPCache" %>
@@ -181,7 +182,7 @@
                 metaAlias = (String) spMetaAliases.get(0);
             }
             if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
-                SAML2Utils.sendError(request, response,
+                SAMLUtils.sendError(request, response,
                    response.SC_BAD_REQUEST, "nullSPEntityID",
                    SAML2Utils.bundle.getString("nullSPEntityID"));
                 return;
@@ -222,7 +223,7 @@
         SAML2MetaManager manager = new SAML2MetaManager();
         List idpEntities = manager.getAllRemoteIdentityProviderEntities("/"); 
         if ((idpEntities == null) || idpEntities.isEmpty()) {
-            SAML2Utils.sendError(request, response,
+            SAMLUtils.sendError(request, response,
                response.SC_BAD_REQUEST, "idpNotFound",
                SAML2Utils.bundle.getString("idpNotFound"));
             return;
@@ -231,7 +232,7 @@
             idpEntityID = (String) idpEntities.get(0);
         } else { 
             // multiple IDP configured in fedlet
-            SAML2Utils.sendError(request, response,
+            SAMLUtils.sendError(request, response,
                response.SC_BAD_REQUEST, "nullIDPEntityID",
                SAML2Utils.bundle.getString("nullIDPEntityID"));
             return;
@@ -242,13 +243,13 @@
         idpEntityID, paramsMap);
     } catch (SAML2Exception sse) {
         SAML2Utils.debug.error("Error sending AuthnRequest " , sse);
-        SAML2Utils.sendError(request, response,
+        SAMLUtils.sendError(request, response,
             response.SC_BAD_REQUEST, "requestProcessingError", 
             SAML2Utils.bundle.getString("requestProcessingError") + " " +
             sse.getMessage());
     } catch (Exception e) {
         SAML2Utils.debug.error("Error processing Request ",e);
-        SAML2Utils.sendError(request, response,
+        SAMLUtils.sendError(request, response,
             response.SC_BAD_REQUEST, "requestProcessingError",
             SAML2Utils.bundle.getString("requestProcessingError") + " " +
             e.getMessage());

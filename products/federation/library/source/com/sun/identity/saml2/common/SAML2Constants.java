@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.40 2009-06-09 20:28:31 exu Exp $
+ * $Id: SAML2Constants.java,v 1.41 2009-06-12 22:21:40 mallas Exp $
  *
  */
 
@@ -1456,27 +1456,7 @@ public interface SAML2Constants {
      * logout use.
      */
     public String APP_SESSION_PROPERTY = "appsessionproperty";
-
-    /**
-     * Service Attribute name for error processing URL.
-     */
-    public String SAML2_ERROR_URL = "errorURL";
-
-    /**
-     * Query parameter name for error code
-     */
-    public String ERROR_CODE = "errorcode";
-
-    /**
-     * Query parameter name for http status code
-     */
-    public String HTTP_STATUS_CODE = "httpstatuscode";
-
-    /**
-     * Query parameter name for error message
-     */
-    public String ERROR_MESSAGE = "errormessage";
-
+  
     /**
      * IDP Session Synchronize Enabled
      */

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.16 2009-04-01 17:47:14 madan_ranganath Exp $
+ * $Id: IDPProxyUtil.java,v 1.17 2009-06-12 22:21:40 mallas Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml2.assertion.AuthnContext;
 import com.sun.identity.saml2.assertion.Assertion;
 import com.sun.identity.saml2.assertion.NameID; 
@@ -589,7 +590,7 @@ public class IDPProxyUtil {
    
         try {
             if (ssoToken == null) {
-                SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                     "nullSSOToken",
                     SAML2Utils.bundle.getString("nullSSOToken"));
                 return;
@@ -627,7 +628,7 @@ public class IDPProxyUtil {
         } catch (SAML2Exception sse) {
             SAML2Utils.debug.error("Error sending Logout Request " , sse);
             try {
-                SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                     "LogoutRequestCreationError",
                     SAML2Utils.bundle.getString(
                     "LogoutRequestCreationError"));
@@ -639,7 +640,7 @@ public class IDPProxyUtil {
         } catch (Exception e) {
             SAML2Utils.debug.error("Error initializing Request ",e);
             try {
-                SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                     "LogoutRequestCreationError",
                     SAML2Utils.bundle.getString(
                     "LogoutRequestCreationError"));

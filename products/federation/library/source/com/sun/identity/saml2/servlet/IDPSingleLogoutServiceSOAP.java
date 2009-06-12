@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogoutServiceSOAP.java,v 1.8 2009-03-03 01:52:56 qcheng Exp $
+ * $Id: IDPSingleLogoutServiceSOAP.java,v 1.9 2009-06-12 22:21:41 mallas Exp $
  *
  */
 
@@ -133,12 +133,12 @@ public class IDPSingleLogoutServiceSOAP extends HttpServlet {
             }
         } catch (SAML2Exception ex) {
             SAML2Utils.debug.error("IDPSingleLogoutServiceSOAP", ex);
-            SAML2Utils.sendError(req, resp, 
+            SAMLUtils.sendError(req, resp, 
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                 "singleLogoutFailed", ex.getMessage());
         } catch (SOAPException soap) {
             SAML2Utils.debug.error("IDPSingleLogoutServiceSOAP", soap);
-            SAML2Utils.sendError(req, resp, 
+            SAMLUtils.sendError(req, resp, 
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                 "singleLogoutFailed", soap.getMessage());
         }

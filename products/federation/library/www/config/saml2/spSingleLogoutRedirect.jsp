@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutRedirect.jsp,v 1.12 2009-06-09 20:28:33 exu Exp $
+   $Id: spSingleLogoutRedirect.jsp,v 1.13 2009-06-12 22:21:42 mallas Exp $
 
 --%>
 
@@ -32,6 +32,7 @@
 <%@ page import="com.sun.identity.shared.debug.Debug" %>
 <%@ page import="com.sun.identity.sae.api.SecureAttrs" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
+<%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
 <%@ page import="com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement" %>
@@ -124,14 +125,14 @@
           }          
         } catch (SAML2Exception sse) {
             SAML2Utils.debug.error("Error processing LogoutResponse :", sse);
-            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                 "LogoutResponseProcessingError",
                 SAML2Utils.bundle.getString("LogoutResponseProcessingError") +
                 " " + sse.getMessage());
             return;
         } catch (Exception e) {
             SAML2Utils.debug.error("Error processing LogoutResponse ",e);
-            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                 "LogoutResponseProcessingError",
                 SAML2Utils.bundle.getString("LogoutResponseProcessingError") +
                 " " + e.getMessage());
@@ -182,14 +183,14 @@
                 samlRequest,relayState);
             } catch (SAML2Exception sse) {
                 SAML2Utils.debug.error("Error processing LogoutRequest :", sse);
-                SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                     "LogoutRequestProcessingError",
                     SAML2Utils.bundle.getString("LogoutRequestProcessingError")
                     + " " + sse.getMessage()); 
                 return;
             } catch (Exception e) {
                 SAML2Utils.debug.error("Error processing LogoutRequest ",e);
-                SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                     "LogoutRequestProcessingError",
                     SAML2Utils.bundle.getString("LogoutRequestProcessingError")
                     + " " + e.getMessage());

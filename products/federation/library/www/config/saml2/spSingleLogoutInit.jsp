@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutInit.jsp,v 1.9 2009-06-09 19:37:37 exu Exp $
+   $Id: spSingleLogoutInit.jsp,v 1.10 2009-06-12 22:21:42 mallas Exp $
 
 --%>
 
@@ -33,6 +33,7 @@
 <%@ page import="com.sun.identity.plugin.session.SessionManager" %>
 <%@ page import="com.sun.identity.plugin.session.SessionException" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
+<%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.meta.SAML2MetaManager" %>
 <%@ page import="com.sun.identity.saml2.meta.SAML2MetaUtils" %>
@@ -91,7 +92,7 @@
             ssoToken = null;
         }
         if (ssoToken == null) {
-            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                 "nullSSOToken", SAML2Utils.bundle.getString("nullSSOToken"));
             return;
         }
@@ -172,14 +173,14 @@
         }
     } catch (SAML2Exception sse) {
         SAML2Utils.debug.error("Error sending Logout Request " , sse);
-        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+        SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
             "LogoutRequestCreationError",
             SAML2Utils.bundle.getString("LogoutRequestCreationError") + " " +
             sse.getMessage());
         return;
     } catch (Exception e) {
         SAML2Utils.debug.error("Error initializing Request ",e);
-        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+        SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
             "LogoutRequestCreationError",
             SAML2Utils.bundle.getString("LogoutRequestCreationError") + " " +
             e.getMessage());

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPArtifactResolution.java,v 1.10 2009-03-03 01:52:47 qcheng Exp $
+ * $Id: IDPArtifactResolution.java,v 1.11 2009-06-12 22:21:40 mallas Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.saml2.profile;
 
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.saml.xmlsig.KeyProvider;
+import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.common.SAML2Constants;
@@ -123,7 +124,7 @@ public class IDPArtifactResolution {
                 String[] data = { idpMetaAlias };
                 LogUtil.error(Level.INFO,
                     LogUtil.IDP_METADATA_ERROR, data, null);
-                SAML2Utils.sendError(request, response, 
+                SAMLUtils.sendError(request, response, 
                     response.SC_INTERNAL_SERVER_ERROR,
                     "nullIDPMetaAlias",
                     SAML2Utils.bundle.getString("nullIDPMetaAlias"));
@@ -138,12 +139,12 @@ public class IDPArtifactResolution {
                                                          idpMetaAlias);
                 if ((idpEntityID == null) 
                     || (idpEntityID.trim().length() == 0)) {
-                    SAML2Utils.debug.error(classMethod +
+                    SAMLUtils.debug.error(classMethod +
                         "Unable to get IDP Entity ID from meta.");
                     String[] data = { idpEntityID };
                     LogUtil.error(Level.INFO, 
                         LogUtil.INVALID_IDP, data, null);
-                    SAML2Utils.sendError(request, response, 
+                    SAMLUtils.sendError(request, response, 
                         response.SC_INTERNAL_SERVER_ERROR,
                         "nullIDPEntityID",
                         SAML2Utils.bundle.getString("nullIDPEntityID"));
@@ -156,7 +157,7 @@ public class IDPArtifactResolution {
                 String[] data = { idpMetaAlias };
                 LogUtil.error(Level.INFO,
                     LogUtil.IDP_METADATA_ERROR, data, null);
-                SAML2Utils.sendError(request, response, 
+                SAMLUtils.sendError(request, response, 
                     response.SC_INTERNAL_SERVER_ERROR, "metaDataError",
                     SAML2Utils.bundle.getString("metaDataError"));
                 return;
@@ -195,13 +196,13 @@ public class IDPArtifactResolution {
                 String[] data = { idpEntityID };
                 LogUtil.error(Level.INFO,
                     LogUtil.INVALID_SOAP_MESSAGE, data, null);
-                SAML2Utils.sendError(request, response, 
+                SAMLUtils.sendError(request, response, 
                     response.SC_INTERNAL_SERVER_ERROR, "invalidSOAPMessage",
                     SAML2Utils.bundle.getString("invalidSOAPMessage") +
                     " " + ex.getMessage());
             } catch (SAML2Exception se) {
                 SAML2Utils.debug.error(classMethod + "SAML2 error", se);
-                SAML2Utils.sendError(request, response, 
+                SAMLUtils.sendError(request, response, 
                     response.SC_INTERNAL_SERVER_ERROR,
                     "unableToCreateArtifactResponse",
                     SAML2Utils.bundle.getString(

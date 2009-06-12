@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManager.java,v 1.10 2008-12-10 20:13:47 hengming Exp $
+ * $Id: AssertionManager.java,v 1.11 2009-06-12 22:21:39 mallas Exp $
  *
  */
 
@@ -702,7 +702,7 @@ public final class AssertionManager {
             try {
                 InetAddress clientIPAddress =
                     InetAddress.getByName(sessionProvider.getProperty(
-                    token,"ipaddress")[0]);
+                    token,"Host")[0]);
                 clientIP = clientIPAddress.getHostAddress();
             } catch (Exception e) {
                 // catching exception here since client ip is optional

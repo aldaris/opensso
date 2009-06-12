@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLPOSTProfileServlet.java,v 1.3 2008-06-25 05:47:38 qcheng Exp $
+ * $Id: SAMLPOSTProfileServlet.java,v 1.4 2009-06-12 22:21:39 mallas Exp $
  *
  */
 
@@ -87,8 +87,10 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
             String[] data = {SAMLUtils.bundle.getString("nullInputParameter")};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.NULL_PARAMETER, data);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-            SAMLUtils.bundle.getString("nullInputParameter"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "nullInputParameter",
+                SAMLUtils.bundle.getString("nullInputParameter"));
             return;
         }
         
@@ -107,8 +109,10 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
             String[] data = {SAMLUtils.bundle.getString("missingTargetSite")};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.MISSING_TARGET, data, token);
-            response.sendError(response.SC_BAD_REQUEST,
-            SAMLUtils.bundle.getString("missingTargetSite"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_BAD_REQUEST,
+                "missingTargetSite",
+                SAMLUtils.bundle.getString("missingTargetSite"));
             return;
         }
         
@@ -122,9 +126,10 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
                 target};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.TARGET_FORBIDDEN, data, token);
-            response.sendError(response.SC_BAD_REQUEST,
-            SAMLUtils.bundle.getString("targetForbidden")
-            + " " + target);
+            SAMLUtils.sendError(request, response,
+                response.SC_BAD_REQUEST,
+                "targetForbidden",
+                SAMLUtils.bundle.getString("targetForbidden") + " " + target);
             return;
         }
         
@@ -160,19 +165,25 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
         } catch (SessionException sse) {
             SAMLUtils.debug.error("SAMLPOSTProfileServlet.doGet: Exception "
                 + "Couldn't get SessionProvider:", sse); 
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+           SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "couldNotCreateResponse",
                 sse.getMessage());
             return;
         } catch (NumberFormatException ne) {
             SAMLUtils.debug.error("SAMLPOSTProfileServlet.doGet: Exception "
                 + "when creating Response: ", ne);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "couldNotCreateResponse",
                 ne.getMessage());
             return;
         } catch (SAMLException se) {
             SAMLUtils.debug.error("SAMLPOSTProfileServlet.doGet: Exception "
                 + "when creating Response: ", se);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "couldNotCreateResponse",
                 se.getMessage());
             return;
         }
@@ -190,8 +201,10 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
         } catch (Exception e) {
             SAMLUtils.debug.error("SAMLPOSTProfileServlet.doGet: Exception "
             + "when signing the response:", e);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-            SAMLUtils.bundle.getString("errorSigningResponse"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "errorSigningResponse",
+                SAMLUtils.bundle.getString("errorSigningResponse"));
             return;
         }
         
@@ -203,8 +216,10 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
         } catch (Exception e) {
             SAMLUtils.debug.error("SAMLPOSTProfileServlet.doGet: Exception "
             + "when encoding the response:", e);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-            SAMLUtils.bundle.getString("errorEncodeResponse"));
+             SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "errorEncodeResponse",
+                SAMLUtils.bundle.getString("errorEncodeResponse"));
             return;
         }
         
@@ -325,8 +340,10 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
             String[] data = {SAMLUtils.bundle.getString("nullInputParameter")};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.NULL_PARAMETER, data);
-            response.sendError(response.SC_BAD_REQUEST,
-            SAMLUtils.bundle.getString("nullInputParameter"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_BAD_REQUEST,
+                "nullInputParameter",
+                SAMLUtils.bundle.getString("nullInputParameter"));
             return;
         }
         
@@ -338,8 +355,10 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
             String[] data = {SAMLUtils.bundle.getString("missingTargetSite")};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.MISSING_TARGET, data);
-            response.sendError(response.SC_BAD_REQUEST,
-            SAMLUtils.bundle.getString("missingTargetSite"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_BAD_REQUEST,
+                "missingTargetSite",
+                SAMLUtils.bundle.getString("missingTargetSite"));
             return;
         }
         
@@ -350,7 +369,9 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
             String[] data = {SAMLUtils.bundle.getString("missingSAMLResponse")};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.MISSING_RESPONSE, data);
-            response.sendError(response.SC_BAD_REQUEST,
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_BAD_REQUEST,
+                "missingSAMLResponse",
                 SAMLUtils.bundle.getString("missingSAMLResponse"));
             return;
         }
@@ -362,8 +383,10 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
         } catch (Exception e) {
             SAMLUtils.debug.error("SAMLPOSTProfileServlet.doPost: Exception "
             + "when decoding SAMLResponse:", e);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-            SAMLUtils.bundle.getString("errorDecodeResponse"));
+             SAMLUtils.sendError(request, response,
+                response.SC_INTERNAL_SERVER_ERROR,
+                "errorDecodeResponse",
+                SAMLUtils.bundle.getString("errorDecodeResponse"));
             return;
         }
         
@@ -373,8 +396,10 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
             String[] data = {SAMLUtils.bundle.getString("errorObtainResponse")};
             LogUtils.error(java.util.logging.Level.INFO,
                LogUtils.RESPONSE_MESSAGE_ERROR, data);
-            response.sendError(response.SC_BAD_REQUEST,
-            SAMLUtils.bundle.getString("errorObtainResponse"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_BAD_REQUEST,
+                "errorObtainResponse",
+                SAMLUtils.bundle.getString("errorObtainResponse"));
             return;
         }
         
@@ -396,8 +421,10 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
             String[] data = {SAMLUtils.bundle.getString("invalidResponse")};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.INVALID_RESPONSE, data);
-            response.sendError(response.SC_BAD_REQUEST,
-            SAMLUtils.bundle.getString("invalidResponse"));
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_BAD_REQUEST,
+                "invalidResponse",
+                SAMLUtils.bundle.getString("invalidResponse"));
             return;
         }
         
@@ -415,8 +442,10 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
                 "failedCreateSSOToken")};
             LogUtils.error(java.util.logging.Level.INFO,
                 LogUtils.FAILED_TO_CREATE_SSO_TOKEN, data);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-            ex.getMessage());
+            SAMLUtils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "failedCreateSSOToken",
+                ex.getMessage());;
             return;
         }
         

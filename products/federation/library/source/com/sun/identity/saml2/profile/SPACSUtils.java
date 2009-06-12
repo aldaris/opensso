@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.41 2009-06-09 20:28:32 exu Exp $
+ * $Id: SPACSUtils.java,v 1.42 2009-06-12 22:21:41 mallas Exp $
  *
  */
 
@@ -62,6 +62,7 @@ import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.xmlsig.KeyProvider;
+import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml2.assertion.Advice;
 import com.sun.identity.saml2.assertion.Attribute;
 import com.sun.identity.saml2.assertion.AssertionFactory;
@@ -164,7 +165,7 @@ public class SPACSUtils {
             }
         } else {
             // not supported
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_METHOD_NOT_ALLOWED,
                 "notSupportedHTTPMethod", 
                 SAML2Utils.bundle.getString("notSupportedHTTPMethod"));
@@ -213,7 +214,7 @@ public class SPACSUtils {
                                 LogUtil.RESPONSE_NOT_FOUND_FROM_CACHE,
                                 data,
                                 null);
-                SAML2Utils.sendError(request, response, 
+                SAMLUtils.sendError(request, response, 
                     response.SC_INTERNAL_SERVER_ERROR, "SSOFailed",
                     SAML2Utils.bundle.getString("SSOFailed"));
                 throw new SAML2Exception(
@@ -230,7 +231,7 @@ public class SPACSUtils {
                         LogUtil.MISSING_ARTIFACT,
                         null,
                         null);
-            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                 "missingArtifact",
                 SAML2Utils.bundle.getString("missingArtifact"));
             throw new SAML2Exception(
@@ -267,7 +268,7 @@ public class SPACSUtils {
         } catch (SAML2Exception se) {
             SAML2Utils.debug.error("SPACSUtils.getResponseFromArtifact: "
                  + "Unable to decode and parse artifact string:" + samlArt);
-            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                 "errorObtainArtifact",
                 SAML2Utils.bundle.getString("errorObtainArtifact"));
             throw se;
@@ -283,7 +284,7 @@ public class SPACSUtils {
                         LogUtil.IDP_META_NOT_FOUND,
                         data,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "failedToGetIDPSSODescriptor", se.getMessage());
             throw se;
@@ -355,7 +356,7 @@ public class SPACSUtils {
                         LogUtil.CANNOT_CREATE_ARTIFACT_RESOLVE,
                         data,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "errorCreateArtifactResolve",
                 SAML2Utils.bundle.getString("errorCreateArtifactResolve"));
@@ -368,7 +369,7 @@ public class SPACSUtils {
                         LogUtil.CANNOT_GET_SOAP_RESPONSE,
                         data,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "errorInSOAPCommunication",
                 SAML2Utils.bundle.getString("errorInSOAPCommunication"));
@@ -431,7 +432,7 @@ public class SPACSUtils {
                         LogUtil.IDP_NOT_FOUND,
                         data,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "cannotFindIDP", se.getMessage());
             throw se;
@@ -486,7 +487,7 @@ public class SPACSUtils {
                                 LogUtil.ARTIFACT_RESOLUTION_URL_NOT_FOUND,
                                 data,
                                 null);
-                    SAML2Utils.sendError(request, response, 
+                    SAMLUtils.sendError(request, response, 
                         response.SC_INTERNAL_SERVER_ERROR,
                         "cannotFindArtifactResolutionUrl",
                         SAML2Utils.bundle.getString(
@@ -529,7 +530,7 @@ public class SPACSUtils {
                         LogUtil.SOAP_ERROR,
                         data,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "soapError", se.getMessage());
             throw se; 
@@ -548,7 +549,7 @@ public class SPACSUtils {
                         LogUtil.CANNOT_INSTANTIATE_ARTIFACT_RESPONSE,
                         data,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "failedToCreateArtifactResponse", se.getMessage());
             throw se;
@@ -560,7 +561,7 @@ public class SPACSUtils {
                         LogUtil.MISSING_ARTIFACT_RESPONSE,
                         data,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "missingArtifactResponse",
                 SAML2Utils.bundle.getString("missingArtifactResponse"));
@@ -592,7 +593,7 @@ public class SPACSUtils {
                         LogUtil.ARTIFACT_RESPONSE_INVALID_SIGNATURE,
                         data,
                         null);
-                SAML2Utils.sendError(request, response, 
+                SAMLUtils.sendError(request, response, 
                     response.SC_INTERNAL_SERVER_ERROR, "invalidSignature",
                     SAML2Utils.bundle.getString("invalidSignature"));
                 throw new SAML2Exception(
@@ -611,7 +612,7 @@ public class SPACSUtils {
                         LogUtil.ARTIFACT_RESPONSE_INVALID_INRESPONSETO,
                         data,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR, "invalidInResponseTo",
                 SAML2Utils.bundle.getString("invalidInResponseTo"));
             throw new SAML2Exception(
@@ -629,7 +630,7 @@ public class SPACSUtils {
                         LogUtil.ARTIFACT_RESPONSE_INVALID_ISSUER,
                         data,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR, "invalidIssuer",
                 SAML2Utils.bundle.getString("invalidIssuer"));
             throw new SAML2Exception(
@@ -657,7 +658,7 @@ public class SPACSUtils {
                         LogUtil.ARTIFACT_RESPONSE_INVALID_STATUS_CODE,
                         data,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR, "invalidStatusCode",
                 SAML2Utils.bundle.getString("invalidStatusCode"));
             throw new SAML2Exception(
@@ -677,7 +678,7 @@ public class SPACSUtils {
                         LogUtil.CANNOT_INSTANTIATE_RESPONSE_ARTIFACT,
                         data,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR, 
                 "failedToCreateResponse", se.getMessage());
             throw se;
@@ -700,7 +701,7 @@ public class SPACSUtils {
             String[] data = { hostEntityId } ;
             LogUtil.error(Level.INFO,
                 LogUtil.CANNOT_INSTANTIATE_SOAP_MESSAGE_ECP, data, null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "failedToCreateSOAPMessage", soapex.getMessage());
             throw new SAML2Exception(soapex.getMessage()); 
@@ -708,7 +709,7 @@ public class SPACSUtils {
             String[] data = { hostEntityId } ;
             LogUtil.error(Level.INFO,
                 LogUtil.CANNOT_INSTANTIATE_SOAP_MESSAGE_ECP, data, null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "failedToCreateSOAPMessage", soapex.getMessage());
             throw new SAML2Exception(soapex.getMessage()); 
@@ -718,7 +719,7 @@ public class SPACSUtils {
                 data, null);
             String faultString =
                 sfex.getSOAPFaultMessage().getSOAPFault().getFaultString();
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR, 
                 "failedToCreateSOAPMessage", faultString);
             throw new SAML2Exception(faultString);
@@ -748,7 +749,7 @@ public class SPACSUtils {
             String[] data = { hostEntityId } ;
             LogUtil.error(Level.INFO,
                 LogUtil.CANNOT_INSTANTIATE_SAML_RESPONSE_FROM_ECP, data, null);
-            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                 "missingSAMLResponse",
                 SAML2Utils.bundle.getString("missingSAMLResponse"));
             throw new SAML2Exception(
@@ -768,7 +769,7 @@ public class SPACSUtils {
             String[] data = { hostEntityId } ;
             LogUtil.error(Level.INFO,
                 LogUtil.CANNOT_INSTANTIATE_SAML_RESPONSE_FROM_ECP, data, null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "failedToCreateResponse", se.getMessage());
             throw se;
@@ -781,7 +782,7 @@ public class SPACSUtils {
         } catch (SAML2MetaException se) {
             String[] data = { orgName, idpEntityID };
             LogUtil.error(Level.INFO, LogUtil.IDP_META_NOT_FOUND, data, null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR,
                 "failedToGetIDPSSODescriptor", se.getMessage());
             throw se;
@@ -802,7 +803,7 @@ public class SPACSUtils {
                     String[] data = { idpEntityID };
                     LogUtil.error(Level.INFO,
                         LogUtil.ECP_ASSERTION_NOT_SIGNED, data, null);
-                    SAML2Utils.sendError(request, response, 
+                    SAMLUtils.sendError(request, response, 
                         response.SC_INTERNAL_SERVER_ERROR,
                         "assertionNotSigned",
                         SAML2Utils.bundle.getString("assertionNotSigned"));
@@ -817,7 +818,7 @@ public class SPACSUtils {
                     String[] data = { idpEntityID };
                     LogUtil.error(Level.INFO,
                         LogUtil.ECP_ASSERTION_INVALID_SIGNATURE, data, null);
-                    SAML2Utils.sendError(request, response, 
+                    SAMLUtils.sendError(request, response, 
                         response.SC_INTERNAL_SERVER_ERROR,
                         "invalidSignature",
                         SAML2Utils.bundle.getString("invalidSignature"));
@@ -852,7 +853,7 @@ public class SPACSUtils {
                         LogUtil.MISSING_SAML_RESPONSE_FROM_POST,
                         null,
                         null);
-            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                 "missingSAMLResponse",
                 SAML2Utils.bundle.getString("missingSAMLResponse"));
             throw new SAML2Exception(
@@ -880,7 +881,7 @@ public class SPACSUtils {
                         LogUtil.CANNOT_INSTANTIATE_RESPONSE_POST,
                         null,
                         null);
-            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                 "errorObtainResponse",
                 SAML2Utils.bundle.getString("errorObtainResponse"));
             throw new SAML2Exception(
@@ -893,7 +894,7 @@ public class SPACSUtils {
                         LogUtil.CANNOT_DECODE_RESPONSE,
                         null,
                         null);
-            SAML2Utils.sendError(request, response, 
+            SAMLUtils.sendError(request, response, 
                 response.SC_INTERNAL_SERVER_ERROR, "errorDecodeResponse",
                 SAML2Utils.bundle.getString("errorDecodeResponse"));
             throw new SAML2Exception(
@@ -926,7 +927,7 @@ public class SPACSUtils {
                               LogUtil.IDP_META_NOT_FOUND,
                               data,
                               null);
-                SAML2Utils.sendError(request, response,
+                SAMLUtils.sendError(request, response,
                     response.SC_INTERNAL_SERVER_ERROR,
                     "failedToGetIDPSSODescriptor", se.getMessage());
                 throw se;
@@ -940,7 +941,7 @@ public class SPACSUtils {
                     String[] data = { orgName , hostEntityId , idpEntityID };
                     LogUtil.error(Level.INFO,
                         LogUtil.POST_RESPONSE_INVALID_SIGNATURE,data,null);
-                    SAML2Utils.sendError(request, response,
+                    SAMLUtils.sendError(request, response,
                         response.SC_INTERNAL_SERVER_ERROR, "invalidSignature",
                         SAML2Utils.bundle.getString("invalidSignature"));
                     throw new SAML2Exception(
