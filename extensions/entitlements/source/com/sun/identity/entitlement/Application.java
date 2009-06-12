@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.22 2009-06-10 17:49:26 veiming Exp $
+ * $Id: Application.java,v 1.23 2009-06-12 00:02:33 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -51,10 +51,14 @@ public final class Application {
     private Set<String> subjects;
     private Set<String> resources;
     private Class entitlementCombiner;
-    private ISearchIndex searchIndex;
-    private ISaveIndex saveIndex;
-    private ResourceName resourceComparator;
+    private Class searchIndex;
+    private Class saveIndex;
+    private Class resourceComparator;
     private Set<String> attributeNames;
+
+    private ResourceName resourceComparatorInstance;
+    private ISaveIndex saveIndexInstance;
+    private ISearchIndex searchIndexInstance;
 
     private Application() {
     }
@@ -104,8 +108,11 @@ public final class Application {
 
         clone.entitlementCombiner = entitlementCombiner;
         clone.searchIndex = searchIndex;
+        clone.searchIndexInstance = searchIndexInstance;
         clone.saveIndex = saveIndex;
+        clone.saveIndexInstance = saveIndexInstance;
         clone.resourceComparator = resourceComparator;
+        clone.resourceComparatorInstance = resourceComparatorInstance;
 
         if (attributeNames != null) {
             clone.attributeNames = new HashSet<String>();
@@ -158,19 +165,30 @@ public final class Application {
     }
 
     /**
+     * Returns entitlement combiner class.
+     *
+     * @return entitlement combiner class.
+     */
+    public Class getEntitlementCombinerClass() {
+        return entitlementCombiner;
+    }
+
+    /**
      * Returns a new instance of entitlement combiner.
      *
      * @return an instance of entitlement combiner.
      */
     public EntitlementCombiner getEntitlementCombiner() {
-        try {
-            return (EntitlementCombiner)entitlementCombiner.newInstance();
-        } catch (InstantiationException ex) {
-            PrivilegeManager.debug.error("Application.getEntitlementCombiner",
-                ex);
-        } catch (IllegalAccessException ex) {
-            PrivilegeManager.debug.error("Application.getEntitlementCombiner",
-                ex);
+        if (entitlementCombiner != null) {
+            try {
+                return (EntitlementCombiner) entitlementCombiner.newInstance();
+            } catch (InstantiationException e) {
+                PrivilegeManager.debug.error(
+                    "Application.getEntitlementCombiner", e);
+            } catch (IllegalAccessException e) {
+                PrivilegeManager.debug.error(
+                    "Application.getEntitlementCombiner", e);
+            }
         }
         return null;
     }
@@ -216,8 +234,14 @@ public final class Application {
      *
      * @param saveIndex save index.
      */
-    public void setSaveIndex(ISaveIndex saveIndex) {
+    public void setSaveIndex(Class saveIndex) throws InstantiationException,
+        IllegalAccessException {
         this.saveIndex = saveIndex;
+        if (saveIndex != null) {
+            saveIndexInstance = (ISaveIndex) saveIndex.newInstance();
+        } else {
+            saveIndexInstance = null;
+        }
     }
 
     /**
@@ -225,8 +249,14 @@ public final class Application {
      *
      * @param searchIndex search index generator.
      */
-    public void setSearchIndex(ISearchIndex searchIndex) {
+    public void setSearchIndex(Class searchIndex) throws InstantiationException,
+        IllegalAccessException {
         this.searchIndex = searchIndex;
+        if (searchIndex != null) {
+            searchIndexInstance = (ISearchIndex) searchIndex.newInstance();
+        } else {
+            searchIndexInstance = null;
+        }
     }
 
     /**
@@ -270,7 +300,7 @@ public final class Application {
      *
      * @param entitlementCombiner entitlement combiner.
      */
-    public void setEntitlementCombiner(Class entitlementCombiner){
+    public void setEntitlementCombiner(Class entitlementCombiner) {
         this.entitlementCombiner = entitlementCombiner;
     }
 
@@ -279,8 +309,15 @@ public final class Application {
      *
      * @param resourceComparator resource comparator.
      */
-    public void setResourceComparator(ResourceName resourceComparator) {
+    public void setResourceComparator(Class resourceComparator) 
+        throws InstantiationException, IllegalAccessException {
         this.resourceComparator = resourceComparator;
+        if (resourceComparator != null) {
+            resourceComparatorInstance = (ResourceName) resourceComparator.
+                newInstance();
+        } else {
+            resourceComparatorInstance = null;
+        }
     }
 
     /**
@@ -302,7 +339,7 @@ public final class Application {
             String resource) {
         return (searchIndex == null) ?
             applicationType.getResourceSearchIndex(resource) :
-            searchIndex.getIndexes(resource);
+            searchIndexInstance.getIndexes(resource);
     }
 
     /**
@@ -314,7 +351,34 @@ public final class Application {
     public ResourceSaveIndexes getResourceSaveIndex(String resource) {
         return (saveIndex == null) ?
             applicationType.getResourceSaveIndex(resource) :
-            saveIndex.getIndexes(resource);
+            saveIndexInstance.getIndexes(resource);
+    }
+
+    /**
+     * Returns save index class.
+     *
+     * @return save index class.
+     */
+    public Class getSaveIndexClass() {
+        return saveIndex;
+    }
+
+    /**
+     * Returns search index class.
+     *
+     * @return search index class.
+     */
+    public Class getSearchIndexClass() {
+        return searchIndex;
+    }
+
+    /**
+     * Returns resource comparator class.
+     *
+     * @return resource comparator class.
+     */
+    public Class getResourceComparatorClass() {
+        return resourceComparator;
     }
 
     /**
@@ -324,7 +388,8 @@ public final class Application {
      */
     public ResourceName getResourceComparator() {
         return (resourceComparator == null) ?
-            applicationType.getResourceComparator() : resourceComparator;
+            applicationType.getResourceComparator() : 
+            resourceComparatorInstance;
     }
 
     /**
@@ -360,7 +425,7 @@ public final class Application {
      * @return save index
      */
     public ISaveIndex getSaveIndex() {
-        return saveIndex;
+        return saveIndexInstance;
     }
 
     /**
@@ -369,7 +434,7 @@ public final class Application {
      * @return search index
      */
     public ISearchIndex getSearchIndex() {
-        return searchIndex;
+        return searchIndexInstance;
     }
 
     /**

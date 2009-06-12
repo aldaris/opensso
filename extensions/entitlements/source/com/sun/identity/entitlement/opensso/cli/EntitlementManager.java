@@ -22,41 +22,41 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementThreadPool.java,v 1.3 2009-06-12 00:02:33 veiming Exp $
+ * $Id: EntitlementManager.java,v 1.1 2009-06-12 00:02:33 veiming Exp $
  *
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.entitlement.opensso.cli;
 
-import com.sun.identity.entitlement.interfaces.IThreadPool;
+import com.sun.identity.cli.CLIDefinitionBase;
+import com.sun.identity.cli.CLIException;
 
 /**
- * Thread Pool
+ * OpenSSO CLI definition class.
  */
-public class EntitlementThreadPool implements IThreadPool {
-    private static ThreadPool thrdPool;
-    private static final int DEFAULT_POOL_SIZE = 10;
-
-
-    static {
-        thrdPool = new ThreadPool("entitlementThreadPool",
-            DEFAULT_POOL_SIZE);
+public class EntitlementManager extends CLIDefinitionBase {
+    private static final String DEFINITION_CLASS =
+        "com.sun.identity.entitlement.opensso.cli.definition.Entitlement";
+   
+    /**
+     * Constructs an instance of this class.
+     */
+    public EntitlementManager()
+        throws CLIException {
+        super(DEFINITION_CLASS);
     }
 
-    public void submit(Runnable task) {
-        try {
-            if (isMutiTreaded()) {
-                thrdPool.run(task);
-            } else {
-                task.run();
-            }
-        } catch (ThreadPoolException e) {
-            PrivilegeManager.debug.error("EntitlementThreadPool.submit", e);
-        }
+    /**
+     * Returns product name.
+     *
+     * @return product name.
+     */
+    public String getProductName() {
+        return "";
     }
 
-    @Override
-    public boolean isMutiTreaded() {
-        return (DEFAULT_POOL_SIZE > 0);
+    public boolean isAuthOption(String arg0) {
+        return true;
     }
+
 }

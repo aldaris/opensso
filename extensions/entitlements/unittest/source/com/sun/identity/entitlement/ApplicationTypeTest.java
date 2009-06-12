@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeTest.java,v 1.8 2009-05-29 23:13:51 veiming Exp $
+ * $Id: ApplicationTypeTest.java,v 1.9 2009-06-12 00:02:34 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -43,7 +43,8 @@ public class ApplicationTypeTest {
     private Subject adminSubject;
 
     @BeforeClass
-    public void setup() throws EntitlementException {
+    public void setup() throws EntitlementException, InstantiationException,
+        IllegalAccessException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         adminSubject = SubjectUtils.createSubject(adminToken);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationType.java,v 1.8 2009-05-27 07:31:56 veiming Exp $
+ * $Id: ApplicationType.java,v 1.9 2009-06-12 00:02:33 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -40,9 +40,12 @@ import java.util.Map;
 public final class ApplicationType {
     private String name;
     private Map<String, Boolean> actions;
-    private ISearchIndex searchIndex;
-    private ISaveIndex saveIndex;
-    private ResourceName resourceComp;
+    private Class searchIndex;
+    private Class saveIndex;
+    private Class resourceComp;
+    private ResourceName resourceCompInstance;
+    private ISaveIndex saveIndexInstance;
+    private ISearchIndex searchIndexInstance;
 
     /**
      * Constructs an instance.
@@ -56,28 +59,32 @@ public final class ApplicationType {
     public ApplicationType(
         String name,
         Map<String, Boolean> actions,
-        ISearchIndex searchIndex,
-        ISaveIndex saveIndex,
-        ResourceName resourceComp
-    ) {
+        Class searchIndex,
+        Class saveIndex,
+        Class resourceComp
+    ) throws InstantiationException, IllegalAccessException {
         this.name = name;
         this.actions = actions;
 
         if (searchIndex == null) {
-            this.searchIndex = new ResourceNameSplitter();
+            this.searchIndex = ResourceNameSplitter.class;
         } else {
             this.searchIndex = searchIndex;
         }
+        searchIndexInstance = (ISearchIndex) searchIndex.newInstance();
         if (saveIndex == null) {
-            this.saveIndex = new ResourceNameIndexGenerator();
+            this.saveIndex = ResourceNameIndexGenerator.class;
         } else {
             this.saveIndex = saveIndex;
         }
+        saveIndexInstance = (ISaveIndex) saveIndex.newInstance();
+
         if (resourceComp == null) {
-            this.resourceComp = new URLResourceName();
+            this.resourceComp = URLResourceName.class;
         } else {
             this.resourceComp = resourceComp;
         }
+        resourceCompInstance = (ResourceName)resourceComp.newInstance();
     }
 
     /**
@@ -112,8 +119,14 @@ public final class ApplicationType {
      *
      * @param saveIndex save index generator.
      */
-    public void setSaveIndex(ISaveIndex saveIndex) {
+    public void setSaveIndex(Class saveIndex) throws InstantiationException,
+        IllegalAccessException {
         this.saveIndex = saveIndex;
+        if (saveIndex != null) {
+            saveIndexInstance = (ISaveIndex) saveIndex.newInstance();
+        } else {
+            saveIndexInstance = null;
+        }
     }
 
     /**
@@ -121,8 +134,14 @@ public final class ApplicationType {
      *
      * @param searchIndex search index generator.
      */
-    public void setSearchIndex(ISearchIndex searchIndex) {
+    public void setSearchIndex(Class searchIndex) throws InstantiationException,
+        IllegalAccessException {
         this.searchIndex = searchIndex;
+        if (searchIndex != null) {
+            searchIndexInstance = (ISearchIndex) searchIndex.newInstance();
+        } else {
+            searchIndexInstance = null;
+        }
     }
 
     /**
@@ -132,7 +151,7 @@ public final class ApplicationType {
      * @return search indexes for a give resource name.
      */
     public ResourceSearchIndexes getResourceSearchIndex(String resource) {
-        return searchIndex.getIndexes(resource);
+        return searchIndexInstance.getIndexes(resource);
     }
 
     /**
@@ -142,7 +161,7 @@ public final class ApplicationType {
      * @return save indexes for a give resource name.
      */
     public ResourceSaveIndexes getResourceSaveIndex(String resource) {
-        return saveIndex.getIndexes(resource);
+        return saveIndexInstance.getIndexes(resource);
     }
 
     /**
@@ -151,7 +170,7 @@ public final class ApplicationType {
      * @return resource comparator.
      */
     public ResourceName getResourceComparator() {
-        return resourceComp;
+        return resourceCompInstance;
     }
 
     /**
@@ -160,7 +179,7 @@ public final class ApplicationType {
      * @return save index.
      */
     public ISaveIndex getSaveIndex() {
-        return saveIndex;
+        return saveIndexInstance;
     }
 
     /**
@@ -169,6 +188,6 @@ public final class ApplicationType {
      * @return search index.
      */
     public ISearchIndex getSearchIndex() {
-        return searchIndex;
+        return searchIndexInstance;
     }
 }

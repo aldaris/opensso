@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferredResourcesTest.java,v 1.1 2009-06-10 17:49:27 veiming Exp $
+ * $Id: ReferredResourcesTest.java,v 1.2 2009-06-12 00:02:34 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -87,7 +87,8 @@ public class ReferredResourcesTest {
         ocm.createSubOrganization(subRealm, Collections.EMPTY_MAP);
     }
     
-    private void createAppl(Subject adminSubject) throws EntitlementException {
+    private void createAppl(Subject adminSubject) throws EntitlementException,
+        InstantiationException, IllegalAccessException {
         Application appl = new Application("/", APPL_NAME,
             ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));

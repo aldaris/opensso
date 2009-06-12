@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeManager.java,v 1.11 2009-05-27 07:31:56 veiming Exp $
+ * $Id: ApplicationTypeManager.java,v 1.12 2009-06-12 00:02:33 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -119,12 +119,12 @@ public final class ApplicationTypeManager {
     }
 
     /**
-     * Returns search index implementation class.
+     * Returns search index class.
      *
      * @param className Search index implementation class name.
-     * @return search index implementation class.
+     * @return search index class.
      */
-    public static ISearchIndex getSearchIndex(String className) {
+    public static Class getSearchIndex(String className) {
         if (className == null) {
             return null;
         }
@@ -132,7 +132,7 @@ public final class ApplicationTypeManager {
             Class clazz = Class.forName(className);
             Object o = clazz.newInstance();
             if (o instanceof ISearchIndex) {
-                return (ISearchIndex) o;
+                return clazz;
             }
         } catch (InstantiationException ex) {
             PrivilegeManager.debug.error(
@@ -148,12 +148,12 @@ public final class ApplicationTypeManager {
     }
 
     /**
-     * Returns save index implementation class.
+     * Returns save index class.
      *
      * @param className Save index implementation class name.
-     * @return saveindex implementation class.
+     * @return saveindex class.
      */
-    public static ISaveIndex getSaveIndex(String className) {
+    public static Class getSaveIndex(String className) {
         if (className == null) {
             return null;
         }
@@ -161,7 +161,7 @@ public final class ApplicationTypeManager {
             Class clazz = Class.forName(className);
             Object o = clazz.newInstance();
             if (o instanceof ISaveIndex) {
-                return (ISaveIndex) o;
+                return clazz;
             }
         } catch (InstantiationException ex) {
             PrivilegeManager.debug.error(
@@ -182,7 +182,7 @@ public final class ApplicationTypeManager {
      * @param className Resource comparator implementation class name.
      * @return resource comparator implementation class.
      */
-    public static ResourceName getResourceComparator(String className) {
+    public static Class getResourceComparator(String className) {
         if (className == null) {
             return null;
         }
@@ -190,7 +190,7 @@ public final class ApplicationTypeManager {
             Class clazz = Class.forName(className);
             Object o = clazz.newInstance();
             if (o instanceof ResourceName) {
-                return (ResourceName) o;
+                return clazz;
             }
         } catch (InstantiationException ex) {
             PrivilegeManager.debug.error(

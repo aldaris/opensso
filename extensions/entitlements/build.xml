@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.61 2009-06-10 20:59:06 farble1670 Exp $
+  $Id: build.xml,v 1.62 2009-06-12 00:02:32 veiming Exp $
 
 -->
 
@@ -51,11 +51,59 @@
     <available file="${war.package.dir}"
            property="war.package.dir.exists" value="true" />
 
+    <target name="nightly" depends="build,tools"/>
+
     <target name="build" depends="package-war"/>
+
     <target name="build-lite">
         <property name="lite" value="true" />
         <antcall target="package-war" />
     </target>
+
+    <target name="tools">
+        <delete dir="${entitlements.built.tools.dir}" />
+        <mkdir dir="${entitlements.built.tools.dir}" />
+        <unzip src="${entitlements.extlib.dir}/ssoAdminTools.zip"
+            dest="${entitlements.built.tools.dir}" />
+        <copy file="${entitlements.script.dir}/ssoadm"
+            toFile="${entitlements.built.tools.dir}/template/unix/bin/ssoadm.template"
+            overwrite="true"/>
+        <copy file="${entitlements.script.dir}/ssoadm.bat"
+            toFile="${entitlements.built.tools.dir}/template/windows/bin/ssoadm.bat.template"
+            overwrite="true"/>
+
+        <mkdir dir="${entitlements.built.tools.dir}/classes" />
+        <copy todir="${entitlements.built.tools.dir}/classes" overwrite="true">
+            <fileset dir="${entitlements.classes.dir}" includes="**/*.class" />
+        </copy>
+        <copy todir="${entitlements.built.tools.dir}/resources"
+            overwrite="true">
+            <fileset dir="${entitlements.res.i18n.dir}"
+                includes="**/*.properties" />
+        </copy>
+
+        <zip destfile="${entitlements.dist.dir}/ssoAdminTools.zip"
+            whenempty="create">
+            <zipfileset dir="${entitlements.built.tools.dir}" filemode="755">
+                <include name="setup"/>
+            </zipfileset>
+            <zipfileset dir="${entitlements.built.tools.dir}">
+                <exclude name="setup"/>
+            </zipfileset>
+        </zip>
+        <checksum file="${entitlements.dist.dir}/ssoAdminTools.zip" 
+            algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="cli-res">
+        <java classname="com.sun.identity.cli.tools.CLIDefinitionGenerator"
+            classpath="${entitlements.extlib.dir}/amserver.jar:${entitlements.classes.dir}">
+            <arg value="${entitlements.res.i18n.dir}"/>
+            <arg value="com.sun.identity.entitlement.opensso.cli.definition.Entitlement"/>
+        </java>
+    </target>
+
+
    
     <target name="init" depends="amserver-jar,openfedlib-jar,sharedlib-jar,build-lib,war-lib">
         <mkdir dir="${entitlements.dist.dir}" />
@@ -95,9 +143,6 @@
                 <not>
                     <isset property="war.package.dir.exists"/>
                 </not>
-                <not>
-                    <isset property="lite"/>
-                </not>
             </and>
         </condition>
     </target>
@@ -129,6 +174,9 @@
             <src path="${entitlements.src.dir}/com/sun/identity/shared/debug"/>
             <classpath refid="build.class.path"/>
         </javac>
+        <mkdir dir="${entitlements.classes.dir}/com/sun/identity/log/messageid" />
+        <copy file="${entitlements.xml.log.dir}/CLILogMessageIDs.xml"
+            toDir="${entitlements.classes.dir}/com/sun/identity/log/messageid" />
     </target>
 
     <target name="src-admin" depends="init">
@@ -160,12 +208,14 @@
         </javac>
     </target>
 
-    <target name="src" depends="src-policy,src-admin"/>
+    <target name="src" depends="src-policy,src-admin,cli-res"/>
 
     <target name="unwar" depends="init" if="merge.web">
         <unjar
            src="${entitlements.extlib.dir}/opensso.war"
            dest="${war.package.dir}" />
+        <copy file="${entitlements.web.dir}/ssoadm.jsp" 
+              todir="${war.package.dir}" overwrite="true" />
     </target>
 
     <target name="copy-webxml" depends="unwar" if="lite">
@@ -263,6 +313,7 @@
         </copy>
         <copy todir="${war.package.dir}/WEB-INF/classes" overwrite="true">
             <fileset dir="${entitlements.classes.dir}" includes="**/*.class" />
+            <fileset dir="${entitlements.classes.dir}" includes="**/*.xml" />
             <fileset dir="${entitlements.res.dir}/config" includes="*.properties" />
             <fileset dir="${entitlements.xml.svc.dir}" includes="*.xml" />
             <fileset dir="${entitlements.web.dir}" includes="*.xml" />
@@ -298,6 +349,8 @@
            webxml="${war.package.dir}/WEB-INF/web.xml">
             <zipfileset dir="${war.package.dir}" />
         </war>
+        <checksum file="${entitlements.dist.dir}/entitlement.war" 
+            algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="prepare-unittest" depends="unwar">

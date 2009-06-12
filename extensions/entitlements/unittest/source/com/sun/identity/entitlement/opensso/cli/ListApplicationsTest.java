@@ -22,41 +22,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementThreadPool.java,v 1.3 2009-06-12 00:02:33 veiming Exp $
- *
+ * $Id: ListApplicationsTest.java,v 1.1 2009-06-12 00:02:35 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.entitlement.opensso.cli;
 
-import com.sun.identity.entitlement.interfaces.IThreadPool;
-
-/**
- * Thread Pool
- */
-public class EntitlementThreadPool implements IThreadPool {
-    private static ThreadPool thrdPool;
-    private static final int DEFAULT_POOL_SIZE = 10;
+import com.sun.identity.cli.CLIConstants;
+import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CLIRequest;
+import com.sun.identity.cli.IArgument;
+import org.testng.annotations.Test;
 
 
-    static {
-        thrdPool = new ThreadPool("entitlementThreadPool",
-            DEFAULT_POOL_SIZE);
-    }
-
-    public void submit(Runnable task) {
-        try {
-            if (isMutiTreaded()) {
-                thrdPool.run(task);
-            } else {
-                task.run();
-            }
-        } catch (ThreadPoolException e) {
-            PrivilegeManager.debug.error("EntitlementThreadPool.submit", e);
-        }
-    }
-
-    @Override
-    public boolean isMutiTreaded() {
-        return (DEFAULT_POOL_SIZE > 0);
+public class ListApplicationsTest extends CLITestImpl {
+    @Test
+    public void listApps() throws CLIException {
+        String[] args = new String[3];
+        args[0] = "list-appls";
+        args[1] = CLIConstants.PREFIX_ARGUMENT_LONG +
+            IArgument.REALM_NAME;
+        args[2] = "/";
+        CLIRequest req = new CLIRequest(null, args, adminToken);
+        cmdManager.addToRequestQueue(req);
+        cmdManager.serviceRequestQueue();
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.21 2009-06-09 19:10:24 veiming Exp $
+ * $Id: EntitlementService.java,v 1.22 2009-06-12 00:02:33 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -152,6 +152,12 @@ public class EntitlementService extends EntitlementConfiguration {
                     results.add(createApplicationType(name, data));
                 }
             }
+        } catch (InstantiationException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplicationTypes", ex);
+        } catch (IllegalAccessException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplicationTypes", ex);
         } catch (SMSException ex) {
             PrivilegeManager.debug.error(
                 "EntitlementService.getApplicationTypes", ex);
@@ -295,6 +301,12 @@ public class EntitlementService extends EntitlementConfiguration {
                     "EntitlementService.getApplications, admin token is missing",
                     null);
             }
+        } catch (InstantiationException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplications", ex);
+        } catch (IllegalAccessException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplications", ex);
         } catch (SMSException ex) {
             PrivilegeManager.debug.error(
                 "EntitlementService.getApplications", ex);
@@ -758,19 +770,19 @@ public class EntitlementService extends EntitlementConfiguration {
     private ApplicationType createApplicationType(
         String name,
         Map<String, Set<String>> data
-    ) {
+    ) throws InstantiationException, IllegalAccessException {
         Map<String, Boolean> actions = getActions(data);
         String saveIndexImpl = getAttribute(data,
             CONFIG_SAVE_INDEX_IMPL);
-        ISaveIndex saveIndex = ApplicationTypeManager.getSaveIndex(
+        Class saveIndex = ApplicationTypeManager.getSaveIndex(
             saveIndexImpl);
         String searchIndexImpl = getAttribute(data,
             CONFIG_SEARCH_INDEX_IMPL);
-        ISearchIndex searchIndex =
+        Class searchIndex =
             ApplicationTypeManager.getSearchIndex(searchIndexImpl);
         String resourceComp = getAttribute(data,
             CONFIG_RESOURCE_COMP_IMPL);
-        ResourceName resComp =
+        Class resComp =
             ApplicationTypeManager.getResourceComparator(resourceComp);
 
         return new ApplicationType(name, actions, searchIndex, saveIndex,
@@ -781,7 +793,7 @@ public class EntitlementService extends EntitlementConfiguration {
         String realm,
         String name,
         Map<String, Set<String>> data
-    ) {
+    ) throws InstantiationException, IllegalAccessException {
         String applicationType = getAttribute(data,
             CONFIG_APPLICATIONTYPE);
 
@@ -819,7 +831,7 @@ public class EntitlementService extends EntitlementConfiguration {
 
         String saveIndexImpl = getAttribute(data,
             CONFIG_SAVE_INDEX_IMPL);
-        ISaveIndex saveIndex = ApplicationTypeManager.getSaveIndex(
+        Class saveIndex = ApplicationTypeManager.getSaveIndex(
             saveIndexImpl);
         if (saveIndex != null) {
             app.setSaveIndex(saveIndex);
@@ -827,7 +839,7 @@ public class EntitlementService extends EntitlementConfiguration {
 
         String searchIndexImpl = getAttribute(data,
             CONFIG_SEARCH_INDEX_IMPL);
-        ISearchIndex searchIndex =
+        Class searchIndex =
             ApplicationTypeManager.getSearchIndex(searchIndexImpl);
         if (searchIndex != null) {
             app.setSearchIndex(searchIndex);
@@ -835,7 +847,7 @@ public class EntitlementService extends EntitlementConfiguration {
 
         String resourceComp = getAttribute(data,
             CONFIG_RESOURCE_COMP_IMPL);
-        ResourceName resComp =
+        Class resComp =
             ApplicationTypeManager.getResourceComparator(resourceComp);
         if (resComp != null) {
             app.setResourceComparator(resComp);
@@ -873,6 +885,12 @@ public class EntitlementService extends EntitlementConfiguration {
                     return app.getAttributeNames();
                 }
             }
+        } catch (InstantiationException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getSubjectAttributeNames", ex);
+        } catch (IllegalAccessException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getSubjectAttributeNames", ex);
         } catch (SMSException ex) {
             PrivilegeManager.debug.error(
                 "EntitlementService.getSubjectAttributeNames", ex);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.6 2009-05-26 07:14:22 veiming Exp $
+ * $Id: ThreadPool.java,v 1.7 2009-06-12 00:02:33 veiming Exp $
  *
  */
 package com.sun.identity.entitlement;
@@ -53,7 +53,6 @@ public class ThreadPool {
     private int poolSize;
     private String poolName;
     private List<Runnable> taskList;
-    private boolean shutdownThePool;
     private WorkerThread[] threads;
     private Lock lock = new ReentrantLock();
     private Condition hasTasks = lock.newCondition();
@@ -97,35 +96,12 @@ public class ThreadPool {
      */
     public final void run(Runnable task)
         throws ThreadPoolException {
-        if (shutdownThePool) {
-            // No more tasks will be accepted
-            throw new ThreadPoolException(poolName +
-                " thread pool's being shutdown.");
-        }
-
         try {
             lock.lock();
             taskList.add(task);
             hasTasks.signal();
         } finally {
             lock.unlock();
-        }
-    }
-
-    public void shutdown() {
-        if (!shutdownThePool) {
-            shutdownThePool = true;
-            for (int i = 0; i < poolSize ; i++) {
-                threads[i].terminate();
-            }
-         
-            try {
-                lock.lock();
-                taskList.clear();
-                hasTasks.notifyAll();
-            } finally {
-                lock.unlock();
-            }
         }
     }
 
@@ -147,13 +123,11 @@ public class ThreadPool {
             while (true) {
                 Runnable task = null;
                 try {
-                    if (!shouldTerminate) {
-                        pool.lock.lock();
-                        if (!pool.taskList.isEmpty()) {
-                            task = taskList.remove(0);
-                        } else {
-                            pool.hasTasks.await();
-                        }
+                    pool.lock.lock();
+                    if (!pool.taskList.isEmpty()) {
+                        task = taskList.remove(0);
+                    } else {
+                        pool.hasTasks.await();
                     }
                 } catch (InterruptedException ex) {
                     PrivilegeManager.debug.error("WorkerThread.run", ex);
@@ -164,10 +138,6 @@ public class ThreadPool {
                     task.run();
                 }
             }
-        }
-
-        public synchronized void terminate() {
-            shouldTerminate = true;
         }
     }
 }

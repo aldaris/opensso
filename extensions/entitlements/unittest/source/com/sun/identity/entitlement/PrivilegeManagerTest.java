@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.27 2009-06-08 19:11:46 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.28 2009-06-12 00:02:34 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -72,7 +72,7 @@ public class PrivilegeManagerTest {
     @BeforeClass
     public void setup() 
         throws SSOException, IdRepoException, EntitlementException,
-        SMSException {
+        SMSException, InstantiationException, IllegalAccessException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         adminSubject = SubjectUtils.createSubject(adminToken);
@@ -83,7 +83,8 @@ public class PrivilegeManagerTest {
         orgMgr.createSubOrganization(subRealm, Collections.EMPTY_MAP);
     }
 
-    private void createApplication(String realm) throws EntitlementException {
+    private void createApplication(String realm) throws EntitlementException,
+        InstantiationException, IllegalAccessException {
         Application appl = new Application(realm, APPL_NAME,
             ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
