@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.25 2009-05-29 22:25:42 dillidorai Exp $
+   $Id: entitlement.xml,v 1.26 2009-06-12 22:38:14 farble1670 Exp $
 
 -->
 
@@ -266,6 +266,7 @@
                             <Value>com.sun.identity.admin.model.IdRepoRoleViewSubject</Value>
                             <Value>com.sun.identity.admin.model.IdRepoUserViewSubject</Value>
                             <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.AttributeViewSubject</Value>
                             <Value>com.sun.identity.admin.model.OrViewSubject</Value>
                             <Value>com.sun.identity.admin.model.AndViewSubject</Value>
                             <Value>com.sun.identity.admin.model.NotViewSubject</Value>

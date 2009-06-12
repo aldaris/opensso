@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.89 2009-06-10 04:46:23 farble1670 Exp $
+  $Id: faces-config.xml,v 1.90 2009-06-12 22:38:13 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -458,6 +458,27 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>attributeSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.AttributeSubjectType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>attribute</value>
+        </managed-property>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-attribute.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/attribute.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>orSubjectType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.OrSubjectType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -538,6 +559,7 @@
             <value>#{idRepoUserSubjectType}</value>
             <value>#{bankingSubjectType}</value>
             <value>#{virtualSubjectType}</value>
+            <value>#{attributeSubjectType}</value>
         </list-entries>
     </managed-bean>
 
@@ -596,6 +618,10 @@
                 <key>com.sun.identity.entitlement.AuthenticatedESubject</key>
                 <value>#{virtualSubjectType}</value>
             </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.AttributeSubject</key>
+                <value>#{attributeSubjectType}</value>
+            </map-entry>
         </map-entries>
     </managed-bean>
 
@@ -650,6 +676,10 @@
                 <key>com.sun.identity.admin.model.VirtualViewSubject</key>
                 <value>#{virtualSubjectType}</value>
             </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.AttributeViewSubject</key>
+                <value>#{attributeSubjectType}</value>
+            </map-entry>
         </map-entries>
     </managed-bean>
 
@@ -679,6 +709,10 @@
             <map-entry>
                 <key>com.sun.identity.admin.model.VirtualViewSubject</key>
                 <value>#{virtualSubjectDao}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.AttributeViewSubject</key>
+                <value>#{attributeSubjectDao}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
@@ -780,6 +814,15 @@
             <value>#{virtualSubjectType}</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>attributeSubjectDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.AttributeSubjectDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{attributeSubjectType}</value>
+        </managed-property>
+    </managed-bean>
     <!-- subject dao's -->
 
     <!-- subject containers -->
@@ -868,6 +911,23 @@
             <value>false</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>attributeSubjectContainer</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SubjectContainer</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectType</property-name>
+            <value>#{attributeSubjectType}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectDao</property-name>
+            <value>#{attributeSubjectDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>searchVisible</property-name>
+            <value>true</value>
+        </managed-property>
+    </managed-bean>
     
     <managed-bean>
         <managed-bean-name>subjectTypeToSubjectContainerMap</managed-bean-name>
@@ -897,6 +957,10 @@
             <map-entry>
                 <key>#{virtualSubjectType}</key>
                 <value>#{virtualSubjectContainer}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{attributeSubjectType}</key>
+                <value>#{attributeSubjectContainer}</value>
             </map-entry>
         </map-entries>
     </managed-bean>

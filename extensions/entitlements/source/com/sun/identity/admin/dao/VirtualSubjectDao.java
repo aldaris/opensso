@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VirtualSubjectDao.java,v 1.2 2009-06-04 11:49:12 veiming Exp $
+ * $Id: VirtualSubjectDao.java,v 1.3 2009-06-12 22:38:13 farble1670 Exp $
  */
 
 package com.sun.identity.admin.dao;
