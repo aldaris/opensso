@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.10 2009-06-12 22:00:41 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.11 2009-06-13 04:40:09 arviranga Exp $
  *
  */
 
@@ -708,164 +708,23 @@ public class PolicyEvaluator {
 
         Set actions = new HashSet();
         actions.addAll(actionNames);
+        SSOToken adminSSOToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
 
-        PolicyDecision mergedPolicyDecision = null;
-        Set policyNameSet = null;
-        Set toRemovePolicyNameSet = null;
-        policyNameSet = resourceIndexManager.getPolicyNames(
-                serviceType, resourceName, INCLUDE_SUPER_RESOURCE_POLCIES);
-        if ( DEBUG.messageEnabled() ) {
-            String tokenPrincipal = 
-                    (token != null) ? token.getPrincipal().getName()
-                    : PolicyUtils.EMPTY_STRING;
-            DEBUG.message(new StringBuffer("at PolicyEvaluator")
-                .append(".getPolicyDecision()")
-                .append(" principal, resource name, ")
-                .append("action names, policy names,")
-                .append(" orgName =")
-                .append(tokenPrincipal) .append(",  ")
-                .append(resourceName) .append(",  ")
-                .append(actionNames) .append(",  ")
-                .append(policyNameSet).append(",  ")
-                .append(orgName).toString());
-        }
-        Iterator policyIter = policyNameSet.iterator();
-        while ( policyIter.hasNext() ) {
-            String policyName = (String) policyIter.next();
-            Policy policy = policyManager.getPolicy(policyName, 
-                USE_POLICY_CACHE);
-            if ( policy != null && policy.isActive()) { 
-                //policy might have been removed or inactivated
-                PolicyDecision policyDecision = policy.getPolicyDecision(token, 
-                       serviceTypeName, resourceName, actions, envParameters);
-                if (!policy.isReferralPolicy() && policyDecision.hasAdvices()) {
-                    addAdvice(policyDecision, ADVICING_ORGANIZATION, orgName);
-                }
-
-                // Let us log all policy evaluation results
-                if (PolicyUtils.logStatus && (token != null)) {
-                    String decision = policyDecision.toString();
-                    if (decision != null && decision.length() != 0) {
-                        String[] objs = { policyName, orgName, serviceTypeName, 
-                                        resourceName, actionNames.toString(), 
-                                        decision };
-                            PolicyUtils.logAccessMessage("POLICY_EVALUATION",
-                                                objs, token, serviceTypeName);
-                    }
-                }
-                if ( mergedPolicyDecision == null ) {
-                    mergedPolicyDecision = policyDecision;
-                } else {
-                    mergePolicyDecisions(serviceType, policyDecision, 
-                           mergedPolicyDecision);
-                }
-
-                if (!PolicyConfig.continueEvaluationOnDenyDecision()) {
-                    actions.removeAll(getFinalizedActions(serviceType, 
-                            mergedPolicyDecision));
-                }
-
-                if ( actions.isEmpty() ) {
-                    break;
-                }
-            } else { // add policy names to toRemovePolicyNameSet
-                if (toRemovePolicyNameSet == null) {
-                    toRemovePolicyNameSet = new HashSet();
-                }
-                toRemovePolicyNameSet.add(policyName);
-                if ( DEBUG.messageEnabled() ) {
-                    DEBUG.message("PolicyEvaluator.getPolicyDecision():"
-                        +policyName+ " is inactive or non-existent");
-                }
+        try {
+            Evaluator eval = new Evaluator(
+                SubjectUtils.createSubject(adminSSOToken), serviceTypeName);
+            List<Entitlement> entitlements = eval.evaluate(
+                orgName, SubjectUtils.createSubject(token), resourceName,
+                envParameters, false);
+            if ((entitlements != null) && !entitlements.isEmpty()) {
+                Entitlement e = entitlements.iterator().next();
+                return (EntitlementToPolicyDecision(e));
             }
+        } catch (EntitlementException e) {
+            throw new PolicyException(e);
         }
-
-        // remove inactive/missing policies from policyNameSet
-        if (toRemovePolicyNameSet != null) {
-            policyNameSet.removeAll(toRemovePolicyNameSet);
-        }
-
-        Set orgsToVisit = getOrgsToVisit(policyNameSet);
-
-        if (PolicyConfig.orgAliasMappedResourcesEnabled()
-                    && PolicyManager.WEB_AGENT_SERVICE.equalsIgnoreCase(
-                    serviceTypeName)) {
-            String orgAlias = policyManager.getOrgAliasWithResource(
-                    resourceName); 
-            if (orgAlias != null) {
-                String orgWithAlias = policyManager.getOrgNameWithAlias(
-                        orgAlias);
-                if (orgWithAlias != null) {
-                    if ( DEBUG.messageEnabled() ) {
-                        DEBUG.message("PolicyEvaluator.getPolicyDecision():"
-                                + "adding orgWithAlias to orgsToVisit="
-                                + orgWithAlias);
-                    }
-                    orgsToVisit.add(orgWithAlias);
-                }
-            }
-        }
-
-        if ( DEBUG.messageEnabled() ) {
-            DEBUG.message(new StringBuffer("at PolicyEvaluator")
-                .append(".getPolicyDecision()")
-                .append(" orgsToVist=").append(orgsToVisit.toString())
-                .toString());
-        }
-        orgsToVisit.removeAll(visitedOrgs);
-        if ( DEBUG.messageEnabled() ) {
-            DEBUG.message(new StringBuffer("at PolicyEvaluator")
-                .append(".getPolicyDecision()")
-                .append(" orgsToVist(after removing already visited orgs=")
-                .append(orgsToVisit.toString())
-                .toString() );
-        }
-        while ( !orgsToVisit.isEmpty() && !actions.isEmpty() ) {
-            String orgToVisit = (String) orgsToVisit.iterator().next();
-            orgsToVisit.remove(orgToVisit);
-            visitedOrgs.add(orgToVisit);
-            try {
-                // need to use admin sso token here. Need all privileges to
-                // check for the organzation
-                policyManager.verifyOrgName(orgToVisit);
-            } catch (NameNotFoundException nnfe) {
-                if( DEBUG.warningEnabled()) {
-                    DEBUG.warning("Organization does not exist - "
-                            + "skipping referral to " + orgToVisit);
-                }
-                continue;
-            }
-            PolicyEvaluator pe = new PolicyEvaluator(orgToVisit, 
-                    serviceTypeName);
-            /**
-             * save policy config before passing control down to
-             * sub realm
-             */
-	    Map savedPolicyConfig =(Map)envParameters.get(SUN_AM_POLICY_CONFIG);
-	    // Update env to point to the realm policy config data.
-	    envParameters.put(SUN_AM_POLICY_CONFIG, PolicyConfig.
-	        getPolicyConfig(orgToVisit));
-            PolicyDecision policyDecision 
-                    = pe.getPolicyDecision(token, resourceName, actionNames,
-                    envParameters,visitedOrgs); 
-	    // restore back the policy config data for the parent realm
-	    envParameters.put(SUN_AM_POLICY_CONFIG, savedPolicyConfig);
-            if ( mergedPolicyDecision == null ) {
-                mergedPolicyDecision = policyDecision;
-            } else {
-                mergePolicyDecisions(serviceType, policyDecision, 
-                       mergedPolicyDecision);
-            }
-            if (!PolicyConfig.continueEvaluationOnDenyDecision()) {
-                actions.removeAll(getFinalizedActions(serviceType, 
-                        mergedPolicyDecision));
-            }
-        }
-
-        if ( mergedPolicyDecision == null ) {
-            mergedPolicyDecision = new PolicyDecision();
-        }
-        return mergedPolicyDecision;
+        return (new PolicyDecision());
     }
 
 

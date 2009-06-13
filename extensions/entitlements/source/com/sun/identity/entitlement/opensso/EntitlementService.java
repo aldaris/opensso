@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.22 2009-06-12 00:02:33 veiming Exp $
+ * $Id: EntitlementService.java,v 1.23 2009-06-13 04:38:56 arviranga Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -39,6 +39,7 @@ import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
@@ -278,6 +279,12 @@ public class EntitlementService extends EntitlementConfiguration {
             if (adminToken != null) {
                 ServiceConfigManager mgr = new ServiceConfigManager(
                     SERVICE_NAME, adminToken);
+                // TODO. Since applications for the hidden realms have to be
+                // the same as root realm mainly for delegation without any
+                // referrals, the hack is to use root realm for hidden realm.
+                if (realm.startsWith(SMSEntry.SUN_INTERNAL_REALM_PREFIX)) {
+                    realm = "/";
+                }
                 ServiceConfig orgConfig = mgr.getOrganizationConfig(
                     realm, null);
                 if (orgConfig != null) {
