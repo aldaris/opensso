@@ -11,6 +11,11 @@ public enum FromAction {
     POLICY_EDIT("policy-edit"),
     REFERRAL_CREATE("referral-create"),
     NEWS("news"),
+    FEDERATION("federation"),
+    SAMLV2_HOSTED_SP_CREATE("samlv2-hosted-sp-create"),
+    SAMLV2_REMOTE_SP_CREATE("samlv2-remote-sp-create"),
+    SAMLV2_HOSTED_IDP_CREATE("samlv2-hosted-idp-create"),
+    SAMLV2_REMOTE_IDP_CREATE("samlv2-remote-sp-create"),
     PERMISSION_DENIED("permission-denied");
 
     private static final Map<String,FromAction> actionValues = new HashMap<String,FromAction>() {
@@ -21,6 +26,11 @@ public enum FromAction {
             put(POLICY_MANAGE.getAction(), POLICY_MANAGE);
             put(POLICY_EDIT.getAction(), POLICY_EDIT);
             put(REFERRAL_CREATE.getAction(), REFERRAL_CREATE);
+            put(SAMLV2_HOSTED_SP_CREATE.getAction(), SAMLV2_HOSTED_SP_CREATE);
+            put(SAMLV2_REMOTE_SP_CREATE.getAction(), SAMLV2_REMOTE_SP_CREATE);
+            put(SAMLV2_HOSTED_IDP_CREATE.getAction(), SAMLV2_HOSTED_IDP_CREATE);
+            put(SAMLV2_REMOTE_IDP_CREATE.getAction(), SAMLV2_REMOTE_IDP_CREATE);
+            put(FEDERATION.getAction(), FEDERATION);
             put(NEWS.getAction(), NEWS);
             put(PERMISSION_DENIED.getAction(), PERMISSION_DENIED);
         }

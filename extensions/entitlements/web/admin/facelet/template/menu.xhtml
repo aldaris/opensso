@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.18 2009-06-10 13:52:34 farble1670 Exp $
+   $Id: menu.xhtml,v 1.19 2009-06-13 00:43:09 farble1670 Exp $
 
 -->
 
@@ -62,6 +62,7 @@
         </ice:menuItem>
 
         <ice:menuItem
+            rendered="#{permissionsBean.federationAllowed}"
             value="#{resources['menu.federationItemValue']}"
             action="federation"
             icon="../image/federation.png">

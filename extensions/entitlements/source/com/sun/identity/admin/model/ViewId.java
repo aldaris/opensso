@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewId.java,v 1.2 2009-06-08 21:02:02 farble1670 Exp $
+ * $Id: ViewId.java,v 1.3 2009-06-13 00:43:09 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -37,6 +37,11 @@ public enum ViewId {
     POLICY_MANAGE("/admin/facelet/policy-manage.xhtml"),
     POLICY_EDIT("/admin/facelet/policy-edit.xhtml"),
     REFERRAL_CREATE("/admin/facelet/referral-create.xhtml"),
+    FEDERATION("/admin/facelet/federation.xhtml"),
+    SAMLV2_HOSTED_SP_CREATE("/admin/facelet/samlv2-hosted-sp-create.xhtml"),
+    SAMLV2_REMOTE_SP_CREATE("/admin/facelet/samlv2-remote-sp-create.xhtml"),
+    SAMLV2_HOSTED_IDP_CREATE("/admin/facelet/samlv2-hosted-idp-create.xhtml"),
+    SAMLV2_REMOTE_IDP_CREATE("/admin/facelet/samlv2-remote-idp-create.xhtml"),
     NEWS("/admin/facelet/news.xhtml"),
     PERMISSION_DENIED("/admin/facelet/permission-denied.xhtml");
 
@@ -48,6 +53,11 @@ public enum ViewId {
             put(POLICY_MANAGE.getId(), POLICY_MANAGE);
             put(POLICY_EDIT.getId(), POLICY_EDIT);
             put(REFERRAL_CREATE.getId(), REFERRAL_CREATE);
+            put(SAMLV2_HOSTED_SP_CREATE.getId(), SAMLV2_HOSTED_SP_CREATE);
+            put(SAMLV2_REMOTE_SP_CREATE.getId(), SAMLV2_REMOTE_SP_CREATE);
+            put(SAMLV2_HOSTED_IDP_CREATE.getId(), SAMLV2_HOSTED_IDP_CREATE);
+            put(SAMLV2_REMOTE_IDP_CREATE.getId(), SAMLV2_REMOTE_IDP_CREATE);
+            put(FEDERATION.getId(), FEDERATION);
             put(NEWS.getId(), NEWS);
             put(PERMISSION_DENIED.getId(), PERMISSION_DENIED);
         }

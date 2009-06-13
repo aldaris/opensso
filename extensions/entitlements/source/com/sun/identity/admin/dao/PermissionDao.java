@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionDao.java,v 1.5 2009-06-10 17:47:54 farble1670 Exp $
+ * $Id: PermissionDao.java,v 1.6 2009-06-13 00:43:08 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -47,43 +47,106 @@ import static com.sun.identity.console.base.model.AMAdminConstants.*;
 
 public class PermissionDao implements Serializable {
 
-    private static final Map<String,Set<Permission>> permissionMap = new HashMap<String,Set<Permission>>();
+    private enum AccessLevel {
+
+        READ,
+        WRITE,
+        DELEGATE;
+    }
+    private static final Set<String> serviceNames = new HashSet<String>();
+    private static final Map<String, Map<AccessLevel, Set<Permission>>> permissionMap = new HashMap<String, Map<AccessLevel, Set<Permission>>>();
+
 
     static {
-        Set<Permission> readPermissions = new HashSet<Permission>();
-        readPermissions.add(Permission.HOME);
-        readPermissions.add(Permission.NEWS);
-        readPermissions.add(Permission.POLICY);
-        readPermissions.add(Permission.POLICY_MANAGE);
+        serviceNames.add(null);
+        serviceNames.add(EntitlementService.SERVICE_NAME);
 
-        Set<Permission> writePermissions = new HashSet<Permission>();
-        writePermissions.add(Permission.POLICY_CREATE);
-        writePermissions.add(Permission.POLICY_EDIT);
+        // for each realm, for each access level, call out permissions
 
-        Set<Permission> delegatePermissions = new HashSet<Permission>();
-        delegatePermissions.add(Permission.REFERRAL_CREATE);
+        Map<AccessLevel, Set<Permission>> accessMap;
+        Set<Permission> permissions;
 
-        permissionMap.put(PERMISSION_READ, readPermissions);
-        permissionMap.put(PERMISSION_MODIFY, writePermissions);
-        permissionMap.put(PERMISSION_DELEGATE, delegatePermissions);
+        //
+        // realm (no service, null key)
+        //
+        accessMap = new HashMap<AccessLevel, Set<Permission>>();
+
+        permissions = new HashSet<Permission>();
+        permissions.add(Permission.HOME);
+        permissions.add(Permission.NEWS);
+        permissions.add(Permission.FEDERATION);
+        accessMap.put(AccessLevel.READ, permissions);
+
+        permissions = new HashSet<Permission>();
+        permissions.add(Permission.SAMLV2_HOSTED_IDP_CREATE);
+        permissions.add(Permission.SAMLV2_HOSTED_SP_CREATE);
+        permissions.add(Permission.SAMLV2_REMOTE_IDP_CREATE);
+        permissions.add(Permission.SAMLV2_REMOTE_SP_CREATE);
+        accessMap.put(AccessLevel.WRITE, permissions);
+
+        permissions = new HashSet<Permission>();
+        permissions.add(Permission.REFERRAL_CREATE);
+        accessMap.put(AccessLevel.DELEGATE, permissions);
+
+        permissionMap.put(null, accessMap);
+
+        //
+        // openssoEntitlements service
+        //
+        accessMap = new HashMap<AccessLevel, Set<Permission>>();
+
+        permissions = new HashSet<Permission>();
+        permissions.add(Permission.POLICY);
+        permissions.add(Permission.POLICY_MANAGE);
+        accessMap.put(AccessLevel.READ, permissions);
+
+        permissions = new HashSet<Permission>();
+        permissions.add(Permission.POLICY_CREATE);
+        permissions.add(Permission.POLICY_EDIT);
+        accessMap.put(AccessLevel.WRITE, permissions);
+
+        permissionMap.put(EntitlementService.SERVICE_NAME, accessMap);
     }
 
     public List<Permission> getPermissions(RealmBean realmBean) {
-        boolean read = isAllowed(realmBean, PERMISSION_READ, EntitlementService.SERVICE_NAME);
-        boolean write = isAllowed(realmBean, PERMISSION_MODIFY, EntitlementService.SERVICE_NAME);
+        List<Permission> permissions = new ArrayList<Permission>();
+
+        for (String serviceName : serviceNames) {
+            List<Permission> ps = getPermissions(realmBean, serviceName);
+            permissions.addAll(ps);
+        }
+
+        return permissions;
+    }
+
+    private List<Permission> getPermissions(RealmBean realmBean, String serviceName) {
+        boolean read = isAllowed(realmBean, PERMISSION_READ, serviceName);
+        boolean write = isAllowed(realmBean, PERMISSION_MODIFY, serviceName);
         // TODO: null svc for delegation check?
-        boolean delegate = isAllowed(realmBean, PERMISSION_DELEGATE, null);
+        boolean delegate = isAllowed(realmBean, PERMISSION_DELEGATE, serviceName);
 
         List<Permission> permissions = new ArrayList<Permission>();
 
         if (read) {
-            permissions.addAll(permissionMap.get(PERMISSION_READ));
+            Map<AccessLevel, Set<Permission>> accessMap = permissionMap.get(serviceName);
+            Set<Permission> p = accessMap.get(AccessLevel.READ);
+            if (p != null) {
+                permissions.addAll(p);
+            }
         }
         if (write) {
-            permissions.addAll(permissionMap.get(PERMISSION_MODIFY));
+            Map<AccessLevel, Set<Permission>> accessMap = permissionMap.get(serviceName);
+            Set<Permission> p = accessMap.get(AccessLevel.WRITE);
+            if (p != null) {
+                permissions.addAll(p);
+            }
         }
         if (delegate) {
-            permissions.addAll(permissionMap.get(PERMISSION_DELEGATE));
+            Map<AccessLevel, Set<Permission>> accessMap = permissionMap.get(serviceName);
+            Set<Permission> p = accessMap.get(AccessLevel.DELEGATE);
+            if (p != null) {
+                permissions.addAll(p);
+            }
         }
 
         return permissions;
