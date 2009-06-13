@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeViewSubject.java,v 1.1 2009-06-12 22:38:13 farble1670 Exp $
+ * $Id: AttributeViewSubject.java,v 1.2 2009-06-13 04:02:41 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import com.sun.identity.entitlement.AttributeSubject;
 import com.sun.identity.entitlement.EntitlementSubject;
 import javax.faces.event.ActionEvent;
@@ -66,5 +67,12 @@ public class AttributeViewSubject extends ViewSubject {
 
     public void valueClicked(ActionEvent event) {
         valueEditable = true;
+    }
+
+    @Override
+    public String toString() {
+        Resources r = new Resources();
+        String v = (value == null || value.length() == 0) ? r.getString(this, "emptyValue") : value;
+        return getSubjectType().getTitle() + ":" + getTitle() + "=" + v;
     }
 }

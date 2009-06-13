@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionDao.java,v 1.6 2009-06-13 00:43:08 farble1670 Exp $
+ * $Id: PermissionDao.java,v 1.7 2009-06-13 04:02:41 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -43,15 +43,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import static com.sun.identity.console.base.model.AMAdminConstants.*;
+import com.sun.identity.console.base.model.AMAdminConstants;
 
 public class PermissionDao implements Serializable {
 
     private enum AccessLevel {
 
-        READ,
-        WRITE,
-        DELEGATE;
+        READ(AMAdminConstants.PERMISSION_READ),
+        WRITE(AMAdminConstants.PERMISSION_MODIFY),
+        DELEGATE(AMAdminConstants.PERMISSION_DELEGATE);
+        private String value;
+
+        AccessLevel(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
     private static final Set<String> serviceNames = new HashSet<String>();
     private static final Map<String, Map<AccessLevel, Set<Permission>>> permissionMap = new HashMap<String, Map<AccessLevel, Set<Permission>>>();
@@ -70,6 +79,7 @@ public class PermissionDao implements Serializable {
         // realm (no service, null key)
         //
         accessMap = new HashMap<AccessLevel, Set<Permission>>();
+        permissionMap.put(null, accessMap);
 
         permissions = new HashSet<Permission>();
         permissions.add(Permission.HOME);
@@ -88,12 +98,11 @@ public class PermissionDao implements Serializable {
         permissions.add(Permission.REFERRAL_CREATE);
         accessMap.put(AccessLevel.DELEGATE, permissions);
 
-        permissionMap.put(null, accessMap);
-
         //
         // openssoEntitlements service
         //
         accessMap = new HashMap<AccessLevel, Set<Permission>>();
+        permissionMap.put(EntitlementService.SERVICE_NAME, accessMap);
 
         permissions = new HashSet<Permission>();
         permissions.add(Permission.POLICY);
@@ -104,8 +113,6 @@ public class PermissionDao implements Serializable {
         permissions.add(Permission.POLICY_CREATE);
         permissions.add(Permission.POLICY_EDIT);
         accessMap.put(AccessLevel.WRITE, permissions);
-
-        permissionMap.put(EntitlementService.SERVICE_NAME, accessMap);
     }
 
     public List<Permission> getPermissions(RealmBean realmBean) {
@@ -120,39 +127,22 @@ public class PermissionDao implements Serializable {
     }
 
     private List<Permission> getPermissions(RealmBean realmBean, String serviceName) {
-        boolean read = isAllowed(realmBean, PERMISSION_READ, serviceName);
-        boolean write = isAllowed(realmBean, PERMISSION_MODIFY, serviceName);
-        // TODO: null svc for delegation check?
-        boolean delegate = isAllowed(realmBean, PERMISSION_DELEGATE, serviceName);
-
         List<Permission> permissions = new ArrayList<Permission>();
-
-        if (read) {
-            Map<AccessLevel, Set<Permission>> accessMap = permissionMap.get(serviceName);
-            Set<Permission> p = accessMap.get(AccessLevel.READ);
-            if (p != null) {
-                permissions.addAll(p);
-            }
-        }
-        if (write) {
-            Map<AccessLevel, Set<Permission>> accessMap = permissionMap.get(serviceName);
-            Set<Permission> p = accessMap.get(AccessLevel.WRITE);
-            if (p != null) {
-                permissions.addAll(p);
-            }
-        }
-        if (delegate) {
-            Map<AccessLevel, Set<Permission>> accessMap = permissionMap.get(serviceName);
-            Set<Permission> p = accessMap.get(AccessLevel.DELEGATE);
-            if (p != null) {
-                permissions.addAll(p);
+        Map<AccessLevel, Set<Permission>> accessMap = permissionMap.get(serviceName);
+        for (AccessLevel ac : AccessLevel.values()) {
+            boolean allowed = isAllowed(realmBean, ac, serviceName);
+            if (allowed) {
+                Set<Permission> ps = accessMap.get(ac);
+                if (ps != null) {
+                    permissions.addAll(ps);
+                }
             }
         }
 
         return permissions;
     }
 
-    private boolean isAllowed(RealmBean realmBean, String permission, String serviceName) {
+    private boolean isAllowed(RealmBean realmBean, AccessLevel accessLevel, String serviceName) {
         try {
             DelegationEvaluator de = new DelegationEvaluator();
             DelegationPermission dp = new DelegationPermission();
@@ -162,7 +152,7 @@ public class PermissionDao implements Serializable {
             // TODO: access level?
             dp.setOrganizationName(realmBean.getName());
 
-            Set<String> actions = Collections.singleton(permission);
+            Set<String> actions = Collections.singleton(accessLevel.getValue());
             dp.setActions(actions);
 
             if (serviceName != null) {
@@ -170,7 +160,6 @@ public class PermissionDao implements Serializable {
             }
 
             SSOToken t = new Token().getSSOToken();
-
             boolean allowed = de.isAllowed(t, dp, Collections.EMPTY_MAP);
             return allowed;
         } catch (DelegationException de) {
