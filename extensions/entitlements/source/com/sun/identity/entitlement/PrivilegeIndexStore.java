@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeIndexStore.java,v 1.8 2009-06-10 17:49:26 veiming Exp $
+ * $Id: PrivilegeIndexStore.java,v 1.9 2009-06-13 00:32:08 arviranga Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -31,7 +31,9 @@ import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -43,6 +45,7 @@ public abstract class PrivilegeIndexStore {
     private static Class clazz;
     private Subject adminSubject;
     private String realm;
+    
 
     static {
         try {
@@ -53,7 +56,6 @@ public abstract class PrivilegeIndexStore {
             PrivilegeManager.debug.error("PrivilegeIndexStore.static<init>", e);
         }
     }
-
 
     protected PrivilegeIndexStore(
         Subject adminSubject,
@@ -78,37 +80,36 @@ public abstract class PrivilegeIndexStore {
      * @param realm Realm Name.
      * @return an instance of the privilege index store.
      */
-    public synchronized static PrivilegeIndexStore getInstance(
+    public static PrivilegeIndexStore getInstance(
         Subject adminSubject,
         String realm) {
         if (clazz == null) {
             return null;
         }
-
         Class[] parameterTypes = {Subject.class, String.class};
-        try {
-            Constructor constructor = clazz.getConstructor(parameterTypes);
-            Object[] args = {adminSubject, realm};
-            return (PrivilegeIndexStore) constructor.newInstance(args);
-        } catch (InstantiationException ex) {
-            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                ex);
-        } catch (IllegalAccessException ex) {
-            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                ex);
-        } catch (IllegalArgumentException ex) {
-            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                ex);
-        } catch (InvocationTargetException ex) {
-            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                ex);
-        } catch (NoSuchMethodException ex) {
-            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                ex);
-        } catch (SecurityException ex) {
-            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                ex);
-        }
+            try {
+                Constructor constructor = clazz.getConstructor(parameterTypes);
+                Object[] args = {adminSubject, realm};
+                return ((PrivilegeIndexStore) constructor.newInstance(args));
+            } catch (InstantiationException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (IllegalAccessException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (IllegalArgumentException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (InvocationTargetException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (NoSuchMethodException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            } catch (SecurityException ex) {
+                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                    ex);
+            }
         return null;
     }
 

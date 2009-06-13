@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.22 2009-06-09 09:44:27 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.23 2009-06-13 00:32:08 arviranga Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -62,6 +62,10 @@ class PrivilegeEvaluator {
     private EntitlementException eException;
     private final Lock lock = new ReentrantLock();
     private Condition hasResults = lock.newCondition();
+
+    // Static variables
+    // TODO determine number of tasks per thread
+    private static int tasksPerThread = 10;
     
     // Stats monitor
     private static final NetworkMonitor PRIVILEGE_EVAL_MONITOR_INIT =
@@ -72,6 +76,8 @@ class PrivilegeEvaluator {
         NetworkMonitor.getInstance("PrivilegeEvaluatorMonitorSubjectIndex");
     private static final NetworkMonitor PRIVILEGE_EVAL_MONITOR_SEARCH =
         NetworkMonitor.getInstance("PrivilegeEvaluatorMonitorSearch");
+    private static final NetworkMonitor PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT =
+        NetworkMonitor.getInstance("PrivilegeEvaluatorMonitorSearchNext");
     private static final NetworkMonitor PRIVILEGE_EVAL_MONITOR_SUBMIT =
         NetworkMonitor.getInstance("PrivilegeEvaluatorMonitorSubmit");
     private static final NetworkMonitor PRIVILEGE_EVAL_MONITOR_WAIT =
@@ -199,10 +205,6 @@ class PrivilegeEvaluator {
         return evaluate(realm);
     }
     
-    boolean isMultiThreaded() {
-        return threadPool.isMutiTreaded();
-    }
-
     private List<Entitlement> evaluate(String realm)
         throws EntitlementException {
         // Subject index
@@ -213,7 +215,6 @@ class PrivilegeEvaluator {
         
         // Search for policies
         start = PRIVILEGE_EVAL_MONITOR_SEARCH.start();
-        int totalCount = 0;
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             adminSubject, realm);
         Iterator<Evaluate> i = pis.search(indexes, sam.getSubjectSearchFilter(
@@ -221,24 +222,52 @@ class PrivilegeEvaluator {
         PRIVILEGE_EVAL_MONITOR_SEARCH.end(start);
         
         // Submit the privileges for evaluation
-        start = PRIVILEGE_EVAL_MONITOR_SUBMIT.start();
-        Set<Evaluate> privileges = new HashSet<Evaluate>(20);
-        while (i.hasNext()) {
+        // First collect tasks to be evaluated locally
+        Set<Evaluate> localPrivileges = new HashSet<Evaluate>(2*tasksPerThread);
+        int totalCount = 0;
+        while (++totalCount != tasksPerThread) {
+            start = PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.start();
+            if (i.hasNext()) {
+                localPrivileges.add(i.next());
+                PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.end(start);
+            } else {
+                PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.end(start);
+                break;
+            }
+        }
+        // Submit additional privilges to be executed by worker threads
+        Set<Evaluate> privileges = null;
+        boolean tasksSubmitted = false;
+        while (true) {
+            start = PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.start();
+            if (!i.hasNext()) {
+                break;
+            }
+            if (privileges == null) {
+                privileges = new HashSet<Evaluate>(2*tasksPerThread);
+                tasksSubmitted = true;
+            }
             privileges.add(i.next());
+            PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.end(start);
             totalCount++;
-            if ((totalCount % 10) == 0) {
-                threadPool.submit(new PrivilegeTask(this, privileges));
+            if ((totalCount % tasksPerThread) == 0) {
+                start = PRIVILEGE_EVAL_MONITOR_SUBMIT.start();
+                threadPool.submit(new PrivilegeTask(this, privileges, true));
+                PRIVILEGE_EVAL_MONITOR_SUBMIT.end(start);
                 privileges.clear();
             }
         }
-        if (!privileges.isEmpty()) {
-            threadPool.submit(new PrivilegeTask(this, privileges));
+        if ((privileges != null) && !privileges.isEmpty()) {
+            start = PRIVILEGE_EVAL_MONITOR_SUBMIT.start();
+            threadPool.submit(new PrivilegeTask(this, privileges, true));
+            PRIVILEGE_EVAL_MONITOR_SUBMIT.end(start);
         }
-        PRIVILEGE_EVAL_MONITOR_SUBMIT.end(start);
+        // Evaluate privileges locally
+        (new PrivilegeTask(this, localPrivileges, false)).run();
 
         // Wait for submitted threads to complete evaluation
         start = PRIVILEGE_EVAL_MONITOR_WAIT.start();
-        if (threadPool.isMutiTreaded()) {
+        if (tasksSubmitted) {
             int counter = 0;
             lock.lock();
             boolean isDone = (eException != null);
@@ -287,11 +316,14 @@ class PrivilegeEvaluator {
     class PrivilegeTask implements Runnable {
         final PrivilegeEvaluator parent;
         private Set<Evaluate> privileges;
+        private boolean isThreaded;
 
-        PrivilegeTask(PrivilegeEvaluator parent, Set<Evaluate> privileges) {
+        PrivilegeTask(PrivilegeEvaluator parent, Set<Evaluate> privileges,
+            boolean isThreaded) {
             this.parent = parent;
             this.privileges = new HashSet<Evaluate>(privileges.size() *2);
             this.privileges.addAll(privileges);
+            this.isThreaded = isThreaded;
         }
 
         public void run() {
@@ -304,7 +336,7 @@ class PrivilegeEvaluator {
                         parent.actionNames, parent.envParameters,
                         parent.recursive);
 
-                    if (parent.isMultiThreaded()) {
+                    if (isThreaded) {
                         try {
                             parent.lock.lock();
                             parent.resultQ.add(entitlements);
@@ -317,7 +349,7 @@ class PrivilegeEvaluator {
                     }
                 }
             } catch (EntitlementException ex) {
-                if (parent.isMultiThreaded()) {
+                if (isThreaded) {
                     try {
                         parent.lock.lock();
                         parent.eException = ex;

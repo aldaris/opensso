@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.21 2009-06-10 17:49:27 veiming Exp $
+ * $Id: DataStore.java,v 1.22 2009-06-13 00:32:09 arviranga Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -196,9 +196,9 @@ public class DataStore {
             orgConf.setAttributes(map);
 
             if (referral) {
-                referralsPerRealm.put(toRealm(realm), count);
+                referralsPerRealm.put(DNMapper.orgNameToDN(realm), count);
             } else {
-                policiesPerRealm.put(toRealm(realm), count);
+                policiesPerRealm.put(DNMapper.orgNameToDN(realm), count);
             }
         } catch (NumberFormatException ex) {
             PrivilegeManager.debug.error("DataStore.updateIndexCount", ex);
@@ -206,22 +206,6 @@ public class DataStore {
             PrivilegeManager.debug.error("DataStore.updateIndexCount", ex);
         } catch (SSOException ex) {
             PrivilegeManager.debug.error("DataStore.updateIndexCount", ex);
-        }
-    }
-
-    private static String toRealm(String orgName) {
-        if (DN.isDN(orgName)) {
-            String orgdn = new DN(orgName).toRFCString();
-            String orgdnlc = orgdn.toLowerCase();
-
-            // Check if orgdn is a hidden internal realm, if so return
-            if (orgdnlc.startsWith(SMSEntry.SUN_INTERNAL_REALM_PREFIX)) {
-                return orgName;
-            }
-
-            return DNMapper.orgNameToRealmName(orgName);
-        } else {
-            return orgName;
         }
     }
 
@@ -727,8 +711,12 @@ public class DataStore {
         SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
         Set<Evaluate> results = searchPrivileges(adminToken, realm,
             iterator, indexes, subjectIndexes, bSubTree, excludeDNs);
-        results.addAll(searchReferral(adminToken, realm, iterator,
-            indexes, bSubTree, excludeDNs));
+        // Get referrals only if count is greater than 0
+        int countInt = getNumberOfReferrals(adminSubject, realm);
+        if (countInt > 0) {
+            results.addAll(searchReferral(adminToken, realm, iterator,
+                indexes, bSubTree, excludeDNs));
+        }
         return results;
     }
 

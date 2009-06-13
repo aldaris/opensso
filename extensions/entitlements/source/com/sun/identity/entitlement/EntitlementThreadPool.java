@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementThreadPool.java,v 1.3 2009-06-12 00:02:33 veiming Exp $
+ * $Id: EntitlementThreadPool.java,v 1.4 2009-06-13 00:32:08 arviranga Exp $
  *
  */
 
@@ -39,24 +39,16 @@ public class EntitlementThreadPool implements IThreadPool {
 
 
     static {
+        // TODO thread pool size should be configurable
         thrdPool = new ThreadPool("entitlementThreadPool",
             DEFAULT_POOL_SIZE);
     }
 
     public void submit(Runnable task) {
         try {
-            if (isMutiTreaded()) {
-                thrdPool.run(task);
-            } else {
-                task.run();
-            }
+            thrdPool.run(task);
         } catch (ThreadPoolException e) {
             PrivilegeManager.debug.error("EntitlementThreadPool.submit", e);
         }
-    }
-
-    @Override
-    public boolean isMutiTreaded() {
-        return (DEFAULT_POOL_SIZE > 0);
     }
 }
