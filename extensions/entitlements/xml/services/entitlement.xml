@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.26 2009-06-12 22:38:14 farble1670 Exp $
+   $Id: entitlement.xml,v 1.27 2009-06-13 14:58:21 arviranga Exp $
 
 -->
 
@@ -192,11 +192,11 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="searchIndexImpl" />
-                            <Value>com.sun.identity.entitlement.util.ResourceNameSplitter</Value>
+                            <Value>com.sun.identity.entitlement.util.DelegationResourceNameSplitter</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="saveIndexImpl" />
-                            <Value>com.sun.identity.entitlement.util.ResourceNameIndexGenerator</Value>
+                            <Value>com.sun.identity.entitlement.util.DelegationResourceNameIndexGenerator</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="resourceComparator" />
