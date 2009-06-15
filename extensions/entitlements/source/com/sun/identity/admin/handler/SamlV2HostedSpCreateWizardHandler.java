@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.1 2009-06-15 18:44:02 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.2 2009-06-15 21:05:17 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -59,7 +59,6 @@ public class SamlV2HostedSpCreateWizardHandler
         return "home";
     }
 
-    @Override
     public String finishAction() {
 
         if (!validateSteps()) {
