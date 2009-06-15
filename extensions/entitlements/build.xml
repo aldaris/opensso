@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.63 2009-06-12 06:25:33 veiming Exp $
+  $Id: build.xml,v 1.64 2009-06-15 21:04:24 asyhuang Exp $
 
 -->
 
@@ -44,6 +44,8 @@
            property="amserver.jar.exists" value="true" />
     <available file="${entitlements.extlib.dir}/openfedlib.jar"
            property="openfedlib.jar.exists" value="true" />
+    <available file="${entitlements.extlib.dir}/opensso.jar"
+           property="opensso.jar.exists" value="true" />
     <available file="${entitlements.extlib.dir}/opensso-sharedlib.jar"
            property="sharedlib.jar.exists" value="true" />
     <available file="${entitlements.built.src.dir}/com/sun/identity/entitlement/xacml3/core"
@@ -105,7 +107,7 @@
 
 
    
-    <target name="init" depends="amserver-jar,openfedlib-jar,sharedlib-jar,build-lib,war-lib">
+    <target name="init" depends="amserver-jar,openfedlib-jar,opensso-jar,sharedlib-jar,build-lib,war-lib">
         <mkdir dir="${entitlements.dist.dir}" />
         <mkdir dir="${entitlements.classes.dir}" />
 
@@ -389,6 +391,16 @@
            dest="${entitlements.extlib.dir}">
             <patternset>
                 <include name="WEB-INF/lib/openfedlib.jar"/>
+            </patternset>
+            <mapper type="flatten" />
+        </unjar>
+    </target>
+
+   <target name="opensso-jar" unless="opensso.jar.exists">
+        <unjar src="${entitlements.extlib.dir}/opensso.war"
+           dest="${entitlements.extlib.dir}">
+            <patternset>
+                <include name="WEB-INF/lib/opensso.jar"/>
             </patternset>
             <mapper type="flatten" />
         </unjar>
