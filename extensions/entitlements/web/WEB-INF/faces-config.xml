@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.90 2009-06-12 22:38:13 farble1670 Exp $
+  $Id: faces-config.xml,v 1.91 2009-06-15 18:47:51 asyhuang Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1722,6 +1722,37 @@
     </managed-bean>
     <!-- resource decorators -->
 
+  <!--  federation manage -->
+    <managed-bean>
+        <managed-bean-name>samlV2HostedSpCreateWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SamlV2HostedSpCreateWizardBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>6</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>samlV2HostedSpCreateWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.SamlV2HostedSpCreateWizardHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{samlV2HostedSpCreateWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>samlV2HostedSpCreateDao</property-name>
+            <value>#{samlV2HostedSpCreateWizardDao}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>samlV2HostedSpCreateWizardDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.SamlV2HostedSpCreateDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+  <!--  federation manage   -->
+
     <navigation-rule>
         <navigation-case>
             <from-outcome>home</from-outcome>
@@ -1734,6 +1765,10 @@
         <navigation-case>
             <from-outcome>federation</from-outcome>
             <to-view-id>/admin/facelet/federation.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>federation-samlv2-create-sp</from-outcome>
+            <to-view-id>/admin/facelet/samlv2-hosted-sp-create.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>policy-create</from-outcome>

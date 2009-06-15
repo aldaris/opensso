@@ -22,28 +22,46 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationCreateIdpBean.java,v 1.2 2009-06-04 11:49:15 veiming Exp $
+ * $Id: CotSamlV2HostedSpCreateSummary.java,v 1.1 2009-06-15 18:43:46 asyhuang Exp $
  */
-
 package com.sun.identity.admin.model;
 
-public class FederationCreateIdpBean {
-    private boolean local;
-    private boolean meta;
+public class CotSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateSummary {
 
-    public boolean isLocal() {
-        return local;
+    public CotSamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2CreateWizardBean) {
+        super(samlV2CreateWizardBean);
     }
 
-    public void setLocal(boolean local) {
-        this.local = local;
+    public String getLabel() {
+        // TODO: localize
+        return "Circle of Trust";
     }
 
-    public boolean isMeta() {
-        return meta;
+    public String getValue() {
+        String cotName;
+        if (getSamlV2CreateWizardBean().isCot()) {
+            cotName = getSamlV2CreateWizardBean().getSelectedCot();
+        } else {
+            cotName = getSamlV2CreateWizardBean().getNewCotName();
+        }
+
+        return cotName;
     }
 
-    public void setMeta(boolean meta) {
-        this.meta = meta;
+    public boolean isExpandable() {
+        return false;
+    }
+
+    public String getIcon() {
+        // TODO
+        return "../image/edit.png";
+    }
+
+    public String getTemplate() {
+        return null;
+    }
+
+    public int getGotoStep() {
+        return SamlV2HostedSpCreateWizardStep.COT.toInt();
     }
 }

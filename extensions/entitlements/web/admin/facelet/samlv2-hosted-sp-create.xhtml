@@ -1,0 +1,349 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition
+    template="template/page.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+    <ui:define name="panel-title">
+        <ice:outputText value="Create a SAMLv2 Service Provider on this Server." />
+    </ui:define>
+    <ui:define name="panel-details">
+        <ice:outputText value="This page allows you to register a remote Service Provider (SP). You need two things: Circle of Trust (COT) and metadata of the provider. A COT is a group of Identity Providers (IDPs) and SPs that trust each other and in effect represents the confines within which all federation communications are performed. Metadata represents the configuration necessary to execute federation protocols (eg SamlV2) as well as the mechanism to communicate this configuration to other entities (eg IDPs) in a COT." />
+    </ui:define>
+
+    <ui:define name="panel-body">
+        <o:wizard
+            steps="6"
+            wizardHandler="#{samlV2HostedSpCreateWizardHandler}"
+            wizardBean="#{samlV2HostedSpCreateWizardBean}">
+            <ui:define name="wizard-steps">
+                <o:wstep
+                    step="0"
+                    label="Step 1: Choice a realm">
+                    <ui:define name="wizard-step-body">
+                        <div class="section-outer">
+                            <o:section>
+                                <ui:define name="section-title">
+                                    <ice:outputText
+                                        value="Choice one realm title"/>
+                                </ui:define>
+                                <ui:define name="section-details">
+                                    <ice:outputText
+                                        value="Choice one realm here...."/>
+                                </ui:define>
+                                <ui:define name="section-body">
+                                    <!-- Realm -->
+                                    <ice:panelGroup>
+                                        <ice:outputLabel
+                                            for="existingRealmList"
+                                            value="Choice one realm from existing realm List"/>
+                                        
+                                        <ice:selectOneMenu
+                                            id="selectedRealm"
+                                            value="#{samlV2HostedSpCreateWizardBean.selectedRealm}"
+                                            partialSubmit="true">
+                                            <f:selectItems
+                                                value="#{samlV2HostedSpCreateWizardBean.availableRealmsList}"/>
+                                        </ice:selectOneMenu>                                      
+                                    </ice:panelGroup>
+                                    <!-- Realm -->
+                                </ui:define>
+                            </o:section>
+                        </div>
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="1"
+                    label="Step 2: Hosted or Remote ">
+                    <ui:define name="wizard-step-body">
+                        <div class="section-outer">
+                            <o:section>
+                                <ui:define name="section-title">
+                                    <ice:outputText
+                                        value="Hosted or Remote"/>
+                                </ui:define>
+                                <ui:define name="section-details">
+                                    <ice:outputText
+                                        value="Is it hosted entity? or remote entity?"/>
+                                </ui:define>
+                                <ui:define name="section-body">
+                                    <!-- local or remote -->
+                                    <ice:panelGroup>
+                                        <ice:selectOneRadio
+                                            id="MenuSelectLocalRemoteRadio"
+                                            value="#{samlV2HostedSpCreateWizardBean.local}"
+                                            partialSubmit="true">
+                                            <f:selectItem id="local" itemValue="true" itemLabel="Local"/>
+                                            <f:selectItem id="remote" itemValue="false" itemLabel="Remote"/>
+                                        </ice:selectOneRadio>
+                                    </ice:panelGroup>
+                                    <!-- local or remote -->
+                                </ui:define>
+                            </o:section>
+                        </div>
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="2"
+                    label="Step 3: Provide entity Name or import Metadata">
+                    <ui:define name="wizard-step-body">
+                        <div class="section-outer">
+                            <o:section>
+                                <ui:define name="section-title">
+                                    <ice:outputText
+                                        value="Provide entity Name or import Metadata"/>
+                                </ui:define>
+                                <ui:define name="section-details">
+                                    <ice:outputText
+                                        value="Provide entity Name or import Metadata here...."/>
+                                </ui:define>
+                                <ui:define name="section-body">
+                                    <!-- Metadata -->
+
+                                    <ice:panelGroup>
+                                        <ice:outputLabel
+                                            for="doYouHaveMeta"
+                                            value="Do you have metadata for this provider?"/>
+
+                                        <ice:panelGroup>
+                                            <ice:selectOneRadio
+                                                id="MenuSelectMetaOrNoMetaRadio"
+                                                partialSubmit="true"
+                                                value="#{samlV2HostedSpCreateWizardBean.meta}">
+                                                <f:selectItem id="meta" itemValue="true" itemLabel="Meta"/>
+                                                <f:selectItem id="nometa" itemValue="false" itemLabel="No Meta"/>
+                                            </ice:selectOneRadio>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{samlV2HostedSpCreateWizardBean.meta}">
+
+                                            <!-- file upload example -->
+                                            <ice:panelGroup styleClass="inputFileContainer">
+                                                <!-- file upload  -->
+
+                                                <ice:panelGroup>
+                                                    <ice:outputLabel
+                                                        for="standardMetaData"
+                                                        value="Standard Metadata"/>
+
+                                                    <!-- file upload usage with progress callback. -->
+                                                    <ice:inputFile id="stdMetaInputFileName"
+                                                                   submitOnUpload="postUpload"
+                                                                   progressListener="#{samlV2CreateHandler.stdMetaFileUploadProgress}"
+                                                                   actionListener="#{samlV2CreateHandler.stdMetaUploadFile}"/>
+                                                    <!-- progress bar, percent value is upated via progressListener-->
+
+                                                    <ice:outputProgress value="#{samlV2HostedSpCreateWizardBean.stdMetaFileProgress}"
+                                                                        styleClass="uploadProgressBar"/>
+                                                    <ice:outputText                                                        
+                                                        value="#{samlV2HostedSpCreateWizardBean.stdMetaFilename}"/>
+                                                </ice:panelGroup>
+
+                                                <ice:panelGroup
+                                                    visible="#{samlV2HostedSpCreateWizardBean.local}">
+                                                    <ice:outputLabel
+                                                        for="etendedMetaData"
+                                                        value="Extended Metadata"/>
+                                                    <!-- file upload usage with progress callback. -->
+                                                    <ice:inputFile id="extMetaInputFileName"
+                                                                   submitOnUpload="postUpload"
+                                                                   progressListener="#{samlV2CreateHandler.extMetaFileUploadProgress}"
+                                                                   actionListener="#{samlV2CreateHandler.extMetaUploadFile}"/>
+                                                    <!-- progress bar, percent value is upated via progressListener-->
+
+                                                    <ice:outputProgress value="#{samlV2HostedSpCreateWizardBean.extMetaFileProgress}"
+                                                                        styleClass="uploadProgressBar"/>
+                                                    <ice:outputText                                                       
+                                                        value="#{samlV2HostedSpCreateWizardBean.extMetaFilename}"/>
+
+                                                </ice:panelGroup>
+                                                <ice:panelGroup
+                                                    visible="#{(!samlV2HostedSpCreateWizardBean.local)&amp;&amp;(samlV2HostedSpCreateWizardBean.retrieveFileFromSpServerVisible)}">
+                                                    <ice:outputText                                                        
+                                                        value="retrieve Metadata from partner (IDP or SP) server here."/>
+                                                </ice:panelGroup>
+                                            </ice:panelGroup>
+
+                                            <!-- file upload example -->
+                                            <ice:panelGroup styleClass="inputFileContainer">
+
+
+                                            </ice:panelGroup>
+
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{!samlV2HostedSpCreateWizardBean.meta}">
+                                            <ice:outputLabel
+                                                for="NewEntityName"
+                                                value="New Entity Name"/>
+                                            <ice:inputText
+                                                id="NewEntityName"
+                                                value="#{samlV2HostedSpCreateWizardBean.newEntityName}"
+                                                size="70"
+                                                maxlength="70"/>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{!samlV2HostedSpCreateWizardBean.meta}">
+                                            <ice:outputLabel
+                                                for="SigningKey"
+                                                value="Signing Key"/>
+                                            <ice:selectOneMenu
+                                                id="selectedSigningKey"
+                                                value="#{samlV2HostedSpCreateWizardBean.signingKey}"
+                                                partialSubmit="true">
+                                                <f:selectItem
+                                                    itemValue="test"
+                                                    itemLabel="test"/>
+                                            </ice:selectOneMenu>
+                                        </ice:panelGroup>
+                                    </ice:panelGroup>
+                                    <!-- Metadata -->
+                                </ui:define>
+                            </o:section>
+                        </div>
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="3"
+                    label="Step 4: Add entity into a Circle of Trust">
+                    <ui:define name="wizard-step-body">
+                        <div class="section-outer">
+                            <o:section>
+                                <ui:define name="section-title">
+                                    <ice:outputText
+                                        value="Add entity into a Circle of Trust"/>
+                                </ui:define>
+                                <ui:define name="section-details">
+                                    <ice:outputText
+                                        value="Add entity into a Circle of Trust here...."/>
+                                </ui:define>
+                                <ui:define name="section-body">
+                                    <!-- COT -->
+                                    <ice:panelGroup>
+                                        <ice:outputLabel
+                                            for="cotDecription"
+                                            value="Choose from existing circles of trust listed or provide one to be created in which to include this SP. A COT is a group of IDPs and SPs that trust each other and provides the confines within which all SamlV2 communications are performed." />
+                                        <ice:panelGroup>
+                                            <ice:selectOneRadio
+                                                id="MenuSelectNewCOTRadio"
+                                                value="#{samlV2HostedSpCreateWizardBean.cot}"
+                                                partialSubmit="true">
+                                                <f:selectItem id="ChoiceCOT" itemValue="true" itemLabel="Choice a COT"/>
+                                                <f:selectItem id="NewCOT" itemValue="false" itemLabel="New a COT"/>
+                                            </ice:selectOneRadio>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{samlV2HostedSpCreateWizardBean.cot}">
+                                            <ice:panelGroup >
+                                                <ice:outputLabel
+                                                    for="existingCotList"
+                                                    value="Choice one COT from existing COT List"/>                                                
+                                                <ice:selectOneMenu
+                                                    id="selectedCot"
+                                                    value="#{samlV2HostedSpCreateWizardBean.selectedCot}"
+                                                    partialSubmit="true">
+                                                    <f:selectItems
+                                                        value="#{samlV2HostedSpCreateWizardBean.availableCotList}"/>
+                                                </ice:selectOneMenu>
+                                            </ice:panelGroup>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{!samlV2HostedSpCreateWizardBean.cot}">
+                                            <ice:outputLabel
+                                                for="NewCotName"
+                                                value="New COT Name"/>
+                                            <ice:inputText
+                                                id="NewCotName"
+                                                value="#{samlV2HostedSpCreateWizardBean.newCotName}"
+                                                size="50"
+                                                maxlength="50"/>
+                                        </ice:panelGroup>
+                                    </ice:panelGroup>
+                                    <!-- COT -->
+                                </ui:define>
+                            </o:section>
+                        </div>
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="4"
+                    label="Step 5: Attribute Mapping">
+                    <ui:define name="wizard-step-body">
+                        <div class="section-outer">
+                            <o:section>
+                                <ui:define name="section-title">
+                                    <ice:outputText
+                                        value="Attribute Mapping"/>
+                                </ui:define>
+                                <ui:define name="section-details">
+                                    <ice:outputText
+                                        value="Add attribute mapping here...."/>
+                                </ui:define>
+                                <ui:define name="section-body">
+                                    <ice:panelGroup>
+                                        <ice:outputLabel
+                                            for="Attribute Mapping"
+                                            value="Attribute Mapping"/>
+                                    </ice:panelGroup>
+                                    <ice:panelGroup
+                                        visible="#{samlV2HostedSpCreateWizardBean.local}">
+                                        <ice:outputLabel
+                                            for="LocalAttributeMapping"
+                                            value="Use default attribute mapping from Identity Provider"/>
+                                    </ice:panelGroup>
+                                    <ice:panelGroup
+                                        visible="#{!samlV2HostedSpCreateWizardBean.local}">
+                                        <ice:outputLabel
+                                            for="RemoteAttributeMapping"
+                                            value="Attributes Mapping Table"/>
+                                        <!-- data table -->
+                                        <!-- data table -->
+                                    </ice:panelGroup>
+                                </ui:define>
+                            </o:section>
+                        </div>
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="5"
+                    label="Step 6: Review">
+                    <ui:define name="wizard-step-body">
+                        <div class="section-outer">
+                            <o:section>
+                                <ui:define name="section-title">
+                                    <ice:outputText
+                                        value="Summary"/>
+                                </ui:define>
+                                <ui:define name="section-details">
+                                    <ice:outputText
+                                        value="Review the entity configuration and click Finish to save."/>
+                                </ui:define>
+                                <ui:define name="section-body">
+                                    <!-- summary -->
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedSpCreateWizardBean.realmSamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedSpCreateWizardBean.entityNameSamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedSpCreateWizardBean.stdMetadataNameSamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedSpCreateWizardBean.extMetadataNameSamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedSpCreateWizardBean.localRemoteSamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedSpCreateWizardBean.cotSamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedSpCreateWizardBean.signingKeySamlV2CreateSummary}"/>
+
+                                    <!-- summary -->
+                                </ui:define>
+                            </o:section>
+                        </div>
+                    </ui:define>
+                </o:wstep>
+            </ui:define>
+        </o:wizard>
+    </ui:define>
+</ui:composition>
