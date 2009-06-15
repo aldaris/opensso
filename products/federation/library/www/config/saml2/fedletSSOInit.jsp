@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSSOInit.jsp,v 1.5 2009-06-12 22:21:42 mallas Exp $
+   $Id: fedletSSOInit.jsp,v 1.6 2009-06-15 22:44:08 mallas Exp $
 
 --%>
 
@@ -32,7 +32,7 @@
 <%@ page import="com.sun.identity.shared.debug.Debug" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
-<%@ page import="com.sun.identity.saml2.common.SAMLUtils" %>
+<%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
 <%@ page import="com.sun.identity.saml2.meta.SAML2MetaManager" %>
 <%@ page import="com.sun.identity.saml2.profile.SPCache" %>
