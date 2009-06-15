@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteConfiguration.java,v 1.8 2009-06-05 19:22:56 veiming Exp $
+ * $Id: SiteConfiguration.java,v 1.9 2009-06-15 19:20:43 veiming Exp $
  *
  */
 
@@ -624,12 +624,14 @@ public class SiteConfiguration extends ConfigurationBase {
      * @throws SMSException if errors access in the service management
      *         datastore.
      * @throws SSOException if the <code>ssoToken</code> is not valid.
+     * @throws ConfigurationException if one or more server instances are not
+     *         found.
      */
     public static void addServersToSite(
         SSOToken ssoToken,
         String siteName,
         Collection serverInstanceNames
-    ) throws SMSException, SSOException {
+    ) throws SMSException, SSOException, ConfigurationException {
         String siteId = getSiteId(ssoToken, siteName);
 
         if (siteId != null) {

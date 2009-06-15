@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfiguration.java,v 1.13 2009-01-31 04:43:12 veiming Exp $
+ * $Id: ServerConfiguration.java,v 1.14 2009-06-15 19:20:43 veiming Exp $
  *
  */
 
@@ -782,12 +782,13 @@ public class ServerConfiguration extends ConfigurationBase {
      * @throws SMSException if errors access in the service management
      *         datastore.
      * @throws SSOException if the <code>ssoToken</code> is not valid.
+     * @throws ConfigurationException if server instance is not found.
      */
     public static void addToSite(
         SSOToken ssoToken,
         String instanceName,
         String siteId
-    ) throws SMSException, SSOException {
+    ) throws SMSException, SSOException, ConfigurationException {
         if (isLegacy(ssoToken)) {
             legacyManageSite(ssoToken, instanceName, siteId, true);
         } else {
@@ -804,6 +805,10 @@ public class ServerConfiguration extends ConfigurationBase {
                     attrs.put(ATTR_PARENT_SITE_ID, set);
                     svr.setAttributes(attrs);
                 }
+            } else {
+                Object[] param = {instanceName};
+                throw new ConfigurationException("invalid.server.instance",
+                    param);
             }
         }
     }
