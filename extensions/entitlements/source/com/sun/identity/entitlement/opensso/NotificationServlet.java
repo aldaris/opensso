@@ -22,20 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationServlet.java,v 1.3 2009-06-09 19:10:24 veiming Exp $
+ * $Id: NotificationServlet.java,v 1.4 2009-06-16 20:30:37 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
-import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.PrivilegeManager;
-import com.sun.identity.security.AdminTokenAction;
 import java.io.IOException;
 import java.io.Writer;
-import java.security.AccessController;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -46,11 +43,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class NotificationServlet extends HttpServlet {
     public static final String CONTEXT_PATH = "/notification";
+    public static final String PRIVILEGE_ADDED = "privilegeadded";
+    public static final String REFERRAL_ADDED = "referraladded";
     public static final String PRIVILEGE_DELETED = "privilegedeleted";
     public static final String REFERRAL_DELETED = "referraldeleted";
     public static final String APPLICATIONS_CHANGED = "applicationsChanged";
     public static final String ATTR_REALM_NAME = "realm";
     public static final String ATTR_NAME = "name";
+    public static DataStore dataStore = DataStore.getInstance();
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -77,6 +77,10 @@ public class NotificationServlet extends HttpServlet {
                 handlePrivilegeDeleted(req);
             } else if (action.equals(REFERRAL_DELETED)) {
                 handleReferralPrivilegeDeleted(req);
+            } else if (action.equals(PRIVILEGE_ADDED)) {
+                handlePrivilegeAdded(req);
+            } else if (action.equals(REFERRAL_ADDED)) {
+                handleReferralPrivilegeAdded(req);
             } else if (action.equals(APPLICATIONS_CHANGED)) {
                 handleApplicationsChanged(req);
             }
@@ -97,34 +101,42 @@ public class NotificationServlet extends HttpServlet {
         }
     }
 
+    private void handleReferralPrivilegeAdded(HttpServletRequest req) {
+        String realm = req.getParameter(ATTR_REALM_NAME);
+        dataStore.clearIndexCount(realm, true);
+    }
+
+    private void handlePrivilegeAdded(HttpServletRequest req) {
+        String realm = req.getParameter(ATTR_REALM_NAME);
+        dataStore.clearIndexCount(realm, false);
+    }
+
     private void handlePrivilegeDeleted(HttpServletRequest req) {
         String privilegeName = req.getParameter(ATTR_NAME);
         String realm = req.getParameter(ATTR_REALM_NAME);
 
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-            SubjectUtils.createSubject(adminToken), realm);
+            PrivilegeManager.superAdminSubject, realm);
         try {
             pis.delete(privilegeName, false);
         } catch (EntitlementException e) {
             //ignore
         }
+        dataStore.clearIndexCount(realm, false);
     }
 
     private void handleReferralPrivilegeDeleted(HttpServletRequest req) {
         String referralName = req.getParameter(ATTR_NAME);
         String realm = req.getParameter(ATTR_REALM_NAME);
 
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-            SubjectUtils.createSubject(adminToken), realm);
+            PrivilegeManager.superAdminSubject, realm);
         try {
             pis.deleteReferral(referralName, false);
         } catch (EntitlementException e) {
             //ignore
         }
+        dataStore.clearIndexCount(realm, true);
     }
 
     private void handleApplicationsChanged(HttpServletRequest req) {

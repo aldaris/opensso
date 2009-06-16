@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementConfiguration.java,v 1.6 2009-06-06 00:34:42 veiming Exp $
+ * $Id: EntitlementConfiguration.java,v 1.7 2009-06-16 20:30:36 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -38,7 +38,8 @@ import javax.security.auth.Subject;
  * Entitlement Configuration
  */
 public abstract class EntitlementConfiguration {
-    public static final String POLICY_THREAD_SIZE = "threadSize";
+    public static final String POLICY_EVAL_THREAD_SIZE = "evalThreadSize";
+    public static final String POLICY_SEARCH_THREAD_SIZE = "searchThreadSize";
     public static final String POLICY_CACHE_SIZE = "policyCacheSize";
     public static final String INDEX_CACHE_SIZE = "indexCacheSize";
     public static final String RESOURCE_COMPARATOR = "resourceComparator";

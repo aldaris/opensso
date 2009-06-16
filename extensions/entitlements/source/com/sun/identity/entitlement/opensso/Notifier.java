@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Notifier.java,v 1.1 2009-06-09 19:10:24 veiming Exp $
+ * $Id: Notifier.java,v 1.2 2009-06-16 20:30:37 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -53,7 +53,7 @@ public class Notifier implements Runnable {
         SystemProperties.getServerInstanceName();
     private String action;
     private Map<String, String> params;
-    private static IThreadPool threadPool = new EntitlementThreadPool();
+    private static IThreadPool threadPool = new EntitlementThreadPool(4);
 
     public static void submit(String action, Map<String, String> params) {
         threadPool.submit(new Notifier(action, params));

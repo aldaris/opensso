@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.19 2009-06-16 10:37:46 veiming Exp $
+ * $Id: PolicyIndexTest.java,v 1.20 2009-06-16 20:30:37 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -33,9 +33,7 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
-import com.sun.identity.entitlement.EntitlementThreadPool;
 import com.sun.identity.entitlement.IPrivilege;
-import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.security.AdminTokenAction;
@@ -98,9 +96,8 @@ public class PolicyIndexTest {
                 hostIndexes, pathIndexes, parentPathIndexes);
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             SubjectUtils.createSubject(adminToken), "/");
-        IThreadPool threadPoool = new EntitlementThreadPool();
         for (Iterator<IPrivilege> i = pis.search(indexes,
-            Collections.EMPTY_SET, false, threadPoool); i.hasNext();
+            Collections.EMPTY_SET, false); i.hasNext();
         ) {
             IPrivilege eval = i.next();
             if (!(eval instanceof Privilege)) {

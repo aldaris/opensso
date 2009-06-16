@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.14 2009-06-16 10:37:45 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.15 2009-06-16 20:30:37 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -33,12 +33,14 @@ import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.ApplicationTypeManager;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.EntitlementThreadPool;
 import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
+import com.sun.identity.entitlement.SequentialThreadPool;
 import com.sun.identity.entitlement.SubjectAttributesManager;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
@@ -63,12 +65,17 @@ import javax.security.auth.Subject;
 
 
 public class OpenSSOIndexStore extends PrivilegeIndexStore {
+    private static final int DEFAULT_CACHE_SIZE = 100000;
+    private static final int DEFAULT_THREAD_SIZE = 1;
+    private static final int DEFAULT_IDX_CACHE_SIZE = 100000;
     private static final PolicyCache policyCache;
     private static final PolicyCache referralCache;
     private static final Map<String, IndexCache> indexCaches;
     private static final Map<String, IndexCache> referralIndexCaches;
     private static final int indexCacheSize;
-    private static final DataStore dataStore = new DataStore();
+    private static final DataStore dataStore = DataStore.getInstance();
+    private static IThreadPool threadPool;
+    private static boolean isMultiThreaded;
 
     // Initialize the caches
     static {
@@ -77,24 +84,33 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         Subject adminSubject = SubjectUtils.createSubject(adminToken);
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, "/");
-        Set<String> setPolicyCacheSize = ec.getConfiguration(
-            EntitlementConfiguration.POLICY_CACHE_SIZE);
-        String policyCacheSize = ((setPolicyCacheSize != null) &&
-            !setPolicyCacheSize.isEmpty()) ?
-                setPolicyCacheSize.iterator().next() : null;
-        policyCache = (policyCacheSize != null) ? new PolicyCache(getNumeric(
-            policyCacheSize, 100000)) : new PolicyCache(100000);
-        referralCache = (policyCacheSize != null) ? new PolicyCache(getNumeric(
-            policyCacheSize, 100000)) : new PolicyCache(100000);
 
-        Set<String> setIndexCacheSize = ec.getConfiguration(
-            EntitlementConfiguration.INDEX_CACHE_SIZE);
-        String indexCacheSizeString = ((setIndexCacheSize != null) &&
-            !setIndexCacheSize.isEmpty()) ?
-                setIndexCacheSize.iterator().next() : null;
-        indexCacheSize = getNumeric(indexCacheSizeString, 100000);
+        int cacheSize = getInteger(ec,
+            EntitlementConfiguration.POLICY_CACHE_SIZE, DEFAULT_CACHE_SIZE);
+        policyCache = new PolicyCache(cacheSize);
+        referralCache = new PolicyCache(cacheSize);
+
+        indexCacheSize = getInteger(ec,
+            EntitlementConfiguration.INDEX_CACHE_SIZE, DEFAULT_IDX_CACHE_SIZE);
         indexCaches = new HashMap<String, IndexCache>();
         referralIndexCaches = new HashMap<String, IndexCache>();
+
+        int threadSize = getInteger(ec,
+            EntitlementConfiguration.POLICY_SEARCH_THREAD_SIZE,
+            DEFAULT_THREAD_SIZE);
+        isMultiThreaded = (threadSize > 1);
+        threadPool = (isMultiThreaded) ? new EntitlementThreadPool(
+            threadSize) : new SequentialThreadPool();
+    }
+
+    private static int getInteger(EntitlementConfiguration ec, String key,
+        int defaultVal) {
+        Set<String> set = ec.getConfiguration(key);
+        if ((set == null) || set.isEmpty()) {
+            return defaultVal;
+        }
+        String str = set.iterator().next();
+        return getNumeric(str, defaultVal);
     }
 
     // Instance variables
@@ -231,10 +247,15 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         String realm = getRealm();
         String dn = DataStore.getPrivilegeDistinguishedName(
             privilegeName, realm, null);
-        dataStore.remove(adminSubject, realmDN, privilegeName, notify);
+        if (notify) {
+            dataStore.remove(adminSubject, realmDN, privilegeName);
+        } else {
+        }
+
         policyCache.decache(dn, realmDN);
         return dn;
     }
+
 
     public String deleteReferral(String privilegeName, boolean notify)
         throws EntitlementException {
@@ -242,7 +263,9 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         String realm = getRealm();
         String dn = DataStore.getPrivilegeDistinguishedName(
             privilegeName, realm, DataStore.REFERRAL_STORE);
-        dataStore.removeReferral(adminSubject, realm, privilegeName, notify);
+        if (notify) {
+            dataStore.removeReferral(adminSubject, realm, privilegeName);
+        }
         referralCache.decache(dn, realmDN);
         return dn;
     }
@@ -289,17 +312,14 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
      * @param indexes Resource search indexes.
      * @param subjectIndexes Subject search indexes.
      * @param bSubTree <code>true</code> for sub tree evaluation.
-     * @param threadPool Thread pool for executing threads.
      * @return an iterator of matching privilege objects.
      * @throws com.sun.identity.entitlement.EntitlementException if results
      * cannot be obtained.
      */
     public Iterator<IPrivilege> search(ResourceSearchIndexes indexes,
-        Set<String> subjectIndexes, boolean bSubTree, IThreadPool threadPool)
+        Set<String> subjectIndexes, boolean bSubTree)
         throws EntitlementException {
-        // TODO determine if search results should be threaded
-        boolean isThreaded = false;
-        BufferedIterator iterator = (isThreaded) ? new BufferedIterator() :
+        BufferedIterator iterator = (isMultiThreaded) ? new BufferedIterator() :
             new SimpleIterator();
         Set setDNs = searchPrivileges(indexes, subjectIndexes, bSubTree,
             iterator);
@@ -308,11 +328,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         if (doDSSearch()) {
             SearchTask st = new SearchTask(this, iterator, indexes,
                 subjectIndexes, bSubTree, setDNs);
-            if (isThreaded) {
-                threadPool.submit(st);
-            } else {
-                st.run();
-            }
+            threadPool.submit(st);
         } else {
             iterator.isDone();
         }
@@ -320,25 +336,22 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     }
 
     private boolean doDSSearch() {
-        // TODO handling of fully cached policies must be re-evaluated
-        /*
         String realm = getRealm();
-        Subject sbj = getAdminSubject();
 
         // check if PolicyCache has all the entries for the realm
         int cacheEntries = policyCache.getCount(realm);
-        int totalPolicies = dataStore.getNumberOfPolicies(sbj, realm);
+        int totalPolicies = dataStore.getNumberOfPolicies(realm);
         if ((totalPolicies > 0) &&(cacheEntries < totalPolicies)) {
             return true;
         }
 
         cacheEntries = referralCache.getCount(realm);
-        int totalReferrals = dataStore.getNumberOfReferrals(sbj, realm);
+        int totalReferrals = dataStore.getNumberOfReferrals(realm);
         if ((totalReferrals > 0) && (cacheEntries < totalReferrals)) {
             return true;
         }
-        */
-        return true;
+
+        return false;
     }
 
     private Set<String> searchReferrals(ResourceSearchIndexes indexes,

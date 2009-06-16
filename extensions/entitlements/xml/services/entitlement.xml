@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.27 2009-06-13 14:58:21 arviranga Exp $
+   $Id: entitlement.xml,v 1.28 2009-06-16 20:30:37 veiming Exp $
 
 -->
 
@@ -52,13 +52,22 @@
                         <Value>false</Value>
                     </DefaultValues>
                 </AttributeSchema>
-                <AttributeSchema name="threadSize"
+                <AttributeSchema name="evalThreadSize"
                     type="single"
                     syntax="number_range"
-                    rangeStart="0" rangeEnd="2147483647"
+                    rangeStart="0" rangeEnd="200"
                     i18nKey="">
                     <DefaultValues>
-                        <Value>100</Value>
+                        <Value>10</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="searchThreadSize"
+                    type="single"
+                    syntax="number_range"
+                    rangeStart="0" rangeEnd="200"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>0</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="policyCacheSize"

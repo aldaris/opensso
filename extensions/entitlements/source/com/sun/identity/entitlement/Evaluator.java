@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.18 2009-06-16 10:37:44 veiming Exp $
+ * $Id: Evaluator.java,v 1.19 2009-06-16 20:30:36 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -41,7 +41,9 @@ public class Evaluator {
     private Subject adminSubject;
     private String applicationName =
         ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
-    
+
+    public static final int DEFAULT_POLICY_EVAL_THREAD = 10;
+
     // Statistics monitors
     private static final NetworkMonitor HAS_ENTITLEMENT_MONITOR =
         NetworkMonitor.getInstance("hasEntitltmentMonitor");

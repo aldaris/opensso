@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementThreadPool.java,v 1.5 2009-06-16 20:30:36 veiming Exp $
+ * $Id: SequentialThreadPool.java,v 1.1 2009-06-16 20:30:36 veiming Exp $
  *
  */
 
@@ -33,19 +33,8 @@ import com.sun.identity.entitlement.interfaces.IThreadPool;
 /**
  * Thread Pool
  */
-public class EntitlementThreadPool implements IThreadPool {
-    private ThreadPool thrdPool;
-
-    public EntitlementThreadPool(int size) {
-        thrdPool = new ThreadPool("entitlementThreadPool", size);
-    }
-
-
-    public void submit(Runnable task) {
-        try {
-            thrdPool.run(task);
-        } catch (ThreadPoolException e) {
-            PrivilegeManager.debug.error("EntitlementThreadPool.submit", e);
-        }
+public class SequentialThreadPool implements IThreadPool {
+    public void submit(Runnable r) {
+        r.run();
     }
 }

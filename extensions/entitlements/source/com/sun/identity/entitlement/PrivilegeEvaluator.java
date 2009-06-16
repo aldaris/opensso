@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.26 2009-06-16 10:37:44 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.27 2009-06-16 20:30:36 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -58,14 +58,17 @@ class PrivilegeEvaluator {
     private Set<String> actionNames;
     private EntitlementCombiner entitlementCombiner;
     private boolean recursive;
-    private IThreadPool threadPool;
     private EntitlementException eException;
     private final Lock lock = new ReentrantLock();
     private Condition hasResults = lock.newCondition();
 
     // Static variables
     // TODO determine number of tasks per thread
+    private static int evalThreadSize = Evaluator.DEFAULT_POLICY_EVAL_THREAD;
     private static int tasksPerThread = 10;
+
+    private static IThreadPool threadPool;
+    private static boolean isMultiThreaded;
     
     // Stats monitor
     private static final NetworkMonitor PRIVILEGE_EVAL_MONITOR_INIT =
@@ -82,6 +85,28 @@ class PrivilegeEvaluator {
         NetworkMonitor.getInstance("PrivilegeEvaluatorMonitorSubmit");
     private static final NetworkMonitor PRIVILEGE_EVAL_MONITOR_WAIT =
         NetworkMonitor.getInstance("PrivilegeEvaluatorMonitorCombineResults");
+
+    static {
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            PrivilegeManager.superAdminSubject, "/");
+        Set<String> setPolicyEvalThread = ec.getConfiguration(
+            EntitlementConfiguration.POLICY_EVAL_THREAD_SIZE);
+
+        if ((setPolicyEvalThread != null) && !setPolicyEvalThread.isEmpty()) {
+            try {
+                evalThreadSize = Integer.parseInt(setPolicyEvalThread.
+                    iterator().next());
+            } catch (NumberFormatException e) {
+                PrivilegeManager.debug.error(
+                    "PrivilegeEvaluator.<init>: get evaluation thread pool size",
+                    e);
+            }
+        }
+        isMultiThreaded = (evalThreadSize > 1);
+        threadPool = (isMultiThreaded) ?
+            new EntitlementThreadPool(evalThreadSize) :
+            new SequentialThreadPool();
+    }
 
     /**
      * Initializes the evaluator.
@@ -115,7 +140,7 @@ class PrivilegeEvaluator {
         this.resourceName = resourceName;
         this.envParameters = envParameters;
 
-        Application appl = getApplication(adminSubject);
+        Application appl = getApplication();
         
         this.actionNames = new HashSet<String>();
         if ((actions == null) || actions.isEmpty()) {
@@ -128,7 +153,6 @@ class PrivilegeEvaluator {
         entitlementCombiner.init(adminSubject, realm, applicationName,
             resourceName, this.actionNames, recursive);
         this.recursive = recursive;
-        threadPool = new EntitlementThreadPool(); //TODO QOS
         PRIVILEGE_EVAL_MONITOR_INIT.end(start);
     }
 
@@ -201,8 +225,7 @@ class PrivilegeEvaluator {
         init(adminSubject, subject, realm, applicationName,
             resourceName, null, envParameters, recursive);        
         long start = PRIVILEGE_EVAL_MONITOR_RES_INDEX.start();
-        indexes = getApplication(adminSubject).getResourceSearchIndex(
-            resourceName);
+        indexes = getApplication().getResourceSearchIndex(resourceName);
         PRIVILEGE_EVAL_MONITOR_RES_INDEX.end(start);
         return evaluate(realm);
     }
@@ -220,12 +243,13 @@ class PrivilegeEvaluator {
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             adminSubject, realm);
         Iterator<IPrivilege> i = pis.search(indexes, sam.getSubjectSearchFilter(
-            subject, applicationName), recursive, threadPool);
+            subject, applicationName), recursive);
         PRIVILEGE_EVAL_MONITOR_SEARCH.end(start);
         
         // Submit the privileges for evaluation
         // First collect tasks to be evaluated locally
-        Set<IPrivilege> localPrivileges = new HashSet<IPrivilege>(2*tasksPerThread);
+        Set<IPrivilege> localPrivileges = new HashSet<IPrivilege>(
+            2*tasksPerThread);
         int totalCount = 0;
         while (++totalCount != tasksPerThread) {
             start = PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.start();
@@ -254,14 +278,16 @@ class PrivilegeEvaluator {
             totalCount++;
             if ((totalCount % tasksPerThread) == 0) {
                 start = PRIVILEGE_EVAL_MONITOR_SUBMIT.start();
-                threadPool.submit(new PrivilegeTask(this, privileges, true));
+                threadPool.submit(new PrivilegeTask(this, privileges,
+                    isMultiThreaded));
                 PRIVILEGE_EVAL_MONITOR_SUBMIT.end(start);
                 privileges.clear();
             }
         }
         if ((privileges != null) && !privileges.isEmpty()) {
             start = PRIVILEGE_EVAL_MONITOR_SUBMIT.start();
-            threadPool.submit(new PrivilegeTask(this, privileges, true));
+            threadPool.submit(new PrivilegeTask(this, privileges,
+                isMultiThreaded));
             PRIVILEGE_EVAL_MONITOR_SUBMIT.end(start);
         }
         // IPrivilege privileges locally
@@ -270,25 +296,14 @@ class PrivilegeEvaluator {
         // Wait for submitted threads to complete evaluation
         start = PRIVILEGE_EVAL_MONITOR_WAIT.start();
         if (tasksSubmitted) {
-            int counter = 0;
-            lock.lock();
-            boolean isDone = (eException != null);
-
-            try {
-                while (!isDone && (counter < totalCount)) {
-                    if (resultQ.isEmpty()) {
-                        hasResults.await();
-                    }
-                    while (!resultQ.isEmpty() && !isDone) {
-                        entitlementCombiner.add(resultQ.remove(0));
-                        isDone = entitlementCombiner.isDone();
-                        counter++;
-                    }
+            if (isMultiThreaded) {
+                receiveEvalResults(totalCount);
+            } else {
+                boolean isDone = false;
+                while (!resultQ.isEmpty() && !isDone) {
+                    entitlementCombiner.add(resultQ.remove(0));
+                    isDone = entitlementCombiner.isDone();
                 }
-            } catch (InterruptedException ex) {
-                PrivilegeManager.debug.error("PrivilegeEvaluator.evaluate", ex);
-            } finally {
-                lock.unlock();
             }
         } else if (eException == null) {
             boolean isDone = false;
@@ -306,8 +321,30 @@ class PrivilegeEvaluator {
         return entitlementCombiner.getResults();
     }
 
+    private void receiveEvalResults(int totalCount) {
+        int counter = 0;
+        lock.lock();
+        boolean isDone = (eException != null);
+
+        try {
+            while (!isDone && (counter < totalCount)) {
+                if (resultQ.isEmpty()) {
+                    hasResults.await();
+                }
+                while (!resultQ.isEmpty() && !isDone) {
+                    entitlementCombiner.add(resultQ.remove(0));
+                    isDone = entitlementCombiner.isDone();
+                    counter++;
+                }
+            }
+        } catch (InterruptedException ex) {
+            PrivilegeManager.debug.error("PrivilegeEvaluator.evaluate", ex);
+        } finally {
+            lock.unlock();
+        }
+    }
     
-    private Application getApplication(Subject adminSubject)
+    private Application getApplication()
         throws EntitlementException {
         if (application == null) {
             application = ApplicationManager.getApplicationForEvaluation(

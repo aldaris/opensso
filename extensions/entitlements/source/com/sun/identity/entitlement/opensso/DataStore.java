@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.23 2009-06-16 10:37:45 veiming Exp $
+ * $Id: DataStore.java,v 1.24 2009-06-16 20:30:37 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -57,7 +57,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import javax.persistence.EntityExistsException;
 import javax.security.auth.Subject;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,6 +65,7 @@ import org.json.JSONObject;
  * This class *talks* to SMS to get the configuration information.
  */
 public class DataStore {
+    private static DataStore instance = new DataStore();
     public static final String POLICY_STORE = "default";
     public static final String REFERRAL_STORE = "referrals";
 
@@ -103,7 +103,9 @@ public class DataStore {
         new HashMap<String, Integer>();
     static HashMap<String, Integer> referralsPerRealm =
         new HashMap<String, Integer>();
-    
+    private static SSOToken adminToken = (SSOToken)
+        AccessController.doPrivileged(AdminTokenAction.getInstance());
+
     static {
         // Initialize statistics collection
         Stats stats = Stats.getInstance("Entitlements");
@@ -111,7 +113,12 @@ public class DataStore {
         stats.addStatsListener(es);
     }
 
-    
+    private DataStore() {
+    }
+
+    public static DataStore getInstance() {
+        return instance;
+    }
     /**
      * Returns distingished name of a privilege.
      *
@@ -172,11 +179,15 @@ public class DataStore {
         return orgConf;
     }
 
-    private void updateIndexCount(
-        SSOToken adminToken,
-        String realm,
-        int num,
-        boolean referral) {
+    void clearIndexCount(String realm, boolean referral) {
+        if (referral) {
+            referralsPerRealm.remove(DNMapper.orgNameToDN(realm));
+        } else {
+            policiesPerRealm.remove(DNMapper.orgNameToDN(realm));
+        }
+    }
+
+    private void updateIndexCount(String realm, int num, boolean referral) {
         try {
             String key = (referral) ? REFERRAL_INDEX_COUNT : INDEX_COUNT;
 
@@ -211,9 +222,7 @@ public class DataStore {
         }
     }
 
-    private int getIndexCount(Subject adminSubject, String realm,
-        boolean referral) {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+    private int getIndexCount(String realm, boolean referral) {
         int count = 0;
         if (adminToken != null) {
             try {
@@ -240,11 +249,11 @@ public class DataStore {
         return count;
     }
 
-    int getNumberOfPolicies(Subject subject, String realm) {
+    int getNumberOfPolicies(String realm) {
         int totalPolicies = 0;
         Integer tp = policiesPerRealm.get(realm);
         if (tp == null) {
-            totalPolicies = getIndexCount(subject, realm, false);
+            totalPolicies = getIndexCount(realm, false);
             policiesPerRealm.put(realm, totalPolicies);
         } else {
             totalPolicies = tp.intValue();
@@ -253,11 +262,11 @@ public class DataStore {
         return (totalPolicies);
     }
 
-    int getNumberOfReferrals(Subject subject, String realm) {
+    int getNumberOfReferrals(String realm) {
         int referralCnt = 0;
         Integer tp = referralsPerRealm.get(realm);
         if (tp == null) {
-            referralCnt = getIndexCount(subject, realm, true);
+            referralCnt = getIndexCount(realm, true);
             referralsPerRealm.put(realm, referralCnt);
         } else {
             referralCnt = tp.intValue();
@@ -285,7 +294,6 @@ public class DataStore {
         Set<String> subjectIndexes =
             SubjectAttributesManager.getSubjectSearchIndexes(p);
 
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
         String dn = null;
         try {
             createDefaultSubConfig(adminToken, realm, null);
@@ -361,7 +369,13 @@ public class DataStore {
 
             s.setAttributes(map);
             s.save();
-            updateIndexCount(adminToken, realm, 1, false);
+
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(NotificationServlet.ATTR_NAME, privilegeName);
+            params.put(NotificationServlet.ATTR_REALM_NAME, realm);
+            Notifier.submit(NotificationServlet.PRIVILEGE_ADDED,
+                params);
+            updateIndexCount(realm, 1, false);
         } catch (JSONException e) {
             throw new EntitlementException(210, e);
         } catch (SSOException e) {
@@ -388,14 +402,14 @@ public class DataStore {
     ) throws EntitlementException {
         ResourceSaveIndexes indexes = referral.getResourceSaveIndexes(
             adminSubject, realm);
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        SSOToken token = getSSOToken(adminSubject);
         String dn = null;
         try {
-            createDefaultSubConfig(adminToken, realm, REFERRAL_STORE);
+            createDefaultSubConfig(token, realm, REFERRAL_STORE);
             dn = getPrivilegeDistinguishedName(referral.getName(), realm,
                 REFERRAL_STORE);
 
-            SMSEntry s = new SMSEntry(adminToken, dn);
+            SMSEntry s = new SMSEntry(token, dn);
             Map<String, Set<String>> map = new HashMap<String, Set<String>>();
 
             Set<String> searchable = new HashSet<String>();
@@ -471,7 +485,13 @@ public class DataStore {
 
             s.setAttributes(map);
             s.save();
-            updateIndexCount(adminToken, realm, 1, true);
+
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(NotificationServlet.ATTR_NAME, privilegeName);
+            params.put(NotificationServlet.ATTR_REALM_NAME, realm);
+            Notifier.submit(NotificationServlet.REFERRAL_ADDED,
+                params);
+            updateIndexCount(realm, 1, true);
         } catch (SSOException e) {
             throw new EntitlementException(270, e);
         } catch (SMSException e) {
@@ -487,19 +507,17 @@ public class DataStore {
      *        datastore.
      * @param realm Realm name.
      * @param name Privilege name.
-     * @param notify <code>true</code> to send notification.
      * @throws com.sun.identity.entitlement.EntitlementException if privilege
      * cannot be removed.
      */
     public void remove(
         Subject adminSubject,
         String realm,
-        String name,
-        boolean notify
+        String name
     ) throws EntitlementException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        SSOToken token = getSSOToken(adminSubject);
 
-        if (adminToken == null) {
+        if (token == null) {
             Object[] arg = {name};
             throw new EntitlementException(55, arg);
         }
@@ -508,18 +526,16 @@ public class DataStore {
         try {
             dn = getPrivilegeDistinguishedName(name, realm, null);
 
-            if (SMSEntry.checkIfEntryExists(dn, adminToken)) {
-                SMSEntry s = new SMSEntry(adminToken, dn);
+            if (SMSEntry.checkIfEntryExists(dn, token)) {
+                SMSEntry s = new SMSEntry(token, dn);
                 s.delete();
-                updateIndexCount(adminToken, realm, -1, false);
+                updateIndexCount(realm, -1, false);
 
-                if (notify) {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put(NotificationServlet.ATTR_NAME, name);
-                    params.put(NotificationServlet.ATTR_REALM_NAME, realm);
-                    Notifier.submit(NotificationServlet.PRIVILEGE_DELETED,
-                        params);
-                }
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(NotificationServlet.ATTR_NAME, name);
+                params.put(NotificationServlet.ATTR_REALM_NAME, realm);
+                Notifier.submit(NotificationServlet.PRIVILEGE_DELETED,
+                    params);
             }
         } catch (SMSException e) {
             Object[] arg = {dn};
@@ -537,18 +553,16 @@ public class DataStore {
      *        datastore.
      * @param realm Realm name.
      * @param name Referral privilege name.
-     * @param notify <code>true</code> to send notification.
      * @throws EntitlementException if privilege cannot be removed.
      */
     public void removeReferral(
         Subject adminSubject,
         String realm,
-        String name,
-        boolean notify
+        String name
     ) throws EntitlementException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        SSOToken token = getSSOToken(adminSubject);
 
-        if (adminToken == null) {
+        if (token == null) {
             Object[] arg = {name};
             throw new EntitlementException(55, arg);
         }
@@ -557,18 +571,16 @@ public class DataStore {
         try {
             dn = getPrivilegeDistinguishedName(name, realm, REFERRAL_STORE);
 
-            if (SMSEntry.checkIfEntryExists(dn, adminToken)) {
-                SMSEntry s = new SMSEntry(adminToken, dn);
+            if (SMSEntry.checkIfEntryExists(dn, token)) {
+                SMSEntry s = new SMSEntry(token, dn);
                 s.delete();
-                updateIndexCount(adminToken, realm, -1, true);
+                updateIndexCount(realm, -1, true);
 
-                if (notify) {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put(NotificationServlet.ATTR_NAME, name);
-                    params.put(NotificationServlet.ATTR_REALM_NAME, realm);
-                    Notifier.submit(NotificationServlet.REFERRAL_DELETED,
-                        params);
-                }
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(NotificationServlet.ATTR_NAME, name);
+                params.put(NotificationServlet.ATTR_REALM_NAME, realm);
+                Notifier.submit(NotificationServlet.REFERRAL_DELETED,
+                    params);
             }
         } catch (SMSException e) {
             Object[] arg = {dn};
@@ -603,16 +615,16 @@ public class DataStore {
         Set<String> results = new HashSet<String>();
 
         try {
-            SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+            SSOToken token = getSSOToken(adminSubject);
 
-            if (adminToken == null) {
+            if (token == null) {
                 throw new EntitlementException(216);
             }
 
             String baseDN = getSearchBaseDN(realm, null);
 
-            if (SMSEntry.checkIfEntryExists(baseDN, adminToken)) {
-                Set<String> dns = SMSEntry.search(adminToken, baseDN, filter);
+            if (SMSEntry.checkIfEntryExists(baseDN, token)) {
+                Set<String> dns = SMSEntry.search(token, baseDN, filter);
                 for (String dn : dns) {
                     if (!areDNIdentical(baseDN, dn)) {
                         String rdns[] = LDAPDN.explodeDN(dn, true);
@@ -654,16 +666,16 @@ public class DataStore {
         Set<String> results = new HashSet<String>();
 
         try {
-            SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+            SSOToken token = getSSOToken(adminSubject);
 
-            if (adminToken == null) {
+            if (token == null) {
                 throw new EntitlementException(216);
             }
 
             String baseDN = getSearchBaseDN(realm, REFERRAL_STORE);
 
-            if (SMSEntry.checkIfEntryExists(baseDN, adminToken)) {
-                Set<String> dns = SMSEntry.search(adminToken, baseDN, filter);
+            if (SMSEntry.checkIfEntryExists(baseDN, token)) {
+                Set<String> dns = SMSEntry.search(token, baseDN, filter);
                 for (String dn : dns) {
                     if (!areDNIdentical(baseDN, dn)) {
                         String rdns[] = LDAPDN.explodeDN(dn, true);
@@ -710,20 +722,19 @@ public class DataStore {
         boolean bSubTree,
         Set<String> excludeDNs
     ) throws EntitlementException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
-        Set<IPrivilege> results = searchPrivileges(adminToken, realm,
+        SSOToken token = getSSOToken(adminSubject);
+        Set<IPrivilege> results = searchPrivileges(realm,
             iterator, indexes, subjectIndexes, bSubTree, excludeDNs);
         // Get referrals only if count is greater than 0
-        int countInt = getNumberOfReferrals(adminSubject, realm);
+        int countInt = getNumberOfReferrals(realm);
         if (countInt > 0) {
-            results.addAll(searchReferral(adminToken, realm, iterator,
+            results.addAll(searchReferral(token, realm, iterator,
                 indexes, bSubTree, excludeDNs));
         }
         return results;
     }
 
     private Set<IPrivilege> searchPrivileges(
-        SSOToken adminToken,
         String realm,
         BufferedIterator iterator,
         ResourceSearchIndexes indexes,
@@ -910,5 +921,12 @@ public class DataStore {
             throw new EntitlementException(52, arg, e);
         }
         return results;
+    }
+
+    private SSOToken getSSOToken(Subject subject) {
+        if (subject == PrivilegeManager.superAdminSubject) {
+            return adminToken;
+        }
+        return SubjectUtils.getSSOToken(subject);
     }
 }

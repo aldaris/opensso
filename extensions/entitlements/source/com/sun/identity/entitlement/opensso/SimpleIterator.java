@@ -22,30 +22,50 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementThreadPool.java,v 1.5 2009-06-16 20:30:36 veiming Exp $
- *
+ * $Id: SimpleIterator.java,v 1.1 2009-06-16 20:30:37 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.entitlement.opensso;
 
-import com.sun.identity.entitlement.interfaces.IThreadPool;
+import com.sun.identity.shared.BufferedIterator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-/**
- * Thread Pool
- */
-public class EntitlementThreadPool implements IThreadPool {
-    private ThreadPool thrdPool;
+public class SimpleIterator extends BufferedIterator {
+    private LinkedList ll = new LinkedList();
+    private Iterator items;
 
-    public EntitlementThreadPool(int size) {
-        thrdPool = new ThreadPool("entitlementThreadPool", size);
+    @Override
+    public void add(Object entry) {
+        ll.add(entry);
     }
 
+    @Override
+    public void add(List entry) {
+        ll.addAll(entry);
+    }
 
-    public void submit(Runnable task) {
-        try {
-            thrdPool.run(task);
-        } catch (ThreadPoolException e) {
-            PrivilegeManager.debug.error("EntitlementThreadPool.submit", e);
+    @Override
+    public boolean hasNext() {
+        if (items == null) {
+            items = ll.iterator();
         }
+        return (items.hasNext());
+    }
+
+    @Override
+    public void isDone() {
+        // do nothing
+        }
+
+    @Override
+    public Object next() {
+        return items.next();
+    }
+
+    @Override
+    public void remove() {
+        items.remove();
     }
 }

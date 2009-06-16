@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.24 2009-06-16 10:37:45 veiming Exp $
+ * $Id: EntitlementService.java,v 1.25 2009-06-16 20:30:37 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -100,8 +100,8 @@ public class EntitlementService extends EntitlementConfiguration {
      * @return set of attribute values of a given attribute name,
      */
     public Set<String> getConfiguration(String attrName) {
-        return getConfiguration(SubjectUtils.getSSOToken(getAdminSubject()),
-            attrName);
+        SSOToken adminToken = getAdminToken();
+        return getConfiguration(adminToken, attrName);
     }
 
     private static Set<String> getConfiguration(
@@ -245,17 +245,20 @@ public class EntitlementService extends EntitlementConfiguration {
         return null;
     }
 
+    private SSOToken getAdminToken() {
+        return (getAdminSubject() == PrivilegeManager.superAdminSubject) ?
+            (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance()) :
+            SubjectUtils.getSSOToken(getAdminSubject());
+    }
+
     /**
      * Returns a set of registered applications.
      *
      * @return a set of registered applications.
      */
     public Set<Application> getApplications() {
-        SSOToken adminToken =
-            (getAdminSubject() == PrivilegeManager.superAdminSubject) ?
-                (SSOToken) AccessController.doPrivileged(
-                    AdminTokenAction.getInstance()) :
-                SubjectUtils.getSSOToken(getAdminSubject());
+        SSOToken adminToken = getAdminToken();
 
         Set<Application> results = getRawApplications(adminToken);
         for (Application app : results) {
