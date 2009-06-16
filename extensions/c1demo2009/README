@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.4 2009-06-12 17:35:17 superpat7 Exp $
+$Id: README,v 1.5 2009-06-16 20:05:14 superpat7 Exp $
 
 ------------------------------------------------------------------------------
 
@@ -285,16 +285,20 @@ Now, restart Glassfish and Derby:
 
 Create the OAuth Token Service tables using the Derby 'ij' utility:
 
-$ /Applications/NetBeans/glassfish-v2ur2/javadb/bin/ij
+$ <glassfish directory>/javadb/bin/ij
 ij version 10.2
 ij> connect 'jdbc:derby://localhost:1527/TokenServiceDB;create=true;user=username;password=password';
 ij> run '<source location>/opensso/extensions/oauth/oauth-service/etc/dbsetup.sql';
 ij> quit;
 
+NOTE - since the dbsetup.sql script starts by dropping the reqtoken, acctoken 
+and consumer tables, it will show an error message the first time you run it. 
+This is expected.
+
 Next, we need to create a JDBC connection pool and resource. Go to 
 http://localhost:4848/ and login as admin with the password adminadmin. Open 
-the 'JDBC' entry in the list on the left, click 'Connection Pools' and click 
-the 'New' button.
+the 'Resources' entry in the list on the left, then 'JDBC', and click 
+'Connection Pools' then the 'New' button.
 
 You'll need to change the following fields:
 
