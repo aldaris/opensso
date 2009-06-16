@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.16 2009-01-28 05:35:21 ww203982 Exp $
+ * $Id: UpgradeUtils.java,v 1.17 2009-06-16 08:48:37 kevinserwin Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -1592,6 +1592,8 @@ public class UpgradeUtils {
             String siteId) throws UpgradeException {
         try {
             ServerConfiguration.addToSite(ssoToken, serverInstance, siteId);
+        } catch (ConfigurationException ce) {
+            throw new UpgradeException("Unable to add to site");
         } catch (SMSException sme) {
             throw new UpgradeException("Unable to add to site");
         } catch (SSOException ssoe) {
