@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.64 2009-06-15 21:04:24 asyhuang Exp $
+  $Id: build.xml,v 1.65 2009-06-16 11:11:37 kevinserwin Exp $
 
 -->
 
@@ -371,7 +371,7 @@
             <fileset dir="${unittest.basedir}/www/images" includes="**/*.gif" />
         </copy>
         <copy todir="${war.package.dir}/WEB-INF/lib"
-           file="${entitlements.extlib.dir}/testng-5.9-jdk15.jar" />
+           file="${opensso.extlib}/testng-5.9-jdk15.jar" />
         <copy todir="${war.package.dir}/WEB-INF/lib"
            file="${entitlements.build.lib.local.dir}/json.jar" />
     </target>
