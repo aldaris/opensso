@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.28 2009-06-09 09:44:27 veiming Exp $
+ * $Id: Privilege.java,v 1.29 2009-06-16 00:59:29 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -308,8 +308,8 @@ public abstract class Privilege implements Evaluate {
             privilege.name = jo.optString("name");
             privilege.description = jo.optString("description");
             privilege.policyName = jo.optString("policyName");
-            privilege.createdBy = jo.getString("createdBy");
-            privilege.lastModifiedBy = jo.getString("lastModifiedBy");
+            privilege.createdBy = jo.optString("createdBy");
+            privilege.lastModifiedBy = jo.optString("lastModifiedBy");
             privilege.creationDate = JSONUtils.getLong(jo,
                 "creationDate");
             privilege.lastModifiedDate = JSONUtils.getLong(jo,

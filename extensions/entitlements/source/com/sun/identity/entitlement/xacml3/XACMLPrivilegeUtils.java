@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLPrivilegeUtils.java,v 1.1 2009-05-29 22:19:38 dillidorai Exp $
+ * $Id: XACMLPrivilegeUtils.java,v 1.2 2009-06-16 00:59:30 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -30,6 +30,7 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.EntitlementSubject;
+import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ResourceAttribute;
@@ -53,6 +54,7 @@ import com.sun.identity.entitlement.xacml3.core.VariableDefinition;
 import com.sun.identity.entitlement.xacml3.core.Version;
 
 
+import com.sun.identity.sm.ServiceManager;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,6 +67,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.namespace.QName;
 
 /**
  * Class with utility methods to map from
@@ -184,7 +187,7 @@ public class XACMLPrivilegeUtils {
 
         VariableDefinition lastModifiedBy = new VariableDefinition();
         vrList.add(lastModifiedBy);
-        lastModifiedBy.setVariableId(XACMLConstants.PRIVILEGE_LAST_MOIFIED_BY);
+        lastModifiedBy.setVariableId(XACMLConstants.PRIVILEGE_LAST_MODIFIED_BY);
         AttributeValue lmbv = new AttributeValue();
         lmbv.setDataType(XACMLConstants.XS_STRING);
         lmbv.getContent().add(privilege.getLastModifiedBy());
@@ -631,7 +634,11 @@ public class XACMLPrivilegeUtils {
             List applyExpressions = apply.getExpression();
             if (es != null) {
                 String esString = es.toString();
+                // TODO: add custom xml attribute to idenity as privilge subject
                 AttributeValue esv = new AttributeValue();
+                Map<QName, String> otherAttrs = esv.getOtherAttributes();
+                QName qn = new QName("privilegeComponent");
+                otherAttrs.put(qn, "entitlementSubject");
                 String dataType = XACMLConstants.JSON_SUBJECT_DATATYPE + ":"
                         + es.getClass().getName();
                 esv.setDataType(dataType);
@@ -641,7 +648,11 @@ public class XACMLPrivilegeUtils {
             }
             if (ec != null) {
                 String ecString = ec.toString();
+                // TODO: add custom xml attribute to idenity as privilge condition
                 AttributeValue ecv = new AttributeValue();
+                Map<QName, String> otherAttrs = ecv.getOtherAttributes();
+                QName qn = new QName("privilegeComponent");
+                otherAttrs.put(qn, "entitlementCondition");
                 String dataType = XACMLConstants.JSON_CONDITION_DATATYPE + ":"
                         + ec.getClass().getName();
                 ecv.setDataType(dataType);
@@ -667,26 +678,35 @@ public class XACMLPrivilegeUtils {
         String description = policy.getDescription();
 
         //value of variable XACMLConstants.PRIVILIEGE_CREATED_BY
-        String createdBy = null; 
+        String createdBy = getVariableById(policy,
+                XACMLConstants.PRIVILEGE_CREATED_BY);
 
         //value of variable XACMLConstants.PRIVILEGE_CREATION_DATE
-        String createdAt = null; 
+        long createdAt = dateStringToLong(getVariableById(policy,
+                XACMLConstants.PRIVILEGE_CREATION_DATE));
 
         //value of variable XACMLConstants.PRIVILEGE_LAST_MODIFIED_BY
-        String lastModifiedBy = null; 
+        String lastModifiedBy = getVariableById(policy,
+                XACMLConstants.PRIVILEGE_LAST_MODIFIED_BY);
 
         //value of variable XACMLConstants.PRIVILEGE_LAST_MODFICATION_DATE
-        String lastModifiedAt = null; 
+        long lastModifiedAt = dateStringToLong(getVariableById(policy,
+                XACMLConstants.PRIVILEGE_LAST_MODIFIED_DATE));
 
         Entitlement entitlement = null;
 
-        EntitlementSubject es = null;
+        //TODO: fix properly
+        String user1 = "id=user11,ou=user," + ServiceManager.getBaseDN();
+        EntitlementSubject es = new IdRepoUserSubject();
+        ((IdRepoUserSubject)es).setID(user1);
 
         EntitlementCondition ec = null;
 
-        Set<ResourceAttribute> ra = null;
+        Set<ResourceAttribute> ras = null;
 
-        Privilege privilege = new XACMLOpenSSOPrivilege(privilegeName, entitlement, es, ec, ra);
+       
+        Privilege privilege = new XACMLOpenSSOPrivilege(privilegeName,
+                entitlement, es, ec, ras);
 
         return privilege;
     }
@@ -694,6 +714,43 @@ public class XACMLPrivilegeUtils {
     public static String policyIdToPrivilegeName(String policyId) {
         //TODO: implement policyIdToPrivilegeName(String) correctly
         return policyId;
+    }
+
+    public static String getVariableById(Policy policy, String id) {
+        String val = null;
+        List<Object> vrList =
+           policy.getCombinerParametersOrRuleCombinerParametersOrVariableDefinition();
+        for (Object obj : vrList) {
+            if (obj instanceof VariableDefinition) {
+                VariableDefinition vd =(VariableDefinition)obj;
+                if (vd.getVariableId().equals(id)) {
+                    JAXBElement<AttributeValue> jav
+                            = (JAXBElement<AttributeValue>)vd.getExpression();
+                    // TODO: initialize correctly
+                    AttributeValue cbav = (AttributeValue)jav.getValue();
+                    val = cbav.getContent().get(0).toString();
+
+                }
+            }  
+        }
+        return val;
+    }
+
+    private static long dateStringToLong(String dateString) {
+        if ((dateString) == null || (dateString.length() == 0)) {
+            return 0;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(
+                "yyyy-MM-dd:HH:mm:ss.SSSS");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        dateString = dateString.replace("T", ":");
+        long time = 0;
+        try {
+            time = sdf.parse(dateString).getTime();
+        } catch (java.text.ParseException pe) {
+            //TODO: log debug warning
+        }
+        return time;
     }
 
 }

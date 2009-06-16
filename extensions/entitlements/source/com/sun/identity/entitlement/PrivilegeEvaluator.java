@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.24 2009-06-13 04:38:55 arviranga Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.25 2009-06-16 00:59:29 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -336,6 +336,9 @@ class PrivilegeEvaluator {
         public void run() {
             try {
                 for (Evaluate eval : privileges) {
+                    if (eval == null) {
+                        continue;
+                    }
                     List<Entitlement> entitlements = eval.evaluate(
                         parent.adminSubject,
                         parent.realm, parent.subject,

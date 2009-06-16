@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLConstants.java,v 1.3 2009-05-26 21:46:29 veiming Exp $
+ * $Id: XACMLConstants.java,v 1.4 2009-06-16 00:59:30 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -36,7 +36,7 @@ public static final String XACML3_CORE_PKG
 
 public static final String PRIVILEGE_CREATED_BY 
         = "createdBy";
-public static final String PRIVILEGE_LAST_MOIFIED_BY 
+public static final String PRIVILEGE_LAST_MODIFIED_BY 
         = "lastModifiedBy";
 
 public static final String XS_STRING 
