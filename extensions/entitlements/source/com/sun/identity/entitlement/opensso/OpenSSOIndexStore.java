@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.13 2009-06-13 00:32:09 arviranga Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.14 2009-06-16 10:37:45 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -33,7 +33,7 @@ import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.ApplicationTypeManager;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.Evaluate;
+import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.PrivilegeManager;
@@ -57,8 +57,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -88,6 +86,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
             policyCacheSize, 100000)) : new PolicyCache(100000);
         referralCache = (policyCacheSize != null) ? new PolicyCache(getNumeric(
             policyCacheSize, 100000)) : new PolicyCache(100000);
+
         Set<String> setIndexCacheSize = ec.getConfiguration(
             EntitlementConfiguration.INDEX_CACHE_SIZE);
         String indexCacheSizeString = ((setIndexCacheSize != null) &&
@@ -99,9 +98,10 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     }
 
     // Instance variables
-    String realmDN;
+    private String realmDN;
     private IndexCache indexCache;
     private IndexCache referralIndexCache;
+    private EntitlementConfiguration entitlementConfig;
 
     /**
      * Constructor.
@@ -111,6 +111,9 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     public OpenSSOIndexStore(Subject adminSubject, String realm) {
         super(adminSubject, realm);
         realmDN = DNMapper.orgNameToDN(realm);
+        entitlementConfig = EntitlementConfiguration.getInstance(
+            adminSubject, realm);
+
         // Get Index caches based on realm
         synchronized (indexCaches) {
             indexCache = indexCaches.get(realmDN);
@@ -144,30 +147,30 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
      * @throws com.sun.identity.entitlement.EntitlementException if addition
      * failed.
      */
-    public void add(Set<Privilege> privileges)
+    public void add(Set<IPrivilege> privileges)
         throws EntitlementException {
-        Subject adminSubject = getAdminSubject();
-        String realm = getRealm();
 
-        for (Privilege p : privileges) {
-            p.canonicalizeResources(adminSubject,
-                DNMapper.orgNameToRealmName(realm));
-            dataStore.add(adminSubject, realmDN, p);
-            EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-                adminSubject, realm);
-            ec.addSubjectAttributeNames(p.getEntitlement().getApplicationName(),
-                SubjectAttributesManager.getRequiredAttributeNames(p));
+        for (IPrivilege p : privileges) {
+            if (p instanceof Privilege) {
+                add((Privilege)p);
+            } else if (p instanceof ReferralPrivilege) {
+                add((ReferralPrivilege)p);
+            }
         }
     }
-    
-    /**
-     * Adds a referral privilege to the data store. Proper indexes will be
-     * created to speed up policy evaluation.
-     *
-     * @param referral referral privileges to be added.
-     * @throws EntitlementException if addition failed.
-     */
-    public void addReferral(ReferralPrivilege referral)
+
+    private void add(Privilege privilege) throws EntitlementException {
+        Subject adminSubject = getAdminSubject();
+        String realm = getRealm();
+        privilege.canonicalizeResources(adminSubject,
+            DNMapper.orgNameToRealmName(realm));
+        dataStore.add(adminSubject, realmDN, privilege);
+        entitlementConfig.addSubjectAttributeNames(
+            privilege.getEntitlement().getApplicationName(),
+            SubjectAttributesManager.getRequiredAttributeNames(privilege));
+    }
+
+    private void add(ReferralPrivilege referral)
         throws EntitlementException {
         Subject adminSubject = getAdminSubject();
         String realm = getRealm();
@@ -210,14 +213,14 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
      * @throws com.sun.identity.entitlement.EntitlementException if deletion
      * failed.
      */
-    public void delete(Set<Privilege> privileges)
+    public void delete(Set<IPrivilege> privileges)
         throws EntitlementException {
         Subject adminSubject = getAdminSubject();
         String realm = getRealm();
 
-        for (Privilege p : privileges) {
+        for (IPrivilege p : privileges) {
             String dn = delete(p.getName(), true);
-            indexCache.clear(p.getEntitlement().getResourceSaveIndexes(
+            indexCache.clear(p.getResourceSaveIndexes(
                 adminSubject, DNMapper.orgNameToRealmName(realm)), dn);
         }
     }
@@ -245,7 +248,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     }
 
     private void cache(
-        Evaluate eval,
+        IPrivilege eval,
         Set<String> subjectSearchIndexes,
         String realm
     ) throws EntitlementException {
@@ -291,17 +294,13 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
      * @throws com.sun.identity.entitlement.EntitlementException if results
      * cannot be obtained.
      */
-    public Iterator<Evaluate> search(ResourceSearchIndexes indexes,
+    public Iterator<IPrivilege> search(ResourceSearchIndexes indexes,
         Set<String> subjectIndexes, boolean bSubTree, IThreadPool threadPool)
         throws EntitlementException {
         // TODO determine if search results should be threaded
         boolean isThreaded = false;
-        BufferedIterator iterator = null;
-        if (isThreaded) {
-            iterator = new BufferedIterator();
-        } else {
-            iterator = new BasicIterator();
-        }
+        BufferedIterator iterator = (isThreaded) ? new BufferedIterator() :
+            new SimpleIterator();
         Set setDNs = searchPrivileges(indexes, subjectIndexes, bSubTree,
             iterator);
         setDNs.addAll(searchReferrals(indexes, bSubTree, iterator));
@@ -674,10 +673,10 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
 
         public void run() {
             try {
-                Set<Evaluate> results = dataStore.search(
+                Set<IPrivilege> results = dataStore.search(
                     parent.getAdminSubject(), parent.getRealmDN(), iterator,
                     indexes, subjectIndexes, bSubTree, excludeDNs);
-                for (Evaluate eval : results) {
+                for (IPrivilege eval : results) {
                     parent.cache(eval, subjectIndexes, parent.getRealmDN());
                 }
             } catch (EntitlementException ex) {
@@ -685,44 +684,6 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 PrivilegeManager.debug.error(
                     "OpenSSOIndexStore.SearchTask.runPolicy", ex);
             }
-        }
-    }
-
-    public class BasicIterator extends BufferedIterator {
-        private LinkedList ll = new LinkedList();
-        private Iterator items;
-
-        @Override
-        public void add(Object entry) {
-            ll.add(entry);
-        }
-
-        @Override
-        public void add(List entry) {
-            ll.addAll(entry);
-        }
-
-        @Override
-        public boolean hasNext() {
-            if (items == null) {
-                items = ll.iterator();
-            }
-            return (items.hasNext());
-        }
-
-        @Override
-        public void isDone() {
-            // do nothing
-        }
-
-        @Override
-        public Object next() {
-            return items.next();
-        }
-
-        @Override
-        public void remove() {
-            items.remove();
         }
     }
 }

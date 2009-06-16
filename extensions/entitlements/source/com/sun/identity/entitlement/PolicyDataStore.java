@@ -17,12 +17,12 @@
  * When distributing Covered Code, include this CDDL
  * Header Notice in each file and include the License file
  * at opensso/legal/CDDLv1.0.txt.
- * If applicable, add the following below the CDDL Header,
+ * If applicable, addReferral the following below the CDDL Header,
  * with the fields enclosed by brackets [] replaced by
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.10 2009-06-06 00:34:42 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.11 2009-06-16 10:37:44 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -35,7 +35,6 @@ import javax.security.auth.Subject;
 public abstract class PolicyDataStore {
     private static PolicyDataStore instance;
     protected static final String POLICIES = "Policies";
-    protected static final String REFERRALS = "Referrals";
 
     static {
         try {
@@ -60,7 +59,7 @@ public abstract class PolicyDataStore {
      * Adds policy.
      *
      * @param adminSubject Administrator subject that has the credential to
-     *        add the policy.
+     *        addReferral the policy.
      * @param realm Realm name.
      * @param policy policy object.
      */
@@ -74,7 +73,7 @@ public abstract class PolicyDataStore {
      * Modifies policy.
      *
      * @param adminSubject Administrator subject that has the credential to
-     *        add the policy.
+     *        addReferral the policy.
      * @param realm Realm name.
      * @param policy policy object.
      */
@@ -88,7 +87,7 @@ public abstract class PolicyDataStore {
      * Modifies referral privilege.
      *
      * @param adminSubject Administrator subject that has the credential to
-     *        add the policy.
+     *        addReferral the policy.
      * @param realm Realm name.
      * @param referral referral privilege object.
      */
@@ -102,7 +101,7 @@ public abstract class PolicyDataStore {
      * Returns policy object.
      *
      * @param adminSubject Administrator subject that has the credential to
-     *        add the policy.
+     *        addReferral the policy.
      * @param realm Realm name.
      * @param name Policy name.
      */
@@ -116,7 +115,7 @@ public abstract class PolicyDataStore {
      * Returns referral privilege object.
      *
      * @param adminSubject Administrator subject that has the credential to
-     *        add the policy.
+     *        addReferral the policy.
      * @param realm Realm name.
      * @param name Policy name.
      */
@@ -130,7 +129,7 @@ public abstract class PolicyDataStore {
      * Removes policy.
      *
      * @param adminSubject Administrator subject that has the credential to
-     *        add the policy.
+     *        addReferral the policy.
      * @param realm Realm name.
      * @param name Policy name.
      */
@@ -144,7 +143,7 @@ public abstract class PolicyDataStore {
      * Adds a referral privilege.
      *
      * @param adminSubject Administrator subject that has the credential to
-     *        add the policy.
+     *        addReferral the policy.
      * @param realm Realm name.
      * @param referral Referral Privilege
      * @throws EntitlementException if referral privilege cannot be added

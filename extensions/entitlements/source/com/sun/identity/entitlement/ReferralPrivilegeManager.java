@@ -17,12 +17,12 @@
  * When distributing Covered Code, include this CDDL
  * Header Notice in each file and include the License file
  * at opensso/legal/CDDLv1.0.txt.
- * If applicable, add the following below the CDDL Header,
+ * If applicable, addReferral the following below the CDDL Header,
  * with the fields enclosed by brackets [] replaced by
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilegeManager.java,v 1.2 2009-06-10 17:49:26 veiming Exp $
+ * $Id: ReferralPrivilegeManager.java,v 1.3 2009-06-16 10:37:44 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -68,13 +68,14 @@ public final class ReferralPrivilegeManager {
         referral.setLastModifiedDate(date.getTime());
 
         Set<Principal> principals = adminSubject.getPrincipals();
-        String principalName = ((principals != null) && !principals.isEmpty()) ?
-            principals.iterator().next().getName() : null;
+        String principalName = ((principals != null) &&
+            !principals.isEmpty()) ? principals.iterator().next().getName() : null;
 
         if (principalName != null) {
             referral.setCreatedBy(principalName);
             referral.setLastModifiedBy(principalName);
         }
+
         PolicyDataStore pdb = PolicyDataStore.getInstance();
         pdb.addReferral(adminSubject, realm, referral);
 
@@ -83,17 +84,19 @@ public final class ReferralPrivilegeManager {
 
     private void validateReferral(ReferralPrivilege referral)
         throws EntitlementException {
-        Map<String, Set<String>> map =
-            referral.getOriginalMapApplNameToResources();
-        for (String appName : map.keySet()) {
-            Application appl = ApplicationManager.getApplication(
-                adminSubject, realm, appName);
-            ResourceName comp = appl.getResourceComparator();
-            Set<String> resources = appl.getResources();
-            Set<String> refResources = map.get(appName);
+        if (!realm.equals("/")) {
+            Map<String, Set<String>> map =
+                referral.getOriginalMapApplNameToResources();
+            for (String appName : map.keySet()) {
+                Application appl = ApplicationManager.getApplication(
+                    adminSubject, realm, appName);
+                ResourceName comp = appl.getResourceComparator();
+                Set<String> resources = appl.getResources();
+                Set<String> refResources = map.get(appName);
 
-            for (String r : resources) {
-                validateReferral(referral, comp, r, refResources);
+                for (String r : resources) {
+                    validateReferral(referral, comp, r, refResources);
+                }
             }
         }
     }
@@ -118,7 +121,7 @@ public final class ReferralPrivilegeManager {
         throw new EntitlementException(267, param);
     }
 
-    private void addApplicationToSubRealm(ReferralPrivilege referral) 
+    public void addApplicationToSubRealm(ReferralPrivilege referral)
         throws EntitlementException {
         Map<String, Set<String>> map = referral.getMapApplNameToResources();
         for (String appName : map.keySet()) {

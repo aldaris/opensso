@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.29 2009-06-16 00:59:29 dillidorai Exp $
+ * $Id: Privilege.java,v 1.30 2009-06-16 10:37:44 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,7 +39,7 @@ import org.json.JSONObject;
 /**
  * Class representing entitlement privilege
  */
-public abstract class Privilege implements Evaluate {
+public abstract class Privilege implements IPrivilege {
     /**
      * Created by index key
      */
@@ -662,6 +662,20 @@ public abstract class Privilege implements Evaluate {
     public void canonicalizeResources(Subject adminSubject, String realm)
         throws EntitlementException {
         entitlement.canonicalizeResources(adminSubject, realm);
+    }
+
+    /**
+     * Returns resource save indexes.
+     *
+     * @param adminSubject Admin Subject.
+     * @param realm Realm Name
+     * @return resource save indexes.
+     */
+    public ResourceSaveIndexes getResourceSaveIndexes(
+        Subject adminSubject,
+        String realm) {
+        return (entitlement != null) ? entitlement.getResourceSaveIndexes(
+            adminSubject, realm) : null;
     }
 }
 

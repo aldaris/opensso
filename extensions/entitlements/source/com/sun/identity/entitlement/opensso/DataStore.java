@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.22 2009-06-13 00:32:09 arviranga Exp $
+ * $Id: DataStore.java,v 1.23 2009-06-16 10:37:45 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -30,7 +30,7 @@ package com.sun.identity.entitlement.opensso;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.Evaluate;
+import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
@@ -38,6 +38,7 @@ import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
 import com.sun.identity.entitlement.util.NetworkMonitor;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.shared.ldap.LDAPDN;
 import com.sun.identity.shared.ldap.util.DN;
@@ -48,6 +49,7 @@ import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
+import java.security.AccessController;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
@@ -699,7 +701,7 @@ public class DataStore {
      * @return a set of privilege that satifies the resource and subject
      * indexes.
      */
-    public Set<Evaluate> search(
+    public Set<IPrivilege> search(
         Subject adminSubject,
         String realm,
         BufferedIterator iterator,
@@ -709,7 +711,7 @@ public class DataStore {
         Set<String> excludeDNs
     ) throws EntitlementException {
         SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
-        Set<Evaluate> results = searchPrivileges(adminToken, realm,
+        Set<IPrivilege> results = searchPrivileges(adminToken, realm,
             iterator, indexes, subjectIndexes, bSubTree, excludeDNs);
         // Get referrals only if count is greater than 0
         int countInt = getNumberOfReferrals(adminSubject, realm);
@@ -720,7 +722,7 @@ public class DataStore {
         return results;
     }
 
-    private Set<Evaluate> searchPrivileges(
+    private Set<IPrivilege> searchPrivileges(
         SSOToken adminToken,
         String realm,
         BufferedIterator iterator,
@@ -729,20 +731,24 @@ public class DataStore {
         boolean bSubTree,
         Set<String> excludeDNs
     ) throws EntitlementException {
-        Set<Evaluate> results = new HashSet<Evaluate>();
+        Set<IPrivilege> results = new HashSet<IPrivilege>();
         String filter = getFilter(indexes, subjectIndexes, bSubTree);
         String baseDN = getSearchBaseDN(realm, null);
 
         if (filter != null) {
-            if (adminToken == null) {
-                Object[] arg = {baseDN};
-                throw new EntitlementException(56, arg);
-            }
+//            if (adminToken == null) {
+//                Object[] arg = {baseDN};
+//                throw new EntitlementException(56, arg);
+//            }
+
+            SSOToken token = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+
             long start = DB_MONITOR_PRIVILEGE.start();
 
             try {
                 Iterator i = SMSEntry.search(
-                    adminToken, baseDN, filter, excludeDNs);
+                    token, baseDN, filter, excludeDNs);
                 while (i.hasNext()) {
                     SMSDataEntry e = (SMSDataEntry)i.next();
                     Privilege privilege = Privilege.getInstance(
@@ -790,15 +796,17 @@ public class DataStore {
         String baseDN = getSearchBaseDN(realm, REFERRAL_STORE);
 
         if (filter != null) {
-            if (adminToken == null) {
+/*            if (adminToken == null) {
                 Object[] arg = {baseDN};
                 throw new EntitlementException(56, arg);
-            }
+            }*/
+            SSOToken token = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
 
             long start = DB_MONITOR_REFERRAL.start();
             try {
                 Iterator i = SMSEntry.search(
-                    adminToken, baseDN, filter, excludeDNs);
+                    token, baseDN, filter, excludeDNs);
                 while (i.hasNext()) {
                     SMSDataEntry e = (SMSDataEntry)i.next();
                     ReferralPrivilege referral = ReferralPrivilege.getInstance(

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeIndexStore.java,v 1.9 2009-06-13 00:32:08 arviranga Exp $
+ * $Id: PrivilegeIndexStore.java,v 1.10 2009-06-16 10:37:44 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -31,9 +31,7 @@ import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -120,17 +118,7 @@ public abstract class PrivilegeIndexStore {
      * @param privileges Privileges to be added.
      * @throws EntitlementException if addition failed.
      */
-    public abstract void add(Set<Privilege> privileges)
-        throws EntitlementException;
-
-    /**
-     * Adds a referral privilege to the data store. Proper indexes will be
-     * created to speed up policy evaluation.
-     *
-     * @param referral referral privileges to be added.
-     * @throws EntitlementException if addition failed.
-     */
-    public abstract void addReferral(ReferralPrivilege referral)
+    public abstract void add(Set<IPrivilege> privileges)
         throws EntitlementException;
 
     /**
@@ -140,7 +128,7 @@ public abstract class PrivilegeIndexStore {
      * @throws com.sun.identity.entitlement.EntitlementException if deletion
      * failed.
      */
-    public abstract void delete(Set<Privilege> privilege)
+    public abstract void delete(Set<IPrivilege> privilege)
         throws EntitlementException;
 
     /**
@@ -196,7 +184,7 @@ public abstract class PrivilegeIndexStore {
      * @throws com.sun.identity.entitlement.EntitlementException if results
      * cannot be obtained.
      */
-    public abstract Iterator<Evaluate> search(
+    public abstract Iterator<IPrivilege> search(
         ResourceSearchIndexes indexes,
         Set<String> subjectIndexes,
         boolean bSubTree,

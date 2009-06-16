@@ -17,12 +17,12 @@
  * When distributing Covered Code, include this CDDL
  * Header Notice in each file and include the License file
  * at opensso/legal/CDDLv1.0.txt.
- * If applicable, add the following below the CDDL Header,
+ * If applicable, addReferral the following below the CDDL Header,
  * with the fields enclosed by brackets [] replaced by
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.17 2009-06-09 05:29:15 arviranga Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.18 2009-06-16 10:37:45 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -30,6 +30,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.PolicyDataStore;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
@@ -38,7 +39,6 @@ import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.stats.Stats;
 
 import java.security.AccessController;
 import java.util.Set;
@@ -112,10 +112,14 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                     privilegeName);
             }
 
-            Set<Privilege> privileges =
+            Set<IPrivilege> privileges =
                 PrivilegeUtils.policyToPrivileges(policy);
             if ((privileges != null) && !privileges.isEmpty()) {
-                privilege = privileges.iterator().next();
+                for (IPrivilege p : privileges) {
+                    if (p instanceof Privilege) {
+                        privilege = (Privilege)p;
+                    }
+                }
             }
         } catch (PolicyException pe) {
             throw new EntitlementException(102, pe);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.17 2009-06-12 22:00:41 veiming Exp $
+ * $Id: PolicyManager.java,v 1.18 2009-06-16 10:37:45 veiming Exp $
  *
  */
 
@@ -33,12 +33,16 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
+import com.sun.identity.entitlement.ReferralPrivilege;
+import com.sun.identity.entitlement.ReferralPrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
@@ -607,12 +611,20 @@ public final class PolicyManager {
             //create the policy entry
             namedPolicy.addSubConfig(policy.getName(),
                 NAMED_POLICY_ID, 0, attrs);
-            EntitlementConfiguration ec =EntitlementConfiguration.getInstance(
-                SubjectUtils.createSubject(token), "/");
-            if (ec.migratedToEntitlementService()) {
+            if (migratedToEntitlementService) {
+                javax.security.auth.Subject adminSubject =
+                    SubjectUtils.createSubject(token);
                 PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                    SubjectUtils.createSubject(token), realmName);
+                    adminSubject, realmName);
                 pis.add(PrivilegeUtils.policyToPrivileges(policy));
+                if (policy.isReferralPolicy()) {
+                    ReferralPrivilegeManager refpm =
+                        new ReferralPrivilegeManager(realmName, adminSubject);
+                    Set<IPrivilege> tmp = PrivilegeUtils.policyToPrivileges(
+                        policy);
+                    refpm.addApplicationToSubRealm(
+                        (ReferralPrivilege)tmp.iterator().next());
+                }
             } else {
                 // do the addition in resources tree
                 //rm.addPolicyToResourceTree(policy);
@@ -752,15 +764,10 @@ public final class PolicyManager {
                 validateReferrals(policy);
                 policyEntry.setAttributes(attrs);
                 if (oldPolicy != null) {
-                    javax.security.auth.Subject adminSubject =
-                        SubjectUtils.createSubject(token);
-                    EntitlementConfiguration ec =
-                        EntitlementConfiguration.getInstance(adminSubject,
-                        "/");
-
-                    if (ec.migratedToEntitlementService()) {
+                    if (migratedToEntitlementService) {
                         PrivilegeIndexStore pis = PrivilegeIndexStore.
-                            getInstance(adminSubject, realm);
+                            getInstance(SubjectUtils.createSubject(token),
+                            realm);
                         pis.delete(PrivilegeUtils.policyToPrivileges(
                             oldPolicy));
                         pis.add(PrivilegeUtils.policyToPrivileges(policy));
@@ -838,15 +845,16 @@ public final class PolicyManager {
                 namedPolicy.removeSubConfig(policyName);
 
                 if (policy != null) {
-                    EntitlementConfiguration ec =
-                        EntitlementConfiguration.getInstance(
-                        SubjectUtils.createSubject(token), "/");
-                    if (ec.migratedToEntitlementService()) {
+                    if (migratedToEntitlementService) {
                         PrivilegeIndexStore pis = PrivilegeIndexStore.
                             getInstance(
                             SubjectUtils.createSubject(token),
                             getOrganizationDN());
-                        pis.delete(PrivilegeUtils.policyToPrivileges(policy));
+                        if (policy.isReferralPolicy()) {
+                            pis.deleteReferral((policyName));
+                        } else {
+                            pis.delete(PrivilegeUtils.policyToPrivileges(policy));
+                        }
                     } else {
                         // do the removal in resources tree
                         rim.removePolicyFromResourceTree(svtm, token, policy);
@@ -1259,28 +1267,88 @@ public final class PolicyManager {
     }
 
     private boolean validateResourceForPrefix(ServiceType resourceType, 
-            String resourceName) throws PolicyException {
-        boolean validResource = false;
-        Set resourcePrefixes = getManagedResourceNames(
+        String resourceName) throws PolicyException {
+        Set<String> resourcePrefixes = getManagedResourceNames(
                 resourceType.getName());
-        Iterator iter = resourcePrefixes.iterator();
-        while ( iter.hasNext() ) {
-            String prefix = (String) iter.next();
+        return validateResourceForPrefix(resourceType,
+            resourcePrefixes, resourceName);
+    }
+
+    private boolean validateResourceForPrefix(
+        ServiceType resourceType,
+        Set<String> resourcePrefixes,
+        String resourceName) throws PolicyException {
+
+        for (String prefix : resourcePrefixes) {
             boolean interpretWildCard = true;
             ResourceMatch resMatch = resourceType.compare(resourceName, prefix,
                     interpretWildCard);
             if ( resMatch.equals(ResourceMatch.SUPER_RESOURCE_MATCH)
                         || resMatch.equals(ResourceMatch.WILDCARD_MATCH)
                         || resMatch.equals(ResourceMatch.EXACT_MATCH) ) {
-                validResource = true;
-                break;
+                return true;
             }
 
         }
-        return validResource;
+        return false;
     }
 
-    private void validateForResourcePrefix(Policy policy) 
+    private void validateForResourcePrefix(Policy policy)
+                throws SSOException, PolicyException {
+        if (migratedToEntitlementService) {
+            validateForResourcePrefixE(policy);
+        } else {
+            validateForResourcePrefixO(policy);
+        }
+    }
+
+    private void validateForResourcePrefixE(Policy policy)
+        throws SSOException, PolicyException {
+        DN orgDN = new DN(org);
+        DN baseDN = new DN(ServiceManager.getBaseDN());
+
+        if (!orgDN.equals(baseDN) && !orgDN.equals(delegationRealm)) {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            javax.security.auth.Subject adminSubject =
+                SubjectUtils.createSubject(adminToken);
+
+            String realm = DNMapper.orgNameToRealmName(getOrganizationDN());
+            Iterator ruleNames = policy.getRuleNames().iterator();
+            while (ruleNames.hasNext()) {
+                try {
+                    String ruleName = (String) ruleNames.next();
+                    Rule rule = (Rule) policy.getRule(ruleName);
+                    String serviceTypeName = rule.getServiceTypeName();
+                    Set<String> referredResources = ApplicationManager.
+                        getReferredResources(adminSubject,
+                        realm, serviceTypeName);
+                    if ((referredResources == null) || referredResources.
+                        isEmpty()) {
+                        String[] objs = {org};
+                        throw new PolicyException(ResBundleUtils.rbName,
+                            "no_referral_can_not_create_policy", objs, null);
+                    }
+                    ServiceType resourceType = getServiceTypeManager().
+                        getServiceType(serviceTypeName);
+                    String ruleResource = rule.getResourceName();
+                    if (!validateResourceForPrefix(resourceType,
+                        referredResources, ruleResource)) {
+                        String[] objs = {ruleResource, resourceType.getName()};
+                        throw new PolicyException(ResBundleUtils.rbName,
+                            "resource_name_not_permitted_by_prefix_names", objs,
+                            null);
+                    }
+                } catch (EntitlementException ex) {
+                    String[] objs = {org};
+                    throw new PolicyException(ResBundleUtils.rbName,
+                        "no_referral_can_not_create_policy", objs, null);
+                }
+            }
+        }
+    }
+
+    private void validateForResourcePrefixO(Policy policy)
             throws SSOException, PolicyException {
         DN orgDN = new DN(org);
         DN baseDN = new DN(ServiceManager.getBaseDN());

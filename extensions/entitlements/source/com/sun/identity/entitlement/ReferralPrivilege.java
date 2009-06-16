@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.4 2009-06-10 17:49:26 veiming Exp $
+ * $Id: ReferralPrivilege.java,v 1.5 2009-06-16 10:37:44 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -45,7 +45,7 @@ import org.json.JSONObject;
 /**
  * Referral privilege allows application to be referred to peer and sub realm.
  */
-public final class ReferralPrivilege implements Evaluate {
+public final class ReferralPrivilege implements IPrivilege {
     private String name;
     private String description;
     private Map<String, Set<String>> mapApplNameToResources;
@@ -114,8 +114,12 @@ public final class ReferralPrivilege implements Evaluate {
             ReferralPrivilege r = new ReferralPrivilege();
             r.name = jo.optString("name");
             r.description = jo.optString("description");
-            r.createdBy = jo.getString("createdBy");
-            r.lastModifiedBy = jo.getString("lastModifiedBy");
+            if (jo.has("createdBy")) {
+                r.createdBy = jo.getString("createdBy");
+            }
+            if (jo.has("lastModifiedBy")) {
+                r.lastModifiedBy = jo.getString("lastModifiedBy");
+            }
             r.creationDate = JSONUtils.getLong(jo, "creationDate");
             r.lastModifiedDate = JSONUtils.getLong(jo, "lastModifiedDate");
             r.mapApplNameToResources = JSONUtils.getMapStringSetString(jo,

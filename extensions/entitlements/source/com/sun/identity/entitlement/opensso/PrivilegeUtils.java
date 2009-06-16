@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.28 2009-06-02 20:36:47 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.29 2009-06-16 10:37:45 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -38,28 +38,36 @@ import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.PolicyCondition;
 import com.sun.identity.entitlement.PolicySubject;
 import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserAttributes;
 import com.sun.identity.entitlement.xacml3.XACMLPrivilegeUtils;
 import com.sun.identity.policy.ActionSchema;
 import com.sun.identity.policy.InvalidNameException;
+import com.sun.identity.policy.NameNotFoundException;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyConfig;
 import com.sun.identity.policy.PolicyException;
+import com.sun.identity.policy.PolicyManager;
+import com.sun.identity.policy.ReferralTypeManager;
 import com.sun.identity.policy.Rule;
 import com.sun.identity.policy.ServiceType;
 import com.sun.identity.policy.ServiceTypeManager;
 import com.sun.identity.policy.interfaces.Condition;
+import com.sun.identity.policy.interfaces.Referral;
 import com.sun.identity.policy.interfaces.ResponseProvider;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.policy.plugins.IDRepoResponseProvider;
 import com.sun.identity.policy.plugins.PrivilegeCondition;
 import com.sun.identity.policy.plugins.PrivilegeSubject;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.sm.DNMapper;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
@@ -101,44 +109,62 @@ public class PrivilegeUtils {
      * @return entitlement Privilege object
      * @throws com.sun.identity.policy.PolicyException if the mapping fails
      */
-    public static Set<Privilege> policyToPrivileges(Object policyObject)
+    public static Set<IPrivilege> policyToPrivileges(Object policyObject)
         throws SSOException, PolicyException, EntitlementException {
         if (policyObject == null) {
             return Collections.EMPTY_SET;
         }
 
-        Set<Privilege> privileges = new HashSet<Privilege>();
+        Set<IPrivilege> privileges = new HashSet<IPrivilege>();
         if (policyObject instanceof
                 com.sun.identity.entitlement.xacml3.core.Policy) {
              Privilege p = XACMLPrivilegeUtils.policyToPrivilege(
                     (com.sun.identity.entitlement.xacml3.core.Policy)policyObject);
              privileges.add(p);
         } else if (policyObject instanceof Policy) {
-            Policy policy = (Policy) policyObject;
-            String policyName = policy.getName();
-            Set<Entitlement> entitlements = rulesToEntitlement(policy);
-            EntitlementSubject eSubject = toEntitlementSubject(policy);
-            EntitlementCondition eCondition = toEntitlementCondition(policy);
-            Set<ResourceAttribute> resourceAttributesSet =
-                    toResourceAttributes(policy);
-
-            if (entitlements.size() == 1) {
-                privileges.add(createPrivilege(policyName, policyName,
-                        entitlements.iterator().next(), eSubject,
-                        eCondition, resourceAttributesSet, policy));
-            } else {
-                for (Entitlement e : entitlements) {
-                    String pName = policyName + "_" + e.getName();
-                    privileges.add(createPrivilege(pName, policyName, e,
-                            eSubject,
-                            eCondition, resourceAttributesSet, policy));
-                }
-            }
+            policyToPrivileges((Policy) policyObject, privileges);
         } else { //TODO: log error, unsupported policy type
 
         }
         
         return privileges;
+    }
+
+    public static void policyToPrivileges(Policy policy,
+        Set<IPrivilege> privileges)
+        throws SSOException, PolicyException, EntitlementException {
+        String policyName = policy.getName();
+
+        if (policy.isReferralPolicy()) {
+            Map<String, Set<String>> resources = getResources(policy);
+            Set<String> referredRealms = getReferrals(policy);
+            ReferralPrivilege rp = new ReferralPrivilege(policyName,
+                resources, referredRealms);
+            rp.setCreationDate(policy.getCreationDate());
+            rp.setCreatedBy(policy.getCreatedBy());
+            rp.setLastModifiedBy(policy.getLastModifiedBy());
+            rp.setLastModifiedDate(policy.getLastModifiedDate());
+            privileges.add(rp);
+        } else {
+            Set<Entitlement> entitlements = rulesToEntitlement(policy);
+            EntitlementSubject eSubject = toEntitlementSubject(policy);
+            EntitlementCondition eCondition = toEntitlementCondition(policy);
+            Set<ResourceAttribute> resourceAttributesSet =
+                toResourceAttributes(policy);
+
+            if (entitlements.size() == 1) {
+                privileges.add(createPrivilege(policyName, policyName,
+                    entitlements.iterator().next(), eSubject,
+                    eCondition, resourceAttributesSet, policy));
+            } else {
+                for (Entitlement e : entitlements) {
+                    String pName = policyName + "_" + e.getName();
+                    privileges.add(createPrivilege(pName, policyName, e,
+                        eSubject,
+                        eCondition, resourceAttributesSet, policy));
+                }
+            }
+        }
     }
 
     private static Privilege createPrivilege(
@@ -208,8 +234,8 @@ public class PrivilegeUtils {
         return nrpsToResourceAttributes(nrps);
     }
 
-    private static Set<Entitlement> rulesToEntitlement(Policy policy)
-        throws PolicyException, SSOException, EntitlementException {
+    private static Set<Rule> getRules(Policy policy)
+        throws NameNotFoundException {
         Set ruleNames = policy.getRuleNames();
         Set<Rule> rules = new HashSet<Rule>();
         for (Object ruleNameObj : ruleNames) {
@@ -217,10 +243,45 @@ public class PrivilegeUtils {
             Rule rule = policy.getRule(ruleName);
             rules.add(rule);
         }
-        if (rules == null || rules.isEmpty()) {
-            return Collections.EMPTY_SET;
-        }
+        return rules;
+    }
 
+    private static Map<String, Set<String>> getResources(Policy policy) 
+        throws NameNotFoundException {
+        Map<String, Set<String>> results = new HashMap<String, Set<String>>();
+        Set<Rule> rules = getRules(policy);
+        for (Rule rule : rules) {
+            Set<String> ruleResources = rule.getResourceNames();
+            if (ruleResources != null) {
+                Set<String> resourceNames = new HashSet<String>();
+                resourceNames.addAll(ruleResources);
+                results.put(rule.getServiceTypeName(), resourceNames);
+            }
+        }
+        return results;
+    }
+
+    private static Set<String> getReferrals(Policy policy) 
+        throws NameNotFoundException {
+        Set<String> results = new HashSet<String>();
+        Set<String> names = policy.getReferralNames();
+        for (String name : names) {
+            Referral r = policy.getReferral(name);
+            Set<String> values = r.getValues();
+            for (String s : values) {
+                if (DN.isDN(s)) {
+                    results.add(DNMapper.orgNameToRealmName(s));
+                } else {
+                    results.add(s);
+                }
+            }
+        }
+        return results;
+    }
+
+    private static Set<Entitlement> rulesToEntitlement(Policy policy)
+        throws PolicyException, SSOException, EntitlementException {
+        Set<Rule> rules = getRules(policy);
         Set<Entitlement> entitlements = new HashSet<Entitlement>();
 
         for (Rule rule : rules) {
@@ -398,11 +459,54 @@ public class PrivilegeUtils {
         }
         return policyObject;
     }
+
+    public static Policy referralPrivilegeToPolicy(String realm,
+        ReferralPrivilege referralPrivilege) throws PolicyException,
+        SSOException, EntitlementException {
+
+        Policy policy = new Policy(referralPrivilege.getName(),
+            referralPrivilege.getDescription(), true);
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        javax.security.auth.Subject adminSubject =
+            SubjectUtils.createSubject(adminToken);
+        PolicyManager pm = new PolicyManager(adminToken, realm);
+        ReferralTypeManager rm = pm.getReferralTypeManager();
+
+        int count = 1;
+        for (String r : referralPrivilege.getRealms()) {
+            Referral referral = rm.getReferral("SubOrgReferral");
+            Set<String> tmp = new HashSet<String>();
+            tmp.add(r);
+            referral.setValues(tmp);
+            policy.addReferral("referral" + count++, referral);
+        }
+
+        Map<String, Set<String>> map =
+            referralPrivilege.getOriginalMapApplNameToResources();
+        count = 1;
+        for (String appName : map.keySet()) {
+            Set<String> res = map.get(appName);
+            Application appl = ApplicationManager.getApplication(
+                adminSubject, realm, appName);
+            if (appl == null) {
+                Object[] params = {appName, realm};
+                throw new EntitlementException(105, params);
+            }
+            String serviceName = appl.getApplicationType().getName();
+
+            for (String r : res) {
+                Rule rule = new Rule("rule" + count++, serviceName, r,
+                    Collections.EMPTY_MAP);
+                policy.addRule(rule);
+            }
+        }
+        return policy;
+    }
     
     public static Policy privilegeToPolicy(String realm, Privilege privilege)
             throws PolicyException, SSOException, EntitlementException {
-        Policy policy = null;
-        policy = new Policy(privilege.getName());
+        Policy policy = new Policy(privilege.getName());
         policy.setDescription(privilege.getDescription());
         if (privilege.getEntitlement() != null) {
             Entitlement entitlement = privilege.getEntitlement();
@@ -780,13 +884,15 @@ public class PrivilegeUtils {
         return name;
     }
 
-    static public Set<Privilege> policyObjectToPrivileges(Object policy) 
+    static public Set<IPrivilege> policyObjectToPrivileges(Object policy)
             throws EntitlementException, PolicyException, SSOException {
         //TODO: implement method, objectToPrivileges(Object object)
-        Set<Privilege> privileges = null;
+        Set<IPrivilege> privileges = null;
         if (policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
             Privilege privilege = XACMLPrivilegeUtils.policyToPrivilege(
                     (com.sun.identity.entitlement.xacml3.core.Policy)policy);
+            privileges = new HashSet<IPrivilege>();
+            privileges.add(privilege);
         } else if (policy instanceof Policy) {
              privileges = policyToPrivileges((Policy)policy);
         } else {

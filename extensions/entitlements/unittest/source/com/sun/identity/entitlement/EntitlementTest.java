@@ -22,13 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementTest.java,v 1.4 2009-05-28 00:57:19 veiming Exp $
+ * $Id: EntitlementTest.java,v 1.5 2009-06-16 10:37:46 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.unittest.UnittestLog;
 
-import java.util.Date;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -73,10 +71,5 @@ public class EntitlementTest {
         }
         
 
-    }
-
-    public static void main(String[] args) throws Exception {
-        new EntitlementTest().testConstruction();
-        UnittestLog.flush(new Date().toString());
     }
 }

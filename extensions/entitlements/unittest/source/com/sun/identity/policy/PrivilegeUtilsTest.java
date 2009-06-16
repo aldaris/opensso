@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.9 2009-05-26 21:20:08 veiming Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.10 2009-06-16 10:37:46 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -35,6 +35,7 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.IPCondition;
+import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.Privilege;
@@ -129,7 +130,7 @@ public class PrivilegeUtilsTest {
                 ra); //attributes
 
         Policy policy = PrivilegeUtils.privilegeToPolicy("/", privilege);
-        Set<Privilege> ps = PrivilegeUtils.policyToPrivileges(policy);
+        Set<IPrivilege> ps = PrivilegeUtils.policyToPrivileges(policy);
 
         if ((ps == null) || ps.isEmpty()) {
             throw new Exception(

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.17 2009-06-10 17:49:26 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.18 2009-06-16 10:37:44 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -70,17 +70,36 @@ public final class ApplicationManager {
         String realm) {
         Set<Application> appls = applications.get(realm);
 
-        synchronized (lock) {
-            appls = applications.get(realm);
-            if (appls == null) {
-                EntitlementConfiguration ec =
-                    EntitlementConfiguration.getInstance(
-                    adminSubject, realm);
-                appls = ec.getApplications();
-                applications.put(realm, appls);
+        if (appls == null) {
+            synchronized (lock) {
+                appls = applications.get(realm);
+                if (appls == null) {
+                    EntitlementConfiguration ec =
+                        EntitlementConfiguration.getInstance(
+                        adminSubject, realm);
+                    appls = ec.getApplications();
+                    applications.put(realm, appls);
+                }
             }
         }
         return appls;
+    }
+
+    /**
+     * Returns application.
+     *
+     * @param adminSubject Admin Subject who has the rights to access
+     *        configuration datastore.
+     * @param realm Realm name.
+     * @param name Name of Application.
+     * @return application.
+     */
+    public static Application getApplicationForEvaluation(
+        String realm,
+        String name
+    ) {
+        return getApplication(PrivilegeManager.superAdminSubject, realm,
+            name);
     }
 
     /**

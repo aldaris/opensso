@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.20 2009-05-26 21:20:05 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.21 2009-06-16 10:37:44 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -42,6 +42,8 @@ public abstract class PrivilegeManager {
      * Debug for Policy Administration Point classes
      */
     public static IDebug debug = DebugFactory.getDebug("Entitlement");
+
+    public static final Subject superAdminSubject = new Subject();
 
     private String realm;
     private Subject adminSubject;

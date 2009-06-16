@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.17 2009-06-09 05:29:15 arviranga Exp $
+ * $Id: Evaluator.java,v 1.18 2009-06-16 10:37:44 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -106,9 +106,11 @@ public class Evaluator {
         Map<String, Set<String>> envParameters
     ) throws EntitlementException {
         long start = HAS_ENTITLEMENT_MONITOR.start();
+
         PrivilegeEvaluator evaluator = new PrivilegeEvaluator();
         boolean result = evaluator.hasEntitlement(realm,
             adminSubject, subject, applicationName, e, envParameters);
+
         HAS_ENTITLEMENT_MONITOR.end(start);
         return result;
     }
@@ -136,14 +138,17 @@ public class Evaluator {
     ) throws EntitlementException {
         long start = (recursive) ? EVAL_SUB_TREE_MONITOR.start() :
             EVAL_SINGLE_LEVEL_MONITOR.start();        
+
         PrivilegeEvaluator evaluator = new PrivilegeEvaluator();
         List<Entitlement> results = evaluator.evaluate(realm, adminSubject,
             subject, applicationName, resourceName, environment, recursive);
+
         if (recursive) {
             EVAL_SUB_TREE_MONITOR.end(start);
         } else {
             EVAL_SINGLE_LEVEL_MONITOR.end(start);
         }
+
         return results;
     }
 

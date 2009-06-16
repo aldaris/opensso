@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.23 2009-06-13 04:38:56 arviranga Exp $
+ * $Id: EntitlementService.java,v 1.24 2009-06-16 10:37:45 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -38,12 +38,14 @@ import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -223,7 +225,8 @@ public class EntitlementService extends EntitlementConfiguration {
     }
 
     private Application getRawApplication(String name) {
-        Set<Application> applications = getRawApplications();
+        SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+        Set<Application> applications = getRawApplications(adminToken);
         for (Application a : applications) {
             if (a.getName().equals(name)) {
                 return a;
@@ -248,7 +251,13 @@ public class EntitlementService extends EntitlementConfiguration {
      * @return a set of registered applications.
      */
     public Set<Application> getApplications() {
-        Set<Application> results = getRawApplications();
+        SSOToken adminToken =
+            (getAdminSubject() == PrivilegeManager.superAdminSubject) ?
+                (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance()) :
+                SubjectUtils.getSSOToken(getAdminSubject());
+
+        Set<Application> results = getRawApplications(adminToken);
         for (Application app : results) {
             Set<String> resources = app.getResources();
             Set<String> res = new HashSet<String>();
@@ -271,11 +280,9 @@ public class EntitlementService extends EntitlementConfiguration {
      *
      * @return a set of registered applications.
      */
-    public Set<Application> getRawApplications() {
+    private Set<Application> getRawApplications(SSOToken adminToken) {
         Set<Application> results = new HashSet<Application>();
         try {
-            SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
-
             if (adminToken != null) {
                 ServiceConfigManager mgr = new ServiceConfigManager(
                     SERVICE_NAME, adminToken);

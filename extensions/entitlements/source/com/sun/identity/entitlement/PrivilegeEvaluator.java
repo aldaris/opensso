@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.25 2009-06-16 00:59:29 dillidorai Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.26 2009-06-16 10:37:44 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -163,6 +163,7 @@ class PrivilegeEvaluator {
         PRIVILEGE_EVAL_MONITOR_RES_INDEX.end(start);
         List<Entitlement> results = evaluate(realm);
         Entitlement result = results.get(0);
+
         for (String action : entitlement.getActionValues().keySet()) {
             Boolean b = result.getActionValue(action);
             // TODO, use policy decision combining algorithm
@@ -218,13 +219,13 @@ class PrivilegeEvaluator {
         start = PRIVILEGE_EVAL_MONITOR_SEARCH.start();
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             adminSubject, realm);
-        Iterator<Evaluate> i = pis.search(indexes, sam.getSubjectSearchFilter(
+        Iterator<IPrivilege> i = pis.search(indexes, sam.getSubjectSearchFilter(
             subject, applicationName), recursive, threadPool);
         PRIVILEGE_EVAL_MONITOR_SEARCH.end(start);
         
         // Submit the privileges for evaluation
         // First collect tasks to be evaluated locally
-        Set<Evaluate> localPrivileges = new HashSet<Evaluate>(2*tasksPerThread);
+        Set<IPrivilege> localPrivileges = new HashSet<IPrivilege>(2*tasksPerThread);
         int totalCount = 0;
         while (++totalCount != tasksPerThread) {
             start = PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.start();
@@ -237,7 +238,7 @@ class PrivilegeEvaluator {
             }
         }
         // Submit additional privilges to be executed by worker threads
-        Set<Evaluate> privileges = null;
+        Set<IPrivilege> privileges = null;
         boolean tasksSubmitted = false;
         while (true) {
             start = PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.start();
@@ -245,7 +246,7 @@ class PrivilegeEvaluator {
                 break;
             }
             if (privileges == null) {
-                privileges = new HashSet<Evaluate>(2*tasksPerThread);
+                privileges = new HashSet<IPrivilege>(2*tasksPerThread);
                 tasksSubmitted = true;
             }
             privileges.add(i.next());
@@ -263,7 +264,7 @@ class PrivilegeEvaluator {
             threadPool.submit(new PrivilegeTask(this, privileges, true));
             PRIVILEGE_EVAL_MONITOR_SUBMIT.end(start);
         }
-        // Evaluate privileges locally
+        // IPrivilege privileges locally
         (new PrivilegeTask(this, localPrivileges, false)).run();
 
         // Wait for submitted threads to complete evaluation
@@ -309,7 +310,7 @@ class PrivilegeEvaluator {
     private Application getApplication(Subject adminSubject)
         throws EntitlementException {
         if (application == null) {
-            application = ApplicationManager.getApplication(adminSubject,
+            application = ApplicationManager.getApplicationForEvaluation(
                 realm, applicationName);
             // If application is still null, throw an exception
             if (application == null) {
@@ -322,23 +323,20 @@ class PrivilegeEvaluator {
 
     class PrivilegeTask implements Runnable {
         final PrivilegeEvaluator parent;
-        private Set<Evaluate> privileges;
+        private Set<IPrivilege> privileges;
         private boolean isThreaded;
 
-        PrivilegeTask(PrivilegeEvaluator parent, Set<Evaluate> privileges,
+        PrivilegeTask(PrivilegeEvaluator parent, Set<IPrivilege> privileges,
             boolean isThreaded) {
             this.parent = parent;
-            this.privileges = new HashSet<Evaluate>(privileges.size() *2);
+            this.privileges = new HashSet<IPrivilege>(privileges.size() *2);
             this.privileges.addAll(privileges);
             this.isThreaded = isThreaded;
         }
 
         public void run() {
             try {
-                for (Evaluate eval : privileges) {
-                    if (eval == null) {
-                        continue;
-                    }
+                for (IPrivilege eval : privileges) {
                     List<Entitlement> entitlements = eval.evaluate(
                         parent.adminSubject,
                         parent.realm, parent.subject,
@@ -346,16 +344,18 @@ class PrivilegeEvaluator {
                         parent.actionNames, parent.envParameters,
                         parent.recursive);
 
-                    if (isThreaded) {
-                        try {
-                            parent.lock.lock();
+                    if (entitlements != null) {
+                        if (isThreaded) {
+                            try {
+                                parent.lock.lock();
+                                parent.resultQ.add(entitlements);
+                                parent.hasResults.signal();
+                            } finally {
+                                parent.lock.unlock();
+                            }
+                        } else {
                             parent.resultQ.add(entitlements);
-                            parent.hasResults.signal();
-                        } finally {
-                            parent.lock.unlock();
                         }
-                    } else {
-                        parent.resultQ.add(entitlements);
                     }
                 }
             } catch (EntitlementException ex) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferredResourcesTest.java,v 1.3 2009-06-12 22:00:42 veiming Exp $
+ * $Id: ReferredResourcesTest.java,v 1.4 2009-06-16 10:37:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -56,7 +56,7 @@ public class ReferredResourcesTest {
             AdminTokenAction.getInstance());
     private Subject adminSubject = SubjectUtils.createSubject(adminToken);
     private boolean migrated = EntitlementConfiguration.getInstance(
-            adminSubject, "/").migratedToEntitlementService();;
+            adminSubject, "/").migratedToEntitlementService();
 
     @BeforeClass
     public void setup() throws Exception {
@@ -139,9 +139,6 @@ public class ReferredResourcesTest {
         if (!migrated) {
             return;
         }
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        Subject adminSubject = SubjectUtils.createSubject(adminToken);
         ReferralPrivilegeManager mgr = new ReferralPrivilegeManager(SUB_REALM2,
             adminSubject);
         mgr.delete(REFERRAL_NAME2);
@@ -164,9 +161,6 @@ public class ReferredResourcesTest {
         if (!migrated) {
             return;
         }
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        Subject adminSubject = SubjectUtils.createSubject(adminToken);
         Set<String> resources = ApplicationManager.getReferredResources(
             adminSubject, SUB_REALM1,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);

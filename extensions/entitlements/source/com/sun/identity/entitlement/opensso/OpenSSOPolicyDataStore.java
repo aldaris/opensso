@@ -17,12 +17,12 @@
  * When distributing Covered Code, include this CDDL
  * Header Notice in each file and include the License file
  * at opensso/legal/CDDLv1.0.txt.
- * If applicable, add the following below the CDDL Header,
+ * If applicable, addReferral the following below the CDDL Header,
  * with the fields enclosed by brackets [] replaced by
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPolicyDataStore.java,v 1.7 2009-06-06 00:34:43 veiming Exp $
+ * $Id: OpenSSOPolicyDataStore.java,v 1.8 2009-06-16 10:37:45 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -31,6 +31,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.PolicyDataStore;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.ReferralPrivilege;
@@ -50,7 +51,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -58,7 +58,7 @@ import org.w3c.dom.Node;
  */
 public class OpenSSOPolicyDataStore extends PolicyDataStore {
     private static final String REALM_DN_TEMPLATE =
-         "ou={1},ou=default,ou=OrganizationConfig,ou=1.0,ou=" +
+         "ou=Policies,ou=default,ou=OrganizationConfig,ou=1.0,ou=" +
          PolicyManager.POLICY_SERVICE_NAME + ",ou=services,{0}";
 
     public void addPolicy(Subject adminSubject, String realm, Object policy)
@@ -69,8 +69,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             policy instanceof com.sun.identity.entitlement.xacml3.core.Policy
         ) {
             String name = PrivilegeUtils.getPolicyName(policy);
-            String dn = getPolicyDistinguishedName(realm, name,
-                PolicyDataStore.POLICIES);
+            String dn = getPolicyDistinguishedName(realm, name);
 
             if (adminToken == null) {
                 Object[] params = {name};
@@ -78,7 +77,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             }
 
             try {
-                createParentNode(adminToken, realm, PolicyDataStore.POLICIES);
+                createParentNode(adminToken, realm);
 
                 SMSEntry s = new SMSEntry(adminToken, dn);
                 Map<String, Set<String>> map = new HashMap<String, Set<String>>();
@@ -114,13 +113,13 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
 
     private void createParentNode(
         SSOToken adminToken,
-        String realm,
-        String domain
+        String realm
     ) throws SSOException, SMSException {
         ServiceConfig orgConf = getOrgConfig(adminToken, realm);
         Set<String> subConfigNames = orgConf.getSubConfigNames();
-        if (!subConfigNames.contains(domain)) {
-            orgConf.addSubConfig(domain, PolicyDataStore.POLICIES, 0, null);
+        if (!subConfigNames.contains(PolicyDataStore.POLICIES)) {
+            orgConf.addSubConfig(PolicyDataStore.POLICIES,
+                PolicyDataStore.POLICIES, 0, null);
         }
     }
 
@@ -131,6 +130,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         ServiceConfig orgConf = mgr.getOrganizationConfig(realm, null);
         if (orgConf == null) {
             mgr.createOrganizationConfig(realm, null);
+            orgConf = mgr.getOrganizationConfig(realm, null);
         }
         return orgConf;
     }
@@ -144,8 +144,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             throw new EntitlementException(209, params);
         }
 
-        String dn = getPolicyDistinguishedName(realm, name,
-            PolicyDataStore.POLICIES);
+        String dn = getPolicyDistinguishedName(realm, name);
 
         if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
             Object[] params = {name};
@@ -181,8 +180,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             throw new EntitlementException(262, params);
         }
 
-        String dn = getPolicyDistinguishedName(realm, name,
-            PolicyDataStore.REFERRALS);
+        String dn = getPolicyDistinguishedName(realm, name);
 
         if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
             Object[] params = {name};
@@ -191,9 +189,12 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         try {
             SMSEntry s = new SMSEntry(adminToken, dn);
             Map<String, Set<String>> map = s.getAttributes();
-            Set<String> jsonSet = map.get(SMSEntry.ATTR_KEYVAL);
-            String json = jsonSet.iterator().next();
-            return ReferralPrivilege.getInstance(new JSONObject(json));
+            Set<String> set = map.get(SMSEntry.ATTR_KEYVAL);
+            String xml = set.iterator().next();
+
+            Set<IPrivilege> privileges = PrivilegeUtils.policyToPrivileges(
+                createPolicy(adminToken, realm, xml));
+            return (ReferralPrivilege)privileges.iterator().next();
         } catch (SSOException ex) {
             Object[] params = {name};
             throw new EntitlementException(204, params, ex);
@@ -210,6 +211,11 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         throws Exception, 
         SSOException, PolicyException {
         Object policy = null;
+
+        if (xml.startsWith("xmlpolicy=")) {
+            xml = xml.substring(10);
+        }
+
         Document doc = XMLUtils.getXMLDocument(
             new ByteArrayInputStream(xml.getBytes("UTF8")));
         if (EntitlementConfiguration.getInstance(
@@ -234,8 +240,8 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             throw new EntitlementException(211, params);
         }
         
-        String dn = getPolicyDistinguishedName(realm, name,
-            PolicyDataStore.POLICIES);
+        String dn = getPolicyDistinguishedName(realm, name);
+
         if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
             Object[] params = {name};
             throw new EntitlementException(203, params);
@@ -255,15 +261,13 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         }
     }
 
-    private static String getPolicyDistinguishedName(
-        String realm,
-        String name,
-        String domain) {
-        return "ou=" + name + "," + getStoreBaseDN(realm, domain);
+    private static String getPolicyDistinguishedName(String realm, String name)
+    {
+        return "ou=" + name + "," + getStoreBaseDN(realm);
     }
 
-    private static String getStoreBaseDN(String realm, String domain) {
-        Object[] args = {DNMapper.orgNameToDN(realm), domain};
+    private static String getStoreBaseDN(String realm) {
+        Object[] args = {DNMapper.orgNameToDN(realm)};
         return MessageFormat.format(REALM_DN_TEMPLATE, args);
     }
 
@@ -275,8 +279,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         if (policy instanceof Policy ||
                 policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
             String name = PrivilegeUtils.getPolicyName(policy);
-            String dn = getPolicyDistinguishedName(realm, name,
-                PolicyDataStore.POLICIES);
+            String dn = getPolicyDistinguishedName(realm, name);
 
             if (adminToken == null) {
                 Object[] params = {name};
@@ -324,15 +327,14 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
 
         String name = referral.getName();
-        String dn = getPolicyDistinguishedName(realm, name,
-            PolicyDataStore.REFERRALS);
+        String dn = getPolicyDistinguishedName(realm, name);
 
         if (adminToken == null) {
             Object[] params = {name};
             throw new EntitlementException(260, params);
         }
         try {
-            createParentNode(adminToken, realm, PolicyDataStore.REFERRALS);
+            createParentNode(adminToken, realm);
 
             SMSEntry s = new SMSEntry(adminToken, dn);
             Map<String, Set<String>> map = new HashMap<String, Set<String>>();
@@ -344,13 +346,20 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
 
             Set<String> setValue = new HashSet<String>(2);
             map.put(SMSEntry.ATTR_KEYVAL, setValue);
-            setValue.add(referral.toXML()); //TODO toXML
+            Policy p = PrivilegeUtils.referralPrivilegeToPolicy(
+                realm, referral);
+            setValue.add(p.toXML());
             s.setAttributes(map);
             s.save();
 
             PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
                 adminSubject, realm);
-            pis.addReferral(referral);
+            Set<IPrivilege> tmp = new HashSet<IPrivilege>();
+            tmp.add(referral);
+            pis.add(tmp);
+        } catch (PolicyException e) {
+            Object[] params = {name};
+            throw new EntitlementException(261, params, e);
         } catch (SSOException e) {
             Object[] params = {name};
             throw new EntitlementException(261, params, e);
@@ -367,8 +376,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
     ) throws EntitlementException {
         SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
         String name = referral.getName();
-        String dn = getPolicyDistinguishedName(realm, name,
-            PolicyDataStore.REFERRALS);
+        String dn = getPolicyDistinguishedName(realm, name);
 
         if (adminToken == null) {
             Object[] params = {name};
@@ -393,7 +401,10 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
                 adminSubject, realm);
             pis.deleteReferral(name);
-            pis.addReferral(referral);
+
+            Set<IPrivilege> tmp = new HashSet<IPrivilege>();
+            tmp.add(referral);
+            pis.add(tmp);
         } catch (SSOException e) {
             Object[] params = {name};
             throw new EntitlementException(265, params, e);
@@ -412,8 +423,8 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             throw new EntitlementException(266, params);
         }
 
-        String dn = getPolicyDistinguishedName(realm, name,
-            PolicyDataStore.REFERRALS);
+        String dn = getPolicyDistinguishedName(realm, name);
+
         if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
             Object[] params = {name};
             throw new EntitlementException(263, params);
