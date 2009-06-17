@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProvider.cs,v 1.2 2009-06-11 18:37:58 ggennaro Exp $
+ * $Id: ServiceProvider.cs,v 1.3 2009-06-17 16:32:02 ggennaro Exp $
  */
 
 using System;
@@ -52,6 +52,22 @@ namespace Sun.Identity.Saml2
 
         #region Properties
         /// <summary>
+        /// Gets a value indicating whether the standard metadata value for 
+        /// AuthnRequestsSigned is true or false.
+        /// </summary>
+        public bool AuthnRequestsSigned
+        {
+            get
+            {
+                string xpath = "/md:EntityDescriptor/md:SPSSODescriptor";
+                XmlNode root = this.metadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.metadataNsMgr);
+                string value = node.Attributes["AuthnRequestsSigned"].Value;
+                return Saml2Utils.GetBoolean(value);
+            }
+        }
+
+        /// <summary>
         /// Gets the entity ID for this service provider.
         /// </summary>
         public string EntityId
@@ -76,6 +92,66 @@ namespace Sun.Identity.Saml2
                 XmlNode root = this.extendedMetadata.DocumentElement;
                 XmlNode node = root.SelectSingleNode(xpath, this.extendedMetadataNsMgr);
                 return node.Attributes["metaAlias"].Value.Trim();
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the extended metadata value for 
+        /// wantArtifactResponseSigned is true or false.
+        /// </summary>
+        public bool WantArtifactResponseSigned
+        {
+            get
+            {
+                string xpath = "/mdx:EntityConfig/mdx:SPSSOConfig/mdx:Attribute[@name='wantArtifactResponseSigned']/mdx:Value";
+                XmlNode root = this.extendedMetadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.extendedMetadataNsMgr);
+
+                if (node != null)
+                {
+                    string value = node.InnerText.Trim();
+                    return Saml2Utils.GetBoolean(value);
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the standard metadata value for 
+        /// WantAssertionsSigned is true or false.
+        /// </summary>
+        public bool WantAssertionsSigned
+        {
+            get
+            {
+                string xpath = "/md:EntityDescriptor/md:SPSSODescriptor";
+                XmlNode root = this.metadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.metadataNsMgr);
+                string value = node.Attributes["WantAssertionsSigned"].Value;
+                return Saml2Utils.GetBoolean(value);
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the extended metadata value for 
+        /// wantPOSTResponseSigned is true or false.
+        /// </summary>
+        public bool WantPostResponseSigned
+        {
+            get
+            {
+                string xpath = "/mdx:EntityConfig/mdx:SPSSOConfig/mdx:Attribute[@name='wantPOSTResponseSigned']/mdx:Value";
+                XmlNode root = this.extendedMetadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.extendedMetadataNsMgr);
+
+                if (node != null)
+                {
+                    string value = node.InnerText.Trim();
+                    return Saml2Utils.GetBoolean(value);
+                }
+
+                return false;
             }
         }
         #endregion

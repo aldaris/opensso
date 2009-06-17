@@ -225,4 +225,7 @@
   <data name="AuthnResponseInvalidInResponseTo" xml:space="preserve">
     <value>AuthnResponse failed validation due to unknown InResponseTo ID.</value>
   </data>
+  <data name="AuthnResponseInvalidSignatureReference" xml:space="preserve">
+    <value>AuthnResponse failed validation due to invalid signature reference.</value>
+  </data>
 </root>

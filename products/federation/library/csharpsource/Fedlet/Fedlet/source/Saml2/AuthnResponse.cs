@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: AuthnResponse.cs,v 1.2 2009-06-11 18:37:58 ggennaro Exp $
+ * $Id: AuthnResponse.cs,v 1.3 2009-06-17 16:32:02 ggennaro Exp $
  */
 
 using System;
@@ -95,9 +95,10 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
-        /// Gets the signature of the authn response as an XML element.
+        /// Gets the signature of the authn response attached to the 
+        /// assertion as an XML element.
         /// </summary>
-        public IXPathNavigable XmlSignature
+        public IXPathNavigable XmlAssertionSignature
         {
             get
             {
@@ -105,6 +106,49 @@ namespace Sun.Identity.Saml2
                 XmlNode root = this.xml.DocumentElement;
                 XmlNode signatureElement = root.SelectSingleNode(xpath, this.nsMgr);
                 return signatureElement;
+            }
+        }
+
+        /// <summary>
+        /// Gets the signature of the authn response attached to the 
+        /// response as an XML element.
+        /// </summary>
+        public IXPathNavigable XmlResponseSignature
+        {
+            get
+            {
+                string xpath = "/samlp:Response/ds:Signature";
+                XmlNode root = this.xml.DocumentElement;
+                XmlNode signatureElement = root.SelectSingleNode(xpath, this.nsMgr);
+                return signatureElement;
+            }
+        }
+
+        /// <summary>
+        /// Gets the Assertion ID attribute value of the response.
+        /// </summary>
+        public string AssertionId
+        {
+            get
+            {
+                string xpath = "/samlp:Response/saml:Assertion";
+                XmlNode root = this.xml.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.nsMgr);
+                return node.Attributes["ID"].Value.Trim();
+            }
+        }
+
+        /// <summary>
+        /// Gets the ID attribute value of the response.
+        /// </summary>
+        public string Id
+        {
+            get
+            {
+                string xpath = "/samlp:Response";
+                XmlNode root = this.xml.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.nsMgr);
+                return node.Attributes["ID"].Value.Trim();
             }
         }
 
@@ -158,10 +202,10 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
-        /// Gets the X509 signature certificate of the authn response, null if
-        /// none provided.
+        /// Gets the X509 signature certificate of the authn response attached
+        /// to the assertion, null if none provided.
         /// </summary>
-        public string SignatureCertificate
+        public string AssertionSignatureCertificate
         {
             get
             {
@@ -173,7 +217,28 @@ namespace Sun.Identity.Saml2
                     return null;
                 }
 
-                string value = node.InnerText.Trim(); // Regex.Replace(node.InnerText.Trim(), @"[\r\t]", "");
+                string value = node.InnerText.Trim();
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the X509 signature certificate of the authn response attached
+        /// to the response, null if none provided.
+        /// </summary>
+        public string ResponseSignatureCertificate
+        {
+            get
+            {
+                string xpath = "/samlp:Response/ds:Signature/ds:KeyInfo/ds:X509Data/ds:X509Certificate";
+                XmlNode root = this.xml.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.nsMgr);
+                if (node == null)
+                {
+                    return null;
+                }
+
+                string value = node.InnerText.Trim();
                 return value;
             }
         }

@@ -178,6 +178,15 @@ namespace Sun.Identity.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AuthnResponse failed validatione due to invalid signature reference..
+        /// </summary>
+        public static string AuthnResponseInvalidSignatureReference {
+            get {
+                return ResourceManager.GetString("AuthnResponseInvalidSignatureReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to AuthnResponse failed validation due to an invalid status code..
         /// </summary>
         public static string AuthnResponseInvalidStatusCode {

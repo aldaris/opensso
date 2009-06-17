@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProviderUtility.cs,v 1.4 2009-06-11 18:37:58 ggennaro Exp $
+ * $Id: ServiceProviderUtility.cs,v 1.5 2009-06-17 16:32:02 ggennaro Exp $
  */
 
 using System;
@@ -250,6 +250,10 @@ namespace Sun.Identity.Saml2
                 string responseContent = streamReader.ReadToEnd();
                 streamReader.Close();
 
+                StringBuilder message = new StringBuilder();
+                message.Append("ArtifactResponse:\r\n").Append(responseContent);
+                FedletLogger.Info(message.ToString());
+
                 XmlDocument soapResponse = new XmlDocument();
                 XmlNamespaceManager soapNsMgr = new XmlNamespaceManager(soapResponse.NameTable);
                 soapNsMgr.AddNamespace("soap", "http://schemas.xmlsoap.org/soap/envelope/");
@@ -422,10 +426,14 @@ namespace Sun.Identity.Saml2
         {
             this.CheckIssuer(authnResponse);
             ServiceProviderUtility.CheckStatusCode(authnResponse);
-            this.CheckSignature(authnResponse, signatureCheckRequired);
             ServiceProviderUtility.CheckConditionWithTime(authnResponse);
             this.CheckConditionWithAudience(authnResponse);
             this.CheckCircleOfTrust(authnResponse);
+
+            if (signatureCheckRequired)
+            {
+                this.CheckSignature(authnResponse);
+            }
         }
 
         /// <summary>
@@ -628,42 +636,73 @@ namespace Sun.Identity.Saml2
         /// parameter is false, the signature will only be checked if present.
         /// </summary>
         /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
-        /// <param name="signatureCheckRequired">
-        /// Flag to determine if the signature check is required.
-        /// </param>
-        private void CheckSignature(AuthnResponse authnResponse, bool signatureCheckRequired)
+        private void CheckSignature(AuthnResponse authnResponse)
         {
             IdentityProvider identityProvider = (IdentityProvider)this.IdentityProviders[authnResponse.Issuer];
-
             if (identityProvider == null)
             {
                 throw new Saml2Exception(Resources.AuthnResponseInvalidIssuer);
             }
 
-            // Check the signature if it's present...
-            if (authnResponse.SignatureCertificate != null)
+            XmlElement responseSignature = (XmlElement)authnResponse.XmlResponseSignature;
+            XmlElement assertionSignature = (XmlElement)authnResponse.XmlAssertionSignature;
+            XmlElement validationSignature = null;
+            string validationSignatureCert = null;
+            string validationReferenceId = null;
+
+            if ((this.ServiceProvider.WantPostResponseSigned && responseSignature == null)
+                || (responseSignature == null && assertionSignature == null) )
+            {
+                throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureMissing);
+            }
+
+            // pick the Response or the Assertion for further validation...
+            if (responseSignature != null)
+            {
+                validationSignature = responseSignature;
+                validationSignatureCert = authnResponse.ResponseSignatureCertificate;
+                validationReferenceId = authnResponse.Id;
+            }
+            else
+            {
+                validationSignature = assertionSignature;
+                validationSignatureCert = authnResponse.AssertionSignatureCertificate;
+                validationReferenceId = authnResponse.AssertionId;
+            }
+
+            if (validationSignatureCert != null)
             {
                 string idpCert = Regex.Replace(identityProvider.EncodedSigningCertificate, @"\s", string.Empty);
-                string authCert = Regex.Replace(authnResponse.SignatureCertificate, @"\s", string.Empty);
-
-                if (authCert != idpCert)
+                validationSignatureCert = Regex.Replace(validationSignatureCert, @"\s", string.Empty);
+                if (idpCert != validationSignatureCert)
                 {
                     throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureCertsDontMatch);
                 }
+            }
 
-                SignedXml signedXml = new SignedXml((XmlDocument)authnResponse.XmlDom);
-                XmlElement authSignatureElement = (XmlElement)authnResponse.XmlSignature;
-                signedXml.LoadXml(authSignatureElement);
-                bool results = signedXml.CheckSignature(identityProvider.SigningCertificate, true);
+            // check the signature of the xml document
+            SignedXml signedXml = new SignedXml((XmlDocument)authnResponse.XmlDom);
+            signedXml.LoadXml(validationSignature);
+            bool results = signedXml.CheckSignature(identityProvider.SigningCertificate, true);
+            if (results == false)
+            {
+                throw new Saml2Exception(Resources.AuthnResponseInvalidSignature);
+            }
 
-                if (results == false)
+            // confirm references in signature
+            bool foundValidSignedReference = false;
+            foreach (Reference r in signedXml.SignedInfo.References)
+            {
+                string referenceId = r.Uri.Substring(1);
+                if (referenceId == validationReferenceId)
                 {
-                    throw new Saml2Exception(Resources.AuthnResponseInvalidSignature);
+                    foundValidSignedReference = true;
                 }
             }
-            else if (signatureCheckRequired)
+
+            if (!foundValidSignedReference)
             {
-                throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureMissing);
+                throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureReference);
             }
         }
 
@@ -700,7 +739,7 @@ namespace Sun.Identity.Saml2
         /// Identity Provider who's entity ID matches the source ID
         /// within the artifact, null if not found.
         /// </returns>
-        private IdentityProvider GetIdpFromArtifact(Artifact artifact)
+        public IdentityProvider GetIdpFromArtifact(Artifact artifact)
         {
             SHA1 sha1 = new SHA1CryptoServiceProvider();
             IdentityProvider idp = null;

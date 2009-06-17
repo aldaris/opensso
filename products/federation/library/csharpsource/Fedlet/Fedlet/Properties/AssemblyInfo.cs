@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: AssemblyInfo.cs,v 1.5 2009-06-11 18:37:59 ggennaro Exp $
+ * $Id: AssemblyInfo.cs,v 1.6 2009-06-17 16:32:03 ggennaro Exp $
  */
 
 using System;
@@ -61,6 +61,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.6.11")]
-[assembly: AssemblyFileVersion("1.0.6.11")]
+[assembly: AssemblyVersion("1.0.6.17")]
+[assembly: AssemblyFileVersion("1.0.6.17")]
 [assembly: NeutralResourcesLanguageAttribute("")]
