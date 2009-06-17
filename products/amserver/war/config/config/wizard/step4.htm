@@ -1,4 +1,5 @@
 <script type="text/javascript">
+    var userStoreDomainNameValid = true;
     var userStoreHostValid = true;
     var userStorePortValid = true;
     var userStoreRootSuffixValid = true;
@@ -9,12 +10,37 @@
         var allFieldsValid = (userStoreHostValid && userStorePortValid &&
             userStoreRootSuffixValid && userStoreLoginIdValid &&
             userStorePasswordValid);
+       
         if (allFieldsValid) {
             ie7fix++;
             AjaxUtils.call("$context$path?actionLink=validateUMHost&ie7fix=" + ie7fix,
                 validateUMHost);
         } else {
             $('nextTabButton').disabled = true;
+        }
+    }
+
+    function adValid() {
+        var adFieldsValid = (userStoreDomainNameValid && 
+            userStoreLoginIdValid &&
+            userStorePasswordValid);
+       
+        if (adFieldsValid) {
+            ie7fix++;
+            AjaxUtils.call("$context$path?actionLink=validateUMDomainName&ie7fix=" + ie7fix, validateUMDomainName);
+        } else {
+            $('nextTabButton').disabled = true;
+        }
+    }
+
+    function validateUMDomainName(response) {
+        if (response.responseText == "ok") { 
+            $('nextTabButton').disabled = false;
+            $('userStoreDomainNameStatus').innerHTML = "";
+        } else {
+            $('nextTabButton').disabled = true;
+            $('userStoreDomainNameStatus').innerHTML = errorImage +
+                '<small>' + response.responseText + '</small>';
         }
     }
 
@@ -29,6 +55,22 @@
         }
     }
     
+    function validateADUserFields(response) {
+        if (response.responseText == "ok") { 
+	    eval(field + "Valid = true;" );
+            $(field + 'Status').innerHTML = okString;
+            if (field == "ADuserStorePassword") {
+                userStorePasswordValid = true;
+            }
+            adValid();
+        } else {
+            eval(field + "Valid = false;" );
+            $(field + 'Status').innerHTML = errorImage +
+                '<small>' + response.responseText + '</small>';
+        }                
+        field = "";
+    }
+
     function validateUserFields(response) {
         if (response.responseText == "ok") { 
 	    eval(field + "Valid = true;" );
@@ -55,6 +97,48 @@
     function validateSSLField() {
         allValid();
     }
+
+    function validateADUserStoreSSL() {
+        field = "ADuserStoreSSL";
+        var callUrl = "$context$path?actionLink=setSSL";
+        var value = ($('ADuserStoreSSL').checked) ? "SSL" : "SIMPLE";
+        var param = "&ssl=" + value;
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
+        AjaxUtils.call(callUrl+param, validateADSSLField);
+    }
+
+    function validateADSSLField() {
+        adValid();
+    }
+
+    function validateUserStoreDomainName() {
+        field = "userStoreDomainName";
+        var callUrl = "$context$path?actionLink=setDomainName";
+        var param = "&domainname=" + $('userStoreDomainName').value;
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
+        AjaxUtils.call(callUrl+param, validateADUserFields);
+    }         
+
+    function validateADUserStoreLoginId() {
+        field = "ADuserStoreLoginId";
+        var callUrl = "$context$path?actionLink=setLoginID";
+        var param = "&dn=" + $('ADuserStoreLoginId').value;
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
+        AjaxUtils.call(callUrl+param, validateADUserFields);
+    }    
+
+    function validateADUserStorePassword() {
+        field = "ADuserStorePassword";
+        var callUrl = "$context$path?actionLink=setPassword";
+        var param = "password=" + $('ADuserStorePassword').value;
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
+        AjaxUtils.doPost(null, callUrl, param, validateADUserFields, 
+            null, null);
+    }   
 
     function validateUserStoreHost() {
         field = "userStoreHost";
@@ -101,6 +185,16 @@
         AjaxUtils.doPost(null, callUrl, param, validateUserFields, null, null);
     }   
     
+    function setADforDomainName() {
+        setType(document.getElementById("ldapv3adforDomainName").value);
+        document.getElementById("activeDirectoryConfigSettings").style.display = "";
+        document.getElementById("embeddedConfigSettings").style.display = "none";
+        document.getElementById("externalConfigSettings").style.display = "none";        
+        $('nextTabButton').disabled = false;
+        ie7fix++;
+        AjaxUtils.call("$context$path?actionLink=setUMEmbedded&ie7fix=" + ie7fix);
+    }
+
     function setAD() {
         setType(document.getElementById("ldapv3ad").value);
     }
@@ -190,10 +284,11 @@
                     <tr>
                         <td valign="top"><label for="userStoreType"><em>*&nbsp;</em>$page.getLocalizedString("store.type.label")</label></td>
                         <td>
-                            <input type="radio" id="ldapv3sunds" name="userStoreType" value="LDAPv3ForSUNDS" $selectLDAPv3sunds onclick="setSUNDS();"/>&nbsp;$page.getLocalizedString("sunds.ldap.schema")<br>
-                            <input type="radio" id="ldapv3opends" name="userStoreType" value="LDAPv3ForOpenDS" $selectLDAPv3opends onclick="setOpenDS();"/>&nbsp;$page.getLocalizedString("opends.ldap.schema")<br>
-                            <input type="radio" id="ldapv3ad" name="userStoreType" value="LDAPv3ForAD" $selectLDAPv3ad onclick="setAD();"/>&nbsp;$page.getLocalizedString("activedirectory.ldap.schema")<br>
-                            <input type="radio" id="ldapv3tivoli" name="userStoreType" value="LDAPv3ForTivoli" $selectLDAPv3tivoli onclick="setTivoli();"/>&nbsp;$page.getLocalizedString("tivoli.ldap.schema")
+                            <input type="radio" id="ldapv3sunds" name="userStoreType" style="margin-left:1em" value="LDAPv3ForSUNDS" $selectLDAPv3sunds onclick="setSUNDS();"/>&nbsp;$page.getLocalizedString("sunds.ldap.schema")<br>
+                            <input type="radio" id="ldapv3opends" name="userStoreType" style="margin-left:1em" value="LDAPv3ForOpenDS" $selectLDAPv3opends onclick="setOpenDS();"/>&nbsp;$page.getLocalizedString("opends.ldap.schema")<br>
+                            <input type="radio" id="ldapv3ad" name="userStoreType" style="margin-left:1em" value="LDAPv3ForAD" $selectLDAPv3ad onclick="setAD();"/>&nbsp;$page.getLocalizedString("activedirectory.ldap.schema")
+                            <input type="radio" id="ldapv3adforDomainName" name="userStoreType" style="margin-left:1em" value="LDAPv3ForADDC" $selectLDAPv3addc onclick="setADforDomainName();"/>&nbsp;$page.getLocalizedString("activedirectoryfordomainname.ldap.schema")<br>
+                            <input type="radio" id="ldapv3tivoli" name="userStoreType" style="margin-left:1em" value="LDAPv3ForTivoli" $selectLDAPv3tivoli onclick="setTivoli();"/>&nbsp;$page.getLocalizedString("tivoli.ldap.schema")
                         </td>
                     </tr>            
                     <tr>
@@ -256,6 +351,48 @@
                                    onkeyup="APP.callDelayed(this, validateUserStorePassword )"
                                    onchange="APP.callDelayed(this, validateUserStorePassword )" />        
                              <span id="userStorePasswordStatus"></span>
+                        </td>
+                    </tr>
+                </table>
+            </span>
+            <span id="activeDirectoryConfigSettings" style="display:none">
+                <table class="temp">
+                    <tr>
+                        <td><label for="ADuserStoreSSL"><em>*&nbsp;</em>$page.getLocalizedString("directory.ssl.label")</label></td>
+                        <td>
+                            <input id="ADuserStoreSSL" name="ADuserStoreSSL"
+                                type="checkbox" value="SSL" $selectADUserStoreSSL
+                                onClick="APP.callDelayed(this, validateADUserStoreSSL)"/>
+                        </td>
+                    </tr>            
+                    <tr>
+                        <td><label for="userStoreDomainName"><em>*&nbsp;</em>$page.getLocalizedString("domain.name.label")</label></td>
+                        <td>
+                            <input id="userStoreDomainName" name="userStoreDomainName" type="text" 
+                                   class="text" style="width:150px"  
+                                   onkeyup="APP.callDelayed(this, validateUserStoreDomainName)"
+                                   onchange="APP.callDelayed(this, validateUserStoreDomainName)"/>
+                            <span id="userStoreDomainNameStatus"></span>                       
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="ADuserStoreLoginId"><em>*&nbsp;</em>$page.getLocalizedString("login.id.label")</label></td>
+                        <td>
+                            <input id="ADuserStoreLoginId" name="ADuserStoreLoginId" 
+                                   type="text" class="text" style="width:150px" 
+                                   onkeyup="APP.callDelayed(this, validateADUserStoreLoginId)"
+                                   onchange="APP.callDelayed(this, validateADUserStoreLoginId)"/>
+                            <span id="ADuserStoreLoginIdStatus"></span>                             
+                        </td>
+                    </tr>            
+                    <tr>
+                        <td><label for="ADuserStorePassword"><em>*&nbsp;</em>$page.getLocalizedString("password.label")</label></td>
+                        <td>
+                            <input id="ADuserStorePassword" name="ADuserStorePassword" 
+                                   type="password" class="text" style="width:100px" 
+                                   onkeyup="APP.callDelayed(this, validateADUserStorePassword )"
+                                   onchange="APP.callDelayed(this, validateADUserStorePassword )" />        
+                             <span id="ADuserStorePasswordStatus"></span>
                         </td>
                     </tr>
                 </table>
