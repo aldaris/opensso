@@ -22,32 +22,35 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LocalRemoteSamlV2HostedSpCreateSummary.java,v 1.1 2009-06-15 18:43:46 asyhuang Exp $
+ * $Id: EntityNameSamlV2RemoteSpCreateSummary.java,v 1.1 2009-06-17 23:44:55 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
-public class LocalRemoteSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateSummary {
+import com.sun.identity.admin.Resources;
 
-    public LocalRemoteSamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2CreateWizardBean) {
-        super(samlV2CreateWizardBean);
+public class EntityNameSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSummary {
+
+    public EntityNameSamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteCreateWizardBean) {
+        super(samlV2RemoteCreateWizardBean);
     }
 
     public String getLabel() {
-        // TODO: localize
-        return "Local or Remote";
+        Resources r = new Resources();
+        String label = r.getString(this, "label");
+        return label;
     }
 
     public String getValue() {
-        String location;
-        if (getSamlV2CreateWizardBean().isLocal()) {
-            // TODO: localize
-            location = "Local";
+        String entityName;
+        boolean hasMeta = getSamlV2RemoteCreateWizardBean().isMeta();
+        if (!hasMeta) {
+            entityName = getSamlV2RemoteCreateWizardBean().getNewEntityName();
         } else {
-            // TODO: localize
-            location = "Remote";
+            entityName = new String();
         }
 
-        return location;
+        return entityName;
+
     }
 
     public boolean isExpandable() {
@@ -64,6 +67,6 @@ public class LocalRemoteSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreate
     }
 
     public int getGotoStep() {
-        return SamlV2HostedSpCreateWizardStep.LOCALREMOTE.toInt();
+        return SamlV2RemoteSpCreateWizardStep.METADATA.toInt();
     }
 }

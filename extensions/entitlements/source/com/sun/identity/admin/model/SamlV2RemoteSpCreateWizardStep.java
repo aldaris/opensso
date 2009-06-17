@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardStep.java,v 1.2 2009-06-17 23:44:55 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardStep.java,v 1.1 2009-06-17 23:44:56 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,18 +30,18 @@ package com.sun.identity.admin.model;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum SamlV2HostedSpCreateWizardStep {
+public enum SamlV2RemoteSpCreateWizardStep {
 
-    REALM(0),  
+    REALM(0), 
     METADATA(1),
     COT(2),
     ATTRIBUTEMAPPING(3),
     SUMMARY(4);
     private final int stepNumber;
-    private static final Map<Integer, SamlV2HostedSpCreateWizardStep> intValues = new HashMap<Integer, SamlV2HostedSpCreateWizardStep>() {
+    private static final Map<Integer, SamlV2RemoteSpCreateWizardStep> intValues = new HashMap<Integer, SamlV2RemoteSpCreateWizardStep>() {
 
         {
-            put(REALM.toInt(), REALM);           
+            put(REALM.toInt(), REALM);            
             put(METADATA.toInt(), METADATA);
             put(COT.toInt(), COT);
             put(ATTRIBUTEMAPPING.toInt(), ATTRIBUTEMAPPING);
@@ -49,7 +49,7 @@ public enum SamlV2HostedSpCreateWizardStep {
         }
     };
 
-    SamlV2HostedSpCreateWizardStep(int stepNumber) {
+    SamlV2RemoteSpCreateWizardStep(int stepNumber) {
         this.stepNumber = stepNumber;
     }
 
@@ -57,7 +57,7 @@ public enum SamlV2HostedSpCreateWizardStep {
         return stepNumber;
     }
 
-    public static SamlV2HostedSpCreateWizardStep valueOf(int i) {
+    public static SamlV2RemoteSpCreateWizardStep valueOf(int i) {
         return intValues.get(Integer.valueOf(i));
     }
 }

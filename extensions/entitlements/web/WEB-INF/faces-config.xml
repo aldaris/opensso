@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.91 2009-06-15 18:47:51 asyhuang Exp $
+  $Id: faces-config.xml,v 1.92 2009-06-17 23:46:20 asyhuang Exp $
 -->
 
 <faces-config version="1.2" 
@@ -43,7 +43,7 @@
             <supported-locale>en_US</supported-locale>
         </locale-config>
         <message-bundle>com.sun.identity.admin.Messages</message-bundle>
-  </application>
+    </application>
 
     <converter>
         <converter-id>urlResourceConverter</converter-id>
@@ -1729,7 +1729,7 @@
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>steps</property-name>
-            <value>6</value>
+            <value>5</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -1744,11 +1744,48 @@
             <property-name>samlV2HostedSpCreateDao</property-name>
             <value>#{samlV2HostedSpCreateWizardDao}</value>
         </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>
         <managed-bean-name>samlV2HostedSpCreateWizardDao</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.dao.SamlV2HostedSpCreateDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>samlV2RemoteSpCreateWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>5</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>samlV2RemoteSpCreateWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.SamlV2RemoteSpCreateWizardHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{samlV2RemoteSpCreateWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>samlV2RemoteSpCreateDao</property-name>
+            <value>#{samlV2RemoteSpCreateWizardDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>samlV2RemoteSpCreateWizardDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.SamlV2RemoteSpCreateDao</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
   <!--  federation manage   -->
@@ -1767,8 +1804,12 @@
             <to-view-id>/admin/facelet/federation.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
-            <from-outcome>federation-samlv2-create-sp</from-outcome>
+            <from-outcome>samlv2-hosted-sp-create</from-outcome>
             <to-view-id>/admin/facelet/samlv2-hosted-sp-create.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>samlv2-remote-sp-create</from-outcome>
+            <to-view-id>/admin/facelet/samlv2-remote-sp-create.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>policy-create</from-outcome>

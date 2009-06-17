@@ -22,40 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SigningKeySamlV2HostedSpCreateSummary.java,v 1.1 2009-06-15 18:43:46 asyhuang Exp $
+ * $Id: SamlV2RemoteCreateWizardBean.java,v 1.1 2009-06-17 23:44:56 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
 
-public class SigningKeySamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateSummary {
+import java.io.Serializable;
 
-    public SigningKeySamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2CreateWizardBean) {
-        super(samlV2CreateWizardBean);
-    }
+/**
+ *
+ * @author yun
+ */
+public class SamlV2RemoteCreateWizardBean
+        extends WizardBean
+        implements Serializable{
 
-    public String getLabel() {
-        // TODO: localize
-        return "Signing Key";
-    }
-
-    public String getValue() {
-        return getSamlV2CreateWizardBean().getSigningKey();
-    }
-
-    public boolean isExpandable() {
-        return false;
-    }
-
-    public String getIcon() {
-        // TODO
-        return "../image/edit.png";
-    }
-
-    public String getTemplate() {
-        return null;
-    }
-
-    public int getGotoStep() {
-        return SamlV2HostedSpCreateWizardStep.METADATA.toInt();
-    }
 }

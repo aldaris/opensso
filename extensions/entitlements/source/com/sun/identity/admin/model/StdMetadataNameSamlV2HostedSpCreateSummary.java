@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StdMetadataNameSamlV2HostedSpCreateSummary.java,v 1.1 2009-06-15 18:43:46 asyhuang Exp $
+ * $Id: StdMetadataNameSamlV2HostedSpCreateSummary.java,v 1.2 2009-06-17 23:44:55 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
+
+import com.sun.identity.admin.Resources;
 
 public class StdMetadataNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateSummary {
 
@@ -34,8 +36,9 @@ public class StdMetadataNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCr
     }
 
     public String getLabel() {
-        // TODO: localize
-        return "Standard Metadata file Name";
+        Resources r = new Resources();
+        String label = r.getString(this, "label");
+        return label;
     }
 
     public String getValue() {

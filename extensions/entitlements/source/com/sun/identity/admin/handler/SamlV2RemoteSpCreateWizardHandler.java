@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.3 2009-06-17 23:45:11 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.1 2009-06-17 23:45:11 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -30,15 +30,15 @@ import com.icesoft.faces.component.inputfile.FileInfo;
 import com.icesoft.faces.component.inputfile.InputFile;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
-import com.sun.identity.admin.dao.SamlV2HostedSpCreateDao;
+import com.sun.identity.admin.dao.SamlV2RemoteSpCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
 import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
-import com.sun.identity.admin.model.SamlV2HostedSpCreateWizardBean;
-import com.sun.identity.admin.model.SamlV2HostedSpCreateWizardStep;
+import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardBean;
+import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardStep;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,15 +51,15 @@ import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 
-public class SamlV2HostedSpCreateWizardHandler
-        extends SamlV2HostedCreateWizardHandler
+public class SamlV2RemoteSpCreateWizardHandler
+        extends SamlV2RemoteCreateWizardHandler
         implements Serializable {
 
-    private SamlV2HostedSpCreateDao samlV2HostedSpCreateDao;
+    private SamlV2RemoteSpCreateDao samlV2RemoteSpCreateDao;
     private MessagesBean messagesBean;
 
-    public void setSamlV2HostedSpCreateDao(SamlV2HostedSpCreateDao samlV2HostedSpCreateDao) {
-        this.samlV2HostedSpCreateDao = samlV2HostedSpCreateDao;
+    public void setSamlV2RemoteSpCreateDao(SamlV2RemoteSpCreateDao samlV2RemoteSpCreateDao) {
+        this.samlV2RemoteSpCreateDao = samlV2RemoteSpCreateDao;
     }
 
     public void doFinishNext() {
@@ -83,8 +83,6 @@ public class SamlV2HostedSpCreateWizardHandler
     private List<LinkBean> getFinishLinkBeans() {
         List<LinkBean> lbs = new ArrayList<LinkBean>();
         lbs.add(LinkBean.HOME);
-        lbs.add(LinkBean.SAMLV2_HOSTED_IDP_CREATE);
-        lbs.add(LinkBean.SAMLV2_REMOTE_IDP_CREATE);
         lbs.add(LinkBean.SAMLV2_HOSTED_SP_CREATE);
         lbs.add(LinkBean.SAMLV2_REMOTE_SP_CREATE);
         return lbs;
@@ -93,8 +91,6 @@ public class SamlV2HostedSpCreateWizardHandler
     private List<LinkBean> getCancelLinkBeans() {
         List<LinkBean> lbs = new ArrayList<LinkBean>();
         lbs.add(LinkBean.HOME);
-        lbs.add(LinkBean.SAMLV2_HOSTED_IDP_CREATE);
-        lbs.add(LinkBean.SAMLV2_REMOTE_IDP_CREATE);
         lbs.add(LinkBean.SAMLV2_HOSTED_SP_CREATE);
         lbs.add(LinkBean.SAMLV2_REMOTE_SP_CREATE);
         return lbs;
@@ -102,48 +98,38 @@ public class SamlV2HostedSpCreateWizardHandler
 
     @Override
     public void finishListener(ActionEvent event) {
+
         if (!validateSteps()) {
             return;
         }
 
         String cot;
-        boolean choseFromExisintCot = getSamlV2HostedSpCreateWizardBean().isCot();
+        boolean choseFromExisintCot = getSamlV2RemoteSpCreateWizardBean().isCot();
         if (choseFromExisintCot) {
-            cot = getSamlV2HostedSpCreateWizardBean().getSelectedCot();
+            cot = getSamlV2RemoteSpCreateWizardBean().getSelectedCot();
         } else {
-            cot = getSamlV2HostedSpCreateWizardBean().getNewCotName();
+            cot = getSamlV2RemoteSpCreateWizardBean().getNewCotName();
         }
 
-        boolean isMeta = getSamlV2HostedSpCreateWizardBean().isMeta();
 
-        String selectedRealmValue = getSamlV2HostedSpCreateWizardBean().getSelectedRealm();
-        int idx = selectedRealmValue.indexOf("(");
-        int end = selectedRealmValue.indexOf(")");
-        String realm = selectedRealmValue.substring(idx + 1, end).trim();
-        String name = getSamlV2HostedSpCreateWizardBean().getNewEntityName();
-        String key = null;
-        if (!isMeta) {
-            samlV2HostedSpCreateDao.createSamlv2HostedSp(realm, name, cot, key);
-        } else {
-            String stdMeta = getSamlV2HostedSpCreateWizardBean().getStdMetaFile();
-            String extMeta = getSamlV2HostedSpCreateWizardBean().getExtMetaFile();
-            samlV2HostedSpCreateDao.importSamlv2HostedSp(cot, stdMeta, extMeta);
-        }
+        String stdMeta = getSamlV2RemoteSpCreateWizardBean().getStdMetaFile();
+        samlV2RemoteSpCreateDao.importSamlv2RemoteSp(cot, stdMeta);
 
-        getSamlV2HostedSpCreateWizardBean().reset();
+
+        getSamlV2RemoteSpCreateWizardBean().reset();
         doFinishNext();
     }
 
     @Override
     public void cancelListener(ActionEvent event) {
-        getSamlV2HostedSpCreateWizardBean().reset();
+        getSamlV2RemoteSpCreateWizardBean().reset();
         doCancelNext();
     }
 
     @Override
     public void previousListener(ActionEvent event) {
         int step = getStep(event);
-        SamlV2HostedSpCreateWizardStep pws = SamlV2HostedSpCreateWizardStep.valueOf(step);
+        SamlV2RemoteSpCreateWizardStep pws = SamlV2RemoteSpCreateWizardStep.valueOf(step);
 
         switch (pws) {
             case REALM:
@@ -172,7 +158,7 @@ public class SamlV2HostedSpCreateWizardHandler
     @Override
     public void nextListener(ActionEvent event) {
         int step = getStep(event);
-        SamlV2HostedSpCreateWizardStep pws = SamlV2HostedSpCreateWizardStep.valueOf(step);
+        SamlV2RemoteSpCreateWizardStep pws = SamlV2RemoteSpCreateWizardStep.valueOf(step);
 
         switch (pws) {
             case REALM:
@@ -199,8 +185,8 @@ public class SamlV2HostedSpCreateWizardHandler
     }
 
     public boolean validateCot() {
-        boolean usingExitingCot = getSamlV2HostedSpCreateWizardBean().isCot();
-        String cotname = getSamlV2HostedSpCreateWizardBean().getNewCotName();
+        boolean usingExitingCot = getSamlV2RemoteSpCreateWizardBean().isCot();
+        String cotname = getSamlV2RemoteSpCreateWizardBean().getNewCotName();
 
         if (!usingExitingCot) {
             if (cotname.length() == 0 || (cotname == null)) {
@@ -213,13 +199,13 @@ public class SamlV2HostedSpCreateWizardHandler
                 Effect e;
 
                 e = new InputFieldErrorEffect();
-                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedSpCreateEntityNameInputEffect(e);
+                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
 
                 e = new MessageErrorEffect();
-                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedSpCreateEntityNameInputEffect(e);
+                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
 
                 getMessagesBean().addMessageBean(mb);
-                getSamlV2HostedSpCreateWizardBean().gotoStep(SamlV2HostedSpCreateWizardStep.COT.toInt());
+                getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.COT.toInt());
 
                 return false;
             }
@@ -228,27 +214,27 @@ public class SamlV2HostedSpCreateWizardHandler
     }
 
     public boolean validateMetadata() {
-        boolean usingMetaDataFile = getSamlV2HostedSpCreateWizardBean().isMeta();
-        String newEntityName = getSamlV2HostedSpCreateWizardBean().getNewEntityName();
+        boolean usingMetaDataFile = getSamlV2RemoteSpCreateWizardBean().isMeta();
+        String newEntityName = getSamlV2RemoteSpCreateWizardBean().getNewEntityName();
 
         if (!usingMetaDataFile) {
             if (newEntityName.length() == 0 || (newEntityName == null)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
-                mb.setSummary(r.getString(this, "invalidNameSummary"));
-                mb.setDetail(r.getString(this, "invalidNameDetail"));
+                mb.setSummary(r.getString(this, "invalidEntityNameSummary"));
+                mb.setDetail(r.getString(this, "invalidEntityNameDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
                 Effect e;
-                
+
                 e = new InputFieldErrorEffect();
-                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedSpCreateEntityNameInputEffect(e);
+                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
 
                 e = new MessageErrorEffect();
-                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedSpCreateEntityNameInputEffect(e);
+                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
 
                 getMessagesBean().addMessageBean(mb);
-                getSamlV2HostedSpCreateWizardBean().gotoStep(SamlV2HostedSpCreateWizardStep.METADATA.toInt());
+                getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.METADATA.toInt());
 
                 return false;
             }
@@ -256,8 +242,8 @@ public class SamlV2HostedSpCreateWizardHandler
         return true;
     }
 
-    private SamlV2HostedSpCreateWizardBean getSamlV2HostedSpCreateWizardBean() {
-        return (SamlV2HostedSpCreateWizardBean) getWizardBean();
+    private SamlV2RemoteSpCreateWizardBean getSamlV2RemoteSpCreateWizardBean() {
+        return (SamlV2RemoteSpCreateWizardBean) getWizardBean();
     }
 
     private boolean validateSteps() {
@@ -299,14 +285,14 @@ public class SamlV2HostedSpCreateWizardHandler
                     e.printStackTrace();
                 }
             }
-            getSamlV2HostedSpCreateWizardBean().setStdMetaFilename(fileInfo.getFileName());
-            getSamlV2HostedSpCreateWizardBean().setStdMetaFile(contents.toString());
+            getSamlV2RemoteSpCreateWizardBean().setStdMetaFilename(fileInfo.getFileName());
+            getSamlV2RemoteSpCreateWizardBean().setStdMetaFile(contents.toString());
         }
     }
 
     public void stdMetaFileUploadProgress(EventObject event) {
         InputFile ifile = (InputFile) event.getSource();
-        getSamlV2HostedSpCreateWizardBean().setStdMetaFileProgress(ifile.getFileInfo().getPercent());
+        getSamlV2RemoteSpCreateWizardBean().setStdMetaFileProgress(ifile.getFileInfo().getPercent());
     }
 
     public void extMetaUploadFile(ActionEvent event) throws IOException {
@@ -342,14 +328,14 @@ public class SamlV2HostedSpCreateWizardHandler
                     e.printStackTrace();
                 }
             }
-            getSamlV2HostedSpCreateWizardBean().setExtMetaFilename(fileInfo.getFileName());
-            getSamlV2HostedSpCreateWizardBean().setExtMetaFile(contents.toString());
+            getSamlV2RemoteSpCreateWizardBean().setExtMetaFilename(fileInfo.getFileName());
+            getSamlV2RemoteSpCreateWizardBean().setExtMetaFile(contents.toString());
         }
     }
 
     public void extMetaFileUploadProgress(EventObject event) {
         InputFile ifile = (InputFile) event.getSource();
-        getSamlV2HostedSpCreateWizardBean().setExtMetaFileProgress(ifile.getFileInfo().getPercent());
+        getSamlV2RemoteSpCreateWizardBean().setExtMetaFileProgress(ifile.getFileInfo().getPercent());
     }
 
     public void setMessagesBean(MessagesBean messagesBean) {

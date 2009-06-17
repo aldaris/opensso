@@ -7,21 +7,21 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
     <ui:define name="panel-title">
-        <ice:outputText value="#{resources['samlv2-hosted-sp-create.panelTitle']}"/>
+        <ice:outputText value="#{resources['samlv2-remote-sp-create.panelTitle']}" />
     </ui:define>
     <ui:define name="panel-details">
-        <ice:outputText value="#{resources['samlv2-hosted-sp-create.panelDetails']}"/>
+        <ice:outputText value="#{resources['samlv2-remote-sp-create.panelDetails']}"/>
     </ui:define>
 
     <ui:define name="panel-body">
         <o:wizard
             steps="5"
-            wizardHandler="#{samlV2HostedSpCreateWizardHandler}"
-            wizardBean="#{samlV2HostedSpCreateWizardBean}">
+            wizardHandler="#{samlV2RemoteSpCreateWizardHandler}"
+            wizardBean="#{samlV2RemoteSpCreateWizardBean}">
             <ui:define name="wizard-steps">
                 <o:wstep
                     step="0"
-                    label="#{resources['samlv2-hosted-sp-create.selectRealmPanelLabel']}">
+                    label="#{resources['samlv2-remote-sp-create.selectRealmPanelLabel']}">
                     <ui:define name="wizard-step-body">
                         <div class="section-outer">
                             <o:section>
@@ -42,10 +42,10 @@
 
                                         <ice:selectOneMenu
                                             id="selectedRealm"
-                                            value="#{samlV2HostedSpCreateWizardBean.selectedRealm}"
+                                            value="#{samlV2RemoteSpCreateWizardBean.selectedRealm}"
                                             partialSubmit="true">
                                             <f:selectItems
-                                                value="#{samlV2HostedSpCreateWizardBean.availableRealmsList}"/>
+                                                value="#{samlV2RemoteSpCreateWizardBean.availableRealmsList}"/>
                                         </ice:selectOneMenu>
                                     </ice:panelGroup>
                                     <!-- Realm -->
@@ -53,20 +53,20 @@
                             </o:section>
                         </div>
                     </ui:define>
-                </o:wstep>
+                </o:wstep>               
                 <o:wstep
                     step="1"
-                    label="#{resources['samlv2-hosted-sp-create.entityNamePanelLabel']}">
+                    label="#{resources['samlv2-remote-sp-create.entityNamePanelLabel']}">
                     <ui:define name="wizard-step-body">
                         <div class="section-outer">
                             <o:section>
                                 <ui:define name="section-title">
                                     <ice:outputText
-                                        value="Do you have metadata for this provider?"/>
+                                        value="Provide entity Name or import Metadata"/>
                                 </ui:define>
                                 <ui:define name="section-details">
                                     <ice:outputText
-                                        value="Do you have metadata for this provider?"/>
+                                        value="Provide entity Name or import Metadata here...."/>
                                 </ui:define>
                                 <ui:define name="section-body">
                                     <!-- Metadata -->
@@ -80,13 +80,13 @@
                                             <ice:selectOneRadio
                                                 id="MenuSelectMetaOrNoMetaRadio"
                                                 partialSubmit="true"
-                                                value="#{samlV2HostedSpCreateWizardBean.meta}">
-                                                <f:selectItem id="meta" itemValue="true" itemLabel="Yes"/>
-                                                <f:selectItem id="nometa" itemValue="false" itemLabel="No"/>
+                                                value="#{samlV2RemoteSpCreateWizardBean.meta}">
+                                                <f:selectItem id="meta" itemValue="true" itemLabel="Meta"/>
+                                                <f:selectItem id="nometa" itemValue="false" itemLabel="No Meta"/>
                                             </ice:selectOneRadio>
                                         </ice:panelGroup>
                                         <ice:panelGroup
-                                            visible="#{samlV2HostedSpCreateWizardBean.meta}">
+                                            visible="#{samlV2RemoteSpCreateWizardBean.meta}">
 
                                             <!-- file upload example -->
                                             <ice:panelGroup styleClass="inputFileContainer">
@@ -95,56 +95,52 @@
                                                 <ice:panelGroup>
                                                     <ice:outputLabel
                                                         for="standardMetaData"
-                                                        value="Where does the metadata file reside?"/>
+                                                        value="Standard Metadata"/>
 
                                                     <!-- file upload usage with progress callback. -->
                                                     <ice:inputFile id="stdMetaInputFileName"
                                                                    submitOnUpload="postUpload"
-                                                                   progressListener="#{samlV2HostedSpCreateWizardHandler.stdMetaFileUploadProgress}"
-                                                                   actionListener="#{samlV2HostedSpCreateWizardHandler.stdMetaUploadFile}"/>
+                                                                   progressListener="#{samlV2RemoteSpCreateWizardHandler.stdMetaFileUploadProgress}"
+                                                                   actionListener="#{samlV2RemoteSpCreateWizardHandler.stdMetaUploadFile}"/>
                                                     <!-- progress bar, percent value is upated via progressListener-->
 
-                                                    <ice:outputProgress value="#{samlV2HostedSpCreateWizardBean.stdMetaFileProgress}"
+                                                    <ice:outputProgress value="#{samlV2RemoteSpCreateWizardBean.stdMetaFileProgress}"
                                                                         styleClass="uploadProgressBar"/>
                                                     <ice:outputText
-                                                        value="#{samlV2HostedSpCreateWizardBean.stdMetaFilename}"/>
+                                                        value="#{samlV2RemoteSpCreateWizardBean.stdMetaFilename}"/>
                                                 </ice:panelGroup>
 
                                                 <ice:panelGroup>
+                                                   
                                                     <ice:outputLabel
                                                         for="etendedMetaData"
-                                                        value="Where does the metadata file reside?"/>
+                                                        value="Extended Metadata"/>
                                                     <!-- file upload usage with progress callback. -->
                                                     <ice:inputFile id="extMetaInputFileName"
                                                                    submitOnUpload="postUpload"
-                                                                   progressListener="#{samlV2HostedSpCreateWizardHandler.extMetaFileUploadProgress}"
-                                                                   actionListener="#{samlV2HostedSpCreateWizardHandler.extMetaUploadFile}"/>
+                                                                   progressListener="#{samlV2RemoteSpCreateWizardHandler.extMetaFileUploadProgress}"
+                                                                   actionListener="#{samlV2RemoteSpCreateWizardHandler.extMetaUploadFile}"/>
                                                     <!-- progress bar, percent value is upated via progressListener-->
 
-                                                    <ice:outputProgress value="#{samlV2HostedSpCreateWizardBean.extMetaFileProgress}"
+                                                    <ice:outputProgress value="#{samlV2RemoteSpCreateWizardBean.extMetaFileProgress}"
                                                                         styleClass="uploadProgressBar"/>
                                                     <ice:outputText
-                                                        value="#{samlV2HostedSpCreateWizardBean.extMetaFilename}"/>
+                                                        value="#{samlV2RemoteSpCreateWizardBean.extMetaFilename}"/>
+
                                                 </ice:panelGroup>
                                                 <ice:panelGroup>
+                                                   
                                                     <ice:outputText
-                                                        value="URL where metadata is located...."/>
+                                                        value="retrieve Metadata from IDP server here."/>
                                                 </ice:panelGroup>
                                             </ice:panelGroup>
 
                                             <!-- file upload example -->
+                                            <ice:panelGroup styleClass="inputFileContainer">
 
-                                        </ice:panelGroup>
-                                        <ice:panelGroup
-                                            visible="#{!samlV2HostedSpCreateWizardBean.meta}">
-                                            <ice:outputLabel
-                                                for="NewEntityName"
-                                                value="New Entity Name"/>
-                                            <ice:inputText
-                                                id="NewEntityName"
-                                                value="#{samlV2HostedSpCreateWizardBean.newEntityName}"
-                                                size="70"
-                                                maxlength="70"/>
+
+                                            </ice:panelGroup>
+
                                         </ice:panelGroup>                                        
                                     </ice:panelGroup>
                                     <!-- Metadata -->
@@ -155,7 +151,7 @@
                 </o:wstep>
                 <o:wstep
                     step="2"
-                    label="#{resources['samlv2-hosted-sp-create.selectCotPanelLabel']}">
+                    label="#{resources['samlv2-remote-sp-create.selectCotPanelLabel']}">
                     <ui:define name="wizard-step-body">
                         <div class="section-outer">
                             <o:section>
@@ -176,35 +172,35 @@
                                         <ice:panelGroup>
                                             <ice:selectOneRadio
                                                 id="MenuSelectNewCOTRadio"
-                                                value="#{samlV2HostedSpCreateWizardBean.cot}"
+                                                value="#{samlV2RemoteSpCreateWizardBean.cot}"
                                                 partialSubmit="true">
                                                 <f:selectItem id="ChoiceCOT" itemValue="true" itemLabel="Choice a COT"/>
                                                 <f:selectItem id="NewCOT" itemValue="false" itemLabel="New a COT"/>
                                             </ice:selectOneRadio>
                                         </ice:panelGroup>
                                         <ice:panelGroup
-                                            visible="#{samlV2HostedSpCreateWizardBean.cot}">
+                                            visible="#{samlV2RemoteSpCreateWizardBean.cot}">
                                             <ice:panelGroup >
                                                 <ice:outputLabel
                                                     for="existingCotList"
                                                     value="Choice one COT from existing COT List"/>
                                                 <ice:selectOneMenu
                                                     id="selectedCot"
-                                                    value="#{samlV2HostedSpCreateWizardBean.selectedCot}"
+                                                    value="#{samlV2RemoteSpCreateWizardBean.selectedCot}"
                                                     partialSubmit="true">
                                                     <f:selectItems
-                                                        value="#{samlV2HostedSpCreateWizardBean.availableCotList}"/>
+                                                        value="#{samlV2RemoteSpCreateWizardBean.availableCotList}"/>
                                                 </ice:selectOneMenu>
                                             </ice:panelGroup>
                                         </ice:panelGroup>
                                         <ice:panelGroup
-                                            visible="#{!samlV2HostedSpCreateWizardBean.cot}">
+                                            visible="#{!samlV2RemoteSpCreateWizardBean.cot}">
                                             <ice:outputLabel
                                                 for="NewCotName"
                                                 value="New COT Name"/>
                                             <ice:inputText
                                                 id="NewCotName"
-                                                value="#{samlV2HostedSpCreateWizardBean.newCotName}"
+                                                value="#{samlV2RemoteSpCreateWizardBean.newCotName}"
                                                 size="50"
                                                 maxlength="50"/>
                                         </ice:panelGroup>
@@ -217,7 +213,7 @@
                 </o:wstep>
                 <o:wstep
                     step="3"
-                    label="#{resources['samlv2-hosted-sp-create.attributeMappingPanelLabel']}">
+                    label="#{resources['samlv2-remote-sp-create.attributeMappingPanelLabel']}">
                     <ui:define name="wizard-step-body">
                         <div class="section-outer">
                             <o:section>
@@ -232,7 +228,14 @@
                                 <ui:define name="section-body">
                                     <ice:panelGroup>
                                         <ice:outputLabel
+                                            for="Attribute Mapping"
                                             value="Attribute Mapping"/>
+                                    </ice:panelGroup>                                
+                                    <ice:panelGroup>
+                                        <ice:outputLabel                                          
+                                            value="Attributes Mapping Table"/>
+                                        <!-- data table -->
+                                        <!-- data table -->
                                     </ice:panelGroup>
                                 </ui:define>
                             </o:section>
@@ -241,7 +244,7 @@
                 </o:wstep>
                 <o:wstep
                     step="4"
-                    label="#{resources['samlv2-hosted-sp-create.summaryPanelLabel']}">
+                    label="#{resources['samlv2-remote-sp-create.summaryPanelLabel']}">
                     <ui:define name="wizard-step-body">
                         <div class="section-outer">
                             <o:section>
@@ -256,15 +259,16 @@
                                 <ui:define name="section-body">
                                     <!-- summary -->
                                     <o:summarypanel
-                                        summary="#{samlV2HostedSpCreateWizardBean.realmSamlV2CreateSummary}"/>
+                                        summary="#{samlV2RemoteSpCreateWizardBean.realmSamlV2RemoteSpCreateSummary}"/>
                                     <o:summarypanel
-                                        summary="#{samlV2HostedSpCreateWizardBean.entityNameSamlV2CreateSummary}"/>
+                                        summary="#{samlV2RemoteSpCreateWizardBean.entityNameSamlV2RemoteSpCreateSummary}"/>
                                     <o:summarypanel
-                                        summary="#{samlV2HostedSpCreateWizardBean.stdMetadataNameSamlV2CreateSummary}"/>
+                                        summary="#{samlV2RemoteSpCreateWizardBean.stdMetadataNameSamlV2RemoteSpCreateSummary}"/>
                                     <o:summarypanel
-                                        summary="#{samlV2HostedSpCreateWizardBean.extMetadataNameSamlV2CreateSummary}"/>
+                                        summary="#{samlV2RemoteSpCreateWizardBean.extMetadataNameSamlV2RemoteSpCreateSummary}"/>                                   
                                     <o:summarypanel
-                                        summary="#{samlV2HostedSpCreateWizardBean.cotSamlV2CreateSummary}"/>                                                                   
+                                        summary="#{samlV2RemoteSpCreateWizardBean.cotSamlV2RemoteSpCreateSummary}"/>                                    
+
                                     <!-- summary -->
                                 </ui:define>
                             </o:section>
