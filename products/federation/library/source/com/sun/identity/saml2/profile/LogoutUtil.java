@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.14 2008-06-27 00:45:55 hengming Exp $
+ * $Id: LogoutUtil.java,v 1.15 2009-06-17 03:09:13 exu Exp $
  *
  */
 
@@ -74,6 +74,7 @@ import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.saml2.plugins.FedletAdapter;
 import com.sun.identity.saml2.protocol.Extensions;
 import com.sun.identity.saml2.protocol.LogoutRequest;
 import com.sun.identity.saml2.protocol.LogoutResponse;
@@ -446,13 +447,32 @@ public class LogoutUtil {
         }
         
         if (success == false) {
+            if (SPCache.isFedlet) {
+                FedletAdapter fedletAdapter =
+                    SAML2Utils.getFedletAdapterClass(hostEntity, realm);
+                if (fedletAdapter != null) {
+                    fedletAdapter.onFedletSLOFailure(
+                        request, response, sloRequest, sloResponse,
+                        hostEntity, remoteEntityID, SAML2Constants.SOAP); 
+                }
+            }
             throw new SAML2Exception(SAML2Utils.bundle.getString("sloFailed"));
         } else {
             // invoke SPAdapter for postSLOSuccess : SP inited SOAP 
             if ((hostRole != null) && hostRole.equals(SAML2Constants.SP_ROLE)) {
-                SPSingleLogout.postSingleLogoutSuccess(hostEntity, realm,
-                    request, response, userId, sloRequest, sloResponse, 
-                    SAML2Constants.SOAP);
+                if (SPCache.isFedlet) {
+                    FedletAdapter fedletAdapter =
+                        SAML2Utils.getFedletAdapterClass(hostEntity, realm);
+                    if (fedletAdapter != null) {
+                        fedletAdapter.onFedletSLOSuccess(
+                            request, response, sloRequest, sloResponse,
+                            hostEntity, remoteEntityID, SAML2Constants.SOAP); 
+                    }
+                } else {
+                    SPSingleLogout.postSingleLogoutSuccess(hostEntity, realm,
+                        request, response, userId, sloRequest, sloResponse, 
+                        SAML2Constants.SOAP);
+                }
             }
         }
     }

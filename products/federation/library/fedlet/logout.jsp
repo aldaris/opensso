@@ -22,13 +22,21 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: logout.jsp,v 1.1 2009-06-09 20:28:30 exu Exp $
+   $Id: logout.jsp,v 1.2 2009-06-17 03:07:37 exu Exp $
 
 --%><%@ page language="java"
         import="com.sun.identity.saml2.common.SAML2Utils,
 java.util.Enumeration"
 %><%
-    // log user out
+    /**
+     * If header SLOStatus doesn't exist, it's IDP initiated SLO. Log user out.
+     *    Besides "Cookie" header, other SLO related headers are: "IDP", "SP",
+     *    "NameIDValue", "SessionIndex", "Binding".
+     * If header SLOStatus exist, it's fedlet initiated SLO. Do processing 
+     *     according to the SLOStatus. Besides "Cookie" header, other SLO 
+     *     related headers are: "IDP", "SP", "NameIDValue", "SessionIndex", 
+     *     "Binding", "SLOStatus".
+     */
     if (SAML2Utils.debug.messageEnabled()) {
         SAML2Utils.debug.message("in fedlet logout.jsp.");
     }

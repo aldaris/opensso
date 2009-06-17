@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletAdapter.java,v 1.1 2009-06-09 20:28:31 exu Exp $
+ * $Id: FedletAdapter.java,v 1.2 2009-06-17 03:09:13 exu Exp $
  *
  */
 
@@ -72,10 +72,17 @@ public abstract class FedletAdapter {
      * @param request servlet request
      * @param response servlet response
      * @param hostedEntityID entity ID for the fedlet
-     * @param idpEntityID entity id for the IDP to which the request will 
-     * 		be sent. This will be null in ECP case.
+     * @param idpEntityID entity id for the IDP to which the request is
+     *          received from.
      * @param siList List of SessionIndex whose session to be logged out
      * @param nameIDValue nameID value whose session to be logged out
+     * @param binding Single Logout binding used,
+     *      one of following values:
+     *          <code>SAML2Constants.SOAP</code>,
+     *          <code>SAML2Constants.HTTP_POST</code>,
+     *          <code>SAML2Constants.HTTP_REDIRECT</code>
+     * @return <code>true</code> if user is logged out successfully; 
+     *          <code>false</code> otherwise.
      * @exception SAML2Exception if user want to fail the process.
      */
     public boolean doFedletSLO (
@@ -85,8 +92,67 @@ public abstract class FedletAdapter {
         String hostedEntityID, 
         String idpEntityID,
         List siList,
-        String nameIDValue)
+        String nameIDValue,
+        String binding)
     throws SAML2Exception {
         return true;
+    }
+
+    /**
+     * Invokes after Fedlet receives SLO response from IDP and the SLO status
+     * is success.
+     * @param request servlet request
+     * @param response servlet response
+     * @param logoutReq SAML2 <code>LogoutRequest</code> object
+     * @param logoutRes SAML2 <code>LogoutResponse</code> object
+     * @param hostedEntityID entity ID for the fedlet
+     * @param idpEntityID entity id for the IDP to which the logout response
+     *          is received from.
+     * @param binding Single Logout binding used,
+     *      one of following values:
+     *          <code>SAML2Constants.SOAP</code>,
+     *          <code>SAML2Constants.HTTP_POST</code>,
+     *          <code>SAML2Constants.HTTP_REDIRECT</code>
+     * @exception SAML2Exception if user want to fail the process.
+     */
+    public void onFedletSLOSuccess(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        LogoutRequest logoutReq,
+        LogoutResponse logoutRes,
+        String hostedEntityID,
+        String idpEntityID,
+        String binding)
+    throws SAML2Exception {
+        return;
+    }
+
+    /**
+     * Invokes after Fedlet receives SLO response from IDP and the SLO status
+     * is not success.
+     * @param request servlet request
+     * @param response servlet response
+     * @param logoutReq SAML2 <code>LogoutRequest</code> object
+     * @param logoutRes SAML2 <code>LogoutResponse</code> object
+     * @param hostedEntityID entity ID for the fedlet
+     * @param idpEntityID entity id for the IDP to which the logout response
+     *          is received from.
+     * @param binding Single Logout binding used,
+     *      one of following values:
+     *          <code>SAML2Constants.SOAP</code>,
+     *          <code>SAML2Constants.HTTP_POST</code>,
+     *          <code>SAML2Constants.HTTP_REDIRECT</code>
+     * @exception SAML2Exception if user want to fail the process.
+     */
+    public void onFedletSLOFailure(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        LogoutRequest logoutReq,
+        LogoutResponse logoutRes,
+        String hostedEntityID,
+        String idpEntityID,
+        String binding)
+    throws SAML2Exception {
+        return;
     }
 } 

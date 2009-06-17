@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saml2error.jsp,v 1.2 2009-06-12 22:21:42 mallas Exp $
+   $Id: saml2error.jsp,v 1.3 2009-06-17 03:10:28 exu Exp $
 
 --%><%--
    This is the default error display page.
@@ -99,6 +99,8 @@
      * invalidRequestUri
      * noRedirectionURL
      * readerServiceFailed
+     * nullSessionIndex
+     * nullNameID
      Here is the list of error codes for SAML v1.x:
      * untrustedSite
      * nullInputParameter

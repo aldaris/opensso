@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseInfo.java,v 1.5 2009-02-24 19:46:28 huacui Exp $
+ * $Id: ResponseInfo.java,v 1.6 2009-06-17 03:09:13 exu Exp $
  *
  */
 
@@ -45,6 +45,7 @@ public class ResponseInfo extends CacheObject {
     private Assertion assertion = null;
     private Map attrMap = null;
     private NameID nameId = null;
+    private String sessionIndex = null;
 
     /**
      * Constructor creates the ResponseInfo.
@@ -146,5 +147,23 @@ public class ResponseInfo extends CacheObject {
      */
     public NameID getNameId() {
         return nameId;
+    }
+
+    /**
+     * Sets SessionIndex.
+     *
+     * @param index SessionIndex of the session
+     */
+    public void setSessionIndex(String index) {
+        sessionIndex = index;
+    }
+
+    /**
+     * Returns the SessionIndex.
+     *
+     * @return the SessionIndex
+     */
+    public String getSessionIndex() {
+        return sessionIndex;
     }
 }

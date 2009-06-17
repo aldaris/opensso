@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.42 2009-06-12 22:21:41 mallas Exp $
+ * $Id: SPACSUtils.java,v 1.43 2009-06-17 03:09:13 exu Exp $
  *
  */
 
@@ -1018,6 +1018,7 @@ public class SPACSUtils {
         Assertion authnAssertion =
             (Assertion) smap.get(SAML2Constants.POST_ASSERTION);
         String sessionIndex = (String)smap.get(SAML2Constants.SESSION_INDEX);
+        respInfo.setSessionIndex(sessionIndex);
         Integer authLevel = (Integer) smap.get(SAML2Constants.AUTH_LEVEL);
         Long maxSessionTime = (Long) smap.get(SAML2Constants.MAX_SESSION_TIME);
         String inRespToResp = (String) smap.get(SAML2Constants.IN_RESPONSE_TO);
@@ -2071,6 +2072,7 @@ public class SPACSUtils {
         map.put(SAML2Constants.SPENTITYID, hostedEntityId);
         map.put(SAML2Constants.NAMEID, respInfo.getNameId());
         map.put(SAML2Constants.ATTRIBUTE_MAP, respInfo.getAttributeMap());
+        map.put(SAML2Constants.SESSION_INDEX, respInfo.getSessionIndex());
         return map;
     }
 }

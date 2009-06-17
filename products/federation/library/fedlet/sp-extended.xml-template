@@ -84,6 +84,9 @@
        <Attribute name="wantNameIDEncrypted">
            <Value></Value>
        </Attribute>
+       <Attribute name="wantPOSTResponseSigned">
+           <Value></Value>
+       </Attribute>
        <Attribute name="wantArtifactResponseSigned">
            <Value></Value>
        </Attribute>

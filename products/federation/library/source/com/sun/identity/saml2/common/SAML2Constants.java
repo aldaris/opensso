@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.41 2009-06-12 22:21:40 mallas Exp $
+ * $Id: SAML2Constants.java,v 1.42 2009-06-17 03:09:13 exu Exp $
  *
  */
 
@@ -1468,4 +1468,10 @@ public interface SAML2Constants {
      */
     public String SP_SESSION_SYNC_ENABLED =
             "spSessionSyncEnabled";
+
+    /**
+     * Map key used in fedlet case to specify federation info key.
+     */
+    public String INFO_KEY = "infoKey";
+
 } 

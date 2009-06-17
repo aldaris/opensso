@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutPOST.jsp,v 1.6 2009-06-12 22:21:42 mallas Exp $
+   $Id: spSingleLogoutPOST.jsp,v 1.7 2009-06-17 03:10:28 exu Exp $
 
 --%>
 
@@ -32,8 +32,8 @@
 
 <%@ page import="com.sun.identity.shared.debug.Debug" %>
 <%@ page import="com.sun.identity.sae.api.SecureAttrs" %>
-<%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
 <%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
+<%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
 <%@ page import="com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement" %>

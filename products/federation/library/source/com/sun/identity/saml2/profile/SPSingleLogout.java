@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.23 2009-06-09 20:28:32 exu Exp $
+ * $Id: SPSingleLogout.java,v 1.24 2009-06-17 03:09:14 exu Exp $
  *
  */
 
@@ -181,16 +181,27 @@ public class SPSingleLogout {
             } else {
                 session = sessionProvider.getSession(request);
             }
-            if (session == null) {
-                throw new SAML2Exception(
-                    SAML2Utils.bundle.getString("nullSSOToken"));
+            if (!SPCache.isFedlet) {
+                if (session == null) {
+                    throw new SAML2Exception(
+                        SAML2Utils.bundle.getString("nullSSOToken"));
+                }
             }
             if (metaAlias == null) {
-                String[] values =
-                    sessionProvider.getProperty(
-                        session, SAML2Constants.SP_METAALIAS);
-                if (values != null && values.length > 0) {
-                    metaAlias = values[0];
+                if (!SPCache.isFedlet) {
+                    String[] values =
+                        sessionProvider.getProperty(
+                            session, SAML2Constants.SP_METAALIAS);
+                    if (values != null && values.length > 0) {
+                        metaAlias = values[0];
+                    }
+                } else {
+                    List spMetaAliases =
+                        sm.getAllHostedServiceProviderMetaAliases("/");
+                    if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
+                        // get first one
+                        metaAlias = (String) spMetaAliases.get(0);
+                    }
                 }
             }
             
@@ -201,7 +212,7 @@ public class SPSingleLogout {
             
             paramsMap.put(SAML2Constants.METAALIAS, metaAlias);
             String realm = SAML2Utils.
-            getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
+                getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
             debug.message("realm : " + realm);
             String spEntityID = sm.getEntityByMetaAlias(metaAlias);
             if (spEntityID == null) {
@@ -217,19 +228,23 @@ public class SPSingleLogout {
             // clean up session index
             String tokenID = sessionProvider.getSessionID(session);
             String infoKeyString = null;            
-            try {
-                String[] values = sessionProvider.getProperty(
-                    session, AccountUtils.getNameIDInfoKeyAttribute());
-                if (values != null && values.length > 0) {
-                    infoKeyString = values[0];
+            if (SPCache.isFedlet) {
+                infoKeyString = SAML2Utils.getParameter(paramsMap,
+                    SAML2Constants.INFO_KEY);
+            } else {
+                try {
+                    String[] values = sessionProvider.getProperty(
+                        session, AccountUtils.getNameIDInfoKeyAttribute());
+                    if (values != null && values.length > 0) {
+                        infoKeyString = values[0];
+                    }
+                } catch (SessionException se) {
+                    debug.error("Unable to get infoKeyString from " +
+                        "session.", se);
+                    throw new SAML2Exception(
+                        SAML2Utils.bundle.getString("errorInfoKeyString"));
                 }
-            } catch (SessionException se) {
-                debug.error("Unable to get infoKeyString from " +
-                    "session.", se);
-                throw new SAML2Exception(
-                    SAML2Utils.bundle.getString("errorInfoKeyString"));
             }
-            
             if (debug.messageEnabled()) {
                 debug.message("tokenID : " + tokenID);
                 debug.message("infoKeyString : " + infoKeyString);
@@ -333,37 +348,52 @@ public class SPSingleLogout {
         LogoutRequest origLogoutRequest, 
         SOAPMessage msg) throws SAML2Exception, SessionException {
 
-        SPFedSession fedSession = null;
-        
-        List list =
-            (List)SPCache.fedSessionListsByNameIDInfoKey.get(infoKeyString);
-        if (list != null) {
-            synchronized (list) {
-                ListIterator iter = list.listIterator();
-                while (iter.hasNext()) {
-                    fedSession = (SPFedSession)iter.next();
-                    if (tokenID.equals(fedSession.spTokenID)) {
-                        iter.remove();
-                        if (list.size() == 0) {
-                            SPCache.fedSessionListsByNameIDInfoKey.
-                                remove(infoKeyString);
-                        }
-                        break;
-                    }
-                    fedSession = null;
-                }
-           }   
-        }
         NameIDInfoKey nameIdInfoKey = NameIDInfoKey.parse(infoKeyString);
-
-        if (fedSession == null) {
-            // just do local logout
-            if (debug.messageEnabled()) {
-                debug.message(
-                    "No session partner, just do local logout.");
+        String sessionIndex = null;
+        NameID nameID = null;
+        if (SPCache.isFedlet) {
+            sessionIndex = SAML2Utils.getParameter(paramsMap,
+                SAML2Constants.SESSION_INDEX);
+             nameID = AssertionFactory.getInstance().createNameID();
+             nameID.setValue(nameIdInfoKey.getNameIDValue());
+             nameID.setFormat(SAML2Constants.NAMEID_TRANSIENT_FORMAT);
+             nameID.setNameQualifier(nameIdInfoKey.getRemoteEntityID());
+             nameID.setSPNameQualifier(nameIdInfoKey.getHostEntityID());
+        } else {
+            SPFedSession fedSession = null;
+        
+            List list =
+                (List)SPCache.fedSessionListsByNameIDInfoKey.get(infoKeyString);
+            if (list != null) {
+                synchronized (list) {
+                    ListIterator iter = list.listIterator();
+                    while (iter.hasNext()) {
+                        fedSession = (SPFedSession)iter.next();
+                        if (tokenID.equals(fedSession.spTokenID)) {
+                            iter.remove();
+                            if (list.size() == 0) {
+                                SPCache.fedSessionListsByNameIDInfoKey.
+                                    remove(infoKeyString);
+                            }
+                            break;
+                        }
+                        fedSession = null;
+                    }
+                }   
             }
-            return null;
+
+            if (fedSession == null) {
+                // just do local logout
+                if (debug.messageEnabled()) {
+                    debug.message(
+                        "No session partner, just do local logout.");
+                }
+                return null;
+            }
+            sessionIndex = fedSession.idpSessionIndex;
+            nameID = fedSession.info.getNameID();
         }
+
 
         // get IDPSSODescriptor
         IDPSSODescriptorElement idpsso =
@@ -401,8 +431,8 @@ public class SPSingleLogout {
             extensionsList,
             binding,
             relayState,
-            fedSession.idpSessionIndex,
-            fedSession.info.getNameID(),
+            sessionIndex,
+            nameID,
             request,
             response,
             paramsMap,
@@ -462,15 +492,15 @@ public class SPSingleLogout {
             binding = SAML2Constants.HTTP_POST;
 	        logoutRes = LogoutUtil.getLogoutResponseFromPost(samlResponse,
                 response);
-	    } else if (rmethod.equals("GET")) {
-                String decodedStr = SAML2Utils.decodeFromRedirect(samlResponse);
-                if (decodedStr == null) {
-                    throw new SAML2Exception(SAML2Utils.bundle.getString(
-                    "nullDecodedStrFromSamlResponse"));
-                }
-                logoutRes = 
-                    ProtocolFactory.getInstance().createLogoutResponse(decodedStr);
-	    }
+        } else if (rmethod.equals("GET")) {
+            String decodedStr = SAML2Utils.decodeFromRedirect(samlResponse);
+            if (decodedStr == null) {
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "nullDecodedStrFromSamlResponse"));
+            }
+            logoutRes = 
+                ProtocolFactory.getInstance().createLogoutResponse(decodedStr);
+        }
 
         if (logoutRes == null) {
             if (debug.messageEnabled()) {
@@ -482,6 +512,20 @@ public class SPSingleLogout {
 
         String metaAlias =
                 SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
+        if ((SPCache.isFedlet) && 
+            ((metaAlias ==  null) || (metaAlias.length() == 0))) 
+        {
+            List spMetaAliases =
+                sm.getAllHostedServiceProviderMetaAliases("/");
+            if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
+                // get first one
+                metaAlias = (String) spMetaAliases.get(0);
+            }
+        }
+        if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("nullSPEntityID"));
+        }
         String realm = SAML2Utils.
                 getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
         String spEntityID = sm.getEntityByMetaAlias(metaAlias);
@@ -492,8 +536,11 @@ public class SPSingleLogout {
             SPCache.logoutRequestIDHash.remove(inResponseTo);
 
         // invoke SPAdapter preSingleLogoutProcess
-        String userId = preSingleLogoutProcess(spEntityID, realm, request, 
-            response, null, logoutReq, logoutRes, binding);
+        String userId = null;
+        if (!SPCache.isFedlet) {
+            userId = preSingleLogoutProcess(spEntityID, realm, request, 
+                response, null, logoutReq, logoutRes, binding);
+        }
  
         SAML2Utils.verifyResponseIssuer(
             realm, spEntityID, resIssuer, inResponseTo);
@@ -572,11 +619,33 @@ public class SPSingleLogout {
         if ((session != null) && sessionProvider.isValid(session)) {
             sessionProvider.invalidateSession(session, request, response);
         }
-    
-        // invoke SPAdapter postSingleLogoutSucces
-        postSingleLogoutSuccess(spEntityID, realm, request, response, userId,
-            logoutReq, logoutRes, binding); 
-
+        if (!SPCache.isFedlet) {
+            if (isSuccess(logoutRes)) {
+                // invoke SPAdapter postSingleLogoutSucces
+                postSingleLogoutSuccess(spEntityID, realm, request, response, 
+                    userId, logoutReq, logoutRes, binding); 
+            } else {
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("sloFailed"));
+            }
+        } else {
+            // obtain fedlet adapter
+            FedletAdapter fedletAdapter = 
+                SAML2Utils.getFedletAdapterClass(spEntityID, realm);
+            if (fedletAdapter != null) {
+                if (isSuccess(logoutRes)) {
+                    fedletAdapter.onFedletSLOSuccess(
+                        request, response, logoutReq, logoutRes,
+                        spEntityID, idpEntityID, binding);
+                } else {
+                    fedletAdapter.onFedletSLOFailure(
+                        request, response, logoutReq, logoutRes,
+                        spEntityID, idpEntityID, binding);
+                    throw new SAML2Exception(
+                        SAML2Utils.bundle.getString("sloFailed"));
+                }
+            }
+        }
         return infoMap; 
     }
 
@@ -692,9 +761,8 @@ public class SPSingleLogout {
         if ((SPCache.isFedlet) && 
             ((metaAlias == null) || (metaAlias.length() == 0)))
         {
-            SAML2MetaManager manager = new SAML2MetaManager();
             List spMetaAliases =
-                manager.getAllHostedServiceProviderMetaAliases("/");
+                sm.getAllHostedServiceProviderMetaAliases("/");
             if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
                 // get first one
                 metaAlias = (String) spMetaAliases.get(0);
@@ -929,7 +997,7 @@ public class SPSingleLogout {
                         // call adapter to do real logout
                         result = fedletAdapter.doFedletSLO(request, response,
                             logoutReq, spEntityID, idpEntity, siList,
-                            nameID.getValue());
+                            nameID.getValue(), binding);
                     }
                     if (result) {
                         status = SUCCESS_STATUS;
