@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HTTPBasic.java,v 1.3 2008-06-25 05:41:57 qcheng Exp $
+ * $Id: HTTPBasic.java,v 1.4 2009-06-17 21:49:54 ericow Exp $
  *
  */
 
@@ -46,6 +46,7 @@ import java.util.Map;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import java.io.IOException;
@@ -108,7 +109,8 @@ public class HTTPBasic extends AMLoginModule {
                 moduleType);
             Class moduleClass = Class.forName(moduleClassName);
             amLoginModule = (AMLoginModule)moduleClass.newInstance();
-            amLoginModule.init(subject,sharedState,currentConfig);
+            CallbackHandler handler = getCallbackHandler();
+            amLoginModule.initialize(subject,handler,sharedState,currentConfig);
         } catch (Exception exp) {
             debug.error("Could not initialize the module instance"+
                 instanceName,

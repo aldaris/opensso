@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Anonymous.java,v 1.3 2008-06-25 05:41:55 qcheng Exp $
+ * $Id: Anonymous.java,v 1.4 2009-06-17 21:53:19 ericow Exp $
  *
  */
 
@@ -149,6 +149,21 @@ public class Anonymous extends AMLoginModule {
                     return ISAuthConstants.LOGIN_SUCCEED;
                 }
             }
+
+            if (callbacks !=null && callbacks.length > 0) {
+                if (callbacks[0] instanceof NameCallback) {
+                    usernameParam = ((NameCallback)callbacks[0]).getName();
+                    if (debug.messageEnabled()) {
+                        debug.message("Anonymous:process received NameCallback "
+                                + usernameParam);
+                    }
+                    if (processAnonUser(usernameParam)) {
+                        setAuthLevel(authLevel);
+                        return ISAuthConstants.LOGIN_SUCCEED;
+                    }
+                }
+            }
+
             if (validAnonUsernames !=null && !(validAnonUsernames.isEmpty())) {
                 usernameParam = sendCallback();
             } else {
