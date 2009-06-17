@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.18 2009-06-03 19:43:42 goodearth Exp $
+ * $Id: Step4.java,v 1.19 2009-06-17 21:47:00 goodearth Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -36,6 +36,18 @@ import com.sun.identity.shared.ldap.LDAPConnection;
 import com.sun.identity.shared.ldap.LDAPException;
 import com.sun.identity.shared.ldap.util.DN;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Hashtable;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+
 /**
  * Step 4 is the input of the remote user data store properties.
  */
@@ -43,6 +55,9 @@ public class Step4 extends AjaxPage {
     public static final String LDAP_STORE_SESSION_KEY = "wizardCustomUserStore";
     public ActionLink validateUMHostLink = 
         new ActionLink("validateUMHost", this, "validateUMHost");
+    public ActionLink validateUMDomainNameLink = 
+        new ActionLink("validateUMDomainName", this, 
+            "validateUMDomainName");
     public ActionLink setSSLLink = 
         new ActionLink("setSSL", this, "setSSL");
     public ActionLink setUMEmbedded = 
@@ -51,6 +66,8 @@ public class Step4 extends AjaxPage {
         new ActionLink("resetUMEmbedded", this, "resetUMEmbedded");
     public ActionLink setHostLink = 
         new ActionLink("setHost", this, "setHost");
+    public ActionLink setDomainNameLink = 
+        new ActionLink("setDomainName", this, "setDomainName");
     public ActionLink setPortLink = 
         new ActionLink("setPort", this, "setPort");
     public ActionLink setRootSuffixLink = 
@@ -146,22 +163,32 @@ public class Step4 extends AjaxPage {
         val = getAttribute(SetupConstants.USER_STORE_TYPE, "LDAPv3ForSUNDS");
         if (val.equals("LDAPv3ForAD")) {
             addModel("selectLDAPv3ad", "checked=\"checked\"");
+            addModel("selectLDAPv3addc", "");
+            addModel("selectLDAPv3sunds", "");
+            addModel("selectLDAPv3opends", "");
+            addModel("selectLDAPv3tivoli", "");
+        } else if (val.equals("LDAPv3ForADDC")) {
+            addModel("selectLDAPv3addc", "checked=\"checked\"");
+            addModel("selectLDAPv3ad", "");
             addModel("selectLDAPv3sunds", "");
             addModel("selectLDAPv3opends", "");
             addModel("selectLDAPv3tivoli", "");
         } else if (val.equals("LDAPv3ForSUNDS")) {
             addModel("selectLDAPv3sunds", "checked=\"checked\"");
             addModel("selectLDAPv3ad", "");
+            addModel("selectLDAPv3addc", "");
             addModel("selectLDAPv3opends", "");
             addModel("selectLDAPv3tivoli", "");
         } else if (val.equals("LDAPv3ForOpenDS")) {
             addModel("selectLDAPv3opends", "checked=\"checked\"");
             addModel("selectLDAPv3ad", "");
+            addModel("selectLDAPv3addc", "");
             addModel("selectLDAPv3sunds", "");
             addModel("selectLDAPv3tivoli", "");
         } else {
             addModel("selectLDAPv3tivoli", "checked=\"checked\"");
             addModel("selectLDAPv3ad", "");
+            addModel("selectLDAPv3addc", "");
             addModel("selectLDAPv3sunds", "");
             addModel("selectLDAPv3opends", "");
         }
@@ -190,6 +217,22 @@ public class Step4 extends AjaxPage {
         } else {
             getContext().setSessionAttribute(
                 SessionAttributeNames.USER_STORE_SSL, "SIMPLE");
+        }
+        writeToResponse(getLocalizedString(responseString));
+        setPath(null);
+        return false;
+    }
+
+    public boolean setDomainName() {
+        String domainname = toString("domainname");
+        if ((domainname != null) && domainname.length() > 0) {
+            getContext().setSessionAttribute(
+                SessionAttributeNames.USER_STORE_DOMAINNAME, 
+                domainname);
+            getContext().setSessionAttribute(
+                SessionAttributeNames.EXT_DATA_STORE, "true");
+        } else {
+            responseString = "missing.domain.name";            
         }
         writeToResponse(getLocalizedString(responseString));
         setPath(null);
@@ -375,5 +418,196 @@ public class Step4 extends AjaxPage {
         
         setPath(null);
         return false;
+    }
+
+    public boolean validateUMDomainName() {
+        Context ctx = getContext();
+        String strSSL = (String)ctx.getSessionAttribute(
+            SessionAttributeNames.USER_STORE_SSL);
+        boolean ssl = (strSSL != null) && (strSSL.equals("SSL"));
+
+        String domainName = (String)ctx.getSessionAttribute(
+            SessionAttributeNames.USER_STORE_DOMAINNAME);
+        String rootSuffixAD = dnsDomainToDN(domainName);
+        getContext().setSessionAttribute(
+            SessionAttributeNames.USER_STORE_ROOT_SUFFIX, 
+            rootSuffixAD);
+        String[] hostAndPort = {""};
+        try {
+            hostAndPort = getLdapHostAndPort(domainName);
+        } catch (NamingException nex) {
+            writeToResponse(
+                getLocalizedString("cannot.connect.to.UM.datastore"));
+        } catch (IOException ioex) {
+            writeToResponse(
+                getLocalizedString("cannot.connect.to.UM.datastore"));
+        } 
+        String host = hostAndPort[0];
+        int port = Integer.parseInt(hostAndPort[1]);
+
+        String bindDN = (String)ctx.getSessionAttribute(
+            SessionAttributeNames.USER_STORE_LOGIN_ID);
+        String rootSuffix = (String)ctx.getSessionAttribute(
+            SessionAttributeNames.USER_STORE_ROOT_SUFFIX);
+        String bindPwd = (String)ctx.getSessionAttribute(
+            SessionAttributeNames.USER_STORE_LOGIN_PWD);
+        
+        LDAPConnection ld = null;
+        try {
+            ld = (ssl) ? new LDAPConnection(
+                SSLSocketFactoryManager.getSSLSocketFactory()) :
+                new LDAPConnection();
+            ld.setConnectTimeout(300);
+            ld.connect(3, host, port, bindDN, bindPwd);
+            
+            String filter = "cn=" + "\"" + rootSuffix + "\"";
+            String[] attrs = {""};
+            ld.search(rootSuffix, LDAPConnection.SCOPE_BASE, filter, 
+                attrs, false);
+            writeToResponse("ok");
+        } catch (LDAPException lex) {
+            switch (lex.getLDAPResultCode()) {
+                case LDAPException.CONNECT_ERROR:
+                    writeToResponse(getLocalizedString(
+                        "ldap.connect.error")); 
+                    break;
+                case LDAPException.SERVER_DOWN:
+                    writeToResponse(getLocalizedString(
+                        "ldap.server.down"));   
+                    break;
+                case LDAPException.INVALID_DN_SYNTAX:
+                    writeToResponse(getLocalizedString(
+                        "ldap.invalid.dn"));  
+                    break;
+                case LDAPException.NO_SUCH_OBJECT:
+                    writeToResponse(getLocalizedString(
+                        "ldap.nosuch.object"));
+                    break;
+                case LDAPException.INVALID_CREDENTIALS:
+                    writeToResponse(getLocalizedString(
+                        "ldap.invalid.credentials"));
+                    break;
+                case LDAPException.UNWILLING_TO_PERFORM:
+                    writeToResponse(getLocalizedString(
+                        "ldap.unwilling"));
+                    break;
+                case LDAPException.INAPPROPRIATE_AUTHENTICATION:
+                    writeToResponse(getLocalizedString(
+                        "ldap.inappropriate"));
+                    break;
+                case LDAPException.CONSTRAINT_VIOLATION:
+                    writeToResponse(getLocalizedString(
+                        "ldap.constraint"));
+                    break;
+                default:
+                    writeToResponse(getLocalizedString(
+                        "cannot.connect.to.UM.datastore"));
+            }           
+        } catch (Exception e) {
+            writeToResponse(getLocalizedString(
+                "cannot.connect.to.UM.datastore"));
+        } finally {
+            if (ld != null) {
+                try {
+                    ld.disconnect();
+                } catch (LDAPException ex) {
+                    //ignore
+                }
+            }
+        }
+        setPath(null);
+        return false;
+    }
+
+    // Method to get hostname and port number with the
+    // provided Domain Name for Active Directory user data store.
+    private String[] getLdapHostAndPort(String domainName) 
+        throws NamingException, IOException {
+        if (!domainName.endsWith(".")) {
+            domainName+='.';
+        }
+        DirContext ictx = null;
+        // Check if domain name is a valid one.
+        // The resource record type A is defined in RFC 1035. 
+        try {
+            Hashtable env = new Hashtable();
+            env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, 
+                "com.sun.jndi.dns.DnsContextFactory");
+            ictx = new InitialDirContext(env);
+            Attributes attributes = 
+                ictx.getAttributes(domainName, new String[]{"A"});
+            Attribute attrib = attributes.get("A");
+            if (attrib == null) {
+                throw new NamingException();
+            }
+        } catch (NamingException e) {
+            // Failed to resolve domainName to A record.
+            // throw exception.
+            throw e;
+        }
+
+        // then look for the LDAP server
+        String serverHostName = null;
+        String serverPortStr = null;
+        final String ldapServer = "_ldap._tcp." + domainName;
+        try {
+            // Attempting to resolve ldapServer to SRV record.
+            // This is a mechanism defined in MSDN, querying 
+            // SRV records for _ldap._tcp.DOMAINNAME.
+            // and get host and port from domain.
+            Attributes attributes = 
+                ictx.getAttributes(ldapServer, new String[]{"SRV"});
+            Attribute attr = attributes.get("SRV");
+            if (attr == null) {
+                throw new NamingException();
+            }
+            String[] srv = attr.get().toString().split(" ");
+            String hostNam = srv[3];
+            serverHostName = 
+                hostNam.substring(0, hostNam.length() -1);
+            if ((serverHostName != null) && 
+                serverHostName.length() > 0) {
+                getContext().setSessionAttribute(
+                    SessionAttributeNames.USER_STORE_HOST, 
+                    serverHostName);
+            }
+            serverPortStr = srv[2];
+        } catch (NamingException e) {
+            // Failed to resolve ldapServer to SRV record.
+            // throw exception.
+            throw e;
+        }
+
+        // try to connect to LDAP port to make sure this machine 
+        // has LDAP service
+        int serverPort = Integer.parseInt(serverPortStr);
+        if ((serverPort > 0) && (serverPort < 65535)) {
+            getContext().setSessionAttribute(
+                SessionAttributeNames.USER_STORE_PORT, serverPortStr);
+        }
+        try {
+            new Socket(serverHostName, serverPort).close();
+        } catch (IOException e) {
+            throw e;
+        }
+
+        String[] hostAndPort = new String[2];
+        hostAndPort[0] = serverHostName;
+        hostAndPort[1] = serverPortStr;
+
+        return hostAndPort;
+    }
+
+    // Method to convert the domain name to the root suffix.
+    // eg., Domain Name amqa.test.com is converted to root suffix 
+    // DC=amqa,DC=test,DC=com
+    static String dnsDomainToDN(String domainName) {
+        StringBuilder buf = new StringBuilder();
+        for (String token : domainName.split("\\.")) {
+            if(token.length()==0)   continue;
+            if(buf.length()>0)  buf.append(",");
+            buf.append("DC=").append(token);
+        }
+        return buf.toString();
     }
 }

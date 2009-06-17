@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step7.java,v 1.13 2009-06-03 19:43:42 goodearth Exp $
+ * $Id: Step7.java,v 1.14 2009-06-17 21:47:00 goodearth Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -102,6 +102,9 @@ public class Step7 extends AjaxPage {
                 } else if (tmp.equals("LDAPv3ForAD")) {
                     add("userStoreType", getLocalizedString(
                         "activedirectory.ldap.schema"));
+                } else if (tmp.equals("LDAPv3ForADDC")) {
+                    add("userStoreType", getLocalizedString(
+                        "activedirectoryfordomainname.ldap.schema"));
                 } else if (tmp.equals("LDAPv3ForOpenDS")) {
                     add("userStoreType", 
                         getLocalizedString("opends.ldap.schema"));
