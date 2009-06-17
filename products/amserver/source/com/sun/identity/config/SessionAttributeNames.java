@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionAttributeNames.java,v 1.1 2009-01-05 23:43:03 veiming Exp $
+ * $Id: SessionAttributeNames.java,v 1.2 2009-06-17 21:45:42 goodearth Exp $
  */
 
 package com.sun.identity.config;
@@ -59,6 +59,7 @@ public interface SessionAttributeNames {
     String EXT_DATA_STORE = "EXT_DATA_STORE";
     String USER_STORE_SSL = "userStoreSSL";
     String USER_STORE_HOST = "userStoreHostName";
+    String USER_STORE_DOMAINNAME = "userStoreDomainName";
     String USER_STORE_PORT = "userStorePort";
     String USER_STORE_ROOT_SUFFIX = "userStoreRootSuffix";
     String USER_STORE_LOGIN_ID = "userStoreLoginID";
