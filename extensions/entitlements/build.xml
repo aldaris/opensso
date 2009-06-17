@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.65 2009-06-16 11:11:37 kevinserwin Exp $
+  $Id: build.xml,v 1.66 2009-06-17 00:03:04 veiming Exp $
 
 -->
 
@@ -40,6 +40,14 @@
            property="war.lib.local.exists" value="true" />
     <available file="${entitlements.build.lib.local.dir}"
            property="build.lib.local.exists" value="true" />
+    <available file="${entitlements.extlib.dir}/opensso.war"
+           property="opensso.war.exists" value="true" />
+    <available file="${entitlements.extlib.dir}/testng-5.9-jdk15.jar"
+           property="testng.jar.exists" value="true" />
+    <available file="${entitlements.extlib.dir}/jato.jar"
+           property="jato.jar.exists" value="true" />
+    <available file="${entitlements.extlib.dir}/ssoAdminTools.zip"
+           property="ssoadmintools.zip.exists" value="true" />
     <available file="${entitlements.extlib.dir}/amserver.jar"
            property="amserver.jar.exists" value="true" />
     <available file="${entitlements.extlib.dir}/openfedlib.jar"
@@ -62,7 +70,7 @@
         <antcall target="package-war" />
     </target>
 
-    <target name="tools">
+    <target name="tools" depends="ssoadmintools-zip">
         <delete dir="${entitlements.built.tools.dir}" />
         <mkdir dir="${entitlements.built.tools.dir}" />
         <unzip src="${entitlements.extlib.dir}/ssoAdminTools.zip"
@@ -107,7 +115,7 @@
 
 
    
-    <target name="init" depends="amserver-jar,openfedlib-jar,opensso-jar,sharedlib-jar,build-lib,war-lib">
+    <target name="init" depends="opensso-war,jato-jar,testng-jar,amserver-jar,openfedlib-jar,opensso-jar,sharedlib-jar,build-lib,war-lib">
         <mkdir dir="${entitlements.dist.dir}" />
         <mkdir dir="${entitlements.classes.dir}" />
 
@@ -207,6 +215,7 @@
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
               debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${entitlements.src.dir}/com/sun/identity/entitlement/opensso"/>
+            <src path="${entitlements.src.dir}/com/sun/identity/console"/>
             <src path="${entitlements.src.dir}/com/sun/identity/policy"/>
             <src path="${entitlements.src.dir}/com/sun/identity/entitlement/xacml3"/>
             <classpath refid="build.class.path"/>
@@ -376,11 +385,34 @@
            file="${entitlements.build.lib.local.dir}/json.jar" />
     </target>
 
+    <target name="opensso-war" unless="opensso.war.exists">
+        <copy file="${openfm.built.dist}/opensso.war"
+           toDir="${entitlements.extlib.dir}" />
+    </target>
+    <target name="testng-jar" unless="testng.jar.exists">
+        <copy file="${opensso.extlib}/testng-5.9-jdk15.jar"
+           toDir="${entitlements.extlib.dir}" />
+    </target>
+    <target name="ssoadmintools-zip" unless="ssoadmintools.zip.exists">
+        <copy file="${openfm.built.dist}/ssoAdminTools.zip"
+           toDir="${entitlements.extlib.dir}" />
+    </target>
+
     <target name="amserver-jar" unless="amserver.jar.exists">
         <unjar src="${entitlements.extlib.dir}/opensso.war"
            dest="${entitlements.extlib.dir}">
             <patternset>
                 <include name="WEB-INF/lib/amserver.jar"/>
+            </patternset>
+            <mapper type="flatten" />
+        </unjar>
+    </target>
+
+    <target name="jato-jar" unless="jato.jar.exists">
+        <unjar src="${entitlements.extlib.dir}/opensso.war"
+           dest="${entitlements.extlib.dir}">
+            <patternset>
+                <include name="WEB-INF/lib/jato.jar"/>
             </patternset>
             <mapper type="flatten" />
         </unjar>

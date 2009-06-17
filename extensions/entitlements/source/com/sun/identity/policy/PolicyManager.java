@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.18 2009-06-16 10:37:45 veiming Exp $
+ * $Id: PolicyManager.java,v 1.19 2009-06-17 00:03:05 veiming Exp $
  *
  */
 
@@ -180,7 +180,11 @@ public final class PolicyManager {
     private ResourceIndexManager rim;
 
     private static ServiceSchemaManager ssm;
-
+    private static SSOToken superAdminToken =
+        (SSOToken) AccessController.doPrivileged(
+        AdminTokenAction.getInstance());
+    private static javax.security.auth.Subject adminSubject =
+        SubjectUtils.createSubject(superAdminToken);
     SSOToken token;
 
     // Can be shared by classes
@@ -189,10 +193,8 @@ public final class PolicyManager {
     static boolean migratedToEntitlementService = false;
 
     static {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            SubjectUtils.createSubject(adminToken), "/");
+            adminSubject, "/");
         migratedToEntitlementService = ec.migratedToEntitlementService();
     }
 
@@ -612,8 +614,6 @@ public final class PolicyManager {
             namedPolicy.addSubConfig(policy.getName(),
                 NAMED_POLICY_ID, 0, attrs);
             if (migratedToEntitlementService) {
-                javax.security.auth.Subject adminSubject =
-                    SubjectUtils.createSubject(token);
                 PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
                     adminSubject, realmName);
                 pis.add(PrivilegeUtils.policyToPrivileges(policy));
@@ -1308,11 +1308,6 @@ public final class PolicyManager {
         DN baseDN = new DN(ServiceManager.getBaseDN());
 
         if (!orgDN.equals(baseDN) && !orgDN.equals(delegationRealm)) {
-            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-            javax.security.auth.Subject adminSubject =
-                SubjectUtils.createSubject(adminToken);
-
             String realm = DNMapper.orgNameToRealmName(getOrganizationDN());
             Iterator ruleNames = policy.getRuleNames().iterator();
             while (ruleNames.hasNext()) {
@@ -1655,4 +1650,56 @@ public final class PolicyManager {
         return aliasMappedOrg;
     }
 
+    public boolean canCreatePolicies(Set<String> services) 
+        throws EntitlementException {
+        String realm = DNMapper.orgNameToRealmName(getOrganizationDN());
+        if (realm.equals("/")) {
+            return true;
+        }
+
+        if (migratedToEntitlementService) {
+            for (String s : services) {
+                Set<String> res = ApplicationManager.getReferredResources(
+                    adminSubject, realm, s);
+                if ((res != null) && !res.isEmpty()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return canCreateNewResource(services) ||
+            hasReferredResources();
+    }
+    
+    private boolean canCreateNewResource(Set<String> services) {
+        boolean can = false;
+        ResourceManager resMgr = getResourceManager();
+
+        if (resMgr != null) {
+            if ((services != null) && !services.isEmpty()) {
+                for (Iterator i = services.iterator(); (i.hasNext() && !can);) {
+                    String svcName = (String)i.next();
+                    try {
+                        can = resMgr.canCreateNewResource(svcName);
+                    } catch (PolicyException  e) {
+                        debug.warning("PolicyManager.canCreateNewResource",e);
+                    }
+                }
+            }
+        }
+
+        return can;
+    }
+
+    private boolean hasReferredResources() {
+        boolean hasPrefixes = false;
+        try {
+            Set prefixes = getManagedResourceNames();
+            hasPrefixes = (prefixes != null) && !prefixes.isEmpty();
+        } catch (PolicyException e) {
+            debug.warning("PolicyManager.hasReferredResources", e);
+        }
+        return hasPrefixes;
+    }
 }
