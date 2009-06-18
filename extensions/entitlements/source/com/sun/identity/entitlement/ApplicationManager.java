@@ -22,12 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.18 2009-06-16 10:37:44 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.19 2009-06-18 00:10:55 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.policy.ResourceMatch;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.sm.DNMapper;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -68,6 +70,9 @@ public final class ApplicationManager {
 
     private static Set<Application> getApplications(Subject adminSubject,
         String realm) {
+        if (DN.isDN(realm)) {
+            realm = DNMapper.orgNameToRealmName(realm);
+        }
         Set<Application> appls = applications.get(realm);
 
         if (appls == null) {
@@ -78,6 +83,10 @@ public final class ApplicationManager {
                         EntitlementConfiguration.getInstance(
                         adminSubject, realm);
                     appls = ec.getApplications();
+if ((appls == null) || (appls.isEmpty())) {
+    //dennis
+    PrivilegeManager.debug.error("dennis getApplications null, " + realm, null);
+}
                     applications.put(realm, appls);
                 }
             }
@@ -118,6 +127,10 @@ public final class ApplicationManager {
     ) {
         if ((name == null) || (name.length() == 0)) {
             name = ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
+        }
+
+        if (DN.isDN(realm)) {
+            realm = DNMapper.orgNameToRealmName(realm);
         }
         Set<Application> appls = getApplications(adminSubject, realm);
         for (Application appl : appls) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.25 2009-06-16 20:30:37 veiming Exp $
+ * $Id: EntitlementService.java,v 1.26 2009-06-18 00:10:55 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -85,6 +85,9 @@ public class EntitlementService extends EntitlementConfiguration {
         "xacml-privilege-enabled";
 
     private String realm;
+    private static SSOToken adminToken =
+        (SSOToken)AccessController.doPrivileged(
+        AdminTokenAction.getInstance());
 
     /**
      * Constructor.
@@ -100,19 +103,18 @@ public class EntitlementService extends EntitlementConfiguration {
      * @return set of attribute values of a given attribute name,
      */
     public Set<String> getConfiguration(String attrName) {
-        SSOToken adminToken = getAdminToken();
-        return getConfiguration(adminToken, attrName);
+        SSOToken token = getSSOToken();
+        return getConfiguration(token, attrName);
     }
 
     private static Set<String> getConfiguration(
-        SSOToken adminToken,
+        SSOToken token,
         String attrName
     ) {
         try {
-
-            if (adminToken != null) {
+            if (token != null) {
                 ServiceSchemaManager smgr = new ServiceSchemaManager(
-                    SERVICE_NAME, adminToken);
+                    SERVICE_NAME, token);
                 AttributeSchema as = smgr.getGlobalSchema().getAttributeSchema(
                     attrName);
                 return as.getDefaultValues();
@@ -139,15 +141,15 @@ public class EntitlementService extends EntitlementConfiguration {
     public Set<ApplicationType> getApplicationTypes() {
         Set<ApplicationType> results = new HashSet<ApplicationType>();
         try {
-            SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+            SSOToken token = getSSOToken();
 
-            if (adminToken == null) {
+            if (token == null) {
                 PrivilegeManager.debug.error(
                     "EntitlementService.getApplicationTypes : "+
                     "admin sso token is absent", null);
             } else {
                 ServiceConfig conf = getApplicationTypeCollectionConfig(
-                    adminToken);
+                    token);
                 Set<String> names = conf.getSubConfigNames();
                 for (String name : names) {
                     ServiceConfig appType = conf.getSubConfig(name);
@@ -171,10 +173,10 @@ public class EntitlementService extends EntitlementConfiguration {
         return results;
     }
 
-    private ServiceConfig getApplicationTypeCollectionConfig(SSOToken adminToken)
+    private ServiceConfig getApplicationTypeCollectionConfig(SSOToken token)
         throws SMSException, SSOException {
         ServiceConfigManager mgr = new ServiceConfigManager(
-            SERVICE_NAME, adminToken);
+            SERVICE_NAME, token);
         ServiceConfig globalConfig = mgr.getGlobalConfig(null);
         if (globalConfig != null) {
             return globalConfig.getSubConfig(CONFIG_APPLICATION_TYPES);
@@ -225,8 +227,8 @@ public class EntitlementService extends EntitlementConfiguration {
     }
 
     private Application getRawApplication(String name) {
-        SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
-        Set<Application> applications = getRawApplications(adminToken);
+        SSOToken token = getSSOToken();
+        Set<Application> applications = getRawApplications(token);
         for (Application a : applications) {
             if (a.getName().equals(name)) {
                 return a;
@@ -245,10 +247,9 @@ public class EntitlementService extends EntitlementConfiguration {
         return null;
     }
 
-    private SSOToken getAdminToken() {
+    private SSOToken getSSOToken() {
         return (getAdminSubject() == PrivilegeManager.superAdminSubject) ?
-            (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance()) :
+            adminToken :
             SubjectUtils.getSSOToken(getAdminSubject());
     }
 
@@ -258,9 +259,9 @@ public class EntitlementService extends EntitlementConfiguration {
      * @return a set of registered applications.
      */
     public Set<Application> getApplications() {
-        SSOToken adminToken = getAdminToken();
+        SSOToken token = getSSOToken();
 
-        Set<Application> results = getRawApplications(adminToken);
+        Set<Application> results = getRawApplications(token);
         for (Application app : results) {
             Set<String> resources = app.getResources();
             Set<String> res = new HashSet<String>();
@@ -283,12 +284,12 @@ public class EntitlementService extends EntitlementConfiguration {
      *
      * @return a set of registered applications.
      */
-    private Set<Application> getRawApplications(SSOToken adminToken) {
+    private Set<Application> getRawApplications(SSOToken token) {
         Set<Application> results = new HashSet<Application>();
         try {
-            if (adminToken != null) {
+            if (token != null) {
                 ServiceConfigManager mgr = new ServiceConfigManager(
-                    SERVICE_NAME, adminToken);
+                    SERVICE_NAME, token);
                 // TODO. Since applications for the hidden realms have to be
                 // the same as root realm mainly for delegation without any
                 // referrals, the hack is to use root realm for hidden realm.
@@ -364,13 +365,13 @@ public class EntitlementService extends EntitlementConfiguration {
         }
         
         try {
-            SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+            SSOToken token = getSSOToken();
 
-            if (adminToken == null) {
+            if (token == null) {
                 throw new EntitlementException(225);
             }
 
-            ServiceConfig applConf = getApplicationSubConfig(adminToken, realm,
+            ServiceConfig applConf = getApplicationSubConfig(token, realm,
                 applicationName);
             if (applConf != null) {
                 Set<String> orig = (Set<String>)
@@ -405,14 +406,14 @@ public class EntitlementService extends EntitlementConfiguration {
         Boolean defVal
     ) throws EntitlementException {
         try {
-            SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+            SSOToken token = SubjectUtils.getSSOToken(getAdminSubject());
 
-            if (adminToken == null) {
+            if (token == null) {
                 throw new EntitlementException(226);
             }
 
             ServiceConfig applConf = getApplicationSubConfig(
-                adminToken, realm, appName);
+                token, realm, appName);
 
             if (applConf != null) {
                 Map<String, Set<String>> data =
@@ -431,13 +432,13 @@ public class EntitlementService extends EntitlementConfiguration {
     }
 
     private ServiceConfig getApplicationSubConfig(
-        SSOToken adminToken,
+        SSOToken token,
         String realm,
         String appName
     ) throws SMSException, SSOException {
         ServiceConfig applConf = null;
         ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
-            adminToken);
+            token);
         ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
         if (orgConfig != null) {
             ServiceConfig conf = orgConfig.getSubConfig(
@@ -529,13 +530,13 @@ public class EntitlementService extends EntitlementConfiguration {
     public void removeApplicationType(String name)
         throws EntitlementException{
         try {
-            SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+            SSOToken token = SubjectUtils.getSSOToken(getAdminSubject());
 
-            if (adminToken == null) {
+            if (token == null) {
                 Object[] arg = {name};
                 throw new EntitlementException(245, arg);
             }
-            ServiceConfig conf = getApplicationTypeCollectionConfig(adminToken);
+            ServiceConfig conf = getApplicationTypeCollectionConfig(token);
             if (conf != null) {
                 conf.removeSubConfig(name);
             }
@@ -550,9 +551,9 @@ public class EntitlementService extends EntitlementConfiguration {
 
     private ServiceConfig getApplicationCollectionConfig(String realm)
         throws SMSException, SSOException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+        SSOToken token = getSSOToken();
         ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
-            adminToken);
+            token);
         ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
         if (orgConfig != null) {
             return orgConfig.getSubConfig(CONFIG_APPLICATIONS);
@@ -563,9 +564,9 @@ public class EntitlementService extends EntitlementConfiguration {
     private ServiceConfig createApplicationCollectionConfig(String realm)
         throws SMSException, SSOException {
         ServiceConfig sc = null;
-        SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+        SSOToken token = SubjectUtils.getSSOToken(getAdminSubject());
         ServiceConfigManager mgr = new ServiceConfigManager(SERVICE_NAME,
-            adminToken);
+            token);
         ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
         if (orgConfig != null) {
             sc = orgConfig.getSubConfig(CONFIG_APPLICATIONS);
@@ -630,14 +631,14 @@ public class EntitlementService extends EntitlementConfiguration {
     public void storeApplicationType(ApplicationType applicationType)
         throws EntitlementException {
         try {
-            SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+            SSOToken token = SubjectUtils.getSSOToken(getAdminSubject());
 
-            if (adminToken == null) {
+            if (token == null) {
                 Object[] arg = {applicationType.getName()};
                 throw new EntitlementException(246, arg);
             }
 
-            ServiceConfig conf = getApplicationTypeCollectionConfig(adminToken);
+            ServiceConfig conf = getApplicationTypeCollectionConfig(token);
             if (conf != null) {
                 ServiceConfig sc = conf.getSubConfig(applicationType.getName());
                 if (sc == null) {
@@ -887,15 +888,15 @@ public class EntitlementService extends EntitlementConfiguration {
      */
     public Set<String> getSubjectAttributeNames(String application) {
         try {
-            SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+            SSOToken token = SubjectUtils.getSSOToken(getAdminSubject());
 
-            if (adminToken == null) {
+            if (token == null) {
                 PrivilegeManager.debug.error(
                     "EntitlementService.getSubjectAttributeNames: " +
                     "admin sso token is absent", null);
             } else {
                 ServiceConfig applConfig = getApplicationSubConfig(
-                    adminToken, realm, application);
+                    token, realm, application);
                 if (applConfig != null) {
                     Application app = createApplication(realm, application,
                         applConfig.getAttributes());
@@ -925,11 +926,11 @@ public class EntitlementService extends EntitlementConfiguration {
      */
     public Set<String> getSubjectAttributesCollectorNames() {
         try {
-            SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+            SSOToken token = getSSOToken();
 
-            if (adminToken != null) {
+            if (token != null) {
                 ServiceConfigManager mgr = new ServiceConfigManager(
-                    SERVICE_NAME, adminToken);
+                    SERVICE_NAME, token);
                 ServiceConfig orgConfig = mgr.getOrganizationConfig(
                     realm, null);
                 if (orgConfig != null) {
@@ -962,11 +963,11 @@ public class EntitlementService extends EntitlementConfiguration {
         getSubjectAttributesCollectorConfiguration(String name) {
 
         try {
-            SSOToken adminToken = SubjectUtils.getSSOToken(getAdminSubject());
+            SSOToken token = getSSOToken();
 
-            if (adminToken != null) {
+            if (token != null) {
                 ServiceConfigManager mgr = new ServiceConfigManager(
-                    SERVICE_NAME, adminToken);
+                    SERVICE_NAME, token);
                 ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
                 if (orgConfig != null) {
                     ServiceConfig conf = orgConfig.getSubConfig(
