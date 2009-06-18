@@ -21,13 +21,13 @@
 #  your own identifying information:
 #  "Portions Copyrighted [year] [name of copyright owner]"
 #
-#  $Id: setup.sql,v 1.2 2009-06-11 05:29:45 superpat7 Exp $
+#  $Id: setup.sql,v 1.3 2009-06-18 00:55:54 superpat7 Exp $
 #
 
 #
-# SQL Script file to set up database for demo
+# SQL Script file to set up tables and data for demo
 # Import using 
-# mysql test < setup.sql
+# mysql -uroot -p<password> -Dj1demodb < setup.sql
 #
 
 # Pre-emptive cleanup!

@@ -23,13 +23,13 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: persistence.xml,v 1.2 2009-06-11 05:29:45 superpat7 Exp $
+  $Id: persistence.xml,v 1.3 2009-06-18 00:55:54 superpat7 Exp $
 
 -->
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
   <persistence-unit name="C1DemoServerPU" transaction-type="JTA">
     <provider>oracle.toplink.essentials.PersistenceProvider</provider>
-    <jta-data-source>jdbc/test</jta-data-source>
+    <jta-data-source>jdbc/j1demodb</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="toplink.ddl-generation" value="create-tables"/>

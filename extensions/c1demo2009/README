@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.5 2009-06-16 20:05:14 superpat7 Exp $
+$Id: README,v 1.6 2009-06-18 00:55:52 superpat7 Exp $
 
 ------------------------------------------------------------------------------
 
@@ -63,20 +63,39 @@ You must have the following software installed and running to be able to run
 the demo:
 
 MySQL - I used 5.1.33, but I don't think the exact version is critical
+
 JDK 6 - http://java.sun.com/javase/downloads/index.jsp
-NetBeans IDE 6.5.1 for JavaFX 1.2 - http://java.sun.com/javafx/downloads/
+
+NetBeans IDE 6.5.1 for JavaFX 1.2 - http://java.sun.com/javafx/downloads/ - you
+can use NetBeans 6.5.0 as long as you have the JavaFX plugins installed (see 
+below).
+
 GlassFish v2 UR2 - https://glassfish.dev.java.net/downloads/v2ur2-b04.html
+
 Maven - I used 2.0.6, but, again, I don't think the exact version is critical
 
 The demo assumes that GlassFish is in its default configuration, with an HTTP 
 listener on port 8080.
 
-You will need to install the 'GlassFish v1, v2' plugin for NetBeans, so that it
-can deploy the Demo Web Service.
+You will need to install the following plugins for NetBeans, if they are not 
+already installed:
+
+GlassFish v1, v2 version 1.6.2.1 (earlier versions may also work)
+JavaFX SDK for Mac OS X version 1.7
+JavaFX Kit version 1.8
+RESTful Web Services version 1.0.3
+Maven version 4.05
 
 You will also need to configure demo.example.com as a local DNS alias for 
 127.0.0.1 - you'll need to add demo.example.com to the end of the 127.0.0.1 
-line in /etc/hosts.
+line in /etc/hosts, or the corresponding hosts file for your version of 
+Windows:
+
+Windows 2000  - C:windows\system32\drivers\etc\hosts  Windows XP    - C:\windows\system32\drivers\etc\hosts  Windows NT    - C:\winnt\system32\drivers\etc\hosts  Windows Vista – C:\windows\system32\drivers\etc\hosts
+
+You should end up with a line in the hosts file of the form:
+
+127.0.0.1       localhost demo.example.com
 
 %% 2. Checking Out the Demo Source Code
 
@@ -85,26 +104,54 @@ https://opensso.dev.java.net/public/about/faqcenter/faqgetstart.html#checkout
 for instructions. The demo source code is located in 
 <source location>/opensso/extensions/c1demo2009
 
+NOTE - if you are checking the code out from CVS for the first time in 
+NetBeans, ensure that you leave the 'branch' empty - this will result in the 
+'trunk' being checked out from CVS.
+
 %% 3. Creating the Demo Database
 
-I used MySQL's 'test' database. The script to create and populate the demo 
-tables is located at 
-<source location>/opensso/extensions/c1demo2009/C1DemoServer/src/conf/setup.sql 
+The scripts to create a demo database, demo users and create and populate the 
+demo tables are located in 
+<source location>/opensso/extensions/c1demo2009/C1DemoServer/src/conf/
 and can be run via:
 
-mysql test < <source location>/opensso/extensions/c1demo2009/C1DemoServer/src/conf/setup.sql
+$ cd <source location>/opensso/extensions/c1demo2009/C1DemoServer/src/conf/
+$ mysql -uroot -p<password> < create_database.mysql
+$ mysql -uroot -p<password> -Dj1demodb < create_dbusers.sql
+$ mysql -uroot -p<password> -Dj1demodb < setup.sql
+
+If you ever need to recreate the database from scratch, you can drop it by 
+running:
+
+$ mysql -uroot -p<password> < drop_database.mysql
 
 %% 4. Deploying the Demo Web Service
 
 Start NetBeans and open the Demo Web Service project at 
-<source location>/opensso/extensions/c1demo2009/C1DemoServer. To test the demo
-web service, we will need to disable security: in NetBeans' 'Projects' pane,
-open the C1DemoServer project (click the triangle to the left of the project
-name) and open 'Configuration Files'. Double click 'web.xml' and comment out or 
-remove the two <filter> elements and the two <filter-mapping> elements - 
-everything from the end of the <web-app> opening tag to the start of the 
-<servlet> opening tag. It's OK to just delete the elements, since you can 
-easily revert to the original web.xml file later.
+<source location>/opensso/extensions/c1demo2009/C1DemoServer. 
+
+You may need to create a data connection for j1demodb. Select the C1DemoServer 
+project, right click, select 'Resolve Data Sources', select 'Add Connection'.
+
+Enter the Name:  MySQL (Connector / J driver)
+Enter the host:  localhost
+Port:  3306
+Database:  j1demodb
+User Name:  j1demouser
+Password:  j1demouser
+select: Remember password
+
+In the 'Projects' pane, expand C1DemoServer, expand 'Configuration Files', 
+right-click C1DemoServer.dbschema and select 'Recapture Schema from Database'.
+  
+To test the demo web service, we will need to disable security: in NetBeans' 
+'Projects' pane, open the C1DemoServer project (click the triangle to the left 
+of the project name) and open 'Configuration Files'. Double click 'web.xml', 
+select 'XML' to see edit the contents of the file and comment out or remove the 
+two <filter> elements and the two <filter-mapping> elements - everything from 
+the end of the <web-app> opening tag to the start of the <servlet> opening tag. 
+It's OK to just delete the elements, since you can easily revert to the 
+original web.xml file later.
 
 Now right-click the C1DemoServer project in the 'Projects' pane, select 
 'Properties', go to the 'Run' category, and check that the GlassFish v2 UR2 
@@ -112,7 +159,8 @@ server is selected.
 
 You can now deploy C1DemoServer - just right-click C1DemoServer in the 
 'Projects' pane and select 'Deploy'. Once the project is deployed, you can test
-the demo web service from a browser:
+the demo web service from a browser. Right-click C1DemoServer in the 'Projects' 
+pane, select 'Run', then visit the following URLs in your browser:
 
 http://localhost:8080/C1DemoServer/resources/phones/ should give a list of 
 phone elements
@@ -125,6 +173,10 @@ accounts
 
 http://localhost:8080/C1DemoServer/resources/accounts/123456789012345 should 
 give a single account
+
+Alternately, select Project right click, select 'Test RESTful web services'. 
+This will bring up an HTML page with a test interface to test the RESTful 
+interface. Note: this does not currently work in Safari.
 
 %% 5. Deploying and Configuring OpenSSO with Entitlements
 
@@ -155,14 +207,14 @@ the link to the OpenSSO login page and log in as amadmin with the password you
 supplied at configuration. Now click 'Access Control', then the top level realm
 listed under 'Realms'. Click 'Data Stores', then the 'New' button.
 
-Name the new Data Store 'JDBC', select 'Database Repository' as the type and 
-click 'Next'. You will need to enter the following data:
+Give the new Data Store name: 'JDBC', select 'Database Repository' as the type 
+and click 'Next'. You will need to enter the following data:
 
-	Password for Connecting to Database: <your password>
+	Password for Connecting to Database: <your password> (j1demouser)
 	
-	JDBC Driver URL: jdbc:mysql://127.0.0.1:3306/test
+	JDBC Driver URL: jdbc:mysql://127.0.0.1:3306/j1demodb
 	
-	Connect This User to Database: root
+	Connect This User to Database: j1demouser
 	
 	Database User Table Name: phone
 	
@@ -198,12 +250,16 @@ Leave the remaining fields as-is, and click 'Save'. You should see the 'JDBC'
 data store listed under the embedded store. Now click the 'Subjects' tab and 
 you should see a number of users in the store, identified by phone numbers.
 
+Note that the grouping functionality in the JDBC data store is not yet 
+functional, so you won't see an account listed in the 'Groups' tab. This isn't 
+a problem - we don't need it for the demo.
+
 Now we need to create policies for OpenSSO to protect our web service. The demo
 policies use custom condition classes, which are not supported by the current 
 version of the entitlements admin user interface, so we'll need to create them
-programmatically. Copy the two JSP files from 
-<source location>/opensso/extensions/entitlements/demo to 
-<glassfish directory>/domains/domain1/applications/j2ee-modules/entitlement/,
+programmatically. Copy the two JSP files, javaoneDemo.jsp and 
+javaoneDemoEval.jsp from <source location>/opensso/extensions/entitlements/demo 
+to <glassfish directory>/domains/domain1/applications/j2ee-modules/entitlement/,
 then go to http://demo.example.com:8080/entitlement/javaoneDemo.jsp - this JSP
 will create the demo policies. You can now test the policies by going to
 http://demo.example.com:8080/entitlement/javaoneDemoEval.jsp - if all is well,
@@ -275,7 +331,8 @@ set - on a *nix machine, you'll need to do the following:
 
 export DERBY_HOME=<glassfish directory>/javadb
 
-I set this in my .bashrc file, which is, in turn, sourced by my .bash_profile.
+I set this in my ~/.bashrc file, which is, in turn, sourced by my 
+~/.bash_profile.
 
 Now, restart Glassfish and Derby:
 
@@ -283,7 +340,10 @@ Now, restart Glassfish and Derby:
 <glassfish directory>/bin/asadmin start-database
 <glassfish directory>/bin/asadmin start-domain
 
-Create the OAuth Token Service tables using the Derby 'ij' utility:
+Create the OAuth Token Service tables using the Derby 'ij' utility. Before 
+running 'ij' for the first time, you may need to set its executable flag:
+
+sudo chmod a+x <glassfish directory>/javadb/bin/ij
 
 $ <glassfish directory>/javadb/bin/ij
 ij version 10.2
@@ -321,20 +381,32 @@ Pool Name: TokenServicePool
 
 (click 'OK').
 
-Now we can build and deploy the OAuth Token Service:
+Now we can build and deploy the OAuth Token Service. NOTE - you must have 
+ensure that you are using JDK 1.6. On a Mac, you can use the 'Java Preferences' 
+app in /Applications/Utilities. Just drag 'Java SE 6' to the top of the 'Java 
+Applications' list.
+ 
+To build the OAuth Token Service:
 
 cd <source location>/opensso/extensions/oauth/oauth-service
 mvn install
 
-Deploy the oauth-service WAR file via the GlassFish admin console. Log in to 
-the GlassFish admin console again and click 'Web Applications' in the list on 
-the left, then the 'Deploy' button on the right.
+Deploy the oauth-service WAR file (target/oauth-service.war) via the GlassFish 
+admin console - log in to the GlassFish admin console again and click 'Web 
+Applications' in the list on the left, then the 'Deploy' button on the right.
 
 Select 'Local packaged file' and give it the location of the OAuth Token 
 Service WAR - <source location>/opensso/extensions/oauth/oauth-service/target/oauth-service.war
 
 IMPORTANT - you MUST change the 'Context Root' from the default 'oauth-service' 
 to 'TokenService'. Hit 'OK' to deploy the OAuth Token Service.
+
+You can also deploy from the command line with:
+
+/Applications/NetBeans/glassfish-v2ur2/bin/asadmin deploy --host localhost \
+--port 4848 --user admin --contextroot /TokenService --precompilejsp=false \
+--verify=false --name "oauth-service" --enabled=true \
+<source location>/opensso/extensions/oauth/oauth-service/target/oauth-service.war
 
 %% 7. Running the Demo Test Harness
 
@@ -355,10 +427,11 @@ http://localhost:8080/C1DemoServer/resources/phones/1234567890/. If you go to
 WWW-Authenticate header is set to 'OAuth realm="http://www.example.com/"', 
 showing that OAuth is required.
 
-Now, open the <source location>/opensso/extensions/c1demo2009/C1DemoHarness
-project and built it. The demo harness takes a username, password and a list
-of URLs. It will attempt to obtain an OAuth token using the username and 
-password, then GET each URL in turn.
+Now, open the Netbeans project 
+<source location>/opensso/extensions/c1demo2009/C1DemoHarness and built it. 
+The demo harness takes a username, password and a list of URLs. It will attempt 
+to obtain an OAuth token using the username and password, then GET each URL in 
+turn.
 
 Run the test harness from the command line:
 
