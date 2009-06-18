@@ -228,4 +228,25 @@
   <data name="AuthnResponseInvalidSignatureReference" xml:space="preserve">
     <value>AuthnResponse failed validation due to invalid signature reference.</value>
   </data>
+  <data name="AuthnResponseInvalidSignatureMissingOnArtifactResponse" xml:space="preserve">
+    <value>AuthnResponse failed validation due to missing signature on the ArtifactResponse element.</value>
+  </data>
+  <data name="AuthnResponseInvalidSignatureMissingOnResponse" xml:space="preserve">
+    <value>AuthnResponse failed validation due to missing signature on the Response element.</value>
+  </data>
+  <data name="ArtifactResponseNullArgument" xml:space="preserve">
+    <value>Specified SAML artifact response was null.</value>
+  </data>
+  <data name="ArtifactResponseXmlException" xml:space="preserve">
+    <value>Specified SAML artifact response threw an XML exception.</value>
+  </data>
+  <data name="SignedXmlInvalidReference" xml:space="preserve">
+    <value>Signed XML did not have the desired reference ID.</value>
+  </data>
+  <data name="SignedXmlCheckSignatureFailed" xml:space="preserve">
+    <value>Signed XML did not have the correct signature.</value>
+  </data>
+  <data name="ArtifactResolutionInvalidInResponseTo" xml:space="preserve">
+    <value>ArtifactResponse failed due to invalid InResponseTo ID.</value>
+  </data>
 </root>

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProviderUtility.cs,v 1.5 2009-06-17 16:32:02 ggennaro Exp $
+ * $Id: ServiceProviderUtility.cs,v 1.6 2009-06-18 22:20:15 ggennaro Exp $
  */
 
 using System;
@@ -107,36 +107,6 @@ namespace Sun.Identity.Saml2
         #region Methods
 
         /// <summary>
-        /// Retrieve the AuthnResponse object with the given decoded SAMLv2 
-        /// response string.
-        /// </summary>
-        /// <param name="samlResponse">SAMLv2 response.</param>
-        /// <returns>AuthnResponse object</returns>
-        public static AuthnResponse GetAuthnResponse(string samlResponse)
-        {
-            AuthnResponse authnResponse = new AuthnResponse(samlResponse);
-            XmlDocument authnResponseXml = (XmlDocument)authnResponse.XmlDom;
-            FedletLogger.Info(authnResponseXml.InnerXml);
-
-            return authnResponse;
-        }
-
-        /// <summary>
-        /// Retrieve the AuthnResponse from the HTTP-POST encoded parameter
-        /// value.
-        /// </summary>
-        /// <param name="encodedResponse">
-        /// SAMLResponse value found in the encdoded HTTP-POST.
-        /// </param>
-        /// <returns>AuthnResponse object</returns>
-        public static AuthnResponse GetAuthnResponseFromPost(string encodedResponse)
-        {
-            string samlResponse = Saml2Utils.ConvertFromBase64(encodedResponse);
-
-            return ServiceProviderUtility.GetAuthnResponse(samlResponse);
-        }
-
-        /// <summary>
         /// Retrieve the AuthnResponse object found within the HttpRequest
         /// in the context of the HttpContext, performing validation of
         /// the AuthnResponse prior to returning to the user.
@@ -147,9 +117,10 @@ namespace Sun.Identity.Saml2
         /// <returns>AuthnResponse object</returns>
         public AuthnResponse GetAuthnResponse(HttpContext context)
         {
+            ArtifactResponse artifactResponse = null;
             AuthnResponse authnResponse = null;
+            ICollection authnRequests = AuthnRequestCache.GetSentAuthnRequests(context);
             HttpRequest request = context.Request;
-            bool signatureCheckRequired = true;
 
             // Check if a saml response was received...
             if (string.IsNullOrEmpty(request[Saml2Constants.ResponseParameter])
@@ -161,29 +132,36 @@ namespace Sun.Identity.Saml2
             // Obtain AuthnResponse object from either HTTP-POST or HTTP-Artifact
             if (request[Saml2Constants.ResponseParameter] != null)
             {
-                authnResponse = ServiceProviderUtility.GetAuthnResponseFromPost(request[Saml2Constants.ResponseParameter]);
-                signatureCheckRequired = true;
+                string samlResponse = Saml2Utils.ConvertFromBase64(request[Saml2Constants.ResponseParameter]);
+                authnResponse = new AuthnResponse(samlResponse);
+
+                XmlDocument xmlDoc = (XmlDocument)authnResponse.XmlDom;
+                StringBuilder logMessage = new StringBuilder();
+                logMessage.Append("AuthnResponse:\r\n").Append(xmlDoc.OuterXml);
+                FedletLogger.Info(logMessage.ToString());
             }
             else if (request[Saml2Constants.ArtifactParameter] != null)
             {
                 Artifact artifact = new Artifact(request[Saml2Constants.ArtifactParameter]);
-                authnResponse = this.GetAuthnResponseFromArtifact(artifact);
-                signatureCheckRequired = false;
+                artifactResponse = this.GetArtifactResponse(artifact);
+                authnResponse = artifactResponse.AuthnResponse;
+
+                XmlDocument xmlDoc = (XmlDocument)artifactResponse.XmlDom;
+                StringBuilder logMessage = new StringBuilder();
+                logMessage.Append("ArtifactResponse:\r\n").Append(xmlDoc.OuterXml);
+                FedletLogger.Info(logMessage.ToString());
             }
 
             string prevAuthnRequestId = authnResponse.InResponseTo;
             try
             {
-                if (!string.IsNullOrEmpty(prevAuthnRequestId))
+                if (artifactResponse != null)
                 {
-                    // solicited validation, check authnrequest cache.
-                    ICollection authnRequests = AuthnRequestCache.GetSentAuthnRequests(context);
-                    this.ValidateAuthnResponse(authnResponse, authnRequests, signatureCheckRequired);
+                    this.ValidateForArtifactProfile(artifactResponse, authnRequests);
                 }
                 else
                 {
-                    // unsolicited validation
-                    this.ValidateAuthnResponse(authnResponse, signatureCheckRequired);
+                    this.ValidateForPostProfile(authnResponse, authnRequests);
                 }
             }
             catch (Saml2Exception se)
@@ -208,11 +186,11 @@ namespace Sun.Identity.Saml2
         /// artifact.
         /// </summary>
         /// <param name="artifact">SAMLv2 artifact</param>
-        /// <returns>AuthnResponse object</returns>
-        public AuthnResponse GetAuthnResponseFromArtifact(Artifact artifact)
+        /// <returns>ArtifactResponse object</returns>
+        public ArtifactResponse GetArtifactResponse(Artifact artifact)
         {
             ArtifactResolve artifactResolve = new ArtifactResolve(this.ServiceProvider, artifact);
-            AuthnResponse authnResponse = null;
+            ArtifactResponse artifactResponse = null;
 
             IdentityProvider idp = this.GetIdpFromArtifact(artifact);
             if (idp == null)
@@ -245,28 +223,36 @@ namespace Sun.Identity.Saml2
                 requestStream.Write(byteArray, 0, byteArray.Length);
                 requestStream.Close();
 
+                XmlDocument xmlDoc = (XmlDocument)artifactResolve.XmlDom;
+                StringBuilder logMessage = new StringBuilder();
+                logMessage.Append("ArtifactResolve:\r\n").Append(xmlDoc.OuterXml);
+                FedletLogger.Info(logMessage.ToString());
+
                 response = (HttpWebResponse)request.GetResponse();
                 StreamReader streamReader = new StreamReader(response.GetResponseStream());
                 string responseContent = streamReader.ReadToEnd();
                 streamReader.Close();
 
-                StringBuilder message = new StringBuilder();
-                message.Append("ArtifactResponse:\r\n").Append(responseContent);
-                FedletLogger.Info(message.ToString());
-
                 XmlDocument soapResponse = new XmlDocument();
+                soapResponse.PreserveWhitespace = true;
+                soapResponse.LoadXml(responseContent);
+
                 XmlNamespaceManager soapNsMgr = new XmlNamespaceManager(soapResponse.NameTable);
                 soapNsMgr.AddNamespace("soap", "http://schemas.xmlsoap.org/soap/envelope/");
                 soapNsMgr.AddNamespace("samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
                 soapNsMgr.AddNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion");
                 soapNsMgr.AddNamespace("ds", "http://www.w3.org/2000/09/xmldsig#");
-                soapResponse.LoadXml(responseContent);
 
                 XmlElement root = soapResponse.DocumentElement;
-                XmlNode responseXml = root.SelectSingleNode("/soap:Envelope/soap:Body/samlp:ArtifactResponse/samlp:Response", soapNsMgr);
-                string samlResponse = responseXml.OuterXml;
+                XmlNode responseXml = root.SelectSingleNode("/soap:Envelope/soap:Body/samlp:ArtifactResponse", soapNsMgr);
+                string artifactResponseXml = responseXml.OuterXml;
 
-                authnResponse = ServiceProviderUtility.GetAuthnResponse(samlResponse);
+                artifactResponse = new ArtifactResponse(artifactResponseXml);
+
+                if (artifactResolve.Id != artifactResponse.InResponseTo)
+                {
+                    throw new Saml2Exception(Resources.ArtifactResolutionInvalidInResponseTo);
+                }
             }
             catch (WebException we)
             {
@@ -280,7 +266,7 @@ namespace Sun.Identity.Saml2
                 }
             }
 
-            return authnResponse;
+            return artifactResponse;
         }
 
         /// <summary>
@@ -394,8 +380,10 @@ namespace Sun.Identity.Saml2
             }
 
             AuthnRequest authnRequest = new AuthnRequest(this.ServiceProvider, parameters);
-            XmlDocument authnRequestXml = (XmlDocument)authnRequest.XmlDom;
-            FedletLogger.Info(authnRequestXml.InnerXml);
+            XmlDocument xmlDoc = (XmlDocument)authnRequest.XmlDom;
+            StringBuilder logMessage = new StringBuilder();
+            logMessage.Append("AuthnRequest:\r\n").Append(xmlDoc.OuterXml);
+            FedletLogger.Info(logMessage.ToString());
 
             // Add this AuthnRequest for this user for validation on AuthnResponse
             AuthnRequestCache.AddSentAuthnRequest(context, authnRequest);
@@ -415,44 +403,60 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
-        /// Validates the given unsolicited AuthnResponse based on the 
-        /// managed metadata.
+        /// Validates the given ArtifactResponse object.
         /// </summary>
-        /// <param name="authnResponse">AuthnResponse object</param>
-        /// <param name="signatureCheckRequired">
-        /// Flag to specify if the signature check is required.
+        /// <param name="artifactResponse">ArtifactResponse object.</param>
+        /// <param name="authnRequests">
+        /// Collection of previously sent authnRequests used to compare with
+        /// the InResponseTo attribute (if present) of the embedded 
+        /// AuthnResponse within the ArtifactResponse.
         /// </param>
-        public void ValidateAuthnResponse(AuthnResponse authnResponse, bool signatureCheckRequired)
+        /// <see cref="ServiceProviderUtility.Validate"/>
+        public void ValidateForArtifactProfile(ArtifactResponse artifactResponse, ICollection authnRequests)
         {
+            this.CheckSignature(artifactResponse);
+            this.Validate(artifactResponse.AuthnResponse, authnRequests);
+        }
+
+        /// <summary>
+        /// Validates the given AuthnResponse object.
+        /// </summary>
+        /// <param name="authnResponse">AuthnResponse object.</param>
+        /// <param name="authnRequests">
+        /// Collection of previously sent authnRequests used to compare with
+        /// the InResponseTo attribute (if present) of the AuthnResponse.
+        /// </param>
+        /// <see cref="ServiceProviderUtility.Validate"/>
+        public void ValidateForPostProfile(AuthnResponse authnResponse, ICollection authnRequests)
+        {
+            this.CheckSignature(authnResponse);
+            this.Validate(authnResponse, authnRequests);
+        }
+
+        /// <summary>
+        /// Validates the given AuthnResponse object except for xml signature.
+        /// XML signature checking is expected to be done prior to calling
+        /// this method based on the appropriate profile.
+        /// </summary>
+        /// <param name="authnResponse">AuthnResponse object.</param>
+        /// <param name="authnRequests">
+        /// Collection of previously sent authnRequests used to compare with
+        /// the InResponseTo attribute of the AuthnResponse (if present).
+        /// </param>
+        /// <see cref="ServiceProviderUtility.ValidateForArtifactProfile"/>
+        /// <see cref="ServiceProviderUtility.ValidateForPostProfile"/>
+        public void Validate(AuthnResponse authnResponse, ICollection authnRequests)
+        {
+            if (authnResponse.InResponseTo != null)
+            {
+                ServiceProviderUtility.CheckInResponseTo(authnResponse, authnRequests);
+            }
+
             this.CheckIssuer(authnResponse);
             ServiceProviderUtility.CheckStatusCode(authnResponse);
             ServiceProviderUtility.CheckConditionWithTime(authnResponse);
             this.CheckConditionWithAudience(authnResponse);
             this.CheckCircleOfTrust(authnResponse);
-
-            if (signatureCheckRequired)
-            {
-                this.CheckSignature(authnResponse);
-            }
-        }
-
-        /// <summary>
-        /// Validates the given solicited AuthnResponse based on the 
-        /// managed metadata and the provided list of previously sent
-        /// AuthnRequests.
-        /// </summary>
-        /// <param name="authnResponse">AuthnResponse object</param>
-        /// <param name="authnRequests">
-        /// Collection of previously sent AuthnRequests used for validating
-        /// the InResponseTo attribute.
-        /// </param>
-        /// <param name="signatureCheckRequired">
-        /// Flag to specify if the signature check is required.
-        /// </param>
-        public void ValidateAuthnResponse(AuthnResponse authnResponse, ICollection authnRequests, bool signatureCheckRequired)
-        {
-            ServiceProviderUtility.CheckInResponseTo(authnResponse, authnRequests);
-            this.ValidateAuthnResponse(authnResponse, signatureCheckRequired);
         }
 
         /// <summary>
@@ -472,7 +476,7 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
-        /// Checks the InResponseTo field fo the given AuthnResponse to
+        /// Checks the InResponseTo field of the given AuthnResponse to
         /// see if it is one of the managed authn requests.
         /// </summary>
         /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
@@ -632,10 +636,89 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
-        /// Checks the signature of the given AuthnResponse. If the boolean
-        /// parameter is false, the signature will only be checked if present.
+        /// Checks the signature of the given ArtifactResponse and embedded
+        /// AuthnResponse used for the Artifact profile.
         /// </summary>
-        /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
+        /// <param name="artifactResponse">ArtifactResponse object.</param>
+        /// <seealso cref="ServiceProviderUtility.ValidateForArtifactProfile"/>
+        private void CheckSignature(ArtifactResponse artifactResponse)
+        {
+            AuthnResponse authnResponse = artifactResponse.AuthnResponse;
+
+            IdentityProvider identityProvider = (IdentityProvider)this.IdentityProviders[authnResponse.Issuer];
+            if (identityProvider == null)
+            {
+                throw new Saml2Exception(Resources.AuthnResponseInvalidIssuer);
+            }
+
+            XmlElement artifactResponseSignature = (XmlElement)artifactResponse.XmlSignature;
+            XmlElement responseSignature = (XmlElement)authnResponse.XmlResponseSignature;
+            XmlElement assertionSignature = (XmlElement)authnResponse.XmlAssertionSignature;
+
+            XmlElement validationSignature = null;
+            string validationSignatureCert = null;
+            string validationReferenceId = null;
+
+            if (this.ServiceProvider.WantArtifactResponseSigned && artifactResponseSignature == null)
+            {
+                throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureMissingOnArtifactResponse);
+            }
+            else if (this.ServiceProvider.WantPostResponseSigned && responseSignature == null && artifactResponseSignature == null)
+            {
+                throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureMissingOnResponse);
+            }
+            else if (this.ServiceProvider.WantAssertionsSigned && assertionSignature == null && responseSignature == null && artifactResponseSignature == null) 
+            {
+                throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureMissing);
+            }
+
+            // pick the ArtifactResponse, Response or the Assertion for further validation...
+            if (artifactResponseSignature != null)
+            {
+                validationSignature = artifactResponseSignature;
+                validationSignatureCert = artifactResponse.SignatureCertificate;
+                validationReferenceId = artifactResponse.Id;
+            }
+            else if (responseSignature != null)
+            {
+                validationSignature = responseSignature;
+                validationSignatureCert = authnResponse.ResponseSignatureCertificate;
+                validationReferenceId = authnResponse.Id;
+            }
+            else
+            {
+                validationSignature = assertionSignature;
+                validationSignatureCert = authnResponse.AssertionSignatureCertificate;
+                validationReferenceId = authnResponse.AssertionId;
+            }
+
+            if (validationSignatureCert != null)
+            {
+                string idpCert = Regex.Replace(identityProvider.EncodedSigningCertificate, @"\s", string.Empty);
+                validationSignatureCert = Regex.Replace(validationSignatureCert, @"\s", string.Empty);
+                if (idpCert != validationSignatureCert)
+                {
+                    throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureCertsDontMatch);
+                }
+            }
+
+            // check the signature of the xml document (optional for artifact)
+            if (validationSignature != null) 
+            {
+                Saml2Utils.ValidateSignedXml(
+                                             identityProvider.SigningCertificate,
+                                             (XmlDocument)artifactResponse.XmlDom,
+                                             validationSignature,
+                                             validationReferenceId);
+            }
+        }
+        
+        /// <summary>
+        /// Checks the signature of the given AuthnResponse used for the POST
+        /// profile.
+        /// </summary>
+        /// <param name="authnResponse">AuthnResponse object.</param>
+        /// <seealso cref="ServiceProviderUtility.ValidateForPostProfile"/>
         private void CheckSignature(AuthnResponse authnResponse)
         {
             IdentityProvider identityProvider = (IdentityProvider)this.IdentityProviders[authnResponse.Issuer];
@@ -650,10 +733,13 @@ namespace Sun.Identity.Saml2
             string validationSignatureCert = null;
             string validationReferenceId = null;
 
-            if ((this.ServiceProvider.WantPostResponseSigned && responseSignature == null)
-                || (responseSignature == null && assertionSignature == null) )
+            if (responseSignature == null && assertionSignature == null)
             {
                 throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureMissing);
+            }
+            else if (this.ServiceProvider.WantPostResponseSigned && responseSignature == null)
+            {
+                throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureMissingOnResponse);
             }
 
             // pick the Response or the Assertion for further validation...
@@ -680,30 +766,12 @@ namespace Sun.Identity.Saml2
                 }
             }
 
-            // check the signature of the xml document
-            SignedXml signedXml = new SignedXml((XmlDocument)authnResponse.XmlDom);
-            signedXml.LoadXml(validationSignature);
-            bool results = signedXml.CheckSignature(identityProvider.SigningCertificate, true);
-            if (results == false)
-            {
-                throw new Saml2Exception(Resources.AuthnResponseInvalidSignature);
-            }
-
-            // confirm references in signature
-            bool foundValidSignedReference = false;
-            foreach (Reference r in signedXml.SignedInfo.References)
-            {
-                string referenceId = r.Uri.Substring(1);
-                if (referenceId == validationReferenceId)
-                {
-                    foundValidSignedReference = true;
-                }
-            }
-
-            if (!foundValidSignedReference)
-            {
-                throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureReference);
-            }
+            // check the signature of the xml document (always for post)
+            Saml2Utils.ValidateSignedXml(
+                                         identityProvider.SigningCertificate,
+                                         (XmlDocument)authnResponse.XmlDom,
+                                         validationSignature,
+                                         validationReferenceId);
         }
 
         /// <summary>
@@ -739,7 +807,7 @@ namespace Sun.Identity.Saml2
         /// Identity Provider who's entity ID matches the source ID
         /// within the artifact, null if not found.
         /// </returns>
-        public IdentityProvider GetIdpFromArtifact(Artifact artifact)
+        private IdentityProvider GetIdpFromArtifact(Artifact artifact)
         {
             SHA1 sha1 = new SHA1CryptoServiceProvider();
             IdentityProvider idp = null;

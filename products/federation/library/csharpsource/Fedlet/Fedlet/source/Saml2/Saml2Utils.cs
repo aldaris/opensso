@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: Saml2Utils.cs,v 1.3 2009-06-11 18:37:58 ggennaro Exp $
+ * $Id: Saml2Utils.cs,v 1.4 2009-06-18 22:20:15 ggennaro Exp $
  */
 
 using System;
@@ -30,10 +30,14 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Web;
 using System.Xml;
 using System.Xml.XPath;
+using Sun.Identity.Saml2.Exceptions;
+using Sun.Identity.Properties;
 
 namespace Sun.Identity.Saml2
 {
@@ -212,6 +216,46 @@ namespace Sun.Identity.Saml2
             return decompressedMessage;
         }
 
+        /// <summary>
+        /// Validates a signed xml document with the given certificate,
+        /// the xml signature, and the target reference id.
+        /// </summary>
+        /// <param name="cert">
+        /// X509Certificate used to verify the signature of the xml document.
+        /// </param>
+        /// <param name="xmlDoc">
+        /// XML document whose signature will be checked.
+        /// </param>
+        /// <param name="xmlSignature">Signature of the XML document.</param>
+        /// <param name="targetReferenceId">
+        /// Reference element that should be signed.
+        /// </param>
+        public static void ValidateSignedXml(X509Certificate2 cert, IXPathNavigable xmlDoc, IXPathNavigable xmlSignature, string targetReferenceId)
+        {
+            SignedXml signedXml = new SignedXml((XmlDocument)xmlDoc);
+            signedXml.LoadXml((XmlElement)xmlSignature);
+
+            bool results = signedXml.CheckSignature(cert, true);
+            if (results == false)
+            {
+                throw new Saml2Exception(Resources.SignedXmlCheckSignatureFailed);
+            }
+
+            bool foundValidSignedReference = false;
+            foreach (Reference r in signedXml.SignedInfo.References)
+            {
+                string referenceId = r.Uri.Substring(1);
+                if (referenceId == targetReferenceId)
+                {
+                    foundValidSignedReference = true;
+                }
+            }
+
+            if (!foundValidSignedReference)
+            {
+                throw new Saml2Exception(Resources.SignedXmlInvalidReference);
+            }
+        }
         #endregion
     }
 }
