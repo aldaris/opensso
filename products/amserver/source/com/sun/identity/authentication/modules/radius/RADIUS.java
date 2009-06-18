@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RADIUS.java,v 1.2 2008-06-25 05:41:59 qcheng Exp $
+ * $Id: RADIUS.java,v 1.3 2009-06-18 18:48:23 bigfatrat Exp $
  *
  */
 
@@ -71,7 +71,7 @@ public class RADIUS extends AMLoginModule {
     private boolean commitSucceeded = false;
     private RADIUSPrincipal userPrincipal = null;
 
-    //private String username;
+    private String username;
     private static final int MSG_INFORMATION = 0;
     private static final int MSG_WARNING = 1;
     private static final int MSG_ERROR = 2;
@@ -94,6 +94,7 @@ public class RADIUS extends AMLoginModule {
     private boolean radiusSSL = false;
     private static final String amAuthRadius = "amAuthRadius";
     private boolean getCredentialsFromSharedState;
+    private ChallengeException cException = null;
 
     static {
         if (debug == null) {
@@ -206,8 +207,6 @@ public class RADIUS extends AMLoginModule {
 	throws AuthLoginException {
 	String tmp_passwd = null;
         String sState;
-        ChallengeException cException = null;
-        String username = null;
 
         switch (state) {
           case ISAuthConstants.LOGIN_START:  
@@ -338,13 +337,15 @@ public class RADIUS extends AMLoginModule {
                       throw new AuthLoginException(amAuthRadius, 
                           "RadiusLoginFailed", null);
                   }
-                  resetCallback(2, 1);
+                  resetCallback(2, 0);
                   challengeID = ce.getReplyMessage();
                   if (debug.messageEnabled()) {
                       debug.message("Server challenge again"+
                           " with challengeID: "+challengeID);
                   }
+                  cException = ce;  // save it for next replyChallenge
                   setDynamicText(2);
+                  // note that cException is reused
                   return ISAuthConstants.LOGIN_CHALLENGE;
               } catch (RejectException ex) {
                   debug.error("Radius challenge response rejected", ex);
