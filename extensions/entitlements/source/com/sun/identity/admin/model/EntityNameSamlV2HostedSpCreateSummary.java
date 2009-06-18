@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityNameSamlV2HostedSpCreateSummary.java,v 1.1 2009-06-15 18:43:46 asyhuang Exp $
+ * $Id: EntityNameSamlV2HostedSpCreateSummary.java,v 1.2 2009-06-18 07:54:56 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
+
+import com.sun.identity.admin.Resources;
 
 public class EntityNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateSummary {
 
@@ -34,8 +36,9 @@ public class EntityNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateS
     }
 
     public String getLabel() {
-        // TODO: localize
-        return "Entity Name";
+        Resources r = new Resources();
+        String label = r.getString(this, "label");
+        return label;
     }
 
     public String getValue() {

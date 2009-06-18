@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.3 2009-06-17 23:45:11 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.4 2009-06-18 07:54:54 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -33,10 +33,8 @@ import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.SamlV2HostedSpCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
-import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
-import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SamlV2HostedSpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2HostedSpCreateWizardStep;
 import java.io.BufferedReader;
@@ -45,9 +43,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.EventObject;
-import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 
@@ -62,42 +58,10 @@ public class SamlV2HostedSpCreateWizardHandler
         this.samlV2HostedSpCreateDao = samlV2HostedSpCreateDao;
     }
 
-    public void doFinishNext() {
-        NextPopupBean npb = NextPopupBean.getInstance();
-        npb.setVisible(true);
-        Resources r = new Resources();
-        npb.setTitle(r.getString(this, "finishTitle"));
-        npb.setMessage(r.getString(this, "finishMessage"));
-        npb.setLinkBeans(getFinishLinkBeans());
-    }
-
-    public void doCancelNext() {
-        NextPopupBean npb = NextPopupBean.getInstance();
-        npb.setVisible(true);
-        Resources r = new Resources();
-        npb.setTitle(r.getString(this, "cancelTitle"));
-        npb.setMessage(r.getString(this, "cancelMessage"));
-        npb.setLinkBeans(getCancelLinkBeans());
-    }
-
-    private List<LinkBean> getFinishLinkBeans() {
-        List<LinkBean> lbs = new ArrayList<LinkBean>();
-        lbs.add(LinkBean.HOME);
-        lbs.add(LinkBean.SAMLV2_HOSTED_IDP_CREATE);
-        lbs.add(LinkBean.SAMLV2_REMOTE_IDP_CREATE);
-        lbs.add(LinkBean.SAMLV2_HOSTED_SP_CREATE);
-        lbs.add(LinkBean.SAMLV2_REMOTE_SP_CREATE);
-        return lbs;
-    }
-
-    private List<LinkBean> getCancelLinkBeans() {
-        List<LinkBean> lbs = new ArrayList<LinkBean>();
-        lbs.add(LinkBean.HOME);
-        lbs.add(LinkBean.SAMLV2_HOSTED_IDP_CREATE);
-        lbs.add(LinkBean.SAMLV2_REMOTE_IDP_CREATE);
-        lbs.add(LinkBean.SAMLV2_HOSTED_SP_CREATE);
-        lbs.add(LinkBean.SAMLV2_REMOTE_SP_CREATE);
-        return lbs;
+    @Override
+    public void cancelListener(ActionEvent event) {
+        getSamlV2HostedSpCreateWizardBean().reset();
+        doCancelNext();
     }
 
     @Override
@@ -132,12 +96,6 @@ public class SamlV2HostedSpCreateWizardHandler
 
         getSamlV2HostedSpCreateWizardBean().reset();
         doFinishNext();
-    }
-
-    @Override
-    public void cancelListener(ActionEvent event) {
-        getSamlV2HostedSpCreateWizardBean().reset();
-        doCancelNext();
     }
 
     @Override
@@ -240,7 +198,7 @@ public class SamlV2HostedSpCreateWizardHandler
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
                 Effect e;
-                
+
                 e = new InputFieldErrorEffect();
                 getSamlV2HostedSpCreateWizardBean().setSamlV2HostedSpCreateEntityNameInputEffect(e);
 

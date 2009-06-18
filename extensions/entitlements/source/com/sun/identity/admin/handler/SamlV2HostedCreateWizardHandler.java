@@ -22,14 +22,57 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedCreateWizardHandler.java,v 1.1 2009-06-15 18:11:04 asyhuang Exp $
+ * $Id: SamlV2HostedCreateWizardHandler.java,v 1.2 2009-06-18 07:54:53 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
+import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.model.LinkBean;
+import com.sun.identity.admin.model.NextPopupBean;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SamlV2HostedCreateWizardHandler
         extends WizardHandler
         implements Serializable {
+
+    public void doFinishNext() {
+        NextPopupBean npb = NextPopupBean.getInstance();
+        npb.setVisible(true);
+        Resources r = new Resources();
+        npb.setTitle(r.getString(this, "finishTitle"));
+        npb.setMessage(r.getString(this, "finishMessage"));
+        npb.setLinkBeans(getFinishLinkBeans());
+    }
+
+    public void doCancelNext() {
+        NextPopupBean npb = NextPopupBean.getInstance();
+        npb.setVisible(true);
+        Resources r = new Resources();
+        npb.setTitle(r.getString(this, "cancelTitle"));
+        npb.setMessage(r.getString(this, "cancelMessage"));
+        npb.setLinkBeans(getCancelLinkBeans());
+    }
+
+    private List<LinkBean> getFinishLinkBeans() {
+        List<LinkBean> lbs = new ArrayList<LinkBean>();
+        lbs.add(LinkBean.HOME);
+        lbs.add(LinkBean.SAMLV2_HOSTED_IDP_CREATE);
+        lbs.add(LinkBean.SAMLV2_REMOTE_IDP_CREATE);
+        lbs.add(LinkBean.SAMLV2_HOSTED_SP_CREATE);
+        lbs.add(LinkBean.SAMLV2_REMOTE_SP_CREATE);
+        return lbs;
+    }
+
+    private List<LinkBean> getCancelLinkBeans() {
+        List<LinkBean> lbs = new ArrayList<LinkBean>();
+        lbs.add(LinkBean.HOME);
+        lbs.add(LinkBean.SAMLV2_HOSTED_IDP_CREATE);
+        lbs.add(LinkBean.SAMLV2_REMOTE_IDP_CREATE);
+        lbs.add(LinkBean.SAMLV2_HOSTED_SP_CREATE);
+        lbs.add(LinkBean.SAMLV2_REMOTE_SP_CREATE);
+        return lbs;
+    }
 
 }
