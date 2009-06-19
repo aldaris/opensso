@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpCallback.java,v 1.2 2008-06-25 05:42:06 qcheng Exp $
+ * $Id: HttpCallback.java,v 1.3 2009-06-19 17:54:14 ericow Exp $
  *
  */
 
@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HttpCallback implements Callback, Serializable {
     private String tokenHeader = null;
+    private String authToken = null;
     private String negoHeader = null;
     private String negoValue = null;
     private int errorCode = HttpServletResponse.SC_UNAUTHORIZED;
@@ -128,5 +129,21 @@ public class HttpCallback implements Callback, Serializable {
         return errorCode;
     }
     
+    /**
+     * Returns the authorization string.
+     * @return the authorization string.
+     */
+    public String getAuthorization() {
+        return authToken;
+    }
+    
+    /**
+     * Set the authorization string to a <code>HttpCallback</code> object.
+     * @param authorization 
+     */
+    public void setAuthorization(String authorization) {
+        this.authToken = authorization;
+    }
+
 }
 

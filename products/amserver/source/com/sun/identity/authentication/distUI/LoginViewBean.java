@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.27 2009-05-11 22:24:22 qcheng Exp $
+ * $Id: LoginViewBean.java,v 1.28 2009-06-19 17:54:13 ericow Exp $
  *
  */
 
@@ -48,6 +48,7 @@ import com.sun.identity.authentication.UI.CallBackTiledView;
 import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.authentication.spi.HttpCallback;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
 import com.sun.identity.authentication.spi.RedirectCallback;
 import com.sun.identity.authentication.spi.X509CertificateCallback;
@@ -1113,6 +1114,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                     clearCookie(rc.getRedirectBackUrlCookieName());
                     loginDebug.message("Redirect callback : set status");
                     rc.setStatus(status);
+                } else if (callbacks[i] instanceof HttpCallback) {
+                    processHttpCallback((HttpCallback)callbacks[i]);
                 }
             }
             
@@ -1277,6 +1280,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 break;
             } else if (callbacks[i] instanceof RedirectCallback) {
                 processRedirectCallback((RedirectCallback)callbacks[i]);
+            } else if (callbacks[i] instanceof HttpCallback) {
+                processHttpCallback((HttpCallback)callbacks[i]);
             }
         }
         
@@ -1342,6 +1347,33 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         } else if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
             indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
             indexName = (String)reqDataHash.get(Constants.COMPOSITE_ADVICE);
+        }
+    }
+
+    // Process 'HttpCallback' initiated by Authentication module
+    private void processHttpCallback(HttpCallback hc) throws Exception{
+        String auth = request.getHeader(hc.getAuthorizationHeader());
+        if (auth != null && auth.length() != 0) {
+            if (loginDebug.messageEnabled()){
+                loginDebug.message("Found authorization header.");
+            }
+            onePageLogin = true;
+            if (hc.getAuthorization() == null) {
+                hc.setAuthorization(auth);
+                processLoginDisplay();
+            }
+        } else {
+            if (loginDebug.messageEnabled()){
+                loginDebug.message("Start authorization negotiation...");
+                loginDebug.message("header: " + hc.getNegotiationHeaderName() +
+                        ", value: " + hc.getNegotiationHeaderValue() +
+                        ", code: " + hc.getNegotiationCode());
+            }
+
+            forward = false;
+            response.setHeader(hc.getNegotiationHeaderName(),
+                    hc.getNegotiationHeaderValue());
+            response.sendError(hc.getNegotiationCode());
         }
     }
 

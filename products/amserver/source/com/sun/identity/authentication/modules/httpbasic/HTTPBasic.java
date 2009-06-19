@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HTTPBasic.java,v 1.4 2009-06-17 21:49:54 ericow Exp $
+ * $Id: HTTPBasic.java,v 1.5 2009-06-19 17:54:14 ericow Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.iplanet.am.util.Cache;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.authentication.spi.HttpCallback;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.config.AMAuthenticationManager;
@@ -124,17 +125,25 @@ public class HTTPBasic extends AMLoginModule {
         if ((instanceName == null) || (instanceName.length() == 0) ) {
             throw new AuthLoginException(amAuthHTTPBasic, "noModule", null);
         }
+
         int status = 0;
         HttpServletRequest req = getHttpServletRequest();
         HttpServletResponse resp = getHttpServletResponse();
-        if (req == null || resp == null) {
+        String auth = null;
+        if (callbacks != null && callbacks.length != 0) { 
+            auth = ((HttpCallback)callbacks[0]).getAuthorization();
+        }
+
+        if ((req == null || resp == null) && auth == null) {
             debug.message("Servlet Request and Response cannot be null");
             throw new AuthLoginException(amAuthHTTPBasic, "reqRespNull", 
                 null);
         }
         try {
             debug.message("Process HTTPBasic Auth started ...");
-            String auth = req.getHeader("Authorization");
+            if (auth == null || auth.length() == 0) {
+                auth = req.getHeader("Authorization");
+            }
             if (debug.messageEnabled()) {
                 debug.message("AUTH : "+auth);
             }

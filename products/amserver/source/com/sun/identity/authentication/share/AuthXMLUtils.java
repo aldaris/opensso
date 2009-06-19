@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLUtils.java,v 1.8 2009-05-21 21:57:34 qcheng Exp $
+ * $Id: AuthXMLUtils.java,v 1.9 2009-06-19 17:54:15 ericow Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.authentication.spi.DSAMECallbackInterface;
+import com.sun.identity.authentication.spi.HttpCallback;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
 import com.sun.identity.authentication.spi.RedirectCallback;
 import com.sun.identity.authentication.spi.X509CertificateCallback;
@@ -259,6 +260,17 @@ public class AuthXMLUtils {
                     callbackList.add(
                             createX509CertificateCallback(childNode,null));
                 }
+            } else if (childNodeName.equals(
+                    AuthXMLTags.HTTP_CALLBACK)) {
+                if (callbacks != null) {
+                    diIndex = getHttpCallbackIndex(callbacks,ppIndex);
+                    if (diIndex >= 0) {
+                        callbackList.add(createHttpCallback(childNode,
+                                callbacks[diIndex]));
+                    }
+                } else {
+                    callbackList.add(createHttpCallback(childNode,null));
+                }
             } else if (childNodeName.equals(AuthXMLTags.CUSTOM_CALLBACK)) {
                 if (callbacks != null) {
                     diIndex = getCustomCallbackIndex(callbacks,ppIndex);
@@ -340,6 +352,9 @@ public class AuthXMLUtils {
                 X509CertificateCallback xc =
                     (X509CertificateCallback) callbacks[i];
                 xmlString.append(getX509CertificateCallbackXML(xc));
+            } else if (callbacks[i] instanceof HttpCallback) {
+                HttpCallback hc = (HttpCallback)callbacks[i];
+                xmlString.append(getHttpCallbackXML(hc));
             } else if (callbacks[i] instanceof DSAMECallbackInterface) {
                 DSAMECallbackInterface dsameCallback =
                 (DSAMECallbackInterface) callbacks[i];
@@ -758,6 +773,30 @@ public class AuthXMLUtils {
         return redirectCallback;
     }
 
+    static HttpCallback createHttpCallback(Node childNode, Callback callback) {
+        HttpCallback hc = null;
+        if (callback != null && (callback instanceof HttpCallback)) {
+            hc = (HttpCallback)callback;
+        }
+
+        if (hc == null) {
+            String authRHeader = getValueOfChildNode(childNode,
+                    AuthXMLTags.HTTP_HEADER);
+            String negoHeader = getValueOfChildNode(childNode,
+                    AuthXMLTags.HTTP_NEGO);
+            String errorCode = getValueOfChildNode(childNode,
+                    AuthXMLTags.HTTP_CODE);
+            hc = new HttpCallback(authRHeader, negoHeader, errorCode);
+        }
+
+        String tokenValue = getValueOfChildNode(childNode,
+                AuthXMLTags.HTTP_TOKEN);
+        if (tokenValue != null && tokenValue.length() > 0) {
+            hc.setAuthorization(tokenValue);
+        }
+        return hc;
+    }
+
     protected static String getRedirectURL(Node node) {
         Node pNode = XMLUtils.getChildNode(node, AuthXMLTags.REDIRECT_URL);
         if (pNode != null) {
@@ -1154,6 +1193,31 @@ public class AuthXMLUtils {
 
         xmlString.append(AuthXMLTags.CERT_CALLBACK_END);
 
+        return xmlString.toString();
+    }
+
+    static String getHttpCallbackXML(HttpCallback hc) {
+        StringBuffer xmlString = new StringBuffer();
+        xmlString.append(AuthXMLTags.HTTP_CALLBACK_BEGIN).
+                append(AuthXMLTags.HTTP_HEADER_BEGIN).
+                append(hc.getAuthorizationHeader()).
+                append(AuthXMLTags.HTTP_HEADER_END). 
+                append(AuthXMLTags.HTTP_NEGO_BEGIN). 
+                append(hc.getNegotiationHeaderName()).
+                append(":").
+                append(hc.getNegotiationHeaderValue()).
+                append(AuthXMLTags.HTTP_NEGO_END). 
+                append(AuthXMLTags.HTTP_CODE_BEGIN). 
+                append(hc.getNegotiationCode()).
+                append(AuthXMLTags.HTTP_CODE_END);
+
+        String tokenValue = hc.getAuthorization();
+        if (tokenValue != null && tokenValue.length() > 0) {
+            xmlString.append(AuthXMLTags.HTTP_TOKEN_BEGIN).
+                    append(tokenValue).
+                    append(AuthXMLTags.HTTP_TOKEN_END);
+        }
+        xmlString.append(AuthXMLTags.HTTP_CALLBACK_END);
         return xmlString.toString();
     }
 
@@ -1580,6 +1644,16 @@ public class AuthXMLUtils {
         int i=0;
         for (i = startIndex;i < callbacks.length;i++) {
             if (callbacks[i] instanceof X509CertificateCallback) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    static int getHttpCallbackIndex(Callback[] callbacks, int startIndex) {
+        int i=0;
+        for (i = startIndex; i < callbacks.length; i++) {
+            if (callbacks[i] instanceof HttpCallback) {
                 return i;
             }
         }

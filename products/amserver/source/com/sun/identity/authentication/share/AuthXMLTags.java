@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLTags.java,v 1.10 2009-04-29 18:07:04 qcheng Exp $
+ * $Id: AuthXMLTags.java,v 1.11 2009-06-19 17:54:14 ericow Exp $
  *
  */
 
@@ -118,9 +118,20 @@ public interface AuthXMLTags {
     public static final String SPACE= " ";
     public static final String QUOTE = "\"";
     public static final String HTTP_CALLBACK = "HttpCallback";
+    public static final String HTTP_CALLBACK_BEGIN = "<HttpCallback>";
+    public static final String HTTP_CALLBACK_END = "</HttpCallback>";
     public static final String HTTP_HEADER = "HttpHeader";
+    public static final String HTTP_HEADER_BEGIN = "<HttpHeader>";
+    public static final String HTTP_HEADER_END = "</HttpHeader>";
     public static final String HTTP_NEGO = "Negotiation";
+    public static final String HTTP_NEGO_BEGIN = "<Negotiation>";
+    public static final String HTTP_NEGO_END = "</Negotiation>";
     public static final String HTTP_CODE = "HttpErrorCode";
+    public static final String HTTP_CODE_BEGIN = "<HttpErrorCode>";
+    public static final String HTTP_CODE_END = "</HttpErrorCode>";
+    public static final String HTTP_TOKEN = "HttpToken";
+    public static final String HTTP_TOKEN_BEGIN = "<HttpToken>";
+    public static final String HTTP_TOKEN_END = "</HttpToken>";
     public static final String SIGN_REQUIRED = "SignatureRequired";
     public static final String X509CERTIFICATE = "X509Certificate";
 

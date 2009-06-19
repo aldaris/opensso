@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: remote-auth.dtd,v 1.8 2009-04-29 18:07:35 qcheng Exp $
+    $Id: remote-auth.dtd,v 1.9 2009-06-19 17:52:39 ericow Exp $
 
 -->
 
@@ -264,7 +264,7 @@ required data. -->
                                 TextInputCallback | TextOutputCallback |
                                 LanguageCallback | PagePropertiesCallback |
                                 SAMLCallback | X509CertificateCallback |
-                                CustomCallback)+ >
+                                HttpCallback | CustomCallback)+ >
 <!ATTLIST        Callbacks
         length                NMTOKEN                #REQUIRED
 >
@@ -449,3 +449,23 @@ specifies if multiple selections are allowed for choice values
 <!-- Value element will be used by the client to return a value
 provided by the user (or service) back to the server. -->
 <!ELEMENT        Value                ( #PCDATA ) >
+
+<!-- HttpCallback element is used by the authentication module with Http
+     protocol based handshaking negotiation. -->
+<!ELEMENT       HttpCallback    ( HttpHeader, Negotiation, HttpErrorCode,
+                                  HttpToken ) >
+
+<!-- HttpHeader element is used in HttpCallback -->
+<!ELEMENT       HttpHeader      ( #PCDATA ) >
+
+<!-- Negotiation element is used in HttpCallback to set the negotiation header
+     in HttpServletResponse -->
+<!ELEMENT       Negotiation     ( #PCDATA ) >
+
+<!-- Code element is used in HttpCallback to set the error code in negotiation
+     response -->
+<!ELEMENT       HttpErrorCode   ( #PCDATA ) >
+
+<!-- HttpToken element is used in HttpCallback to set the authorization token
+     provided by the user back to the server. -->
+<!ELEMENT       HttpErrorCode   ( #PCDATA ) >
