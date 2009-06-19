@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.22 2009-05-14 04:17:34 222713 Exp $
+ * $Id: LoginViewBean.java,v 1.23 2009-06-19 18:29:11 manish_rustagi Exp $
  *
  */
 
@@ -361,7 +361,39 @@ public class LoginViewBean extends AuthViewBeanBase {
                             ("authentication.already.login");
                     }
                     LoginSuccess = true;
-                    response.sendRedirect(redirect_url);
+                    boolean doForward = AuthUtils.isForwardSuccess(ac,request);
+                    if (doForward) {  
+                        if(loginDebug.messageEnabled()){
+                            loginDebug.message(
+                                "LoginViewBean.forwardRequest=true");
+                            loginDebug.message("LoginViewBean.forwardTo():" +
+                            "Forward URL before appending cookie is " + 
+                            redirect_url); 
+                        }
+                        Cookie appendCookie = 
+                            AuthUtils.getCookieString(ac, null);
+                        if(redirect_url.indexOf("?") == -1){
+                            redirect_url = redirect_url + "?" + 
+                            appendCookie.getName() + "=" + 
+                            appendCookie.getValue(); 
+                        }else{
+                            redirect_url = redirect_url + "&" + 
+                            appendCookie.getName() + "=" + 
+                            appendCookie.getValue();                            
+                        }
+                        if(loginDebug.messageEnabled()){
+                            loginDebug.message("LoginViewBean.forwardTo():" +
+                            "Final Forward URL is " + redirect_url); 
+                        }
+                        
+                        RequestDispatcher dispatcher =
+                        request.getRequestDispatcher(redirect_url);
+                        request.setAttribute(Constants.FORWARD_PARAM,
+                            Constants.FORWARD_YES_VALUE);
+                        dispatcher.forward(request, response);
+                    } else {            
+                        response.sendRedirect(redirect_url);
+                    }
                     return;
                 }
                 catch (Exception er){
@@ -492,6 +524,8 @@ public class LoginViewBean extends AuthViewBeanBase {
             // forward check for liberty federation, if the redirect_url
             // is the federation post login servlet, use forward instead
             boolean doForward = AuthUtils.isForwardSuccess(ac,request);
+            Cookie appendCookie = AuthUtils.getCookieString(ac, null);
+
             if (AuthUtils.isGenericHTMLClient(client_type) || doForward) {
                 try {
                     if (loginDebug.messageEnabled()) {
@@ -550,6 +584,25 @@ public class LoginViewBean extends AuthViewBeanBase {
                     clearGlobals();
                     if (doForward) {
                         loginDebug.message("LoginViewBean.forwardRequest=true");
+                        if(loginDebug.messageEnabled()){
+                            loginDebug.message("LoginViewBean.forwardTo():" +
+                            "Forward URL before appending cookie is " + 
+                            redirect_url); 
+                        }                 
+                        if(redirect_url.indexOf("?") == -1){
+                            redirect_url = redirect_url + "?" + 
+                            appendCookie.getName() + "=" + 
+                            appendCookie.getValue(); 
+                        }else{
+                            redirect_url = redirect_url + "&" + 
+                            appendCookie.getName() + "=" + 
+                            appendCookie.getValue();                            
+                        }
+                        if(loginDebug.messageEnabled()){
+                            loginDebug.message("LoginViewBean.forwardTo():" +
+                            "Final Forward URL is " + redirect_url); 
+                        }
+
                         RequestDispatcher dispatcher =
                         request.getRequestDispatcher(redirect_url);
                         request.setAttribute(Constants.FORWARD_PARAM,
