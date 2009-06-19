@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.21 2009-04-29 18:07:03 qcheng Exp $
+ * $Id: AMLoginContext.java,v 1.22 2009-06-19 02:28:00 bigfatrat Exp $
  *
  */
 
@@ -62,6 +62,9 @@ import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
+
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerAuthSvcImpl;
 
 /**
  * <code>AMLoginContext</code> class is the core layer in the authentication 
@@ -117,6 +120,8 @@ public class AMLoginContext {
     private Thread jaasThread = null;
     private AppConfigurationEntry[] entries = null;
     Callback[] recdCallback;
+
+    private static SsoServerAuthSvcImpl authImpl;
     
     /**
      * Bundle to be used for localized error message. users can be differnt
@@ -151,6 +156,9 @@ public class AMLoginContext {
         }
         debug.message("Reset the auth Configuration !");
 
+        if (Agent.isRunning()) {
+            authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+        }
     }
 
     /**
@@ -289,9 +297,25 @@ public class AMLoginContext {
                 return;
             }
         } catch (AuthLoginException le) {
+	    if (Agent.isRunning()) {
+		if (authImpl == null) {
+		    authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+		}
+		if (authImpl != null) {
+	            authImpl.incSsoServerAuthenticationFailureCount();
+		}
+	    }
             debug.message("Error  : " ,le);
             throw le;
         } catch (Exception e) {
+	    if (Agent.isRunning()) {
+		if (authImpl == null) {
+		    authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+		}
+		if (authImpl != null) {
+	            authImpl.incSsoServerAuthenticationFailureCount();
+		}
+	    }
             debug.message("Error : " , e);
             throw new AuthLoginException(e);
         }
@@ -309,6 +333,14 @@ public class AMLoginContext {
             internalAuthError = true;
             st.setStatus(LoginStatus.AUTH_FAILED);
             loginState.logFailed(bundle.getString("noConfig"),"NOCONFIG");
+	    if (Agent.isRunning()) {
+		if (authImpl == null) {
+		    authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+		}
+		if (authImpl != null) {
+	            authImpl.incSsoServerAuthenticationFailureCount();
+		}
+	    }
             throw new AuthLoginException(bundleName,
             AMAuthErrorCode.AUTH_CONFIG_NOT_FOUND, null);
         }
@@ -373,6 +405,14 @@ public class AMLoginContext {
             loginState.logFailed(bundle.getString("loginContextCreateFailed"));
             internalAuthError=true;
             st.setStatus(LoginStatus.AUTH_FAILED);
+	    if (Agent.isRunning()) {
+		if (authImpl == null) {
+		    authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+		}
+		if (authImpl != null) {
+	            authImpl.incSsoServerAuthenticationFailureCount();
+		}
+	    }
             throw ae;
         } catch (LoginException le) {
             debug.error("in creating LoginContext.");
@@ -384,6 +424,14 @@ public class AMLoginContext {
             setErrorMsgAndTemplate();
             st.setStatus(LoginStatus.AUTH_FAILED);
             internalAuthError=true;
+	    if (Agent.isRunning()) {
+		if (authImpl == null) {
+		    authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+		}
+		if (authImpl != null) {
+	            authImpl.incSsoServerAuthenticationFailureCount();
+		}
+	    }
             throw new AuthLoginException(bundleName,
             AMAuthErrorCode.AUTH_ERROR, null, le);
         } catch (SecurityException se) {
@@ -396,6 +444,14 @@ public class AMLoginContext {
             loginState.logFailed(bundle.getString("loginContextCreateFailed"));
             internalAuthError=true;
             st.setStatus(LoginStatus.AUTH_FAILED);
+	    if (Agent.isRunning()) {
+		if (authImpl == null) {
+		    authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+		}
+		if (authImpl != null) {
+	            authImpl.incSsoServerAuthenticationFailureCount();
+		}
+	    }
             throw new AuthLoginException(bundleName,
             AMAuthErrorCode.AUTH_ERROR, null);
         } catch (Exception e) {
@@ -404,6 +460,14 @@ public class AMLoginContext {
             setErrorMsgAndTemplate();
             loginState.logFailed(bundle.getString("loginContextCreateFailed"));
             internalAuthError=true;
+	    if (Agent.isRunning()) {
+		if (authImpl == null) {
+		    authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+		}
+		if (authImpl != null) {
+	            authImpl.incSsoServerAuthenticationFailureCount();
+		}
+	    }
             st.setStatus(LoginStatus.AUTH_FAILED);
             throw new AuthLoginException(bundleName, AMAuthErrorCode.AUTH_ERROR,
             null, e);
@@ -432,6 +496,14 @@ public class AMLoginContext {
             loginState.setErrorCode(AMAuthErrorCode.AUTH_ERROR);
             setErrorMsgAndTemplate();
             internalAuthError=true;
+	    if (Agent.isRunning()) {
+		if (authImpl == null) {
+		    authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+		}
+		if (authImpl != null) {
+	            authImpl.incSsoServerAuthenticationFailureCount();
+		}
+	    }
             throw new AuthLoginException(bundleName,
             AMAuthErrorCode.AUTH_ERROR, null);
             
@@ -661,6 +733,14 @@ public class AMLoginContext {
         }
         debug.message("Came to before if Failed loop");
         if (isFailed) {
+	    if (Agent.isRunning()) {
+		if (authImpl == null) {
+		    authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+		}
+		if (authImpl != null) {
+	            authImpl.incSsoServerAuthenticationFailureCount();
+		}
+	    }
             if (loginSuccess) {
                 // this is the case where authentication to modules
                 // succeeded but framework failed to validate the
@@ -681,7 +761,20 @@ public class AMLoginContext {
                 }
                 loginState.setFailedUserId(indexName);
             }
-        }
+        } else {
+	    if (debug.messageEnabled()) {
+		debug.message("AMLoginContext.runLogin:" +
+		    "calling incSsoServerAuthenticationSuccessCount");
+	    }
+	    if (Agent.isRunning()) {
+		if (authImpl == null) {
+		    authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+		}
+		if (authImpl != null) {
+	            authImpl.incSsoServerAuthenticationSuccessCount();
+		}
+	    }
+	}
         
         if (debug.messageEnabled()) {
             debug.message("finished...login notify all threads\n"+
