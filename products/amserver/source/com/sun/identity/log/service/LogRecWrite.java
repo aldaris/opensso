@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogRecWrite.java,v 1.5 2008-06-25 05:43:39 qcheng Exp $
+ * $Id: LogRecWrite.java,v 1.6 2009-06-19 02:33:29 bigfatrat Exp $
  *
  */
 
@@ -47,6 +47,9 @@ import com.sun.identity.log.LogRecord;
 import com.sun.identity.log.Logger;
 import com.sun.identity.log.s1is.LogSSOTokenDetails;
 import com.sun.identity.log.spi.Debug;
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerLoggingHdlrEntryImpl;
+import com.sun.identity.monitoring.SsoServerLoggingSvcImpl;
 
 /**
  * This class implements <code>ParseOutput</code> interface and <code>
@@ -65,6 +68,12 @@ public class LogRecWrite implements LogOperation, ParseOutput {
      */
     public Response execute() {
         Response res = new Response("OK");
+        SsoServerLoggingSvcImpl slsi = null;
+        SsoServerLoggingHdlrEntryImpl slei = null;
+        if (Agent.isRunning()) {
+            slsi = (SsoServerLoggingSvcImpl)Agent.getLoggingSvcMBean();
+            slei = slsi.getHandler(SsoServerLoggingSvcImpl.REMOTE_HANDLER_NAME);
+        }
         
         Logger logger = (Logger)Logger.getLogger(_logname);
         if (Debug.messageEnabled()) {
@@ -154,8 +163,14 @@ public class LogRecWrite implements LogOperation, ParseOutput {
         } catch (SSOException ssoe) {
             Debug.error("LogRecWrite: exec:SSOException: ", ssoe);
         }
+        if (Agent.isRunning()) {
+            slei.incHandlerRequestCount(1);
+        }
         logger.log(rec, loggedByToken);
         // Log file record write okay and return OK
+        if (Agent.isRunning()) {
+            slei.incHandlerSuccessCount(1);
+        }
         return res;
     }
     
