@@ -112,6 +112,45 @@ public class LDAPDN {
     }
 
     /**
+     * Escape a string to be used as RDN value.
+     * Incriminated characters are prepended with a \
+     * @param str source string
+     * @return RDN-safe string
+     */
+    public static String escapeValue( String str ) {
+        StringBuffer retbuf = new StringBuffer();
+        for( int i = 0; i < str.length(); ++i ) {
+            char current_char = str.charAt( i );
+            if( isEscape( current_char ) ) {
+                retbuf.append( '\\' );
+            }
+            retbuf.append( current_char );
+        }
+        return retbuf.toString();
+    }
+    /**
+     * Unescape a string from a RDN value.
+     * \ prefixing escape characters are removed.
+     * @param str RDN source string
+     * @return original string
+     */
+    public static String unEscapeValue( String str ) {
+        StringBuffer retbuf = new StringBuffer();
+        for( int i = 0; i < str.length(); ++i ) {
+            char current_char = str.charAt( i ); 
+            if( '\\' ==  current_char ) {
+                ++i;
+                if( i == str.length() ) {
+                    return "";
+                }
+                current_char = str.charAt( i );
+            }
+            retbuf.append( current_char );
+        }
+        return retbuf.toString();
+    }
+    
+    /**
      * Returns the RDN after unescaping any escaped characters.
      * For a list of characters that are typically escaped in a
      * DN, see <CODE>com.sun.identity.shared.ldap.LDAPDN.ESCAPED_CHAR</CODE>.

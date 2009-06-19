@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.34 2009-04-23 23:05:53 hengming Exp $
+ * $Id: AMIdentity.java,v 1.35 2009-06-19 23:39:11 stanguy Exp $
  *
  */
 
@@ -180,7 +180,7 @@ public final class AMIdentity {
             dnObject = new DN(univIdWithoutDN);
 
         }
-        name = array[0];
+        name = LDAPDN.unEscapeValue( array[0] );
         type = new IdType(array[1]);
         orgName = dnObject.getParent().getParent().toRFCString();
     }
@@ -215,7 +215,8 @@ public final class AMIdentity {
             DN.isDN(name)) {
             name = LDAPDN.explodeDN(name, true)[0];
         }
-        sb.append("id=").append(name).append(",ou=").append(type.getName())
+        sb.append("id=").append(LDAPDN.escapeValue( name ) )
+            .append(",ou=").append(type.getName())
             .append(",").append(this.orgName);
         
         univIdWithoutDN = sb.toString();
