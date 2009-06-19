@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_IDP.jsp,v 1.8 2009-02-26 23:57:19 exu Exp $
+   $Id: SA_IDP.jsp,v 1.9 2009-06-19 20:43:33 exu Exp $
 
 --%>
 
@@ -104,7 +104,9 @@ com.sun.identity.shared.debug.Debug"
     SAML2MetaManager mm = null;
     String servletPath = request.getServletPath();
     String gotoUrl = request.getRequestURL().toString();
-    String appBase = gotoUrl.substring(0, gotoUrl.lastIndexOf(servletPath)+1);
+    int pathIndex = gotoUrl.lastIndexOf(servletPath);
+    String appBase = gotoUrl.substring(0, pathIndex+1);
+    gotoUrl = gotoUrl.substring(pathIndex, gotoUrl.length());
     String errorUrl = appBase+"saml2/jsp/saeerror.jsp";
     String ipaddr = request.getRemoteAddr();
     String userid = null;
@@ -375,14 +377,14 @@ com.sun.identity.shared.debug.Debug"
         HashMap postParams = new HashMap();
         redirectUrl = appBase + "UI/Login";
         postParams.put("module", "SAE");
-        //postParams.put("forward", "true");
+        postParams.put("forward", "true");
+        postParams.put("goto", gotoUrl);
         postParams.put(SecureAttrs.SAE_PARAM_DATA, sunData);
         postParams.put(SAML2Constants.SAE_REALM, realm);
         postParams.put(SAML2Constants.SAE_IDP_ENTITYID ,
             idpEntityId);
         postParams.put(SAML2Constants.SAE_IDPAPP_URL,
             idpAppUrl);
-        postParams.put("goto", gotoUrl);
         if (forceAuth) {
             postParams.put("ForceAuth", "true");
         }
