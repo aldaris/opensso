@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.19 2008-11-22 01:56:10 hengming Exp $
+   $Id: web.xml,v 1.20 2009-06-19 02:44:57 bigfatrat Exp $
                                                                                 
 -->
 
@@ -33,6 +33,11 @@
 <web-app>
 <display-name>OpenSSO Services</display-name>
 <distributable/>
+        <servlet>
+            <servlet-name>MonitoringFedConfig</servlet-name>
+            <servlet-class>com.sun.identity.configuration.MonitoringFedConfig</servlet-class>
+            <load-on-startup>30</load-on-startup>
+        </servlet>
         <servlet>
             <servlet-name>cdcservlet</servlet-name>
             <description>CDCServlet</description>
