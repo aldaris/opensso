@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLUtils.java,v 1.9 2009-06-19 17:54:15 ericow Exp $
+ * $Id: AuthXMLUtils.java,v 1.10 2009-06-19 20:39:09 qcheng Exp $
  *
  */
 
@@ -1246,7 +1246,7 @@ public class AuthXMLUtils {
                 redirectCallback.getRedirectUrl() : "";
 
         xmlString.append(AuthXMLTags.REDIRECT_URL_BEGIN)
-                .append(redirectUrl)
+                .append(XMLUtils.escapeSpecialCharacters(redirectUrl))
                 .append(AuthXMLTags.REDIRECT_URL_END);
 
         // <RedirectData>

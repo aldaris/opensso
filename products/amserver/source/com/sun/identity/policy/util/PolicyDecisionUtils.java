@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDecisionUtils.java,v 1.2 2009-05-21 21:58:02 qcheng Exp $
+ * $Id: PolicyDecisionUtils.java,v 1.3 2009-06-19 20:39:09 qcheng Exp $
  *
  */
 
@@ -36,6 +36,8 @@ import java.util.Set;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.util.AMAuthUtils;
+import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.policy.ActionDecision;
 import com.sun.identity.policy.PolicyDecision;
 import com.sun.identity.policy.ProxyPolicyEvaluatorFactory;
@@ -43,6 +45,7 @@ import com.sun.identity.policy.ProxyPolicyEvaluator;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.plugins.AuthLevelCondition;
 import com.sun.identity.policy.plugins.AuthSchemeCondition;
+import com.sun.identity.policy.plugins.AuthenticateToRealmCondition;
 import com.sun.identity.policy.plugins.AuthenticateToServiceCondition;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.DNMapper;
@@ -147,7 +150,13 @@ public class PolicyDecisionUtils {
                 
         return ad;
     }
-    
+   
+    /**
+     * Returns the matching policy advice. The method finds the advice
+     * for the specified realm first, if none found, return anyone 
+     * realm/user/role/authlevel/service/module advice from the 
+     * <code>ActionDecision</code>.
+     */ 
     private static List getPolicyAdvice(ActionDecision ad, String realm) {
         Map advices;
         if (ad == null) {
@@ -197,6 +206,13 @@ public class PolicyDecisionUtils {
             } else if (findAdviceValue(advices, 
                 AUTH_REDIRECTION_ADVICE, realm, sb)) {
                 answer.add(sb.toString());
+            } else {
+                // there is no advice for this specific realm, just pick anyone.
+                // That advice will be for a different realm
+                String url = getOneAdviceAsRedirectURL(advices);
+                if (url != null) {
+                    answer.add(url);
+                }
             }
             return answer;
         } else {
@@ -258,6 +274,90 @@ public class PolicyDecisionUtils {
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Returns one advice from the advices as redirection URL.
+     * returns null if no valid advice found.
+     * The URL will redirect user to /UI/Login with different realm
+     * for authentication.
+     */
+    private static String getOneAdviceAsRedirectURL(Map advices) {
+        if ((advices == null) || advices.isEmpty()) {
+            return null;
+        }
+
+        // loop through all advices to find 
+        // realm/user/role/authlevel/service/module advice
+        boolean found = false;
+        String adviceType = null;
+        String paramName = null;
+        Iterator types = advices.keySet().iterator();
+        while (types.hasNext()) {
+            adviceType = (String) types.next();
+            if (AuthenticateToRealmCondition.
+                AUTHENTICATE_TO_REALM_CONDITION_ADVICE.equals(adviceType)) {
+                // this is authenticate to realm
+                found = true;
+                break;
+            } else if (AUTH_USER_ADVICE.equals(adviceType)) {
+                paramName = ISAuthConstants.USER_PARAM;
+                found = true;
+                break;
+            } else if (AUTH_ROLE_ADVICE.equals(adviceType)) {
+                paramName = ISAuthConstants.ROLE_PARAM;
+                found = true;
+                break;
+            } else if (AuthenticateToServiceCondition.
+                AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE.equals(adviceType)) {
+                paramName = ISAuthConstants.SERVICE_PARAM;
+                found = true;
+                break;
+            } else if (AuthSchemeCondition.AUTH_SCHEME_CONDITION_ADVICE.
+                equals(adviceType)) {
+                paramName = ISAuthConstants.MODULE_PARAM;
+                found = true;
+                break;
+            } else if (AuthLevelCondition.AUTH_LEVEL_CONDITION_ADVICE.
+                equals(adviceType)) {
+                paramName = ISAuthConstants.AUTH_LEVEL_PARAM;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            // no matching advice type found
+            return null;
+        }
+
+        Set advice = (Set) advices.get(adviceType);
+        if (advice != null) {
+            // get first realm/module/role/user/service/authlevel advice 
+            String item = (String) advice.iterator().next();     
+            // value contains one or two part : <realm>[:<value>], e.g. /realm:4
+            String realm = AMAuthUtils.getRealmFromRealmQualifiedData(item);
+            String value = AMAuthUtils.getDataFromRealmQualifiedData(item);
+            if (debug.messageEnabled()) {
+                debug.message("PolicyDecisionUtils.getOneAdvice: advice=" + 
+                    item + ", type=" + adviceType + ", realm=" + realm +
+                    ", indexName=" + value);
+            }
+            if ((value == null) || (value.length() == 0)) {
+                return null;
+            }
+            StringBuffer sb = new StringBuffer("/UI/Login");
+            if (AuthenticateToRealmCondition.
+                AUTHENTICATE_TO_REALM_CONDITION_ADVICE.equals(adviceType)) {
+                sb.append("?realm=").append(value);
+            } else {
+                sb.append("?realm=").append(realm).append("&")
+                  .append(paramName).append("=").append(value);
+            }
+            return sb.toString();
+        } else {
+            return null;
         }
     }
 }
