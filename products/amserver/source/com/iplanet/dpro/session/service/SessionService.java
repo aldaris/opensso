@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.32 2009-01-23 22:09:30 beomsuk Exp $
+ * $Id: SessionService.java,v 1.33 2009-06-19 01:33:43 manish_rustagi Exp $
  *
  */
 
@@ -1068,7 +1068,9 @@ public class SessionService {
      */
     public void destroyInternalSession(SessionID sid) {
         InternalSession sess = removeInternalSession(sid);
-        sess.setIsISStored(false);
+        if(sess != null){
+            sess.setIsISStored(false);
+        }    
         if (sess != null && sess.getState() != Session.INVALID) {
             logEvent(sess, SessionEvent.DESTROY);
             sess.setState(Session.DESTROYED);
@@ -1083,7 +1085,9 @@ public class SessionService {
      */
     public void logoutInternalSession(SessionID sid) {
         InternalSession sess = removeInternalSession(sid);
-        sess.setIsISStored(false);
+        if(sess != null){
+            sess.setIsISStored(false);
+        }    
         if (sess != null && sess.getState() != Session.INVALID) {
             logEvent(sess, SessionEvent.LOGOUT);
             sess.setState(Session.DESTROYED);

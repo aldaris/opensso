@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.49 2009-06-03 20:46:52 veiming Exp $
+ * $Id: LoginState.java,v 1.50 2009-06-19 01:30:22 manish_rustagi Exp $
  *
  */
 
@@ -3340,9 +3340,7 @@ public class LoginState {
             // clean up auth internal tables
             if (!sessionUpgrade) {
                 SessionID oldSessionID = new SessionID(oldSidString);
-                if (oldSessionID != null) {
-                    AuthUtils.removeAuthContext(oldSessionID);
-                }
+                AuthD.getSS().destroyInternalSession(oldSessionID);
             }
             if (!getOrgName().equals(domainStr)) {
                 // force orgName to domain in PCookie
