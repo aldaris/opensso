@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.62 2009-04-23 23:05:55 hengming Exp $
+ * $Id: LDAPv3Repo.java,v 1.63 2009-06-19 22:55:56 ericow Exp $
  *
  */
 
@@ -73,6 +73,7 @@ import com.sun.identity.shared.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMCommonUtils;
 import com.iplanet.am.sdk.AMHashMap;
+import com.iplanet.am.util.AMURLEncDec;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Base64;
 import com.iplanet.services.naming.ServerEntryNotFoundException;
@@ -2416,7 +2417,8 @@ public class LDAPv3Repo extends IdRepo {
                 while ((enumVals != null) && enumVals.hasMoreElements()) {
                     String memberUrl = (String) enumVals.nextElement();
                     try {
-                        LDAPUrl ldapUrl = new LDAPUrl(memberUrl);
+                        LDAPUrl ldapUrl = new LDAPUrl(
+                                AMURLEncDec.encodeLDAPUrl(memberUrl));
                         Set dynMembers = findDynamicGroupMembersByUrl(ldapUrl);
                         resultSet.addAll(dynMembers);
                     } catch (java.net.MalformedURLException e) {
