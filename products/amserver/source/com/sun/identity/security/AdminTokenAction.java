@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminTokenAction.java,v 1.13 2008-10-04 00:36:43 veiming Exp $
+ * $Id: AdminTokenAction.java,v 1.14 2009-06-19 02:35:11 bigfatrat Exp $
  *
  */
 
@@ -161,7 +161,7 @@ public class AdminTokenAction implements PrivilegedAction {
                     tokenManager.destroyToken(appSSOToken);
                 } catch (SSOException e) {
                     debug.error(
-                        "AdminTokenAction.reset: cannot destroyed appSSOToken.",
+                        "AdminTokenAction.reset: cannot destroy appSSOToken.",
                         e);
                 }
             }
