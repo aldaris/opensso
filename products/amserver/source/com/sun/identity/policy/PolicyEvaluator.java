@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.11 2009-02-28 04:14:58 dillidorai Exp $
+ * $Id: PolicyEvaluator.java,v 1.12 2009-06-19 02:34:19 bigfatrat Exp $
  *
  */
 
@@ -47,6 +47,8 @@ import com.sun.identity.shared.stats.Stats;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenListener;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerPolicySvcImpl;
 import com.sun.identity.policy.interfaces.PolicyListener;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.ServiceManager;
@@ -147,6 +149,8 @@ public class PolicyEvaluator {
     private Set serviceTypeNames = new HashSet(); 
     // listener for policy decision cache
     private PolicyDecisionCacheListener listener = null; 
+
+//    private static SsoServerPolicySvcImpl sspsi;
 
     /*
      * Cache to keep the policy evaluation results
@@ -612,6 +616,12 @@ public class PolicyEvaluator {
             DEBUG.message("Evaluating policies at org " + orgName);
         }
 
+        if (Agent.isRunning()) {
+            SsoServerPolicySvcImpl sspsi =
+                (SsoServerPolicySvcImpl)Agent.getPolicySvcMBean();
+            sspsi.incPolicyEvalsIn();
+        }
+
         /* compute for all action names if passed in actionNames is
            null or empty */
         if ( (actionNames == null) || (actionNames.isEmpty()) ) {
@@ -753,15 +763,15 @@ public class PolicyEvaluator {
              * save policy config before passing control down to
              * sub realm
              */
-	    Map savedPolicyConfig =(Map)envParameters.get(SUN_AM_POLICY_CONFIG);
-	    // Update env to point to the realm policy config data.
-	    envParameters.put(SUN_AM_POLICY_CONFIG, PolicyConfig.
-	        getPolicyConfig(orgToVisit));
+            Map savedPolicyConfig =(Map)envParameters.get(SUN_AM_POLICY_CONFIG);
+            // Update env to point to the realm policy config data.
+            envParameters.put(SUN_AM_POLICY_CONFIG, PolicyConfig.
+                getPolicyConfig(orgToVisit));
             PolicyDecision policyDecision 
                     = pe.getPolicyDecision(token, resourceName, actionNames,
                     envParameters,visitedOrgs); 
-	    // restore back the policy config data for the parent realm
-	    envParameters.put(SUN_AM_POLICY_CONFIG, savedPolicyConfig);
+            // restore back the policy config data for the parent realm
+            envParameters.put(SUN_AM_POLICY_CONFIG, savedPolicyConfig);
             if ( mergedPolicyDecision == null ) {
                 mergedPolicyDecision = policyDecision;
             } else {
@@ -777,6 +787,13 @@ public class PolicyEvaluator {
         if ( mergedPolicyDecision == null ) {
             mergedPolicyDecision = new PolicyDecision();
         }
+
+        if (Agent.isRunning()) {
+            SsoServerPolicySvcImpl sspsi =
+                (SsoServerPolicySvcImpl)Agent.getPolicySvcMBean();
+            sspsi.incPolicyEvalsOut();
+        }
+
         return mergedPolicyDecision;
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureFileHandler.java,v 1.10 2009-04-07 23:22:48 hvijay Exp $
+ * $Id: SecureFileHandler.java,v 1.11 2009-06-19 02:32:00 bigfatrat Exp $
  *
  */
 
@@ -71,6 +71,9 @@ import com.sun.identity.log.spi.Archiver;
 import com.sun.identity.log.spi.Authorizer;
 import com.sun.identity.log.spi.Debug;
 import com.sun.identity.log.spi.Token;
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerLoggingHdlrEntryImpl;
+import com.sun.identity.monitoring.SsoServerLoggingSvcImpl;
 import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.security.keystore.AMPassword;
 /**
@@ -112,7 +115,9 @@ public class SecureFileHandler extends java.util.logging.Handler {
     private static AMPassword verPassword = null;
     private SecureLogHelper helper = null;
     private LogVerifier lv = null;
-    
+    private SsoServerLoggingSvcImpl logServiceImplForMonitoring =
+        (SsoServerLoggingSvcImpl) Agent.getLoggingSvcMBean();
+    private SsoServerLoggingHdlrEntryImpl sfLogHandlerForMonitoring = null;
     private static String token = null;
     
     static {
@@ -408,6 +413,9 @@ public class SecureFileHandler extends java.util.logging.Handler {
      * @param lrecord the log record to be published.
      */
     public synchronized void publish(LogRecord lrecord) {
+        if (Agent.isRunning() && sfLogHandlerForMonitoring != null) {
+            sfLogHandlerForMonitoring.incHandlerRequestCount(1);
+        }
         if (writer == null) {
             Debug.warning(logName+":SecureFileHandler: Writer is null");
             return;
@@ -423,6 +431,9 @@ public class SecureFileHandler extends java.util.logging.Handler {
                 headerWritten = true;
             }
             writer.write(message);
+            if (Agent.isRunning() && sfLogHandlerForMonitoring != null) {
+                sfLogHandlerForMonitoring.incHandlerSuccessCount(1);
+            }
         } catch (IOException ex) {
             Debug.error(logName +
                 ":SecureFileHandler: could not write to file", ex);
@@ -507,10 +518,10 @@ public class SecureFileHandler extends java.util.logging.Handler {
             Debug.error(logName +
                 ":SecureFileHandler: could not generate signature");
         }
-	/*
-	 * periodic signer is creating log record at Level.SEVERE, so
-	 * do it here, too.
-	 */
+        /*
+         * periodic signer is creating log record at Level.SEVERE, so
+         * do it here, too.
+         */
         com.sun.identity.log.LogRecord lr =
         new com.sun.identity.log.LogRecord(Level.SEVERE, "Signature");
 
@@ -519,9 +530,21 @@ public class SecureFileHandler extends java.util.logging.Handler {
         message = getFormatter().format(lr);
         try {
             writer.write(message);
+            //Monitoring: Increment log records successfully logged count
+            //Do we need to increment the count in this method ? This block just
+            //writes the signature and not any debug/error message that is
+            //passed using the publish method. So it might disturb the equation:
+            //success-count + dropped-count = requests-count
+            if (Agent.isRunning() && sfLogHandlerForMonitoring != null) {
+                sfLogHandlerForMonitoring.incHandlerSuccessCount(1);
+            }
         } catch (IOException ioe) {
             Debug.error(logName +
                 ":SecureLogHelper: could not write signature to file", ioe);
+            //Monitoring: Increment log records dropped count
+            if (Agent.isRunning() && sfLogHandlerForMonitoring != null) {
+                sfLogHandlerForMonitoring.incHandlerDroppedCount(1);
+            }
         }
         flush();
         try {

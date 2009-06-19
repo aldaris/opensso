@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.14 2009-03-24 19:04:04 hvijay Exp $
+ * $Id: DBHandler.java,v 1.15 2009-06-19 02:31:59 bigfatrat Exp $
  *
  */
 
@@ -59,7 +59,9 @@ import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManager;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.spi.Debug;
-
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerLoggingHdlrEntryImpl;
+import com.sun.identity.monitoring.SsoServerLoggingSvcImpl;
 
 /**
  * DBHandler takes log messages from the Logger and exports
@@ -85,6 +87,9 @@ public class DBHandler extends Handler {
     private ArrayList recordBuffer;
     private TimeBufferingTask bufferTask;
     private boolean timeBufferingEnabled = false;
+    private SsoServerLoggingSvcImpl logServiceImplForMonitoring =
+        (SsoServerLoggingSvcImpl) Agent.getLoggingSvcMBean();
+    private SsoServerLoggingHdlrEntryImpl dbLogHandlerForMonitoring = null;
     //
     //  this is to keep track when the connection to the DB
     //  is lost so that debug messages are logged only on
@@ -98,13 +103,13 @@ public class DBHandler extends Handler {
     private int dbFieldMax = 0;
 
     private void configure() throws NullLocationException,
-    FormatterInitException {
+        FormatterInitException
+    {
         String cname = DBHandler.class.getName();
         setFilter(null);
         try {
             setEncoding("UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             Debug.error(tableName +
                 ":DBHandler: unsupportedEncodingException ", e);
         }
@@ -166,15 +171,14 @@ public class DBHandler extends Handler {
                 "setting to buffer size (" + recCountLimit + ")");
             recMaxDBMem = recCountLimit;
         }
-       
+
         String status =
             lmanager.getProperty(LogConstants.TIME_BUFFERING_STATUS);
 
-        if ( status != null && status.equalsIgnoreCase("ON"))
-        {
+        if ( status != null && status.equalsIgnoreCase("ON")) {
             timeBufferingEnabled = true;
         }
-        
+
         oraDataType = lmanager.getProperty(LogConstants.ORA_DBDATA_FIELDTYPE);
         mysqlDataType =
             lmanager.getProperty(LogConstants.MYSQL_DBDATA_FIELDTYPE);
@@ -204,7 +208,7 @@ public class DBHandler extends Handler {
         //
         //  don't know about drivers other than Oracle and MySQL
         //
-        if(driver.toLowerCase().indexOf("oracle") != -1){
+        if (driver.toLowerCase().indexOf("oracle") != -1){
             isMySQL = false;
         } else if (driver.toLowerCase().indexOf("mysql") != -1) {
             isMySQL = true;
@@ -225,21 +229,29 @@ public class DBHandler extends Handler {
                 "Unable To Initialize DBFormatter " + e.getMessage());
         }
     }
-    
+
     private void connectToDatabase(String userName, String password)
         throws ConnectionException, DriverLoadException 
     {
+        //Monit start
+        if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+            dbLogHandlerForMonitoring.incHandlerConnectionRequests(1);
+        }
+        //Monit end
         try {
             Class.forName(driver);
             this.conn = 
                 DriverManager.getConnection(databaseURL, userName, password);
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             Debug.error(tableName +
                 ":DBHandler: ClassNotFoundException " + e.getMessage());
+            //Monit start
+            if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+                dbLogHandlerForMonitoring.incHandlerConnectionsFailed(1);
+            }
+            //Monit end
             throw new DriverLoadException(e.getMessage());
-        }
-        catch (SQLException sqle) {
+        } catch (SQLException sqle) {
             //
             //  if start up with Oracle DB down, can get sqle.getErrorCode()
             //  == 1034, "ORA-01034: ORACLE not available"
@@ -250,8 +262,19 @@ public class DBHandler extends Handler {
             Debug.error(tableName +
                 ":DBHandler: ConnectionException (" + sqle.getErrorCode() +
                 "): " + sqle.getMessage());
+            //Monit start
+            if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+                dbLogHandlerForMonitoring.incHandlerConnectionsFailed(1);
+            }
+            //Monit end
             throw new ConnectionException(sqle.getMessage());
         }
+
+        //Monit start
+        if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+            dbLogHandlerForMonitoring.incHandlerConnectionsMade(1);
+        }
+        //Monit end
     }
 
     //
@@ -262,21 +285,42 @@ public class DBHandler extends Handler {
     private void reconnectToDatabase()
         throws ConnectionException, DriverLoadException 
     {
+        //Monit start
+        if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+            dbLogHandlerForMonitoring.incHandlerConnectionRequests(1);
+        }
+        //Monit end
+
         try {
             Class.forName(driver);
             this.conn = DriverManager.getConnection(databaseURL,
                 userName, password);
         } catch (ClassNotFoundException e) {
+            //Monit start
+            if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+                dbLogHandlerForMonitoring.incHandlerConnectionsFailed(1);
+            }
+            //Monit end
             throw new DriverLoadException(e.getMessage());
-        }
-        catch (SQLException sqle) {
+        } catch (SQLException sqle) {
             Debug.error (tableName +
                 ":DBHandler:reconnect (" + sqle.getErrorCode() + "): " +
                 sqle.getMessage());
+            //Monit start
+            if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+                dbLogHandlerForMonitoring.incHandlerConnectionsFailed(1);
+            }
+            //Monit end
             throw new ConnectionException(sqle.getMessage());
         }
+
+        //Monit start
+        if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+            dbLogHandlerForMonitoring.incHandlerConnectionsMade(1);
+        }
+        //Monit end
     }
-    
+
     /**
      * Constructor takes the tableName as a parameter. Gets the configuration
      * information from LogManager regarding the user name, password, database
@@ -331,13 +375,16 @@ public class DBHandler extends Handler {
             }
             connectionToDBLost = false;
         }
-        
+
         recordBuffer = new ArrayList();
         if (timeBufferingEnabled) {
             startTimeBufferingThread();
         }
+
+        dbLogHandlerForMonitoring = logServiceImplForMonitoring.getHandler(
+            SsoServerLoggingSvcImpl.DB_HANDLER_NAME);
     }
-    
+
     /**
      * Formats and publishes the LogRecord.
      * <p>
@@ -358,11 +405,16 @@ public class DBHandler extends Handler {
      *
      */
     public void publish(java.util.logging.LogRecord logRecord) {
+        //Monit start
+        if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+            dbLogHandlerForMonitoring.incHandlerRequestCount(1);
+        }
+        //Monit end
         if (!isLoggable(logRecord)) {
             return;
         }
         String vals = getFormatter().format(logRecord);
-        synchronized(recordBuffer) {
+        synchronized (recordBuffer) {
             recordBuffer.add(vals);
         }
         if (recordBuffer.size() >= recCountLimit) {
@@ -374,7 +426,7 @@ public class DBHandler extends Handler {
             flush();
         }
     }
-    
+
     private String getColString() {
         String cols = getFormatter().getHead(this);
         if (Debug.messageEnabled()) {
@@ -413,10 +465,17 @@ public class DBHandler extends Handler {
         if (tableName == null) {
             Debug.error(tableName + 
                 ":DBHandler:flush:NullLocationException: table name is null");
+            int recordsToBeDropped = recordBuffer.size();
             recordBuffer.clear();
+            //Monit start
+            if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+                dbLogHandlerForMonitoring.incHandlerDroppedCount(
+                    recordsToBeDropped);
+            }
+            //Monit end
             return;
         }
-        
+
         //
         //  check if the connection to the db had problems before
         //  if so, try to reconnect and then make sure the table's there.
@@ -604,6 +663,11 @@ public class DBHandler extends Handler {
                 }
                 try {
                     stmt.executeUpdate(insertStr);
+                    //Monit start
+                    if(Agent.isRunning() && dbLogHandlerForMonitoring != null){
+                        dbLogHandlerForMonitoring.incHandlerSuccessCount(1);
+                    }
+                    //Monit end
                 } catch (SQLException sqle) {
                     /*
                      *  as mentioned above, connection errors to oracle seem
@@ -731,6 +795,14 @@ public class DBHandler extends Handler {
                             createTable (tableName);
                             stmt = conn.createStatement();
                             stmt.executeUpdate(insertStr);
+                            //Monit start
+                            if (Agent.isRunning() &&
+                                dbLogHandlerForMonitoring != null)
+                            {
+                                dbLogHandlerForMonitoring.
+                                    incHandlerSuccessCount(1);
+                            }
+                            //Monit end
                         } catch (SQLException sqe) {
                             Debug.error (tableName +
                                 ":DBHandler:flush:executeUpd:reconnect:" +
@@ -830,6 +902,12 @@ public class DBHandler extends Handler {
                 for(int i = 0; i < removeCount; ++i) {
                     recordBuffer.remove(0);
                 }
+                //Monit start
+                if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+                    dbLogHandlerForMonitoring.incHandlerDroppedCount(
+                        removeCount);
+                }
+                //Monit end
             }
         }
     }
@@ -1012,8 +1090,7 @@ public class DBHandler extends Handler {
                 }
                 return;
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             Debug.error(tableName +
                 ":DBHandler:createTable:Query:SQLException (" +
                 e.getErrorCode() + "): " + e.getMessage());
@@ -1062,7 +1139,7 @@ public class DBHandler extends Handler {
 
         String [] allFields = lmanager.getAllFields();
         int i = 0;
-        for (i = 2; i < allFields.length - 1; i ++) {
+        for (i = 2; i < allFields.length - 1; i++) {
             sbuffer.append(allFields[i]).append(" " + varCharX + " (255), ");
         }
         sbuffer.append(allFields[i]).append(" " + varCharX + " (255)) ");
@@ -1076,8 +1153,7 @@ public class DBHandler extends Handler {
             }
             stmt.executeUpdate(createString);
             stmt.close();
-        }
-        catch (SQLException sqe) {
+        } catch (SQLException sqe) {
             Debug.error(tableName +
                 ":DBHandler:createTable:Execute:SQLEx (" +
                 sqe.getErrorCode() + "): " + sqe.getMessage());
@@ -1087,15 +1163,15 @@ public class DBHandler extends Handler {
             throw sqe;
         }
     }
-    
+
     private class TimeBufferingTask extends GeneralTaskRunnable {
-        
+
         private long runPeriod;
-        
+
         public TimeBufferingTask(long runPeriod) {
             this.runPeriod = runPeriod;
         }
-        
+
         /**
          * The method which implements the GeneralTaskRunnable.
          */
@@ -1106,7 +1182,7 @@ public class DBHandler extends Handler {
             }
             flush();
         }
-        
+
         /**
          *  Methods that need to be implemented from GeneralTaskRunnable.
          */
@@ -1114,20 +1190,20 @@ public class DBHandler extends Handler {
         public boolean isEmpty() {
             return true;
         }
-        
+
         public boolean addElement(Object obj) {
             return false;
         }
-        
+
         public boolean removeElement(Object obj) {
             return false;
         }
-        
+
         public long getRunPeriod() {
             return runPeriod;
         }
     }
-    
+
     private void startTimeBufferingThread() {
         String period = lmanager.getProperty(LogConstants.BUFFER_TIME);
         long interval;

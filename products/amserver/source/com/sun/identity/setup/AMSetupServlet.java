@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.103 2009-06-03 19:44:31 goodearth Exp $
+ * $Id: AMSetupServlet.java,v 1.104 2009-06-19 02:36:08 bigfatrat Exp $
  *
  */
 
@@ -39,6 +39,7 @@ import com.iplanet.services.ldap.LDAPServiceException;
 import com.sun.identity.authentication.UI.LoginLogoutMapping;
 import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.authentication.internal.server.SMSAuthModule;
+import com.sun.identity.common.ConfigMonitoring;
 import com.sun.identity.common.DebugPropertiesObserver;
 import com.sun.identity.common.FQDNUtils;
 import com.sun.identity.common.configuration.ConfigurationObserver;
@@ -477,7 +478,15 @@ public class AMSetupServlet extends HttpServlet {
         } finally {
             InstallLog.getInstance().close();
         }
-        
+
+        if (WebtopNaming.configMonitoring() >= 0) {
+            ConfigMonitoring cm = new ConfigMonitoring();
+            cm.configureMonitoring();
+        } else {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "WebtopNaming.configMonitoring returned error.");
+        }
+
         return isConfiguredFlag;
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileHandler.java,v 1.10 2009-04-07 23:16:58 hvijay Exp $
+ * $Id: FileHandler.java,v 1.11 2009-06-19 02:32:00 bigfatrat Exp $
  *
  */
 package com.sun.identity.log.handlers;
@@ -55,6 +55,9 @@ import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.Logger;
 import com.sun.identity.log.spi.Debug;
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerLoggingHdlrEntryImpl;
+import com.sun.identity.monitoring.SsoServerLoggingSvcImpl;
 
 /**
  * This <tt> FileHandler </tt> is very much similar to the
@@ -90,6 +93,8 @@ public class FileHandler extends java.util.logging.Handler {
     private TimeBufferingTask bufferTask;
     private boolean timeBufferingEnabled = false;
     private static String headerString = null;
+    private SsoServerLoggingSvcImpl logServiceImplForMonitoring = null;
+    private SsoServerLoggingHdlrEntryImpl fileLogHandlerForMonitoring = null;
 
     private class MeteredStream extends OutputStream {
 
@@ -352,6 +357,14 @@ public class FileHandler extends java.util.logging.Handler {
         if (timeBufferingEnabled) {
             startTimeBufferingThread();
         }
+
+        if (Agent.isRunning()) {
+            logServiceImplForMonitoring =
+                (SsoServerLoggingSvcImpl) Agent.getLoggingSvcMBean();
+            fileLogHandlerForMonitoring =
+                logServiceImplForMonitoring.getHandler(
+                    SsoServerLoggingSvcImpl.FILE_HANDLER_NAME);
+        }
     }
 
     private void cleanup() {
@@ -391,6 +404,10 @@ public class FileHandler extends java.util.logging.Handler {
      * @param lrecord the log record to be published.
      */
     public synchronized void publish(LogRecord lrecord) {
+        if (Agent.isRunning() && fileLogHandlerForMonitoring != null) {
+            fileLogHandlerForMonitoring.incHandlerRequestCount(1);
+        }
+
         if (maxFileSize <= 0) {
             return;
         }
@@ -431,7 +448,12 @@ public class FileHandler extends java.util.logging.Handler {
         if (writer == null) {
             Debug.error(fileName + ":FileHandler: Writer is null");
             synchronized (recordBuffer) {
+                int recordsToBeDropped = recordBuffer.size();
                 recordBuffer.clear();
+                if (Agent.isRunning() && fileLogHandlerForMonitoring != null){
+                    fileLogHandlerForMonitoring.incHandlerDroppedCount(
+                        recordsToBeDropped);
+                }
             }
             return;
         }
@@ -458,6 +480,11 @@ public class FileHandler extends java.util.logging.Handler {
                         headerWritten = true;
                     }
                     writer.write(message);
+                    if (Agent.isRunning() &&
+                        fileLogHandlerForMonitoring != null)
+                    {
+                        fileLogHandlerForMonitoring.incHandlerSuccessCount(1);
+                    }
                 } catch (IOException ex) {
                     Debug.error(fileName +
                             ":FileHandler: could not write to file: ", ex);

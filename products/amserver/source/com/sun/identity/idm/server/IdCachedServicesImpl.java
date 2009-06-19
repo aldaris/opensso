@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.17 2008-09-19 02:38:52 sean_brydon Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.18 2009-06-19 02:30:19 bigfatrat Exp $
  *
  */
 
@@ -50,6 +50,8 @@ import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.common.IdCacheBlock;
 import com.sun.identity.idm.common.IdCacheStats;
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerIdRepoSvcImpl;
 import com.sun.identity.shared.stats.Stats;
 import com.sun.identity.sm.ServiceManager;
 
@@ -79,6 +81,8 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
     private IdCacheStats cacheStats;
 
     private static Stats stats;
+
+    private static SsoServerIdRepoSvcImpl monIdRepo;
 
     static {
         initializeParams();
@@ -116,6 +120,9 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         stats = Stats.getInstance(getClass().getName());
         cacheStats = new IdCacheStats(IdConstants.IDREPO_CACHESTAT);
         stats.addStatsListener(cacheStats);
+        if (Agent.isRunning()) {
+            monIdRepo = (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean();
+        }
     }
 
     private void initializeCache() {
@@ -340,6 +347,10 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
             return getAttributes(token, type, name, amOrgName, amsdkDN);
         }
         cacheStats.incrementGetRequestCount(getSize());
+        if (Agent.isRunning() && (monIdRepo != null)) {
+            long li = (long)getSize();
+            monIdRepo.incGetRqts(li);
+        }
         
         // Get the entry DN
         AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkDN);
@@ -411,6 +422,10 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
                         false, !isStringValues);
             } else { // All attributes found in cache
                 cacheStats.updateGetHitCount(getSize());
+                if (Agent.isRunning() && (monIdRepo != null)) {
+                    long li = (long)getSize();
+                    monIdRepo.incCacheHits(li);
+                }
                 if (getDebug().messageEnabled()) {
                     getDebug().message("IdCachedServicesImpl" 
                             + ".getAttributes(): " + amsdkDN
@@ -426,6 +441,10 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         throws IdRepoException, SSOException {
         
         cacheStats.incrementGetRequestCount(getSize());
+        if (Agent.isRunning() && (monIdRepo != null)) {
+            long li = (long)getSize();
+            monIdRepo.incGetRqts(li);
+        }
         // Get the identity dn
         AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkDN);
         String dn = id.getUniversalId().toLowerCase();
@@ -439,6 +458,10 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         AMHashMap attributes;
         if ((cb != null) && cb.hasCompleteSet(principalDN)) {
             cacheStats.updateGetHitCount(getSize());
+            if (Agent.isRunning() && (monIdRepo != null)) {
+                long li = (long)getSize();
+                monIdRepo.incCacheHits(li);
+            }
             if (getDebug().messageEnabled()) {
                 getDebug().message("IdCachedServicesImpl." 
                     + "getAttributes(): DN: " + dn 
@@ -535,6 +558,10 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         throws IdRepoException, SSOException {
         IdSearchResults answer = new IdSearchResults(type, orgName);
         cacheStats.incrementSearchRequestCount(getSize());
+        if (Agent.isRunning() && (monIdRepo != null)) {
+            long li = (long)getSize();
+            monIdRepo.incSearchRqts(li);
+        }
         // in legacy mode we must do search in order
         // to get the AMSDKDN component added to AMIdentity's uvid.
         // otherwise unix and anonymous login will fail.
@@ -556,6 +583,10 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
                 Map attributes;
                 try {
                     cacheStats.updateSearchHitCount(getSize());
+                        if (Agent.isRunning() && (monIdRepo != null)) {
+                        long li = (long)getSize();
+                        monIdRepo.incSearchCacheHits(li);
+                        }
                     if (ctrl.isGetAllReturnAttributesEnabled()) {
                         attributes = getAttributes(token, type, pattern,
                             orgName, null);
