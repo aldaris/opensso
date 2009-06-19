@@ -22,10 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.10 2008-11-26 23:56:29 bigfatrat Exp $
+ * $Id: LogManager.java,v 1.11 2009-06-19 02:32:51 bigfatrat Exp $
  *
  */
-
 package com.sun.identity.log;
 
 import java.io.IOException;
@@ -48,6 +47,8 @@ import com.sun.identity.log.messageid.LogMessageProviderBase;
 import com.sun.identity.log.messageid.MessageProviderFactory;
 import com.sun.identity.log.spi.Debug;
 import com.sun.identity.log.s1is.LogConfigReader;
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerLoggingSvcImpl;
 
 /**
  * This class keeps track of all the logger objects and does all the
@@ -55,28 +56,22 @@ import com.sun.identity.log.s1is.LogConfigReader;
  * functionalities, such as adding our logger listening to DS changes, etc.
  * @supported.all.api
  */
-
 public class LogManager extends java.util.logging.LogManager {
 
     /**
      * Is the Log Service running locally or remotely
      */
     public static boolean isLocal = false;
-
     /**
      * The handler which will be added to each logger object
      */
     public static String HANDLER = "Handler";
-
     /**
      * The formatter which depends on the log settings
      */
     public static String FORMATTER = "Formatter";
-
-    /**
-     * Indicator for having set Monitoring Status
-     */
-    public static boolean setMonitoringStatus;
+    
+    public static boolean isMonitoringInit = false;
 
     /**
      * Indicator for whether the first readConfiguration has happened
@@ -88,7 +83,7 @@ public class LogManager extends java.util.logging.LogManager {
     private static String oldSecurityStatus = strDEFAULT;
     private static String oldBackend = strDEFAULT;
     private static String oldStatus = strDEFAULT;
-    private static String newLocation; 
+    private static String newLocation;
     private static String newLevel;
     private static String newSecurityStatus;
     private static String newBackend;
@@ -103,6 +98,8 @@ public class LogManager extends java.util.logging.LogManager {
     private final int NEWSTATUS = 7;
     private final int OLDLEVEL = 8;
     private final int NEWLEVEL = 9;
+    private static SsoServerLoggingSvcImpl logServiceImplForMonitoring = null;
+    private static int loggerCount = 0;
 
     /**
      * Adds a logger to the Log Manager.
@@ -116,9 +113,13 @@ public class LogManager extends java.util.logging.LogManager {
         if (name != null && name.length() != 0 && !name.equals("global")) {
             /* we have to take care of the resourcebundle logger may have */
             String rbName = logger.getResourceBundleName();
-            logger = new Logger(name,rbName);
+            logger = new Logger(name, rbName);
         }
-        return super.addLogger(logger);
+        boolean addSuccess = super.addLogger(logger);
+        if(addSuccess){
+            loggerCount++;
+        }
+        return addSuccess;
     }
 
     /* security status updated by readConfiguration */
@@ -126,9 +127,7 @@ public class LogManager extends java.util.logging.LogManager {
 
     /* all fields read during read configuration */
     private String[] allFields;
-
     private Set selectedFieldSet;
-
     protected Level loggingLevel = null;
 
     /**
@@ -164,7 +163,7 @@ public class LogManager extends java.util.logging.LogManager {
         int count = strToken.countTokens();
         String localAllFields[] = new String[count];
         count = 0;
-        while(strToken.hasMoreElements()) {
+        while (strToken.hasMoreElements()) {
             localAllFields[count++] = strToken.nextToken().trim();
         }
         allFields = localAllFields;
@@ -175,12 +174,11 @@ public class LogManager extends java.util.logging.LogManager {
 
         String strSelectedFields = getProperty(LogConstants.LOG_FIELDS);
 
-        if ((strSelectedFields != null) && (strSelectedFields.length() != 0))
-        {
+        if ((strSelectedFields != null) && (strSelectedFields.length() != 0)) {
             StringTokenizer stoken =
                 new StringTokenizer(strSelectedFields, ", ");
 
-            while(stoken.hasMoreElements()) {
+            while (stoken.hasMoreElements()) {
                 fieldSet.add(stoken.nextToken());
             }
         }
@@ -200,8 +198,7 @@ public class LogManager extends java.util.logging.LogManager {
      * does not have <code>LoggingPermission("control")</code>.
      */
     public final void readConfiguration()
-        throws IOException, SecurityException
-    {
+            throws IOException, SecurityException {
         String[] xlogData = null;
         try {
             /*
@@ -225,7 +222,7 @@ public class LogManager extends java.util.logging.LogManager {
                     oldLocation = getProperty(LogConstants.LOG_LOCATION);
                     oldLevel = getProperty(LogConstants.LOGGING_LEVEL);
                     oldSecurityStatus =
-                        getProperty(LogConstants.SECURITY_STATUS);
+                            getProperty(LogConstants.SECURITY_STATUS);
                     oldBackend = getProperty(LogConstants.BACKEND);
                     oldStatus = getProperty(LogConstants.LOG_STATUS_ATTR);
                 }
@@ -242,12 +239,12 @@ public class LogManager extends java.util.logging.LogManager {
                      */
                     if (SystemProperties.isServerMode()) {
                         LogConfigReader logConfigReader =
-                            new LogConfigReader();
+                                new LogConfigReader();
                     } else {
                         super.readConfiguration();
                     }
                     didFirstReadConfig = true;
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     /* no debug since our debugging system is not up. */
                 } finally {
                     LogManagerUtil.resetEnv();
@@ -262,7 +259,7 @@ public class LogManager extends java.util.logging.LogManager {
                         newLocation = getProperty(LogConstants.LOG_LOCATION);
                         newLevel = getProperty(LogConstants.LOGGING_LEVEL);
                         newSecurityStatus =
-                            getProperty(LogConstants.SECURITY_STATUS);
+                                getProperty(LogConstants.SECURITY_STATUS);
                         newBackend = getProperty(LogConstants.BACKEND);
                         newStatus = getProperty(LogConstants.LOG_STATUS_ATTR);
                     }
@@ -278,22 +275,22 @@ public class LogManager extends java.util.logging.LogManager {
                      */
 
                     String[] logData = {oldLocation, newLocation,
-                               oldBackend, newBackend,
-                               oldSecurityStatus, newSecurityStatus,
-                               oldStatus, newStatus,
-                               oldLevel, newLevel};
+                        oldBackend, newBackend,
+                        oldSecurityStatus, newSecurityStatus,
+                        oldStatus, newStatus,
+                        oldLevel, newLevel};
 
                     if (getProperty(LogConstants.BACKEND).equals("DB")) {
                         HANDLER = getProperty(LogConstants.DB_HANDLER);
                         FORMATTER = getProperty(LogConstants.DB_FORMATTER);
                         String driver = getProperty(LogConstants.DB_DRIVER);
-                    } else if (getProperty(LogConstants.SECURITY_STATUS)
-                        .equalsIgnoreCase("ON"))
+                    } else if (getProperty(
+                        LogConstants.SECURITY_STATUS).equalsIgnoreCase("ON"))
                     {
                         securityStatus = true;
                         HANDLER = getProperty(LogConstants.SECURE_FILE_HANDLER);
                         FORMATTER =
-                            getProperty(LogConstants.SECURE_ELF_FORMATTER);
+                                getProperty(LogConstants.SECURE_ELF_FORMATTER);
                     } else {
                         HANDLER = getProperty(LogConstants.FILE_HANDLER);
                         FORMATTER = getProperty(LogConstants.ELF_FORMATTER);
@@ -306,36 +303,35 @@ public class LogManager extends java.util.logging.LogManager {
                          */
 
                         if (SystemProperties.isServerMode() &&
-                            (newLocation != null) &&
-                            (oldLocation != null) &&
-                            !oldLocation.equals(newLocation))
-                        {
+                                (newLocation != null) &&
+                                (oldLocation != null) &&
+                                !oldLocation.equals(newLocation)) {
                             File dir = new File(newLocation);
                             if (!dir.exists()) {
                                 if (!dir.mkdirs()) {
                                     Debug.error(
-                                    "LogManager:readConfiguration:" +
-                                    "Unable to create the new log directory." +
-                                    " Verify that the process has necessary" +
-                                    " permissions");
+                                            "LogManager:readConfiguration:" +
+                                            "Unable to create the new log directory." +
+                                            " Verify that the process has necessary" +
+                                            " permissions");
                                 }
                             }
                         }
                     }
 
                     boolean loggingInactive =
-                        (getProperty(LogConstants.LOG_STATUS_ATTR).
+                            (getProperty(LogConstants.LOG_STATUS_ATTR).
                             equals("INACTIVE"));
 
                     String strLogLevel =
-                        getProperty(LogConstants.LOGGING_LEVEL);
+                            getProperty(LogConstants.LOGGING_LEVEL);
                     try {
                         loggingLevel = Level.parse(strLogLevel);
                     } catch (IllegalArgumentException iaex) {
                         loggingLevel = Level.INFO;  // default
                         Debug.error("LogManager:readConfiguration:" +
-                            "Log level '" + strLogLevel +
-                            "' unknown; setting to Level.INFO.");
+                                "Log level '" + strLogLevel +
+                                "' unknown; setting to Level.INFO.");
                     }
 
                     /*
@@ -360,7 +356,7 @@ public class LogManager extends java.util.logging.LogManager {
                 }
 
                 Logger.resolveHostName = Boolean.valueOf(
-                    getProperty(LogConstants.LOG_RESOLVE_HOSTNAME_ATTR)).
+                        getProperty(LogConstants.LOG_RESOLVE_HOSTNAME_ATTR)).
                         booleanValue();
 
                 /*
@@ -368,24 +364,23 @@ public class LogManager extends java.util.logging.LogManager {
                  * to the new configuration
                  */
                 loggerNames = getLoggerNames();
-  
+
                 while (loggerNames.hasMoreElements()) {
-                    String curEl = (String)loggerNames.nextElement();
+                    String curEl = (String) loggerNames.nextElement();
                     /* avoid root logger */
                     if (curEl.length() != 0 && curEl.length() != 0 &&
-                        !curEl.equals("global"))
-                    {
+                            !curEl.equals("global")) {
                         if (Debug.messageEnabled()) {
                             Debug.message(
-                                "LogManager:readConfiguration:" +
-                                "Processing Logger: " + curEl);
+                                    "LogManager:readConfiguration:" +
+                                    "Processing Logger: " + curEl);
                         }
 
                         /*
                          * remove all handlers and add new handlers for
                          * this logger
                          */
-                        Logger l = (Logger)Logger.getLogger(curEl);
+                        Logger l = (Logger) Logger.getLogger(curEl);
                         Handler[] handlers = l.getHandlers();
                         for (int i = 0; i < handlers.length; i++) {
                             handlers[i].close();
@@ -394,40 +389,39 @@ public class LogManager extends java.util.logging.LogManager {
 
                         String handlerClass = LogManager.HANDLER;
                         Class clz = null;
-                        Class [] parameters = {String.class};
-                        Object [] parameterObjects = {new String(l.getName())};
-                        Constructor cons =null;
+                        Class[] parameters = {String.class};
+                        Object[] parameterObjects = {new String(l.getName())};
+                        Constructor cons = null;
                         Handler h = null;
                         try {
                             clz = Class.forName(handlerClass);
                         } catch (Exception e) {
                             Debug.error(
-                                "LogManager.readConfiguration:could not load "
-                                + handlerClass, e);
+                                    "LogManager.readConfiguration:could not load " + handlerClass, e);
                         }
                         try {
                             cons = clz.getDeclaredConstructor(parameters);
                         } catch (Exception e) {
                             Debug.error(
-                                "LogManager.readConfiguration:could not" +
-                                " instantiate" + handlerClass, e);
+                                    "LogManager.readConfiguration:could not" +
+                                    " instantiate" + handlerClass, e);
                         }
                         try {
-                            h = (Handler)cons.newInstance(parameterObjects);
+                            h = (Handler) cons.newInstance(parameterObjects);
                         } catch (Exception e) {
                             Debug.error(
-                                "LogManager.readConfiguration:could not" +
-                                " instantiate" + handlerClass, e);
+                                    "LogManager.readConfiguration:could not" +
+                                    " instantiate" + handlerClass, e);
                         }
                         String formatterClass = LogManager.FORMATTER;
                         Formatter f = null;
                         try {
-                            f = (Formatter)Class.forName(formatterClass).
-                                newInstance();
+                            f = (Formatter) Class.forName(formatterClass).
+                                    newInstance();
                         } catch (Exception e) {
                             Debug.error(
-                                "LogManager.readConfiguration:could not" +
-                                " instantiate Formatter " + formatterClass, e);
+                                    "LogManager.readConfiguration:could not" +
+                                    " instantiate Formatter " + formatterClass, e);
                         }
                         h.setFormatter(f);
                         l.addHandler(h);
@@ -443,9 +437,9 @@ public class LogManager extends java.util.logging.LogManager {
                         Level tlevel = loggingLevel;
                         if (loggingLevel != Level.OFF) {
                             String levelProp =
-                                LogConstants.LOG_PROP_PREFIX + "." +
-                                l.getName() + ".level";
-                            String lvlStr = SystemProperties.get (levelProp);
+                                    LogConstants.LOG_PROP_PREFIX + "." +
+                                    l.getName() + ".level";
+                            String lvlStr = SystemProperties.get(levelProp);
 
                             if ((lvlStr != null) && (lvlStr.length() > 0)) {
                                 try {
@@ -465,8 +459,11 @@ public class LogManager extends java.util.logging.LogManager {
         } finally {
             Logger.rwLock.writeDone();
         }
+
         if (SystemProperties.isServerMode() && isLocal) {
             checkStartLogs(xlogData);
+            //Update the new configuration info in Monitoring handle also
+            updateMonitConfigForLogService();
         }
     } /* end of readConfiguration() */
 
@@ -529,11 +526,10 @@ public class LogManager extends java.util.logging.LogManager {
         if (loggingIsActive) {
             // see if there's a reason to write the log record
             if (!vals[OLDBACKEND].equals(vals[NEWBACKEND]) ||
-                !vals[OLDLOCATION].equals(vals[NEWLOCATION]) ||
-                !vals[OLDSECURITYSTATUS].equals(vals[NEWSECURITYSTATUS]) ||
-                !vals[OLDSTATUS].equals(vals[NEWSTATUS]) ||
-                !vals[OLDLEVEL].equals(vals[NEWLEVEL]))
-            {
+                    !vals[OLDLOCATION].equals(vals[NEWLOCATION]) ||
+                    !vals[OLDSECURITYSTATUS].equals(vals[NEWSECURITYSTATUS]) ||
+                    !vals[OLDSTATUS].equals(vals[NEWSTATUS]) ||
+                    !vals[OLDLEVEL].equals(vals[NEWLEVEL])) {
                 loggerNames = getLoggerNames();
                 String saveLevel = vals[NEWLEVEL];
                 Level level = Level.INFO;
@@ -542,15 +538,14 @@ public class LogManager extends java.util.logging.LogManager {
                 } catch (IllegalArgumentException iaex) {
                     // just leave it at "INFO" as a default
                 }
-  
+
                 while (loggerNames.hasMoreElements()) {
                     vals[NEWLEVEL] = saveLevel;
-                    String curEl = (String)loggerNames.nextElement();
+                    String curEl = (String) loggerNames.nextElement();
                     /* avoid root logger */
                     if (curEl.length() != 0 && curEl.length() != 0 &&
-                        !curEl.equals("global"))
-                    {
-                        Logger l = (Logger)Logger.getLogger(curEl);
+                            !curEl.equals("global")) {
+                        Logger l = (Logger) Logger.getLogger(curEl);
 
                         /*
                          *  additional reason to check if start record
@@ -573,7 +568,7 @@ public class LogManager extends java.util.logging.LogManager {
                             if (tlevel != Level.OFF) {
                                 vals[NEWLEVEL] = tlevel.toString();
                                 logIt(l, vals,
-                                    LogConstants.START_LOG_CONFIG_NAME);
+                                        LogConstants.START_LOG_CONFIG_NAME);
                             }
                         } else {
                             logIt(l, vals, LogConstants.START_LOG_CONFIG_NAME);
@@ -587,15 +582,62 @@ public class LogManager extends java.util.logging.LogManager {
     private void logIt(Logger logger, String[] msg, String msgName) {
         try {
             LogMessageProviderBase provider =
-                (LogMessageProviderBase)MessageProviderFactory.getProvider(
+                    (LogMessageProviderBase) MessageProviderFactory.getProvider(
                     "Logging");
             SSOToken ssot = LogManagerUtil.getLoggingSSOToken();
             com.sun.identity.log.LogRecord lr =
-                provider.createLogRecord(msgName, msg, ssot);
+                    provider.createLogRecord(msgName, msg, ssot);
             logger.log(lr, ssot);
         } catch (IOException ioex) {
             Debug.error("LogManager.logIt:could not log to " +
-                logger.getName() + ": " + ioex.getMessage());
-        } 
+                    logger.getName() + ": " + ioex.getMessage());
+        }
+    }
+
+    /**
+     * This method is called from two places, from readConfiguration() and from
+     * Logger.getLoggers().
+     */
+    public void updateMonitConfigForLogService() {
+        /*
+         * if haven't gotten the logging service monitoring handle
+         * yet, see if it's setup now
+         */
+        if (SystemProperties.isServerMode() && Agent.isRunning()) {
+            if (logServiceImplForMonitoring == null) {
+                logServiceImplForMonitoring =
+                    (SsoServerLoggingSvcImpl) Agent.getLoggingSvcMBean();
+            }
+            if (logServiceImplForMonitoring == null) {
+                return;
+            }
+
+            logServiceImplForMonitoring.setSsoServerLoggingLoggers(
+                    new Integer(loggerCount));
+            logServiceImplForMonitoring.setSsoServerLoggingSecure(
+                    newSecurityStatus);
+            logServiceImplForMonitoring.setSsoServerLoggingTimeBuffering(
+                    getProperty(LogConstants.TIME_BUFFERING_STATUS));
+            logServiceImplForMonitoring.setSsoServerLoggingBufferSize(
+                    Long.valueOf(getProperty(LogConstants.BUFFER_SIZE)).
+                    longValue());
+            logServiceImplForMonitoring.setSsoServerLoggingBufferTime(
+                    Long.valueOf(getProperty(LogConstants.BUFFER_TIME)).
+                    longValue());
+            logServiceImplForMonitoring.setSsoServerLoggingMaxLogSize(
+                    Long.valueOf(getProperty(
+                    LogConstants.MAX_FILE_SIZE)).longValue());
+            logServiceImplForMonitoring.
+                setSsoServerLoggingNumberHistoryFiles(Long.valueOf(
+                    getProperty(LogConstants.NUM_HISTORY_FILES)).
+                    longValue());
+            logServiceImplForMonitoring.setSsoServerLoggingLocation(
+                    getProperty(LogConstants.LOG_LOCATION));
+            logServiceImplForMonitoring.setSsoServerLoggingType(
+                    getProperty(LogConstants.BACKEND));
+            
+            isMonitoringInit = true;
+        }
     }
 }
+

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.13 2009-03-14 00:32:26 veiming Exp $
+ * $Id: Logger.java,v 1.14 2009-06-19 02:32:51 bigfatrat Exp $
  *
  */
 
@@ -459,6 +459,17 @@ public class Logger extends java.util.logging.Logger {
         processNewLoggerObject(result);
         if (SystemProperties.isServerMode()) {
             logStartRecord(result);
+        }
+
+        /* Logging service starts earlier than Monitoring.
+         * Because of this the first call to LogManager's readConfiguration()
+         * does not update the monitoring handle with the config information for
+         * logging. Hence we need to call updateMonitConfigForLogService() here
+         * to make sure the monitoring handle does get updated with the config
+         * information eventually.
+         */
+        if(!lm.isMonitoringInit){
+            lm.updateMonitConfigForLogService();
         }
         return result;
     }
