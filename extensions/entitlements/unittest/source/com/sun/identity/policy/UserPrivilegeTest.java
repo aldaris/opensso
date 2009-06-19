@@ -22,22 +22,31 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserPrivilegeTest.java,v 1.1 2009-06-16 19:18:23 dillidorai Exp $
+ * $Id: UserPrivilegeTest.java,v 1.2 2009-06-19 22:01:52 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.login.LoginException;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -47,6 +56,7 @@ import org.testng.annotations.Test;
 public class UserPrivilegeTest {
 
     SSOToken adminToken = null;
+    SSOToken userToken = null;
     AMIdentityRepository amir = null;
     AMIdentity user = null;
 
@@ -73,7 +83,10 @@ public class UserPrivilegeTest {
         passworVals.add(name);
         attrMap.put("userpassword", passworVals);
 
-        user = amir.createIdentity(IdType.USER, name, attrMap);
+        amir.createIdentity(IdType.USER, name, attrMap);
+        userToken = createSessionToken("/", name, name, null, -1);
+
+        user = IdUtils.getIdentity(userToken);
     }
 
     @AfterClass
@@ -83,7 +96,7 @@ public class UserPrivilegeTest {
         amir.deleteIdentities(identities);
     }
 
-    @Test(dependsOnMethods={"setup"})
+    @Test(dependsOnMethods = {"setup"})
     public void testUpdateEmailAddress() throws Exception {
         Map attrMap = new HashMap();
         Set mailVals = new HashSet();
@@ -94,12 +107,12 @@ public class UserPrivilegeTest {
 
     }
 
-    @Test(dependsOnMethods={"testUpdateEmailAddress"})
+    @Test(dependsOnMethods = {"testUpdateEmailAddress"})
     public void testReadEmailAddress() throws Exception {
         Set attrNames = new HashSet();
         attrNames.add("mail");
         Map attrMap = user.getAttributes(attrNames);
-        Set mailVals = (Set)attrMap.get("mail");
+        Set mailVals = (Set) attrMap.get("mail");
         if (mailVals == null) {
             throw new Exception("mail values null");
         }
@@ -108,7 +121,105 @@ public class UserPrivilegeTest {
         }
     }
 
+    private SSOToken createUserToken(String userName, String password)
+            throws Exception {
+        NameCallback nc = new NameCallback("Enter Name");
+        nc.setName(userName);
+        boolean echoOn = false;
+        PasswordCallback pc = new PasswordCallback("Enter Password", echoOn);
+        pc.setPassword(password.toCharArray());
+        Callback[] callbacks = new Callback[2];
+        callbacks[0] = nc;
+        callbacks[1] = pc;
+        AuthContext ac = new AuthContext("/");
+        return ac.login(AuthContext.IndexType.MODULE_INSTANCE, "DataStore", callbacks);
+    }
 
+    private SSOToken createSessionToken(String orgName, String userId,
+            String password, String module, int level)
+            throws Exception {
+        AuthContext ac = null;
+        try {
+            System.out.println("TokenUtils:orgName=" + orgName);
+            ac = new AuthContext(orgName);
+            if (module != null) {
+                ac.login(AuthContext.IndexType.MODULE_INSTANCE, module);
+            } else if (level != -1) {
+                ac.login(AuthContext.IndexType.LEVEL, String.valueOf(level));
+            } else {
+                System.out.println("TokenUtils:calling login()");
+                ac.login();
+            }
+            System.out.println("TokenUtils:after ac.login()");
+        } catch (LoginException le) {
+            le.printStackTrace();
+            return null;
+        }
 
+        try {
+            Callback[] callbacks = null;
+            // Get the information requested by the plug-ins
+            if (ac.hasMoreRequirements()) {
+                callbacks = ac.getRequirements();
 
+                if (callbacks != null) {
+                    addLoginCallbackMessage(callbacks, userId, password);
+                    ac.submitRequirements(callbacks);
+
+                    if (ac.getStatus() == AuthContext.Status.SUCCESS) {
+                        //System.out.println("Auth success");
+                        Subject authSubject = ac.getSubject();
+                        if (authSubject != null) {
+                            Iterator principals =
+                                    (authSubject.getPrincipals()).iterator();
+                            Principal principal;
+                            while (principals.hasNext()) {
+                                principal = (Principal) principals.next();
+                            }
+                        }
+                    } else if (ac.getStatus() == AuthContext.Status.FAILED) {
+                        //System.out.println("Authentication has FAILED");
+                    } else {
+                    }
+                } else {
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //SSOTokenManager.getInstance().validateToken(ac.getSSOToken());
+        //System.out.println(ac.getSSOToken().getPrincipal().getName());
+        return ac.getSSOToken();
+    }
+
+    static void addLoginCallbackMessage(Callback[] callbacks, String userId,
+            String password)
+            throws UnsupportedCallbackException {
+        int i = 0;
+        try {
+            for (i = 0; i < callbacks.length; i++) {
+                if (callbacks[i] instanceof NameCallback) {
+
+                    // prompt the user for a username
+                    NameCallback nc = (NameCallback) callbacks[i];
+
+                    //System.out.println("userName=" + userId);
+                    nc.setName(userId);
+
+                } else if (callbacks[i] instanceof PasswordCallback) {
+
+                    // prompt the user for sensitive information
+                    PasswordCallback pc = (PasswordCallback) callbacks[i];
+
+                    //System.out.println("password=" + password);
+                    pc.setPassword(password.toCharArray());
+
+                } else {
+                }
+            }
+        } catch (Exception e) {
+            //throw new UnsupportedCallbackException(callbacks[i],
+            //"Callback exception: " + e);
+        }
+    }
 }
