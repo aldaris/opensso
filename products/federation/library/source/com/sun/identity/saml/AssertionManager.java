@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManager.java,v 1.11 2009-06-12 22:21:39 mallas Exp $
+ * $Id: AssertionManager.java,v 1.12 2009-06-19 02:51:03 bigfatrat Exp $
  *
  */
 
@@ -56,6 +56,9 @@ import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.stats.Stats;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.util.StringTokenizer;
+import com.sun.identity.plugin.monitoring.FedMonAgent;
+import com.sun.identity.plugin.monitoring.FedMonSAML1Svc;
+import com.sun.identity.plugin.monitoring.MonitorManager;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
@@ -98,6 +101,9 @@ public final class AssertionManager {
     private static long assertionTimeout;
     private static long artifactTimeout;
     private static long notBeforeSkew;
+
+    private static FedMonAgent agent;
+    private static FedMonSAML1Svc saml1Svc;
     
     static {
         assStats = Stats.getInstance("amAssertionMap");
@@ -118,6 +124,9 @@ public final class AssertionManager {
             SAMLConstants.ASSERTION_TIMEOUT_NAME)).intValue() * 1000;
         notBeforeSkew = ((Integer) SAMLServiceManager.getAttribute(
             SAMLConstants.NOTBEFORE_TIMESKEW_NAME)).intValue() * 1000;
+
+        agent = MonitorManager.getAgent();
+        saml1Svc = MonitorManager.getSAML1Svc();
     }
     
     // Singleton instance of AssertionManager
@@ -392,11 +401,27 @@ public final class AssertionManager {
         String artString = art.getAssertionArtifact();
         String aID = assertion.getAssertionID();
         Entry entry = (Entry) idEntryMap.get(aID);
+        if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+            saml1Svc.incSAML1Cache(FedMonSAML1Svc.ASSERTIONS,
+                FedMonSAML1Svc.CREAD);
+        }
         if ((entry == null) && !validateNumberOfAssertions(idEntryMap)) {
+            if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+                saml1Svc.incSAML1Cache(FedMonSAML1Svc.ASSERTIONS,
+                    FedMonSAML1Svc.CMISS);
+            }
             entry = new Entry(assertion, destID, artString, null);
             try {
                 synchronized (idEntryMap) {
                     idEntryMap.put(aID, entry);
+                }
+                if ((agent != null) &&
+                    agent.isRunning() &&
+                    (saml1Svc != null))
+                {
+                        saml1Svc.incSAML1Cache(
+                        FedMonSAML1Svc.ASSERTIONS,
+                        FedMonSAML1Svc.CWRITE);
                 }
                 goThroughRunnable.addElement(aID);
             } catch (Exception e) {
@@ -418,15 +443,45 @@ public final class AssertionManager {
                     LogUtils.ASSERTION_CREATED, data);
             }
         } else {
+            if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+                saml1Svc.incSAML1Cache(FedMonSAML1Svc.ASSERTIONS,
+                    FedMonSAML1Svc.CHIT);
+            }
             String preArtString = entry.getArtifactString();
-            if ((preArtString != null) &&
-                (artEntryMap.containsKey(preArtString)))
-            {
-                SAMLUtils.debug.error("AssertionManager.createAssertion"
+            if (preArtString != null) {
+                if ((agent != null) &&
+                    agent.isRunning() &&
+                    (saml1Svc != null))
+                {
+                        saml1Svc.incSAML1Cache(
+                        FedMonSAML1Svc.ARTIFACTS,
+                        FedMonSAML1Svc.CREAD);
+                }
+            
+                if (artEntryMap.containsKey(preArtString)) {
+                    if ((agent != null) &&
+                        agent.isRunning() &&
+                        (saml1Svc != null))
+                    {
+                            saml1Svc.incSAML1Cache(
+                            FedMonSAML1Svc.ARTIFACTS,
+                            FedMonSAML1Svc.CHIT);
+                    }
+                    SAMLUtils.debug.error("AssertionManager.createAssertion"
                         + "Artifact(Asssertion, String): Artifact exists for "
                         + "the assertion.");
-                throw new SAMLResponderException(
-                    SAMLUtils.bundle.getString("errorCreateArtifact"));
+                    throw new SAMLResponderException(
+                        SAMLUtils.bundle.getString("errorCreateArtifact"));
+                } else {
+                    if ((agent != null) &&
+                        agent.isRunning() &&
+                        (saml1Svc != null))
+                    {
+                            saml1Svc.incSAML1Cache(
+                            FedMonSAML1Svc.ARTIFACTS,
+                            FedMonSAML1Svc.CMISS);
+                    }
+                }
             }
             entry.setDestID(destID);
             entry.setArtifactString(artString);
@@ -443,6 +498,10 @@ public final class AssertionManager {
                 artifactTimeoutRunnable.removeElement(artString);
             }
             artifactTimeoutRunnable.addElement(artString);
+            if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+                saml1Svc.incSAML1Cache(FedMonSAML1Svc.ARTIFACTS,
+                    FedMonSAML1Svc.CWRITE);
+            }
         } catch (Exception e) {
             SAMLUtils.debug.error("AssertionManager.createAssertionArt"
                     + "fact(Assertion,String): couldn't add artifact to the "
@@ -822,6 +881,10 @@ public final class AssertionManager {
                 assertionTimeoutRunnable.removeElement(aIDString);
             }
             assertionTimeoutRunnable.addElement(aIDString);
+            if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+                saml1Svc.incSAML1Cache(FedMonSAML1Svc.ASSERTIONS,
+                    FedMonSAML1Svc.CWRITE);
+            }
         } catch (Exception e) {
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("AssertionManager: couldn't add "
@@ -856,6 +919,11 @@ public final class AssertionManager {
                     artifactTimeoutRunnable.removeElement(artString);
                 }
                 artifactTimeoutRunnable.addElement(artString);
+                if ((agent != null) && agent.isRunning() && (saml1Svc != null)){
+                        saml1Svc.incSAML1Cache(
+                        FedMonSAML1Svc.ARTIFACTS,
+                        FedMonSAML1Svc.CWRITE);
+                }
             } catch (Exception e) {
                 if (SAMLUtils.debug.messageEnabled()) {
                     SAMLUtils.debug.message("AssertionManager: couldn't add "
@@ -983,13 +1051,26 @@ public final class AssertionManager {
         long timeout = 0;
 
         ArtEntry artEntry = (ArtEntry) artEntryMap.get(artString);
+        if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+            saml1Svc.incSAML1Cache(FedMonSAML1Svc.ARTIFACTS,
+                FedMonSAML1Svc.CREAD);
+        }
         if (artEntry == null) {
+            if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+                saml1Svc.incSAML1Cache(FedMonSAML1Svc.ARTIFACTS,
+                    FedMonSAML1Svc.CMISS);
+            }
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("AssertionManager.getAssertion(art, de"
                     + "stid): no Assertion found corresponding to artifact.");
             }
             throw new SAMLException(
                     SAMLUtils.bundle.getString("noMatchingAssertion"));
+        } else {
+            if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+                saml1Svc.incSAML1Cache(FedMonSAML1Svc.ARTIFACTS,
+                    FedMonSAML1Svc.CHIT);
+            }
         }
         aIDString = (String) artEntry.getAssertionID();
         if (aIDString == null) {
@@ -1317,11 +1398,33 @@ public final class AssertionManager {
                         + "this server is the issuer.");
                 }
                 Entry entry = (Entry) idEntryMap.get(aID);
+                if ((agent != null) && agent.isRunning() && (saml1Svc != null)){
+                        saml1Svc.incSAML1Cache(
+                        FedMonSAML1Svc.ASSERTIONS,
+                        FedMonSAML1Svc.CREAD);
+                }
                 if (entry != null) {
                     token = entry.getSSOToken();
                     if (token != null) {
                         verifySSOTokenAndNI(token,
                                         ssoSubject.getNameIdentifier());
+                    }
+                    if ((agent != null) &&
+                        agent.isRunning() &&
+                        (saml1Svc != null))
+                    {
+                        saml1Svc.incSAML1Cache(
+                            FedMonSAML1Svc.ASSERTIONS,
+                            FedMonSAML1Svc.CHIT);
+                    }
+                } else {
+                    if ((agent != null) &&
+                        agent.isRunning() &&
+                        (saml1Svc != null))
+                    {
+                        saml1Svc.incSAML1Cache(
+                            FedMonSAML1Svc.ASSERTIONS,
+                            FedMonSAML1Svc.CMISS);
                     }
                 }
             } else { // this machine is not the issuer
@@ -1367,6 +1470,10 @@ public final class AssertionManager {
                 assertionTimeoutRunnable.removeElement(aIDString);
             }
             assertionTimeoutRunnable.addElement(aIDString);
+            if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+                saml1Svc.incSAML1Cache(FedMonSAML1Svc.ASSERTIONS,
+                    FedMonSAML1Svc.CWRITE);
+            }
         } catch (Exception e) {
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("AssertionManager.getAttributeAssertion"
@@ -1556,6 +1663,10 @@ public final class AssertionManager {
                 assertionTimeoutRunnable.removeElement(aIDString);
             }
             assertionTimeoutRunnable.addElement(aIDString);
+            if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+                saml1Svc.incSAML1Cache(FedMonSAML1Svc.ASSERTIONS,
+                    FedMonSAML1Svc.CWRITE);
+            }
         } catch (Exception e) {
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("AssertionManager.getAuthNAssertion:"
@@ -1757,14 +1868,29 @@ public final class AssertionManager {
                 SAMLUtils.debug.message("AssertionManager.getAuthZAssertion:"
                     + "this server is the issuer.");
             }
+            if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+                saml1Svc.incSAML1Cache(FedMonSAML1Svc.ASSERTIONS,
+                    FedMonSAML1Svc.CREAD);
+            }
             Entry entry = (Entry) idEntryMap.get(aID);
             if (entry != null) {
+                if ((agent != null) && agent.isRunning() && (saml1Svc != null)){
+                        saml1Svc.incSAML1Cache(
+                        FedMonSAML1Svc.ASSERTIONS,
+                        FedMonSAML1Svc.CHIT);
+                }
                 token = entry.getSSOToken();
                 if (token != null) {
                     verifySSOTokenAndNI(token,
                                         querySubject.getNameIdentifier());
                     tokenMap.put("true", token);
                     return tokenMap;
+                }
+            } else {
+                if ((agent != null) && agent.isRunning() && (saml1Svc != null)){
+                    saml1Svc.incSAML1Cache(
+                        FedMonSAML1Svc.ASSERTIONS,
+                        FedMonSAML1Svc.CMISS);
                 }
             }
 
@@ -2029,6 +2155,11 @@ public final class AssertionManager {
                     assertionTimeoutRunnable.removeElement(aIDString);
                 }
                 assertionTimeoutRunnable.addElement(aIDString);
+                if ((agent != null) && agent.isRunning() && (saml1Svc != null)){
+                    saml1Svc.incSAML1Cache(
+                        FedMonSAML1Svc.ASSERTIONS,
+                        FedMonSAML1Svc.CWRITE);
+                }
             } catch (Exception e) {
                 if (SAMLUtils.debug.messageEnabled()) {
                     SAMLUtils.debug.message("AssertionManager.getAuthZAssertion"
@@ -2201,13 +2332,26 @@ public final class AssertionManager {
         }
 
         Entry entry = (Entry) idEntryMap.get(aIDString);
+        if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+            saml1Svc.incSAML1Cache(FedMonSAML1Svc.ASSERTIONS,
+                FedMonSAML1Svc.CREAD);
+        }
         if (entry == null) {
+            if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+                saml1Svc.incSAML1Cache(FedMonSAML1Svc.ASSERTIONS,
+                    FedMonSAML1Svc.CMISS);
+            }
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("AssertionManager.getAssertion(Asser"
                     + "tionIDRef): no matching assertion found in idEntryMap.");
             }
             throw new SAMLException(
                 SAMLUtils.bundle.getString("noMatchingAssertion"));
+        } else {
+            if ((agent != null) && agent.isRunning() && (saml1Svc != null)) {
+                saml1Svc.incSAML1Cache(FedMonSAML1Svc.ASSERTIONS,
+                    FedMonSAML1Svc.CHIT);
+            }
         }
 
         Assertion assertion = entry.getAssertion();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSessionManager.java,v 1.4 2008-06-25 05:46:56 qcheng Exp $
+ * $Id: FSSessionManager.java,v 1.5 2009-06-19 02:46:46 bigfatrat Exp $
  *
  */
 
@@ -40,6 +40,9 @@ import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.liberty.ws.meta.jaxb.IDPDescriptorType;
 import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
+import com.sun.identity.plugin.monitoring.FedMonAgent;
+import com.sun.identity.plugin.monitoring.FedMonIDFFSvc;
+import com.sun.identity.plugin.monitoring.MonitorManager;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import java.util.ArrayList;
@@ -106,6 +109,9 @@ public final class FSSessionManager {
      */
     public static Stats sessStats = Stats.getInstance("libIDFFSessionMaps");
 
+    private static FedMonAgent agent;
+    private static FedMonIDFFSvc idffSvc;
+
     static {
         try {
             String temp = SystemConfigurationUtil.getProperty(
@@ -137,6 +143,9 @@ public final class FSSessionManager {
             }
             requestTimeout = DEFAULT_REQUEST_TIMEOUT;
         }
+
+        agent = MonitorManager.getAgent();
+        idffSvc = MonitorManager.getIDFFSvc();
         
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("FSSessionManager, cleanup interval=" 
@@ -214,6 +223,9 @@ public final class FSSessionManager {
         }
         idAuthnRequestMap.remove(requestID);
         idDestnMap.remove(requestID);
+        if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
+            idffSvc.decIdDestn();
+        }
         if (cRunnable != null) {
             cRunnable.removeElement(requestID);
         }
@@ -237,6 +249,9 @@ public final class FSSessionManager {
     public void setLocalSessionToken (String requestID, Object localSession){
         FSUtils.debug.message ("FSSessionManager.setLocalSessionToken: Called");
         idLocalSessionTokenMap.put (requestID, localSession);
+        if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
+            idffSvc.incIdLocalSessToken();
+        }
     }
 
     /**
@@ -247,6 +262,9 @@ public final class FSSessionManager {
         FSUtils.debug.message(
             "FSSessionManager.removeLocalSessionToken: Called");
         idLocalSessionTokenMap.remove(requestID);
+        if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
+            idffSvc.decIdLocalSessToken();
+        }
     }
 
     /**
@@ -270,6 +288,9 @@ public final class FSSessionManager {
     {
         FSUtils.debug.message ("FSSessionManager.setIDPEntityID");
         idDestnMap.put (requestID, idpEntityId);
+        if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
+            idffSvc.incIdDestn();
+        }
     }
 
     /**
@@ -331,6 +352,9 @@ public final class FSSessionManager {
     public void setSessionList (String userID, List sessionList){
         FSUtils.debug.message ("FSSessionManager.setSessionList: Called");
         userIDSessionListMap.put(userID.toLowerCase(), sessionList);
+        if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
+            idffSvc.incUserIDSessionList();
+        }
     }
     
     /**
@@ -340,6 +364,9 @@ public final class FSSessionManager {
     public void removeSessionList (String userID){
         FSUtils.debug.message ("FSSessionManager.removeSessionList: Called ");
         userIDSessionListMap.remove(userID.toLowerCase());
+        if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
+            idffSvc.decUserIDSessionList();
+        }
     }
     
     /**

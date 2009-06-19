@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.21 2009-06-12 22:21:40 mallas Exp $
+ * $Id: DoManageNameID.java,v 1.22 2009-06-19 02:50:26 bigfatrat Exp $
  *
  */
 
@@ -55,6 +55,9 @@ import javax.xml.soap.SOAPMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.sun.identity.plugin.monitoring.FedMonAgent;
+import com.sun.identity.plugin.monitoring.FedMonSAML2Svc;
+import com.sun.identity.plugin.monitoring.MonitorManager;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
@@ -115,6 +118,8 @@ public class DoManageNameID {
     static KeyProvider keyProvider = KeyUtil.getKeyProviderInstance(); 
     static Debug debug = SAML2Utils.debug;
     static SessionProvider sessionProvider = null;
+    private static FedMonAgent agent;
+    private static FedMonSAML2Svc saml2Svc;
     
     static {
         try {
@@ -129,6 +134,8 @@ public class DoManageNameID {
         } catch (SessionException sessE) {
             debug.error("Error retrieving session provider.", sessE);
         }
+        agent = MonitorManager.getAgent();
+        saml2Svc = MonitorManager.getSAML2Svc();
     }
     
     private static void logError(String msgID, String key, String value) {
@@ -969,6 +976,9 @@ public class DoManageNameID {
         } else {
             spFedSessions = (List)SPCache.fedSessionListsByNameIDInfoKey.remove(
                 oldNameIDInfo.getNameIDInfoKey().toValueString());
+            if ((agent != null) && agent.isRunning() && (saml2Svc != null)) {
+                saml2Svc.decFedSessionCount();
+            }
         }
                 
         if (!AccountUtils.removeAccountFederation(oldNameIDInfo, userID)) {
@@ -1073,6 +1083,9 @@ public class DoManageNameID {
             }
             SPCache.fedSessionListsByNameIDInfoKey.put(newInfoKeyStr,
                 spFedSessions);
+            if ((agent != null) && agent.isRunning() && (saml2Svc != null)) {
+                saml2Svc.incFedSessionCount();
+            }
         }
         // log new name id success
         logAccess("requestSuccess", LogUtil.SUCCESS_NEW_NAMEID, userID);
@@ -1499,6 +1512,9 @@ public class DoManageNameID {
                 spFedSessions = (List)SPCache.fedSessionListsByNameIDInfoKey.
                     remove(infoKeyStr);
                 removeInfoKeyFromSession(session, infoKeyStr);
+                if ((agent != null) && agent.isRunning() && (saml2Svc != null)){
+                    saml2Svc.decFedSessionCount();
+                }
             } else {
                 removeIDPFedSession(remoteEntityID, oldNameID.getValue());
             }
@@ -1540,6 +1556,12 @@ public class DoManageNameID {
                 if (spFedSessions != null) {
                     SPCache.fedSessionListsByNameIDInfoKey.put(
                         newInfoKeyStr, spFedSessions);
+                    if ((agent != null) &&
+                        agent.isRunning() &&
+                        (saml2Svc != null))
+                    {
+                        saml2Svc.incFedSessionCount();
+                    }
                 }
 
                 AccountUtils.setAccountFederation(newNameIDInfo, userID);

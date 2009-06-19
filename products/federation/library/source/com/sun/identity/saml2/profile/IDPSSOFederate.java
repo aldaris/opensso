@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.22 2009-06-12 22:21:40 mallas Exp $
+ * $Id: IDPSSOFederate.java,v 1.23 2009-06-19 02:50:26 bigfatrat Exp $
  *
  */
 
@@ -31,6 +31,9 @@ package com.sun.identity.saml2.profile;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.multiprotocol.MultiProtocolUtils;
 import com.sun.identity.multiprotocol.SingleLogoutManager;
+import com.sun.identity.plugin.monitoring.FedMonAgent;
+import com.sun.identity.plugin.monitoring.FedMonSAML2Svc;
+import com.sun.identity.plugin.monitoring.MonitorManager;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
@@ -91,7 +94,15 @@ import org.w3c.dom.Element;
 public class IDPSSOFederate {
 
     private static final String REQ_ID = "ReqID";
+
+    private static FedMonAgent agent;
+    private static FedMonSAML2Svc saml2Svc;
   
+    static {
+        agent = MonitorManager.getAgent();
+        saml2Svc = MonitorManager.getSAML2Svc();
+    }
+
     private IDPSSOFederate() {
     }
  
@@ -234,7 +245,7 @@ public class IDPSSOFederate {
             String relayState = null;
             if (reqID == null) {
                 String binding = SAML2Constants.HTTP_REDIRECT;
-	        if (request.getMethod().equals("POST")) {
+                if (request.getMethod().equals("POST")) {
                     binding = SAML2Constants.HTTP_POST;
                 }
 
@@ -322,11 +333,11 @@ public class IDPSSOFederate {
                         if (isFromECP) {
                             isSignatureOK = authnReq.isSignatureValid(spCert);
                         } else {
-			    String method  = request.getMethod();
-			    if (method.equals("POST")) {
-				isSignatureOK = authnReq.isSignatureValid(
+                            String method  = request.getMethod();
+                            if (method.equals("POST")) {
+                                isSignatureOK = authnReq.isSignatureValid(
                                     spCert);
-			    } else {
+                            } else {
                                 String queryString = request.getQueryString();
                                 isSignatureOK = QuerySignatureUtil.verify(
                                     queryString, spCert);
@@ -715,6 +726,13 @@ public class IDPSSOFederate {
                     String sessionIndex = IDPSSOUtil.getSessionIndex(session);
                     if (sessionIndex != null && (sessionIndex.length() != 0 )) { 
                         IDPCache.idpSessionsByIndices.put(sessionIndex,oldSess);
+
+                        if ((agent != null) &&
+                            agent.isRunning() &&
+                            (saml2Svc != null))
+                        {
+                            saml2Svc.incIdpSessionCount();
+                        }
                     }
                 }
                 if (session != null) {

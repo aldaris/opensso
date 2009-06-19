@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedService.java,v 1.7 2008-12-19 06:50:46 exu Exp $
+ * $Id: FSSSOAndFedService.java,v 1.8 2009-06-19 02:45:50 bigfatrat Exp $
  *
  */
 
@@ -47,6 +47,9 @@ import com.sun.identity.federation.accountmgmt.FSAccountMgmtException;
 import com.sun.identity.liberty.ws.meta.jaxb.IDPDescriptorType;
 import com.sun.identity.multiprotocol.MultiProtocolUtils;
 import com.sun.identity.multiprotocol.SingleLogoutManager;
+import com.sun.identity.plugin.monitoring.FedMonAgent;
+import com.sun.identity.plugin.monitoring.FedMonIDFFSvc;
+import com.sun.identity.plugin.monitoring.MonitorManager;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
@@ -79,6 +82,10 @@ public class FSSSOAndFedService  extends HttpServlet {
     private static FSSOAPService soapService = FSSOAPService.getInstance();
     private static MessageFactory msgFactory = null;
     private static IDFFMetaManager metaManager = null;
+
+    private static FedMonAgent agent = MonitorManager.getAgent();
+    private static FedMonIDFFSvc idffSvc =
+	MonitorManager.getIDFFSvc();
     
     /**
      * Initializes the servlet.
@@ -243,7 +250,7 @@ public class FSSSOAndFedService  extends HttpServlet {
                     "FSSSOAndFedService: couldn't obtain hosted entity id:",e);
             }
         }
-            
+
         handleAuthnRequest(request, 
                             response,
                             authnRequest, 
@@ -368,6 +375,7 @@ public class FSSSOAndFedService  extends HttpServlet {
                     "FSSSOAndFedService: couldn't obtain hosted entity id:",e);
             }
         }
+
         handleAuthnRequest(request,
                             response, 
                             authnRequest, 
@@ -638,6 +646,11 @@ public class FSSSOAndFedService  extends HttpServlet {
                 return;
             }
             
+
+            if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
+                idffSvc.incIdAuthnRqt();
+            }
+
             handler.setHostedEntityId(hostEntityId);
             handler.setMetaAlias(metaAlias);
             handler.setHostedDescriptor(hostedDesc);

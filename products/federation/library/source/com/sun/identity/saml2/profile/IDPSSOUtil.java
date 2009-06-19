@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.51 2009-06-12 22:21:40 mallas Exp $
+ * $Id: IDPSSOUtil.java,v 1.52 2009-06-19 02:50:26 bigfatrat Exp $
  *
  */
 
@@ -94,6 +94,9 @@ import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.protocol.Scoping;
 import com.sun.identity.saml2.protocol.Status;
 import com.sun.identity.saml2.protocol.StatusCode;
+import com.sun.identity.plugin.monitoring.FedMonAgent;
+import com.sun.identity.plugin.monitoring.FedMonSAML2Svc;
+import com.sun.identity.plugin.monitoring.MonitorManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionException;
@@ -130,6 +133,10 @@ public class IDPSSOUtil {
     public static CircleOfTrustManager cotManager = null;
     static IDPSessionListener sessionListener = new IDPSessionListener();
     static SessionProvider sessionProvider = null;
+
+    private static FedMonAgent agent;
+    private static FedMonSAML2Svc saml2Svc;
+
     static {
         try {
             metaManager = new SAML2MetaManager();
@@ -146,6 +153,9 @@ public class IDPSSOUtil {
                 "IDPSSOUtil static block: Error getting SessionProvider.",
                 se);
         }                   
+
+        agent = MonitorManager.getAgent();
+        saml2Svc = MonitorManager.getSAML2Svc();
     }
 
     /**
@@ -768,6 +778,11 @@ public class IDPSSOUtil {
             idpSession.setMetaAlias(idpMetaAlias);
 
             IDPCache.idpSessionsByIndices.put(sessionIndex, idpSession);
+
+            if ((agent != null) && agent.isRunning() && (saml2Svc != null)) {
+                saml2Svc.incIdpSessionCount();
+            }
+
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message(classMethod +
                     "a new IDP session has been saved in cache, " +

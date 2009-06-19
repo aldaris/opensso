@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.43 2009-06-17 03:09:13 exu Exp $
+ * $Id: SPACSUtils.java,v 1.44 2009-06-19 02:50:26 bigfatrat Exp $
  *
  */
 
@@ -61,8 +61,8 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.saml.common.SAMLConstants;
-import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.Advice;
 import com.sun.identity.saml2.assertion.Attribute;
 import com.sun.identity.saml2.assertion.AssertionFactory;
@@ -105,6 +105,9 @@ import com.sun.identity.saml2.plugins.SAML2ServiceProviderAdapter;
 import com.sun.identity.saml2.plugins.SPAccountMapper;
 import com.sun.identity.saml2.plugins.SPAttributeMapper;
 
+import com.sun.identity.plugin.monitoring.FedMonAgent;
+import com.sun.identity.plugin.monitoring.FedMonSAML2Svc;
+import com.sun.identity.plugin.monitoring.MonitorManager;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
@@ -118,6 +121,9 @@ import java.security.PrivateKey;
  * @supported.api
  */
 public class SPACSUtils {
+
+    private static FedMonAgent agent = MonitorManager.getAgent();
+    private static FedMonSAML2Svc saml2Svc = MonitorManager.getSAML2Svc();
 
     private SPACSUtils() {}
 
@@ -1570,6 +1576,10 @@ public class SPACSUtils {
                     SPCache.fedSessionListsByNameIDInfoKey.put(
                         infoKeyString, fedSessions);
                 }
+                if ((agent != null) && agent.isRunning() && (saml2Svc != null)){
+                    saml2Svc.incFedSessionCount();
+                }
+
                 if (isIDPProxy) {
                     //IDP Proxy 
                     IDPSession idpSess = (IDPSession)
@@ -1612,11 +1622,20 @@ public class SPACSUtils {
                                              metaAlias));
                         SPCache.fedSessionListsByNameIDInfoKey.put(
                             infoKeyString, fedSessions);
+                        if ((agent != null) &&
+                            agent.isRunning() &&
+                            (saml2Svc != null))
+                        {
+                            saml2Svc.incFedSessionCount();
+                        }
                     }
                }    
             }
             SPCache.fedSessionListsByNameIDInfoKey.put(infoKeyString,
                                                    fedSessions);
+            if ((agent != null) && agent.isRunning() && (saml2Svc != null)) {
+                saml2Svc.incFedSessionCount();
+            }
         }
         try {
             sessionProvider.addListener(

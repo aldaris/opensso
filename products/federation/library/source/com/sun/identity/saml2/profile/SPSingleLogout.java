@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.24 2009-06-17 03:09:14 exu Exp $
+ * $Id: SPSingleLogout.java,v 1.25 2009-06-19 02:50:26 bigfatrat Exp $
  *
  */
 
@@ -54,6 +54,9 @@ import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.LogoutResponse;
 import com.sun.identity.saml2.protocol.LogoutRequest;
 import com.sun.identity.saml2.protocol.Status;
+import com.sun.identity.plugin.monitoring.FedMonAgent;
+import com.sun.identity.plugin.monitoring.FedMonSAML2Svc;
+import com.sun.identity.plugin.monitoring.MonitorManager;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
@@ -92,6 +95,9 @@ public class SPSingleLogout {
             SAML2Utils.generateStatus(SAML2Constants.RESPONDER,
                                 SAML2Utils.bundle.getString("partialLogout"));
     static SessionProvider sessionProvider = null;
+
+    private static FedMonAgent agent;
+    private static FedMonSAML2Svc saml2Svc;
     
     static {
         try {
@@ -104,6 +110,8 @@ public class SPSingleLogout {
         } catch (SessionException se) {
             debug.error("Error retrieving session provider.", se);
         }
+        agent = MonitorManager.getAgent();
+        saml2Svc = MonitorManager.getSAML2Svc();
     }
 
     /**
@@ -374,6 +382,12 @@ public class SPSingleLogout {
                             if (list.size() == 0) {
                                 SPCache.fedSessionListsByNameIDInfoKey.
                                     remove(infoKeyString);
+                                if ((agent != null) &&
+                                    agent.isRunning() &&
+                                    (saml2Svc != null))
+                                {
+                                    saml2Svc.decFedSessionCount();
+                                }
                             }
                             break;
                         }
@@ -485,12 +499,12 @@ public class SPSingleLogout {
             debug.message(method + "relayState : " + relayState);
         }
 
-	String rmethod = request.getMethod();
-	LogoutResponse logoutRes = null;
+        String rmethod = request.getMethod();
+        LogoutResponse logoutRes = null;
         String binding = SAML2Constants.HTTP_REDIRECT;
-	if (rmethod.equals("POST")) {
+        if (rmethod.equals("POST")) {
             binding = SAML2Constants.HTTP_POST;
-	        logoutRes = LogoutUtil.getLogoutResponseFromPost(samlResponse,
+                logoutRes = LogoutUtil.getLogoutResponseFromPost(samlResponse,
                 response);
         } else if (rmethod.equals("GET")) {
             String decodedStr = SAML2Utils.decodeFromRedirect(samlResponse);
@@ -565,7 +579,7 @@ public class SPSingleLogout {
             } else {
                 valid = LogoutUtil.verifySLOResponse(logoutRes, realm,
                     idpEntityID, spEntityID, SAML2Constants.SP_ROLE);
-	    }
+            }
 
             if (!valid) {
                 debug.error("SPSingleLogout.processLogoutResponse: " +
@@ -730,14 +744,14 @@ public class SPSingleLogout {
             debug.message(method + "samlRequest : " + samlRequest);
             debug.message(method + "relayState : " + relayState);
         }
-	String rmethod = request.getMethod();
-	LogoutRequest logoutReq = null;
-	String binding = SAML2Constants.HTTP_REDIRECT;
-	if (rmethod.equals("POST")) {
+        String rmethod = request.getMethod();
+        LogoutRequest logoutReq = null;
+        String binding = SAML2Constants.HTTP_REDIRECT;
+        if (rmethod.equals("POST")) {
             binding = SAML2Constants.HTTP_POST;
             logoutReq = LogoutUtil.getLogoutRequestFromPost(samlRequest,
                 response);
-	} else if (rmethod.equals("GET")) {
+        } else if (rmethod.equals("GET")) {
             String decodedStr = SAML2Utils.decodeFromRedirect(samlRequest);
             if (decodedStr == null) {
                 throw new SAML2Exception(SAML2Utils.bundle.getString(
@@ -1014,7 +1028,7 @@ public class SPSingleLogout {
                     debug.message(method + "SPFedsessions=" + list);
                 }
 
-		if ((list == null) || list.isEmpty()) {
+                if ((list == null) || list.isEmpty()) {
                     String spQ = nameID.getSPNameQualifier();
                     if ((spQ == null) || (spQ.length() == 0)) {
                         infoKeyString = (new NameIDInfoKey(nameID.getValue(), 
@@ -1024,7 +1038,7 @@ public class SPSingleLogout {
                             .get(infoKeyString);
 
                     }
-		}
+                }
 
                 boolean foundPeer = false;
                 List remoteServiceURLs = null;
@@ -1131,6 +1145,12 @@ public class SPSingleLogout {
                             SPFedSession fedSession =(SPFedSession) iter.next();
                             tokenIDsToBeDestroyed.add(fedSession.spTokenID);
                             iter.remove();
+                            if ((agent != null) &&
+                                agent.isRunning() &&
+                                (saml2Svc != null))
+                            {
+                                saml2Svc.decFedSessionCount();
+                            }
                         }
                     }
                    
@@ -1204,6 +1224,12 @@ public class SPSingleLogout {
                                     }
                                     tokenIDToBeDestroyed = fedSession.spTokenID;
                                     iter.remove();
+                                    if ((agent != null) &&
+                                        agent.isRunning() &&
+                                        (saml2Svc != null))
+                                    {
+                                        saml2Svc.decFedSessionCount();
+                                    }
                                     break;
                                 }
                             }   

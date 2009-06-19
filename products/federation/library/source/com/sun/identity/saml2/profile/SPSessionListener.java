@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSessionListener.java,v 1.4 2009-05-06 19:48:34 madan_ranganath Exp $
+ * $Id: SPSessionListener.java,v 1.5 2009-06-19 02:50:26 bigfatrat Exp $
  *
  */
 
@@ -36,6 +36,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Level;
 
+import com.sun.identity.plugin.monitoring.FedMonAgent;
+import com.sun.identity.plugin.monitoring.FedMonSAML2Svc;
+import com.sun.identity.plugin.monitoring.MonitorManager;
 import com.sun.identity.plugin.session.SessionListener;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
@@ -64,12 +67,16 @@ public class SPSessionListener implements SessionListener {
 
     private static SAML2MetaManager sm = null;
     private static Debug debug = SAML2Utils.debug;
+    private static FedMonAgent agent;
+    private static FedMonSAML2Svc saml2Svc;
     static {
         try {
             sm = new SAML2MetaManager();
         } catch (SAML2MetaException sme) {
             debug.error("Error retreiving metadata",sme);
         }
+        agent = MonitorManager.getAgent();
+        saml2Svc = MonitorManager.getSAML2Svc();
     }
     
     private String infoKeyString = null;
@@ -192,8 +199,14 @@ public class SPSessionListener implements SessionListener {
             Iterator iter = fedSessionList.iterator();
             while (iter.hasNext()) {
                 fedSession = (SPFedSession) iter.next();
-                if (fedSession.spTokenID.equals(sessionID)) {                        
+                if (fedSession.spTokenID.equals(sessionID)) {
                     iter.remove();
+                    if ((agent != null) &&
+                        agent.isRunning() &&
+                        (saml2Svc != null))
+                    {
+                        saml2Svc.decFedSessionCount();
+                    }
                 }
             }
             if (fedSessionList.isEmpty()) {

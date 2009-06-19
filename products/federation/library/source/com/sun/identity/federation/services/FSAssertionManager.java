@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManager.java,v 1.10 2008-12-19 06:50:46 exu Exp $
+ * $Id: FSAssertionManager.java,v 1.11 2009-06-19 02:46:46 bigfatrat Exp $
  *
  */
 
@@ -49,6 +49,9 @@ import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.federation.services.util.FSAttributeStatementHelper;
 import com.sun.identity.federation.services.util.FSServiceUtils;
+import com.sun.identity.plugin.monitoring.FedMonAgent;
+import com.sun.identity.plugin.monitoring.FedMonIDFFSvc;
+import com.sun.identity.plugin.monitoring.MonitorManager;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
@@ -113,6 +116,9 @@ public final class FSAssertionManager {
     private int artifactTimeout;
     private FSArtifactStats artIdStats;
     private FSAssertionStats assrtIdStats;
+
+    private static FedMonAgent agent = MonitorManager.getAgent();
+    private static FedMonIDFFSvc idffSvc = MonitorManager.getIDFFSvc();
 
     private class Entry {
         private String destID = null;
@@ -221,10 +227,19 @@ public final class FSAssertionManager {
             ScheduleableGroupAction() {
             public void doGroupAction(Object obj) {
                 Entry entry = (Entry) idEntryMap.remove(obj);
+                if ((agent != null) && agent.isRunning() && (idffSvc != null)){
+                    idffSvc.decAssertions();
+                }
                 if (entry != null) {
                     String artString = entry.getArtifactString();
                     if (artString != null) {
                         artIdMap.remove(artString);
+                    }
+                    if ((agent != null) &&
+                        agent.isRunning() &&
+                        (idffSvc != null))
+                    {
+                        idffSvc.decArtifacts();
                     }
                 }
             }
@@ -833,6 +848,9 @@ public final class FSAssertionManager {
             synchronized(idEntryMap) {
                 oldEntry = idEntryMap.put(aIDString, entry);
             }
+            if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
+                idffSvc.incAssertions();
+            }
         } catch(Exception e) {
             if (FSUtils.debug.messageEnabled()) {
                 FSUtils.debug.message("FSAssertionManager: couldn't add "
@@ -851,6 +869,9 @@ public final class FSAssertionManager {
             try {
                 synchronized(artIdMap) {
                     oldEntry = artIdMap.put(artString, aIDString);
+                }
+                if ((agent != null) && agent.isRunning() && (idffSvc != null)){
+                    idffSvc.incArtifacts();
                 }
             } catch(Exception e) {
                 if (FSUtils.debug.messageEnabled()) {
@@ -959,9 +980,15 @@ public final class FSAssertionManager {
         synchronized(artIdMap) {
             artIdMap.remove(artString);
         }
+        if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
+            idffSvc.decArtifacts();
+        }
         artifactTimeoutRunnable.removeElement(aIDString);
         synchronized(idEntryMap) {
             idEntryMap.remove(aIDString);
+        }
+        if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
+            idffSvc.decAssertions();
         }
         assertionTimeoutRunnable.removeElement(aIDString);
        
@@ -1118,6 +1145,9 @@ public final class FSAssertionManager {
         }
         if (oldEntry != null) {
             assertionTimeoutRunnable.removeElement(artString);
+            if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
+                idffSvc.incAssertions();
+            }
         }
         assertionTimeoutRunnable.addElement(artString);
     }
