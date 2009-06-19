@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Condition.java,v 1.6 2009-05-05 18:27:47 mrudul_uchil Exp $
+ * $Id: Condition.java,v 1.7 2009-06-19 22:54:46 mrudul_uchil Exp $
  *
  */
 
@@ -246,6 +246,12 @@ public interface Condition extends Cloneable {
      */
     public static final String AUTH_LEVEL_CONDITION_ADVICE =
             "AuthLevelConditionAdvice";
+    
+    /** Key that is used identify the advice messages from
+     * <code>AuthenticateToRealmCondition</code>
+     */
+    public static final String AUTHENTICATE_TO_REALM_CONDITION_ADVICE =
+            "AuthenticateToRealmConditionAdvice";
     
     /**
      * Following keys are used to define relevant key names for processing

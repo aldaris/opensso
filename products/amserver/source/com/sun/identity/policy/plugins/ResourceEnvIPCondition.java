@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceEnvIPCondition.java,v 1.2 2009-05-26 18:59:56 mrudul_uchil Exp $
+ * $Id: ResourceEnvIPCondition.java,v 1.3 2009-06-19 22:53:42 mrudul_uchil Exp $
  *
  */
 
@@ -350,6 +350,18 @@ public class ResourceEnvIPCondition implements Condition {
                     advices.put(PolicyDecisionUtils.AUTH_REDIRECTION_ADVICE,
                         adviceMessages);
                 }
+            } else if ((adviceName.equalsIgnoreCase(
+                    ISAuthConstants.REALM_PARAM)) || 
+                    (adviceName.equalsIgnoreCase(
+                    ISAuthConstants.ORG_PARAM))) {
+                Set adviceMessages =
+                    getAdviceMessagesforRealm(adviceValue,token,env);
+                if (adviceMessages.isEmpty()) {
+                    allowed = true;
+                } else {
+                    advices.put(AUTHENTICATE_TO_REALM_CONDITION_ADVICE,
+                        adviceMessages);
+                }
             } else {
                 if ( DEBUG.messageEnabled()) {
                     DEBUG.message("At ResourceEnvIPCondition."
@@ -674,6 +686,70 @@ public class ResourceEnvIPCondition implements Condition {
         }
         
         return adviceMessages;            
+    }
+    
+    /** 
+     * Returns advice messages for Authentication Realm condition.
+     */
+    private Set getAdviceMessagesforRealm(String adviceValue, 
+        SSOToken token, Map env) throws PolicyException, SSOException {
+        Set adviceMessages = new HashSet();
+        Set requestAuthnRealms = new HashSet();
+        if ( (env != null) 
+                    && (env.get(REQUEST_AUTHENTICATED_TO_REALMS) != null) ) {
+            try {
+                requestAuthnRealms = (Set) env.get(
+                    REQUEST_AUTHENTICATED_TO_REALMS);
+                if (DEBUG.messageEnabled()) {
+                    DEBUG.message("At ResourceEnvIPCondition."
+                            + "getAdviceMessagesforRealm(): "
+                            + "requestAuthnRealms, from request / env = " 
+                            + requestAuthnRealms);
+                }
+            } catch (ClassCastException e) {
+                String args[] = { REQUEST_AUTHENTICATED_TO_REALMS };
+                throw new PolicyException(
+                        ResBundleUtils.rbName, "property_is_not_a_Set", 
+                        args, e);
+            }
+        } else {
+
+            if (token != null) {
+                Set authenticatedRealms 
+                        = AMAuthUtils.getAuthenticatedRealms(token);
+                if (authenticatedRealms != null) {
+                    requestAuthnRealms.addAll(authenticatedRealms);
+                }
+                if (DEBUG.messageEnabled()) {
+                    DEBUG.message("At ResourceEnvIPCondition."
+                            + "getAdviceMessagesforRealm(): "
+                            + "requestAuthnRealms, from ssoToken = " 
+                            + requestAuthnRealms);
+                }
+            }
+        }
+
+        String authRealm = adviceValue;
+        
+        if (!requestAuthnRealms.contains(authRealm)) {
+            adviceMessages.add(authRealm);
+            if (DEBUG.messageEnabled()) {
+                DEBUG.message("At ResourceEnvIPCondition."
+                        + "getAdviceMessagesforRealm():"
+                        + "authenticateToRealm not satisfied = "
+                        + authRealm);
+            }
+        }
+        
+        if ( DEBUG.messageEnabled()) {
+            DEBUG.message("At ResourceEnvIPCondition." + 
+                    "getAdviceMessagesforRealm():"
+                    + "authRealm = " + authRealm + "," 
+                    + " requestAuthnRealms = " + requestAuthnRealms + ", "
+		    + " adviceMessages = " + adviceMessages);
+        }
+        return adviceMessages;
+        
     }
     
     /** 

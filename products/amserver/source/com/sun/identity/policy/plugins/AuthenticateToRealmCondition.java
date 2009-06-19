@@ -22,12 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticateToRealmCondition.java,v 1.5 2008-06-25 05:43:51 qcheng Exp $
+ * $Id: AuthenticateToRealmCondition.java,v 1.6 2009-06-19 22:53:42 mrudul_uchil Exp $
  *
  */
-
-
-
 
 package com.sun.identity.policy.plugins;
 
@@ -63,13 +60,7 @@ public class AuthenticateToRealmCondition implements Condition {
         = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME);
 
     private static final boolean debugMessageEnabled 
-            = DEBUG.messageEnabled();
-
-    /** Key that is used identify the advice messages from
-     * <code>AuthenticateToRealmCondition</code>
-     */
-    public static final String AUTHENTICATE_TO_REALM_CONDITION_ADVICE =
-            "AuthenticateToRealmConditionAdvice"; 
+            = DEBUG.messageEnabled(); 
 
     private Map properties;
     private String authenticateToRealm = null;
