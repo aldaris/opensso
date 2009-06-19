@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.23 2009-06-19 02:50:26 bigfatrat Exp $
+ * $Id: IDPSSOFederate.java,v 1.24 2009-06-19 20:44:45 exu Exp $
  *
  */
 
@@ -905,7 +905,7 @@ public class IDPSSOFederate {
         // Pass spEntityID to IdP Auth Module
         if (spEntityID != null) {
             if (newURL.indexOf("?") == -1) {
-                newURL.append("&");
+                newURL.append("?");
             } else {
                 newURL.append("&");
             }
