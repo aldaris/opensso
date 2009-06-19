@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.33 2009-06-19 01:33:43 manish_rustagi Exp $
+ * $Id: SessionService.java,v 1.34 2009-06-19 02:25:39 bigfatrat Exp $
  *
  */
 
@@ -113,6 +113,9 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.servlet.http.HttpSession;
+
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerSessSvcImpl;
 
 /**  
  * This class represents a Session Service
@@ -1100,6 +1103,12 @@ public class SessionService {
      */
     public static synchronized void decrementActiveSessions() {
         numberOfActiveSessions--;
+        if (SystemProperties.isServerMode() && Agent.isRunning()) {
+            SsoServerSessSvcImpl sessImpl =
+                (SsoServerSessSvcImpl)Agent.getSessSvcMBean();
+            sessImpl.decSessionActiveCount();
+            sessImpl.setSessNotifCount((long)getNotificationQueueSize());
+        }
     }
 
     /**
@@ -1107,6 +1116,14 @@ public class SessionService {
      */
     public static synchronized void incrementActiveSessions() {
         numberOfActiveSessions++;
+        if (SystemProperties.isServerMode()) {
+            if (Agent.isRunning()) {
+                SsoServerSessSvcImpl sessImpl =
+                    (SsoServerSessSvcImpl)Agent.getSessSvcMBean();
+                sessImpl.incSessionActiveCount();
+                sessImpl.setSessNotifCount((long)getNotificationQueueSize());
+            }
+        }
     }
 
     /**

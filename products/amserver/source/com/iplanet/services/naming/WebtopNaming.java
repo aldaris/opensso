@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.29 2009-02-05 23:52:05 beomsuk Exp $
+ * $Id: WebtopNaming.java,v 1.30 2009-06-19 02:26:33 bigfatrat Exp $
  *
  */
 
@@ -42,6 +42,7 @@ import java.util.Vector;
 
 import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.SystemTimer;
+import com.sun.identity.monitoring.Agent;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.client.PLLClient;
 import com.iplanet.services.comm.client.SendRequestException;
@@ -52,10 +53,30 @@ import com.iplanet.services.naming.service.NamingService;
 import com.iplanet.services.naming.share.NamingBundle;
 import com.iplanet.services.naming.share.NamingRequest;
 import com.iplanet.services.naming.share.NamingResponse;
+import com.sun.identity.common.configuration.SiteConfiguration;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
+
+/*
+ *  these are here temporarily, just to see how long it takes to
+ *  build the monitoring stuff
+ */
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import com.sun.identity.monitoring.SSOServerInfo;
+
+/*
+ *  and this stuff is here for retrieving session config
+ */
+import java.security.AccessController;
+import com.sun.identity.security.AdminTokenAction;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOException;
+import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceConfig;
 
 
 /**
@@ -1111,7 +1132,7 @@ public class WebtopNaming {
         updateSiteIdMappings();
         updatePlatformServerIDs();
         updateLBCookieValueMappings();
-		
+                
         if (debug.messageEnabled()) {
             debug.message("Naming table -> " + namingTable.toString());
             debug.message("Server Id Table -> " + serverIdTable.toString());
@@ -1350,6 +1371,88 @@ public class WebtopNaming {
         }
         
         return uri;
+    }
+
+    /**
+     * Provides the Monitoring Agent site and server related information.
+     * 
+     * @return 0 (zero) if all information collected and provided successfully;
+     *         -1 if server protocol, hostname, port or URI is null;
+     *         -2 if not serverMode, or Monitoring Agent already running
+     *         -3 if unable to get the ServerID
+     *
+     */
+    public static int configMonitoring() {
+        String classMethod = "WebtopNaming.configMonitoring: ";
+        /*
+         * start the monitoring agent, if not already started
+         */
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (isServerMode() && !Agent.isRunning()) {
+            Date date1 = new Date();
+            String startDate = sdf.format(date1);
+
+            if (debug.warningEnabled()) {
+                Date date = new Date();
+                debug.warning(classMethod +
+                    "start monitoring config" + "\n" +
+                    "    Start time = " + sdf.format(date));
+            }
+
+            if ((amServerProtocol != null) &&
+                (amServer != null) &&
+                (amServerPort != null) &&
+                (amServerURI != null))
+            {
+                String xxx = null;
+                try {
+                    xxx = getServerID(amServerProtocol, amServer,
+                        amServerPort, amServerURI);
+                } catch (ServerEntryNotFoundException sefx) {
+                    debug.error(classMethod + "can't getServerID");
+                    return -3;
+                }
+
+                String siteID = getSiteID(xxx);
+                String baseDir =
+                    SystemProperties.get(SystemProperties.CONFIG_PATH);
+                boolean isEmbeddedDS =
+                    (new File(baseDir + "/opends")).exists();
+
+                /*
+                 *  session failover status and site configuration
+                 *  (SiteConfiguration.getSites()) (to get the site names)
+                 *  require an SSOToken, which we can't get at this point.
+                 */
+                SSOServerInfo srvrInfo =
+                    new SSOServerInfo.SSOServerInfoBuilder(xxx, siteID).
+                        svrProtocol(amServerProtocol).
+                        svrName(amServer).
+                        svrURI(amServerURI).
+                        svrPort(amServerPort).
+                        embeddedDS(isEmbeddedDS).
+                        siteIdTable(siteIdTable).
+                        svrIdTable(serverIdTable).
+                        startDate(startDate).
+                        namingTable(namingTable).build();
+    
+                int rtn = Agent.siteAndServerInfo(srvrInfo);
+
+                if (debug.warningEnabled()) {
+                    Date date = new Date();
+                    debug.warning (classMethod +
+                        "monitoring agent config returns " + rtn + "\n" +
+                        "    End time = " + sdf.format(date));
+                }
+
+                Agent.setWebtopConfig(true);
+                return 0;
+            } else {
+                debug.error(classMethod + "null proto/server/port/uri");
+                return -1;
+            }
+        }
+        return -2;
     }
     
     /**
