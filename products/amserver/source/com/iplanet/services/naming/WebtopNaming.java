@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.30 2009-06-19 02:26:33 bigfatrat Exp $
+ * $Id: WebtopNaming.java,v 1.31 2009-06-20 06:17:02 bigfatrat Exp $
  *
  */
 
@@ -1388,7 +1388,7 @@ public class WebtopNaming {
          * start the monitoring agent, if not already started
          */
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        if (isServerMode() && !Agent.isRunning()) {
+        if (isServerMode() && !Agent.isRunning() && !ssoadm) {
             Date date1 = new Date();
             String startDate = sdf.format(date1);
 
