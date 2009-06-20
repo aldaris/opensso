@@ -22,16 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExtMetadataNameSamlV2RemoteSpCreateSummary.java,v 1.1 2009-06-17 23:44:56 asyhuang Exp $
+ * $Id: DefAttrMappingsSamlV2HostedSpCreateSummary.java,v 1.1 2009-06-20 08:41:58 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
 
-public class ExtMetadataNameSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSummary {
+public class DefAttrMappingsSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateSummary {
 
-    public ExtMetadataNameSamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteCreateWizardBean) {
-        super(samlV2RemoteCreateWizardBean);
+    public DefAttrMappingsSamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2CreateWizardBean) {
+        super(samlV2CreateWizardBean);
     }
 
     public String getLabel() {
@@ -41,15 +41,17 @@ public class ExtMetadataNameSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCr
     }
 
     public String getValue() {
-        String filename;
-        boolean hasMeta = getSamlV2RemoteCreateWizardBean().isMeta();
-        if (hasMeta) {
-            filename = getSamlV2RemoteCreateWizardBean().getExtMetaFilename();
-        } else {
-            filename = new String();
+        boolean defAttrMappings = getSamlV2CreateWizardBean().getDefAttrMappings();
+        String defAttrMappingsValue;
+        Resources r = new Resources();
+       
+        if (defAttrMappings) {          
+            defAttrMappingsValue = r.getString(this, "usingDefAttrMappingsSummary");
+        } else {            
+            defAttrMappingsValue = r.getString(this, "notUsingDefAttrMappingsSummary");
         }
 
-        return filename;
+        return defAttrMappingsValue;
     }
 
     public boolean isExpandable() {
@@ -66,6 +68,6 @@ public class ExtMetadataNameSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCr
     }
 
     public int getGotoStep() {
-        return SamlV2RemoteSpCreateWizardStep.METADATA.toInt();
+        return SamlV2HostedSpCreateWizardStep.ATTRIBUTEMAPPING.toInt();
     }
 }

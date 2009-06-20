@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteCreateWizardBean.java,v 1.2 2009-06-18 07:54:57 asyhuang Exp $
+ * $Id: SamlV2RemoteCreateWizardBean.java,v 1.3 2009-06-20 08:41:58 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -51,9 +51,6 @@ public class SamlV2RemoteCreateWizardBean
     private String stdMetaFile;
     private String stdMetaFilename;
     private int stdMetaFileProgress;
-    private String extMetaFile;
-    private String extMetaFilename;
-    private int extMetaFileProgress;
 
     @Override
     public void reset() {
@@ -69,11 +66,8 @@ public class SamlV2RemoteCreateWizardBean
         availableCotList = null;
         cotsBean = null;
         stdMetaFile = null;
-        stdMetaFilename = null;
-        extMetaFile = null;
-        extMetaFilename = null;
-        stdMetaFileProgress = 0;
-        extMetaFileProgress = 0;
+        stdMetaFilename = null;       
+        stdMetaFileProgress = 0;        
     }
 
     public String getSelectedRealm() {
@@ -161,35 +155,11 @@ public class SamlV2RemoteCreateWizardBean
         this.stdMetaFilename = name;
     }
 
-    public String getExtMetaFile() {
-        return extMetaFile;
-    }
-
-    public void setExtMetaFile(String file) {
-        this.extMetaFile = file;
-    }
-
-    public String getExtMetaFilename() {
-        return extMetaFilename;
-    }
-
-    public void setExtMetaFilename(String name) {
-        this.extMetaFilename = name;
-    }
-
     public int getStdMetaFileProgress() {
         return stdMetaFileProgress;
     }
 
     public void setStdMetaFileProgress(int fileProgress) {
         this.stdMetaFileProgress = fileProgress;
-    }
-
-    public int getExtMetaFileProgress() {
-        return extMetaFileProgress;
-    }
-
-    public void setExtMetaFileProgress(int fileProgress) {
-        this.extMetaFileProgress = fileProgress;
-    }
+    }  
 }

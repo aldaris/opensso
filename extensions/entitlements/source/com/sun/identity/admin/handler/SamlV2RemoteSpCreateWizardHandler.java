@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.2 2009-06-18 07:54:55 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.3 2009-06-20 08:41:58 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -33,10 +33,7 @@ import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.SamlV2RemoteSpCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
-import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
-import com.sun.identity.admin.model.MessagesBean;
-import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardStep;
 import java.io.BufferedReader;
@@ -76,10 +73,21 @@ public class SamlV2RemoteSpCreateWizardHandler
             cot = getSamlV2RemoteSpCreateWizardBean().getNewCotName();
         }
 
+        String selectedRealmValue = getSamlV2RemoteSpCreateWizardBean().getSelectedRealm();
+        int idx = selectedRealmValue.indexOf("(");
+        int end = selectedRealmValue.indexOf(")");
+        String realm = selectedRealmValue.substring(idx + 1, end).trim();
 
-        String stdMeta = getSamlV2RemoteSpCreateWizardBean().getStdMetaFile();
-        samlV2RemoteSpCreateDao.importSamlv2RemoteSp(cot, stdMeta);
-
+        //TODO: add attribute mapping to this ArrayList...
+        List attrMapping = new ArrayList();
+        
+        if (getSamlV2RemoteSpCreateWizardBean().isMeta()) {
+            String stdMetadataFile = getSamlV2RemoteSpCreateWizardBean().getStdMetaFile();
+            samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromFile(realm, cot, stdMetadataFile, attrMapping);
+        } else {
+            String stdMetadataFilename = getSamlV2RemoteSpCreateWizardBean().getMetaUrl();
+            samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromURL(realm, cot, stdMetadataFilename, attrMapping);
+        }
 
         getSamlV2RemoteSpCreateWizardBean().reset();
         doFinishNext();
@@ -179,15 +187,42 @@ public class SamlV2RemoteSpCreateWizardHandler
     }
 
     public boolean validateMetadata() {
-        boolean usingMetaDataFile = getSamlV2RemoteSpCreateWizardBean().isMeta();
-        String newEntityName = getSamlV2RemoteSpCreateWizardBean().getNewEntityName();
+        boolean usingMetaDataFile = getSamlV2RemoteSpCreateWizardBean().isMeta();        
 
         if (!usingMetaDataFile) {
-            if (newEntityName.length() == 0 || (newEntityName == null)) {
+
+            String url = getSamlV2RemoteSpCreateWizardBean().getMetaUrl();
+
+            if (url.length() == 0 || (url == null)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
-                mb.setSummary(r.getString(this, "invalidEntityNameSummary"));
-                mb.setDetail(r.getString(this, "invalidEntityNameDetail"));
+                mb.setSummary(r.getString(this, "invalidMetaUrlSummary"));
+                mb.setDetail(r.getString(this, "invalidMetaUrlDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+                Effect e;
+
+                e = new InputFieldErrorEffect();
+                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
+
+                e = new MessageErrorEffect();
+                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
+
+                getMessagesBean().addMessageBean(mb);
+                getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.METADATA.toInt());
+
+                return false;
+            }
+
+        } else {
+
+            String filename = getSamlV2RemoteSpCreateWizardBean().getStdMetaFilename();
+
+            if (filename.length() == 0 || (filename == null)) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "invalidMetafileSummary"));
+                mb.setDetail(r.getString(this, "invalidMetafileDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
                 Effect e;
@@ -204,6 +239,7 @@ public class SamlV2RemoteSpCreateWizardHandler
                 return false;
             }
         }
+
         return true;
     }
 
@@ -258,48 +294,5 @@ public class SamlV2RemoteSpCreateWizardHandler
     public void stdMetaFileUploadProgress(EventObject event) {
         InputFile ifile = (InputFile) event.getSource();
         getSamlV2RemoteSpCreateWizardBean().setStdMetaFileProgress(ifile.getFileInfo().getPercent());
-    }
-
-    public void extMetaUploadFile(ActionEvent event) throws IOException {
-        InputFile inputFile = (InputFile) event.getSource();
-        FileInfo fileInfo = inputFile.getFileInfo();
-        if (fileInfo.getStatus() == FileInfo.SAVED) {
-            // read the file into a string
-            // reference our newly updated file for display purposes and
-            // added it to filename string object in our bean
-            File file = new File(fileInfo.getFile().getAbsolutePath());
-            StringBuffer contents = new StringBuffer();
-            BufferedReader reader = null;
-
-            try {
-                reader = new BufferedReader(new FileReader(file));
-                String text = null;
-
-                // repeat until all lines is read
-                while ((text = reader.readLine()) != null) {
-                    contents.append(text).append(System.getProperty(
-                            "line.separator"));
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            getSamlV2RemoteSpCreateWizardBean().setExtMetaFilename(fileInfo.getFileName());
-            getSamlV2RemoteSpCreateWizardBean().setExtMetaFile(contents.toString());
-        }
-    }
-
-    public void extMetaFileUploadProgress(EventObject event) {
-        InputFile ifile = (InputFile) event.getSource();
-        getSamlV2RemoteSpCreateWizardBean().setExtMetaFileProgress(ifile.getFileInfo().getPercent());
-    }
+    }   
 }

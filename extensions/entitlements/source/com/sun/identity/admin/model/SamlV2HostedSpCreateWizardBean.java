@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardBean.java,v 1.3 2009-06-18 07:54:57 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateWizardBean.java,v 1.4 2009-06-20 08:41:58 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -34,19 +34,21 @@ public class SamlV2HostedSpCreateWizardBean
         implements Serializable {
 
     private boolean retrieveFileFromSpServerVisible = true;
+    private boolean defAttrMappings;
     private RealmSamlV2HostedSpCreateSummary realmSamlV2CreateSummary = new RealmSamlV2HostedSpCreateSummary(this);
     private EntityNameSamlV2HostedSpCreateSummary entityNameSamlV2CreateSummary = new EntityNameSamlV2HostedSpCreateSummary(this);
     private StdMetadataNameSamlV2HostedSpCreateSummary stdMetadataNameSamlV2CreateSummary = new StdMetadataNameSamlV2HostedSpCreateSummary(this);
     private ExtMetadataNameSamlV2HostedSpCreateSummary extMetadataNameSamlV2CreateSummary = new ExtMetadataNameSamlV2HostedSpCreateSummary(this);
     private CotSamlV2HostedSpCreateSummary cotSamlV2CreateSummary = new CotSamlV2HostedSpCreateSummary(this);
+    private DefAttrMappingsSamlV2HostedSpCreateSummary defAttrMappingsSamlV2CreateSummary = new DefAttrMappingsSamlV2HostedSpCreateSummary(this);
     private Effect samlV2HostedSpCreateEntityNameInputEffect;
 
     public SamlV2HostedSpCreateWizardBean() {
         super();
     }
-    
+
     public void reset() {
-       super.reset();
+        super.reset();
         realmSamlV2CreateSummary = new RealmSamlV2HostedSpCreateSummary(this);
         entityNameSamlV2CreateSummary = new EntityNameSamlV2HostedSpCreateSummary(this);
         stdMetadataNameSamlV2CreateSummary = new StdMetadataNameSamlV2HostedSpCreateSummary(this);
@@ -62,6 +64,14 @@ public class SamlV2HostedSpCreateWizardBean
         this.retrieveFileFromSpServerVisible = retrieveFileFromSpServerVisible;
     }
 
+    public boolean getDefAttrMappings() {
+        return defAttrMappings;
+    }
+
+    public void setDefAttrMappings(boolean defAttrMappings) {
+        this.defAttrMappings = defAttrMappings;
+    }
+
     public RealmSamlV2HostedSpCreateSummary getRealmSamlV2CreateSummary() {
         return realmSamlV2CreateSummary;
     }
@@ -72,6 +82,10 @@ public class SamlV2HostedSpCreateWizardBean
 
     public CotSamlV2HostedSpCreateSummary getCotSamlV2CreateSummary() {
         return cotSamlV2CreateSummary;
+    }
+
+    public DefAttrMappingsSamlV2HostedSpCreateSummary getDefAttrMappingsSamlV2CreateSummary() {
+        return defAttrMappingsSamlV2CreateSummary;
     }
 
     public StdMetadataNameSamlV2HostedSpCreateSummary getStdMetadataNameSamlV2CreateSummary() {

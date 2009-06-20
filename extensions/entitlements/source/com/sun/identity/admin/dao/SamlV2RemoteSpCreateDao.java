@@ -22,15 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateDao.java,v 1.1 2009-06-17 23:45:42 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateDao.java,v 1.2 2009-06-20 08:41:58 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
 import com.sun.identity.cot.COTException;
 import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.jaxb.entityconfig.AttributeType;
+import com.sun.identity.saml2.jaxb.entityconfig.ObjectFactory;
+import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.meta.SAML2MetaConstants;
 import com.sun.identity.saml2.meta.SAML2MetaException;
+import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.shared.debug.Debug;
@@ -38,9 +43,17 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.workflow.AddProviderToCOT;
 import com.sun.identity.workflow.ImportSAML2MetaData;
 import com.sun.identity.workflow.WorkflowException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.w3c.dom.Document;
@@ -54,34 +67,12 @@ public class SamlV2RemoteSpCreateDao
     public SamlV2RemoteSpCreateDao() {
     }
 
-    public void importSamlv2RemoteSp(
+    public void importSamlv2RemoteSpFromFile(
+            String realm,
             String cot,
             String stdMetadata,
-            String extMetadata) {
-        String realm = null;
-        String entityId = null;
+            List attrMapping) {
 
-        try {
-            String[] results = ImportSAML2MetaData.importData(null, stdMetadata, extMetadata);
-            realm = results[0];
-            entityId = results[1];
-        } catch (WorkflowException e) {
-            throw new RuntimeException(e);
-        }
-
-        if ((cot != null) && (cot.length() > 0)) {
-            try {
-                AddProviderToCOT.addToCOT(realm, cot, entityId);
-            } catch (COTException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    public void importSamlv2RemoteSp(
-            String cot,
-            String stdMetadata) {
-        String realm = null;
         String entityId = null;
 
         try {
@@ -90,14 +81,14 @@ public class SamlV2RemoteSpCreateDao
             try {
                 e = getEntityDescriptorElement(stdMetadata);
             } catch (SAML2MetaException ex) {
-                Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+                throw new RuntimeException(ex);
             } catch (JAXBException ex) {
-                Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+                throw new RuntimeException(ex);
             }
             String eId = e.getEntityID();
             String extMetadata = createExtendedDataTemplate(
                     eId, false);
-            String[] results = ImportSAML2MetaData.importData(null, stdMetadata, extMetadata);
+            String[] results = ImportSAML2MetaData.importData(realm, stdMetadata, extMetadata);
             realm = results[0];
             entityId = results[1];
         } catch (WorkflowException e) {
@@ -110,6 +101,128 @@ public class SamlV2RemoteSpCreateDao
             } catch (COTException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        if (!attrMapping.isEmpty()) {
+            addAttributeMapping(realm, entityId, attrMapping);
+        }
+    }
+
+    public void importSamlv2RemoteSpFromURL(
+            String realm,
+            String cot,
+            String metadataFilename,
+            List attrMapping) {
+
+        String metadata = getContent(metadataFilename);
+        String extendedMeta = null;
+
+        if (!attrMapping.isEmpty()) {
+            try {
+                EntityDescriptorElement e = getEntityDescriptorElement(metadata);
+                String eId = e.getEntityID();
+                extendedMeta =
+                        createExtendedDataTemplate(
+                        eId, false);
+            } catch (SAML2MetaException ex) {
+                throw new RuntimeException(ex);
+            } catch (JAXBException ex) {
+                throw new RuntimeException(ex);
+            } catch (WorkflowException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        String[] results;
+        try {
+            results = ImportSAML2MetaData.importData(realm, metadata, extendedMeta);
+        } catch (WorkflowException ex) {
+            throw new RuntimeException(ex);
+        }
+        String entityId = results[1];
+
+        if ((cot != null) && (cot.length() > 0)) {
+            try {
+                AddProviderToCOT.addToCOT(realm, cot, entityId);
+            } catch (COTException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (!attrMapping.isEmpty()) {
+            addAttributeMapping(realm, entityId, attrMapping);
+        }
+
+    }
+
+    private void addAttributeMapping(String realm, String entityId, List attrMapping) {
+        try {
+
+            SAML2MetaManager manager = new SAML2MetaManager();
+            EntityConfigElement config =
+                    manager.getEntityConfig(realm, entityId);
+            SPSSOConfigElement ssoConfig =
+                    manager.getSPSSOConfig(realm, entityId);
+
+            if (ssoConfig != null) {
+                ObjectFactory objFactory = new ObjectFactory();
+                AttributeType avp = objFactory.createAttributeElement();
+                String key = SAML2Constants.ATTRIBUTE_MAP;
+                avp.setName(key);
+                avp.getValue().addAll(attrMapping);
+                ssoConfig.getAttribute().add(avp);
+            }
+            manager.setEntityConfig(realm, config);
+
+        } catch (SAML2MetaException e) {
+            throw new RuntimeException(e);
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String getContent(String resName) {
+        if (resName.startsWith("http://") ||
+                resName.startsWith("https://")) {
+            return getWebContent(resName);
+        } else {
+            return resName;
+        }
+    }
+
+    private static String getWebContent(String url) {
+
+        try {
+            StringBuffer content = new StringBuffer();
+            URL urlObj = new URL(url);
+            URLConnection conn = urlObj.openConnection();
+
+            if (conn instanceof HttpURLConnection) {
+                HttpURLConnection httpConnection = (HttpURLConnection) conn;
+                httpConnection.setRequestMethod("GET");
+                httpConnection.setDoOutput(true);
+
+                httpConnection.connect();
+                int response = httpConnection.getResponseCode();
+                InputStream is = httpConnection.getInputStream();
+                BufferedReader dataInput = new BufferedReader(
+                        new InputStreamReader(is));
+                String line = dataInput.readLine();
+
+                while (line != null) {
+                    content.append(line).append('\n');
+                    line = dataInput.readLine();
+                }
+            }
+
+            return content.toString();
+
+        } catch (ProtocolException e) {
+            throw new RuntimeException(e);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

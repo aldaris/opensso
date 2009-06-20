@@ -22,15 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityNameSamlV2RemoteSpCreateSummary.java,v 1.1 2009-06-17 23:44:55 asyhuang Exp $
+ * $Id: MetaUrlSamlV2RemoteSpCreateSummary.java,v 1.1 2009-06-20 08:44:25 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
 
-public class EntityNameSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSummary {
+public class MetaUrlSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSummary {
 
-    public EntityNameSamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteCreateWizardBean) {
+    public MetaUrlSamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteCreateWizardBean) {
         super(samlV2RemoteCreateWizardBean);
     }
 
@@ -41,16 +41,9 @@ public class EntityNameSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateS
     }
 
     public String getValue() {
-        String entityName;
-        boolean hasMeta = getSamlV2RemoteCreateWizardBean().isMeta();
-        if (!hasMeta) {
-            entityName = getSamlV2RemoteCreateWizardBean().getNewEntityName();
-        } else {
-            entityName = new String();
-        }
-
-        return entityName;
-
+        String metaUrl;
+        metaUrl = getSamlV2RemoteCreateWizardBean().getMetaUrl();
+        return metaUrl;
     }
 
     public boolean isExpandable() {

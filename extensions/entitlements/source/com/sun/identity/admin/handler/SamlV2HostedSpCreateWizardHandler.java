@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.4 2009-06-18 07:54:54 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.5 2009-06-20 08:41:58 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -85,13 +85,14 @@ public class SamlV2HostedSpCreateWizardHandler
         int end = selectedRealmValue.indexOf(")");
         String realm = selectedRealmValue.substring(idx + 1, end).trim();
         String name = getSamlV2HostedSpCreateWizardBean().getNewEntityName();
-        String key = null;
+        boolean defAttrMappings = getSamlV2HostedSpCreateWizardBean().getDefAttrMappings();
+        
         if (!isMeta) {
-            samlV2HostedSpCreateDao.createSamlv2HostedSp(realm, name, cot, key);
+            samlV2HostedSpCreateDao.createSamlv2HostedSp(realm, name, cot, defAttrMappings );
         } else {
             String stdMeta = getSamlV2HostedSpCreateWizardBean().getStdMetaFile();
             String extMeta = getSamlV2HostedSpCreateWizardBean().getExtMetaFile();
-            samlV2HostedSpCreateDao.importSamlv2HostedSp(cot, stdMeta, extMeta);
+            samlV2HostedSpCreateDao.importSamlv2HostedSp(cot, stdMeta, extMeta, defAttrMappings );
         }
 
         getSamlV2HostedSpCreateWizardBean().reset();
@@ -193,8 +194,8 @@ public class SamlV2HostedSpCreateWizardHandler
             if (newEntityName.length() == 0 || (newEntityName == null)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
-                mb.setSummary(r.getString(this, "invalidNameSummary"));
-                mb.setDetail(r.getString(this, "invalidNameDetail"));
+                mb.setSummary(r.getString(this, "invalidEntityNameSummary"));
+                mb.setDetail(r.getString(this, "invalidEntityNameDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
                 Effect e;

@@ -27,18 +27,20 @@
                             <o:section>
                                 <ui:define name="section-title">
                                     <ice:outputText
-                                        value="Choice one realm title"/>
+                                        value="#{resources['samlv2-remote-sp-create.selectRealmPanelLabel']}"/>
                                 </ui:define>
                                 <ui:define name="section-details">
+                                    <!--
                                     <ice:outputText
                                         value="Choice one realm here...."/>
+                                        -->
                                 </ui:define>
                                 <ui:define name="section-body">
                                     <!-- Realm -->
                                     <ice:panelGroup>
+
                                         <ice:outputLabel
-                                            for="existingRealmList"
-                                            value="Choice one realm from existing realm List"/>
+                                            value="#{resources['samlv2-remote-sp-create.selectRealmPanelLabel.realm']}"/>
 
                                         <ice:selectOneMenu
                                             id="selectedRealm"
@@ -53,7 +55,7 @@
                             </o:section>
                         </div>
                     </ui:define>
-                </o:wstep>               
+                </o:wstep>
                 <o:wstep
                     step="1"
                     label="#{resources['samlv2-remote-sp-create.entityNamePanelLabel']}">
@@ -62,27 +64,25 @@
                             <o:section>
                                 <ui:define name="section-title">
                                     <ice:outputText
-                                        value="Provide entity Name or import Metadata"/>
+                                        value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel']}"/>
                                 </ui:define>
                                 <ui:define name="section-details">
-                                    <ice:outputText
+                                    <!-- <ice:outputText
                                         value="Provide entity Name or import Metadata here...."/>
+                                        -->
                                 </ui:define>
                                 <ui:define name="section-body">
                                     <!-- Metadata -->
-
                                     <ice:panelGroup>
                                         <ice:outputLabel
-                                            for="doYouHaveMeta"
-                                            value="Do you have metadata for this provider?"/>
-
+                                            value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataFileReside']}"/>
                                         <ice:panelGroup>
                                             <ice:selectOneRadio
                                                 id="MenuSelectMetaOrNoMetaRadio"
                                                 partialSubmit="true"
                                                 value="#{samlV2RemoteSpCreateWizardBean.meta}">
-                                                <f:selectItem id="meta" itemValue="true" itemLabel="Meta"/>
-                                                <f:selectItem id="nometa" itemValue="false" itemLabel="No Meta"/>
+                                                <f:selectItem id="meta" itemValue="true" itemLabel="Yes"/>
+                                                <f:selectItem id="nometa" itemValue="false" itemLabel="No"/>
                                             </ice:selectOneRadio>
                                         </ice:panelGroup>
                                         <ice:panelGroup
@@ -92,56 +92,43 @@
                                             <ice:panelGroup styleClass="inputFileContainer">
                                                 <!-- file upload  -->
 
-                                                <ice:panelGroup>
-                                                    <ice:outputLabel
-                                                        for="standardMetaData"
-                                                        value="Standard Metadata"/>
+                                               <!-- <ice:panelGroup> -->
+                                                <ice:outputLabel
+                                                    value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataLocation']}"/>
 
-                                                    <!-- file upload usage with progress callback. -->
-                                                    <ice:inputFile id="stdMetaInputFileName"
-                                                                   submitOnUpload="postUpload"
-                                                                   progressListener="#{samlV2RemoteSpCreateWizardHandler.stdMetaFileUploadProgress}"
-                                                                   actionListener="#{samlV2RemoteSpCreateWizardHandler.stdMetaUploadFile}"/>
-                                                    <!-- progress bar, percent value is upated via progressListener-->
+                                                <!-- file upload usage with progress callback. -->
+                                                <ice:inputFile id="stdMetaInputFileName"
+                                                               submitOnUpload="postUpload"
+                                                               progressListener="#{samlV2RemoteSpCreateWizardHandler.stdMetaFileUploadProgress}"
+                                                               actionListener="#{samlV2RemoteSpCreateWizardHandler.stdMetaUploadFile}"/>
+                                                <!-- progress bar, percent value is upated via progressListener-->
 
-                                                    <ice:outputProgress value="#{samlV2RemoteSpCreateWizardBean.stdMetaFileProgress}"
-                                                                        styleClass="uploadProgressBar"/>
-                                                    <ice:outputText
-                                                        value="#{samlV2RemoteSpCreateWizardBean.stdMetaFilename}"/>
-                                                </ice:panelGroup>
+                                                <ice:outputProgress value="#{samlV2RemoteSpCreateWizardBean.stdMetaFileProgress}"
+                                                                    styleClass="uploadProgressBar"/>
+                                                <ice:outputText
+                                                    value="#{samlV2RemoteSpCreateWizardBean.stdMetaFilename}"/>
+                                                <!--  </ice:panelGroup> -->
 
-                                                <ice:panelGroup>
-                                                   
-                                                    <ice:outputLabel
-                                                        for="etendedMetaData"
-                                                        value="Extended Metadata"/>
-                                                    <!-- file upload usage with progress callback. -->
-                                                    <ice:inputFile id="extMetaInputFileName"
-                                                                   submitOnUpload="postUpload"
-                                                                   progressListener="#{samlV2RemoteSpCreateWizardHandler.extMetaFileUploadProgress}"
-                                                                   actionListener="#{samlV2RemoteSpCreateWizardHandler.extMetaUploadFile}"/>
-                                                    <!-- progress bar, percent value is upated via progressListener-->
-
-                                                    <ice:outputProgress value="#{samlV2RemoteSpCreateWizardBean.extMetaFileProgress}"
-                                                                        styleClass="uploadProgressBar"/>
-                                                    <ice:outputText
-                                                        value="#{samlV2RemoteSpCreateWizardBean.extMetaFilename}"/>
-
-                                                </ice:panelGroup>
-                                                <ice:panelGroup>
-                                                   
-                                                    <ice:outputText
-                                                        value="retrieve Metadata from IDP server here."/>
-                                                </ice:panelGroup>
-                                            </ice:panelGroup>
-
-                                            <!-- file upload example -->
-                                            <ice:panelGroup styleClass="inputFileContainer">
-
+                                                <!-- file upload example -->
 
                                             </ice:panelGroup>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{!samlV2RemoteSpCreateWizardBean.meta}">
+                                            <ice:outputLabel
+                                                value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataLocation']}"/>
+                                            <ice:inputText
+                                                id="metaUrl"
+                                                value="#{samlV2RemoteSpCreateWizardBean.metaUrl}"
+                                                size="128"
+                                                maxlength="256"/>
 
-                                        </ice:panelGroup>                                        
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{!samlV2RemoteSpCreateWizardBean.meta}">
+                                            <ice:outputLabel
+                                                value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataLocation.inlineHelp']}"/>
+                                        </ice:panelGroup>
                                     </ice:panelGroup>
                                     <!-- Metadata -->
                                 </ui:define>
@@ -230,9 +217,9 @@
                                         <ice:outputLabel
                                             for="Attribute Mapping"
                                             value="Attribute Mapping"/>
-                                    </ice:panelGroup>                                
+                                    </ice:panelGroup>
                                     <ice:panelGroup>
-                                        <ice:outputLabel                                          
+                                        <ice:outputLabel
                                             value="Attributes Mapping Table"/>
                                         <!-- data table -->
                                         <!-- data table -->
@@ -250,24 +237,22 @@
                             <o:section>
                                 <ui:define name="section-title">
                                     <ice:outputText
-                                        value="Summary"/>
+                                        value="#{resources['samlv2-remote-sp-create.summaryPanelLabel.section-title']}"/>
                                 </ui:define>
                                 <ui:define name="section-details">
                                     <ice:outputText
-                                        value="Review the entity configuration and click Finish to save."/>
+                                        value="#{resources['samlv2-remote-sp-create.summaryPanelLabel.section-details']}"/>
                                 </ui:define>
                                 <ui:define name="section-body">
                                     <!-- summary -->
                                     <o:summarypanel
-                                        summary="#{samlV2RemoteSpCreateWizardBean.realmSamlV2RemoteSpCreateSummary}"/>
-                                    <o:summarypanel
-                                        summary="#{samlV2RemoteSpCreateWizardBean.entityNameSamlV2RemoteSpCreateSummary}"/>
-                                    <o:summarypanel
+                                        summary="#{samlV2RemoteSpCreateWizardBean.realmSamlV2RemoteSpCreateSummary}"/>                                    
+                                    <o:summarypanel                                       
                                         summary="#{samlV2RemoteSpCreateWizardBean.stdMetadataNameSamlV2RemoteSpCreateSummary}"/>
+                                        <o:summarypanel
+                                        summary="#{samlV2RemoteSpCreateWizardBean.metaUrlSamlV2RemoteSpCreateSummary}"/>
                                     <o:summarypanel
-                                        summary="#{samlV2RemoteSpCreateWizardBean.extMetadataNameSamlV2RemoteSpCreateSummary}"/>                                   
-                                    <o:summarypanel
-                                        summary="#{samlV2RemoteSpCreateWizardBean.cotSamlV2RemoteSpCreateSummary}"/>                                    
+                                        summary="#{samlV2RemoteSpCreateWizardBean.cotSamlV2RemoteSpCreateSummary}"/>
 
                                     <!-- summary -->
                                 </ui:define>

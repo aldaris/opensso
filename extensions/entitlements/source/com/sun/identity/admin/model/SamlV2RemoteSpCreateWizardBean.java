@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardBean.java,v 1.2 2009-06-18 07:54:58 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardBean.java,v 1.3 2009-06-20 08:41:58 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -33,11 +33,10 @@ public class SamlV2RemoteSpCreateWizardBean
         extends SamlV2RemoteCreateWizardBean
         implements Serializable {
 
-    private boolean retrieveFileFromSpServerVisible = true;
+    private String metaUrl;
     private RealmSamlV2RemoteSpCreateSummary realmSamlV2RemoteSpCreateSummary = new RealmSamlV2RemoteSpCreateSummary(this);
-    private EntityNameSamlV2RemoteSpCreateSummary entityNameSamlV2RemoteSpCreateSummary = new EntityNameSamlV2RemoteSpCreateSummary(this);
-    private StdMetadataNameSamlV2RemoteSpCreateSummary stdMetadataNameSamlV2RemoteSpCreateSummary = new StdMetadataNameSamlV2RemoteSpCreateSummary(this);
-    private ExtMetadataNameSamlV2RemoteSpCreateSummary extMetadataNameSamlV2RemoteSpCreateSummary = new ExtMetadataNameSamlV2RemoteSpCreateSummary(this);   
+    private MetaUrlSamlV2RemoteSpCreateSummary metaUrlSamlV2RemoteSpCreateSummary = new MetaUrlSamlV2RemoteSpCreateSummary(this);
+    private StdMetadataNameSamlV2RemoteSpCreateSummary stdMetadataNameSamlV2RemoteSpCreateSummary = new StdMetadataNameSamlV2RemoteSpCreateSummary(this);   
     private CotSamlV2RemoteSpCreateSummary cotSamlV2RemoteSpCreateSummary = new CotSamlV2RemoteSpCreateSummary(this);
     private Effect samlV2RemoteSpCreateEntityNameInputEffect;
     
@@ -48,27 +47,27 @@ public class SamlV2RemoteSpCreateWizardBean
     @Override
     public void reset() {
         super.reset();
+        metaUrl = null;
         realmSamlV2RemoteSpCreateSummary = new RealmSamlV2RemoteSpCreateSummary(this);
-        entityNameSamlV2RemoteSpCreateSummary = new EntityNameSamlV2RemoteSpCreateSummary(this);
-        stdMetadataNameSamlV2RemoteSpCreateSummary = new StdMetadataNameSamlV2RemoteSpCreateSummary(this);
-        extMetadataNameSamlV2RemoteSpCreateSummary = new ExtMetadataNameSamlV2RemoteSpCreateSummary(this);
+        metaUrlSamlV2RemoteSpCreateSummary = new MetaUrlSamlV2RemoteSpCreateSummary(this);
+        stdMetadataNameSamlV2RemoteSpCreateSummary = new StdMetadataNameSamlV2RemoteSpCreateSummary(this);       
         cotSamlV2RemoteSpCreateSummary = new CotSamlV2RemoteSpCreateSummary(this);
     }
 
-    public boolean getRetrieveFileFromSpServerVisible() {
-        return retrieveFileFromSpServerVisible;
+    public String getMetaUrl() {
+        return metaUrl;
     }
 
-    public void setRetrieveFileFromSpServerVisible(boolean retrieveFileFromSpServerVisible) {
-        this.retrieveFileFromSpServerVisible = retrieveFileFromSpServerVisible;
+    public void setMetaUrl(String metaUrl) {
+        this.metaUrl = metaUrl;
     }
 
     public RealmSamlV2RemoteSpCreateSummary getRealmSamlV2RemoteSpCreateSummary() {
         return realmSamlV2RemoteSpCreateSummary;
     }
 
-    public EntityNameSamlV2RemoteSpCreateSummary getEntityNameSamlV2RemoteSpCreateSummary() {
-        return entityNameSamlV2RemoteSpCreateSummary;
+    public MetaUrlSamlV2RemoteSpCreateSummary getMetaUrlSamlV2RemoteSpCreateSummary() {
+        return metaUrlSamlV2RemoteSpCreateSummary;
     }
 
     public CotSamlV2RemoteSpCreateSummary getCotSamlV2RemoteSpCreateSummary() {
@@ -77,10 +76,6 @@ public class SamlV2RemoteSpCreateWizardBean
 
     public StdMetadataNameSamlV2RemoteSpCreateSummary getStdMetadataNameSamlV2RemoteSpCreateSummary() {
         return stdMetadataNameSamlV2RemoteSpCreateSummary;
-    }
-
-    public ExtMetadataNameSamlV2RemoteSpCreateSummary getExtMetadataNameSamlV2RemoteSpCreateSummary() {
-        return extMetadataNameSamlV2RemoteSpCreateSummary;
     }
 
     public Effect getSamlV2RemoteSpCreateEntityNameInputEffect() {
