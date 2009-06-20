@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.34 2009-01-13 21:30:53 exu Exp $
+   $Id: build-zip.xml,v 1.35 2009-06-20 01:26:13 ak138937 Exp $
 
 -->
 
@@ -227,6 +227,7 @@
         <copy todir="${zip.temp.dir}/tools">
             <fileset file="${fm.dist.dir}/ssoAdminTools.zip" />
             <fileset file="${fm.dist.dir}/ssoSessionTools.zip" />
+            <fileset file="${amserver.dist.dir}/ssoDiagnosticTools.zip" />
         </copy>
         <copy file="${openfm.extlib.dir}/amConfiguratorTools.zip"
             tofile="${zip.temp.dir}/tools/ssoConfiguratorTools.zip" />

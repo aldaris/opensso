@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.46 2009-06-05 22:26:36 veiming Exp $
+   $Id: build.xml,v 1.47 2009-06-20 01:27:51 ak138937 Exp $
 
 -->
 
@@ -95,6 +95,7 @@
             <fileset file="${amserver.dist.dir}/amAdminTools.zip" />
             <fileset file="${amserver.dist.dir}/amSessionTools.zip" />
             <fileset file="${amserver.dist.dir}/amConfiguratorTools.zip" />
+            <fileset file="${amserver.dist.dir}/ssoDiagnosticTools.zip" />
         </copy>
         <!-- fake a copy to pass check-openfm-jars.xml -->
         <copy file="${amserver.dist.dir}/amserver.jar" 
@@ -169,6 +170,8 @@
         <copy file="${amserver.dist.dir}/amSessionTools.zip"
             todir="${openfm.extlib.dir}"  />            
         <copy file="${amserver.dist.dir}/amConfiguratorTools.zip"
+            todir="${openfm.extlib.dir}"  />            
+        <copy file="${amserver.dist.dir}/ssoDiagnosticTools.zip"
             todir="${openfm.extlib.dir}"  />            
         <copy file="${amserver.tools.dir}/ssomanifest.jar"
             todir="${prd.nightly.dist.dir}/openfm"  />

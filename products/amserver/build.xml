@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.78 2009-06-11 00:09:09 veiming Exp $
+   $Id: build.xml,v 1.79 2009-06-20 01:24:33 ak138937 Exp $
 
 -->
 
@@ -496,6 +496,9 @@
              inheritRefs="true"/>        
         <ant antfile="${amserver.warbase.dir}/build.xml" target="configurator"
              inheritRefs="true"/>        
+        <ant antfile="${amserver.base.dir}/build-diagnostic-tools.xml"
+            dir="${amserver.base.dir}"
+            inheritRefs="true"/>
     </target>
     
     <target name="war" depends="build,prepXML-not-enterprise,prepXML-enterprise">
