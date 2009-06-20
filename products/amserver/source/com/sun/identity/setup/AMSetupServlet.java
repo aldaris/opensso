@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.104 2009-06-19 02:36:08 bigfatrat Exp $
+ * $Id: AMSetupServlet.java,v 1.105 2009-06-20 06:30:18 hengming Exp $
  *
  */
 
@@ -1685,6 +1685,7 @@ public class AMSetupServlet extends HttpServlet {
     )  throws Exception {
         SetupProgress.reportStart("configurator.progress.tagswap.schemafiles", 
             null);
+        Set absSchemaFiles = new HashSet();
         for (Iterator i = schemaFiles.iterator(); i.hasNext(); ) {
             String file = (String)i.next();
             String content = readFile(file).toString();
@@ -1692,8 +1693,10 @@ public class AMSetupServlet extends HttpServlet {
             
             try {
                 int idx = file.lastIndexOf("/");
-                String absFile = (idx != -1) ? file.substring(idx+1) : file;
-                fout = new FileWriter(basedir + "/" + absFile);
+                String absFile = basedir + "/" + 
+                    ((idx != -1) ? file.substring(idx+1) : file);
+                fout = new FileWriter(absFile);
+                absSchemaFiles.add(absFile);
                 fout.write(ServicesDefaultValues.tagSwap(content));
             } catch (IOException ioex) {
                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
@@ -1717,6 +1720,11 @@ public class AMSetupServlet extends HttpServlet {
 
         if (dataStore.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
             EmbeddedOpenDS.rebuildIndex(map);
+        }
+
+        for(Iterator iter = absSchemaFiles.iterator(); iter.hasNext(); ) {
+            File file = new File((String)iter.next());
+            file.delete();
         }
     }
 

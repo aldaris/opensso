@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.17 2009-06-03 19:44:31 goodearth Exp $
+ * $Id: UserIdRepo.java,v 1.18 2009-06-20 06:30:18 hengming Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -224,6 +225,9 @@ class UserIdRepo {
             for (Iterator i = schemas.iterator(); i.hasNext(); ) {
                 String file = (String)i.next();
                 LDAPUtils.createSchemaFromLDIF(file, ld);
+
+                File f = new File(file);
+                f.delete();
             }
         } finally {
             disconnectDServer(ld);

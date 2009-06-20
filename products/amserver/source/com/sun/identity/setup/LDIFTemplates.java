@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDIFTemplates.java,v 1.3 2009-06-03 19:44:31 goodearth Exp $
+ * $Id: LDIFTemplates.java,v 1.4 2009-06-20 06:30:18 hengming Exp $
  */
 
 
@@ -69,17 +69,14 @@ public class LDIFTemplates {
     }
     
     public static void copy(String dir, ServletContext servletCtx) {
-        File d = new File(dir);
-        d.mkdirs();
-        
         for (Iterator i = templates.iterator(); i.hasNext(); ) {
             String templ = (String) i.next();
             String content = getContent(templ, servletCtx);
-            String newFile = 
-                templ.substring(templ.lastIndexOf("/") + 1);
+            String newFile = dir + "/ldif/" + templ;
+            File file = new File(newFile);
+            file.getParentFile().mkdirs();
             try {
-                AMSetupServlet.writeToFile(dir + "/" + newFile, 
-                    content);
+                AMSetupServlet.writeToFile(newFile, content);
             } catch (IOException e) {
                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                     "LDIFTemplates.copy", e);
