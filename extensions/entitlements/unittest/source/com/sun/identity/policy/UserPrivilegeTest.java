@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserPrivilegeTest.java,v 1.2 2009-06-19 22:01:52 dillidorai Exp $
+ * $Id: UserPrivilegeTest.java,v 1.3 2009-06-21 09:25:34 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -54,18 +54,17 @@ import org.testng.annotations.Test;
  * @author dillidorai
  */
 public class UserPrivilegeTest {
-
-    SSOToken adminToken = null;
+    public static final String USER_NAME = "UserPrivilegeTestUser1";
+    SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+        AdminTokenAction.getInstance());
     SSOToken userToken = null;
     AMIdentityRepository amir = null;
     AMIdentity user = null;
 
     @Test
     public void setup() throws Exception {
-        adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
         amir = new AMIdentityRepository(adminToken, "/");
-        String name = "user1";
+        String name = USER_NAME;
         Map attrMap = new HashMap();
         Set cnVals = new HashSet();
         cnVals.add(name);
@@ -92,7 +91,7 @@ public class UserPrivilegeTest {
     @AfterClass
     public void cleanup() throws Exception {
         Set identities = new HashSet();
-        identities.add(user.getUniversalId());
+        identities.add(user);
         amir.deleteIdentities(identities);
     }
 
@@ -121,36 +120,19 @@ public class UserPrivilegeTest {
         }
     }
 
-    private SSOToken createUserToken(String userName, String password)
-            throws Exception {
-        NameCallback nc = new NameCallback("Enter Name");
-        nc.setName(userName);
-        boolean echoOn = false;
-        PasswordCallback pc = new PasswordCallback("Enter Password", echoOn);
-        pc.setPassword(password.toCharArray());
-        Callback[] callbacks = new Callback[2];
-        callbacks[0] = nc;
-        callbacks[1] = pc;
-        AuthContext ac = new AuthContext("/");
-        return ac.login(AuthContext.IndexType.MODULE_INSTANCE, "DataStore", callbacks);
-    }
-
     private SSOToken createSessionToken(String orgName, String userId,
             String password, String module, int level)
             throws Exception {
         AuthContext ac = null;
         try {
-            System.out.println("TokenUtils:orgName=" + orgName);
             ac = new AuthContext(orgName);
             if (module != null) {
                 ac.login(AuthContext.IndexType.MODULE_INSTANCE, module);
             } else if (level != -1) {
                 ac.login(AuthContext.IndexType.LEVEL, String.valueOf(level));
             } else {
-                System.out.println("TokenUtils:calling login()");
                 ac.login();
             }
-            System.out.println("TokenUtils:after ac.login()");
         } catch (LoginException le) {
             le.printStackTrace();
             return null;

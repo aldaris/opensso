@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.20 2009-06-16 20:30:37 veiming Exp $
+ * $Id: PolicyIndexTest.java,v 1.21 2009-06-21 09:25:34 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -96,7 +96,7 @@ public class PolicyIndexTest {
                 hostIndexes, pathIndexes, parentPathIndexes);
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             SubjectUtils.createSubject(adminToken), "/");
-        for (Iterator<IPrivilege> i = pis.search(indexes,
+        for (Iterator<IPrivilege> i = pis.search("/", indexes,
             Collections.EMPTY_SET, false); i.hasNext();
         ) {
             IPrivilege eval = i.next();

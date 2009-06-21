@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.29 2009-06-16 10:37:45 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.30 2009-06-21 09:25:33 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -253,9 +253,13 @@ public class PrivilegeUtils {
         for (Rule rule : rules) {
             Set<String> ruleResources = rule.getResourceNames();
             if (ruleResources != null) {
-                Set<String> resourceNames = new HashSet<String>();
+                Set<String> resourceNames = results.get(
+                    rule.getServiceTypeName());
+                if (resourceNames == null) {
+                    resourceNames = new HashSet<String>();
+                    results.put(rule.getServiceTypeName(), resourceNames);
+                }
                 resourceNames.addAll(ruleResources);
-                results.put(rule.getServiceTypeName(), resourceNames);
             }
         }
         return results;
@@ -347,7 +351,10 @@ public class PrivilegeUtils {
         Map<String, Set<EntitlementCondition>> cnEntcMap =
             new HashMap<String, Set<EntitlementCondition>>();
         for (EntitlementCondition ec : ecSet) {
-            String key = ec.getClass().getName();
+            String key = (ec instanceof PolicyCondition) ?
+                ((PolicyCondition)ec).getClassName()
+                : ec.getClass().getName();
+
             Set<EntitlementCondition> values = cnEntcMap.get(key);
             if (values == null) {
                 values = new HashSet<EntitlementCondition>();

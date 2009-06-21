@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.19 2009-06-18 00:10:55 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.20 2009-06-21 09:25:32 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -83,10 +83,6 @@ public final class ApplicationManager {
                         EntitlementConfiguration.getInstance(
                         adminSubject, realm);
                     appls = ec.getApplications();
-if ((appls == null) || (appls.isEmpty())) {
-    //dennis
-    PrivilegeManager.debug.error("dennis getApplications null, " + realm, null);
-}
                     applications.put(realm, appls);
                 }
             }
@@ -138,6 +134,18 @@ if ((appls == null) || (appls.isEmpty())) {
                 return appl;
             }
         }
+
+        // try again, to get application for sub realm.
+        synchronized (lock) {
+            applications.remove(realm);
+        }
+        appls = getApplications(adminSubject, realm);
+        for (Application appl : appls) {
+            if (appl.getName().equals(name)) {
+                return appl;
+            }
+        }
+
         return null;
     }
 

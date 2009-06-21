@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.26 2009-06-18 00:10:55 veiming Exp $
+ * $Id: EntitlementService.java,v 1.27 2009-06-21 09:25:33 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -259,13 +259,50 @@ public class EntitlementService extends EntitlementConfiguration {
      * @return a set of registered applications.
      */
     public Set<Application> getApplications() {
+        boolean hasWebAgent = false;
+
+        Set<Application> results = getApplications(realm);
+        for (Application app : results) {
+            if (!hasWebAgent) {
+                hasWebAgent = app.getName().equals(
+                    ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
+            }
+        }
+
+        SSOToken token = getSSOToken();
+        if (OpenSSOIndexStore.isOrgAliasMappingResourceEnabled(token) &&
+            !hasWebAgent) {
+            Set<Application> rootApps = getApplications("/");
+            for (Application a : rootApps) {
+                if (a.getName().equals(
+                    ApplicationTypeManager.URL_APPLICATION_TYPE_NAME)) {
+                    try {
+                        Set<String> resources =
+                            OpenSSOIndexStore.getOrgAliasMappingResources(
+                            realm,
+                            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
+                        Application clone = a.refers(realm, resources);
+                        results.add(clone);
+
+                    } catch (SMSException ex) {
+                        PrivilegeManager.debug.error(
+                            "EntitlementService.getApplications", ex);
+                    }
+                    break;
+                }
+            }
+        }
+        return results;
+    }
+
+    private Set<Application> getApplications(String curRealm) {
         SSOToken token = getSSOToken();
 
-        Set<Application> results = getRawApplications(token);
+        Set<Application> results = getRawApplications(token, curRealm);
         for (Application app : results) {
             Set<String> resources = app.getResources();
             Set<String> res = new HashSet<String>();
-            
+
             for (String r : resources) {
                 int idx = r.indexOf('\t');
                 if (idx != -1) {
@@ -279,25 +316,37 @@ public class EntitlementService extends EntitlementConfiguration {
         return results;
     }
 
+
     /**
      * Returns a set of registered applications.
      *
      * @return a set of registered applications.
      */
     private Set<Application> getRawApplications(SSOToken token) {
+        if (realm.startsWith(SMSEntry.SUN_INTERNAL_REALM_PREFIX)) {
+            realm = "/";
+        }
+        return getRawApplications(token, realm);
+    }
+
+    /**
+     * Returns a set of registered applications.
+     *
+     * @return a set of registered applications.
+     */
+    private Set<Application> getRawApplications(
+        SSOToken token, String curRealm) {
         Set<Application> results = new HashSet<Application>();
         try {
             if (token != null) {
-                ServiceConfigManager mgr = new ServiceConfigManager(
-                    SERVICE_NAME, token);
                 // TODO. Since applications for the hidden realms have to be
                 // the same as root realm mainly for delegation without any
                 // referrals, the hack is to use root realm for hidden realm.
-                if (realm.startsWith(SMSEntry.SUN_INTERNAL_REALM_PREFIX)) {
-                    realm = "/";
-                }
+
+                ServiceConfigManager mgr = new ServiceConfigManager(
+                    SERVICE_NAME, token);
                 ServiceConfig orgConfig = mgr.getOrganizationConfig(
-                    realm, null);
+                    curRealm, null);
                 if (orgConfig != null) {
                     ServiceConfig conf = orgConfig.getSubConfig(
                         CONFIG_APPLICATIONS);
@@ -308,7 +357,7 @@ public class EntitlementService extends EntitlementConfiguration {
                             ServiceConfig applConf = conf.getSubConfig(name);
                             Map<String, Set<String>> data =
                                 applConf.getAttributes();
-                            Application app = createApplication(realm, name,
+                            Application app = createApplication(curRealm, name,
                                 data);
                             results.add(app);
                         }
@@ -591,6 +640,7 @@ public class EntitlementService extends EntitlementConfiguration {
         throws EntitlementException {
         storeApplication(appl, true);
     }
+    
     /**
      * Stores the application to data store.
      *

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeIndexStore.java,v 1.11 2009-06-16 20:30:36 veiming Exp $
+ * $Id: PrivilegeIndexStore.java,v 1.12 2009-06-21 09:25:33 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -175,6 +175,7 @@ public abstract class PrivilegeIndexStore {
     /**
      * Returns an iterator of matching privilege objects.
      *
+     * @param realm Realm name.
      * @param indexes Resource search indexes.
      * @param subjectIndexes Subject search indexes.
      * @param bSubTree <code>true</code> for sub tree evaluation.
@@ -183,6 +184,7 @@ public abstract class PrivilegeIndexStore {
      * cannot be obtained.
      */
     public abstract Iterator<IPrivilege> search(
+        String realm,
         ResourceSearchIndexes indexes,
         Set<String> subjectIndexes,
         boolean bSubTree

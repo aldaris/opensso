@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.23 2009-06-12 00:02:33 veiming Exp $
+ * $Id: Application.java,v 1.24 2009-06-21 09:25:32 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -458,11 +458,11 @@ public final class Application {
 
         if ((resources != null) && !resources.isEmpty()) {
             for (String r : resources) {
-                ResourceMatch rm = resComp.compare(resource, r, true);
+                ResourceMatch rm = resComp.compare(
+                    resource, r, true);
                 if (rm.equals(ResourceMatch.EXACT_MATCH) ||
                     rm.equals(ResourceMatch.SUB_RESOURCE_MATCH) ||
-                    rm.equals(ResourceMatch.WILDCARD_MATCH)
-                ) {
+                    rm.equals(ResourceMatch.WILDCARD_MATCH)) {
                     match = true;
                     break;
                 }
@@ -488,7 +488,7 @@ public final class Application {
         }
     }
 
-    Application refers(String realm, Set<String> res) {
+    public Application refers(String realm, Set<String> res) {
         Application clone = clone();
         clone.realm = realm;
         clone.resources.clear();

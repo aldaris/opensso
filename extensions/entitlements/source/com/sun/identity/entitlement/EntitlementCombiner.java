@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCombiner.java,v 1.11 2009-05-26 21:20:05 veiming Exp $
+ * $Id: EntitlementCombiner.java,v 1.12 2009-06-21 09:25:33 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -128,6 +128,11 @@ public abstract class EntitlementCombiner {
                         mergeActionValues(existing, e);
                         mergeAdvices(existing, e);
                         mergeAttributes(existing, e);
+                    } else if (match.equals(ResourceMatch.SUPER_RESOURCE_MATCH)
+                    ) {
+                        mergeActionValues(e, existing);
+                        mergeAdvices(e, existing);
+                        mergeAttributes(e, existing);
                     }
                 }
 

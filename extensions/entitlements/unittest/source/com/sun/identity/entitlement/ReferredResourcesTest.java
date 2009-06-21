@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferredResourcesTest.java,v 1.4 2009-06-16 10:37:46 veiming Exp $
+ * $Id: ReferredResourcesTest.java,v 1.5 2009-06-21 09:25:34 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.opensso.OpenSSOIndexStore;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.security.AdminTokenAction;
@@ -164,9 +165,18 @@ public class ReferredResourcesTest {
         Set<String> resources = ApplicationManager.getReferredResources(
             adminSubject, SUB_REALM1,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
-        if (resources.size() != 2) {
-            throw new Exception("ReferredResourcesTest.test: failed incorrect number of" +
-                "resources");
+        if (OpenSSOIndexStore.isOrgAliasMappingResourceEnabled(adminToken)) {
+            if (resources.size() != 4) {
+                throw new Exception(
+                    "ReferredResourcesTest.test: failed incorrect number of" +
+                    "resources");
+            }
+        } else {
+            if (resources.size() != 2) {
+                throw new Exception(
+                    "ReferredResourcesTest.test: failed incorrect number of" +
+                    "resources");
+            }
         }
 
         if (!resources.contains("http://www.ReferredResourcesTest.com/1/")) {

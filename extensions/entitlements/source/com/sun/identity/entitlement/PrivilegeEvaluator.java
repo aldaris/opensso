@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.27 2009-06-16 20:30:36 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.28 2009-06-21 09:25:33 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -232,6 +232,7 @@ class PrivilegeEvaluator {
     
     private List<Entitlement> evaluate(String realm)
         throws EntitlementException {
+
         // Subject index
         long start = PRIVILEGE_EVAL_MONITOR_SUB_INDEX.start();
         SubjectAttributesManager sam = SubjectAttributesManager.getInstance(
@@ -242,8 +243,8 @@ class PrivilegeEvaluator {
         start = PRIVILEGE_EVAL_MONITOR_SEARCH.start();
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             adminSubject, realm);
-        Iterator<IPrivilege> i = pis.search(indexes, sam.getSubjectSearchFilter(
-            subject, applicationName), recursive);
+        Iterator<IPrivilege> i = pis.search(realm, indexes,
+            sam.getSubjectSearchFilter(subject, applicationName), recursive);
         PRIVILEGE_EVAL_MONITOR_SEARCH.end(start);
         
         // Submit the privileges for evaluation

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.24 2009-06-16 20:30:37 veiming Exp $
+ * $Id: DataStore.java,v 1.25 2009-06-21 09:25:33 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -57,6 +57,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import javax.persistence.EntityExistsException;
 import javax.security.auth.Subject;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -903,22 +904,24 @@ public class DataStore {
         Set<ReferralPrivilege> results = new HashSet<ReferralPrivilege>();
         String baseDN = getSearchBaseDN(realm, REFERRAL_STORE);
 
-        try {
-            Iterator i = SMSEntry.search(
-                adminToken, baseDN, filter, Collections.EMPTY_SET);
-            while (i.hasNext()) {
-                SMSDataEntry e = (SMSDataEntry) i.next();
-                ReferralPrivilege referral = ReferralPrivilege.getInstance(
-                    new JSONObject(e.getAttributeValue(
-                    SERIALIZABLE_INDEX_KEY)));
-                results.add(referral);
+        if (SMSEntry.checkIfEntryExists(baseDN, adminToken)) {
+            try {
+                Iterator i = SMSEntry.search(
+                    adminToken, baseDN, filter, Collections.EMPTY_SET);
+                while (i.hasNext()) {
+                    SMSDataEntry e = (SMSDataEntry) i.next();
+                    ReferralPrivilege referral = ReferralPrivilege.getInstance(
+                        new JSONObject(e.getAttributeValue(
+                        SERIALIZABLE_INDEX_KEY)));
+                    results.add(referral);
+                }
+            } catch (JSONException e) {
+                Object[] arg = {baseDN};
+                throw new EntitlementException(52, arg, e);
+            } catch (SMSException e) {
+                Object[] arg = {baseDN};
+                throw new EntitlementException(52, arg, e);
             }
-        } catch (JSONException e) {
-            Object[] arg = {baseDN};
-            throw new EntitlementException(52, arg, e);
-        } catch (SMSException e) {
-            Object[] arg = {baseDN};
-            throw new EntitlementException(52, arg, e);
         }
         return results;
     }

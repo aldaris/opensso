@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.11 2009-06-13 04:40:09 arviranga Exp $
+ * $Id: PolicyEvaluator.java,v 1.12 2009-06-21 09:25:34 veiming Exp $
  *
  */
 
@@ -1144,7 +1144,6 @@ public class PolicyEvaluator {
 
         SSOToken adminSSOToken = (SSOToken)AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        Subject adminSubject = SubjectUtils.createSubject(adminSSOToken);
 
         try {
             Subject userSubject = SubjectUtils.createSubject(token);

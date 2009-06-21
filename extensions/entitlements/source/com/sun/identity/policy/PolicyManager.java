@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.19 2009-06-17 00:03:05 veiming Exp $
+ * $Id: PolicyManager.java,v 1.20 2009-06-21 09:25:34 veiming Exp $
  *
  */
 
@@ -616,14 +616,14 @@ public final class PolicyManager {
             if (migratedToEntitlementService) {
                 PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
                     adminSubject, realmName);
-                pis.add(PrivilegeUtils.policyToPrivileges(policy));
+                Set<IPrivilege> privileges = PrivilegeUtils.policyToPrivileges(
+                    policy);
+                pis.add(privileges);
                 if (policy.isReferralPolicy()) {
                     ReferralPrivilegeManager refpm =
                         new ReferralPrivilegeManager(realmName, adminSubject);
-                    Set<IPrivilege> tmp = PrivilegeUtils.policyToPrivileges(
-                        policy);
                     refpm.addApplicationToSubRealm(
-                        (ReferralPrivilege)tmp.iterator().next());
+                        (ReferralPrivilege)privileges.iterator().next());
                 }
             } else {
                 // do the addition in resources tree
