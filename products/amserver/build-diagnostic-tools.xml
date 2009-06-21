@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-diagnostic-tools.xml,v 1.3 2009-06-20 01:23:39 ak138937 Exp $
+   $Id: build-diagnostic-tools.xml,v 1.4 2009-06-21 02:31:44 ak138937 Exp $
 
 -->
 
@@ -210,6 +210,14 @@
                      includes="README.ssodtool"/>
             <mapper type="glob" from="README.ssodtool" to="README"/>
         </copy>
+
+       <filter token="DATESTAMP" value="${war.time.stamp}"/>
+       <filter token="VERSION" value="${version.set}" />
+
+       <copy file="${amserver.warbase.dir}/xml/template/sms/serverdefaults.properties"
+           tofile="${services.res.dir}/serverdefaults.properties"
+       filtering="true"/>
+
         <!-- copy properties file -->
         <copy todir="${services.res.dir}" overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${amserver.built.res.dir}" includes="AgentConfiguration*.properties"/> 
@@ -218,7 +226,6 @@
             <fileset dir="${amserver.built.res.dir}" includes="Tamper*.properties"/> 
             <fileset dir="${amserver.built.res.dir}" includes="WebContainer*.properties"/> 
             <fileset dir="${odt.res.dir}">
-                <include name ="serverdefaults.properties"/>
                 <include name ="validserverconfig.properties"/>
             </fileset>
         </copy>
