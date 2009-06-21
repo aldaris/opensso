@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.24 2009-06-21 09:25:32 veiming Exp $
+ * $Id: Application.java,v 1.25 2009-06-21 10:52:47 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -455,11 +455,19 @@ public final class Application {
     public ValidateResourceResult validateResourceName(String resource) {
         ResourceName resComp = getResourceComparator();
         boolean match = false;
+        String res = null;
+        try {
+            res = resComp.canonicalize(resource);
+        } catch (EntitlementException ex) {
+            Object[] args = {resource};
+            return new ValidateResourceResult(
+                ValidateResourceResult.VALID_CODE_INVALID,
+                "resource.validation.invalid.resource", args);
+        }
 
         if ((resources != null) && !resources.isEmpty()) {
             for (String r : resources) {
-                ResourceMatch rm = resComp.compare(
-                    resource, r, true);
+                ResourceMatch rm = resComp.compare(res, r, true);
                 if (rm.equals(ResourceMatch.EXACT_MATCH) ||
                     rm.equals(ResourceMatch.SUB_RESOURCE_MATCH) ||
                     rm.equals(ResourceMatch.WILDCARD_MATCH)) {
@@ -476,16 +484,8 @@ public final class Application {
                 "resource.validation.does.not.match.valid.resources", args);
         }
 
-        try {
-            resComp.canonicalize(resource);
-            return new ValidateResourceResult( 
-                ValidateResourceResult.VALID_CODE_VALID, "");
-        } catch (EntitlementException ex) {
-            Object[] args = {resource};
-            return new ValidateResourceResult(
-                ValidateResourceResult.VALID_CODE_INVALID,
-                "resource.validation.invalid.resource", args);
-        }
+        return new ValidateResourceResult(
+            ValidateResourceResult.VALID_CODE_VALID, "");
     }
 
     public Application refers(String realm, Set<String> res) {
