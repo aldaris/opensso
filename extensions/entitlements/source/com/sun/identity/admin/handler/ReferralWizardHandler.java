@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardHandler.java,v 1.12 2009-06-22 14:53:20 farble1670 Exp $
+ * $Id: ReferralWizardHandler.java,v 1.13 2009-06-22 15:08:11 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -35,7 +35,7 @@ import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.RealmBean;
-import com.sun.identity.admin.model.ReferralBean;
+import com.sun.identity.admin.model.ReferralManageBean;
 import com.sun.identity.admin.model.ReferralResource;
 import com.sun.identity.admin.model.ReferralWizardBean;
 import com.sun.identity.admin.model.ReferralWizardStep;
@@ -51,6 +51,7 @@ public abstract class ReferralWizardHandler extends WizardHandler {
     private MessagesBean messagesBean;
     private QueuedActionBean queuedActionBean;
     private ReferralDao referralDao;
+    private ReferralManageBean referralManageBean;
 
     public void setMessagesBean(MessagesBean messagesBean) {
         this.messagesBean = messagesBean;
@@ -286,5 +287,13 @@ public abstract class ReferralWizardHandler extends WizardHandler {
 
     public ReferralDao getReferralDao() {
         return referralDao;
+    }
+
+    public void setReferralManageBean(ReferralManageBean referralManageBean) {
+        this.referralManageBean = referralManageBean;
+    }
+
+    public ReferralManageBean getReferralManageBean() {
+        return referralManageBean;
     }
 }
