@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.1 2009-06-12 00:02:34 veiming Exp $
+ * $Id: Entitlement.java,v 1.2 2009-06-22 19:09:03 veiming Exp $
  *
  */
 
@@ -154,5 +154,31 @@ public class Entitlement {
         resourceStrings={
             "delete-applications-succeeded=Applications were deleted."})
     private String delete_appls;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.entitlement.opensso.cli.ShowConfigurations",
+        description="Display entitlements service configuration",
+        webSupport="true",
+        mandatoryOptions={},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={"get-attr-values-of-entitlement-service={0}={1}"})
+    private String show_entitlement_conf;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.entitlement.opensso.cli.SetConfigurations",
+        description="Set entitlements service configuration",
+        webSupport="true",
+        mandatoryOptions={},
+        optionAliases={},
+        optionalOptions={
+            "attributevalues|a|m|Attribute values e.g. evalThreadSize=4.",
+            "datafile|D|s|Name of file that contains attribute values data. Possible attributes are evalThreadSize, searchThreadSize, policyCacheSize and indexCacheSize."},
+        macro="authentication",
+        resourceStrings={
+            "set-entitlement-config-unidentified-attr={0} was unidentified.",
+            "set-entitlement-config-succeeded=Entitlements Service configuration is updated."})
+    private String set_entitlement_conf;
 }
 

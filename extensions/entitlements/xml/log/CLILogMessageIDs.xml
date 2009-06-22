@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.1 2009-06-12 00:02:35 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.2 2009-06-22 19:09:03 veiming Exp $
 
 -->
 
@@ -6830,5 +6830,70 @@
             <item>Look under debug file for more information.</item>
         </actions>
     </logmessage>
+
+    <logmessage name="ATTEMPT_SHOW_ENTITLEMENT_SVC" id="5600"
+        loglevel="LL_INFO"
+        description="Attempt to show entitlement service configuration.">
+        <datainfo />
+        <triggers>
+            <item>Execute show entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_SHOW_ENTITLEMENT_SVC" id="5601"
+        loglevel="LL_INFO"
+        description="Entitlement service configuration is displayed.">
+        <datainfo />
+        <triggers>
+            <item>Execute show entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SHOW_ENTITLEMENT_SVC" id="5602"
+        loglevel="LL_INFO"
+        description="Failed to display entitlement service configuration.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_MODIFY_ENTITLEMENT_SVC" id="5610"
+        loglevel="LL_INFO"
+        description="Attempt to modify entitlement service configuration.">
+        <datainfo />
+        <triggers>
+            <item>Execute set entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_MODIFY_ENTITLEMENT_SVC" id="5611"
+        loglevel="LL_INFO"
+        description="Entitlement service configuration is modified.">
+        <datainfo />
+        <triggers>
+            <item>Execute set entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_MODIFY_ENTITLEMENT_SVC" id="5612"
+        loglevel="LL_INFO"
+        description="Failed to modify entitlement service configuration.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
 
 </logmessages>
