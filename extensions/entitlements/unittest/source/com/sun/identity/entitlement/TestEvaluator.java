@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestEvaluator.java,v 1.13 2009-06-12 22:00:42 veiming Exp $
+ * $Id: TestEvaluator.java,v 1.14 2009-06-22 10:14:36 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -30,7 +30,6 @@ package com.sun.identity.entitlement;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
-import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -126,8 +125,10 @@ public class TestEvaluator {
         esSet.add(es2);
 
         EntitlementSubject eSubject = new OrSubject(esSet);
-        Privilege privilege = new OpenSSOPrivilege(
-            PRIVILEGE1_NAME, ent, eSubject, null, Collections.EMPTY_SET);
+        Privilege privilege = Privilege.getNewInstance();
+        privilege.setName(PRIVILEGE1_NAME);
+        privilege.setEntitlement(ent);
+        privilege.setSubject(eSubject);
         pm.addPrivilege(privilege);
         Thread.sleep(1000);
     }

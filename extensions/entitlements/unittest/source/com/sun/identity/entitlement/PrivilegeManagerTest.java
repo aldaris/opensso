@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.29 2009-06-12 22:00:42 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.30 2009-06-22 10:14:35 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import com.sun.identity.idm.IdRepoException;
@@ -174,7 +173,10 @@ public class PrivilegeManagerTest {
         OrSubject os = new OrSubject(eSubjects);
 
         try {
-            new OpenSSOPrivilege(PRIVILEGE_NAME1, entitlement, os, null, null);
+            Privilege p = Privilege.getNewInstance();
+            p.setName(PRIVILEGE_NAME1);
+            p.setEntitlement(entitlement);
+            p.setSubject(os);
         } catch (EntitlementException e) {
             if (e.getErrorCode() != 310)  {
                 throw e;
@@ -250,8 +252,12 @@ public class PrivilegeManagerTest {
         ra.add(uat1);
         ra.add(uat2);
 
-        Privilege priv = new OpenSSOPrivilege(PRIVILEGE_NAME, entitlement, os,
-            ipc, ra);
+        Privilege priv = Privilege.getNewInstance();
+        priv.setName(PRIVILEGE_NAME);
+        priv.setEntitlement(entitlement);
+        priv.setSubject(os);
+        priv.setCondition(ipc);
+        priv.setResourceAttributes(ra);
         priv.setDescription(PRIVILEGE_DESC);
         return priv;
     }

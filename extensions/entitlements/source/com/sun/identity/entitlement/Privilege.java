@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.30 2009-06-16 10:37:44 veiming Exp $
+ * $Id: Privilege.java,v 1.31 2009-06-22 10:14:34 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -81,8 +81,9 @@ public abstract class Privilege implements IPrivilege {
      */
     public static final String DESCRIPTION_ATTRIBUTE = "description";
 
+    private static Class privilegeClass;
+
     private String name;
-    private String policyName;
     private String description;
     private Entitlement entitlement;
     private EntitlementSubject eSubject;
@@ -94,42 +95,60 @@ public abstract class Privilege implements IPrivilege {
     private long creationDate;
     private long lastModifiedDate;
 
-    public Privilege() {
+
+    static {
+        try {
+            //TODO: should be customizable
+            privilegeClass = Class.forName(
+                "com.sun.identity.entitlement.opensso.OpenSSOPrivilege");
+        } catch (ClassNotFoundException ex) {
+            PrivilegeManager.debug.error("Privilege.<init>", ex);
+        }
     }
 
     /**
-     * Constructs entitlement privilege.
+     * Returns entitlement privilege.
      *
-     * @param name name of the privilege
-     * @param eSubject EntitlementSubject used for membership check
-     * @param eCondition EntitlementCondition used for constraint check
-     * @param eResourceAttributes Resource1Attributes used to get additional
-     * result attributes
-     * @throws EntitlementException if resource names are invalid.
+     * @return entitlement privilege.
+     * @throws EntitlementException if entitlementPrivilege cannot be returned.
      */
-    protected Privilege(
-        String name,
-        Entitlement entitlement,
-        EntitlementSubject eSubject,
-        EntitlementCondition eCondition,
-        Set<ResourceAttribute> eResourceAttributes
-    ) throws EntitlementException {
-        this.name = name;
-        this.entitlement = entitlement;
-        this.eSubject = eSubject;
-        this.eCondition = eCondition;
-        this.eResourceAttributes = eResourceAttributes;
-        validateSubject();
+    public static Privilege getNewInstance() throws EntitlementException {
+        if (privilegeClass == null) {
+            throw new EntitlementException(2);
+        }
+        try {
+            return (Privilege)privilegeClass.newInstance();
+        } catch (InstantiationException ex) {
+            throw new EntitlementException(1, ex);
+        } catch (IllegalAccessException ex) {
+            throw new EntitlementException(1, ex);
+        }
     }
+
+    public Privilege() {
+    }
+
 
     void validateResourceNames(Subject adminSubject, String realm
         ) throws EntitlementException {
         entitlement.validateResourceNames(adminSubject, realm);
     }
 
-    private void validateSubject()
+    /**
+     * Sets entitlement subject.
+     *
+     * @param eSubject Entitlement subject
+     * @throws EntitlementException if subject is null.
+     */
+    public void setSubject(EntitlementSubject eSubject)
         throws EntitlementException {
-        if ((eSubject == null) || !eSubject.isIdentity()){
+        validateSubject(eSubject);
+        this.eSubject = eSubject;
+    }
+
+    private void validateSubject(EntitlementSubject sbj)
+        throws EntitlementException {
+        if ((sbj == null) || !sbj.isIdentity()){
             Object[] params = {name};
             throw new EntitlementException(310, params);
         }
@@ -256,9 +275,6 @@ public abstract class Privilege implements IPrivilege {
         jo.put("className", getClass().getName());
         jo.put("name", name);
 
-        if (policyName != null) {
-            jo.put("policyName", policyName);
-        }
         if (description != null) {
             jo.put("description", description);
         }
@@ -300,6 +316,8 @@ public abstract class Privilege implements IPrivilege {
         return jo;
     }
 
+    protected abstract void init(JSONObject jo);
+
     public static Privilege getInstance(JSONObject jo) {
         String className = jo.optString("className");
         try {
@@ -307,7 +325,6 @@ public abstract class Privilege implements IPrivilege {
             Privilege privilege = (Privilege)clazz.newInstance();
             privilege.name = jo.optString("name");
             privilege.description = jo.optString("description");
-            privilege.policyName = jo.optString("policyName");
             privilege.createdBy = jo.optString("createdBy");
             privilege.lastModifiedBy = jo.optString("lastModifiedBy");
             privilege.creationDate = JSONUtils.getLong(jo,
@@ -322,6 +339,7 @@ public abstract class Privilege implements IPrivilege {
             privilege.eSubject = getESubject(jo);
             privilege.eCondition = getECondition(jo);
             privilege.eResourceAttributes = getResourceAttributes(jo);
+            privilege.init(jo);
             
             return privilege;
         } catch (InstantiationException ex) {
@@ -636,24 +654,6 @@ public abstract class Privilege implements IPrivilege {
     }
 
     /**
-     * Sets policy name.
-     *
-     * @param policyName Policy name.
-     */
-    public void setPolicyName(String policyName) {
-        this.policyName = policyName;
-    }
-
-    /**
-     * Returns policy name.
-     *
-     * @return policyName Policy name.
-     */
-    public String getPolicyName() {
-        return this.policyName;
-    }
-
-    /**
      * Canonicalizes resource name before persistence.
      *
      * @param adminSubject Admin Subject.
@@ -677,6 +677,58 @@ public abstract class Privilege implements IPrivilege {
         return (entitlement != null) ? entitlement.getResourceSaveIndexes(
             adminSubject, realm) : null;
     }
+
+    /**
+     * Sets name.
+     *
+     * @param name Name of privilege.
+     * @throws EntitlementException if name is null or empty.
+     */
+    public void setName(String name) throws EntitlementException {
+        if ((name == null) || (name.trim().length() == 0)) {
+            throw new EntitlementException(3);
+        }
+        this.name = name;
+    }
+
+    /**
+     * Sets entitlement.
+     *
+     * @param entitlement Entitlement.
+     * @throws EntitlementException if entitlement is null.
+     */
+    public void setEntitlement(Entitlement entitlement)
+        throws EntitlementException {
+        if (entitlement == null) {
+            throw new EntitlementException(4);
+        }
+        this.entitlement = entitlement;
+    }
+
+    /**
+     * Sets condition.
+     *
+     * @param condition Condition.
+     */
+    public void setCondition(EntitlementCondition condition) {
+        this.eCondition = condition;
+    }
+
+    /**
+     * Sets resource attributes.
+     *
+     * @param set Set of resource attribute.
+     */
+    public void setResourceAttributes(Set<ResourceAttribute> set) {
+        if (set == null) {
+            this.eResourceAttributes = null;
+        } else {
+            this.eResourceAttributes = new HashSet();
+            this.eResourceAttributes.addAll(set);
+        }
+    }
+
 }
+
 
 

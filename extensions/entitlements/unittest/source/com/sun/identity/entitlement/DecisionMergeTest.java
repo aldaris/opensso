@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionMergeTest.java,v 1.1 2009-06-21 09:25:34 veiming Exp $
+ * $Id: DecisionMergeTest.java,v 1.2 2009-06-22 10:14:35 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.policy.PolicyDecision;
 import com.sun.identity.policy.PolicyEvaluator;
@@ -70,8 +69,10 @@ public class DecisionMergeTest {
             actionValues);
         EntitlementSubject sbj = new AuthenticatedESubject();
 
-        Privilege p1 = new OpenSSOPrivilege("DecisionMergeTestPolicy1",
-            e1, sbj, null, null);
+        Privilege p1 = Privilege.getNewInstance();
+        p1.setName("DecisionMergeTestPolicy1");
+        p1.setEntitlement(e1);
+        p1.setSubject(sbj);
         PrivilegeManager mgr = PrivilegeManager.getInstance("/", adminSubject);
         mgr.addPrivilege(p1);
 
@@ -80,8 +81,10 @@ public class DecisionMergeTest {
         Entitlement e2 = new Entitlement("http://www.DecisionMergeTest.com/a/b/*",
             actionValues2);
 //        EntitlementCondition ec = new IPCondition("100.0.0.0", "100.0.0.1");
-        Privilege p2 = new OpenSSOPrivilege("DecisionMergeTestPolicy2",
-            e2, sbj, null, null);
+        Privilege p2 = Privilege.getNewInstance();
+        p2.setName("DecisionMergeTestPolicy2");
+        p2.setEntitlement(e2);
+        p2.setSubject(sbj);
         mgr.addPrivilege(p2);
     }
 

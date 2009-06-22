@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeBean.java,v 1.34 2009-06-04 11:49:16 veiming Exp $
+ * $Id: PrivilegeBean.java,v 1.35 2009-06-22 10:14:34 veiming Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -34,7 +34,6 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceAttribute;
-import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -329,12 +328,12 @@ public class PrivilegeBean implements Serializable {
         }
 
         try {
-            Privilege p = new OpenSSOPrivilege(
-                name,
-                entitlement,
-                eSubject,
-                condition,
-                attributes);
+            Privilege p = Privilege.getNewInstance();
+            p.setName(name);
+            p.setEntitlement(entitlement);
+            p.setSubject(eSubject);
+            p.setCondition(condition);
+            p.setResourceAttributes(attributes);
             p.setDescription(description);
             return p;
         } catch (EntitlementException ee) {

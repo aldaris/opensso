@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiWildcardEvalTest.java,v 1.1 2009-06-21 09:25:34 veiming Exp $
+ * $Id: MultiWildcardEvalTest.java,v 1.2 2009-06-22 10:14:35 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
@@ -56,8 +55,10 @@ public class MultiWildcardEvalTest {
             "http://sun.com/a/*/b/*/c", actionValues);
         EntitlementSubject sbj = new AuthenticatedESubject();
 
-        Privilege p1 = new OpenSSOPrivilege("MultiWildcardEvalTest",
-            e1, sbj, null, null);
+        Privilege p1 = Privilege.getNewInstance();
+        p1.setName("MultiWildcardEvalTest");
+        p1.setEntitlement(e1);
+        p1.setSubject(sbj);
         PrivilegeManager mgr = PrivilegeManager.getInstance("/",
             adminSubject);
         mgr.addPrivilege(p1);

@@ -22,18 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLOpenSSOPrivilege.java,v 1.1 2009-05-29 22:22:47 dillidorai Exp $
+ * $Id: XACMLOpenSSOPrivilege.java,v 1.2 2009-06-22 10:14:35 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
-import com.sun.identity.entitlement.Entitlement;
-import com.sun.identity.entitlement.EntitlementCondition;
-import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.PrivilegeType;
-import com.sun.identity.entitlement.ResourceAttribute;
-import java.util.Set;
 
 /**
  *
@@ -43,25 +37,6 @@ public class XACMLOpenSSOPrivilege extends OpenSSOPrivilege {
 
     public XACMLOpenSSOPrivilege() {
        super();
-    }
-
-    /**
-     * Constructs entitlement privilege
-     * @param name name of the privilege
-     * @param eSubject EntitlementSubject used for membership check
-     * @param eCondition EntitlementCondition used for constraint check
-     * @param eResourceAttributes Resource1Attributes used to get additional
-     * result attributes
-     * @throws EntitlementException if resource names are invalid.
-     */
-    public XACMLOpenSSOPrivilege(
-        String name,
-        Entitlement entitlement,
-        EntitlementSubject eSubject,
-        EntitlementCondition eCondition,
-        Set<ResourceAttribute> eResourceAttributes
-    ) throws EntitlementException {
-        super(name, entitlement, eSubject, eCondition, eResourceAttributes);
     }
 
     @Override

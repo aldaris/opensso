@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgAliasReferralTest.java,v 1.1 2009-06-21 09:25:34 veiming Exp $
+ * $Id: OrgAliasReferralTest.java,v 1.2 2009-06-22 10:14:35 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -96,8 +96,10 @@ public class OrgAliasReferralTest {
             actionValues);
         EntitlementSubject sbj = new AuthenticatedESubject();
 
-        Privilege p1 = new OpenSSOPrivilege("OrgAliasReferralTest",
-            e1, sbj, null, null);
+        Privilege p1 = Privilege.getNewInstance();
+        p1.setName("OrgAliasReferralTest");
+        p1.setEntitlement(e1);
+        p1.setSubject(sbj);
         PrivilegeManager mgr = PrivilegeManager.getInstance(SUB_REALM1,
             adminSubject);
         mgr.addPrivilege(p1);

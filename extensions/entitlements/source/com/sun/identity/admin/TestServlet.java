@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestServlet.java,v 1.4 2009-06-11 02:00:41 farble1670 Exp $
+ * $Id: TestServlet.java,v 1.5 2009-06-22 10:14:34 veiming Exp $
  */
 
 package com.sun.identity.admin;
@@ -77,7 +77,12 @@ public class TestServlet extends HttpServlet {
                 }
                 for (int i = 0; i < n; i++) {
                     String name = "policy" + System.currentTimeMillis();
-                    OpenSSOPrivilege op = new OpenSSOPrivilege(name, p.getEntitlement(), p.getSubject(), p.getCondition(), p.getResourceAttributes());
+                    OpenSSOPrivilege op = new OpenSSOPrivilege();
+                    op.setName(name);
+                    op.setEntitlement(p.getEntitlement());
+                    op.setSubject(p.getSubject());
+                    op.setCondition(p.getCondition());
+                    op.setResourceAttributes(p.getResourceAttributes());
                     op.setDescription("created by test servlet");
                     out.print("creating privilege: " + name + " ... ");
                     pm.addPrivilege(op);

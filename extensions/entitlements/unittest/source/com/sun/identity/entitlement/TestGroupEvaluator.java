@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestGroupEvaluator.java,v 1.2 2009-06-12 22:00:42 veiming Exp $
+ * $Id: TestGroupEvaluator.java,v 1.3 2009-06-22 10:14:36 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -31,7 +31,6 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.entitlement.opensso.OpenSSOGroupSubject;
-import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.entitlement.opensso.PolicyPrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.idm.AMIdentity;
@@ -93,8 +92,10 @@ public class TestGroupEvaluator {
         group1 = createGroup(GROUP1_NAME);
         group1.addMember(user1);
         EntitlementSubject es1 = new OpenSSOGroupSubject(group1.getUniversalId());
-        Privilege privilege = new OpenSSOPrivilege(
-            PRIVILEGE1_NAME, ent, es1, null, Collections.EMPTY_SET);
+        Privilege privilege = Privilege.getNewInstance();
+        privilege.setName(PRIVILEGE1_NAME);
+        privilege.setEntitlement(ent);
+        privilege.setSubject(es1);
         pm.addPrivilege(privilege);
     }
 

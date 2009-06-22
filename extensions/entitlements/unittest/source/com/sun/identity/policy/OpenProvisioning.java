@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenProvisioning.java,v 1.6 2009-05-09 01:08:47 veiming Exp $
+ * $Id: OpenProvisioning.java,v 1.7 2009-06-22 10:14:36 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -38,7 +38,6 @@ import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.UserSubject;
-import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.entitlement.opensso.PolicyPrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.idm.AMIdentity;
@@ -107,8 +106,11 @@ public class OpenProvisioning {
         AttributeLookupCondition cond = new AttributeLookupCondition(
             "$USER.postaladdress", "$RES.postaladdress");
 
-        Privilege privilege = new OpenSSOPrivilege(
-            PRIVILEGE_NAME, entitlement, sbj, cond, null);
+        Privilege privilege = Privilege.getNewInstance();
+        privilege.setName(PRIVILEGE_NAME);
+        privilege.setEntitlement(entitlement);
+        privilege.setSubject(sbj);
+        privilege.setCondition(cond);
         pMgr.addPrivilege(privilege);
     }
 

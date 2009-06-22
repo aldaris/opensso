@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLPrivilegeUtils.java,v 1.2 2009-06-16 00:59:30 dillidorai Exp $
+ * $Id: XACMLPrivilegeUtils.java,v 1.3 2009-06-22 10:14:35 veiming Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -671,7 +671,8 @@ public class XACMLPrivilegeUtils {
         return XACMLConstants.XACML_RULE_DENY_OVERRIDES;
     }
 
-    static public Privilege policyToPrivilege(Policy policy) throws EntitlementException {
+    static public Privilege policyToPrivilege(Policy policy)
+        throws EntitlementException {
         //TODO: implement method, policyToPrivilege(Policy)
         String policyId = policy.getPolicyId();
         String privilegeName = policyIdToPrivilegeName(policyId);
@@ -705,9 +706,12 @@ public class XACMLPrivilegeUtils {
         Set<ResourceAttribute> ras = null;
 
        
-        Privilege privilege = new XACMLOpenSSOPrivilege(privilegeName,
-                entitlement, es, ec, ras);
-
+        Privilege privilege = new XACMLOpenSSOPrivilege();
+        privilege.setName(privilegeName);
+        privilege.setEntitlement(entitlement);
+        privilege.setSubject(es);
+        privilege.setCondition(ec);
+        privilege.setResourceAttributes(ras);
         return privilege;
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.6 2009-05-29 22:17:16 dillidorai Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.7 2009-06-22 10:14:36 veiming Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -39,7 +39,6 @@ import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserAttributes;
 import com.sun.identity.entitlement.UserSubject;
-import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.unittest.UnittestLog;
 import java.util.HashMap;
@@ -142,8 +141,12 @@ public class PrivilegeUtilsTest {
         ra.add(uat1);
         ra.add(uat2);
 
-        Privilege privilege = new OpenSSOPrivilege(PRIVILEGE_NAME, entitlement, ua1,
-                ipc, ra);
+        Privilege privilege = Privilege.getNewInstance();
+        privilege.setName(PRIVILEGE_NAME);
+        privilege.setEntitlement(entitlement);
+        privilege.setSubject(ua1);
+        privilege.setCondition(ipc);
+        privilege.setResourceAttributes(ra);
         privilege.setCreatedBy("amadmin");
         privilege.setLastModifiedBy("amadmin");
         privilege.setCreationDate(System.currentTimeMillis());

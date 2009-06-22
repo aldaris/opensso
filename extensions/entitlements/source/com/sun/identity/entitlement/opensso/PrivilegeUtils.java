@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.30 2009-06-21 09:25:33 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.31 2009-06-22 10:14:35 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -176,8 +176,12 @@ public class PrivilegeUtils {
         Set<ResourceAttribute> resourceAttributesSet,
         Policy policy
     ) throws EntitlementException {
-        Privilege privilege = new OpenSSOPrivilege(name, e,
-            eSubject, eCondition, resourceAttributesSet);
+        OpenSSOPrivilege privilege = new OpenSSOPrivilege();
+        privilege.setName(name);
+        privilege.setEntitlement(e);
+        privilege.setSubject(eSubject);
+        privilege.setCondition(eCondition);
+        privilege.setResourceAttributes(resourceAttributesSet);
         privilege.setPolicyName(policyName);
         privilege.setDescription(policy.getDescription());
         privilege.setCreatedBy(policy.getCreatedBy());

@@ -22,18 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPrivilege.java,v 1.15 2009-06-12 00:02:33 veiming Exp $
+ * $Id: OpenSSOPrivilege.java,v 1.16 2009-06-22 10:14:35 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
 import com.sun.identity.entitlement.Entitlement;
-import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeType;
-import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.util.NetworkMonitor;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +39,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -52,28 +51,10 @@ public class OpenSSOPrivilege extends Privilege {
         NetworkMonitor.getInstance("privilegeSingleLevelEvaluation");
     private static final NetworkMonitor EVAL_SUB_TREE_MONITOR =
         NetworkMonitor.getInstance("privilegeSubTreeEvaluation");
+    private String policyName;
 
     public OpenSSOPrivilege() {
        super();
-    }
-
-    /**
-     * Constructs entitlement privilege
-     * @param name name of the privilege
-     * @param eSubject EntitlementSubject used for membership check
-     * @param eCondition EntitlementCondition used for constraint check
-     * @param eResourceAttributes Resource1Attributes used to get additional
-     * result attributes
-     * @throws EntitlementException if resource names are invalid.
-     */
-    public OpenSSOPrivilege(
-        String name,
-        Entitlement entitlement,
-        EntitlementSubject eSubject,
-        EntitlementCondition eCondition,
-        Set<ResourceAttribute> eResourceAttributes
-    ) throws EntitlementException {
-        super(name, entitlement, eSubject, eCondition, eResourceAttributes);
     }
 
     @Override
@@ -127,5 +108,41 @@ public class OpenSSOPrivilege extends Privilege {
         }
 
         return results;
+    }
+
+     /**
+     * Returns JSONObject mapping of  the object
+     * @return JSONObject mapping of  the object
+     * @throws JSONException if can not map to JSONObject
+     */
+    @Override
+    public JSONObject toJSONObject() throws JSONException {
+        JSONObject jo = super.toJSONObject();
+        if (policyName != null) {
+            jo.put("policyName", policyName);
+        }
+        return jo;
+    }
+
+    protected void init(JSONObject jo) {
+        policyName = jo.optString("policyName");
+    }
+
+    /**
+     * Sets policy name.
+     *
+     * @param policyName Policy name.
+     */
+    public void setPolicyName(String policyName) {
+        this.policyName = policyName;
+    }
+
+    /**
+     * Returns policy name.
+     *
+     * @return policyName Policy name.
+     */
+    public String getPolicyName() {
+        return this.policyName;
     }
 }

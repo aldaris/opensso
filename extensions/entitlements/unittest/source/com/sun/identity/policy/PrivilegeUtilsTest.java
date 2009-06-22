@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.10 2009-06-16 10:37:46 veiming Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.11 2009-06-22 10:14:36 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -43,7 +43,6 @@ import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserAttributes;
 import com.sun.identity.entitlement.UserSubject;
-import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
@@ -122,12 +121,12 @@ public class PrivilegeUtilsTest {
         ra.add(uat1);
         ra.add(uat2);
 
-        Privilege privilege = new OpenSSOPrivilege(
-                "TestPrivilege",
-                entitlement,
-                os, //orSubject
-                andCondition, //entitlementCondition
-                ra); //attributes
+        Privilege privilege = Privilege.getNewInstance();
+        privilege.setName("PrivilegeUtilsTest");
+        privilege.setEntitlement(entitlement);
+        privilege.setSubject(os); //orSubject
+        privilege.setCondition(andCondition);
+        privilege.setResourceAttributes(ra);
 
         Policy policy = PrivilegeUtils.privilegeToPolicy("/", privilege);
         Set<IPrivilege> ps = PrivilegeUtils.policyToPrivileges(policy);
