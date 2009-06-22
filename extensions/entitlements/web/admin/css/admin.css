@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.96 2009-06-10 04:46:23 farble1670 Exp $
+* $Id: admin.css,v 1.97 2009-06-22 17:54:32 farble1670 Exp $
 *
 */
 
@@ -949,6 +949,49 @@ span.button img.left {
     position: relative;
     float: right;
 }
+
+.referral-manage {
+    width: 100%;
+    margin: 0;
+}
+
+.referral-manageCol1,
+.referral-manageCol2,
+.referral-manageCol3,
+.referral-manageCol4,
+.referral-manageCol5,
+.referral-manageCol6,
+.referral-manageCol7,
+.referral-manageCol8,
+.referral-manageCol9,
+.referral-manageCol10,
+.referral-manageCol11,
+.referral-manageCol12,
+.referral-manageCol13,
+.referral-manageCol14,
+.referral-manageCol15 {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 200px;
+    min-width: 40px;
+}
+
+.referral-manageCol1 {
+    width: 5px;
+    min-width: 5px;
+    text-align: center;
+}
+
+.referral-manage-table-actions-container {
+    width: 100%;
+    height: 16px;
+}
+
+.referral-manage-table-actions {
+    position: relative;
+    float: right;
+}
+
 .tooltip .icon {
     padding-left: 5px;
 }

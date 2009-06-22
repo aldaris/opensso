@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MessagesBean.java,v 1.4 2009-06-08 18:06:12 farble1670 Exp $
+ * $Id: MessagesBean.java,v 1.5 2009-06-22 17:54:32 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -63,7 +63,7 @@ public class MessagesBean implements Serializable {
     }
 
     public void setComponentId(String componentId) {
-        if (componentId == null) {
+        if (componentId == null || componentId.length() == 0) {
             return;
         }
 

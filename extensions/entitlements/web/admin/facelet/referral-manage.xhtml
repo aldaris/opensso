@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-manage.xhtml,v 1.2 2009-06-22 17:18:54 farble1670 Exp $
+   $Id: referral-manage.xhtml,v 1.3 2009-06-22 17:54:33 farble1670 Exp $
 
 -->
 
@@ -177,7 +177,7 @@
                                 </ice:commandSortHeader>
                             </f:facet>
                             <ice:panelGroup
-                                styleClass="policy-manage-cell"
+                                styleClass="referral-manage-cell"
                                 panelTooltip="descriptionTooltip"
                                 visible="#{true}">
                                 <ice:outputText
@@ -189,6 +189,54 @@
                                 <ui:define name="body">
                                     <ice:outputText
                                         value="#{referralBean.description}"/>
+                                </ui:define>
+                            </o:tooltip>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{referralManageBean.referralManageTableBean.resourcesColumnVisible}">
+                            <f:facet name="header">
+                                <ice:outputText
+                                    value="#{resources['referral-manage.resourcesColumn']}"/>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="referral-manage-cell"
+                                visible="#{true}"
+                                panelTooltip="resourcesTooltip">
+                                <ice:outputText
+                                    value="#{referralBean.resourcesToString}"/>
+                            </ice:panelGroup>
+                            <o:tooltip
+                                tooltipId="resourcesTooltip"
+                                title="#{referralBean.name}: resources (#{o:size(referralBean.resources)})">
+                                <ui:define name="body">
+                                    <pre>
+                                        <ice:outputText
+                                            value="#{referralBean.resourcesToFormattedString}"/>
+                                    </pre>
+                                </ui:define>
+                            </o:tooltip>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{referralManageBean.referralManageTableBean.subjectsColumnVisible}">
+                            <f:facet name="header">
+                                <ice:outputText
+                                    value="#{resources['referral-manage.subjectsColumn']}"/>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="referral-manage-cell"
+                                visible="#{true}"
+                                panelTooltip="subjectsTooltip">
+                                <ice:outputText
+                                    value="#{referralBean.subjectsToString}"/>
+                            </ice:panelGroup>
+                            <o:tooltip
+                                tooltipId="subjectsTooltip"
+                                title="#{referralBean.name}: subjects (#{o:size(referralBean.realmBeans)})">
+                                <ui:define name="body">
+                                    <pre>
+                                        <ice:outputText
+                                            value="#{referralBean.subjectsToFormattedString}"/>
+                                    </pre>
                                 </ui:define>
                             </o:tooltip>
                         </ice:column>
