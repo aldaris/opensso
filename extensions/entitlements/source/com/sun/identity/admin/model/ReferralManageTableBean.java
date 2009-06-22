@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageTableBean.java,v 1.4 2009-06-22 17:54:32 farble1670 Exp $
+ * $Id: ReferralManageTableBean.java,v 1.5 2009-06-22 18:31:57 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -42,6 +42,14 @@ public class ReferralManageTableBean implements Serializable {
         comparators.put(new TableSortKey("name", false), new ReferralBean.NameComparator(false));
         comparators.put(new TableSortKey("description", true), new ReferralBean.DescriptionComparator(true));
         comparators.put(new TableSortKey("description", false), new ReferralBean.DescriptionComparator(false));
+        comparators.put(new TableSortKey("birth", true), new ReferralBean.BirthComparator(true));
+        comparators.put(new TableSortKey("birth", false), new ReferralBean.BirthComparator(false));
+        comparators.put(new TableSortKey("author", true), new ReferralBean.AuthorComparator(true));
+        comparators.put(new TableSortKey("author", false), new ReferralBean.AuthorComparator(false));
+        comparators.put(new TableSortKey("modifier", true), new ReferralBean.ModifierComparator(true));
+        comparators.put(new TableSortKey("modifier", false), new ReferralBean.ModifierComparator(false));
+        comparators.put(new TableSortKey("modified", true), new ReferralBean.ModifiedComparator(true));
+        comparators.put(new TableSortKey("modified", false), new ReferralBean.ModifiedComparator(false));
     }
     private List<ReferralBean> referralBeans;
     private int rows = 10;
@@ -95,6 +103,22 @@ public class ReferralManageTableBean implements Serializable {
 
     public boolean isSubjectsColumnVisible() {
         return getColumnsVisible().contains("subjects");
+    }
+
+    public boolean isAuthorColumnVisible() {
+        return getColumnsVisible().contains("author");
+    }
+
+    public boolean isBirthColumnVisible() {
+        return getColumnsVisible().contains("birth");
+    }
+
+    public boolean isModifiedColumnVisible() {
+        return getColumnsVisible().contains("modified");
+    }
+
+    public boolean isModifierColumnVisible() {
+        return getColumnsVisible().contains("modifier");
     }
 
     public List<String> getColumnsVisible() {

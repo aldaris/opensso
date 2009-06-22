@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-manage.xhtml,v 1.3 2009-06-22 17:54:33 farble1670 Exp $
+   $Id: referral-manage.xhtml,v 1.4 2009-06-22 18:31:57 farble1670 Exp $
 
 -->
 
@@ -169,12 +169,14 @@
                         <ice:column
                             rendered="#{referralManageBean.referralManageTableBean.descriptionColumnVisible}">
                             <f:facet name="header">
-                                <ice:commandSortHeader
-                                    columnName="description"
-                                    actionListener="#{referralManageHandler.sortTableListener}">
-                                    <ice:outputText
-                                        value="#{resources['referral-manage.descriptionColumn']}"/>
-                                </ice:commandSortHeader>
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="description"
+                                        actionListener="#{referralManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['referral-manage.descriptionColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="referral-manage-cell"
@@ -191,6 +193,92 @@
                                         value="#{referralBean.description}"/>
                                 </ui:define>
                             </o:tooltip>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{referralManageBean.referralManageTableBean.modifierColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="modifier"
+                                        actionListener="#{referralManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['referral-manage.modifierColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="referral-manage-cell"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{referralBean.modifier}"/>
+                            </ice:panelGroup>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{referralManageBean.referralManageTableBean.authorColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="author"
+                                        actionListener="#{referralManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['referral-manage.authorColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="referral-manage-cell"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{referralBean.author}"/>
+                            </ice:panelGroup>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{referralManageBean.referralManageTableBean.modifiedColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="modified"
+                                        actionListener="#{referralManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['referral-manage.modifiedColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="referral-manage-cell"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{referralBean.modified}">
+                                    <f:convertDateTime
+                                        dateStyle="short"
+                                        timeZone="#{timeZoneBean.timeZone.ID}"
+                                        type="both" />
+                                </ice:outputText>
+                            </ice:panelGroup>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{referralManageBean.referralManageTableBean.birthColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="birth"
+                                        actionListener="#{referralManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['referral-manage.birthColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="referral-manage-cell"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{referralBean.birth}">
+                                    <f:convertDateTime
+                                        dateStyle="short"
+                                        timeZone="#{timeZoneBean.timeZone.ID}"
+                                        type="both" />
+                                </ice:outputText>
+                            </ice:panelGroup>
                         </ice:column>
                         <ice:column
                             rendered="#{referralManageBean.referralManageTableBean.resourcesColumnVisible}">

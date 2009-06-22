@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralBean.java,v 1.8 2009-06-22 17:18:53 farble1670 Exp $
+ * $Id: ReferralBean.java,v 1.9 2009-06-22 18:31:57 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -75,6 +75,79 @@ public class ReferralBean {
             }
         }
     }
+
+    public static class BirthComparator extends TableColumnComparator {
+
+        public BirthComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            ReferralBean rb1 = (ReferralBean) o1;
+            ReferralBean rb2 = (ReferralBean) o2;
+
+            if (!isAscending()) {
+                return rb1.getBirth().compareTo(rb2.getBirth());
+            } else {
+                return rb2.getBirth().compareTo(rb1.getBirth());
+            }
+        }
+    }
+
+    public static class ModifiedComparator extends TableColumnComparator {
+
+        public ModifiedComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            ReferralBean rb1 = (ReferralBean) o1;
+            ReferralBean rb2 = (ReferralBean) o2;
+
+            if (!isAscending()) {
+                return rb1.getModified().compareTo(rb2.getModified());
+            } else {
+                return rb2.getModified().compareTo(rb1.getModified());
+            }
+        }
+    }
+
+    public static class AuthorComparator extends TableColumnComparator {
+
+        public AuthorComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            ReferralBean rb1 = (ReferralBean) o1;
+            ReferralBean rb2 = (ReferralBean) o2;
+
+            if (!isAscending()) {
+                return rb1.getAuthor().compareTo(rb2.getAuthor());
+            } else {
+                return rb2.getAuthor().compareTo(rb1.getAuthor());
+            }
+        }
+    }
+
+    public static class ModifierComparator extends TableColumnComparator {
+
+        public ModifierComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            ReferralBean rb1 = (ReferralBean) o1;
+            ReferralBean rb2 = (ReferralBean) o2;
+
+            if (!isAscending()) {
+                return rb1.getModifier().compareTo(rb2.getModifier());
+            } else {
+                return rb2.getModifier().compareTo(rb1.getModifier());
+            }
+        }
+    }
+
 
     private String name;
     private String description;

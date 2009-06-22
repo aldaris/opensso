@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-manage.xhtml,v 1.52 2009-06-11 15:05:56 farble1670 Exp $
+   $Id: policy-manage.xhtml,v 1.53 2009-06-22 18:31:57 farble1670 Exp $
 
 -->
 
@@ -172,12 +172,14 @@
                         <ice:column
                             rendered="#{policyManageBean.policyManageTableBean.descriptionColumnVisible}">
                             <f:facet name="header">
-                                <ice:commandSortHeader
-                                    columnName="description"
-                                    actionListener="#{policyManageHandler.sortTableListener}">
-                                    <ice:outputText
-                                        value="#{resources['policy-manage.descriptionColumn']}"/>
-                                </ice:commandSortHeader>
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="description"
+                                        actionListener="#{policyManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['policy-manage.descriptionColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -198,12 +200,14 @@
                         <ice:column
                             rendered="#{policyManageBean.policyManageTableBean.applicationColumnVisible}">
                             <f:facet name="header">
-                                <ice:commandSortHeader
-                                    columnName="application"
-                                    actionListener="#{policyManageHandler.sortTableListener}">
-                                    <ice:outputText
-                                        value="#{resources['policy-manage.applicationColumn']}"/>
-                                </ice:commandSortHeader>
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="application"
+                                        actionListener="#{policyManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['policy-manage.applicationColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -215,12 +219,14 @@
                         <ice:column
                             rendered="#{policyManageBean.policyManageTableBean.modifierColumnVisible}">
                             <f:facet name="header">
-                                <ice:commandSortHeader
-                                    columnName="modifier"
-                                    actionListener="#{policyManageHandler.sortTableListener}">
-                                    <ice:outputText
-                                        value="#{resources['policy-manage.modifierColumn']}"/>
-                                </ice:commandSortHeader>
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="modifier"
+                                        actionListener="#{policyManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['policy-manage.modifierColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -232,12 +238,14 @@
                         <ice:column
                             rendered="#{policyManageBean.policyManageTableBean.authorColumnVisible}">
                             <f:facet name="header">
-                                <ice:commandSortHeader
-                                    columnName="author"
-                                    actionListener="#{policyManageHandler.sortTableListener}">
-                                    <ice:outputText
-                                        value="#{resources['policy-manage.authorColumn']}"/>
-                                </ice:commandSortHeader>
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="author"
+                                        actionListener="#{policyManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['policy-manage.authorColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -249,12 +257,14 @@
                         <ice:column
                             rendered="#{policyManageBean.policyManageTableBean.modifiedColumnVisible}">
                             <f:facet name="header">
-                                <ice:commandSortHeader
-                                    columnName="modified"
-                                    actionListener="#{policyManageHandler.sortTableListener}">
-                                    <ice:outputText
-                                        value="#{resources['policy-manage.modifiedColumn']}"/>
-                                </ice:commandSortHeader>
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="modified"
+                                        actionListener="#{policyManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['policy-manage.modifiedColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
@@ -271,12 +281,14 @@
                         <ice:column
                             rendered="#{policyManageBean.policyManageTableBean.birthColumnVisible}">
                             <f:facet name="header">
-                                <ice:commandSortHeader
-                                    columnName="birth"
-                                    actionListener="#{policyManageHandler.sortTableListener}">
-                                    <ice:outputText
-                                        value="#{resources['policy-manage.birthColumn']}"/>
-                                </ice:commandSortHeader>
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="birth"
+                                        actionListener="#{policyManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['policy-manage.birthColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
                             </f:facet>
                             <ice:panelGroup
                                 styleClass="policy-manage-cell"
