@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewId.java,v 1.3 2009-06-13 00:43:09 farble1670 Exp $
+ * $Id: ViewId.java,v 1.4 2009-06-22 14:53:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -37,6 +37,8 @@ public enum ViewId {
     POLICY_MANAGE("/admin/facelet/policy-manage.xhtml"),
     POLICY_EDIT("/admin/facelet/policy-edit.xhtml"),
     REFERRAL_CREATE("/admin/facelet/referral-create.xhtml"),
+    REFERRAL_MANAGE("/admin/facelet/referral-manage.xhtml"),
+    REFERRAL_EDIT("/admin/facelet/referral-edit.xhtml"),
     FEDERATION("/admin/facelet/federation.xhtml"),
     SAMLV2_HOSTED_SP_CREATE("/admin/facelet/samlv2-hosted-sp-create.xhtml"),
     SAMLV2_REMOTE_SP_CREATE("/admin/facelet/samlv2-remote-sp-create.xhtml"),
@@ -53,6 +55,8 @@ public enum ViewId {
             put(POLICY_MANAGE.getId(), POLICY_MANAGE);
             put(POLICY_EDIT.getId(), POLICY_EDIT);
             put(REFERRAL_CREATE.getId(), REFERRAL_CREATE);
+            put(REFERRAL_MANAGE.getId(), REFERRAL_MANAGE);
+            put(REFERRAL_EDIT.getId(), REFERRAL_EDIT);
             put(SAMLV2_HOSTED_SP_CREATE.getId(), SAMLV2_HOSTED_SP_CREATE);
             put(SAMLV2_REMOTE_SP_CREATE.getId(), SAMLV2_REMOTE_SP_CREATE);
             put(SAMLV2_HOSTED_IDP_CREATE.getId(), SAMLV2_HOSTED_IDP_CREATE);

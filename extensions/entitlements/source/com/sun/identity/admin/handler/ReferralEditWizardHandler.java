@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralCreateWizardHandler.java,v 1.7 2009-06-22 14:53:20 farble1670 Exp $
+ * $Id: ReferralEditWizardHandler.java,v 1.1 2009-06-22 14:53:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -37,9 +37,9 @@ import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 
-public class ReferralCreateWizardHandler extends ReferralWizardHandler {
+public class ReferralEditWizardHandler extends ReferralWizardHandler {
     public String getBeanName() {
-        return "referralCreateWizardHandler";
+        return "referralEditWizardHandler";
     }
 
     public void finishListener(ActionEvent event) {
@@ -48,39 +48,13 @@ public class ReferralCreateWizardHandler extends ReferralWizardHandler {
         }
 
         ReferralBean rb = getReferralWizardBean().getReferralBean();
-        getReferralDao().add(rb);
+        getReferralDao().set(rb);
 
         getWizardBean().reset();
 
         doFinishNext();
     }
 
-    public String createAction() {
-        int realmsSize = getReferralWizardBean().getAvailableRealmBeans().size();
-        if (realmsSize == 0) {
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "noAvailableSubjectsSummary"));
-            mb.setDetail(r.getString(this, "noAvailableSubjectsDetail"));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-            getMessagesBean().addMessageBean(mb);
-
-            return null;
-        }
-        int resourcesSize = getReferralWizardBean().getAvailableResourcesSize();
-        if (resourcesSize == 0) {
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "noAvailableResourcesSummary"));
-            mb.setDetail(r.getString(this, "noAvailableResourcesDetail"));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-            getMessagesBean().addMessageBean(mb);
-
-            return null;
-
-        }
-        return "referral-create";
-    }
 
     public void doFinishNext() {
         NextPopupBean npb = NextPopupBean.getInstance();
@@ -105,7 +79,6 @@ public class ReferralCreateWizardHandler extends ReferralWizardHandler {
     private List<LinkBean> getFinishLinkBeans() {
         List<LinkBean> lbs = new ArrayList<LinkBean>();
         lbs.add(LinkBean.HOME);
-        lbs.add(LinkBean.REFERRAL_CREATE);
         lbs.add(LinkBean.REFERRAL_MANAGE);
 
         return lbs;
@@ -114,30 +87,8 @@ public class ReferralCreateWizardHandler extends ReferralWizardHandler {
     private List<LinkBean> getCancelLinkBeans() {
         List<LinkBean> lbs = new ArrayList<LinkBean>();
         lbs.add(LinkBean.HOME);
-        lbs.add(LinkBean.REFERRAL_CREATE);
         lbs.add(LinkBean.REFERRAL_MANAGE);
 
         return lbs;
     }
-
-    @Override
-    public boolean validateName() {
-        if (!super.validateName()) {
-            return false;
-        }
-
-        if (getReferralDao().referralExists(getReferralWizardBean().getReferralBean())) {
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "existsSummary"));
-            mb.setDetail(r.getString(this, "existsDetail", getReferralWizardBean().getReferralBean().getName()));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-            getMessagesBean().addMessageBean(mb);
-            return false;
-        }
-
-        return true;
-    }
-
 }

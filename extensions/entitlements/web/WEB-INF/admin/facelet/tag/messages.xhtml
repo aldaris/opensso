@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: messages.xhtml,v 1.5 2009-06-04 11:49:24 veiming Exp $
+   $Id: messages.xhtml,v 1.6 2009-06-22 14:53:21 farble1670 Exp $
 
 -->
 
@@ -48,9 +48,11 @@
                 value="#{messagesBean.messageBeans}">
                 <ice:panelGroup>
                     <ice:outputLabel
+                        escape="false"
                         for="message-detail"
                         value="#{message.summary}"/>
                     <ice:outputText
+                        escape="false"
                         id="message-detail"
                         rendered="#{message.detail != null}"
                         value=": #{message.detail}"/>
@@ -72,10 +74,12 @@
                 value="#{messagesBean.messageBeans}">
                 <ice:panelGroup>
                     <ice:outputLabel
+                        escape="false"
                         for="message-detail"
                         value="#{message.summary}"/>
                     <ice:outputText
                         id="message-detail"
+                        escape="false"
                         rendered="#{message.detail != null}"
                         value=": #{message.detail}"/>
                 </ice:panelGroup>
@@ -96,9 +100,11 @@
                 value="#{messagesBean.messageBeans}">
                 <ice:panelGroup>
                     <ice:outputLabel
+                        escape="false"
                         for="message-detail"
                         value="#{message.summary}"/>
                     <ice:outputText
+                        escape="false"
                         id="message-detail"
                         rendered="#{message.detail != null}"
                         value="#{message.detail}"/>

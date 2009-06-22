@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.92 2009-06-17 23:46:20 asyhuang Exp $
+  $Id: faces-config.xml,v 1.93 2009-06-22 14:53:21 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -79,12 +79,6 @@
     <managed-bean>
         <managed-bean-name>realmDao</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.dao.RealmDao</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>referralDao</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.dao.ReferralDao</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
@@ -1487,6 +1481,10 @@
             <value>#{realmDao}</value>
         </managed-property>
         <managed-property>
+            <property-name>nameEditable</property-name>
+            <value>true</value>
+        </managed-property>
+        <managed-property>
             <property-name>steps</property-name>
             <value>4</value>
         </managed-property>
@@ -1514,6 +1512,52 @@
         </managed-property>
     </managed-bean>
     <!-- referral create -->
+
+    <!-- referral edit -->
+    <managed-bean>
+        <managed-bean-name>referralEditWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ReferralEditWizardBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>viewApplicationsBean</property-name>
+            <value>#{viewApplicationsBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>realmDao</property-name>
+            <value>#{realmDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>nameEditable</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>4</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>referralEditWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.ReferralEditWizardHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{referralEditWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>referralDao</property-name>
+            <value>#{referralDao}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- referral edit -->
 
     <!-- policy manage -->
     <managed-bean>
@@ -1582,6 +1626,62 @@
         </managed-property>
     </managed-bean>
     <!-- policy manage -->
+
+    <!-- referral manage -->
+    <managed-bean>
+        <managed-bean-name>referralDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.ReferralDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>limit</property-name>
+            <value>100</value>
+        </managed-property>
+        <managed-property>
+            <property-name>timeout</property-name>
+            <value>5</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>referralManageBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ReferralManageBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>referralDao</property-name>
+            <value>#{referralDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>policyFilterTypes</property-name>
+            <value>#{policyFilterTypes}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>referralManageHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.ReferralManageHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>referralManageBean</property-name>
+            <value>#{referralManageBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>referralDao</property-name>
+            <value>#{referralDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>referralEditWizardBean</property-name>
+            <value>#{referralEditWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- referral manage -->
 
     <managed-bean>
         <managed-bean-name>messagesBean</managed-bean-name>
@@ -1826,6 +1926,14 @@
         <navigation-case>
             <from-outcome>policy-edit</from-outcome>
             <to-view-id>/admin/facelet/policy-edit.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>referral-manage</from-outcome>
+            <to-view-id>/admin/facelet/referral-manage.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>referral-edit</from-outcome>
+            <to-view-id>/admin/facelet/referral-edit.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>news</from-outcome>

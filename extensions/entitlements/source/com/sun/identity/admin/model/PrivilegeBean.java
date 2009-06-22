@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeBean.java,v 1.35 2009-06-22 10:14:34 veiming Exp $
+ * $Id: PrivilegeBean.java,v 1.36 2009-06-22 14:53:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -89,24 +89,7 @@ public class PrivilegeBean implements Serializable {
         this.selected = selected;
     }
 
-    public static abstract class PrivilegeComparator implements Comparator {
-        private boolean ascending;
-
-        public PrivilegeComparator(boolean ascending) {
-            this.ascending = ascending;
-        }
-
-        public boolean isAscending() {
-            return ascending;
-        }
-
-        public void setAscending(boolean ascending) {
-            this.ascending = ascending;
-        }
-
-    }
-
-    public static class NameComparator extends PrivilegeComparator {
+    public static class NameComparator extends TableColumnComparator {
 
         public NameComparator(boolean ascending) {
             super(ascending);
@@ -124,7 +107,7 @@ public class PrivilegeBean implements Serializable {
         }
     }
 
-    public static class DescriptionComparator extends PrivilegeComparator {
+    public static class DescriptionComparator extends TableColumnComparator {
 
         public DescriptionComparator(boolean ascending) {
             super(ascending);
@@ -145,7 +128,7 @@ public class PrivilegeBean implements Serializable {
         }
     }
 
-    public static class ApplicationComparator extends PrivilegeComparator {
+    public static class ApplicationComparator extends TableColumnComparator {
 
         public ApplicationComparator(boolean ascending) {
             super(ascending);
@@ -163,7 +146,7 @@ public class PrivilegeBean implements Serializable {
         }
     }
 
-    public static class BirthComparator extends PrivilegeComparator {
+    public static class BirthComparator extends TableColumnComparator {
 
         public BirthComparator(boolean ascending) {
             super(ascending);
@@ -181,7 +164,7 @@ public class PrivilegeBean implements Serializable {
         }
     }
 
-    public static class ModifiedComparator extends PrivilegeComparator {
+    public static class ModifiedComparator extends TableColumnComparator {
 
         public ModifiedComparator(boolean ascending) {
             super(ascending);
@@ -199,7 +182,7 @@ public class PrivilegeBean implements Serializable {
         }
     }
 
-    public static class AuthorComparator extends PrivilegeComparator {
+    public static class AuthorComparator extends TableColumnComparator {
 
         public AuthorComparator(boolean ascending) {
             super(ascending);
@@ -217,7 +200,7 @@ public class PrivilegeBean implements Serializable {
         }
     }
 
-    public static class ModifierComparator extends PrivilegeComparator {
+    public static class ModifierComparator extends TableColumnComparator {
 
         public ModifierComparator(boolean ascending) {
             super(ascending);

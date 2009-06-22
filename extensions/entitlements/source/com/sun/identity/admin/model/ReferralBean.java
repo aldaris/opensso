@@ -22,13 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralBean.java,v 1.6 2009-06-06 17:39:15 farble1670 Exp $
+ * $Id: ReferralBean.java,v 1.7 2009-06-22 14:53:20 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,11 +40,106 @@ import java.util.Set;
 import javax.faces.model.SelectItem;
 
 public class ReferralBean {
+    public static class NameComparator extends TableColumnComparator {
+
+        public NameComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            ReferralBean rb1 = (ReferralBean) o1;
+            ReferralBean rb2 = (ReferralBean) o2;
+
+            if (!isAscending()) {
+                return rb1.getName().compareTo(rb2.getName());
+            } else {
+                return rb2.getName().compareTo(rb1.getName());
+            }
+        }
+    }
 
     private String name;
     private String description;
     private List<Resource> resources;
     private List<RealmBean> realmBeans = new ArrayList<RealmBean>();
+    private Date birth;
+    private Date modified;
+    private String author;
+    private String modifier;
+    private boolean selected;
+
+    public ReferralBean() {
+        // nothing
+    }
+
+    public ReferralBean(
+            ReferralPrivilege rp,
+            Map<String, ViewApplication> viewApplications) {
+
+        // name
+        name = rp.getName();
+
+        // description
+        description = rp.getDescription();
+
+        // birth
+        birth = new Date(rp.getCreationDate());
+
+        // author
+        author = rp.getCreatedBy();
+
+        // modified
+        modified = new Date(rp.getLastModifiedDate());
+
+        // modifier
+        modifier = rp.getLastModifiedBy();
+
+        // applications, resources
+        resources = new ArrayList<Resource>();
+        for (String applicationName : rp.getMapApplNameToResources().keySet()) {
+            ReferralResource rr = new ReferralResource();
+            rr.setName(applicationName);
+
+            String resourceClassName = rr.getViewEntitlement().getViewApplication().getViewApplicationType().getResourceClassName();
+            Class resourceClass;
+            try {
+                resourceClass = Class.forName(resourceClassName);
+            } catch (ClassNotFoundException cnfe) {
+                throw new RuntimeException(cnfe);
+            }
+
+            ManagedBeanResolver mbr = new ManagedBeanResolver();
+            Map<String, ResourceDecorator> resourceDecorators = (Map<String, ResourceDecorator>) mbr.resolve("resourceDecorators");
+            Set<String> resourceNames = rp.getMapApplNameToResources().get(applicationName);
+            for (String resourceName : resourceNames) {
+                try {
+                    Resource r = (Resource) resourceClass.newInstance();
+                    r.setName(resourceName);
+
+                    // decorate resource (optionally)
+                    ResourceDecorator rd = resourceDecorators.get(r.getClass().getName());
+                    if (rd != null) {
+                        rd.decorate(r);
+                    }
+
+                    rr.getViewEntitlement().getResources().add(r);
+                } catch (InstantiationException ie) {
+                    throw new RuntimeException(ie);
+                } catch (IllegalAccessException iae) {
+                    throw new RuntimeException(iae);
+                }
+            }
+
+            resources.add(rr);
+        }
+
+        // subjects, realms
+        for (String realmName : rp.getRealms()) {
+            RealmBean rb = new RealmBean();
+            rb.setName(realmName);
+            realmBeans.add(rb);
+        }
+    }
 
     public String getName() {
         return name;
@@ -126,13 +223,13 @@ public class ReferralBean {
     public String getResourcesToFormattedString() {
         StringBuffer b = new StringBuffer();
         for (Iterator<Resource> i = resources.iterator(); i.hasNext();) {
-            ReferralResource rr = (ReferralResource)i.next();
+            ReferralResource rr = (ReferralResource) i.next();
             List<Resource> rs = rr.getViewEntitlement().getResources();
 
             b.append(rr.getTitle());
             b.append("\n");
             if (rs != null) {
-                for (Resource r: rs) {
+                for (Resource r : rs) {
                     b.append("    ");
                     b.append(r.getTitle());
                     b.append("\n");
@@ -149,12 +246,12 @@ public class ReferralBean {
 
     public ReferralPrivilege toReferrealPrivilege() {
         // applications, resources
-        Map<String, Set<String>> applicationNames = new HashMap<String,Set<String>>();
-        for (Resource r: resources) {
-            ReferralResource rr = (ReferralResource)r;
+        Map<String, Set<String>> applicationNames = new HashMap<String, Set<String>>();
+        for (Resource r : resources) {
+            ReferralResource rr = (ReferralResource) r;
             String an = rr.getViewEntitlement().getViewApplication().getName();
             Set<String> rs = new HashSet<String>();
-            for (Resource ar: rr.getViewEntitlement().getResources()) {
+            for (Resource ar : rr.getViewEntitlement().getResources()) {
                 rs.add(ar.getName());
             }
             applicationNames.put(an, rs);
@@ -162,7 +259,7 @@ public class ReferralBean {
 
         // subjects (realms)
         Set<String> realmNames = new HashSet<String>();
-        for (RealmBean rb: realmBeans) {
+        for (RealmBean rb : realmBeans) {
             realmNames.add(rb.getName());
         }
 
@@ -172,8 +269,34 @@ public class ReferralBean {
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }
+
+        // description
         rp.setDescription(description);
 
         return rp;
+    }
+
+    public Date getBirth() {
+        return birth;
+    }
+
+    public Date getModified() {
+        return modified;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

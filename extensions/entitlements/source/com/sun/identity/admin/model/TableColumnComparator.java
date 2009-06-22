@@ -22,16 +22,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralCreateWizardBean.java,v 1.4 2009-06-22 14:53:20 farble1670 Exp $
+ * $Id: TableColumnComparator.java,v 1.1 2009-06-22 14:53:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import com.sun.identity.admin.ManagedBeanResolver;
+import java.io.Serializable;
+import java.util.Comparator;
 
-public class ReferralCreateWizardBean extends ReferralWizardBean {
-    public static ReferralCreateWizardBean getInstance() {
-        ManagedBeanResolver mbr = new ManagedBeanResolver();
-        return (ReferralCreateWizardBean)mbr.resolve("referralCreateWizardBean");
+public abstract class TableColumnComparator
+    implements Serializable, Comparator {
+    
+    private boolean ascending;
+
+    public TableColumnComparator(boolean ascending) {
+        this.ascending = ascending;
+    }
+
+    public boolean isAscending() {
+        return ascending;
+    }
+
+    public void setAscending(boolean ascending) {
+        this.ascending = ascending;
     }
 }

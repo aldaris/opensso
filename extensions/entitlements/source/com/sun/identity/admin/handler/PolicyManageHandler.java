@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManageHandler.java,v 1.24 2009-06-04 11:49:13 veiming Exp $
+ * $Id: PolicyManageHandler.java,v 1.25 2009-06-22 14:53:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -61,7 +61,6 @@ public class PolicyManageHandler implements Serializable {
     public PrivilegeBean getPrivilegeBean(ActionEvent event) {
         PrivilegeBean pb = (PrivilegeBean) event.getComponent().getAttributes().get("privilegeBean");
         assert (pb != null);
-
         return pb;
     }
 

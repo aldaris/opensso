@@ -10,6 +10,8 @@ public enum FromAction {
     POLICY_MANAGE("policy-manage"),
     POLICY_EDIT("policy-edit"),
     REFERRAL_CREATE("referral-create"),
+    REFERRAL_MANAGE("referral-manage"),
+    REFERRAL_EDIT("referral-edit"),
     NEWS("news"),
     FEDERATION("federation"),
     SAMLV2_HOSTED_SP_CREATE("samlv2-hosted-sp-create"),
@@ -26,6 +28,8 @@ public enum FromAction {
             put(POLICY_MANAGE.getAction(), POLICY_MANAGE);
             put(POLICY_EDIT.getAction(), POLICY_EDIT);
             put(REFERRAL_CREATE.getAction(), REFERRAL_CREATE);
+            put(REFERRAL_MANAGE.getAction(), REFERRAL_MANAGE);
+            put(REFERRAL_EDIT.getAction(), REFERRAL_EDIT);
             put(SAMLV2_HOSTED_SP_CREATE.getAction(), SAMLV2_HOSTED_SP_CREATE);
             put(SAMLV2_REMOTE_SP_CREATE.getAction(), SAMLV2_REMOTE_SP_CREATE);
             put(SAMLV2_HOSTED_IDP_CREATE.getAction(), SAMLV2_HOSTED_IDP_CREATE);

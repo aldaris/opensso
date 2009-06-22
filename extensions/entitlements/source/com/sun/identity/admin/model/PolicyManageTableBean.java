@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManageTableBean.java,v 1.19 2009-06-04 11:49:16 veiming Exp $
+ * $Id: PolicyManageTableBean.java,v 1.20 2009-06-22 14:53:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -62,78 +62,28 @@ public class PolicyManageTableBean implements Serializable {
         this.rows = rows;
     }
 
-    public static class SortKey implements Serializable {
-        private boolean ascending = false;
-        private String column = "name";
-
-        public SortKey() {
-            // nothing
-        }
-
-        public SortKey(String column, boolean ascending) {
-            this.column = column;
-            this.ascending = ascending;
-        }
-
-        public boolean isAscending() {
-            return ascending;
-        }
-
-        public void setAscending(boolean ascending) {
-            this.ascending = ascending;
-        }
-
-        public String getColumn() {
-            return column;
-        }
-
-        public void setColumn(String column) {
-            this.column = column;
-        }
-
-        @Override
-        public int hashCode() {
-            return toString().hashCode();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof SortKey)) {
-                return false;
-            }
-
-            SortKey other = (SortKey)o;
-            return other.toString().endsWith(toString());
-        }
-
-        @Override
-        public String toString() {
-            return column+":"+ascending;
-        }
-    }
-
-    private SortKey sortKey = new SortKey();
+    private TableSortKey sortKey = new TableSortKey("name");
     private List<PrivilegeBean> privilegeBeans;
-    private static Map<SortKey,Comparator> comparators = new HashMap<SortKey,Comparator>();
+    private static Map<TableSortKey,Comparator> comparators = new HashMap<TableSortKey,Comparator>();
     private int cellWidth = 20;
     private List<String> columnsVisible = new ArrayList<String>();
     private int rows = 10;
 
     static {
-        comparators.put(new SortKey("name", true), new PrivilegeBean.NameComparator(true));
-        comparators.put(new SortKey("name", false), new PrivilegeBean.NameComparator(false));
-        comparators.put(new SortKey("description", true), new PrivilegeBean.DescriptionComparator(true));
-        comparators.put(new SortKey("description", false), new PrivilegeBean.DescriptionComparator(false));
-        comparators.put(new SortKey("application", true), new PrivilegeBean.ApplicationComparator(true));
-        comparators.put(new SortKey("application", false), new PrivilegeBean.ApplicationComparator(false));
-        comparators.put(new SortKey("birth", true), new PrivilegeBean.BirthComparator(true));
-        comparators.put(new SortKey("birth", false), new PrivilegeBean.BirthComparator(false));
-        comparators.put(new SortKey("author", true), new PrivilegeBean.AuthorComparator(true));
-        comparators.put(new SortKey("author", false), new PrivilegeBean.AuthorComparator(false));
-        comparators.put(new SortKey("modified", true), new PrivilegeBean.ModifiedComparator(true));
-        comparators.put(new SortKey("modified", false), new PrivilegeBean.ModifiedComparator(false));
-        comparators.put(new SortKey("modifier", true), new PrivilegeBean.ModifierComparator(true));
-        comparators.put(new SortKey("modifier", false), new PrivilegeBean.ModifierComparator(false));
+        comparators.put(new TableSortKey("name", true), new PrivilegeBean.NameComparator(true));
+        comparators.put(new TableSortKey("name", false), new PrivilegeBean.NameComparator(false));
+        comparators.put(new TableSortKey("description", true), new PrivilegeBean.DescriptionComparator(true));
+        comparators.put(new TableSortKey("description", false), new PrivilegeBean.DescriptionComparator(false));
+        comparators.put(new TableSortKey("application", true), new PrivilegeBean.ApplicationComparator(true));
+        comparators.put(new TableSortKey("application", false), new PrivilegeBean.ApplicationComparator(false));
+        comparators.put(new TableSortKey("birth", true), new PrivilegeBean.BirthComparator(true));
+        comparators.put(new TableSortKey("birth", false), new PrivilegeBean.BirthComparator(false));
+        comparators.put(new TableSortKey("author", true), new PrivilegeBean.AuthorComparator(true));
+        comparators.put(new TableSortKey("author", false), new PrivilegeBean.AuthorComparator(false));
+        comparators.put(new TableSortKey("modified", true), new PrivilegeBean.ModifiedComparator(true));
+        comparators.put(new TableSortKey("modified", false), new PrivilegeBean.ModifiedComparator(false));
+        comparators.put(new TableSortKey("modifier", true), new PrivilegeBean.ModifierComparator(true));
+        comparators.put(new TableSortKey("modifier", false), new PrivilegeBean.ModifierComparator(false));
     }
 
     public PolicyManageTableBean() {
@@ -143,11 +93,11 @@ public class PolicyManageTableBean implements Serializable {
         columnsVisible.add("modified");
     }
 
-    public SortKey getSortKey() {
+    public TableSortKey getSortKey() {
         return sortKey;
     }
 
-    public void setSortKey(SortKey sortKey) {
+    public void setSortKey(TableSortKey sortKey) {
         this.sortKey = sortKey;
     }
 

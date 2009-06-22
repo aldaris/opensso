@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardBean.java,v 1.10 2009-06-10 21:28:41 farble1670 Exp $
+ * $Id: ReferralWizardBean.java,v 1.11 2009-06-22 14:53:20 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -51,22 +51,23 @@ public abstract class ReferralWizardBean extends WizardBean {
     private ReferralSummary descriptionReferralSummary = new DescriptionReferralSummary(this);
     private ReferralSummary resourcesReferralSummary = new ResourcesReferralSummary(this);
     private ReferralSummary subjectsReferralSummary = new SubjectsReferralSummary(this);
+    private boolean nameEditable;
 
     public ReferralWizardBean() {
         super();
     }
 
     public List<Resource> getResources() {
-        return referralBean.getResources();
+        return getReferralBean().getResources();
     }
 
     public void setResources(List<Resource> resources) {
-        referralBean.setResources(new ArrayList<Resource>());
+        getReferralBean().setResources(new ArrayList<Resource>());
         for (Resource r : resources) {
             int i = availableResources.indexOf(r);
             assert (i != -1);
             r = availableResources.get(i);
-            referralBean.getResources().add(r);
+            getReferralBean().getResources().add(r);
         }
     }
 
@@ -93,8 +94,6 @@ public abstract class ReferralWizardBean extends WizardBean {
         return items;
     }
 
-    public abstract boolean isNameEditable();
-
     public ReferralBean getReferralBean() {
         return referralBean;
     }
@@ -102,7 +101,7 @@ public abstract class ReferralWizardBean extends WizardBean {
     @Override
     public void reset() {
         super.reset();
-        referralBean = new ReferralBean();
+        setReferralBean(new ReferralBean());
         resetAvailableResources();
         resetAvailableRealmBeans();
     }
@@ -162,7 +161,7 @@ public abstract class ReferralWizardBean extends WizardBean {
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
         availableRealmBeans = realmDao.getSubRealmBeans(realmBean, subjectFilter, false);
         availableRealmBeans.addAll(realmDao.getPeerRealmBeans(realmBean, subjectFilter));
-        availableRealmBeans.removeAll(referralBean.getRealmBeans());
+        availableRealmBeans.removeAll(getReferralBean().getRealmBeans());
         availableRealmBeans.remove(realmBean);
         selectedAvailableRealmBeans = new ArrayList<RealmBean>();
     }
@@ -211,8 +210,8 @@ public abstract class ReferralWizardBean extends WizardBean {
 
     public int getResourcesSize() {
         int size = 0;
-        if (referralBean.getResources() != null) {
-            for (Resource r : referralBean.getResources()) {
+        if (getReferralBean().getResources() != null) {
+            for (Resource r : getReferralBean().getResources()) {
                 ReferralResource rr = (ReferralResource) r;
                 if (rr.getViewEntitlement().getResources() != null) {
                     size += rr.getViewEntitlement().getResources().size();
@@ -233,14 +232,14 @@ public abstract class ReferralWizardBean extends WizardBean {
                 break;
 
             case RESOURCES:
-                int applicationCount = Functions.size(referralBean.getResources());
+                int applicationCount = Functions.size(getReferralBean().getResources());
                 int resourceCount = getResourcesSize();
                 label = r.getString(this, "resourcesPanelLabel", applicationCount, resourceCount);
 
                 break;
 
             case SUBJECTS:
-                int subjectCount = Functions.size(referralBean.getRealmBeans());
+                int subjectCount = Functions.size(getReferralBean().getRealmBeans());
                 label = r.getString(this, "subjectsPanelLabel", subjectCount);
 
                 break;
@@ -270,5 +269,17 @@ public abstract class ReferralWizardBean extends WizardBean {
 
     public String getSummaryPanelLabel() {
         return getPanelLabel(SUMMARY);
+    }
+
+    public void setReferralBean(ReferralBean referralBean) {
+        this.referralBean = referralBean;
+    }
+
+    public void setNameEditable(boolean nameEditable) {
+        this.nameEditable = nameEditable;
+    }
+
+    public boolean isNameEditable() {
+        return nameEditable;
     }
 }

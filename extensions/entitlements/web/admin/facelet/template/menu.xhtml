@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.19 2009-06-13 00:43:09 farble1670 Exp $
+   $Id: menu.xhtml,v 1.20 2009-06-22 14:53:22 farble1670 Exp $
 
 -->
 
@@ -58,6 +58,11 @@
             rendered="#{permissionsBean.referralCreateAllowed &amp;&amp; o:size(realmsBean.realmBeans) &gt; 1}"
             value="#{resources['menu.referralCreateItemValue']}"
             action="#{referralCreateWizardHandler.createAction}"
+            icon="../image/new.png"/>
+        <ice:menuItem
+            rendered="#{permissionsBean.referralManageAllowed &amp;&amp; o:size(realmsBean.realmBeans) &gt; 1}"
+            value="#{resources['menu.referralManageItemValue']}"
+            action="referral-manage"
             icon="../image/new.png"/>
         </ice:menuItem>
 
