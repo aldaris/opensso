@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.3 2009-05-09 15:44:00 mallas Exp $
+ * $Id: LogUtil.java,v 1.4 2009-06-22 23:28:46 rh221556 Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import com.sun.identity.plugin.log.LogException;
 import com.sun.identity.plugin.log.Logger;
 import com.sun.identity.plugin.log.LogManager;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.wss.security.WSSUtils;
 
 /**
@@ -107,11 +108,17 @@ public class LogUtil {
      */
     public static final String MODULE_NAME = "ModuleName";
                                           
+    private static boolean logStatus;
     private static final String WebServices_LOG = "WebServicesSecurity";
     private static Logger logger = null;
 
     
     static {
+        
+        String status = SystemPropertiesManager.get(
+            com.sun.identity.shared.Constants.AM_LOGSTATUS);
+        logStatus = (status != null) && status.equalsIgnoreCase("ACTIVE");
+        
         try {
             logger = LogManager.getLogger(WebServices_LOG);
         } catch (LogException le) {
@@ -188,14 +195,16 @@ public class LogUtil {
     public static void access(
         Level level, String msgid, String data[],
         Object session, Map props) {
-        if (logger != null) {
-            try {
-                logger.access(level, msgid, data, session, props);
-            } catch (LogException le) {
-                WSSUtils.debug.error(
-                    "LogUtil.access: Couldn't write log:", le);
+        if (isLogEnabled()) {
+            if (logger != null) {
+                try {
+                    logger.access(level, msgid, data, session, props);
+                } catch (LogException le) {
+                    WSSUtils.debug.error(
+                        "LogUtil.access: Couldn't write log:", le);
+                }
             }
-        }
+        }    
     }
     
     /**
@@ -267,15 +276,16 @@ public class LogUtil {
     public static void error(
         Level level, String msgid, String data[],
         Object session, Map props) {
-        if (logger != null) {
-            try {
-                logger.error(level, msgid, data, session, props);
-            } catch (LogException le) {
-                WSSUtils.debug.error("LogUtil.error:Couldn't write log:",le);
-            }
-        } 
+        if (isLogEnabled()) {
+                if (logger != null) {
+                    try {
+                        logger.error(level, msgid, data, session, props);
+                } catch (LogException le) {
+                    WSSUtils.debug.error("LogUtil.error:Couldn't write log:",le);
+                }
+            }    
+        }
     }
-
     /**
      * Checks if the logging is enabled.
      *
@@ -285,7 +295,7 @@ public class LogUtil {
         if (logger == null) {
             return false;
         } else {
-            return logger.isLogEnabled();
+            return logStatus;
         }
     }
     

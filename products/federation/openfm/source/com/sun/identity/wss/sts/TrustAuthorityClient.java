@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.23 2009-06-04 01:16:50 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.24 2009-06-22 23:30:35 rh221556 Exp $
  *
  */
 
@@ -408,23 +408,25 @@ public class TrustAuthorityClient {
                     + " obtained from STS : " + XMLUtils.print(element));
             }
 
-            if (credential != null && (credential 
-                    instanceof com.iplanet.sso.SSOToken)) {
-                String[] data = {wspEndPoint,stsEndpoint,stsMexAddress,
-                credential.toString(),keyType,tokenType};
-                LogUtil.access(Level.INFO,
-                    LogUtil.SUCCESS_RETRIEVING_TOKEN_FROM_STS,
-                    data,
-                    credential);
-            } else {
-                String[] data2 = {wspEndPoint,stsEndpoint,stsMexAddress,
-                null,keyType,tokenType};
-                LogUtil.access(Level.INFO,
-                    LogUtil.SUCCESS_RETRIEVING_TOKEN_FROM_STS,
-                    data2,
-                    null);
+            if (LogUtil.isLogEnabled()) {
+                if (credential != null && (credential 
+                        instanceof com.iplanet.sso.SSOToken)) {
+                    String[] data = {wspEndPoint,stsEndpoint,stsMexAddress,
+                    credential.toString(),keyType,tokenType};
+                    LogUtil.access(Level.INFO,
+                            LogUtil.SUCCESS_RETRIEVING_TOKEN_FROM_STS,
+                            data,
+                            credential);
+                } else {
+                    String[] data2 = {wspEndPoint,stsEndpoint,stsMexAddress,
+                    null,keyType,tokenType};
+                    LogUtil.access(Level.INFO,
+                        LogUtil.SUCCESS_RETRIEVING_TOKEN_FROM_STS,
+                        data2,
+                        null);
+                }
             }
-                    
+            
             if (type != null) {
                 if (type.equals(STSConstants.SAML20_ASSERTION_TOKEN_TYPE)) {
                     return new SAML2Token(element);

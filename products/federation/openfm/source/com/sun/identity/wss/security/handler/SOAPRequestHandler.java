@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.39 2009-06-04 01:16:49 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.40 2009-06-22 23:32:08 rh221556 Exp $
  *
  */
 
@@ -196,12 +196,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                    "Before validation: " 
                    + WSSUtils.print(soapRequest.getSOAPPart())); 
         }
-        String[] data = {WSSUtils.print(soapRequest.getSOAPPart())};
-        LogUtil.access(Level.FINE,
+        if (LogUtil.isLogEnabled()) {
+            String[] data = {WSSUtils.print(soapRequest.getSOAPPart())};
+            LogUtil.access(Level.FINE,
                 LogUtil.REQUEST_TO_BE_VALIDATED,
                 data,
                 null);
         
+        }
         Boolean isTrustMessage = (Boolean) sharedState.get("IS_TRUST_MSG");
         boolean isSTS = 
             (isTrustMessage != null) ? isTrustMessage.booleanValue(): false;
@@ -366,15 +368,15 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             debug.message(WSSUtils.print(soapRequest.getSOAPPart()));
         }
         
-        String[] data2 = {providerName,uri};
-        LogUtil.access(Level.INFO,
+        if (LogUtil.isLogEnabled()) {
+            String[] data2 = {providerName,uri};
+            LogUtil.access(Level.INFO,
                 LogUtil.SUCCESS_VALIDATE_REQUEST,
                 data2,
                 null);
-        
-        return subject;
-    }
-
+        }
+            return subject;    
+     }
     /**
      * Secures the SOAP Message response to the client.
      *
@@ -395,12 +397,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 WSSUtils.print(soapMessage.getSOAPPart()));
         }
 
-        String[] data = {WSSUtils.print(soapMessage.getSOAPPart())};
-        LogUtil.access(Level.FINE,
-                LogUtil.RESPONSE_TO_BE_SECURED,
-                data,
-                null);
-        
+        if (LogUtil.isLogEnabled()) {
+            String[] data = {WSSUtils.print(soapMessage.getSOAPPart())};
+            LogUtil.access(Level.FINE,
+                   LogUtil.RESPONSE_TO_BE_SECURED,
+                    data,
+                    null);
+        }
         ProviderConfig config = null;
         STSRemoteConfig stsConfig = null;
         
@@ -485,11 +488,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         soapMessage = secureMessage.getSOAPMessage();
         
-        String[] data2 = {providerName};
-        LogUtil.access(Level.INFO,
-                LogUtil.SUCCESS_SECURE_RESPONSE,
-                data2,
-                null);
+        if (LogUtil.isLogEnabled()) {
+            String[] data2 = {providerName};
+            LogUtil.access(Level.INFO,
+                    LogUtil.SUCCESS_SECURE_RESPONSE,
+                    data2,
+                    null);
+        }
         if(debug.messageEnabled()) {            
             debug.message("SOAPRequestHandler.secureResponse - " + 
                 "Secured SOAP response : " + 
@@ -517,12 +522,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             Subject subject,
             Map sharedState) throws SecurityException {
        
-        String[] data = {WSSUtils.print(soapMessage.getSOAPPart())};
-        LogUtil.access(Level.FINE,
-                LogUtil.REQUEST_TO_BE_SECURED,
-                data,
-                null);
-        
+        if (LogUtil.isLogEnabled()) {
+            String[] data = {WSSUtils.print(soapMessage.getSOAPPart())};
+            LogUtil.access(Level.FINE,
+                    LogUtil.REQUEST_TO_BE_SECURED,
+                    data,
+                    null);
+        }
         ProviderConfig config = getProviderConfig(sharedState);
         if(config == null) {
            if(WSSUtils.debug.messageEnabled()) {
@@ -663,12 +669,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
 
         soapMessage = secureMessage.getSOAPMessage();
-                
-        String[] data2 = {providerName,uri};
-        LogUtil.access(Level.INFO,
-                LogUtil.SUCCESS_SECURE_REQUEST,
-                data2,
-                null);
+
+        if (LogUtil.isLogEnabled()) {
+            String[] data2 = {providerName,uri};
+            LogUtil.access(Level.INFO,
+                    LogUtil.SUCCESS_SECURE_REQUEST,
+                    data2,
+                    null);
+        }
         if(debug.messageEnabled()) {
            debug.message("SOAPRequestHandler.secureRequest:  SOAP message" +
               " after securing: " + WSSUtils.print(soapMessage.getSOAPPart())); 
@@ -697,11 +705,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 WSSUtils.print(soapMessage.getSOAPPart()));
         }
         
-        String[] data = {WSSUtils.print(soapMessage.getSOAPPart())};
-        LogUtil.access(Level.FINE,
-                LogUtil.RESPONSE_TO_BE_VALIDATED,
-                data,
-                null);
+        if (LogUtil.isLogEnabled()) {
+            String[] data = {WSSUtils.print(soapMessage.getSOAPPart())};
+            LogUtil.access(Level.FINE,
+                    LogUtil.RESPONSE_TO_BE_VALIDATED,
+                    data,
+                    null);
+        }
         
         ProviderConfig config = getProviderConfig(sharedState);
         if(config == null) {
@@ -749,11 +759,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
         removeValidatedHeaders(config, soapMessage);
         
-        String[] data2 = {providerName};
-        LogUtil.access(Level.INFO,
-                LogUtil.SUCCESS_VALIDATE_RESPONSE,
-                data2,
-                null);
+        if (LogUtil.isLogEnabled()) {
+            String[] data2 = {providerName};
+            LogUtil.access(Level.INFO,
+                    LogUtil.SUCCESS_VALIDATE_RESPONSE,
+                    data2,
+                    null);
+        }
         if(debug.messageEnabled()) {      
             debug.message("SOAPRequestHandler.validateResponse - " + 
                 "SOAP message after validation : " + 
