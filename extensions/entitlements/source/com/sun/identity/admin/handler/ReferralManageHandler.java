@@ -22,12 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageHandler.java,v 1.1 2009-06-22 14:53:20 farble1670 Exp $
+ * $Id: ReferralManageHandler.java,v 1.2 2009-06-22 17:18:53 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
 
+import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.ReferralDao;
+import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.QueuedActionBean;
@@ -35,6 +37,9 @@ import com.sun.identity.admin.model.ReferralBean;
 import com.sun.identity.admin.model.ReferralManageBean;
 import com.sun.identity.admin.model.ReferralWizardBean;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 
@@ -99,6 +104,52 @@ public class ReferralManageHandler implements Serializable {
         referralEditWizardBean.setReferralBean(rb);
         referralEditWizardBean.setAllEnabled(true);
         referralEditWizardBean.gotoStep(3);
+    }
+
+    public void removeListener(ActionEvent event) {
+        if (!referralManageBean.isRemovePopupVisible()) {
+            if (referralManageBean.getSizeSelected() == 0) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "removeNoneSelectedSummary"));
+                mb.setDetail(r.getString(this, "removeNoneSelectedDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+                messagesBean.addMessageBean(mb);
+            } else {
+                referralManageBean.setRemovePopupVisible(true);
+            }
+        } else {
+            referralManageBean.setRemovePopupVisible(false);
+        }
+    }
+
+    public void removePopupOkListener(ActionEvent event) {
+        PhaseEventAction pea = new PhaseEventAction();
+        pea.setDoBeforePhase(true);
+        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+        pea.setAction("#{referralManageHandler.handleRemoveAction}");
+        pea.setParameters(new Class[]{});
+        pea.setArguments(new Object[]{});
+
+        queuedActionBean.getPhaseEventActions().add(pea);
+
+        referralManageBean.setRemovePopupVisible(false);
+    }
+
+    public void removePopupCancelListener(ActionEvent event) {
+        referralManageBean.setRemovePopupVisible(false);
+    }
+
+    public void handleRemoveAction() {
+        Set<ReferralBean> removed = new HashSet<ReferralBean>();
+        for (ReferralBean rb : referralManageBean.getReferralBeans()) {
+            if (rb.isSelected()) {
+                removed.add(rb);
+                referralDao.remove(rb.getName());
+            }
+            rb.setSelected(false);
+        }
+        referralManageBean.getReferralBeans().removeAll(removed);
     }
 
 }

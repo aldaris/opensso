@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageBean.java,v 1.1 2009-06-22 14:53:20 farble1670 Exp $
+ * $Id: ReferralManageBean.java,v 1.2 2009-06-22 17:18:53 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections.comparators.NullComparator;
 
 public class ReferralManageBean implements Serializable {
     private List<ReferralBean> referralBeans;
@@ -41,6 +42,7 @@ public class ReferralManageBean implements Serializable {
     private ReferralManageTableBean referralManageTableBean = new ReferralManageTableBean();
     private boolean selectAll;
     private Map<String, PolicyFilterType> policyFilterTypes;
+    private boolean removePopupVisible = false;
 
     public List<ReferralBean> getReferralBeans() {
         return referralBeans;
@@ -52,7 +54,7 @@ public class ReferralManageBean implements Serializable {
     }
 
     public void reset() {
-        referralBeans = referralDao.getReferralBeans(searchFilter,getPolicyFilterHolders());
+        referralBeans = referralDao.getReferralBeans(getSearchFilter(),getPolicyFilterHolders());
         getReferralManageTableBean().setReferralBeans(referralBeans);
     }
 
@@ -76,4 +78,37 @@ public class ReferralManageBean implements Serializable {
         this.policyFilterTypes = policyFilterTypes;
     }
 
+    public String getSearchFilter() {
+        return searchFilter;
+    }
+
+    public void setSearchFilter(String searchFilter) {
+        if (searchFilter == null) {
+            searchFilter = "";
+        }
+        NullComparator n = new NullComparator();
+        if (n.compare(this.searchFilter, searchFilter) != 0) {
+            this.searchFilter = searchFilter;
+            reset();
+        }
+    }
+
+    public boolean isRemovePopupVisible() {
+        return removePopupVisible;
+    }
+
+    public void setRemovePopupVisible(boolean removePopupVisible) {
+        this.removePopupVisible = removePopupVisible;
+    }
+
+    public int getSizeSelected() {
+        int size = 0;
+        for (ReferralBean rb: referralBeans) {
+            if (rb.isSelected()) {
+                size++;
+            }
+        }
+
+        return size;
+    }
 }

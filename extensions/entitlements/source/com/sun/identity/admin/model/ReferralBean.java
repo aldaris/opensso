@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralBean.java,v 1.7 2009-06-22 14:53:20 farble1670 Exp $
+ * $Id: ReferralBean.java,v 1.8 2009-06-22 17:18:53 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -54,6 +54,24 @@ public class ReferralBean {
                 return rb1.getName().compareTo(rb2.getName());
             } else {
                 return rb2.getName().compareTo(rb1.getName());
+            }
+        }
+    }
+
+    public static class DescriptionComparator extends TableColumnComparator {
+
+        public DescriptionComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            ReferralBean rb1 = (ReferralBean) o1;
+            ReferralBean rb2 = (ReferralBean) o2;
+
+            if (!isAscending()) {
+                return rb1.getDescription().compareTo(rb2.getDescription());
+            } else {
+                return rb2.getDescription().compareTo(rb1.getDescription());
             }
         }
     }

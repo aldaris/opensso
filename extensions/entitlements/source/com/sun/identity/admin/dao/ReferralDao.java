@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralDao.java,v 1.3 2009-06-22 14:53:19 farble1670 Exp $
+ * $Id: ReferralDao.java,v 1.4 2009-06-22 17:18:53 farble1670 Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -149,5 +149,15 @@ public class ReferralDao implements Serializable {
 
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    public void remove(String name) {
+        ReferralPrivilegeManager rpm = getReferralPrivilegeManager();
+
+        try {
+            rpm.delete(name);
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
     }
 }

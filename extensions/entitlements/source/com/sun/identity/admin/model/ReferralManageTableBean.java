@@ -22,12 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageTableBean.java,v 1.2 2009-06-22 15:08:11 farble1670 Exp $
+ * $Id: ReferralManageTableBean.java,v 1.3 2009-06-22 17:18:53 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,16 +35,25 @@ import java.util.List;
 import java.util.Map;
 
 public class ReferralManageTableBean implements Serializable {
-    private static Map<TableSortKey,Comparator> comparators = new HashMap<TableSortKey,Comparator>();
+    private static Map<TableSortKey, Comparator> comparators = new HashMap<TableSortKey, Comparator>();
 
     static {
         comparators.put(new TableSortKey("name", true), new ReferralBean.NameComparator(true));
         comparators.put(new TableSortKey("name", false), new ReferralBean.NameComparator(false));
+        comparators.put(new TableSortKey("description", true), new ReferralBean.DescriptionComparator(true));
+        comparators.put(new TableSortKey("description", false), new ReferralBean.DescriptionComparator(false));
     }
-
     private List<ReferralBean> referralBeans;
     private int rows = 10;
     private TableSortKey tableSortKey = new TableSortKey("name");
+    private List<String> columnsVisible = new ArrayList<String>();
+
+    public ReferralManageTableBean() {
+        columnsVisible.add("description");
+        columnsVisible.add("resources");
+        columnsVisible.add("subjects");
+        columnsVisible.add("modified");
+    }
 
     public List<ReferralBean> getReferralBeans() {
         return referralBeans;
@@ -74,5 +83,17 @@ public class ReferralManageTableBean implements Serializable {
     public void sort() {
         Comparator c = comparators.get(tableSortKey);
         Collections.sort(referralBeans, c);
+    }
+
+    public boolean isDescriptionColumnVisible() {
+        return getColumnsVisible().contains("description");
+    }
+
+    public List<String> getColumnsVisible() {
+        return columnsVisible;
+    }
+
+    public void setColumnsVisible(List<String> columnsVisible) {
+        this.columnsVisible = columnsVisible;
     }
 }

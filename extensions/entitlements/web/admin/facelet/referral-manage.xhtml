@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-manage.xhtml,v 1.1 2009-06-22 14:53:21 farble1670 Exp $
+   $Id: referral-manage.xhtml,v 1.2 2009-06-22 17:18:54 farble1670 Exp $
 
 -->
 
@@ -48,10 +48,10 @@
         <ui:include
             src="/admin/facelet/template/referral-manage-view-options-popup.xhtml"/>
         <ui:include
-            src="/admin/facelet/template/referral-manage-remove-popup.xhtml"/>
-        <ui:include
             src="/admin/facelet/template/referral-manage-export-popup.xhtml"/>
         -->
+        <ui:include
+            src="/admin/facelet/template/referral-manage-remove-popup.xhtml"/>
         <o:section>
             <ui:define name="section-title">
                 <ice:dataPaginator
@@ -78,6 +78,7 @@
                 <ice:panelGrid
                     columns="5">
                     <ice:commandLink
+                        actionListener="#{referralManageHandler.removeListener}"
                         styleClass="command-link">
                         <ice:graphicImage
                             value="/admin/image/remove.png"/>
@@ -95,6 +96,7 @@
                             value="/admin/image/search.png"/>
                         <ice:inputText
                             styleClass="section-input"
+                            value="#{referralManageBean.searchFilter}"
                             onkeyup="submitNow(this);"/>
                     </ice:panelGroup>
                 </ice:panelGrid>
@@ -163,6 +165,32 @@
                                     rendered="#{!permissionsBean.referralEditAllowed}"
                                     value="#{referralBean.name}"/>
                             </ice:panelGroup>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{referralManageBean.referralManageTableBean.descriptionColumnVisible}">
+                            <f:facet name="header">
+                                <ice:commandSortHeader
+                                    columnName="description"
+                                    actionListener="#{referralManageHandler.sortTableListener}">
+                                    <ice:outputText
+                                        value="#{resources['referral-manage.descriptionColumn']}"/>
+                                </ice:commandSortHeader>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="policy-manage-cell"
+                                panelTooltip="descriptionTooltip"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{referralBean.description}"/>
+                            </ice:panelGroup>
+                            <o:tooltip
+                                tooltipId="descriptionTooltip"
+                                title="#{referralBean.name}: description">
+                                <ui:define name="body">
+                                    <ice:outputText
+                                        value="#{referralBean.description}"/>
+                                </ui:define>
+                            </o:tooltip>
                         </ice:column>
                     </ice:dataTable>
                     <center>
