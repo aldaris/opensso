@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.94 2009-06-22 15:08:11 farble1670 Exp $
+  $Id: faces-config.xml,v 1.95 2009-06-23 06:47:13 babysunil Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1896,6 +1896,113 @@
         <managed-bean-class>com.sun.identity.admin.dao.SamlV2RemoteSpCreateDao</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
+
+    <!--idp -->
+    <managed-bean>
+        <managed-bean-name>samlV2HostedIdpCreateWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SamlV2HostedIdpCreateWizardBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>5</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>samlV2HostedIdpCreateWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.SamlV2HostedIdpCreateWizardHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{samlV2HostedIdpCreateWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>samlV2HostedIdpCreateDao</property-name>
+            <value>#{samlV2HostedIdpCreateWizardDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>samlV2HostedIdpCreateWizardDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.SamlV2HostedIdpCreateDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>signingKeysDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.SigningKeysDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>signingKeysBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SigningKeysBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>signingKeysDao</property-name>
+            <value>#{signingKeysDao}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>signingKeysHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.SigningKeysHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>signingKeysBean</property-name>
+            <value>#{signingKeysBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+
+
+    <!--remote-->
+    <managed-bean>
+        <managed-bean-name>samlV2RemoteIdpCreateWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SamlV2RemoteIdpCreateWizardBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>4</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>samlV2RemoteIdpCreateWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.SamlV2RemoteIdpCreateWizardHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{samlV2RemoteIdpCreateWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>samlV2RemoteIdpCreateDao</property-name>
+            <value>#{samlV2RemoteIdpCreateWizardDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>samlV2RemoteIdpCreateWizardDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.SamlV2RemoteIdpCreateDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <!--remote -->
+
+    <!--idp end -->
+    
   <!--  federation manage   -->
 
     <navigation-rule>
@@ -1910,6 +2017,14 @@
         <navigation-case>
             <from-outcome>federation</from-outcome>
             <to-view-id>/admin/facelet/federation.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>samlv2-hosted-idp-create</from-outcome>
+            <to-view-id>/admin/facelet/samlv2-hosted-idp-create.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>samlv2-remote-idp-create</from-outcome>
+            <to-view-id>/admin/facelet/samlv2-remote-idp-create.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>samlv2-hosted-sp-create</from-outcome>

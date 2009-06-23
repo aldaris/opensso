@@ -17,7 +17,7 @@ public enum FromAction {
     SAMLV2_HOSTED_SP_CREATE("samlv2-hosted-sp-create"),
     SAMLV2_REMOTE_SP_CREATE("samlv2-remote-sp-create"),
     SAMLV2_HOSTED_IDP_CREATE("samlv2-hosted-idp-create"),
-    SAMLV2_REMOTE_IDP_CREATE("samlv2-remote-sp-create"),
+    SAMLV2_REMOTE_IDP_CREATE("samlv2-remote-idp-create"),
     PERMISSION_DENIED("permission-denied");
 
     private static final Map<String,FromAction> actionValues = new HashMap<String,FromAction>() {
