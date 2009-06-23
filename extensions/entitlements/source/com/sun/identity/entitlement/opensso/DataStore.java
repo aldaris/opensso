@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.25 2009-06-21 09:25:33 veiming Exp $
+ * $Id: DataStore.java,v 1.26 2009-06-23 08:24:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -757,24 +757,26 @@ public class DataStore {
                 AdminTokenAction.getInstance());
 
             long start = DB_MONITOR_PRIVILEGE.start();
-
-            try {
-                Iterator i = SMSEntry.search(
-                    token, baseDN, filter, excludeDNs);
-                while (i.hasNext()) {
-                    SMSDataEntry e = (SMSDataEntry)i.next();
-                    Privilege privilege = Privilege.getInstance(
-                        new JSONObject(e.getAttributeValue(
-                        SERIALIZABLE_INDEX_KEY)));
-                    iterator.add(privilege);
-                    results.add(privilege);
+            
+            if (SMSEntry.checkIfEntryExists(baseDN, token)) {
+                try {
+                    Iterator i = SMSEntry.search(
+                        token, baseDN, filter, excludeDNs);
+                    while (i.hasNext()) {
+                        SMSDataEntry e = (SMSDataEntry) i.next();
+                        Privilege privilege = Privilege.getInstance(
+                            new JSONObject(e.getAttributeValue(
+                            SERIALIZABLE_INDEX_KEY)));
+                        iterator.add(privilege);
+                        results.add(privilege);
+                    }
+                } catch (JSONException e) {
+                    Object[] arg = {baseDN};
+                    throw new EntitlementException(52, arg, e);
+                } catch (SMSException e) {
+                    Object[] arg = {baseDN};
+                    throw new EntitlementException(52, arg, e);
                 }
-            } catch (JSONException e) {
-                Object[] arg = {baseDN};
-                throw new EntitlementException(52, arg, e);
-            } catch (SMSException e) {
-                Object[] arg = {baseDN};
-                throw new EntitlementException(52, arg, e);
             }
 
             DB_MONITOR_PRIVILEGE.end(start);
@@ -814,26 +816,29 @@ public class DataStore {
             }*/
             SSOToken token = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-
             long start = DB_MONITOR_REFERRAL.start();
-            try {
-                Iterator i = SMSEntry.search(
-                    token, baseDN, filter, excludeDNs);
-                while (i.hasNext()) {
-                    SMSDataEntry e = (SMSDataEntry)i.next();
-                    ReferralPrivilege referral = ReferralPrivilege.getInstance(
-                        new JSONObject(e.getAttributeValue(
-                        SERIALIZABLE_INDEX_KEY)));
-                    iterator.add(referral);
-                    results.add(referral);
+
+            if (SMSEntry.checkIfEntryExists(baseDN, token)) {
+                try {
+                    Iterator i = SMSEntry.search(
+                        token, baseDN, filter, excludeDNs);
+                    while (i.hasNext()) {
+                        SMSDataEntry e = (SMSDataEntry) i.next();
+                        ReferralPrivilege referral = ReferralPrivilege.
+                            getInstance(
+                            new JSONObject(e.getAttributeValue(
+                            SERIALIZABLE_INDEX_KEY)));
+                        iterator.add(referral);
+                        results.add(referral);
+                    }
+                    iterator.isDone();
+                } catch (JSONException e) {
+                    Object[] arg = {baseDN};
+                    throw new EntitlementException(52, arg, e);
+                } catch (SMSException e) {
+                    Object[] arg = {baseDN};
+                    throw new EntitlementException(52, arg, e);
                 }
-                iterator.isDone();
-            } catch (JSONException e) {
-                Object[] arg = {baseDN};
-                throw new EntitlementException(52, arg, e);
-            } catch (SMSException e) {
-                Object[] arg = {baseDN};
-                throw new EntitlementException(52, arg, e);
             }
 
             DB_MONITOR_REFERRAL.end(start);

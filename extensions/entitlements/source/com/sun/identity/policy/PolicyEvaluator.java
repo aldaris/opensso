@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.12 2009-06-21 09:25:34 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.13 2009-06-23 08:24:39 veiming Exp $
  *
  */
 
@@ -47,6 +47,8 @@ import com.sun.identity.shared.stats.Stats;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenListener;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.entitlement.Application;
+import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
@@ -520,9 +522,50 @@ public class PolicyEvaluator {
         return actionAllowed;
     }
 
+    private void padEnvParameters(SSOToken token, String resourceName,
+        String actionName, Map envParameters) throws PolicyException {
+        if ((resourceName == null) || (resourceName.trim().length() == 0)) {
+            resourceName = Rule.EMPTY_RESOURCE_NAME;
+        }
+
+        Set originalResourceNames = new HashSet(2);
+        originalResourceNames.add(resourceName);
+
+        Application appl = ApplicationManager.getApplication(
+            SubjectUtils.createSubject(token),
+            realm, serviceTypeName);
+        try {
+            resourceName = appl.getResourceComparator().canonicalize(
+                resourceName);
+        } catch (EntitlementException e) {
+            throw new PolicyException(e);
+        }
+        //Add request resourceName and request actionNames to the envParameters
+        //so that Condition(s)/ResponseProvider(s) can use them if necessary
+        Set resourceNames = new HashSet(2);
+        resourceNames.add(resourceName);
+
+        Set actions = new HashSet();
+        actions.add(actionName);
+
+        envParameters.put(SUN_AM_REQUESTED_RESOURCE, resourceNames);
+        envParameters.put(SUN_AM_ORIGINAL_REQUESTED_RESOURCE,
+                originalResourceNames);
+        envParameters.put(SUN_AM_REQUESTED_ACTIONS, actions);
+        envParameters.put(SUN_AM_POLICY_CONFIG,
+            policyManager.getPolicyConfig());
+    }
+
     private boolean isAllowedE(SSOToken token, String resourceName,
         String actionName, Map envParameters) throws SSOException,
         PolicyException {
+
+        if ((envParameters == null) || envParameters.isEmpty()) {
+            envParameters = new HashMap();
+        }
+
+        padEnvParameters(token, resourceName, actionName, envParameters);
+
         ActionSchema schema = serviceType.getActionSchema(actionName);
         
         if (!AttributeSchema.Syntax.BOOLEAN.equals(schema.getSyntax())) {
