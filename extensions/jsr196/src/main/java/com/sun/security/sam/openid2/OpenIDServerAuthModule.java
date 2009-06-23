@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenIDServerAuthModule.java,v 1.3 2009-04-05 07:57:54 rsoika Exp $
+ * $Id: OpenIDServerAuthModule.java,v 1.4 2009-06-23 21:10:16 rsoika Exp $
  */
 
 package com.sun.security.sam.openid2;
@@ -440,7 +440,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 		debugRequest(request);
 
 		// is it a response from an OpenID Login page?
-		if (getRequestURIMinusContextPath(request).endsWith(loginURI)) {
+		if (isRequestURILogin(request)) {
 
 			logInfo(DEBUG_TRACE, "openid.received_login_form");
 
@@ -820,20 +820,12 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 		return normalizedID;
 	}
 
-	static String getRequestURIMinusContextPath(HttpServletRequest request) {
+	static boolean isRequestURILogin(HttpServletRequest request) {
 		String uri = request.getRequestURI();
-		if (uri != null) {
-			String contextPath = request.getContextPath();
-			int contextLength = contextPath == null ? 0 : contextPath.length();
-			if (contextLength > 0) {
-				uri = uri.substring(contextLength);
-			} else {
-				uri = "";
-			}
-		} else {
-			uri = "";
-		}
-		return uri;
+		if (uri==null)
+			return false;
+		// is it a response from an OpenID Login page?
+		return  uri.endsWith(loginURI);
 	}
 
 	String getQueryParameter(HttpServletRequest request, String parameter) {
