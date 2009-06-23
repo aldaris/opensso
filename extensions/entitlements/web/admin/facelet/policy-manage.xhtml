@@ -23,8 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-manage.xhtml,v 1.53 2009-06-22 18:31:57 farble1670 Exp $
-
+   $Id: policy-manage.xhtml,v 1.54 2009-06-23 18:05:31 farble1670 Exp $
 -->
 
 <ui:composition
@@ -50,7 +49,6 @@
             src="/admin/facelet/template/policy-manage-remove-popup.xhtml"/>
         <ui:include
             src="/admin/facelet/template/policy-manage-export-popup.xhtml"/>
-
         <o:section>
             <ui:define name="section-title">
                 <ice:dataPaginator
@@ -111,18 +109,18 @@
                     src="/admin/facelet/template/policy-manage-filters.xhtml"/>
                 <ice:panelGroup
                     style="padding-top: 10px"
-                    rendered="#{o:size(policyManageHandler.policyManageBean.privilegeBeans) == 0}">
+                    rendered="#{o:size(policyManageBean.privilegeBeans) == 0}">
                     <ice:outputText
                         value="No policies."/>
                 </ice:panelGroup>
                 <ice:panelGroup
-                    rendered="#{o:size(policyManageHandler.policyManageBean.privilegeBeans) > 0}">
+                    rendered="#{o:size(policyManageBean.privilegeBeans) > 0}">
                     <ice:dataTable
                         id="policyManageTable"
                         var="privilegeBean"
                         rows="#{policyManageBean.policyManageTableBean.rows}"
                         styleClass="policy-manage"
-                        value="#{policyManageHandler.policyManageBean.privilegeBeans}"
+                        value="#{policyManageBean.privilegeBeans}"
                         sortColumn="#{policyManageBean.policyManageTableBean.sortKey.column}"
                         sortAscending="#{policyManageBean.policyManageTableBean.sortKey.ascending}"
                         resizable="true">

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageBean.java,v 1.2 2009-06-22 17:18:53 farble1670 Exp $
+ * $Id: ReferralManageBean.java,v 1.3 2009-06-23 18:05:31 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -43,6 +43,9 @@ public class ReferralManageBean implements Serializable {
     private boolean selectAll;
     private Map<String, PolicyFilterType> policyFilterTypes;
     private boolean removePopupVisible = false;
+    private boolean viewOptionsPopupVisible = false;
+    private List<String> viewOptionsPopupColumnsVisible = new ArrayList<String>();
+    private int viewOptionsPopupRows = 10;
 
     public List<ReferralBean> getReferralBeans() {
         return referralBeans;
@@ -110,5 +113,29 @@ public class ReferralManageBean implements Serializable {
         }
 
         return size;
+    }
+
+    public boolean isViewOptionsPopupVisible() {
+        return viewOptionsPopupVisible;
+    }
+
+    public void setViewOptionsPopupVisible(boolean viewOptionsPopupVisible) {
+        this.viewOptionsPopupVisible = viewOptionsPopupVisible;
+    }
+
+    public List<String> getViewOptionsPopupColumnsVisible() {
+        return viewOptionsPopupColumnsVisible;
+    }
+
+    public void setViewOptionsPopupColumnsVisible(List<String> viewOptionsPopupColumnsVisible) {
+        this.viewOptionsPopupColumnsVisible = viewOptionsPopupColumnsVisible;
+    }
+
+    public int getViewOptionsPopupRows() {
+        return viewOptionsPopupRows;
+    }
+
+    public void setViewOptionsPopupRows(int viewOptionsPopupRows) {
+        this.viewOptionsPopupRows = viewOptionsPopupRows;
     }
 }

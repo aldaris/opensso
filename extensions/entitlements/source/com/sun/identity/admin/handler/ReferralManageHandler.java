@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageHandler.java,v 1.2 2009-06-22 17:18:53 farble1670 Exp $
+ * $Id: ReferralManageHandler.java,v 1.3 2009-06-23 18:05:30 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -152,4 +152,23 @@ public class ReferralManageHandler implements Serializable {
         referralManageBean.getReferralBeans().removeAll(removed);
     }
 
+    public void viewOptionsPopupCancelListener(ActionEvent event) {
+        referralManageBean.setViewOptionsPopupVisible(false);
+    }
+
+    public void viewOptionsPopupOkListener(ActionEvent event) {
+        referralManageBean.getReferralManageTableBean().getColumnsVisible().clear();
+        referralManageBean.getReferralManageTableBean().getColumnsVisible().addAll(referralManageBean.getViewOptionsPopupColumnsVisible());
+        referralManageBean.getReferralManageTableBean().setRows(referralManageBean.getViewOptionsPopupRows());
+
+        referralManageBean.setViewOptionsPopupVisible(false);
+    }
+
+    public void viewOptionsListener(ActionEvent event) {
+        referralManageBean.getViewOptionsPopupColumnsVisible().clear();
+        referralManageBean.getViewOptionsPopupColumnsVisible().addAll(referralManageBean.getReferralManageTableBean().getColumnsVisible());
+        referralManageBean.setViewOptionsPopupRows(referralManageBean.getReferralManageTableBean().getRows());
+
+        referralManageBean.setViewOptionsPopupVisible(true);
+    }
 }

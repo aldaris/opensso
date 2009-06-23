@@ -23,8 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-manage.xhtml,v 1.4 2009-06-22 18:31:57 farble1670 Exp $
-
+   $Id: referral-manage.xhtml,v 1.5 2009-06-23 18:05:31 farble1670 Exp $
 -->
 
 <ui:composition
@@ -44,12 +43,8 @@
             value="#{resources['referral-manage.panelDetails']}" />
     </ui:define>
     <ui:define name="panel-body">
-        <!--
         <ui:include
             src="/admin/facelet/template/referral-manage-view-options-popup.xhtml"/>
-        <ui:include
-            src="/admin/facelet/template/referral-manage-export-popup.xhtml"/>
-        -->
         <ui:include
             src="/admin/facelet/template/referral-manage-remove-popup.xhtml"/>
         <o:section>
@@ -85,12 +80,10 @@
                         <ice:outputText
                             value="Remove"/>
                     </ice:commandLink>
-                    <!--
                     <o:clink
                         type="view-options"
-                        handler="#{policyManageHandler}"
+                        handler="#{referralManageHandler}"
                         listenerMethod="viewOptionsListener"/>
-                    -->
                     <ice:panelGroup>
                         <ice:graphicImage
                             value="/admin/image/search.png"/>
