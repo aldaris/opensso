@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.19 2009-06-12 22:08:47 huacui Exp $
+   $Id: build.xml,v 1.20 2009-06-23 20:29:29 kevinserwin Exp $
 
 -->
 
@@ -72,7 +72,7 @@
 
     <target name="build" depends="checkjar, preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-            destdir="${wssagents.classes.dir}" source="1.5" target="1.5"
+            destdir="${wssagents.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
             debug="${build.debug}" debuglevel="${build.debuglevel}" excludes="com/sun/identity/wssagents/weblogic/*.*">
             <src path="${wssagents.src.dir}"/>
             <classpath refid="build.class.path"/>

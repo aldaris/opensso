@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-diagnostic-tools.xml,v 1.4 2009-06-21 02:31:44 ak138937 Exp $
+   $Id: build-diagnostic-tools.xml,v 1.5 2009-06-23 20:29:26 kevinserwin Exp $
 
 -->
 
@@ -252,7 +252,7 @@
     <target name="compileCore">
         <antcall target="xsd.services" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${odt.classes.dir}" source="1.5" target="1.5"
+               destdir="${odt.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
                debug="${build.debug}" debuglevel="${build.debuglevel}"
                srcdir="${odt.package.path}/base"
                excludes="${odt.package.path}/plugin">
@@ -314,7 +314,7 @@
     
     <target name="compileServices" depends="makeBaseJar">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${odt.classes.dir}" source="1.5" target="1.5"
+               destdir="${odt.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
                debug="${build.debug}" debuglevel="${build.debuglevel}"
                srcdir="${odt.package.path}/plugin">
             <classpath refid="build.class.path"/>

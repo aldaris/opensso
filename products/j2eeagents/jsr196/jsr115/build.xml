@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2009-02-03 17:48:44 kalpanakm Exp $
+   $Id: build.xml,v 1.2 2009-06-23 20:29:25 kevinserwin Exp $
 
 -->
 
@@ -42,7 +42,7 @@
     <property name="j2eeagents.jsr196.src.dir" location="${j2eeagents.basedir}/${containername}/${containerversion}/source"/>
     
     <target name="build">
-        <javac destdir="${j2eeagents.container.classes.dir}" source="1.5" target="1.5"
+        <javac destdir="${j2eeagents.container.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${j2eeagents.jsr196.src.dir}"/>
             <classpath refid="build.class.path"/>

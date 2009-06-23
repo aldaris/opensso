@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.18 2008-12-12 23:24:02 huacui Exp $
+   $Id: build.xml,v 1.19 2009-06-23 20:29:22 kevinserwin Exp $
 
 -->
 
@@ -42,7 +42,7 @@
     <property name="j2eeagents.weblogic.v10.src.dir" location="${j2eeagents.basedir}/${containername}/${containerversion}/source"/>
 
     <target name="build">
-        <javac destdir="${j2eeagents.container.classes.dir}" source="1.5" target="1.5"
+        <javac destdir="${j2eeagents.container.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${j2eeagents.weblogic.v10.src.dir}"/>
             <classpath refid="build.class.path"/>

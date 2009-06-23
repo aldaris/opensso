@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.47 2009-06-20 01:27:51 ak138937 Exp $
+   $Id: build.xml,v 1.48 2009-06-23 20:29:24 kevinserwin Exp $
 
 -->
 
@@ -44,7 +44,15 @@
         <not><isset property="build.number"/></not>
     </condition>
     <echo message="OpenSSO Build Number: ${build.number.set}"/>
-
+    
+    <condition property="target.jdk.set" value="${target.jdk}">
+        <isset property="target.jdk"/>
+    </condition>
+    <condition property="target.jdk.set" value="1.5">
+        <not><isset property="target.jdk"/></not>
+    </condition>
+    <echo message="OpenSSO JDK Version: ${target.jdk.set}"/>
+        
     <delete file="${products.basedir}/federation/openfm/source/com/sun/identity/federation/cli/stubs/FederationManagerCLI.java" />
     <delete file="${products.basedir}/amserver/test/source/com/sun/identity/cli/stubs/MockCLI.java" />
     <delete file="${products.basedir}/amserver/source/com/sun/identity/cli/stubs/AccessManagerCLI.java" />
@@ -314,7 +322,7 @@
 
     <target name="build-diff">
         <mkdir dir="${sharedlib.classes.dir}" />
-        <javac destdir="${sharedlib.classes.dir}" source="1.5" target="1.5">
+        <javac destdir="${sharedlib.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}">
             <src path="${products.basedir}/shared/source"/>
             <include name="com/sun/identity/tools/diffs/*.java"/>
         </javac>
@@ -326,7 +334,7 @@
         <mkdir dir="${prd.classes.dir}" />
         <mkdir dir="${prd.log.html.dir}" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-            destdir="${prd.classes.dir}" source="1.5" target="1.5"
+            destdir="${prd.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
             debug="on" debuglevel="lines,vars,source">
             <src path="${amserver.src.dir}"/>
             <include name="com/sun/identity/tools/logdoc/*.java"/>

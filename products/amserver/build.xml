@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.79 2009-06-20 01:24:33 ak138937 Exp $
+   $Id: build.xml,v 1.80 2009-06-23 20:29:26 kevinserwin Exp $
 
 -->
 
@@ -93,7 +93,7 @@
     <target name="enterprise" if="enterprise.authmodules.present">   
         <antcall target="idsvcs" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${amserver.classes.dir}" source="1.5" target="1.5"
+               destdir="${amserver.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${amserver.src.dir}"/>
             <classpath refid="build.class.path"/>
@@ -203,7 +203,7 @@
         <antcall target="idsvcs" />
         
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${amserver.classes.dir}" source="1.5" target="1.5"
+               destdir="${amserver.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
                debug="${build.debug}" debuglevel="${build.debuglevel}"
                excludes="${amserver_one_dot_five_targets}">
             <src path="${amserver.src.dir}"/>
@@ -222,7 +222,7 @@
         </java>
         <antcall target="jaxrpc" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${amserver.classes.dir}" source="1.5" target="1.5"
+               destdir="${amserver.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
                debug="${build.debug}" debuglevel="${build.debuglevel}"
                includes="${amserver_one_dot_five_targets}">
             <src path="${amserver.src.dir}"/>
@@ -362,7 +362,7 @@
     </target>
     
     <target name="sharedlib">
-        <subant buildpath="${sharedlib.dir}/build.xml" target="all" />
+        <subant buildpath="${sharedlib.dir}/build.xml" target="all" inheritall="true"/>
     </target>
     
     <target name="doc-not-enterprise" depends="preparebuild" if="enterprise.authmodules.not.present">

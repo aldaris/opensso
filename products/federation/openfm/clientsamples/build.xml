@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.28 2009-06-03 20:45:33 veiming Exp $
+   $Id: build.xml,v 1.29 2009-06-23 20:29:20 kevinserwin Exp $
 
 -->
 
@@ -52,7 +52,7 @@
         <delete dir="${clientsamples.packages.temp.dir}" />
         <delete dir="${clientsamples.war.packages.dir}" />
         <mkdir dir="${clientsamples.war.packages.dir}" />
-        <copy file="${fm.dist.dir}/opensso-client-jdk15.war" todir="${clientsamples.war.packages.dir}" />
+        <copy file="${fm.dist.dir}/opensso-client-jdk${target.jdk.set}.war" todir="${clientsamples.war.packages.dir}" />
         <copy todir="${clientsamples.packages.dir}/"
               file="${openfm.clientsamples.dir}/README"/>
         <zip destfile="${fm.dist.dir}/opensso-client.zip" basedir="${clientsamples.packages.dir}" />
@@ -127,7 +127,7 @@
 	<delete dir="${clientsamples.packages.temp.dir}" />
 	<mkdir dir="${clientsamples.packages.temp.dir}" />
 	<move file="${clientsamples.war.packages.dir}/WEB-INF/web.xml" tofile="${clientsamples.packages.temp.dir}/web.xml" />
-        <war destfile="${fm.dist.dir}/opensso-client-jdk15.war" webxml="${clientsamples.packages.temp.dir}/web.xml">
+        <war destfile="${fm.dist.dir}/opensso-client-jdk${target.jdk.set}.war" webxml="${clientsamples.packages.temp.dir}/web.xml">
             <manifest>
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
@@ -136,7 +136,7 @@
         </war>
 	<move file="${clientsamples.packages.temp.dir}/web.xml" tofile="${clientsamples.war.packages.dir}/WEB-INF/web.xml" />
 	<delete dir="${clientsamples.packages.temp.dir}" />
-        <checksum file="${fm.dist.dir}/opensso-client-jdk15.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${fm.dist.dir}/opensso-client-jdk${target.jdk.set}.war" algorithm="SHA" fileext=".sha" />
         <delete dir="${clientsamples.war.packages.dir}" />
     </target>
 

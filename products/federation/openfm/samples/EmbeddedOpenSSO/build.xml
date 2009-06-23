@@ -20,7 +20,7 @@
 
     <target name="compile" depends="preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${embedded.classes.dir}" source="1.5" target="1.5"
+               destdir="${embedded.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
                debug="on" debuglevel="lines,vars,source">
             <src path="${embedded.src.dir}"/>
             <classpath refid="build.class.path"/>

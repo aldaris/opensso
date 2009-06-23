@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.12 2009-06-05 19:33:42 veiming Exp $
+   $Id: build.xml,v 1.13 2009-06-23 20:29:29 kevinserwin Exp $
 
 -->
 
@@ -43,7 +43,7 @@
     <property name="test.classes.dir" location="${amserver.built.dir}/test/classes"/>
 
     <target name="build" depends="preparebuild">
-        <javac destdir="${test.classes.dir}" source="1.5" target="1.5"
+        <javac destdir="${test.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
                debug="on" debuglevel="lines,vars,source">
             <compilerarg value="-Xlint:unchecked"/>
             <compilerarg value="-Xlint:deprecation"/>

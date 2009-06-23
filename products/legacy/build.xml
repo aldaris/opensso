@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2009-05-19 14:30:25 kevinserwin Exp $
+   $Id: build.xml,v 1.5 2009-06-23 20:29:23 kevinserwin Exp $
 
 -->
 
@@ -51,7 +51,7 @@
 
     <target name="build" depends="preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-            destdir="${legacy.classes.dir}" source="1.5" target="1.5"
+            destdir="${legacy.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${legacy.src.dir}"/>
             <classpath refid="legacy.build.class.path"/>
