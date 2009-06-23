@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AnyUserSubject.java,v 1.4 2009-06-04 11:49:19 veiming Exp $
+ * $Id: AnyUserSubject.java,v 1.5 2009-06-23 07:00:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -41,6 +41,7 @@ public class AnyUserSubject extends VirtualSubject {
     }
 
     public SubjectDecision evaluate(
+        String realm,
         SubjectAttributesManager mgr,
         Subject subject,
         String resourceName,

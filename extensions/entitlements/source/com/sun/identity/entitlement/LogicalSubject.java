@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogicalSubject.java,v 1.5 2009-05-21 06:35:31 veiming Exp $
+ * $Id: LogicalSubject.java,v 1.6 2009-06-23 07:00:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.security.auth.Subject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -116,24 +115,6 @@ public abstract class LogicalSubject implements EntitlementSubject {
     public String getState() {
         return toString();
     }
-
-    /**
-     * Returns <code>SubjectDecision</code> of
-     * <code>EntitlementSubject</code> evaluation
-     * 
-     * @param subject EntitlementSubject who is under evaluation.
-     * @param resourceName Resource name.
-     * @param environment Environment parameters.
-     * @return <code>SubjectDecision</code> of
-     * <code>EntitlementSubject</code> evaluation
-     * @throws EntitlementException if any errors occur.
-     */
-    public abstract SubjectDecision evaluate(
-        SubjectAttributesManager mgr,
-        Subject subject,
-        String resourceName,
-        Map<String, Set<String>> environment
-    ) throws EntitlementException;
 
     /**
      * Sets the nested EntitlementSubject(s)

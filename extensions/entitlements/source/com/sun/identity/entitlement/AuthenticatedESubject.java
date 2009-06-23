@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedESubject.java,v 1.3 2009-05-22 15:22:22 farble1670 Exp $
+ * $Id: AuthenticatedESubject.java,v 1.4 2009-06-23 07:00:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -68,10 +68,10 @@ public class AuthenticatedESubject extends VirtualSubject {
      * of any error
      */
     public SubjectDecision evaluate(
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment)
+        throws EntitlementException {
         return null;
     }
 
@@ -95,6 +95,7 @@ public class AuthenticatedESubject extends VirtualSubject {
     }
 
     public SubjectDecision evaluate(
+        String realm,
         SubjectAttributesManager mgr,
         Subject subject,
         String resourceName,

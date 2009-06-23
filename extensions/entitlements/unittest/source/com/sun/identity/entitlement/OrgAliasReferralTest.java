@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgAliasReferralTest.java,v 1.2 2009-06-22 10:14:35 veiming Exp $
+ * $Id: OrgAliasReferralTest.java,v 1.3 2009-06-23 07:00:17 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.opensso.OpenSSOIndexStore;
-import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.security.AdminTokenAction;
@@ -92,7 +91,7 @@ public class OrgAliasReferralTest {
         Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
         actionValues.put("GET", true);
         Entitlement e1 = new Entitlement(
-            "http://www.OrgAliasReferralTest.com/*",
+            "http://www.OrgAliasReferralTest.com:80/*.*",
             actionValues);
         EntitlementSubject sbj = new AuthenticatedESubject();
 

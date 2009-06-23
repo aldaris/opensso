@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPolicyTest.java,v 1.1 2009-06-16 20:30:37 veiming Exp $
+ * $Id: ReferralPolicyTest.java,v 1.2 2009-06-23 07:00:18 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -102,7 +102,7 @@ public class ReferralPolicyTest {
         Rule rule = new Rule("iPlanetAMWebAgentService",
             Collections.EMPTY_MAP);
         Set<String> set = new HashSet<String>();
-        set.add("http://www.ReferredResourcesTest.com/1/");
+        set.add("http://www.ReferredResourcesTest.com/1/*");
         rule.setResourceNames(set);
         policy.addRule(rule);
 
@@ -136,8 +136,6 @@ public class ReferralPolicyTest {
             adminToken);
         ReferralPrivilegeManager rfm = new ReferralPrivilegeManager("/",
             adminSubject);
-        Set<PrivilegeSearchFilter> filter = new
-            HashSet<PrivilegeSearchFilter>();
         PrivilegeSearchFilter f = new PrivilegeSearchFilter(
             Privilege.NAME_ATTRIBUTE, "*");
         ReferralPrivilege ref = rfm.getReferral(REFERRAL_POLICY_NAME);
@@ -153,7 +151,7 @@ public class ReferralPolicyTest {
                 "cannot referred resources");
         }
 
-        if (!res.contains("http://www.ReferredResourcesTest.com/1/")) {
+        if (!res.contains("http://www.ReferredResourcesTest.com/1/*")) {
             throw new Exception("ReferralPolicyTest.getReferralInRootRealm: " +
                 "referred resources does not match");
         }

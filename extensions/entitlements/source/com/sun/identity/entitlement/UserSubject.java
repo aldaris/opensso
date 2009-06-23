@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSubject.java,v 1.9 2009-05-21 06:35:31 veiming Exp $
+ * $Id: UserSubject.java,v 1.10 2009-06-23 07:00:16 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -68,6 +68,8 @@ public class UserSubject extends EntitlementSubjectImpl {
     /**
      * Returns <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation
+     *
+     * @param realm Realm name.
      * @param subject EntitlementSubject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -77,6 +79,7 @@ public class UserSubject extends EntitlementSubjectImpl {
      * of any error
      */
     public SubjectDecision evaluate(
+        String realm,
         SubjectAttributesManager mgr,
         Subject subject,
         String resourceName,

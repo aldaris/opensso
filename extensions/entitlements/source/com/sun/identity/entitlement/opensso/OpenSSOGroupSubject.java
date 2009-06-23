@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOGroupSubject.java,v 1.1 2009-05-27 23:05:40 hengming Exp $
+ * $Id: OpenSSOGroupSubject.java,v 1.2 2009-06-23 07:00:16 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -84,6 +84,8 @@ public class OpenSSOGroupSubject extends GroupSubject {
     /**
      * Returns <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation
+     *
+     * @param realm Realm name.
      * @param subject EntitlementSubject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -92,7 +94,9 @@ public class OpenSSOGroupSubject extends GroupSubject {
      * @throws com.sun.identity.entitlement,  EntitlementException in case
      * of any error
      */
+    @Override
     public SubjectDecision evaluate(
+        String realm,
         SubjectAttributesManager mgr,
         Subject subject,
         String resourceName,
@@ -136,6 +140,7 @@ public class OpenSSOGroupSubject extends GroupSubject {
      *
      * @return search index attributes.
      */
+    @Override
     public Map<String, Set<String>> getSearchIndexAttributes() {
         SubjectAttributesManager sam = getSubjectAttributesManager();
         if (sam != null) {
@@ -162,6 +167,7 @@ public class OpenSSOGroupSubject extends GroupSubject {
      * 
      * @return required attribute names.
      */
+    @Override
     public Set<String> getRequiredAttributeNames() {
         SubjectAttributesManager sam = getSubjectAttributesManager();
         if (sam != null) {

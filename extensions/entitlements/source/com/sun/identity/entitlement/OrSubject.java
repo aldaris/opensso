@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrSubject.java,v 1.8 2009-05-05 00:28:58 veiming Exp $
+ * $Id: OrSubject.java,v 1.9 2009-06-23 07:00:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -67,7 +67,8 @@ public class OrSubject extends LogicalSubject {
     /**
      * Returns <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation
-     * 
+     *
+     * @param realm Realm name.
      * @param subject EntitlementSubject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -76,6 +77,7 @@ public class OrSubject extends LogicalSubject {
      * @throws EntitlementException if any errors occur.
      */
     public SubjectDecision evaluate(
+        String realm,
         SubjectAttributesManager mgr,
         Subject subject,
         String resourceName,
@@ -87,7 +89,7 @@ public class OrSubject extends LogicalSubject {
         Set<EntitlementSubject> eSubjects = getESubjects();
         if ((eSubjects != null) && !eSubjects.isEmpty()) {
             for (EntitlementSubject e : eSubjects) {
-                SubjectDecision decision = e.evaluate(mgr, subject,
+                SubjectDecision decision = e.evaluate(realm, mgr, subject,
                     resourceName, environment);
                 if (decision.isSatisfied()) {
                     return decision;

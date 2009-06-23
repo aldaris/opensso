@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.20 2009-06-21 09:25:34 veiming Exp $
+ * $Id: PolicyManager.java,v 1.21 2009-06-23 07:00:17 veiming Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.policy.interfaces.Subject;
@@ -1274,6 +1275,32 @@ public final class PolicyManager {
             resourcePrefixes, resourceName);
     }
 
+    private boolean validateResourceForPrefixE(
+        String realm,
+        String serviceName,
+        Set<String> resourcePrefixes,
+        String resourceName) throws PolicyException, EntitlementException {
+
+        Application appl = ApplicationManager.getApplication(
+            adminSubject, realm, serviceName);
+        com.sun.identity.entitlement.interfaces.ResourceName resComp = appl.
+            getResourceComparator();
+        resourceName = resComp.canonicalize(resourceName);
+
+        for (String prefix : resourcePrefixes) {
+            boolean interpretWildCard = true;
+            ResourceMatch resMatch = resComp.compare(resourceName,
+                resComp.canonicalize(prefix), interpretWildCard);
+            if ( resMatch.equals(ResourceMatch.SUPER_RESOURCE_MATCH)
+                        || resMatch.equals(ResourceMatch.WILDCARD_MATCH)
+                        || resMatch.equals(ResourceMatch.EXACT_MATCH) ) {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
     private boolean validateResourceForPrefix(
         ServiceType resourceType,
         Set<String> resourcePrefixes,
@@ -1315,6 +1342,8 @@ public final class PolicyManager {
                     String ruleName = (String) ruleNames.next();
                     Rule rule = (Rule) policy.getRule(ruleName);
                     String serviceTypeName = rule.getServiceTypeName();
+                    String ruleResource = rule.getResourceName();
+
                     Set<String> referredResources = ApplicationManager.
                         getReferredResources(adminSubject,
                         realm, serviceTypeName);
@@ -1326,8 +1355,8 @@ public final class PolicyManager {
                     }
                     ServiceType resourceType = getServiceTypeManager().
                         getServiceType(serviceTypeName);
-                    String ruleResource = rule.getResourceName();
-                    if (!validateResourceForPrefix(resourceType,
+
+                    if (!validateResourceForPrefixE(realm, serviceTypeName,
                         referredResources, ruleResource)) {
                         String[] objs = {ruleResource, resourceType.getName()};
                         throw new PolicyException(ResBundleUtils.rbName,

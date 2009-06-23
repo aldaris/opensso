@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.32 2009-06-22 17:49:23 veiming Exp $
+ * $Id: Privilege.java,v 1.33 2009-06-23 07:00:16 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -539,6 +539,7 @@ public abstract class Privilege implements IPrivilege {
     }
 
     protected boolean doesSubjectMatch(
+        String realm,
         Map<String, Set<String>> resultAdvices,
         Subject subject,
         String resourceName,
@@ -546,7 +547,7 @@ public abstract class Privilege implements IPrivilege {
     ) throws EntitlementException {
         SubjectAttributesManager mgr =
             SubjectAttributesManager.getInstance(subject);
-        SubjectDecision sDecision = getSubject().evaluate(
+        SubjectDecision sDecision = getSubject().evaluate(realm,
             mgr, subject, resourceName, environment);
         if (!sDecision.isSatisfied()) {
             Map<String, Set<String>> advices = sDecision.getAdvices();

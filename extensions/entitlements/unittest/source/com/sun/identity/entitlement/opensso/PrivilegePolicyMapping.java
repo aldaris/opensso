@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegePolicyMapping.java,v 1.6 2009-06-16 10:37:46 veiming Exp $
+ * $Id: PrivilegePolicyMapping.java,v 1.7 2009-06-23 07:00:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -33,8 +33,8 @@ import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.OrCondition;
-import com.sun.identity.entitlement.PolicyCondition;
-import com.sun.identity.entitlement.PolicySubject;
+import com.sun.identity.entitlement.opensso.PolicyCondition;
+import com.sun.identity.entitlement.opensso.PolicySubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;

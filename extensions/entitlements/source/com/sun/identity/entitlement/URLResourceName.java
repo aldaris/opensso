@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLResourceName.java,v 1.5 2009-05-29 23:13:50 veiming Exp $
+ * $Id: URLResourceName.java,v 1.6 2009-06-23 07:00:16 veiming Exp $
  *
  */
 
@@ -76,12 +76,14 @@ public class URLResourceName
     @Override
     public String canonicalize(String urlStr)
         throws EntitlementException {
-
-        try {
-            new URL(urlStr);
-        } catch (MalformedURLException e) {
-            Object[] params = {urlStr};
-            throw new EntitlementException(303, params);
+         /* if no http or https protocol resources
+         * only call super.canonicalize()
+         * to validate the wildcard usage and
+         * remove extra delimiters.
+         */
+        if ((!urlStr.startsWith(DEFAULT_WEB_PROTOCOL + "://"))
+             && (!urlStr.startsWith(SECURE_WEB_PROTOCOL + "://"))) {
+            return super.canonicalize(urlStr);
         }
         
         int index = urlStr.indexOf("://"); 

@@ -22,14 +22,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicySubject.java,v 1.4 2009-05-19 23:50:14 veiming Exp $
+ * $Id: PolicySubject.java,v 1.1 2009-06-23 07:00:17 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.EntitlementSubject;
+import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.entitlement.SubjectAttributesCollector;
+import com.sun.identity.entitlement.SubjectAttributesManager;
+import com.sun.identity.entitlement.SubjectDecision;
 import com.sun.identity.policy.PolicyException;
+import com.sun.identity.policy.PolicyManager;
+import com.sun.identity.security.AdminTokenAction;
+import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -178,6 +187,8 @@ public class PolicySubject implements EntitlementSubject {
 
     /**
      * Returns subject decision.
+     *
+     * @param realm Realm name.
      * @param mgr Subject attribute manager
      * @param subject Subject to be evaluated.
      * @param resourceName Resource name to be evaluated.
@@ -187,15 +198,21 @@ public class PolicySubject implements EntitlementSubject {
      *         occurs.
      */
     public SubjectDecision evaluate(
+        String realm,
         SubjectAttributesManager mgr,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+
         try {
+            PolicyManager pm = new PolicyManager(adminToken, realm);
             com.sun.identity.policy.interfaces.Subject sbj =
                 (com.sun.identity.policy.interfaces.Subject)
                 Class.forName(className).newInstance();
+            sbj.initialize(pm.getPolicyConfig());
             sbj.setValues(values);
             SSOToken token = getSSOToken(subject);
             return new SubjectDecision(sbj.isMember(token),

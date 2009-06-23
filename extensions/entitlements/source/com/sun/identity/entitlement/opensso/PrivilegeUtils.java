@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.31 2009-06-22 10:14:35 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.32 2009-06-23 07:00:17 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -39,8 +39,6 @@ import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPrivilege;
-import com.sun.identity.entitlement.PolicyCondition;
-import com.sun.identity.entitlement.PolicySubject;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ResourceAttribute;

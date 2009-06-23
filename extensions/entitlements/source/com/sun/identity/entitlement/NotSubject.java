@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotSubject.java,v 1.10 2009-05-21 06:35:31 veiming Exp $
+ * $Id: NotSubject.java,v 1.11 2009-06-23 07:00:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -112,6 +112,7 @@ public class NotSubject implements EntitlementSubject {
      * Returns <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation.
      *
+     * @param realm Realm name.
      * @param subject EntitlementSubject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -120,13 +121,14 @@ public class NotSubject implements EntitlementSubject {
      * @throws  EntitlementException if any errors occur.
      */
     public SubjectDecision evaluate(
+        String realm,
         SubjectAttributesManager mgr,
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
-        SubjectDecision d = eSubject.evaluate(mgr, subject, resourceName,
-            environment);
+        SubjectDecision d = eSubject.evaluate(realm, mgr, subject,
+            resourceName, environment);
         return new SubjectDecision(!d.isSatisfied(), Collections.EMPTY_MAP);
     }
 
