@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceProviderEditViewBean.java,v 1.7 2008-11-24 21:36:49 farble1670 Exp $
+ * $Id: WebServiceProviderEditViewBean.java,v 1.8 2009-06-23 22:15:40 mallas Exp $
  *
  */
 
@@ -109,6 +109,8 @@ public class WebServiceProviderEditViewBean
         attrToChildNames.put("SecurityMech", "SecurityMech");
         attrToChildNames.put("UserCredential", "UserCredential");
         attrToChildNames.put("SAMLAttributeMapping", "SAMLAttributeMapping");
+        attrToChildNames.put("DetectMessageReplay", "detectmessagereplay");
+        attrToChildNames.put("DetectUserTokenReplay", "detectusertokenreplay");
     }
     
     /**

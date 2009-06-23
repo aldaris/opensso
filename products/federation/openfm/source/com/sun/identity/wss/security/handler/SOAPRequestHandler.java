@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.40 2009-06-22 23:32:08 rh221556 Exp $
+ * $Id: SOAPRequestHandler.java,v 1.41 2009-06-23 22:15:40 mallas Exp $
  *
  */
 
@@ -250,7 +250,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                     (Node)secureMsg.getSecurityHeaderElement());
         
         String msgID = secureMsg.getMessageID();
-        if(msgID != null) {
+        if(msgID != null && config.isMessageReplayDetectionEnabled()) {
            if(checkForReplay(msgID, config.getProviderName())) {
               throw new SecurityException(
                       bundle.getString("replayAttackDetected")); 
@@ -329,7 +329,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 secureMsg.getSecurityToken(),
                 config, secureMsg, false);
         
-        if(msgID == null) {
+        if(msgID == null && config.isMessageReplayDetectionEnabled()) {
            if(checkForReplay(subject, secureMsg.getMessageTimestamp(),
                    config.getProviderName())) {
               throw new SecurityException(

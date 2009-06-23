@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceProviderEdit.xml,v 1.15 2008-11-06 05:27:40 veiming Exp $
+   $Id: propertyWebServiceProviderEdit.xml,v 1.16 2009-06-23 22:15:41 mallas Exp $
 
 -->
 
@@ -105,6 +105,24 @@
             defaultValue="a310"
             labelFor="preservesecurityheader" />
         <cc name="preservesecurityheader"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+            <attribute name="label" value="label.Yes" />
+        </cc>
+    </property>
+    <property>
+        <label name="lbldetectmessagereplay"
+            defaultValue="a363"
+            labelFor="detectmessagereplay" />
+        <cc name="detectmessagereplay"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+            <attribute name="label" value="label.Yes" />
+        </cc>
+    </property>
+    <property>
+        <label name="lbldetectusertokenreplay"
+            defaultValue="a362"
+            labelFor="detectusertokenreplay" />
+        <cc name="detectusertokenreplay"
             tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
             <attribute name="label" value="label.Yes" />
         </cc>
