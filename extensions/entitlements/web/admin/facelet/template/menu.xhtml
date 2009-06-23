@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.20 2009-06-22 14:53:22 farble1670 Exp $
+   $Id: menu.xhtml,v 1.21 2009-06-23 05:51:25 babysunil Exp $
 
 -->
 
@@ -71,6 +71,26 @@
             value="#{resources['menu.federationItemValue']}"
             action="federation"
             icon="../image/federation.png">
+        <ice:menuItem
+			    rendered="#{permissionsBean.samlV2HostedIdpCreateAllowed}"
+				value="Create Hosted Idp"
+				action="samlv2-hosted-idp-create"
+				icon="../image/new.png"/>
+			<ice:menuItem
+			    rendered="#{permissionsBean.samlV2RemoteIdpCreateAllowed}"
+				value="Create Remote Idp"
+				action="samlv2-remote-idp-create"
+				icon="../image/new.png"/>
+            <ice:menuItem
+			    rendered="#{permissionsBean.samlV2HostedSpCreateAllowed}"
+				value="Create Hosted Sp"
+				action="samlv2-hosted-sp-create"
+				icon="../image/new.png"/>
+			<ice:menuItem
+			    rendered="#{permissionsBean.samlV2RemoteSpCreateAllowed}"
+				value="Create Remote Sp"
+				action="samlv2-remote-sp-create"
+				icon="../image/new.png"/>
         </ice:menuItem>
 
         <ice:menuItem

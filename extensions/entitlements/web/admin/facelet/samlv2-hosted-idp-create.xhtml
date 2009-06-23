@@ -1,0 +1,290 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition
+    template="template/page.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+    <ui:define name="panel-title">
+        <ice:outputText value="#{resources['samlv2-hosted-idp-create.panelTitle']}" />
+    </ui:define>
+    <ui:define name="panel-details">
+        <ice:outputText value="#{resources['samlv2-hosted-idp-create.panelDetails']}" />
+    </ui:define>
+
+    <ui:define name="panel-body">
+        <o:wizard
+            steps="5"
+            wizardHandler="#{samlV2HostedIdpCreateWizardHandler}"
+            wizardBean="#{samlV2HostedIdpCreateWizardBean}">
+            <ui:define name="wizard-steps">
+                <o:wstep
+                    step="0"
+                    label="#{resources['samlv2-hosted-idp-create.wizardstep1']}">
+                    <ui:define name="wizard-step-body">
+                        <div class="section-outer">
+                            <o:section>
+                                <ui:define name="section-title">
+                                    <ice:outputText
+                                        value="#{resources['samlv2-hosted-idp-create.entitynamesectiontitle']}"/>
+                                </ui:define>
+                                <ui:define name="section-body">
+                                    <!-- Metadata -->
+                                    <ice:panelGroup>
+                                        <ice:outputLabel
+                                            for="doYouHaveMeta"
+                                            value="Do you have metadata for this provider?"/>
+
+                                        <ice:panelGroup>
+                                            <ice:selectOneRadio
+                                                id="MenuSelectMetaOrNoMetaRadio"
+                                                partialSubmit="true"
+                                                value="#{samlV2HostedIdpCreateWizardBean.meta}">
+                                                <f:selectItem id="meta" itemValue="true" itemLabel="#{resources['samlv2-hosted-idp-create.hasmetaitemlabel']}"/>
+                                                <f:selectItem id="nometa" itemValue="false" itemLabel="#{resources['samlv2-hosted-idp-create.nometaitemlabel']}"/>
+                                            </ice:selectOneRadio>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{!samlV2HostedIdpCreateWizardBean.meta}">
+                                            <ice:outputLabel
+                                                for="existingRealmList"
+                                                value="#{resources['samlv2-hosted-idp-create.realmsectiontitle']}"/>
+                                            <ui:define name="section-title">
+                                                <ice:outputText
+                                                    value="#{resources['samlv2-hosted-idp-create.realmsectiontitle']}"/>
+                                            </ui:define>
+                                            <ice:selectOneMenu
+                                                id="selectedRealm"
+                                                value="#{samlV2HostedIdpCreateWizardBean.selectedRealm}"
+                                                partialSubmit="true">
+                                                <f:selectItems
+                                                    value="#{samlV2HostedIdpCreateWizardBean.availableRealmsList}"/>
+                                            </ice:selectOneMenu>
+                                        </ice:panelGroup>
+
+                                    </ice:panelGroup>
+                                    <!-- Metadata -->
+                                </ui:define>
+                            </o:section>
+                        </div>
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="1"
+                    label="#{resources['samlv2-hosted-idp-create.wizardstep2']}">
+                    <ui:define name="wizard-step-body">
+                        <div class="section-outer">
+                            <o:section>
+                                <ui:define name="section-title">
+                                    <ice:outputText
+                                        value="#{resources['samlv2-hosted-idp-create.entitynamesectiontitle']}"/>
+                                </ui:define>
+                                <ui:define name="section-body">
+                                    <!-- Metadata -->
+                                    <ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{samlV2HostedIdpCreateWizardBean.meta}">
+                                            <ice:outputLabel
+                                                for="upload the file"
+                                                value="Choose the file to upload?"/>
+                                            <!-- file upload example -->
+                                            <ice:panelGroup styleClass="inputFileContainer">
+                                                <!-- file upload  -->
+                                                <ice:panelGroup>
+                                                    <ice:outputLabel
+                                                        for="standardMetaData"
+                                                        value="#{resources['samlv2-hosted-idp-create.standardmetadata']}"/>
+                                                    <!-- file upload usage with progress callback. -->
+                                                    <ice:inputFile id="stdMetaInputFileName"
+                                                                   submitOnUpload="postUpload"
+                                                                   progressListener="#{samlV2HostedIdpCreateWizardHandler.stdMetaFileUploadProgress}"
+                                                                   actionListener="#{samlV2HostedIdpCreateWizardHandler.stdMetaUploadFile}"/>
+                                                    <!-- progress bar, percent value is upated via progressListener-->
+
+                                                    <ice:outputProgress value="#{samlV2HostedIdpCreateWizardBean.stdMetaFileProgress}"
+                                                                        styleClass="uploadProgressBar"/>
+                                                    <ice:outputText
+                                                        value="#{samlV2HostedIdpCreateWizardBean.stdMetaFilename}"/>
+                                                </ice:panelGroup>
+                                                <ice:panelGroup>
+                                                    <ice:outputLabel
+                                                        for="extendedMetaData"
+                                                        value="#{resources['samlv2-hosted-idp-create.extendedmetadata']}"/>
+                                                    <!-- file upload usage with progress callback. -->
+                                                    <ice:inputFile id="extMetaInputFileName"
+                                                                   submitOnUpload="postUpload"
+                                                                   progressListener="#{samlV2HostedIdpCreateWizardHandler.extMetaFileUploadProgress}"
+                                                                   actionListener="#{samlV2HostedIdpCreateWizardHandler.extMetaUploadFile}"/>
+                                                    <!-- progress bar, percent value is upated via progressListener-->
+
+                                                    <ice:outputProgress value="#{samlV2HostedIdpCreateWizardBean.extMetaFileProgress}"
+                                                                        styleClass="uploadProgressBar"/>
+                                                    <ice:outputText
+                                                        value="#{samlV2HostedIdpCreateWizardBean.extMetaFilename}"/>
+                                                </ice:panelGroup>
+                                            </ice:panelGroup>
+                                            <!-- file upload example -->
+                                            <ice:panelGroup styleClass="inputFileContainer">
+                                            </ice:panelGroup>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{!samlV2HostedIdpCreateWizardBean.meta}">
+                                            <ice:outputLabel
+                                                for="NewEntityName"
+                                                value="#{resources['samlv2-hosted-idp-create.newentityname']}"/>
+                                            <ice:inputText
+                                                id="NewEntityName"
+                                                value="#{samlV2HostedIdpCreateWizardBean.newEntityName}"
+                                                size="70"
+                                                maxlength="70"/>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{!samlV2HostedIdpCreateWizardBean.meta}">
+                                            <ice:outputLabel
+                                                for="SigningKey"
+                                                value="#{resources['samlv2-hosted-idp-create.signingkey']}"/>
+                                            <ice:selectOneMenu
+                                                id="selectedSigningKey"
+                                                value="#{samlV2HostedIdpCreateWizardBean.selectedSigningKey}"
+                                                partialSubmit="true">
+                                                <f:selectItems
+                                                    value="#{samlV2HostedIdpCreateWizardBean.availableSigningKeyList}"/>
+                                            </ice:selectOneMenu>
+                                        </ice:panelGroup>
+                                    </ice:panelGroup>
+                                    <!-- Metadata -->
+                                </ui:define>
+                            </o:section>
+                        </div>
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="2"
+                    label="#{resources['samlv2-hosted-idp-create.wizardstepcot']}">
+                    <ui:define name="wizard-step-body">
+                        <div class="section-outer">
+                            <o:section>
+                                <ui:define name="section-title">
+                                    <ice:outputText
+                                        value="#{resources['samlv2-hosted-idp-create.addentitytocot']}"/>
+                                </ui:define>
+                                <ui:define name="section-body">
+                                    <!-- COT -->
+                                    <ice:panelGroup>
+                                        <ice:outputLabel
+                                            for="cotDecription"
+                                            value="#{resources['samlv2-hosted-idp-create.cotdetails']}" />
+                                        <ice:panelGroup>
+                                            <ice:selectOneRadio
+                                                id="MenuSelectNewCOTRadio"
+                                                value="#{samlV2HostedIdpCreateWizardBean.cot}"
+                                                partialSubmit="true">
+                                                <f:selectItem id="ChoiceCOT" itemValue="true" itemLabel="#{resources['samlv2-idp-create-cot-choiceone']}"/>
+                                                <f:selectItem id="NewCOT" itemValue="false" itemLabel="#{resources['samlv2-idp-create-cot-choicetwo']}"/>
+                                            </ice:selectOneRadio>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{samlV2HostedIdpCreateWizardBean.cot}">
+                                            <ice:panelGroup >
+                                                <ice:outputLabel
+                                                    for="existingCotList"
+                                                    value="#{resources['samlv2-hosted-idp-create.choosecot']}"/>
+                                                <ice:selectOneMenu
+                                                    id="selectedCot"
+                                                    value="#{samlV2HostedIdpCreateWizardBean.selectedCot}"
+                                                    partialSubmit="true">
+                                                    <f:selectItems
+                                                        value="#{samlV2HostedIdpCreateWizardBean.availableCotList}"/>
+                                                </ice:selectOneMenu>
+                                            </ice:panelGroup>
+                                        </ice:panelGroup>
+                                        <ice:panelGroup
+                                            visible="#{!samlV2HostedIdpCreateWizardBean.cot}">
+                                            <ice:outputLabel
+                                                for="NewCotName"
+                                                value="#{resources['samlv2-hosted-idp-create.newcotname']}"/>
+                                            <ice:inputText
+                                                id="NewCotName"
+                                                value="#{samlV2HostedIdpCreateWizardBean.newCotName}"
+                                                size="50"
+                                                maxlength="50"/>
+                                        </ice:panelGroup>
+                                    </ice:panelGroup>
+                                    <!-- COT -->
+                                </ui:define>
+                            </o:section>
+                        </div>
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="3"
+                    label="#{resources['samlv2-hosted-idp-create.wizardstepattrmap']}">
+                    <ui:define name="wizard-step-body">
+                        <div class="section-outer">
+                            <o:section>
+                                <ui:define name="section-title">
+                                    <ice:outputText
+                                        value="#{resources['samlv2-hosted-idp-create.attrmap']}"/>
+                                </ui:define>
+                                <ui:define name="section-details">
+                                </ui:define>
+                                <ui:define name="section-body">
+                                    <ice:panelGroup>
+                                        <!--   <ice:outputLabel
+                                        for="Attribute Mapping"
+                                        value="#{resources['samlv2-hosted-idp-create.attrmap']}"/> -->
+
+                                        <ui:include src="/admin/facelet/template/samlv2-attribute-mapping.xhtml">
+                                            <ui:param
+                                                name="wizardBean"
+                                                value="#{samlV2HostedIdpCreateWizardBean}"/>
+                                            <ui:param
+                                                name="wizardHandler"
+                                                value="#{samlV2HostedIdpCreateWizardHandler}"/>
+                                        </ui:include>
+                                    </ice:panelGroup>
+                                </ui:define>
+                            </o:section>
+                        </div>
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="4"
+                    label="#{resources['samlv2-hosted-idp-create.wizardstepreview']}">
+                    <ui:define name="wizard-step-body">
+                        <div class="section-outer">
+                            <o:section>
+                                <ui:define name="section-title">
+                                    <ice:outputText
+                                        value="#{resources['samlv2-hosted-idp-create.summary']}"/>
+                                </ui:define>
+                                <ui:define name="section-details">
+                                    <ice:outputText
+                                        value="#{resources['samlv2-hosted-idp-create.reviewdetails']}"/>
+                                </ui:define>
+                                <ui:define name="section-body">
+
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedIdpCreateWizardBean.realmSamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedIdpCreateWizardBean.entityNameSamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedIdpCreateWizardBean.stdMetadataNameSamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedIdpCreateWizardBean.extMetadataNameSamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedIdpCreateWizardBean.cotSamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedIdpCreateWizardBean.signingKeySamlV2CreateSummary}"/>
+                                    <o:summarypanel
+                                        summary="#{samlV2HostedIdpCreateWizardBean.attributeMappingSamlV2HostedCreateSummary}"/>
+                                </ui:define>
+                            </o:section>
+                        </div>
+                    </ui:define>
+                </o:wstep>
+            </ui:define>
+        </o:wizard>
+    </ui:define>
+</ui:composition>
