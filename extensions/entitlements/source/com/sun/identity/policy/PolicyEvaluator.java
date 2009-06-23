@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.13 2009-06-23 08:24:39 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.14 2009-06-23 09:18:09 veiming Exp $
  *
  */
 
@@ -546,7 +546,14 @@ public class PolicyEvaluator {
         resourceNames.add(resourceName);
 
         Set actions = new HashSet();
-        actions.add(actionName);
+        if (actionName != null) {
+            actions.add(actionName);
+        } else {
+            Set actionNames = serviceType.getActionNames();
+            if (actionNames != null) {
+                actions.addAll(actionNames);
+            }
+        }
 
         envParameters.put(SUN_AM_REQUESTED_RESOURCE, resourceNames);
         envParameters.put(SUN_AM_ORIGINAL_REQUESTED_RESOURCE,
@@ -1163,6 +1170,11 @@ public class PolicyEvaluator {
     private Set getResourceResultsE(SSOToken token,
             String resourceName, String scope, Map envParameters)
             throws SSOException, PolicyException {
+
+        if ((envParameters == null) || envParameters.isEmpty()) {
+            envParameters = new HashMap();
+        }
+        padEnvParameters(token, resourceName, null, envParameters);
 
         Set resultsSet;
         boolean subTreeSearch = false;
