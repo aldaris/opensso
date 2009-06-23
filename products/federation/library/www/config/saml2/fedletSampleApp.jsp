@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSampleApp.jsp,v 1.10 2009-06-17 03:10:28 exu Exp $
+   $Id: fedletSampleApp.jsp,v 1.11 2009-06-23 18:59:32 madan_ranganath Exp $
 
 --%>
 
@@ -183,6 +183,12 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
         out.println("<br><br>Click <a href=\"" + relayUrl 
             + "\">here</a> to redirect to final destination.");
     }
+
+    out.print("<p><p>");
+    out.println("<br><b>Test Attribute Query:</b></br>");
+    out.print("<p><p>");
+    out.print("<b><a href="+deployuri+"/fedletAttrQuery.jsp?nameIDValue="+value+"&idpEntityID="+entityID+"&spEntityID="+spEntityID+">Fedlet Attribute Query </a></b>");
+    out.print("<p><p>");
 
     Map idpMap = getIDPBaseUrlAndMetaAlias(entityID, deployuri);
     String idpBaseUrl = (String) idpMap.get("idpBaseUrl");

@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.9 2008-08-19 19:11:00 veiming Exp $
+$Id: README,v 1.10 2009-06-23 18:58:26 madan_ranganath Exp $
 
 
 
@@ -35,6 +35,7 @@ $Id: README,v 1.9 2008-08-19 19:11:00 veiming Exp $
     %% 4. How to integrate with existing application after Single Sign-on 
     %% 5. How to enable Fedlet to support multiple Identity Providers  
     %% 6. How to enable Identity Provider Discovery service in Fedlet
+    %% 7. How to perform Fedlet Attribute Query
 
 
 %% 1. Contents of this directory 
@@ -224,3 +225,66 @@ try {
        You will be redirected to the IDP discovery service to find out
        the preferred IDP and send back to Fedlet side with the chosen
        IDP to start the Fedlet initiated single sign-on.
+
+%% 7. How to perform Fedlet Attribute Query:
+
+      Step 1)
+      Following steps need to be performed on hosted IDP:
+
+      a) When creating the IDP entity metadata, make sure that you specify that
+         particular entity with Attribute Authority role. 
+      b) Specify the list of attributes to be fetched in the Attribute Map
+	 ex : CommonName=cn
+	      GiveName=sn
+	      UserStatus=inetUserStatus
+      c) Create the Fedlet.
+
+      Step 2)
+      Following steps need to be performed on Fedlet side:
+
+      a) Deploy fedlet.war and configure the fedlet
+
+      b) The Attribute Query needs to be signed. Please follow the below
+	 link on creating a KeyStore, importing the certificate. 
+	   http://wikis.sun.com/display/OpenSSO/Enabling+XML+Signing+and+Decryption+in+the+OpenSSO+Java+Fedlet
+	 
+	 Add the certificate to the "RoleDescriptor" element as shown below
+	 inside "sp.xml".
+
+         <RoleDescriptor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	  xmlns:query="urn:oasis:names:tc:SAML:metadata:ext:query" 
+	  xsi:type="query:AttributeQueryDescriptorType" 
+	  protocolSupportEnumeration= "urn:oasis:names:tc:SAML:2.0:protocol">
+	      <KeyDescriptor use="signing">
+	      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+	      <ds:X509Data>
+	      <ds:X509Certificate>
+		--certificate--
+              </ds:X509Certificate>
+              </ds:X509Data>
+              </ds:KeyInfo>
+              </KeyDescriptor>
+         </RoleDescriptor>
+
+      c) In the "sp-extended.xml", specify the correct value for
+         "signingCertAlias" inside the AttributeQueryConfig element as follows:
+             <Attribute name="signingCertAlias">
+                 <Value>test</Value>
+             </Attribute>
+
+      d) 2 JSP files are bundled along inside fedlet.war. fedletAttrQuery.jsp
+	 gets the list of attributes from the form and fedletAttrResp.jsp
+         invokes the below method to get the attribute values and display the 
+	 same. 
+	      Map attrMap = AttributeQueryUtil.getAttributeMapForFedlet(
+						      spEntityID, 
+                                                      idpEntityID, 
+                                                      newNameIDValue, 
+                                                      attrsList);
+      e) You can modify "fedletAttrQuery.jsp" to get the list of attributes
+         from IDP. Please make sure you define the correct mapping in the IDP.
+
+      f) Goto Step (1) i.e to Hosted IDP side
+
+      g) Delete existing fedlet metadata and obtain the standard metadata 
+	 from Fedlet(i.e sp.xml) and import the same.

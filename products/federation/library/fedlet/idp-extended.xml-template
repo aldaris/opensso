@@ -8,4 +8,8 @@
             <Value>fedletcot</Value>
         </Attribute>
     </IDPSSOConfig>
+    <AttributeAuthorityConfig">
+        <Attribute name="cotlist">
+            <Value>fedletcot</Value>
+        </Attribute>
 </EntityConfig>

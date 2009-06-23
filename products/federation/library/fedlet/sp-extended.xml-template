@@ -130,4 +130,15 @@
            <Value>false</Value>
        </Attribute>
     </SPSSOConfig>
+    <AttributeQueryConfig metaAlias="/attrQuery">
+        <Attribute name="signingCertAlias">
+            <Value></Value>
+        </Attribute>
+        <Attribute name="encryptionCertAlias">
+            <Value></Value>
+        </Attribute>
+        <Attribute name="cotlist">
+           <Value>fedletcot</Value>
+        </Attribute>
+    </AttributeQueryConfig>
 </EntityConfig>
