@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeQueryUtil.java,v 1.9 2008-12-03 00:32:31 hengming Exp $
+ * $Id: AttributeQueryUtil.java,v 1.10 2009-06-23 19:12:04 madan_ranganath Exp $
  *
  */
 
@@ -69,6 +69,7 @@ import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.jaxb.assertion.AttributeElement;
 import com.sun.identity.saml2.jaxb.assertion.AttributeValueElement;
 import com.sun.identity.saml2.jaxb.entityconfig.AttributeAuthorityConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.AttributeQueryConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.AttributeAuthorityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.AttributeServiceElement;
 import com.sun.identity.saml2.jaxb.metadataextquery.AttributeQueryDescriptorElement;
@@ -1164,5 +1165,241 @@ public class AttributeQueryUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * Sends the AttributeQuery to specifiied attribute authority, 
+     * validates the response and returns the attribute map
+     * <code>Map</code> to the Fedlet
+     *
+     * @param spEntityID SP entity ID
+     * @param idpEntityID IDP entity ID
+     * @param nameIDValue  NameID value 
+     * @param attrsList The list of attributes whose values needs to be 
+     *                  fetched from IDP
+     *
+     * @return the <code>Map</code> object
+     * @exception SAML2Exception if the operation is not successful
+     *
+     * @supported.api
+     */
+    public static Map getAttributeMapForFedlet(String spEntityID,
+                                               String idpEntityID,
+                                               String nameIDValue,
+                                               List attrsList)
+                                               throws SAML2Exception {
+
+        AttributeQueryConfigElement attrQueryConfig =
+                metaManager.getAttributeQueryConfig("/", spEntityID);
+        if (attrQueryConfig == null) {
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("AttributeQueryUtil." +
+                                          "getAttributeMapForFedlet: " +
+                                          "Attribute Query Config is null");
+             }
+            return null;
+        }
+
+        String attrqMetaAlias = attrQueryConfig.getMetaAlias();
+        if (attrqMetaAlias == null) {
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("AttributeQueryUtil." +
+                                       "getAttributeMapForFedlet: " +
+                                       "Attribute Query MetaAlias is null");
+             }
+            return null;
+        }
+
+        AttributeQuery attrQuery = constructAttrQueryForFedlet(spEntityID,
+                                                               idpEntityID,
+                                                               nameIDValue,
+                                                               attrsList,
+                                                               attrqMetaAlias);
+
+        Response samlResp = sendAttributeQuery(attrQuery, idpEntityID,
+                                  "/",
+                                  SAML2Constants.DEFAULT_ATTR_QUERY_PROFILE,
+                                  SAML2Constants.BASIC_ATTRIBUTE_PROFILE,
+                                  SAML2Constants.SOAP);
+
+        // Validate the response
+        boolean validResp = validateSAMLResponseForFedlet(samlResp);
+        Map attrMap = new HashMap();
+        if (validResp) {
+            // Return back the AttributeMap
+            if (samlResp != null) {
+                List assertions = samlResp.getAssertion();
+                for (Iterator asserIter = assertions.iterator();
+                    asserIter.hasNext(); ) {
+                    Assertion assertion = (Assertion)asserIter.next();
+                    if (assertion != null) {
+                        List statements = assertion.getAttributeStatements();
+                        if (statements != null && statements.size() > 0 ) {
+                            for (Iterator stmtIter = statements.iterator();
+                                stmtIter.hasNext();) {
+                                AttributeStatement statement =
+                                    (AttributeStatement)stmtIter.next();
+                                List attributes = statement.getAttribute();
+                                if (attributes != null) {
+                                    for (Iterator attribIter =
+                                        attributes.iterator();
+                                        attribIter.hasNext(); ) {
+                                        Attribute attr =
+                                            (Attribute)attribIter.next();
+                                        String attrName = attr.getName();
+                                        List attrValueList =
+                                            attr.getAttributeValueString();
+                                        StringBuffer attrValue =
+                                                     new StringBuffer();
+                                        for (Iterator attrValueIter =
+                                             attrValueList.iterator();
+                                             attrValueIter.hasNext(); ) {
+                                            // Multiple attribute values
+                                            // are seperated with "|"
+                                            if (attrValue.length() > 0) {
+                                                attrValue.append('|');
+                                            }
+                                            String value =
+                                                (String)attrValueIter.next();
+                                            attrValue.append(value);
+                                        }
+                                        attrMap.put(attrName,
+                                                    attrValue.toString());
+                                    }
+                                } else {
+                                    if (SAML2Utils.debug.messageEnabled()) {
+                                        SAML2Utils.debug.message(
+                                            "AttributeQueryUtil." +
+                                            "getAttributeMapForFedlet: " +
+                                            "No Attributes present in " +
+                                            "SAML response");
+                                    }
+                                }
+                            }
+                        } else {
+                            if (SAML2Utils.debug.messageEnabled()) {
+                                SAML2Utils.debug.message("AttributeQueryUtil." +
+                                "getAttributeMapForFedlet: " +
+                                "Empty Statement present in SAML response");
+                            }
+                        }
+                    } else {
+                        if (SAML2Utils.debug.messageEnabled()) {
+                            SAML2Utils.debug.message("AttributeQueryUtil." +
+                            "getAttributeMapForFedlet: " +
+                            "Empty Assertion present in SAML response");
+                        }
+                    }
+                }
+            }
+        } else {
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("AttributeQueryUtil." +
+                   "getAttributeMapForFedlet: " +
+                   "Invalid response obtained from Attribute Authority");
+            }
+        }
+        // Return the attribute map and to the fedlet
+        return attrMap;
+    }
+
+    /**
+     * 
+     * Constructs the Attribute Query used by the Fedlet to retrieve the 
+     * values from IDP
+     *
+     * @param samlResp saml response
+     *
+     * @exception SAML2Exception if the operation is not successful
+     *
+     * @supported.api
+     */
+    private static AttributeQuery constructAttrQueryForFedlet(
+                                  String spEntityID,
+                                  String idpEntityID,
+                                  String nameIDValue,
+                                  List attrsList,
+                                  String attrqMetaAlias) throws SAML2Exception
+    {
+        String attrqEntityID =
+          SAML2Utils.getSAML2MetaManager().getEntityByMetaAlias(attrqMetaAlias);
+
+        ProtocolFactory protocolFactory = ProtocolFactory.getInstance();
+        AssertionFactory assertionFactory = AssertionFactory.getInstance();        
+
+        AttributeQuery attrQuery = protocolFactory.createAttributeQuery();
+
+        Issuer issuer = assertionFactory.createIssuer();
+        issuer.setValue(attrqEntityID);
+
+        attrQuery.setIssuer(issuer);
+        attrQuery.setID(SAML2Utils.generateID());
+        attrQuery.setVersion(SAML2Constants.VERSION_2_0);
+        attrQuery.setIssueInstant(new Date());
+
+        List attrs = new ArrayList();
+        for (Iterator attrIter = attrsList.iterator();
+                                attrIter.hasNext();) {
+            Attribute attr = assertionFactory.createAttribute();
+            String attributeName = (String)attrIter.next();
+            attr.setName(attributeName);
+            attr.setNameFormat(SAML2Constants.BASIC_NAME_FORMAT);
+            attrs.add(attr);
+        }        
+        attrQuery.setAttributes(attrs);
+
+        Subject subject = assertionFactory.createSubject();
+        NameID nameID = assertionFactory.createNameID();
+
+        nameID.setFormat(SAML2Constants.NAMEID_TRANSIENT_FORMAT);
+        nameID.setValue(nameIDValue);
+        nameID.setNameQualifier(idpEntityID);
+        nameID.setSPNameQualifier(spEntityID);
+
+        subject.setNameID(nameID);
+        attrQuery.setSubject(subject);
+
+        return attrQuery;
+    }
+
+     /**
+     * Validates the SAML response obtained from Attribute Authortity
+     *
+     * @param samlResp saml response
+     *
+     * @exception SAML2Exception if the operation is not successful
+     *
+     * @supported.api
+     */
+    private static boolean validateSAMLResponseForFedlet(Response samlResp)
+            throws SAML2Exception {        
+
+        boolean resp = true;
+        if (samlResp != null) {
+            List assertions = samlResp.getAssertion();
+            for (Iterator asserIter = assertions.iterator();
+                asserIter.hasNext(); ) {
+                    Assertion assertion = (Assertion)asserIter.next();
+                    if (assertion != null) {
+                        Conditions conditions = assertion.getConditions();
+                        if (conditions != null) {
+                            List audienceRes = conditions.
+                                               getAudienceRestrictions();
+                            if (audienceRes.size() > 1) {
+                                resp = false;
+                                break;
+                            }
+                        }
+                        List statements = assertion.getAttributeStatements();
+                        if (statements.size() > 1) {
+                            resp = false;
+                            break;
+                       }
+                    }
+            }
+        } else {
+            resp = false;
+        }
+        return resp;
     }
 }

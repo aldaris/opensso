@@ -22,12 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletMetaData.java,v 1.8 2009-06-09 20:29:25 exu Exp $
+ * $Id: FedletMetaData.java,v 1.9 2009-06-23 19:13:14 madan_ranganath Exp $
  *
  */
 
 package com.sun.identity.workflow;
 
+
+import java.lang.StringBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -125,6 +127,7 @@ public class FedletMetaData {
                     extendedData.substring(idx+1);
             }
         }
+        
         return extendedData;
     }
 
@@ -132,5 +135,5 @@ public class FedletMetaData {
     private static final String TAG_BASE_URL = "@BASE_URL@";
 
     private static final String STANDARD_METADATA = 
-        "<EntityDescriptor entityID=\"@ENTITY_ID@\" xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"><SPSSODescriptor AuthnRequestsSigned=\"false\" WantAssertionsSigned=\"false\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\"><SingleLogoutService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\" Location=\"@BASE_URL@/fedletSloRedirect\" ResponseLocation=\"@BASE_URL@/fedletSloRedirect\"/><SingleLogoutService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"@BASE_URL@/fedletSloPOST\" ResponseLocation=\"@BASE_URL@/fedletSloPOST\"/><SingleLogoutService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\" Location=\"@BASE_URL@/fedletSloSoap\"/><NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat><AssertionConsumerService isDefault=\"true\" index=\"0\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"@BASE_URL@/fedletapplication\"/><AssertionConsumerService index=\"1\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact\" Location=\"@BASE_URL@/fedletapplication\"/></SPSSODescriptor></EntityDescriptor>";
+        "<EntityDescriptor entityID=\"@ENTITY_ID@\" xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"><SPSSODescriptor AuthnRequestsSigned=\"false\" WantAssertionsSigned=\"false\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\"><SingleLogoutService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\" Location=\"@BASE_URL@/fedletSloRedirect\" ResponseLocation=\"@BASE_URL@/fedletSloRedirect\"/><SingleLogoutService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"@BASE_URL@/fedletSloPOST\" ResponseLocation=\"@BASE_URL@/fedletSloPOST\"/><SingleLogoutService Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\" Location=\"@BASE_URL@/fedletSloSoap\"/><NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat><AssertionConsumerService isDefault=\"true\" index=\"0\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"@BASE_URL@/fedletapplication\"/><AssertionConsumerService index=\"1\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact\" Location=\"@BASE_URL@/fedletapplication\"/></SPSSODescriptor><RoleDescriptor xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:query=\"urn:oasis:names:tc:SAML:metadata:ext:query\" xsi:type=\"query:AttributeQueryDescriptorType\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\"></RoleDescriptor></EntityDescriptor>";
 }

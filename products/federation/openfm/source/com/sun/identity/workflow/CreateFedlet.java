@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.12 2009-06-09 20:29:25 exu Exp $
+ * $Id: CreateFedlet.java,v 1.13 2009-06-23 19:13:14 madan_ranganath Exp $
  *
  */
 
@@ -334,6 +334,9 @@ public class CreateFedlet
         String extended = FedletMetaData.createExtendedMetaData(realm,
             entityId, attrMapping, assertConsumer);
         
+        // Add the AttributeQueryConfig to SP extended meta data
+        extended = addAttributeQueryTemplate(extended, cot);
+          
         ImportSAML2MetaData.importData(realm, metadata, extended);
         if ((cot != null) && (cot.length() > 0)) {
             try {
@@ -610,6 +613,34 @@ public class CreateFedlet
             sb.append(chars, lastIdx, i - lastIdx);
         }
         return sb.toString();
+    }
+
+    /**
+     * Below method will add the AttributeQuery to the SP extended
+     * meta data
+     */
+    private String addAttributeQueryTemplate(String extended, String cot) {
+        StringBuffer buff = new StringBuffer();
+        buff.append(
+            "    <AttributeQueryConfig metaAlias=\"/attrQuery\">\n" +
+            "        <Attribute name=\"SigningCertAlias\">\n" +
+            "            <Value>" + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"encryptionCertAlias\">\n" +
+            "            <Value>" + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"cotlist\">\n" +
+            "            <Value>" + cot + "</Value>\n" +
+            "        </Attribute>\n" +
+            "    </AttributeQueryConfig>\n"
+        );
+        int idx = extended.indexOf("</EntityConfig>");
+        if (idx != -1) {
+            extended = extended.substring(0, idx) +
+                       buff.toString() +
+                       "</EntityConfig>";
+        }
+        return extended;
     }
 }
 
