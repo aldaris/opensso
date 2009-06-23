@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileHandler.java,v 1.11 2009-06-19 02:32:00 bigfatrat Exp $
+ * $Id: FileHandler.java,v 1.12 2009-06-23 20:06:52 ww203982 Exp $
  *
  */
 package com.sun.identity.log.handlers;
@@ -38,7 +38,8 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
@@ -89,7 +90,8 @@ public class FileHandler extends java.util.logging.Handler {
     private String currentFileName;
     private String fileName;
     private int recCountLimit;
-    private ArrayList recordBuffer;
+    private LinkedList recordBuffer;
+    private static LoggingThread thread = LoggingThread.getInstance();
     private TimeBufferingTask bufferTask;
     private boolean timeBufferingEnabled = false;
     private static String headerString = null;
@@ -352,7 +354,7 @@ public class FileHandler extends java.util.logging.Handler {
         }
         logger.setCurrentFile(this.fileName);
 
-        recordBuffer = new ArrayList();
+        recordBuffer = new LinkedList();
 
         if (timeBufferingEnabled) {
             startTimeBufferingThread();
@@ -403,7 +405,7 @@ public class FileHandler extends java.util.logging.Handler {
      * beginning of the file.
      * @param lrecord the log record to be published.
      */
-    public synchronized void publish(LogRecord lrecord) {
+    public void publish(LogRecord lrecord) {
         if (Agent.isRunning() && fileLogHandlerForMonitoring != null) {
             fileLogHandlerForMonitoring.incHandlerRequestCount(1);
         }
@@ -414,16 +416,15 @@ public class FileHandler extends java.util.logging.Handler {
         if (!isLoggable(lrecord)) {
             return;
         }
-        String message = getFormatter().format(lrecord);
-        synchronized (recordBuffer) {
-            recordBuffer.add(message);
-        }
-        if (recordBuffer.size() >= recCountLimit) {
-            if (Debug.messageEnabled()) {
-                Debug.message(fileName + ":FileHandler.publish(): got " +
+        synchronized (this) {        
+            recordBuffer.add(lrecord);
+            if (recordBuffer.size() >= recCountLimit) {
+                if (Debug.messageEnabled()) {
+                    Debug.message(fileName + ":FileHandler.publish(): got " +
                         recordBuffer.size() + " records, writing all");
+                }
+                flush();
             }
-            flush();
         }
     }
 
@@ -437,61 +438,73 @@ public class FileHandler extends java.util.logging.Handler {
     /**
      * Flush any buffered messages.
      */
-    public synchronized void flush() {
-        if (recordBuffer.size() <= 0) {
-            if (Debug.messageEnabled()) {
-                Debug.message(fileName +
+    public void flush() {
+        LinkedList writeBuffer = null;
+        synchronized (this) {
+            if (recordBuffer.size() <= 0) {
+                if (Debug.messageEnabled()) {
+                    Debug.message(fileName +
                         ":FileHandler.flush: no records in buffer to write");
-            }
-            return;
-        }
-        if (writer == null) {
-            Debug.error(fileName + ":FileHandler: Writer is null");
-            synchronized (recordBuffer) {
-                int recordsToBeDropped = recordBuffer.size();
-                recordBuffer.clear();
-                if (Agent.isRunning() && fileLogHandlerForMonitoring != null){
-                    fileLogHandlerForMonitoring.incHandlerDroppedCount(
-                        recordsToBeDropped);
                 }
+                return;
             }
-            return;
+            writeBuffer = recordBuffer;
+            recordBuffer = new LinkedList();
         }
-        if (Debug.messageEnabled()) {
-            Debug.message(fileName + ":FileHandler.flush: writing " +
-                    "buffered records (" +
-                    recordBuffer.size() + " records)");
-        }
-        synchronized (recordBuffer) {
-            int rbsz = recordBuffer.size();
-            for (int i = 0; i < rbsz; ++i) {
-                String message = (String) recordBuffer.remove(0);
-                if ((message.length() > 0) &&
-                        ((meteredStream.written + message.length()) >= maxFileSize)) {
-                    if (Debug.messageEnabled()) {
-                        Debug.message(fileName +
+        final LinkedList tempBuffer = writeBuffer;
+        writeBuffer = null;
+        Runnable logTask = new Runnable() {
+            public void run() {
+                if (writer == null) {
+                    Debug.error(fileName + ":FileHandler: Writer is null");
+                    int recordsToBeDropped = tempBuffer.size();
+                    if (Agent.isRunning() && fileLogHandlerForMonitoring !=
+                        null) {
+                        fileLogHandlerForMonitoring.incHandlerDroppedCount(
+                            recordsToBeDropped);
+                    }
+                    tempBuffer.clear();
+                    return;
+                }
+                if (Debug.messageEnabled()) {
+                    Debug.message(fileName + ":FileHandler.flush: writing " +
+                        "buffered records (" +
+                        tempBuffer.size() + " records)");
+                }
+                Formatter formatter = getFormatter();
+                for (Iterator iter = tempBuffer.iterator(); iter.hasNext();) {
+                    String message = formatter.format((LogRecord) iter.next());
+                    if ((message.length() > 0) &&
+                        ((meteredStream.written + message.length()) >=
+                        maxFileSize)) {
+                        if (Debug.messageEnabled()) {
+                            Debug.message(fileName +
                                 ":FileHandler: Rotation condition reached");
+                        }
+                        // no need to synchronize since there is only 1 logging
+                        // thread.
+                        rotate();
                     }
-                    rotate();
-                }
-                try {
-                    if (!headerWritten) {
-                        writer.write(getHeaderString());
-                        headerWritten = true;
-                    }
-                    writer.write(message);
-                    if (Agent.isRunning() &&
-                        fileLogHandlerForMonitoring != null)
-                    {
-                        fileLogHandlerForMonitoring.incHandlerSuccessCount(1);
-                    }
-                } catch (IOException ex) {
-                    Debug.error(fileName +
+                    try {
+                        if (!headerWritten) {
+                            writer.write(getHeaderString());
+                            headerWritten = true;
+                        }
+                        writer.write(message);
+                        if (Agent.isRunning() &&
+                            fileLogHandlerForMonitoring != null) {                    
+                            fileLogHandlerForMonitoring.incHandlerSuccessCount(
+                                1);
+                        }
+                    } catch (IOException ex) {
+                        Debug.error(fileName +
                             ":FileHandler: could not write to file: ", ex);
+                    }
+                    cleanup();
                 }
-                cleanup();
             }
-        }
+        };
+        thread.run(logTask);
     }
 
     private void rotate() {
