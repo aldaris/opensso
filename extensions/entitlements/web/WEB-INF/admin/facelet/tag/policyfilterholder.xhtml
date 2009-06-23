@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policyfilterholder.xhtml,v 1.7 2009-06-11 19:54:32 farble1670 Exp $
+   $Id: policyfilterholder.xhtml,v 1.8 2009-06-23 18:43:48 farble1670 Exp $
 
 -->
 
@@ -50,7 +50,7 @@
                             <ice:panelGroup>
                                 <ice:selectOneMenu
                                     id="filter-type-select"
-                                    valueChangeListener="#{policyManageHandler.policyFilterChangedListener}"
+                                    valueChangeListener="#{handler.policyFilterChangedListener}"
                                     value="#{policyFilterHolder.policyFilterTypeName}">
                                     <f:selectItems
                                         value="#{policyFilterHolder.policyFilterTypeNameItems}"/>
@@ -66,7 +66,7 @@
                         <ice:panelGroup
                             styleClass="float-right">
                             <ice:commandLink
-                                actionListener="#{policyManageHandler.removePolicyFilterListener}">
+                                actionListener="#{handler.removePolicyFilterListener}">
                                 <f:attribute
                                     name="policyFilterHolder"
                                     value="#{policyFilterHolder}"/>
@@ -74,7 +74,7 @@
                                     value="../image/remove-16.png"/>
                             </ice:commandLink>
                             <ice:commandLink
-                                actionListener="#{policyManageHandler.addPolicyFilterListener}">
+                                actionListener="#{handler.addPolicyFilterListener}">
                                 <ice:graphicImage
                                     value="../image/add-16.png"/>
                             </ice:commandLink>

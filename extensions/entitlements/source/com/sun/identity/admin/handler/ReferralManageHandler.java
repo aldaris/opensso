@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageHandler.java,v 1.3 2009-06-23 18:05:30 farble1670 Exp $
+ * $Id: ReferralManageHandler.java,v 1.4 2009-06-23 18:43:47 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -32,6 +32,7 @@ import com.sun.identity.admin.dao.ReferralDao;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.PhaseEventAction;
+import com.sun.identity.admin.model.PolicyFilterHolder;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.ReferralBean;
 import com.sun.identity.admin.model.ReferralManageBean;
@@ -42,6 +43,7 @@ import java.util.Set;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
+import javax.faces.event.ValueChangeEvent;
 
 public class ReferralManageHandler implements Serializable {
     private ReferralManageBean referralManageBean;
@@ -49,6 +51,13 @@ public class ReferralManageHandler implements Serializable {
     private ReferralDao referralDao;
     private ReferralWizardBean referralEditWizardBean;
     private MessagesBean messagesBean;
+
+    public PolicyFilterHolder getPolicyFilterHolder(ActionEvent event) {
+        PolicyFilterHolder pfh = (PolicyFilterHolder) event.getComponent().getAttributes().get("policyFilterHolder");
+        assert (pfh != null);
+
+        return pfh;
+    }
 
     public void selectAllListener(ActionEvent event) {
         referralManageBean.setSelectAll(!referralManageBean.isSelectAll());
@@ -171,4 +180,40 @@ public class ReferralManageHandler implements Serializable {
 
         referralManageBean.setViewOptionsPopupVisible(true);
     }
+
+    public void addPolicyFilterListener(ActionEvent event) {
+        referralManageBean.newPolicyFilterHolder();
+        addResetEvent();
+    }
+
+    private void addResetEvent() {
+        PhaseEventAction pea = new PhaseEventAction();
+        pea.setDoBeforePhase(true);
+        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+        pea.setAction("#{referralManageHandler.handleReset}");
+        pea.setParameters(new Class[]{});
+        pea.setArguments(new Object[]{});
+
+        queuedActionBean.getPhaseEventActions().add(pea);
+    }
+
+    public void handleReset() {
+        referralManageBean.reset();
+    }
+
+    public void policyFilterChangedListener(ValueChangeEvent event) {
+        addResetEvent();
+    }
+
+    public void policyFilterChangedListener(ActionEvent event) {
+        addResetEvent();
+    }
+
+    public void removePolicyFilterListener(ActionEvent event) {
+        PolicyFilterHolder pfh = getPolicyFilterHolder(event);
+        referralManageBean.getPolicyFilterHolders().remove(pfh);
+        addResetEvent();
+    }
+
+
 }

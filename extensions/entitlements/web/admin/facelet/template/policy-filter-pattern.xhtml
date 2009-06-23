@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-filter-pattern.xhtml,v 1.4 2009-06-11 19:54:32 farble1670 Exp $
+   $Id: policy-filter-pattern.xhtml,v 1.5 2009-06-23 18:43:49 farble1670 Exp $
 
 -->
 
@@ -35,13 +35,14 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <ice:panelGroup>
+    <ice:panelGrid
+        columns="2">
         <ice:outputText
             value="#{resources['policy-filter-pattern.contains']}"/>
         <ice:inputText
             styleClass="inline-input"
             value="#{policyFilter.filter}"
             onkeyup="submitNow(this); setFocus(this);"
-            valueChangeListener="#{policyManageHandler.policyFilterChangedListener}"/>
-    </ice:panelGroup>
+            valueChangeListener="#{handler.policyFilterChangedListener}"/>
+    </ice:panelGrid>
 </span>

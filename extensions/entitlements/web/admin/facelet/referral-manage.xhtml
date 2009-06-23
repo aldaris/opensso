@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-manage.xhtml,v 1.5 2009-06-23 18:05:31 farble1670 Exp $
+   $Id: referral-manage.xhtml,v 1.6 2009-06-23 18:43:48 farble1670 Exp $
 -->
 
 <ui:composition
@@ -95,10 +95,8 @@
                 </ice:panelGrid>
             </ui:define>
             <ui:define name="section-body">
-                <!--
                 <ui:include
                     src="/admin/facelet/template/referral-manage-filters.xhtml"/>
-                -->
                 <ice:panelGroup
                     style="padding-top: 10px"
                     rendered="#{o:size(referralManageBean.referralBeans) == 0}">
