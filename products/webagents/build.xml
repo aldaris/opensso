@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.14 2009-05-15 23:26:07 krishna_indigo Exp $
+   $Id: build.xml,v 1.15 2009-06-24 05:34:30 kevinserwin Exp $
 
 -->
 
@@ -81,6 +81,12 @@
         <equals arg1="${build.type}" arg2="64"/>
     </condition>
 
+    <condition property="target.jdk.set" value="${target.jdk}">
+        <isset property="target.jdk"/>
+    </condition>
+    <condition property="target.jdk.set" value="1.5">
+        <not><isset property="target.jdk"/></not>
+    </condition>
 
     <!-- agent version number appended to end of agent zip file name -->
     <property name="agentversion" value="3"/>

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.20 2009-06-23 20:29:29 kevinserwin Exp $
+   $Id: build.xml,v 1.21 2009-06-24 05:34:30 kevinserwin Exp $
 
 -->
 
@@ -48,6 +48,15 @@
         <format property="nightly.date" pattern="yyyyMMdd" offset="-1"
             unit="day"/>
     </tstamp>
+    
+    <condition property="target.jdk.set" value="${target.jdk}">
+        <isset property="target.jdk"/>
+    </condition>
+    <condition property="target.jdk.set" value="1.5">
+        <not><isset property="target.jdk"/></not>
+    </condition>
+    <echo message="OpenSSO JDK Version: ${target.jdk.set}"/>    
+    
     <!-- build class path -->
     <path id="build.class.path">
         <pathelement location="${wssagents.classes.dir}"/>
