@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestServlet.java,v 1.5 2009-06-22 10:14:34 veiming Exp $
+ * $Id: TestServlet.java,v 1.6 2009-06-24 19:23:46 farble1670 Exp $
  */
-
 package com.sun.identity.admin;
 
 import com.iplanet.sso.SSOException;
@@ -33,6 +32,8 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.entitlement.ReferralPrivilege;
+import com.sun.identity.entitlement.ReferralPrivilegeManager;
 import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import java.io.IOException;
@@ -57,44 +58,78 @@ public class TestServlet extends HttpServlet {
                 throw new ServletException("no action specified");
             }
             if (action.equals("privilege.create")) {
-                int n = 1;
-                if (request.getParameter("n") != null) {
-                    n = Integer.parseInt(request.getParameter("n"));
-                }
-                String template = request.getParameter("template");
-                if (template == null) {
-                    throw new ServletException("no privilege template specified");
-                }
-                String realm = request.getParameter("realm");
-                if (realm == null) {
-                    realm = "/";
-                }
-
-                PrivilegeManager pm = getPrivilegeManager(request, realm);
-                Privilege p = pm.getPrivilege(template);
-                if (p == null) {
-                    throw new ServletException("template privilege did not exist");
-                }
-                for (int i = 0; i < n; i++) {
-                    String name = "policy" + System.currentTimeMillis();
-                    OpenSSOPrivilege op = new OpenSSOPrivilege();
-                    op.setName(name);
-                    op.setEntitlement(p.getEntitlement());
-                    op.setSubject(p.getSubject());
-                    op.setCondition(p.getCondition());
-                    op.setResourceAttributes(p.getResourceAttributes());
-                    op.setDescription("created by test servlet");
-                    out.print("creating privilege: " + name + " ... ");
-                    pm.addPrivilege(op);
-                    out.println("done");
-                }
-            } else {
-                throw new ServletException("unknown action:" + action);
+                privilegeCreateAction(request, out);
+            } else if (action.equals("referral.create")) {
+                referralCreateAction(request, out);
             }
         } catch (EntitlementException ee) {
             throw new ServletException(ee);
         } finally {
             out.close();
+        }
+    }
+
+    private void privilegeCreateAction(HttpServletRequest request, PrintWriter out) throws ServletException, EntitlementException {
+        int n = 1;
+        if (request.getParameter("n") != null) {
+            n = Integer.parseInt(request.getParameter("n"));
+        }
+        String template = request.getParameter("template");
+        if (template == null) {
+            throw new ServletException("no privilege template specified");
+        }
+        String realm = request.getParameter("realm");
+        if (realm == null) {
+            realm = "/";
+        }
+
+        PrivilegeManager pm = getPrivilegeManager(request, realm);
+        Privilege p = pm.getPrivilege(template);
+        if (p == null) {
+            throw new ServletException("template privilege did not exist");
+        }
+        for (int i = 0; i < n; i++) {
+            String name = "policy" + System.currentTimeMillis();
+            OpenSSOPrivilege op = new OpenSSOPrivilege();
+            op.setName(name);
+            op.setEntitlement(p.getEntitlement());
+            op.setSubject(p.getSubject());
+            op.setCondition(p.getCondition());
+            op.setResourceAttributes(p.getResourceAttributes());
+            op.setDescription("created by test servlet");
+            out.print("creating privilege: " + name + " ... ");
+            pm.addPrivilege(op);
+            out.println("done");
+        }
+    }
+
+    private void referralCreateAction(HttpServletRequest request, PrintWriter out) throws ServletException, EntitlementException {
+        int n = 1;
+        if (request.getParameter("n") != null) {
+            n = Integer.parseInt(request.getParameter("n"));
+        }
+        String template = request.getParameter("template");
+        if (template == null) {
+            throw new ServletException("no referral template specified");
+        }
+        String realm = request.getParameter("realm");
+        if (realm == null) {
+            realm = "/";
+        }
+
+        ReferralPrivilegeManager rpm = getReferralPrivilegeManager(request, realm);
+        ReferralPrivilege rp = rpm.getReferral(template);
+        if (rp == null) {
+            throw new ServletException("template referral did not exist");
+        }
+        for (int i = 0; i < n; i++) {
+            String name = "referral" + System.currentTimeMillis();
+            ReferralPrivilege newRp = new ReferralPrivilege(
+                    name, rp.getMapApplNameToResources(), rp.getRealms());
+            newRp.setDescription("created by test servlet");
+            out.print("creating referral: " + name + " ... ");
+            rpm.add(newRp);
+            out.println("done");
         }
     }
 
@@ -105,6 +140,18 @@ public class TestServlet extends HttpServlet {
             PrivilegeManager pm = PrivilegeManager.getInstance(realm, s);
 
             return pm;
+        } catch (SSOException ssoe) {
+            throw new ServletException(ssoe);
+        }
+    }
+
+    private ReferralPrivilegeManager getReferralPrivilegeManager(HttpServletRequest request, String realm) throws ServletException {
+        try {
+            SSOToken t = SSOTokenManager.getInstance().createSSOToken(request);
+            Subject s = SubjectUtils.createSubject(t);
+            ReferralPrivilegeManager rpm = new ReferralPrivilegeManager(realm, s);
+
+            return rpm;
         } catch (SSOException ssoe) {
             throw new ServletException(ssoe);
         }

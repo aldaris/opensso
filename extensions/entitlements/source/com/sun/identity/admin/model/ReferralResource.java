@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralResource.java,v 1.1 2009-06-05 05:21:07 farble1670 Exp $
+ * $Id: ReferralResource.java,v 1.2 2009-06-24 19:23:46 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -75,6 +75,8 @@ public class ReferralResource
     private ViewApplication getViewApplication() {
         ViewApplicationsBean vasb = ViewApplicationsBean.getInstance();
         ViewApplication va = vasb.getViewApplications().get(getName());
+        assert(va != null);
+
         return va;
     }
 
