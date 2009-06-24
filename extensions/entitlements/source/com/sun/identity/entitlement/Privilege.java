@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.34 2009-06-24 01:58:00 veiming Exp $
+ * $Id: Privilege.java,v 1.35 2009-06-24 07:51:46 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -730,18 +730,29 @@ public abstract class Privilege implements IPrivilege {
         }
     }
 
-    protected Map<String, Set<String>> getAttributes() {
+    protected Map<String, Set<String>> getAttributes(Subject adminSubject, 
+        String realm, Subject subject, String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
         Map<String, Set<String>> result = null;
+
         if ((eResourceAttributes != null) && !eResourceAttributes.isEmpty()) {
             result = new HashMap<String, Set<String>>();
+
             for (ResourceAttribute e : eResourceAttributes) {
-                String rname = e.getPropertyName();
-                Set<String> values = result.get(rname);
-                if (values == null) {
-                    values = new HashSet<String>();
-                    result.put(rname, values);
+                Map<String, Set<String>> values = e.evaluate(adminSubject,
+                    realm, subject, resourceName, environment);
+
+                for (String k : values.keySet()) {
+                    Set<String> v = result.get(k);
+
+                    if (v == null) {
+                        v = new HashSet<String>();
+                        result.put(k, v);
+                    }
+
+                    v.addAll(values.get(k));
                 }
-                values.addAll(e.getPropertyValues());
             }
         }
         return result;

@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StaticAttributes.java,v 1.6 2009-05-21 06:35:31 veiming Exp $
+ * $Id: StaticAttributes.java,v 1.7 2009-06-24 07:51:46 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.util.JSONUtils;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -69,6 +70,9 @@ public class StaticAttributes implements ResourceAttribute {
 
     /**
      * Returns resoruce attributes aplicable to the request
+     *
+     * @param adminSubject Subject who is performing the evaluation.
+     * @param realm Realm name.
      * @param subject Subject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -77,11 +81,15 @@ public class StaticAttributes implements ResourceAttribute {
      * if can not get condition decision
      */
     public Map<String, Set<String>> evaluate(
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return null;
+        Subject adminSubject,
+        String realm,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment)
+        throws EntitlementException {
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        map.put(propertyName, propertyValues);
+        return map;
     }
 
     /**

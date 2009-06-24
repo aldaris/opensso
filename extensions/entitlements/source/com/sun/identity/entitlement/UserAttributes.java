@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAttributes.java,v 1.7 2009-05-26 21:46:28 veiming Exp $
+ * $Id: UserAttributes.java,v 1.8 2009-06-24 07:51:46 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -64,6 +64,9 @@ public class UserAttributes implements ResourceAttribute {
 
     /**
      * Returns resoruce attributes aplicable to the request
+     *
+     * @param adminSubject Subject who is performing the evaluation.
+     * @param realm Realm name.
      * @param subject Subject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -72,11 +75,17 @@ public class UserAttributes implements ResourceAttribute {
      * if can not get condition decision
      */
     public Map<String, Set<String>> evaluate(
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return null;
+        Subject adminSubject,
+        String realm,
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
+        SubjectAttributesManager sac = SubjectAttributesManager.getInstance(
+            adminSubject, realm);
+        Set<String> names = new HashSet<String>();
+        names.add(propertyName);
+        return sac.getAttributes(subject, names);
     }
 
     /**
