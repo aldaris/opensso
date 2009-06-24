@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: override.css,v 1.18 2009-06-04 11:49:26 veiming Exp $
+ * $Id: override.css,v 1.19 2009-06-24 20:11:31 farble1670 Exp $
  *
  */
 
@@ -30,6 +30,7 @@
     padding-left: 30px;
     padding-top: 5px;
     padding-bottom: 5px;
+    color: #404040;
 }
 
 .iceMnuBarItem img {
@@ -61,4 +62,8 @@
 
 .iceDatTbl td span.iceOutTxt {
     display: inline;
+}
+
+.iceOutFrmt, .iceOutTxt, .iceOutLbl  {
+    color: #404040;
 }
