@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.95 2009-06-23 06:47:13 babysunil Exp $
+  $Id: faces-config.xml,v 1.96 2009-06-24 14:01:35 asyhuang Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1946,25 +1946,6 @@
             <value>#{signingKeysDao}</value>
         </managed-property>
     </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>signingKeysHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.SigningKeysHandler</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>signingKeysBean</property-name>
-            <value>#{signingKeysBean}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>queuedActionBean</property-name>
-            <value>#{queuedActionBean}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>messagesBean</property-name>
-            <value>#{messagesBean}</value>
-        </managed-property>
-    </managed-bean>
-
 
     <!--remote-->
     <managed-bean>

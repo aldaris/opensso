@@ -212,13 +212,13 @@
                             <o:section>
                                 <ui:define name="section-title">
                                     <ice:outputText
-                                        value="#{resources['samlv2-remote-sp-create.attributeMapping.title']}"/>
+                                        value="#{resources['samlv2-hosted-sp-create.attributeMapping.title']}"/>
                                 </ui:define>
                                 <ui:define name="section-details"/>
                                 <ui:define name="section-body">
                                     <ice:panelGroup>
                                         <ice:outputLabel
-                                            value="#{resources['samlv2-remote-sp-create.attributeMapping.useDefaultAttributeMapping']}"/>
+                                            value="#{resources['samlv2-hosted-sp-create.attributeMapping.useDefaultAttributeMapping']}"/>
                                         <ice:selectBooleanCheckbox
                                             id="defAttrMappings"
                                             value="#{samlV2HostedSpCreateWizardBean.defAttrMappings}"/>

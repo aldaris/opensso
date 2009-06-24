@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.4 2009-06-24 01:41:35 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.5 2009-06-24 14:01:34 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
+import com.icesoft.faces.component.dragdrop.DndEvent;
+import com.icesoft.faces.component.dragdrop.DropEvent;
 import com.icesoft.faces.component.inputfile.FileInfo;
 import com.icesoft.faces.component.inputfile.InputFile;
 import com.icesoft.faces.context.effects.Effect;
@@ -36,6 +38,8 @@ import com.sun.identity.admin.effect.MessageErrorEffect;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardStep;
+import com.sun.identity.admin.model.SamlV2ViewAttribute;
+import com.sun.identity.admin.model.ViewAttribute;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,6 +51,8 @@ import java.util.EventObject;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.FacesEvent;
+import javax.faces.event.ValueChangeEvent;
 
 public class SamlV2RemoteSpCreateWizardHandler
         extends SamlV2RemoteCreateWizardHandler
@@ -73,20 +79,34 @@ public class SamlV2RemoteSpCreateWizardHandler
             cot = getSamlV2RemoteSpCreateWizardBean().getNewCotName();
         }
 
-        String selectedRealmValue = getSamlV2RemoteSpCreateWizardBean().getSelectedRealm();
+        String selectedRealmValue =
+                getSamlV2RemoteSpCreateWizardBean().getSelectedRealm();
         int idx = selectedRealmValue.indexOf("(");
         int end = selectedRealmValue.indexOf(")");
         String realm = selectedRealmValue.substring(idx + 1, end).trim();
-
-        //TODO: add attribute mapping to this ArrayList...
+      
         List attrMapping = new ArrayList();
+        List viewAttributes =
+                getSamlV2RemoteSpCreateWizardBean().getViewAttributes();
+        attrMapping =
+                getSamlV2RemoteSpCreateWizardBean().getToListOfStrings(viewAttributes);
 
         if (getSamlV2RemoteSpCreateWizardBean().isMeta()) {
-            String stdMetadataFile = getSamlV2RemoteSpCreateWizardBean().getStdMetaFile();
-            samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromFile(realm, cot, stdMetadataFile, attrMapping);
+            String stdMetadataFile =
+                    getSamlV2RemoteSpCreateWizardBean().getStdMetaFile();
+            samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromFile(
+                    realm,
+                    cot,
+                    stdMetadataFile,
+                    attrMapping);
         } else {
-            String stdMetadataFilename = getSamlV2RemoteSpCreateWizardBean().getMetaUrl();
-            samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromURL(realm, cot, stdMetadataFilename, attrMapping);
+            String stdMetadataFilename =
+                    getSamlV2RemoteSpCreateWizardBean().getMetaUrl();
+            samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromURL(
+                    realm,
+                    cot,
+                    stdMetadataFilename,
+                    attrMapping);
         }
 
         getSamlV2RemoteSpCreateWizardBean().reset();
@@ -297,5 +317,64 @@ public class SamlV2RemoteSpCreateWizardHandler
     public void stdMetaFileUploadProgress(EventObject event) {
         InputFile ifile = (InputFile) event.getSource();
         getSamlV2RemoteSpCreateWizardBean().setStdMetaFileProgress(ifile.getFileInfo().getPercent());
+    }
+
+    // for attrmapping
+    public void dropListener(DropEvent dropEvent) {
+        int type = dropEvent.getEventType();
+        if (type == DndEvent.DROPPED) {
+            Object dragValue = dropEvent.getTargetDragValue();
+            assert (dragValue != null);
+            ViewAttribute va = (ViewAttribute) dragValue;
+
+            getSamlV2RemoteSpCreateWizardBean().getViewAttributes().add(va);
+        }
+    }
+
+    protected ViewAttribute getViewAttribute(FacesEvent event) {
+        ViewAttribute va = (ViewAttribute) event.getComponent().
+                getAttributes().get("viewAttribute");
+        assert (va != null);
+
+        return va;
+    }
+
+    public void removeListener(ActionEvent event) {
+        ViewAttribute va = getViewAttribute(event);
+        getSamlV2RemoteSpCreateWizardBean().getViewAttributes().remove(va);
+    }
+
+    public void addListener(ActionEvent event) {
+        ViewAttribute va = newViewAttribute();
+        va.setEditable(true);
+        SamlV2ViewAttribute sva = (SamlV2ViewAttribute) va;
+        sva.setValueEditable(true);
+        sva.setIsAdded(true);
+
+        getSamlV2RemoteSpCreateWizardBean().getViewAttributes().add(va);
+    }
+
+    public void editNameListener(ActionEvent event) {
+        ViewAttribute va = (ViewAttribute) getViewAttribute(event);
+        va.setNameEditable(true);
+    }
+
+    public void nameEditedListener(ValueChangeEvent event) {
+        ViewAttribute va = (ViewAttribute) getViewAttribute(event);
+        va.setNameEditable(false);
+    }
+
+    public void editValueListener(ActionEvent event) {
+        SamlV2ViewAttribute sva = (SamlV2ViewAttribute) getViewAttribute(event);
+        sva.setValueEditable(true);
+    }
+
+    public void valueEditedListener(ValueChangeEvent event) {
+        SamlV2ViewAttribute sva = (SamlV2ViewAttribute) getViewAttribute(event);
+        sva.setValueEditable(false);
+    }
+
+    public ViewAttribute newViewAttribute() {
+        return new SamlV2ViewAttribute();
     }
 }

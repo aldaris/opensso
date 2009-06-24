@@ -152,7 +152,7 @@
                                 </ui:define>
                                 <ui:define name="section-body">
                                     <!-- COT -->
-                                    <ice:panelGroup>                                        
+                                    <ice:panelGroup>
                                         <ice:panelGroup>
                                             <ice:selectOneRadio
                                                 id="MenuSelectNewCOTRadio"
@@ -165,9 +165,8 @@
                                         <ice:panelGroup
                                             visible="#{samlV2RemoteSpCreateWizardBean.cot}">
                                             <ice:panelGroup >
-                                                <ice:outputLabel
-                                                    for="existingCotList"
-                                                    value="Choice one COT from existing COT List"/>
+                                                <ice:outputLabel                                                  
+                                                    value="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.existingCotListLabel']}"/>
                                                 <ice:selectOneMenu
                                                     id="selectedCot"
                                                     value="#{samlV2RemoteSpCreateWizardBean.selectedCot}"
@@ -179,9 +178,8 @@
                                         </ice:panelGroup>
                                         <ice:panelGroup
                                             visible="#{!samlV2RemoteSpCreateWizardBean.cot}">
-                                            <ice:outputLabel
-                                                for="NewCotName"
-                                                value="New COT Name"/>
+                                            <ice:outputLabel                                                
+                                                value="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.newCotNameLabel']}"/>
                                             <ice:inputText
                                                 id="NewCotName"
                                                 value="#{samlV2RemoteSpCreateWizardBean.newCotName}"
@@ -202,24 +200,23 @@
                         <div class="section-outer">
                             <o:section>
                                 <ui:define name="section-title">
-                                    <ice:outputText
-                                        value="Attribute Mapping"/>
+                                  <ice:outputLabel
+                                        value="#{resources['samlv2-remote-sp-create.attributeMappingPanelLabel.section-title']}"/>
                                 </ui:define>
                                 <ui:define name="section-details">
-                                    <ice:outputText
-                                        value="Add attribute mapping here...."/>
+                                    <ice:outputLabel
+                                        value="#{resources['samlv2-remote-sp-create.attributeMappingPanelLabel.section-details']}"/>
                                 </ui:define>
                                 <ui:define name="section-body">
                                     <ice:panelGroup>
-                                        <ice:outputLabel
-                                            for="Attribute Mapping"
-                                            value="Attribute Mapping"/>
-                                    </ice:panelGroup>
-                                    <ice:panelGroup>
-                                        <ice:outputLabel
-                                            value="Attributes Mapping Table"/>
-                                        <!-- data table -->
-                                        <!-- data table -->
+                                        <ui:include src="/admin/facelet/template/samlv2-attribute-mapping.xhtml">
+                                            <ui:param
+                                                name="wizardBean"
+                                                value="#{samlV2RemoteSpCreateWizardBean}"/>
+                                            <ui:param
+                                                name="wizardHandler"
+                                                value="#{samlV2RemoteSpCreateWizardHandler}"/>
+                                        </ui:include>
                                     </ice:panelGroup>
                                 </ui:define>
                             </o:section>
@@ -243,10 +240,10 @@
                                 <ui:define name="section-body">
                                     <!-- summary -->
                                     <o:summarypanel
-                                        summary="#{samlV2RemoteSpCreateWizardBean.realmSamlV2RemoteSpCreateSummary}"/>                                    
-                                    <o:summarypanel                                       
+                                        summary="#{samlV2RemoteSpCreateWizardBean.realmSamlV2RemoteSpCreateSummary}"/>
+                                    <o:summarypanel
                                         summary="#{samlV2RemoteSpCreateWizardBean.stdMetadataNameSamlV2RemoteSpCreateSummary}"/>
-                                        <o:summarypanel
+                                    <o:summarypanel
                                         summary="#{samlV2RemoteSpCreateWizardBean.metaUrlSamlV2RemoteSpCreateSummary}"/>
                                     <o:summarypanel
                                         summary="#{samlV2RemoteSpCreateWizardBean.cotSamlV2RemoteSpCreateSummary}"/>

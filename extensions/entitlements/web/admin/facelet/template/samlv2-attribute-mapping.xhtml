@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-attribute-mapping.xhtml,v 1.1 2009-06-23 05:53:02 babysunil Exp $
+   $Id: samlv2-attribute-mapping.xhtml,v 1.2 2009-06-24 14:01:36 asyhuang Exp $
 
 -->
 
@@ -34,9 +34,7 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-    <ice:panelGroup
-        label="#{policyWizardBean.userAttributesTabPanelLabel}">
-
+    <ice:panelGroup>
         <o:section>
             <ui:define name="section-title">
                 <ice:outputText
@@ -65,9 +63,9 @@
                         dropTarget="true"
                         dropListener="#{wizardHandler.dropListener}">
                         <ice:dataTable
-                            visible="#{o:size(samlV2HostedIdpCreateWizardBean.viewAttributes) > 0}"
+                            visible="#{o:size(wizardBean.viewAttributes) > 0}"
                             columnClasses="attributesCol1,attributesCol2,attributesCol3"
-                            value="#{samlV2HostedIdpCreateWizardBean.viewAttributes}"
+                            value="#{wizardBean.viewAttributes}"
                             var="attribute">
                             <ice:column>
                                 <f:facet name="header">
@@ -173,14 +171,14 @@
                             </ui:define>
                             <ui:define name="panel-body">
                                 <ice:panelGroup
-                                    visible="#{o:size(samlV2HostedIdpCreateWizardBean.availableViewAttributes) == 0}">
+                                    visible="#{o:size(wizardBean.availableViewAttributes) == 0}">
                                     <ice:outputText
                                         value="#{resources['federation-attribute-mapping.noAvailable']}"/>
                                 </ice:panelGroup>
                                 <ice:panelGroup
                                     scrollHeight="200px">
                                     <ice:panelSeries
-                                        value="#{samlV2HostedIdpCreateWizardBean.availableViewAttributes}"
+                                        value="#{wizardBean.availableViewAttributes}"
                                         var="viewAttribute">
                                         <ice:panelGroup
                                             styleClass="draggable"

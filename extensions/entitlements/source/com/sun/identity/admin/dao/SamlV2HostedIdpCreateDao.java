@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateDao.java,v 1.1 2009-06-23 05:56:28 babysunil Exp $
+ * $Id: SamlV2HostedIdpCreateDao.java,v 1.2 2009-06-24 14:01:34 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -94,29 +94,17 @@ public class SamlV2HostedIdpCreateDao
             }
         }
 
-        try {
-            if (!attrMapping.isEmpty()) {
-                SAML2MetaManager manager = new SAML2MetaManager();
-                EntityConfigElement config =
-                        manager.getEntityConfig(realm, entityId);
-                IDPSSOConfigElement ssoConfig =
-                        manager.getIDPSSOConfig(realm, entityId);
-
-                Map attribConfig = SAML2MetaUtils.getAttributes(ssoConfig);
-                List mappedAttributes = (List) attribConfig.get(
-                        SAML2Constants.ATTRIBUTE_MAP);
-                mappedAttributes.addAll(attrMapping);
-                manager.setEntityConfig(realm, config);
-            }
-        } catch (SAML2MetaException e) {
-            throw new RuntimeException(e.getMessage());
+        if (!attrMapping.isEmpty()) {
+            addAttributeMapping(realm, entityId, attrMapping);
         }
+
     }
 
     public void importSamlv2HostedIdp(
             String cot,
             String stdMetadata,
-            String extMetadata) {
+            String extMetadata,
+            List attrMapping) {
         String realm = null;
         String entityId = null;
 
@@ -135,7 +123,29 @@ public class SamlV2HostedIdpCreateDao
                 throw new RuntimeException(e);
             }
         }
+        if (!attrMapping.isEmpty()) {
+            addAttributeMapping(realm, entityId, attrMapping);
+        }
+    }
 
+    private void addAttributeMapping(String realm, String entityId, List attrMapping) {
+        try {
+
+            SAML2MetaManager manager = new SAML2MetaManager();
+            EntityConfigElement config =
+                    manager.getEntityConfig(realm, entityId);
+            IDPSSOConfigElement ssoConfig =
+                    manager.getIDPSSOConfig(realm, entityId);
+
+            Map attribConfig = SAML2MetaUtils.getAttributes(ssoConfig);
+            List mappedAttributes = (List) attribConfig.get(
+                    SAML2Constants.ATTRIBUTE_MAP);
+            mappedAttributes.addAll(attrMapping);
+            manager.setEntityConfig(realm, config);
+
+        } catch (SAML2MetaException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     private String generateMetaAliasForIDP(String realm) {

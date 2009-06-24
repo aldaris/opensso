@@ -22,18 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardBean.java,v 1.3 2009-06-20 08:41:58 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardBean.java,v 1.4 2009-06-24 14:01:35 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
+import com.sun.identity.admin.dao.AttributeMappingsDao;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class SamlV2RemoteSpCreateWizardBean
         extends SamlV2RemoteCreateWizardBean
         implements Serializable {
 
     private String metaUrl;
+
+    private List<ViewAttribute> availableViewAttributes = new ArrayList<ViewAttribute>();
+    private List<ViewAttribute> viewAttributes = new ArrayList<ViewAttribute>();
+    
     private RealmSamlV2RemoteSpCreateSummary realmSamlV2RemoteSpCreateSummary = new RealmSamlV2RemoteSpCreateSummary(this);
     private MetaUrlSamlV2RemoteSpCreateSummary metaUrlSamlV2RemoteSpCreateSummary = new MetaUrlSamlV2RemoteSpCreateSummary(this);
     private StdMetadataNameSamlV2RemoteSpCreateSummary stdMetadataNameSamlV2RemoteSpCreateSummary = new StdMetadataNameSamlV2RemoteSpCreateSummary(this);   
@@ -60,6 +68,70 @@ public class SamlV2RemoteSpCreateWizardBean
 
     public void setMetaUrl(String metaUrl) {
         this.metaUrl = metaUrl;
+    }
+
+        //for attr mapping
+    public List<ViewAttribute> getAvailableViewAttributes() {
+        loadAvailableViewAttributes();
+        return availableViewAttributes;
+    }
+
+    public void loadAvailableViewAttributes() {
+        AttributeMappingsDao amdao = new AttributeMappingsDao();
+        availableViewAttributes.clear();
+        for (SamlV2ViewAttribute va : amdao.getViewAttributes()) {
+            availableViewAttributes.add(va);
+        }
+    }
+
+
+    public List<ViewAttribute> getViewAttributes() {
+        return viewAttributes;
+    }
+
+    public String getToString() {
+        return getListToString(viewAttributes);
+    }
+
+    public String getToFormattedString() {
+        return getListToFormattedString(viewAttributes);
+    }
+
+    public static String getToFormattedString(List<ViewAttribute> vas) {
+        return getListToFormattedString(vas);
+    }
+
+    private static String getListToString(List list) {
+        StringBuffer b = new StringBuffer();
+
+        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
+            b.append(i.next());
+            if (i.hasNext()) {
+                b.append(",");
+            }
+
+        }
+        return b.toString();
+    }
+
+    public List getToListOfStrings(List list) {
+        List newList = new ArrayList();
+        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
+            newList.add(String.valueOf(i.next()));
+        }
+        return newList;
+    }
+
+    private static String getListToFormattedString(List list) {
+        StringBuffer b = new StringBuffer();
+
+        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
+            b.append(i.next());
+            if (i.hasNext()) {
+                b.append("\n");
+            }
+        }
+        return b.toString();
     }
 
     public RealmSamlV2RemoteSpCreateSummary getRealmSamlV2RemoteSpCreateSummary() {

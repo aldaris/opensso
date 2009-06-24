@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.1 2009-06-23 06:36:21 babysunil Exp $
+ * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.2 2009-06-24 14:01:35 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.dao.AttributeMappingsDao;
-import com.sun.identity.admin.ManagedBeanResolver;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -66,24 +65,12 @@ public class SamlV2HostedIdpCreateWizardBean
     private CotSamlV2HostedIdpCreateSummary
             cotSamlV2CreateSummary = new CotSamlV2HostedIdpCreateSummary(this);
 
-    public static SamlV2HostedIdpCreateWizardBean getInstance() {
-        ManagedBeanResolver mbr = new ManagedBeanResolver();
-        SamlV2HostedIdpCreateWizardBean hostedIdp = 
-                (SamlV2HostedIdpCreateWizardBean) mbr.resolve(
-                "samlV2HostedIdpCreateWizardBean");
-        return hostedIdp;
-    }
-
     public SamlV2HostedIdpCreateWizardBean() {
         super();
     }
 
     @Override
     public void reset() {
-        reset(true);
-    }
-
-    public void reset(boolean resetName) {
         super.reset();
         selectedSigningKey = null;
         viewAttributes.clear();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.2 2009-06-24 01:41:35 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.3 2009-06-24 14:01:34 asyhuang Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -195,10 +195,10 @@ public class SamlV2HostedIdpCreateWizardHandler
         String name = getSamlV2HostedIdpCreateWizardBean().getNewEntityName();
         String key =
                 getSamlV2HostedIdpCreateWizardBean().getSelectedSigningKey();
-        List test = getSamlV2HostedIdpCreateWizardBean().getViewAttributes();
+        List viewAttributes = getSamlV2HostedIdpCreateWizardBean().getViewAttributes();
         List attrMapping = new ArrayList();
         attrMapping =
-                getSamlV2HostedIdpCreateWizardBean().getToListOfStrings(test);
+                getSamlV2HostedIdpCreateWizardBean().getToListOfStrings(viewAttributes);
         if (!isMeta) {
             samlV2HostedIdpCreateDao.createSamlv2HostedIdp(
                     realm, name, cot, key, attrMapping);
@@ -208,7 +208,7 @@ public class SamlV2HostedIdpCreateWizardHandler
             String extMeta =
                     getSamlV2HostedIdpCreateWizardBean().getExtMetaFile();
             samlV2HostedIdpCreateDao.importSamlv2HostedIdp(
-                    cot, stdMeta, extMeta);
+                    cot, stdMeta, extMeta, attrMapping);
         }
         getSamlV2HostedIdpCreateWizardBean().reset();
         getFinishAction();

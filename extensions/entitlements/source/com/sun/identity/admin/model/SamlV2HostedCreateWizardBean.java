@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedCreateWizardBean.java,v 1.3 2009-06-24 01:41:35 asyhuang Exp $
+ * $Id: SamlV2HostedCreateWizardBean.java,v 1.4 2009-06-24 14:01:35 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -134,6 +134,8 @@ public class SamlV2HostedCreateWizardBean
         availableRealmsList = new ArrayList<SelectItem>();
         RealmsBean rlmbean = RealmsBean.getInstance();
         availableRealmsList = rlmbean.getRealmBeanItems();
+        RealmBean baseRealmBean = rlmbean.getBaseRealmBean();
+        availableRealmsList.add(0, new SelectItem(baseRealmBean, baseRealmBean.getTitle()));
         return availableRealmsList;
     }
 

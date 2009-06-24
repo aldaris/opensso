@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteCreateWizardBean.java,v 1.3 2009-06-20 08:41:58 asyhuang Exp $
+ * $Id: SamlV2RemoteCreateWizardBean.java,v 1.4 2009-06-24 14:01:35 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -81,6 +81,9 @@ public class SamlV2RemoteCreateWizardBean
         String realm = selectedRealm.substring(idx + 1, end).trim();
         cotsBean = new CotsBean();
         cotsBean.setCotBeans(realm);
+        if (getAvailableCotList().size() == 0) {
+            setCot(false);
+        }
     }
 
     public boolean isMeta() {
@@ -127,15 +130,14 @@ public class SamlV2RemoteCreateWizardBean
         availableRealmsList = new ArrayList<SelectItem>();
         RealmsBean rlmbean = RealmsBean.getInstance();
         availableRealmsList = rlmbean.getRealmBeanItems();
+        RealmBean baseRealmBean = rlmbean.getBaseRealmBean();
+        availableRealmsList.add(0, new SelectItem(baseRealmBean, baseRealmBean.getTitle()));
         return availableRealmsList;
     }
 
     public List<SelectItem> getAvailableCotList() {
         availableCotList = new ArrayList<SelectItem>();
         availableCotList = cotsBean.getCotBeanItems();
-        if (availableCotList.isEmpty()) {
-            this.cot = false;
-        }
         return availableCotList;
     }
 

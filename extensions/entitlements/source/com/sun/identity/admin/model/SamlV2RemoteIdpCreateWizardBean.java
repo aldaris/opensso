@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateWizardBean.java,v 1.1 2009-06-23 06:36:21 babysunil Exp $
+ * $Id: SamlV2RemoteIdpCreateWizardBean.java,v 1.2 2009-06-24 14:01:35 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
-import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.handler.SamlV2RemoteIdpCreateWizardHandler;
 import java.io.Serializable;
 
@@ -58,10 +57,6 @@ public class SamlV2RemoteIdpCreateWizardBean
 
     @Override
     public void reset() {
-        reset(true);
-    }
-
-    public void reset(boolean resetName) {
         super.reset();
         metaUrl = null;
         realmSamlV2RemoteIdpCreateSummary =
@@ -72,14 +67,6 @@ public class SamlV2RemoteIdpCreateWizardBean
                 new CotSamlV2RemoteIdpCreateSummary(this);
         metaUrlSamlV2RemoteIdpCreateSummary =
                 new MetaUrlSamlV2RemoteIdpCreateSummary(this);
-    }
-
-    public static SamlV2RemoteIdpCreateWizardBean getInstance() {
-        ManagedBeanResolver mbr = new ManagedBeanResolver();
-        SamlV2RemoteIdpCreateWizardBean remoteIdp =
-                (SamlV2RemoteIdpCreateWizardBean) mbr.resolve(
-                "samlV2RemoteIdpCreateWizardBean");
-        return remoteIdp;
     }
 
     public String getMetaUrl() {
