@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.98 2009-06-24 20:11:31 farble1670 Exp $
+* $Id: admin.css,v 1.99 2009-06-24 23:47:02 farble1670 Exp $
 *
 */
 
@@ -52,6 +52,10 @@ input[type="radio"]:focus
 
 body {
     font: 80% arial, helvetica, sans-serif;
+}
+
+label {
+    color: #404040;
 }
 
 .width-200 {
@@ -240,7 +244,7 @@ span.button {
 }
 
 span.button span {
-    color: #333333;
+    color: #404040;
     font-size: 100%;
     font-weight: bold;
     font-family: Verdana, Helvetica, Arial, sans-serif;

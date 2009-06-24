@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributesBean.java,v 1.6 2009-06-04 11:49:14 veiming Exp $
+ * $Id: AttributesBean.java,v 1.7 2009-06-24 23:47:01 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -55,6 +55,7 @@ public abstract class AttributesBean implements Serializable {
     public abstract Set<ResourceAttribute> toResourceAttributesSet();
 
     public void reset() {
+        viewAttributes.clear();
     }
 
 

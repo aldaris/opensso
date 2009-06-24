@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAttributeDao.java,v 1.3 2009-06-04 11:49:12 veiming Exp $
+ * $Id: UserAttributeDao.java,v 1.4 2009-06-24 23:47:01 farble1670 Exp $
  */
 
 package com.sun.identity.admin.dao;
 
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.UserViewAttribute;
@@ -65,5 +66,11 @@ public class UserAttributeDao implements Serializable {
             throw new AssertionError(ee);
         }
         return viewAttributes;
+    }
+
+    public static UserAttributeDao getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        UserAttributeDao uadao = (UserAttributeDao) mbr.resolve("userAttributeDao");
+        return uadao;
     }
 }

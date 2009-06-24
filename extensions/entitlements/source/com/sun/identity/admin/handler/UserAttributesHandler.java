@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAttributesHandler.java,v 1.2 2009-06-04 11:49:13 veiming Exp $
+ * $Id: UserAttributesHandler.java,v 1.3 2009-06-24 23:47:01 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -30,7 +30,11 @@ package com.sun.identity.admin.handler;
 import com.icesoft.faces.component.dragdrop.DndEvent;
 import com.icesoft.faces.component.dragdrop.DropEvent;
 import com.sun.identity.admin.model.AttributesBean;
+import com.sun.identity.admin.model.UserAttributesBean;
 import com.sun.identity.admin.model.ViewAttribute;
+import java.util.Collections;
+import java.util.List;
+import javax.faces.event.ActionEvent;
 
 public class UserAttributesHandler extends AttributesHandler {
     public UserAttributesHandler(AttributesBean ab) {
@@ -44,8 +48,20 @@ public class UserAttributesHandler extends AttributesHandler {
             assert (dragValue != null);
             ViewAttribute va = (ViewAttribute)dragValue;
 
+            List<ViewAttribute> availableViewAttributes = ((UserAttributesBean)getAttributesBean()).getAvailableViewAttributes();
             getAttributesBean().getViewAttributes().add(va);
+            availableViewAttributes.remove(va);
+            Collections.sort((List)availableViewAttributes);
         }
+    }
+
+    @Override
+    public void removeListener(ActionEvent event) {
+        super.removeListener(event);
+        ViewAttribute va = getViewAttribute(event);
+        List<ViewAttribute> availableViewAttributes = ((UserAttributesBean)getAttributesBean()).getAvailableViewAttributes();
+        availableViewAttributes.add(va);
+        Collections.sort(availableViewAttributes);
     }
 
 }

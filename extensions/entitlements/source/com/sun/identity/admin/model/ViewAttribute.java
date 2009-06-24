@@ -22,15 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewAttribute.java,v 1.4 2009-06-04 11:49:19 veiming Exp $
+ * $Id: ViewAttribute.java,v 1.5 2009-06-24 23:47:02 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import com.sun.identity.admin.Resources;
 import java.io.Serializable;
 
-public abstract class ViewAttribute implements Serializable {
+public abstract class ViewAttribute implements Comparable, Serializable {
     private String name;
     private boolean nameEditable = false;
 
@@ -78,5 +77,10 @@ public abstract class ViewAttribute implements Serializable {
 
     public void setNameEditable(boolean nameEditable) {
         this.nameEditable = nameEditable;
+    }
+
+    public int compareTo(Object o) {
+        ViewAttribute other = (ViewAttribute)o;
+        return name.compareTo(other.getName());
     }
 }

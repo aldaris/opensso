@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAttributesBean.java,v 1.2 2009-06-04 11:49:18 veiming Exp $
+ * $Id: UserAttributesBean.java,v 1.3 2009-06-24 23:47:02 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -32,6 +32,7 @@ import com.sun.identity.admin.handler.UserAttributesHandler;
 import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.UserAttributes;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,11 +42,10 @@ import static com.sun.identity.admin.model.AttributesBean.AttributeType.*;
 public class UserAttributesBean extends AttributesBean {
 
     private String filter = "";
-    private List<ViewAttribute> availableViewAttributes = new ArrayList<ViewAttribute>();
+    private List<ViewAttribute> availableViewAttributes = null;
 
     public UserAttributesBean() {
         super();
-        loadAvailableViewAttributes();
     }
 
     public String getFilter() {
@@ -59,17 +59,20 @@ public class UserAttributesBean extends AttributesBean {
         NullComparator n = new NullComparator();
         if (n.compare(this.filter, filter) != 0) {
             this.filter = filter;
-            loadAvailableViewAttributes();
+            availableViewAttributes = null;
         }
     }
 
     public List<ViewAttribute> getAvailableViewAttributes() {
+        if (availableViewAttributes == null) {
+            loadAvailableViewAttributes();
+        }
         return availableViewAttributes;
     }
 
     public void loadAvailableViewAttributes() {
-        UserAttributeDao uadao = new UserAttributeDao();
-        availableViewAttributes.clear();
+        UserAttributeDao uadao = UserAttributeDao.getInstance();
+        availableViewAttributes = new ArrayList<ViewAttribute>();
 
         for (ViewAttribute va : uadao.getViewAttributes()) {
             if (filter == null || filter.length() == 0) {
@@ -82,6 +85,8 @@ public class UserAttributesBean extends AttributesBean {
                 }
             }
         }
+        availableViewAttributes.removeAll(getViewAttributes());
+        Collections.sort(availableViewAttributes);
     }
 
     public AttributeType getAttributeType() {
@@ -128,5 +133,6 @@ public class UserAttributesBean extends AttributesBean {
     public void reset() {
         super.reset();
         setAttributesHandler(new UserAttributesHandler(this));
+        availableViewAttributes = null;
     }
 }

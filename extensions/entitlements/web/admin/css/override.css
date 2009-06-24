@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: override.css,v 1.19 2009-06-24 20:11:31 farble1670 Exp $
+ * $Id: override.css,v 1.20 2009-06-24 23:47:02 farble1670 Exp $
  *
  */
 
@@ -65,5 +65,9 @@
 }
 
 .iceOutFrmt, .iceOutTxt, .iceOutLbl  {
+    color: #404040;
+}
+
+.iceSelOneMnu, .iceSelMnyLb, .iceSelMnyMnu, .iceSelOneLb {
     color: #404040;
 }

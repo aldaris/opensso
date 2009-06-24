@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BooleanAction.java,v 1.13 2009-06-04 11:49:14 veiming Exp $
+ * $Id: BooleanAction.java,v 1.14 2009-06-24 23:47:02 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -79,15 +79,15 @@ public class BooleanAction
         }
         BooleanAction other = (BooleanAction)o;
 
-        if (!getName().equals(other.getName())) {
-            return false;
+        if (getName().equals(other.getName())) {
+            return true;
         }
 
-        if (!getValue().equals(other.getValue())) {
-            return false;
+        if (getName().equals(other.getName().toLowerCase())) {
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     public String toString() {

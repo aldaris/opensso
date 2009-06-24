@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.96 2009-06-24 14:01:35 asyhuang Exp $
+  $Id: faces-config.xml,v 1.97 2009-06-24 23:47:02 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1978,6 +1978,12 @@
     <managed-bean>
         <managed-bean-name>samlV2RemoteIdpCreateWizardDao</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.dao.SamlV2RemoteIdpCreateDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>userAttributeDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.UserAttributeDao</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <!--remote -->
