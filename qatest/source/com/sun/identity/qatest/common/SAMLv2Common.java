@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.16 2009-05-27 23:06:35 rmisra Exp $
+ * $Id: SAMLv2Common.java,v 1.17 2009-06-24 23:02:47 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -297,9 +297,12 @@ public class SAMLv2Common extends TestCommon {
                 + sp_port + sp_deployment_uri
                 + "/saml2/jsp/spSingleLogoutInit.jsp?metaAlias="
                 + sp_alias + "&amp;idpEntityID=" + idp_entity_name);
-        if (bindingType == "soap") {
+        if (bindingType.equals("soap")) {
             out.write("&amp;" +
                     "binding=urn:oasis:names:tc:SAML:2.0:bindings:SOAP");
+        } else if (bindingType.equals("post")) {
+            out.write("&amp;" +
+                    "binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
         }
         if (m.get("urlparams") != null) {
             out.write("&amp;" + m.get("urlparams"));
@@ -345,9 +348,12 @@ public class SAMLv2Common extends TestCommon {
                 + idp_port + idp_deployment_uri
                 + "/saml2/jsp/idpSingleLogoutInit.jsp?metaAlias="
                 + idp_alias + "&amp;spEntityID=" + sp_entity_name);
-        if (bindingType == "soap") {
+        if (bindingType.equals("soap")) {
             out.write("&amp;" +
                     "binding=urn:oasis:names:tc:SAML:2.0:bindings:SOAP");
+        } else if (bindingType.equals("post")) {
+            out.write("&amp;" +
+                    "binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
         }
         if (m.get("urlparams") != null) {
             out.write("&amp;" + m.get("urlparams"));
@@ -399,9 +405,12 @@ public class SAMLv2Common extends TestCommon {
                 + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=" + sp_alias
                 + "&amp;idpEntityID=" + idp_entity_name
                 + "&amp;requestType=Terminate");
-        if (bindingType == "soap") {
+        if (bindingType.equals("soap")) {
             out.write("&amp;" +
                     "binding=urn:oasis:names:tc:SAML:2.0:bindings:SOAP");
+        } else if (bindingType.equals("post")) {
+            out.write("&amp;" +
+                    "binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
         }
         if (m.get("urlparams") != null) {
             out.write("&amp;" + m.get("urlparams"));
@@ -456,9 +465,12 @@ public class SAMLv2Common extends TestCommon {
                 + "/saml2/jsp/idpMNIRequestInit.jsp?metaAlias=" + idp_alias
                 + "&amp;spEntityID=" + sp_entity_name
                 + "&amp;requestType=Terminate");
-        if (bindingType == "soap") {
+        if (bindingType.equals("soap")) {
             out.write("&amp;" +
                     "binding=urn:oasis:names:tc:SAML:2.0:bindings:SOAP");
+        } else if (bindingType.equals("post")) {
+            out.write("&amp;" +
+                    "binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
         }
         if (m.get("urlparams") != null) {
             out.write("&amp;" + m.get("urlparams"));
@@ -517,6 +529,9 @@ public class SAMLv2Common extends TestCommon {
         if (bindingType == "soap") {
             out.write("&amp;" +
                     "binding=urn:oasis:names:tc:SAML:2.0:bindings:SOAP");
+        } else if (bindingType.equals("post")) {
+            out.write("&amp;" +
+                    "binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
         }
         if (m.get("urlparams") != null) {
             out.write("&amp;" + m.get("urlparams"));
