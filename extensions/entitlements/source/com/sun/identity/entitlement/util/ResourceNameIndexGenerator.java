@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexGenerator.java,v 1.14 2009-06-21 09:25:33 veiming Exp $
+ * $Id: ResourceNameIndexGenerator.java,v 1.15 2009-06-24 01:58:01 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -30,7 +30,6 @@ package com.sun.identity.entitlement.util;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,7 +54,7 @@ public class ResourceNameIndexGenerator implements ISaveIndex {
      */
     public ResourceSaveIndexes getIndexes(String resName) {
         try {
-            URL url = new URL(resName);
+            RelaxedURL url = new RelaxedURL(resName);
             Set<String> hostIndexes = new HashSet<String>();
             hostIndexes.add(getHostIndex(url));
 
@@ -80,8 +79,8 @@ public class ResourceNameIndexGenerator implements ISaveIndex {
     
     }
     
-    private static String getHostIndex(URL url) {
-        String host = url.getHost().toLowerCase();
+    private static String getHostIndex(RelaxedURL url) {
+        String host = url.getHostname().toLowerCase();
         int idx = host.lastIndexOf("*");
         if (idx != -1) {
             int dotIdx = host.indexOf('.', idx);
@@ -90,7 +89,7 @@ public class ResourceNameIndexGenerator implements ISaveIndex {
         return url.getProtocol().toLowerCase() + "://" + host;
     }
     
-    private static String getPathIndex(URL url) {
+    private static String getPathIndex(RelaxedURL url) {
         return getPathIndex(url.getPath(), url.getQuery());
     }
 

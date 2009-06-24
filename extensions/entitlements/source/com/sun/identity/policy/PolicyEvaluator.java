@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.14 2009-06-23 09:18:09 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.15 2009-06-24 01:58:01 veiming Exp $
  *
  */
 
@@ -1205,7 +1205,8 @@ public class PolicyEvaluator {
             Evaluator eval = new Evaluator(
                 SubjectUtils.createSubject(adminSSOToken), serviceTypeName);
 
-            List entitlements = eval.evaluate(realm, userSubject, resourceName,
+            List<Entitlement> entitlements = eval.evaluate(
+                realm, userSubject, resourceName,
                 envParameters, subTreeSearch);
             resultsSet = new HashSet();
 
@@ -1217,13 +1218,21 @@ public class PolicyEvaluator {
                     ResourceResult virtualResourceResult =
                         new ResourceResult(ResourceResult.VIRTUAL_ROOT,
                             new PolicyDecision());
-                    for (Iterator i = entitlements.iterator(); i.hasNext(); ) {
-                        ResourceResult r = EntitlementToResourceResult(
-                            (Entitlement)i.next());
+                    Map<String, Set<String>> resAttr = new
+                        HashMap<String, Set<String>>();
+                    for (Entitlement ent : entitlements ) {
+                        collectResourceAttrs(ent, resAttr);
+                        ResourceResult r = EntitlementToResourceResult(ent);
                         virtualResourceResult.addResourceResult(r, serviceType);
                     }
-                    resultsSet.addAll(
-                        virtualResourceResult.getResourceResults());
+
+                    Set<ResourceResult> tmp =
+                        virtualResourceResult.getResourceResults();
+                    for (ResourceResult r : tmp) {
+                        PolicyDecision pd = r.getPolicyDecision();
+                        pd.setResponseAttributes(resAttr);
+                        resultsSet.add(r);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -1232,6 +1241,22 @@ public class PolicyEvaluator {
         }
 
         return resultsSet;
+    }
+
+    private void collectResourceAttrs(Entitlement e,
+        Map<String, Set<String>> resAttr) {
+        Map<String, Set<String>> attrs = e.getAttributes();
+
+        if ((attrs != null) && !attrs.isEmpty()) {
+            for (String k : attrs.keySet()) {
+                Set<String> v = resAttr.get(k);
+                if (v == null) {
+                    v = new HashSet<String>();
+                    resAttr.put(k, v);
+                }
+                v.addAll(attrs.get(k));
+            }
+        }
     }
     
     private ResourceResult EntitlementToResourceResult(
@@ -1248,11 +1273,9 @@ public class PolicyEvaluator {
         PolicyDecision pd = new PolicyDecision();
         Map actionValues = entitlement.getActionValues();
 
-
         for (Iterator i = actionValues.keySet().iterator(); i.hasNext(); ) {
             String actionName = (String)i.next();
             Boolean values = (Boolean)actionValues.get(actionName);
-
 
             Set set = new HashSet();
             if (values.booleanValue()) {

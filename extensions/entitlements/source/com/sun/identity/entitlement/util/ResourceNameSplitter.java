@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitter.java,v 1.8 2009-04-23 23:29:21 veiming Exp $
+ * $Id: ResourceNameSplitter.java,v 1.9 2009-06-24 01:58:01 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -30,7 +30,6 @@ package com.sun.identity.entitlement.util;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,7 +56,7 @@ public class ResourceNameSplitter implements ISearchIndex {
      */
     public ResourceSearchIndexes getIndexes(String resName) {
         try {
-            URL url = new URL(resName);
+            RelaxedURL url = new RelaxedURL(resName);
             Set<String> hostIndexes = splitHost(url);
             Set<String> pathIndexes = splitPath(url);
             String path = url.getPath();
@@ -84,10 +83,10 @@ public class ResourceNameSplitter implements ISearchIndex {
      * @param resName Resource name.
      * @return a list of sub parts of host of a resource name.
      */
-    public static Set<String> splitHost(URL url) {
+    public static Set<String> splitHost(RelaxedURL url) {
         Set<String> results = new HashSet<String>();
         String protocol = url.getProtocol().toLowerCase();
-        String host = url.getHost().toLowerCase();
+        String host = url.getHostname().toLowerCase();
         protocol += "://";
 
         results.add(protocol);
@@ -129,7 +128,7 @@ public class ResourceNameSplitter implements ISearchIndex {
      * @param resName Resource name.
      * @param a list of sub parts of path of a resource name.
      */
-    private static Set<String> splitPath(URL url) {
+    private static Set<String> splitPath(RelaxedURL url) {
         Set<String> results = new HashSet<String>();
         String path = url.getPath().toLowerCase();
         Set<String> queries = normalizeQuery(url.getQuery());

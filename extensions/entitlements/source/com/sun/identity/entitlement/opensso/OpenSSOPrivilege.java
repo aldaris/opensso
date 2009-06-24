@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPrivilege.java,v 1.17 2009-06-23 07:00:16 veiming Exp $
+ * $Id: OpenSSOPrivilege.java,v 1.18 2009-06-24 01:58:00 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -31,10 +31,12 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeType;
+import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.util.NetworkMonitor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,7 +93,7 @@ public class OpenSSOPrivilege extends Privilege {
             for (String r : resources) {
                 Entitlement e = new Entitlement(origE.getApplicationName(),
                     r, origE.getActionValues());
-                e.setAttributes(origE.getAttributes());
+                e.setAttributes(getAttributes());
                 results.add(e);
             }
         } else {

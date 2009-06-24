@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicySubject.java,v 1.1 2009-06-23 07:00:17 veiming Exp $
+ * $Id: PolicySubject.java,v 1.2 2009-06-24 01:58:00 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -215,8 +215,8 @@ public class PolicySubject implements EntitlementSubject {
             sbj.initialize(pm.getPolicyConfig());
             sbj.setValues(values);
             SSOToken token = getSSOToken(subject);
-            return new SubjectDecision(sbj.isMember(token),
-                Collections.EMPTY_MAP);
+            boolean result = sbj.isMember(token) ^ exclusive;
+            return new SubjectDecision(result, Collections.EMPTY_MAP);
         } catch (SSOException ex) {
             throw new EntitlementException(508, ex);
         } catch (PolicyException ex) {

@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.33 2009-06-23 07:00:16 veiming Exp $
+ * $Id: Privilege.java,v 1.34 2009-06-24 01:58:00 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.util.JSONUtils;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -729,6 +730,22 @@ public abstract class Privilege implements IPrivilege {
         }
     }
 
+    protected Map<String, Set<String>> getAttributes() {
+        Map<String, Set<String>> result = null;
+        if ((eResourceAttributes != null) && !eResourceAttributes.isEmpty()) {
+            result = new HashMap<String, Set<String>>();
+            for (ResourceAttribute e : eResourceAttributes) {
+                String rname = e.getPropertyName();
+                Set<String> values = result.get(rname);
+                if (values == null) {
+                    values = new HashSet<String>();
+                    result.put(rname, values);
+                }
+                values.addAll(e.getPropertyValues());
+            }
+        }
+        return result;
+    }
 }
 
 
