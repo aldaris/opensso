@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.12 2009-06-02 21:32:15 vimal_67 Exp $
+ * $Id: CLIConstants.java,v 1.13 2009-06-24 22:32:05 srivenigan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -393,4 +393,69 @@ public interface CLIConstants {
      * String for the "show-datastore" subcommand
      */    
     public static final String SHOW_DATASTORE_SUBCOMMAND = "show-datastore";
+    
+    /**
+     * String for the "do-batch" subcommand
+     */
+    public static final String DO_BATCH_SUBCOMMAND = "do-batch";
+
+    /**
+     * String for the "create-site" subcommand
+     */
+    public static final String CREATE_SITE_SUBCOMMAND = "create-site";
+
+    /**
+     * String for the "show-site" subcommand
+     */
+    public static final String SHOW_SITE_SUBCOMMAND = "show-site";
+
+    /**
+     * String for the "list-sites" subcommand
+     */
+    public static final String LIST_SITES_SUBCOMMAND = "list-sites";    
+
+    /**
+     * String for the "delete-site" subcommand
+     */
+    public static final String DELETE_SITE_SUBCOMMAND = "delete-site";
+    
+    /**
+     * String for the "add-site-members" subcommand
+     */
+    public static final String ADD_SITE_MEMBERS_SUBCOMMAND = "add-site-members";
+    
+    /**
+     * String for the "show-site-members" subcommand
+     */
+    public static final String SHOW_SITE_MEMBERS_SUBCOMMAND = 
+            "show-site-members";
+    
+    /**
+     * String for the "remove-site-members" subcommand
+     */
+    public static final String REMOVE_SITE_MEMBERS_SUBCOMMAND = 
+            "remove-site-members";
+    
+    /**
+     * String for the "add-site-sec-urls" subcommand
+     */
+    public static final String ADD_SITE_SEC_URLS_SUBCOMMAND = 
+            "add-site-sec-urls";
+    
+    /**
+     * String for the "set-site-sec-urls" subcommand 
+     */
+    public static final String SET_SITE_SEC_URLS_SUBCOMMAND = 
+    	"set-site-sec-urls";
+
+    /**
+     * String for the "remove-site-sec-urls" subcommand
+     */
+    public static final String REMOVE_SITE_SEC_URLS_SUBCOMMAND = 
+    	"remove-site-sec-urls";
+    
+    /**
+     * String for the "set-site-pri-url" subcommand
+     */
+    public static final String SET_SITE_PRI_URL_SUBCOMMAND = "set-site-pri-url"; 
 }
