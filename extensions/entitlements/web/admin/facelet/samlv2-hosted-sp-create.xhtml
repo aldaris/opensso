@@ -34,8 +34,8 @@
                                         value="#{resources['samlv2-hosted-sp-create.selectRealmPanelLabel.section-details']}"/>
                                 </ui:define>
                                 <ui:define name="section-body">
-                                     <ice:panelGroup>
-                                    <ice:outputLabel                                            
+                                    <ice:panelGroup>
+                                        <ice:outputLabel
                                             value="#{resources['samlv2-hosted-sp-create.selectRealmPanelLabel.metaQuestionLabel']}"/>
 
                                         <ice:panelGroup>
@@ -47,7 +47,7 @@
                                                 <f:selectItem id="nometa" itemValue="false" itemLabel="No"/>
                                             </ice:selectOneRadio>
                                         </ice:panelGroup>
-                                        </ice:panelGroup>
+                                    </ice:panelGroup>
                                     <!-- Realm -->
                                     <ice:panelGroup visible="#{!samlV2HostedSpCreateWizardBean.meta}">
                                         <ice:outputLabel
@@ -84,7 +84,7 @@
                                 </ui:define>
                                 <ui:define name="section-body">
                                     <!-- Metadata -->
-                                    <ice:panelGroup>                            
+                                    <ice:panelGroup>
                                         <ice:panelGroup
                                             visible="#{samlV2HostedSpCreateWizardBean.meta}">
 
@@ -125,7 +125,7 @@
                                                                         styleClass="uploadProgressBar"/>
                                                     <ice:outputText
                                                         value="#{samlV2HostedSpCreateWizardBean.extMetaFilename}"/>
-                                                </ice:panelGroup>                                               
+                                                </ice:panelGroup>
                                             </ice:panelGroup>
 
                                             <!-- file upload example -->
@@ -133,13 +133,13 @@
                                         </ice:panelGroup>
                                         <ice:panelGroup
                                             visible="#{!samlV2HostedSpCreateWizardBean.meta}">
-                                            <ice:outputLabel                                                
+                                            <ice:outputLabel
                                                 value="#{resources['samlv2-hosted-sp-create.entityNamePanelLabel.newEntityNameLabel']}"/>
                                             <ice:inputText
                                                 id="NewEntityName"
                                                 value="#{samlV2HostedSpCreateWizardBean.newEntityName}"
                                                 size="70"
-                                                maxlength="70"/>
+                                                maxlength="128"/>
                                         </ice:panelGroup>
                                     </ice:panelGroup>
                                     <!-- Metadata -->
@@ -165,7 +165,7 @@
                                 <ui:define name="section-body">
                                     <!-- COT -->
                                     <ice:panelGroup>
-                                        
+
                                         <ice:panelGroup>
                                             <ice:selectOneRadio
                                                 id="MenuSelectNewCOTRadio"
@@ -176,20 +176,20 @@
                                             </ice:selectOneRadio>
                                         </ice:panelGroup>
                                         <ice:panelGroup
-                                            visible="#{samlV2HostedSpCreateWizardBean.cot}">                                           
-                                                <ice:outputLabel                                                   
-                                                    value="#{resources['samlv2-hosted-sp-create.selectCotPanelLabel.existingCotListLabel']}"/>
-                                                <ice:selectOneMenu
-                                                    id="selectedCot"
-                                                    value="#{samlV2HostedSpCreateWizardBean.selectedCot}"
-                                                    partialSubmit="true">
-                                                    <f:selectItems
-                                                        value="#{samlV2HostedSpCreateWizardBean.availableCotList}"/>
-                                                </ice:selectOneMenu>                                            
+                                            visible="#{samlV2HostedSpCreateWizardBean.cot}">
+                                            <ice:outputLabel
+                                                value="#{resources['samlv2-hosted-sp-create.selectCotPanelLabel.existingCotListLabel']}"/>
+                                            <ice:selectOneMenu
+                                                id="selectedCot"
+                                                value="#{samlV2HostedSpCreateWizardBean.selectedCot}"
+                                                partialSubmit="true">
+                                                <f:selectItems
+                                                    value="#{samlV2HostedSpCreateWizardBean.availableCotList}"/>
+                                            </ice:selectOneMenu>
                                         </ice:panelGroup>
                                         <ice:panelGroup
                                             visible="#{!samlV2HostedSpCreateWizardBean.cot}">
-                                            <ice:outputLabel                                              
+                                            <ice:outputLabel
                                                 value="#{resources['samlv2-hosted-sp-create.selectCotPanelLabel.newCotNameLabel']}"/>
                                             <ice:inputText
                                                 id="NewCotName"
@@ -214,7 +214,7 @@
                                     <ice:outputText
                                         value="#{resources['samlv2-remote-sp-create.attributeMapping.title']}"/>
                                 </ui:define>
-                                <ui:define name="section-details"/>                                  
+                                <ui:define name="section-details"/>
                                 <ui:define name="section-body">
                                     <ice:panelGroup>
                                         <ice:outputLabel
@@ -251,7 +251,7 @@
                                     <o:summarypanel
                                         summary="#{samlV2HostedSpCreateWizardBean.stdMetadataNameSamlV2CreateSummary}"/>
                                     <o:summarypanel
-                                        summary="#{samlV2HostedSpCreateWizardBean.extMetadataNameSamlV2CreateSummary}"/>
+                                        summary="#{samlV2HostedSpCreateWizardBean.extMetadataNameSamlV2CreateSummary}"/>                         
                                     <o:summarypanel
                                         summary="#{samlV2HostedSpCreateWizardBean.cotSamlV2CreateSummary}"/>
                                     <o:summarypanel

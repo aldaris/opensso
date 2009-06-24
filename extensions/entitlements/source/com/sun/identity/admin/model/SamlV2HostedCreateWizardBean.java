@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedCreateWizardBean.java,v 1.2 2009-06-18 07:54:56 asyhuang Exp $
+ * $Id: SamlV2HostedCreateWizardBean.java,v 1.3 2009-06-24 01:41:35 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -31,10 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author yun
- */
 public class SamlV2HostedCreateWizardBean
         extends WizardBean
         implements Serializable {
@@ -54,6 +50,10 @@ public class SamlV2HostedCreateWizardBean
     private String extMetaFile;
     private String extMetaFilename;
     private int extMetaFileProgress;
+
+    SamlV2HostedCreateWizardBean() {
+        super();
+    }
 
     public void reset() {
         super.reset();
@@ -85,6 +85,9 @@ public class SamlV2HostedCreateWizardBean
         String realm = selectedRealm.substring(idx + 1, end).trim();
         cotsBean = new CotsBean();
         cotsBean.setCotBeans(realm);
+        if (getAvailableCotList().size() == 0) {
+            setCot(false);
+        }
     }
 
     public boolean isMeta() {
@@ -137,9 +140,6 @@ public class SamlV2HostedCreateWizardBean
     public List<SelectItem> getAvailableCotList() {
         availableCotList = new ArrayList<SelectItem>();
         availableCotList = cotsBean.getCotBeanItems();
-        if (availableCotList.isEmpty()) {
-            this.cot = false;
-        }
         return availableCotList;
     }
 

@@ -144,18 +144,15 @@
                             <o:section>
                                 <ui:define name="section-title">
                                     <ice:outputText
-                                        value="Add entity into a Circle of Trust"/>
+                                        value="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.section-title']}"/>
                                 </ui:define>
                                 <ui:define name="section-details">
                                     <ice:outputText
-                                        value="Add entity into a Circle of Trust here...."/>
+                                        value="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.section-details']}"/>
                                 </ui:define>
                                 <ui:define name="section-body">
                                     <!-- COT -->
-                                    <ice:panelGroup>
-                                        <ice:outputLabel
-                                            for="cotDecription"
-                                            value="Choose from existing circles of trust listed or provide one to be created in which to include this SP. A COT is a group of IDPs and SPs that trust each other and provides the confines within which all SamlV2 communications are performed." />
+                                    <ice:panelGroup>                                        
                                         <ice:panelGroup>
                                             <ice:selectOneRadio
                                                 id="MenuSelectNewCOTRadio"

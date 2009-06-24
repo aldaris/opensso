@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.5 2009-06-20 08:41:58 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.6 2009-06-24 01:41:35 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -86,13 +86,13 @@ public class SamlV2HostedSpCreateWizardHandler
         String realm = selectedRealmValue.substring(idx + 1, end).trim();
         String name = getSamlV2HostedSpCreateWizardBean().getNewEntityName();
         boolean defAttrMappings = getSamlV2HostedSpCreateWizardBean().getDefAttrMappings();
-        
+
         if (!isMeta) {
-            samlV2HostedSpCreateDao.createSamlv2HostedSp(realm, name, cot, defAttrMappings );
+            samlV2HostedSpCreateDao.createSamlv2HostedSp(realm, name, cot, defAttrMappings);
         } else {
             String stdMeta = getSamlV2HostedSpCreateWizardBean().getStdMetaFile();
             String extMeta = getSamlV2HostedSpCreateWizardBean().getExtMetaFile();
-            samlV2HostedSpCreateDao.importSamlv2HostedSp(cot, stdMeta, extMeta, defAttrMappings );
+            samlV2HostedSpCreateDao.importSamlv2HostedSp(cot, stdMeta, extMeta, defAttrMappings);
         }
 
         getSamlV2HostedSpCreateWizardBean().reset();
@@ -102,9 +102,9 @@ public class SamlV2HostedSpCreateWizardHandler
     @Override
     public void previousListener(ActionEvent event) {
         int step = getStep(event);
-        SamlV2HostedSpCreateWizardStep pws = SamlV2HostedSpCreateWizardStep.valueOf(step);
+        SamlV2HostedSpCreateWizardStep wizardStep = SamlV2HostedSpCreateWizardStep.valueOf(step);
 
-        switch (pws) {
+        switch (wizardStep) {
             case REALM:
                 break;
             case METADATA:
@@ -122,7 +122,7 @@ public class SamlV2HostedSpCreateWizardHandler
             case SUMMARY:
                 break;
             default:
-                assert false : "unhandled step: " + pws;
+                assert false : "unhandled step: " + wizardStep;
         }
 
         super.previousListener(event);
@@ -131,9 +131,9 @@ public class SamlV2HostedSpCreateWizardHandler
     @Override
     public void nextListener(ActionEvent event) {
         int step = getStep(event);
-        SamlV2HostedSpCreateWizardStep pws = SamlV2HostedSpCreateWizardStep.valueOf(step);
+        SamlV2HostedSpCreateWizardStep wizardStep = SamlV2HostedSpCreateWizardStep.valueOf(step);
 
-        switch (pws) {
+        switch (wizardStep) {
             case REALM:
                 break;
             case METADATA:
@@ -151,7 +151,7 @@ public class SamlV2HostedSpCreateWizardHandler
             case SUMMARY:
                 break;
             default:
-                assert false : "unhandled step: " + pws;
+                assert false : "unhandled step: " + wizardStep;
         }
 
         super.nextListener(event);
@@ -259,7 +259,8 @@ public class SamlV2HostedSpCreateWizardHandler
                 }
             }
             getSamlV2HostedSpCreateWizardBean().setStdMetaFilename(fileInfo.getFileName());
-            getSamlV2HostedSpCreateWizardBean().setStdMetaFile(contents.toString());
+            getSamlV2HostedSpCreateWizardBean().setStdMetaFile(contents.toString());          
+            file.delete();
         }
     }
 
@@ -302,7 +303,8 @@ public class SamlV2HostedSpCreateWizardHandler
                 }
             }
             getSamlV2HostedSpCreateWizardBean().setExtMetaFilename(fileInfo.getFileName());
-            getSamlV2HostedSpCreateWizardBean().setExtMetaFile(contents.toString());
+            getSamlV2HostedSpCreateWizardBean().setExtMetaFile(contents.toString());            
+            file.delete();
         }
     }
 

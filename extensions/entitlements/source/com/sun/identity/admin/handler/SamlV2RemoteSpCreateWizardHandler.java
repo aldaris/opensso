@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.3 2009-06-20 08:41:58 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.4 2009-06-24 01:41:35 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -80,7 +80,7 @@ public class SamlV2RemoteSpCreateWizardHandler
 
         //TODO: add attribute mapping to this ArrayList...
         List attrMapping = new ArrayList();
-        
+
         if (getSamlV2RemoteSpCreateWizardBean().isMeta()) {
             String stdMetadataFile = getSamlV2RemoteSpCreateWizardBean().getStdMetaFile();
             samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromFile(realm, cot, stdMetadataFile, attrMapping);
@@ -102,9 +102,10 @@ public class SamlV2RemoteSpCreateWizardHandler
     @Override
     public void previousListener(ActionEvent event) {
         int step = getStep(event);
-        SamlV2RemoteSpCreateWizardStep pws = SamlV2RemoteSpCreateWizardStep.valueOf(step);
+        SamlV2RemoteSpCreateWizardStep wizardStep =
+                SamlV2RemoteSpCreateWizardStep.valueOf(step);
 
-        switch (pws) {
+        switch (wizardStep) {
             case REALM:
                 break;
             case METADATA:
@@ -122,7 +123,7 @@ public class SamlV2RemoteSpCreateWizardHandler
             case SUMMARY:
                 break;
             default:
-                assert false : "unhandled step: " + pws;
+                assert false : "unhandled step: " + wizardStep;
         }
 
         super.previousListener(event);
@@ -131,9 +132,10 @@ public class SamlV2RemoteSpCreateWizardHandler
     @Override
     public void nextListener(ActionEvent event) {
         int step = getStep(event);
-        SamlV2RemoteSpCreateWizardStep pws = SamlV2RemoteSpCreateWizardStep.valueOf(step);
+        SamlV2RemoteSpCreateWizardStep wizardStep =
+                SamlV2RemoteSpCreateWizardStep.valueOf(step);
 
-        switch (pws) {
+        switch (wizardStep) {
             case REALM:
                 break;
             case METADATA:
@@ -151,7 +153,7 @@ public class SamlV2RemoteSpCreateWizardHandler
             case SUMMARY:
                 break;
             default:
-                assert false : "unhandled step: " + pws;
+                assert false : "unhandled step: " + wizardStep;
         }
 
         super.nextListener(event);
@@ -187,7 +189,7 @@ public class SamlV2RemoteSpCreateWizardHandler
     }
 
     public boolean validateMetadata() {
-        boolean usingMetaDataFile = getSamlV2RemoteSpCreateWizardBean().isMeta();        
+        boolean usingMetaDataFile = getSamlV2RemoteSpCreateWizardBean().isMeta();
 
         if (!usingMetaDataFile) {
 
@@ -288,11 +290,12 @@ public class SamlV2RemoteSpCreateWizardHandler
             }
             getSamlV2RemoteSpCreateWizardBean().setStdMetaFilename(fileInfo.getFileName());
             getSamlV2RemoteSpCreateWizardBean().setStdMetaFile(contents.toString());
+            file.delete();
         }
     }
 
     public void stdMetaFileUploadProgress(EventObject event) {
         InputFile ifile = (InputFile) event.getSource();
         getSamlV2RemoteSpCreateWizardBean().setStdMetaFileProgress(ifile.getFileInfo().getPercent());
-    }   
+    }
 }

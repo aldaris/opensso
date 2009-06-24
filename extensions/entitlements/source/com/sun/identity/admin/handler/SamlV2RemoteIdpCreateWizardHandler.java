@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.1 2009-06-23 06:41:54 babysunil Exp $
+ * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.2 2009-06-24 01:41:35 asyhuang Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -200,10 +200,10 @@ public class SamlV2RemoteIdpCreateWizardHandler
     @Override
     public void previousListener(ActionEvent event) {
         int step = getStep(event);
-        SamlV2RemoteIdpCreateWizardStep pws =
+        SamlV2RemoteIdpCreateWizardStep wizardStep =
                 SamlV2RemoteIdpCreateWizardStep.valueOf(step);
 
-        switch (pws) {
+        switch (wizardStep) {
             case REALM:
                 break;
             case METADATA:
@@ -219,7 +219,7 @@ public class SamlV2RemoteIdpCreateWizardHandler
             case SUMMARY:
                 break;
             default:
-                assert false : "unhandled step: " + pws;
+                assert false : "unhandled step: " + wizardStep;
         }
 
         super.previousListener(event);
@@ -228,10 +228,10 @@ public class SamlV2RemoteIdpCreateWizardHandler
     @Override
     public void nextListener(ActionEvent event) {
         int step = getStep(event);
-        SamlV2RemoteIdpCreateWizardStep pws =
+        SamlV2RemoteIdpCreateWizardStep wizardStep =
                 SamlV2RemoteIdpCreateWizardStep.valueOf(step);
 
-        switch (pws) {
+        switch (wizardStep) {
             case REALM:
                 break;
             case METADATA:
@@ -247,7 +247,7 @@ public class SamlV2RemoteIdpCreateWizardHandler
             case SUMMARY:
                 break;
             default:
-                assert false : "unhandled step: " + pws;
+                assert false : "unhandled step: " + wizardStep;
         }
 
         super.nextListener(event);
