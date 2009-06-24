@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutPOST.jsp,v 1.7 2009-06-17 03:10:28 exu Exp $
+   $Id: spSingleLogoutPOST.jsp,v 1.8 2009-06-24 23:05:31 mrudulahg Exp $
 
 --%>
 
@@ -68,12 +68,6 @@
 
     Check the SAML2 Documentation for supported parameters.
 --%>
-<html>
-
-<head>
-    <title>SAMLv2 Single Logout POST binding at SP</title>
-</head>
-<body bgcolor="#FFFFFF" text="#000000">
 
 <%
     // Retrieves the LogoutRequest or LogoutResponse
@@ -199,9 +193,6 @@
         }
     }
 %>
-
-</body>
-</html>
 <%!
 boolean processSAELogout(
     HttpServletRequest request, HttpServletResponse response)

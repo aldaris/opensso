@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutInit.jsp,v 1.11 2009-06-17 03:10:28 exu Exp $
+   $Id: spSingleLogoutInit.jsp,v 1.12 2009-06-24 23:05:31 mrudulahg Exp $
 
 --%>
 
@@ -72,12 +72,6 @@
                    first sp from metadata is used.
     Check the SAML2 Documentation for supported parameters.
 --%>
-<html>
-
-<head>
-    <title>SAMLv2 Single Logout Initiation at SP</title>
-</head>
-<body bgcolor="#FFFFFF" text="#000000">
 
 <%
     // Retrieves the Request Query Parameters
@@ -264,6 +258,3 @@
         return;
     }
 %>
-
-</body>
-</html>

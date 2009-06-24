@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSSOInit.jsp,v 1.7 2009-06-17 03:10:28 exu Exp $
+   $Id: fedletSSOInit.jsp,v 1.8 2009-06-24 23:05:30 mrudulahg Exp $
 
 --%>
 
@@ -144,12 +144,6 @@
     19.affiliationID     Affiliation entity ID
 
 --%>
-<html>
-
-<head>
-<title>Fedlet SSO init</title>
-</head>
-<body bgcolor="#FFFFFF" text="#000000">
 <%
     // Retreive the Request Query Parameters
     // metaAlias and idpEntiyID are the required query parameters
@@ -255,5 +249,3 @@
             e.getMessage());
     }
 %>
-</body>
-</html>

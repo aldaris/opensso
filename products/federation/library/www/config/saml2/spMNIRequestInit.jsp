@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spMNIRequestInit.jsp,v 1.10 2009-06-12 22:21:42 mallas Exp $
+   $Id: spMNIRequestInit.jsp,v 1.11 2009-06-24 23:05:30 mrudulahg Exp $
 
 --%>
 
@@ -54,12 +54,6 @@
     Check the SAML2 Documentation for supported parameters.
 
 --%>
-<html>
-
-<head>
-<title>SAMLv2 SP ManageNameIDRequest Initiation JSP</title>
-</head>
-<body bgcolor="#FFFFFF" text="#000000">
 
 <%
     // Retreive the Request Query Parameters
@@ -158,6 +152,3 @@
             e.getMessage());
     }
 %>
-
-</body>
-</html>

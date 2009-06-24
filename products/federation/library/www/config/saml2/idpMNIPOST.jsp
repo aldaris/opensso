@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpMNIPOST.jsp,v 1.4 2009-06-12 22:21:42 mallas Exp $
+   $Id: idpMNIPOST.jsp,v 1.5 2009-06-24 23:05:30 mrudulahg Exp $
 
 --%>
 
@@ -42,12 +42,6 @@
     the Service Provider with HttpRedirect binding.
     Required parameters to this jsp are : NONE
 --%>
-<html>
-
-<head>
-<title>SAMLv2 IDP ManageNameIDRequest Process JSP with HttpRedirect binding</title>
-</head>
-<body bgcolor="#FFFFFF" text="#000000">
 <%
     try {
         HashMap paramsMap = new HashMap();
@@ -90,7 +84,4 @@
             e.getMessage());
     }
 %>
-
-</body>
-</html>
 

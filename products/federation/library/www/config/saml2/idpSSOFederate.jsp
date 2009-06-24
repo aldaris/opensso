@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSSOFederate.jsp,v 1.4 2009-06-12 22:21:42 mallas Exp $
+   $Id: idpSSOFederate.jsp,v 1.5 2009-06-24 23:05:30 mrudulahg Exp $
 
 --%>
 
@@ -37,11 +37,6 @@
 <%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
 <%@ page import="com.sun.identity.saml2.profile.IDPSSOUtil" %>
 <%@ page import="com.sun.identity.saml2.profile.IDPSSOFederate" %>
-
-<html>
-<head><title>IDP SSO Federation Service</title></head>
-
-<body>
 <%
     // check request, response
     if ((request == null) || (response == null)) {

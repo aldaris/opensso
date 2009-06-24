@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSSOInit.jsp,v 1.10 2009-06-12 22:21:42 mallas Exp $
+   $Id: spSSOInit.jsp,v 1.11 2009-06-24 23:05:30 mrudulahg Exp $
 
 --%>
 
@@ -159,12 +159,6 @@
                             In this advice, the requested auth level is 1.
                             Note: The ":" before auth level 1 is a must.
 --%>
-<html>
-
-<head>
-<title>SAMLv2 Service Provider SSO</title>
-</head>
-<body bgcolor="#FFFFFF" text="#000000">
 <%
     // Retreive the Request Query Parameters
     // metaAlias and idpEntiyID are the required query parameters
@@ -238,5 +232,3 @@
             e.getMessage());
     }
 %>
-</body>
-</html>

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSingleLogoutInit.jsp,v 1.7 2009-06-12 22:21:42 mallas Exp $
+   $Id: idpSingleLogoutInit.jsp,v 1.8 2009-06-24 23:05:30 mrudulahg Exp $
 
 --%>
 
@@ -62,12 +62,6 @@
     Check the SAML2 Documentation for supported parameters.
 
 --%>
-<html>
-
-<head>
-    <title>SAMLv2 Single Logout Initiation at IDP</title>
-</head>
-<body bgcolor="#FFFFFF" text="#000000">
 
 <%
     // Retreive the Request Query Parameters
@@ -175,6 +169,3 @@
         return;
     }
 %>
-
-</body>
-</html>

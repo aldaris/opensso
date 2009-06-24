@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSingleLogoutPOST.jsp,v 1.4 2009-06-12 22:21:42 mallas Exp $
+   $Id: idpSingleLogoutPOST.jsp,v 1.5 2009-06-24 23:05:30 mrudulahg Exp $
 
 --%>
 
@@ -56,12 +56,6 @@
 
     Check the SAML2 Documentation for supported parameters.
 --%>
-<html>
-
-<head>
-    <title>SAMLv2 Single Logout Redirect binding at IDP</title>
-</head>
-<body bgcolor="#FFFFFF" text="#000000">
 
 <%
     // Retrieves the LogoutRequest or LogoutResponse
@@ -167,6 +161,3 @@
         }
     }
 %>
-
-</body>
-</html>

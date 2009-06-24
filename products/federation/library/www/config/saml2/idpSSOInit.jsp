@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSSOInit.jsp,v 1.8 2009-06-12 22:21:42 mallas Exp $
+   $Id: idpSSOInit.jsp,v 1.9 2009-06-24 23:05:30 mrudulahg Exp $
 
 --%>
 
@@ -79,12 +79,6 @@
 				  which are not supported by FM/AM.
     7. affiliationID	    affiliation entity ID
 --%>
-<html>
-
-<head>
-<title>SAMLv2 Identity Provider Unsolicited SSO</title>
-</head>
-<body bgcolor="#FFFFFF" text="#000000">
 <%
     // Retreive the Request Query Parameters
     // metaAlias and spEntiyID are the required query parameters
@@ -135,5 +129,3 @@
             e.getMessage());
     }
 %>
-</body>
-</html>
