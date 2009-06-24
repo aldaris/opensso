@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SmokeTest.java,v 1.11 2009-01-27 00:14:09 nithyas Exp $
+ * $Id: SAMLv2SmokeTest.java,v 1.12 2009-06-24 23:03:43 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -252,7 +252,7 @@ public class SAMLv2SmokeTest extends TestCommon {
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
       "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testSPTerminate"})
-    public void testIDPSSO()
+     public void testIDPSSO()
     throws Exception {
         entering("testIDPSSO", null);
         try {
@@ -483,7 +483,109 @@ public class SAMLv2SmokeTest extends TestCommon {
         }
         exiting("testIDPTerminateSOAP");
     }
-    
+
+        /**
+     * Run saml2 slo
+     * @DocTest: SAML2|Perform SP initiated slo with POST profile.
+     */
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
+    dependsOnMethods={"testIDPTerminateSOAP"})
+    public void testSPSLOPOST()
+    throws Exception {
+        entering("testSPSLOPOST", null);
+        try {
+            log(Level.FINEST, "testSPSLOPOST", "First try SP init SSO Post");
+            testSPSSOInitPost();
+            log(Level.FINEST, "testSPSLOPOST", "Now get xml for SP SLO POST");
+            xmlfile = baseDir + "test13spslo.xml";
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "post", false);
+            log(Level.FINEST, "testSPSLOPOST", "Run " + xmlfile);
+            task1 = new DefaultTaskHandler(xmlfile);
+            page1 = task1.execute(webClient);
+        } catch (Exception e) {
+            log(Level.SEVERE, "testSPSLOPOST", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("testSPSLOPOST");
+    }
+
+    /**
+     * Run saml2 termination
+     * @DocTest: SAML2|Perform SP initiated termination with POST profile
+     */
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
+    dependsOnMethods={"testSPSLOPOST"})
+    public void testSPTerminatePOST()
+    throws Exception {
+        entering("testSPTerminatePOST", null);
+        try {
+            log(Level.FINEST, "testSPTerminatePOST", "Running: " +
+                    "testSPTerminatePOST");
+            xmlfile = baseDir + "test14spterminate.xml";
+            SAMLv2Common.getxmlSPTerminate(xmlfile, configMap, "post");
+            log(Level.FINEST, "testSPTerminatePOST", "Run " + xmlfile);
+            task1 = new DefaultTaskHandler(xmlfile);
+            page1 = task1.execute(webClient);
+        } catch (Exception e) {
+            log(Level.SEVERE, "testSPTerminatePOST", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("testSPTerminatePOST");
+    }
+
+    /**
+     * Run saml2 slo
+     * @DocTest: SAML2|Perform  idp initiated slo with POST profile.
+     */
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
+    dependsOnMethods={"testSPTerminatePOST"})
+    public void testIDPSLOPOST()
+    throws Exception {
+        entering("testIDPSLOPOST", null);
+        try {
+            log(Level.FINEST, "testIDPSLOPOST", "First try SP init SSO Post");
+            testSPSSOInitPost();
+            log(Level.FINEST, "testIDPSLOPOST", "Now get xml for IDP SLO POST");
+            xmlfile = baseDir + "test15idpslo.xml";
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "post", false);
+            log(Level.FINEST, "testIDPSLOPOST", "Run " + xmlfile);
+            task1 = new DefaultTaskHandler(xmlfile);
+            page1 = task1.execute(webClient);
+        } catch (Exception e) {
+            log(Level.SEVERE, "testIDPSLOPOST", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("testIDPSLOPOST");
+    }
+
+    /**
+     * Run saml2 termination
+     * @DocTest: SAML2|Perform  idp initiated termination with post profile
+     */
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
+    dependsOnMethods={"testIDPSLOPOST"})
+    public void testIDPTerminatePOST()
+    throws Exception {
+        entering("testIDPTerminatePOST", null);
+        try {
+            log(Level.FINEST, "testIDPTerminatePOST",
+                    "Running: testIDPTerminatePOST");
+            xmlfile = baseDir + "test16idpterminate.xml";
+            SAMLv2Common.getxmlSPTerminate(xmlfile, configMap, "post");
+            log(Level.FINEST, "testIDPTerminatePOST", "Run " + xmlfile);
+            task1 = new DefaultTaskHandler(xmlfile);
+            page1 = task1.execute(webClient);
+        } catch (Exception e) {
+            log(Level.SEVERE, "testIDPTerminatePOST", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("testIDPTerminatePOST");
+    }
+
     /**
      * Cleanup methods deletes all the users which were created in setup
      */
