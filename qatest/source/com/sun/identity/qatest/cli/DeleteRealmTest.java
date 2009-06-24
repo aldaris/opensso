@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteRealmTest.java,v 1.14 2009-01-26 23:49:30 nithyas Exp $
+ * $Id: DeleteRealmTest.java,v 1.15 2009-06-24 22:29:32 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -273,6 +273,12 @@ public class DeleteRealmTest extends TestCommon implements CLIExitCodes {
                 FederationManagerCLI cleanupCli = 
                         new FederationManagerCLI(useDebugOption, 
                         useVerboseOption, useLongOptions);
+                if (!expectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
+                    log(Level.FINEST, "cleanup", "All setup realms will be " +
+                            "deleted in cleanup");
+                    realmToDelete = "";
+                }
                 for (int i=realms.length-1; i >= 0; i--) {             
                     log(Level.FINEST, "cleanup", "setupRealmToDelete: " + 
                             realms[i]);
