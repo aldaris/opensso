@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.20 2009-06-02 20:56:04 vimal_67 Exp $
+ * $Id: FederationManagerCLI.java,v 1.21 2009-06-24 22:36:36 srivenigan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,12 +33,14 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
@@ -208,14 +210,16 @@ public class FederationManagerCLI extends CLIUtility
      * @param schemaType
      */
     private void addSchemaTypeArguments(String schemaType) {
-		String schemaTypeArg;
-		if (useLongOptions) {
-			schemaTypeArg = PREFIX_ARGUMENT_LONG + SCHEMA_TYPE_ARGUMENT;
-		} else {
-			schemaTypeArg = PREFIX_ARGUMENT_SHORT + SHORT_SCHEMA_TYPE_ARGUMENT;
-		}
-		addArgument(schemaTypeArg);
-		addArgument(schemaType);
+        String schemaTypeArg;
+        if (useLongOptions) {
+            schemaTypeArg = PREFIX_ARGUMENT_LONG + 
+                    SCHEMA_TYPE_ARGUMENT;
+        } else {
+            schemaTypeArg = PREFIX_ARGUMENT_SHORT +
+                    SHORT_SCHEMA_TYPE_ARGUMENT;
+        }
+        addArgument(schemaTypeArg);
+        addArgument(schemaType);
 	}
     
     /**
@@ -1226,21 +1230,38 @@ public class FederationManagerCLI extends CLIUtility
     public boolean createRealms(String realmList)
     throws Exception {
         boolean allRealmsCreated = true;
-        
+        List commandList = new ArrayList();
+        int exitStatus = -1;
+        Map argMap = new HashMap();
+        List argList = new ArrayList();
         if (realmList != null) {
             if (realmList.length() > 0) {
-                String [] realms = realmList.split(";");
-                for (int i=0; i < realms.length; i++) {
-                    log(Level.FINE, "createRealms", "Creating realm " + 
-                            realms[i]);
-                    int exitStatus = createRealm(realms[i]);
+                String[] realms = realmList.split(";");
+
+                //Create single realm without "do-batch"
+                if (realms.length == 1) {
+                    exitStatus = createRealm(realms[0]);
                     logCommand("createRealms");
                     resetArgList();
-                    if (exitStatus != SUCCESS_STATUS) {
-                        allRealmsCreated = false;
-                        log(Level.SEVERE, "createRealms", "The realm " + 
-                                realms[i] + " failed to be created.");
+                } else {
+                    for (int i = 0; i < realms.length; i++) {
+                        argMap.put(PREFIX_ARGUMENT_LONG + REALM_ARGUMENT,
+                                realms[i]);
+                        argList.add(argMap);
+                        commandList.add(createBatchCommand(
+                                CREATE_REALM_SUBCOMMAND, argList));
+                        argList.clear();
+                        argMap.clear();
                     }
+                    String attFile = createBatchfile(commandList);
+                    exitStatus = doBatch(attFile, "", false);
+                    logCommand("createRealms");
+                    resetArgList();
+                }
+                if (exitStatus != SUCCESS_STATUS) {
+                    allRealmsCreated = false;
+                    log(Level.SEVERE, "createRealms", "The ssoadm do-batch " +
+                            "command failed to create realms.");
                 }
             } else {
                 allRealmsCreated = false;
@@ -1253,7 +1274,7 @@ public class FederationManagerCLI extends CLIUtility
         }
         return (allRealmsCreated);
     }
-       
+
     /**
      * Delete a realm.
      *
@@ -1444,51 +1465,89 @@ public class FederationManagerCLI extends CLIUtility
     public boolean createIdentities(String idList)
     throws Exception {
         boolean allIdsCreated = true;
-        String setupID = null;
-        
+        List commandsList = new ArrayList();
+        int exitStatus = -1;
+
         if (idList != null) {
             if (idList.length() > 0) {
-                String [] ids = idList.split("\\|");
-                for (int i=0; i < ids.length; i++) {
-                    log(Level.FINE, "createIdentities", "Creating id " + 
-                            ids[i]);
-                    String [] idArgs = ids[i].split("\\,");
+                String[] ids = idList.split("\\|");
+            	
+                //Create single identity without "do-batch"
+                if (ids.length == 1) {
+                    String[] idArgs = ids[0].split("\\,");
                     if (idArgs.length >= 3) {
                         String idRealm = idArgs[0];
                         String idName = idArgs[1];
                         String idType = idArgs[2];
                         log(Level.FINEST, "createIdentities", "Realm for id: " +
                                 idRealm);
-                        log(Level.FINEST, "createIdentities", "Name for id: " + 
+                        log(Level.FINEST, "createIdentities", "Name for id: " +
                                 idName);
-                        log(Level.FINEST, "createIdentities", "Type for id: " + 
-                                idType);                            
-                        String idAttributes = null;
-                        int exitStatus = -1;
+                        log(Level.FINEST, "createIdentities", "Type for id: " +
+                                idType);
+                        exitStatus = createIdentity(idRealm, idName, idType);
+
                         if (idArgs.length > 3) {
-                            idAttributes = idArgs[3];
-                            exitStatus = createIdentity(idRealm, idName, idType,
-                                    idAttributes);
-                        } else {                                
+                            String idAttributes = idArgs[3];
                             exitStatus = createIdentity(idRealm, idName, 
-                                    idType);
+                                    idType, idAttributes);
                         }
                         logCommand("createIdentities");
                         resetArgList();
-                        if (exitStatus != SUCCESS_STATUS) {
-                            allIdsCreated = false;
-                            log(Level.SEVERE, "createIdentities", 
-                                    "The creation of " + idName + 
-                                    " failed with exit status " + exitStatus + 
-                                    ".");
-                        }
-                    } else {
-                        allIdsCreated = false;
-                        log(Level.SEVERE, "createIdentities", 
-                                "The identity " + ids[i] + 
-                                " must have a realm, an identity name, and an " 
-                                + "identity type");
                     }
+                } else {
+                    for (int i = 0; i < ids.length; i++) {
+                        log(Level.FINE, "createIdentities", "Creating id " +
+                                ids[i]);
+                        String[] idArgs = ids[i].split("\\,");
+                        if (idArgs.length >= 3) {
+                            String idRealm = idArgs[0];
+                            String idName = idArgs[1];
+                            String idType = idArgs[2];
+                            log(Level.FINEST, "createIdentities", 
+                                    "Realm for id: " + idRealm);
+                            log(Level.FINEST, "createIdentities", 
+                                    "Name for id: " + idName);
+                            log(Level.FINEST, "createIdentities", 
+                                    "Type for id: " + idType);
+                            List argNameValueList = new ArrayList();
+                            Map argMap = new HashMap();
+                            argMap.put(PREFIX_ARGUMENT_LONG + REALM_ARGUMENT,
+                                    idRealm);
+                            argMap.put(PREFIX_ARGUMENT_LONG + ID_NAME_ARGUMENT,
+                                    idName);
+                            argMap.put(PREFIX_ARGUMENT_LONG + ID_TYPE_ARGUMENT,
+                                    idType);
+                            if (idArgs.length > 3) {
+                                String idAttributes = null;
+                                idAttributes = idArgs[3];
+                                idAttributes = idAttributes.replace(";", " ");
+                                argMap.put(PREFIX_ARGUMENT_LONG +
+                                        ATTRIBUTE_VALUES_ARGUMENT,
+                                        idAttributes);
+                            }
+                            argNameValueList.add(argMap);
+                            commandsList.add(createBatchCommand(
+                                    CREATE_IDENTITY_SUBCOMMAND, 
+                                    argNameValueList));
+                        } else {
+                            allIdsCreated = false;
+                            log(Level.SEVERE, "createIdentities",
+                                    "The identity " + ids[i] + " must have a " +
+                                    "realm, an identity name, and an " +
+                                    "identity type");
+                        }
+                    }
+                    String batchFile = createBatchfile(commandsList);
+                    exitStatus = doBatch(batchFile, "", false);
+                    logCommand("createIdentities");
+                    resetArgList();
+                }
+                if (exitStatus != SUCCESS_STATUS) {
+                    allIdsCreated = false;
+                    log(Level.SEVERE, "createIdentities",
+                            "The creation of identities in batch failed with " +
+                            "exit status: " + exitStatus + ".");
                 }
             } else {
                 allIdsCreated = false;
@@ -3213,6 +3272,527 @@ public class FederationManagerCLI extends CLIUtility
         addDataStoreNameArguments(datastoreName);
         addGlobalOptions();        
         return executeCommand(commandTimeout);    	
+    }
+    
+    /**
+     * Creates a batch command.
+     * 
+     * @param subCommand - name of sub-command. For e.g. create-realm, 
+     *        create-identity, etc.
+     * @param argNameValueList - list with arguments in map for the command to 
+     *        be created.
+     * @return commandString - is entire command as string.
+     */
+    private String createBatchCommand(String subCommand, 
+            List<Map> argNameValueList) 
+            throws Exception {
+        StringBuffer commandBuffer = new StringBuffer();
+        String commandString = "";
+        if (argNameValueList.size() > 0) {
+            commandBuffer.append(subCommand);
+            commandBuffer.append(" ");
+            Iterator i = argNameValueList.iterator();
+            while (i.hasNext()) {
+                Map argMap = (Map)i.next();
+                Set s = argMap.keySet();
+                Iterator it = s.iterator();
+                while(it.hasNext()) {
+                    String key = (String)it.next();
+                    String value = (String)argMap.get(key);
+                    commandBuffer.append(key + " " + value + " ");
+                }
+            }
+            commandString = commandBuffer.toString();
+        }
+        return commandString;
+    }
+    
+    /**
+     * Creates a batchfile.
+     * 
+     * @param commandList - list containing commands to be executed in batch. 
+     * @return batchFile - a string with path of batch file location
+     */
+    private String createBatchfile(List commandList)
+            throws Exception {
+        StringBuffer commandsBuffer = new StringBuffer();
+        ResourceBundle rb_amconfig =
+                ResourceBundle.getBundle(
+                TestConstants.TEST_PROPERTY_AMCONFIG);
+        String attFileDir = getBaseDir() + fileseparator +
+                rb_amconfig.getString(TestConstants.KEY_ATT_SERVER_NAME) +
+                fileseparator + "built" + fileseparator + "classes" +
+                fileseparator + "cli" + fileseparator;
+        String attFile = attFileDir + "batchFile" + 
+                (new Integer(new Random().nextInt())).toString() + ".txt";
+        BufferedWriter out = new BufferedWriter(new FileWriter(attFile));
+        if (commandList.size() > 0) {
+            Iterator i = commandList.iterator();
+            while (i.hasNext()) {
+                commandsBuffer.append((String) i.next());
+                if (i.hasNext()) {
+                    commandsBuffer.append(newline);
+                }
+            }
+        }
+        String commandsString = commandsBuffer.toString();
+        log(Level.FINEST, "createBatchfile", "List of commands executed " +
+                "in batch: \n\n" + commandsString + "\n");
+        out.write(commandsString);
+        out.close();
+        return attFile;
+    }
+    
+    /**
+     * Adds batch file arguments to "do-batch" sub-command.
+     * 
+     * @param batchFile - Name of file that contains commands and options.
+     */
+    private void addBatchFileArguments(String batchFile) {
+    	String batchFileArg;
+        if (!batchFile.trim().equals("")) {
+            if (useLongOptions) {
+                batchFileArg = PREFIX_ARGUMENT_LONG + BATCH_FILE_ARGUMENT;
+            } else {
+    		batchFileArg = PREFIX_ARGUMENT_SHORT + 
+                        SHORT_BATCH_FILE_ARGUMENT;
+            }
+            addArgument(batchFileArg);
+            addArgument(batchFile);
+        }        
+    }
+    
+    /**
+     * Adds batch status arguments to "do-batch" sub-command.
+     * 
+     * @param batchStatus - name of the batch status file.
+     */
+    private void addBatchStatusArguments(String batchStatus) {
+        String batchStatusArg;
+        if (!batchStatus.trim().equals("")) {
+            if (useLongOptions) {
+                batchStatusArg = PREFIX_ARGUMENT_LONG + BATCH_STATUS_ARGUMENT;
+            } else {
+                batchStatusArg = PREFIX_ARGUMENT_SHORT + 
+                        SHORT_BATCH_STATUS_ARGUMENT;
+            }
+            addArgument(batchStatusArg);
+            addArgument(batchStatus);
+        }
+    }
+    
+    /**
+     * Executes commands in batch.
+     * 
+     * @param batchFile - Name of file that contains commands and options.
+     * @param batchStatus - name of the batch status file.
+     * @param continueDeletingService - Continue processing the rest of the 
+     *        request when preceeding request was erroneous.
+     * @return exit status of "show-datastore" subcommand.
+     * @throws java.lang.Exception
+     */
+    public int doBatch(String batchFile, String batchStatus, 
+    		boolean continueDeletingService) 
+    throws Exception {
+        setSubcommand(DO_BATCH_SUBCOMMAND);
+        addBatchFileArguments(batchFile);
+        addBatchStatusArguments(batchStatus);
+        if (continueDeletingService) {
+            addContinueArgument();
+        }
+        addGlobalOptions();
+        return executeCommand(commandTimeout);
+    }
+
+    /**
+     * Creates a site
+     * 
+     * @param siteName - Site name, e.g. mysite
+     * @param siteUrl - Site primary URL, e.g. http://www.example.com:8080
+     * @param secondaryUrls - Secondary URLs
+     * @return exit status of "create-site" subcommand.
+     * @throws java.lang.Exception
+     */
+    public int createSite(String siteName, String siteUrl, 
+    		String secondaryUrls) 
+    throws Exception {
+        setSubcommand(CREATE_SITE_SUBCOMMAND);
+        addSiteNameArguments(siteName);
+        addSiteUrlArguments(siteUrl);
+        if (!secondaryUrls.equals("") || secondaryUrls != null) {
+            addSecondaryUrlArguments(secondaryUrls);
+        }
+        addGlobalOptions();
+        return executeCommand(commandTimeout);
+    }    
+    
+    /**
+     * Adds site name arguments.
+     * 
+     * @param siteName - Site name, e.g. mysite
+     */
+    private void addSiteNameArguments(String siteName) {
+        String siteNameArg;
+        if (!siteName.equals("")) {
+            if (useLongOptions) {
+            	siteNameArg = PREFIX_ARGUMENT_LONG + SITE_NAME_ARGUMENT;
+            } else {
+            	siteNameArg = PREFIX_ARGUMENT_SHORT + SHORT_SITE_NAME_ARGUMENT;
+            }
+            addArgument(siteNameArg);
+            addArgument(siteName);
+        }
+    }
+    
+    /**
+     * Adds site url arguments.
+     * 
+     * @param siteUrl - Sites primary URL, e.g. http://www.example.com:8080
+     */
+    private void addSiteUrlArguments(String siteUrl) {
+        String siteUrlArg;
+        if (!siteUrl.equals("")) {
+            if (useLongOptions) {
+            	siteUrlArg = PREFIX_ARGUMENT_LONG + SITE_URL_ARGUMENT;
+            } else {
+            	siteUrlArg = PREFIX_ARGUMENT_SHORT + SHORT_SITE_URL_ARGUMENT;
+            }
+            addArgument(siteUrlArg);
+            addArgument(siteUrl);
+        }
+    }
+    
+    /**
+     * Adds site name arguments.
+     * 
+     * @param secondaryUrls - Secondary URLs
+     */
+    private void addSecondaryUrlArguments(String secondaryUrls) {
+        String secondaryUrlsArg;
+        if (!secondaryUrls.equals("")) {
+            if (useLongOptions) {
+            	secondaryUrlsArg = PREFIX_ARGUMENT_LONG + 
+                        SECONDARY_URLS_ARGUMENT;
+            } else {
+            	secondaryUrlsArg = PREFIX_ARGUMENT_SHORT +
+                        SHORT_SECONDARY_URLS_ARGUMENT;
+            }
+            addArgument(secondaryUrlsArg);
+            String[] secStrings = secondaryUrls.split(",");
+            for (String s : secStrings) {
+                addArgument(s);
+            }
+        }
+    }
+    
+    /**
+     * Shows site
+     * 
+     * @param siteName - Site name, e.g. mysite
+     * @return exit status of "show-site" subcommand.
+     * @throws java.lang.Exception
+     */
+    public int showSite(String siteName) 
+    throws Exception {
+        setSubcommand(SHOW_SITE_SUBCOMMAND);
+        addSiteNameArguments(siteName);
+        addGlobalOptions();
+        return executeCommand(commandTimeout);
+    }    
+
+    /**
+     * List sites
+     * 
+     * @return exit status of "list-sites" subcommand.
+     * @throws java.lang.Exception
+     */
+    public int listSites() 
+    throws Exception {
+        setSubcommand(LIST_SITES_SUBCOMMAND);
+        addGlobalOptions();
+        return executeCommand(commandTimeout);
+    }    
+
+    /**
+     * Delete site
+     * 
+     * @param siteName - Site name, e.g. mysite
+     * @return exit status of "delete-site" subcommand.
+     * @throws java.lang.Exception
+     */
+    public int deleteSite(String siteName) 
+    throws Exception {
+        setSubcommand(DELETE_SITE_SUBCOMMAND);
+        addSiteNameArguments(siteName);
+        addGlobalOptions();
+        return executeCommand(commandTimeout);
+    }      
+    
+    /**
+     * Creates a site.
+     * 
+     * @param sitesArgs - Names of the sites 
+     * @return
+     * @throws java.lang.Exception
+     */
+    public boolean createSites(String sitesArgs)
+    throws Exception { 
+    	int exitStatus = -1;
+    	boolean allSitesCreated = true;
+        String[] sites = sitesArgs.split("\\|");
+        Map argMap = new HashMap();
+        List argList = new ArrayList();
+        List commandList = new ArrayList();
+        
+    	if (sites.length > 0) {
+            if (sites.length == 1) {
+                String[] siteArgs = sites[0].split(";");
+                if (siteArgs.length >= 2) {
+                    String siteName = siteArgs[0];
+                    String siteUrl = siteArgs[1];
+                    log(Level.FINEST, "createSites", "Creating site with args: "
+                            + siteName + ", " + siteUrl);
+                    exitStatus = createSite(siteName, siteUrl, "");
+                    if (siteArgs.length > 2) {
+                        String secUrls = siteArgs[2];
+                        log(Level.FINEST, "createSites", "Creating site with " +
+                                "args: " + siteName + ", " + siteUrl + ", " 
+                                + secUrls);
+                        exitStatus = createSite(siteName, siteUrl, secUrls);
+                    }
+                }
+                logCommand("createSites");
+                resetArgList();
+            } else { 
+                for (String site : sites) {
+                    String[] siteArgs = site.split(";");
+                    if (siteArgs.length >= 2) {
+                        String siteName = siteArgs[0];
+                        String siteUrl = siteArgs[1];
+                        argMap.put(PREFIX_ARGUMENT_LONG + SITE_NAME_ARGUMENT,
+                        		siteName);
+                        argMap.put(PREFIX_ARGUMENT_LONG + SITE_URL_ARGUMENT,
+                        		siteUrl);
+                        if (siteArgs.length > 2) {
+                            String secUrls = siteArgs[2];
+                            secUrls = secUrls.replace(",", " ");
+                            argMap.put(PREFIX_ARGUMENT_LONG + 
+                                    SECONDARY_URLS_ARGUMENT, secUrls);
+                        }
+                        argList.add(argMap);
+                        commandList.add(createBatchCommand(
+                                CREATE_SITE_SUBCOMMAND, argList));
+                        argList.clear();
+                        argMap.clear();
+                    } else {
+                        allSitesCreated = false;
+                        log(Level.SEVERE, "createSites", "Incorrect site " +
+                                "argument list passed.");
+                    }
+                }
+                String attFile = createBatchfile(commandList);
+                exitStatus = doBatch(attFile, "", false);
+                logCommand("createSites");
+                resetArgList();
+            }
+            if (exitStatus != SUCCESS_STATUS) {
+            	allSitesCreated = false;
+                log(Level.SEVERE, "createSites", "The ssoadm command " +
+                        " failed to create sites.");
+            }
+        } else {
+        	allSitesCreated = false;
+            log(Level.SEVERE, "createSites", 
+                    "The list of sites is empty.");
+        }
+    	return allSitesCreated;
+    }
+    
+    /**
+     * 
+     * @param siteNames
+     * @return
+     * @throws java.lang.Exception
+     */
+    public boolean deleteSites(String siteNames)
+    throws Exception { 
+    	int exitStatus = -1;
+    	boolean allSitesDeleted = true;
+        String[] siteStrings = siteNames.split(";");
+        Map argMap = new HashMap();
+        List argList = new ArrayList();
+        List commandList = new ArrayList();
+        
+    	if (siteStrings.length > 0) {
+    		if (siteStrings.length == 1) {
+    			exitStatus = deleteSite(siteStrings[0]);
+    			logCommand("deleteSites");
+    			resetArgList();
+    		} else { 
+    			for (int i=0; i < siteStrings.length; i++) {
+                    argMap.put(PREFIX_ARGUMENT_LONG + SITE_NAME_ARGUMENT,
+                            siteStrings[i]);
+                    argList.add(argMap);
+                    commandList.add(createBatchCommand(
+                            DELETE_SITE_SUBCOMMAND, argList));
+                    argList.clear();
+                    argMap.clear();
+                }
+                String attFile = createBatchfile(commandList);
+                exitStatus = doBatch(attFile, "", false);
+                logCommand("deleteSites");
+                resetArgList();
+            }
+            if (exitStatus != SUCCESS_STATUS) {
+            	allSitesDeleted = false;
+                log(Level.SEVERE, "deleteSites", "The ssoadm command " +
+                        " failed to delete sites.");
+            }
+        } else {
+        	allSitesDeleted = false;
+            log(Level.SEVERE, "deleteSites", 
+                    "The list of sites is empty.");
+        }
+    	return allSitesDeleted;
+    }
+    
+    /**
+     * Add server names arguments to the command.
+     * 
+     * @param serverNames - names of the servers separated by ","
+     */
+    private void addServerNamesArguments(String serverNames) {
+        String serverNamesArg;
+        if (!serverNames.equals("")) {
+            if (useLongOptions) {
+            	//serverNamesArg = PREFIX_ARGUMENT_LONG + SERVER_NAMES_ARGUMENT;
+            	serverNamesArg = "--servernames";
+            } else {
+            	serverNamesArg = PREFIX_ARGUMENT_SHORT + 
+                        SHORT_SERVER_NAMES_ARGUMENT;
+            }
+            addArgument(serverNamesArg);
+            String[] servers = serverNames.split(",");
+            for (String s : servers)
+                addArgument(s);
+        }
+    }
+    
+    /**
+     * Add members to a site.
+     * 
+     * @param siteName - name of the site as string.
+     * @param serverNames - servernames to be removed separated by ","
+     * @return int - exitstatus of the subcommand "add-site-members"
+     * @throws java.lang.Exception
+     */
+    public int addSiteMembers(String siteName, String serverNames) 
+    throws Exception {
+        setSubcommand(ADD_SITE_MEMBERS_SUBCOMMAND);
+        addSiteNameArguments(siteName);
+        addServerNamesArguments(serverNames);
+        addGlobalOptions();
+        return executeCommand(commandTimeout);
+    }      
+
+    /**
+     * Display members of a site.
+     * 
+     * @param siteName - name of the site as string.
+     * @return int - exitstatus of the subcommand "show-site-members"
+     * @throws java.lang.Exception
+     */
+    public int showSiteMembers(String siteName) 
+    throws Exception {
+        setSubcommand(SHOW_SITE_MEMBERS_SUBCOMMAND);
+        addSiteNameArguments(siteName);
+        addGlobalOptions();
+        return executeCommand(commandTimeout);
+    }      
+
+    /**
+     * Remove members of a site.
+     * 
+     * @param siteName - name of the site as string.
+     * @param serverNames - servernames to be removed separated by ","
+     * @return int - exitstatus of the subcommand "remove-site-members"
+     * @throws java.lang.Exception
+     */
+    public int removeSiteMembers(String siteName, String serverNames) 
+    throws Exception {
+        setSubcommand(REMOVE_SITE_MEMBERS_SUBCOMMAND);
+        addSiteNameArguments(siteName);
+        addServerNamesArguments(serverNames);
+        addGlobalOptions();
+        return executeCommand(commandTimeout);
+    }      
+
+    /**
+     * Adds site secondary urls to site.
+     * 
+     * @param siteName - name of the site as string.
+     * @param siteSecUrls - siteSecUrls to be removed separated by ","
+     * @return int - exitstatus of the subcommand "add-site-sec-urls"
+     * @throws java.lang.Exception
+     */
+    public int addSiteSecUrls(String siteName, String siteSecUrls)
+    throws Exception {
+    	setSubcommand(ADD_SITE_SEC_URLS_SUBCOMMAND);
+    	addSiteNameArguments(siteName);
+    	addSecondaryUrlArguments(siteSecUrls);
+    	addGlobalOptions();
+    	return executeCommand(commandTimeout);
+    }
+
+    /**
+     * Sets site secondary urls to site.
+     * 
+     * @param siteName - name of the site as string.
+     * @param siteSecUrls - siteSecUrls to be set separated by ","
+     * @return int - exitstatus of the subcommand "set-site-sec-urls"
+     * @throws java.lang.Exception
+     */
+    public int setSiteSecUrls(String siteName, String siteSecUrls)
+    throws Exception {
+    	setSubcommand(SET_SITE_SEC_URLS_SUBCOMMAND);
+    	addSiteNameArguments(siteName);
+    	addSecondaryUrlArguments(siteSecUrls);
+    	addGlobalOptions();
+    	return executeCommand(commandTimeout);
+    }
+
+    /**
+     * Removes site secondary urls from site.
+     * 
+     * @param siteName - name of the site as string.
+     * @param siteSecUrls - siteSecUrls to be removed separated by ","
+     * @return int - exitstatus of the subcommand "remove-site-sec-urls"
+     * @throws java.lang.Exception
+     */
+    public int removeSiteSecUrls(String siteName, String siteSecUrls)
+    throws Exception {
+    	setSubcommand(REMOVE_SITE_SEC_URLS_SUBCOMMAND);
+    	addSiteNameArguments(siteName);
+    	addSecondaryUrlArguments(siteSecUrls);
+    	addGlobalOptions();
+    	return executeCommand(commandTimeout);
+    }
+
+    /**
+     * Sets site url to site.
+     * 
+     * @param siteName - name of the site as string.
+     * @param siteUrl - siteUrl to be removed separated by ","
+     * @return int - exitstatus of the subcommand "set-site-pri-url"
+     * @throws java.lang.Exception
+     */
+    public int setSitePriUrl(String siteName, String siteUrl)
+    throws Exception {
+    	setSubcommand(SET_SITE_PRI_URL_SUBCOMMAND);
+    	addSiteNameArguments(siteName);
+    	addSiteUrlArguments(siteUrl);
+    	addGlobalOptions();
+    	return executeCommand(commandTimeout);
     }
 }
 
