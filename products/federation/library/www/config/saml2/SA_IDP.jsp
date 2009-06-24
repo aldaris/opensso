@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_IDP.jsp,v 1.9 2009-06-19 20:43:33 exu Exp $
+   $Id: SA_IDP.jsp,v 1.10 2009-06-24 00:22:44 sean_brydon Exp $
 
 --%>
 
@@ -319,14 +319,15 @@ com.sun.identity.shared.debug.Debug"
    
     
 
-    // Check if usr is switched : will destroy session and treat like new login
+    // Check if user is switched : will destroy session and treat like new login
     // Alternate scenarios : (i) ignore userid (ii) treat as error
     if (loggedIn) {
         String requestedUserid = 
            (String) rawattrs.get(SecureAttrs.SAE_PARAM_USERID);
         if (requestedUserid != null) {
             // TODO
-            requestedUserid = "id=" + requestedUserid.toLowerCase() + ","; 
+            requestedUserid = "id=" + requestedUserid.toLowerCase() + ",";
+            loggedinPrincipal = loggedinPrincipal.toLowerCase();
             if (!loggedinPrincipal.startsWith(requestedUserid)) {
                 Map verifiedattrs = null;
                 if ((verifiedattrs = sa.verifyEncodedString(
