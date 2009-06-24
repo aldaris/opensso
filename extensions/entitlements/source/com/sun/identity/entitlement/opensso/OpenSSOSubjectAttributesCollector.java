@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOSubjectAttributesCollector.java,v 1.8 2009-06-04 11:49:21 veiming Exp $
+ * $Id: OpenSSOSubjectAttributesCollector.java,v 1.9 2009-06-24 08:33:49 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -281,4 +281,34 @@ public class OpenSSOSubjectAttributesCollector
     public boolean isGroupMembershipSearchIndexEnabled() {
         return groupMembershipSearchIndexEnabled;
     }
+
+    /**
+     * Returns the attribute values of the given user represented by
+     * <class>Subject</class> object.
+     *
+     * @param subject identity of the user.
+     * @param attrNames requested attribute names.
+     * @return a map of attribute names and their values
+     * @throws com.sun.identity.entitlement.EntitlementException if this
+     * operation failed.
+     */
+    public Map<String, Set<String>> getUserAttributes(
+        Subject subject,
+        Set<String> attrNames
+    ) throws EntitlementException {
+        String uuid = SubjectUtils.getPrincipalId(subject);
+        try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            AMIdentity amid = new AMIdentity(adminToken, uuid);
+            return amid.getAttributes(attrNames);
+        } catch (IdRepoException e) {
+            Object[] params = {uuid};
+            throw new EntitlementException(601, params, e);
+        } catch (SSOException e) {
+            Object[] params = {uuid};
+            throw new EntitlementException(601, params, e);
+        }
+    }
+
 }

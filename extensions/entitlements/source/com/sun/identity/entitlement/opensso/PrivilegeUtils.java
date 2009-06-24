@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.32 2009-06-23 07:00:17 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.33 2009-06-24 08:33:49 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -117,7 +117,7 @@ public class PrivilegeUtils {
         if (policyObject instanceof
                 com.sun.identity.entitlement.xacml3.core.Policy) {
              Privilege p = XACMLPrivilegeUtils.policyToPrivilege(
-                    (com.sun.identity.entitlement.xacml3.core.Policy)policyObject);
+                (com.sun.identity.entitlement.xacml3.core.Policy)policyObject);
              privileges.add(p);
         } else if (policyObject instanceof Policy) {
             policyToPrivileges((Policy) policyObject, privileges);
@@ -142,6 +142,7 @@ public class PrivilegeUtils {
             rp.setCreatedBy(policy.getCreatedBy());
             rp.setLastModifiedBy(policy.getLastModifiedBy());
             rp.setLastModifiedDate(policy.getLastModifiedDate());
+            rp.setActive(policy.isActive());
             privileges.add(rp);
         } else {
             Set<Entitlement> entitlements = rulesToEntitlement(policy);
@@ -186,6 +187,7 @@ public class PrivilegeUtils {
         privilege.setLastModifiedBy(policy.getLastModifiedBy());
         privilege.setCreationDate(policy.getCreationDate());
         privilege.setLastModifiedDate(policy.getLastModifiedDate());
+        privilege.setActive(policy.isActive());
         return privilege;
     }
 

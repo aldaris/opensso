@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RelaxedURL.java,v 1.1 2009-06-24 01:58:01 veiming Exp $
+ * $Id: RelaxedURL.java,v 1.2 2009-06-24 08:33:49 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -52,13 +52,24 @@ public class RelaxedURL {
             return 7;
         }
 
-        throw new MalformedURLException(url);
+        int idx = url.indexOf("://");
+
+        if (idx == -1) {
+            throw new MalformedURLException(url);
+        }
+
+        protocol = url.substring(0, idx);
+        return idx+3;
     }
 
     private void parseURL(String url, int begins) {
         int colon = url.indexOf(":", begins);
         if (colon == -1) {
-            port = (protocol.equals("https")) ? "443" : "80";
+            if (protocol.equals("http")) {
+                port = "80";
+            } else if (protocol.equals("https")) {
+                port = "443";
+            }
 
             int slash = url.indexOf('/', begins);
             if (slash == -1) {

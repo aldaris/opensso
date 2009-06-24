@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAttributes.java,v 1.8 2009-06-24 07:51:46 veiming Exp $
+ * $Id: UserAttributes.java,v 1.9 2009-06-24 08:33:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -85,7 +85,7 @@ public class UserAttributes implements ResourceAttribute {
             adminSubject, realm);
         Set<String> names = new HashSet<String>();
         names.add(propertyName);
-        return sac.getAttributes(subject, names);
+        return sac.getUserAttributes(subject, names);
     }
 
     /**

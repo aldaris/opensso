@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.11 2009-05-27 23:06:09 hengming Exp $
+ * $Id: SubjectAttributesManager.java,v 1.12 2009-06-24 08:33:48 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -279,5 +279,21 @@ public class SubjectAttributesManager {
      */
     public boolean isGroupMembershipSearchIndexEnabled() {
         return attrCollector.isGroupMembershipSearchIndexEnabled();
+    }
+
+    /**
+     * Returns the attribute values of the given user represented by
+     * <class>Subject</class> object.
+     * @param subject identity of the user.
+     * @param attrNames requested attribute names.
+     * @return a map of attribute names and their values.
+     * @throws com.sun.identity.entitlement.EntitlementException if attribute
+     * values cannot be obtained.
+     */
+    public Map<String, Set<String>> getUserAttributes(
+        Subject subject,
+        Set<String> attrNames
+    ) throws EntitlementException {
+        return attrCollector.getUserAttributes(subject, attrNames);
     }
 }

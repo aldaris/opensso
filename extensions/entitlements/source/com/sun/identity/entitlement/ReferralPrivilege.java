@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.6 2009-06-21 09:25:33 veiming Exp $
+ * $Id: ReferralPrivilege.java,v 1.7 2009-06-24 08:33:48 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -33,6 +33,7 @@ import com.sun.identity.policy.ResourceMatch;
 import com.sun.identity.shared.ldap.LDAPDN;
 import com.sun.identity.shared.ldap.util.DN;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -55,6 +56,7 @@ public final class ReferralPrivilege implements IPrivilege {
     private long lastModifiedDate;
     private String lastModifiedBy;
     private String createdBy;
+    private boolean active = true;
 
     private ReferralPrivilege() {
     }
@@ -412,6 +414,10 @@ public final class ReferralPrivilege implements IPrivilege {
     ) throws EntitlementException {
         List<Entitlement> results = null;
 
+        if (!active) {
+            return Collections.EMPTY_LIST;
+        }
+
         for (String rlm : realms) {
             for (String app : mapApplNameToResources.keySet()) {
                 if (app.equals(applicationName)) {
@@ -501,5 +507,23 @@ public final class ReferralPrivilege implements IPrivilege {
             results.add(appl.getApplicationType().getName());
         }
         return results;
+    }
+
+    /**
+     * Returns <code>true</code> if this privilege is active.
+     *
+     * @return <code>true</code> if this privilege is active.
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Sets this privilege active/inactive.
+     *
+     * @param active <code>true</code> if this privilege is to be active.
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

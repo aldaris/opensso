@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.35 2009-06-24 07:51:46 veiming Exp $
+ * $Id: Privilege.java,v 1.36 2009-06-24 08:33:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -84,6 +84,7 @@ public abstract class Privilege implements IPrivilege {
 
     private static Class privilegeClass;
 
+    private boolean active = true;
     private String name;
     private String description;
     private Entitlement entitlement;
@@ -757,7 +758,23 @@ public abstract class Privilege implements IPrivilege {
         }
         return result;
     }
+
+    /**
+     * Returns <code>true</code> if this privilege is active.
+     *
+     * @return <code>true</code> if this privilege is active.
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Sets this privilege active/inactive.
+     * 
+     * @param active <code>true</code> if this privilege is to be active.
+     */
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }
-
-
 
