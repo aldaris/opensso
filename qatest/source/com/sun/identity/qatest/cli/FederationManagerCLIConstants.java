@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLIConstants.java,v 1.14 2009-06-02 21:34:14 vimal_67 Exp $
+ * $Id: FederationManagerCLIConstants.java,v 1.15 2009-06-24 22:34:39 srivenigan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -359,7 +359,67 @@ public interface FederationManagerCLIConstants {
      * Short prefix argument/option
      */
     String SHORT_PREFIX_ARGUMENT = "-p";
-
+    
+    /**
+     * Batch file argument/option
+     */
+    static final String BATCH_FILE_ARGUMENT = "batchfile";
+    
+    /**
+     * Short batch file argument/option
+     */
+    static final String SHORT_BATCH_FILE_ARGUMENT = "D";
+    
+    /**
+     * Batch status argument/option
+     */
+    static final String BATCH_STATUS_ARGUMENT = "batchstatus";
+    
+    /**
+     * Short batch status argument/option
+     */
+    static final String SHORT_BATCH_STATUS_ARGUMENT = "b";    
+    
+    /**
+     * Site name argument/option
+     */
+    static final String SITE_NAME_ARGUMENT = "sitename";    
+    
+    /**
+     * Short site name argument/option
+     */
+    static final String SHORT_SITE_NAME_ARGUMENT = "s";    
+    
+    /**
+     * Site url argument/option
+     */
+    static final String SITE_URL_ARGUMENT = "siteurl";    
+    
+    /**
+     * Short site name argument/option
+     */
+    static final String SHORT_SITE_URL_ARGUMENT = "i";    
+    
+    /**
+     * Site secondary urls argument/option
+     */
+    static final String SECONDARY_URLS_ARGUMENT = "secondaryurls";    
+    
+    /**
+     * Short site secondary urls argument/option
+     */
+    static final String SHORT_SECONDARY_URLS_ARGUMENT = "a";    
+    
+    /**
+     * Short server names argument/option
+     */
+    static final String SHORT_SERVER_NAMES_ARGUMENT = "e";
+    
+    /**
+     * Server names argument/option
+     */
+    static final String SERVER_NAMES_ARGUMENT = "servernames";
+    
     /**
      * Entity ID argument/option
      */
@@ -586,7 +646,8 @@ public interface FederationManagerCLIConstants {
     String ATTRQECERTALIAS_ARGUMENT = "--attrqecertalias";
 
     /**
-     * Short Attribute query provider encryption certificate alias argument/option
+     * Short Attribute query provider encryption certificate alias 
+     * argument/option
      */
     String SHORT_ATTRQECERTALIAS_ARGUMENT = "-R";
 
@@ -606,7 +667,8 @@ public interface FederationManagerCLIConstants {
     String AUTHNAECERTALIAS_ARGUMENT = "--authnaecertalias";
 
     /**
-     * Short Authentication authority encryption certificate alias argument/option
+     * Short Authentication authority encryption certificate alias 
+     * argument/option
      */
     String SHORT_AUTHNAECERTALIAS_ARGUMENT = "-E";
 
@@ -636,17 +698,20 @@ public interface FederationManagerCLIConstants {
     String XACMLPEPECERTALIAS_ARGUMENT = "--xacmlpepecertalias";
 
     /**
-     * Short Policy enforcement point encryption certificate alias argument/option
+     * Short Policy enforcement point encryption certificate alias 
+     * argument/option
      */
     String SHORT_XACMLPEPECERTALIAS_ARGUMENT = "-z";
 
     /**
-     * Specify metadata specification, either idff or saml2, defaults to saml2 argument/option
+     * Specify metadata specification, either idff or saml2, defaults to saml2 
+     * argument/option
      */
     String SPEC_ARGUMENT = "--spec";
 
     /**
-     * Short Specify metadata specification, either idff or saml2, defaults to saml2 argument/option
+     * Short Specify metadata specification, either idff or saml2, defaults to 
+     * saml2 argument/option
      */
     String SHORT_SPEC_ARGUMENT = "-c";
 
