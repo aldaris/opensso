@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitter.java,v 1.9 2009-06-24 01:58:01 veiming Exp $
+ * $Id: ResourceNameSplitter.java,v 1.10 2009-06-24 10:10:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -85,20 +85,17 @@ public class ResourceNameSplitter implements ISearchIndex {
      */
     public static Set<String> splitHost(RelaxedURL url) {
         Set<String> results = new HashSet<String>();
-        String protocol = url.getProtocol().toLowerCase();
         String host = url.getHostname().toLowerCase();
-        protocol += "://";
 
-        results.add(protocol);
-        results.add(protocol + host);
+        results.add("://" + host);
 
         List<String> dns = getDNS(host);
         String buff = "";
         for (String s : dns) {
             if (buff.length() > 0) {
-                results.add(protocol + "." + s + buff);
+                results.add("://." + s + buff);
             } else {
-                results.add(protocol + "." + s);
+                results.add("://." + s);
             }
 
             buff += "." + s;

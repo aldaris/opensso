@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexGenerator.java,v 1.15 2009-06-24 01:58:01 veiming Exp $
+ * $Id: ResourceNameIndexGenerator.java,v 1.16 2009-06-24 10:10:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -86,7 +86,7 @@ public class ResourceNameIndexGenerator implements ISaveIndex {
             int dotIdx = host.indexOf('.', idx);
             host = (dotIdx != -1) ? host.substring(dotIdx) : "";
         }
-        return url.getProtocol().toLowerCase() + "://" + host;
+        return "://" + host;
     }
     
     private static String getPathIndex(RelaxedURL url) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.36 2009-06-24 08:33:48 veiming Exp $
+ * $Id: Privilege.java,v 1.37 2009-06-24 10:10:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -277,6 +277,8 @@ public abstract class Privilege implements IPrivilege {
         jo.put("className", getClass().getName());
         jo.put("name", name);
 
+        jo.put("active", Boolean.toString(active));
+
         if (description != null) {
             jo.put("description", description);
         }
@@ -326,6 +328,7 @@ public abstract class Privilege implements IPrivilege {
             Class clazz = Class.forName(className);
             Privilege privilege = (Privilege)clazz.newInstance();
             privilege.name = jo.optString("name");
+            privilege.active = Boolean.parseBoolean(jo.optString("active"));
             privilege.description = jo.optString("description");
             privilege.createdBy = jo.optString("createdBy");
             privilege.lastModifiedBy = jo.optString("lastModifiedBy");
@@ -460,6 +463,11 @@ public abstract class Privilege implements IPrivilege {
                 return false;
             }
         }
+
+        if (this.active != object.active) {
+            return false;
+        }
+
         if (entitlement == null) {
             if (object.getEntitlement() != null) {
                 return false;
