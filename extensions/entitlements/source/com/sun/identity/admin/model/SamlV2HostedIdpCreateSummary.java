@@ -22,19 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateSummary.java,v 1.1 2009-06-24 21:55:09 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
 import javax.faces.event.ActionEvent;
 
-public abstract class SamlV2HostedSpCreateSummary
+public abstract class SamlV2HostedIdpCreateSummary
         extends Summary {
 
-    private SamlV2HostedSpCreateWizardBean samlV2HostedSpCreateWizardBean;
+    private SamlV2HostedIdpCreateWizardBean samlV2HostedIdpCreateWizardBean;
 
-    public SamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2HostedSpCreateWizardBean) {
-        this.samlV2HostedSpCreateWizardBean = samlV2HostedSpCreateWizardBean;
+    public SamlV2HostedIdpCreateSummary(
+            SamlV2HostedIdpCreateWizardBean samlV2HostedIdpCreateWizardBean) {
+        this.samlV2HostedIdpCreateWizardBean = samlV2HostedIdpCreateWizardBean;
     }
 
     public abstract String getLabel();
@@ -49,20 +50,21 @@ public abstract class SamlV2HostedSpCreateSummary
 
     public abstract int getGotoStep();
 
-    protected SamlV2HostedSpCreateWizardStep getGotoStep(ActionEvent event) {
+    protected SamlV2HostedIdpCreateWizardStep getGotoStep(ActionEvent event) {
         Object o = event.getComponent().getAttributes().get("gotoStep");
         Integer i = (Integer) o;
-        SamlV2HostedSpCreateWizardStep ws = SamlV2HostedSpCreateWizardStep.valueOf(i.intValue());
-        return ws;
+        SamlV2HostedIdpCreateWizardStep rws = SamlV2HostedIdpCreateWizardStep.valueOf(i.intValue());
+
+        return rws;
     }
 
-    public SamlV2HostedSpCreateWizardBean getSamlV2HostedSpCreateWizardBean() {
-        return samlV2HostedSpCreateWizardBean;
+    public SamlV2HostedIdpCreateWizardBean getSamlV2HostedIdpCreateWizardBean() {
+        return samlV2HostedIdpCreateWizardBean;
     }
 
     public void editListener(ActionEvent event) {
-        SamlV2HostedSpCreateWizardStep gotoStep = getGotoStep(event);
-        getSamlV2HostedSpCreateWizardBean().gotoStep(gotoStep.toInt());
+        SamlV2HostedIdpCreateWizardStep gotoStep = getGotoStep(event);
+        getSamlV2HostedIdpCreateWizardBean().gotoStep(gotoStep.toInt());
     }
 
     public int getTabIndex() {

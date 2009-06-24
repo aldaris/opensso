@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CotSamlV2RemoteSpCreateSummary.java,v 1.1 2009-06-17 23:44:55 asyhuang Exp $
+ * $Id: CotSamlV2RemoteSpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -42,10 +42,10 @@ public class CotSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSummary 
 
     public String getValue() {
         String cotName;
-        if (getSamlV2RemoteCreateWizardBean().isCot()) {
-            cotName = getSamlV2RemoteCreateWizardBean().getSelectedCot();
+        if (getSamlV2RemoteSpCreateWizardBean().isCot()) {
+            cotName = getSamlV2RemoteSpCreateWizardBean().getSelectedCot();
         } else {
-            cotName = getSamlV2RemoteCreateWizardBean().getNewCotName();
+            cotName = getSamlV2RemoteSpCreateWizardBean().getNewCotName();
         }
 
         return cotName;

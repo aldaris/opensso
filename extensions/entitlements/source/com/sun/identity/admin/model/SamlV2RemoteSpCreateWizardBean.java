@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardBean.java,v 1.4 2009-06-24 14:01:35 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardBean.java,v 1.5 2009-06-24 21:55:08 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -38,16 +38,15 @@ public class SamlV2RemoteSpCreateWizardBean
         implements Serializable {
 
     private String metaUrl;
-
     private List<ViewAttribute> availableViewAttributes = new ArrayList<ViewAttribute>();
     private List<ViewAttribute> viewAttributes = new ArrayList<ViewAttribute>();
-    
     private RealmSamlV2RemoteSpCreateSummary realmSamlV2RemoteSpCreateSummary = new RealmSamlV2RemoteSpCreateSummary(this);
     private MetaUrlSamlV2RemoteSpCreateSummary metaUrlSamlV2RemoteSpCreateSummary = new MetaUrlSamlV2RemoteSpCreateSummary(this);
-    private StdMetadataNameSamlV2RemoteSpCreateSummary stdMetadataNameSamlV2RemoteSpCreateSummary = new StdMetadataNameSamlV2RemoteSpCreateSummary(this);   
+    private StdMetadataNameSamlV2RemoteSpCreateSummary stdMetadataNameSamlV2RemoteSpCreateSummary = new StdMetadataNameSamlV2RemoteSpCreateSummary(this);
     private CotSamlV2RemoteSpCreateSummary cotSamlV2RemoteSpCreateSummary = new CotSamlV2RemoteSpCreateSummary(this);
+    private AttributeMappingSamlV2RemoteSpCreateSummary attributeMappingSamlV2RemoteSpCreateSummary = new AttributeMappingSamlV2RemoteSpCreateSummary(this);
     private Effect samlV2RemoteSpCreateEntityNameInputEffect;
-    
+
     public SamlV2RemoteSpCreateWizardBean() {
         super();
     }
@@ -58,8 +57,9 @@ public class SamlV2RemoteSpCreateWizardBean
         metaUrl = null;
         realmSamlV2RemoteSpCreateSummary = new RealmSamlV2RemoteSpCreateSummary(this);
         metaUrlSamlV2RemoteSpCreateSummary = new MetaUrlSamlV2RemoteSpCreateSummary(this);
-        stdMetadataNameSamlV2RemoteSpCreateSummary = new StdMetadataNameSamlV2RemoteSpCreateSummary(this);       
+        stdMetadataNameSamlV2RemoteSpCreateSummary = new StdMetadataNameSamlV2RemoteSpCreateSummary(this);
         cotSamlV2RemoteSpCreateSummary = new CotSamlV2RemoteSpCreateSummary(this);
+        attributeMappingSamlV2RemoteSpCreateSummary = new AttributeMappingSamlV2RemoteSpCreateSummary(this);
     }
 
     public String getMetaUrl() {
@@ -70,7 +70,7 @@ public class SamlV2RemoteSpCreateWizardBean
         this.metaUrl = metaUrl;
     }
 
-        //for attr mapping
+    //for attr mapping
     public List<ViewAttribute> getAvailableViewAttributes() {
         loadAvailableViewAttributes();
         return availableViewAttributes;
@@ -83,7 +83,6 @@ public class SamlV2RemoteSpCreateWizardBean
             availableViewAttributes.add(va);
         }
     }
-
 
     public List<ViewAttribute> getViewAttributes() {
         return viewAttributes;
@@ -156,5 +155,9 @@ public class SamlV2RemoteSpCreateWizardBean
 
     public void setSamlV2RemoteSpCreateEntityNameInputEffect(Effect samlV2RemoteSpCreateEntityNameInputEffect) {
         this.samlV2RemoteSpCreateEntityNameInputEffect = samlV2RemoteSpCreateEntityNameInputEffect;
+    }
+
+    public AttributeMappingSamlV2RemoteSpCreateSummary getAttributeMappingSamlV2RemoteSpCreateSummary() {
+        return attributeMappingSamlV2RemoteSpCreateSummary;
     }
 }

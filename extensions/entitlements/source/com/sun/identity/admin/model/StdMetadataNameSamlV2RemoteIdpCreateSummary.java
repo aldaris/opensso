@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StdMetadataNameSamlV2RemoteIdpCreateSummary.java,v 1.1 2009-06-23 06:28:59 babysunil Exp $
+ * $Id: StdMetadataNameSamlV2RemoteIdpCreateSummary.java,v 1.2 2009-06-24 21:55:09 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,11 +30,11 @@ package com.sun.identity.admin.model;
 import com.sun.identity.admin.Resources;
 
 public class StdMetadataNameSamlV2RemoteIdpCreateSummary
-        extends SamlV2IdpCreateSummary {
+        extends SamlV2RemoteIdpCreateSummary {
 
     public StdMetadataNameSamlV2RemoteIdpCreateSummary(
-            SamlV2RemoteIdpCreateWizardBean samlV2CreateWizardBean) {
-        super(samlV2CreateWizardBean);
+            SamlV2RemoteIdpCreateWizardBean samlV2RemoteIdpCreateWizardBean) {
+        super(samlV2RemoteIdpCreateWizardBean);
     }
 
     public String getLabel() {
@@ -46,7 +46,6 @@ public class StdMetadataNameSamlV2RemoteIdpCreateSummary
     public String getValue() {
         String filename = new String();
         filename = getSamlV2RemoteIdpCreateWizardBean().getStdMetaFilename();
-
         return filename;
     }
 

@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeMappingSamlV2HostedIdpCreateSummary.java,v 1.1 2009-06-23 06:28:59 babysunil Exp $
+ * $Id: AttributeMappingSamlV2HostedIdpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
 
 public class AttributeMappingSamlV2HostedIdpCreateSummary
-        extends SamlV2IdpCreateSummary {
+        extends SamlV2HostedIdpCreateSummary {
 
     public AttributeMappingSamlV2HostedIdpCreateSummary(
             SamlV2HostedIdpCreateWizardBean samlV2HostedIdpCreateWizardBean) {

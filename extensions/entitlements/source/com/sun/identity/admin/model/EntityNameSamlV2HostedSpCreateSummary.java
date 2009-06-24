@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityNameSamlV2HostedSpCreateSummary.java,v 1.2 2009-06-18 07:54:56 asyhuang Exp $
+ * $Id: EntityNameSamlV2HostedSpCreateSummary.java,v 1.3 2009-06-24 21:55:08 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,8 +31,8 @@ import com.sun.identity.admin.Resources;
 
 public class EntityNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateSummary {
 
-    public EntityNameSamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2CreateWizardBean) {
-        super(samlV2CreateWizardBean);
+    public EntityNameSamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2HostedSpCreateWizardBean) {
+        super(samlV2HostedSpCreateWizardBean);
     }
 
     public String getLabel() {
@@ -43,9 +43,9 @@ public class EntityNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateS
 
     public String getValue() {
         String entityName;
-        boolean hasMeta = getSamlV2CreateWizardBean().isMeta();
+        boolean hasMeta = getSamlV2HostedSpCreateWizardBean().isMeta();
         if(!hasMeta){
-            entityName = getSamlV2CreateWizardBean().getNewEntityName();
+            entityName = getSamlV2HostedSpCreateWizardBean().getNewEntityName();
         } else {
             entityName = new String();
         }

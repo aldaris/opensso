@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateDao.java,v 1.2 2009-06-20 08:41:58 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateDao.java,v 1.3 2009-06-24 21:55:08 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.cot.COTException;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
@@ -33,6 +34,7 @@ import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.workflow.AddProviderToCOT;
 import com.sun.identity.workflow.CreateSAML2HostedProviderTemplate;
 import com.sun.identity.workflow.ImportSAML2MetaData;
@@ -45,6 +47,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 public class SamlV2HostedSpCreateDao
         implements Serializable {
@@ -69,10 +73,10 @@ public class SamlV2HostedSpCreateDao
         try {
             metadata =
                     CreateSAML2HostedProviderTemplate.buildMetaDataTemplate(
-                    entityId, map, ""); // TODO getRequestURL(params)?? need to handle LB case. have to use request url to create metadata.
+                    entityId, map, getRequestURL());
             extendedData =
                     CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
-                    entityId, map, ""); //TODO getRequestURL(params)?? need to handle LB case. have to use request url to create metadata.
+                    entityId, map, getRequestURL()); 
         } catch (SAML2MetaException e) {
             throw new RuntimeException(e);
         }
@@ -93,7 +97,7 @@ public class SamlV2HostedSpCreateDao
         if (defAttrMappings) {
             addAttributeMappingSetting(realm, entityId);
         }
- 
+
     }
 
     public void importSamlv2HostedSp(
@@ -165,6 +169,21 @@ public class SamlV2HostedSpCreateDao
             return metaAlias;
         } catch (SAML2MetaException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private String getRequestURL() {
+        boolean isConsoleRemote = Boolean.valueOf(
+                SystemProperties.get(Constants.AM_CONSOLE_REMOTE)).booleanValue();
+        if (isConsoleRemote) {
+            return SystemProperties.getServerInstanceName();
+        } else {
+            HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+            String uri = req.getRequestURI().toString();
+            int idx = uri.indexOf('/', 1);
+            uri = uri.substring(0, idx);
+            return req.getScheme() + "://" + req.getServerName() +
+                    ":" + req.getServerPort() + uri;
         }
     }
 }

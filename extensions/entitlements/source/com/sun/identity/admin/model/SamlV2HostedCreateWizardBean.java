@@ -22,14 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedCreateWizardBean.java,v 1.4 2009-06-24 14:01:35 asyhuang Exp $
+ * $Id: SamlV2HostedCreateWizardBean.java,v 1.5 2009-06-24 21:55:08 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
+import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.console.base.model.AMSystemConfig;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletRequest;
 
 public class SamlV2HostedCreateWizardBean
         extends WizardBean
@@ -53,6 +57,7 @@ public class SamlV2HostedCreateWizardBean
 
     SamlV2HostedCreateWizardBean() {
         super();
+        newEntityName = (AMSystemConfig.isConsoleRemote) ? SystemProperties.getServerInstanceName() : getRequestURL();
     }
 
     public void reset() {
@@ -60,7 +65,7 @@ public class SamlV2HostedCreateWizardBean
         selectedRealm = null;
         meta = false;
         cot = true;
-        newEntityName = null;
+        newEntityName = (AMSystemConfig.isConsoleRemote) ? SystemProperties.getServerInstanceName() : getRequestURL();
         newCotName = null;
         selectedCot = null;
         availableRealmsList = null;
@@ -72,6 +77,15 @@ public class SamlV2HostedCreateWizardBean
         extMetaFilename = null;
         stdMetaFileProgress = 0;
         extMetaFileProgress = 0;
+    }
+
+    protected String getRequestURL() {       
+        HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String uri = req.getRequestURI().toString();
+        int idx = uri.indexOf('/', 1);
+        uri = uri.substring(0, idx);
+        return req.getScheme() + "://" + req.getServerName() +
+                ":" + req.getServerPort() + uri;
     }
 
     public String getSelectedRealm() {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefAttrMappingsSamlV2HostedSpCreateSummary.java,v 1.1 2009-06-20 08:41:58 asyhuang Exp $
+ * $Id: DefAttrMappingsSamlV2HostedSpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -30,8 +30,8 @@ import com.sun.identity.admin.Resources;
 
 public class DefAttrMappingsSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateSummary {
 
-    public DefAttrMappingsSamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2CreateWizardBean) {
-        super(samlV2CreateWizardBean);
+    public DefAttrMappingsSamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2HostedSpCreateWizardBean) {
+        super(samlV2HostedSpCreateWizardBean);
     }
 
     public String getLabel() {
@@ -41,7 +41,7 @@ public class DefAttrMappingsSamlV2HostedSpCreateSummary extends SamlV2HostedSpCr
     }
 
     public String getValue() {
-        boolean defAttrMappings = getSamlV2CreateWizardBean().getDefAttrMappings();
+        boolean defAttrMappings = getSamlV2HostedSpCreateWizardBean().getDefAttrMappings();
         String defAttrMappingsValue;
         Resources r = new Resources();
        

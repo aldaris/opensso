@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StdMetadataNameSamlV2HostedSpCreateSummary.java,v 1.2 2009-06-17 23:44:55 asyhuang Exp $
+ * $Id: StdMetadataNameSamlV2HostedSpCreateSummary.java,v 1.3 2009-06-24 21:55:09 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,8 +31,8 @@ import com.sun.identity.admin.Resources;
 
 public class StdMetadataNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateSummary {
 
-    public StdMetadataNameSamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2CreateWizardBean) {
-        super(samlV2CreateWizardBean);
+    public StdMetadataNameSamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2HostedSpCreateWizardBean) {
+        super(samlV2HostedSpCreateWizardBean);
     }
 
     public String getLabel() {
@@ -43,9 +43,9 @@ public class StdMetadataNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCr
 
     public String getValue() {
         String filename;
-        boolean hasMeta = getSamlV2CreateWizardBean().isMeta();
+        boolean hasMeta = getSamlV2HostedSpCreateWizardBean().isMeta();
         if(hasMeta){
-            filename = getSamlV2CreateWizardBean().getStdMetaFilename();
+            filename = getSamlV2HostedSpCreateWizardBean().getStdMetaFilename();
         } else {
             filename = new String();
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityNameSamlV2HostedIdpCreateSummary.java,v 1.1 2009-06-23 06:28:59 babysunil Exp $
+ * $Id: EntityNameSamlV2HostedIdpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,7 +30,7 @@ package com.sun.identity.admin.model;
 import com.sun.identity.admin.Resources;
 
 public class EntityNameSamlV2HostedIdpCreateSummary
-        extends SamlV2IdpCreateSummary {
+        extends SamlV2HostedIdpCreateSummary {
 
     public EntityNameSamlV2HostedIdpCreateSummary(
             SamlV2HostedIdpCreateWizardBean samlV2HostedIdpCreateWizardBean) {

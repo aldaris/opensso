@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StdMetadataNameSamlV2RemoteSpCreateSummary.java,v 1.1 2009-06-17 23:44:56 asyhuang Exp $
+ * $Id: StdMetadataNameSamlV2RemoteSpCreateSummary.java,v 1.2 2009-06-24 21:55:09 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,8 +31,8 @@ import com.sun.identity.admin.Resources;
 
 public class StdMetadataNameSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSummary {
 
-    public StdMetadataNameSamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteCreateWizardBean) {
-        super(samlV2RemoteCreateWizardBean);
+    public StdMetadataNameSamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteSpCreateWizardBean) {
+        super(samlV2RemoteSpCreateWizardBean);
     }
 
     public String getLabel() {
@@ -43,9 +43,9 @@ public class StdMetadataNameSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCr
 
     public String getValue() {
         String filename;
-        boolean hasMeta = getSamlV2RemoteCreateWizardBean().isMeta();
+        boolean hasMeta = getSamlV2RemoteSpCreateWizardBean().isMeta();
         if(hasMeta){
-            filename = getSamlV2RemoteCreateWizardBean().getStdMetaFilename();
+            filename = getSamlV2RemoteSpCreateWizardBean().getStdMetaFilename();
         } else {
             filename = new String();
         }

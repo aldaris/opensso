@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MetaUrlSamlV2RemoteSpCreateSummary.java,v 1.1 2009-06-20 08:44:25 asyhuang Exp $
+ * $Id: MetaUrlSamlV2RemoteSpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -30,8 +30,8 @@ import com.sun.identity.admin.Resources;
 
 public class MetaUrlSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSummary {
 
-    public MetaUrlSamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteCreateWizardBean) {
-        super(samlV2RemoteCreateWizardBean);
+    public MetaUrlSamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteSpCreateWizardBean) {
+        super(samlV2RemoteSpCreateWizardBean);
     }
 
     public String getLabel() {
@@ -42,7 +42,7 @@ public class MetaUrlSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSumm
 
     public String getValue() {
         String metaUrl;
-        metaUrl = getSamlV2RemoteCreateWizardBean().getMetaUrl();
+        metaUrl = getSamlV2RemoteSpCreateWizardBean().getMetaUrl();
         return metaUrl;
     }
 

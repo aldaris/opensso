@@ -22,16 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExtMetadataNameSamlV2HostedSpCreateSummary.java,v 1.3 2009-06-24 21:55:08 asyhuang Exp $
+ * $Id: AttributeMappingSamlV2RemoteSpCreateSummary.java,v 1.1 2009-06-24 21:55:09 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
 
-public class ExtMetadataNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCreateSummary {
+public class AttributeMappingSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSummary {
 
-    public ExtMetadataNameSamlV2HostedSpCreateSummary(SamlV2HostedSpCreateWizardBean samlV2HostedSpCreateWizardBean) {
-        super(samlV2HostedSpCreateWizardBean);
+    public AttributeMappingSamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteSpCreateWizardBean) {
+        super(samlV2RemoteSpCreateWizardBean);
     }
 
     public String getLabel() {
@@ -41,15 +41,8 @@ public class ExtMetadataNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCr
     }
 
     public String getValue() {
-        String filename;
-        boolean hasMeta = getSamlV2HostedSpCreateWizardBean().isMeta();
-        if (hasMeta) {
-            filename = getSamlV2HostedSpCreateWizardBean().getExtMetaFilename();
-        } else {
-            filename = new String();
-        }
-
-        return filename;
+        String attribueMapping = getSamlV2RemoteSpCreateWizardBean().getToFormattedString();
+        return attribueMapping; 
     }
 
     public boolean isExpandable() {
@@ -66,6 +59,6 @@ public class ExtMetadataNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCr
     }
 
     public int getGotoStep() {
-        return SamlV2HostedSpCreateWizardStep.METADATA.toInt();
+        return SamlV2RemoteSpCreateWizardStep.ATTRIBUTEMAPPING.toInt();
     }
 }

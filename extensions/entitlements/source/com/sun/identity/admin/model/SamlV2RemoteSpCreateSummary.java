@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateSummary.java,v 1.1 2009-06-17 23:44:56 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -31,10 +31,10 @@ import javax.faces.event.ActionEvent;
 public abstract class SamlV2RemoteSpCreateSummary
         extends Summary {
 
-    private SamlV2RemoteSpCreateWizardBean samlV2RemoteCreateWizardBean;
+    private SamlV2RemoteSpCreateWizardBean samlV2RemoteSpCreateWizardBean;
 
-    public SamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteCreateWizardBean) {
-        this.samlV2RemoteCreateWizardBean = samlV2RemoteCreateWizardBean;
+    public SamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteSpCreateWizardBean) {
+        this.samlV2RemoteSpCreateWizardBean = samlV2RemoteSpCreateWizardBean;
     }
 
     public abstract String getLabel();
@@ -49,25 +49,21 @@ public abstract class SamlV2RemoteSpCreateSummary
 
     public abstract int getGotoStep();
 
-    protected ReferralWizardStep getGotoStep(ActionEvent event) {
+    protected SamlV2RemoteSpCreateWizardStep getGotoStep(ActionEvent event) {
         Object o = event.getComponent().getAttributes().get("gotoStep");
         Integer i = (Integer) o;
-        ReferralWizardStep rws = ReferralWizardStep.valueOf(i.intValue());
+        SamlV2RemoteSpCreateWizardStep ws = SamlV2RemoteSpCreateWizardStep.valueOf(i.intValue());
 
-        return rws;
+        return ws;
     }
 
-    public PolicyWizardAdvancedTabIndex getAdvancedTabIndex() {
-        return PolicyWizardAdvancedTabIndex.ACTIONS;
-    }
-
-    public SamlV2RemoteSpCreateWizardBean getSamlV2RemoteCreateWizardBean() {
-        return samlV2RemoteCreateWizardBean;
+    public SamlV2RemoteSpCreateWizardBean getSamlV2RemoteSpCreateWizardBean() {
+        return samlV2RemoteSpCreateWizardBean;
     }
 
     public void editListener(ActionEvent event) {
-        ReferralWizardStep gotoStep = getGotoStep(event);
-        getSamlV2RemoteCreateWizardBean().gotoStep(gotoStep.toInt());
+        SamlV2RemoteSpCreateWizardStep gotoStep = getGotoStep(event);
+        getSamlV2RemoteSpCreateWizardBean().gotoStep(gotoStep.toInt());
     }
 
     public int getTabIndex() {

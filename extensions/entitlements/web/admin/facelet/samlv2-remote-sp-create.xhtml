@@ -158,14 +158,14 @@
                                                 id="MenuSelectNewCOTRadio"
                                                 value="#{samlV2RemoteSpCreateWizardBean.cot}"
                                                 partialSubmit="true">
-                                                <f:selectItem id="ChoiceCOT" itemValue="true" itemLabel="Choice a COT"/>
-                                                <f:selectItem id="NewCOT" itemValue="false" itemLabel="New a COT"/>
+                                                <f:selectItem id="ChoiceCOT" itemValue="true" itemLabel="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.existingCotListLabel']}"/>
+                                                <f:selectItem id="NewCOT" itemValue="false" itemLabel="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.newCotNameLabel']}"/>
                                             </ice:selectOneRadio>
                                         </ice:panelGroup>
                                         <ice:panelGroup
                                             visible="#{samlV2RemoteSpCreateWizardBean.cot}">
                                             <ice:panelGroup >
-                                                <ice:outputLabel                                                  
+                                                <ice:outputLabel
                                                     value="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.existingCotListLabel']}"/>
                                                 <ice:selectOneMenu
                                                     id="selectedCot"
@@ -178,7 +178,7 @@
                                         </ice:panelGroup>
                                         <ice:panelGroup
                                             visible="#{!samlV2RemoteSpCreateWizardBean.cot}">
-                                            <ice:outputLabel                                                
+                                            <ice:outputLabel
                                                 value="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.newCotNameLabel']}"/>
                                             <ice:inputText
                                                 id="NewCotName"
@@ -200,7 +200,7 @@
                         <div class="section-outer">
                             <o:section>
                                 <ui:define name="section-title">
-                                  <ice:outputLabel
+                                    <ice:outputLabel
                                         value="#{resources['samlv2-remote-sp-create.attributeMappingPanelLabel.section-title']}"/>
                                 </ui:define>
                                 <ui:define name="section-details">
@@ -247,7 +247,8 @@
                                         summary="#{samlV2RemoteSpCreateWizardBean.metaUrlSamlV2RemoteSpCreateSummary}"/>
                                     <o:summarypanel
                                         summary="#{samlV2RemoteSpCreateWizardBean.cotSamlV2RemoteSpCreateSummary}"/>
-
+                                    <o:summarypanel
+                                        summary="#{samlV2RemoteSpCreateWizardBean.attributeMappingSamlV2RemoteSpCreateSummary}"/>
                                     <!-- summary -->
                                 </ui:define>
                             </o:section>

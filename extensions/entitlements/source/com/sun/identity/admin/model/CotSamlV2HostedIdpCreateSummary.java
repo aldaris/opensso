@@ -22,18 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CotSamlV2HostedIdpCreateSummary.java,v 1.1 2009-06-23 06:28:59 babysunil Exp $
+ * $Id: CotSamlV2HostedIdpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
 
 public class CotSamlV2HostedIdpCreateSummary
-        extends SamlV2IdpCreateSummary {
+        extends SamlV2HostedIdpCreateSummary {
 
     public CotSamlV2HostedIdpCreateSummary(
-            SamlV2HostedCreateWizardBean samlV2CreateWizardBean) {
-        super(samlV2CreateWizardBean);
+            SamlV2HostedIdpCreateWizardBean samlV2HostedIdpCreateWizardBean) {
+        super(samlV2HostedIdpCreateWizardBean);
     }
 
     public String getLabel() {
@@ -44,10 +44,10 @@ public class CotSamlV2HostedIdpCreateSummary
 
     public String getValue() {
         String cotName;
-        if (getSamlV2CreateWizardBean().isCot()) {
-            cotName = getSamlV2CreateWizardBean().getSelectedCot();
+        if (getSamlV2HostedIdpCreateWizardBean().isCot()) {
+            cotName = getSamlV2HostedIdpCreateWizardBean().getSelectedCot();
         } else {
-            cotName = getSamlV2CreateWizardBean().getNewCotName();
+            cotName = getSamlV2HostedIdpCreateWizardBean().getNewCotName();
         }
 
         return cotName;

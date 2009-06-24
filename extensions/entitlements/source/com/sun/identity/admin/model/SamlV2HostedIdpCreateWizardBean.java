@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.2 2009-06-24 14:01:35 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.3 2009-06-24 21:55:08 asyhuang Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
@@ -45,25 +44,19 @@ public class SamlV2HostedIdpCreateWizardBean
     private List<ViewAttribute> viewAttributes = new ArrayList<ViewAttribute>();
     private Effect samlV2EntityNameInputEffect;
     private Effect samlV2EntityNameMessageEffect;
-    private RealmSamlV2HostedIdpCreateSummary realmSamlV2CreateSummary =
+    private RealmSamlV2HostedIdpCreateSummary realmSamlV2HostedIdpCreateSummary =
             new RealmSamlV2HostedIdpCreateSummary(this);
-    private EntityNameSamlV2HostedIdpCreateSummary 
-            entityNameSamlV2CreateSummary =
+    private EntityNameSamlV2HostedIdpCreateSummary entityNameSamlV2HostedIdpCreateSummary =
             new EntityNameSamlV2HostedIdpCreateSummary(this);
-    private StdMetadataNameSamlV2HostedIdpCreateSummary 
-            stdMetadataNameSamlV2CreateSummary =
+    private StdMetadataNameSamlV2HostedIdpCreateSummary stdMetadataNameSamlV2HostedIdpCreateSummary =
             new StdMetadataNameSamlV2HostedIdpCreateSummary(this);
-    private ExtMetadataNameSamlV2HostedIdpCreateSummary 
-            extMetadataNameSamlV2CreateSummary =
+    private ExtMetadataNameSamlV2HostedIdpCreateSummary extMetadataNameSamlV2HostedIdpCreateSummary =
             new ExtMetadataNameSamlV2HostedIdpCreateSummary(this);
-    private AttributeMappingSamlV2HostedIdpCreateSummary 
-            attributeMappingSamlV2HostedCreateSummary =
+    private AttributeMappingSamlV2HostedIdpCreateSummary attributeMappingSamlV2HostedIdpCreateSummary =
             new AttributeMappingSamlV2HostedIdpCreateSummary(this);
-    private SigningKeySamlV2HostedIdpCreateSummary 
-            signingKeySamlV2CreateSummary =
+    private SigningKeySamlV2HostedIdpCreateSummary signingKeySamlV2HostedIdpCreateSummary =
             new SigningKeySamlV2HostedIdpCreateSummary(this);
-    private CotSamlV2HostedIdpCreateSummary
-            cotSamlV2CreateSummary = new CotSamlV2HostedIdpCreateSummary(this);
+    private CotSamlV2HostedIdpCreateSummary cotSamlV2HostedIdpCreateSummary = new CotSamlV2HostedIdpCreateSummary(this);
 
     public SamlV2HostedIdpCreateWizardBean() {
         super();
@@ -75,18 +68,18 @@ public class SamlV2HostedIdpCreateWizardBean
         selectedSigningKey = null;
         viewAttributes.clear();
 
-        realmSamlV2CreateSummary = new RealmSamlV2HostedIdpCreateSummary(this);
-        entityNameSamlV2CreateSummary =
+        realmSamlV2HostedIdpCreateSummary = new RealmSamlV2HostedIdpCreateSummary(this);
+        entityNameSamlV2HostedIdpCreateSummary =
                 new EntityNameSamlV2HostedIdpCreateSummary(this);
-        stdMetadataNameSamlV2CreateSummary =
+        stdMetadataNameSamlV2HostedIdpCreateSummary =
                 new StdMetadataNameSamlV2HostedIdpCreateSummary(this);
-        extMetadataNameSamlV2CreateSummary =
+        extMetadataNameSamlV2HostedIdpCreateSummary =
                 new ExtMetadataNameSamlV2HostedIdpCreateSummary(this);
-        attributeMappingSamlV2HostedCreateSummary =
+        attributeMappingSamlV2HostedIdpCreateSummary =
                 new AttributeMappingSamlV2HostedIdpCreateSummary(this);
-        signingKeySamlV2CreateSummary =
+        signingKeySamlV2HostedIdpCreateSummary =
                 new SigningKeySamlV2HostedIdpCreateSummary(this);
-        cotSamlV2CreateSummary = new CotSamlV2HostedIdpCreateSummary(this);
+        cotSamlV2HostedIdpCreateSummary = new CotSamlV2HostedIdpCreateSummary(this);
     }
 
     public String getSelectedSigningKey() {
@@ -172,38 +165,32 @@ public class SamlV2HostedIdpCreateWizardBean
         return samlV2EntityNameInputEffect;
     }
 
-    public RealmSamlV2HostedIdpCreateSummary
-            getRealmSamlV2CreateSummary() {
-        return realmSamlV2CreateSummary;
+    public RealmSamlV2HostedIdpCreateSummary getRealmSamlV2HostedIdpCreateSummary() {
+        return realmSamlV2HostedIdpCreateSummary;
     }
 
-    public AttributeMappingSamlV2HostedIdpCreateSummary
-            getAttributeMappingSamlV2HostedCreateSummary() {
-        return attributeMappingSamlV2HostedCreateSummary;
+    public AttributeMappingSamlV2HostedIdpCreateSummary getAttributeMappingSamlV2HostedIdpCreateSummary() {
+        return attributeMappingSamlV2HostedIdpCreateSummary;
     }
 
-    public EntityNameSamlV2HostedIdpCreateSummary
-            getEntityNameSamlV2CreateSummary() {
-        return entityNameSamlV2CreateSummary;
+    public EntityNameSamlV2HostedIdpCreateSummary getEntityNameSamlV2HostedIdpCreateSummary() {
+        return entityNameSamlV2HostedIdpCreateSummary;
     }
 
-    public SigningKeySamlV2HostedIdpCreateSummary
-            getSigningKeySamlV2CreateSummary() {
-        return signingKeySamlV2CreateSummary;
+    public SigningKeySamlV2HostedIdpCreateSummary getSigningKeySamlV2HostedIdpCreateSummary() {
+        return signingKeySamlV2HostedIdpCreateSummary;
     }
 
-    public CotSamlV2HostedIdpCreateSummary getCotSamlV2CreateSummary() {
-        return cotSamlV2CreateSummary;
+    public CotSamlV2HostedIdpCreateSummary getCotSamlV2HostedIdpCreateSummary() {
+        return cotSamlV2HostedIdpCreateSummary;
     }
 
-    public StdMetadataNameSamlV2HostedIdpCreateSummary
-            getStdMetadataNameSamlV2CreateSummary() {
-        return stdMetadataNameSamlV2CreateSummary;
+    public StdMetadataNameSamlV2HostedIdpCreateSummary getStdMetadataNameSamlV2HostedIdpCreateSummary() {
+        return stdMetadataNameSamlV2HostedIdpCreateSummary;
     }
 
-    public ExtMetadataNameSamlV2HostedIdpCreateSummary
-            getExtMetadataNameSamlV2CreateSummary() {
-        return extMetadataNameSamlV2CreateSummary;
+    public ExtMetadataNameSamlV2HostedIdpCreateSummary getExtMetadataNameSamlV2HostedIdpCreateSummary() {
+        return extMetadataNameSamlV2HostedIdpCreateSummary;
     }
 
     public void setSamlV2EntityNameInputEffect(

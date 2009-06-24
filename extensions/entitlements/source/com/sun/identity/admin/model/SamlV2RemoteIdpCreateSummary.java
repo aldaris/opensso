@@ -22,32 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2IdpCreateSummary.java,v 1.1 2009-06-23 06:28:59 babysunil Exp $
+ * $Id: SamlV2RemoteIdpCreateSummary.java,v 1.1 2009-06-24 21:55:09 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
 import javax.faces.event.ActionEvent;
 
-public abstract class SamlV2IdpCreateSummary
+public abstract class SamlV2RemoteIdpCreateSummary
         extends Summary {
 
-    private SamlV2HostedCreateWizardBean samlV2HostedCreateWizardBean;
-    private SamlV2RemoteIdpCreateWizardBean samlV2RemoteIdpCreateWizardBean;
-    private SamlV2HostedIdpCreateWizardBean samlV2HostedIdpCreateWizardBean;
+    private SamlV2RemoteIdpCreateWizardBean samlV2RemoteIdpCreateWizardBean;  
 
-    public SamlV2IdpCreateSummary(
-            SamlV2HostedCreateWizardBean samlV2HostedCreateWizardBean) {
-        this.samlV2HostedCreateWizardBean = samlV2HostedCreateWizardBean;
-    }
-
-    public SamlV2IdpCreateSummary(
+    public SamlV2RemoteIdpCreateSummary(
             SamlV2RemoteIdpCreateWizardBean samlV2RemoteIdpCreateWizardBean) {
         this.samlV2RemoteIdpCreateWizardBean = samlV2RemoteIdpCreateWizardBean;
-    }
-
-    public SamlV2IdpCreateSummary(
-            SamlV2HostedIdpCreateWizardBean samlV2HostedIdpCreateWizardBean) {
-        this.samlV2HostedIdpCreateWizardBean = samlV2HostedIdpCreateWizardBean;
     }
 
     public abstract String getLabel();
@@ -62,33 +50,21 @@ public abstract class SamlV2IdpCreateSummary
 
     public abstract int getGotoStep();
 
-    protected ReferralWizardStep getGotoStep(ActionEvent event) {
+    protected SamlV2RemoteIdpCreateWizardStep getGotoStep(ActionEvent event) {
         Object o = event.getComponent().getAttributes().get("gotoStep");
         Integer i = (Integer) o;
-        ReferralWizardStep rws = ReferralWizardStep.valueOf(i.intValue());
+        SamlV2RemoteIdpCreateWizardStep rws = SamlV2RemoteIdpCreateWizardStep.valueOf(i.intValue());
 
         return rws;
-    }
-
-    public PolicyWizardAdvancedTabIndex getAdvancedTabIndex() {
-        return PolicyWizardAdvancedTabIndex.ACTIONS;
-    }
-
-    public SamlV2HostedCreateWizardBean getSamlV2CreateWizardBean() {
-        return samlV2HostedCreateWizardBean;
     }
 
     public SamlV2RemoteIdpCreateWizardBean getSamlV2RemoteIdpCreateWizardBean() {
         return samlV2RemoteIdpCreateWizardBean;
     }
 
-    public SamlV2HostedIdpCreateWizardBean getSamlV2HostedIdpCreateWizardBean() {
-        return samlV2HostedIdpCreateWizardBean;
-    }
-
     public void editListener(ActionEvent event) {
-        ReferralWizardStep gotoStep = getGotoStep(event);
-        getSamlV2CreateWizardBean().gotoStep(gotoStep.toInt());
+        SamlV2RemoteIdpCreateWizardStep gotoStep = getGotoStep(event);
+        getSamlV2RemoteIdpCreateWizardBean().gotoStep(gotoStep.toInt());
     }
 
     public int getTabIndex() {

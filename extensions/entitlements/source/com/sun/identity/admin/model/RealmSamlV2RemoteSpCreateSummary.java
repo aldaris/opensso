@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmSamlV2RemoteSpCreateSummary.java,v 1.1 2009-06-17 23:44:56 asyhuang Exp $
+ * $Id: RealmSamlV2RemoteSpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,8 +31,8 @@ import com.sun.identity.admin.Resources;
 
 public class RealmSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSummary {
 
-    public RealmSamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteCreateWizardBean) {
-        super(samlV2RemoteCreateWizardBean);
+    public RealmSamlV2RemoteSpCreateSummary(SamlV2RemoteSpCreateWizardBean samlV2RemoteSpCreateWizardBean) {
+        super(samlV2RemoteSpCreateWizardBean);
     }
 
     public String getLabel() {
@@ -42,7 +42,7 @@ public class RealmSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSummar
     }
 
     public String getValue() {
-        return getSamlV2RemoteCreateWizardBean().getSelectedRealm();
+        return getSamlV2RemoteSpCreateWizardBean().getSelectedRealm();
     }
 
     public boolean isExpandable() {
