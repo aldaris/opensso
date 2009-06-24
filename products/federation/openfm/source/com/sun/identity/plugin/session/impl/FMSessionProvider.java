@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.20 2009-01-17 01:02:50 qcheng Exp $
+ * $Id: FMSessionProvider.java,v 1.21 2009-06-24 00:24:45 sean_brydon Exp $
  *
  */
 
@@ -194,7 +194,8 @@ public class FMSessionProvider implements SessionProvider {
         try {
             oldSession = getSession(request);
             String oldPrincipal = getPrincipalName(oldSession);
-            if ((!oldPrincipal.equals(principalName)) &&
+            oldPrincipal = oldPrincipal.toLowerCase();
+            if ((!oldPrincipal.equals(principalName.toLowerCase())) &&
                 (!oldPrincipal.startsWith(
                 "id=" + principalName.toLowerCase() +",")))
             {
