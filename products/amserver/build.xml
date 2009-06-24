@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.80 2009-06-23 20:29:26 kevinserwin Exp $
+   $Id: build.xml,v 1.81 2009-06-24 05:44:58 kevinserwin Exp $
 
 -->
 
@@ -75,6 +75,14 @@
     </condition>           
     <!-- note that if version.set is set above, the following line is ignored -->
     <property name="version.set" value="${opensso.nightly}"/>    
+    
+    <condition property="target.jdk.set" value="${target.jdk}">
+        <isset property="target.jdk"/>
+    </condition>
+    <condition property="target.jdk.set" value="1.5">
+        <not><isset property="target.jdk"/></not>
+    </condition>
+    <echo message="OpenSSO JDK Version: ${target.jdk.set}"/>    
     
     <target name="checkjar">
         <ant antfile="${products.basedir}/build-checkjars.xml" inheritRefs="true" />
