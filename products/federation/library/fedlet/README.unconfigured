@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.unconfigured,v 1.11 2009-06-23 18:58:26 madan_ranganath Exp $
+$Id: README.unconfigured,v 1.12 2009-06-25 23:18:25 madan_ranganath Exp $
 
 
 
@@ -345,7 +345,6 @@ try {
 
       a) When creating the IDP entity metadata, make sure that you specify that
          particular entity has Attribute Authority role. 
-	 Fedlet side.
       b) Specify the list of attributes to be fetched in the Attribute Map
 	 ex : CommonName=cn
 	      GiveName=sn

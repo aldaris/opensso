@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.13 2009-06-23 19:13:14 madan_ranganath Exp $
+ * $Id: CreateFedlet.java,v 1.14 2009-06-25 23:17:44 madan_ranganath Exp $
  *
  */
 
@@ -623,7 +623,7 @@ public class CreateFedlet
         StringBuffer buff = new StringBuffer();
         buff.append(
             "    <AttributeQueryConfig metaAlias=\"/attrQuery\">\n" +
-            "        <Attribute name=\"SigningCertAlias\">\n" +
+            "        <Attribute name=\"signingCertAlias\">\n" +
             "            <Value>" + "</Value>\n" +
             "        </Attribute>\n" +
             "        <Attribute name=\"encryptionCertAlias\">\n" +
