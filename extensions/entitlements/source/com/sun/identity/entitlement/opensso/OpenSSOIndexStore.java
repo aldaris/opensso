@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.18 2009-06-24 01:58:00 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.19 2009-06-25 02:29:04 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -364,7 +364,8 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                     Map<String, Set<String>> map =
                         new HashMap<String, Set<String>>();
                     Set<String> res = new HashSet<String>();
-                    res.add(getReferralURL(indexes.getHostIndexes()) + ":*");
+                    res.add("http*://" +
+                        getReferralURL(indexes.getHostIndexes()) + ":*");
                     map.put(
                         ApplicationTypeManager.URL_APPLICATION_TYPE_NAME,
                         res);
@@ -398,10 +399,8 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         throws SMSException, SSOException {
         Set<String> searchIndexes = new HashSet<String>();
         for (String s : indexes.getHostIndexes()) {
-            if (s.startsWith("http://")) {
-                s = s.substring(7);
-            } else if (s.startsWith("https://")) {
-                s = s.substring(8);
+            if (s.startsWith("://")) {
+                s = s.substring(3);
             }
 
             if (s.length() > 0) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.33 2009-06-24 08:33:49 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.34 2009-06-25 02:29:04 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -138,6 +138,7 @@ public class PrivilegeUtils {
             Set<String> referredRealms = getReferrals(policy);
             ReferralPrivilege rp = new ReferralPrivilege(policyName,
                 resources, referredRealms);
+            rp.setDescription(policy.getDescription());
             rp.setCreationDate(policy.getCreationDate());
             rp.setCreatedBy(policy.getCreatedBy());
             rp.setLastModifiedBy(policy.getLastModifiedBy());
@@ -483,6 +484,11 @@ public class PrivilegeUtils {
             SubjectUtils.createSubject(adminToken);
         PolicyManager pm = new PolicyManager(adminToken, realm);
         ReferralTypeManager rm = pm.getReferralTypeManager();
+
+        policy.setCreatedBy(referralPrivilege.getCreatedBy());
+        policy.setCreationDate(referralPrivilege.getCreationDate());
+        policy.setLastModifiedBy(referralPrivilege.getLastModifiedBy());
+        policy.setLastModifiedDate(referralPrivilege.getLastModifiedDate());
 
         int count = 1;
         for (String r : referralPrivilege.getRealms()) {

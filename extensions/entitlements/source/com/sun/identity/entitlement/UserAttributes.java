@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAttributes.java,v 1.9 2009-06-24 08:33:48 veiming Exp $
+ * $Id: UserAttributes.java,v 1.10 2009-06-25 02:29:04 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.util.JSONUtils;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -84,8 +85,23 @@ public class UserAttributes implements ResourceAttribute {
         SubjectAttributesManager sac = SubjectAttributesManager.getInstance(
             adminSubject, realm);
         Set<String> names = new HashSet<String>();
-        names.add(propertyName);
-        return sac.getUserAttributes(subject, names);
+        if ((propertyValues == null) || propertyValues.isEmpty()) {
+            names.add(propertyName);
+        } else {
+            names.addAll(propertyValues);
+        }
+
+        Map<String, Set<String>> values = sac.getUserAttributes(subject, names);
+        Set<String> tmp = new HashSet<String>();
+        if ((values != null) && !values.isEmpty()) {
+            for (String k : values.keySet()) {
+                tmp.addAll(values.get(k));
+            }
+        }
+
+        Map<String, Set<String>> results = new HashMap<String, Set<String>>();
+        results.put(propertyName, tmp);
+        return results;
     }
 
     /**

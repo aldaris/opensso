@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.16 2009-06-24 10:10:15 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.17 2009-06-25 02:29:04 veiming Exp $
  *
  */
 
@@ -1424,21 +1424,13 @@ public class PolicyEvaluator {
                     ResourceResult virtualResourceResult =
                         new ResourceResult(ResourceResult.VIRTUAL_ROOT,
                             new PolicyDecision());
-                    Map<String, Set<String>> resAttr = new
-                        HashMap<String, Set<String>>();
                     for (Entitlement ent : entitlements ) {
-                        collectResourceAttrs(ent, resAttr);
                         ResourceResult r = EntitlementToResourceResult(ent);
                         virtualResourceResult.addResourceResult(r, serviceType);
                     }
 
-                    Set<ResourceResult> tmp =
-                        virtualResourceResult.getResourceResults();
-                    for (ResourceResult r : tmp) {
-                        PolicyDecision pd = r.getPolicyDecision();
-                        pd.setResponseAttributes(resAttr);
-                        resultsSet.add(r);
-                    }
+                    resultsSet.addAll(
+                        virtualResourceResult.getResourceResults());
                 }
             }
         } catch (Exception e) {
@@ -1449,22 +1441,7 @@ public class PolicyEvaluator {
         return resultsSet;
     }
 
-    private void collectResourceAttrs(Entitlement e,
-        Map<String, Set<String>> resAttr) {
-        Map<String, Set<String>> attrs = e.getAttributes();
-
-        if ((attrs != null) && !attrs.isEmpty()) {
-            for (String k : attrs.keySet()) {
-                Set<String> v = resAttr.get(k);
-                if (v == null) {
-                    v = new HashSet<String>();
-                    resAttr.put(k, v);
-                }
-                v.addAll(attrs.get(k));
-            }
-        }
-    }
-    
+   
     private ResourceResult EntitlementToResourceResult(
         Entitlement entitlement
     ) throws PolicyException {

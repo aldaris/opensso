@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLResourceName.java,v 1.6 2009-06-23 07:00:16 veiming Exp $
+ * $Id: URLResourceName.java,v 1.7 2009-06-25 02:29:04 veiming Exp $
  *
  */
 
@@ -155,7 +155,7 @@ public class URLResourceName
         sb.append(proto);
         sb.append("://");
         sb.append(hostName);
-        if (hostName.length() != 0) {
+        if ((hostName.length() != 0) && !hostName.endsWith("*")) {
             sb.append(":");
             sb.append(port);
         }

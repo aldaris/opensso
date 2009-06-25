@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.7 2009-06-24 08:33:48 veiming Exp $
+ * $Id: ReferralPrivilege.java,v 1.8 2009-06-25 02:29:04 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -433,9 +433,13 @@ public final class ReferralPrivilege implements IPrivilege {
                     for (String r : resources) {
                         ResourceMatch match = comp.compare(resName,
                             comp.canonicalize(r), true);
+                        if (!recursive) {
                         applicable = match.equals(ResourceMatch.EXACT_MATCH) ||
                             match.equals(ResourceMatch.WILDCARD_MATCH) ||
                             match.equals(ResourceMatch.SUB_RESOURCE_MATCH);
+                        } else {
+                            applicable = !match.equals(ResourceMatch.NO_MATCH);
+                        }
                         if (applicable) {
                             break;
                         }

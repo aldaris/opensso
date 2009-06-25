@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.25 2009-06-21 10:52:47 veiming Exp $
+ * $Id: Application.java,v 1.26 2009-06-25 02:29:04 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -458,25 +458,26 @@ public final class Application {
         String res = null;
         try {
             res = resComp.canonicalize(resource);
+
+            if ((resources != null) && !resources.isEmpty()) {
+                for (String r : resources) {
+                    ResourceMatch rm = resComp.compare(res, resComp.canonicalize(r),
+                        true);
+                    if (rm.equals(ResourceMatch.EXACT_MATCH) ||
+                        rm.equals(ResourceMatch.SUB_RESOURCE_MATCH) ||
+                        rm.equals(ResourceMatch.WILDCARD_MATCH)) {
+                        match = true;
+                        break;
+                    }
+                }
+            }
         } catch (EntitlementException ex) {
             Object[] args = {resource};
             return new ValidateResourceResult(
                 ValidateResourceResult.VALID_CODE_INVALID,
                 "resource.validation.invalid.resource", args);
         }
-
-        if ((resources != null) && !resources.isEmpty()) {
-            for (String r : resources) {
-                ResourceMatch rm = resComp.compare(res, r, true);
-                if (rm.equals(ResourceMatch.EXACT_MATCH) ||
-                    rm.equals(ResourceMatch.SUB_RESOURCE_MATCH) ||
-                    rm.equals(ResourceMatch.WILDCARD_MATCH)) {
-                    match = true;
-                    break;
-                }
-            }
-        }
-
+        
         if (!match) {
             Object[] args = {resource};
             return new ValidateResourceResult(
