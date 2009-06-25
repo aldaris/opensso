@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.31 2009-06-03 20:46:51 veiming Exp $
+ * $Id: AuthClientUtils.java,v 1.32 2009-06-25 06:25:34 si224302 Exp $
  *
  */
 
@@ -70,6 +70,7 @@ import com.iplanet.dpro.session.share.SessionEncodeURL;
 import com.sun.identity.session.util.SessionUtils;
 
 import com.iplanet.am.util.AMClientDetector;
+import com.iplanet.am.util.AMURLEncDec;
 import com.iplanet.am.util.SystemProperties;
 
 import com.iplanet.services.cdm.Client;
@@ -112,6 +113,7 @@ import com.sun.identity.policy.plugins.AuthSchemeCondition;
 public class AuthClientUtils {
 
     public static final String  DEFAULT_CLIENT_TYPE ="genericHTML";
+    public static final String  COMPOSITE_ADVICE = "sunamcompositeadvice";
     private static final String  DEFAULT_CONTENT_TYPE="text/html";
     private static final String  DEFAULT_FILE_PATH="html";
     private static final String  DSAME_VERSION="7.0";
@@ -762,6 +764,9 @@ public class AuthClientUtils {
         boolean upgrade = false;
         try {
             if (reqDataHash.get("user")!=null) {
+                if (utilDebug.messageEnabled()) {
+                    utilDebug.message("AuthClientUtils.checkSessionUpgrade: user");
+            	}
                 tmp = (String) reqDataHash.get("user");
                 value = ssoToken.getProperty("UserToken");
                 if (utilDebug.messageEnabled()) {
@@ -772,29 +777,45 @@ public class AuthClientUtils {
                     upgrade = true;
                 }
             } else if (reqDataHash.get("role")!=null) {
+                if (utilDebug.messageEnabled()) {
+                    utilDebug.message("AuthClientUtils.checkSessionUpgrade: role");
+            	}
                 tmp = (String) reqDataHash.get("role");
                 value = ssoToken.getProperty("Role");
                 if (!isContain(value, tmp)) {
                     upgrade = true;
                 }
             } else if (reqDataHash.get("service")!=null) {
+                if(utilDebug.messageEnabled()) {
+                    utilDebug.message("AuthClientUtils.checkSessionUpgrade:"
+                         +" service");
+                }
                 tmp = (String) reqDataHash.get("service");
                 value = ssoToken.getProperty("Service");
                 if (!isContain(value, tmp)) {
                     upgrade = true;
                 }
             } else if (reqDataHash.get("module")!=null) {
+                if (utilDebug.messageEnabled()) {
+                    utilDebug.message("AuthClientUtils.checkSessionUpgrade:module");
+                }
                 tmp = (String) reqDataHash.get("module");
                 value = ssoToken.getProperty("AuthType");
                 if (!isContain(value, tmp)) {
                     upgrade = true;
                 }
             } else if (reqDataHash.get("authlevel")!=null) {
+                if (utilDebug.messageEnabled()) {
+                    utilDebug.message("checksessionUpgrade: authlevel");
+                }
                 int i = Integer.parseInt((String)reqDataHash.get("authlevel"));
                 if (i>Integer.parseInt(ssoToken.getProperty("AuthLevel"))) {
                     upgrade = true;
                 }
             } else if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
+                if (utilDebug.messageEnabled()) {
+                    utilDebug.message("checksessionUpgrade: composite advice");
+                }
                 upgrade = true;
             }
         } catch (Exception e) {
@@ -1471,15 +1492,39 @@ public class AuthClientUtils {
         Enumeration parameters = request.getParameterNames();
         for ( ; parameters.hasMoreElements() ;) {
             String parameter = (String)parameters.nextElement();
+            if(utilDebug.messageEnabled()) {
+                utilDebug.message("constructLoginURL:parameter: "+parameter);
+            }
             if(!ignoreParameter(parameter)){
                 if (parameter.equalsIgnoreCase("SunQueryParamsString")) {
                     String queryParams = getBase64DecodedValue(
                         request.getParameter(parameter));
+                    if ((queryParams != null) &&
+                         (queryParams.indexOf(COMPOSITE_ADVICE) != -1)) {
+                        if(utilDebug.messageEnabled()) {
+                            utilDebug.message("constructLoginURL: found "
+                                 +"composite advice");
+                        }
+                        queryParams = URLencodedCompositeAdvice(queryParams);
+                    }
                     queryString = queryString + queryParams;
-                } else { // if goto may be empty, so check value is not null
+                } else {
                     String value = request.getParameter(parameter);
                     if(( value != null) && !value.equals("")) {
-                        queryString = queryString + parameter + "=" + value;
+                        // if goto may be empty, so check value is not null
+                       if(parameter.equals("goto") && value.indexOf("&")>0) {
+                           queryString = queryString + parameter + "="
+                               + Base64.encode(value.getBytes()) + "&encoded=true";
+                       } else {
+                              if (parameter.indexOf(COMPOSITE_ADVICE) != -1) {
+                                  if(utilDebug.messageEnabled()) {
+                                      utilDebug.message("constructLoginURL:found "
+                                           +"composite advice");
+                                  }
+                                  value = AMURLEncDec.encode(value);
+                             }
+                             queryString = queryString + parameter + "=" + value;
+                       }
                     }
                 }
                 if (parameters.hasMoreElements()) {
@@ -1497,6 +1542,29 @@ public class AuthClientUtils {
         }
         return(loginURL.toString());
     }
+    
+    /**
+     * This method takes ina String representing query parameters, and 
+     * URL encodes "sunamcompositeadvice" parameter out of it.
+     */
+     private static String URLencodedCompositeAdvice(String queryParams) {
+         StringBuffer sb = new StringBuffer(400);
+         StringTokenizer st = new StringTokenizer(queryParams, "&");
+         String adviceString = null;
+         while (st.hasMoreTokens()) {
+             String str = st.nextToken();
+             if (str.indexOf(COMPOSITE_ADVICE) != -1 ) {
+                 adviceString = str;
+             } else {
+                sb.append(str).append("&");
+             }
+         }
+         int index = adviceString.indexOf("=");
+         String value = adviceString.substring(index+1);
+         sb.append(COMPOSITE_ADVICE).append("=");
+         sb.append(AMURLEncDec.encode(value));
+         return sb.toString();
+     }
 
     // Get Original Redirect URL for Auth to redirect the Login request
     public static SSOToken getExistingValidSSOToken(SessionID sessID) {
