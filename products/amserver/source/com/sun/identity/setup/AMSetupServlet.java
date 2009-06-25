@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.106 2009-06-23 22:11:03 mallas Exp $
+ * $Id: AMSetupServlet.java,v 1.107 2009-06-25 00:00:45 mallas Exp $
  *
  */
 
@@ -1987,8 +1987,6 @@ public class AMSetupServlet extends HttpServlet {
         config.put("publicKeyAlias","test");
         config.put("isRequestSign","true");
         config.put("keepSecurityHeaders","true");
-        config.put("DetectMessageReplay","true");
-        config.put("DetectUserTokenReplay","true");
         config.put("WSPEndpoint","default");
         config.put("EncryptionAlgorithm","AES");
         config.put("EncryptionStrength","256");
@@ -1999,6 +1997,8 @@ public class AMSetupServlet extends HttpServlet {
         // Add WSP configuration
         config.remove("AgentType");
         config.put("AgentType","WSPAgent");
+        config.put("DetectMessageReplay","true");
+        config.put("DetectUserTokenReplay","true");
         config.remove("SecurityMech");
         config.put("SecurityMech","urn:sun:wss:security:null:UserNameToken," +
                                   "urn:sun:wss:security:null:SAML2Token-HK," +
