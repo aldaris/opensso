@@ -2,6 +2,7 @@ package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
 import java.io.Serializable;
+import java.net.URL;
 
 public abstract class LinkBean implements Serializable {
 
@@ -14,6 +15,7 @@ public abstract class LinkBean implements Serializable {
     public static final LinkBean SAMLV2_REMOTE_IDP_CREATE;
     public static final LinkBean SAMLV2_HOSTED_SP_CREATE;
     public static final LinkBean SAMLV2_REMOTE_SP_CREATE;
+    public static final LinkBean COMMON_TASKS;
 
     static {
         HOME = new CommandLinkBean();
@@ -51,6 +53,10 @@ public abstract class LinkBean implements Serializable {
         SAMLV2_REMOTE_SP_CREATE = new CommandLinkBean();
         SAMLV2_REMOTE_SP_CREATE.setValue("samlv2-remote-sp-create");
         SAMLV2_REMOTE_SP_CREATE.setIconUri("/admin/image/new.png");
+
+        COMMON_TASKS = new ContextLinkBean();
+        COMMON_TASKS.setValue("/");
+        COMMON_TASKS.setIconUri("/admin/image/home.png");
     }
 
     private String value;
@@ -81,4 +87,6 @@ public abstract class LinkBean implements Serializable {
     public void setIconUri(String iconUri) {
         this.iconUri = iconUri;
     }
+
+    public abstract String getRedirect();
 }

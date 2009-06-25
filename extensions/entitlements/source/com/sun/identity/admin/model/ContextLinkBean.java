@@ -22,14 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HrefLinkBean.java,v 1.2 2009-06-25 17:55:09 farble1670 Exp $
+ * $Id: ContextLinkBean.java,v 1.1 2009-06-25 17:55:09 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
-public class HrefLinkBean extends LinkBean {
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 
+public class ContextLinkBean extends LinkBean {
     public String getRedirect() {
-        return getValue();
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ExternalContext ec = fc.getExternalContext();
+
+        String redirect;
+        String cp = ec.getRequestContextPath();
+        if (getValue().startsWith("/")) {
+            redirect = cp + getValue();
+        } else {
+            redirect = cp + "/" + getValue();
+        }
+
+        return redirect;
     }
 }

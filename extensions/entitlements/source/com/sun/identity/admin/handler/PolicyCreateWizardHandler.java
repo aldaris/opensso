@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCreateWizardHandler.java,v 1.35 2009-06-11 02:00:42 farble1670 Exp $
+ * $Id: PolicyCreateWizardHandler.java,v 1.36 2009-06-25 17:55:08 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -35,7 +35,6 @@ import com.sun.identity.admin.model.ViewApplicationsBean;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
-import com.sun.identity.admin.dao.PolicyDao;
 
 public class PolicyCreateWizardHandler extends PolicyWizardHandler {
     public String createAction() {
