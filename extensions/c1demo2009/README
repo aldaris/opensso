@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.6 2009-06-18 00:55:52 superpat7 Exp $
+$Id: README,v 1.7 2009-06-25 13:58:35 superpat7 Exp $
 
 ------------------------------------------------------------------------------
 
@@ -505,6 +505,11 @@ others.
 
 Again, you can experiment by changing the username and resource to check that 
 policy is being enforced correctly.
+
+NOTE - one user reported a 500 error when running the test harness. The 
+GlassFish log indicated that there was an unwanted 'ssl=off' property in 
+TokenServicePool's 'Additional Properties' tab. Deleting this property solved 
+the issue.
 
 %% 8. Running the Demo Client
 
