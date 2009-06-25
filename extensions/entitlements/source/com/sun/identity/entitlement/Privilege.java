@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.37 2009-06-24 10:10:15 veiming Exp $
+ * $Id: Privilege.java,v 1.38 2009-06-25 20:39:39 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -83,6 +83,7 @@ public abstract class Privilege implements IPrivilege {
     public static final String DESCRIPTION_ATTRIBUTE = "description";
 
     private static Class privilegeClass;
+    public static final NoSubject NOT_SUBJECT = new NoSubject();
 
     private boolean active = true;
     private String name;
@@ -150,7 +151,9 @@ public abstract class Privilege implements IPrivilege {
 
     void validateSubject(EntitlementSubject sbj)
         throws EntitlementException {
-        if ((sbj == null) || !sbj.isIdentity()){
+        if (sbj == null) {
+            sbj = NOT_SUBJECT;
+        } else if (!sbj.isIdentity()) {
             Object[] params = {name};
             throw new EntitlementException(310, params);
         }

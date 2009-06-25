@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.34 2009-06-25 02:29:04 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.35 2009-06-25 20:39:39 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -196,15 +196,17 @@ public class PrivilegeUtils {
         throws PolicyException {
         Set subjectNames = policy.getSubjectNames();
         Set nqSubjects = new HashSet();
-        for (Object subjectNameObj : subjectNames) {
-            String subjectName = (String) subjectNameObj;
-            Subject subject = policy.getSubject(subjectName);
-            boolean exclusive = policy.isSubjectExclusive(subjectName);
-            Object[] nqSubject = new Object[3];
-            nqSubject[0] = subjectName;
-            nqSubject[1] = subject;
-            nqSubject[2] = exclusive;
-            nqSubjects.add(nqSubject);
+        if (subjectNames != null) {
+            for (Object subjectNameObj : subjectNames) {
+                String subjectName = (String) subjectNameObj;
+                Subject subject = policy.getSubject(subjectName);
+                boolean exclusive = policy.isSubjectExclusive(subjectName);
+                Object[] nqSubject = new Object[3];
+                nqSubject[0] = subjectName;
+                nqSubject[1] = subject;
+                nqSubject[2] = exclusive;
+                nqSubjects.add(nqSubject);
+            }
         }
         return nqSubjectsToESubject(nqSubjects);
     }
@@ -534,7 +536,7 @@ public class PrivilegeUtils {
         }
 
         EntitlementSubject es = privilege.getSubject();
-        if (es != null) {
+        if ((es != null) && (es != Privilege.NOT_SUBJECT)) {
             Subject sbj = eSubjectToEPSubject(es);
             policy.addSubject(randomName(), sbj, false);
         }
