@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.28 2009-06-26 19:50:03 veiming Exp $
+ * $Id: EntitlementService.java,v 1.29 2009-06-26 19:57:52 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -1131,12 +1131,34 @@ public class EntitlementService extends EntitlementConfiguration {
 
 
     public static void useNewConsole(boolean flag) {
-        Set<String> values = new HashSet<String>();
-        values.add(Boolean.toString(flag));
-        setConfiguration(adminToken, USE_NEW_CONSOLE, values);
+        if (canSwitchToNewConsole()) {
+            Set<String> values = new HashSet<String>();
+            values.add(Boolean.toString(flag));
+            setConfiguration(adminToken, USE_NEW_CONSOLE, values);
+        }
+    }
+
+    private static boolean canSwitchToNewConsole() {
+        try {
+            new ServiceSchemaManager(SERVICE_NAME, adminToken);
+
+            Set<String> setMigrated = getConfiguration(adminToken,
+                MIGRATED_TO_ENTITLEMENT_SERVICES);
+            String migrated = ((setMigrated != null) && !setMigrated.isEmpty())
+                ? setMigrated.iterator().next() : null;
+            return (migrated != null) ? Boolean.parseBoolean(migrated) : false;
+        } catch (SMSException ex) {
+            return false;
+        } catch (SSOException ex) {
+            return false;
+        }
     }
 
     public static String useNewConsole() {
+        if (!canSwitchToNewConsole()) {
+            return "";
+        }
+
         Set<String> values = getConfiguration(adminToken, USE_NEW_CONSOLE);
         return ((values != null) && !values.isEmpty()) ?
             values.iterator().next() : "";
