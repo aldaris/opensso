@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.63 2009-06-19 22:55:56 ericow Exp $
+ * $Id: LDAPv3Repo.java,v 1.64 2009-06-26 23:34:02 hengming Exp $
  *
  */
 
 package com.sun.identity.idm.plugins.ldapv3;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -289,6 +290,9 @@ public class LDAPv3Repo extends IdRepo {
 
     private static final String LDAPv3Config_LDAPV3AD =
         "sun-idrepo-ldapv3-ldapv3AD";
+
+    private static final String LDAPv3Config_LDAPV3ADAM =
+        "sun-idrepo-ldapv3-ldapv3ADAM";
 
     private static final String LDAPv3Config_LDAP_SERVER = 
         "sun-idrepo-ldapv3-config-ldap-server";
@@ -1653,8 +1657,7 @@ public class LDAPv3Repo extends IdRepo {
         return attrMap;
     }
 
-    private Set convertInetStatus(String attrName,
-            Set attrNames, Set attrValueSet) {
+    private Set convertInetStatus(Set attrValueSet, String attrName) {
         // in AD mode, and the user requested inetuserstatus, and the
         // current attribute is userAccountControl. set inetuserstatus
         // according to userAccountControl ADS_UF_ACCOUNTDISABLE bits.
@@ -1663,9 +1666,7 @@ public class LDAPv3Repo extends IdRepo {
                 + ";  attrValueSet=" + attrValueSet);
         }
         Set newAttrVal = new HashSet();
-        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)
-            && attrName.equalsIgnoreCase(isActiveAttrName)
-            && attrNames.contains(defaultStatusAttribute) ) {
+        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)) {
             int attrValue = Integer.parseInt(
                 (String) attrValueSet.iterator().next());
             if ((attrValue & 0x2) != 0) {
@@ -1674,7 +1675,13 @@ public class LDAPv3Repo extends IdRepo {
                 newAttrVal.add(statusActive);
             }
         } else {
-            newAttrVal = attrValueSet;
+            // ADAM
+            String value = (String)attrValueSet.iterator().next();
+            if (value.equalsIgnoreCase(inetUserInactive)) {
+                newAttrVal.add(statusInactive);
+            } else {
+                newAttrVal.add(statusActive);
+            }
         }
         if (debug.messageEnabled()) {
             debug.message("convertInetStatus: newAttrVal=" +
@@ -1683,19 +1690,17 @@ public class LDAPv3Repo extends IdRepo {
         return newAttrVal;
     }
 
-    private byte[][]  convertInetStatus(String attrName,
-            Set attrNames, LDAPAttribute ldapAttr, byte[][] values) {
+    private byte[][]  convertInetStatus(LDAPAttribute ldapAttr) {
         // in AD mode, and the user requested inetuserstatus, and the
         // current attribute is userAccountControl. set
         // inetuserstatus according to userAccountControl bits.
         if (debug.messageEnabled()) {
             debug.message("convertInetStatus: attrName: " +
-                attrName + "; values=" + values);
+                ldapAttr.getName() + "; values=" + ldapAttr.getStringValues());
         }
         byte[][] newAttrVal = new byte[1][];
-        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)
-            && attrName.equalsIgnoreCase(isActiveAttrName)
-            && attrNames.contains(defaultStatusAttribute) ) {
+        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)) {
+
             Set attrValueSet = new HashSet();
             Enumeration enumVals = ldapAttr.getStringValues();
             while ((enumVals != null) && enumVals.hasMoreElements()) {
@@ -1710,7 +1715,13 @@ public class LDAPv3Repo extends IdRepo {
                 newAttrVal[0] = statusActive.getBytes();
             }
         } else {
-            newAttrVal = values;
+            // ADAM
+            String value = (String)ldapAttr.getStringValues().nextElement();
+            if (value.equalsIgnoreCase(inetUserInactive)) {
+                newAttrVal[0] = statusInactive.getBytes();
+            } else {
+                newAttrVal[0] = statusActive.getBytes();
+            }
         }
         if (debug.messageEnabled()) {
             debug.message("convertInetStatus exit: newAttrVal: "
@@ -1733,9 +1744,9 @@ public class LDAPv3Repo extends IdRepo {
             userAccountControl to the list of attributes.
         */
 
-        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)) {
-            if (attributes.containsKey(defaultStatusAttribute) &&
-                (!attributes.containsKey(isActiveAttrName))) {
+        if (attributes.containsKey(defaultStatusAttribute) &&
+            (!attributes.containsKey(isActiveAttrName))) {
+            if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)) {
                 // read userAccountControl so we can mask the active bit.
                 HashSet attrNameSet = new HashSet();
                 attrNameSet.add(isActiveAttrName);
@@ -1771,54 +1782,59 @@ public class LDAPv3Repo extends IdRepo {
                     attributes.put(isActiveAttrName, usrCtlBin);
                 }
 
+            } else if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3ADAM)) {
+
+                Set attrSet = (Set)attributes.get(defaultStatusAttribute);
+                if ((attrSet != null) && (!attrSet.isEmpty())) {
+                    String userStatus = (String) attrSet.iterator().next();
+                    String attrValue = 
+                        userStatus.equalsIgnoreCase(statusInactive) ?
+                        inetUserInactive : inetUserActive;
+                    attributes.remove(defaultStatusAttribute);
+                    Set attrValues = new HashSet();
+                    attrValues.add(attrValue);
+                    attributes.put(isActiveAttrName, attrValues);
+                }
+
             }
         }
-           
     }
 
-    private String encodeADPwd(String passwd) {
+    private byte[] encodeADPwd(String passwd) {
         // encode the AD password. 
-        // the password must be enclosed in double quotes 
-        // if password is secret it needs to be put into
-        // double quote:  ie "secret", the encode result
-        // for secret should be IgBzAGUAYwByAGUAdAAiAA==
-        char quote[] = {'"'};
-        String doublequote;
-        String  encodedBytesStr = null;
+        // the password must be enclosed in double quotes
+        // and converted byte array with encoding "UTF-16LE"
+        byte[] encodedPwd = null;
         try {
-            doublequote = new String(quote);
-            String test = doublequote + passwd  + doublequote;
-            byte[] testBytes = test.getBytes("UTF-16LE");
-            encodedBytesStr = Base64.encode(testBytes);
-        } catch (Exception e) {
-            e.printStackTrace();
+            encodedPwd = ("\"" + passwd + "\"").getBytes("UTF-16LE");
+        } catch (UnsupportedEncodingException uex) {
+            if (debug.warningEnabled()) {
+                debug.warning("LDAPv3Repo.encodeADPwd:", uex);
+            }
         }
-        return encodedBytesStr;
+        return encodedPwd;
     }
 
-    private Map doPasswordEncode(IdType type,
+    private byte[] doPasswordEncode(IdType type,
         String name, Map attrMap, String attrName) {
         // replace the default user status attribute name and value
         // with what's configured on datastore config page.
         // add the attribute if it does not exist.
         if (type.equals(IdType.USER) && 
-            dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)) {
-            if (attrMap.containsKey(attrName)) {
+            (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD) ||
+            dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3ADAM))) {
+            Set previousVal = (Set) attrMap.remove(attrName);
+            
+            if ((previousVal != null) && (!previousVal.isEmpty())) {
                 Set newAttrValue = new HashSet();
-                Set previousVal = (Set) attrMap.get(attrName);
-                String previousPass = (previousVal.iterator().hasNext()) ?
-                    (String) previousVal.iterator().next() : null;
-                attrMap.remove(attrName);
+                String previousPass = (String) previousVal.iterator().next();
                 if (previousPass != null) {
-                    String encodedPass = encodeADPwd(previousPass);
-                    newAttrValue.add(encodedPass);
+                    return encodeADPwd(previousPass);
                 }
-                attrMap.put(attrName, newAttrValue);
             }
         }
-        return attrMap;
+        return null;
     }
-
 
     /*
      * (non-Javadoc)
@@ -1842,6 +1858,7 @@ public class LDAPv3Repo extends IdRepo {
         String eDN = getDN(type, name);
         LDAPConnection ld = null;
         int resultCode = 0;
+        byte[] encodedPwd = null;
         Map origAttrMap = null;
         try {
             ld = connPool.getConnection();
@@ -1866,8 +1883,7 @@ public class LDAPv3Repo extends IdRepo {
 
             origAttrMap = attrMap;
             attrMap = new CaseInsensitiveHashMap(attrMap);
-            attrMap = doPasswordEncode(type, name, attrMap, unicodePwd);
-            attrMap = doPasswordEncode(type, name, attrMap, userPassword);
+            encodedPwd = doPasswordEncode(type, name, attrMap, unicodePwd);
             attrMap = doUserStatusMapping(type, name, attrMap);
             attrMap = addAttrMapping(type, name, attrMap);
             attrMap = getAllowedAttrs(type, attrMap);
@@ -1890,7 +1906,8 @@ public class LDAPv3Repo extends IdRepo {
                     } else {
                         Set attrNameValue = (Set) attrMap.get(attrName);
                     // ignore empty set because some servers can't handle it.
-                        if (!attrNameValue.isEmpty()) {
+                        if ((attrNameValue != null) &&
+                            (!attrNameValue.isEmpty())) {
                             privAttrMap.put(attrName, attrNameValue);
                         }
                     }
@@ -1900,6 +1917,10 @@ public class LDAPv3Repo extends IdRepo {
                     privAttrMap.put(LDAP_OBJECT_CLASS, theOC);
                 }
 
+                String namingAttr = getNamingAttr(type);
+                Set values = new HashSet();
+                values.add(name);
+                privAttrMap.put(namingAttr, values);
                 itr = privAttrMap.keySet().iterator();
                 while (itr.hasNext()) {
                     String attrName = (String) itr.next();
@@ -1907,7 +1928,7 @@ public class LDAPv3Repo extends IdRepo {
                     String attrValues[] = (set == null ? null : (String[]) set
                         .toArray(new String[set.size()]));
 
-                    if (attrName.equals(getNamingAttr(type))) {
+                    if (attrName.equals(namingAttr)) {
                         for (int i = 0; i < attrValues.length; i++) {
                             if (attrValues[i].startsWith("#")) {
                                 String s = "\\"+attrValues[i];
@@ -1941,6 +1962,11 @@ public class LDAPv3Repo extends IdRepo {
             if (debug.messageEnabled()) {
                 debug.message("    : before ld.add: eDN=" + eDN);
             }
+
+            if (encodedPwd != null) {
+                ldapAttrSet.add(new LDAPAttribute(unicodePwd, encodedPwd));
+            }
+
             try {
                 LDAPEntry theEntry = new LDAPEntry(eDN, ldapAttrSet);
                 ld.add(theEntry);
@@ -1959,6 +1985,7 @@ public class LDAPv3Repo extends IdRepo {
                 connPool.close(ld, resultCode);
             }
         }
+
         if (type.equals(IdType.GROUP) && (defaultGrpMem != null)) {
             if (memberOfAttr != null) {
                 checkConnPool();
@@ -2095,8 +2122,10 @@ public class LDAPv3Repo extends IdRepo {
                 } else {
                     predefinedAttr = userAtttributesAllowed;
                 }
-                if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)
+                if ((dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD) ||
+                    dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3ADAM))
                     && attrNamesCase.contains(defaultStatusAttribute)) {
+
                     if (!attrNamesCase.contains(isActiveAttrName)) {
                         addActiveAttrName = true;
                         attrNamesCase.add(isActiveAttrName);
@@ -2185,16 +2214,19 @@ public class LDAPv3Repo extends IdRepo {
                             String value = (String) enumVals.nextElement();
                             attrValueSet.add(value);
                         }
-                        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)
+                        if ((dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD) ||
+                            dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3ADAM))
                             && attrName.equalsIgnoreCase(isActiveAttrName)
-                            && attrNamesCase.contains(defaultStatusAttribute)) {
+                            && ((attrNames == null) ||
+                            attrNamesCase.contains(defaultStatusAttribute))) {
+
                             if (!addActiveAttrName) {
                                 // we didn't add this. requested by caller.
                                 theAttrMap.put(attrName.toLowerCase(),
                                     attrValueSet);
                             }
-                            attrValueSet = convertInetStatus(attrName,
-                                attrNamesCase, attrValueSet);
+                            attrValueSet = convertInetStatus(attrValueSet,
+                                attrName);
                             theAttrMap.put(defaultStatusAttribute,
                                 attrValueSet);
                         } else {
@@ -2204,14 +2236,16 @@ public class LDAPv3Repo extends IdRepo {
                     } else {
                         byte[][] values = ldapAttr.getByteValueArray();
 
-                        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)
+                        if ((dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD) ||
+                            dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3ADAM))
                             && attrName.equalsIgnoreCase(isActiveAttrName)
-                            && attrNamesCase.contains(defaultStatusAttribute)) {
+                            && ((attrNames == null) ||
+                            attrNamesCase.contains(defaultStatusAttribute))) {
+
                             if (!addActiveAttrName) {
                                 theAttrMap.put(attrName, values);
                             }
-                            values = convertInetStatus(attrName, attrNamesCase,
-                                ldapAttr, values);
+                            values = convertInetStatus(ldapAttr);
                             theAttrMap.put(defaultStatusAttribute, values);
                         } else {
                             theAttrMap.put(attrName, values);
@@ -3593,15 +3627,24 @@ public class LDAPv3Repo extends IdRepo {
             predefinedAttr = filteredroleAtttributesAllowed;
         }
 
-        Map attributesCase =
-            new CaseInsensitiveHashMap(attributes);
-        attributesCase = doPasswordEncode(type, name, attributesCase, 
+        Map attributesCase = new CaseInsensitiveHashMap(attributes);
+        byte[] encodedPwd = doPasswordEncode(type, name, attributesCase,
             unicodePwd);
-        attributesCase = doPasswordEncode(type, name, attributesCase, 
-            userPassword);
         appendInetUser(token, type, name, attributesCase, isString);
 
         LDAPModificationSet ldapModSet = new LDAPModificationSet();
+        if (encodedPwd != null) {
+            LDAPAttribute theAttr = new LDAPAttribute(unicodePwd);
+            theAttr.addValue(encodedPwd);
+
+            if (isAdd) {
+                ldapModSet.add(LDAPModification.ADD, theAttr);
+            } else {
+                ldapModSet.add(LDAPModification.REPLACE, theAttr);
+            }
+            
+        }
+
         Iterator itr = attributesCase.keySet().iterator();
         while (itr.hasNext()) {
             LDAPAttribute theAttr = null;
@@ -5458,6 +5501,8 @@ public class LDAPv3Repo extends IdRepo {
     private void setDSType(Map configParams) {
         if (configParams.containsKey(LDAPv3Config_LDAPV3AD)) {
             dsType = LDAPv3Config_LDAPV3AD;
+        } else if (configParams.containsKey(LDAPv3Config_LDAPV3ADAM)) {
+            dsType = LDAPv3Config_LDAPV3ADAM;
         } else if (configParams.containsKey(LDAPv3Config_LDAPV3AMDS)) {
             dsType = LDAPv3Config_LDAPV3AMDS;
         } else {
