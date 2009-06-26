@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.4 2009-06-26 09:02:17 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.5 2009-06-26 23:07:27 asyhuang Exp $
  */
-
 package com.sun.identity.admin.handler;
 
 import com.icesoft.faces.component.dragdrop.DndEvent;
@@ -57,7 +56,7 @@ import javax.faces.event.ValueChangeEvent;
 public class SamlV2HostedIdpCreateWizardHandler
         extends SamlV2HostedCreateWizardHandler {
 
-    private SamlV2HostedIdpCreateDao samlV2HostedIdpCreateDao;    
+    private SamlV2HostedIdpCreateDao samlV2HostedIdpCreateDao;
 
     public void setSamlV2HostedIdpCreateDao(
             SamlV2HostedIdpCreateDao samlV2HostedIdpCreateDao) {
@@ -132,7 +131,6 @@ public class SamlV2HostedIdpCreateWizardHandler
         if (!validateMetadata()) {
             return false;
         }
-
         if (!validateCot()) {
             return false;
         }
@@ -197,10 +195,11 @@ public class SamlV2HostedIdpCreateWizardHandler
     public boolean validateMetadata() {
         boolean usingMetaDataFile =
                 getSamlV2HostedIdpCreateWizardBean().isMeta();
-        String newEntityName =
-                getSamlV2HostedIdpCreateWizardBean().getNewEntityName();
+
 
         if (!usingMetaDataFile) {
+            String newEntityName =
+                    getSamlV2HostedIdpCreateWizardBean().getNewEntityName();
             if ((newEntityName == null) || (newEntityName.length() == 0)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
@@ -437,5 +436,4 @@ public class SamlV2HostedIdpCreateWizardHandler
         getSamlV2HostedIdpCreateWizardBean().setExtMetaFileProgress(
                 ifile.getFileInfo().getPercent());
     }
-
 }

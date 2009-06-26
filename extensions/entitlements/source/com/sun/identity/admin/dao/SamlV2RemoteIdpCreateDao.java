@@ -22,9 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateDao.java,v 1.1 2009-06-23 05:56:28 babysunil Exp $
+ * $Id: SamlV2RemoteIdpCreateDao.java,v 1.2 2009-06-26 23:07:27 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
+
 import com.sun.identity.cot.COTException;
 import com.sun.identity.workflow.AddProviderToCOT;
 import com.sun.identity.workflow.ImportSAML2MetaData;
@@ -47,22 +48,15 @@ public class SamlV2RemoteIdpCreateDao
     }
 
     public void importSamlv2RemoteIdp(
-            String cot,
             String realm,
-            String stdMeta) throws RuntimeException {
+            String cot,
+            String standardMetadata) throws RuntimeException {
+
         String entityId = null;
-
-        if ((stdMeta == null) || (stdMeta.trim().length() == 0)) {
-            throw new RuntimeException("meta-data-required");
-        }
-        if ((realm == null) || (realm.trim().length() == 0)) {
-            throw new RuntimeException("meta-data-required");
-        }
-        String StandardMeta = getContent(stdMeta);
-
+        String extendedMetadata = null;
         try {
             String[] results = ImportSAML2MetaData.importData(
-                    realm, StandardMeta, null);
+                    realm, standardMetadata, extendedMetadata);
             realm = results[0];
             entityId = results[1];
         } catch (WorkflowException e) {
@@ -76,6 +70,37 @@ public class SamlV2RemoteIdpCreateDao
                 throw new RuntimeException(e);
             }
         }
+
+    }
+
+    public void importSamlv2RemoteIdpFromURL(
+            String realm,
+            String cot,
+            String metadataUrl) {
+
+        String standardMetadata = getContent(metadataUrl);
+        String extendedMetadata = null;
+
+        String[] results;
+        try {
+            results = ImportSAML2MetaData.importData(
+                    realm,
+                    standardMetadata,
+                    extendedMetadata);
+        } catch (WorkflowException ex) {
+            throw new RuntimeException(ex);
+        }
+        String entityId = results[1];
+
+        if ((cot != null) && (cot.length() > 0)) {
+            try {
+                AddProviderToCOT.addToCOT(realm, cot, entityId);
+            } catch (COTException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
 
     }
 

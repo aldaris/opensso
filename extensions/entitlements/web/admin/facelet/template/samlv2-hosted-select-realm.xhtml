@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-hosted-select-realm.xhtml,v 1.1 2009-06-26 09:02:18 asyhuang Exp $
+   $Id: samlv2-hosted-select-realm.xhtml,v 1.2 2009-06-26 23:07:28 asyhuang Exp $
 
 -->
 
@@ -36,44 +36,32 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <o:section>
-        <ui:define name="section-title">
-            <ice:outputText
-                value="#{resources['samlv2-hosted-select-realm.section-title']}"/>
-        </ui:define>
-        <ui:define name="section-details">
-            <ice:outputText
-                value="#{resources['samlv2-hosted-select-realm.section-details']}"/>
-        </ui:define>
-        <ui:define name="section-body">
-            <ice:panelGroup>
-                <ice:outputLabel
-                    value="#{resources['samlv2-hosted-select-realm.metaQuestionLabel']}"/>
-                <ice:panelGroup>
-                    <ice:selectOneRadio
-                        id="menuSelectMetaOrNoMetaRadio"
-                        partialSubmit="true"
-                        value="#{wizardBean.meta}">
-                        <f:selectItem id="meta" itemValue="true" itemLabel="#{resources['samlv2-hosted-select-realm.yesLabel']}"/>
-                        <f:selectItem id="nometa" itemValue="false" itemLabel="#{resources['samlv2-hosted-select-realm.noLabel']}"/>
-                    </ice:selectOneRadio>
-                </ice:panelGroup>
-            </ice:panelGroup>
-            <ice:panelGroup visible="#{!wizardBean.meta}">
-                <ice:panelGroup>
-                    <ice:outputLabel
-                        for="existingRealmList"
-                        value="#{resources['samlv2-hosted-select-realm.selectRealmLabel']}"/>
-                    <ice:selectOneMenu
-                        id="selectedRealm"
-                        value="#{wizardBean.selectedRealm}"
-                        partialSubmit="true">
-                        <f:selectItems
-                            value="#{wizardBean.availableRealmsList}"/>
-                    </ice:selectOneMenu>
-                </ice:panelGroup>
-            </ice:panelGroup>
-        </ui:define>
-    </o:section>
-
+    <ice:panelGroup>
+        <ice:outputLabel
+            value="#{resources['samlv2-hosted-select-realm.metaQuestionLabel']}"/>
+        <ice:panelGroup>
+            <ice:selectOneRadio
+                id="menuSelectMetaOrNoMetaRadio"
+                partialSubmit="true"
+                value="#{wizardBean.meta}">
+                <f:selectItem id="meta" itemValue="true" itemLabel="#{resources['samlv2-hosted-select-realm.yesLabel']}"/>
+                <f:selectItem id="nometa" itemValue="false" itemLabel="#{resources['samlv2-hosted-select-realm.noLabel']}"/>
+            </ice:selectOneRadio>
+        </ice:panelGroup>
+    </ice:panelGroup>
+    <ice:panelGroup visible="#{!wizardBean.meta}">
+        <ice:panelGroup>
+            <ice:outputLabel
+                for="existingRealmList"
+                value="#{resources['samlv2-hosted-select-realm.selectRealmLabel']}"/>
+            <ice:selectOneMenu
+                id="selectedRealm"
+                value="#{wizardBean.selectedRealm}"
+                partialSubmit="true">
+                <f:selectItems
+                    value="#{wizardBean.availableRealmsList}"/>
+            </ice:selectOneMenu>
+        </ice:panelGroup>
+    </ice:panelGroup>
+    
 </span>

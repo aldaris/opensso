@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-remote-idp-create.xhtml,v 1.2 2009-06-26 09:02:18 asyhuang Exp $
+   $Id: samlv2-remote-idp-create.xhtml,v 1.3 2009-06-26 23:07:27 asyhuang Exp $
 -->
 
 <ui:composition
@@ -49,14 +49,26 @@
                     step="0"
                     label="#{resources['samlv2-remote-idp-create.selectRealmPanelLabel']}">
                     <ui:define name="wizard-step-body">
-                        <ui:include src="template/samlv2-remote-select-realm.xhtml">
-                            <ui:param
-                                name="wizardBean"
-                                value="#{samlV2RemoteIdpCreateWizardBean}"/>
-                            <ui:param
-                                name="wizardHandler"
-                                value="#{samlV2RemoteIdpCreateWizardHandler}"/>
-                        </ui:include>
+                        <o:section>
+                            <ui:define name="section-title">
+                                <ice:outputText
+                                    value="#{resources['samlv2-remote-idp-create.selectRealmPanelLabel.section-title']}"/>
+                            </ui:define>
+                            <ui:define name="section-details">
+                                <ice:outputText
+                                    value="#{resources['samlv2-remote-idp-create.selectRealmPanelLabel.section-details']}"/>
+                            </ui:define>
+                            <ui:define name="section-body">
+                                <ui:include src="template/samlv2-remote-select-realm.xhtml">
+                                    <ui:param
+                                        name="wizardBean"
+                                        value="#{samlV2RemoteIdpCreateWizardBean}"/>
+                                    <ui:param
+                                        name="wizardHandler"
+                                        value="#{samlV2RemoteIdpCreateWizardHandler}"/>
+                                </ui:include>
+                            </ui:define>
+                        </o:section>
                     </ui:define>
                 </o:wstep>
                 <o:wstep

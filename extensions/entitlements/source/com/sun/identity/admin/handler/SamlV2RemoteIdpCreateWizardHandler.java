@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.3 2009-06-26 09:02:17 asyhuang Exp $
+ * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.4 2009-06-26 23:07:27 asyhuang Exp $
  */
-
 package com.sun.identity.admin.handler;
 
 import com.icesoft.faces.component.inputfile.FileInfo;
@@ -149,6 +148,12 @@ public class SamlV2RemoteIdpCreateWizardHandler
     }
 
     private boolean validateSteps() {
+        if (!validateMetadata()) {
+            return false;
+        }
+        if (!validateCot()) {
+            return false;
+        }
         return true;
     }
 
@@ -298,12 +303,14 @@ public class SamlV2RemoteIdpCreateWizardHandler
         if (getSamlV2RemoteIdpCreateWizardBean().isMeta()) {
             String stdMeta =
                     getSamlV2RemoteIdpCreateWizardBean().getStdMetaFile();
-            samlV2RemoteIdpCreateDao.importSamlv2RemoteIdp(cot, realm, stdMeta);
-        } else {
-            String stdMetaFileName =
-                    getSamlV2RemoteIdpCreateWizardBean().getMetaUrl();
             samlV2RemoteIdpCreateDao.importSamlv2RemoteIdp(
-                    cot, realm, stdMetaFileName);
+                    realm, cot, stdMeta);
+        } else {
+            String metaUrl =
+                    getSamlV2RemoteIdpCreateWizardBean().getMetaUrl();
+            samlV2RemoteIdpCreateDao.importSamlv2RemoteIdpFromURL(
+                    realm, cot, metaUrl);
+
         }
 
         getSamlV2RemoteIdpCreateWizardBean().reset();
@@ -314,5 +321,4 @@ public class SamlV2RemoteIdpCreateWizardHandler
         getSamlV2RemoteIdpCreateWizardBean().reset();
         doFinishNext();
     }
-
 }

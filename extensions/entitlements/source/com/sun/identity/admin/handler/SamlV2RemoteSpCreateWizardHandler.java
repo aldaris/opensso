@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.5 2009-06-24 14:01:34 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.6 2009-06-26 23:07:27 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -84,7 +84,7 @@ public class SamlV2RemoteSpCreateWizardHandler
         int idx = selectedRealmValue.indexOf("(");
         int end = selectedRealmValue.indexOf(")");
         String realm = selectedRealmValue.substring(idx + 1, end).trim();
-      
+
         List attrMapping = new ArrayList();
         List viewAttributes =
                 getSamlV2RemoteSpCreateWizardBean().getViewAttributes();
@@ -100,12 +100,12 @@ public class SamlV2RemoteSpCreateWizardHandler
                     stdMetadataFile,
                     attrMapping);
         } else {
-            String stdMetadataFilename =
+            String metaUrl =
                     getSamlV2RemoteSpCreateWizardBean().getMetaUrl();
             samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromURL(
                     realm,
                     cot,
-                    stdMetadataFilename,
+                    metaUrl,
                     attrMapping);
         }
 
@@ -270,7 +270,12 @@ public class SamlV2RemoteSpCreateWizardHandler
     }
 
     private boolean validateSteps() {
-
+        if (!validateMetadata()) {
+            return false;
+        }
+        if (!validateCot()) {
+            return false;
+        }
         return true;
     }
 

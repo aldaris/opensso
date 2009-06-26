@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.6 2009-06-24 01:41:35 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.7 2009-06-26 23:07:27 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -220,7 +220,12 @@ public class SamlV2HostedSpCreateWizardHandler
     }
 
     private boolean validateSteps() {
-
+        if (!validateMetadata()) {
+            return false;
+        }
+        if (!validateCot()) {
+            return false;
+        }
         return true;
     }
 
@@ -259,7 +264,7 @@ public class SamlV2HostedSpCreateWizardHandler
                 }
             }
             getSamlV2HostedSpCreateWizardBean().setStdMetaFilename(fileInfo.getFileName());
-            getSamlV2HostedSpCreateWizardBean().setStdMetaFile(contents.toString());          
+            getSamlV2HostedSpCreateWizardBean().setStdMetaFile(contents.toString());
             file.delete();
         }
     }
@@ -303,7 +308,7 @@ public class SamlV2HostedSpCreateWizardHandler
                 }
             }
             getSamlV2HostedSpCreateWizardBean().setExtMetaFilename(fileInfo.getFileName());
-            getSamlV2HostedSpCreateWizardBean().setExtMetaFile(contents.toString());            
+            getSamlV2HostedSpCreateWizardBean().setExtMetaFile(contents.toString());
             file.delete();
         }
     }
