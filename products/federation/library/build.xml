@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.25 2009-06-23 20:29:24 kevinserwin Exp $
+   $Id: build.xml,v 1.26 2009-06-26 16:40:58 exu Exp $
 
 -->
 
@@ -41,6 +41,14 @@
     <!-- overridable properties -->
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
+
+    <condition property="target.jdk.set" value="${target.jdk}">
+        <isset property="target.jdk"/>
+    </condition>
+    <condition property="target.jdk.set" value="1.5">
+        <not><isset property="target.jdk"/></not>
+    </condition>
+    <echo message="OpenSSO JDK Version: ${target.jdk.set}"/>
 
     <property name="fedlibrary.clientsdkbase.dir" value="${library.basedir}/clientsdk"/>
 
