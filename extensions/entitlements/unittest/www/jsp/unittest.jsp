@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: unittest.jsp,v 1.4 2009-04-28 17:40:15 veiming Exp $
+   $Id: unittest.jsp,v 1.5 2009-06-26 21:53:48 veiming Exp $
   
 --%>
 
@@ -43,6 +43,10 @@
     <link rel="styleSheet" href="../console/css/commontask.css" type="text/css" rel="stylesheet" />
     <link rel="styleSheet" href="../console/css/css_master.css" type="text/css" rel="stylesheet" />
     <link rel="shortcut icon" href="../com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon" />
+    <style>
+    .highlight {background-color:#CCCCCC}
+    .unhighlight {background-color:transparent}
+    </style>
 </head>
 <body class="DefBdy">
     <div class="SkpMedGry1"><a href="#SkipAnchor3860"><img src="../com_sun_web_ui/images/other/dot.gif" alt="Jump to End of Masthead" border="0" height="1" width="1" /></a></div><div class="MstDiv">
@@ -181,7 +185,7 @@
                 label = label.substring(idx+1);
             }
 %>
-            <li><input class="test" name="<%= testname %>" value="<%= value %>" type="checkbox"  title="Select/unselect this test to run" /> <%= label %></li>
+            <li onmouseover="this.childNodes[2].className='highlight'" onmouseout="this.childNodes[2].className='unhighlight'"><input class="test" name="<%= testname %>" value="<%= value %>" type="checkbox" title="Select/unselect this test to run" /> <span>&nbsp;<%= label %>&nbsp;</span></li>
 <%
         }
 %>
