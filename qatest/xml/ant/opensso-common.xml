@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.24 2009-05-27 23:04:18 rmisra Exp $
+ $Id: opensso-common.xml,v 1.25 2009-06-26 20:39:21 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,6 +38,10 @@
         <isset property="REPORT_DIR"/>
     </condition>
     <echo message="report_dir.set=${report_dir.set}"/>
+
+    <condition property="run_failed_testcase.set" value="${RUN_FAILED_TESTCASE}" else="false">
+        <isset property="RUN_FAILED_TESTCASE"/>
+    </condition>
 
     <target name="checkReportDir">
         <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
@@ -60,8 +64,17 @@
             <include name="debug/*"/>
           </fileset>
         </copy>
+        <available file="${base.report.dir}/${EXECUTION_MODE}-${ModuleToExecute}/testng-failed.xml"
+                type="file" property="tests_failed" />
+        <antcall target="copy_testng_failed_xml"/>
      </target>
      
+    <target name="copy_testng_failed_xml" if="tests_failed">
+        <copy file="${base.report.dir}/${EXECUTION_MODE}-${ModuleToExecute}/testng-failed.xml"
+        tofile="${QATEST_HOME}/xml/testng/${ModuleToExecute}/testng-failed.xml"
+        failonerror="false" overwrite="true" />
+    </target>
+
     <target name="report" depends="checkReportDir">
         <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
         <if>
@@ -522,10 +535,22 @@
 
 <!-- This target runs the testng task with the generated xml file-->
     <target name="runTestng" >
-      <taskdef name="testng" classname="com.beust.testng.TestNGAntTask" classpathref="client.classpath"/>
-      <testng classpathref="client.classpath" outputdir="${base.report.dir}">
-          <xmlfileset dir="${built.classes.dir}/xml/testng/${ModuleToExecute}" includes="${ModuleToExecute}-${EXECUTION_MODE}-generated.xml"/>
-    </testng>
+        <echo message="run_failed_testcase.set=${run_failed_testcase.set}" level="info"/>
+        <if>
+            <contains string="${run_failed_testcase.set}" substring="false" casesensitive="No"/>
+            <then>
+                <taskdef name="testng" classname="com.beust.testng.TestNGAntTask" classpathref="client.classpath"/>
+                <testng classpathref="client.classpath" outputdir="${base.report.dir}">
+                    <xmlfileset dir="${built.classes.dir}/xml/testng/${ModuleToExecute}" includes="${ModuleToExecute}-${EXECUTION_MODE}-generated.xml"/>
+                </testng>
+            </then>
+            <else>
+                <taskdef name="testng" classname="com.beust.testng.TestNGAntTask" classpathref="client.classpath"/>
+                <testng classpathref="client.classpath" outputdir="${base.report.dir}">
+                    <xmlfileset dir="${built.classes.dir}/xml/testng/${ModuleToExecute}" includes="testng-failed.xml"/>
+                </testng>
+            </else>
+        </if>
     <concat destfile="${SERVER_DIR}/logs" append="true">
         <sort>
             <last count="1">
@@ -566,7 +591,7 @@
     <delete>
         <fileset dir="${SERVER_DIR}/docs"/>
     </delete>
-    <touch file="${SERVER_DIR}/logs.1" />
+    <touch file="${SERVER_DIR}/logs.1" /> 
   </target>
 
   <!--This target is for running the sanity module.
