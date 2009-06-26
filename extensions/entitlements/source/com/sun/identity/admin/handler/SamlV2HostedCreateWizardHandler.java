@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedCreateWizardHandler.java,v 1.2 2009-06-18 07:54:53 asyhuang Exp $
+ * $Id: SamlV2HostedCreateWizardHandler.java,v 1.3 2009-06-26 09:02:17 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.LinkBean;
+import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,6 +37,8 @@ import java.util.List;
 public class SamlV2HostedCreateWizardHandler
         extends WizardHandler
         implements Serializable {
+
+    private MessagesBean messagesBean;
 
     public void doFinishNext() {
         NextPopupBean npb = NextPopupBean.getInstance();
@@ -75,4 +78,11 @@ public class SamlV2HostedCreateWizardHandler
         return lbs;
     }
 
+    public void setMessagesBean(MessagesBean messagesBean) {
+        this.messagesBean = messagesBean;
+    }
+
+    public MessagesBean getMessagesBean() {
+        return messagesBean;
+    }
 }

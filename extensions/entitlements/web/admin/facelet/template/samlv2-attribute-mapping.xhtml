@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-attribute-mapping.xhtml,v 1.2 2009-06-24 14:01:36 asyhuang Exp $
+   $Id: samlv2-attribute-mapping.xhtml,v 1.3 2009-06-26 09:02:18 asyhuang Exp $
 
 -->
 
@@ -38,11 +38,11 @@
         <o:section>
             <ui:define name="section-title">
                 <ice:outputText
-                    value="#{resources['federation-attribute-mapping.sectionTitle']}"/>
+                    value="#{resources['samlv2-attribute-mapping.sectionTitle']}"/>
             </ui:define>
             <ui:define name="section-details">
                 <ice:outputText
-                    value="#{resources['federation-attribute-mapping.sectionDetails']}"/>
+                    value="#{resources['samlv2-attribute-mapping.sectionDetails']}"/>
             </ui:define>
             <ui:define name="section-links">
                 <ice:panelGrid
@@ -69,7 +69,7 @@
                             var="attribute">
                             <ice:column>
                                 <f:facet name="header">
-                                    <ice:outputText value="#{resources['federation-attribute-mapping-attribute.assertionname']}"/>
+                                    <ice:outputText value="#{resources['samlv2-attribute-mapping.attribute.assertionname']}"/>
                                 </f:facet>
                                 <ice:panelGroup
                                     visible="#{!attribute.nameEditable}">
@@ -99,7 +99,7 @@
                             </ice:column>
                             <ice:column>
                                 <f:facet name="header">
-                                    <ice:outputText value="#{resources['federation-attribute-mapping-attribute.localattrname']}"/>
+                                    <ice:outputText value="#{resources['samlv2-attribute-mapping.attribute.localattrname']}"/>
                                 </f:facet>
                                 <ice:panelGroup
                                     visible="#{attribute.isAdded and !attribute.valueEditable}">
@@ -135,7 +135,7 @@
                             </ice:column>
                             <ice:column>
                                 <f:facet name="header">
-                                    <ice:outputText value="#{resources['federation-attribute-mapping-attribute.remove']}"/>
+                                    <ice:outputText value="#{resources['samlv2-attribute-mapping.attribute.remove']}"/>
                                 </f:facet>
                                 <ice:panelGroup>
                                     <ice:commandLink
@@ -152,7 +152,7 @@
                         <ice:panelGroup
                             styleClass="drop-target">
                             <ice:outputText
-                                value="#{resources['federation-attribute-mapping.drop']}"/>
+                                value="#{resources['samlv2-attribute-mapping.drop']}"/>
                         </ice:panelGroup>
                     </ice:panelGroup>
                     <ice:panelGroup>
@@ -166,14 +166,14 @@
                             <ui:define name="panel-title">
                                 <ice:panelGroup>
                                     <ice:outputText
-                                        value="#{resources['federation-attribute-mapping.available']}"/>
+                                        value="#{resources['samlv2-attribute-mapping.available']}"/>
                                 </ice:panelGroup>
                             </ui:define>
                             <ui:define name="panel-body">
                                 <ice:panelGroup
                                     visible="#{o:size(wizardBean.availableViewAttributes) == 0}">
                                     <ice:outputText
-                                        value="#{resources['federation-attribute-mapping.noAvailable']}"/>
+                                        value="#{resources['samlv2-attribute-mapping.noAvailable']}"/>
                                 </ice:panelGroup>
                                 <ice:panelGroup
                                     scrollHeight="200px">
@@ -183,7 +183,7 @@
                                         <ice:panelGroup
                                             styleClass="draggable"
                                             draggable="true"
-                                            dragMask="dragging,drag_cancel,hover_start,hover_end"
+                                            dragMask="dragging,drag_cancel,hover_start,hover_end,dropped"
                                             dragValue="#{viewAttribute}"
                                             dragOptions="dragGhost">
                                             <ice:panelGrid columns="2">

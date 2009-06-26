@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExtMetadataNameSamlV2HostedSpCreateSummary.java,v 1.3 2009-06-24 21:55:08 asyhuang Exp $
+ * $Id: ExtMetadataNameSamlV2HostedSpCreateSummary.java,v 1.4 2009-06-26 09:02:17 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -44,8 +44,10 @@ public class ExtMetadataNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCr
         String filename;
         boolean hasMeta = getSamlV2HostedSpCreateWizardBean().isMeta();
         if (hasMeta) {
+            setPanelVisible(true);
             filename = getSamlV2HostedSpCreateWizardBean().getExtMetaFilename();
         } else {
+            setPanelVisible(false);
             filename = new String();
         }
 

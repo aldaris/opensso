@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.3 2009-06-24 14:01:34 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.4 2009-06-26 09:02:17 asyhuang Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -35,10 +35,7 @@ import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.dao.SamlV2HostedIdpCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
-import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
-import com.sun.identity.admin.model.MessagesBean;
-import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SamlV2ViewAttribute;
 import com.sun.identity.admin.model.ViewAttribute;
 import com.sun.identity.admin.Resources;
@@ -60,8 +57,7 @@ import javax.faces.event.ValueChangeEvent;
 public class SamlV2HostedIdpCreateWizardHandler
         extends SamlV2HostedCreateWizardHandler {
 
-    private SamlV2HostedIdpCreateDao samlV2HostedIdpCreateDao;
-    private MessagesBean messagesBean;
+    private SamlV2HostedIdpCreateDao samlV2HostedIdpCreateDao;    
 
     public void setSamlV2HostedIdpCreateDao(
             SamlV2HostedIdpCreateDao samlV2HostedIdpCreateDao) {
@@ -151,27 +147,6 @@ public class SamlV2HostedIdpCreateWizardHandler
     }
 
     @Override
-    public void doCancelNext() {
-        NextPopupBean npb = NextPopupBean.getInstance();
-        npb.setVisible(true);
-        Resources r = new Resources();
-        npb.setTitle(r.getString(this, "cancelTitle"));
-        npb.setMessage(r.getString(this, "cancelMessage"));
-        npb.setLinkBeans(getCancelLinkBeans());
-
-    }
-
-    private List<LinkBean> getCancelLinkBeans() {
-        List<LinkBean> lbs = new ArrayList<LinkBean>();
-        lbs.add(LinkBean.HOME);
-        lbs.add(LinkBean.SAMLV2_HOSTED_IDP_CREATE);
-        lbs.add(LinkBean.SAMLV2_REMOTE_SP_CREATE);
-        lbs.add(LinkBean.SAMLV2_HOSTED_SP_CREATE);
-
-        return lbs;
-    }
-
-    @Override
     public void finishListener(ActionEvent event) {
         if (!validateSteps()) {
             return;
@@ -219,26 +194,6 @@ public class SamlV2HostedIdpCreateWizardHandler
         doFinishNext();
     }
 
-    public void doFinishNext() {
-        NextPopupBean npb = NextPopupBean.getInstance();
-        npb.setVisible(true);
-        Resources r = new Resources();
-        npb.setTitle(r.getString(this, "finishTitle"));
-        npb.setMessage(r.getString(this, "finishMessage"));
-        npb.setLinkBeans(getFinishLinkBeans());
-
-    }
-
-    private List<LinkBean> getFinishLinkBeans() {
-        List<LinkBean> lbs = new ArrayList<LinkBean>();
-        lbs.add(LinkBean.HOME);
-        lbs.add(LinkBean.SAMLV2_HOSTED_SP_CREATE);
-        lbs.add(LinkBean.SAMLV2_REMOTE_SP_CREATE);
-        lbs.add(LinkBean.SAMLV2_REMOTE_IDP_CREATE);
-
-        return lbs;
-    }
-
     public boolean validateMetadata() {
         boolean usingMetaDataFile =
                 getSamlV2HostedIdpCreateWizardBean().isMeta();
@@ -265,6 +220,30 @@ public class SamlV2HostedIdpCreateWizardHandler
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2HostedIdpCreateWizardBean().gotoStep(
                         SamlV2HostedIdpCreateWizardStep.METADATA.toInt());
+
+                return false;
+            }
+        } else {
+
+            String filename = getSamlV2HostedIdpCreateWizardBean().getStdMetaFilename();
+
+            if (filename.length() == 0 || (filename == null)) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "invalidMetafileSummary"));
+                mb.setDetail(r.getString(this, "invalidMetafileDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+                Effect e;
+
+                e = new InputFieldErrorEffect();
+                getSamlV2HostedIdpCreateWizardBean().setSamlV2EntityNameMessageEffect(e);
+
+                e = new MessageErrorEffect();
+                getSamlV2HostedIdpCreateWizardBean().setSamlV2EntityNameMessageEffect(e);
+
+                getMessagesBean().addMessageBean(mb);
+                getSamlV2HostedIdpCreateWizardBean().gotoStep(SamlV2HostedIdpCreateWizardStep.METADATA.toInt());
 
                 return false;
             }
@@ -459,11 +438,4 @@ public class SamlV2HostedIdpCreateWizardHandler
                 ifile.getFileInfo().getPercent());
     }
 
-    public void setMessagesBean(MessagesBean messagesBean) {
-        this.messagesBean = messagesBean;
-    }
-
-    public MessagesBean getMessagesBean() {
-        return messagesBean;
-    }
 }

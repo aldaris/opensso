@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.22 2009-06-24 19:23:47 farble1670 Exp $
+   $Id: menu.xhtml,v 1.23 2009-06-26 09:02:18 asyhuang Exp $
 
 -->
 
@@ -71,26 +71,28 @@
             value="#{resources['menu.federationItemValue']}"
             action="federation"
             icon="../image/federation.png">
+
         <ice:menuItem
-			    rendered="#{permissionsBean.samlV2HostedIdpCreateAllowed}"
-				value="Create Hosted Idp"
-				action="samlv2-hosted-idp-create"
-				icon="../image/new.png"/>
-			<ice:menuItem
-			    rendered="#{permissionsBean.samlV2RemoteIdpCreateAllowed}"
-				value="Create Remote Idp"
-				action="samlv2-remote-idp-create"
-				icon="../image/new.png"/>
-            <ice:menuItem
-			    rendered="#{permissionsBean.samlV2HostedSpCreateAllowed}"
-				value="Create Hosted Sp"
-				action="samlv2-hosted-sp-create"
-				icon="../image/new.png"/>
-			<ice:menuItem
-			    rendered="#{permissionsBean.samlV2RemoteSpCreateAllowed}"
-				value="Create Remote Sp"
-				action="samlv2-remote-sp-create"
-				icon="../image/new.png"/>
+            rendered="#{permissionsBean.samlV2HostedIdpCreateAllowed}"
+            value="#{resources['menu.federationSamlV2HostedIdpCreateItemValue']}"
+            action="samlv2-hosted-idp-create"
+            icon="../image/new.png"/>
+        <ice:menuItem
+            rendered="#{permissionsBean.samlV2RemoteIdpCreateAllowed}"
+            value="#{resources['menu.federationSamlV2RemoteIdpCreateItemValue']}"
+            action="samlv2-remote-idp-create"
+            icon="../image/new.png"/>
+        <ice:menuItem
+            rendered="#{permissionsBean.samlV2HostedSpCreateAllowed}"
+            value="#{resources['menu.federationSamlV2HostedSpCreateItemValue']}"
+            action="samlv2-hosted-sp-create"
+            icon="../image/new.png"/>
+        <ice:menuItem
+            rendered="#{permissionsBean.samlV2RemoteSpCreateAllowed}"
+            value="#{resources['menu.federationSamlV2RemoteSpCreateItemValue']}"
+            action="samlv2-remote-sp-create"
+            icon="../image/new.png"/>
+            
         </ice:menuItem>
 
         <ice:menuItem

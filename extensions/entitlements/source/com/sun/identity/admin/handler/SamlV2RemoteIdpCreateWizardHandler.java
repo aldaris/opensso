@@ -22,23 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.2 2009-06-24 01:41:35 asyhuang Exp $
+ * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.3 2009-06-26 09:02:17 asyhuang Exp $
  */
 
 package com.sun.identity.admin.handler;
 
-import com.icesoft.faces.component.dragdrop.DndEvent;
-import com.icesoft.faces.component.dragdrop.DropEvent;
 import com.icesoft.faces.component.inputfile.FileInfo;
 import com.icesoft.faces.component.inputfile.InputFile;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.dao.SamlV2RemoteIdpCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
-import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
-import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SamlV2RemoteIdpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2RemoteIdpCreateWizardStep;
 import com.sun.identity.admin.model.WizardBean;
@@ -48,9 +44,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.EventObject;
-import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 
@@ -59,7 +53,6 @@ public class SamlV2RemoteIdpCreateWizardHandler
 
     private SamlV2RemoteIdpCreateWizardBean samlV2RemoteIdpCreateWizardBean;
     private SamlV2RemoteIdpCreateDao samlV2RemoteIdpCreateDao;
-    private MessagesBean messagesBean;
 
     public void setSamlV2RemoteIdpCreateDao(
             SamlV2RemoteIdpCreateDao samlV2RemoteIdpCreateDao) {
@@ -67,29 +60,57 @@ public class SamlV2RemoteIdpCreateWizardHandler
     }
 
     public boolean validateMetadata() {
-        String newEntityName = getSamlV2RemoteIdpCreateWizardBean().
-                getStdMetaFilename();
-        if ((newEntityName == null) || (newEntityName.length() == 0)) {
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "invalidNameSummary"));
-            mb.setDetail(r.getString(this, "invalidNameDetail"));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+        boolean usingMetaDataFile = getSamlV2RemoteIdpCreateWizardBean().isMeta();
 
-            Effect e;
-            e = new InputFieldErrorEffect();
-            getSamlV2RemoteIdpCreateWizardBean().
-                    setSamlV2EntityNameInputEffect(e);
+        if (!usingMetaDataFile) {
 
-            e = new MessageErrorEffect();
-            getSamlV2RemoteIdpCreateWizardBean().
-                    setSamlV2EntityNameMessageEffect(e);
+            String url = getSamlV2RemoteIdpCreateWizardBean().getMetaUrl();
 
-            getMessagesBean().addMessageBean(mb);
-            getSamlV2RemoteIdpCreateWizardBean().gotoStep(
-                    SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
+            if (url.length() == 0 || (url == null)) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "invalidMetaUrlSummary"));
+                mb.setDetail(r.getString(this, "invalidMetaUrlDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-            return false;
+                Effect e;
+
+                e = new InputFieldErrorEffect();
+                getSamlV2RemoteIdpCreateWizardBean().setSamlV2EntityNameMessageEffect(e);
+
+                e = new MessageErrorEffect();
+                getSamlV2RemoteIdpCreateWizardBean().setSamlV2EntityNameMessageEffect(e);
+
+                getMessagesBean().addMessageBean(mb);
+                getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
+
+                return false;
+            }
+
+        } else {
+
+            String filename = getSamlV2RemoteIdpCreateWizardBean().getStdMetaFilename();
+
+            if (filename.length() == 0 || (filename == null)) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "invalidMetafileSummary"));
+                mb.setDetail(r.getString(this, "invalidMetafileDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+                Effect e;
+
+                e = new InputFieldErrorEffect();
+                getSamlV2RemoteIdpCreateWizardBean().setSamlV2EntityNameMessageEffect(e);
+
+                e = new MessageErrorEffect();
+                getSamlV2RemoteIdpCreateWizardBean().setSamlV2EntityNameMessageEffect(e);
+
+                getMessagesBean().addMessageBean(mb);
+                getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
+
+                return false;
+            }
         }
 
         return true;
@@ -178,10 +199,6 @@ public class SamlV2RemoteIdpCreateWizardHandler
         getSamlV2RemoteIdpCreateWizardBean().setStdMetaFileProgress(
                 ifile.getFileInfo().getPercent());
     }
-   
-    public MessagesBean getMessagesBean() {
-        return messagesBean;
-    }
 
     public void setSamlV2RemoteIdpCreateWizardBean(
             SamlV2RemoteIdpCreateWizardBean samlV2RemoteIdpCreateWizardBean) {
@@ -260,27 +277,6 @@ public class SamlV2RemoteIdpCreateWizardHandler
     }
 
     @Override
-    public void doCancelNext() {
-        NextPopupBean npb = NextPopupBean.getInstance();
-        npb.setVisible(true);
-        Resources r = new Resources();
-        npb.setTitle(r.getString(this, "cancelTitle"));
-        npb.setMessage(r.getString(this, "cancelMessage"));
-        npb.setLinkBeans(getCancelLinkBeans());
-
-    }
-
-    private List<LinkBean> getCancelLinkBeans() {
-        List<LinkBean> lbs = new ArrayList<LinkBean>();
-        lbs.add(LinkBean.HOME);
-        lbs.add(LinkBean.SAMLV2_HOSTED_IDP_CREATE);
-        lbs.add(LinkBean.SAMLV2_REMOTE_SP_CREATE);
-        lbs.add(LinkBean.SAMLV2_HOSTED_SP_CREATE);
-
-        return lbs;
-    }
-
-    @Override
     public void finishListener(ActionEvent event) {
         if (!validateSteps()) {
             return;
@@ -319,37 +315,4 @@ public class SamlV2RemoteIdpCreateWizardHandler
         doFinishNext();
     }
 
-    public void doFinishNext() {
-        NextPopupBean npb = NextPopupBean.getInstance();
-        npb.setVisible(true);
-        Resources r = new Resources();
-        npb.setTitle(r.getString(this, "finishTitle"));
-        npb.setMessage(r.getString(this, "finishMessage"));
-        npb.setLinkBeans(getFinishLinkBeans());
-
-    }
-
-    public void doNotFinishNext(String errormsg) {
-        NextPopupBean npb = NextPopupBean.getInstance();
-        npb.setVisible(true);
-        Resources r = new Resources();
-        npb.setTitle(errormsg);
-        npb.setMessage(errormsg);
-        npb.setLinkBeans(getFinishLinkBeans());
-
-    }
-
-    private List<LinkBean> getFinishLinkBeans() {
-        List<LinkBean> lbs = new ArrayList<LinkBean>();
-        lbs.add(LinkBean.HOME);
-        lbs.add(LinkBean.SAMLV2_HOSTED_IDP_CREATE);
-        lbs.add(LinkBean.SAMLV2_REMOTE_SP_CREATE);
-        lbs.add(LinkBean.SAMLV2_HOSTED_SP_CREATE);
-
-        return lbs;
-    }
-
-    public void setMessagesBean(MessagesBean messagesBean) {
-        this.messagesBean = messagesBean;
-    }
 }

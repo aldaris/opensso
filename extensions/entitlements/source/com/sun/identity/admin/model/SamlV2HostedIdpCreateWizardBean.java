@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.3 2009-06-24 21:55:08 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.4 2009-06-26 09:02:17 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -37,7 +37,7 @@ import javax.faces.model.SelectItem;
 public class SamlV2HostedIdpCreateWizardBean
         extends SamlV2HostedCreateWizardBean
         implements Serializable {
-
+    
     private List<SelectItem> availableSigningKeyList;
     private String selectedSigningKey;
     private List<ViewAttribute> availableViewAttributes = new ArrayList<ViewAttribute>();

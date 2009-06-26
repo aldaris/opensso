@@ -1,4 +1,31 @@
 <?xml version='1.0' encoding='UTF-8'?>
+<!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+   Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
+
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: samlv2-remote-sp-create.xhtml,v 1.6 2009-06-26 09:02:18 asyhuang Exp $
+-->
+
 <ui:composition
     template="template/page.xhtml"
     xmlns="http://www.w3.org/1999/xhtml"
@@ -23,236 +50,143 @@
                     step="0"
                     label="#{resources['samlv2-remote-sp-create.selectRealmPanelLabel']}">
                     <ui:define name="wizard-step-body">
-                        <div class="section-outer">
-                            <o:section>
-                                <ui:define name="section-title">
-                                    <ice:outputText
-                                        value="#{resources['samlv2-remote-sp-create.selectRealmPanelLabel']}"/>
-                                </ui:define>
-                                <ui:define name="section-details">
-                                    <!--
-                                    <ice:outputText
-                                        value="Choice one realm here...."/>
-                                        -->
-                                </ui:define>
-                                <ui:define name="section-body">
-                                    <!-- Realm -->
-                                    <ice:panelGroup>
-
-                                        <ice:outputLabel
-                                            value="#{resources['samlv2-remote-sp-create.selectRealmPanelLabel.realm']}"/>
-
-                                        <ice:selectOneMenu
-                                            id="selectedRealm"
-                                            value="#{samlV2RemoteSpCreateWizardBean.selectedRealm}"
-                                            partialSubmit="true">
-                                            <f:selectItems
-                                                value="#{samlV2RemoteSpCreateWizardBean.availableRealmsList}"/>
-                                        </ice:selectOneMenu>
-                                    </ice:panelGroup>
-                                    <!-- Realm -->
-                                </ui:define>
-                            </o:section>
-                        </div>
+                        <ui:include src="template/samlv2-remote-select-realm.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{samlV2RemoteSpCreateWizardBean}"/>
+                            <ui:param
+                                name="wizardHandler"
+                                value="#{samlV2RemoteSpCreateWizardHandler}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="1"
                     label="#{resources['samlv2-remote-sp-create.entityNamePanelLabel']}">
                     <ui:define name="wizard-step-body">
-                        <div class="section-outer">
-                            <o:section>
-                                <ui:define name="section-title">
-                                    <ice:outputText
-                                        value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel']}"/>
-                                </ui:define>
-                                <ui:define name="section-details">
-                                    <!-- <ice:outputText
+                        <o:section>
+                            <ui:define name="section-title">
+                                <ice:outputText
+                                    value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel']}"/>
+                            </ui:define>
+                            <ui:define name="section-details">
+                                <!-- <ice:outputText
                                         value="Provide entity Name or import Metadata here...."/>
                                         -->
-                                </ui:define>
-                                <ui:define name="section-body">
-                                    <!-- Metadata -->
+                            </ui:define>
+                            <ui:define name="section-body">
+                                <ice:outputLabel
+                                    value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataFileReside']}"/>
+                                <ice:panelGroup>
+                                    <ice:selectOneRadio
+                                        id="menuSelectMetaOrNoMetaRadio"
+                                        partialSubmit="true"
+                                        value="#{samlV2RemoteSpCreateWizardBean.meta}">
+                                        <f:selectItem id="meta" itemValue="true" itemLabel="Yes"/>
+                                        <f:selectItem id="nometa" itemValue="false" itemLabel="No"/>
+                                    </ice:selectOneRadio>
+                                </ice:panelGroup>
+                                <ice:panelGroup
+                                    visible="#{samlV2RemoteSpCreateWizardBean.meta}">
+                                    <ui:include src="template/samlv2-remote-meta-upload.xhtml">
+                                        <ui:param
+                                            name="wizardBean"
+                                            value="#{samlV2RemoteSpCreateWizardBean}"/>
+                                        <ui:param
+                                            name="wizardHandler"
+                                            value="#{samlV2RemoteSpCreateWizardHandler}"/>
+                                    </ui:include>
+                                </ice:panelGroup>
+                                <ice:panelGroup
+                                    visible="#{!samlV2RemoteSpCreateWizardBean.meta}">
                                     <ice:panelGroup>
                                         <ice:outputLabel
-                                            value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataFileReside']}"/>
-                                        <ice:panelGroup>
-                                            <ice:selectOneRadio
-                                                id="MenuSelectMetaOrNoMetaRadio"
-                                                partialSubmit="true"
-                                                value="#{samlV2RemoteSpCreateWizardBean.meta}">
-                                                <f:selectItem id="meta" itemValue="true" itemLabel="Yes"/>
-                                                <f:selectItem id="nometa" itemValue="false" itemLabel="No"/>
-                                            </ice:selectOneRadio>
-                                        </ice:panelGroup>
-                                        <ice:panelGroup
-                                            visible="#{samlV2RemoteSpCreateWizardBean.meta}">
-
-                                            <!-- file upload example -->
-                                            <ice:panelGroup styleClass="inputFileContainer">
-                                                <!-- file upload  -->
-
-                                               <!-- <ice:panelGroup> -->
-                                                <ice:outputLabel
-                                                    value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataLocation']}"/>
-
-                                                <!-- file upload usage with progress callback. -->
-                                                <ice:inputFile id="stdMetaInputFileName"
-                                                               submitOnUpload="postUpload"
-                                                               progressListener="#{samlV2RemoteSpCreateWizardHandler.stdMetaFileUploadProgress}"
-                                                               actionListener="#{samlV2RemoteSpCreateWizardHandler.stdMetaUploadFile}"/>
-                                                <!-- progress bar, percent value is upated via progressListener-->
-
-                                                <ice:outputProgress value="#{samlV2RemoteSpCreateWizardBean.stdMetaFileProgress}"
-                                                                    styleClass="uploadProgressBar"/>
-                                                <ice:outputText
-                                                    value="#{samlV2RemoteSpCreateWizardBean.stdMetaFilename}"/>
-                                                <!--  </ice:panelGroup> -->
-
-                                                <!-- file upload example -->
-
-                                            </ice:panelGroup>
-                                        </ice:panelGroup>
-                                        <ice:panelGroup
-                                            visible="#{!samlV2RemoteSpCreateWizardBean.meta}">
-                                            <ice:outputLabel
-                                                value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataLocation']}"/>
-                                            <ice:inputText
-                                                id="metaUrl"
-                                                value="#{samlV2RemoteSpCreateWizardBean.metaUrl}"
-                                                size="128"
-                                                maxlength="256"/>
-
-                                        </ice:panelGroup>
-                                        <ice:panelGroup
-                                            visible="#{!samlV2RemoteSpCreateWizardBean.meta}">
-                                            <ice:outputLabel
-                                                value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataLocation.inlineHelp']}"/>
-                                        </ice:panelGroup>
+                                            value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataLocation']}"/>
+                                        <ice:inputText
+                                            id="metaUrl"
+                                            value="#{samlV2RemoteSpCreateWizardBean.metaUrl}"
+                                            size="128"
+                                            maxlength="256"/>
                                     </ice:panelGroup>
-                                    <!-- Metadata -->
-                                </ui:define>
-                            </o:section>
-                        </div>
+                                    <ice:panelGroup>
+                                        <ice:outputLabel
+                                            value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataLocation.inlineHelp']}"/>
+                                    </ice:panelGroup>
+                                </ice:panelGroup>
+                            </ui:define>
+                        </o:section>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="2"
                     label="#{resources['samlv2-remote-sp-create.selectCotPanelLabel']}">
                     <ui:define name="wizard-step-body">
-                        <div class="section-outer">
-                            <o:section>
-                                <ui:define name="section-title">
-                                    <ice:outputText
-                                        value="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.section-title']}"/>
-                                </ui:define>
-                                <ui:define name="section-details">
-                                    <ice:outputText
-                                        value="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.section-details']}"/>
-                                </ui:define>
-                                <ui:define name="section-body">
-                                    <!-- COT -->
-                                    <ice:panelGroup>
-                                        <ice:panelGroup>
-                                            <ice:selectOneRadio
-                                                id="MenuSelectNewCOTRadio"
-                                                value="#{samlV2RemoteSpCreateWizardBean.cot}"
-                                                partialSubmit="true">
-                                                <f:selectItem id="ChoiceCOT" itemValue="true" itemLabel="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.existingCotListLabel']}"/>
-                                                <f:selectItem id="NewCOT" itemValue="false" itemLabel="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.newCotNameLabel']}"/>
-                                            </ice:selectOneRadio>
-                                        </ice:panelGroup>
-                                        <ice:panelGroup
-                                            visible="#{samlV2RemoteSpCreateWizardBean.cot}">
-                                            <ice:panelGroup >
-                                                <ice:outputLabel
-                                                    value="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.existingCotListLabel']}"/>
-                                                <ice:selectOneMenu
-                                                    id="selectedCot"
-                                                    value="#{samlV2RemoteSpCreateWizardBean.selectedCot}"
-                                                    partialSubmit="true">
-                                                    <f:selectItems
-                                                        value="#{samlV2RemoteSpCreateWizardBean.availableCotList}"/>
-                                                </ice:selectOneMenu>
-                                            </ice:panelGroup>
-                                        </ice:panelGroup>
-                                        <ice:panelGroup
-                                            visible="#{!samlV2RemoteSpCreateWizardBean.cot}">
-                                            <ice:outputLabel
-                                                value="#{resources['samlv2-remote-sp-create.selectCotPanelLabel.newCotNameLabel']}"/>
-                                            <ice:inputText
-                                                id="NewCotName"
-                                                value="#{samlV2RemoteSpCreateWizardBean.newCotName}"
-                                                size="50"
-                                                maxlength="50"/>
-                                        </ice:panelGroup>
-                                    </ice:panelGroup>
-                                    <!-- COT -->
-                                </ui:define>
-                            </o:section>
-                        </div>
+                        <ui:include src="template/samlv2-select-cot.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{samlV2RemoteSpCreateWizardBean}"/>
+                            <ui:param
+                                name="wizardHandler"
+                                value="#{samlV2RemoteSpCreateWizardHandler}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="3"
                     label="#{resources['samlv2-remote-sp-create.attributeMappingPanelLabel']}">
                     <ui:define name="wizard-step-body">
-                        <div class="section-outer">
-                            <o:section>
-                                <ui:define name="section-title">
-                                    <ice:outputLabel
-                                        value="#{resources['samlv2-remote-sp-create.attributeMappingPanelLabel.section-title']}"/>
-                                </ui:define>
-                                <ui:define name="section-details">
-                                    <ice:outputLabel
-                                        value="#{resources['samlv2-remote-sp-create.attributeMappingPanelLabel.section-details']}"/>
-                                </ui:define>
-                                <ui:define name="section-body">
-                                    <ice:panelGroup>
-                                        <ui:include src="/admin/facelet/template/samlv2-attribute-mapping.xhtml">
-                                            <ui:param
-                                                name="wizardBean"
-                                                value="#{samlV2RemoteSpCreateWizardBean}"/>
-                                            <ui:param
-                                                name="wizardHandler"
-                                                value="#{samlV2RemoteSpCreateWizardHandler}"/>
-                                        </ui:include>
-                                    </ice:panelGroup>
-                                </ui:define>
-                            </o:section>
-                        </div>
+                        <o:section>
+                            <ui:define name="section-title">
+                                <ice:outputLabel
+                                    value="#{resources['samlv2-remote-sp-create.attributeMappingPanelLabel.section-title']}"/>
+                            </ui:define>
+                            <ui:define name="section-details">
+                                <ice:outputLabel
+                                    value="#{resources['samlv2-remote-sp-create.attributeMappingPanelLabel.section-details']}"/>
+                            </ui:define>
+                            <ui:define name="section-body">
+                                <ice:panelGroup>
+                                    <ui:include src="template/samlv2-attribute-mapping.xhtml">
+                                        <ui:param
+                                            name="wizardBean"
+                                            value="#{samlV2RemoteSpCreateWizardBean}"/>
+                                        <ui:param
+                                            name="wizardHandler"
+                                            value="#{samlV2RemoteSpCreateWizardHandler}"/>
+                                    </ui:include>
+                                </ice:panelGroup>
+                            </ui:define>
+                        </o:section>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="4"
                     label="#{resources['samlv2-remote-sp-create.summaryPanelLabel']}">
                     <ui:define name="wizard-step-body">
-                        <div class="section-outer">
-                            <o:section>
-                                <ui:define name="section-title">
-                                    <ice:outputText
-                                        value="#{resources['samlv2-remote-sp-create.summaryPanelLabel.section-title']}"/>
-                                </ui:define>
-                                <ui:define name="section-details">
-                                    <ice:outputText
-                                        value="#{resources['samlv2-remote-sp-create.summaryPanelLabel.section-details']}"/>
-                                </ui:define>
-                                <ui:define name="section-body">
-                                    <!-- summary -->
-                                    <o:summarypanel
-                                        summary="#{samlV2RemoteSpCreateWizardBean.realmSamlV2RemoteSpCreateSummary}"/>
-                                    <o:summarypanel
-                                        summary="#{samlV2RemoteSpCreateWizardBean.stdMetadataNameSamlV2RemoteSpCreateSummary}"/>
-                                    <o:summarypanel
-                                        summary="#{samlV2RemoteSpCreateWizardBean.metaUrlSamlV2RemoteSpCreateSummary}"/>
-                                    <o:summarypanel
-                                        summary="#{samlV2RemoteSpCreateWizardBean.cotSamlV2RemoteSpCreateSummary}"/>
-                                    <o:summarypanel
-                                        summary="#{samlV2RemoteSpCreateWizardBean.attributeMappingSamlV2RemoteSpCreateSummary}"/>
-                                    <!-- summary -->
-                                </ui:define>
-                            </o:section>
-                        </div>
+                        <o:section>
+                            <ui:define name="section-title">
+                                <ice:outputText
+                                    value="#{resources['samlv2-remote-sp-create.summaryPanelLabel.section-title']}"/>
+                            </ui:define>
+                            <ui:define name="section-details">
+                                <ice:outputText
+                                    value="#{resources['samlv2-remote-sp-create.summaryPanelLabel.section-details']}"/>
+                            </ui:define>
+                            <ui:define name="section-body">
+                                <o:summarypanel
+                                    summary="#{samlV2RemoteSpCreateWizardBean.realmSamlV2RemoteSpCreateSummary}"/>
+                                <o:summarypanel
+                                    summary="#{samlV2RemoteSpCreateWizardBean.stdMetadataNameSamlV2RemoteSpCreateSummary}"
+                                    visible="#{samlV2RemoteSpCreateWizardBean.meta}"/>
+                                <o:summarypanel
+                                    summary="#{samlV2RemoteSpCreateWizardBean.metaUrlSamlV2RemoteSpCreateSummary}"
+                                    visible="#{!samlV2RemoteSpCreateWizardBean.meta}"/>
+                                <o:summarypanel
+                                    summary="#{samlV2RemoteSpCreateWizardBean.cotSamlV2RemoteSpCreateSummary}"/>
+                                <o:summarypanel
+                                    summary="#{samlV2RemoteSpCreateWizardBean.attributeMappingSamlV2RemoteSpCreateSummary}"/>
+                            </ui:define>
+                        </o:section>
                     </ui:define>
                 </o:wstep>
             </ui:define>
