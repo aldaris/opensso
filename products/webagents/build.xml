@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.15 2009-06-24 05:34:30 kevinserwin Exp $
+   $Id: build.xml,v 1.16 2009-06-26 21:30:08 robertis Exp $
 
 -->
 
@@ -114,6 +114,7 @@
         <antcall target="sjsws" />
         <antcall target="apache" />
         <antcall target="proxy40" />
+        <antcall target="iis6" />
     </target>
 
     <target name="apache" depends="preparebuild">

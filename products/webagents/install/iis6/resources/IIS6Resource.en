@@ -17,7 +17,7 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS6Resource.en,v 1.3 2008-04-25 22:07:27 madan_ranganath Exp $
+' $Id: IIS6Resource.en,v 1.4 2009-06-26 21:37:39 robertis Exp $
 '
 ' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 '
@@ -34,21 +34,21 @@
 108 = Primary Server Host :
 109 = Primary Server Protocol [http] :
 110 = Primary Server Port Number
-111 = Primary Server Deployment URI [/amserver] :
-112 = Primary Server Console URI [/amconsole] :
+111 = Primary Server Deployment URI [/opensso] :
+112 = Primary Server Console URI [/opensso] :
 
 113 = Failover Server Host :
 114 = Failover Server Protocol [http] :
 115 = Failover Server Port Number
-116 = Failover Server Deployment URI [/amserver] :
-117 = Failover Server Console URI [/amconsole] :
+116 = Failover Server Deployment URI [/opensso] :
+117 = Failover Server Console URI [/opensso] :
 
-118 = Agent-Sun Federated Access Manager Shared Secret :
-119 = Re-enter Shared Secret :
+118 = Please enter the path to the password file :
+119 = Password file is empty 
 
 120 = CDSSO Enabled [false] :
 
-121 = Invalid Web Site Identifier entered
+121 = Enter a valid Web Site Identifier
 122 = Invalid protocol value entered, enter http or https
 123 = Non-numeric value entered for Agent Port
 124 = Non-numeric value entered for Primary Server Port
@@ -58,7 +58,7 @@
 128 = Invalid value entered, enter true or false
 
 129 = Creating the Agent Config Directory
-130 = Creating the FAMAgentBootstrap.properties File
+130 = Creating the OpenSSOAgentBootstrap.properties and OpenSSOAgentConfiguration.properties File
 131 = Updating the Windows Product Registry
 132 = Loading the IIS 6.0 Agent
 133 = Completed Configuring the IIS 6.0 Agent
@@ -72,3 +72,7 @@
 140 = Unable to find Agent Config Directory
 141 = Unable to find entries in Windows Product Registry
 142 = IIS 6.0 Agent already Unconfigured for this site
+
+143 = Removing the Agent Bootstrap file
+144 = Unable to find Agent Bootstrap file
+145 = Please enter the Agent Profile name :

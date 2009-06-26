@@ -23,7 +23,7 @@
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
 #
-# $Id: Makefile,v 1.12 2009-06-25 01:18:19 robertis Exp $
+# $Id: Makefile,v 1.13 2009-06-26 21:31:26 robertis Exp $
 #
 # Makefile file for building the Agents tree.
 #
@@ -62,7 +62,7 @@ endif
 
 ifeq ($(OS_ARCH), WINNT)
 ifeq ($(CYGWIN_ARCH), WOW64)
-SUBDIRS += iis7
+SUBDIRS += iis7 iis6
 else
 SUBDIRS += $(BUILD_AGENT)
 endif

@@ -17,7 +17,7 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS6admin.vbs,v 1.2 2008-03-11 23:13:43 sean_brydon Exp $
+' $Id: IIS6Admin.vbs,v 1.1 2009-06-26 21:42:00 robertis Exp $
 '
 ' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 '
@@ -37,9 +37,9 @@
 'used to develop this script
 '--------------------------------------------------------------------------
 
-Dim WshShell, installDir, iis6ConfigDir, iis6DebugDir, identifier, newIdentifier
-Dim origPropertyFile, newConfigDir, newDebugDir
-Dim newConfigFile, newConfigFileTmp
+Dim WshShell, installDir, iis6ConfigDir, iis6LogsDir, iis6AuditDir, iis6DebugDir, identifier, newIdentifier
+Dim origBootstrapFile, origConfigFile, newConfigDir, newLogsDir, newAuditDir, newDebugDir
+Dim newBootstrapFile, newConfigFile
 Dim regKey, responseFile, sLine, aLine, wildCardMap
 Dim NewMaps(), count, objWebRoot, IIsWebServiceObj, FSO, dict, dict1
 Dim scriptFullName, currDir
@@ -49,7 +49,7 @@ Const ForReading = 1, ForWriting = 2
 Set Args = WScript.Arguments
 if Args.Count < 2 Then
    WScript.Echo "Incorrect Number of arguments"
-   WScript.Echo "Syntax: IIS6admin.vbs -config/-unconfig <config-filename>"
+   WScript.Echo "Syntax: IIS6Admin.vbs -config/-unconfig <config-filename>"
    WScript.Quit(1)
 end if
 
@@ -58,7 +58,7 @@ Set WshShell = CreateObject("WScript.Shell")
 
 '// Set the correct path where the script is located
 scriptFullName = WScript.ScriptFullName
-currDir = split(scriptFullName, "\IIS6admin.vbs")
+currDir = split(scriptFullName, "\IIS6Admin.vbs")
 WshShell.currentDirectory = currDir(0)
 
 ' Entry point
@@ -87,7 +87,7 @@ end if
 Function Init()
   Dim correctConfigFile
 
-  WScript.Echo "Copyright c 2004 Sun Microsystems, Inc. All rights reserved"
+  WScript.Echo "Copyright c 2009 Sun Microsystems, Inc. All rights reserved"
   WScript.Echo "Use is subject to license terms"
 
   Set WshShell = WScript.CreateObject("WScript.Shell")
@@ -129,12 +129,16 @@ Function Init()
       newIdentifier = "Identifier_" + identifier
   end if
 
-  ' Generate the location of FAMAgentBootstrap.properties file
+  ' Generate the location of properties file
   iis6InstanceDir = installDir + "\" + newIdentifier 
   iis6ConfigDir = iis6InstanceDir + "\config"
-  iis6DebugDir = iis6InstanceDir + "\debug"
+  iis6LogsDir = iis6InstanceDir + "\logs"
+  iis6AuditDir = iis6LogsDir + "\audit"
+  iis6DebugDir = iis6LogsDir + "\debug"
 
   newConfigDir = iis6ConfigDir  
+  newLogsDir = iis6LogsDir  
+  newAuditDir = iis6AuditDir  
   newDebugDir = iis6DebugDir 
 
   'Enable "All Unknown ISAPI Extensions"
@@ -201,15 +205,13 @@ End Function
 ' Input : WshShell, FSO, responseFile, objWebRoot, dict1
 ' Output : None
 ' Description : The AgentConfigure() function performs the following tasks:
-' 1. Opens the FAMAgentBootstrap.properties file 
-' 2. Perfoms token replacement in FAMAgentBootstrap.properties file using the agent
+' 1. Opens the properties file 
+' 2. Perfoms token replacement in properties file using the agent
 '    configuration file created from IIS6CreateConfig.vbs
-' 3. Under "Sun\Access_Manager\Agents\2.2\iis6\config directory, creates a 
-'    sub-directory "InstanceId_<id number>"
-' 4. Under "Sun\Access_Manager\Agents\2.2\debug" directory, creates a 
-'    sub-directory "InstanceId_<id number>"
-' 5. Updates the windows registry with the location of FAMAgentBootstrap.properties file
-' 6. Adds the wild card application map to the web site for which the agent
+' 3. Under "iis_v6_WINNT_agent\web_agents\iis6_agent directory, creates a 
+'    sub-directory "Identifier_<id number>"
+' 4. Updates the windows registry with the location of properties file
+' 5. Adds the wild card application map to the web site for which the agent
 '    is configured.
 '----------------------------------------------------------------------------
 Function AgentConfigure(WshShell, FSO, responseFile, objWebRoot, dict1)
@@ -221,17 +223,25 @@ Function AgentConfigure(WshShell, FSO, responseFile, objWebRoot, dict1)
    if (FSO.FolderExists(newConfigDir) = false) then
       FSO.CreateFolder(newConfigDir)
    end if
-
+   if (FSO.FolderExists(newLogsDir) = false) then
+      FSO.CreateFolder(newLogsDir)
+   end if
+   if (FSO.FolderExists(newAuditDir) = false) then
+      FSO.CreateFolder(newAuditDir)
+   end if
    if (FSO.FolderExists(newDebugDir) = false) then
       FSO.CreateFolder(newDebugDir)
    end if
 
    WScript.Echo dict1("130")
-   origPropertyFile = installDir + "\config\FAMAgentBootstrap.template"
-   newConfigFile = newConfigDir + "\FAMAgentBootstrap.properties"
-   FSO.CopyFile origPropertyFile, newConfigFile
+   origBootstrapFile = installDir + "\config\OpenSSOAgentBootstrap.template"
+   origConfigFile = installDir + "\config\OpenSSOAgentConfiguration.template"
+   newBootstrapFile = newConfigDir + "\OpenSSOAgentBootstrap.properties"
+   newConfigFile = newConfigDir + "\OpenSSOAgentConfiguration.properties"
+   FSO.CopyFile origBootstrapFile, newBootstrapFile
+   FSO.CopyFile origConfigFile, newConfigFile
 
-   'Perform token replacement in FAMAgentBootstrap.properties
+   'Perform token replacement in properties
    With New RegExp
      .Pattern = "^(.*?) = (.*?)$"
      .Multiline = True
@@ -239,21 +249,28 @@ Function AgentConfigure(WshShell, FSO, responseFile, objWebRoot, dict1)
      Set Tokens = .Execute(FSO.OpenTextFile(responseFile, ForReading, False).ReadAll)
    End With
 
+   B = FSO.OpenTextFile(newBootstrapFile, ForReading, True).ReadAll
+
+   For Each Token In Tokens
+     B = Replace(B, Token.Submatches(0), Token.Submatches(1))
+   Next
+
+   FSO.OpenTextFile(newBootstrapFile, ForWriting, False).Write B
+
+
    B = FSO.OpenTextFile(newConfigFile, ForReading, True).ReadAll
 
    For Each Token In Tokens
      B = Replace(B, Token.Submatches(0), Token.Submatches(1))
    Next
 
-   B = Replace(B, "com.sun.am.policy.agents.notenforcedList", "# com.sun.am.policy.agents.notenforcedList")
-
    FSO.OpenTextFile(newConfigFile, ForWriting, False).Write B
-   WScript.Sleep(100)
 
+   WScript.Sleep(100)
 
    WScript.Echo dict1("131")
    'Add the config file into the product registry
-   regKey = "HKLM\Software\Sun Microsystems\Access Manager IIS6 Agent\"
+   regKey = "HKLM\Software\Sun Microsystems\OpenSSO IIS6 Agent\"
    WshShell.RegWrite regKey + newIdentifier + "\" ,1,"REG_SZ"
    WshShell.RegWrite regKey + newIdentifier + "\Path", newConfigDir,"REG_SZ"
    WshShell.RegWrite regKey + newIdentifier + "\Version","2.2","REG_SZ"
@@ -281,16 +298,24 @@ End Function
 ' Input : WshShell, FSO, dict1
 ' Output : None
 ' Description : The AgentUnConfigure() function performs the following tasks:
-' 1.Removes both the FAMAgentBootstrap.properties file under the "InstanceId_<id number>"
-'   and the "InstanceId_<id number>" directory itself
+' 1.Removes both the properties file under the "Identifier_<id number>"
+'   and the "Identifier_<id number>" directory itself
 ' 2.Removes the windows registry entry which had information about the 
-'   location of FAMAgentBootstrap.properties file
+'   location of properties file
 ' 3.Removes the wild card application map to the web site for which the agent
 '   was configured.
 '----------------------------------------------------------------------------
 Function AgentUnConfigure(WshShell, FSO, dict1)
    'Remove the Agent Config Directory
-   delConfigFile = newConfigDir + "\FAMAgentBootstrap.properties"
+   delBootstrapFile = newConfigDir + "\OpenSSOAgentBootstrap.properties"
+   delConfigFile = newConfigDir + "\OpenSSOAgentConfiguration.properties"
+
+   if (FSO.FileExists(delBootstrapFile)) then
+      WScript.Echo dict1("143")
+      FSO.DeleteFile(delBootstrapFile)
+   else
+      WScript.Echo dict1("144")
+   end if
 
    if (FSO.FileExists(delConfigFile)) then
       WScript.Echo dict1("134")
@@ -306,7 +331,7 @@ Function AgentUnConfigure(WshShell, FSO, dict1)
 
       'Remove the entry from the Windows Product Registry
       WSCript.Echo dict1("136")
-      regKey = "HKLM\Software\Sun Microsystems\Access Manager IIS6 Agent\"
+      regKey = "HKLM\Software\Sun Microsystems\OpenSSO IIS6 Agent\"
       WshShell.RegDelete regKey + newIdentifier + "\Version"
       WshShell.RegDelete regKey + newIdentifier + "\Path"
       WshShell.RegDelete regKey + newIdentifier + "\"

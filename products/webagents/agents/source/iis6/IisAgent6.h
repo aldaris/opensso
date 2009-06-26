@@ -96,6 +96,8 @@ BOOL iisaPropertiesFilePathGet(CHAR** propertiesFileFullPath, char *instanceId);
 
 void logPrimitive(CHAR *message);
 
+char* string_case_insensitive_search(char *HTTPHeaders, char *KeY);
+
 tAgentConfig agentConfig;
 
 // Agent error codes to return to IIS on failure via SetLastError() in

@@ -17,7 +17,7 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS6CreateConfig.vbs,v 1.1 2007-06-05 19:36:44 subbae Exp $
+' $Id: IIS6CreateConfig.vbs,v 1.2 2009-06-26 21:38:07 robertis Exp $
 '
 ' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 '
@@ -28,18 +28,17 @@ Dim installDir, setInstallDir, configInstallDir, portNumber,setPortNumber
 Dim objWWW, Item, setIdentifier, protocol, setProtocol, agentDeploymentURI
 Dim setAgentDeploymentURI, setPrimaryServerHost, primaryServerPort
 Dim setPrimaryServerPort, primaryServerProtocol, setPrimaryServerProtocol
-Dim primaryServerDeploymentURI, setPrimaryServerDeploymentURI, userName
-Dim primaryServerConsoleURI, setPrimaryServerConsoleURI, failoverServer
+Dim primaryServerDeploymentURI, setPrimaryServerDeploymentURI, userName 
 Dim setFailoverServerPort, failoverServerProtocol, setFailoverServerProtocol
 Dim failoverServerDeploymentURI, setFailoverServerDeploymentURI, orgName
 Dim failoverServerConsoleURI, setFailoverServerConsoleURI, failoverServerPort
-Dim setOrgName, setUserName, setUserPassword, encryptFile, primaryServerURL
+Dim setOrgName, setUserName, setUserPassword, setPasswdKey, encryptFile, primaryServerURL
 Dim encrypt, encryptedPwd, delEncryptedFile, cdssoEnabled, setCDSSOEnabled
 Dim isVersion, correctVersion, setISVersionNumber, correctAgentPort
 Dim correctIdentifier, correctAgentProtocol, correctPrimaryServerPort
 Dim correctPrimaryServerProtocol, correctFailoverServerPort, tmpInstallDir
 Dim correctFailoverServerProtocl, correctPassword, correctCDSSOFlag, dict
-Dim setHostName, encryptedPasswd, setFailoverServerHost, failoverServerURL
+Dim setHostName, expHostName, encryptedPasswd, setFailoverServerHost, failoverServerURL
 Dim scriptFullName, currDir, WshShell
 
 Set Args = WScript.Arguments
@@ -237,7 +236,7 @@ End Function
 Function GetAccessManagerDetails(oFSO, dict, WshShell)
 
   WScript.Echo "------------------------------------------------"
-  WScript.Echo "Sun Java (TM) Enterprise System Access Manager "
+  WScript.Echo "Sun OpenSSO Enterprise 8.0" 
   WScript.Echo "------------------------------------------------"
 
   WScript.Echo dict("108")
@@ -280,7 +279,7 @@ Function GetAccessManagerDetails(oFSO, dict, WshShell)
   loop until (correctPrimaryServerPort = true)
 
   WScript.Echo ""
-  primaryServerDeploymentURI = "/amserver"
+  primaryServerDeploymentURI = "/opensso"
   WScript.Echo dict("111")
   setPrimaryServerDeploymentURI = WScript.StdIn.ReadLine
   if (setPrimaryServerDeploymentURI="") then
@@ -288,49 +287,42 @@ Function GetAccessManagerDetails(oFSO, dict, WshShell)
   end if
 
   WScript.Echo ""
-  primaryServerConsoleURI = "/amconsole"
-  WScript.Echo dict("112")
-  setPrimaryServerConsoleURI = WScript.StdIn.ReadLine
-  if (setPrimaryServerConsoleURI="") then
-     setPrimaryServerConsoleURI = primaryServerConsoleURI
-  end if
-
-  setUserName = "UrlAccessAgent"
+  WScript.Echo dict("145")
+  setUserName = WScript.StdIn.ReadLine
 
   WScript.Echo ""
-  correctPassword = false
-  do 
+
     do 
-      WScript.Echo dict("118")
-      Set objPassword = CreateObject("ScriptPW.Password")
-      setUserPassword = objPassword.GetPassword()
-      if (setUserPassword = "") then
-         WScript.Echo ""
-         WScript.Echo dict("126")
-      end if
-    loop until (setUserPassword <> "")
-    WScript.Echo
-    do 
-      WScript.Echo dict("119")
-      Set objPassword1 = CreateObject("ScriptPW.Password")
-      setUserPassword1 = objPassword1.GetPassword()
-      if (setUserPassword1 = "") then
-         WScript.Echo ""
-         WScript.Echo dict("126")
-      end if
-    loop until (setUserPassword <> "")
-    if (setUserPassword = SetUserPassword1) then
-       correctPassword = true
-    else 
-       WScript.Echo ""
-       WScript.Echo dict("127")
-       WScript.Echo ""
-    end if
-  loop until (correctPassword = true)
+        WScript.Echo "Enter the Agent profile password file : "
+        passwdFile = WScript.StdIn.ReadLine
+        WScript.Echo
+        'First check if the file exist.
+        if(oFSO.FileExists(passwdFile)) then
+            Set passwdFile = oFSO.GetFile(passwdFile)
+            if(passwdFile.Size > 0) then
+                Set passwd = oFSO.OpenTextFile(passwdFile,ForReading,True)
+                setUserPassword = passwd.ReadLine
+                passwd.Close
+                if (Trim(setUserPassword) = "") then
+                    WScript.Echo ""
+                    WScript.Echo dict("119")
+                    WScript.Echo ""
+                end if
+            else
+                WScript.Echo dict("119")
+            end if
+        else
+            WScript.Echo "The password file does not exist."
+        end if
+
+    loop until (Trim(setUserPassword) <> "")
+
+    setUserPassword = Trim(setUserPassword)
 
   '// Encrypt the password
   encryptFile = configInstallDir + "\encryptPasswd"
-  WshShell.Run "cmd /c cd " + configInstallDir + "\bin" + "& cryptit.exe " + setUserPassword + " > " + encryptFile, 0, true
+  setPasswdKey = GetRandomString(10)
+  WshShell.Run "cmd /c cd " + configInstallDir + "\bin" + "& cryptit.exe " + setUserPassword + " "+ setPasswdKey + " > " + encryptFile, 0, true
 
   Set encrypt = oFSO.OpenTextFile(encryptFile,ForReading,True)
   encryptedPasswd = encrypt.ReadLine
@@ -349,7 +341,7 @@ End Function
 ' Output : None
 ' Description : The WriteConfigFile() function performs the following tasks:
 ' 1.Creates the config file
-' 2 Populates the name and value pairs to be used by the IIS6admin.vbs
+' 2 Populates the name and value pairs to be used by the IIS6Admin.vbs
 '----------------------------------------------------------------------------
 Function WriteConfigFile(oFSO, configFile)
 
@@ -371,11 +363,18 @@ Function WriteConfigFile(oFSO, configFile)
                                       
   wTF.WriteLine "@AGENT_PROFILE_NAME@ = " + setUserName
   wTF.WriteLine "@AGENT_ENCRYPTED_PASSWORD@ = " + encryptedPasswd
+  wTF.WriteLine "@AGENT_ENCRYPT_KEY@ = " + setPasswdKey
+
 
   wTF.WriteLine "AGENT_URL_PREFIX = " + setProtocol + "://" + setHostName + ":" + setPortNumber + agentDeploymentURI
 
-  wTF.WriteLine "@DEBUG_LOGS_DIR@ = " + setInstallDir + "/Identifier_" + setIdentifier + "/debug"
+  wTF.WriteLine "@DEBUG_LOGS_DIR@ = " + setInstallDir + "/Identifier_" + setIdentifier + "/logs/debug"
   wTF.WriteLine "TEMP_DIR_PREFIXDEBUG_DIR_PREFIX = " + setInstallDir 
+
+  wTF.WriteLine "@AUDIT_LOGS_DIR@ = " + setInstallDir + "/Identifier_" + setIdentifier + "/logs/audit"
+
+  expHostName = Replace(setHostName,".","_")
+  wTF.WriteLine "@AUDIT_LOG_FILENAME@ = " + "amAgent_"+ expHostName + ".log"
 
   wTF.WriteLine "SERVER_DIR =  "  + setInstallDir + "/iis6/cert"
 
@@ -386,10 +385,28 @@ Function WriteConfigFile(oFSO, configFile)
   WScript.Echo "-----------------------------------------------------"
   WScript.Echo "Agent Configuration file created ==>  " + configFile
   WScript.Echo "Execute the below command for Agent Configuration :  " 
-  WScript.Echo "      cscript.exe IIS6admin.vbs -config " + configFile
+  WScript.Echo "      cscript.exe IIS6Admin.vbs -config " + configFile
   WScript.Echo "-----------------------------------------------------"
   wTF.Close
 
   Set oFSO = nothing
 
 End Function
+
+' Return a random string 
+Function GetRandomString(len) 
+  dim i, s, a, rndm, rndm1, tmp, tmp1
+  a=Array("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9")
+
+  const startChr ="a", range = 36 
+  Randomize 
+  s = "" 
+  for i = 0 to len-1   
+     rndm1 = Rnd()
+     rndm = rndm1 * range
+     rndm = rndm Mod 35
+     s = s + a(rndm)
+  next 
+  GetRandomString = s 
+end function  
+' 

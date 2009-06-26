@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.3 2008-06-25 05:54:14 qcheng Exp $
+# $Id: Makefile,v 1.4 2009-06-26 21:32:05 robertis Exp $
 #
 #
 
@@ -36,9 +36,9 @@ IIS6 := iis6
 IIS6_LIB_NAME := am$(IIS6)
 IIS6_LIB := $(IIS6_LIB_NAME)$(SO_EXT)
 
-IIS6AUTH := iis6auth
-IIS6AUTH_LIB_NAME := am$(IIS6AUTH)
-IIS6AUTH_LIB := $(IIS6AUTH_LIB_NAME)$(SO_EXT)
+#IIS6AUTH := iis6auth
+#IIS6AUTH_LIB_NAME := am$(IIS6AUTH)
+#IIS6AUTH_LIB := $(IIS6AUTH_LIB_NAME)$(SO_EXT)
 
 EXPORTED_LIBS += $(IIS6_LIB) $(IIS6AUTH_LIB)
 EXPORTED_OBJS := IisAgent6.o  Iis6auth.o
@@ -58,8 +58,8 @@ all: export_libs
 $(IIS6_LIB): IisAgent6.o IisAgent6.def
 	$(MAKE_SHARED_LIB)
 
-$(IIS6AUTH_LIB): Iis6auth.o Iis6auth.def
-	$(MAKE_SHARED_LIB)
+#$(IIS6AUTH_LIB): Iis6auth.o Iis6auth.def
+#	$(MAKE_SHARED_LIB)
 
 
 all: $(DEST_PACKAGE_SCRATCH_DIR) $(IIS6_LIB)
