@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrefixResourceName.java,v 1.1 2009-04-07 10:25:08 veiming Exp $
+ * $Id: PrefixResourceName.java,v 1.2 2009-06-26 02:31:11 veiming Exp $
  *
  */
 
@@ -281,9 +281,9 @@ public class PrefixResourceName implements ResourceName {
         // we just pass the last wildcard in targetResource
         substr = targetResource.substring(beginIndex2, strlen2);
         if ((endIndex1 = requestResource.lastIndexOf(substr, strlen1 - 1)) 
-            == -1) 
+            == -1)
         {
-            return (ResourceMatch.SUB_RESOURCE_MATCH);
+            return (ResourceMatch.NO_MATCH);
         }
         
         if (beginIndex1 > endIndex1) {
