@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.29 2009-06-25 02:29:05 veiming Exp $
+   $Id: entitlement.xml,v 1.30 2009-06-26 19:50:03 veiming Exp $
 
 -->
 
@@ -36,6 +36,14 @@
     <Service name="openssoEntitlement" version="1.0">
         <Schema i18nFileName="" revisionNumber="10">
             <Global>
+                <AttributeSchema name="usenewconsole"
+                    type="single"
+                    syntax="string"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value></Value>
+                    </DefaultValues>
+                </AttributeSchema>
                 <AttributeSchema name="migratedtoentitlementservice"
                     type="single"
                     syntax="boolean"

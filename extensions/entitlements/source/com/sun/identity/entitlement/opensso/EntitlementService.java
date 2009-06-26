@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.27 2009-06-21 09:25:33 veiming Exp $
+ * $Id: EntitlementService.java,v 1.28 2009-06-26 19:50:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -79,6 +79,7 @@ public class EntitlementService extends EntitlementConfiguration {
     private static final String CONFIG_APPLICATION_TYPES = "applicationTypes";
     private static final String CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS =
         "subjectAttributesCollectors";
+    private static final String USE_NEW_CONSOLE = "usenewconsole";
     private static final String MIGRATED_TO_ENTITLEMENT_SERVICES =
         "migratedtoentitlementservice";
     private static final String XACML_PRIVILEGE_ENABLED =
@@ -131,6 +132,31 @@ public class EntitlementService extends EntitlementConfiguration {
                 "EntitlementService.getAttributeValues", ex);
         }
         return Collections.EMPTY_SET;
+    }
+
+    private static void setConfiguration(SSOToken token,
+        String attrName, Set<String> values) {
+        try {
+            if (token != null) {
+                ServiceSchemaManager smgr = new ServiceSchemaManager(
+                    SERVICE_NAME, token);
+                AttributeSchema as = smgr.getGlobalSchema().getAttributeSchema(
+                    attrName);
+                if (as != null) {
+                    as.setDefaultValues(values);
+                }
+            } else {
+                PrivilegeManager.debug.error(
+                    "EntitlementService.getAttributeValues: " +
+                    "admin token is missing", null);
+            }
+        } catch (SMSException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.setAttributeValues", ex);
+        } catch (SSOException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.setAttributeValues", ex);
+        }
     }
 
     /**
@@ -1101,5 +1127,23 @@ public class EntitlementService extends EntitlementConfiguration {
                 xacmlEnabledSet.iterator().next() : null;
         return (xacmlEnabled != null) ? Boolean.parseBoolean(xacmlEnabled)
                 : false;
+    }
+
+
+    public static void useNewConsole(boolean flag) {
+        Set<String> values = new HashSet<String>();
+        values.add(Boolean.toString(flag));
+        setConfiguration(adminToken, USE_NEW_CONSOLE, values);
+    }
+
+    public static String useNewConsole() {
+        Set<String> values = getConfiguration(adminToken, USE_NEW_CONSOLE);
+        return ((values != null) && !values.isEmpty()) ?
+            values.iterator().next() : "";
+    }
+
+    public static boolean toUseNewConsole() {
+        String val = useNewConsole();
+        return Boolean.parseBoolean(val);
     }
 }
