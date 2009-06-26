@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: unittest.jsp,v 1.5 2009-06-26 21:53:48 veiming Exp $
+   $Id: unittest.jsp,v 1.6 2009-06-26 21:56:37 veiming Exp $
   
 --%>
 
@@ -169,7 +169,7 @@
     for (Iterator i = set.iterator(); i.hasNext(); ) {
         String pkgname = (String)i.next();
 %>
-        <li><a href="#" onClick="expand('children.<%= pkgname %>', this); return false;"><img border=0 width="11" height="11" src="expand.gif" /></a> <input name="<%= pkgname %>" type="checkbox" title="Select/unselect the entire set of tests under this package" class="pkg" onClick="selectpkg(this);" /> <%= pkgname %> 
+        <li  onmouseover="this.childNodes[4].className='highlight'" onmouseout="this.childNodes[4].className='unhighlight'"><a href="#" onClick="expand('children.<%= pkgname %>', this); return false;"><img border=0 width="11" height="11" src="expand.gif" /></a> <input name="<%= pkgname %>" type="checkbox" title="Select/unselect the entire set of tests under this package" class="pkg" onClick="selectpkg(this);" /> <span>&nbsp;<%= pkgname %>&nbsp;</span>
         <ul id='children.<%= pkgname %>' style="display:none">
 
 <%
