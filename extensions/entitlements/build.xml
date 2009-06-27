@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.67 2009-06-17 00:12:15 veiming Exp $
+  $Id: build.xml,v 1.68 2009-06-27 07:10:24 kevinserwin Exp $
 
 -->
 
@@ -40,7 +40,7 @@
            property="war.lib.local.exists" value="true" />
     <available file="${entitlements.build.lib.local.dir}"
            property="build.lib.local.exists" value="true" />
-    <available file="${entitlements.extlib.dir}/opensso.war"
+    <available file="${entitlements.extlib.dir}/opensso-no-entitlements.war"
            property="opensso.war.exists" value="true" />
     <available file="${entitlements.extlib.dir}/testng-5.9-jdk15.jar"
            property="testng.jar.exists" value="true" />
@@ -226,7 +226,7 @@
 
     <target name="unwar" depends="init" unless="war.package.dir.exists">
         <unjar
-           src="${entitlements.extlib.dir}/opensso.war"
+           src="${entitlements.extlib.dir}/opensso-no-entitlements.war"
            dest="${war.package.dir}" />
         <copy file="${entitlements.web.dir}/ssoadm.jsp" 
               todir="${war.package.dir}" overwrite="true" />
@@ -360,11 +360,11 @@
 
     <target name="package-war" depends="src,merge">
         <war
-           destfile="${entitlements.dist.dir}/entitlement.war"
+           destfile="${entitlements.dist.dir}/opensso.war"
            webxml="${war.package.dir}/WEB-INF/web.xml">
             <zipfileset dir="${war.package.dir}" />
         </war>
-        <checksum file="${entitlements.dist.dir}/entitlement.war" 
+        <checksum file="${entitlements.dist.dir}/opensso.war" 
             algorithm="SHA" fileext=".sha" />
     </target>
 
@@ -386,7 +386,7 @@
     </target>
 
     <target name="opensso-war" unless="opensso.war.exists">
-        <copy file="${openfm.built.dist}/opensso.war"
+        <copy file="${openfm.built.dist}/opensso-no-entitlements.war"
            toDir="${entitlements.extlib.dir}" />
     </target>
     <target name="testng-jar" unless="testng.jar.exists">
@@ -399,7 +399,7 @@
     </target>
 
     <target name="amserver-jar" unless="amserver.jar.exists">
-        <unjar src="${entitlements.extlib.dir}/opensso.war"
+        <unjar src="${entitlements.extlib.dir}/opensso-no-entitlements.war"
            dest="${entitlements.extlib.dir}">
             <patternset>
                 <include name="WEB-INF/lib/amserver.jar"/>
@@ -409,7 +409,7 @@
     </target>
 
     <target name="jato-jar" unless="jato.jar.exists">
-        <unjar src="${entitlements.extlib.dir}/opensso.war"
+        <unjar src="${entitlements.extlib.dir}/opensso-no-entitlements.war"
            dest="${entitlements.extlib.dir}">
             <patternset>
                 <include name="WEB-INF/lib/jato.jar"/>
@@ -419,7 +419,7 @@
     </target>
 
     <target name="openfedlib-jar" unless="openfedlib.jar.exists">
-        <unjar src="${entitlements.extlib.dir}/opensso.war"
+        <unjar src="${entitlements.extlib.dir}/opensso-no-entitlements.war"
            dest="${entitlements.extlib.dir}">
             <patternset>
                 <include name="WEB-INF/lib/openfedlib.jar"/>
@@ -429,7 +429,7 @@
     </target>
 
    <target name="opensso-jar" unless="opensso.jar.exists">
-        <unjar src="${entitlements.extlib.dir}/opensso.war"
+        <unjar src="${entitlements.extlib.dir}/opensso-no-entitlements.war"
            dest="${entitlements.extlib.dir}">
             <patternset>
                 <include name="WEB-INF/lib/opensso.jar"/>
@@ -439,7 +439,7 @@
     </target>
    
     <target name="sharedlib-jar" unless="sharedlib.jar.exists">
-        <unjar src="${entitlements.extlib.dir}/opensso.war"
+        <unjar src="${entitlements.extlib.dir}/opensso-no-entitlements.war"
            dest="${entitlements.extlib.dir}">
             <patternset>
                 <include name="WEB-INF/lib/opensso-sharedlib.jar"/>

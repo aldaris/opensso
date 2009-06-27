@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.29 2009-06-23 20:29:20 kevinserwin Exp $
+   $Id: build.xml,v 1.30 2009-06-27 07:10:25 kevinserwin Exp $
 
 -->
 
@@ -48,11 +48,13 @@
     <property name="clientsamples.packages.temp2.dir" location="${openfm.built.dir}/clientsamples/.AMConfig"/>
     <property name="amserver.samples.dir" location="${amserver.base.dir}/samples"/>
 
-    <target name="all" depends="preparebuild, client-properties, jdk15-client-war-samples, client-sdk-samples">
+    <target name="all" depends="check-ver5, check-ver6, preparebuild, client-properties, jdk15-client-war-samples,
+           client-sdk-samples">
+
         <delete dir="${clientsamples.packages.temp.dir}" />
         <delete dir="${clientsamples.war.packages.dir}" />
         <mkdir dir="${clientsamples.war.packages.dir}" />
-        <copy file="${fm.dist.dir}/opensso-client-jdk${target.jdk.set}.war" todir="${clientsamples.war.packages.dir}" />
+        <copy file="${fm.dist.dir}/opensso-client-jdk${target.val}.war" todir="${clientsamples.war.packages.dir}" />
         <copy todir="${clientsamples.packages.dir}/"
               file="${openfm.clientsamples.dir}/README"/>
         <zip destfile="${fm.dist.dir}/opensso-client.zip" basedir="${clientsamples.packages.dir}" />
@@ -61,9 +63,24 @@
         <delete dir="${clientsamples.packages.temp2.dir}" />
     </target>
 
+   <target name="check-ver">
+      <condition property="ver5">
+        <equals arg1="${target.jdk.set}" arg2="1.5"/>
+      </condition>
+    </target>
+
+   <target name="check-ver5" depends="check-ver" if="ver5">
+      <property name="target.val" value="15"/>
+    </target>
+
+   <target name="check-ver6" depends="check-ver" unless="ver5">
+      <property name="target.val" value="16"/>
+   </target>
+
+
     <target name="jdk15-client-war-samples">
         <delete dir="${clientsamples.war.packages.dir}" />
-        <unjar src="${fm.dist.dir}/opensso.war" dest="${clientsamples.war.packages.dir}">
+        <unjar src="${fm.dist.dir}/opensso-no-entitlements.war" dest="${clientsamples.war.packages.dir}">
             <patternset>
                 <include name="com_sun_web_ui/css/css_ns6up.css"/>
                 <include name="com_sun_web_ui/images/other/javalogo.gif"/>
@@ -127,7 +144,7 @@
 	<delete dir="${clientsamples.packages.temp.dir}" />
 	<mkdir dir="${clientsamples.packages.temp.dir}" />
 	<move file="${clientsamples.war.packages.dir}/WEB-INF/web.xml" tofile="${clientsamples.packages.temp.dir}/web.xml" />
-        <war destfile="${fm.dist.dir}/opensso-client-jdk${target.jdk.set}.war" webxml="${clientsamples.packages.temp.dir}/web.xml">
+        <war destfile="${fm.dist.dir}/opensso-client-jdk${target.val}.war" webxml="${clientsamples.packages.temp.dir}/web.xml">
             <manifest>
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
@@ -136,7 +153,7 @@
         </war>
 	<move file="${clientsamples.packages.temp.dir}/web.xml" tofile="${clientsamples.war.packages.dir}/WEB-INF/web.xml" />
 	<delete dir="${clientsamples.packages.temp.dir}" />
-        <checksum file="${fm.dist.dir}/opensso-client-jdk${target.jdk.set}.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${fm.dist.dir}/opensso-client-jdk${target.val}.war" algorithm="SHA" fileext=".sha" />
         <delete dir="${clientsamples.war.packages.dir}" />
     </target>
 
