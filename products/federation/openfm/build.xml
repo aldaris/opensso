@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.58 2009-06-26 16:40:58 exu Exp $
+   $Id: build.xml,v 1.59 2009-06-27 15:31:03 kevinserwin Exp $
 
 -->
 
@@ -116,8 +116,8 @@
 
 
     <target name="nightly">
-        <antcall target="war" />
         <antcall target="tools" />
+        <antcall target="war" />
         <antcall target="unittest" />
         <antcall target="clientsdk" />
         <antcall target="clientsamples" />

@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.68 2009-06-27 07:10:24 kevinserwin Exp $
+  $Id: build.xml,v 1.69 2009-06-27 15:30:31 kevinserwin Exp $
 
 -->
 
@@ -457,7 +457,7 @@
         <java classname="com.sun.tools.internal.xjc.Driver"
             classpath="${env.JAVA_HOME}/lib/tools.jar"
             maxmemory="256m" failonerror="true" fork="true">
-            <arg line="-b xsd/xacml-core-v3.xjb -extension -d ${entitlements.built.src.dir} xsd/xacml-core-v3-schema-cd-1.xsd"/>
+            <arg line="-b ${entitlements.basedir}/xsd/xacml-core-v3.xjb -extension -d ${entitlements.built.src.dir} ${entitlements.basedir}/xsd/xacml-core-v3-schema-cd-1.xsd"/>
         </java>
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
