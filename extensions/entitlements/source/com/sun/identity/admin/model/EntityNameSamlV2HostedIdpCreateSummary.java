@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityNameSamlV2HostedIdpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
+ * $Id: EntityNameSamlV2HostedIdpCreateSummary.java,v 1.3 2009-06-27 01:52:14 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -61,8 +61,7 @@ public class EntityNameSamlV2HostedIdpCreateSummary
     }
 
     public String getIcon() {
-        // TODO
-        return "../image/edit.png";
+        return "../image/file.png";
     }
 
     public String getTemplate() {

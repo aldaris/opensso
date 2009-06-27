@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefAttrMappingsSamlV2HostedSpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
+ * $Id: DefAttrMappingsSamlV2HostedSpCreateSummary.java,v 1.3 2009-06-27 01:52:14 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -59,8 +59,7 @@ public class DefAttrMappingsSamlV2HostedSpCreateSummary extends SamlV2HostedSpCr
     }
 
     public String getIcon() {
-        // TODO
-        return "../image/edit.png";
+        return "../image/attribute.png";
     }
 
     public String getTemplate() {

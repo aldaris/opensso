@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MetaUrlSamlV2RemoteSpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
+ * $Id: MetaUrlSamlV2RemoteSpCreateSummary.java,v 1.3 2009-06-27 01:52:14 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -50,9 +50,8 @@ public class MetaUrlSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSumm
         return false;
     }
 
-    public String getIcon() {
-        // TODO
-        return "../image/edit.png";
+    public String getIcon() {        
+        return "../image/url.png";
     }
 
     public String getTemplate() {

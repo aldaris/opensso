@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExtMetadataNameSamlV2HostedSpCreateSummary.java,v 1.4 2009-06-26 09:02:17 asyhuang Exp $
+ * $Id: ExtMetadataNameSamlV2HostedSpCreateSummary.java,v 1.5 2009-06-27 01:52:14 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -59,8 +59,7 @@ public class ExtMetadataNameSamlV2HostedSpCreateSummary extends SamlV2HostedSpCr
     }
 
     public String getIcon() {
-        // TODO
-        return "../image/edit.png";
+        return "../image/xml.png";
     }
 
     public String getTemplate() {

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-remote-sp-create.xhtml,v 1.7 2009-06-26 23:07:27 asyhuang Exp $
+   $Id: samlv2-remote-sp-create.xhtml,v 1.8 2009-06-27 01:52:14 asyhuang Exp $
 -->
 
 <ui:composition
@@ -79,23 +79,20 @@
                         <o:section>
                             <ui:define name="section-title">
                                 <ice:outputText
-                                    value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel']}"/>
+                                    value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.section-title']}"/>
                             </ui:define>
                             <ui:define name="section-details">
-                                <!-- <ice:outputText
-                                        value="Provide entity Name or import Metadata here...."/>
-                                        -->
+                                 <ice:outputText
+                                        value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.section-details']}"/>
                             </ui:define>
-                            <ui:define name="section-body">
-                                <ice:outputLabel
-                                    value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataFileReside']}"/>
+                            <ui:define name="section-body">                                
                                 <ice:panelGroup>
                                     <ice:selectOneRadio
                                         id="menuSelectMetaOrNoMetaRadio"
                                         partialSubmit="true"
                                         value="#{samlV2RemoteSpCreateWizardBean.meta}">
-                                        <f:selectItem id="meta" itemValue="true" itemLabel="Yes"/>
-                                        <f:selectItem id="nometa" itemValue="false" itemLabel="No"/>
+                                        <f:selectItem id="meta" itemValue="true" itemLabel="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.file']}"/>
+                                        <f:selectItem id="nometa" itemValue="false" itemLabel="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.url']}"/>
                                     </ice:selectOneRadio>
                                 </ice:panelGroup>
                                 <ice:panelGroup
@@ -119,11 +116,7 @@
                                             value="#{samlV2RemoteSpCreateWizardBean.metaUrl}"
                                             size="128"
                                             maxlength="256"/>
-                                    </ice:panelGroup>
-                                    <ice:panelGroup>
-                                        <ice:outputLabel
-                                            value="#{resources['samlv2-remote-sp-create.entityNamePanelLabel.metadataLocation.inlineHelp']}"/>
-                                    </ice:panelGroup>
+                                    </ice:panelGroup>                                    
                                 </ice:panelGroup>
                             </ui:define>
                         </o:section>

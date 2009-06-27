@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CotSamlV2RemoteSpCreateSummary.java,v 1.2 2009-06-24 21:55:08 asyhuang Exp $
+ * $Id: CotSamlV2RemoteSpCreateSummary.java,v 1.3 2009-06-27 01:52:14 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -56,8 +56,7 @@ public class CotSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpCreateSummary 
     }
 
     public String getIcon() {
-        // TODO
-        return "../image/edit.png";
+        return "../image/cot.png";
     }
 
     public String getTemplate() {

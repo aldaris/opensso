@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeMappingSamlV2RemoteSpCreateSummary.java,v 1.1 2009-06-24 21:55:09 asyhuang Exp $
+ * $Id: AttributeMappingSamlV2RemoteSpCreateSummary.java,v 1.2 2009-06-27 01:52:14 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -50,8 +50,7 @@ public class AttributeMappingSamlV2RemoteSpCreateSummary extends SamlV2RemoteSpC
     }
 
     public String getIcon() {
-        // TODO
-        return "../image/edit.png";
+        return "../image/attribute.png";
     }
 
     public String getTemplate() {

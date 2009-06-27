@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-remote-idp-create.xhtml,v 1.3 2009-06-26 23:07:27 asyhuang Exp $
+   $Id: samlv2-remote-idp-create.xhtml,v 1.4 2009-06-27 01:52:14 asyhuang Exp $
 -->
 
 <ui:composition
@@ -84,16 +84,14 @@
                                 <ice:outputText
                                     value="#{resources['samlv2-remote-idp-create.entityNamePanelLabel.section-details']}"/>
                             </ui:define>
-                            <ui:define name="section-body">
-                                <ice:outputLabel
-                                    value="#{resources['samlv2-remote-idp-create.entityNamePanelLabel.metadataFileReside']}"/>
+                            <ui:define name="section-body">                                
                                 <ice:panelGroup>
                                     <ice:selectOneRadio
                                         id="menuSelectMetaOrNoMetaRadio"
                                         partialSubmit="true"
                                         value="#{samlV2RemoteIdpCreateWizardBean.meta}">
-                                        <f:selectItem id="meta" itemValue="true" itemLabel="File"/>
-                                        <f:selectItem id="nometa" itemValue="false" itemLabel="URL"/>
+                                        <f:selectItem id="meta" itemValue="true" itemLabel="#{resources['samlv2-remote-idp-create.entityNamePanelLabel.file']}"/>
+                                        <f:selectItem id="nometa" itemValue="false" itemLabel="#{resources['samlv2-remote-idp-create.entityNamePanelLabel.url']}"/>
                                     </ice:selectOneRadio>
                                 </ice:panelGroup>
                                 <ice:panelGroup>
@@ -118,11 +116,7 @@
                                                 value="#{samlV2RemoteIdpCreateWizardBean.metaUrl}"
                                                 size="128"
                                                 maxlength="256"/>
-                                        </ice:panelGroup>
-                                        <ice:panelGroup>
-                                            <ice:outputLabel
-                                                value="#{resources['samlv2-remote-idp-create.entityNamePanelLabel.metadataLocation.inlineHelp']}"/>
-                                        </ice:panelGroup>
+                                        </ice:panelGroup>                                        
                                     </ice:panelGroup>
                                 </ice:panelGroup>
                             </ui:define>
