@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicy.xml,v 1.3 2009-05-06 22:40:36 veiming Exp $
+    $Id: amPolicy.xml,v 1.4 2009-06-29 14:58:01 veiming Exp $
 
 -->
 
@@ -262,6 +262,12 @@
             i18nFileName="amPolicy"
             i18nKey="sun-amidentitymembership-condition-name"
             propertiesViewBeanURL = "../policy/IdentityMembershipCondition" />
+        <PluginSchema
+            name="ResourceEnvIPCondition"
+            interfaceName="Condition"
+            className="com.sun.identity.policy.plugins.ResourceEnvIPCondition"
+            i18nFileName="amPolicy"
+            i18nKey="sun-resourceenvip-condition-name" />
         <PluginSchema
             name="IDRepoResponseProvider"
             interfaceName="ResponseProvider"

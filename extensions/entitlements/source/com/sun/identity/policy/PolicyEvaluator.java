@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.17 2009-06-25 02:29:04 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.18 2009-06-29 14:58:01 veiming Exp $
  *
  */
 
@@ -47,6 +47,8 @@ import com.sun.identity.shared.stats.Stats;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenListener;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerPolicySvcImpl;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.Entitlement;
@@ -745,13 +747,27 @@ public class PolicyEvaluator {
         SSOToken token, String resourceName, Set actionNames,
         Map envParameters, Set visitedOrgs)
         throws PolicyException, SSOException {
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            SubjectUtils.createSubject(token), realm);
-        return (ec.migratedToEntitlementService()) ?
-            getPolicyDecisionE(token, resourceName, actionNames,
-                envParameters) :
-            getPolicyDecisionO(token, resourceName, actionNames,
+        if (Agent.isRunning()) {
+            SsoServerPolicySvcImpl sspsi =
+                (SsoServerPolicySvcImpl)Agent.getPolicySvcMBean();
+            sspsi.incPolicyEvalsIn();
+        }
+
+        try {
+            EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+                SubjectUtils.createSubject(token), realm);
+            return (ec.migratedToEntitlementService()) ? getPolicyDecisionE(
+                token, resourceName, actionNames,
+                envParameters) : getPolicyDecisionO(token, resourceName,
+                actionNames,
                 envParameters, visitedOrgs);
+        } finally {
+            if (Agent.isRunning()) {
+                SsoServerPolicySvcImpl sspsi =
+                    (SsoServerPolicySvcImpl)Agent.getPolicySvcMBean();
+                sspsi.incPolicyEvalsOut();
+            }
+        }
     }
 
 

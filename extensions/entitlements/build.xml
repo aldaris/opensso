@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.69 2009-06-27 15:30:31 kevinserwin Exp $
+  $Id: build.xml,v 1.70 2009-06-29 14:58:00 veiming Exp $
 
 -->
 
@@ -452,12 +452,18 @@
     <target name="xjc.xacml3" unless="xacml3.core.source.exists">
         <property environment="env" />
         <echo message="compiling xacml3 schema to create java source " />
-        <echo message="JAVA_HOME=${env.JAVA_HOME}" />
         <mkdir dir="${entitlements.built.src.dir}" />
+        <mkdir dir="${entitlements.built.xsd.dir}" />
+
+        <filter token="ENTITLEMENT_BASE_DIR" value="${entitlements.basedir}"/>
+        <copy todir="${entitlements.built.xsd.dir}" filtering="true">
+            <fileset dir="${entitlements.basedir}/xsd" includes="*.*" />
+        </copy>
+
         <java classname="com.sun.tools.internal.xjc.Driver"
             classpath="${env.JAVA_HOME}/lib/tools.jar"
             maxmemory="256m" failonerror="true" fork="true">
-            <arg line="-b ${entitlements.basedir}/xsd/xacml-core-v3.xjb -extension -d ${entitlements.built.src.dir} ${entitlements.basedir}/xsd/xacml-core-v3-schema-cd-1.xsd"/>
+            <arg line="-b ${entitlements.built.xsd.dir}/xacml-core-v3.xjb -extension -d ${entitlements.built.src.dir} ${entitlements.built.xsd.dir}/xacml-core-v3-schema-cd-1.xsd"/>
         </java>
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
