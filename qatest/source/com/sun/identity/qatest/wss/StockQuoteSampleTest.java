@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [ of copyright owner]"
  *
- * $Id: StockQuoteSampleTest.java,v 1.2 2009-01-27 00:18:56 nithyas Exp $
+ * $Id: StockQuoteSampleTest.java,v 1.3 2009-06-29 17:07:41 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -281,6 +281,7 @@ public class StockQuoteSampleTest extends TestCommon {
             } finally {
                 Reporter.log("Test Description: "  + strTestDescription);
             }
+	    Thread.sleep(1000);            
             exiting("evaluateStockQuoteClient");
         }
     }

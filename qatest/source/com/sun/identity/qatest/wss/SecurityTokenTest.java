@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [ of copyright owner]"
  *
- * $Id: SecurityTokenTest.java,v 1.6 2009-01-27 00:18:56 nithyas Exp $
+ * $Id: SecurityTokenTest.java,v 1.7 2009-06-29 17:07:51 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.logging.Level;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.MimeHeaders;
@@ -185,7 +186,7 @@ public class SecurityTokenTest extends TestCommon {
         entering("setup", params);
         try {
             
-            //changeRunTimeUser();
+            changeRunTimeUser();
             testIndex = new Integer(testIdx).intValue();
             
             strServiceURL = rbp.getString(strLocRB + testIndex + ".url");
@@ -514,7 +515,9 @@ public class SecurityTokenTest extends TestCommon {
         .append("xmlns:enc=\"http://schemas.xmlsoap.org/soap/encoding/\" ")
         .append("xmlns:ns0=\"http://sun.com/stockquote.xsd\" ")
         .append("env:encodingStyle=\"http://schemas.xmlsoap.org")
-        .append("/soap/encoding/\"><env:Header></env:Header>")
+        .append("/soap/encoding/\"><env:Header>")
+        .append(getAddressingHeader())
+	.append("</env:Header>")
         .append("<env:Body><ns0:QuoteRequest><Symbol>")
         .append(symbol)
         .append("</Symbol></ns0:QuoteRequest>")
@@ -522,6 +525,25 @@ public class SecurityTokenTest extends TestCommon {
         return sb;
     }
     
+    /**
+     * Creates a unique message id for each request
+     */
+    private String getAddressingHeader() {
+        StringBuffer sb = new StringBuffer(1024);
+        sb.append("<To xmlns=\"http://www.w3.org/2005/08/addressing\"")
+	  .append(">" + strServiceURL + "</To>")
+          .append("<Action xmlns=\"http://www.w3.org/2005/08/addressing\"")
+          .append(">http://sun.com/GetStockQuote</Action>")
+          .append("<ReplyTo xmlns=\"http://www.w3.org/2005/08/addressing\">")
+          .append("<Address>http://www.w3.org/2005/08/addressing/anonymous")
+          .append("</Address>")
+          .append("</ReplyTo><MessageID ")
+          .append("xmlns=\"http://www.w3.org/2005/08/addressing\">")
+          .append(java.util.UUID.randomUUID().toString() + "</MessageID>");
+        return sb.toString();
+    }    
+    
+ 
     /**
      * Creates the XML for updating the Discovery service security bootstrap
      * entry.
