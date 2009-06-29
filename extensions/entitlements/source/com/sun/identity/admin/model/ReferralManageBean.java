@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageBean.java,v 1.4 2009-06-23 18:43:48 farble1670 Exp $
+ * $Id: ReferralManageBean.java,v 1.5 2009-06-29 13:48:01 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.dao.ReferralDao;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -144,4 +145,11 @@ public class ReferralManageBean implements Serializable {
     public void setViewOptionsPopupRows(int viewOptionsPopupRows) {
         this.viewOptionsPopupRows = viewOptionsPopupRows;
     }
+
+    public static ReferralManageBean getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        ReferralManageBean rmb = (ReferralManageBean)mbr.resolve("referralManageBean");
+        return rmb;
+    }
+
 }

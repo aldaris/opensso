@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributesBean.java,v 1.7 2009-06-24 23:47:01 farble1670 Exp $
+ * $Id: AttributesBean.java,v 1.8 2009-06-29 13:48:01 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.ListFormatter;
 import com.sun.identity.admin.handler.AttributesHandler;
 import com.sun.identity.entitlement.ResourceAttribute;
 import java.io.Serializable;
@@ -76,29 +77,17 @@ public abstract class AttributesBean implements Serializable {
     }
 
     public String getToString() {
-        return getListToString(viewAttributes);
+        return new ListFormatter(viewAttributes).toString();
     }
 
     public String getToFormattedString() {
-        return getListToFormattedString(viewAttributes);
+        return new ListFormatter(viewAttributes).toFormattedString();
     }
 
     public static String getToFormattedString(List<ViewAttribute> vas) {
-        return getListToFormattedString(vas);
+        return new ListFormatter(vas).toFormattedString();
     }
 
-    private static String getListToString(List list) {
-        StringBuffer b = new StringBuffer();
-
-        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
-            b.append(i.next());
-            if (i.hasNext()) {
-                b.append(",");
-            }
-
-        }
-        return b.toString();
-    }
 
     private static String getListToFormattedString(List list) {
         StringBuffer b = new StringBuffer();

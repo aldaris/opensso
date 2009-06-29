@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewEntitlement.java,v 1.22 2009-06-04 15:21:09 farble1670 Exp $
+ * $Id: ViewEntitlement.java,v 1.23 2009-06-29 13:48:01 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.DeepCloneableArrayList;
+import com.sun.identity.admin.ListFormatter;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.dao.ViewApplicationDao;
 import com.sun.identity.admin.handler.BooleanActionsHandler;
@@ -39,7 +40,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -210,48 +210,20 @@ public class ViewEntitlement implements Serializable {
         resetAvailableResources();
     }
 
-    public String getListToString(List list) {
-        StringBuffer b = new StringBuffer();
-
-        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
-            b.append(i.next());
-            if (i.hasNext()) {
-                b.append(",");
-            }
-
-        }
-
-        return b.toString();
-    }
-
     public String getResourcesToString() {
-        return getListToString(resources);
+        return new ListFormatter(resources).toString();
     }
 
     public String getExceptionsToString() {
-        return getListToString(exceptions);
-    }
-
-    public String getListToFormattedString(List list) {
-        StringBuffer b = new StringBuffer();
-
-        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
-            b.append(i.next());
-            if (i.hasNext()) {
-                b.append("\n");
-            }
-
-        }
-
-        return b.toString();
+        return new ListFormatter(exceptions).toString();
     }
 
     public String getResourcesToFormattedString() {
-        return getListToFormattedString(resources);
+        return new ListFormatter(resources).toFormattedString();
     }
 
     public String getExceptionsToFormattedString() {
-        return getListToFormattedString(exceptions);
+        return new ListFormatter(exceptions).toFormattedString();
     }
 
     public BooleanActionsBean getBooleanActionsBean() {

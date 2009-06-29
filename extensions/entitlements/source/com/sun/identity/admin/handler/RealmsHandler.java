@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmsHandler.java,v 1.7 2009-06-06 17:39:15 farble1670 Exp $
+ * $Id: RealmsHandler.java,v 1.8 2009-06-29 13:48:00 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -37,6 +37,7 @@ import com.sun.identity.admin.model.PolicyManageBean;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.ReferralCreateWizardBean;
+import com.sun.identity.admin.model.ReferralManageBean;
 import com.sun.identity.admin.model.ViewApplicationsBean;
 import java.io.Serializable;
 import javax.faces.application.FacesMessage;
@@ -97,6 +98,8 @@ public class RealmsHandler implements Serializable {
         pewb.reset();
         ReferralCreateWizardBean rcwb = ReferralCreateWizardBean.getInstance();
         rcwb.reset();
+        ReferralManageBean rmb = ReferralManageBean.getInstance();
+        rmb.reset();
     }
 
     public void setRealmsBean(RealmsBean realmsBean) {
