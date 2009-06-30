@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.7 2009-06-26 23:07:27 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.8 2009-06-30 08:30:38 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -32,7 +32,6 @@ import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.SamlV2HostedSpCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
-import com.sun.identity.admin.effect.MessageErrorEffect;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.SamlV2HostedSpCreateWizardBean;
@@ -169,14 +168,9 @@ public class SamlV2HostedSpCreateWizardHandler
                 mb.setDetail(r.getString(this, "invalidCotDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-                Effect e;
-
-                e = new InputFieldErrorEffect();
-                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedSpCreateEntityNameInputEffect(e);
-
-                e = new MessageErrorEffect();
-                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedSpCreateEntityNameInputEffect(e);
-
+                Effect e = new InputFieldErrorEffect();
+                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedCreateEntityInputEffect(e);
+               
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2HostedSpCreateWizardBean().gotoStep(SamlV2HostedSpCreateWizardStep.COT.toInt());
 
@@ -198,16 +192,30 @@ public class SamlV2HostedSpCreateWizardHandler
                 mb.setDetail(r.getString(this, "invalidEntityNameDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-                Effect e;
-
-                e = new InputFieldErrorEffect();
-                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedSpCreateEntityNameInputEffect(e);
-
-                e = new MessageErrorEffect();
-                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedSpCreateEntityNameInputEffect(e);
+                Effect e = new InputFieldErrorEffect();
+                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedCreateEntityInputEffect(e);
 
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2HostedSpCreateWizardBean().gotoStep(SamlV2HostedSpCreateWizardStep.METADATA.toInt());
+
+                return false;
+            }
+        } else {
+            String stdFilename = getSamlV2HostedSpCreateWizardBean().getStdMetaFile();
+            String extFilename = getSamlV2HostedSpCreateWizardBean().getExtMetaFile();
+            if ((stdFilename == null) || (stdFilename.length() == 0) || (extFilename == null) || (extFilename.length() == 0)) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "invalidMetafileSummary"));
+                mb.setDetail(r.getString(this, "invalidMetafileDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+                Effect e = new InputFieldErrorEffect();
+                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedCreateEntityInputEffect(e);
+
+                getMessagesBean().addMessageBean(mb);
+                getSamlV2HostedSpCreateWizardBean().gotoStep(
+                        SamlV2HostedSpCreateWizardStep.METADATA.toInt());
 
                 return false;
             }
@@ -316,13 +324,5 @@ public class SamlV2HostedSpCreateWizardHandler
     public void extMetaFileUploadProgress(EventObject event) {
         InputFile ifile = (InputFile) event.getSource();
         getSamlV2HostedSpCreateWizardBean().setExtMetaFileProgress(ifile.getFileInfo().getPercent());
-    }
-
-    public void setMessagesBean(MessagesBean messagesBean) {
-        this.messagesBean = messagesBean;
-    }
-
-    public MessagesBean getMessagesBean() {
-        return messagesBean;
     }
 }

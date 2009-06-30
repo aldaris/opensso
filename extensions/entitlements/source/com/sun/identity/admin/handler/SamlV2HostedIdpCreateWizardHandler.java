@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.5 2009-06-26 23:07:27 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.6 2009-06-30 08:30:38 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -33,7 +33,6 @@ import com.icesoft.faces.component.inputfile.InputFile;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.dao.SamlV2HostedIdpCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
-import com.sun.identity.admin.effect.MessageErrorEffect;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.SamlV2ViewAttribute;
 import com.sun.identity.admin.model.ViewAttribute;
@@ -207,14 +206,9 @@ public class SamlV2HostedIdpCreateWizardHandler
                 mb.setDetail(r.getString(this, "invalidNameDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-                Effect e;
-                e = new InputFieldErrorEffect();
+                Effect e = new InputFieldErrorEffect();
                 getSamlV2HostedIdpCreateWizardBean().
-                        setSamlV2EntityNameInputEffect(e);
-
-                e = new MessageErrorEffect();
-                getSamlV2HostedIdpCreateWizardBean().
-                        setSamlV2EntityNameMessageEffect(e);
+                        setSamlV2HostedCreateEntityInputEffect(e);
 
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2HostedIdpCreateWizardBean().gotoStep(
@@ -224,25 +218,22 @@ public class SamlV2HostedIdpCreateWizardHandler
             }
         } else {
 
-            String filename = getSamlV2HostedIdpCreateWizardBean().getStdMetaFilename();
-
-            if (filename.length() == 0 || (filename == null)) {
+            String stdFilename = getSamlV2HostedIdpCreateWizardBean().getStdMetaFile();
+            String extFilename = getSamlV2HostedIdpCreateWizardBean().getExtMetaFile();
+            if ((stdFilename == null) || (stdFilename.length() == 0) || (extFilename == null) || (extFilename.length() == 0)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidMetafileSummary"));
                 mb.setDetail(r.getString(this, "invalidMetafileDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-                Effect e;
-
-                e = new InputFieldErrorEffect();
-                getSamlV2HostedIdpCreateWizardBean().setSamlV2EntityNameMessageEffect(e);
-
-                e = new MessageErrorEffect();
-                getSamlV2HostedIdpCreateWizardBean().setSamlV2EntityNameMessageEffect(e);
+                Effect e = new InputFieldErrorEffect();
+                getSamlV2HostedIdpCreateWizardBean().
+                        setSamlV2HostedCreateEntityInputEffect(e);
 
                 getMessagesBean().addMessageBean(mb);
-                getSamlV2HostedIdpCreateWizardBean().gotoStep(SamlV2HostedIdpCreateWizardStep.METADATA.toInt());
+                getSamlV2HostedIdpCreateWizardBean().gotoStep(
+                        SamlV2HostedIdpCreateWizardStep.METADATA.toInt());
 
                 return false;
             }
@@ -263,14 +254,9 @@ public class SamlV2HostedIdpCreateWizardHandler
                 mb.setDetail(r.getString(this, "invalidCotDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-                Effect e;
-                e = new InputFieldErrorEffect();
+                Effect e = new InputFieldErrorEffect();
                 getSamlV2HostedIdpCreateWizardBean().
-                        setSamlV2EntityNameInputEffect(e);
-
-                e = new MessageErrorEffect();
-                getSamlV2HostedIdpCreateWizardBean().
-                        setSamlV2EntityNameMessageEffect(e);
+                        setSamlV2HostedCreateEntityInputEffect(e);
 
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2HostedIdpCreateWizardBean().gotoStep(

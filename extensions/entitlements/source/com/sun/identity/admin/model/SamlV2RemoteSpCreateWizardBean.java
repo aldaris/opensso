@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardBean.java,v 1.5 2009-06-24 21:55:08 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardBean.java,v 1.6 2009-06-30 08:30:39 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
-import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.dao.AttributeMappingsDao;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,8 +43,7 @@ public class SamlV2RemoteSpCreateWizardBean
     private MetaUrlSamlV2RemoteSpCreateSummary metaUrlSamlV2RemoteSpCreateSummary = new MetaUrlSamlV2RemoteSpCreateSummary(this);
     private StdMetadataNameSamlV2RemoteSpCreateSummary stdMetadataNameSamlV2RemoteSpCreateSummary = new StdMetadataNameSamlV2RemoteSpCreateSummary(this);
     private CotSamlV2RemoteSpCreateSummary cotSamlV2RemoteSpCreateSummary = new CotSamlV2RemoteSpCreateSummary(this);
-    private AttributeMappingSamlV2RemoteSpCreateSummary attributeMappingSamlV2RemoteSpCreateSummary = new AttributeMappingSamlV2RemoteSpCreateSummary(this);
-    private Effect samlV2RemoteSpCreateEntityNameInputEffect;
+    private AttributeMappingSamlV2RemoteSpCreateSummary attributeMappingSamlV2RemoteSpCreateSummary = new AttributeMappingSamlV2RemoteSpCreateSummary(this);   
 
     public SamlV2RemoteSpCreateWizardBean() {
         super();
@@ -147,14 +145,6 @@ public class SamlV2RemoteSpCreateWizardBean
 
     public StdMetadataNameSamlV2RemoteSpCreateSummary getStdMetadataNameSamlV2RemoteSpCreateSummary() {
         return stdMetadataNameSamlV2RemoteSpCreateSummary;
-    }
-
-    public Effect getSamlV2RemoteSpCreateEntityNameInputEffect() {
-        return samlV2RemoteSpCreateEntityNameInputEffect;
-    }
-
-    public void setSamlV2RemoteSpCreateEntityNameInputEffect(Effect samlV2RemoteSpCreateEntityNameInputEffect) {
-        this.samlV2RemoteSpCreateEntityNameInputEffect = samlV2RemoteSpCreateEntityNameInputEffect;
     }
 
     public AttributeMappingSamlV2RemoteSpCreateSummary getAttributeMappingSamlV2RemoteSpCreateSummary() {

@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteCreateWizardBean.java,v 1.4 2009-06-24 14:01:35 asyhuang Exp $
+ * $Id: SamlV2RemoteCreateWizardBean.java,v 1.5 2009-06-30 08:30:39 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
+import com.icesoft.faces.context.effects.Effect;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,7 @@ public class SamlV2RemoteCreateWizardBean
     private String stdMetaFile;
     private String stdMetaFilename;
     private int stdMetaFileProgress;
+    private Effect samlV2RemoteCreateEntityInputEffect;
 
     @Override
     public void reset() {
@@ -66,8 +68,8 @@ public class SamlV2RemoteCreateWizardBean
         availableCotList = null;
         cotsBean = null;
         stdMetaFile = null;
-        stdMetaFilename = null;       
-        stdMetaFileProgress = 0;        
+        stdMetaFilename = null;
+        stdMetaFileProgress = 0;
     }
 
     public String getSelectedRealm() {
@@ -163,5 +165,14 @@ public class SamlV2RemoteCreateWizardBean
 
     public void setStdMetaFileProgress(int fileProgress) {
         this.stdMetaFileProgress = fileProgress;
-    }  
+    }
+
+    public Effect getSamlV2RemoteCreateEntityInputEffect() {
+        return samlV2RemoteCreateEntityInputEffect;
+    }
+
+    public void setSamlV2RemoteCreateEntityInputEffect(Effect samlV2RemoteCreateEntityInputEffect) {
+        this.samlV2RemoteCreateEntityInputEffect = samlV2RemoteCreateEntityInputEffect;
+    }
+
 }

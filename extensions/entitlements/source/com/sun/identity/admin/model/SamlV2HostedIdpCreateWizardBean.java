@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.4 2009-06-26 09:02:17 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.5 2009-06-30 08:30:39 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -41,9 +41,7 @@ public class SamlV2HostedIdpCreateWizardBean
     private List<SelectItem> availableSigningKeyList;
     private String selectedSigningKey;
     private List<ViewAttribute> availableViewAttributes = new ArrayList<ViewAttribute>();
-    private List<ViewAttribute> viewAttributes = new ArrayList<ViewAttribute>();
-    private Effect samlV2EntityNameInputEffect;
-    private Effect samlV2EntityNameMessageEffect;
+    private List<ViewAttribute> viewAttributes = new ArrayList<ViewAttribute>();  
     private RealmSamlV2HostedIdpCreateSummary realmSamlV2HostedIdpCreateSummary =
             new RealmSamlV2HostedIdpCreateSummary(this);
     private EntityNameSamlV2HostedIdpCreateSummary entityNameSamlV2HostedIdpCreateSummary =
@@ -161,10 +159,6 @@ public class SamlV2HostedIdpCreateWizardBean
         return b.toString();
     }
 
-    public Effect getSamlV2EntityNameInputEffect() {
-        return samlV2EntityNameInputEffect;
-    }
-
     public RealmSamlV2HostedIdpCreateSummary getRealmSamlV2HostedIdpCreateSummary() {
         return realmSamlV2HostedIdpCreateSummary;
     }
@@ -193,13 +187,4 @@ public class SamlV2HostedIdpCreateWizardBean
         return extMetadataNameSamlV2HostedIdpCreateSummary;
     }
 
-    public void setSamlV2EntityNameInputEffect(
-            Effect samlV2EntityNameInputEffect) {
-        this.samlV2EntityNameInputEffect = samlV2EntityNameInputEffect;
-    }
-
-    public void setSamlV2EntityNameMessageEffect(
-            Effect samlV2EntityNameMessageEffect) {
-        this.samlV2EntityNameMessageEffect = samlV2EntityNameMessageEffect;
-    }
 }

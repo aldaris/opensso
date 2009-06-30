@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.6 2009-06-26 23:07:27 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.7 2009-06-30 08:30:38 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -34,7 +34,6 @@ import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.SamlV2RemoteSpCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
-import com.sun.identity.admin.effect.MessageErrorEffect;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardStep;
@@ -191,13 +190,8 @@ public class SamlV2RemoteSpCreateWizardHandler
                 mb.setDetail(r.getString(this, "invalidCotDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-                Effect e;
-
-                e = new InputFieldErrorEffect();
-                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
-
-                e = new MessageErrorEffect();
-                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
+                Effect e = new InputFieldErrorEffect();
+                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
 
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.COT.toInt());
@@ -214,7 +208,6 @@ public class SamlV2RemoteSpCreateWizardHandler
         if (!usingMetaDataFile) {
 
             String url = getSamlV2RemoteSpCreateWizardBean().getMetaUrl();
-
             if (url.length() == 0 || (url == null)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
@@ -222,13 +215,8 @@ public class SamlV2RemoteSpCreateWizardHandler
                 mb.setDetail(r.getString(this, "invalidMetaUrlDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-                Effect e;
-
-                e = new InputFieldErrorEffect();
-                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
-
-                e = new MessageErrorEffect();
-                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
+                Effect e = new InputFieldErrorEffect();
+                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
 
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.METADATA.toInt());
@@ -238,22 +226,16 @@ public class SamlV2RemoteSpCreateWizardHandler
 
         } else {
 
-            String filename = getSamlV2RemoteSpCreateWizardBean().getStdMetaFilename();
-
-            if (filename.length() == 0 || (filename == null)) {
+            String filename = getSamlV2RemoteSpCreateWizardBean().getStdMetaFile();
+            if ((filename == null ) || filename.length() == 0) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidMetafileSummary"));
                 mb.setDetail(r.getString(this, "invalidMetafileDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-                Effect e;
-
-                e = new InputFieldErrorEffect();
-                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
-
-                e = new MessageErrorEffect();
-                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteSpCreateEntityNameInputEffect(e);
+                Effect e = new InputFieldErrorEffect();
+                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
 
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.METADATA.toInt());

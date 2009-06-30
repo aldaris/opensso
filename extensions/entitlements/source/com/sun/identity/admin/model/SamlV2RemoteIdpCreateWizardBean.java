@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateWizardBean.java,v 1.2 2009-06-24 14:01:35 asyhuang Exp $
+ * $Id: SamlV2RemoteIdpCreateWizardBean.java,v 1.3 2009-06-30 08:30:39 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.handler.SamlV2RemoteIdpCreateWizardHandler;
 import java.io.Serializable;
 
@@ -36,8 +35,6 @@ public class SamlV2RemoteIdpCreateWizardBean
         implements Serializable {
 
     private String metaUrl;
-    private Effect samlV2EntityNameInputEffect;
-    private Effect samlV2EntityNameMessageEffect;
     private SamlV2RemoteIdpCreateWizardHandler
             samlV2RemoteIdpCreateWizardHandler;
     private RealmSamlV2RemoteIdpCreateSummary realmSamlV2RemoteIdpCreateSummary =
@@ -77,10 +74,6 @@ public class SamlV2RemoteIdpCreateWizardBean
         this.metaUrl = metaUrl;
     }
 
-    public Effect getSamlV2EntityNameInputEffect() {
-        return samlV2EntityNameInputEffect;
-    }
-
     public SamlV2RemoteIdpCreateWizardHandler
             getSamlV2RemoteIdpCreateWizardHandler() {
         return samlV2RemoteIdpCreateWizardHandler;
@@ -91,16 +84,6 @@ public class SamlV2RemoteIdpCreateWizardBean
             samlV2RemoteIdpCreateWizardHandler) {
         this.samlV2RemoteIdpCreateWizardHandler =
                 samlV2RemoteIdpCreateWizardHandler;
-    }
-
-    public void setSamlV2EntityNameInputEffect(
-            Effect samlV2EntityNameInputEffect) {
-        this.samlV2EntityNameInputEffect = samlV2EntityNameInputEffect;
-    }
-
-    public void setSamlV2EntityNameMessageEffect(
-            Effect samlV2EntityNameMessageEffect) {
-        this.samlV2EntityNameMessageEffect = samlV2EntityNameMessageEffect;
     }
 
     public RealmSamlV2RemoteIdpCreateSummary

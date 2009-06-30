@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedCreateWizardBean.java,v 1.5 2009-06-24 21:55:08 asyhuang Exp $
+ * $Id: SamlV2HostedCreateWizardBean.java,v 1.6 2009-06-30 08:30:39 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
+import com.icesoft.faces.context.effects.Effect;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.console.base.model.AMSystemConfig;
 import java.io.Serializable;
@@ -54,6 +55,7 @@ public class SamlV2HostedCreateWizardBean
     private String extMetaFile;
     private String extMetaFilename;
     private int extMetaFileProgress;
+    private Effect samlV2HostedCreateEntityInputEffect;
 
     SamlV2HostedCreateWizardBean() {
         super();
@@ -79,7 +81,7 @@ public class SamlV2HostedCreateWizardBean
         extMetaFileProgress = 0;
     }
 
-    protected String getRequestURL() {       
+    protected String getRequestURL() {
         HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String uri = req.getRequestURI().toString();
         int idx = uri.indexOf('/', 1);
@@ -206,4 +208,13 @@ public class SamlV2HostedCreateWizardBean
     public void setExtMetaFileProgress(int fileProgress) {
         this.extMetaFileProgress = fileProgress;
     }
+
+    public Effect getSamlV2HostedCreateEntityInputEffect() {
+        return samlV2HostedCreateEntityInputEffect;
+    }
+
+    public void setSamlV2HostedCreateEntityInputEffect(Effect samlV2HostedCreateEntityInputEffect) {
+        this.samlV2HostedCreateEntityInputEffect = samlV2HostedCreateEntityInputEffect;
+    }
+
 }

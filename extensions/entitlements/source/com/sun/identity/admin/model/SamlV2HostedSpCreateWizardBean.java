@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardBean.java,v 1.4 2009-06-20 08:41:58 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateWizardBean.java,v 1.5 2009-06-30 08:30:39 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
-import com.icesoft.faces.context.effects.Effect;
 import java.io.Serializable;
 
 public class SamlV2HostedSpCreateWizardBean
@@ -41,7 +40,6 @@ public class SamlV2HostedSpCreateWizardBean
     private ExtMetadataNameSamlV2HostedSpCreateSummary extMetadataNameSamlV2CreateSummary = new ExtMetadataNameSamlV2HostedSpCreateSummary(this);
     private CotSamlV2HostedSpCreateSummary cotSamlV2CreateSummary = new CotSamlV2HostedSpCreateSummary(this);
     private DefAttrMappingsSamlV2HostedSpCreateSummary defAttrMappingsSamlV2CreateSummary = new DefAttrMappingsSamlV2HostedSpCreateSummary(this);
-    private Effect samlV2HostedSpCreateEntityNameInputEffect;
 
     public SamlV2HostedSpCreateWizardBean() {
         super();
@@ -94,13 +92,5 @@ public class SamlV2HostedSpCreateWizardBean
 
     public ExtMetadataNameSamlV2HostedSpCreateSummary getExtMetadataNameSamlV2CreateSummary() {
         return extMetadataNameSamlV2CreateSummary;
-    }
-
-    public Effect getSamlV2HostedSpCreateEntityNameInputEffect() {
-        return samlV2HostedSpCreateEntityNameInputEffect;
-    }
-
-    public void setSamlV2HostedSpCreateEntityNameInputEffect(Effect samlV2HostedSpCreateEntityNameInputEffect) {
-        this.samlV2HostedSpCreateEntityNameInputEffect = samlV2HostedSpCreateEntityNameInputEffect;
     }
 }
