@@ -628,7 +628,7 @@ com.sun.identity.agents.config.fetch.from.root.resource = true
 #
 # FETCH CLIENT HOST NAME
 #   Whether to get the client's hostname through DNS reverse lookup for use 
-#   in policy evaluation.
+#   in policy evaluation. This may slow down the agent performance.
 #
 # Hot-Swap Enabled: Yes
 #
@@ -855,3 +855,38 @@ com.sun.identity.agents.config.policy.clock.skew = 0
 # Hot-Swap Enabled: Yes
 #
 com.sun.identity.agents.config.redirect.param = goto
+
+#
+# CLIENT IDENTIFICATION PROPERTIES
+#   If agent is behind a proxy or load balancer, then typically agent
+#   gets client IP and hostname values of proxy/load blanacer. 
+#   Proxy server/load balancer may have HTTP header support to get actual 
+#   client IP and/or hostname values of the requesting client. If such support
+#   available, then these properties can be used.
+# 
+#   If multiple proxies or proxy and load balancer are in the request path,
+#   then these headers's values result in as comma separated values. 
+#   In this case, the first value represents requesting client. 
+#   Example: client, proxy1, proxy2...
+#
+#   If only client IP HTTP header is available, then web agents can get the client
+#   hostname by using com.sun.identity.agents.config.get.client.host.name property.
+#
+#   Note that in some cases client IP may not always represent actual requesting client,
+#   rather proxy server. If a web browser is using a proxy, then client IP value may be the
+#   value of the proxy, unless that proxy supports the same HTTP header.
+#   Example case 1: Client browser(using direct access) -> Proxy/LB -> Agent =>  Actual client IP 
+#   Example case 2: Client browser(using proxy) -> Proxy/LB -> Agent =>  Client IP of browser's proxy.
+#
+#   - client.ip.header: Specifies a HTTP header name that holds the IP
+#     address of the client. May be left blank if not used.
+#   - client.hostname.header: Specifies a HTTP header name that holds the
+#     Hostname of the client. May be left blank if not used.
+# Hot-Swap Enabled: Yes
+# Example:
+#   com.sun.identity.agents.config.client.ip.header = X-Proxy-Client-IP
+#   com.sun.identity.agents.config.client.hostname.header = X-Proxy-Client-Host
+#
+com.sun.identity.agents.config.client.ip.header =
+com.sun.identity.agents.config.client.hostname.header =
+

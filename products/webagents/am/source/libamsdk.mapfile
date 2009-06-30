@@ -126,6 +126,11 @@ SUNW_1.0 {
 		am_web_get_parameter_value;
 		am_web_is_cdsso_enabled;
 		am_web_clear_attributes_map;
+		am_web_get_client_ip_header_name;
+		am_web_get_client_hostname_header_name;
+		am_web_get_client_ip;
+		am_web_get_client_hostname;
+		am_web_set_host_ip_in_env_map;
 
 		am_auth_init;
 		am_auth_create_auth_context;

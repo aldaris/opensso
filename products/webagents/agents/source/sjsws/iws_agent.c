@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.22 2009-05-20 23:31:25 subbae Exp $
+ * $Id: iws_agent.c,v 1.23 2009-06-30 01:01:36 subbae Exp $
  *
  *
  */
@@ -1023,12 +1023,69 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
     }
 
     if (status == AM_SUCCESS) {
-        status = am_web_is_access_allowed(dpro_cookie, request_url,
-                                          path_info, method,
-                                          pblock_findval(REQUEST_IP_ADDR,
-                                                         sn->client),
-                                      env_parameter_map, &result, agent_config);
+        // Check if client ip header property is set
+        const char* client_ip_header_name = 
+            am_web_get_client_ip_header_name(agent_config);
+
+        // Check if client hostname header property is set
+        const char* client_hostname_header_name = 
+            am_web_get_client_hostname_header_name(agent_config);
+        char* ip_header = NULL;
+        char* hostname_header = NULL;
+        char* client_ip_from_ip_header = NULL;
+        char* client_hostname_from_hostname_header = NULL;
+
+        // If client ip header property is set, then try to
+        // retrieve header value.
+        if(client_ip_header_name != NULL && client_ip_header_name[0] != '\0') {
+            ip_header = pblock_findval(client_ip_header_name, rq->headers);
+
+            // Usually client ip header value is: client, proxy1, proxy2....
+            // Process client ip header value to get the correct value. 
+            am_web_get_client_ip(ip_header,
+                &client_ip_from_ip_header);
+        }
+
+        // If client hostname header property is set, then try to
+        // retrieve header value.
+        if(client_hostname_header_name != NULL && client_hostname_header_name[0] != '\0') {
+            hostname_header = pblock_findval(client_hostname_header_name, rq->headers);
+
+           // Usually client hostname header value is: client, proxy1, proxy2....
+           // Process client hostname header value to get the correct value.
+            am_web_get_client_hostname(hostname_header, 
+                &client_hostname_from_hostname_header);
+        }
+
+        // If client IP value is present from above processing, then
+        // set it to env_param_map. Else use from request structure.
+        if(client_ip_from_ip_header != NULL && client_ip_from_ip_header[0] != '\0') {
+            am_web_set_host_ip_in_env_map(client_ip_from_ip_header,
+                                  client_hostname_from_hostname_header,
+                                  env_parameter_map,
+                                  agent_config);
+
+            status = am_web_is_access_allowed(dpro_cookie, 
+                         request_url,
+                         path_info, 
+                         method,
+                         client_ip_from_ip_header,
+                         env_parameter_map, 
+                         &result, 
+                         agent_config);
+        } else {
+            status = am_web_is_access_allowed(dpro_cookie, 
+                         request_url,
+                         path_info, 
+                         method,
+                         pblock_findval(REQUEST_IP_ADDR, sn->client),
+                         env_parameter_map, 
+                         &result, 
+                         agent_config);
+        }
         am_map_destroy(env_parameter_map);
+        am_web_free_memory(client_ip_from_ip_header);
+        am_web_free_memory(client_hostname_from_hostname_header);
     }
 
     switch (status) {

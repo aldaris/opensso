@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.27 2009-05-20 23:31:25 subbae Exp $
+ * $Id: am_web.h,v 1.28 2009-06-30 01:01:37 subbae Exp $
  *
  */
 
@@ -206,6 +206,8 @@ AM_BEGIN_EXTERN_C
 #define AM_COMMON_AGENTS_CONFIG_CLEANUP_PROPERTY AM_COMMON_PROPERTY_PREFIX "cleanup.interval"
 
 #define AM_WEB_LOCALE_PROPERTY AM_COMMON_PROPERTY_PREFIX "locale"
+#define AM_WEB_CLIENT_IP_HEADER_PROPERTY AM_COMMON_PROPERTY_PREFIX "client.ip.header"
+#define AM_WEB_CLIENT_HOSTNAME_HEADER_PROPERTY AM_COMMON_PROPERTY_PREFIX "client.hostname.header"
 
 /*
  * Enough space to hold PRTime key in a string
@@ -349,6 +351,7 @@ typedef struct {
     am_web_req_method_t method;     /* request method */
     char *path_info;                /* path info if any */
     char *client_ip;                /* client IP if any */
+    char *client_hostname;          /* client hostname if any */
     char *cookie_header_val;	    /* the cookie header value if any */
     void *reserved;		    /* reserved - do not set this */
 } am_web_request_params_t;
@@ -1254,6 +1257,45 @@ AM_WEB_EXPORT boolean_t am_web_is_owa_enabled_change_protocol(void* agent_config
 AM_WEB_EXPORT const char * am_web_is_owa_enabled_session_timeout_url(void* agent_config);
 
 AM_WEB_EXPORT am_status_t am_web_get_logout_url(char** logout_url, void* agent_config);
+
+/**
+ * Returns client.ip.header property value
+ */
+AM_WEB_EXPORT const char *
+    am_web_get_client_ip_header_name(void* agent_config);
+
+/**
+ * Returns client.hostname.header property value
+ */
+AM_WEB_EXPORT const char *
+    am_web_get_client_hostname_header_name(void* agent_config);
+
+/**
+ * Returns client ip value from client ip header.
+ * If the clientIP contains comma separated values,
+ * then first value is taken into consideration.
+ */
+AM_WEB_EXPORT am_status_t am_web_get_client_ip(const char* clientIPHeader,
+                                               char** clientIP);
+
+/**
+ * Returns client hostname value from client hostname header.
+ * If the clientHostname contains comma separated values,
+ * then first value is taken into consideration.
+ */
+AM_WEB_EXPORT am_status_t am_web_get_client_hostname(const char* clientHostnameHeader,
+                                                     char** clientHostname);
+
+/**
+ * Sets client ip (and client hostname) in environment map
+ * which then sent as part of policy request.
+ */
+AM_WEB_EXPORT void
+    am_web_set_host_ip_in_env_map(const char *client_ip,
+                              const char *client_hostname,
+                              const am_map_t env_parameter_map,
+                              void* agent_config);
+
 
 AM_END_EXTERN_C
 

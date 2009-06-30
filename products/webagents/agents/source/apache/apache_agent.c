@@ -779,11 +779,60 @@ int dsame_check_access(request_rec *r)
         ret = HTTP_INTERNAL_SERVER_ERROR;
     }
     else {
+        // Check if client ip header property is set
+        const char* client_ip_header_name =
+            am_web_get_client_ip_header_name(agent_config);
+        // Check if client hostname header property is set
+        const char* client_hostname_header_name =
+            am_web_get_client_hostname_header_name(agent_config);
+        char* ip_header = NULL;
+        char* hostname_header = NULL;
+        char* client_ip_from_ip_header = NULL;
+        char* client_hostname_from_hostname_header = NULL;
+
+        // If client ip header property is set, then try to
+        // retrieve header value.
+        if(client_ip_header_name != NULL && client_ip_header_name[0] != '\0') {
+            ip_header = (char *)ap_table_get(r->headers_in, client_ip_header_name);
+
+            // Usually client ip header value is: client, proxy1, proxy2....
+            // Process client ip header value to get the correct value. 
+            am_web_get_client_ip(ip_header,
+                &client_ip_from_ip_header);
+        }
+
+        // If client hostname header property is set, then try to
+        // retrieve header value.
+        if(client_hostname_header_name != NULL 
+            && client_hostname_header_name[0] != '\0') {
+            hostname_header = (char *)ap_table_get(r->headers_in, 
+                client_hostname_header_name);
+
+            // Usually client hostname header value is: client, proxy1, proxy2....
+            // Process client hostname header value to get the correct value. 
+            am_web_get_client_hostname(hostname_header,
+                &client_hostname_from_hostname_header);
+        }
+
+        // If client IP value is present from above processing, then
+        // set it to req_param. Else set from request structure.
+        if(client_ip_from_ip_header != NULL && client_ip_from_ip_header[0] != '\0') {
+            req_params.client_ip = client_ip_from_ip_header;
+        } else {
+            req_params.client_ip = (char *)r->connection->remote_ip;
+        }
+
+        // If client hostname value is present from above processing, then
+        // set it to req_param. 
+        if(client_hostname_from_hostname_header != NULL && 
+            client_hostname_from_hostname_header[0] != '\0') {
+            req_params.client_hostname = client_hostname_from_hostname_header;
+        } 
+
         req_params.url = url;
         req_params.query = r->args;
         req_params.method = method;
         req_params.path_info = r->path_info;
-        req_params.client_ip = (char *)r->connection->remote_ip;
         req_params.cookie_header_val =
                     (char *)ap_table_get(r->headers_in, "Cookie");
 
@@ -807,6 +856,9 @@ int dsame_check_access(request_rec *r)
                                 thisfunc, ret);
             ret = HTTP_INTERNAL_SERVER_ERROR;
         }
+        am_web_free_memory(client_ip_from_ip_header);
+        am_web_free_memory(client_hostname_from_hostname_header);
+
     }
 
     am_web_delete_agent_configuration(agent_config);

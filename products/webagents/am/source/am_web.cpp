@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.49 2009-06-09 00:22:24 subbae Exp $
+ * $Id: am_web.cpp,v 1.50 2009-06-30 01:01:37 subbae Exp $
  *
  */
 
@@ -154,6 +154,8 @@ static int initialized = AM_FALSE;
 
 #define INSTANCE_NAME  "unused"
 
+static const char* requestIp = "requestIp";
+static const char* requestDnsName = "requestDnsName";
 
 #if defined(WINNT)
 HINSTANCE hInstance;
@@ -248,8 +250,10 @@ void getFullQualifiedHostName(const am_map_t env_parameter_map,
 	    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		"getFullQualifiedHostName: map_insert: "
 		"hostname=%s", hostName);
-	    am_map_insert(env_parameter_map, "requestDnsName",
-		hostName, AM_FALSE);
+	    am_map_insert(env_parameter_map, 
+                requestDnsName,
+		hostName, 
+                AM_FALSE);
 	}
 
 	alias = hostEntry->h_aliases[i++];
@@ -257,8 +261,10 @@ void getFullQualifiedHostName(const am_map_t env_parameter_map,
 	    Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		"getFullQualifiedHostName: map_insert: "
 		"alias=%s", alias);
-	    am_map_insert(env_parameter_map, "requestDnsName",
-		alias, AM_FALSE);
+	    am_map_insert(env_parameter_map, 
+                requestDnsName,
+		alias, 
+                AM_FALSE);
 	    alias = hostEntry->h_aliases[i++];
 	}
     }
@@ -1025,7 +1031,7 @@ void set_host_ip_in_env_map(const char *client_ip,
     Log::log(boot_info.log_module, Log::LOG_DEBUG,
 	     "set_host_ip_in_env_map: map_insert: "
 	     "client_ip=%s", client_ip);
-    am_map_insert(env_parameter_map, "requestIp", client_ip, AM_TRUE);
+    am_map_insert(env_parameter_map, requestIp, client_ip, AM_TRUE);
 
     if ((*agentConfigPtr)->getClientHostname) {
 	prStatus = PR_StringToNetAddr(client_ip, &address);
@@ -1771,12 +1777,24 @@ am_web_is_access_allowed(const char *sso_token,
                 // but ignore result if url not enforced or do_sso_only.
                 // Note: This will be replaced by a different policy call to just get
                 // user ldap attributes or id so the policy does not get evaluated.
+
                 KeyValueMap action_results_map;
                 am_status_t eval_status = AM_SUCCESS;
                 // the following should not throw exceptions 
+
                 if (client_ip != NULL && *client_ip != '\0') {
-                    set_host_ip_in_env_map(client_ip, env_parameter_map,
+                    // check whether requestIp is already set in
+                    // environment map else set it.
+                    const char* tmpRequestIP = am_map_find_first_value(env_parameter_map,
+                                          requestIp);
+                    if(tmpRequestIP != NULL) {
+                        am_web_log_debug("%s(%s,%s): , "
+                            "requestIp is already set in env_parameter_map.",
+                            thisfunc, url, tmpRequestIP);
+                    } else {
+                        set_host_ip_in_env_map(client_ip, env_parameter_map,
                                      agent_config);
+                    }
                 }
                 if ((isNotEnforced == AM_TRUE &&
                        ((*agentConfigPtr)->notenforced_url_attributes_enable 
@@ -5779,6 +5797,12 @@ process_request(am_web_request_params_t *req_params,
         // query parameter from CDC servlet.
         if (orig_method == AM_WEB_REQUEST_UNKNOWN)
             orig_method = req_params->method;
+
+        am_web_set_host_ip_in_env_map(req_params->client_ip,
+            req_params->client_hostname,
+            env_map,
+            agent_config);
+
         // now check if access allowed
         sts = am_web_is_access_allowed(
                       sso_token, req_params->url, 
@@ -6288,6 +6312,163 @@ am_web_get_logout_url(char** logout_url, void* agent_config)
     *logout_url=strdup(retVal.c_str());
 
     return ret;
+}
+
+/**
+ * Returns client.ip.header property value
+ */
+extern "C" AM_WEB_EXPORT const char *
+am_web_get_client_ip_header_name(void* agent_config)
+{
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+    return (*agentConfigPtr)->clientIPHeader;
+}
+
+/**
+ * Returns client.hostname.header property value
+ */
+extern "C" AM_WEB_EXPORT const char *
+am_web_get_client_hostname_header_name(void* agent_config)
+{
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+    return (*agentConfigPtr)->clientHostnameHeader;
+}
+
+/**
+ * Returns client ip value from client ip header.
+ * If the clientIP contains comma separated values,
+ * then first value is taken into consideration.
+ */
+extern "C" AM_WEB_EXPORT am_status_t
+am_web_get_client_ip(const char* clientIPHeader,
+                     char** clientIP)
+{
+    if (clientIPHeader != NULL && clientIPHeader[0] != '\0') {
+        am_web_log_debug("am_web_get_client_ip: "
+                "client IP header value = %s", clientIPHeader);
+
+        std::string tmpClientIPHeader(clientIPHeader);
+        size_t size = tmpClientIPHeader.size();
+        size_t multipleValues = 0, start = 0;
+        multipleValues = tmpClientIPHeader.find(',', start);
+        if (multipleValues == std::string::npos) {
+            *clientIP = strdup(tmpClientIPHeader.c_str());
+        } else {
+            *clientIP = strdup(tmpClientIPHeader.substr(start, multipleValues).c_str());
+        }
+        am_web_log_debug("am_web_get_client_ip: "
+            "processed client IP = %s", *clientIP);
+        return AM_SUCCESS;
+    } else {
+        return AM_INVALID_ARGUMENT;
+    }
+
+}
+
+/**
+ * Returns client hostname value from client hostname header.
+ * If the clientHostname contains comma separated values,
+ * then first value is taken into consideration.
+ */
+extern "C" AM_WEB_EXPORT am_status_t
+am_web_get_client_hostname(const char* clientHostnameHeader,
+                           char** clientHostname)
+{
+    if (clientHostnameHeader != NULL && 
+        clientHostnameHeader[0] != '\0') {
+        am_web_log_debug("am_web_get_client_hostname: "
+                "client hostname header value = %s", clientHostnameHeader);
+
+        std::string tmpClientHostnameHeader(clientHostnameHeader);
+        std::string tmpClientHostname;
+        size_t size = tmpClientHostnameHeader.size();
+        size_t multipleValues = 0, start = 0, colonSeparator = 0;
+        //check multiple hostname values present
+        multipleValues = tmpClientHostnameHeader.find(',', start);
+        if (multipleValues == std::string::npos) {
+            tmpClientHostname = tmpClientHostnameHeader;
+        } else {
+            tmpClientHostname = tmpClientHostnameHeader.substr(start, multipleValues);
+        }
+
+        am_web_log_debug("am_web_get_client_hostname: "
+                "tmp client hostname value = %s", tmpClientHostname.c_str());
+        //check hostname contains :port value
+        colonSeparator = tmpClientHostname.find(':', start);
+        if (colonSeparator == std::string::npos) {
+            *clientHostname = strdup(tmpClientHostname.c_str());;
+        } else {
+            *clientHostname = strdup(tmpClientHostname.substr(start, colonSeparator).c_str());
+        }
+        am_web_log_debug("am_web_get_client_hostname: "
+                "processed client hostname value = %s",
+                *clientHostname);
+
+        return AM_SUCCESS;
+    } else {
+        return AM_INVALID_ARGUMENT;
+    }
+
+}
+
+/**
+ * Sets client ip (and client hostname) in environment map
+ * which then sent as part of policy request.
+ */
+extern "C" AM_WEB_EXPORT void 
+am_web_set_host_ip_in_env_map(const char *client_ip,
+                              const char *client_hostname,
+                              const am_map_t env_parameter_map,
+                              void* agent_config)
+{
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
+    PRStatus prStatus;
+    PRNetAddr address;
+    PRHostEnt hostEntry;
+    char buffer[PR_NETDB_BUF_SIZE];
+
+    Log::log(boot_info.log_module, Log::LOG_DEBUG,
+             "am_web_set_host_ip_in_env_map: map_insert: "
+             "client_ip=%s", client_ip);
+    am_map_insert(env_parameter_map, requestIp, client_ip, AM_TRUE);
+
+    //check if client_hostname value is available. Else
+    // try to get client host name based get.client.host.name property value.
+    if( client_hostname != NULL && client_hostname[0] != '\0') {
+        Log::log(boot_info.log_module, Log::LOG_DEBUG,
+             "am_web_set_host_ip_in_env_map: map_insert: "
+             "client_hostname=%s", client_hostname);
+        am_map_insert(env_parameter_map, 
+            requestDnsName,
+            client_hostname, 
+            AM_FALSE);
+
+    } else if ((*agentConfigPtr)->getClientHostname) {
+        prStatus = PR_StringToNetAddr(client_ip, &address);
+        if (PR_SUCCESS == prStatus) {
+            prStatus = PR_GetHostByAddr(
+                &address, buffer, sizeof(buffer), &hostEntry);
+
+            if (PR_SUCCESS == prStatus) {
+                // this function will log info about the client's hostnames
+                // so no need to do it here.
+                getFullQualifiedHostName(
+                    env_parameter_map, &address, &hostEntry);
+            }
+        }
+        else {
+            am_web_log_warning("am_web_set_host_ip_in_env_map: map_insert: "
+                "could not get client's hostname for policy. "
+                "Error %s.",
+                PR_ErrorToString(PR_GetError(), PR_LANGUAGE_I_DEFAULT));
+        }
+    }
+
 }
 
 #if defined(WINNT)

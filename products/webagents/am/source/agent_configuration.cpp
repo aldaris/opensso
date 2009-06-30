@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.cpp,v 1.17 2008-10-09 21:25:34 robertis Exp $
+ * $Id: agent_configuration.cpp,v 1.18 2009-06-30 01:01:37 subbae Exp $
  *
  * Abstract:
  * AgentConfiguration: This class creates/delets the agent configuration 
@@ -930,6 +930,20 @@ am_status_t AgentConfiguration::populateAgentProperties()
         this->doRemoteLog = AM_TRUE;
     }
 
+    // get client ip header 
+    if (AM_SUCCESS == status) {
+        parameter = AM_WEB_CLIENT_IP_HEADER_PROPERTY;
+        status = am_properties_get_with_default(this->properties, parameter,
+                     NULL, &this->clientIPHeader);
+    }
+
+    // get client hostname header 
+    if (AM_SUCCESS == status) {
+        parameter = AM_WEB_CLIENT_HOSTNAME_HEADER_PROPERTY;
+        status = am_properties_get_with_default(this->properties, parameter,
+                     NULL, &this->clientHostnameHeader);
+    }
+
     std::string notURL_str;
     const char* normURL = NULL;
     
@@ -1313,7 +1327,10 @@ void AgentConfiguration::cleanup_properties()
         }
 
     this->iis6_replaypasswd_key = NULL;
-        this->owa_enable_session_timeout_url = NULL;
+    this->owa_enable_session_timeout_url = NULL;
+
+    this->clientIPHeader = NULL;
+    this->clientHostnameHeader = NULL;
 
     if (this->postdatapreserve_enable) {
         if(this->postcache_handle != NULL){

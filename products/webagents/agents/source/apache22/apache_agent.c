@@ -622,6 +622,95 @@ set_user(void **args, const char *user) {
     return sts;
 }
 
+static int
+get_apache_method_num(am_web_req_method_t am_num) {
+    int apache_num = -1;
+    switch (am_num) {
+        case AM_WEB_REQUEST_GET:
+            apache_num = M_GET;
+            break;
+        case AM_WEB_REQUEST_POST:
+            apache_num = M_POST;
+            break;
+        case AM_WEB_REQUEST_PUT:
+            apache_num = M_PUT;
+            break;
+        case AM_WEB_REQUEST_DELETE:
+            apache_num = M_DELETE;
+            break;
+        case AM_WEB_REQUEST_TRACE:
+            apache_num = M_TRACE;
+            break;
+        case AM_WEB_REQUEST_OPTIONS:
+            apache_num = M_OPTIONS;
+            break;
+        case AM_WEB_REQUEST_CONNECT:
+            apache_num = M_CONNECT;
+            break;
+        case AM_WEB_REQUEST_COPY:
+            apache_num = M_COPY;
+            break;
+        case AM_WEB_REQUEST_INVALID:
+            apache_num = M_INVALID;
+            break;
+        case AM_WEB_REQUEST_LOCK:
+            apache_num = M_LOCK;
+            break;
+        case AM_WEB_REQUEST_UNLOCK:
+            apache_num = M_UNLOCK;
+            break;
+        case AM_WEB_REQUEST_MOVE:
+            apache_num = M_MOVE;
+            break;
+        case AM_WEB_REQUEST_MKCOL:
+            apache_num = M_MKCOL;
+            break;
+        case AM_WEB_REQUEST_PATCH:
+            apache_num = M_PATCH;
+            break;
+        case AM_WEB_REQUEST_PROPFIND:
+            apache_num = M_PROPFIND;
+            break;
+        case AM_WEB_REQUEST_PROPPATCH:
+            apache_num = M_PROPPATCH;
+            break;
+        case AM_WEB_REQUEST_VERSION_CONTROL:
+            apache_num = M_VERSION_CONTROL;
+            break;
+        case AM_WEB_REQUEST_CHECKOUT:
+            apache_num = M_CHECKOUT;
+            break;
+        case AM_WEB_REQUEST_UNCHECKOUT:
+            apache_num = M_UNCHECKOUT;
+            break;
+        case AM_WEB_REQUEST_CHECKIN:
+            apache_num = M_CHECKIN;
+            break;
+        case AM_WEB_REQUEST_UPDATE:
+            apache_num = M_UPDATE;
+            break;
+        case AM_WEB_REQUEST_LABEL:
+            apache_num = M_LABEL;
+            break;
+        case AM_WEB_REQUEST_REPORT:
+            apache_num = M_REPORT;
+            break;
+        case AM_WEB_REQUEST_MKWORKSPACE:
+            apache_num = M_MKWORKSPACE;
+            break;
+        case AM_WEB_REQUEST_MKACTIVITY:
+            apache_num = M_MKACTIVITY;
+            break;
+        case AM_WEB_REQUEST_BASELINE_CONTROL:
+            apache_num = M_BASELINE_CONTROL;
+            break;
+        case AM_WEB_REQUEST_MERGE:
+            apache_num = M_MERGE;
+            break;
+    }
+    return apache_num;
+}
+
 static am_web_req_method_t
 get_method_num(request_rec *r) {
     const char *thisfunc = "get_method_num()";
@@ -752,94 +841,6 @@ void init_at_request() {
     }
 }
 
-static int
-get_apache_method_num(am_web_req_method_t am_num) {
-    int apache_num = -1;
-    switch (am_num) {
-        case AM_WEB_REQUEST_GET:
-            apache_num = M_GET;
-            break;
-        case AM_WEB_REQUEST_POST:
-            apache_num = M_POST;
-            break;
-        case AM_WEB_REQUEST_PUT:
-            apache_num = M_PUT;
-            break;
-        case AM_WEB_REQUEST_DELETE:
-            apache_num = M_DELETE;
-            break;
-        case AM_WEB_REQUEST_TRACE:
-            apache_num = M_TRACE;
-            break;
-        case AM_WEB_REQUEST_OPTIONS:
-            apache_num = M_OPTIONS;
-            break;
-        case AM_WEB_REQUEST_CONNECT:
-            apache_num = M_CONNECT;
-            break;
-        case AM_WEB_REQUEST_COPY:
-            apache_num = M_COPY;
-            break;
-        case AM_WEB_REQUEST_INVALID:
-            apache_num = M_INVALID;
-            break;
-        case AM_WEB_REQUEST_LOCK:
-            apache_num = M_LOCK;
-            break;
-        case AM_WEB_REQUEST_UNLOCK:
-            apache_num = M_UNLOCK;
-            break;
-        case AM_WEB_REQUEST_MOVE:
-            apache_num = M_MOVE;
-            break;
-        case AM_WEB_REQUEST_MKCOL:
-            apache_num = M_MKCOL;
-            break;
-        case AM_WEB_REQUEST_PATCH:
-            apache_num = M_PATCH;
-            break;
-        case AM_WEB_REQUEST_PROPFIND:
-            apache_num = M_PROPFIND;
-            break;
-        case AM_WEB_REQUEST_PROPPATCH:
-            apache_num = M_PROPPATCH;
-            break;
-        case AM_WEB_REQUEST_VERSION_CONTROL:
-            apache_num = M_VERSION_CONTROL;
-            break;
-        case AM_WEB_REQUEST_CHECKOUT:
-            apache_num = M_CHECKOUT;
-            break;
-        case AM_WEB_REQUEST_UNCHECKOUT:
-            apache_num = M_UNCHECKOUT;
-            break;
-        case AM_WEB_REQUEST_CHECKIN:
-            apache_num = M_CHECKIN;
-            break;
-        case AM_WEB_REQUEST_UPDATE:
-            apache_num = M_UPDATE;
-            break;
-        case AM_WEB_REQUEST_LABEL:
-            apache_num = M_LABEL;
-            break;
-        case AM_WEB_REQUEST_REPORT:
-            apache_num = M_REPORT;
-            break;
-        case AM_WEB_REQUEST_MKWORKSPACE:
-            apache_num = M_MKWORKSPACE;
-            break;
-        case AM_WEB_REQUEST_MKACTIVITY:
-            apache_num = M_MKACTIVITY;
-            break;
-        case AM_WEB_REQUEST_BASELINE_CONTROL:
-            apache_num = M_BASELINE_CONTROL;
-            break;
-        case AM_WEB_REQUEST_MERGE:
-            apache_num = M_MERGE;
-            break;
-    }
-    return apache_num;
-}
 
 /**
  * Deny the access in case the agent is found uninitialized
@@ -913,11 +914,61 @@ int dsame_check_access(request_rec *r) {
                 "request method, or client IP.", thisfunc);
         ret = HTTP_INTERNAL_SERVER_ERROR;
     } else {
+        // Check if client ip header property is set
+        const char* client_ip_header_name =
+            am_web_get_client_ip_header_name(agent_config);
+
+        // Check if client hostname header property is set
+        const char* client_hostname_header_name =
+            am_web_get_client_hostname_header_name(agent_config);
+        char* ip_header = NULL;
+        char* hostname_header = NULL;
+        char* client_ip_from_ip_header = NULL;
+        char* client_hostname_from_hostname_header = NULL;
+
+        // If client ip header property is set, then try to
+        // retrieve header value.
+        if(client_ip_header_name != NULL && client_ip_header_name[0] != '\0') {
+            ip_header = (char *)apr_table_get(r->headers_in, client_ip_header_name);
+
+            // Usually client ip header value is: client, proxy1, proxy2....
+            // Process client ip header value to get the correct value. 
+            am_web_get_client_ip(ip_header,
+                &client_ip_from_ip_header);
+        }
+
+        // If client hostname header property is set, then try to
+        // retrieve header value.
+        if(client_hostname_header_name != NULL
+            && client_hostname_header_name[0] != '\0') {
+            hostname_header = (char *)apr_table_get(r->headers_in,
+                client_hostname_header_name);
+
+            // Usually client hostname header value is: client, proxy1, proxy2....
+            // Process client hostname header value to get the correct value.
+            am_web_get_client_hostname(hostname_header,
+                &client_hostname_from_hostname_header);
+        }
+
+        // If client IP value is present from above processing, then
+        // set it to req_param. Else set from request structure.
+        if(client_ip_from_ip_header != NULL && client_ip_from_ip_header[0] != '\0') {
+            req_params.client_ip = client_ip_from_ip_header;
+        } else {
+            req_params.client_ip = (char *)r->connection->remote_ip;
+        }
+
+        // If client hostname value is present from above processing, then
+        // set it to req_param.
+        if(client_hostname_from_hostname_header != NULL &&
+            client_hostname_from_hostname_header[0] != '\0') {
+            req_params.client_hostname = client_hostname_from_hostname_header;
+        }
+
         req_params.url = url;
         req_params.query = r->args;
         req_params.method = method;
         req_params.path_info = r->path_info;
-        req_params.client_ip = (char *) r->connection->remote_ip;
         req_params.cookie_header_val =
                 (char *) apr_table_get(r->headers_in, "Cookie");
 
@@ -941,6 +992,8 @@ int dsame_check_access(request_rec *r) {
                     thisfunc, ret);
             ret = HTTP_INTERNAL_SERVER_ERROR;
         }
+        am_web_free_memory(client_ip_from_ip_header);
+        am_web_free_memory(client_hostname_from_hostname_header);
     }
 
     am_web_delete_agent_configuration(agent_config);
