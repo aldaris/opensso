@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetSiteFailoverURLs.java,v 1.4 2008-09-19 23:37:15 beomsuk Exp $
+ * $Id: SetSiteFailoverURLs.java,v 1.5 2009-06-30 01:07:38 veiming Exp $
  *
  */
 
@@ -80,7 +80,7 @@ public class SetSiteFailoverURLs extends ServerConfigBase {
                     (Object[])params));
             } else {
                 outputWriter.printlnMessage(MessageFormat.format(
-                    getResourceString("set-site-secodary-urls-no-exists"),
+                    getResourceString("set-site-secondary-urls-no-exists"),
                     (Object[])params));
             }
             
