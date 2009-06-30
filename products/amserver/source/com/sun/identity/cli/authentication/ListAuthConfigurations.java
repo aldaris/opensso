@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListAuthConfigurations.java,v 1.3 2008-12-16 06:47:01 veiming Exp $
+ * $Id: ListAuthConfigurations.java,v 1.4 2009-06-30 17:43:27 veiming Exp $
  *
  */
 
@@ -38,7 +38,9 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.log.Level;
+import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -50,6 +52,7 @@ public class ListAuthConfigurations extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if request cannot be processed.
      */
+    @Override
     public void handleRequest(RequestContext rc)
         throws CLIException {
         super.handleRequest(rc);
@@ -61,6 +64,20 @@ public class ListAuthConfigurations extends AuthenticatedCommand {
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
             "ATTEMPT_LIST_AUTH_CONFIGURATIONS", params);
         try {
+            //this throws exception if realm does not exist
+            try {
+                new OrganizationConfigManager(adminSSOToken, realm);
+            } catch (SMSException e) {
+                debugError(
+                    "ListAuthConfigurations.handleRequest realm did not exist",
+                    null);
+                writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                    "FAILED_LIST_AUTH_CONFIGURATIONS", params);
+                throw new CLIException(MessageFormat.format(
+                    getResourceString("realm-does-not-exist"),
+                    (Object[])params),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
             Set configurations = AMAuthConfigUtils.getAllNamedConfig(
                 realm, adminSSOToken);
             if ((configurations != null) && !configurations.isEmpty()) {
