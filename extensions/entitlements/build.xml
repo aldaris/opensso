@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.70 2009-06-29 14:58:00 veiming Exp $
+  $Id: build.xml,v 1.71 2009-06-30 17:47:37 veiming Exp $
 
 -->
 
@@ -86,6 +86,8 @@
         <copy todir="${entitlements.built.tools.dir}/classes" overwrite="true">
             <fileset dir="${entitlements.classes.dir}" includes="**/*.class" />
         </copy>
+        <copy todir="${entitlements.built.tools.dir}/lib"
+            file="${entitlements.build.lib.local.dir}/json.jar" />
         <copy todir="${entitlements.built.tools.dir}/resources"
             overwrite="true">
             <fileset dir="${entitlements.res.i18n.dir}"

@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.4 2009-06-09 05:29:15 arviranga Exp $
+ * $Id: PolicyCache.java,v 1.5 2009-06-30 17:47:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
-import com.iplanet.am.util.Cache;
 import com.sun.identity.entitlement.Privilege;
 import java.util.HashMap;
 import com.sun.identity.entitlement.ReferralPrivilege;

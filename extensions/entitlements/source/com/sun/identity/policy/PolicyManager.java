@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.21 2009-06-23 07:00:17 veiming Exp $
+ * $Id: PolicyManager.java,v 1.22 2009-06-30 17:47:38 veiming Exp $
  *
  */
 
@@ -255,17 +255,17 @@ public final class PolicyManager {
         this.token = token;
         try {
             scm = new ServiceConfigManager(POLICY_SERVICE_NAME, token);
+
+            // Check name i.e., org name
+            org = verifyOrgName(name);
+            givenOrgName = name;
+
+            rm = new ResourceManager(org);
         } catch (SMSException se) {
             debug.error("In constructor for PolicyManager with orgName" +
                 "Unable to get service config manager", se);
             throw (new PolicyException(se));
         }
-
-        // Check name i.e., org name
-        org = verifyOrgName(name);
-        givenOrgName = name;
-        
-        rm = new ResourceManager(token, org, scm);
             
         if (debug.messageEnabled()) {
             debug.message("Policy Manager constructed with SSO token " +

@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.6 2009-06-09 09:44:27 veiming Exp $
+ * $Id: IndexCache.java,v 1.7 2009-06-30 17:47:37 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
-import com.iplanet.am.util.Cache;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import java.util.HashSet;
