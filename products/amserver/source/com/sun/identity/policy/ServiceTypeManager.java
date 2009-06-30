@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceTypeManager.java,v 1.5 2009-02-13 17:18:37 dillidorai Exp $
+ * $Id: ServiceTypeManager.java,v 1.6 2009-06-30 17:46:02 veiming Exp $
  *
  */
 
@@ -61,6 +61,10 @@ public class ServiceTypeManager {
 
     // static variables
     private static Random random = new Random();
+
+    private static boolean ssoadm = Boolean.valueOf(
+        System.getProperty("ssoadm", "false")).booleanValue();
+
 
     /**
      * Returns an instance of <code>ServiceTypeManager</code>
@@ -198,7 +202,7 @@ public class ServiceTypeManager {
      * configured in serverconfig.xml 
      */
     static SSOToken getSSOToken() throws SSOException{
-        if (!SystemProperties.isServerMode() && (token != null)) {
+        if (!SystemProperties.isServerMode() && (token != null) && !ssoadm) {
             return token;
         }
 

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.24 2009-01-28 05:34:43 ww203982 Exp $
+   $Id: build-tools.xml,v 1.25 2009-06-30 17:46:01 veiming Exp $
 
 -->
 
@@ -163,7 +163,7 @@
         <copy todir="${amadm.lib.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${extlib.dir}"
-                includes="j2ee.jar, xercesImpl.jar, mail.jar, activation.jar, db.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, webservices-api.jar, webservices-rt.jar, webservices-tools.jar, OpenDS.jar"/>
+                includes="j2ee.jar, xercesImpl.jar, mail.jar, activation.jar, db.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, webservices-api.jar, webservices-rt.jar, webservices-tools.jar, OpenDS.jar, jdmkrt.jar, jdmktk.jar"/>
             <fileset dir="${sharedlib.dist.dir}"
                 includes="opensso-sharedlib.jar"/>
             <fileset dir="${amserver.dist.dir}"

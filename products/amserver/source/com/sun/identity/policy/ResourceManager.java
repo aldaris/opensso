@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceManager.java,v 1.6 2009-02-14 00:53:25 dillidorai Exp $
+ * $Id: ResourceManager.java,v 1.7 2009-06-30 17:46:02 veiming Exp $
  *
  */
 
@@ -43,6 +43,8 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.sm.*;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.am.util.Cache;
+import com.sun.identity.security.AdminTokenAction;
+import java.security.AccessController;
 
 
 /**
@@ -90,13 +92,14 @@ public class ResourceManager {
     /**
      * this constructor is called by PolicyManager
      */
-    ResourceManager(
-        SSOToken token, String orgName, ServiceConfigManager scm)
-        throws SSOException {
+    ResourceManager(String orgName)
+        throws SSOException, SMSException {
             
-        this.token = token;
+        this.token = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
         org = orgName;
-        this.scm = scm;
+        this.scm = new ServiceConfigManager(PolicyManager.POLICY_SERVICE_NAME,
+            token);
         DN orgDN = new DN(org);
         DN baseDN = new DN(ServiceManager.getBaseDN());
         stm = ServiceTypeManager.getServiceTypeManager();
@@ -477,8 +480,9 @@ public class ResourceManager {
                         PolicyManager.RESOURCES_POLICY, scm, org);
                 } else {
                     //rConfig = scm.getOrganizationConfig(org, null);
-                    ServiceConfig oConfig = scm.getOrganizationConfig(org,null);
-                rConfig = (oConfig == null) ? null :
+                    ServiceConfig oConfig = scm.getOrganizationConfig(org,
+                        null);
+                    rConfig = (oConfig == null) ? null :
                         oConfig.getSubConfig(PolicyManager.RESOURCES_POLICY);
                 }
             } catch (SMSException e) {
