@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.51 2009-06-27 07:10:25 kevinserwin Exp $
+   $Id: build-war.xml,v 1.52 2009-07-01 01:11:43 veiming Exp $
 
 -->
 
@@ -42,12 +42,8 @@
     <property name="war.webinf.classes.dir" location="${openfm.built.war.dir}/package/WEB-INF/classes"/>
     <property name="war.packageweb.dir" location="${openfm.built.war.dir}/packageweb"/>
 
-<!--    <target name="all">
+    <target name="all">
         <antcall target="war" inheritRefs="true"/>
-    </target>
--->
-    <target name="all" depends="war">
-       <ant antfile="${entitlements.base.dir}/build.xml" inheritRefs="true" target="nightly" />        
     </target>
 
     <target name="war" depends="preparebuild">
@@ -441,7 +437,7 @@
                  excludes="**/CVS" />
         </copy>
 
-        <war destfile="${fm.dist.dir}/opensso-no-entitlements.war" webxml="${war.packageweb.dir}/web.xml">
+        <war destfile="${fm.dist.dir}/opensso.war" webxml="${war.packageweb.dir}/web.xml">
             <manifest>
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
@@ -450,10 +446,28 @@
         </war>
         <move file="${war.packageweb.dir}/web.xml" tofile="${war.package.dir}/WEB-INF/web.xml" />
         <delete dir="${war.packageweb.dir}" />
-        <checksum file="${fm.dist.dir}/opensso-no-entitlements.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${fm.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
+        <antcall target="entitlement" />
 
     </target>
 
+    <target name="entitlement" if="build.nightly">
+        <ant antfile="${entitlements.base.dir}/build.xml"
+            target="clean" />
+        <ant antfile="${entitlements.base.dir}/build.xml"
+            target="clean-extlib" />
+        <ant antfile="${entitlements.base.dir}/build.xml" target="nightly" />
+        <copy file="${entitlements.base.dir}/built/dist/entitlement.war"
+            tofile="${fm.dist.dir}/opensso.war" overwrite="true" />
+        <delete file="${fm.dist.dir}/opensso.war.sha" />
+        <checksum file="${fm.dist.dir}/opensso.war" algorithm="SHA"
+            fileext=".sha" />
+        <copy file="${entitlements.base.dir}/built/dist/ssoAdminTools.zip" 
+            tofile="${fm.dist.dir}/ssoAdminTools.zip" overwrite="true" />
+        <delete file="${fm.dist.dir}/ssoAdminTools.zip.sha" />
+        <checksum file="${fm.dist.dir}/ssoAdminTools.zip" algorithm="SHA"
+            fileext=".sha" />
+    </target>
 
     <target name="preparebuild">
         <mkdir dir="${fm.dist.dir}"/>

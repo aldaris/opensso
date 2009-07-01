@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.59 2009-06-27 15:31:03 kevinserwin Exp $
+   $Id: build.xml,v 1.60 2009-07-01 01:11:43 veiming Exp $
 
 -->
 
@@ -396,7 +396,7 @@
         <delete file="${openfm.extlib.dir}/amSessionTools.zip"/>
         <delete file="${openfm.extlib.dir}/amConfiguratorTools.zip"/>
         <delete file="${openfm.extlib.dir}/ssoDiagnosticTools.zip"/>
-        <delete file="${openfm.extlib.dir}/opensso.war"/>
+        <delete file="${openfm.extlib.dir}/opensso.jar"/>
         <delete file="${openfm.extlib.dir}/console.jar"/>
     </target>
   

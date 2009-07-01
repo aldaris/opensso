@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.48 2009-06-23 20:29:24 kevinserwin Exp $
+   $Id: build.xml,v 1.49 2009-07-01 01:11:42 veiming Exp $
 
 -->
 
@@ -72,6 +72,7 @@
     </target>    
     
     <target name="nightly">
+        <property name="build.nightly" value="true"/>
         <delete dir="${prd.nightly.dist.dir}" />
         <antcall target="server-nightly" />
         <antcall target="agents-nightly" />

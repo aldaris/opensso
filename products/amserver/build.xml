@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.81 2009-06-24 05:44:58 kevinserwin Exp $
+   $Id: build.xml,v 1.82 2009-07-01 01:11:42 veiming Exp $
 
 -->
 
@@ -212,8 +212,7 @@
         
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
                destdir="${amserver.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
-               debug="${build.debug}" debuglevel="${build.debuglevel}"
-               excludes="${amserver_one_dot_five_targets}">
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${amserver.src.dir}"/>
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
@@ -229,15 +228,6 @@
             <arg value="com.sun.identity.cli.definition.AccessManager"/>
         </java>
         <antcall target="jaxrpc" />
-        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${amserver.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
-               debug="${build.debug}" debuglevel="${build.debuglevel}"
-               includes="${amserver_one_dot_five_targets}">
-            <src path="${amserver.src.dir}"/>
-            <classpath refid="build.class.path"/>
-            <exclude name="**/package-info.java"/>
-            <exclude name="**/com/sun/identity/diagnostic/**"/>
-        </javac>
         
         <filter token="DATESTAMP" value="${war.time.stamp}"/>        
         <filter token="VERSION" value="${version.set}" />

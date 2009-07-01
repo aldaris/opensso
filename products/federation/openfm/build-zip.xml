@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.36 2009-06-27 07:10:25 kevinserwin Exp $
+   $Id: build-zip.xml,v 1.37 2009-07-01 01:11:43 veiming Exp $
 
 -->
 
@@ -64,8 +64,9 @@
         <copy todir="${zip.temp.dir}/integrations">
              <fileset dir="${openfm.dir}/integrations" includes="**/*"/>
         </copy>
-        <copy file="${entitlements.base.dir}/built/dist/opensso.war"
+        <copy file="${fm.dist.dir}/opensso.war"
             tofile="${zip.temp.dir}/deployable-war/opensso.war" />
+
 
         <mkdir dir="${zip.temp.dir}/fedlet" />
         <copy file="${fm.dist.dir}/Fedlet-unconfigured.zip"
