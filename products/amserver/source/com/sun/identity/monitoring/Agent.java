@@ -22,16 +22,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Agent.java,v 1.1 2009-06-19 02:23:15 bigfatrat Exp $
+ * $Id: Agent.java,v 1.2 2009-07-01 05:52:47 bigfatrat Exp $
  *
  */
 
 package com.sun.identity.monitoring;
 
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
 import javax.management.JMException;
+import javax.management.JMRuntimeException;
 import javax.management.ObjectName;
+import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.RuntimeOperationsException;
 import javax.management.remote.*;
 
 import com.sun.jdmk.comm.HtmlAdaptorServer;
@@ -43,6 +50,8 @@ import com.sun.management.snmp.SnmpStatusException;
 //import java.rmi.RemoteException;
 //import java.rmi.server.UnicastRemoteObject;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -158,6 +167,23 @@ public class Agent {
 
     protected static void stopRMI() {
         if (monitoringEnabled && monRmiPortEnabled && (cs != null)) {
+            if ((server != null) && (mibObjName != null)) {
+                try {
+                    server.unregisterMBean(mibObjName);
+                } catch (InstanceNotFoundException ex) {
+                    if (debug.warningEnabled()) {
+                        debug.warning(
+                            "Agent.stopRMI: error unregistering OpenSSO:" +
+                                ex.getMessage());
+                    }
+                } catch (MBeanRegistrationException ex) {
+                    if (debug.warningEnabled()) {
+                        debug.warning(
+                            "Agent.stopRMI: error unregistering OpenSSO:" +
+                                ex.getMessage());
+                    }
+                }
+            }
             try {
                 cs.stop();
             } catch (Exception ex) {
@@ -414,7 +440,27 @@ public class Agent {
     }
 
 
-    public static void startAgent (SSOServerMonConfig monConfig) {
+    /**
+     *  This method starts up the monitoring agent from the
+     *  common/ConfigMonitoring module (load-on-startup or at the
+     *  end of AMSetupServlet/configuration).  Since web-app startup
+     *  is sensitive to exceptions in load-on-startup stuff, this has
+     *  quite a few try/catch blocks.
+     * 
+     *  If any of HTML, SNMP, or RMI adaptors has a problem getting created
+     *  or started, attempts to create/start the others will be made; If
+     *  at least one adaptor is started, monitoring will be "active"
+     *  (Agent.isRunning() will return true).
+     *
+     *  @param monConfig SSOServerMonConfig structure of OpenSSO configuration
+     *  @return 0 (zero) if at least one of HTML/SNMP/RMI adaptors started up;
+     *          -1 if monitoring configured as disabled
+     *          -2 if MBeanServer problem encountered
+     *          -3 if RMI connector problem
+     *             (MIB not registered with MBeanServer)
+     *          -4 if problem creating/registering MIB
+     */
+    public static int startAgent (SSOServerMonConfig monConfig) {
         monHtmlPort = monConfig.htmlPort;
         monSnmpPort = monConfig.snmpPort;
         monRmiPort = monConfig.rmiPort;
@@ -423,7 +469,14 @@ public class Agent {
         monSnmpPortEnabled = monConfig.monSnmpPortEnabled;
         monRmiPortEnabled = monConfig.monRmiPortEnabled;
         String classMethod = "Agent.startAgent:";
+        // OpenSSO server port comes from WebtopNaming.siteAndServerInfo
+        String serverPort = agentSvrInfo.serverPort;
 
+        /*
+         *  there are a lot of exception checks in this method, as
+         *  it's invoked from a load-on-startup servlet.  if it
+         *  chokes in here, OpenSSO won't start up.
+         */
         if (debug.messageEnabled()) {
             debug.message(classMethod + "entry:\n" +
                 "    htmlPort = " + monHtmlPort + "\n" +
@@ -432,12 +485,55 @@ public class Agent {
                 "    monEna = " + monitoringEnabled + "\n" +
                 "    htmlEna = " + monHtmlPortEnabled + "\n" +
                 "    snmpEna = " + monSnmpPortEnabled + "\n" +
-                "    rmiEna = " + monRmiPortEnabled + "\n");
+                "    rmiEna = " + monRmiPortEnabled + "\n" +
+                "    serverPort = " + serverPort + "\n"
+                );
         }
 
         if (!monitoringEnabled) {
             debug.warning(classMethod + "Monitoring configured as disabled.");
-            return;
+            return -1;
+        }
+
+        /*
+         *  verify that the HTML, SNMP and RMI ports aren't the same as
+         *  the OpenSSO server port.  if HTML or SNMP conflict with it,
+         *  then they'll be disabled (warning message).  if the RMI port
+         *  conflicts, then all of monitoring is disabled.  there might
+         *  be other ports that should be checked.
+         */
+        try {
+            int sport = Integer.parseInt(serverPort);
+
+            if (monRmiPort == sport) {
+                debug.error(classMethod +
+                    "RMI port conflicts with OpenSSO server port (" +
+                    sport + "); Monitoring disabled.");
+                return -3;
+            }
+            if (monHtmlPort == sport) {
+                monHtmlPortEnabled = false;
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "HTML port conflicts with OpenSSO server port (" +
+                        sport + "); Monitoring HTML port disabled.");
+                }
+            }
+            if (monSnmpPort == sport) {
+                monSnmpPortEnabled = false;
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "SNMP port conflicts with OpenSSO server port (" +
+                        sport + "); Monitoring SNMP port disabled.");
+                }
+            }
+        } catch (NumberFormatException nfe) {
+            /*
+             * odd.  if serverPort's not a valid int, then there'll be
+             * other problems
+             */
+            debug.error(classMethod + "Server port (" + serverPort + 
+            " is invalid: " + nfe.getMessage());
         }
 
         if (debug.messageEnabled()) {
@@ -451,28 +547,138 @@ public class Agent {
                 ", enabled = " + monRmiPortEnabled + "\n");
         }
 
+        /*
+         *  if OpenSSO's deployed on a container that has MBeanServer(s),
+         *  will the findMBeanServer(null) "find" those?  if so,
+         *  is using the first one the right thing to do?
+         */
+        ArrayList servers = null;
         try {
+            servers = MBeanServerFactory.findMBeanServer(null);
+        } catch (SecurityException ex) {
             /*
-             *  if OpenSSO's deployed on a container that has MBeanServer(s),
-             *  will the findMBeanServer(null) "find" those?  if so,
-             *  is using the first one the right thing to do?
+             * if can't find one, try creating one below, although
+             * if there's no findMBeanServer permission, it's unlikely
+             * that there's a createMBeanServer permission...
              */
-            ArrayList servers = MBeanServerFactory.findMBeanServer(null);
-
-            if (debug.messageEnabled()) {
-                debug.message(classMethod + "MBeanServer list is not empty: " +
-                   ((servers != null) && !servers.isEmpty()));
+            if (debug.warningEnabled()) {
+                debug.warning(classMethod +
+                    "findMBeanServer permission error: " + ex.getMessage());
             }
+        }
 
-            if ((servers != null) && !servers.isEmpty()) {
-                server = (MBeanServer)servers.get(0);
-            } else {
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "MBeanServer list is not empty: " +
+                ((servers != null) && !servers.isEmpty()));
+        }
+
+        if ((servers != null) && !servers.isEmpty()) {
+            server = (MBeanServer)servers.get(0);
+        } else {
+            try {
                 server = MBeanServerFactory.createMBeanServer();
+            } catch (SecurityException ex) {
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "createMBeanServer permission error: " +
+                        ex.getMessage());
+                }
+                return -2;
+            } catch (JMRuntimeException ex) {
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "createMBeanServer JMRuntime error: " +
+                        ex.getMessage());
+                }
+                return -2;
+            } catch (ClassCastException ex) {
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "createMBeanServer ClassCast error: " +
+                        ex.getMessage());
+                }
+                return -2;
             }
-            String domain = server.getDefaultDomain();
+        }
+        if (server == null) {
+            if (debug.warningEnabled()) {
+                debug.warning(classMethod + "no MBeanServer");
+            }
+            return (-2);
+        }
 
-            if (monHtmlPortEnabled) {
-                // Create and start the HTML adaptor.
+        String domain = server.getDefaultDomain();  // throws no exception
+
+
+        // Create the MIB II (RFC 1213), add to the MBean server.
+        try {
+            mibObjName =
+                new ObjectName("snmp:class=SUN_OPENSSO_SERVER_MIB");
+            if (debug.messageEnabled()) {
+                debug.message(classMethod +
+                    "Adding SUN_OPENSSO_SERVER_MIB to MBean server " +
+                    "with name '" + mibObjName + "'");
+            }
+        } catch (MalformedObjectNameException ex) {
+            // from ObjectName
+            if (debug.warningEnabled()) {
+                debug.warning(classMethod +
+                    "Error getting ObjectName for the MIB: " +
+                    ex.getMessage());
+            }
+            return -4;
+        }
+
+        // Create an instance of the customized MIB
+        mib2 = new SUN_OPENSSO_SERVER_MIB();
+
+        try {
+            server.registerMBean(mib2, mibObjName);
+        } catch (RuntimeOperationsException ex) {
+            // from registerMBean
+            if (debug.warningEnabled()) {
+                debug.warning(classMethod +
+                    "Null parameter or no object name for MIB specified: " +
+                    ex.getMessage());
+            }
+            return -4;
+        } catch (InstanceAlreadyExistsException ex) {
+            // from registerMBean
+            if (debug.warningEnabled()) {
+                debug.warning(classMethod +
+                    "Error registering MIB MBean: " +
+                    ex.getMessage());
+            }
+            // probably can just continue
+        } catch (MBeanRegistrationException ex) {
+            // from registerMBean
+            if (debug.warningEnabled()) {
+                debug.warning(classMethod +
+                    "Error registering MIB MBean: " +
+                    ex.getMessage());
+            }
+            return -4;
+        } catch (NotCompliantMBeanException ex) {
+            // from registerMBean
+            if (debug.warningEnabled()) {
+                debug.warning(classMethod +
+                    "Error registering MIB MBean: " +
+                    ex.getMessage());
+            }
+            return -4;
+        }
+
+        /*
+         *  now that we have the MBeanServer, see if the HTML,
+         *  SNMP and RMI adaptors specified will start up
+         */
+        boolean monHTMLStarted = false;
+        boolean monSNMPStarted = false;
+        boolean monRMIStarted = false;
+        // HTML port adaptor
+        if (monHtmlPortEnabled) {
+            // Create and start the HTML adaptor.
+            try {
                 htmlObjName = new ObjectName(domain +
                     ":class=HtmlAdaptorServer,protocol=html,port=" +
                     monHtmlPort);
@@ -485,109 +691,205 @@ public class Agent {
                 }
 
                 HtmlAdaptorServer htmlAdaptor =
-                    new HtmlAdaptorServer(monHtmlPort);
-                server.registerMBean(htmlAdaptor, htmlObjName);
-                htmlAdaptor.start();
-            } else {
-                debug.warning(classMethod +
-                    "Monitoring HTML port not enabled.");
+                    new HtmlAdaptorServer(monHtmlPort); // throws no exception
+                if (htmlAdaptor == null) {
+                    if (debug.warningEnabled()) {
+                        debug.warning(classMethod + "HTTP port " +
+                            monHtmlPort + " unavailable or invalid. " +
+                            "Monitoring HTML adaptor not started.");
+                    }
+                } else {
+                    server.registerMBean(htmlAdaptor, htmlObjName);
+                    htmlAdaptor.start();  // throws no exception
+                    monHTMLStarted = true;
+                }
+            } catch (MalformedObjectNameException ex) {
+                // from ObjectName
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Error getting ObjectName for HTML adaptor: " +
+                        ex.getMessage());
+                }
+            } catch (NullPointerException ex) {
+                // from ObjectName
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "NPE getting ObjectName for HTML adaptor: " +
+                        ex.getMessage());
+                }
+            } catch (InstanceAlreadyExistsException ex) {
+                // from registerMBean
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Error registering HTML adaptor MBean: " +
+                        ex.getMessage());
+                }
+            } catch (MBeanRegistrationException ex) {
+                // from registerMBean
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Error registering HTML adaptor MBean: " +
+                        ex.getMessage());
+                }
+            } catch (NotCompliantMBeanException ex) {
+                // from registerMBean
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Error registering HTML adaptor MBean: " +
+                        ex.getMessage());
+                }
             }
+        } else {
+            debug.warning(classMethod +
+                "Monitoring HTML port not enabled in configuration.");
+        }
 
-            if (monSnmpPortEnabled) {
-                // SNMP specific code:
-                /*
-                 * Create and start the SNMP adaptor.
-                 * Specify the port to use in the constructor. 
-                 *
-                 *  the following is a note for who calls this method:
-                 *  If you want to use the standard port (161) comment out the 
-                 *  following line:
-                 *   snmpPort = 8085;
-                 */
+        // SNMP port adaptor
+        if (monSnmpPortEnabled) {
+            // SNMP specific code:
+            /*
+             * Create and start the SNMP adaptor.
+             * Specify the port to use in the constructor. 
+             * The standard port for SNMP is 161.
+             */
+            try {
                 snmpObjName = new ObjectName(domain + 
                     ":class=SnmpAdaptorServer,protocol=snmp,port=" +
                     monSnmpPort);
 
                 if (debug.messageEnabled()) {
                     debug.message(classMethod +
-                    "Adding SNMP adaptor to MBean server with name '" +
+                        "Adding SNMP adaptor to MBean server with name '" +
                         snmpObjName + "'\n    " +
                         "SNMP Adaptor is bound on UDP port " + monSnmpPort);
                 }
 
-                snmpAdaptor = new SnmpAdaptorServer(monSnmpPort);
-                server.registerMBean(snmpAdaptor, snmpObjName);
-                snmpAdaptor.start();
+                snmpAdaptor = new SnmpAdaptorServer(monSnmpPort); // no exc
+                if (snmpAdaptor == null) {
+                    if (debug.warningEnabled()) {
+                        debug.warning(classMethod +
+                            "Unable to get SNMP adaptor.");
+                    }
+                } else {
+                    server.registerMBean(snmpAdaptor, snmpObjName);
+                    snmpAdaptor.start();  // throws no exception
 
-                //  Send a coldStart SNMP Trap. Use port = monSnmpPort+1.
-                if (debug.messageEnabled()) {
-                    debug.message(classMethod +
-                        "Sending a coldStart SNMP trap" + 
-                      " to each destination defined in the ACL file...");
-                }
+                    /*
+                     *  Send a coldStart SNMP Trap.
+                     *  Use port = monSnmpPort+1.
+                     */
+                    if (debug.messageEnabled()) {
+                        debug.message(classMethod +
+                            "Sending a coldStart SNMP trap to each " +
+                            "destination defined in the ACL file...");
+                    }
 
-                snmpAdaptor.setTrapPort(new Integer(monSnmpPort+1));
-                snmpAdaptor.snmpV1Trap(0, 0, null);
+                    snmpAdaptor.setTrapPort(new Integer(monSnmpPort+1));
+                    snmpAdaptor.snmpV1Trap(0, 0, null);
 
-                if (debug.messageEnabled()) {
-                    debug.message(classMethod + "Done sending coldStart.");
-                }
-            } else {
-                debug.warning(classMethod +
-                    "Monitoring SNMP port not enabled.");
-            }
-
-//            /*
-//             *  adding the create registry for "our" port?
-//             */
-//            try {
-//                XXX xyz = new XXX();
-//                xxx stub = (XXX)UnicastRemoteObject.exportObject(xyz,
-//                    monRmiPort);
-//                Registry registry = LocateRegistry.getRegistry();
-//                registry.bind("what?", stub);
-//            } catch (Exception e) {
-//            }
-
-            if (monRmiPortEnabled) {
-                // probably need to pass RMI port if this remains...
-                // Create an RMI connector and start it
-                try {
-                    JMXServiceURL url = new JMXServiceURL(
-                        "service:jmx:rmi:///jndi/rmi://localhost:" +
-                        monRmiPort + "/server");
-                    cs = JMXConnectorServerFactory.newJMXConnectorServer(
-                            url, null, server);
-                    cs.start();
-                } catch (Exception ex) {
-                    debug.error(classMethod +
-                        "Error starting RMI: executing rmiregistry " +
-                        monRmiPort + ".", ex);
-                }
-      
-                // Create the MIB II (RFC 1213) and add it to the MBean server.
-                //
-                mibObjName =
-                    new ObjectName("snmp:class=SUN_OPENSSO_SERVER_MIB");
-                if (debug.messageEnabled()) {
-                    debug.message(classMethod +
-                        "Adding SUN_OPENSSO_SERVER_MIB to MBean server " +
-                        "with name '" + mibObjName + "'");
-                }
-
-                // Create an instance of the customized MIB
-                mib2 = new SUN_OPENSSO_SERVER_MIB();
-                server.registerMBean(mib2, mibObjName);
+                    if (debug.messageEnabled()) {
+                        debug.message(classMethod + "Done sending coldStart.");
+                    }
  
-                /*
-                 *  Bind the SNMP adaptor to the MIB in order to make the MIB 
-                 *  accessible through the SNMP protocol adaptor.
-                 *  If this step is not performed, the MIB will still live in 
-                 *  the Java DMK agent:
-                 *  its objects will be addressable through HTML but not SNMP.
-                 */
-                mib2.setSnmpAdaptor(snmpAdaptor);
+                    /*
+                     *  Bind the SNMP adaptor to the MIB in order to make the
+                     *  MIB accessible through the SNMP protocol adaptor.
+                     *  If this step is not performed, the MIB will still live
+                     *  in the Java DMK agent:
+                     *  its objects will be addressable through HTML but not
+                     *  SNMP.
+                     */
+                    mib2.setSnmpAdaptor(snmpAdaptor);  // throws no exception
 
+                    monSNMPStarted = true;
+                }
+            } catch (MalformedObjectNameException ex) {
+                // from ObjectName
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Error getting ObjectName for SNMP adaptor: " +
+                        ex.getMessage());
+                }
+            } catch (NullPointerException ex) {
+                // from ObjectName
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "NPE getting ObjectName for SNMP adaptor: " +
+                        ex.getMessage());
+                }
+            } catch (InstanceAlreadyExistsException ex) {
+                // from registerMBean
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Error registering SNMP adaptor MBean: " +
+                        ex.getMessage());
+                }
+            } catch (MBeanRegistrationException ex) {
+                // from registerMBean
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Error registering SNMP adaptor MBean: " +
+                        ex.getMessage());
+                }
+            } catch (NotCompliantMBeanException ex) {
+                // from registerMBean
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Error registering SNMP adaptor MBean: " +
+                        ex.getMessage());
+                }
+            } catch (IOException ex) {
+                /*
+                 * should be from the snmpV1Trap call, which
+                 * *shouldn't* affect the rest of snmp operations...
+                 */
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "IO Error from SNMP snmpV1Trap: " +
+                        ex.getMessage());
+                }
+                monSNMPStarted = true;
+            } catch (SnmpStatusException ex) {
+                /*
+                 * also should be from the snmpV1Trap call, which
+                 * *shouldn't* affect the rest of snmp operations...
+                 */
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Status error from SNMP snmpV1Trap: " +
+                        ex.getMessage());
+                }
+                monSNMPStarted = true;
+            }
+        } else {
+            debug.warning(classMethod +
+                "Monitoring SNMP port not enabled.");
+        }
+
+//        /*
+//         *  adding the create registry for "our" port?
+//         */
+//        try {
+//            XXX xyz = new XXX();
+//            xxx stub = (XXX)UnicastRemoteObject.exportObject(xyz,
+//                monRmiPort);
+//            Registry registry = LocateRegistry.getRegistry();
+//            registry.bind("what?", stub);
+//        } catch (Exception e) {
+//        }
+
+        // RMI port adaptor
+        if (monRmiPortEnabled) {
+            // Create an RMI connector and start it
+            try {
+                JMXServiceURL url = new JMXServiceURL(
+                    "service:jmx:rmi:///jndi/rmi://localhost:" +
+                    monRmiPort + "/server");
+                cs = JMXConnectorServerFactory.newJMXConnectorServer(
+                    url, null, server);
+                cs.start();
+
+                monRMIStarted = true;
 //                /*
 //                 *  Create a LinkTrapGenerator.
 //                 *  Specify the ifIndex to use in the object name.
@@ -595,7 +897,7 @@ public class Agent {
 //                String trapGeneratorClass = "LinkTrapGenerator";
 //                int ifIndex = 1;
 //                trapGeneratorObjName = new ObjectName("trapGenerator" + 
-//                              ":class=LinkTrapGenerator,ifIndex=" + ifIndex);
+//                    ":class=LinkTrapGenerator,ifIndex=" + ifIndex);
 //                if (debug.messageEnabled()) {
 //                    debug.message(classMethod +
 //                        "Adding LinkTrapGenerator to MBean server " +
@@ -607,17 +909,70 @@ public class Agent {
 //                    new LinkTrapGenerator(nbTraps);
 //                server.registerMBean(trapGenerator, trapGeneratorObjName);
 //
-            } else {
-                debug.warning(classMethod +
-                    "Monitoring RMI port not enabled.");
+            } catch (MalformedURLException ex) {
+                /*
+                 * from JMXServiceURL or
+                 * JMXConnectorServerFactory.JMXConnectorServer
+                 */
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Error getting JMXServiceURL or JMXConnectorServer " +
+                        "for RMI adaptor: " + ex.getMessage());
+                }
+            } catch (NullPointerException ex) {
+                /*
+                 * from JMXServiceURL or
+                 * JMXConnectorServerFactory.JMXConnectorServer
+                 */
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Error getting JMXServiceURL or JMXConnectorServer " +
+                        "for RMI adaptor: " + ex.getMessage());
+                }
+            } catch (IOException ex) {
+                /*
+                 * from JMXConnectorServerFactory.JMXConnectorServer or
+                 * JMXConnectorServer.start
+                 */
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Error getting JMXConnectorServer for, or starting " +
+                        "RMI adaptor: " + ex.getMessage());
+                }
+            } catch (IllegalStateException ex) {
+                // from JMXConnectorServer.start
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Illegal State Error from JMXConnectorServer for " +
+                        "RMI adaptor: " + ex.getMessage());
+                }
+            } catch (Exception ex) {
+                /*
+                 * compiler says that JMXProviderException and
+                 * NullPointerException already caught
+                 */
+                debug.error(classMethod +
+                    "Error starting RMI: executing rmiregistry " +
+                    monRmiPort + ".", ex);
             }
-        } catch (Exception e) {
-            debug.error(classMethod, e);
+        } else {
+            debug.warning(classMethod + "Monitoring RMI port not enabled.");
         }
 
-        agentStarted = true;  // if all has gone well
-
-        startMonitoringAgent(agentSvrInfo);
+        /*
+         * the HTML and SNMP adaptors may or may not be started,
+         * but if the RMI connector had a problem, monitoring is
+         * non-functional, as the opensso MIB didn't get registered.
+         */
+        if (!monRMIStarted && !monSNMPStarted && !monHTMLStarted) {
+            debug.warning(classMethod +
+                "No Monitoring interfaces started; monitoring disabled.");
+            return -3;
+        } else {
+            agentStarted = true;  // if all/enough has gone well
+            startMonitoringAgent(agentSvrInfo);
+            return (0);
+        }
     }
 
     public static void setWebtopConfig(boolean state) {
@@ -1873,7 +2228,7 @@ public class Agent {
         sss.artifactCache = ssce;
 
         // SOAPReceiver endpoint
-	if (!skipSAML1EndPoints) {
+        if (!skipSAML1EndPoints) {
         SsoServerSAML1EndPointEntryImpl ssee =
                 new SsoServerSAML1EndPointEntryImpl(mib2);
         ssee.SsoServerSAML1EndPointIndex = new Integer(1);
@@ -1966,7 +2321,7 @@ public class Agent {
         }
 
         sss.samlAwareEP = ssee;
-	} // if (!skipSAML1EndPoints)
+        } // if (!skipSAML1EndPoints)
 
         Date stopDate = new Date();
         if (debug.messageEnabled()) {
