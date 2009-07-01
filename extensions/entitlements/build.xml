@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.72 2009-07-01 01:12:31 veiming Exp $
+  $Id: build.xml,v 1.73 2009-07-01 02:25:34 veiming Exp $
 
 -->
 
@@ -460,7 +460,7 @@
     </target>
 
     <target name="clean-extlib">
-        <delete>
+        <delete quiet="true">
             <fileset dir="${entitlements.extlib.dir}"
                 includes="*.jar,*.war,*.zip" />
         </delete>
