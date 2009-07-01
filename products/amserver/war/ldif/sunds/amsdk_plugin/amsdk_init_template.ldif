@@ -390,7 +390,7 @@ objectclass: person
 objectclass: top
 cn: puser
 sn: puser
-userPassword: @ADMIN_PWD@
+userPassword: @AMLDAPUSERPASSWD@
 nsSizeLimit: 4000
 
 dn: cn=dsameuser,ou=DSAME Users,@NORMALIZED_RS@
