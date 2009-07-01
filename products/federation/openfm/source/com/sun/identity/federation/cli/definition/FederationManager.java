@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.37 2009-06-04 20:04:33 veiming Exp $
+ * $Id: FederationManager.java,v 1.38 2009-07-01 21:54:58 veiming Exp $
  *
  */
 
@@ -73,7 +73,7 @@ public class FederationManager {
             "xacmlpep|e|s|Specify metaAlias for policy enforcement point to be created. The format must be <realm name>/<identifier>.",
             "xacmlpdp|p|s|Specify metaAlias for policy decision point to be created. The format must be <realm name>/<identifier>.",
             "affiliation|F|s|i|Specify metaAlias for hosted affiliation. to be created. The format must be <realm name>/<identifier>",
-            "affiownerid|N|m|i|Affiliation Owner ID", 
+            "affiownerid|N|s|i|Affiliation Owner ID", 
             "affimembers|M|m|Affiliation members",
             "spscertalias|a|s|Service provider signing certificate alias",
             "idpscertalias|b|s|Identity provider signing certificate alias",
