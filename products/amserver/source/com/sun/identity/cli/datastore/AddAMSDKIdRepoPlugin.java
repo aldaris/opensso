@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAMSDKIdRepoPlugin.java,v 1.7 2009-01-28 05:34:55 ww203982 Exp $
+ * $Id: AddAMSDKIdRepoPlugin.java,v 1.8 2009-07-01 01:02:16 hengming Exp $
  *
  */
 
@@ -342,13 +342,13 @@ public class AddAMSDKIdRepoPlugin extends AuthenticatedCommand {
     private List getLDIFs() {
         List ldifs = new ArrayList();
         String configDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
-        String templateDir = configDir + "/template/ldif";
-        ldifs.add(templateDir + "/sunone_schema2.ldif");
-        ldifs.add(templateDir + "/ds_remote_schema.ldif");
-        ldifs.add(templateDir + "/install.ldif");
-        ldifs.add(templateDir + "/index.ldif");
-        ldifs.add(templateDir + "/plugin.ldif");
-        ldifs.add(configDir + "/fam_sds_schema.ldif");
+        String templateDir = configDir + "/ldif";
+        ldifs.add(templateDir +
+            "/sunds/amsdk_plugin/amsdk_sunone_schema2.ldif");
+        ldifs.add(templateDir + "/sunds/sunds_user_schema.ldif");
+        ldifs.add(templateDir + "/sunds/amsdk_plugin/amsdk_init_template.ldif");
+        ldifs.add(templateDir + "/sunds/sunds_user_index.ldif");
+        ldifs.add(templateDir + "/sunds/sunds_plugin.ldif");
         return ldifs;
     }
 
