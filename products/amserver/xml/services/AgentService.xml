@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.80 2009-06-04 01:18:13 mallas Exp $
+   $Id: AgentService.xml,v 1.81 2009-07-01 21:06:28 subbae Exp $
 
 -->
 
@@ -707,37 +707,53 @@
                     <AttributeSchema
                         name="com.sun.identity.agents.config.override.protocol"
                         type="single"
-                        syntax="string"
+                        syntax="boolean"
                         i18nKey="a455">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.override.host"
                         type="single"
-                        syntax="string"
+                        syntax="boolean"
                         i18nKey="a456">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.override.port"
                         type="single"
-                        syntax="string"
+                        syntax="boolean"
                         i18nKey="a457">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.override.notification.url"
                         type="single"
-                        syntax="string"
+                        syntax="boolean"
                         i18nKey="a458">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -1051,6 +1067,24 @@
                         i18nKey="a147">
                         <DefaultValues>
                             <Value>goto</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.client.ip.header"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a118">
+                        <DefaultValues>
+                            <Value></Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.client.hostname.header"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a119">
+                        <DefaultValues>
+                            <Value></Value>
                         </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>
