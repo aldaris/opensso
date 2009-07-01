@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.8 2009-05-29 16:22:30 pbryan Exp $
+ * $Id: DecisionResource.java,v 1.9 2009-07-01 01:27:42 pbryan Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -55,20 +55,24 @@ public class DecisionResource {
      @QueryParam("realm") String realm,
      @QueryParam("subject") String subject,
      @QueryParam("action") String action,
-     @QueryParam("resource") String resource) {
+     @QueryParam("resource") String resource,
+     @QueryParam("application") String application) {
 
 // FIXME: once OAuth filter comes stock, let's use it to authenticate the caller
 Subject caller = toSubject("id=amAdmin,ou=user,dc=opensso,dc=java,dc=net");
 //        Subject caller = toSubject(security.getUserPrincipal());
 
-         try {
-            return p(new Evaluator(caller).hasEntitlement(realm,
-             toSubject(subject), toEntitlement(resource, action), Collections.EMPTY_MAP));
+        try {
+            Evaluator evaluator = (application == null ?
+             new Evaluator(caller) : new Evaluator(caller, application));
+
+            return permission(evaluator.hasEntitlement(realm, toSubject(subject),
+             toEntitlement(resource, action), Collections.EMPTY_MAP));
         }
 
         // fail safe
         catch (EntitlementException ee) {
-            return p(false);
+            return permission(false);
         }
     }
 
@@ -94,7 +98,7 @@ Subject caller = toSubject("id=amAdmin,ou=user,dc=opensso,dc=java,dc=net");
         return toSubject(new AuthSPrincipal(subject));
     }
 
-    private String p(boolean b) {
+    private String permission(boolean b) {
         return (b ? Permission.allow.toString() : Permission.deny.toString());
     }
 }
