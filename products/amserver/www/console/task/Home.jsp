@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Home.jsp,v 1.14 2009-03-13 21:30:46 asyhuang Exp $
+   $Id: Home.jsp,v 1.15 2009-07-01 23:24:13 babysunil Exp $
 
 --%>
 
@@ -68,6 +68,9 @@
 
 <div id="info13" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
 <div><a href="#" id="close13" onclick="closeAll(13); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpConfigureGoogleApps" defaultValue="commontask.configure.google.apps" bundleID="amConsole" /></span></p></div>
+
+<div id="info14" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
+<div><a href="#" id="close14" onclick="closeAll(14); event.cancelBubble = true;return false;"><img alt="close ConfigureSalesForce" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpConfigureSalesForce" defaultValue="commontask.configure.salesforce.apps" bundleID="amConsole" /></span></p></div>
 
 <div id="info6" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
 <div><a href="#" id="close6" onclick="closeAll(6); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpValidate" defaultValue="commontask.saml2.validate" bundleID="amConsole" /></span></p></div>
@@ -248,6 +251,25 @@
         <td width="3%" align="right" valign="top" class="TskPgeTskRghtTd" ><a href="#" onclick="test(12); event.cancelBubble = true; return false;" onmouseover="hoverImg(12); event.cancelBubble = true;" onmouseout="outImg(12); event.cancelBubble = true;" onfocus="hoverImg(12); event.cancelBubble = true;" onblur="outImg(12); event.cancelBubble = true;" id="i12"><img alt="" id="togImg12" src="../console/images/tasks/rightToggle.gif" width="29" height="21"  border="0" /></a></td>
         </tr>
         </table>
+    </td></tr>    
+    <tr>
+        <td valign="top" colspan=3><span class="TskPgeSbHdr"><cc:text name="txtSectionConfigureSalesForce" defaultValue="page.title.common.tasks.section.configure.salesforce.apps" bundleID="amConsole" /></span></td>
+    </tr>
+    <tr><td class="TskPgeBckgrTd">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr><td colspan=3 style="background-color:#FFFFFF"><span class="TskPgeHdr"><cc:text name="txtSectionDescSalesForce" defaultValue="page.title.common.tasks.section.desc.configure.salesforce.apps" bundleID="amConsole" /></span></td>
+            </tr>
+            </table>
+        </td>
+    </tr>
+    <tr><td class="TskPgeBckgrTd">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+            <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="spacer" id="gif14" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+            <td width="100%;" class="TskPgeTskCntrTd"><a href="../task/ConfigureSalesForceApps" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtConfigureSalesForceApps" defaultValue="commontask.label.configure.salesforce.apps" bundleID="amConsole" /></span></a></td>
+            <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(14); event.cancelBubble = true; return false;"  onmouseover="hoverImg(14); event.cancelBubble = true;" onmouseout="outImg(14); event.cancelBubble = true;" onfocus="hoverImg(14); event.cancelBubble = true;" onblur="outImg(14); event.cancelBubble = true;" id="i1"><img alt="right toggle" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg14" /></a></td>
+            </tr>
+            </table>
     </td></tr>
     </table>
 </td></tr>  

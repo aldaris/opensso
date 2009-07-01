@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModelImpl.java,v 1.12 2009-04-30 00:01:46 asyhuang Exp $
+ * $Id: TaskModelImpl.java,v 1.13 2009-07-01 23:26:13 babysunil Exp $
  *
  */
 package com.sun.identity.console.task.model;
@@ -330,6 +330,51 @@ public class TaskModelImpl
         } catch (SAML2MetaException ex) {
             throw new AMConsoleException(ex.getMessage());
         } catch (MalformedURLException ex) {
+            throw new AMConsoleException(ex.getMessage());
+        }
+        return map;
+    }
+    
+    public Map getConfigureSalesForceAppsURLs(
+            String realm, 
+            String entityId, 
+            String attrMapping
+            ) throws AMConsoleException 
+    {
+        Map map = new HashMap();
+        StringTokenizer st = new StringTokenizer(attrMapping, "=");
+        String assertName = st.nextToken().trim();
+        IDPSSODescriptorElement idpssoDescriptor = null;
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            idpssoDescriptor =
+                    samlManager.getIDPSSODescriptor(realm, entityId);
+            String signinPageURL = null;
+
+            // get pubkey
+            Map extValueMap = new HashMap();
+            IDPSSOConfigElement idpssoConfig = 
+                    samlManager.getIDPSSOConfig(realm, entityId);
+            if (idpssoConfig != null) {
+                BaseConfigType baseConfig = (BaseConfigType) idpssoConfig;
+                extValueMap = SAML2MetaUtils.getAttributes(baseConfig);
+            }
+            List aList = (List) extValueMap.get("signingCertAlias");
+            String signingCertAlias = null;
+            if (aList != null) {
+                signingCertAlias = (String) aList.get(0);
+            }
+            String publickey =
+                SAML2MetaSecurityUtils.buildX509Certificate(signingCertAlias);
+            String str = "-----BEGIN CERTIFICATE-----\n" 
+                    + publickey + "-----END CERTIFICATE-----\n";
+
+            map.put("PubKey", returnEmptySetIfValueIsNull(str));
+            map.put("IssuerID", returnEmptySetIfValueIsNull(entityId));
+
+            map.put("AttributeName", returnEmptySetIfValueIsNull(assertName));
+
+        } catch (SAML2MetaException ex) {
             throw new AMConsoleException(ex.getMessage());
         }
         return map;
