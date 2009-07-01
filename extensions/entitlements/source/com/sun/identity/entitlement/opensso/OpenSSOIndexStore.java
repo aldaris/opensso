@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.19 2009-06-25 02:29:04 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.20 2009-07-01 21:47:02 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -78,12 +78,11 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     private static final DataStore dataStore = DataStore.getInstance();
     private static IThreadPool threadPool;
     private static boolean isMultiThreaded;
+    private Subject superAdminSubject;
 
     // Initialize the caches
     static {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        Subject adminSubject = SubjectUtils.createSubject(adminToken);
+        Subject adminSubject = SubjectUtils.createSuperAdminSubject();
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, "/");
 
@@ -128,6 +127,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
      */
     public OpenSSOIndexStore(Subject adminSubject, String realm) {
         super(adminSubject, realm);
+        superAdminSubject = SubjectUtils.createSuperAdminSubject();
         realmDN = DNMapper.orgNameToDN(realm);
         entitlementConfig = EntitlementConfiguration.getInstance(
             adminSubject, realm);
@@ -293,7 +293,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
             p.getName(), realm, null);
         String realmName = DNMapper.orgNameToRealmName(realm);
         indexCache.cache(p.getEntitlement().getResourceSaveIndexes(
-            getAdminSubject(), realmName), subjectSearchIndexes, dn);
+            superAdminSubject, realmName), subjectSearchIndexes, dn);
         policyCache.cache(dn, p, realmDN);
     }
 
@@ -303,7 +303,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     ) throws EntitlementException {
         String dn = DataStore.getPrivilegeDistinguishedName(
             p.getName(), realm, DataStore.REFERRAL_STORE);
-        referralIndexCache.cache(p.getResourceSaveIndexes(getAdminSubject(),
+        referralIndexCache.cache(p.getResourceSaveIndexes(superAdminSubject,
             DNMapper.orgNameToRealmName(realm)), null, dn);
         referralCache.cache(dn, p, realmDN);
     }
@@ -352,8 +352,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     private ReferralPrivilege getOrgAliasReferral(ResourceSearchIndexes indexes
         ) throws EntitlementException {
         ReferralPrivilege result = null;
-        Subject adminSubject = getAdminSubject();
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        SSOToken adminToken = SubjectUtils.getSSOToken(superAdminSubject);
 
         //TOFIX check if it is webagent service
         if (OpenSSOIndexStore.isOrgAliasMappingResourceEnabled(adminToken)) {
@@ -612,8 +611,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
             realm = DNMapper.orgNameToRealmName(realm);
         }
 
-        Subject adminSubject = getAdminSubject();
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        SSOToken adminToken = SubjectUtils.getSSOToken(superAdminSubject);
 
         try {
             Set<String> results = new HashSet<String>();
@@ -626,8 +624,8 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
             Map<String, Set<ReferralPrivilege>> referrals = new
                 HashMap<String, Set<ReferralPrivilege>>();
             for (String rlm : realms) {
-                referrals.put(rlm, dataStore.searchReferrals(adminToken, rlm,
-                    filter));
+                referrals.put(rlm, dataStore.searchReferrals(
+                    adminToken, rlm, filter));
             }
 
             for (String rlm : referrals.keySet()) {
@@ -638,7 +636,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                         r.getOriginalMapApplNameToResources();
                     for (String a : map.keySet()) {
                         Application appl = ApplicationManager.getApplication(
-                            adminSubject, rlm, a);
+                            superAdminSubject, rlm, a);
                         if (appl.getApplicationType().getName().equals(
                             applicationTypeName)) {
                             results.addAll(map.get(a));
@@ -661,8 +659,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
 
     private Set<String> getParentRealms(String realm) throws SMSException {
         Set<String> results = new HashSet<String>();
-        Subject adminSubject = getAdminSubject();
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        SSOToken adminToken = SubjectUtils.getSSOToken(superAdminSubject);
         OrganizationConfigManager ocm = new OrganizationConfigManager(
             adminToken, realm);
         while (true) {
@@ -678,8 +675,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     }
 
     private Set<String> getPeerRealms(String realm) throws SMSException {
-        Subject adminSubject = getAdminSubject();
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        SSOToken adminToken = SubjectUtils.getSSOToken(superAdminSubject);
         OrganizationConfigManager ocm = new OrganizationConfigManager(
             adminToken, realm);
         OrganizationConfigManager parentOrg = ocm.getParentOrgConfigManager();

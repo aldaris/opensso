@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectUtils.java,v 1.5 2009-05-21 23:29:56 veiming Exp $
+ * $Id: SubjectUtils.java,v 1.6 2009-07-01 21:47:02 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -31,7 +31,9 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
+import java.security.AccessController;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,6 +42,13 @@ import javax.security.auth.Subject;
 public class SubjectUtils {
     private SubjectUtils() {
     }
+
+    static Subject createSuperAdminSubject() {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        return createSubject(adminToken);
+    }
+
     public static Subject createSubject(SSOToken token) {
         try {
             Set<Principal> userPrincipals = new HashSet<Principal>(2);
