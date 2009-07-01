@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.105 2009-01-31 04:43:11 veiming Exp $
+ * $Id: AccessManager.java,v 1.106 2009-07-01 00:57:59 veiming Exp $
  *
  */
 
@@ -44,6 +44,7 @@ public class AccessManager {
     @ResourceStrings(
         string={"resourcebundle-not-found=Resource Bundle not found.",
             "realm-does-not-exist=Could not process the request because realm {0} did not exist.",
+            "identity-does-not-exist=Could not process the request because identity {0} did not exist.",
         "missing-attributevalues=attributevalues and datafile options are missing.",
         "missing-choicevalues=choicevalues and datafile options are missing.",
         "attribute-schema-not-exist=Attribute schema {0} did not exist.",

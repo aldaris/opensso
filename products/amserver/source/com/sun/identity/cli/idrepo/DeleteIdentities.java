@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentities.java,v 1.8 2008-10-31 16:18:38 veiming Exp $
+ * $Id: DeleteIdentities.java,v 1.9 2009-07-01 00:58:00 veiming Exp $
  */
 
 package com.sun.identity.cli.idrepo;
@@ -60,6 +60,7 @@ public class DeleteIdentities extends IdentityCommand {
      * @param rc Request Context.
      * @throw CLIException if the request cannot serviced.
      */
+    @Override
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
@@ -108,10 +109,26 @@ public class DeleteIdentities extends IdentityCommand {
             IdType idType = convert2IdType(type);
             Set setDelete = new HashSet();
 
-            for (Iterator i = idNames.iterator(); i.hasNext(); ) {
-                String idName = (String)i.next();
+            for (Iterator i = idNames.iterator(); i.hasNext();) {
+                String idName = (String) i.next();
                 AMIdentity amid = new AMIdentity(
-                    adminSSOToken, idName, idType, realm, null); 
+                    adminSSOToken, idName, idType, realm, null);
+                boolean exist = false;
+                try {
+                    exist = amid.isExists();
+                } catch (IdRepoException e) {
+                }
+                if (!exist) {
+                    String[] args = {realm, type, displayableIdNames,
+                        "user " + idName + " does not exist"};
+                    writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                        "FAILED_DELETE_IDENTITY", args);
+                    Object[] msgArg = {idName};
+                    throw new CLIException(MessageFormat.format(
+                        getResourceString(
+                        "identity-does-not-exist"), msgArg),
+                        ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                }
                 setDelete.add(amid);
             }
 
