@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigMonitoring.java,v 1.1 2009-06-19 02:29:39 bigfatrat Exp $
+ * $Id: ConfigMonitoring.java,v 1.2 2009-07-01 05:53:48 bigfatrat Exp $
  *
  */
 
@@ -1057,9 +1057,15 @@ public class ConfigMonitoring {
             int rmiPort = 
                 Integer.valueOf(CollectionHelper.getMapAttr(monAttrs,
                     "iplanet-am-monitoring-rmi-port"));
+            boolean rmiEna =
+                Boolean.valueOf(CollectionHelper.getMapAttr(monAttrs,
+                    "iplanet-am-monitoring-rmi-enabled")).booleanValue();
             int snmpPort = 
                 Integer.valueOf(CollectionHelper.getMapAttr(monAttrs,
                     "iplanet-am-monitoring-snmp-port"));
+            boolean snmpEna =
+                Boolean.valueOf(CollectionHelper.getMapAttr(monAttrs,
+                    "iplanet-am-monitoring-snmp-enabled")).booleanValue();
             
             if (debug.messageEnabled()) {
                 debug.message(classMethod + "\n" +
@@ -1067,13 +1073,12 @@ public class ConfigMonitoring {
                     "     httpPort = " + httpPort + "\n" +
                     "     httpPort enabled = " + httpEna + "\n" +
                     "     rmiPort = " + rmiPort + "\n" +
-                    "     snmpPort = " + snmpPort + "\n"
+                    "     rmiPort enabled = " + rmiEna + "\n" +
+                    "     snmpPort = " + snmpPort + "\n" +
+                    "     snmpPort enabled = " + snmpEna + "\n"
                     );
             }
 
-            // fixed to true for now; maybe configurable in the future
-            boolean snmpEna = true;
-            boolean rmiEna = true;
             SSOServerMonConfig sMonInfo =
                 new SSOServerMonConfig.SSOServerMonInfoBuilder(monEna).
                     htmlPort(httpPort).
@@ -1083,11 +1088,18 @@ public class ConfigMonitoring {
                     monRmiEnabled(rmiEna).
                     monSnmpEnabled(snmpEna).build();
 
-            Agent.startAgent(sMonInfo);
+            int i = Agent.startAgent(sMonInfo);
+            if (i != 0) {
+                if (debug.warningEnabled()) {
+                    debug.warning(classMethod +
+                        "Monitoring Agent not started (" + i + ")");
+                }
+                return (i);
+            }
         } catch (Exception ex) {
-            debug.error("ConfigMonitoring.getMonServiceAttrs: " +
-                "error reading Monitoring attributes: " +
+            debug.error(classMethod + "error reading Monitoring attributes: " +
                 ex.getMessage());
+            return (-1);
         }
         return 0;
     }
