@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.28 2009-06-19 17:54:13 ericow Exp $
+ * $Id: LoginViewBean.java,v 1.29 2009-07-01 21:09:16 qcheng Exp $
  *
  */
 
@@ -1413,7 +1413,19 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         if (qString != null && qString.length() != 0) {
             redirectUrl.append(qString);
         }
-        response.sendRedirect(redirectUrl.toString());
+
+        String rUrl = redirectUrl.toString();
+        if (rUrl.startsWith("/UI/Login")) {
+            if (loginDebug.messageEnabled()) {
+                loginDebug.message("LoginViewBean.processRedirectCallback :"
+                    + " distauth redirect URL " + rUrl 
+                    + ", serviceuri=" + serviceUri);
+            }
+            // prepend deployment URI
+            response.sendRedirect(serviceUri + rUrl); 
+        } else {
+            response.sendRedirect(rUrl);
+        }
     }
 
     // Method to check if this is Session Upgrade

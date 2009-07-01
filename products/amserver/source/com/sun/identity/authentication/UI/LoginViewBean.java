@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.23 2009-06-19 18:29:11 manish_rustagi Exp $
+ * $Id: LoginViewBean.java,v 1.24 2009-07-01 21:09:16 qcheng Exp $
  *
  */
 
@@ -1081,7 +1081,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                     setErrorMessage(null);
                 }
             }
-        }catch(Exception e){
+        } catch(Exception e){
             setErrorMessage(e);
             throw new L10NMessageImpl(bundleName, "loginDisplay.get",
             new Object[]{e.getMessage()});
@@ -1159,7 +1159,19 @@ public class LoginViewBean extends AuthViewBeanBase {
             if (qString != null && qString.length() != 0) {
                 redirectUrl.append(qString);
             }
-            response.sendRedirect(redirectUrl.toString());
+            
+            String rUrl = redirectUrl.toString();
+            if (rUrl.startsWith("/UI/Login")) {
+                if (loginDebug.messageEnabled()) {
+                    loginDebug.message("LoginViewBean.processRedirectCallback :"
+                        + " redirect URL " + rUrl 
+                        + ", serviceuri=" + serviceUri);
+                }
+                // prepend deployment URI
+                response.sendRedirect(serviceUri + rUrl); 
+            } else {
+                response.sendRedirect(rUrl);
+            }
         }
     } 
     
