@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteCreateWizardHandler.java,v 1.3 2009-07-02 00:38:12 asyhuang Exp $
+ * $Id: SamlV2RemoteCreateWizardHandler.java,v 1.4 2009-07-02 01:02:44 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -60,6 +60,7 @@ public class SamlV2RemoteCreateWizardHandler
 
     private List<LinkBean> getFinishLinkBeans() {
         List<LinkBean> lbs = new ArrayList<LinkBean>();
+        lbs.add(LinkBean.HOME);
         lbs.add(LinkBean.COMMON_TASKS);
         lbs.add(LinkBean.SAMLV2_HOSTED_IDP_CREATE);
         lbs.add(LinkBean.SAMLV2_REMOTE_IDP_CREATE);
@@ -70,6 +71,7 @@ public class SamlV2RemoteCreateWizardHandler
 
     private List<LinkBean> getCancelLinkBeans() {
         List<LinkBean> lbs = new ArrayList<LinkBean>();
+        lbs.add(LinkBean.HOME);
         lbs.add(LinkBean.COMMON_TASKS);
         lbs.add(LinkBean.SAMLV2_HOSTED_IDP_CREATE);
         lbs.add(LinkBean.SAMLV2_REMOTE_IDP_CREATE);
