@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-hosted-select-realm.xhtml,v 1.2 2009-06-26 23:07:28 asyhuang Exp $
+   $Id: samlv2-hosted-select-realm.xhtml,v 1.3 2009-07-02 00:01:05 asyhuang Exp $
 
 -->
 
@@ -55,6 +55,7 @@
                 for="existingRealmList"
                 value="#{resources['samlv2-hosted-select-realm.selectRealmLabel']}"/>
             <ice:selectOneMenu
+                style="width: 100px"
                 id="selectedRealm"
                 value="#{wizardBean.selectedRealm}"
                 partialSubmit="true">
@@ -63,5 +64,5 @@
             </ice:selectOneMenu>
         </ice:panelGroup>
     </ice:panelGroup>
-    
+
 </span>

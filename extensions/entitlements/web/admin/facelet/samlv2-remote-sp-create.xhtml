@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-remote-sp-create.xhtml,v 1.8 2009-06-27 01:52:14 asyhuang Exp $
+   $Id: samlv2-remote-sp-create.xhtml,v 1.9 2009-07-02 00:01:04 asyhuang Exp $
 -->
 
 <ui:composition
@@ -189,7 +189,8 @@
                                 <o:summarypanel
                                     summary="#{samlV2RemoteSpCreateWizardBean.cotSamlV2RemoteSpCreateSummary}"/>
                                 <o:summarypanel
-                                    summary="#{samlV2RemoteSpCreateWizardBean.attributeMappingSamlV2RemoteSpCreateSummary}"/>
+                                    summary="#{samlV2RemoteSpCreateWizardBean.attributeMappingSamlV2RemoteSpCreateSummary}"
+                                    visible="#{o:size(samlV2RemoteSpCreateWizardBean.viewAttributes)>0}"/>
                             </ui:define>
                         </o:section>
                     </ui:define>
