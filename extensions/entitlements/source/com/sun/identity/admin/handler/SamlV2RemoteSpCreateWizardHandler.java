@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.8 2009-07-02 20:28:52 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.9 2009-07-02 22:19:39 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -32,6 +32,7 @@ import com.icesoft.faces.component.inputfile.FileInfo;
 import com.icesoft.faces.component.inputfile.InputFile;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.dao.SamlV2CreateSharedDao;
 import com.sun.identity.admin.dao.SamlV2RemoteSpCreateDao;
 import com.sun.identity.admin.dao.SamlV2ShareCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
@@ -184,7 +185,7 @@ public class SamlV2RemoteSpCreateWizardHandler
         String cotname = getSamlV2RemoteSpCreateWizardBean().getNewCotName();
 
         if (!usingExitingCot) {
-            if (cotname.length() == 0 || (cotname == null)) {
+            if ((cotname == null) || (cotname.length() == 0)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidCotSummary"));
@@ -197,6 +198,22 @@ public class SamlV2RemoteSpCreateWizardHandler
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.COT.toInt());
 
+                return false;
+            }
+            
+            if (!SamlV2CreateSharedDao.validateCot(cotname)) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "cotExistSummary"));
+                mb.setDetail(r.getString(this, "cotExistDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+                Effect e = new InputFieldErrorEffect();
+                getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
+
+                getMessagesBean().addMessageBean(mb);
+                getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.COT.toInt());
+                
                 return false;
             }
         }
@@ -222,7 +239,7 @@ public class SamlV2RemoteSpCreateWizardHandler
         if (!usingMetaDataFile) {
 
             String url = getSamlV2RemoteSpCreateWizardBean().getMetaUrl();
-            if (url.length() == 0 || (url == null)) {
+            if ((url == null) || (url.length() == 0)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidMetaUrlSummary"));
@@ -241,7 +258,7 @@ public class SamlV2RemoteSpCreateWizardHandler
         } else {
 
             String filename = getSamlV2RemoteSpCreateWizardBean().getStdMetaFile();
-            if ((filename == null ) || filename.length() == 0) {
+            if ((filename == null) || filename.length() == 0) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidMetafileSummary"));
@@ -256,7 +273,7 @@ public class SamlV2RemoteSpCreateWizardHandler
 
                 return false;
             }
-              //check meta format
+           
             if (!SamlV2ShareCreateDao.validateMetaFormat(filename)) {
                 getSamlV2RemoteSpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2RemoteSpCreateWizardBean().setStdMetaFile("");

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.8 2009-07-02 20:28:52 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.9 2009-07-02 22:19:39 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -196,7 +196,6 @@ public class SamlV2HostedIdpCreateWizardHandler
         boolean usingMetaDataFile =
                 getSamlV2HostedIdpCreateWizardBean().isMeta();
 
-
         if (!usingMetaDataFile) {
             String newEntityName =
                     getSamlV2HostedIdpCreateWizardBean().getNewEntityName();
@@ -239,8 +238,7 @@ public class SamlV2HostedIdpCreateWizardHandler
 
                 return false;
             }
-
-            //check meta format
+           
             if (!SamlV2CreateSharedDao.validateMetaFormat(stdFilename)) {
                 getSamlV2HostedIdpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2HostedIdpCreateWizardBean().setStdMetaFile("");
@@ -252,8 +250,8 @@ public class SamlV2HostedIdpCreateWizardHandler
                 getSamlV2HostedIdpCreateWizardBean().setExtMetaFilename("");
                 getSamlV2HostedIdpCreateWizardBean().setExtMetaFile("");
                 metaErrorPopup();
+                return false;
             }
-
         }
 
         return true;
@@ -264,7 +262,7 @@ public class SamlV2HostedIdpCreateWizardHandler
         String cotname = getSamlV2HostedIdpCreateWizardBean().getNewCotName();
 
         if (!usingExistingCot) {
-            if (cotname.length() == 0 || (cotname == null)) {
+            if ((cotname == null) || cotname.length() == 0) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidCotSummary"));
@@ -278,8 +276,23 @@ public class SamlV2HostedIdpCreateWizardHandler
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2HostedIdpCreateWizardBean().gotoStep(
                         SamlV2HostedIdpCreateWizardStep.COT.toInt());
+                return false;
+            }
 
+            if (!SamlV2CreateSharedDao.validateCot(cotname)) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "cotExistSummary"));
+                mb.setDetail(r.getString(this, "cotExistDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
+                Effect e = new InputFieldErrorEffect();
+                getSamlV2HostedIdpCreateWizardBean().
+                        setSamlV2HostedCreateEntityInputEffect(e);
+
+                getMessagesBean().addMessageBean(mb);
+                getSamlV2HostedIdpCreateWizardBean().gotoStep(
+                        SamlV2HostedIdpCreateWizardStep.COT.toInt());
                 return false;
             }
         }
@@ -348,7 +361,7 @@ public class SamlV2HostedIdpCreateWizardHandler
 
     public void extMetaUploadFile(ActionEvent event) throws IOException {
         InputFile inputFile = (InputFile) event.getSource();
-        FileInfo fileInfo = inputFile.getFileInfo();        
+        FileInfo fileInfo = inputFile.getFileInfo();
         if (fileInfo.getStatus() == FileInfo.SAVED) {
             // read the file into a string
             // reference our newly updated file for display purposes and

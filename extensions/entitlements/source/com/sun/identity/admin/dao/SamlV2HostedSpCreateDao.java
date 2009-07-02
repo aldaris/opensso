@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateDao.java,v 1.3 2009-06-24 21:55:08 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateDao.java,v 1.4 2009-07-02 22:19:39 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -73,10 +73,10 @@ public class SamlV2HostedSpCreateDao
         try {
             metadata =
                     CreateSAML2HostedProviderTemplate.buildMetaDataTemplate(
-                    entityId, map, getRequestURL());
+                    entityId, map, SamlV2CreateSharedDao.getRequestURL());
             extendedData =
                     CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
-                    entityId, map, getRequestURL()); 
+                    entityId, map, SamlV2CreateSharedDao.getRequestURL());
         } catch (SAML2MetaException e) {
             throw new RuntimeException(e);
         }
@@ -169,21 +169,6 @@ public class SamlV2HostedSpCreateDao
             return metaAlias;
         } catch (SAML2MetaException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private String getRequestURL() {
-        boolean isConsoleRemote = Boolean.valueOf(
-                SystemProperties.get(Constants.AM_CONSOLE_REMOTE)).booleanValue();
-        if (isConsoleRemote) {
-            return SystemProperties.getServerInstanceName();
-        } else {
-            HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-            String uri = req.getRequestURI().toString();
-            int idx = uri.indexOf('/', 1);
-            uri = uri.substring(0, idx);
-            return req.getScheme() + "://" + req.getServerName() +
-                    ":" + req.getServerPort() + uri;
         }
     }
 }

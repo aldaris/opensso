@@ -22,14 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2CreateSharedDao.java,v 1.1 2009-07-02 20:28:52 asyhuang Exp $
+ * $Id: SamlV2CreateSharedDao.java,v 1.2 2009-07-02 22:19:39 asyhuang Exp $
  */
-
 package com.sun.identity.admin.dao;
 
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.RealmsBean;
+import com.sun.identity.cot.COTException;
+import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
@@ -42,6 +43,15 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.workflow.WorkflowException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -71,13 +81,49 @@ public class SamlV2CreateSharedDao {
         }
     }
 
-    public static List<RealmBean> getRealmList() {
+    public static List getRealmList() {
         List<RealmBean> realmBeans;
+        List realms = new ArrayList();
         RealmsBean rlmbean = RealmsBean.getInstance();
         realmBeans = rlmbean.getRealmBeans();
         RealmBean baseRealmBean = rlmbean.getBaseRealmBean();
         realmBeans.add(baseRealmBean);
-        return realmBeans;
+        for (Iterator i = realmBeans.iterator(); i.hasNext();) {
+            String realmName = ((RealmBean) i.next()).getName();
+            realms.add(realmName);
+        }
+        return realms;
+    }
+
+    public static boolean validateCot(String newCotName) {
+
+        //List realms = getRealmList();
+        List cotList = new ArrayList();
+        //String realm = COTConstants.ROOT_REALM;
+
+        CircleOfTrustManager manager;
+        try {
+            manager = new CircleOfTrustManager();
+
+            List realmList = getRealmList();
+            for (Iterator i = realmList.iterator(); i.hasNext();) {
+                String realm = (String) i.next();
+                Set cotSet = manager.getAllCirclesOfTrust(realm);
+                for (Iterator j = cotSet.iterator(); j.hasNext();) {
+                    String cotName = (String) j.next();
+                    cotList.add(cotName);
+                }
+            }
+
+        } catch (COTException ex) {
+            return false;
+        }
+
+        if (cotList.contains(newCotName)) {
+            return false;
+        }
+
+        return true;
     }
 
     public static boolean valideEntityName(String newEntityName) {
@@ -89,7 +135,7 @@ public class SamlV2CreateSharedDao {
 
             SAML2MetaManager samlManager = new SAML2MetaManager();
             for (Iterator i = realms.iterator(); i.hasNext();) {
-                String realmName = ((RealmBean) i.next()).getName();
+                String realmName = (String) i.next();
 
                 Set samlEntities = samlManager.getAllEntities(realmName);
 
@@ -213,6 +259,51 @@ public class SamlV2CreateSharedDao {
                     child.getParentNode().replaceChild(newChild, child);
                 }
             }
+        }
+    }
+
+    public static String getContent(String resName) {
+        if (resName.startsWith("http://") ||
+                resName.startsWith("https://")) {
+            return getWebContent(resName);
+        } else {
+            return resName;
+        }
+    }
+
+    private static String getWebContent(String url) {
+
+        try {
+            StringBuffer content = new StringBuffer();
+            URL urlObj = new URL(url);
+            URLConnection conn = urlObj.openConnection();
+
+            if (conn instanceof HttpURLConnection) {
+                HttpURLConnection httpConnection = (HttpURLConnection) conn;
+                httpConnection.setRequestMethod("GET");
+                httpConnection.setDoOutput(true);
+
+                httpConnection.connect();
+                int response = httpConnection.getResponseCode();
+                InputStream is = httpConnection.getInputStream();
+                BufferedReader dataInput = new BufferedReader(
+                        new InputStreamReader(is));
+                String line = dataInput.readLine();
+
+                while (line != null) {
+                    content.append(line).append('\n');
+                    line = dataInput.readLine();
+                }
+            }
+
+            return content.toString();
+
+        } catch (ProtocolException e) {
+            throw new RuntimeException(e);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

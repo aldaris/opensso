@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.6 2009-07-02 20:28:52 asyhuang Exp $
+ * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.7 2009-07-02 22:19:39 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -77,7 +77,7 @@ public class SamlV2RemoteIdpCreateWizardHandler
 
             String url = getSamlV2RemoteIdpCreateWizardBean().getMetaUrl();
 
-            if (url.length() == 0 || (url == null)) {
+            if ((url == null) || (url.length() == 0)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidMetaUrlSummary"));
@@ -111,7 +111,7 @@ public class SamlV2RemoteIdpCreateWizardHandler
 
                 return false;
             }
-            //check meta format
+            
             if (!SamlV2CreateSharedDao.validateMetaFormat(filename)) {
                 getSamlV2RemoteIdpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2RemoteIdpCreateWizardBean().setStdMetaFile("");
@@ -139,9 +139,24 @@ public class SamlV2RemoteIdpCreateWizardHandler
                 getSamlV2RemoteIdpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
 
                 getMessagesBean().addMessageBean(mb);
-                getSamlV2RemoteIdpCreateWizardBean().gotoStep(
-                        SamlV2RemoteIdpCreateWizardStep.COT.toInt());
+                getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.COT.toInt());
 
+                return false;
+            }
+            
+            if (!SamlV2CreateSharedDao.validateCot(cotname)) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "cotExistSummary"));
+                mb.setDetail(r.getString(this, "cotExistDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+                Effect e = new InputFieldErrorEffect();
+                getSamlV2RemoteIdpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
+
+                getMessagesBean().addMessageBean(mb);
+                getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.COT.toInt());
+                
                 return false;
             }
         }

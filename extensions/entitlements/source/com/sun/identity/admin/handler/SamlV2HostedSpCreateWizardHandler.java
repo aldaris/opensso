@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.9 2009-07-02 20:28:52 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.10 2009-07-02 22:19:39 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -162,7 +162,7 @@ public class SamlV2HostedSpCreateWizardHandler
         String cotname = getSamlV2HostedSpCreateWizardBean().getNewCotName();
 
         if (!usingExitingCot) {
-            if (cotname.length() == 0 || (cotname == null)) {
+            if ((cotname == null) || (cotname.length() == 0)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidCotSummary"));
@@ -174,7 +174,21 @@ public class SamlV2HostedSpCreateWizardHandler
 
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2HostedSpCreateWizardBean().gotoStep(SamlV2HostedSpCreateWizardStep.COT.toInt());
+                return false;
+            }
 
+            if (!SamlV2CreateSharedDao.validateCot(cotname)) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "cotExistSummary"));
+                mb.setDetail(r.getString(this, "cotExistDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+                Effect e = new InputFieldErrorEffect();
+                getSamlV2HostedSpCreateWizardBean().setSamlV2HostedCreateEntityInputEffect(e);
+
+                getMessagesBean().addMessageBean(mb);
+                getSamlV2HostedSpCreateWizardBean().gotoStep(SamlV2HostedSpCreateWizardStep.COT.toInt());
                 return false;
             }
         }
@@ -233,7 +247,7 @@ public class SamlV2HostedSpCreateWizardHandler
 
                 return false;
             }
-            //check meta format
+            
             if (!SamlV2CreateSharedDao.validateMetaFormat(stdFilename)) {
                 getSamlV2HostedSpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2HostedSpCreateWizardBean().setStdMetaFile("");
@@ -244,6 +258,7 @@ public class SamlV2HostedSpCreateWizardHandler
                 getSamlV2HostedSpCreateWizardBean().setExtMetaFilename("");
                 getSamlV2HostedSpCreateWizardBean().setExtMetaFile("");
                 metaErrorPopup();
+                return false;
             }
 
         }

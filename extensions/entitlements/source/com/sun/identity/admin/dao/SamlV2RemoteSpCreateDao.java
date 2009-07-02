@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateDao.java,v 1.2 2009-06-20 08:41:58 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateDao.java,v 1.3 2009-07-02 22:19:39 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -111,10 +111,10 @@ public class SamlV2RemoteSpCreateDao
     public void importSamlv2RemoteSpFromURL(
             String realm,
             String cot,
-            String metadataFilename,
+            String metadataUrl,
             List attrMapping) {
 
-        String metadata = getContent(metadataFilename);
+        String metadata = SamlV2CreateSharedDao.getContent(metadataUrl);
         String extendedMeta = null;
 
         if (!attrMapping.isEmpty()) {
@@ -177,51 +177,6 @@ public class SamlV2RemoteSpCreateDao
         } catch (SAML2MetaException e) {
             throw new RuntimeException(e);
         } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static String getContent(String resName) {
-        if (resName.startsWith("http://") ||
-                resName.startsWith("https://")) {
-            return getWebContent(resName);
-        } else {
-            return resName;
-        }
-    }
-
-    private static String getWebContent(String url) {
-
-        try {
-            StringBuffer content = new StringBuffer();
-            URL urlObj = new URL(url);
-            URLConnection conn = urlObj.openConnection();
-
-            if (conn instanceof HttpURLConnection) {
-                HttpURLConnection httpConnection = (HttpURLConnection) conn;
-                httpConnection.setRequestMethod("GET");
-                httpConnection.setDoOutput(true);
-
-                httpConnection.connect();
-                int response = httpConnection.getResponseCode();
-                InputStream is = httpConnection.getInputStream();
-                BufferedReader dataInput = new BufferedReader(
-                        new InputStreamReader(is));
-                String line = dataInput.readLine();
-
-                while (line != null) {
-                    content.append(line).append('\n');
-                    line = dataInput.readLine();
-                }
-            }
-
-            return content.toString();
-
-        } catch (ProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

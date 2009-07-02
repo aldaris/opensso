@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateDao.java,v 1.2 2009-06-26 23:07:27 asyhuang Exp $
+ * $Id: SamlV2RemoteIdpCreateDao.java,v 1.3 2009-07-02 22:19:39 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -30,16 +30,7 @@ import com.sun.identity.cot.COTException;
 import com.sun.identity.workflow.AddProviderToCOT;
 import com.sun.identity.workflow.ImportSAML2MetaData;
 import com.sun.identity.workflow.WorkflowException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.net.URLConnection;
 
 public class SamlV2RemoteIdpCreateDao
         implements Serializable {
@@ -78,7 +69,7 @@ public class SamlV2RemoteIdpCreateDao
             String cot,
             String metadataUrl) {
 
-        String standardMetadata = getContent(metadataUrl);
+        String standardMetadata = SamlV2CreateSharedDao.getContent(metadataUrl);
         String extendedMetadata = null;
 
         String[] results;
@@ -98,54 +89,6 @@ public class SamlV2RemoteIdpCreateDao
             } catch (COTException e) {
                 throw new RuntimeException(e);
             }
-        }
-
-
-
-    }
-
-    public static String getContent(String resName) {
-        if (resName.startsWith("http://") ||
-                resName.startsWith("https://")) {
-            return getWebContent(resName);
-        } else {
-            return resName;
-        }
-    }
-
-    private static String getWebContent(String url) {
-
-        try {
-            StringBuffer content = new StringBuffer();
-            URL urlObj = new URL(url);
-            URLConnection conn = urlObj.openConnection();
-
-            if (conn instanceof HttpURLConnection) {
-                HttpURLConnection httpConnection = (HttpURLConnection) conn;
-                httpConnection.setRequestMethod("GET");
-                httpConnection.setDoOutput(true);
-
-                httpConnection.connect();
-                int response = httpConnection.getResponseCode();
-                InputStream is = httpConnection.getInputStream();
-                BufferedReader dataInput = new BufferedReader(
-                        new InputStreamReader(is));
-                String line = dataInput.readLine();
-
-                while (line != null) {
-                    content.append(line).append('\n');
-                    line = dataInput.readLine();
-                }
-            }
-
-            return content.toString();
-
-        } catch (ProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }
