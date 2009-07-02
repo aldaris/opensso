@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.6 2009-06-30 08:30:38 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.7 2009-07-02 17:44:15 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -39,6 +39,8 @@ import com.sun.identity.admin.model.ViewAttribute;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.SamlV2HostedIdpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2HostedIdpCreateWizardStep;
+import com.sun.identity.saml2.meta.SAML2MetaException;
+import com.sun.identity.workflow.WorkflowException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,10 +49,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.FacesEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.xml.bind.JAXBException;
 
 public class SamlV2HostedIdpCreateWizardHandler
         extends SamlV2HostedCreateWizardHandler {
@@ -199,7 +204,7 @@ public class SamlV2HostedIdpCreateWizardHandler
         if (!usingMetaDataFile) {
             String newEntityName =
                     getSamlV2HostedIdpCreateWizardBean().getNewEntityName();
-            if ((newEntityName == null) || (newEntityName.length() == 0)) {
+            if ((newEntityName == null) || (newEntityName.length() == 0) || (!samlV2HostedIdpCreateDao.valideEntityName(newEntityName))) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidNameSummary"));
@@ -216,6 +221,7 @@ public class SamlV2HostedIdpCreateWizardHandler
 
                 return false;
             }
+
         } else {
 
             String stdFilename = getSamlV2HostedIdpCreateWizardBean().getStdMetaFile();
@@ -237,6 +243,21 @@ public class SamlV2HostedIdpCreateWizardHandler
 
                 return false;
             }
+
+            //check meta format
+            if (!samlV2HostedIdpCreateDao.validateMetaDataFormat(stdFilename)) {
+                getSamlV2HostedIdpCreateWizardBean().setStdMetaFilename("");
+                getSamlV2HostedIdpCreateWizardBean().setStdMetaFile("");
+                MetaErrorPopup();
+                return false;
+            }
+
+            if (!samlV2HostedIdpCreateDao.valideaExtendedMataFormat(extFilename)) {
+                getSamlV2HostedIdpCreateWizardBean().setExtMetaFilename("");
+                getSamlV2HostedIdpCreateWizardBean().setExtMetaFile("");
+                MetaErrorPopup();
+            }
+
         }
 
         return true;
@@ -272,6 +293,7 @@ public class SamlV2HostedIdpCreateWizardHandler
     public void stdMetaUploadFile(ActionEvent event) throws IOException {
         InputFile inputFile = (InputFile) event.getSource();
         FileInfo fileInfo = inputFile.getFileInfo();
+
         if (fileInfo.getStatus() == FileInfo.SAVED) {
             // read the file into a string
             // reference our newly updated file for display purposes and
@@ -303,12 +325,23 @@ public class SamlV2HostedIdpCreateWizardHandler
                     e.printStackTrace();
                 }
             }
-            getSamlV2HostedIdpCreateWizardBean().setStdMetaFilename(
-                    fileInfo.getFileName());
-            getSamlV2HostedIdpCreateWizardBean().setStdMetaFile(
-                    contents.toString());
+            getSamlV2HostedIdpCreateWizardBean().setStdMetaFilename(fileInfo.getFileName());
+            getSamlV2HostedIdpCreateWizardBean().setStdMetaFile(contents.toString());
             file.delete();
         }
+    }
+
+    private void MetaErrorPopup() {
+        getSamlV2HostedIdpCreateWizardBean().setStdMetaFileProgress(0);
+        MessageBean mb = new MessageBean();
+        Resources r = new Resources();
+        mb.setSummary(r.getString(this, "invalidMataFormatSummary"));
+        mb.setDetail(r.getString(this, "invalidMetaFormatDetail"));
+        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+        Effect e = new InputFieldErrorEffect();
+        getSamlV2HostedIdpCreateWizardBean().setSamlV2HostedCreateEntityInputEffect(e);
+        getMessagesBean().addMessageBean(mb);
+        getSamlV2HostedIdpCreateWizardBean().gotoStep(SamlV2HostedIdpCreateWizardStep.METADATA.toInt());
     }
 
     public void stdMetaFileUploadProgress(EventObject event) {
@@ -320,6 +353,7 @@ public class SamlV2HostedIdpCreateWizardHandler
     public void extMetaUploadFile(ActionEvent event) throws IOException {
         InputFile inputFile = (InputFile) event.getSource();
         FileInfo fileInfo = inputFile.getFileInfo();
+        String meta;
         if (fileInfo.getStatus() == FileInfo.SAVED) {
             // read the file into a string
             // reference our newly updated file for display purposes and
@@ -350,10 +384,8 @@ public class SamlV2HostedIdpCreateWizardHandler
                     e.printStackTrace();
                 }
             }
-            getSamlV2HostedIdpCreateWizardBean().setExtMetaFilename(
-                    fileInfo.getFileName());
-            getSamlV2HostedIdpCreateWizardBean().setExtMetaFile(
-                    contents.toString());
+            getSamlV2HostedIdpCreateWizardBean().setExtMetaFilename(fileInfo.getFileName());
+            getSamlV2HostedIdpCreateWizardBean().setExtMetaFile(contents.toString());
             file.delete();
         }
     }
