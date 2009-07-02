@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationDao.java,v 1.10 2009-06-04 11:49:12 veiming Exp $
+ * $Id: ViewApplicationDao.java,v 1.11 2009-07-02 12:27:39 veiming Exp $
  */
 
 package com.sun.identity.admin.dao;
 
-import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.RealmBean;
@@ -37,10 +36,7 @@ import com.sun.identity.admin.model.ViewApplicationType;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.opensso.SubjectUtils;
-import com.sun.identity.security.AdminTokenAction;
 import java.io.Serializable;
-import java.security.AccessController;
 import java.util.HashMap;
 import java.util.Map;
 import javax.security.auth.Subject;

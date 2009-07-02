@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.30 2009-06-26 19:50:03 veiming Exp $
+   $Id: entitlement.xml,v 1.31 2009-07-02 12:27:40 veiming Exp $
 
 -->
 
@@ -199,6 +199,26 @@
                             <Value>com.sun.identity.entitlement.URLResourceName</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
+                    <SubConfiguration name="sunIdentityServerDiscoveryService"
+                        id="applicationType">
+                        <AttributeValuePair>
+                            <Attribute name="actions" />
+                            <Value>LOOKUP=true</Value>
+                            <Value>UPDATE=true</Value>
+                        </AttributeValuePair>
+                    <AttributeValuePair>
+                            <Attribute name="searchIndexImpl" />
+                            <Value>com.sun.identity.entitlement.util.ResourceNameSplitter</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="saveIndexImpl" />
+                            <Value>com.sun.identity.entitlement.util.ResourceNameIndexGenerator</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resourceComparator" />
+                            <Value>com.sun.identity.entitlement.PrefixResourceName</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
                     <SubConfiguration name="sunAMDelegationService"
                         id="applicationType">
                         <AttributeValuePair>
@@ -271,6 +291,45 @@
                         <AttributeValuePair>
                             <Attribute name="applicationType" />
                             <Value>iPlanetAMWebAgentService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resources" />
+                            <Value>http*://*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="subjects" />
+                            <Value>com.sun.identity.admin.model.IdRepoGroupViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.IdRepoRoleViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.IdRepoUserViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.AttributeViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.OrViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.AndViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.NotViewSubject</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="conditions" />
+                            <!--<Value>com.sun.identity.admin.model.ActiveSessionTimeCondition</Value>-->
+                            <Value>com.sun.identity.admin.model.DateRangeCondition</Value>
+                            <Value>com.sun.identity.admin.model.DaysOfWeekCondition</Value>
+                            <Value>com.sun.identity.admin.model.DnsNameViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.IpRangeViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.TimeRangeCondition</Value>
+                            <Value>com.sun.identity.admin.model.TimezoneCondition</Value>
+                            <Value>com.sun.identity.admin.model.OrViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.AndViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.NotViewCondition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="entitlementCombiner" />
+                            <Value>com.sun.identity.entitlement.DenyOverride</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="sunIdentityServerDiscoveryService" 
+                        id="application">
+                        <AttributeValuePair>
+                            <Attribute name="applicationType" />
+                            <Value>sunIdentityServerDiscoveryService</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="resources" />

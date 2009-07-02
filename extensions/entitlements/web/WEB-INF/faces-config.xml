@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.97 2009-06-24 23:47:02 farble1670 Exp $
+  $Id: faces-config.xml,v 1.98 2009-07-02 12:27:40 veiming Exp $
 -->
 
 <faces-config version="1.2" 
@@ -186,6 +186,27 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>discoveryViewApplicationType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ViewApplicationType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>sunIdentityServerDiscoveryService</value>
+        </managed-property>
+        <managed-property>
+            <property-name>entitlementApplicationType</property-name>
+            <value>sunIdentityServerDiscoveryService</value>
+        </managed-property>
+        <managed-property>
+            <property-name>resourceTemplate</property-name>
+            <value>/admin/facelet/template/resources-url.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>resourceClassName</property-name>
+            <value>com.sun.identity.admin.model.UrlResource</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>bankingViewApplicationType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.ViewApplicationType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -221,6 +242,10 @@
             <map-entry>
                 <key>#{bankingViewApplicationType.entitlementApplicationType}</key>
                 <value>#{bankingViewApplicationType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{discoveryViewApplicationType.entitlementApplicationType}</key>
+                <value>#{discoveryViewApplicationType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
