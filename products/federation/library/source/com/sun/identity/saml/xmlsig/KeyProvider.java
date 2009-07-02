@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyProvider.java,v 1.4 2008-06-25 05:47:38 qcheng Exp $
+ * $Id: KeyProvider.java,v 1.5 2009-07-02 21:53:26 madan_ranganath Exp $
  *
  */
 
@@ -40,6 +40,8 @@ import java.lang.*;
  * that is implemented to retrieve X509Certificates and Private Keys from
  * user data store.  
  * <p>
+ *
+ * @supported.all.api
  */
 
 public interface KeyProvider {
