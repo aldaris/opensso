@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.7 2009-07-02 17:44:15 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.8 2009-07-02 20:28:52 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -37,10 +37,9 @@ import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.SamlV2ViewAttribute;
 import com.sun.identity.admin.model.ViewAttribute;
 import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.dao.SamlV2CreateSharedDao;
 import com.sun.identity.admin.model.SamlV2HostedIdpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2HostedIdpCreateWizardStep;
-import com.sun.identity.saml2.meta.SAML2MetaException;
-import com.sun.identity.workflow.WorkflowException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,13 +48,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.FacesEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.xml.bind.JAXBException;
 
 public class SamlV2HostedIdpCreateWizardHandler
         extends SamlV2HostedCreateWizardHandler {
@@ -204,7 +200,7 @@ public class SamlV2HostedIdpCreateWizardHandler
         if (!usingMetaDataFile) {
             String newEntityName =
                     getSamlV2HostedIdpCreateWizardBean().getNewEntityName();
-            if ((newEntityName == null) || (newEntityName.length() == 0) || (!samlV2HostedIdpCreateDao.valideEntityName(newEntityName))) {
+            if ((newEntityName == null) || (newEntityName.length() == 0) || (!SamlV2CreateSharedDao.valideEntityName(newEntityName))) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidNameSummary"));
@@ -245,17 +241,17 @@ public class SamlV2HostedIdpCreateWizardHandler
             }
 
             //check meta format
-            if (!samlV2HostedIdpCreateDao.validateMetaDataFormat(stdFilename)) {
+            if (!SamlV2CreateSharedDao.validateMetaFormat(stdFilename)) {
                 getSamlV2HostedIdpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2HostedIdpCreateWizardBean().setStdMetaFile("");
-                MetaErrorPopup();
+                metaErrorPopup();
                 return false;
             }
 
-            if (!samlV2HostedIdpCreateDao.valideaExtendedMataFormat(extFilename)) {
+            if (!SamlV2CreateSharedDao.valideaExtendedMataFormat(extFilename)) {
                 getSamlV2HostedIdpCreateWizardBean().setExtMetaFilename("");
                 getSamlV2HostedIdpCreateWizardBean().setExtMetaFile("");
-                MetaErrorPopup();
+                metaErrorPopup();
             }
 
         }
@@ -331,7 +327,7 @@ public class SamlV2HostedIdpCreateWizardHandler
         }
     }
 
-    private void MetaErrorPopup() {
+    private void metaErrorPopup() {
         getSamlV2HostedIdpCreateWizardBean().setStdMetaFileProgress(0);
         MessageBean mb = new MessageBean();
         Resources r = new Resources();
@@ -352,8 +348,7 @@ public class SamlV2HostedIdpCreateWizardHandler
 
     public void extMetaUploadFile(ActionEvent event) throws IOException {
         InputFile inputFile = (InputFile) event.getSource();
-        FileInfo fileInfo = inputFile.getFileInfo();
-        String meta;
+        FileInfo fileInfo = inputFile.getFileInfo();        
         if (fileInfo.getStatus() == FileInfo.SAVED) {
             // read the file into a string
             // reference our newly updated file for display purposes and

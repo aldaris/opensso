@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.7 2009-06-30 08:30:38 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.8 2009-07-02 20:28:52 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -33,6 +33,7 @@ import com.icesoft.faces.component.inputfile.InputFile;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.SamlV2RemoteSpCreateDao;
+import com.sun.identity.admin.dao.SamlV2ShareCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardBean;
@@ -202,6 +203,19 @@ public class SamlV2RemoteSpCreateWizardHandler
         return true;
     }
 
+    private void metaErrorPopup() {
+        getSamlV2RemoteSpCreateWizardBean().setStdMetaFileProgress(0);
+        MessageBean mb = new MessageBean();
+        Resources r = new Resources();
+        mb.setSummary(r.getString(this, "invalidMataFormatSummary"));
+        mb.setDetail(r.getString(this, "invalidMetaFormatDetail"));
+        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+        Effect e = new InputFieldErrorEffect();
+        getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
+        getMessagesBean().addMessageBean(mb);
+        getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.METADATA.toInt());
+    }
+
     public boolean validateMetadata() {
         boolean usingMetaDataFile = getSamlV2RemoteSpCreateWizardBean().isMeta();
 
@@ -240,6 +254,13 @@ public class SamlV2RemoteSpCreateWizardHandler
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.METADATA.toInt());
 
+                return false;
+            }
+              //check meta format
+            if (!SamlV2ShareCreateDao.validateMetaFormat(filename)) {
+                getSamlV2RemoteSpCreateWizardBean().setStdMetaFilename("");
+                getSamlV2RemoteSpCreateWizardBean().setStdMetaFile("");
+                metaErrorPopup();
                 return false;
             }
         }

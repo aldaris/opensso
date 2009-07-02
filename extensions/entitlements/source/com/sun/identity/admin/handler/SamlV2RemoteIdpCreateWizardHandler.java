@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.5 2009-06-30 08:30:38 asyhuang Exp $
+ * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.6 2009-07-02 20:28:52 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -36,6 +36,7 @@ import com.sun.identity.admin.model.SamlV2RemoteIdpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2RemoteIdpCreateWizardStep;
 import com.sun.identity.admin.model.WizardBean;
 import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.dao.SamlV2CreateSharedDao;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,6 +55,19 @@ public class SamlV2RemoteIdpCreateWizardHandler
     public void setSamlV2RemoteIdpCreateDao(
             SamlV2RemoteIdpCreateDao samlV2RemoteIdpCreateDao) {
         this.samlV2RemoteIdpCreateDao = samlV2RemoteIdpCreateDao;
+    }
+
+    private void metaErrorPopup() {
+        getSamlV2RemoteIdpCreateWizardBean().setStdMetaFileProgress(0);
+        MessageBean mb = new MessageBean();
+        Resources r = new Resources();
+        mb.setSummary(r.getString(this, "invalidMataFormatSummary"));
+        mb.setDetail(r.getString(this, "invalidMetaFormatDetail"));
+        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+        Effect e = new InputFieldErrorEffect();
+        getSamlV2RemoteIdpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
+        getMessagesBean().addMessageBean(mb);
+        getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
     }
 
     public boolean validateMetadata() {
@@ -82,7 +96,7 @@ public class SamlV2RemoteIdpCreateWizardHandler
         } else {
 
             String filename = getSamlV2RemoteIdpCreateWizardBean().getStdMetaFilename();
-            if ((filename == null) || (filename.length() == 0) ) {
+            if ((filename == null) || (filename.length() == 0)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidMetafileSummary"));
@@ -91,10 +105,17 @@ public class SamlV2RemoteIdpCreateWizardHandler
 
                 Effect e = new InputFieldErrorEffect();
                 getSamlV2RemoteIdpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
-            
+
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
 
+                return false;
+            }
+            //check meta format
+            if (!SamlV2CreateSharedDao.validateMetaFormat(filename)) {
+                getSamlV2RemoteIdpCreateWizardBean().setStdMetaFilename("");
+                getSamlV2RemoteIdpCreateWizardBean().setStdMetaFile("");
+                metaErrorPopup();
                 return false;
             }
         }
