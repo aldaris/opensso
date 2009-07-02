@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.7 2009-07-02 22:19:39 asyhuang Exp $
+ * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.8 2009-07-02 22:46:17 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -95,8 +95,8 @@ public class SamlV2RemoteIdpCreateWizardHandler
 
         } else {
 
-            String filename = getSamlV2RemoteIdpCreateWizardBean().getStdMetaFilename();
-            if ((filename == null) || (filename.length() == 0)) {
+            String meta = getSamlV2RemoteIdpCreateWizardBean().getStdMetaFile();
+            if ((meta == null) || (meta.length() == 0)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidMetafileSummary"));
@@ -111,8 +111,8 @@ public class SamlV2RemoteIdpCreateWizardHandler
 
                 return false;
             }
-            
-            if (!SamlV2CreateSharedDao.validateMetaFormat(filename)) {
+                       
+            if (!SamlV2CreateSharedDao.validateMetaFormat(meta)) {
                 getSamlV2RemoteIdpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2RemoteIdpCreateWizardBean().setStdMetaFile("");
                 metaErrorPopup();
@@ -143,7 +143,7 @@ public class SamlV2RemoteIdpCreateWizardHandler
 
                 return false;
             }
-            
+
             if (!SamlV2CreateSharedDao.validateCot(cotname)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
@@ -156,7 +156,7 @@ public class SamlV2RemoteIdpCreateWizardHandler
 
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.COT.toInt());
-                
+
                 return false;
             }
         }

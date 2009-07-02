@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.9 2009-07-02 22:19:39 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.10 2009-07-02 22:46:17 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -257,8 +257,8 @@ public class SamlV2RemoteSpCreateWizardHandler
 
         } else {
 
-            String filename = getSamlV2RemoteSpCreateWizardBean().getStdMetaFile();
-            if ((filename == null) || filename.length() == 0) {
+            String meta = getSamlV2RemoteSpCreateWizardBean().getStdMetaFile();
+            if ((meta == null) || meta.length() == 0) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
                 mb.setSummary(r.getString(this, "invalidMetafileSummary"));
@@ -273,8 +273,8 @@ public class SamlV2RemoteSpCreateWizardHandler
 
                 return false;
             }
-           
-            if (!SamlV2ShareCreateDao.validateMetaFormat(filename)) {
+            
+            if (!SamlV2ShareCreateDao.validateMetaFormat(meta)) {
                 getSamlV2RemoteSpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2RemoteSpCreateWizardBean().setStdMetaFile("");
                 metaErrorPopup();
