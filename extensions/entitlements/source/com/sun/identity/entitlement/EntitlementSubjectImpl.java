@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementSubjectImpl.java,v 1.4 2009-05-21 06:35:31 veiming Exp $
+ * $Id: EntitlementSubjectImpl.java,v 1.5 2009-07-02 15:53:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,6 +39,7 @@ import org.json.JSONException;
 public abstract class EntitlementSubjectImpl implements EntitlementSubject {
     private String uuid;
     private String pSubjectName;
+    private boolean exclusive;
 
     /**
      * Constructor
@@ -77,6 +78,8 @@ public abstract class EntitlementSubjectImpl implements EntitlementSubject {
             uuid = jo.has("uuid") ? jo.optString("uuid") : null;
             pSubjectName = jo.has("pSubjectName") ?
                 jo.optString("pSubjectName") : null;
+            exclusive = jo.has("exclusive") ?
+                Boolean.parseBoolean(jo.optString("exclusive")) : false;
         } catch (JSONException e) {
             PrivilegeManager.debug.error("EntitlementSubjectImpl.setState", e);
         }
@@ -100,6 +103,9 @@ public abstract class EntitlementSubjectImpl implements EntitlementSubject {
         JSONObject jo = new JSONObject();
         jo.put("uuid", uuid);
         jo.put("pSubjectName", pSubjectName);
+        if (exclusive) {
+            jo.put("exclusive", exclusive);
+        }
         return jo;
     }
 
@@ -163,7 +169,6 @@ public abstract class EntitlementSubjectImpl implements EntitlementSubject {
      */
     @Override
     public boolean equals(Object obj) {
-        boolean equalled = true;
         if (obj == null) {
             return false;
         }
@@ -189,7 +194,7 @@ public abstract class EntitlementSubjectImpl implements EntitlementSubject {
                 return false;
             }
         }
-        return equalled;
+        return (exclusive == object.exclusive);
     }
 
     /**
@@ -205,6 +210,11 @@ public abstract class EntitlementSubjectImpl implements EntitlementSubject {
         if (pSubjectName != null) {
             code += pSubjectName.hashCode();
         }
+        if (exclusive) {
+            code += Boolean.TRUE.hashCode();
+        } else {
+            code += Boolean.FALSE.hashCode();
+        }
         return code;
     }
 
@@ -216,5 +226,23 @@ public abstract class EntitlementSubjectImpl implements EntitlementSubject {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns <code>true</code> for exclusive.
+     *
+     * @return <code>true</code> for exclusive.
+     */
+    public boolean isExclusive() {
+        return exclusive;
+    }
+
+    /**
+     * Sets exclusive.
+     *
+     * @param flag <code>true</code> for exclusive.
+     */
+    public void setExclusive(boolean flag) {
+        exclusive = flag;
     }
 }

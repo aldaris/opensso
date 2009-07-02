@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleSubject.java,v 1.12 2009-06-23 07:00:16 veiming Exp $
+ * $Id: RoleSubject.java,v 1.13 2009-07-02 15:53:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -94,7 +94,8 @@ public class RoleSubject extends EntitlementSubjectImpl {
                     IdType.ROLE.getName());
             satified = (values != null) ? values.contains(getID()) : false;
         }
-        
+
+        satified = satified ^ isExclusive();
         return new SubjectDecision(satified, Collections.EMPTY_MAP);
     }
 

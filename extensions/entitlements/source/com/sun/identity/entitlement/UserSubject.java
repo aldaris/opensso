@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSubject.java,v 1.10 2009-06-23 07:00:16 veiming Exp $
+ * $Id: UserSubject.java,v 1.11 2009-07-02 15:53:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -85,7 +85,7 @@ public class UserSubject extends EntitlementSubjectImpl {
         String resourceName,
         Map<String, Set<String>> environment)
         throws EntitlementException {
-        boolean satified = hasPrincipal(subject, getID());
+        boolean satified = hasPrincipal(subject, getID()) ^ isExclusive();
         return new SubjectDecision(satified, Collections.EMPTY_MAP);
     }
 

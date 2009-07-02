@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.16 2009-06-23 07:00:15 veiming Exp $
+ * $Id: GroupSubject.java,v 1.17 2009-07-02 15:53:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -100,6 +100,7 @@ public class GroupSubject extends EntitlementSubjectImpl {
                 IdType.GROUP.getName());
             satified = (values != null) ? values.contains(getID()) : false;
         }
+        satified = satified ^ isExclusive();
         return new SubjectDecision(satified, Collections.EMPTY_MAP);
     }
 

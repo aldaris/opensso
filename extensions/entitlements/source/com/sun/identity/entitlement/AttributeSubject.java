@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeSubject.java,v 1.3 2009-06-23 07:00:15 veiming Exp $
+ * $Id: AttributeSubject.java,v 1.4 2009-07-02 15:53:15 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -99,6 +99,7 @@ public class AttributeSubject extends EntitlementSubjectImpl {
                 SubjectAttributesCollector.NAMESPACE_ATTR + getID());
             satified = (values != null) ? values.contains(getValue()) : false;
         }
+        satified = satified ^ isExclusive();
         return new SubjectDecision(satified, Collections.EMPTY_MAP);
     }
 

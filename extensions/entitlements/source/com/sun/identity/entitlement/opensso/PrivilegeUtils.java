@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.36 2009-06-25 21:24:44 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.37 2009-07-02 15:53:15 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -38,13 +38,19 @@ import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.GroupSubject;
 import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ResourceAttribute;
+import com.sun.identity.entitlement.RoleSubject;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserAttributes;
 import com.sun.identity.entitlement.xacml3.XACMLPrivilegeUtils;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
 import com.sun.identity.policy.ActionSchema;
 import com.sun.identity.policy.InvalidNameException;
 import com.sun.identity.policy.NameNotFoundException;
@@ -60,6 +66,7 @@ import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.interfaces.Referral;
 import com.sun.identity.policy.interfaces.ResponseProvider;
 import com.sun.identity.policy.interfaces.Subject;
+import com.sun.identity.policy.plugins.AMIdentitySubject;
 import com.sun.identity.policy.plugins.IDRepoResponseProvider;
 import com.sun.identity.policy.plugins.PrivilegeCondition;
 import com.sun.identity.policy.plugins.PrivilegeSubject;
@@ -194,21 +201,71 @@ public class PrivilegeUtils {
 
     private static EntitlementSubject toEntitlementSubject(Policy policy)
         throws PolicyException {
-        Set subjectNames = policy.getSubjectNames();
-        Set nqSubjects = new HashSet();
+        Set<String> subjectNames = policy.getSubjectNames();
+        Set<EntitlementSubject> entitlementSubjects =
+            new HashSet<EntitlementSubject>();
+
         if (subjectNames != null) {
-            for (Object subjectNameObj : subjectNames) {
-                String subjectName = (String) subjectNameObj;
+            for (String subjectName : subjectNames) {
                 Subject subject = policy.getSubject(subjectName);
                 boolean exclusive = policy.isSubjectExclusive(subjectName);
-                Object[] nqSubject = new Object[3];
-                nqSubject[0] = subjectName;
-                nqSubject[1] = subject;
-                nqSubject[2] = exclusive;
-                nqSubjects.add(nqSubject);
+                boolean dealtWith = false;
+                if (subject instanceof AMIdentitySubject) {
+                    AMIdentitySubject sbj = (AMIdentitySubject) subject;
+                    Set<EntitlementSubject> eSubjects = toEntitlementSubject(
+                        sbj, exclusive);
+                    if (eSubjects != null) {
+                        entitlementSubjects.addAll(eSubjects);
+                        dealtWith = true;
+                    }
+                }
+                if (!dealtWith) {
+                    EntitlementSubject sbj = mapGenericSubject(subjectName,
+                        subject, exclusive);
+                    if (sbj != null) {
+                        entitlementSubjects.add(sbj);
+                    }
+                }
             }
         }
-        return nqSubjectsToESubject(nqSubjects);
+
+        if (entitlementSubjects.isEmpty()) {
+            return null;
+        }
+        return (entitlementSubjects.size() == 1) ?
+            entitlementSubjects.iterator().next() :
+            new OrSubject(entitlementSubjects);
+    }
+
+    private static Set<EntitlementSubject> toEntitlementSubject(
+        AMIdentitySubject sbj,
+        boolean exclusive) {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+
+        try {
+            Set<EntitlementSubject> result = new HashSet<EntitlementSubject>();
+            Set<String> values = sbj.getValues();
+            
+            for (String uuid : values) {
+                AMIdentity amid = IdUtils.getIdentity(adminToken, uuid);
+                IdType type = amid.getType();
+                if (type.equals(IdType.GROUP)) {
+                    GroupSubject grp = new GroupSubject(uuid);
+                    grp.setExclusive(exclusive);
+                    result.add(grp);
+                } else if (type.equals(IdType.ROLE)) {
+                    RoleSubject role = new RoleSubject(uuid);
+                    role.setExclusive(exclusive);
+                    result.add(role);
+                } else {
+                    return Collections.EMPTY_SET;
+                }
+            }
+            return result;
+        } catch (IdRepoException ex) {
+            return Collections.EMPTY_SET;
+        }
     }
 
     private static EntitlementCondition toEntitlementCondition(Policy policy)
@@ -322,23 +379,6 @@ public class PrivilegeUtils {
         return entitlements;
     }
 
-    private static EntitlementSubject nqSubjectsToESubject(Set nqSubjects) {
-        Set<EntitlementSubject> esSet = new HashSet<EntitlementSubject>();
-        for (Object nqSubjectObj : nqSubjects) {
-            Object[] nqSubject = (Object[]) nqSubjectObj;
-            esSet.add(mapGenericSubject(nqSubject));
-        }
-
-        if (esSet.isEmpty()) {
-            return null;
-        }
-        if (esSet.size() == 1) {
-            return esSet.iterator().next();
-        }
-
-        return new OrSubject(esSet);
-    }
-
     private static EntitlementCondition nConditionsToECondition(Set nConditons)
     {
         Set<EntitlementCondition> ecSet = new HashSet<EntitlementCondition>();
@@ -391,9 +431,10 @@ public class PrivilegeUtils {
     }
 
     private static EntitlementSubject mapGenericSubject(
-        Object[] nSubject) {
+        String subjectName,
+        Subject objSubject,
+        boolean exclusive) {
         try {
-            Object objSubject = nSubject[1];
             if (objSubject instanceof
                 com.sun.identity.policy.plugins.PrivilegeSubject) {
                 com.sun.identity.policy.plugins.PrivilegeSubject pips =
@@ -408,12 +449,12 @@ public class PrivilegeUtils {
                     (EntitlementSubject)Class.forName(className).newInstance();
                 es.setState(state);
                 return es;
-            } else if (objSubject instanceof Subject) {
+            } else {
                 Subject sbj = (Subject)objSubject;
                 Set<String> val = sbj.getValues();
                 String className = sbj.getClass().getName();
-                return new PolicySubject((String)nSubject[0],
-                    className, val, (Boolean)nSubject[2]);
+                return new PolicySubject(subjectName,
+                    className, val, exclusive);
             }
         } catch (ClassNotFoundException e) {
             PrivilegeManager.debug.error("PrivilegeUtils.mapGenericSubject", e);
