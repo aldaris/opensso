@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.19 2008-09-04 05:24:53 ericow Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.20 2009-07-02 20:26:16 hengming Exp $
  *
  */
 
@@ -804,6 +804,24 @@ public class DirectoryManagerImpl extends IdRepoJAXRPCObjectImpl implements
         }
     }
     
+    public void changePassword(String token, String entryDN, String attrName,
+        String oldPassword, String newPassword)
+        throws AMRemoteException, SSOException, RemoteException {
+
+        initialize();
+        try {
+            SSOToken ssoToken = getSSOToken(token);
+            dsServices.changePassword(ssoToken, entryDN, attrName,
+                oldPassword, newPassword);
+        } catch (AMException amex) {
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl.setAttributes."
+                    + " Caught Exception: " + amex);
+            }
+            throw convertException(amex);
+        }
+    }
+
     public void setGroupFilter(String token, String entryDN, String filter)
         throws AMRemoteException, SSOException, RemoteException {
         initialize();

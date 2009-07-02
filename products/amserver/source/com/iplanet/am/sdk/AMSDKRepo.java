@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.25 2009-03-06 01:12:43 hengming Exp $
+ * $Id: AMSDKRepo.java,v 1.26 2009-07-02 20:26:15 hengming Exp $
  *
  */
 
@@ -1089,6 +1089,34 @@ public class AMSDKRepo extends IdRepo {
             throw IdUtils.convertAMException(ame);
         }
 
+    }
+
+    public void changePassword(SSOToken token, IdType type,
+        String name, String attrName, String oldPassword, String newPassword)
+        throws IdRepoException, SSOException {
+
+        if (debug.messageEnabled()) {
+            debug.message("AMSDKRepo.changePassword: name = " + name);
+        }
+
+        if (!type.equals(IdType.USER)) {
+            Object args[] = { this.getClass().getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                "229", args);
+        }
+
+        String dn = getDN(type, name);
+        int profileType = getProfileType(type);
+
+        try {
+            IDirectoryServices dsServices = AMDirectoryAccessFactory
+                .getDirectoryServices();
+            dsServices.changePassword(token, dn, attrName, oldPassword,
+                newPassword);
+        } catch (AMException ame) {
+            debug.error("AMSDKRepo.changePassword:", ame);
+            throw IdUtils.convertAMException(ame);
+        }
     }
 
     private void setMixAttributes(SSOToken token, IdType type, String name,

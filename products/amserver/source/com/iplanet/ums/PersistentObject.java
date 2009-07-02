@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PersistentObject.java,v 1.7 2009-01-28 05:34:50 ww203982 Exp $
+ * $Id: PersistentObject.java,v 1.8 2009-07-02 20:27:01 hengming Exp $
  *
  */
 
@@ -370,6 +370,23 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
                 Attr.getName(attr.getBaseName(), locale));
         attrWithLocale.addValues(attr.getStringValues());
         setAttribute(attrWithLocale);
+    }
+
+    /**
+     * Changes user password.
+     * 
+     * @param entryDN DN of the profile whose template is to be set
+     * @param attrName password attribute name
+     * @param oldPassword old password
+     * @param newPassword new password
+     * @throws AMException if an error occurs when changing user password
+     * @throws SSOException If user's single sign on token is invalid.
+     */
+    public void changePassword(String entryDN, String attrName,
+        String oldPassword, String newPassword) throws UMSException {
+
+        DataLayer.getInstance().changePassword(getGuid(), attrName,
+            oldPassword, newPassword);
     }
 
     /**

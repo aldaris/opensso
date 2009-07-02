@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteServicesImpl.java,v 1.9 2008-06-25 05:41:26 qcheng Exp $
+ * $Id: RemoteServicesImpl.java,v 1.10 2009-07-02 20:26:16 hengming Exp $
  *
  */
 
@@ -1191,6 +1191,55 @@ public class RemoteServicesImpl implements IDirectoryServices {
             if (getDebug().messageEnabled()) {
                 getDebug().message(
                     "RemoteServicesImpl.setAttributes : entryDN=" +
+                     entryDN +";  caught exception=", ex);
+            }
+            throw new AMException(AMSDKBundle.getString("1000"), "1000");
+        }
+
+    }
+
+    /**
+     * Changes user password.
+     * 
+     * @param token Single sign on token
+     * @param entryDN DN of the profile whose template is to be set
+     * @param attrName password attribute name
+     * @param oldPassword old password
+     * @param newPassword new password
+     * @throws AMException if an error occurs when changing user password
+     * @throws SSOException If user's single sign on token is invalid.
+     */
+    public void changePassword(SSOToken token, String entryDN, String attrName,
+        String oldPassword, String newPassword)
+        throws AMException, SSOException {
+
+        try {
+            String tokenID = token.getTokenID().toString();
+            Object[] objs = { tokenID, entryDN, attrName, oldPassword,
+                newPassword };
+            client.send(client.encodeMessage("changePassword", objs), 
+        	    Session.getLBCookie(tokenID), null);
+        } catch (AMRemoteException amrex) {
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.changePassword : entryDN" +
+                    entryDN + ";  AMRemoteException caught exception=" ,
+                    amrex);
+            }
+            throw convertException(amrex);
+        } catch (RemoteException rex) {
+            getDebug().error(
+                "RemoteServicesImpl.changePassword: caught exception=", rex);
+            throw new AMException(AMSDKBundle.getString("1000"), "1000");
+        } catch (SSOException ssoe) {
+            getDebug().error(
+                "RemoteServicesImpl.changePassword: caught SSOException=",
+                ssoe);
+            throw ssoe;
+        } catch (Exception ex) {
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "RemoteServicesImpl.changePassword : entryDN=" +
                      entryDN +";  caught exception=", ex);
             }
             throw new AMException(AMSDKBundle.getString("1000"), "1000");

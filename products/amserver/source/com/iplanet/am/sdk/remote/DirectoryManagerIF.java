@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerIF.java,v 1.7 2008-06-25 05:41:26 qcheng Exp $
+ * $Id: DirectoryManagerIF.java,v 1.8 2009-07-02 20:26:16 hengming Exp $
  *
  */
 
@@ -127,6 +127,10 @@ public interface DirectoryManagerIF extends Remote {
     public void setAttributes(String token, String entryDN, int objectType,
             Map stringAttributes, Map byteAttributes, boolean isAdd)
             throws AMRemoteException, SSOException, RemoteException;
+
+    public void changePassword(String token, String entryDN, String attrName,
+        String oldPassword, String newPassword)
+        throws AMRemoteException, SSOException, RemoteException;
 
     // Role/group operations
     public Set getMembers(String token, String entryDN, int objectType)
@@ -271,6 +275,11 @@ public interface DirectoryManagerIF extends Remote {
             Map attributes, boolean isAdd, String amOrgName, String amsdkDN,
             boolean isString) throws RemoteException, IdRepoException,
             SSOException;
+
+    public void changePassword_idrepo(String token, String type,
+            String entryDN, String attrName, String oldPassword,
+            String newPassword, String amsdkDN) throws RemoteException,
+            IdRepoException, SSOException;
 
     public Set getAssignedServices_idrepo(String token, String type,
             String name, Map mapOfServiceNamesAndOCs, String amOrgName,

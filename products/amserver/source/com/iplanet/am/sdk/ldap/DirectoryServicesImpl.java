@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.12 2009-02-18 03:51:48 222713 Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.13 2009-07-02 20:26:15 hengming Exp $
  *
  */
 
@@ -2557,6 +2557,31 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
                 mailer.sendUserModifyNotification(token, stringAttributes,
                         oldAttributes);
             }
+        }
+    }
+
+    /**
+     * Changes user password.
+     * 
+     * @param token Single sign on token
+     * @param entryDN DN of the profile whose template is to be set
+     * @param attrName password attribute name
+     * @param oldPassword old password
+     * @param newPassword new password
+     * @throws AMException if an error occurs when changing user password
+     * @throws SSOException If user's single sign on token is invalid.
+     */
+    public void changePassword(SSOToken token, String entryDN, String attrName,
+        String oldPassword, String newPassword)
+        throws AMException, SSOException {
+
+        try {
+            PersistentObject po = UMSObject.getObjectHandle(token,
+                new Guid(entryDN));
+            po.changePassword(entryDN, attrName, oldPassword, newPassword);
+        } catch (UMSException umex) {
+            debug.error("DirectoryServicesImpl.changePassword: ", umex); 
+            throw new AMException(token, "362", umex);
         }
     }
 

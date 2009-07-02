@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDirectoryServices.java,v 1.3 2008-06-25 05:41:24 qcheng Exp $
+ * $Id: IDirectoryServices.java,v 1.4 2009-07-02 20:26:15 hengming Exp $
  *
  */
 
@@ -504,6 +504,21 @@ public interface IDirectoryServices {
      */
     public void setAttributes(SSOToken token, String entryDN, int objectType,
             Map stringAttributes, Map byteAttributes, boolean isAdd)
+            throws AMException, SSOException;
+
+    /**
+     * Changes user password.
+     * 
+     * @param token Single sign on token
+     * @param entryDN DN of the profile whose template is to be set
+     * @param attrName password attribute name
+     * @param oldPassword old password
+     * @param newPassword new password
+     * @throws AMException if an error occurs when changing user password
+     * @throws SSOException If user's single sign on token is invalid.
+     */
+    public void changePassword(SSOToken token, String entryDN, String attrName,
+            String oldPassword, String newPassword)
             throws AMException, SSOException;
 
     // ###### Group and Role APIs

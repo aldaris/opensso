@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.17 2009-01-28 05:34:50 ww203982 Exp $
+ * $Id: DataLayer.java,v 1.18 2009-07-02 20:27:01 hengming Exp $
  *
  */
 
@@ -799,6 +799,65 @@ public class DataLayer implements java.io.Serializable {
             }
         } finally {
             releaseConnection(conn, errorCode);
+        }
+    }
+
+    /**
+     * Changes user password.
+     * 
+     * @param guid globally unique identifier for the entry.
+     * @param attrName password attribute name
+     * @param oldPassword old password
+     * @param newPassword new password
+     * @exception AccessRightsException if insufficient access
+     * @exception EntryNotFoundException if the entry is not found.
+     * @exception UMSException if failure
+     *
+     * @supported.api
+     */
+    public void changePassword(Guid guid, String attrName, String oldPassword,
+        String newPassword)
+        throws AccessRightsException, EntryNotFoundException, UMSException {
+
+        ModSet modSet = new ModSet();
+        modSet.add(LDAPModification.REPLACE,
+            new LDAPAttribute(attrName, newPassword));
+
+        String id = guid.getDn();
+
+        LDAPConnection ldc = null;
+        int resultCode = 0;
+        try {
+            DSConfigMgr dsCfg = DSConfigMgr.getDSConfigMgr();
+            String hostAndPort = dsCfg.getHostName("default");
+
+            ldc = new LDAPConnection();
+            ldc.connect(hostAndPort, 389, id, oldPassword);
+
+            ldc.modify(id, modSet);
+        } catch (LDAPException ldex) {
+            if (debug.warningEnabled()) {
+                debug.warning("DataLayer.changePassword:", ldex);
+            }
+            int errorCode = ldex.getLDAPResultCode();
+            switch (errorCode) {
+            case LDAPException.NO_SUCH_OBJECT:
+                throw new EntryNotFoundException(id, ldex);
+            case LDAPException.INSUFFICIENT_ACCESS_RIGHTS:
+                throw new AccessRightsException(id, ldex);
+            default:
+                throw new UMSException(id, ldex);
+            }
+        } catch (LDAPServiceException ex) {
+            debug.error("DataLayer.changePassword:", ex);
+            throw new UMSException(id, ex);
+        } finally {
+            if (ldc != null) {
+                try {
+                    ldc.disconnect();
+                } catch (LDAPException lde) {
+                }
+            }
         }
     }
 
