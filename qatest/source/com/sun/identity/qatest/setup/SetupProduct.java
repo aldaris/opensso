@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.22 2009-05-27 23:07:19 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.23 2009-07-02 18:48:12 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1579,8 +1579,10 @@ public class SetupProduct extends TestCommon {
 
     /**
      * This method modifies the generated 
-     * authenticationConfigData.properties file with the details of the embedded
+     * AuthenticationConfig.properties file with the details of the embedded
      * directory server
+     * @param serverConfigMap - a <code>Map</code> containing the configuration
+     * details for the OpenSSO configuration.
      */
     private void modifyAuthConfigproperties(Map<String, String> serverconfigMap) 
             throws Exception { 
@@ -1592,8 +1594,8 @@ public class SetupProduct extends TestCommon {
             String strAuthConfigFileName = getBaseDir() + fileseparator +
                 serverName + fileseparator + "built" + 
                 fileseparator + "classes" + fileseparator + 
-                "authentication" + fileseparator + 
-                "authenticationConfigData.properties";
+                "config" + fileseparator +
+                "AuthenticationConfig.properties";
             authConfigMap = getMapFromProperties(strAuthConfigFileName);
             buff = new StringBuffer();
             buffer = new StringBuffer();
@@ -1636,11 +1638,11 @@ public class SetupProduct extends TestCommon {
                     " \n" + authConfigMap);
             createFileFromMap(authConfigMap, serverName + fileseparator +
                         "built" + fileseparator + "classes" + fileseparator +
-                        "authentication" + fileseparator +
-                        "authenticationConfigData.properties");
+                        "config" + fileseparator +
+                        "AuthenticationConfig.properties");
         } catch (Exception e) {
             log(Level.SEVERE, "modifyAuthConfigproperties", "Exception when " +
-                    "changing AuthConfig properties");
+                    "changing AuthenticationConfig.properties");
             e.printStackTrace();
         }
     }

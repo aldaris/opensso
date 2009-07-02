@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.13 2009-06-05 20:48:02 cmwesley Exp $
+ * $Id: AuthenticationCommon.java,v 1.14 2009-07-02 18:48:12 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.Set;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.ChoiceCallback;
@@ -52,7 +54,8 @@ import javax.security.auth.callback.PasswordCallback;
 /**
  * This class contains helper method related to Authentication.
  */
-public class AuthenticationCommon extends TestCommon implements AuthConstants {
+public class AuthenticationCommon extends TestCommon 
+        implements AuthConstants, SMSConstants {
 
     private static Map<String, String> globalAuthInstancesMap = new HashMap();
     private SSOToken ssoToken;
@@ -67,6 +70,11 @@ public class AuthenticationCommon extends TestCommon implements AuthConstants {
             serverName + fileseparator + "built" + fileseparator + "classes" +
             fileseparator + "config" + fileseparator +
             "AuthenticationConfig-Generated.properties";
+    private static final String DEFAULT_LDAP_SERVER =
+            "UM_CONFIG_LDAPSERVER_COLON_PORT";
+    private static final String DEFAULT_LDAP_BASEDN = "UM_CONFIG_SUFFIX";
+    private static final String DEFAULT_LDAP_BINDDN = "UM_CONFIG_BIND_DN";
+    private static final String DEFAULT_LDAP_BINDPW = "UM_CONFIG_BIND_PW";
     private String moduleName;
     private String[] instancePrefixes =
         {LDAP_INSTANCE_PREFIX, MEMBERSHIP_INSTANCE_PREFIX,
@@ -101,42 +109,129 @@ public class AuthenticationCommon extends TestCommon implements AuthConstants {
         Map globalDefaultMap = new HashMap();
         Map globalMap = new HashMap();
         Map moduleSpecificMap = new HashMap();
+        String umPrefix = "UM_CONFIG1";
+        String keyPrefix = "UMGlobalDatastoreConfig1";
 
         try {
-            StringBuffer globalDefaultFileName = new StringBuffer(getBaseDir()).
-                    append(fileseparator).append("resources").
-                    append(fileseparator).append("config").
+            StringBuffer defAuthBuffer = new StringBuffer(getBaseDir()).
+                    append(fileseparator).append(serverName).
+                    append(fileseparator).append("built").append(fileseparator).
+                    append("classes").append(fileseparator).append("config").
                     append(fileseparator).append("default").
                     append(fileseparator).
                     append("AuthenticationConfig.properties");
-            log(Level.FINE, "getAuthInstancesMap",
-                    "Reading default AuthenticationConfig.properties " +
-                    globalDefaultFileName.toString() + " ...");
             globalDefaultMap =
-                    getMapFromProperties(globalDefaultFileName.toString());
+                    getMapFromProperties(defAuthBuffer.toString());
             globalAuthInstancesMap.putAll(globalDefaultMap);
             log(Level.FINEST, "createAuthInstancesMap",
                     "globalDefaultMap = " + globalDefaultMap);
 
-            StringBuffer globalFileName = new StringBuffer(getBaseDir()).
-                    append(fileseparator).append("resources").
-                    append(fileseparator).append("config").
+            StringBuffer globalAuthBuffer = new StringBuffer(getBaseDir()).
+                    append(fileseparator).append(serverName).
+                    append(fileseparator).append("built").append(fileseparator).
+                    append("classes").append(fileseparator).append("config").
                     append(fileseparator).
                     append("AuthenticationConfig.properties");
-            log(Level.FINE, "createAuthInstancesMap",
-                    "Reading global AuthenticationConfig.properties " +
-                    globalFileName.toString());
-            globalMap = getMapFromProperties(globalFileName.toString());
+            globalMap = getMapFromProperties(globalAuthBuffer.toString());
             log(Level.FINEST, "createAuthInstancesMap", "globalMap = " +
                     globalMap);
+            if (globalMap.containsValue("UM_CONFIG_LDAPSERVER_COLON_PORT") ||
+                    globalMap.containsValue("UM_CONFIG_SUFFIX") ||
+                    globalMap.containsValue("UM_CONFIG_BIND_DN") ||
+                    globalMap.containsValue("UM_CONFIG_BIND_PW") ||
+                    globalMap.containsValue("")) {
+                ResourceBundle umGlobalBundle = null;
+                try {
+                    umGlobalBundle = ResourceBundle.getBundle("config" +
+                            fileseparator + "UMGlobalDatastoreConfig");
+                } catch (MissingResourceException mre) {
+                    log(Level.SEVERE, "createAuthInstancesMap",
+                            "Unable to retrieve the " +
+                            "UMGlobalDatastoreConfig resource bundle.");
+                    assert false;
+                    throw mre;
+                }
+
+                log(Level.FINE, "createAuthInstancesMap",
+                        "Retrieving datastore " +
+                        "directory server host, port, and root suffix.");
+                if (moduleName.equals("samlv2")) {
+                    keyPrefix = "UMGlobalDatastoreConfig0";
+                    umPrefix = "UM_CONFIG0";
+                }
+
+                String globalLDAPServer =
+                        ((String) globalMap.get("ldap." +
+                        LDAP_AUTH_SERVER)).trim();
+                if (globalLDAPServer.equals(DEFAULT_LDAP_SERVER) ||
+                        globalLDAPServer.equals("")) {
+                    String umDirectoryHost =
+                            umGlobalBundle.getString(keyPrefix + "." +
+                            UM_LDAPv3_LDAP_SERVER + ".0").trim();
+                    String umDirectoryPort =
+                            umGlobalBundle.getString(keyPrefix + "." +
+                            UM_LDAPv3_LDAP_PORT + ".0").trim();
+                    log(Level.FINEST, "createAuthInstancesMap",
+                            "Replacing the value of ldap." + LDAP_AUTH_SERVER +
+                            " with " + umDirectoryHost + ":" + umDirectoryPort);
+                    globalMap.put("ldap." + LDAP_AUTH_SERVER,
+                            umDirectoryHost + ":" + umDirectoryPort);
+                }
+
+                String globalLDAPBaseDN = ((String) globalMap.get("ldap." +
+                        LDAP_AUTH_BASEDN)).trim();
+                if (globalLDAPBaseDN.equals(DEFAULT_LDAP_BASEDN) ||
+                        globalLDAPBaseDN.equals("")) {
+                    String umDirectoryBaseDN =
+                            umGlobalBundle.getString(keyPrefix + "." +
+                            "datastore-root-suffix.0").trim();
+                    log(Level.FINEST, "createAuthInstancesMap",
+                            "Replacing the value of ldap." + LDAP_AUTH_BASEDN +
+                            " with " + umDirectoryBaseDN);
+                    globalMap.put("ldap." + LDAP_AUTH_BASEDN,
+                            umDirectoryBaseDN);
+                }
+
+                String globalLDAPBindDN =
+                        ((String) globalMap.get("ldap." +
+                        LDAP_AUTH_BINDDN)).trim();
+                if (globalLDAPBindDN.equals(DEFAULT_LDAP_BINDDN) ||
+                        globalLDAPBindDN.equals("")) {
+                    String umDirectoryBindDN =
+                            umGlobalBundle.getString(keyPrefix + "." +
+                            UM_LDAPv3_AUTHID + ".0").trim();
+                    log(Level.FINEST, "createAuthInstancesMap",
+                            "Replacing the value of ldap." + LDAP_AUTH_BINDDN +
+                            " with " + umDirectoryBindDN);
+                    globalMap.put("ldap." + LDAP_AUTH_BINDDN,
+                            umDirectoryBindDN);
+                }
+
+                String globalLDAPBindPw =
+                        ((String) globalMap.get("ldap." +
+                        LDAP_AUTH_BIND_PASSWD)).trim();
+                if (globalLDAPBindPw.equals(DEFAULT_LDAP_BINDPW) ||
+                        globalLDAPBindPw.equals("")) {
+                    String umDirectoryBindPw =
+                            umGlobalBundle.getString(keyPrefix + "." +
+                            UM_LDAPv3_AUTHPW + ".0").trim();
+                    log(Level.FINEST, "createAuthInstancesMap",
+                            "Replacing the value of ldap." +
+                            LDAP_AUTH_BIND_PASSWD +
+                            " with " + umDirectoryBindPw);
+                    globalMap.put("ldap." + LDAP_AUTH_BIND_PASSWD,
+                            umDirectoryBindPw);
+                }
+            }
             globalAuthInstancesMap.putAll(globalMap);
             log(Level.FINEST, "createAuthInstancesMap",
                     "Updated globalAuthInstancesMap = " +
                     globalAuthInstancesMap);
 
             StringBuffer moduleFileName = new StringBuffer(getBaseDir()).
-                    append(fileseparator).append("resources").
-                    append(fileseparator).append(moduleName).
+                    append(fileseparator).append(serverName).
+                    append(fileseparator).append("built").append(fileseparator).
+                    append("classes").append(fileseparator).append(moduleName).
                     append(fileseparator).
                     append("AuthenticationConfig.properties");
             log(Level.FINE, "createAuthInstancesMap",
@@ -158,6 +253,29 @@ public class AuthenticationCommon extends TestCommon implements AuthConstants {
                         "Updated globalAuthInstancesMap = " +
                         globalAuthInstancesMap);
             }
+
+            if (globalAuthInstancesMap.containsValue(umPrefix + "_SUFFIX0")
+                        || globalAuthInstancesMap.containsValue(umPrefix + 
+                        "_LDAPSERVER_NAME0:" + umPrefix + "_LDAPSERVER_PORT0")
+                        || globalAuthInstancesMap.containsValue(umPrefix +
+                        "_BIND_DN0") ||
+                        globalAuthInstancesMap.containsValue(
+                        umPrefix + "_BIND_PW0")) {
+                log(Level.SEVERE, "createAuthInstancesMap",
+                        globalAuthBuffer.toString() + " and/or " +
+                        moduleFileName + " contains one or more of the " +
+                        "following unswapped tags " + umPrefix + "_SUFFIX0, " +
+                        umPrefix + "_LDAPSERVER_NAME0:" + umPrefix +
+                        "_LDAPSERVER_PORT0, " + umPrefix +
+                        "_BIND_DN0, and " + umPrefix + "_BIND_PW0!");
+                log(Level.SEVERE, "createAuthInstancesMap",
+                        "Please update the " + keyPrefix +
+                        " UM directory server values in " + getBaseDir() +
+                        "resources" + fileseparator + "config" + fileseparator +
+                        "UMGlobalDatastoreConfig.properties");
+                assert false;
+            }
+
             createFileFromMap(globalAuthInstancesMap,
                     AUTH_CONFIGURATION_GENERATED_PROPS);
 
@@ -496,7 +614,8 @@ public class AuthenticationCommon extends TestCommon implements AuthConstants {
                 assert false;
             }
             if (instanceName == null) {
-                log(Level.SEVERE, "createAuthInstance", "instanceName was null");
+                log(Level.SEVERE, "createAuthInstance",
+                        "instanceName was null");
                 assert false;
             }
             if (subConfigId == null) {
@@ -926,8 +1045,12 @@ public class AuthenticationCommon extends TestCommon implements AuthConstants {
             webClient = new WebClient();
             String osType = getServerConfigValue(webClient, "Operating System");
             if (moduleType.equalsIgnoreCase("unix")) {
+                String productVersion = getServerConfigValue(webClient,
+                        "OpenSSO Version");
                 validTest = !osType.toLowerCase().contains("windows") &&
-                        !osType.toLowerCase().contains("aix");
+                        !osType.toLowerCase().contains("aix") &&
+                        (productVersion.toLowerCase().contains("enterprise") ||
+                        productVersion.toLowerCase().contains("express"));
             }
             if (moduleType.equalsIgnoreCase("nt")) {
                 validTest = !osType.toLowerCase().contains("windows");

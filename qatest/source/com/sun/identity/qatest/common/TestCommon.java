@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.76 2009-05-27 23:06:35 rmisra Exp $
+ * $Id: TestCommon.java,v 1.77 2009-07-02 18:48:13 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2236,7 +2236,8 @@ public class TestCommon implements TestConstants {
      */
     public void replaceAuthTags(String testModule)
     throws Exception {
-        entering("replaceAuthTags", null);
+        Object[] params = {testModule};
+        entering("replaceAuthTags", params);
         ResourceBundle umGlobalBundle = null;
 
         try {
