@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.37 2009-07-02 15:53:15 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.38 2009-07-02 16:41:24 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -214,7 +214,7 @@ public class PrivilegeUtils {
                     AMIdentitySubject sbj = (AMIdentitySubject) subject;
                     Set<EntitlementSubject> eSubjects = toEntitlementSubject(
                         sbj, exclusive);
-                    if (eSubjects != null) {
+                    if (!eSubjects.isEmpty()) {
                         entitlementSubjects.addAll(eSubjects);
                         dealtWith = true;
                     }
