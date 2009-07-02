@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.20 2009-03-14 00:36:33 ericow Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.21 2009-07-02 20:33:30 hengming Exp $
  *
  */
 
@@ -331,6 +331,21 @@ public class IdRemoteServicesImpl implements IdServices {
                     name, attributes, Boolean.valueOf(isAdd), amOrgName, 
                     amsdkDN, Boolean.valueOf(isString) };
             client.send(client.encodeMessage("setAttributes2_idrepo", objs),
+                    Session.getLBCookie(token.getTokenID().toString()), null);
+
+        } catch (Exception ex) {
+            processException(ex);
+        }
+    }
+
+    public void changePassword(SSOToken token, IdType type, String name,
+        String oldPassword, String newPassword, String amOrgName,
+        String amsdkDN) throws IdRepoException, SSOException {
+
+        try {
+            Object[] objs = { getTokenString(token), type.getName(),
+                    name, oldPassword, newPassword, amOrgName, amsdkDN };
+            client.send(client.encodeMessage("changePassword_idrepo", objs),
                     Session.getLBCookie(token.getTokenID().toString()), null);
 
         } catch (Exception ex) {

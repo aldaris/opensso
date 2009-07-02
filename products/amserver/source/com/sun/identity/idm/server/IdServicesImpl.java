@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdServicesImpl.java,v 1.56 2009-04-23 23:05:55 hengming Exp $
+* $Id: IdServicesImpl.java,v 1.57 2009-07-02 20:33:31 hengming Exp $
 *
 */
 
@@ -1725,6 +1725,94 @@ public class IdServicesImpl implements IdServices {
                getDebug().warning(
                    "IdServicesImpl.setAttributes: "
                    + "Unable to set attributes  for identity "
+                   + type.getName() + "::" + name + " in any configured data"
+                   + " store", origEx);
+           }
+           throw origEx;
+       }
+   }
+
+   public void changePassword(SSOToken token, IdType type, String name,
+       String oldPassword, String newPassword, String amOrgName,
+       String amsdkDN) throws IdRepoException, SSOException {
+
+       String attrName = "userPassword";
+       Set attrNames = new HashSet();
+       attrNames.add(attrName);
+
+       // Check permission first. If allowed then proceed, else the
+       // checkPermission method throws an "402" exception.
+       checkPermission(token, amOrgName, name, attrNames, IdOperation.EDIT,
+           type);
+       // Get the list of plugins that service/edit the create operation.
+       Set configuredPluginClasses = 
+           idrepoCache.getIdRepoPlugins(amOrgName, IdOperation.EDIT, type);
+       if ((configuredPluginClasses == null) || 
+           configuredPluginClasses.isEmpty()) {
+           throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
+       }
+
+       Iterator it = configuredPluginClasses.iterator();
+       int noOfSuccess = configuredPluginClasses.size();
+       IdRepoException origEx = null;
+       IdRepo idRepo;
+       while (it.hasNext()) {
+           idRepo = (IdRepo) it.next();
+           Map cMap = idRepo.getConfiguration();
+           attrNames = mapAttributeNames(attrNames, cMap);
+           if ((attrNames != null) && (!attrNames.isEmpty())) {
+               attrName = (String)attrNames.iterator().next();
+           }
+
+           try {
+               if (idRepo.getClass().getName().equals(IdConstants.AMSDK_PLUGIN)
+                   && (amsdkDN != null)) {
+
+                   idRepo.changePassword(token, type, amsdkDN, attrName, 
+                       oldPassword, newPassword);
+               } else {
+                   idRepo.changePassword(token, type, name, attrName,
+                       oldPassword, newPassword);
+               }
+           } catch (IdRepoUnsupportedOpException ide) {
+               if (idRepo != null && getDebug().messageEnabled()) {
+                   getDebug().message("IdServicesImpl.changePassword: "
+                           + "Unable to change password in the following "
+                           + "repository "
+                           + idRepo.getClass().getName()
+                           + " :: " + ide.getMessage());
+               }
+               noOfSuccess--;
+               origEx = (origEx == null) ? ide :origEx;
+           } catch (IdRepoFatalException idf) {
+               // fatal ..throw it all the way up
+               getDebug().error(
+                   "IdServicesImpl.changePassword: Fatal Exception ", idf);
+               throw idf;
+           } catch (IdRepoException ide) {
+               if (idRepo != null && getDebug().warningEnabled()) {
+                   getDebug().warning(
+                       "IdServicesImpl.changePassword: "
+                       + "Unable to change password "
+                       + "following repository "
+                       + idRepo.getClass().getName() + " :: "
+                       + ide.getMessage());
+               }
+               noOfSuccess--;
+               // 220 is entry not found. this error should have lower
+               // precedence than other error because we search thru
+               // all the ds and this entry might exist in one of the other ds.
+               if (!ide.getErrorCode().equalsIgnoreCase("220")
+                       || (origEx == null)) {
+                   origEx = ide;
+               }
+           }
+       }
+       if (noOfSuccess == 0) {
+           if (getDebug().warningEnabled()) {
+               getDebug().warning(
+                   "IdServicesImpl.changePassword: "
+                   + "Unable to change password  for identity "
                    + type.getName() + "::" + name + " in any configured data"
                    + " store", origEx);
            }

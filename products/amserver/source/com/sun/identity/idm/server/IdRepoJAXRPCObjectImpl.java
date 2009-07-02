@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoJAXRPCObjectImpl.java,v 1.9 2009-03-14 00:35:45 ericow Exp $
+* $Id: IdRepoJAXRPCObjectImpl.java,v 1.10 2009-07-02 20:33:31 hengming Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -623,6 +623,21 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
             amOrgName, amsdkDN, isString);
     }
     
+    public void changePassword_idrepo(
+        String token,
+        String type,
+        String name,
+        String oldPassword,
+        String newPassword,
+        String amOrgName,
+        String amsdkDN
+    ) throws RemoteException, IdRepoException, SSOException {
+        SSOToken ssoToken = getSSOToken(token);
+        IdType idtype = IdUtils.getType(type);
+        idServices.changePassword(ssoToken, idtype, name, oldPassword,
+            newPassword, amOrgName, amsdkDN);
+    }
+
     public void unassignService_idrepo(
         String token,
         String type,

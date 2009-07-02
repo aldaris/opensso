@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepo.java,v 1.7 2008-06-25 05:43:28 qcheng Exp $
+ * $Id: IdRepo.java,v 1.8 2009-07-02 20:33:30 hengming Exp $
  *
  */
 
@@ -293,6 +293,28 @@ public abstract class IdRepo {
     public abstract void setBinaryAttributes(SSOToken token, IdType type,
             String name, Map attributes, boolean isAdd) throws IdRepoException,
             SSOException;
+
+    /**
+     *
+     * Changes password of identity.
+     *
+     * @param token Single sign on token of identity performing the task.
+     * @param type identity type of this object.
+     * @param name name of the object of interest.
+     * @param attrName password attribute name
+     * @param oldPassword old password
+     * @param newPassword new password
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If identity's single sign on token is invalid.
+     */
+    public void changePassword(SSOToken token, IdType type,
+            String name, String attrName, String oldPassword,
+            String newPassword) throws IdRepoException, SSOException {
+
+            Object args[] = { this.getClass().getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                    "228", args);
+    }
 
     /**
      * Removes the attributes from the identity.

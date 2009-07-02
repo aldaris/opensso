@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServices.java,v 1.8 2008-06-25 05:43:29 qcheng Exp $
+ * $Id: IdServices.java,v 1.9 2009-07-02 20:33:30 hengming Exp $
  *
  */
 
@@ -92,6 +92,10 @@ public interface IdServices {
     public void setAttributes(SSOToken token, IdType type, String name,
             Map attributes, boolean isAdd, String amOrgName, String amsdkDN, 
             boolean isString) throws IdRepoException, SSOException;
+
+    public void changePassword(SSOToken token, IdType type, String name,
+            String oldPassword, String newPassword, String amOrgName,
+            String amsdkDN) throws IdRepoException, SSOException;
 
     public Set getAssignedServices(SSOToken token, IdType type, String name,
             Map mapOfServiceNamesAndOCs, String amOrgName, String amsdkDN)

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.64 2009-06-26 23:34:02 hengming Exp $
+ * $Id: LDAPv3Repo.java,v 1.65 2009-07-02 20:33:30 hengming Exp $
  *
  */
 
@@ -3808,6 +3808,67 @@ public class LDAPv3Repo extends IdRepo {
         } finally {
             if (ld != null) {
                 connPool.close(ld, resultCode);
+            }
+        }
+    }
+
+    public void changePassword(SSOToken token, IdType type,
+        String name, String attrName, String oldPassword, String newPassword)
+        throws IdRepoException, SSOException {
+
+        if (debug.messageEnabled()) {
+            debug.message("LDAPv3Repo.changePassword: " + type + ": " + name);
+        }
+        if (!type.equals(IdType.USER)) {
+            Object args[] = { this.getClass().getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                "229", args);
+        }
+
+        LDAPModificationSet ldapModSet = new LDAPModificationSet();
+        LDAPAttribute theAttr = new LDAPAttribute(attrName);
+        if (attrName.equals(unicodePwd) &&
+            dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)) {
+
+            byte[] encodedNewPwd = encodeADPwd(newPassword);
+            theAttr.addValue(encodedNewPwd);
+        } else {
+            theAttr.addValue(newPassword);
+        }
+
+        String eDN = getDN(type, name);
+        ldapModSet.add(LDAPModification.REPLACE, theAttr);
+
+        LDAPConnection ldc = null;
+        int resultCode = 0;
+        try {
+            if (sslMode) {
+                ldc = new LDAPConnection(new JSSESocketFactory(null));
+            } else {
+                ldc = new LDAPConnection();
+            }
+            ldc.connect(ldapServerName, ldapPort, eDN, oldPassword);
+
+            if (debug.messageEnabled()) {
+                debug.message("LDAPv3Repo.changePassword: Calling ld.modify");
+            }
+            ldc.modify(eDN, ldapModSet);
+            if (cacheEnabled) {
+                ldapCache.flushEntries(eDN, LDAPv2.SCOPE_BASE);
+            }
+        } catch (LDAPException lde) {
+            resultCode = lde.getLDAPResultCode();
+            if (debug.warningEnabled()) {
+                debug.warning("LDAPv3Repo.changePassword: ld.modify error: " +
+                    resultCode, lde);
+            }
+            handleLDAPException(lde, eDN);
+        } finally {
+            if (ldc != null) {
+                try {
+                    ldc.disconnect();
+                } catch (LDAPException lde) {
+                }
             }
         }
     }

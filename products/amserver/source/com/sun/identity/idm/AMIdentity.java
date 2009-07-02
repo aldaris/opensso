@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.35 2009-06-19 23:39:11 stanguy Exp $
+ * $Id: AMIdentity.java,v 1.36 2009-07-02 20:33:29 hengming Exp $
  *
  */
 
@@ -432,6 +432,23 @@ public final class AMIdentity {
     public void setAttributes(Map attrMap) throws IdRepoException, SSOException 
     {
         modMap.copy(attrMap);
+    }
+
+    /**
+     * Changes password for the identity.
+     * 
+     * @param oldPassword old password
+     * @param newPassword new password
+     * @throws IdRepoException If there are repository related error conditions.
+     * @throws SSOException If user's single sign on token is invalid.
+     * @supported.api
+     */
+    public void changePassword(String oldPassword, String newPassword)
+        throws IdRepoException, SSOException {
+
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
+        idServices.changePassword(token, type, name, oldPassword,
+            newPassword, orgName, getDN());
     }
 
     /**
