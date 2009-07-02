@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import org.testng.Reporter;
+import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -210,10 +211,13 @@ public class CSDKAuthTest extends AuthenticationCommon {
                             "non amsdk plugin ...");
                 }
             } else {
-                log(Level.FINEST, "setup", "Skipping setup of " + testModule +
-                     " auth module test on a Windows based server");
+                throw new SkipException("Skipping setup for " + testModule +
+                        " auth module test on unsupported platform or " +
+                        "an OpenSSO nightly build.");
             }
             exiting("setup");
+        } catch (SkipException se) {
+            log(Level.FINEST, "setup", se.getMessage());
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
@@ -299,10 +303,12 @@ public class CSDKAuthTest extends AuthenticationCommon {
                 throw e;
             }
         } else {
-            log(Level.FINEST, "testCSDKAuthPositive", "Skipping " + testModule +
-                    " auth module test on a Windows based server");
+            SkipException se = new SkipException("Skipping " + testModule +
+                    " auth module test on unsupported platform or " +
+                    "an OpenSSO nightly build.");
+            log(Level.FINEST, "testCSDKAuthPositive", se.getMessage());
+            throw se;
         }
-
     }
 
     /**
@@ -380,9 +386,11 @@ public class CSDKAuthTest extends AuthenticationCommon {
                 throw e;
             }
         } else {
-            log(Level.FINEST, "testCSDKAuthNegative", "Skipping " + testModule +
-                    " auth module test on a Windows based server");
-        }
+            SkipException se = new SkipException("Skipping " + testModule +
+                    " auth module test on unsupported platform or " +
+                    "an OpenSSO nightly build.");
+            log(Level.FINEST, "testCSDKAuthNegative", se.getMessage());
+            throw se;        }
     }
 
     /**
@@ -451,8 +459,9 @@ public class CSDKAuthTest extends AuthenticationCommon {
                 destroyToken(adminToken);
             }
         } else {
-            log(Level.FINEST, "setup", "Skipping cleanup for " + testModule +
-                    " auth module test on a Windows based server");
+            log(Level.FINEST, "cleanup", "Skipping cleanup for " + testModule +
+                    " auth module test on unsupported platform or " +
+                    "an OpenSSO nightly build.");
         }
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.21 2009-06-02 17:41:42 cmwesley Exp $
+ * $Id: AuthTest.java,v 1.22 2009-07-02 19:32:38 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import org.testng.Reporter;
+import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -230,10 +231,13 @@ public class AuthTest extends AuthenticationCommon {
                             "non amsdk plugin ...");
                 }
             } else {
-                log(Level.FINEST, "setup", "Skipping setup of " + testModule + 
-                     " auth module test on a Windows based server");
+                throw new SkipException("Skipping setup for " + testModule +
+                        " auth module test on unsupported platform or " +
+                        "an OpenSSO nightly build.");
             }
             exiting("setup");
+        } catch (SkipException se) {
+            log(Level.FINEST, "setup", se.getMessage());
         } catch(Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
@@ -323,8 +327,11 @@ public class AuthTest extends AuthenticationCommon {
                 }
             }
         } else {
-            log(Level.FINEST, "testLoginPositive", "Skipping " + testModule + 
-                    " auth module test on a Windows based server");                
+            SkipException se = new SkipException("Skipping " + testModule +
+                    " auth module test on unsupported platform or " +
+                    "an OpenSSO nightly build.");
+            log(Level.FINEST, "testLoginPositive", se.getMessage());
+            throw se;
         }
     }
 
@@ -408,8 +415,11 @@ public class AuthTest extends AuthenticationCommon {
                 }
             }
         } else {
-            log(Level.FINEST, "testLoginNegative", "Skipping " + testModule + 
-                    " auth module test on a Windows based server");           
+            SkipException se = new SkipException("Skipping " + testModule +
+                    " auth module test on unsupported platform or " +
+                    "an OpenSSO nightly build.");
+            log(Level.FINEST, "testLoginPositive", se.getMessage());
+            throw se;
         }
     }
 
@@ -483,7 +493,8 @@ public class AuthTest extends AuthenticationCommon {
             }
         } else {
             log(Level.FINEST, "cleanup", "Skipping cleanup for " + testModule +
-                     " auth module test on a Windows based server");            
+                    " auth module test on unsupported platform or " +
+                    "an OpenSSO nightly build.");
         }
     }
 }

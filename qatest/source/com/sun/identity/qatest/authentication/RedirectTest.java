@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectTest.java,v 1.13 2009-06-02 17:08:18 cmwesley Exp $
+ * $Id: RedirectTest.java,v 1.14 2009-07-02 19:32:38 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import org.testng.Reporter;
+import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -214,10 +215,13 @@ public class RedirectTest extends AuthenticationCommon {
                     }
                 }
             } else {
-                log(Level.FINEST, "setup", "Skipping setup of " + testModule + 
-                     " auth module test on a Windows based server");                
+                throw new SkipException("Skipping setup for " + testModule +
+                        " auth module test on unsupported platform or " +
+                        "an OpenSSO nightly build.");
             }
             exiting("setup");
+        } catch (SkipException se) {
+            log(Level.FINEST, "setup", se.getMessage());
         } catch (Exception e) {
             log(Level.SEVERE, "setup", 
                     "Unexpected setup failure has occured ...");
@@ -253,8 +257,11 @@ public class RedirectTest extends AuthenticationCommon {
 
             testFormBasedAuth(executeMap);
         } else {
-            log(Level.FINEST, "validateModuleTest", "Skipping " + testModule +
-                    " auth module test on a Windows based server");
+            SkipException se = new SkipException("Skipping " + testModule +
+                    " auth module test on unsupported platform or " +
+                    "an OpenSSO nightly build.");
+            log(Level.FINEST, "testLoginPositive", se.getMessage());
+            throw se;
         }
         exiting("validateModuleTest");
     }
@@ -281,8 +288,11 @@ public class RedirectTest extends AuthenticationCommon {
             executeMap.put("uniqueIdentifier", uniqueIdentifier + "_negative");
             testFormBasedAuth(executeMap);
         } else {
-            log(Level.FINEST, "validateModuleTestNegative", "Skipping " +
-                    testModule + " auth module test on a Windows based server");
+            SkipException se = new SkipException("Skipping " + testModule +
+                    " auth module test on unsupported platform or " +
+                    "an OpenSSO nightly build.");
+            log(Level.FINEST, "testLoginPositive", se.getMessage());
+            throw se;
         }
         exiting("validateModuleTestNegative");
     }
@@ -310,8 +320,11 @@ public class RedirectTest extends AuthenticationCommon {
             executeMap.put("uniqueIdentifier", uniqueIdentifier + "_goto");
             testFormBasedAuth(executeMap);
         } else {
-            log(Level.FINEST, "validateGotoTests", "Skipping " + testModule +
-                    " auth module test on a Windows based server");
+            SkipException se = new SkipException("Skipping " + testModule +
+                    " auth module test on unsupported platform or " +
+                    "an OpenSSO nightly build.");
+            log(Level.FINEST, "testLoginPositive", se.getMessage());
+            throw se;
         }
         exiting("validateGotoTests");
     }
@@ -341,8 +354,11 @@ public class RedirectTest extends AuthenticationCommon {
                     uniqueIdentifier + "_gotoOnFail");
             testFormBasedAuth(executeMap);
         } else {
-            log(Level.FINEST, "validateGotoOnFailTests", "Skipping " +
-                    testModule + " auth module test on a Windows based server");
+            SkipException se = new SkipException("Skipping " + testModule +
+                    " auth module test on unsupported platform or " +
+                    "an OpenSSO nightly build.");
+            log(Level.FINEST, "testLoginPositive", se.getMessage());
+            throw se;
         }
         exiting("validateGotoOnFailTests");
     }
@@ -405,8 +421,9 @@ public class RedirectTest extends AuthenticationCommon {
                         "Debug flag was set cleanup method was not performed");
             }
         } else {
-            log(Level.FINEST, "setup", "Skipping cleanup for " + testModule + 
-                     " auth module test on a Windows based server");                
+            log(Level.FINEST, "setup", "Skipping cleanup for " + testModule +
+                    " auth module test on unsupported platform or " +
+                    "an OpenSSO nightly build.");
         }
     }
 }
