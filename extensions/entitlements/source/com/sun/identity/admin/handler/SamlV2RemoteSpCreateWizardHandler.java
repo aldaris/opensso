@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.10 2009-07-02 22:46:17 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.11 2009-07-06 17:43:15 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -34,7 +34,7 @@ import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.SamlV2CreateSharedDao;
 import com.sun.identity.admin.dao.SamlV2RemoteSpCreateDao;
-import com.sun.identity.admin.dao.SamlV2ShareCreateDao;
+import com.sun.identity.admin.dao.SamlV2CreateSharedDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardBean;
@@ -274,7 +274,7 @@ public class SamlV2RemoteSpCreateWizardHandler
                 return false;
             }
             
-            if (!SamlV2ShareCreateDao.validateMetaFormat(meta)) {
+            if (!SamlV2CreateSharedDao.validateMetaFormat(meta)) {
                 getSamlV2RemoteSpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2RemoteSpCreateWizardBean().setStdMetaFile("");
                 metaErrorPopup();
