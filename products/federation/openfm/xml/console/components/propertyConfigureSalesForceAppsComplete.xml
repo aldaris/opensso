@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyConfigureSalesForceAppsComplete.xml,v 1.1 2009-07-01 23:30:43 babysunil Exp $ 
+   $Id: propertyConfigureSalesForceAppsComplete.xml,v 1.2 2009-07-06 21:55:19 babysunil Exp $ 
 
 -->
 
@@ -41,9 +41,7 @@
                 <label name="lblIssuerID"
                    defaultValue="configure.salesforce.apps.complete.label.issuerid"
                    labelFor="lblIssuerID" />
-                <cc name="IssuerID" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                    <attribute name="size" value="100" />
-                    <attribute name="readOnly" value="true" />
+                <cc name="IssuerID" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" >
                 </cc>
                 <fieldhelp name="helpIssuerID"
                        defaultValue="configure.salesforce.apps.complete.help.IssuerID" />
@@ -52,9 +50,7 @@
                 <label name="lblAttributeName"
                    defaultValue="configure.salesforce.apps.complete.label.AttributeName"
                    labelFor="lblAttributeName" />
-                <cc name="AttributeName" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                    <attribute name="size" value="100" />
-                    <attribute name="readOnly" value="true" />
+                <cc name="AttributeName" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" >
                 </cc>
                 <fieldhelp name="helpAttributeName"
                        defaultValue="configure.salesforce.apps.complete.help.AttributeName" />
@@ -204,6 +200,13 @@
                     <attribute name="defaultValue" value="configure.salesforce.apps.complete.step18" />
                     <attribute name="escape" value="false" />
                 </cc>
+            </property>
+            
+            <property span="true">
+	                    <cc name="step19"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+	                        <attribute name="defaultValue" value="configure.salesforce.apps.complete.step19" />
+	                        <attribute name="escape" value="false" />
+	                    </cc>
             </property>
 
         </section>
