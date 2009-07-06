@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerEditAdvancedViewBean.java,v 1.4 2009-03-11 00:45:00 veiming Exp $
+ * $Id: ServerEditAdvancedViewBean.java,v 1.5 2009-07-06 18:20:04 veiming Exp $
  *
  */
 
@@ -333,15 +333,22 @@ public class ServerEditAdvancedViewBean
             map.put(name, value);
         }
 
-        for (Iterator i = hiddenProperties.entrySet().iterator(); i.hasNext(); )
-        {
-            Map.Entry entry = (Map.Entry)i.next();
-            map.put(entry.getKey(), entry.getValue());
-        } 
-
         ServerSiteModel model = (ServerSiteModel)getModel();
         String serverName = (String)getPageSessionAttribute(
             ServerEditViewBeanBase.PG_ATTR_SERVER_NAME);
+
+        /*
+         * only global default has values for hidden properties. should not
+         * try to set hidden property values for server instance
+         */
+        if (serverName.equals(ServerConfiguration.DEFAULT_SERVER_CONFIG)) {
+            for (Iterator i = hiddenProperties.entrySet().iterator();
+                i.hasNext(); ) {
+                Map.Entry entry = (Map.Entry)i.next();
+                map.put(entry.getKey(), entry.getValue());
+            }
+        }
+
         try {
             Map origValues = model.getServerConfiguration(serverName);
             discardDealtWithProperties(origValues);
