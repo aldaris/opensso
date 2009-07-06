@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DenyOverride.java,v 1.4 2009-04-14 00:24:18 veiming Exp $
+ * $Id: DenyOverride.java,v 1.5 2009-07-06 19:34:17 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -37,7 +37,7 @@ import java.util.Set;
 public class DenyOverride extends EntitlementCombiner {
     @Override
     protected boolean combine(Boolean b1, Boolean b2) {
-        return b1.booleanValue() & b2.booleanValue();
+        return b1.booleanValue() && b2.booleanValue();
     }
 
     @Override

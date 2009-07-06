@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationType.java,v 1.9 2009-06-12 00:02:33 veiming Exp $
+ * $Id: ApplicationType.java,v 1.10 2009-07-06 19:34:17 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -40,9 +40,6 @@ import java.util.Map;
 public final class ApplicationType {
     private String name;
     private Map<String, Boolean> actions;
-    private Class searchIndex;
-    private Class saveIndex;
-    private Class resourceComp;
     private ResourceName resourceCompInstance;
     private ISaveIndex saveIndexInstance;
     private ISearchIndex searchIndexInstance;
@@ -66,25 +63,12 @@ public final class ApplicationType {
         this.name = name;
         this.actions = actions;
 
-        if (searchIndex == null) {
-            this.searchIndex = ResourceNameSplitter.class;
-        } else {
-            this.searchIndex = searchIndex;
-        }
-        searchIndexInstance = (ISearchIndex) searchIndex.newInstance();
-        if (saveIndex == null) {
-            this.saveIndex = ResourceNameIndexGenerator.class;
-        } else {
-            this.saveIndex = saveIndex;
-        }
-        saveIndexInstance = (ISaveIndex) saveIndex.newInstance();
+        setSearchIndex(searchIndex);
+        setSaveIndex(saveIndex);
 
-        if (resourceComp == null) {
-            this.resourceComp = URLResourceName.class;
-        } else {
-            this.resourceComp = resourceComp;
-        }
-        resourceCompInstance = (ResourceName)resourceComp.newInstance();
+        Class resourceCompClass = (resourceComp == null) ?
+            URLResourceName.class : resourceComp;
+        resourceCompInstance = (ResourceName)resourceCompClass.newInstance();
     }
 
     /**
@@ -121,12 +105,9 @@ public final class ApplicationType {
      */
     public void setSaveIndex(Class saveIndex) throws InstantiationException,
         IllegalAccessException {
-        this.saveIndex = saveIndex;
-        if (saveIndex != null) {
-            saveIndexInstance = (ISaveIndex) saveIndex.newInstance();
-        } else {
-            saveIndexInstance = null;
-        }
+        Class saveIndexClass = (saveIndex == null) ?
+            ResourceNameIndexGenerator.class : saveIndex;
+        saveIndexInstance = (ISaveIndex)saveIndexClass.newInstance();
     }
 
     /**
@@ -136,12 +117,9 @@ public final class ApplicationType {
      */
     public void setSearchIndex(Class searchIndex) throws InstantiationException,
         IllegalAccessException {
-        this.searchIndex = searchIndex;
-        if (searchIndex != null) {
-            searchIndexInstance = (ISearchIndex) searchIndex.newInstance();
-        } else {
-            searchIndexInstance = null;
-        }
+        Class searchIndexClass = (searchIndex == null) ?
+            ResourceNameSplitter.class : searchIndex;
+        searchIndexInstance = (ISearchIndex)searchIndexClass.newInstance();
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.8 2009-06-25 02:29:04 veiming Exp $
+ * $Id: ReferralPrivilege.java,v 1.9 2009-07-06 19:34:17 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -46,7 +46,7 @@ import org.json.JSONObject;
 /**
  * Referral privilege allows application to be referred to peer and sub realm.
  */
-public final class ReferralPrivilege implements IPrivilege {
+public final class ReferralPrivilege implements IPrivilege, Cloneable {
     private String name;
     private String description;
     private Map<String, Set<String>> mapApplNameToResources;

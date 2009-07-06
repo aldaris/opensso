@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeSubject.java,v 1.1 2009-04-28 00:34:35 veiming Exp $
+ * $Id: PrivilegeSubject.java,v 1.2 2009-07-06 19:34:18 veiming Exp $
  */
 
 package com.sun.identity.policy.plugins;
@@ -43,7 +43,7 @@ import java.util.HashSet;
  * A generic subject mapper which map entitlement subject to OpenSSO
  * subject.
  */
-public class PrivilegeSubject implements Subject {
+public class PrivilegeSubject implements Subject, Cloneable {
     private String state;
     private static ValidValues validValues = 
                 new ValidValues(ValidValues.SUCCESS, Collections.EMPTY_SET);

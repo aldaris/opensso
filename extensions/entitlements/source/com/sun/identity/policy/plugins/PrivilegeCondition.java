@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeCondition.java,v 1.2 2009-04-24 17:39:45 veiming Exp $
+ * $Id: PrivilegeCondition.java,v 1.3 2009-07-06 19:34:18 veiming Exp $
  */
 
 package com.sun.identity.policy.plugins;
@@ -51,7 +51,7 @@ import java.util.Set;
  * A generic condition mapper which map entitlement condition to OpenSSO
  * condition.
  */
-public class PrivilegeCondition implements Condition {
+public class PrivilegeCondition implements Condition, Cloneable {
     private static List propertyNames = new ArrayList(1);
     public static final String STATE = "privilegeConditionState";
     private String state;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.7 2009-06-12 00:02:33 veiming Exp $
+ * $Id: ThreadPool.java,v 1.8 2009-07-06 19:34:17 veiming Exp $
  *
  */
 package com.sun.identity.entitlement;
@@ -107,12 +107,10 @@ public class ThreadPool {
 
     private class WorkerThread extends Thread {
         private ThreadPool pool;
-        private boolean shouldTerminate;
 
         public WorkerThread(String name, ThreadPool pool) {
             setName(name);
             this.pool = pool;
-            this.shouldTerminate = false;
         }
 
         /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.26 2009-06-25 02:29:04 veiming Exp $
+ * $Id: Application.java,v 1.27 2009-07-06 19:34:17 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -42,7 +42,7 @@ import javax.security.auth.Subject;
  * e.g. how to combine decision and how to compare resources;
  * and the supported actions.
  */
-public final class Application {
+public final class Application implements Cloneable {
     private String realm = "/";
     private String name;
     private ApplicationType applicationType;

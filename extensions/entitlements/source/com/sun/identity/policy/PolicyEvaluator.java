@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.18 2009-06-29 14:58:01 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.19 2009-07-06 19:34:17 veiming Exp $
  *
  */
 
@@ -681,7 +681,7 @@ public class PolicyEvaluator {
     public PolicyDecision getPolicyDecision(
             SSOToken token, String resourceName, Set actionNames,
             Map envParameters)  throws SSOException, PolicyException {
-        if ( (resourceName == null) || (resourceName == "") ) {
+        if ( (resourceName == null) || (resourceName.length() == 0) ) {
             resourceName = Rule.EMPTY_RESOURCE_NAME;
         }
 
