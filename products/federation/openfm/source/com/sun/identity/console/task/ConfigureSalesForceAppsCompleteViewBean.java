@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSalesForceAppsCompleteViewBean.java,v 1.1 2009-07-01 23:27:21 babysunil Exp $
+ * $Id: ConfigureSalesForceAppsCompleteViewBean.java,v 1.2 2009-07-06 21:59:32 babysunil Exp $
  *
  */
 package com.sun.identity.console.task;
@@ -127,7 +127,7 @@ public class ConfigureSalesForceAppsCompleteViewBean
             TaskModel model = (TaskModel) getModelInternal();
             Map values = model.getConfigureSalesForceAppsURLs(realm, entityId, attrMapp);
 
-            String domainId = "SalesForce";            
+            String domainId = getModel().getLocalizedString("salesforce.link");           
             String msg = "<ul>";
             String orgMsg = getModel().getLocalizedString(
                         "configure.salesforce.apps.complete.urllist");

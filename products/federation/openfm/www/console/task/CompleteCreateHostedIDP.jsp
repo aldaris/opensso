@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CompleteCreateHostedIDP.jsp,v 1.5 2009-04-29 23:52:42 asyhuang Exp $
+   $Id: CompleteCreateHostedIDP.jsp,v 1.6 2009-07-06 21:58:43 babysunil Exp $
 
 --%>
 
@@ -72,6 +72,17 @@
             escapeEx(cot) + '&realm=' + escapeEx(realm) + 
             '&entityId=' + escapeEx(entityId));
     }
+    
+    function configureSalesForceApps() {
+            var frm = document.forms[0];
+            var cot = frm.elements['CompleteCreateHostedIDP.tfcot'].value;
+            var realm = frm.elements['CompleteCreateHostedIDP.tfrealm'].value;
+            var entityId = frm.elements['CompleteCreateHostedIDP.tfentityId'].value;
+            top.location.replace('../task/ConfigureSalesForceApps?cot=' +
+                escapeEx(cot) + '&realm=' + escapeEx(realm) +
+                '&entityId=' + escapeEx(entityId));
+    }
+    
     function modifyIDP() {
         top.location.replace('../federation/Federation');
     }
@@ -101,6 +112,9 @@
 <p>
 <div class="ConFldSetLgdDiv"><cc:text name="txtCreateFedletTitle" defaultValue="complete.create.host.idp.create.google.apps.title" bundleID="amConsole" /></div>
 <cc:text name="txtCreateGoogleAppsText" defaultValue="complete.create.host.idp.create.google.apps.text" escape="false" bundleID="amConsole" />
+<p>
+<div class="ConFldSetLgdDiv"><cc:text name="txtCreateSalesForceTitle" defaultValue="complete.create.host.idp.create.salesforce.title" bundleID="amConsole" /></div>
+<cc:text name="txtCreateSalesForceText" defaultValue="complete.create.host.idp.create.salesforce.text" escape="false" bundleID="amConsole" />
 </td>
 </tr>
 </table>
