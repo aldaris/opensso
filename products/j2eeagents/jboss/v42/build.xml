@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2009-06-23 20:29:21 kevinserwin Exp $
+   $Id: build.xml,v 1.4 2009-07-07 23:10:34 leiming Exp $
 
 -->
 
@@ -99,9 +99,10 @@
             </fileset>
         </copy>
       
-        <zip destfile="${j2eeagents.dist.dir}/${containername}_${containerversion}_agent_${agentversion}.zip"
-             basedir="${j2eeagents.container.scratch.dir}"
-        /> 
+        <zip destfile="${j2eeagents.dist.dir}/${containername}_${containerversion}_agent_${agentversion}.zip">
+            <fileset dir="${j2eeagents.container.scratch.dir}" excludes="**/bin/**"/>
+            <zipfileset dir="${j2eeagents.container.scratch.dir}" includes="**/bin/**" filemode="755"/>
+        </zip>
         <checksum file="${j2eeagents.dist.dir}/${containername}_${containerversion}_agent_${agentversion}.zip"
             algorithm="SHA" fileext=".sha" />
     </target>
