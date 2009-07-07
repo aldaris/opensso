@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.60 2009-07-01 01:11:43 veiming Exp $
+   $Id: build.xml,v 1.61 2009-07-07 16:47:04 veiming Exp $
 
 -->
 
@@ -85,7 +85,7 @@
             </fileset>
         </copy>
 
-        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+        <javac memoryInitialSize="256m" memoryMaximumSize="1024m" fork="true"
             destdir="${openfm.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
             debug="${build.debug}" debuglevel="${build.debuglevel}"
             srcdir="${openfm.src.dir}">
@@ -264,7 +264,7 @@
     </target>
     
     <target name="doc" depends="preparebuild">
-        <javadoc maxmemory="512m" destdir="${openfm.built.apidocs.dir}" 
+        <javadoc maxmemory="1024m" destdir="${openfm.built.apidocs.dir}" 
             windowtitle="OpenSSO API" failonerror="true">
             <classpath refid="build.class.path"/>
             <packageset dir="${openfm.src.dir}">
@@ -290,7 +290,7 @@
     </target>
 
     <target name="publicdoc" depends="preparebuild">
-        <javadoc maxmemory="512m" destdir="${openfm.built.publicapidocs.dir}"
+        <javadoc maxmemory="1024m" destdir="${openfm.built.publicapidocs.dir}"
                  windowtitle="OpenSSO Public API" failonerror="true">
             <classpath refid="build.class.path"/>
             <packageset dir="${amserver.src.dir}">
