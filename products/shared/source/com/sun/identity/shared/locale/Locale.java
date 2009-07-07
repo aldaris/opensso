@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Locale.java,v 1.6 2008-10-23 00:21:28 dillidorai Exp $
+ * $Id: Locale.java,v 1.7 2009-07-07 17:32:02 bina Exp $
  *
  */
 
@@ -64,6 +64,11 @@ public class Locale {
     private static final String normalizedDateString = "yyyy/MM/dd HH:mm:ss";
 
     private static final SimpleDateFormat normalizedDateFormat;
+
+    private static final String UNDERSCORE = "_";
+
+    private static final String HYPHEN = "-";
+
 
     /*
      * The list of characters that are not encoded have been determined by
@@ -113,22 +118,36 @@ public class Locale {
      * @return the <code>java.util.locale</code> object.
      */
     public static java.util.Locale getLocale(String stringformat) {
-        if (stringformat == null)
-            return java.util.Locale.getDefault();
+        java.util.Locale locale = java.util.Locale.getDefault();
+        if (stringformat == null) {
+            return locale;
+        }
 
-        StringTokenizer tk = new StringTokenizer(stringformat, "_");
+        StringTokenizer tk = null;
         String lang = "";
         String country = "";
         String variant = "";
 
-        if (tk.hasMoreTokens())
-            lang = tk.nextToken();
-        if (tk.hasMoreTokens())
-            country = tk.nextToken();
-        if (tk.hasMoreTokens())
-            variant = tk.nextToken();
+        if (stringformat.indexOf(HYPHEN) != -1) {
+            tk = new StringTokenizer(stringformat,HYPHEN);
+        } else {
+            tk = new StringTokenizer(stringformat,UNDERSCORE);
+        }
 
-        return new java.util.Locale(lang, country, variant);
+        if (tk != null) {
+            if (tk.hasMoreTokens()) {
+                lang = tk.nextToken();
+            }
+            if (tk.hasMoreTokens()) {
+                country = tk.nextToken();
+            }
+            if (tk.hasMoreTokens()) {
+                variant = tk.nextToken();
+            }
+            locale = new java.util.Locale(lang, country, variant);
+        } 
+
+        return locale;
     }
 
     /**
