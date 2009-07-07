@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionBase.java,v 1.9 2009-06-05 19:33:41 veiming Exp $
+ * $Id: CLIDefinitionBase.java,v 1.10 2009-07-07 00:32:54 bigfatrat Exp $
  *
  */
 
@@ -76,8 +76,8 @@ public abstract class CLIDefinitionBase implements IDefinition {
             if (pdtField != null) {
                 DefinitionClassInfo classInfo = pdtField.getAnnotation(
                     DefinitionClassInfo.class);
-            
                 rb = ResourceBundle.getBundle(classInfo.resourceBundle());
+                logName = classInfo.logName();
             } else {
                 throw new CLIException("Incorrect Definiton, class" +
                     definitionClass + " missing product field",
