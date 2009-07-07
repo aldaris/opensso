@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteSite.java,v 1.3 2008-09-19 23:36:43 beomsuk Exp $
+ * $Id: DeleteSite.java,v 1.4 2009-07-07 06:14:12 veiming Exp $
  *
  */
 
@@ -36,6 +36,7 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.common.configuration.SiteConfiguration;
 import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
@@ -83,6 +84,12 @@ public class DeleteSite extends ServerConfigBase {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_DELETE_SITE", params);
         } catch (SSOException e) {
+            String[] args = {siteName, e.getMessage()};
+            debugError("DeleteSite.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_DELETE_SITE", args);
+            throw new CLIException(e,ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (ConfigurationException e) {
             String[] args = {siteName, e.getMessage()};
             debugError("DeleteSite.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteConfiguration.java,v 1.9 2009-06-15 19:20:43 veiming Exp $
+ * $Id: SiteConfiguration.java,v 1.10 2009-07-07 06:14:12 veiming Exp $
  *
  */
 
@@ -163,7 +163,7 @@ public class SiteConfiguration extends ConfigurationBase {
     public static boolean deleteSite(
         SSOToken ssoToken,
         String siteName
-    ) throws SMSException, SSOException {
+    ) throws SMSException, SSOException, ConfigurationException {
         boolean deleted = false;
         
         if (isLegacy(ssoToken)) {
@@ -657,7 +657,7 @@ public class SiteConfiguration extends ConfigurationBase {
         SSOToken ssoToken,
         String siteName,
         Collection serverInstanceNames
-    ) throws SMSException, SSOException {
+    ) throws SMSException, SSOException, ConfigurationException {
         String siteId = getSiteId(ssoToken, siteName);
 
         if (siteId != null) {
@@ -669,7 +669,7 @@ public class SiteConfiguration extends ConfigurationBase {
     }
 
     private static String getSiteId(SSOToken ssoToken, String siteName)
-        throws SMSException, SSOException {
+        throws SMSException, SSOException, ConfigurationException {
         String siteId = null;
 
         if (isLegacy(ssoToken)) {
@@ -701,6 +701,11 @@ public class SiteConfiguration extends ConfigurationBase {
             }
         }
 
+        if (siteId == null) {
+            String[] param = {siteName};
+            throw new ConfigurationException("invalid.site.instance", param);
+        }
+
         return siteId;
     }
 
@@ -718,7 +723,7 @@ public class SiteConfiguration extends ConfigurationBase {
     public static Set listServers(
         SSOToken ssoToken,
         String siteName
-    ) throws SMSException, SSOException {
+    ) throws SMSException, SSOException, ConfigurationException {
         Set members = new HashSet();
         String siteId = getSiteId(ssoToken, siteName);
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerSiteModelImpl.java,v 1.5 2008-07-09 02:04:50 veiming Exp $
+ * $Id: ServerSiteModelImpl.java,v 1.6 2009-07-07 06:14:13 veiming Exp $
  *
  */
 
@@ -166,6 +166,10 @@ public class ServerSiteModelImpl
                 name);
             logEvent("SUCCEED_GET_SITE_MEMBERS", param);
             return members;
+        } catch (ConfigurationException e){
+            String[] params = {name, e.getMessage()};
+            logEvent("SMS_EXCEPTION_GET_SITE_MEMBERS", params);
+            throw new AMConsoleException(getErrorString(e));
         } catch (SMSException e){
             String[] params = {name, e.getMessage()};
             logEvent("SMS_EXCEPTION_GET_SITE_MEMBERS", params);
@@ -267,6 +271,10 @@ public class ServerSiteModelImpl
                     logEvent("SUCCEED_DELETE_SITE", param);
                 }
             }
+        } catch (ConfigurationException e){
+            String[] params = {siteName, e.getMessage()};
+            logEvent("SMS_EXCEPTION_DELETE_SITE", params);
+            throw new AMConsoleException(getErrorString(e));
         } catch (SMSException e){
             String[] params = {siteName, e.getMessage()};
             logEvent("SMS_EXCEPTION_DELETE_SITE", params);

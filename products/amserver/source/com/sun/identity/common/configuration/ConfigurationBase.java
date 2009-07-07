@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationBase.java,v 1.3 2008-06-25 05:42:27 qcheng Exp $
+ * $Id: ConfigurationBase.java,v 1.4 2009-07-07 06:14:12 veiming Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -129,12 +130,16 @@ public abstract class ConfigurationBase {
         String name,
         boolean bPrimaryOnly
     ) throws SMSException, SSOException {
-        Set currentIds = new HashSet();
         if (rootNode == null) {
             rootNode = getRootSiteConfig(ssoToken);
         }
 
         ServiceConfig sc = rootNode.getSubConfig(name);
+        if (sc == null) {
+            return Collections.EMPTY_SET;
+        }
+
+        Set currentIds = new HashSet();
         ServiceConfig accessPoint = sc.getSubConfig(SUBCONFIG_ACCESS_URL);
 
         Map map = accessPoint.getAttributes();

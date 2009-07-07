@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowSiteMembers.java,v 1.4 2008-09-19 23:37:15 beomsuk Exp $
+ * $Id: ShowSiteMembers.java,v 1.5 2009-07-07 06:14:12 veiming Exp $
  *
  */
 
@@ -36,6 +36,7 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.common.configuration.SiteConfiguration;
 import com.sun.identity.sm.SMSException;
 import java.util.Iterator;
@@ -85,6 +86,12 @@ public class ShowSiteMembers extends ServerConfigBase {
             
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_SHOW_SITE_MEMBERS", params);
+        } catch (ConfigurationException e) {
+            String[] args = {siteName, e.getMessage()};
+            debugError("ShowSiteMembers.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_SHOW_SITE_MEMBERS", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
             String[] args = {siteName, e.getMessage()};
             debugError("ShowSiteMembers.handleRequest", e);
