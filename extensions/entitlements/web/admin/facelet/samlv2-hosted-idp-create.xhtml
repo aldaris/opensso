@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-hosted-idp-create.xhtml,v 1.6 2009-07-02 00:01:04 asyhuang Exp $
+   $Id: samlv2-hosted-idp-create.xhtml,v 1.7 2009-07-07 01:27:32 asyhuang Exp $
 -->
 
 <ui:composition
@@ -108,10 +108,9 @@
                                     <ice:panelGroup
                                         visible="#{!samlV2HostedIdpCreateWizardBean.meta}">
                                         <ice:panelGrid
-                                            style="padding-left: 5px"
+                                            style="padding-left: 5px"                                           
                                             columns="2">
                                             <ice:panelGroup>
-
                                                 <ice:outputLabel
                                                     for="NewEntityName"
                                                     value="#{resources['samlv2-hosted-idp-create.entityNamePanelLabel.newEntityName']}"/>
@@ -120,18 +119,18 @@
                                                 <ice:inputText
                                                     id="newEntityName"
                                                     value="#{samlV2HostedIdpCreateWizardBean.newEntityName}"
+                                                    styleClass="inline-input"
                                                     size="70"
                                                     maxlength="70"/>
                                             </ice:panelGroup>
                                             <ice:panelGroup>
-
                                                 <ice:outputLabel
                                                     for="SigningKey"
                                                     value="#{resources['samlv2-hosted-idp-create.entityNamePanelLabel.signingKey']}"/>
                                             </ice:panelGroup>
                                             <ice:panelGroup>
                                                 <ice:selectOneMenu
-                                                    style="width: 50px"
+                                                    style="width: 100px"
                                                     id="selectedSigningKey"
                                                     value="#{samlV2HostedIdpCreateWizardBean.selectedSigningKey}"
                                                     partialSubmit="true">

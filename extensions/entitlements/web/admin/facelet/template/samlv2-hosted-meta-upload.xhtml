@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-hosted-meta-upload.xhtml,v 1.1 2009-06-26 09:02:18 asyhuang Exp $
+   $Id: samlv2-hosted-meta-upload.xhtml,v 1.2 2009-07-07 01:27:32 asyhuang Exp $
 -->
 
 <span
@@ -34,35 +34,64 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-  
-    <ice:panelGroup styleClass="inputFileContainer">        
+
+    <ice:panelGrid
+        style="padding-left: 5px"
+        columns="2">
         <ice:panelGroup>
             <ice:outputLabel
                 for="standardMetaData"
                 value="#{resources['samlv2-hosted-meta-upload.standardmetadata']}"/>
-            
+        </ice:panelGroup>
+        <ice:panelGroup>
             <ice:inputFile id="stdMetaInputFileName"
                            submitOnUpload="postUpload"
                            progressListener="#{wizardHandler.stdMetaFileUploadProgress}"
-                           actionListener="#{wizardHandler.stdMetaUploadFile}"/>            
+                           actionListener="#{wizardHandler.stdMetaUploadFile}"/>
+        </ice:panelGroup>
+        <ice:panelGroup>
+            <ice:outputText
+                value="#{resources['samlv2-hosted-meta-upload.standardMetadataProgress']}"/>
+        </ice:panelGroup>
+        <ice:panelGroup>
             <ice:outputProgress value="#{wizardBean.stdMetaFileProgress}"
                                 styleClass="uploadProgressBar"/>
+        </ice:panelGroup>
+        <ice:panelGroup>
+            <ice:outputText
+                value="#{resources['samlv2-hosted-meta-upload.standardMetadataFilename']}"/>
+        </ice:panelGroup>
+        <ice:panelGroup>
             <ice:outputText
                 value="#{wizardBean.stdMetaFilename}"/>
         </ice:panelGroup>
+
         <ice:panelGroup>
             <ice:outputLabel
                 for="extendedMetaData"
                 value="#{resources['samlv2-hosted-meta-upload.extendedmetadata']}"/>
-          
+        </ice:panelGroup>
+        <ice:panelGroup>
             <ice:inputFile id="extMetaInputFileName"
                            submitOnUpload="postUpload"
                            progressListener="#{wizardHandler.extMetaFileUploadProgress}"
-                           actionListener="#{wizardHandler.extMetaUploadFile}"/>           
+                           actionListener="#{wizardHandler.extMetaUploadFile}"/>
+        </ice:panelGroup>
+        <ice:panelGroup>
+            <ice:outputText
+                value="#{resources['samlv2-hosted-meta-upload.standardMetadataProgress']}"/>
+        </ice:panelGroup>
+        <ice:panelGroup>
             <ice:outputProgress value="#{wizardBean.extMetaFileProgress}"
                                 styleClass="uploadProgressBar"/>
+        </ice:panelGroup>
+        <ice:panelGroup>
+            <ice:outputText
+                value="#{resources['samlv2-hosted-meta-upload.extendedMetadataFilename']}"/>
+        </ice:panelGroup>
+        <ice:panelGroup>
             <ice:outputText
                 value="#{wizardBean.extMetaFilename}"/>
         </ice:panelGroup>
-    </ice:panelGroup>
+    </ice:panelGrid>
 </span>
