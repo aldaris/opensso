@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Home.jsp,v 1.15 2009-07-01 23:24:13 babysunil Exp $
+   $Id: Home.jsp,v 1.16 2009-07-07 23:16:52 babysunil Exp $
 
 --%>
 
@@ -53,42 +53,42 @@
 <cc:tabs name="tabCommon" bundleID="amConsole" submitFormData="false" />
 
 <div id="info1" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
-<div><a href="#" id="close1" onclick="closeAll(1); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateHostedIDP" defaultValue="commontask.create.hosted.idp" bundleID="amConsole" /></span></p></div>
+<div><a href="#" id="close1" onclick="closeAll(1); event.cancelBubble = true;return false;"><img alt="close hosted idp" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateHostedIDP" defaultValue="commontask.create.hosted.idp" bundleID="amConsole" /></span></p></div>
 
 <div id="info2" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
-<div><a href="#" id="close2" onclick="closeAll(2); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateHostedSP" defaultValue="commontask.create.hosted.sp" bundleID="amConsole" /></span></p></div>
+<div><a href="#" id="close2" onclick="closeAll(2); event.cancelBubble = true;return false;"><img alt="close hosted sp" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateHostedSP" defaultValue="commontask.create.hosted.sp" bundleID="amConsole" /></span></p></div>
 
 <div id="info3" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
-<div><a href="#" id="close3" onclick="closeAll(3); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateRemoteIDP" defaultValue="commontask.create.remote.idp" bundleID="amConsole" /></span></p></div>
+<div><a href="#" id="close3" onclick="closeAll(3); event.cancelBubble = true;return false;"><img alt="close remote idp" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateRemoteIDP" defaultValue="commontask.create.remote.idp" bundleID="amConsole" /></span></p></div>
 
 <div id="info4" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
-<div><a href="#" id="close4" onclick="closeAll(4); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateRemoteSP" defaultValue="commontask.create.remote.sp" bundleID="amConsole" /></span></p></div>
+<div><a href="#" id="close4" onclick="closeAll(4); event.cancelBubble = true;return false;"><img alt="close remote sp" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateRemoteSP" defaultValue="commontask.create.remote.sp" bundleID="amConsole" /></span></p></div>
 <div id="info5" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
-<div><a href="#" id="close5" onclick="closeAll(5); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateFedlet" defaultValue="commontask.create.fedlet" bundleID="amConsole" /></span></p></div>
+<div><a href="#" id="close5" onclick="closeAll(5); event.cancelBubble = true;return false;"><img alt="close create fedlet" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateFedlet" defaultValue="commontask.create.fedlet" bundleID="amConsole" /></span></p></div>
 
 <div id="info13" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
-<div><a href="#" id="close13" onclick="closeAll(13); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpConfigureGoogleApps" defaultValue="commontask.configure.google.apps" bundleID="amConsole" /></span></p></div>
+<div><a href="#" id="close13" onclick="closeAll(13); event.cancelBubble = true;return false;"><img alt="close configure google apps" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpConfigureGoogleApps" defaultValue="commontask.configure.google.apps" bundleID="amConsole" /></span></p></div>
 
 <div id="info14" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
-<div><a href="#" id="close14" onclick="closeAll(14); event.cancelBubble = true;return false;"><img alt="close ConfigureSalesForce" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpConfigureSalesForce" defaultValue="commontask.configure.salesforce.apps" bundleID="amConsole" /></span></p></div>
+<div><a href="#" id="close14" onclick="closeAll(14); event.cancelBubble = true;return false;"><img alt="close configure salesforce" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpConfigureSalesForce" defaultValue="commontask.configure.salesforce.apps" bundleID="amConsole" /></span></p></div>
 
 <div id="info6" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
-<div><a href="#" id="close6" onclick="closeAll(6); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpValidate" defaultValue="commontask.saml2.validate" bundleID="amConsole" /></span></p></div>
+<div><a href="#" id="close6" onclick="closeAll(6); event.cancelBubble = true;return false;"><img alt="close validate samlv2" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpValidate" defaultValue="commontask.saml2.validate" bundleID="amConsole" /></span></p></div>
 
 <div id="info11" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
-<div><a href="#" id="close11" onclick="closeAll(11); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpDoc" defaultValue="commontask.doc" bundleID="amConsole" /></span></p></div>
+<div><a href="#" id="close11" onclick="closeAll(11); event.cancelBubble = true;return false;"><img alt="close documentation" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpDoc" defaultValue="commontask.doc" bundleID="amConsole" /></span></p></div>
 
 <div id="info12" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
-<div><a href="#" id="close12" onclick="closeAll(12); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtRegisterProduct" defaultValue="commontask.register.product" bundleID="amConsole" /></span></p></div>
+<div><a href="#" id="close12" onclick="closeAll(12); event.cancelBubble = true;return false;"><img alt="close register product" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtRegisterProduct" defaultValue="commontask.register.product" bundleID="amConsole" /></span></p></div>
 
 <div class="TskPgeFllPge" id="TskPge" onclick="hideAllMenus()">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr valign="top"><td>&nbsp;</td><td colspan="4"></td></tr>
 <tr>
 <td>&nbsp;</td>
-<td width="40%"><img alt="" src="../console/images/tasks/spacer.gif" width="220" height="1" /></td>
+<td width="40%"><img alt="spacer" src="../console/images/tasks/spacer.gif" width="220" height="1" /></td>
 <td width="9%">&nbsp;</td>
-<td width="39%"><img alt="" src="../console/images/tasks/spacer.gif" width="220" height="1" /></td>
+<td width="39%"><img alt="spacer" src="../console/images/tasks/spacer.gif" width="220" height="1" /></td>
 <td width="7%">&nbsp;</td>
 </tr>
 <tr>
@@ -109,9 +109,9 @@
     <tr><td class="TskPgeBckgrTd">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif1" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="spacer" id="gif1" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
         <td width="100%;" class="TskPgeTskCntrTd"><a href="../task/CreateHostedIDP" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtCreateHostedIDP" defaultValue="commontask.label.create.hosted.idp" bundleID="amConsole" /></span></a></td>
-         <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(1); event.cancelBubble = true; return false;"  onmouseover="hoverImg(1); event.cancelBubble = true;" onmouseout="outImg(1); event.cancelBubble = true;" onfocus="hoverImg(1); event.cancelBubble = true;" onblur="outImg(1); event.cancelBubble = true;" id="i1"><img alt="" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg1" /></a></td>
+         <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(1); event.cancelBubble = true; return false;"  onmouseover="hoverImg(1); event.cancelBubble = true;" onmouseout="outImg(1); event.cancelBubble = true;" onfocus="hoverImg(1); event.cancelBubble = true;" onblur="outImg(1); event.cancelBubble = true;" id="i1"><img alt="create hosted idp" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg1" /></a></td>
          </tr>
          </table>
     </td></tr>
@@ -119,9 +119,9 @@
     <tr><td class="TskPgeBckgrTd">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif2" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="spacer" id="gif2" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
         <td width="100%;" class="TskPgeTskCntrTd"><a href="../task/CreateHostedSP" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtCreateHostedSP" defaultValue="commontask.label.create.hosted.sp" bundleID="amConsole" /></span></a></td>
-        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(2); event.cancelBubble = true; return false;"  onmouseover="hoverImg(2); event.cancelBubble = true;" onmouseout="outImg(2); event.cancelBubble = true;" onfocus="hoverImg(2); event.cancelBubble = true;" onblur="outImg(2); event.cancelBubble = true;" id="i2"><img alt="" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg2" /></a></td>
+        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(2); event.cancelBubble = true; return false;"  onmouseover="hoverImg(2); event.cancelBubble = true;" onmouseout="outImg(2); event.cancelBubble = true;" onfocus="hoverImg(2); event.cancelBubble = true;" onblur="outImg(2); event.cancelBubble = true;" id="i2"><img alt="create hosted sp" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg2" /></a></td>
         </tr>
         </table>
     </td></tr>
@@ -129,9 +129,9 @@
     <tr><td class="TskPgeBckgrTd">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif3" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="spacer" id="gif3" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
         <td width="100%;" class="TskPgeTskCntrTd"><a href="../task/CreateRemoteIDP" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtCreateRemoteIDP" defaultValue="commontask.label.create.remote.idp" bundleID="amConsole" /></span></a></td>
-        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(3); event.cancelBubble = true; return false;"  onmouseover="hoverImg(3); event.cancelBubble = true;" onmouseout="outImg(3); event.cancelBubble = true;" onfocus="hoverImg(3); event.cancelBubble = true;" onblur="outImg(3); event.cancelBubble = true;" id="i3"><img alt="" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg3" /></a></td>
+        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(3); event.cancelBubble = true; return false;"  onmouseover="hoverImg(3); event.cancelBubble = true;" onmouseout="outImg(3); event.cancelBubble = true;" onfocus="hoverImg(3); event.cancelBubble = true;" onblur="outImg(3); event.cancelBubble = true;" id="i3"><img alt="create remote idp" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg3" /></a></td>
         </tr>
         </table>
     </td></tr>
@@ -139,9 +139,9 @@
     <tr><td class="TskPgeBckgrTd">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif4" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="spacer" id="gif4" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
         <td width="100%;" class="TskPgeTskCntrTd"><a href="../task/CreateRemoteSP" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtCreateRemoteSP" defaultValue="commontask.label.create.remote.sp" bundleID="amConsole" /></span></a></td>
-        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(4); event.cancelBubble = true; return false;"  onmouseover="hoverImg(4); event.cancelBubble = true;" onmouseout="outImg(4); event.cancelBubble = true;" onfocus="hoverImg(4); event.cancelBubble = true;" onblur="outImg(4); event.cancelBubble = true;" id="i4"><img alt="" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg4" /></a></td>
+        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(4); event.cancelBubble = true; return false;"  onmouseover="hoverImg(4); event.cancelBubble = true;" onmouseout="outImg(4); event.cancelBubble = true;" onfocus="hoverImg(4); event.cancelBubble = true;" onblur="outImg(4); event.cancelBubble = true;" id="i4"><img alt="create remote sp" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg4" /></a></td>
         </tr>
         </table>
     </td></tr>
@@ -161,9 +161,9 @@
     <tr><td class="TskPgeBckgrTd">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif5" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="spacer" id="gif5" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
         <td width="100%;" class="TskPgeTskCntrTd"><a href="../task/CreateFedlet" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtCreateFedlet" defaultValue="commontask.label.create.fedlet" bundleID="amConsole" /></span></a></td>
-        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(5); event.cancelBubble = true; return false;"  onmouseover="hoverImg(5); event.cancelBubble = true;" onmouseout="outImg(5); event.cancelBubble = true;" onfocus="hoverImg(5); event.cancelBubble = true;" onblur="outImg(5); event.cancelBubble = true;" id="i1"><img alt="" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg5" /></a></td>
+        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(5); event.cancelBubble = true; return false;"  onmouseover="hoverImg(5); event.cancelBubble = true;" onmouseout="outImg(5); event.cancelBubble = true;" onfocus="hoverImg(5); event.cancelBubble = true;" onblur="outImg(5); event.cancelBubble = true;" id="i1"><img alt="create fedlet" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg5" /></a></td>
         </tr>
         </table>
     </td></tr>
@@ -182,9 +182,9 @@
     <tr><td class="TskPgeBckgrTd">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif5" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="spacer" id="gif5" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
         <td width="100%;" class="TskPgeTskCntrTd"><a href="../task/ConfigureGoogleApps" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtConfigureGoogleApps" defaultValue="commontask.label.configure.google.apps" bundleID="amConsole" /></span></a></td>
-        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(13); event.cancelBubble = true; return false;"  onmouseover="hoverImg(13); event.cancelBubble = true;" onmouseout="outImg(13); event.cancelBubble = true;" onfocus="hoverImg(13); event.cancelBubble = true;" onblur="outImg(13); event.cancelBubble = true;" id="i1"><img alt="" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg13" /></a></td>
+        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(13); event.cancelBubble = true; return false;"  onmouseover="hoverImg(13); event.cancelBubble = true;" onmouseout="outImg(13); event.cancelBubble = true;" onfocus="hoverImg(13); event.cancelBubble = true;" onblur="outImg(13); event.cancelBubble = true;" id="i1"><img alt="configure google apps" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg13" /></a></td>
         </tr>
         </table>
     </td></tr>
@@ -207,9 +207,9 @@
     <tr><td class="TskPgeBckgrTd">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif6" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="spacer" id="gif6" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
         <td width="100%;" class="TskPgeTskCntrTd"><a href="../task/ValidateSAML2Setup" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtCreateRemoteSP" defaultValue="commontask.label.saml2.validate" bundleID="amConsole" /></span></a></td>
-        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(6); event.cancelBubble = true; return false;"  onmouseover="hoverImg(6); event.cancelBubble = true;" onmouseout="outImg(6); event.cancelBubble = true;" onfocus="hoverImg(6); event.cancelBubble = true;" onblur="outImg(6); event.cancelBubble = true;" id="i6"><img alt="" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg6" /></a></td>
+        <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(6); event.cancelBubble = true; return false;"  onmouseover="hoverImg(6); event.cancelBubble = true;" onmouseout="outImg(6); event.cancelBubble = true;" onfocus="hoverImg(6); event.cancelBubble = true;" onblur="outImg(6); event.cancelBubble = true;" id="i6"><img alt="samlv2 validate" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg6" /></a></td>
         </tr>
         </table>
     </td></tr>
@@ -227,9 +227,9 @@
     <tr><td class="TskPgeBckgrTd">
         <table width="100%"  border="0" cellspacing="0" cellpadding="0">
         <tr>
-        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif11" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="spacer" id="gif11" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
         <td width="100%" class="TskPgeTskCntrTd"><a href="https://opensso.dev.java.net/public/use/docs/index.html" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtLblDoc" defaultValue="commontask.label.doc" bundleID="amConsole"/></span></a></td>
-        <td width="3%" align="right" valign="top" class="TskPgeTskRghtTd" ><a href="#" onclick="test(11); event.cancelBubble = true; return false;" onmouseover="hoverImg(11); event.cancelBubble = true;" onmouseout="outImg(11); event.cancelBubble = true;" onfocus="hoverImg(11); event.cancelBubble = true;" onblur="outImg(11); event.cancelBubble = true;" id="i11"><img alt="" id="togImg11" src="../console/images/tasks/rightToggle.gif" width="29" height="21"  border="0" /></a></td>
+        <td width="3%" align="right" valign="top" class="TskPgeTskRghtTd" ><a href="#" onclick="test(11); event.cancelBubble = true; return false;" onmouseover="hoverImg(11); event.cancelBubble = true;" onmouseout="outImg(11); event.cancelBubble = true;" onfocus="hoverImg(11); event.cancelBubble = true;" onblur="outImg(11); event.cancelBubble = true;" id="i11"><img alt="get documentation" id="togImg11" src="../console/images/tasks/rightToggle.gif" width="29" height="21"  border="0" /></a></td>
         </tr>
         </table>
     </td></tr>
@@ -246,9 +246,9 @@
     <tr><td class="TskPgeBckgrTd">
         <table width="100%"  border="0" cellspacing="0" cellpadding="0">
         <tr>
-        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif12" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="spacer" id="gif12" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
         <td width="100%" class="TskPgeTskCntrTd"><a href="../task/RegisterProduct" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtRegisterProduct" defaultValue="commontask.label.register.product" bundleID="amConsole"/></span></a></td>
-        <td width="3%" align="right" valign="top" class="TskPgeTskRghtTd" ><a href="#" onclick="test(12); event.cancelBubble = true; return false;" onmouseover="hoverImg(12); event.cancelBubble = true;" onmouseout="outImg(12); event.cancelBubble = true;" onfocus="hoverImg(12); event.cancelBubble = true;" onblur="outImg(12); event.cancelBubble = true;" id="i12"><img alt="" id="togImg12" src="../console/images/tasks/rightToggle.gif" width="29" height="21"  border="0" /></a></td>
+        <td width="3%" align="right" valign="top" class="TskPgeTskRghtTd" ><a href="#" onclick="test(12); event.cancelBubble = true; return false;" onmouseover="hoverImg(12); event.cancelBubble = true;" onmouseout="outImg(12); event.cancelBubble = true;" onfocus="hoverImg(12); event.cancelBubble = true;" onblur="outImg(12); event.cancelBubble = true;" id="i12"><img alt="register product" id="togImg12" src="../console/images/tasks/rightToggle.gif" width="29" height="21"  border="0" /></a></td>
         </tr>
         </table>
     </td></tr>    
@@ -267,7 +267,7 @@
             <tr>
             <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="spacer" id="gif14" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
             <td width="100%;" class="TskPgeTskCntrTd"><a href="../task/ConfigureSalesForceApps" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtConfigureSalesForceApps" defaultValue="commontask.label.configure.salesforce.apps" bundleID="amConsole" /></span></a></td>
-            <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(14); event.cancelBubble = true; return false;"  onmouseover="hoverImg(14); event.cancelBubble = true;" onmouseout="outImg(14); event.cancelBubble = true;" onfocus="hoverImg(14); event.cancelBubble = true;" onblur="outImg(14); event.cancelBubble = true;" id="i1"><img alt="right toggle" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg14" /></a></td>
+            <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(14); event.cancelBubble = true; return false;"  onmouseover="hoverImg(14); event.cancelBubble = true;" onmouseout="outImg(14); event.cancelBubble = true;" onfocus="hoverImg(14); event.cancelBubble = true;" onblur="outImg(14); event.cancelBubble = true;" id="i1"><img alt="configure sales force" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg14" /></a></td>
             </tr>
             </table>
     </td></tr>
