@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseAttributeTests.java,v 1.4 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: ResponseAttributeTests.java,v 1.5 2009-07-08 21:14:23 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -251,7 +251,7 @@ public class ResponseAttributeTests extends TestCommon {
             map.put("mail", set);
             set = new HashSet();
             set.add("rauser1updated");
-            map.put("cn", set);            
+             map.put("cn", set);            
             log(Level.FINEST, "evaluateUpdatedDynamicResponseAttribute",
                     "Update Attribute List: " + map);
             set1 = amid.getAttribute("cn");
@@ -262,15 +262,32 @@ public class ResponseAttributeTests extends TestCommon {
             }            
             idmc.modifyIdentity(amid, map);
             Thread.sleep(70100);
-            page = (HtmlPage)webClient.getPage(url);
-            iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page,
-                    "HTTP_RESPONSE_MAIL:abc.def@sun.com");
-            assert (iIdx != -1);
-            iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page,
-                    "HTTP_RESPONSE_CN:rauser1updated");
-            assert (iIdx != -1);
+            log(Level.SEVERE, "evaluateUpdatedDynamicResponseAttribute",
+                 "The URL is >>> " + url);
+            long time = System.currentTimeMillis();
+            String strPage = "";
+            boolean isFound = false;
+            while (System.currentTimeMillis() - time < pollingTime &&
+                   ! isFound ) {
+              log(Level.FINEST, "evaluateUpdatedDynamicResponseAttribute",
+                   (System.currentTimeMillis() - time));
+              page = (HtmlPage)webClient.getPage(url);
+              strPage = page.asXml();
+              if (strPage.contains("HTTP_RESPONSE_MAIL:abc.def@sun.com")){
+                isFound = true;
+              }
+               Thread.sleep(5000);
+             }
+             if(strPage.contains("HTTP_RESPONSE_MAIL:abc.def@sun.com")) {
+             assert true;
+             } else {
+             assert false;
+            }
+            if(strPage.contains("HTTP_RESPONSE_CN:rauser1updated")){
+             assert true;
+            } else {
+             assert false;
+            }
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateUpdatedDynamicResponseAttribute",
                     e.getMessage());
