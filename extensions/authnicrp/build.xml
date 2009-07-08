@@ -2,10 +2,11 @@
 <!-- You may freely edit this file. See commented blocks below for -->
 <!-- some examples of how to customize the build. -->
 <!-- (If you delete it and reopen the project it will be recreated.) -->
-<project name="Authnicrp" default="default" basedir=".">
-    <description>Builds, tests, and runs the project Authnicrp.</description>
+<project name="AuthInfocard" default="default" basedir=".">
+    <description>Builds, tests, and runs of project authnicrp.
+    Information Cards authentication module</description>
     <import file="nbproject/build-impl.xml"/>
-     
+    
     <!--
 
     There exist several targets which are by default empty and which can be 
@@ -55,7 +56,7 @@
 
     An example of overriding the target for project execution could look like this:
 
-        <target name="run" depends="Authnicrp-impl.jar">
+        <target name="run" depends="AuthInfocard-impl.jar">
             <exec dir="bin" executable="launcher.exe">
                 <arg file="${dist.jar}"/>
             </exec>
@@ -69,26 +70,36 @@
     -->
     
     <!-- Check project properties correctness before invoking the install target -->
-    <target name="install" depends="jar">
+    <target name="-post-jar">
         <property file="nbproject/project.properties"/>
         <property file="nbproject/private/private.properties"/>
         
         <!-- define opensso-root.dir property in this file or in private.properties
-              if you build the module using Netbeans -->
-        <property name="opensso-root.dir" value="TBD" />
+             if you build the module from Netbeans -->
+        <property name="opensso-root.dir" value="/Users/Patrick/opensso/" />
         <property name="opensso-lib.dir" value="${opensso-root.dir}/WEB-INF/lib" />
-        <property name="opensso-config.dir" value="${opensso-root.dir}/config/auth/default" />
+        <property name="opensso-config.dir" value="${opensso-root.dir}/config/auth/" />
         <property name="opensso-images.dir" value="${opensso-root.dir}/images" />
-       
+
         <copy file="${dist.jar}" todir="${opensso-lib.dir}" />
-        <copy file="extlib/opensso-sharedlib.jar" todir="${opensso-lib.dir}" />
-        <copy file="extlib/opensso.jar" todir="${opensso-lib.dir}" />
-        <copy file="extlib/servlet.jar" todir="${opensso-lib.dir}" />
         <copy file="extlib/xmldap-1.0.jar" todir="${opensso-lib.dir}" />
-        <copy file="source/Infocard.jsp" todir="${opensso-config.dir}" />
-        <copy file="source/infocardInvalidToken.jsp" todir="${opensso-config.dir}" />
-        <copy file="source/infocardInvalidCert.jsp" todir="${opensso-config.dir}" />
-        <copy file="source/Infocard.properties" todir="${opensso-root.dir}/WEB-INF/classes" />
-        <copy file="images/infocard_71x50.png" todir="${opensso-images.dir}" />
+        <copy file="xml/services/amAuthInfocard.xml" todir="${opensso-root.dir}/WEB-INF/classes" />
+        <copy file="xml/services/amUser.xml" todir="${opensso-root.dir}/WEB-INF/classes" />
+        <copy file="resources/locale/amAuthInfocard.properties" todir="${opensso-root.dir}/WEB-INF/classes" />
+        <copy file="resources/locale/amAuthInfocard.properties" tofile="${opensso-root.dir}/WEB-INF/classes/amAuthInfocard_en.properties" />
+        <copy file="resources/locale/amUser.properties" todir="${opensso-root.dir}/WEB-INF/classes" />
+        <copy file="resources/locale/amUser.properties" tofile="${opensso-root.dir}/WEB-INF/classes/amUser_en.properties" />
+        <copy file="xml/auth-module/Infocard.xml" todir="${opensso-config.dir}/default" />
+        <copy file="xml/auth-module/Infocard.xml" todir="${opensso-config.dir}/default_en" />
+        <copy file="www/jsp/infocardInvalidToken.jsp" todir="${opensso-config.dir}/default" />
+        <copy file="www/jsp/infocardInvalidSignature.jsp" todir="${opensso-config.dir}/default" />
+        <copy file="www/jsp/infocardInvalidCert.jsp" todir="${opensso-config.dir}/default" />
+        <copy file="www/jsp/infocardProcessing.jsp" todir="${opensso-config.dir}/default" />
+        <copy file="www/jsp/infocard.jsp" todir="${opensso-config.dir}/default" />
+        <copy file="www/js/Infocard.js" todir="${opensso-root.dir}/js" />
+        <copy file="www/css/Infocard.css" todir="${opensso-root.dir}/css" />
+        <copy file="www/images/Infocard_56x39.png" todir="${opensso-images.dir}" />
+        <copy file="www/PrivacyPolicy.html" todir="${opensso-root.dir}" />
+
     </target>
 </project>

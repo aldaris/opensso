@@ -2,10 +2,4 @@ OpenSSO Authentication Module for Information Cards (RP) Todo Items list
 
 1 - Check compatibility / evaluate work to do to make authnicrp work on
     Distributed Authentication User Interface
-2 - The Information Card / User Account association should be maintained in the
-    identity repository in place of an external database (JavaDB). Extend IdRepo
-    schema to support this association.
-3 - Authicrp should be able to authenticate users against supported authentication
-    data stores (i.e Active Directory)
-4 - Information Card properties (required, optional claims, etc.) should be
-    configurable on a realm / organization, Service URL basis
+2 - Handle ic-data update when a PPID is removed from console

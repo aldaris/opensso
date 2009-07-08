@@ -17,27 +17,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InfocardStorage.java,v 1.3 2008-04-18 13:52:33 ppetitsm Exp $
+ * $Id: InvalidTokenConditionException.java,v 1.1 2009-07-08 08:59:26 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
  */
 
-package com.identarian.infocard.opensso.db;
+package com.identarian.infocard.opensso.exception;
 
-import com.identarian.infocard.opensso.exception.InfocardException;
-import java.sql.*;
 
-public interface InfocardStorage {
+public class InvalidTokenConditionException extends Exception{
+    public InvalidTokenConditionException() {
+    }
 
-    public void startup()
-            throws InfocardException;
-    public void shutdown()
-            throws InfocardException ; 
-    public void addCredentials(StoredCredentials creds)
-            throws InfocardException;
-    public void delCredentials(StoredCredentials creds)
-            throws InfocardException;
-    public StoredCredentials findCredentials(String ppid)
-            throws InfocardException;
+    public InvalidTokenConditionException(String string) {
+        super(string);
+    }
+
+    public InvalidTokenConditionException(String string, Throwable throwable) {
+        super(string, throwable);
+    }
+
+    public InvalidTokenConditionException(Throwable throwable) {
+        super(throwable);
+    }
 }

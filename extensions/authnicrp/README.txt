@@ -1,11 +1,44 @@
-OpenSSO Authentication Module for Information Cards (RP).
+-----------------------------------------------------------------------------
+OpenSSO Authentication Module for Information Cards 0.9
+README file (updated 2009-07-05)
+-----------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
+The contents of this file are subject to the terms
+of the Common Development and Distribution License
+(the License). You may not use this file except in
+compliance with the License.
+
+You can obtain a copy of the License at
+https://opensso.dev.java.net/public/CDDLv1.0.html or
+opensso/legal/CDDLv1.0.txt
+See the License for the specific language governing
+permission and limitations under the License.
+
+When distributing Covered Code, include this CDDL
+Header Notice in each file and include the License file
+at opensso/legal/CDDLv1.0.txt.
+If applicable, add the following below the CDDL Header,
+with the fields enclosed by brackets [] replaced by
+your own identifying information:
+"Portions Copyrighted [year] [name of copyright owner]"
+
+$Id: README.txt,v 1.10 2009-07-08 08:59:27 ppetitsm Exp $
+
+Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+Portions Copyrighted 2008 Patrick Petit Consulting
+
+---------------------------------------------------------
+
+Build Instructions
+------------------
+
 In order to run the build.xml to compile the jar file, create a directory named
-extlib under the authnicrp root containing the following JAR files
---------------------------------------------------------------------------------
+extlib under the authnicrp root containing the following JAR files.
+You need to compile with JDK 1.6, and setup JAVA_HOME environment variable
+accordingly.
 
 xmldap-1.0.jar:
+    Compile with JDK 6
     The Xmldap.org code can be retrieved from the 'openinfocard' project at
     http://code.google.com/p/openinfocard/
     To build:
@@ -27,9 +60,13 @@ servlet.jar:
     Otherwise, look into downloading Tomcat, or look for J2EE 1.4 SDK and for an
     implementation from Sun Microsystems.
 
-To build the authnicrp authentication module, you will need to compile with
-JDK 1.6, and setup the JAVA_HOME environment variable accordingly. All you need
-to do is to invoke the default ant target of the build.xml file.
+
+Modify the 'opensso-root.dir' property in build.xml to make it point to OpenSSO's
+deployment directory.
+For example: /opt/glassfish/domains/domain1/applications/j2ee-modules/opensso
+
+Open the project in Netbeans 6.5.1 or latter, and click 'Clean & Build", or simply
+invoke the default build target.
 
 # ant
 
@@ -47,8 +84,10 @@ below
     field under 'Pluggable Authentication Module Classes', click 'Add', then 
     'Save'.
 
-3 - Edit the source/Infocard.properties file to define the application server's
-    key store password and alias.
+3 - Edit the source/amAuthInfocard.xml file to define the application server's
+    key store password and alias which are respectively defined by the
+    'iplanet-am-auth-infocard-keyStorePassword' attribute and
+    'iplanet-am-auth-infocard-keyAlias' attribute.
     On Glassfish V2, which the module has been tested, the default alias is 's1as'
     and the default password is the application's server admin password (i.e. 
     'adminadmin').
@@ -57,25 +96,44 @@ below
     On Glassfish you can verify the password and alias with keytool -list \
     -storepass changeit -keystore \
     <GLASSFISH_DIR>/domains/domain1/config/keystore.jks
-    - Edit the source/Infocard.properties file to define the database connection
-    URL parameters if different from defaults
 
-4 - Install the module in OpenSSO. An 'install' ant target has been provided to
-    copy all the necessary files in the deployed OpenSSO instance root directory.
+4 - Install the module in OpenSSO. An 'install' ant target has been provided for
+    your convenience. Its function is to copy all the necessary files in the
+    deployed OpenSSO instance.
     Prior to invoking the 'install' ant target, you will need to modify the
-    opensso-root.dir property in build.xml in order to define its location.
+    opensso-root.dir property in build.xml in order to define the location of the
+    opensso instance. For example:
+    /usr/local/glassfish/domains/domain1/applications/j2ee-modules/opensso/.
 
-5 - Start a JavaDB (Derby) server on localhost and default port '1527'.
-    The module creates the database and tables at startup. The database is used
-    to store relations between Information Cards presented by users and the
-    OpenSSO user accounts.
+6-  Install the authentication module in opensso. Invoke the
+    following commands in sequence:
 
-6 - Restart the server
+    $ ssoadm create-svc -X amAuthInfocard.xml -u amadmin -f password
 
-7 - Point your browser at 
+    $ ssoadm register-auth-module -a com.identarian.infocard.opensso.rp.Infocard \
+      -u amadmin -f password
+    
+    Note: The file password (which mode must be read-only for the user
+    (i.e. -r--------) constains amAdmin password
+
+    Then you need to modify the iPlanetAMUserService service in order to enable
+    the ic-ppid attribute whithin the console. Check the bundled amUser.xml to
+    figure out how to modify the service.
+
+    $ ssoadm delete-svc -u amadmin -f password -s iPlanetAMUserService
+
+    And add it back in:
+
+    $ ssoadm create-svc -u amAdmin -f password -X amUser.xml
+
+7 - Modify the LDAP schema using the authnicrp.ldif file
+
+8 - Restart the application server
+
+9 - Point your browser at
     http(s)://my.domain.name:port/opensso/UI/Login?module=Infocard
 
-8 - In order to play with the module, you'll have to install an Information 
+10 - In order to play with the module, you'll have to install an Information
     Card Identity Selector application. The initial login page provides links 
     for where you can download an Identity Selector as a Firefox extension for 
     Linux, Windows and Mac OS X.
@@ -83,8 +141,13 @@ below
     above and Windows Server 2003 SP and above you must install Internet 
     Explorer 7 and .NET Framework 3.0 (both available via Windows Update).
     Most common Information Card extensions for Firefox are DigitalMe and
-    xmldap.org.
-    Go to http://www.bandit-project.org/index.php/Digital_Me#Download or
-    http://xmldap.org/ to download the application and/or extension.
+    xmldap.org and Azigo
+
+Some reference articles:
+
+About the sms.dtd Structure
+
+* http://developers.sun.com/identity/reference/techart/authentication.html
+* http://docs.sun.com/source/816-6774-10/prog_service.html#wp19647
 
 For further explanations please email dev@opensso.dev.java.net

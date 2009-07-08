@@ -17,39 +17,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertiesManager.java,v 1.3 2008-04-03 14:09:58 ppetitsm Exp $
+ * $Id: InvalidTokenSignatureException.java,v 1.1 2009-07-08 08:59:26 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
  */
 
-package com.identarian.infocard.opensso.rp;
-
-import com.sun.identity.authentication.service.AuthD;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.Properties;
-import javax.servlet.ServletContext;
+package com.identarian.infocard.opensso.exception;
 
 
-public class PropertiesManager {
-
-    private Properties properties = new Properties();
-
-    public PropertiesManager(String file) throws IOException {
-
-        // There sould be a better way of doing it... ?
-        ServletContext context = AuthD.getAuth().getServletContext();
-        InputStream is = context.getResourceAsStream(file);
-        properties.load(is);
-
+public class InvalidTokenSignatureException extends Exception{
+    public InvalidTokenSignatureException() {
     }
 
-    public String getProperty(String propertyName) {
-        return properties.getProperty(propertyName);
+    public InvalidTokenSignatureException(String string) {
+        super(string);
     }
-    
-    public String getProperty(String propertyName, String defaultProperty) {
-        return properties.getProperty(propertyName, defaultProperty);
+
+    public InvalidTokenSignatureException(String string, Throwable throwable) {
+        super(string, throwable);
+    }
+
+    public InvalidTokenSignatureException(Throwable throwable) {
+        super(throwable);
     }
 }

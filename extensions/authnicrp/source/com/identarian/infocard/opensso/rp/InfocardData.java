@@ -17,26 +17,45 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: InfocardData.java,v 1.1 2009-07-08 08:59:28 ppetitsm Exp $
+ *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
  */
 
-package com.identarian.infocard.opensso.exception;
+package com.identarian.infocard.opensso.rp;
 
+import java.io.Serializable;
+import java.util.HashMap;
 
-public class InvalidTokenException extends Exception{
-    public InvalidTokenException() {
+/**
+ *
+ * @author Patrick
+ */
+public class InfocardData extends HashMap<String, String> implements Serializable {
+
+    private String password = null;
+
+    public InfocardData() {
+        super();
     }
 
-    public InvalidTokenException(String string) {
-        super(string);
+    public InfocardData(String password) {
+        super();
+        this.password = password;
+    }
+    
+    /**
+     * @return the digest
+     */
+    public String getPassword() {
+        return password;
     }
 
-    public InvalidTokenException(String string, Throwable throwable) {
-        super(string, throwable);
-    }
-
-    public InvalidTokenException(Throwable throwable) {
-        super(throwable);
+    /**
+     * @param digest the digest to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
