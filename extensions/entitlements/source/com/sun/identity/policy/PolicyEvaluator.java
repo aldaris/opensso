@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.19 2009-07-06 19:34:17 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.20 2009-07-08 01:16:15 veiming Exp $
  *
  */
 
@@ -755,7 +755,7 @@ public class PolicyEvaluator {
 
         try {
             EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-                SubjectUtils.createSubject(token), realm);
+                SubjectUtils.createSuperAdminSubject(), realm);
             return (ec.migratedToEntitlementService()) ? getPolicyDecisionE(
                 token, resourceName, actionNames,
                 envParameters) : getPolicyDecisionO(token, resourceName,
@@ -809,12 +809,13 @@ public class PolicyEvaluator {
         try {
             Evaluator eval = new Evaluator(
                 SubjectUtils.createSubject(adminSSOToken), serviceTypeName);
+            Subject sbj = (token != null) ? SubjectUtils.createSubject(token) :
+                null;
             List<Entitlement> entitlements = eval.evaluate(
-                orgName, SubjectUtils.createSubject(token), resourceName,
-                envParameters, false);
+                orgName, sbj, resourceName, envParameters, false);
             if ((entitlements != null) && !entitlements.isEmpty()) {
                 Entitlement e = entitlements.iterator().next();
-                return (EntitlementToPolicyDecision(e));
+                return (entitlementToPolicyDecision(e, actionNames));
             }
         } catch (EntitlementException e) {
             throw new PolicyException(e);
@@ -1434,14 +1435,14 @@ public class PolicyEvaluator {
 
             if (!entitlements.isEmpty()) {
                 if (!subTreeSearch) {
-                    resultsSet.add(EntitlementToResourceResult(
+                    resultsSet.add(entitlementToResourceResult(
                         (Entitlement)entitlements.iterator().next()));
                 } else {
                     ResourceResult virtualResourceResult =
                         new ResourceResult(ResourceResult.VIRTUAL_ROOT,
                             new PolicyDecision());
                     for (Entitlement ent : entitlements ) {
-                        ResourceResult r = EntitlementToResourceResult(ent);
+                        ResourceResult r = entitlementToResourceResult(ent);
                         virtualResourceResult.addResourceResult(r, serviceType);
                     }
 
@@ -1458,33 +1459,43 @@ public class PolicyEvaluator {
     }
 
    
-    private ResourceResult EntitlementToResourceResult(
+    private ResourceResult entitlementToResourceResult(
         Entitlement entitlement
     ) throws PolicyException {
-        return new ResourceResult(
-            entitlement.getResourceName(),
-            EntitlementToPolicyDecision(entitlement));
+        return new ResourceResult(entitlement.getResourceName(),
+            entitlementToPolicyDecision(entitlement, Collections.EMPTY_SET));
     }
     
-    private PolicyDecision EntitlementToPolicyDecision(
-        Entitlement entitlement
+    private PolicyDecision entitlementToPolicyDecision(
+        Entitlement entitlement,
+        Set<String> actionNames
     ) throws PolicyException {
         PolicyDecision pd = new PolicyDecision();
         Map actionValues = entitlement.getActionValues();
 
-        for (Iterator i = actionValues.keySet().iterator(); i.hasNext(); ) {
-            String actionName = (String)i.next();
-            Boolean values = (Boolean)actionValues.get(actionName);
+        if ((actionValues != null) && !actionValues.isEmpty()) {
+            for (Iterator i = actionValues.keySet().iterator(); i.hasNext();) {
+                String actionName = (String) i.next();
+                Boolean values = (Boolean) actionValues.get(actionName);
 
-            Set set = new HashSet();
-            if (values.booleanValue()) {
-                set.add(getActionTrueBooleanValue(actionName));
-            } else {
-                set.add(getActionFalseBooleanValue(actionName));
+                Set set = new HashSet();
+                if (values.booleanValue()) {
+                    set.add(getActionTrueBooleanValue(actionName));
+                } else {
+                    set.add(getActionFalseBooleanValue(actionName));
+                }
+                ActionDecision ad = new ActionDecision(actionName, set);
+                ad.setAdvices(entitlement.getAdvices());
+                pd.addActionDecision(ad, serviceType);
             }
-            ActionDecision ad = new ActionDecision(actionName, set);
-            ad.setAdvices(entitlement.getAdvices());
-            pd.addActionDecision(ad, serviceType);
+        } else {
+            for (String actionName : actionNames) {
+                Set set = new HashSet();
+                set.add(getActionFalseBooleanValue(actionName));
+                ActionDecision ad = new ActionDecision(actionName, set);
+                ad.setAdvices(entitlement.getAdvices());
+                pd.addActionDecision(ad, serviceType);
+            }
         }
 
         pd.setResponseAttributes(entitlement.getAttributes());

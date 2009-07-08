@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCondition.java,v 1.1 2009-06-23 07:00:16 veiming Exp $
+ * $Id: PolicyCondition.java,v 1.2 2009-07-08 01:16:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -170,7 +170,7 @@ public class PolicyCondition implements EntitlementCondition {
                 (com.sun.identity.policy.interfaces.Condition)
                 Class.forName(className).newInstance();
             cond.setProperties(properties);
-            SSOToken token = getSSOToken(subject);
+            SSOToken token = (subject != null) ? getSSOToken(subject) : null;
             com.sun.identity.policy.ConditionDecision dec =
                 cond.getConditionDecision(token, environment);
             return new ConditionDecision(dec.isAllowed(), dec.getAdvices());

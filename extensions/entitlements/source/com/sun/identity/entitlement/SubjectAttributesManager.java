@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.12 2009-06-24 08:33:48 veiming Exp $
+ * $Id: SubjectAttributesManager.java,v 1.13 2009-07-08 01:16:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -152,6 +152,10 @@ public class SubjectAttributesManager {
                     searchIndexes.add(attrName + "=" + v);
                 }
             }
+        } else {
+            searchIndexes.add(
+                SubjectAttributesCollector.NAMESPACE_IDENTITY + "=" +
+                SubjectAttributesCollector.ATTR_NAME_ALL_ENTITIES);
         }
         return (searchIndexes);
     }

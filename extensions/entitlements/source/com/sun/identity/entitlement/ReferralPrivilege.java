@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.9 2009-07-06 19:34:17 veiming Exp $
+ * $Id: ReferralPrivilege.java,v 1.10 2009-07-08 01:16:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -476,15 +476,17 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
         Set<String> resources = new HashSet<String>();
         Set<String> userIds = new HashSet<String>();
 
-        Set<Principal> principals = sbj.getPrincipals();
-        if (!principals.isEmpty()) {
-            for (Principal p : principals) {
-                String pName = p.getName();
-                if (DN.isDN(pName)){
-                    String[] rdns = LDAPDN.explodeDN(pName, true);
-                    userIds.add(rdns[0]);
-                } else {
-                    userIds.add(pName);
+        if (sbj != null) {
+            Set<Principal> principals = sbj.getPrincipals();
+            if (!principals.isEmpty()) {
+                for (Principal p : principals) {
+                    String pName = p.getName();
+                    if (DN.isDN(pName)) {
+                        String[] rdns = LDAPDN.explodeDN(pName, true);
+                        userIds.add(rdns[0]);
+                    } else {
+                        userIds.add(pName);
+                    }
                 }
             }
         }
@@ -495,6 +497,8 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
                     resources.add(r.replaceAll("\\$SELF", uid));
                 }
             }
+        } else {
+            resources.addAll(set);
         }
 
         return resources;

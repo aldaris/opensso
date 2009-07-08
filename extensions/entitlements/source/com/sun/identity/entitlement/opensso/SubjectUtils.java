@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectUtils.java,v 1.6 2009-07-01 21:47:02 veiming Exp $
+ * $Id: SubjectUtils.java,v 1.7 2009-07-08 01:16:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -43,7 +43,7 @@ public class SubjectUtils {
     private SubjectUtils() {
     }
 
-    static Subject createSuperAdminSubject() {
+    public static Subject createSuperAdminSubject() {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         return createSubject(adminToken);
