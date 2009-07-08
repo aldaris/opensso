@@ -17,16 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebAgentHotSwapTests.java,v 1.5 2009-01-26 23:45:50 nithyas Exp $
+ * $Id: WebAgentHotSwapTests.java,v 1.6 2009-07-08 21:15:12 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
-
 package com.sun.identity.qatest.agents;
 
 import com.gargoylesoftware.htmlunit.WaitingRefreshHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.ScriptException;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.idm.AMIdentity;
@@ -90,8 +91,8 @@ public class WebAgentHotSwapTests extends TestCommon {
     /**
      * Instantiated different helper class objects
      */
-    public WebAgentHotSwapTests() 
-    throws Exception{
+    public WebAgentHotSwapTests()
+            throws Exception {
         super("WebAgentHotSwapTests");
         mpc = new AgentsCommon();
         idmc = new IDMCommon();
@@ -104,63 +105,61 @@ public class WebAgentHotSwapTests extends TestCommon {
         admintoken = getToken(adminUser, adminPassword, basedn);
         smsc = new SMSCommon(admintoken);
     }
-    
+
     /**
      * Does the pre-test setup needed for the test. Evaluates if these tests
      * need to be executed for the agent configuration being tested. 
      */
-    @Parameters({"policyIdx", "resourceIdx", "agentType", "evaluationIdx", 
-    "testIdx"})
-    @BeforeTest(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
-    "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @Parameters({"policyIdx", "resourceIdx", "agentType", "evaluationIdx",
+        "testIdx"})
+    @BeforeTest(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+        "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String policyIdx, String resourceIdx, String TCforAgent,
             String evaluationIdx, String tstIdx)
-    throws Exception {
-        Object[] params = {policyIdx, resourceIdx, TCforAgent, 
+            throws Exception {
+        Object[] params = {policyIdx, resourceIdx, TCforAgent,
             evaluationIdx, tstIdx};
         entering("setup", params);
 
         try {
             if (!idmc.isFilteredRolesSupported()) {
-                Reporter.log("Skipping Test Cases, since Roles or Filtered " + 
+                Reporter.log("Skipping Test Cases, since Roles or Filtered " +
                         "Roles are not supported in this configuration");
-                assert(false);                        
+                assert (false);
             }
             strAgentBeingTested = rbg.getString(strGblRB + ".agentType");
             agentId = rbg.getString(strGblRB + ".agentId");
             hotswap = new HotSwapProperties("agentonly", tstIdx);
-            boolean isHotSwapSupported = hotswap.isHotSwapSupported();            
-            if (isHotSwapSupported && strAgentBeingTested.contains("WEB")) { 
-                amid = idmc.getFirstAMIdentity(admintoken, agentId, 
-                    idmc.getIdType("agentonly"), "/"
-                    );
+            boolean isHotSwapSupported = hotswap.isHotSwapSupported();
+            if (isHotSwapSupported && strAgentBeingTested.contains("WEB")) {
+                amid = idmc.getFirstAMIdentity(admintoken, agentId,
+                        idmc.getIdType("agentonly"), "/");
                 resIdx = new Integer(resourceIdx).intValue();
                 resource = rbg.getString(strGblRB + ".resource" + resIdx);
-                log(Level.FINEST, "setup", "Protected Resource Name: " + 
+                log(Level.FINEST, "setup", "Protected Resource Name: " +
                         resource);
                 logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
                         "/UI/Logout";
-                strScriptURL = rbg.getString(strGblRB 
-                    + ".headerEvalScriptName");
+                strScriptURL = rbg.getString(strGblRB + ".headerEvalScriptName");
                 Set set = amid.getAttribute(
                         "com.sun.identity.agents.config.agenturi.prefix");
                 Iterator itr = set.iterator();
                 String strUrl = "";
-                while ( itr.hasNext()) {
-                    strUrl  = (String)itr.next();
+                while (itr.hasNext()) {
+                    strUrl = (String) itr.next();
                 }
                 if (strUrl != null) {
-                     agentURL = strUrl.substring(0, strUrl.indexOf("/amagent"));
+                    agentURL = strUrl.substring(0, strUrl.indexOf("/amagent"));
                 } else {
-                    log(Level.SEVERE, "setup", "property com.sun" + 
-                            ".identity.client.notification.url is " + 
+                    log(Level.SEVERE, "setup", "property com.sun" +
+                            ".identity.client.notification.url is " +
                             "not present");
                 }
                 polIdx = new Integer(policyIdx).intValue();
                 testIdx = new Integer(tstIdx).intValue();
-                mpc.createIdentities("agents" + fileseparator + strLocRB, 
+                mpc.createIdentities("agents" + fileseparator + strLocRB,
                         polIdx);
-                mpc.createPolicyXML("agents" + fileseparator + strGblRB, 
+                mpc.createPolicyXML("agents" + fileseparator + strGblRB,
                         "agents" + fileseparator + strLocRB, polIdx, strLocRB +
                         ".xml");
                 log(Level.FINEST, "setup", "Policy XML:\n" + strLocRB +
@@ -168,20 +167,20 @@ public class WebAgentHotSwapTests extends TestCommon {
                 mpc.createPolicy(strLocRB + ".xml");
                 //HotSwapIdentities and Policies
                 mpc.createIdentities("agents" + fileseparator + strHotSwapRB, polIdx);
-                mpc.createPolicyXML("agents" + fileseparator + strGblRB, 
-                        "agents" + fileseparator + strHotSwapRB, polIdx, 
+                mpc.createPolicyXML("agents" + fileseparator + strGblRB,
+                        "agents" + fileseparator + strHotSwapRB, polIdx,
                         strHotSwapRB + ".xml");
                 log(Level.FINEST, "setup", "Policy XML:\n" + strHotSwapRB +
                         ".xml");
-                mpc.createPolicy(strHotSwapRB + ".xml");                
+                mpc.createPolicy(strHotSwapRB + ".xml");
                 Thread.sleep(15000);
 
             } else {
-                Reporter.log("Agent being tested is of type: " + 
+                Reporter.log("Agent being tested is of type: " +
                         strAgentBeingTested);
-                Reporter.log("Test Case is for agent type: 3.0WEB "+
+                Reporter.log("Test Case is for agent type: 3.0WEB " +
                         ". Hence skipping tests.");
-                assert(false);
+                assert (false);
             }
         } catch (Exception e) {
             cleanup();
@@ -191,32 +190,32 @@ public class WebAgentHotSwapTests extends TestCommon {
         }
         exiting("setup");
     }
-    
+
     /**
-     * Gets the Respose Attribute's fetch mode from server, swaps the vlaues
+     * Gets the Respose Attribute's fetch mode from server, swaps the values
      * and instantiates the ResponseAttributeTests object
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getResponseAttrFetchMode()
-    throws Exception {
-        String strPropName = rbp.getString(strHotSwapRB + testIdx + 
+            throws Exception {
+        String strPropName = rbp.getString(strHotSwapRB + testIdx +
                 ".responseFetch");
         String strPropValue = rbp.getString(strHotSwapRB + testIdx +
-               ".responseFetchValue");
+                ".responseFetchValue");
         hotswap.hotSwapProperty(strPropName, strPropValue);
-        resp = new ResponseAttributeTests(strScriptURL, resource); 
+        resp = new ResponseAttributeTests(strScriptURL, resource);
     }
-       
+
     /**
      * Evaluates newly created response attribute which holds a single static
      * value
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"getResponseAttrFetchMode"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"getResponseAttrFetchMode"})
     public void evaluateNewSingleValuedStaticResponseAttribute()
-    throws Exception {
+            throws Exception {
         resp.evaluateNewSingleValuedStaticResponseAttribute();
     }
 
@@ -224,234 +223,228 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Evaluates newly created response attribute which holds multiple static
      * value
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evaluateNewSingleValuedStaticResponseAttribute"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evaluateNewSingleValuedStaticResponseAttribute"})
     public void evaluateNewMultiValuedStaticResponseAttribute()
-    throws Exception {
+            throws Exception {
         resp.evaluateNewMultiValuedStaticResponseAttribute();
     }
-    
-    
+
     /**
      * Evaluates newly created response attribute which holds a single dynamic
      * value
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evaluateNewMultiValuedStaticResponseAttribute"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evaluateNewMultiValuedStaticResponseAttribute"})
     public void evaluateDynamicResponseAttribute()
-    throws Exception {
+            throws Exception {
         resp.evaluateDynamicResponseAttribute();
     }
-      
+
     /**
      * Evaluates updated response attribute which holds a single dynamic value
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evaluateDynamicResponseAttribute"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evaluateDynamicResponseAttribute"})
     public void evaluateUpdatedDynamicResponseAttribute()
-    throws Exception {
+            throws Exception {
         resp.evaluateUpdatedDynamicResponseAttribute();
     }
 
-     
     /**
      * Gets the Session Attribute's fetch mode from server, swaps the values
      * and instantiates the SessionAttributeTests object
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getSessionAttrFetchMode()
-    throws Exception {
-        String strPropName = rbp.getString(strHotSwapRB + testIdx + 
+            throws Exception {
+        String strPropName = rbp.getString(strHotSwapRB + testIdx +
                 ".sessionFetch");
-        String strPropValue = rbp.getString(strHotSwapRB + testIdx + 
-               ".sessionFetchValue");
+        String strPropValue = rbp.getString(strHotSwapRB + testIdx +
+                ".sessionFetchValue");
         hotswap.hotSwapProperty(strPropName, strPropValue);
-        session = new SessionAttributeTests(strScriptURL, resource);         
+        session = new SessionAttributeTests(strScriptURL, resource);
     }
-    
+
     /**
      * Evaluates a standard session attribute
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"getSessionAttrFetchMode"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"getSessionAttrFetchMode"})
     public void evaluateUniversalIdSessionAttribute()
-    throws Exception {
+            throws Exception {
         session.evaluateUniversalIdSessionAttribute();
-    }           
-
+    }
 
     /**
      * Evaluates newly created and updated custom session attribute
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evaluateUniversalIdSessionAttribute"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evaluateUniversalIdSessionAttribute"})
     public void evaluateCustomSessionAttribute()
-    throws Exception {
+            throws Exception {
         session.evaluateCustomSessionAttribute();
-    }    
+    }
 
     /**
-     * Gets the Profile Attribute's fetch mode from server, swaps the va;ues
+     * Gets the Profile Attribute's fetch mode from server, swaps the values
      * and instantiates the ProfileAttributeTests object
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getProfileAttrFetchMode()
-    throws Exception {
-        String strPropName = rbp.getString(strHotSwapRB + testIdx + 
-               ".profileFetch");
-        String strPropValue = rbp.getString(strHotSwapRB + testIdx + 
-               ".profileFetchValue");
+            throws Exception {
+        String strPropName = rbp.getString(strHotSwapRB + testIdx +
+                ".profileFetch");
+        String strPropValue = rbp.getString(strHotSwapRB + testIdx +
+                ".profileFetchValue");
         hotswap.hotSwapProperty(strPropName, strPropValue);
-        profile = new ProfileAttributeTests(strScriptURL, resource); 
+        profile = new ProfileAttributeTests(strScriptURL, resource);
     }
-    
-     /**
+
+    /**
      * Evaluates newly created single valued profile attribute
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"getProfileAttrFetchMode"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"getProfileAttrFetchMode"})
     public void evaluateNewSingleValuedProfileAttribute()
-    throws Exception {
+            throws Exception {
         profile.evaluateNewSingleValuedProfileAttribute();
     }
-    
+
     /**
      * Evaluates newly created multi valued profile attribute
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evaluateNewSingleValuedProfileAttribute"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evaluateNewSingleValuedProfileAttribute"})
     public void evaluateNewMultiValuedProfileAttribute()
-    throws Exception {
+            throws Exception {
         profile.evaluateNewMultiValuedProfileAttribute();
     }
-    
+
     /**
      * Evaluates newly created dynamic multi valued profile attribute related
      * to static roles
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evaluateNewMultiValuedProfileAttribute"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evaluateNewMultiValuedProfileAttribute"})
     public void evaluateNewNsRoleProfileAttribute()
-    throws Exception {
+            throws Exception {
         profile.evaluateNewNsRoleProfileAttribute();
     }
-    
+
     /**
      * Evaluates newly created dynamic multi valued profile attribute related
      * to dynamic roles
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evaluateNewNsRoleProfileAttribute"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evaluateNewNsRoleProfileAttribute"})
     public void evaluateNewFilteredRoleProfileAttribute()
-    throws Exception {
+            throws Exception {
         profile.evaluateNewFilteredRoleProfileAttribute();
     }
-    
+
     /**
      * Evaluates updated single valued profile attribute
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evaluateNewNsRoleProfileAttribute"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evaluateNewNsRoleProfileAttribute"})
     public void evaluateUpdatedSingleValuedProfileAttribute()
-    throws Exception {
+            throws Exception {
         profile.evaluateUpdatedSingleValuedProfileAttribute();
     }
-    
+
     /**
      * Evaluates updated multi valued profile attribute
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evaluateUpdatedSingleValuedProfileAttribute"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evaluateUpdatedSingleValuedProfileAttribute"})
     public void evaluateUpdatedMultiValuedProfileAttribute()
-    throws Exception {
+            throws Exception {
         profile.evaluateUpdatedMultiValuedProfileAttribute();
     }
-    
+
     /**
      * Evaluates updated dynamic multi valued profile attribute related to
      * static roles
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evaluateUpdatedMultiValuedProfileAttribute"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evaluateUpdatedMultiValuedProfileAttribute"})
     public void evaluateUpdatedNsRoleProfileAttribute()
-    throws Exception {
+            throws Exception {
         profile.evaluateUpdatedNsRoleProfileAttribute();
     }
-    
+
     /**
      * Evaluates updated dynamic multi valued profile attribute related to
      * dynamic roles
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evaluateUpdatedNsRoleProfileAttribute"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evaluateUpdatedNsRoleProfileAttribute"})
     public void evaluateUpdatedFilteredRoleProfileAttribute()
-    throws Exception {
+            throws Exception {
         profile.evaluateUpdatedFilteredRoleProfileAttribute();
     }
-
 
     /**
      * Evaluates accessDeniedURL Swap 
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evalAccessDeniedURL()
-    throws Exception {
-        entering("accessDeniedURL",null);
+            throws Exception {
+        entering("accessDeniedURL", null);
         HtmlPage page = null;
-        String strPropName="";
-        String strPropValue="";
-        String strEvalValue="";
+        String strPropName = "";
+        String strPropValue = "";
+        String strEvalValue = "";
         WebClient webClient = new WebClient();
         try {
-            strPropName = rbp.getString(strHotSwapRB + testIdx + 
-                   ".accessDeniedURL");
-            strPropValue = rbp.getString(strHotSwapRB + testIdx + 
-                   ".accessDeniedURLValue");
-            strEvalValue = rbp.getString(strHotSwapRB + testIdx + 
-                   ".accessDeniedURLEvalValue");
-            log(Level.FINE,"accessDeniedURI", "strAgentSampleURI : " + 
+            strPropName = rbp.getString(strHotSwapRB + testIdx +
+                    ".accessDeniedURL");
+            strPropValue = rbp.getString(strHotSwapRB + testIdx +
+                    ".accessDeniedURLValue");
+            strEvalValue = rbp.getString(strHotSwapRB + testIdx +
+                    ".accessDeniedURLEvalValue");
+            log(Level.FINE, "accessDeniedURI", "strAgentSampleURI : " +
                     agentURL + ",strPropValue : " + strPropValue);
             if (!strPropValue.equals("")) {
-                strPropValue = rbg.getString(strPropValue);            
+                strPropValue = rbg.getString(strPropValue);
             }
             hotswap.hotSwapProperty(strPropName, strPropValue);
             webClient.setCookiesEnabled(true);
             page = consoleLogin(webClient, resource, "hsuser0",
-                "hsuser0");
+                    "hsuser0");
             iIdx = -1;
             String strUrl = agentURL + "/allow17.html";
-            log(Level.FINE,"evalAccessDeniedURL", "accessDeniedURL is " + 
+            log(Level.FINE, "evalAccessDeniedURL", "accessDeniedURL is " +
                     strUrl);
-            Reporter.log("Resource: " + strUrl);   
-            Reporter.log("Username: " + "hsuser0");   
-            Reporter.log("Password: " + "hsuser0");   
-            Reporter.log("Expected Result: " + strEvalValue); 
-            page = (HtmlPage)webClient.getPage(new URL(strUrl));                
+            Reporter.log("Resource: " + strUrl);
+            Reporter.log("Username: " + "hsuser0");
+            Reporter.log("Password: " + "hsuser0");
+            Reporter.log("Expected Result: " + strEvalValue);
+            page = (HtmlPage) webClient.getPage(new URL(strUrl));
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page, strEvalValue);
-            if (strEvalValue.equals("Forbidden") && iIdx == -1) {
-                 iIdx = getHtmlPageStringIndex(page, "Access Denied");
-            }
             assert (iIdx != -1);
-
-        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException 
-                ee) {
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ee) {
+            log(Level.SEVERE, "evalAccessDeniedURL", ee.getMessage());
+        } catch (com.gargoylesoftware.htmlunit.ScriptException sse) {
+            assert (true);
         } catch (Exception e) {
             log(Level.SEVERE, "evalAccessDeniedURL", e.getMessage());
             e.printStackTrace();
@@ -465,48 +458,49 @@ public class WebAgentHotSwapTests extends TestCommon {
     /**
      * Evaluates evalNotEnfURL Swap 
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"evalAccessDeniedURL"})
+    @Test(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
+    dependsOnMethods = {"evalAccessDeniedURL"})
     public void evalNotEnfURL()
-    throws Exception {
-        entering("evalNotEnfURL",null);
-        String strPropName="";
-        String strPropValue="";
-        String strEvalValue="";
-        WebClient webClient = new WebClient();        
+            throws Exception {
+        entering("evalNotEnfURL", null);
+        String strPropName = "";
+        String strPropValue = "";
+        String strEvalValue = "";
+        WebClient webClient = new WebClient();
         try {
-            strPropName = rbp.getString(strHotSwapRB + testIdx + 
-                   ".notenfURL");
-            strPropValue = rbp.getString(strHotSwapRB + testIdx + 
-                   ".notenfURLValue");
-            strEvalValue = rbp.getString(strHotSwapRB + testIdx + 
-                   ".notenfURLEvalValue");
-            log(Level.FINE,"accessDeniedURI", "strAgentSampleURI : " + 
+            strPropName = rbp.getString(strHotSwapRB + testIdx +
+                    ".notenfURL");
+            strPropValue = rbp.getString(strHotSwapRB + testIdx +
+                    ".notenfURLValue");
+            strEvalValue = rbp.getString(strHotSwapRB + testIdx +
+                    ".notenfURLEvalValue");
+            log(Level.FINE, "accessDeniedURI", "strAgentSampleURI : " +
                     agentURL + ",strPropValue : " + strPropValue);
             if (!strPropValue.equals("")) {
-                strPropValue = rbg.getString(strPropValue);            
+                strPropValue = rbg.getString(strPropValue);
             }
             hotswap.hotSwapProperty(strPropName, strPropValue);
-            URL Url = new URL (strPropValue);
-            log(Level.FINE,"evalNotEnfURL", "evalNotEnfURL is " + 
+            URL Url = new URL(strPropValue);
+            log(Level.FINE, "evalNotEnfURL", "evalNotEnfURL is " +
                     Url.toString());
-            Reporter.log("Resource: " + Url.toString());   
-            Reporter.log("Expected Result: " + strEvalValue); 
+            Reporter.log("Resource: " + Url.toString());
+            Reporter.log("Expected Result: " + strEvalValue);
             webClient.setCookiesEnabled(true);
             boolean isFound = false;
             long time = System.currentTimeMillis();
             HtmlPage page;
-            while (System.currentTimeMillis()-time < (pollingTime) &&
-                !isFound) {
-                page = (HtmlPage)webClient.getPage(Url);
+            while (System.currentTimeMillis() - time < (pollingTime) &&
+                    !isFound) {
+                page = (HtmlPage) webClient.getPage(Url);
                 iIdx = -1;
                 iIdx = getHtmlPageStringIndex(page, strEvalValue, false);
-                if (iIdx != -1)
+                if (iIdx != -1) {
                     isFound = true;
-                log(Level.FINE,"evalNotEnfURL", "isFound=" + isFound);
+                }
+                log(Level.FINE, "evalNotEnfURL", "isFound=" + isFound);
             }
-            page = (HtmlPage)webClient.getPage(Url);                
+            page = (HtmlPage) webClient.getPage(Url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page, strEvalValue);
             assert (iIdx != -1);
@@ -524,49 +518,52 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Deletes policies, identities and updates service attributes to default
      * values.
      */
-    @AfterTest(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @AfterTest(groups = {"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
-    throws Exception {
+            throws Exception {
         entering("cleanup", null);
         try {
             hotswap.restoreDefaults(testIdx);
-            
+
             // If profile, session & resp objects are null then the test 
             // has failed in setup and only identities & policies need to 
             // be deleted.
-            if (profile != null) { 
+            if (profile != null) {
                 profile.cleanup();
             } else {
                 if (idmc.searchIdentities(admintoken, "pauser",
-                        IdType.USER).size() != 0)
-                   idmc.deleteIdentity(admintoken, realm, IdType.USER, 
-                           "pauser");
+                        IdType.USER).size() != 0) {
+                    idmc.deleteIdentity(admintoken, realm, IdType.USER,
+                            "pauser");
+                }
             }
-            if (resp != null) { 
+            if (resp != null) {
                 resp.cleanup();
             } else {
                 if (idmc.searchIdentities(admintoken, "rauser",
-                        IdType.USER).size() != 0)
-                   idmc.deleteIdentity(admintoken, realm, IdType.USER,
-                           "rauser");
+                        IdType.USER).size() != 0) {
+                    idmc.deleteIdentity(admintoken, realm, IdType.USER,
+                            "rauser");
+                }
             }
-            if (session != null) { 
+            if (session != null) {
                 session.cleanup();
             } else {
                 if (idmc.searchIdentities(admintoken, "sauser",
-                        IdType.USER).size() != 0)
-                   idmc.deleteIdentity(admintoken, realm, IdType.USER,
-                           "sauser");
+                        IdType.USER).size() != 0) {
+                    idmc.deleteIdentity(admintoken, realm, IdType.USER,
+                            "sauser");
+                }
             }
             if (executeAgainstOpenSSO) {
-                mpc.deletePolicies("agents" + fileseparator + strLocRB, polIdx);            
-                mpc.deletePolicies("agents" + fileseparator + strHotSwapRB, 
+                mpc.deletePolicies("agents" + fileseparator + strLocRB, polIdx);
+                mpc.deletePolicies("agents" + fileseparator + strHotSwapRB,
                         polIdx);
             } else {
                 log(Level.FINE, "cleanup", "Executing against non OpenSSO" +
                         " install");
             }
-            mpc.deleteIdentities("agents" + fileseparator + strHotSwapRB, 
+            mpc.deleteIdentities("agents" + fileseparator + strHotSwapRB,
                     polIdx);
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
