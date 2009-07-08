@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.39 2009-07-08 01:16:14 veiming Exp $
+ * $Id: Privilege.java,v 1.40 2009-07-08 14:01:36 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -146,7 +146,7 @@ public abstract class Privilege implements IPrivilege {
     public void setSubject(EntitlementSubject eSubject)
         throws EntitlementException {
         validateSubject(eSubject);
-        this.eSubject = eSubject;
+         this.eSubject = eSubject;
     }
 
     void validateSubject(EntitlementSubject sbj)

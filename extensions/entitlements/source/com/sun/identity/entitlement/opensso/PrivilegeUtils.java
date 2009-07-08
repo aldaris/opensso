@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.38 2009-07-02 16:41:24 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.39 2009-07-08 14:01:36 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -36,6 +36,7 @@ import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.AndCondition;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
+import com.sun.identity.entitlement.AuthenticatedESubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.GroupSubject;
@@ -46,6 +47,7 @@ import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.RoleSubject;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserAttributes;
+import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.entitlement.xacml3.XACMLPrivilegeUtils;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
@@ -67,6 +69,7 @@ import com.sun.identity.policy.interfaces.Referral;
 import com.sun.identity.policy.interfaces.ResponseProvider;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.policy.plugins.AMIdentitySubject;
+import com.sun.identity.policy.plugins.AuthenticatedUsers;
 import com.sun.identity.policy.plugins.IDRepoResponseProvider;
 import com.sun.identity.policy.plugins.PrivilegeCondition;
 import com.sun.identity.policy.plugins.PrivilegeSubject;
@@ -218,7 +221,16 @@ public class PrivilegeUtils {
                         entitlementSubjects.addAll(eSubjects);
                         dealtWith = true;
                     }
+                } else if (subject instanceof AuthenticatedUsers) {
+                    AuthenticatedUsers sbj = (AuthenticatedUsers)subject;
+                    Set<EntitlementSubject> eSubjects = toEntitlementSubject(
+                        sbj, exclusive);
+                    if (!eSubjects.isEmpty()) {
+                        entitlementSubjects.addAll(eSubjects);
+                        dealtWith = true;
+                    }
                 }
+
                 if (!dealtWith) {
                     EntitlementSubject sbj = mapGenericSubject(subjectName,
                         subject, exclusive);
@@ -258,6 +270,10 @@ public class PrivilegeUtils {
                     RoleSubject role = new RoleSubject(uuid);
                     role.setExclusive(exclusive);
                     result.add(role);
+                } else if (type.equals(IdType.USER)) {
+                    UserSubject user = new UserSubject(uuid);
+                    user.setExclusive(exclusive);
+                    result.add(user);
                 } else {
                     return Collections.EMPTY_SET;
                 }
@@ -267,6 +283,18 @@ public class PrivilegeUtils {
             return Collections.EMPTY_SET;
         }
     }
+
+    private static Set<EntitlementSubject> toEntitlementSubject(
+        AuthenticatedUsers sbj,
+        boolean exclusive) {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+
+        Set<EntitlementSubject> result = new HashSet<EntitlementSubject>();
+        result.add(new AuthenticatedESubject());
+        return result;
+    }
+
 
     private static EntitlementCondition toEntitlementCondition(Policy policy)
         throws PolicyException {
