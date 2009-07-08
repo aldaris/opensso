@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateDao.java,v 1.3 2009-07-02 22:19:39 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateDao.java,v 1.4 2009-07-08 01:08:30 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -43,17 +43,10 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.workflow.AddProviderToCOT;
 import com.sun.identity.workflow.ImportSAML2MetaData;
 import com.sun.identity.workflow.WorkflowException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 
 import org.w3c.dom.Document;
@@ -67,7 +60,7 @@ public class SamlV2RemoteSpCreateDao
     public SamlV2RemoteSpCreateDao() {
     }
 
-    public void importSamlv2RemoteSpFromFile(
+    public boolean importSamlv2RemoteSpFromFile(
             String realm,
             String cot,
             String stdMetadata,
@@ -76,39 +69,44 @@ public class SamlV2RemoteSpCreateDao
         String entityId = null;
 
         try {
-
-            EntityDescriptorElement e = null;
-            try {
-                e = getEntityDescriptorElement(stdMetadata);
-            } catch (SAML2MetaException ex) {
-                throw new RuntimeException(ex);
-            } catch (JAXBException ex) {
-                throw new RuntimeException(ex);
-            }
+            EntityDescriptorElement e = getEntityDescriptorElement(stdMetadata);
             String eId = e.getEntityID();
             String extMetadata = createExtendedDataTemplate(
                     eId, false);
             String[] results = ImportSAML2MetaData.importData(realm, stdMetadata, extMetadata);
             realm = results[0];
             entityId = results[1];
-        } catch (WorkflowException e) {
-            throw new RuntimeException(e);
+        } catch (SAML2MetaException ex) {
+            Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (JAXBException ex) {
+            Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (WorkflowException ex) {
+            Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
 
         if ((cot != null) && (cot.length() > 0)) {
             try {
                 AddProviderToCOT.addToCOT(realm, cot, entityId);
-            } catch (COTException e) {
-                throw new RuntimeException(e);
+            } catch (COTException ex) {
+                Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
+
         }
 
         if (!attrMapping.isEmpty()) {
-            addAttributeMapping(realm, entityId, attrMapping);
+            if (!addAttributeMapping(realm, entityId, attrMapping)) {
+                return false;
+            }
         }
+
+        return true;
     }
 
-    public void importSamlv2RemoteSpFromURL(
+    public boolean importSamlv2RemoteSpFromURL(
             String realm,
             String cot,
             String metadataUrl,
@@ -125,11 +123,14 @@ public class SamlV2RemoteSpCreateDao
                         createExtendedDataTemplate(
                         eId, false);
             } catch (SAML2MetaException ex) {
-                throw new RuntimeException(ex);
+                Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             } catch (JAXBException ex) {
-                throw new RuntimeException(ex);
+                Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             } catch (WorkflowException ex) {
-                throw new RuntimeException(ex);
+                Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
         }
 
@@ -137,25 +138,29 @@ public class SamlV2RemoteSpCreateDao
         try {
             results = ImportSAML2MetaData.importData(realm, metadata, extendedMeta);
         } catch (WorkflowException ex) {
-            throw new RuntimeException(ex);
+            Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
         String entityId = results[1];
 
         if ((cot != null) && (cot.length() > 0)) {
             try {
                 AddProviderToCOT.addToCOT(realm, cot, entityId);
-            } catch (COTException e) {
-                throw new RuntimeException(e);
+            } catch (COTException ex) {
+                Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
         }
 
         if (!attrMapping.isEmpty()) {
-            addAttributeMapping(realm, entityId, attrMapping);
+            if (!addAttributeMapping(realm, entityId, attrMapping)) {
+                return false;
+            }
         }
-
+        return true;
     }
 
-    private void addAttributeMapping(String realm, String entityId, List attrMapping) {
+    private boolean addAttributeMapping(String realm, String entityId, List attrMapping) {
         try {
 
             SAML2MetaManager manager = new SAML2MetaManager();
@@ -174,11 +179,14 @@ public class SamlV2RemoteSpCreateDao
             }
             manager.setEntityConfig(realm, config);
 
-        } catch (SAML2MetaException e) {
-            throw new RuntimeException(e);
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
+        } catch (SAML2MetaException ex) {
+            Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (JAXBException ex) {
+            Logger.getLogger(SamlV2RemoteSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
+        return true;
     }
 
     private EntityDescriptorElement getEntityDescriptorElement(String metadata)

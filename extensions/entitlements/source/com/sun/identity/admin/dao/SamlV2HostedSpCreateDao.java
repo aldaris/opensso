@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateDao.java,v 1.4 2009-07-02 22:19:39 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateDao.java,v 1.5 2009-07-08 01:08:30 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -47,6 +47,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -56,7 +58,7 @@ public class SamlV2HostedSpCreateDao
     public SamlV2HostedSpCreateDao() {
     }
 
-    public void createSamlv2HostedSp(
+    public boolean createSamlv2HostedSp(
             String realm,
             String entityId,
             String cot,
@@ -77,30 +79,37 @@ public class SamlV2HostedSpCreateDao
             extendedData =
                     CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
                     entityId, map, SamlV2CreateSharedDao.getRequestURL());
-        } catch (SAML2MetaException e) {
-            throw new RuntimeException(e);
+        } catch (SAML2MetaException ex) {
+            Logger.getLogger(SamlV2HostedIdpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
 
         try {
             String[] results = ImportSAML2MetaData.importData(realm, metadata, extendedData);
-        } catch (WorkflowException e) {
-            throw new RuntimeException(e);
+        } catch (WorkflowException ex) {
+            Logger.getLogger(SamlV2HostedIdpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
 
         if ((cot != null) && (cot.length() > 0)) {
             try {
                 AddProviderToCOT.addToCOT(realm, cot, entityId);
-            } catch (COTException e) {
-                throw new RuntimeException(e);
+            } catch (COTException ex) {
+                Logger.getLogger(SamlV2HostedSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
+
         }
         if (defAttrMappings) {
-            addAttributeMappingSetting(realm, entityId);
+            if (!addAttributeMappingSetting(realm, entityId)) {
+                return false;
+            }
         }
 
+        return true;
     }
 
-    public void importSamlv2HostedSp(
+    public boolean importSamlv2HostedSp(
             String cot,
             String stdMetadata,
             String extMetadata,
@@ -112,24 +121,29 @@ public class SamlV2HostedSpCreateDao
             String[] results = ImportSAML2MetaData.importData(null, stdMetadata, extMetadata);
             realm = results[0];
             entityId = results[1];
-        } catch (WorkflowException e) {
-            throw new RuntimeException(e);
+        } catch (WorkflowException ex) {
+            Logger.getLogger(SamlV2HostedSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
 
         if ((cot != null) && (cot.length() > 0)) {
             try {
                 AddProviderToCOT.addToCOT(realm, cot, entityId);
-            } catch (COTException e) {
-                throw new RuntimeException(e);
+            } catch (COTException ex) {
+                Logger.getLogger(SamlV2HostedSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
         }
         if (defAttrMappings) {
-            addAttributeMappingSetting(realm, entityId);
-        }
+            if (!addAttributeMappingSetting(realm, entityId)) {
+                return false;
+            }
 
+        }
+        return true;
     }
 
-    private void addAttributeMappingSetting(String realm, String entityId) {
+    private boolean addAttributeMappingSetting(String realm, String entityId) {
         List attrMapping = new ArrayList(1);
         attrMapping.add("*=*");
 
@@ -144,9 +158,11 @@ public class SamlV2HostedSpCreateDao
                     SAML2Constants.ATTRIBUTE_MAP);
             mappedAttributes.addAll(attrMapping);
             manager.setEntityConfig(realm, config);
-        } catch (SAML2MetaException e) {
-            throw new RuntimeException(e);
+        } catch (SAML2MetaException ex) {
+            Logger.getLogger(SamlV2HostedSpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
+        return true;
     }
 
     private String generateMetaAliasForSP(String realm) {

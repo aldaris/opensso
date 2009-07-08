@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.11 2009-07-06 17:43:15 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.12 2009-07-08 01:08:30 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -32,7 +32,6 @@ import com.icesoft.faces.component.inputfile.FileInfo;
 import com.icesoft.faces.component.inputfile.InputFile;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
-import com.sun.identity.admin.dao.SamlV2CreateSharedDao;
 import com.sun.identity.admin.dao.SamlV2RemoteSpCreateDao;
 import com.sun.identity.admin.dao.SamlV2CreateSharedDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
@@ -91,11 +90,11 @@ public class SamlV2RemoteSpCreateWizardHandler
                 getSamlV2RemoteSpCreateWizardBean().getViewAttributes();
         attrMapping =
                 getSamlV2RemoteSpCreateWizardBean().getToListOfStrings(viewAttributes);
-
+        boolean result = false;
         if (getSamlV2RemoteSpCreateWizardBean().isMeta()) {
             String stdMetadataFile =
                     getSamlV2RemoteSpCreateWizardBean().getStdMetaFile();
-            samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromFile(
+            result = samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromFile(
                     realm,
                     cot,
                     stdMetadataFile,
@@ -103,15 +102,28 @@ public class SamlV2RemoteSpCreateWizardHandler
         } else {
             String metaUrl =
                     getSamlV2RemoteSpCreateWizardBean().getMetaUrl();
-            samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromURL(
+            result = samlV2RemoteSpCreateDao.importSamlv2RemoteSpFromURL(
                     realm,
                     cot,
                     metaUrl,
                     attrMapping);
         }
 
-        getSamlV2RemoteSpCreateWizardBean().reset();
-        doFinishNext();
+        if (!result) {
+            getSamlV2RemoteSpCreateWizardBean().setStdMetaFileProgress(0);
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "creationFailedSummary"));
+            mb.setDetail(r.getString(this, "creationFailedDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            Effect e = new InputFieldErrorEffect();
+            getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
+            getMessagesBean().addMessageBean(mb);
+            getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.SUMMARY.toInt());
+        } else {
+            getSamlV2RemoteSpCreateWizardBean().reset();
+            doFinishNext();
+        }
     }
 
     @Override
@@ -200,7 +212,7 @@ public class SamlV2RemoteSpCreateWizardHandler
 
                 return false;
             }
-            
+
             if (!SamlV2CreateSharedDao.validateCot(cotname)) {
                 MessageBean mb = new MessageBean();
                 Resources r = new Resources();
@@ -213,7 +225,7 @@ public class SamlV2RemoteSpCreateWizardHandler
 
                 getMessagesBean().addMessageBean(mb);
                 getSamlV2RemoteSpCreateWizardBean().gotoStep(SamlV2RemoteSpCreateWizardStep.COT.toInt());
-                
+
                 return false;
             }
         }
@@ -273,7 +285,7 @@ public class SamlV2RemoteSpCreateWizardHandler
 
                 return false;
             }
-            
+
             if (!SamlV2CreateSharedDao.validateMetaFormat(meta)) {
                 getSamlV2RemoteSpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2RemoteSpCreateWizardBean().setStdMetaFile("");

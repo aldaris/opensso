@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.9 2009-07-02 22:19:39 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.10 2009-07-08 01:08:30 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -172,19 +172,35 @@ public class SamlV2HostedIdpCreateWizardHandler
         List attrMapping = new ArrayList();
         attrMapping =
                 getSamlV2HostedIdpCreateWizardBean().getToListOfStrings(viewAttributes);
+
+        boolean result = false;
         if (!isMeta) {
-            samlV2HostedIdpCreateDao.createSamlv2HostedIdp(
+            result = samlV2HostedIdpCreateDao.createSamlv2HostedIdp(
                     realm, name, cot, key, attrMapping);
         } else {
             String stdMeta =
                     getSamlV2HostedIdpCreateWizardBean().getStdMetaFile();
             String extMeta =
                     getSamlV2HostedIdpCreateWizardBean().getExtMetaFile();
-            samlV2HostedIdpCreateDao.importSamlv2HostedIdp(
+            result = samlV2HostedIdpCreateDao.importSamlv2HostedIdp(
                     cot, stdMeta, extMeta, attrMapping);
         }
-        getSamlV2HostedIdpCreateWizardBean().reset();
-        getFinishAction();
+        if (!result) {
+            getSamlV2HostedIdpCreateWizardBean().setStdMetaFileProgress(0);
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "creationFailedSummary"));
+            mb.setDetail(r.getString(this, "creationFailedDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            Effect e = new InputFieldErrorEffect();
+            getSamlV2HostedIdpCreateWizardBean().setSamlV2HostedCreateEntityInputEffect(e);
+            getMessagesBean().addMessageBean(mb);
+            getSamlV2HostedIdpCreateWizardBean().gotoStep(SamlV2HostedIdpCreateWizardStep.SUMMARY.toInt());
+
+        } else {
+            getSamlV2HostedIdpCreateWizardBean().reset();
+            getFinishAction();
+        }
     }
 
     public void getFinishAction() {
@@ -238,7 +254,7 @@ public class SamlV2HostedIdpCreateWizardHandler
 
                 return false;
             }
-           
+
             if (!SamlV2CreateSharedDao.validateMetaFormat(stdFilename)) {
                 getSamlV2HostedIdpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2HostedIdpCreateWizardBean().setStdMetaFile("");
@@ -344,7 +360,7 @@ public class SamlV2HostedIdpCreateWizardHandler
         getSamlV2HostedIdpCreateWizardBean().setStdMetaFileProgress(0);
         MessageBean mb = new MessageBean();
         Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidMataFormatSummary"));
+        mb.setSummary(r.getString(this, "invalidMetaFormatSummary"));
         mb.setDetail(r.getString(this, "invalidMetaFormatDetail"));
         mb.setSeverity(FacesMessage.SEVERITY_ERROR);
         Effect e = new InputFieldErrorEffect();

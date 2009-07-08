@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateDao.java,v 1.3 2009-07-02 22:19:39 asyhuang Exp $
+ * $Id: SamlV2RemoteIdpCreateDao.java,v 1.4 2009-07-08 01:08:30 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -31,6 +31,8 @@ import com.sun.identity.workflow.AddProviderToCOT;
 import com.sun.identity.workflow.ImportSAML2MetaData;
 import com.sun.identity.workflow.WorkflowException;
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SamlV2RemoteIdpCreateDao
         implements Serializable {
@@ -38,10 +40,10 @@ public class SamlV2RemoteIdpCreateDao
     public SamlV2RemoteIdpCreateDao() {
     }
 
-    public void importSamlv2RemoteIdp(
+    public boolean importSamlv2RemoteIdp(
             String realm,
             String cot,
-            String standardMetadata) throws RuntimeException {
+            String standardMetadata) {
 
         String entityId = null;
         String extendedMetadata = null;
@@ -50,21 +52,23 @@ public class SamlV2RemoteIdpCreateDao
                     realm, standardMetadata, extendedMetadata);
             realm = results[0];
             entityId = results[1];
-        } catch (WorkflowException e) {
-            throw new RuntimeException(e);
+        } catch (WorkflowException ex) {
+            Logger.getLogger(SamlV2RemoteIdpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
 
         if ((cot != null) && (cot.length() > 0)) {
             try {
                 AddProviderToCOT.addToCOT(realm, cot, entityId);
-            } catch (COTException e) {
-                throw new RuntimeException(e);
+            } catch (COTException ex) {
+                Logger.getLogger(SamlV2RemoteIdpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
         }
-
+        return true;
     }
 
-    public void importSamlv2RemoteIdpFromURL(
+    public boolean importSamlv2RemoteIdpFromURL(
             String realm,
             String cot,
             String metadataUrl) {
@@ -79,17 +83,20 @@ public class SamlV2RemoteIdpCreateDao
                     standardMetadata,
                     extendedMetadata);
         } catch (WorkflowException ex) {
-            throw new RuntimeException(ex);
+            Logger.getLogger(SamlV2RemoteIdpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
         String entityId = results[1];
 
         if ((cot != null) && (cot.length() > 0)) {
             try {
                 AddProviderToCOT.addToCOT(realm, cot, entityId);
-            } catch (COTException e) {
-                throw new RuntimeException(e);
+            } catch (COTException ex) {
+                Logger.getLogger(SamlV2RemoteIdpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
         }
+        return true;
     }
 }
 

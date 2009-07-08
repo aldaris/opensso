@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.10 2009-07-02 22:19:39 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.11 2009-07-08 01:08:30 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -86,17 +86,30 @@ public class SamlV2HostedSpCreateWizardHandler
         String realm = selectedRealmValue.substring(idx + 1, end).trim();
         String name = getSamlV2HostedSpCreateWizardBean().getNewEntityName();
         boolean defAttrMappings = getSamlV2HostedSpCreateWizardBean().getDefAttrMappings();
-
+        boolean result = false;
         if (!isMeta) {
-            samlV2HostedSpCreateDao.createSamlv2HostedSp(realm, name, cot, defAttrMappings);
+            result = samlV2HostedSpCreateDao.createSamlv2HostedSp(realm, name, cot, defAttrMappings);
         } else {
             String stdMeta = getSamlV2HostedSpCreateWizardBean().getStdMetaFile();
             String extMeta = getSamlV2HostedSpCreateWizardBean().getExtMetaFile();
-            samlV2HostedSpCreateDao.importSamlv2HostedSp(cot, stdMeta, extMeta, defAttrMappings);
+            result = samlV2HostedSpCreateDao.importSamlv2HostedSp(cot, stdMeta, extMeta, defAttrMappings);
         }
 
-        getSamlV2HostedSpCreateWizardBean().reset();
-        doFinishNext();
+        if (!result) {
+            getSamlV2HostedSpCreateWizardBean().setStdMetaFileProgress(0);
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "creationFailedSummary"));
+            mb.setDetail(r.getString(this, "creationFailedDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            Effect e = new InputFieldErrorEffect();
+            getSamlV2HostedSpCreateWizardBean().setSamlV2HostedCreateEntityInputEffect(e);
+            getMessagesBean().addMessageBean(mb);
+            getSamlV2HostedSpCreateWizardBean().gotoStep(SamlV2HostedSpCreateWizardStep.SUMMARY.toInt());
+        } else {
+            getSamlV2HostedSpCreateWizardBean().reset();
+            doFinishNext();
+        }
     }
 
     @Override
@@ -247,7 +260,7 @@ public class SamlV2HostedSpCreateWizardHandler
 
                 return false;
             }
-            
+
             if (!SamlV2CreateSharedDao.validateMetaFormat(stdFilename)) {
                 getSamlV2HostedSpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2HostedSpCreateWizardBean().setStdMetaFile("");
