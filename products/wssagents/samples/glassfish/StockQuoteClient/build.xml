@@ -23,12 +23,19 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2008-08-29 21:22:50 arunav Exp $
+   $Id: build.xml,v 1.8 2009-07-09 17:04:28 veiming Exp $
 
 -->
 
 <project name="StockQuoteClient" default="all" basedir=".">
     <description>Builds, tests, and runs the project stockclient.</description>
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
+    
     <property file="../glassfish.properties"/>
     <condition property="wsimport-script-suffix" value=".bat">
         <os family="windows"/>
@@ -53,7 +60,8 @@
         <copy file="src/java/handlers.xml" todir="web/WEB-INF/classes"/>
     </target>
     <target name="compile" depends="-pre-compile">
-       <javac fork="true" destdir="build/classes" srcdir="src/java" debug="on">
+       <javac fork="true" destdir="build/classes" srcdir="src/java"
+           source="${target.jdk.set}" target="${target.jdk.set}" debug="on">
            <classpath refid="build.class.path" />
        </javac>
     </target>

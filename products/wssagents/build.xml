@@ -22,12 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.21 2009-06-24 05:34:30 kevinserwin Exp $
+   $Id: build.xml,v 1.22 2009-07-09 17:04:27 veiming Exp $
 
 -->
 
 <project name="Open WSS Agents" default="usage">
-                
     <description>Open Web Services Security Agents</description>
     <import file="../products.xml" />
     <import file="../amserver/amserver.xml" />
@@ -35,6 +34,12 @@
     <import file="../federation/library/library.xml" />
     <import file="../installtools/installtools.xml" />
     <import file="wssagents.xml" />
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
 
     <!-- user specific properties -->
     <property file="${user.home}/.opensso"/>
@@ -81,8 +86,10 @@
 
     <target name="build" depends="checkjar, preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-            destdir="${wssagents.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
-            debug="${build.debug}" debuglevel="${build.debuglevel}" excludes="com/sun/identity/wssagents/weblogic/*.*">
+            destdir="${wssagents.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="${build.debug}" debuglevel="${build.debuglevel}"
+            excludes="com/sun/identity/wssagents/weblogic/*.*">
             <src path="${wssagents.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>

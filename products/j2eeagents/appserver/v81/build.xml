@@ -22,13 +22,19 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.23 2009-07-07 23:10:33 leiming Exp $
+   $Id: build.xml,v 1.24 2009-07-09 17:04:19 veiming Exp $
 
 -->
 
 <project name="open-source-j2ee-agents-appserver-v81" default="build">
-                
     <description>OpenSSO Policy Agent for Sun Appserver 8.1</description>
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
+
     <!-- enforce invocation via top level build only -->
     <fail message="*** J2EE Agent may be built from top level only ***">
         <condition>
@@ -42,8 +48,9 @@
     <property name="j2eeagents.appserver.v81.src.dir" location="${j2eeagents.basedir}/${containername}/${containerversion}/source"/>
 
     <target name="build">
-        <javac destdir="${j2eeagents.container.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
-               debug="${build.debug}" debuglevel="${build.debuglevel}">
+        <javac destdir="${j2eeagents.container.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${j2eeagents.appserver.v81.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>

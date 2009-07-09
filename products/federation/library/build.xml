@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.26 2009-06-26 16:40:58 exu Exp $
+   $Id: build.xml,v 1.27 2009-07-09 17:04:16 veiming Exp $
 
 -->
 
@@ -31,6 +31,12 @@
     <description>Open Federation</description>
     <import file="../../products.xml" />
     <import file="library.xml" />
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
 
     <property name="libtracker" value="${library.basedir}/tracker.properties" />
     <touch file="${libtracker}" />
@@ -120,8 +126,9 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
 
     <target name="compile" depends="preparebuild">
 	<javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-                destdir="${library.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
-	        debug="${build.debug}" debuglevel="${build.debuglevel}">
+            destdir="${library.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+	    debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${library.src.dir}"/>
             <classpath refid="build.class.path"/>
 	</javac>
@@ -136,9 +143,10 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
 
     <target name="build" depends="preparebuild, xsd.liberty, xsd.saml2, xsd.wsfederation">
          <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-                destdir="${library.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
-                debug="${build.debug}" debuglevel="${build.debuglevel}"
-                srcdir="${library.src.dir}" >
+            destdir="${library.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="${build.debug}" debuglevel="${build.debuglevel}"
+            srcdir="${library.src.dir}" >
             <classpath refid="build.class.path"/>
             <compilerarg value="-Xlint:deprecation" />
         </javac>

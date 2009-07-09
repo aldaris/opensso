@@ -22,13 +22,19 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2009-06-23 20:29:27 kevinserwin Exp $
+   $Id: build.xml,v 1.8 2009-07-09 17:04:26 veiming Exp $
 
 -->
 
 <project name="open-source-web-agents-install-apache22" default="build">
-                
     <description>Open Web Single Sign-On Apache agent install</description>
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
+
     <!-- enforce invocation via top level build only -->
     <fail message="*** Apache Agent may be built from top level only ***">
         <condition>

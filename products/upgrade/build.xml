@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.16 2009-06-23 20:29:25 kevinserwin Exp $
+   $Id: build.xml,v 1.17 2009-07-09 17:04:25 veiming Exp $
 
 -->
 
@@ -35,7 +35,12 @@
     <import file="../federation/openfm/openfm.xml" />
     <import file="../amserver/amserver.xml" />
     <import file="./upgrade.xml" />
-    
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
     
     <taskdef name="foreach" classname="net.sf.antcontrib.logic.ForEach">
         <classpath>
@@ -82,7 +87,8 @@
     <target name="compile" depends="preparebuild">
         <antcall target="legacy-build" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${upgrade.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
+               destdir="${upgrade.classes.dir}"
+               source="${target.jdk.set}" target="${target.jdk.set}"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${upgrade.source.dir}"/>
             <classpath refid="build.class.path"/>
@@ -110,9 +116,10 @@
     </target>
     
     <target name="compile-services">
-        <javac sourcepath="${fileToWorkon}" memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               source="${target.jdk.set}" target="${target.jdk.set}"
-               debug="${build.debug}" debuglevel="${build.debuglevel}">
+        <javac sourcepath="${fileToWorkon}" memoryInitialSize="256m"
+            memoryMaximumSize="512m" fork="true"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${fileToWorkon}"/> 
             <classpath refid="build.class.path"/>
             <include name="*java"/>

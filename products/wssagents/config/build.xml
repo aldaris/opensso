@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2008-08-29 21:24:30 arunav Exp $
+   $Id: build.xml,v 1.2 2009-07-09 17:04:27 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,6 +35,12 @@
     
     <available file="${pwd_file}" type="file"
                property="file.present"/>  
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
     
     <condition property="asadmin-script-suffix" value=".bat">
         <os family="windows"/>
@@ -145,7 +151,8 @@
         <path id="lib.path.ref">
             <fileset dir="${openssodir}" includes="*.jar"/>
         </path>
-        <javac srcdir="src" destdir="${classes.dir}" >
+        <javac srcdir="src" destdir="${classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}">
             <classpath refid="lib.path.ref" />
         </javac>
     </target>

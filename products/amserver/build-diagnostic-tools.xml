@@ -24,12 +24,19 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-diagnostic-tools.xml,v 1.5 2009-06-23 20:29:26 kevinserwin Exp $
+   $Id: build-diagnostic-tools.xml,v 1.6 2009-07-09 17:04:14 veiming Exp $
 
 -->
 
 <project name="diagnostic" default="createZipFile" basedir=".">
     <description>OpenWebSingle Sign-On: Diagnostic Tool</description>
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
+
     <fail message="*** diagnostic-tool build may be built from top level only ***">
         <condition>
             <or>
@@ -252,7 +259,8 @@
     <target name="compileCore">
         <antcall target="xsd.services" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${odt.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
+               destdir="${odt.classes.dir}"
+               source="${target.jdk.set}" target="${target.jdk.set}"
                debug="${build.debug}" debuglevel="${build.debuglevel}"
                srcdir="${odt.package.path}/base"
                excludes="${odt.package.path}/plugin">
@@ -314,7 +322,8 @@
     
     <target name="compileServices" depends="makeBaseJar">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${odt.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
+               destdir="${odt.classes.dir}"
+               source="${target.jdk.set}" target="${target.jdk.set}"
                debug="${build.debug}" debuglevel="${build.debuglevel}"
                srcdir="${odt.package.path}/plugin">
             <classpath refid="build.class.path"/>

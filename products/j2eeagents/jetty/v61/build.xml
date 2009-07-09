@@ -22,11 +22,18 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2009-07-07 23:10:34 leiming Exp $
+   $Id: build.xml,v 1.4 2009-07-09 17:04:21 veiming Exp $
 
 -->
 <project name="open-source-j2ee-agents-jetty-v61" default="build">
     <description>OpenSSO Policy Agent for Jetty 6.1</description>
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
+
     <!-- enforce invocation via top level build only -->
     <fail message="*** J2EE Agent may be built from top level only ***">
         <condition>
@@ -42,8 +49,9 @@
     </fail>
     <property name="j2eeagents.jetty.v61.src.dir" location="${j2eeagents.basedir}/${containername}/${containerversion}/source"/>
     <target name="build">
-        <javac destdir="${j2eeagents.container.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
-               debug="${build.debug}" debuglevel="${build.debuglevel}">
+        <javac destdir="${j2eeagents.container.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${j2eeagents.jetty.v61.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>

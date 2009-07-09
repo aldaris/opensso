@@ -22,12 +22,18 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2009-07-07 23:10:36 leiming Exp $
+   $Id: build.xml,v 1.5 2009-07-09 17:04:24 veiming Exp $
 
 -->
 <project name="open-source-j2ee-agents-websphere-v61" default="build">
-    <description>OpenSSO IBM WebSphere 6.1 J2EE Agent
-    </description>
+    <description>OpenSSO IBM WebSphere 6.1 J2EE Agent</description>
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
+
     <!-- enforce invocation via top level build only -->
     <fail message="*** J2EE Agent may be built from top level only ***">
         <condition>
@@ -46,8 +52,8 @@
     
     <target name="build">
         <javac destdir="${j2eeagents.container.classes.dir}" 
- source="${target.jdk.set}" target="${target.jdk.set}"
- debug="${build.debug}" debuglevel="${build.debuglevel}">
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${j2eeagents.websphere.v61.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>

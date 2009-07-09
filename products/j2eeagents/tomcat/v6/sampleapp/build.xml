@@ -5,6 +5,12 @@
 
 <project name="AgentSample" default="rebuild">
 
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
+
     <target name="init">
 
         <!-- Replace APPSERV_LIB_DIR with the directory where servlet-api.jar is located -->
@@ -33,6 +39,7 @@
     <target name="buildweb" depends="preparebuildweb">
         <javac srcdir="${servlet.src.dir}"
                destdir="${built.web.dir}/WEB-INF/classes"
+               source="${target.jdk.set}" target="${target.jdk.set}"
                includes="com/sun/identity/agents/**/*.java"
                classpath="${web.classpath}"/>
         <copy todir="${built.web.dir}">

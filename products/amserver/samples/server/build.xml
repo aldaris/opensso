@@ -22,13 +22,18 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2009-06-23 20:29:26 kevinserwin Exp $
+   $Id: build.xml,v 1.11 2009-07-09 17:04:15 veiming Exp $
 
 -->
 
 <project name="opensso-sample-server" default="all">
-                
     <description>Open Web Single Sign-On: Server Samples</description>
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
 
     <!-- enforce invocation via top level build only -->
     <fail message="*** war may be built from top level only ***">
@@ -50,7 +55,8 @@
 
     <target name="all" depends="preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-            destdir="${samples.server.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
+            destdir="${samples.server.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
             debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${samples.server.source.dir}"/>
             <classpath refid="build.class.path"/>

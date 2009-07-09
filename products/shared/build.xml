@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2009-06-23 20:29:22 kevinserwin Exp $
+   $Id: build.xml,v 1.8 2009-07-09 17:04:25 veiming Exp $
 
 -->
 
@@ -31,6 +31,12 @@
     <description>Open Web Single Sign-On Shared library</description>
 
     <import file="../products.xml" />
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
 
     <!-- overridable properties -->
     <property name="build.debug" value="on"/>
@@ -60,16 +66,18 @@
     </target>
 
     <target name="build" depends="preparebuild">
-        <javac destdir="${sharedlib.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
-               debug="${build.debug}" debuglevel="${build.debuglevel}">
+        <javac destdir="${sharedlib.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${sharedlib.src.dir}"/>
             <compilerarg value="-Xlint:deprecation" />
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
             <exclude name="**/com/sun/identity/shared/test/**/*.java"/>
         </javac>
-        <javac destdir="${sharedlib.classes.dir}" source="1.5" target="1.5"
-               debug="${build.debug}" debuglevel="${build.debuglevel}">
+        <javac destdir="${sharedlib.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${sharedlib.src.dir}"/>
             <compilerarg value="-Xlint:deprecation" />
             <classpath refid="build.class.path"/>

@@ -22,13 +22,19 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2009-06-23 20:29:28 kevinserwin Exp $
+   $Id: build.xml,v 1.6 2009-07-09 17:04:26 veiming Exp $
 
 -->
 
 <project name="open-source-web-agents-install-proxy40" default="build">
-                
     <description>Open Web Single Sign-On PROXY agent install</description>
+
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
+
     <!-- enforce invocation via top level build only -->
     <fail message="*** PROXY40 Agent may be built from top level only ***">
         <condition>
@@ -42,8 +48,9 @@
         location="${webagents.install.dir}/${containername}/source"/>
 
     <target name="build">
-        <javac destdir="${webagents.container.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}" verbose="yes"
-               debug="on" debuglevel="lines,vars,source">
+        <javac destdir="${webagents.container.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="on" debuglevel="lines,vars,source">
             <src path="${webagents.install.proxy40.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>

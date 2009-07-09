@@ -5,6 +5,12 @@
     <import file="../../openfm.xml" />
     <import file="embeddedOpenSSO.xml" />
 
+    <fail message="*** jdk target is not set ***">
+        <condition>
+            <not><isset property="target.jdk.set"/></not>
+        </condition>
+    </fail>
+
     <path id="build.class.path">
         <fileset dir="${embedded.extlib.dir}">
             <include name="j2ee.jar"/>
@@ -20,8 +26,9 @@
 
     <target name="compile" depends="preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${embedded.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
-               debug="on" debuglevel="lines,vars,source">
+            destdir="${embedded.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="on" debuglevel="lines,vars,source">
             <src path="${embedded.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>

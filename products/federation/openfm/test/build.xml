@@ -22,12 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.16 2009-06-23 20:29:20 kevinserwin Exp $
+   $Id: build.xml,v 1.17 2009-07-09 17:04:17 veiming Exp $
 
 -->
 
 <project name="openfm" default="all">
-                
     <description>Open Federation - test</description>
 
     <!-- enforce invocation via top level build only -->
@@ -44,8 +43,9 @@
 
 
     <target name="build" depends="preparebuild">
-        <javac destdir="${test.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
-               debug="on" debuglevel="lines,vars,source">
+        <javac destdir="${test.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="on" debuglevel="lines,vars,source">
             <compilerarg value="-Xlint:unchecked"/>
             <compilerarg value="-Xlint:deprecation"/>
             <src path="${openfm.unittest.dir}/source"/>
