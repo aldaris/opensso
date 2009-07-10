@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.30 2009-06-26 02:31:11 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.31 2009-07-10 23:15:16 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -65,7 +65,7 @@ class PrivilegeEvaluator {
     // Static variables
     // TODO determine number of tasks per thread
     private static int evalThreadSize = Evaluator.DEFAULT_POLICY_EVAL_THREAD;
-    private static int tasksPerThread = 10;
+    private static int tasksPerThread = 5;
 
     private static IThreadPool threadPool;
     private static boolean isMultiThreaded;
@@ -252,10 +252,11 @@ class PrivilegeEvaluator {
         Set<IPrivilege> localPrivileges = new HashSet<IPrivilege>(
             2*tasksPerThread);
         int totalCount = 0;
-        while (++totalCount != tasksPerThread) {
+        while (totalCount != tasksPerThread) {
             start = PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.start();
             if (i.hasNext()) {
                 localPrivileges.add(i.next());
+                totalCount++;
                 PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.end(start);
             } else {
                 PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.end(start);
@@ -292,7 +293,7 @@ class PrivilegeEvaluator {
             PRIVILEGE_EVAL_MONITOR_SUBMIT.end(start);
         }
         // IPrivilege privileges locally
-        (new PrivilegeTask(this, localPrivileges, false)).run();
+        (new PrivilegeTask(this, localPrivileges, tasksSubmitted)).run();
 
         // Wait for submitted threads to complete evaluation
         start = PRIVILEGE_EVAL_MONITOR_WAIT.start();
