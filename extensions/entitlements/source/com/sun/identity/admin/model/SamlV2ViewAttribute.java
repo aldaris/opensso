@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2ViewAttribute.java,v 1.1 2009-06-23 06:36:21 babysunil Exp $
+ * $Id: SamlV2ViewAttribute.java,v 1.2 2009-07-10 23:13:35 asyhuang Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,7 +31,7 @@ public class SamlV2ViewAttribute extends ViewAttribute {
 
     private String value;
     private boolean valueEditable = false;
-    private boolean isAdded = false;
+    private boolean added = false;
 
     public SamlV2ViewAttribute() {
         super();
@@ -53,7 +53,7 @@ public class SamlV2ViewAttribute extends ViewAttribute {
 
     @Override
     public int hashCode() {
-        return toString().hashCode();
+        return getName().hashCode();
     }
 
     @Override
@@ -81,11 +81,11 @@ public class SamlV2ViewAttribute extends ViewAttribute {
         this.valueEditable = valueEditable;
     }
 
-    public void setIsAdded(boolean isAdded) {
-        this.isAdded = isAdded;
+    public void setAdded(boolean added) {
+        this.added = added;
     }
 
-    public boolean getIsAdded() {
-        return isAdded;
+    public boolean isAdded() {
+        return added;
     }
 }

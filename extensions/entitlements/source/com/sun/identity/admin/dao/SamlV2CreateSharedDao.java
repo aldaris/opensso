@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2CreateSharedDao.java,v 1.2 2009-07-02 22:19:39 asyhuang Exp $
+ * $Id: SamlV2CreateSharedDao.java,v 1.3 2009-07-10 23:13:34 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -55,6 +55,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.Set;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
@@ -96,10 +98,8 @@ public class SamlV2CreateSharedDao {
     }
 
     public static boolean validateCot(String newCotName) {
-
-        //List realms = getRealmList();
-        List cotList = new ArrayList();
-        //String realm = COTConstants.ROOT_REALM;
+       
+        List cotList = new ArrayList();       
 
         CircleOfTrustManager manager;
         try {
@@ -153,6 +153,52 @@ public class SamlV2CreateSharedDao {
         }
 
         return true;
+    }
+
+    public static boolean validateUrl(String url) {
+
+        String metadata;
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            try {
+                StringBuffer content = new StringBuffer();
+                URL urlObj = new URL(url);
+                URLConnection conn = urlObj.openConnection();
+
+                if (conn instanceof HttpURLConnection) {
+                    HttpURLConnection httpConnection = (HttpURLConnection) conn;
+                    httpConnection.setRequestMethod("GET");
+                    httpConnection.setDoOutput(true);
+
+                    httpConnection.connect();
+                    int response = httpConnection.getResponseCode();
+                    InputStream is = httpConnection.getInputStream();
+                    BufferedReader dataInput = new BufferedReader(
+                            new InputStreamReader(is));
+                    String line = dataInput.readLine();
+
+                    while (line != null) {
+                        content.append(line).append('\n');
+                        line = dataInput.readLine();
+                    }
+                }
+
+                metadata = content.toString();
+
+            } catch (ProtocolException ex) {
+                Logger.getLogger(SamlV2CreateSharedDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;            
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(SamlV2CreateSharedDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;           
+            } catch (IOException ex) {
+                Logger.getLogger(SamlV2CreateSharedDao.class.getName()).log(Level.SEVERE, null, ex);
+                return false;           
+            }
+
+            return validateMetaFormat(metadata);
+        } else {
+            return true;
+        }
     }
 
     public static boolean valideaExtendedMataFormat(String extended) {

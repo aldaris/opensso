@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.9 2009-07-08 01:08:30 asyhuang Exp $
+ * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.10 2009-07-10 23:13:34 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -57,17 +57,17 @@ public class SamlV2RemoteIdpCreateWizardHandler
         this.samlV2RemoteIdpCreateDao = samlV2RemoteIdpCreateDao;
     }
 
-    private void metaErrorPopup() {
+    private void popUpErrorMessage(String summaryMsg, String detailMsg, int step) {
         getSamlV2RemoteIdpCreateWizardBean().setStdMetaFileProgress(0);
         MessageBean mb = new MessageBean();
         Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidMataFormatSummary"));
-        mb.setDetail(r.getString(this, "invalidMetaFormatDetail"));
+        mb.setSummary(r.getString(this, summaryMsg));
+        mb.setDetail(r.getString(this, detailMsg));
         mb.setSeverity(FacesMessage.SEVERITY_ERROR);
         Effect e = new InputFieldErrorEffect();
         getSamlV2RemoteIdpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
         getMessagesBean().addMessageBean(mb);
-        getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
+        getSamlV2RemoteIdpCreateWizardBean().gotoStep(step);
     }
 
     public boolean validateMetadata() {
@@ -78,44 +78,40 @@ public class SamlV2RemoteIdpCreateWizardHandler
             String url = getSamlV2RemoteIdpCreateWizardBean().getMetaUrl();
 
             if ((url == null) || (url.length() == 0)) {
-                MessageBean mb = new MessageBean();
-                Resources r = new Resources();
-                mb.setSummary(r.getString(this, "invalidMetaUrlSummary"));
-                mb.setDetail(r.getString(this, "invalidMetaUrlDetail"));
-                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+                popUpErrorMessage(
+                        "invalidMetaUrlSummary",
+                        "invalidMetaUrlDetail",
+                        SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
+                return false;
+            }
 
-                Effect e = new InputFieldErrorEffect();
-                getSamlV2RemoteIdpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
-
-                getMessagesBean().addMessageBean(mb);
-                getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
-
+            if (!SamlV2CreateSharedDao.validateUrl(url)) {
+                popUpErrorMessage(
+                        "urlErrorSummary",
+                        "urlErrorDetail",
+                        SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
                 return false;
             }
 
         } else {
 
             String meta = getSamlV2RemoteIdpCreateWizardBean().getStdMetaFile();
+
             if ((meta == null) || (meta.length() == 0)) {
-                MessageBean mb = new MessageBean();
-                Resources r = new Resources();
-                mb.setSummary(r.getString(this, "invalidMetafileSummary"));
-                mb.setDetail(r.getString(this, "invalidMetafileDetail"));
-                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-                Effect e = new InputFieldErrorEffect();
-                getSamlV2RemoteIdpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
-
-                getMessagesBean().addMessageBean(mb);
-                getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
-
+                popUpErrorMessage(
+                        "invalidMetafileSummary",
+                        "invalidMetafileDetail",
+                        SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
                 return false;
             }
 
             if (!SamlV2CreateSharedDao.validateMetaFormat(meta)) {
                 getSamlV2RemoteIdpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2RemoteIdpCreateWizardBean().setStdMetaFile("");
-                metaErrorPopup();
+                popUpErrorMessage(
+                        "invalidMataFormatSummary",
+                        "invalidMataFormatDetail",
+                        SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
                 return false;
             }
         }
@@ -129,34 +125,19 @@ public class SamlV2RemoteIdpCreateWizardHandler
 
         if (!usingExitingCot) {
             if ((cotname == null) || (cotname.length() == 0)) {
-                MessageBean mb = new MessageBean();
-                Resources r = new Resources();
-                mb.setSummary(r.getString(this, "invalidCotSummary"));
-                mb.setDetail(r.getString(this, "invalidCotDetail"));
-                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-                Effect e = new InputFieldErrorEffect();
-                getSamlV2RemoteIdpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
-
-                getMessagesBean().addMessageBean(mb);
-                getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.COT.toInt());
+                popUpErrorMessage(
+                        "invalidCotSummary",
+                        "invalidCotDetail",
+                        SamlV2RemoteIdpCreateWizardStep.COT.toInt());
 
                 return false;
             }
 
             if (!SamlV2CreateSharedDao.validateCot(cotname)) {
-                MessageBean mb = new MessageBean();
-                Resources r = new Resources();
-                mb.setSummary(r.getString(this, "cotExistSummary"));
-                mb.setDetail(r.getString(this, "cotExistDetail"));
-                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-                Effect e = new InputFieldErrorEffect();
-                getSamlV2RemoteIdpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
-
-                getMessagesBean().addMessageBean(mb);
-                getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.COT.toInt());
-
+                popUpErrorMessage(
+                        "cotExistSummary",
+                        "cotExistDetail",
+                        SamlV2RemoteIdpCreateWizardStep.COT.toInt());
                 return false;
             }
         }
@@ -331,16 +312,10 @@ public class SamlV2RemoteIdpCreateWizardHandler
         }
 
         if (!result) {
-            getSamlV2RemoteIdpCreateWizardBean().setStdMetaFileProgress(0);
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "creationFailedSummary"));
-            mb.setDetail(r.getString(this, "creationFailedDetail"));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-            Effect e = new InputFieldErrorEffect();
-            getSamlV2RemoteIdpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
-            getMessagesBean().addMessageBean(mb);
-            getSamlV2RemoteIdpCreateWizardBean().gotoStep(SamlV2RemoteIdpCreateWizardStep.SUMMARY.toInt());
+            popUpErrorMessage(
+                    "creationFailedSummary",
+                    "creationFailedDetail",
+                    SamlV2RemoteIdpCreateWizardStep.SUMMARY.toInt());
         } else {
             getSamlV2RemoteIdpCreateWizardBean().reset();
             getFinishAction();
