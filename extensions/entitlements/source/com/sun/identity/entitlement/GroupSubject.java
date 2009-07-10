@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.18 2009-07-02 16:41:24 veiming Exp $
+ * $Id: GroupSubject.java,v 1.19 2009-07-10 00:24:27 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -112,15 +112,15 @@ public class GroupSubject extends EntitlementSubjectImpl {
     public Map<String, Set<String>> getSearchIndexAttributes() {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>(4);
         {
-        Set<String> set = new HashSet<String>();
-        set.add(getID());
-        map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
-            IdType.GROUP.getName(), set);
+            Set<String> set = new HashSet<String>();
+            set.add(getID());
+            map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
+                IdType.GROUP.getName(), set);
         }
         {
-        Set<String> set = new HashSet<String>();
-        set.add(SubjectAttributesCollector.ATTR_NAME_ALL_ENTITIES);
-        map.put(SubjectAttributesCollector.NAMESPACE_IDENTITY, set);
+            Set<String> set = new HashSet<String>();
+            set.add(SubjectAttributesCollector.ATTR_NAME_ALL_ENTITIES);
+            map.put(SubjectAttributesCollector.NAMESPACE_IDENTITY, set);
         }
 
         return map;

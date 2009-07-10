@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.39 2009-07-08 14:01:36 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.40 2009-07-10 00:24:27 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -39,7 +39,6 @@ import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.AuthenticatedESubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.GroupSubject;
 import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
@@ -213,6 +212,7 @@ public class PrivilegeUtils {
                 Subject subject = policy.getSubject(subjectName);
                 boolean exclusive = policy.isSubjectExclusive(subjectName);
                 boolean dealtWith = false;
+                /*
                 if (subject instanceof AMIdentitySubject) {
                     AMIdentitySubject sbj = (AMIdentitySubject) subject;
                     Set<EntitlementSubject> eSubjects = toEntitlementSubject(
@@ -229,7 +229,7 @@ public class PrivilegeUtils {
                         entitlementSubjects.addAll(eSubjects);
                         dealtWith = true;
                     }
-                }
+                } */
 
                 if (!dealtWith) {
                     EntitlementSubject sbj = mapGenericSubject(subjectName,
@@ -263,7 +263,7 @@ public class PrivilegeUtils {
                 AMIdentity amid = IdUtils.getIdentity(adminToken, uuid);
                 IdType type = amid.getType();
                 if (type.equals(IdType.GROUP)) {
-                    GroupSubject grp = new GroupSubject(uuid);
+                    OpenSSOGroupSubject grp = new OpenSSOGroupSubject(uuid);
                     grp.setExclusive(exclusive);
                     result.add(grp);
                 } else if (type.equals(IdType.ROLE)) {
