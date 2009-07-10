@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.11 2009-01-27 00:14:08 nithyas Exp $
+ * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.12 2009-07-10 04:38:48 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,12 +33,10 @@ import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -83,9 +81,9 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
     private String baseDir;
     public WebClient webClient;
     private DefaultTaskHandler task;
+    ArrayList spuserlist = new ArrayList();
     ArrayList idpuserlist = new ArrayList();
     private HtmlPage page;
-    private URL url;
     private String spmetadata;
     private String idpmetadata;
     private String spurl;
@@ -99,7 +97,8 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @BeforeMethod(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+    "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     private void getWebClient() 
     throws Exception {
         try {
@@ -163,9 +162,9 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                 list.add("inetuserstatus=Active");
                 log(Level.FINEST, "setup", "IDP user to be created is " + list);
                 if (FederationManager.getExitCode(fmIDP.createIdentity(
-                        webClient, configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
-                        usersMap.get(TestConstants.KEY_IDP_USER + i), "User", 
-                        list)) != 0) {
+                        webClient, configMap.get(TestConstants.
+                        KEY_IDP_EXECUTION_REALM), usersMap.get(TestConstants.
+                        KEY_IDP_USER + i), "User", list)) != 0) {
                     log(Level.SEVERE, "setup", "createIdentity famadm command" +
                             " failed");
                     assert false;
@@ -292,8 +291,8 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
             
             HtmlPage idpmetaPage = fmIDP.exportEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false, false, 
-                    true, "saml2");
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false,
+                    false, true, "saml2");
             if (FederationManager.getExitCode(idpmetaPage) != 0) {
                log(Level.SEVERE, "autoFedDynamicUserCreationSetup",
                        "exportEntity famadm command failed");
@@ -376,6 +375,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                         + ".xml");
                 page = task.execute(webClient);
             }
+            spuserlist.add(usersMap.get(TestConstants.KEY_IDP_USER + 1));
         } catch (Exception e) {
             log(Level.SEVERE, "SSOWithDynUserSPInit", e.getMessage());
             e.printStackTrace();
@@ -422,6 +422,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                         + ".xml");
                 page = task.execute(webClient);
             }
+            spuserlist.add(usersMap.get(TestConstants.KEY_IDP_USER + 2));
         } catch (Exception e) {
             log(Level.SEVERE, "SSOWithDynUserIDPInit", e.getMessage());
             e.printStackTrace();
@@ -466,6 +467,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                         + ".xml");
                 page = task.execute(webClient);
             }
+            spuserlist.add(usersMap.get(TestConstants.KEY_IDP_USER + 3));
         } catch (Exception e) {
             log(Level.SEVERE, "SSOWithDynUserSPInitPost", e.getMessage());
             e.printStackTrace();
@@ -512,6 +514,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                         + ".xml");
                 page = task.execute(webClient);
             }
+            spuserlist.add(usersMap.get(TestConstants.KEY_IDP_USER + 4));
         } catch (Exception e) {
             log(Level.SEVERE, "SSOWithDynUserIDPInitPost", e.getMessage());
             e.printStackTrace();
@@ -564,20 +567,12 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
             spusersMap = new HashMap<String, String>();
             spusersMap = getMapFromResourceBundle("samlv2" + fileseparator + 
                     "samlv2AutoFedDynUserCreationTests");
-            log(Level.FINEST, "cleanup", "Users map is " + spusersMap);
-            Integer totalUsers = new Integer(
-                    (String)spusersMap.get("totalUsers"));
-            list = new ArrayList();
-            for (int i = 1; i < totalUsers + 1; i++) {
-                list.clear();
-                list.add(spusersMap.get(TestConstants.KEY_IDP_USER + i));
-                if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
-                        list , "User")) != 0) {
+            log(Level.FINEST, "cleanup", "SP users to delete : " + spuserlist);
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
+                    spuserlist , "User")) != 0) {
                 log(Level.SEVERE, "setup", "deleteIdentity famadm command" +
                         " failed");
-                assert false;
-                }
             }
             if (FederationManager.getExitCode(fmSP.importEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "", 
