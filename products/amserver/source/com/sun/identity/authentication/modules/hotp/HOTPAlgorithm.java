@@ -27,7 +27,7 @@
  * These notices must be retained in any copies of any part of this
  * documentation and/or software.
  *
- * $Id: HOTPAlgorithm.java,v 1.1 2009-03-24 23:52:12 pluo Exp $
+ * $Id: HOTPAlgorithm.java,v 1.2 2009-07-11 00:46:56 qcheng Exp $
  *
  */
 package com.sun.identity.authentication.modules.hotp;
@@ -154,8 +154,6 @@ public class HOTPAlgorithm {
      *                     a valid HMAC-SHA-1 key.
      *
      * @return A numeric String in base 10 that includes
-     * {@link codeDigits} digits plus the optional checksum
-     * digit if requested.
      */
     static public String generateOTP(byte[] secret,
             long movingFactor,
