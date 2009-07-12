@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
-OpenSSO Authentication Module for Information Cards 0.9
-README file (updated 2009-07-05)
+OpenSSO Authentication Module for Information Cards version authnicrp-0.9
+By Patrick Petit (Patrick.Petit@Sun.Com)
 -----------------------------------------------------------------------------
 
 The contents of this file are subject to the terms
@@ -22,12 +22,86 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.txt,v 1.10 2009-07-08 08:59:27 ppetitsm Exp $
+$Id: README.txt,v 1.11 2009-07-12 22:11:58 ppetitsm Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 Portions Copyrighted 2008 Patrick Petit Consulting
 
 ---------------------------------------------------------
+
+Introduction
+------------
+
+The Information Card authentication module (Authnicrp) provides the ability for
+a Relying Party (RP) to accept Information Cards as a means of authentication and
+authorization to access secured Web resources. It has been successfully tested with
+OpenSSO 8 build 1, running on Glassfish application server v2.1, using self-issued
+cards and managed cards from DigitalMe and Azigo Identity Selectors.
+
+As in the previous version, Authnicrp relies on the OpenInfocard project to handle
+the Security Token issued by the Identity Selector or Security Token Service. But,
+Authnicrp-0.9 presents a major improvement compared to the initial version, that
+was committed more than year ago, which primary objective was the roll-out of a
+quick proof of concept. In particular, the need a companion JavaDB database has
+been removed. Information Card data is now part of the user profile that is stored
+in the Identity Repository (IdRepo) of OpenSSO, which can either be Active Directory,
+OpenDS, Sun Directory Server Enterprise Edition or MySQL through the JDBC IdRepo
+plug-in. A RP can also now specify its Security Token requirements and security
+policies dynamically though the Authnicrp's service configuration that is integrated
+in the OpenSSO administration console. As such, different security policies for
+secured Web resources can be expressed at the domain and sub-domain (realms) levels
+in one instance of OpenSSO server. More fine-grained control levels are possible.
+
+Thanks to the OpenSSO Agent 3.0, Information Card support can be added to any
+Web application without programming. Information Card claims can be passed by
+the agent to the application as HTTP request parameters, HTTP header parameters
+or cookies. It also possible to obtain Information Card claims from the user's
+session attributes.
+
+Features
+--------
+
+The Information Card authentication module (Authnicrp) supports three different
+authentication modes:
+
+1 - Anonymous
+2 - Required
+3 - Dynamic
+
+In Anonymous mode, Authnicrp authenticates the Information Card bearer at the
+condition the Security Token returned by the Identity Selector complies with
+the RP's security policy requirements. For instance, security policy
+requirements may mandate certain required claims and that those required claims
+be verified. Once the user is authenticated a session is created on behalf of the
+user, which is assigned a configurable anonymous user ID. An anonymous user can
+be assigned a set of default roles, which can further be used to evaluate the
+user access rights to protected resources.
+
+The Required mode, requires that a user account already exists in the Identity
+Repository to authenticate the Information Card bearer successfully. The user is
+asked to provide a user ID and password the first time the Information Card is
+presented. Upon successful authentication of the user's credentials, the Information
+Card is registered in the user's profile. Subsequent authentications will use the
+Information Card instead of the user Id and password until the user changes his
+password or remove the Information Card from his profile. As with the anonymous,
+it is possible to define default roles when a user authenticates with his Information
+Card, or specify specific roles based on the user's group membership.
+
+The Dynamic mode is used for self-provisioning of new user accounts using the
+Information Card claims. The Authnicrp configuration console provides a flexible
+mechanism by which the administrator can define a claim to attribute mapping scheme,
+by which a claim can be mapped to a user profile attribute.
+
+Roadmap
+-------
+
+1 - The next release of Authnicrp (version 1.0) targets to fully support the Identity
+Metasystem Interoperability Version 1.0, OASIS Committee Draft 01.
+
+2 - Support claim to attribute types conversions
+
+3 - Support role based authorization using claims
+
 
 Build Instructions
 ------------------
