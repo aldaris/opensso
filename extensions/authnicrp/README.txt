@@ -22,7 +22,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.txt,v 1.12 2009-07-12 22:23:25 ppetitsm Exp $
+$Id: README.txt,v 1.13 2009-07-12 22:29:39 ppetitsm Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 Portions Copyrighted 2008 Patrick Petit Consulting
@@ -34,20 +34,22 @@ Introduction
 
 The Information Card authentication module (Authnicrp) provides the ability for
 a Relying Party (RP) to accept Information Cards as a means of authentication and
-authorization to access secured Web resources. It has been successfully tested with
-OpenSSO 8 build 1, running on Glassfish application server v2.1, using self-issued
-cards and managed cards from DigitalMe and Azigo Identity Selectors.
+authorization to access secured Web resources. It has been successfully tested against
+OpenSSO 8 build 1, running on Glassfish application server v2.1, and using self-issued
+cards and managed cards issued from DigitalMe and Azigo Identity Selectors.
 
 As in the previous version, Authnicrp relies on the OpenInfocard project to handle
-the Security Token issued by the Identity Selector or Security Token Service. But,
-Authnicrp-0.9 presents a major improvement compared to the initial version, that
-was committed more than year ago, which primary objective was the roll-out of a
-quick proof of concept. In particular, the need a companion JavaDB database has
-been removed. Information Card data is now part of the user profile that is stored
-in the Identity Repository (IdRepo) of OpenSSO, which can either be Active Directory,
-OpenDS, Sun Directory Server Enterprise Edition or MySQL through the JDBC IdRepo
-plug-in. A RP can also now specify its Security Token requirements and security
-policies dynamically though the Authnicrp's service configuration that is integrated
+the Security Token issued by the Identity Selector or Security Token Service.
+
+Authnicrp-0.9 presents some important improvements compared to the initial version,
+that was committed more than year ago, which primary objective was to roll-out a
+quick proof of concept. In particular, the need of a companion JavaDB database has
+been removed. Information Card support is now part of the user profile that is stored
+in the Identity Repository (IdRepo), which can either be Active Directory,
+embeeded OpenDS, Sun Directory Server Enterprise Edition or MySQL through the JDBC
+IdRepo plug-in.
+A RP can now specify its Security Token requirements and security
+policies dynamically though the service configuration that is integrated
 in the OpenSSO administration console. As such, different security policies for
 secured Web resources can be expressed at the domain and sub-domain (realms) levels
 in one instance of OpenSSO server. More fine-grained control levels are possible.
