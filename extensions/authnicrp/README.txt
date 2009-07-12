@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
-OpenSSO Authentication Module for Information Cards version authnicrp-0.9
-By Patrick Petit (Patrick.Petit@Sun.Com)
+OpenSSO Authentication Module for Information Cards version 0.9
+By Patrick Petit (Patrick.Michel.Petit@Gmail.com)
 -----------------------------------------------------------------------------
 
 The contents of this file are subject to the terms
@@ -22,7 +22,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.txt,v 1.11 2009-07-12 22:11:58 ppetitsm Exp $
+$Id: README.txt,v 1.12 2009-07-12 22:23:25 ppetitsm Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 Portions Copyrighted 2008 Patrick Petit Consulting
@@ -144,10 +144,8 @@ invoke the default build target.
 
 # ant
 
---------------------------------------------------------------------------------
 To install the module in opensso you need to follow the instructions outlined 
-below
---------------------------------------------------------------------------------
+below:
 
 1 - Install OpenSSO (Download from 
     https://opensso.dev.java.net/public/use/index.html). 
@@ -218,6 +216,10 @@ below
     xmldap.org and Azigo
 
 Some reference articles:
+
+Creating Custom User Attributes in OpenSSO
+
+http://wikis.sun.com/display/OpenSSO/Creating+Custom+User+Attributes+in+OpenSSO
 
 About the sms.dtd Structure
 
