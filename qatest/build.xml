@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: build.xml,v 1.6 2009-04-10 01:44:01 inthanga Exp $
+ $Id: build.xml,v 1.7 2009-07-13 21:36:38 chandp Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,23 +31,23 @@
     <import file="./xml/ant/opensso-properties.xml"/>
     <import file="./xml/ant/opensso-common.xml"/>
     <target name="checkAntVersion" description="Ensure that we're running ant 1.7.1 or above">
-      <fail message="Please execute QATEST using ant 1.7.1 or above">
-        <condition>
-          <not>
-            <contains string="${ant.version}" substring="1.7.1"/>
-          </not>
-        </condition>
-      </fail>
-    </target> 
+        <fail message="Please execute QATEST using ant 1.7.1 or above">
+            <condition>
+                <not>
+                    <contains string="${ant.version}" substring="1.7.1"/>
+                </not>
+            </condition>
+        </fail>
+    </target>
     <target name="IsClientJarExists" description="Ensure that we have openssoclientsdk.jar in the qatest/lib directory" depends="checkAntVersion">
-      <fail message="openssoclientsdk.jar missing in qatest/lib directory">
-        <condition>
-          <not>
-            <available file="./lib/openssoclientsdk.jar" />
-          </not>
-        </condition> 
-      </fail>
-    </target> 
+        <fail message="openssoclientsdk.jar missing in qatest/lib directory">
+            <condition>
+                <not>
+                    <available file="./lib/openssoclientsdk.jar" />
+                </not>
+            </condition>
+        </fail>
+    </target>
     <target name="usage" depends="checkAntVersion">
         <echo message=" "/>
         <echo message=" Following targets are available:"/>
@@ -92,43 +92,54 @@
         <echo message=" ant -lib &lt;location of ant-contrib-1.0b3.jar&gt; -DSERVER_NAME1=&lt;server-name1&gt;"/>
         <echo message=" -DSERVER_NAME2=&lt;server-name2&gt; run"/>
         <echo message=" "/>
+        <echo message=" To run a target for building qaweb war"/>
+        <echo message=" following command:"/>
+        <echo message=" ant generate-qaweb-war;"/>
+        <echo message=" "/>
     </target>
 
     <target name="run" depends="IsClientJarExists">
-      <condition property="SERVER_DIR" value="${SERVER_NAME1}_${SERVER_NAME2}" else="${SERVER_NAME1}">
+        <condition property="SERVER_DIR" value="${SERVER_NAME1}_${SERVER_NAME2}" else="${SERVER_NAME1}">
             <and>
                 <isset property="SERVER_NAME1"/>
                 <isset property="SERVER_NAME2"/>
             </and>
         </condition>
         <condition property="multimodule" else="false">
-           <or>
-               <equals arg1="${TEST_MODULE}" arg2="sanity" casesensitive="No"/>
-               <equals arg1="${TEST_MODULE}" arg2="all" casesensitive="No"/>
-           </or>
-       </condition>
-       <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
-       <if>
+            <or>
+                <equals arg1="${TEST_MODULE}" arg2="sanity" casesensitive="No"/>
+                <equals arg1="${TEST_MODULE}" arg2="all" casesensitive="No"/>
+            </or>
+        </condition>
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+        <if>
             <equals arg1="${multimodule}" arg2="true"/>
             <then>
                 <property name="test.output.file" value="multi_module"/>
             </then>
             <elseif>
                 <contains string="${TEST_MODULE}" substring="Agent" casesensitive="No"/>
-		<then>       
+                <then>
                     <property name="test.output.file" value="agents"/>
-		</then>
+                </then>
             </elseif>
             <else>
                 <property name="test.output.file" value="${TEST_MODULE}_${EXECUTION_MODE}"/>
             </else>
-       </if>
-       <property name="test.env.outfile" value="./${SERVER_DIR}/test_env.txt"/>
-       <property name="moduleName" value="./${TEST_MODULE}"/>
-       <echo message="Creating SERVER_DIR ${SERVER_DIR}"/>
-       <mkdir dir="${SERVER_DIR}"/>
-       <record name="${SERVER_DIR}/${test.output.file}.output" action="start"/>
-       <antcall target="execute-module"/>
-       <record name="${SERVER_DIR}/${test.output.file}.output" action="stop"/>
-  </target>
+        </if>
+        <property name="test.env.outfile" value="./${SERVER_DIR}/test_env.txt"/>
+        <property name="moduleName" value="./${TEST_MODULE}"/>
+        <echo message="Creating SERVER_DIR ${SERVER_DIR}"/>
+        <mkdir dir="${SERVER_DIR}"/>
+        <record name="${SERVER_DIR}/${test.output.file}.output" action="start"/>
+        <antcall target="execute-module"/>
+        <record name="${SERVER_DIR}/${test.output.file}.output" action="stop"/>
+    </target>
+
+    <target name="generate-qaweb-war" depends="qaweb-jar">
+        <echo>Building the qaweb war file</echo>
+        <war destfile="${qaweb.build.dir}/qaweb.war" webxml="${qaweb.build.dir}/build/web/WEB-INF/web.xml" >
+            <fileset dir="${qaweb.build.dir}/build/web"/>
+        </war>
+    </target>
 </project>            
