@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.21 2009-06-24 22:36:36 srivenigan Exp $
+ * $Id: FederationManagerCLI.java,v 1.22 2009-07-13 03:07:23 vimal_67 Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -212,7 +212,7 @@ public class FederationManagerCLI extends CLIUtility
     private void addSchemaTypeArguments(String schemaType) {
         String schemaTypeArg;
         if (useLongOptions) {
-            schemaTypeArg = PREFIX_ARGUMENT_LONG + 
+            schemaTypeArg = PREFIX_ARGUMENT_LONG +
                     SCHEMA_TYPE_ARGUMENT;
         } else {
             schemaTypeArg = PREFIX_ARGUMENT_SHORT +
@@ -380,6 +380,398 @@ public class FederationManagerCLI extends CLIUtility
     }
 
     /**
+     * Adds the "--attrqueryprovider" argument and attrqueryprovider value to
+     * the argument list
+     * @param attrqueryprovider - metaalias for attribute query provider
+     */
+    public void addAttrQueryProviderArguments(String attrqueryprovider) {
+        String attrqueryproviderArg;
+        if (useLongOptions) {
+            attrqueryproviderArg = ATTRQP_METAALIAS_ARGUMENT;
+        } else {
+            attrqueryproviderArg = SHORT_ATTRQP_METAALIAS_ARGUMENT;
+        }
+        addArgument(attrqueryproviderArg);
+        addArgument(attrqueryprovider);
+    }
+
+    /**
+     * Adds the "--attrauthority" argument and attrauthority value to
+     * the argument list
+     * @param attrauthority - metaalias for attribute authority
+     */
+    public void addAttrAuthorityArguments(String attrauthority) {
+        String attrauthorityArg;
+        if (useLongOptions) {
+            attrauthorityArg = ATTRAUTH_METAALIAS_ARGUMENT;
+        } else {
+            attrauthorityArg = SHORT_ATTRAUTH_METAALIAS_ARGUMENT;
+        }
+        addArgument(attrauthorityArg);
+        addArgument(attrauthority);
+    }
+
+    /**
+     * Adds the "--authnauthority" argument and authnauthority value to
+     * the argument list
+     * @param authnauthority - metaalias for authn authority
+     */
+    public void addAuthNAuthorityArguments(String authnauthority) {
+        String authnauthorityArg;
+        if (useLongOptions) {
+            authnauthorityArg = AUTHNAUTH_METAALIAS_ARGUMENT;
+        } else {
+            authnauthorityArg = SHORT_AUTHNAUTH_METAALIAS_ARGUMENT;
+        }
+        addArgument(authnauthorityArg);
+        addArgument(authnauthority);
+    }
+
+    /**
+     * Adds the "--xacmlpep" argument and xacmlpep value to
+     * the argument list
+     * @param xacmlpep - metaalias for xacml policy enforcement point
+     */
+    public void addXacmlPEPArguments(String xacmlpep) {
+        String xacmlpepArg;
+        if (useLongOptions) {
+            xacmlpepArg = XACMLPEP_METAALIAS_ARGUMENT;
+        } else {
+            xacmlpepArg = SHORT_XACMLPEP_METAALIAS_ARGUMENT;
+        }
+        addArgument(xacmlpepArg);
+        addArgument(xacmlpep);
+    }
+
+    /**
+     * Adds the "--xacmlpdp" argument and xacmlpdp value to
+     * the argument list
+     * @param xacmlpdp - metaalias for xacml policy decision point
+     */
+    public void addXacmlPDPArguments(String xacmlpdp) {
+        String xacmlpdpArg;
+        if (useLongOptions) {
+            xacmlpdpArg = XACMLPDP_METAALIAS_ARGUMENT;
+        } else {
+            xacmlpdpArg = SHORT_XACMLPDP_METAALIAS_ARGUMENT;
+        }
+        addArgument(xacmlpdpArg);
+        addArgument(xacmlpdp);
+    }
+
+    /**
+     * Adds the "--affiliation" argument and affiliation value to
+     * the argument list
+     * @param affiliation - metaalias for hosted affiliation
+     */
+    public void addAffiliationArguments(String affiliation) {
+        String affiliationArg;
+        if (useLongOptions) {
+            affiliationArg = AFFILIATION_METAALIAS_ARGUMENT;
+        } else {
+            affiliationArg = SHORT_AFFILIATION_METAALIAS_ARGUMENT;
+        }
+        addArgument(affiliationArg);
+        addArgument(affiliation);
+    }
+
+    /**
+     * Adds the "--affiownerid" argument and affiownerid value to
+     * the argument list
+     * @param affiownerid - Affiliation Owner ID
+     */
+    public void addAffiOwnerIDArguments(String affiownerid) {
+        String affiowneridArg;
+        if (useLongOptions) {
+            affiowneridArg = AFFILIATION_OWNERID_ARGUMENT;
+        } else {
+            affiowneridArg = SHORT_AFFILIATION_OWNERID_ARGUMENT;
+        }
+        addArgument(affiowneridArg);
+        addArgument(affiownerid);
+    }
+    
+    /**
+     * Adds the "--affimembers" argument and affimembers value to
+     * the argument list
+     * @param affiownerid - Affiliation members
+     */
+    public void addAffiMembersArguments(String affimembers) {
+        String affimembersArg;
+        if (useLongOptions) {
+            affimembersArg = AFFILIATION_MEMBERS_ARGUMENT;
+        } else {
+            affimembersArg = SHORT_AFFILIATION_MEMBERS_ARGUMENT;
+        }
+        addArgument(affimembersArg);
+        addArgument(affimembers);
+    }
+
+    /**
+     * Adds the "--spscertalias" argument and spscertalias value to
+     * the argument list
+     * @param spscertalias - Service provider signing certificate alias
+     */
+    public void addSPSCertAliasArguments(String spscertalias) {
+        String spscertaliasArg;
+        if (useLongOptions) {
+            spscertaliasArg = SP_SCERTALIAS_ARGUMENT;
+        } else {
+            spscertaliasArg = SHORT_SP_SCERTALIAS_ARGUMENT;
+        }
+        addArgument(spscertaliasArg);
+        addArgument(spscertalias);
+    }
+    
+    /**
+     * Adds the "--idpscertalias" argument and idpscertalias value to
+     * the argument list
+     * @param idpscertalias - Identity provider signing certificate alias
+     */
+    public void addIDPSCertAliasArguments(String idpscertalias) {
+        String idpscertaliasArg;
+        if (useLongOptions) {
+            idpscertaliasArg = IDP_SCERTALIAS_ARGUMENT;
+        } else {
+            idpscertaliasArg = SHORT_IDP_SCERTALIAS_ARGUMENT;
+        }
+        addArgument(idpscertaliasArg);
+        addArgument(idpscertalias);
+    }
+
+    /**
+     * Adds the "--attrqscertalias" argument and attrqscertalias value to
+     * the argument list
+     * @param attrqscertalias - Attribute query provider signing
+     * certificate alias
+     */
+    public void addAttrQSCertAliasArguments(String attrqscertalias) {
+        String attrqscertaliasArg;
+        if (useLongOptions) {
+            attrqscertaliasArg = ATTRQSCERTALIAS_ARGUMENT;
+        } else {
+            attrqscertaliasArg = SHORT_ATTRQSCERTALIAS_ARGUMENT;
+        }
+        addArgument(attrqscertaliasArg);
+        addArgument(attrqscertalias);
+    }
+
+    /**
+     * Adds the "--attrascertalias" argument and attrascertalias value to
+     * the argument list
+     * @param attrascertalias - Attribute authority signing certificate alias
+     */
+    public void addAttrASCertAliasArguments(String attrascertalias) {
+        String attrascertaliasArg;
+        if (useLongOptions) {
+            attrascertaliasArg = ATTRASCERTALIAS_ARGUMENT;
+        } else {
+            attrascertaliasArg = SHORT_ATTRASCERTALIAS_ARGUMENT;
+        }
+        addArgument(attrascertaliasArg);
+        addArgument(attrascertalias);
+    }
+
+    /**
+     * Adds the "--authnascertalias" argument and authnascertalias value to
+     * the argument list
+     * @param authnascertalias - Authentication authority signing
+     * certificate alias
+     */
+    public void addAuthNASCertAliasArguments(String authnascertalias) {
+        String authnascertaliasArg;
+        if (useLongOptions) {
+            authnascertaliasArg = AUTHNASCERTALIAS_ARGUMENT;
+        } else {
+            authnascertaliasArg = SHORT_AUTHNASCERTALIAS_ARGUMENT;
+        }
+        addArgument(authnascertaliasArg);
+        addArgument(authnascertalias);
+    }
+    
+    /**
+     * Adds the "--affiscertalias" argument and affiscertalias value to
+     * the argument list
+     * @param affiscertalias - Affiliation signing certificate alias
+     */
+    public void addAffiSCertAliasArguments(String affiscertalias) {
+        String affiscertaliasArg;
+        if (useLongOptions) {
+            affiscertaliasArg = AFFISCERTALIAS_ARGUMENT;
+        } else {
+            affiscertaliasArg = SHORT_AFFISCERTALIAS_ARGUMENT;
+        }
+        addArgument(affiscertaliasArg);
+        addArgument(affiscertalias);
+    }
+
+    /**
+     * Adds the "--xacmlpdpscertalias" argument and xacmlpdpscertalias value to
+     * the argument list
+     * @param xacmlpdpscertalias - Policy decision point signing
+     * certificate alias
+     */
+    public void addXacmlPDPSCertAliasArguments(String xacmlpdpscertalias) {
+        String xacmlpdpscertaliasArg;
+        if (useLongOptions) {
+            xacmlpdpscertaliasArg = XACMLPDPSCERTALIAS_ARGUMENT;
+        } else {
+            xacmlpdpscertaliasArg = SHORT_XACMLPDPSCERTALIAS_ARGUMENT;
+        }
+        addArgument(xacmlpdpscertaliasArg);
+        addArgument(xacmlpdpscertalias);
+    }
+
+    /**
+     * Adds the "--xacmlpepscertalias" argument and xacmlpepscertalias value to
+     * the argument list
+     * @param xacmlpepscertalias - Policy decision point signing
+     * certificate alias
+     */
+    public void addXacmlPEPSCertAliasArguments(String xacmlpepscertalias) {
+        String xacmlpepscertaliasArg;
+        if (useLongOptions) {
+            xacmlpepscertaliasArg = XACMLPEPSCERTALIAS_ARGUMENT;
+        } else {
+            xacmlpepscertaliasArg = SHORT_XACMLPEPSCERTALIAS_ARGUMENT;
+        }
+        addArgument(xacmlpepscertaliasArg);
+        addArgument(xacmlpepscertalias);
+    }
+    
+    /**
+     * Adds the "--specertalias" argument and specertalias value to
+     * the argument list
+     * @param specertalias - Service provider encryption certificate alias
+     */
+    public void addSPECertAliasArguments(String specertalias) {
+        String specertaliasArg;
+        if (useLongOptions) {
+            specertaliasArg = SP_ECERTALIAS_ARGUMENT;
+        } else {
+            specertaliasArg = SHORT_SP_ECERTALIAS_ARGUMENT;
+        }
+        addArgument(specertaliasArg);
+        addArgument(specertalias);
+    }
+
+    /**
+     * Adds the "--idpecertalias" argument and idpecertalias value to
+     * the argument list
+     * @param idpecertalias - Identity provider encryption certificate alias
+     */
+    public void addIDPECertAliasArguments(String idpecertalias) {
+        String idpecertaliasArg;
+        if (useLongOptions) {
+            idpecertaliasArg = IDP_ECERTALIAS_ARGUMENT;
+        } else {
+            idpecertaliasArg = SHORT_IDP_ECERTALIAS_ARGUMENT;
+        }
+        addArgument(idpecertaliasArg);
+        addArgument(idpecertalias);
+    }
+
+    /**
+     * Adds the "--attrqecertalias" argument and attrqecertalias value to
+     * the argument list
+     * @param attrqecertalias - Attribute query provider encryption
+     * certificate alias
+     */
+    public void addAttrQECertAliasArguments(String attrqecertalias) {
+        String attrqecertaliasArg;
+        if (useLongOptions) {
+            attrqecertaliasArg = ATTRQECERTALIAS_ARGUMENT;
+        } else {
+            attrqecertaliasArg = SHORT_ATTRQECERTALIAS_ARGUMENT;
+        }
+        addArgument(attrqecertaliasArg);
+        addArgument(attrqecertalias);
+    }
+
+    /**
+     * Adds the "--attraecertalias" argument and attraecertalias value to
+     * the argument list
+     * @param attraecertalias - Attribute authority encryption certificate alias
+     */
+    public void addAttrAECertAliasArguments(String attraecertalias) {
+        String attraecertaliasArg;
+        if (useLongOptions) {
+            attraecertaliasArg = ATTRAECERTALIAS_ARGUMENT;
+        } else {
+            attraecertaliasArg = SHORT_ATTRAECERTALIAS_ARGUMENT;
+        }
+        addArgument(attraecertaliasArg);
+        addArgument(attraecertalias);
+    }
+
+    /**
+     * Adds the "--authnaecertalias" argument and authnaecertalias value to
+     * the argument list
+     * @param authnaecertalias - Authentication authority encryption
+     * certificate alias
+     */
+    public void addAuthNAECertAliasArguments(String authnaecertalias) {
+        String authnaecertaliasArg;
+        if (useLongOptions) {
+            authnaecertaliasArg = AUTHNAECERTALIAS_ARGUMENT;
+        } else {
+            authnaecertaliasArg = SHORT_AUTHNAECERTALIAS_ARGUMENT;
+        }
+        addArgument(authnaecertaliasArg);
+        addArgument(authnaecertalias);
+    }
+
+    /**
+     * Adds the "--affiecertalias" argument and affiecertalias value to
+     * the argument list
+     * @param affiecertalias - Affiliation encryption certificate alias
+     */
+    public void addAffiECertAliasArguments(String affiecertalias) {
+        String affiecertaliasArg;
+        if (useLongOptions) {
+            affiecertaliasArg = AFFIECERTALIAS_ARGUMENT;
+        } else {
+            affiecertaliasArg = SHORT_AFFIECERTALIAS_ARGUMENT;
+        }
+        addArgument(affiecertaliasArg);
+        addArgument(affiecertalias);
+    }
+
+    /**
+     * Adds the "--xacmlpdpecertalias" argument and xacmlpdpecertalias value to
+     * the argument list
+     * @param xacmlpdpecertalias - Policy decision point encryption
+     * certificate alias
+     */
+    public void addXacmlPDPECertAliasArguments(String xacmlpdpecertalias) {
+        String xacmlpdpecertaliasArg;
+        if (useLongOptions) {
+            xacmlpdpecertaliasArg = XACMLPDPECERTALIAS_ARGUMENT;
+        } else {
+            xacmlpdpecertaliasArg = SHORT_XACMLPDPECERTALIAS_ARGUMENT;
+        }
+        addArgument(xacmlpdpecertaliasArg);
+        addArgument(xacmlpdpecertalias);
+    }
+
+    /**
+     * Adds the "--xacmlpepecertalias" argument and xacmlpepecertalias value to
+     * the argument list
+     * @param xacmlpepecertalias - Policy enforcement point encryption
+     * certificate alias
+     */
+    public void addXacmlPEPECertAliasArguments(String xacmlpepecertalias) {
+        String xacmlpepecertaliasArg;
+        if (useLongOptions) {
+            xacmlpepecertaliasArg = XACMLPEPECERTALIAS_ARGUMENT;
+        } else {
+            xacmlpepecertaliasArg = SHORT_XACMLPEPECERTALIAS_ARGUMENT;
+        }
+        addArgument(xacmlpepecertaliasArg);
+        addArgument(xacmlpepecertalias);
+    }
+
+    /**
      * Adds the "--spec" argument and spec value to the argument list
      * @param spec - specification of the metadata
      */
@@ -505,6 +897,42 @@ public class FederationManagerCLI extends CLIUtility
             addSPMetaaliasArguments(msp);
         }
         addSpecArguments(spec);      
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Creates metadata template
+     * @param entityid - Name of entityid.
+     * @param metadatafile - Location of standard metadata file
+     * @param extendeddatafile - Location of extended data file
+     * @param midp - metaalias of identity provider
+     * @param msp - metaalias of service provider
+     * @param optionalattributes - optional attributes of the metadata
+     * @param spec - specification of metadata
+     * @return int - command status
+     * @throws java.lang.Exception
+     */
+    public int createMetadataTempl(String entityid,
+            String metadatafile, String extendeddatafile, String midp,
+            String msp, String optionalattributes,
+            String spec) throws Exception {
+        Map map = new HashMap();
+        setSubcommand(CREATE_METADATA_TEMPLATE_SUBCOMMAND);
+        addEntityIDArguments(entityid);
+        addMetadataFileArguments(metadatafile);
+        addExtendeddataFileArguments(extendeddatafile);
+        if (midp.equals("")) {
+            addSPMetaaliasArguments(msp);
+        } else if (msp.equals("")) {
+            addIDPMetaaliasArguments(midp);
+        } else {
+            addIDPMetaaliasArguments(midp);
+            addSPMetaaliasArguments(msp);
+        }
+        map = parseStringToRegularMap(optionalattributes, ",");
+        createMetaTemplOptionalAttributes(map);
+        addSpecArguments(spec);
         addGlobalOptions();
         return (executeCommand(commandTimeout));
     }
@@ -704,6 +1132,75 @@ public class FederationManagerCLI extends CLIUtility
         addRealmArguments(realm);
         addGlobalOptions();
         return (executeCommand(commandTimeout));
+    }
+    
+    /**     
+     * @param map - Map of attributes with its values
+     * @throws java.lang.Exception
+     */
+    public void createMetaTemplOptionalAttributes (Map map)
+            throws Exception {
+
+        // attributes Map
+        Set set = map.keySet();
+        Iterator iter = set.iterator();
+        while (iter.hasNext()) {
+            String key = (String) iter.next();
+            String value = (String) map.get(key);
+
+            // calling individual attribute function
+            if (key.equals("--attrqueryprovider") || key.equals("-S")) {
+                addAttrQueryProviderArguments(value);
+            } else if (key.equals("--attrauthority") || key.equals("-I")) {
+                addAttrAuthorityArguments(value);
+            } else if (key.equals("--authnauthority") || key.equals("-C")) {
+                addAuthNAuthorityArguments(value);
+            } else if (key.equals("--xacmlpep") || key.equals("-e")) {
+                addXacmlPEPArguments(value);
+            } else if (key.equals("--xacmlpdp") || key.equals("-p")) {
+                addXacmlPDPArguments(value);
+            } else if (key.equals("--affiliation") || key.equals("-F")) {
+                addAffiliationArguments(value);
+            } else if (key.equals("--affiownerid") || key.equals("-N")) {
+                addAffiOwnerIDArguments(value);
+            } else if (key.equals("--affimembers") || key.equals("-M")) {
+                addAffiMembersArguments(value);
+            } else if (key.equals("--spscertalias") || key.equals("-a")) {
+                addSPSCertAliasArguments(value);
+            } else if (key.equals("--idpscertalias") || key.equals("-b")) {
+                addIDPSCertAliasArguments(value);
+            } else if (key.equals("--attrqscertalias") || key.equals("-A")) {
+                addAttrQSCertAliasArguments(value);
+            } else if (key.equals("--attrascertalias") || key.equals("-B")) {
+                addAttrASCertAliasArguments(value);
+            } else if (key.equals("--authnascertalias") || key.equals("-D")) {
+                addAuthNASCertAliasArguments(value);
+            } else if (key.equals("--affiscertalias") || key.equals("-J")) {
+                addAffiSCertAliasArguments(value);
+            } else if (key.equals("--xacmlpdpscertalias") || key.equals("-t")) {
+                addXacmlPDPSCertAliasArguments(value);
+            } else if (key.equals("--xacmlpepscertalias") || key.equals("-k")) {
+                addXacmlPEPSCertAliasArguments(value);
+            } else if (key.equals("--specertalias") || key.equals("-r")) {
+                addSPECertAliasArguments(value);
+            } else if (key.equals("--idpecertalias") || key.equals("-g")) {
+                addIDPECertAliasArguments(value);
+            } else if (key.equals("--attrqecertalias") || key.equals("-R")) {
+                addAttrQECertAliasArguments(value);
+            } else if (key.equals("--attraecertalias") || key.equals("-G")) {
+                addAttrAECertAliasArguments(value);
+            } else if (key.equals("--authnaecertalias") || key.equals("-E")) {
+                addAuthNAECertAliasArguments(value);
+            } else if (key.equals("--affiecertalias") || key.equals("-K")) {
+                addAffiECertAliasArguments(value);
+            } else if (key.equals("--xacmlpdpecertalias") || key.equals("-j")) {
+                addXacmlPDPECertAliasArguments(value);
+            } else if (key.equals("--xacmlpepecertalias") || key.equals("-z")) {
+                addXacmlPEPECertAliasArguments(value);
+            } else {
+
+            } 
+        }       
     }
     
     /**
@@ -1265,7 +1762,7 @@ public class FederationManagerCLI extends CLIUtility
                 }
             } else {
                 allRealmsCreated = false;
-                log(Level.SEVERE, "createRealms", 
+                log(Level.SEVERE, "createRealms",
                         "The list of realms is empty.");
             }
         } else {
@@ -1274,7 +1771,7 @@ public class FederationManagerCLI extends CLIUtility
         }
         return (allRealmsCreated);
     }
-
+       
     /**
      * Delete a realm.
      *
@@ -1471,7 +1968,7 @@ public class FederationManagerCLI extends CLIUtility
         if (idList != null) {
             if (idList.length() > 0) {
                 String[] ids = idList.split("\\|");
-            	
+
                 //Create single identity without "do-batch"
                 if (ids.length == 1) {
                     String[] idArgs = ids[0].split("\\,");
@@ -1489,7 +1986,7 @@ public class FederationManagerCLI extends CLIUtility
 
                         if (idArgs.length > 3) {
                             String idAttributes = idArgs[3];
-                            exitStatus = createIdentity(idRealm, idName, 
+                            exitStatus = createIdentity(idRealm, idName,
                                     idType, idAttributes);
                         }
                         logCommand("createIdentities");
@@ -1504,11 +2001,11 @@ public class FederationManagerCLI extends CLIUtility
                             String idRealm = idArgs[0];
                             String idName = idArgs[1];
                             String idType = idArgs[2];
-                            log(Level.FINEST, "createIdentities", 
+                            log(Level.FINEST, "createIdentities",
                                     "Realm for id: " + idRealm);
-                            log(Level.FINEST, "createIdentities", 
+                            log(Level.FINEST, "createIdentities",
                                     "Name for id: " + idName);
-                            log(Level.FINEST, "createIdentities", 
+                            log(Level.FINEST, "createIdentities",
                                     "Type for id: " + idType);
                             List argNameValueList = new ArrayList();
                             Map argMap = new HashMap();
@@ -1528,7 +2025,7 @@ public class FederationManagerCLI extends CLIUtility
                             }
                             argNameValueList.add(argMap);
                             commandsList.add(createBatchCommand(
-                                    CREATE_IDENTITY_SUBCOMMAND, 
+                                    CREATE_IDENTITY_SUBCOMMAND,
                                     argNameValueList));
                         } else {
                             allIdsCreated = false;
@@ -1551,7 +2048,7 @@ public class FederationManagerCLI extends CLIUtility
                 }
             } else {
                 allIdsCreated = false;
-                log(Level.SEVERE, "createIdentities", 
+                log(Level.SEVERE, "createIdentities",
                         "The identity list is empty.");
             }
         } else {
@@ -2367,6 +2864,32 @@ public class FederationManagerCLI extends CLIUtility
      */
     public void resetArgList() {
         clearArguments(PASSWORD_VALUE_INDEX);
+    }
+
+    /**
+     * Returns a regular map.
+     * @param str. The format of the string is key1=val1,key2=val2 where ',' is
+     * the token
+     * @param mTok. Seperator for single key-value pair
+     * @return Map containing key-value pairs
+     * @throws java.lang.Exception
+     */
+    private Map parseStringToRegularMap(String str, String mTok)
+    throws Exception {
+        entering("parseStringToRegularMap", null);
+        Map map = new HashMap();
+        StringTokenizer st = new StringTokenizer(str, mTok);
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            int idx = token.indexOf("=");
+            if (idx != -1) {
+                String attrName = token.substring(0, idx);
+                String attrValue = token.substring(idx+1, token.length());
+                map.put(attrName, attrValue);
+            }
+        }
+        exiting("parseStringToRegularMap");
+        return map;
     }
     
     /**
@@ -3273,18 +3796,18 @@ public class FederationManagerCLI extends CLIUtility
         addGlobalOptions();        
         return executeCommand(commandTimeout);    	
     }
-    
+
     /**
      * Creates a batch command.
-     * 
-     * @param subCommand - name of sub-command. For e.g. create-realm, 
+     *
+     * @param subCommand - name of sub-command. For e.g. create-realm,
      *        create-identity, etc.
-     * @param argNameValueList - list with arguments in map for the command to 
+     * @param argNameValueList - list with arguments in map for the command to
      *        be created.
      * @return commandString - is entire command as string.
      */
-    private String createBatchCommand(String subCommand, 
-            List<Map> argNameValueList) 
+    private String createBatchCommand(String subCommand,
+            List<Map> argNameValueList)
             throws Exception {
         StringBuffer commandBuffer = new StringBuffer();
         String commandString = "";
@@ -3306,11 +3829,11 @@ public class FederationManagerCLI extends CLIUtility
         }
         return commandString;
     }
-    
+
     /**
      * Creates a batchfile.
-     * 
-     * @param commandList - list containing commands to be executed in batch. 
+     *
+     * @param commandList - list containing commands to be executed in batch.
      * @return batchFile - a string with path of batch file location
      */
     private String createBatchfile(List commandList)
@@ -3323,7 +3846,7 @@ public class FederationManagerCLI extends CLIUtility
                 rb_amconfig.getString(TestConstants.KEY_ATT_SERVER_NAME) +
                 fileseparator + "built" + fileseparator + "classes" +
                 fileseparator + "cli" + fileseparator;
-        String attFile = attFileDir + "batchFile" + 
+        String attFile = attFileDir + "batchFile" +
                 (new Integer(new Random().nextInt())).toString() + ".txt";
         BufferedWriter out = new BufferedWriter(new FileWriter(attFile));
         if (commandList.size() > 0) {
@@ -3342,10 +3865,10 @@ public class FederationManagerCLI extends CLIUtility
         out.close();
         return attFile;
     }
-    
+
     /**
      * Adds batch file arguments to "do-batch" sub-command.
-     * 
+     *
      * @param batchFile - Name of file that contains commands and options.
      */
     private void addBatchFileArguments(String batchFile) {
@@ -3354,17 +3877,17 @@ public class FederationManagerCLI extends CLIUtility
             if (useLongOptions) {
                 batchFileArg = PREFIX_ARGUMENT_LONG + BATCH_FILE_ARGUMENT;
             } else {
-    		batchFileArg = PREFIX_ARGUMENT_SHORT + 
+    		batchFileArg = PREFIX_ARGUMENT_SHORT +
                         SHORT_BATCH_FILE_ARGUMENT;
             }
             addArgument(batchFileArg);
             addArgument(batchFile);
-        }        
+        }
     }
-    
+
     /**
      * Adds batch status arguments to "do-batch" sub-command.
-     * 
+     *
      * @param batchStatus - name of the batch status file.
      */
     private void addBatchStatusArguments(String batchStatus) {
@@ -3373,26 +3896,26 @@ public class FederationManagerCLI extends CLIUtility
             if (useLongOptions) {
                 batchStatusArg = PREFIX_ARGUMENT_LONG + BATCH_STATUS_ARGUMENT;
             } else {
-                batchStatusArg = PREFIX_ARGUMENT_SHORT + 
+                batchStatusArg = PREFIX_ARGUMENT_SHORT +
                         SHORT_BATCH_STATUS_ARGUMENT;
             }
             addArgument(batchStatusArg);
             addArgument(batchStatus);
         }
     }
-    
+
     /**
      * Executes commands in batch.
-     * 
+     *
      * @param batchFile - Name of file that contains commands and options.
      * @param batchStatus - name of the batch status file.
-     * @param continueDeletingService - Continue processing the rest of the 
+     * @param continueDeletingService - Continue processing the rest of the
      *        request when preceeding request was erroneous.
      * @return exit status of "show-datastore" subcommand.
      * @throws java.lang.Exception
      */
-    public int doBatch(String batchFile, String batchStatus, 
-    		boolean continueDeletingService) 
+    public int doBatch(String batchFile, String batchStatus,
+    		boolean continueDeletingService)
     throws Exception {
         setSubcommand(DO_BATCH_SUBCOMMAND);
         addBatchFileArguments(batchFile);
@@ -3406,15 +3929,15 @@ public class FederationManagerCLI extends CLIUtility
 
     /**
      * Creates a site
-     * 
+     *
      * @param siteName - Site name, e.g. mysite
      * @param siteUrl - Site primary URL, e.g. http://www.example.com:8080
      * @param secondaryUrls - Secondary URLs
      * @return exit status of "create-site" subcommand.
      * @throws java.lang.Exception
      */
-    public int createSite(String siteName, String siteUrl, 
-    		String secondaryUrls) 
+    public int createSite(String siteName, String siteUrl,
+    		String secondaryUrls)
     throws Exception {
         setSubcommand(CREATE_SITE_SUBCOMMAND);
         addSiteNameArguments(siteName);
@@ -3424,11 +3947,11 @@ public class FederationManagerCLI extends CLIUtility
         }
         addGlobalOptions();
         return executeCommand(commandTimeout);
-    }    
-    
+    }
+
     /**
      * Adds site name arguments.
-     * 
+     *
      * @param siteName - Site name, e.g. mysite
      */
     private void addSiteNameArguments(String siteName) {
@@ -3443,10 +3966,10 @@ public class FederationManagerCLI extends CLIUtility
             addArgument(siteName);
         }
     }
-    
+
     /**
      * Adds site url arguments.
-     * 
+     *
      * @param siteUrl - Sites primary URL, e.g. http://www.example.com:8080
      */
     private void addSiteUrlArguments(String siteUrl) {
@@ -3461,17 +3984,17 @@ public class FederationManagerCLI extends CLIUtility
             addArgument(siteUrl);
         }
     }
-    
+
     /**
      * Adds site name arguments.
-     * 
+     *
      * @param secondaryUrls - Secondary URLs
      */
     private void addSecondaryUrlArguments(String secondaryUrls) {
         String secondaryUrlsArg;
         if (!secondaryUrls.equals("")) {
             if (useLongOptions) {
-            	secondaryUrlsArg = PREFIX_ARGUMENT_LONG + 
+            	secondaryUrlsArg = PREFIX_ARGUMENT_LONG +
                         SECONDARY_URLS_ARGUMENT;
             } else {
             	secondaryUrlsArg = PREFIX_ARGUMENT_SHORT +
@@ -3484,66 +4007,66 @@ public class FederationManagerCLI extends CLIUtility
             }
         }
     }
-    
+
     /**
      * Shows site
-     * 
+     *
      * @param siteName - Site name, e.g. mysite
      * @return exit status of "show-site" subcommand.
      * @throws java.lang.Exception
      */
-    public int showSite(String siteName) 
+    public int showSite(String siteName)
     throws Exception {
         setSubcommand(SHOW_SITE_SUBCOMMAND);
         addSiteNameArguments(siteName);
         addGlobalOptions();
         return executeCommand(commandTimeout);
-    }    
+    }
 
     /**
      * List sites
-     * 
+     *
      * @return exit status of "list-sites" subcommand.
      * @throws java.lang.Exception
      */
-    public int listSites() 
+    public int listSites()
     throws Exception {
         setSubcommand(LIST_SITES_SUBCOMMAND);
         addGlobalOptions();
         return executeCommand(commandTimeout);
-    }    
+    }
 
     /**
      * Delete site
-     * 
+     *
      * @param siteName - Site name, e.g. mysite
      * @return exit status of "delete-site" subcommand.
      * @throws java.lang.Exception
      */
-    public int deleteSite(String siteName) 
+    public int deleteSite(String siteName)
     throws Exception {
         setSubcommand(DELETE_SITE_SUBCOMMAND);
         addSiteNameArguments(siteName);
         addGlobalOptions();
         return executeCommand(commandTimeout);
-    }      
-    
+    }
+
     /**
      * Creates a site.
-     * 
-     * @param sitesArgs - Names of the sites 
+     *
+     * @param sitesArgs - Names of the sites
      * @return
      * @throws java.lang.Exception
      */
     public boolean createSites(String sitesArgs)
-    throws Exception { 
+    throws Exception {
     	int exitStatus = -1;
     	boolean allSitesCreated = true;
         String[] sites = sitesArgs.split("\\|");
         Map argMap = new HashMap();
         List argList = new ArrayList();
         List commandList = new ArrayList();
-        
+
     	if (sites.length > 0) {
             if (sites.length == 1) {
                 String[] siteArgs = sites[0].split(";");
@@ -3556,14 +4079,14 @@ public class FederationManagerCLI extends CLIUtility
                     if (siteArgs.length > 2) {
                         String secUrls = siteArgs[2];
                         log(Level.FINEST, "createSites", "Creating site with " +
-                                "args: " + siteName + ", " + siteUrl + ", " 
+                                "args: " + siteName + ", " + siteUrl + ", "
                                 + secUrls);
                         exitStatus = createSite(siteName, siteUrl, secUrls);
                     }
                 }
                 logCommand("createSites");
                 resetArgList();
-            } else { 
+            } else {
                 for (String site : sites) {
                     String[] siteArgs = site.split(";");
                     if (siteArgs.length >= 2) {
@@ -3576,7 +4099,7 @@ public class FederationManagerCLI extends CLIUtility
                         if (siteArgs.length > 2) {
                             String secUrls = siteArgs[2];
                             secUrls = secUrls.replace(",", " ");
-                            argMap.put(PREFIX_ARGUMENT_LONG + 
+                            argMap.put(PREFIX_ARGUMENT_LONG +
                                     SECONDARY_URLS_ARGUMENT, secUrls);
                         }
                         argList.add(argMap);
@@ -3602,33 +4125,33 @@ public class FederationManagerCLI extends CLIUtility
             }
         } else {
         	allSitesCreated = false;
-            log(Level.SEVERE, "createSites", 
+            log(Level.SEVERE, "createSites",
                     "The list of sites is empty.");
         }
     	return allSitesCreated;
     }
-    
+
     /**
-     * 
+     *
      * @param siteNames
      * @return
      * @throws java.lang.Exception
      */
     public boolean deleteSites(String siteNames)
-    throws Exception { 
+    throws Exception {
     	int exitStatus = -1;
     	boolean allSitesDeleted = true;
         String[] siteStrings = siteNames.split(";");
         Map argMap = new HashMap();
         List argList = new ArrayList();
         List commandList = new ArrayList();
-        
+
     	if (siteStrings.length > 0) {
     		if (siteStrings.length == 1) {
     			exitStatus = deleteSite(siteStrings[0]);
     			logCommand("deleteSites");
     			resetArgList();
-    		} else { 
+    		} else {
     			for (int i=0; i < siteStrings.length; i++) {
                     argMap.put(PREFIX_ARGUMENT_LONG + SITE_NAME_ARGUMENT,
                             siteStrings[i]);
@@ -3650,15 +4173,15 @@ public class FederationManagerCLI extends CLIUtility
             }
         } else {
         	allSitesDeleted = false;
-            log(Level.SEVERE, "deleteSites", 
+            log(Level.SEVERE, "deleteSites",
                     "The list of sites is empty.");
         }
     	return allSitesDeleted;
     }
-    
+
     /**
      * Add server names arguments to the command.
-     * 
+     *
      * @param serverNames - names of the servers separated by ","
      */
     private void addServerNamesArguments(String serverNames) {
@@ -3668,7 +4191,7 @@ public class FederationManagerCLI extends CLIUtility
             	//serverNamesArg = PREFIX_ARGUMENT_LONG + SERVER_NAMES_ARGUMENT;
             	serverNamesArg = "--servernames";
             } else {
-            	serverNamesArg = PREFIX_ARGUMENT_SHORT + 
+            	serverNamesArg = PREFIX_ARGUMENT_SHORT +
                         SHORT_SERVER_NAMES_ARGUMENT;
             }
             addArgument(serverNamesArg);
@@ -3677,59 +4200,59 @@ public class FederationManagerCLI extends CLIUtility
                 addArgument(s);
         }
     }
-    
+
     /**
      * Add members to a site.
-     * 
+     *
      * @param siteName - name of the site as string.
      * @param serverNames - servernames to be removed separated by ","
      * @return int - exitstatus of the subcommand "add-site-members"
      * @throws java.lang.Exception
      */
-    public int addSiteMembers(String siteName, String serverNames) 
+    public int addSiteMembers(String siteName, String serverNames)
     throws Exception {
         setSubcommand(ADD_SITE_MEMBERS_SUBCOMMAND);
         addSiteNameArguments(siteName);
         addServerNamesArguments(serverNames);
         addGlobalOptions();
         return executeCommand(commandTimeout);
-    }      
+    }
 
     /**
      * Display members of a site.
-     * 
+     *
      * @param siteName - name of the site as string.
      * @return int - exitstatus of the subcommand "show-site-members"
      * @throws java.lang.Exception
      */
-    public int showSiteMembers(String siteName) 
+    public int showSiteMembers(String siteName)
     throws Exception {
         setSubcommand(SHOW_SITE_MEMBERS_SUBCOMMAND);
         addSiteNameArguments(siteName);
         addGlobalOptions();
         return executeCommand(commandTimeout);
-    }      
+    }
 
     /**
      * Remove members of a site.
-     * 
+     *
      * @param siteName - name of the site as string.
      * @param serverNames - servernames to be removed separated by ","
      * @return int - exitstatus of the subcommand "remove-site-members"
      * @throws java.lang.Exception
      */
-    public int removeSiteMembers(String siteName, String serverNames) 
+    public int removeSiteMembers(String siteName, String serverNames)
     throws Exception {
         setSubcommand(REMOVE_SITE_MEMBERS_SUBCOMMAND);
         addSiteNameArguments(siteName);
         addServerNamesArguments(serverNames);
         addGlobalOptions();
         return executeCommand(commandTimeout);
-    }      
+    }
 
     /**
      * Adds site secondary urls to site.
-     * 
+     *
      * @param siteName - name of the site as string.
      * @param siteSecUrls - siteSecUrls to be removed separated by ","
      * @return int - exitstatus of the subcommand "add-site-sec-urls"
@@ -3746,7 +4269,7 @@ public class FederationManagerCLI extends CLIUtility
 
     /**
      * Sets site secondary urls to site.
-     * 
+     *
      * @param siteName - name of the site as string.
      * @param siteSecUrls - siteSecUrls to be set separated by ","
      * @return int - exitstatus of the subcommand "set-site-sec-urls"
@@ -3763,7 +4286,7 @@ public class FederationManagerCLI extends CLIUtility
 
     /**
      * Removes site secondary urls from site.
-     * 
+     *
      * @param siteName - name of the site as string.
      * @param siteSecUrls - siteSecUrls to be removed separated by ","
      * @return int - exitstatus of the subcommand "remove-site-sec-urls"
@@ -3780,7 +4303,7 @@ public class FederationManagerCLI extends CLIUtility
 
     /**
      * Sets site url to site.
-     * 
+     *
      * @param siteName - name of the site as string.
      * @param siteUrl - siteUrl to be removed separated by ","
      * @return int - exitstatus of the subcommand "set-site-pri-url"
