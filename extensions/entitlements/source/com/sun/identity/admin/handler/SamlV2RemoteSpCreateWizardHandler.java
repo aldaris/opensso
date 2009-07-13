@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.13 2009-07-10 23:13:34 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.14 2009-07-13 19:42:42 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -32,10 +32,12 @@ import com.icesoft.faces.component.inputfile.FileInfo;
 import com.icesoft.faces.component.inputfile.InputFile;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
-import com.sun.identity.admin.dao.SamlV2RemoteSpCreateDao;
 import com.sun.identity.admin.dao.SamlV2CreateSharedDao;
+import com.sun.identity.admin.dao.SamlV2RemoteSpCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
+import com.sun.identity.admin.model.CotSamlV2RemoteSpCreateWizardStepValidator;
 import com.sun.identity.admin.model.MessageBean;
+import com.sun.identity.admin.model.MetadataSamlV2RemoteSpCreateWizardStepValidator;
 import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2RemoteSpCreateWizardStep;
 import com.sun.identity.admin.model.SamlV2ViewAttribute;
@@ -60,6 +62,12 @@ public class SamlV2RemoteSpCreateWizardHandler
 
     private SamlV2RemoteSpCreateDao samlV2RemoteSpCreateDao;
 
+    @Override
+    public void initWizardStepValidators() {
+        getWizardStepValidators()[SamlV2RemoteSpCreateWizardStep.COT.toInt()] = new CotSamlV2RemoteSpCreateWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[SamlV2RemoteSpCreateWizardStep.METADATA.toInt()] = new MetadataSamlV2RemoteSpCreateWizardStepValidator(getWizardBean());
+    }
+
     public void setSamlV2RemoteSpCreateDao(SamlV2RemoteSpCreateDao samlV2RemoteSpCreateDao) {
         this.samlV2RemoteSpCreateDao = samlV2RemoteSpCreateDao;
     }
@@ -67,7 +75,7 @@ public class SamlV2RemoteSpCreateWizardHandler
     @Override
     public void finishListener(ActionEvent event) {
 
-        if (!validateSteps()) {
+        if (!validateFinish(event)) {
             return;
         }
 
@@ -124,90 +132,6 @@ public class SamlV2RemoteSpCreateWizardHandler
     public void cancelListener(ActionEvent event) {
         getSamlV2RemoteSpCreateWizardBean().reset();
         doCancelNext();
-    }
-
-    @Override
-    public void previousListener(ActionEvent event) {
-        int step = getStep(event);
-        SamlV2RemoteSpCreateWizardStep wizardStep =
-                SamlV2RemoteSpCreateWizardStep.valueOf(step);
-
-        switch (wizardStep) {
-            case REALM:
-                break;
-            case METADATA:
-                if (!validateMetadata()) {
-                    return;
-                }
-                break;
-            case COT:
-                if (!validateCot()) {
-                    return;
-                }
-                break;
-            case ATTRIBUTEMAPPING:
-                break;
-            case SUMMARY:
-                break;
-            default:
-                assert false : "unhandled step: " + wizardStep;
-        }
-
-        super.previousListener(event);
-    }
-
-    @Override
-    public void nextListener(ActionEvent event) {
-        int step = getStep(event);
-        SamlV2RemoteSpCreateWizardStep wizardStep =
-                SamlV2RemoteSpCreateWizardStep.valueOf(step);
-
-        switch (wizardStep) {
-            case REALM:
-                break;
-            case METADATA:
-                if (!validateMetadata()) {
-                    return;
-                }
-                break;
-            case COT:
-                if (!validateCot()) {
-                    return;
-                }
-                break;
-            case ATTRIBUTEMAPPING:
-                break;
-            case SUMMARY:
-                break;
-            default:
-                assert false : "unhandled step: " + wizardStep;
-        }
-
-        super.nextListener(event);
-    }
-
-    public boolean validateCot() {
-        boolean usingExitingCot = getSamlV2RemoteSpCreateWizardBean().isCot();
-        String cotname = getSamlV2RemoteSpCreateWizardBean().getNewCotName();
-
-        if (!usingExitingCot) {
-            if ((cotname == null) || (cotname.length() == 0)) {               
-                popUpErrorMessage(
-                        "invalidCotSummary",
-                        "invalidCotDetail",
-                        SamlV2RemoteSpCreateWizardStep.COT.toInt());
-                return false;
-            }
-
-            if (!SamlV2CreateSharedDao.validateCot(cotname)) {               
-                popUpErrorMessage(
-                        "cotExistSummary",
-                        "cotExistDetail",
-                        SamlV2RemoteSpCreateWizardStep.COT.toInt());
-                return false;
-            }
-        }
-        return true;
     }
 
     private void popUpErrorMessage(String summary, String detail, int step) {
@@ -271,16 +195,6 @@ public class SamlV2RemoteSpCreateWizardHandler
 
     private SamlV2RemoteSpCreateWizardBean getSamlV2RemoteSpCreateWizardBean() {
         return (SamlV2RemoteSpCreateWizardBean) getWizardBean();
-    }
-
-    private boolean validateSteps() {
-        if (!validateMetadata()) {
-            return false;
-        }
-        if (!validateCot()) {
-            return false;
-        }
-        return true;
     }
 
     public void stdMetaUploadFile(ActionEvent event) throws IOException {

@@ -22,25 +22,33 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WizardHandler.java,v 1.11 2009-06-10 04:46:22 farble1670 Exp $
+ * $Id: WizardHandler.java,v 1.12 2009-07-13 19:42:42 farble1670 Exp $
  */
-
 package com.sun.identity.admin.handler;
 
 import com.sun.identity.admin.model.WizardBean;
 import com.sun.identity.admin.model.WizardStepBean;
+import com.sun.identity.admin.model.WizardStepValidator;
 import java.io.Serializable;
 import javax.faces.event.ActionEvent;
 
 public class WizardHandler implements Serializable {
+
     private WizardBean wizardBean = null;
+    private WizardStepValidator[] wizardStepValidators;
 
     public WizardBean getWizardBean() {
         return wizardBean;
     }
 
+    protected void initWizardStepValidators() {
+        // nothing
+    }
+
     public void setWizardBean(WizardBean wizardBean) {
         this.wizardBean = wizardBean;
+        wizardStepValidators = new WizardStepValidator[wizardBean.getWizardStepBeans().length];
+        initWizardStepValidators();
     }
 
     protected int getStep(ActionEvent event) {
@@ -57,18 +65,43 @@ public class WizardHandler implements Serializable {
         return step;
     }
 
-    public void gotoStepListener(ActionEvent event) {
-        int gotoStep = getGotoStep(event);
+    protected boolean validateSteps() {
+        for (int i = 0; i < wizardStepValidators.length; i++) {
+            if (!validateStep(i)) {
+                return false;
+            }
+        }
 
+        return true;
+    }
+
+    protected boolean validateStep(int step) {
+        WizardStepValidator wsv = wizardStepValidators[step];
+        if (wsv == null) {
+            return true;
+        }
+        if (!getWizardBean().isStepEnabled(step)) {
+            return true;
+        }
+
+        return wsv.validate();
+    }
+
+    public void gotoStepListener(ActionEvent event) {
+        gotoStep(event);
+    }
+
+    protected void gotoStep(ActionEvent event) {
+        int gotoStep = getGotoStep(event);
         getWizardBean().gotoStep(gotoStep);
     }
 
-    public void expandListener(ActionEvent event) {
+    public void expandStep(ActionEvent event) {
         int step = getStep(event);
         int steps = getWizardBean().getSteps();
 
-        assert(step <= steps-1);
-        
+        assert (step <= steps - 1);
+
         for (int i = 0; i < steps; i++) {
             WizardStepBean ws = getWizardBean().getWizardStepBeans()[i];
             if (i != step) {
@@ -77,39 +110,85 @@ public class WizardHandler implements Serializable {
         }
     }
 
+    protected boolean validateExpandStep(ActionEvent event) {
+        int step = getStep(event);
+
+        for (int i = 0; i < step; i++) {
+            if (!validateStep(i)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void expandStepListener(ActionEvent event) {
+        if (!validateExpandStep(event)) {
+            return;
+        }
+        expandStep(event);
+    }
+
+    protected boolean validateNextStep(ActionEvent event) {
+        int step = getStep(event);
+        return validateStep(step);
+    }
+
     public void nextListener(ActionEvent event) {
+        if (!validateNextStep(event)) {
+            return;
+        }
+        gotoNext(event);
+    }
+
+    protected void gotoNext(ActionEvent event) {
         int step = getStep(event);
         int steps = getWizardBean().getSteps();
 
-        assert (step <= steps-1);
+        assert (step <= steps - 1);
 
         WizardStepBean current = getWizardBean().getWizardStepBeans()[step];
         current.setExpanded(false);
 
-        WizardStepBean next = getWizardBean().getWizardStepBeans()[step+1];
+        WizardStepBean next = getWizardBean().getWizardStepBeans()[step + 1];
         next.setEnabled(true);
         next.setExpanded(true);
     }
 
     public void previousListener(ActionEvent event) {
+        gotoPrevious(event);
+    }
+
+    protected void gotoPrevious(ActionEvent event) {
         int step = getStep(event);
         int steps = getWizardBean().getSteps();
 
         assert (step != 0);
-        assert (step <= steps-1);
+        assert (step <= steps - 1);
 
         WizardStepBean current = getWizardBean().getWizardStepBeans()[step];
         current.setExpanded(false);
 
-        WizardStepBean previous = getWizardBean().getWizardStepBeans()[step-1];
+        WizardStepBean previous = getWizardBean().getWizardStepBeans()[step - 1];
         previous.setExpanded(true);
     }
 
+    protected boolean validateFinish(ActionEvent event) {
+        return validateSteps();
+    }
+
     public void finishListener(ActionEvent event) {
+        if (!validateFinish(event)) {
+            return;
+        }
         getWizardBean().reset();
     }
 
     public void cancelListener(ActionEvent event) {
         getWizardBean().reset();
+    }
+
+    public WizardStepValidator[] getWizardStepValidators() {
+        return wizardStepValidators;
     }
 }

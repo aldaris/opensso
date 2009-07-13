@@ -1,5 +1,3 @@
-package com.sun.identity.admin;
-
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -24,10 +22,10 @@ package com.sun.identity.admin;
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConsoleFilter.java,v 1.1 2009-06-29 13:48:00 farble1670 Exp $
+ * $Id: ConsoleFilter.java,v 1.2 2009-07-13 19:42:41 farble1670 Exp $
  */
 
-
+package com.sun.identity.admin;
 
 import com.sun.identity.entitlement.opensso.EntitlementService;
 import java.io.IOException;

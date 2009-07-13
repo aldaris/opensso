@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDao.java,v 1.23 2009-06-11 19:20:39 farble1670 Exp $
+ * $Id: PolicyDao.java,v 1.24 2009-07-13 19:42:42 farble1670 Exp $
  */
 
 package com.sun.identity.admin.dao;
 
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.ConditionTypeFactory;
 import com.sun.identity.admin.model.PolicyFilterHolder;
@@ -243,5 +244,11 @@ public class PolicyDao implements Serializable {
 
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    public static PolicyDao getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        PolicyDao pdao = (PolicyDao)mbr.resolve("policyDao");
+        return pdao;
     }
 }

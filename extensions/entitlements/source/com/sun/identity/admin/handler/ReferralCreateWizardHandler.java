@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralCreateWizardHandler.java,v 1.8 2009-06-22 15:08:11 farble1670 Exp $
+ * $Id: ReferralCreateWizardHandler.java,v 1.9 2009-07-13 19:42:42 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -30,20 +30,31 @@ package com.sun.identity.admin.handler;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
+import com.sun.identity.admin.model.NameReferralCreateWizardStepValidator;
 import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.ReferralBean;
+import com.sun.identity.admin.model.ReferralWizardStep;
+import com.sun.identity.admin.model.ResourcesReferralWizardStepValidator;
+import com.sun.identity.admin.model.SubjectsReferralWizardStepValidator;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 
 public class ReferralCreateWizardHandler extends ReferralWizardHandler {
+    @Override
+    public void initWizardStepValidators() {
+        getWizardStepValidators()[ReferralWizardStep.NAME.toInt()] = new NameReferralCreateWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[ReferralWizardStep.RESOURCES.toInt()] = new ResourcesReferralWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[ReferralWizardStep.SUBJECTS.toInt()] = new SubjectsReferralWizardStepValidator(getWizardBean());
+    }
+
     public String getBeanName() {
         return "referralCreateWizardHandler";
     }
 
     public void finishListener(ActionEvent event) {
-        if (!validateSteps()) {
+        if (!validateFinish(event)) {
             return;
         }
 
@@ -120,25 +131,4 @@ public class ReferralCreateWizardHandler extends ReferralWizardHandler {
 
         return lbs;
     }
-
-    @Override
-    public boolean validateName() {
-        if (!super.validateName()) {
-            return false;
-        }
-
-        if (getReferralDao().referralExists(getReferralWizardBean().getReferralBean())) {
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "existsSummary"));
-            mb.setDetail(r.getString(this, "existsDetail", getReferralWizardBean().getReferralBean().getName()));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-            getMessagesBean().addMessageBean(mb);
-            return false;
-        }
-
-        return true;
-    }
-
 }

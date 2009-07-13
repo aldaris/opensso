@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCreateWizardHandler.java,v 1.36 2009-06-25 17:55:08 farble1670 Exp $
+ * $Id: PolicyCreateWizardHandler.java,v 1.37 2009-07-13 19:42:42 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -30,13 +30,25 @@ package com.sun.identity.admin.handler;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
+import com.sun.identity.admin.model.NamePolicyCreateWizardStepValidator;
 import com.sun.identity.admin.model.NextPopupBean;
+import com.sun.identity.admin.model.PolicyWizardStep;
+import com.sun.identity.admin.model.ResourcesPolicyWizardStepValidator;
+import com.sun.identity.admin.model.SubjectsPolicyWizardStepValidator;
 import com.sun.identity.admin.model.ViewApplicationsBean;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 
 public class PolicyCreateWizardHandler extends PolicyWizardHandler {
+    @Override
+    public void initWizardStepValidators() {
+        getWizardStepValidators()[PolicyWizardStep.NAME.toInt()] = new NamePolicyCreateWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[PolicyWizardStep.RESOURCES.toInt()] = new ResourcesPolicyWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[PolicyWizardStep.SUBJECTS.toInt()] = new SubjectsPolicyWizardStepValidator(getWizardBean());
+    }
+
+
     public String createAction() {
         ViewApplicationsBean vasb = ViewApplicationsBean.getInstance();
         if (vasb.getViewApplications() == null || vasb.getViewApplications().size() == 0) {
@@ -90,25 +102,5 @@ public class PolicyCreateWizardHandler extends PolicyWizardHandler {
         lbs.add(LinkBean.POLICY_MANAGE);
 
         return lbs;
-    }
-
-    @Override
-    public boolean validateName() {
-        if (!super.validateName()) {
-            return false;
-        }
-
-        if (getPolicyDao().privilegeExists(getPolicyWizardBean().getPrivilegeBean())) {
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "existsSummary"));
-            mb.setDetail(r.getString(this, "existsDetail", getPolicyWizardBean().getPrivilegeBean().getName()));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-            getMessagesBean().addMessageBean(mb);
-            return false;
-        }
-
-        return true;
     }
 }

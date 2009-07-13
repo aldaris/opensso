@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.10 2009-07-10 23:13:34 asyhuang Exp $
+ * $Id: SamlV2RemoteIdpCreateWizardHandler.java,v 1.11 2009-07-13 19:42:42 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -36,7 +36,8 @@ import com.sun.identity.admin.model.SamlV2RemoteIdpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2RemoteIdpCreateWizardStep;
 import com.sun.identity.admin.model.WizardBean;
 import com.sun.identity.admin.Resources;
-import com.sun.identity.admin.dao.SamlV2CreateSharedDao;
+import com.sun.identity.admin.model.CotSamlV2RemoteIdpCreateWizardStepValidator;
+import com.sun.identity.admin.model.MetadataSamlV2RemoteIdpCreateWizardStepValidator;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,8 +50,13 @@ import javax.faces.event.ActionEvent;
 public class SamlV2RemoteIdpCreateWizardHandler
         extends SamlV2RemoteCreateWizardHandler {
 
-    private SamlV2RemoteIdpCreateWizardBean samlV2RemoteIdpCreateWizardBean;
     private SamlV2RemoteIdpCreateDao samlV2RemoteIdpCreateDao;
+
+    @Override
+    public void initWizardStepValidators() {
+        getWizardStepValidators()[SamlV2RemoteIdpCreateWizardStep.COT.toInt()] = new CotSamlV2RemoteIdpCreateWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[SamlV2RemoteIdpCreateWizardStep.METADATA.toInt()] = new MetadataSamlV2RemoteIdpCreateWizardStepValidator(getWizardBean());
+    }
 
     public void setSamlV2RemoteIdpCreateDao(
             SamlV2RemoteIdpCreateDao samlV2RemoteIdpCreateDao) {
@@ -68,90 +74,6 @@ public class SamlV2RemoteIdpCreateWizardHandler
         getSamlV2RemoteIdpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
         getMessagesBean().addMessageBean(mb);
         getSamlV2RemoteIdpCreateWizardBean().gotoStep(step);
-    }
-
-    public boolean validateMetadata() {
-        boolean usingMetaDataFile = getSamlV2RemoteIdpCreateWizardBean().isMeta();
-
-        if (!usingMetaDataFile) {
-
-            String url = getSamlV2RemoteIdpCreateWizardBean().getMetaUrl();
-
-            if ((url == null) || (url.length() == 0)) {
-                popUpErrorMessage(
-                        "invalidMetaUrlSummary",
-                        "invalidMetaUrlDetail",
-                        SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
-                return false;
-            }
-
-            if (!SamlV2CreateSharedDao.validateUrl(url)) {
-                popUpErrorMessage(
-                        "urlErrorSummary",
-                        "urlErrorDetail",
-                        SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
-                return false;
-            }
-
-        } else {
-
-            String meta = getSamlV2RemoteIdpCreateWizardBean().getStdMetaFile();
-
-            if ((meta == null) || (meta.length() == 0)) {
-                popUpErrorMessage(
-                        "invalidMetafileSummary",
-                        "invalidMetafileDetail",
-                        SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
-                return false;
-            }
-
-            if (!SamlV2CreateSharedDao.validateMetaFormat(meta)) {
-                getSamlV2RemoteIdpCreateWizardBean().setStdMetaFilename("");
-                getSamlV2RemoteIdpCreateWizardBean().setStdMetaFile("");
-                popUpErrorMessage(
-                        "invalidMataFormatSummary",
-                        "invalidMataFormatDetail",
-                        SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public boolean validateCot() {
-        boolean usingExitingCot = getSamlV2RemoteIdpCreateWizardBean().isCot();
-        String cotname = getSamlV2RemoteIdpCreateWizardBean().getNewCotName();
-
-        if (!usingExitingCot) {
-            if ((cotname == null) || (cotname.length() == 0)) {
-                popUpErrorMessage(
-                        "invalidCotSummary",
-                        "invalidCotDetail",
-                        SamlV2RemoteIdpCreateWizardStep.COT.toInt());
-
-                return false;
-            }
-
-            if (!SamlV2CreateSharedDao.validateCot(cotname)) {
-                popUpErrorMessage(
-                        "cotExistSummary",
-                        "cotExistDetail",
-                        SamlV2RemoteIdpCreateWizardStep.COT.toInt());
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean validateSteps() {
-        if (!validateMetadata()) {
-            return false;
-        }
-        if (!validateCot()) {
-            return false;
-        }
-        return true;
     }
 
     public void stdMetaUploadFile(ActionEvent event) throws IOException {
@@ -202,11 +124,6 @@ public class SamlV2RemoteIdpCreateWizardHandler
                 ifile.getFileInfo().getPercent());
     }
 
-    public void setSamlV2RemoteIdpCreateWizardBean(
-            SamlV2RemoteIdpCreateWizardBean samlV2RemoteIdpCreateWizardBean) {
-        this.samlV2RemoteIdpCreateWizardBean = samlV2RemoteIdpCreateWizardBean;
-    }
-
     private SamlV2RemoteIdpCreateWizardBean getSamlV2RemoteIdpCreateWizardBean() {
         return (SamlV2RemoteIdpCreateWizardBean) getWizardBean();
     }
@@ -217,62 +134,6 @@ public class SamlV2RemoteIdpCreateWizardHandler
     }
 
     @Override
-    public void previousListener(ActionEvent event) {
-        int step = getStep(event);
-        SamlV2RemoteIdpCreateWizardStep wizardStep =
-                SamlV2RemoteIdpCreateWizardStep.valueOf(step);
-
-        switch (wizardStep) {
-            case REALM:
-                break;
-            case METADATA:
-                if (!validateMetadata()) {
-                    return;
-                }
-                break;
-            case COT:
-                if (!validateCot()) {
-                    return;
-                }
-                break;
-            case SUMMARY:
-                break;
-            default:
-                assert false : "unhandled step: " + wizardStep;
-        }
-
-        super.previousListener(event);
-    }
-
-    @Override
-    public void nextListener(ActionEvent event) {
-        int step = getStep(event);
-        SamlV2RemoteIdpCreateWizardStep wizardStep =
-                SamlV2RemoteIdpCreateWizardStep.valueOf(step);
-
-        switch (wizardStep) {
-            case REALM:
-                break;
-            case METADATA:
-                if (!validateMetadata()) {
-                    return;
-                }
-                break;
-            case COT:
-                if (!validateCot()) {
-                    return;
-                }
-                break;
-            case SUMMARY:
-                break;
-            default:
-                assert false : "unhandled step: " + wizardStep;
-        }
-
-        super.nextListener(event);
-    }
-
-    @Override
     public void cancelListener(ActionEvent event) {
         getSamlV2RemoteIdpCreateWizardBean().reset();
         doCancelNext();
@@ -280,7 +141,7 @@ public class SamlV2RemoteIdpCreateWizardHandler
 
     @Override
     public void finishListener(ActionEvent event) {
-        if (!validateSteps()) {
+        if (!validateFinish(event)) {
             return;
         }
 
@@ -318,12 +179,7 @@ public class SamlV2RemoteIdpCreateWizardHandler
                     SamlV2RemoteIdpCreateWizardStep.SUMMARY.toInt());
         } else {
             getSamlV2RemoteIdpCreateWizardBean().reset();
-            getFinishAction();
+            doFinishNext();
         }
-    }
-
-    public void getFinishAction() {
-        getSamlV2RemoteIdpCreateWizardBean().reset();
-        doFinishNext();
     }
 }

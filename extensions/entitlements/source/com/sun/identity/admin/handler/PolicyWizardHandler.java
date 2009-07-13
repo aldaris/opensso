@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardHandler.java,v 1.23 2009-06-11 02:00:42 farble1670 Exp $
+ * $Id: PolicyWizardHandler.java,v 1.24 2009-07-13 19:42:42 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -34,18 +34,13 @@ import com.icesoft.faces.context.effects.Fade;
 import com.icesoft.faces.context.effects.Highlight;
 import com.icesoft.faces.context.effects.SlideDown;
 import com.icesoft.faces.context.effects.SlideUp;
-import com.sun.identity.admin.NamePattern;
-import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.ConditionType;
-import com.sun.identity.admin.effect.InputFieldErrorEffect;
-import com.sun.identity.admin.effect.MessageErrorEffect;
 import com.sun.identity.admin.model.AndViewCondition;
 import com.sun.identity.admin.model.AndViewSubject;
 import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.ContainerViewCondition;
 import com.sun.identity.admin.model.ContainerViewSubject;
-import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.MultiPanelBean;
 import com.sun.identity.admin.model.OrViewCondition;
@@ -53,19 +48,13 @@ import com.sun.identity.admin.model.OrViewSubject;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PolicyManageBean;
-import com.sun.identity.admin.model.PolicyWizardStep;
 import com.sun.identity.admin.model.QueuedActionBean;
-import com.sun.identity.admin.model.Resource;
 import com.sun.identity.admin.model.SubjectType;
 import com.sun.identity.admin.model.Tree;
 import com.sun.identity.admin.model.ViewCondition;
 import com.sun.identity.admin.model.ViewSubject;
-import com.sun.identity.admin.model.WizardBean;
 import com.sun.identity.entitlement.Privilege;
 import java.io.Serializable;
-import java.util.List;
-import java.util.regex.Matcher;
-import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 
@@ -79,41 +68,13 @@ public abstract class PolicyWizardHandler
     private String managedBeanName;
     private MessagesBean messagesBean;
 
-    @Override
-    public void setWizardBean(WizardBean wizardBean) {
-        super.setWizardBean(wizardBean);
-    }
-
     public abstract void doFinishNext();
 
     public abstract void doCancelNext();
 
-    protected boolean validateSteps() {
-        if (!validateName()) {
-            return false;
-        }
-        if (!validateResources()) {
-            return false;
-        }
-        if (!validateSubjects()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public void expandListener(ActionEvent event) {
-        if (!validateSteps()) {
-            return;
-        }
-
-        super.expandListener(event);
-    }
-
     @Override
     public void finishListener(ActionEvent event) {
-        if (!validateSteps()) {
+        if (!validateFinish(event)) {
             return;
         }
 
@@ -123,79 +84,13 @@ public abstract class PolicyWizardHandler
         getPolicyWizardBean().reset();
         getPolicyManageBean().reset();
 
-
         doFinishNext();
     }
 
     @Override
     public void cancelListener(ActionEvent event) {
         getPolicyWizardBean().reset();
-
         doCancelNext();
-    }
-
-    @Override
-    public void nextListener(ActionEvent event) {
-        int step = getStep(event);
-        PolicyWizardStep pws = PolicyWizardStep.valueOf(step);
-
-        switch (pws) {
-            case NAME:
-                if (!validateName()) {
-                    return;
-                }
-                break;
-            case RESOURCES:
-                if (!validateResources()) {
-                    return;
-                }
-                break;
-            case SUBJECTS:
-                if (!validateSubjects()) {
-                    return;
-                }
-                break;
-            case ADVANCED:
-                break;
-            case SUMMARY:
-                break;
-            default:
-                assert false : "unhandled step: " + pws;
-        }
-
-        super.nextListener(event);
-    }
-
-    @Override
-    public void previousListener(ActionEvent event) {
-        int step = getStep(event);
-        PolicyWizardStep pws = PolicyWizardStep.valueOf(step);
-
-        switch (pws) {
-            case NAME:
-                if (!validateName()) {
-                    return;
-                }
-                break;
-            case RESOURCES:
-                if (!validateResources()) {
-                    return;
-                }
-                break;
-            case SUBJECTS:
-                if (!validateSubjects()) {
-                    return;
-                }
-                break;
-            case ADVANCED:
-                break;
-            case SUMMARY:
-                break;
-            default:
-                assert false : "unhandled step: " + pws;
-        }
-
-        super.previousListener(event);
     }
 
     public void conditionDropListener(DropEvent dropEvent) {
@@ -300,7 +195,7 @@ public abstract class PolicyWizardHandler
 
     @Override
     public void gotoStepListener(ActionEvent event) {
-        super.gotoStepListener(event);
+        gotoStep(event);
 
         // TODO, enumerate the tabs
         if (getGotoStep(event) == 3) {
@@ -401,57 +296,6 @@ public abstract class PolicyWizardHandler
         }
     }
 
-    public boolean validateName() {
-        String policyName = getPolicyWizardBean().getPrivilegeBean().getName();
-        Matcher matcher = NamePattern.get().matcher(policyName);
-
-        if (!matcher.matches()) {
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "invalidNameSummary"));
-            mb.setDetail(r.getString(this, "invalidNameDetail"));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-            Effect e;
-
-            e = new InputFieldErrorEffect();
-            getPolicyWizardBean().setPolicyNameInputEffect(e);
-
-            e = new MessageErrorEffect();
-            getPolicyWizardBean().setPolicyNameMessageEffect(e);
-
-            getMessagesBean().addMessageBean(mb);
-            getPolicyWizardBean().gotoStep(PolicyWizardStep.NAME.toInt());
-
-            return false;
-        }
-
-        return true;
-    }
-
-    public boolean validateSubjects() {
-        if (!getWizardBean().isStepEnabled(PolicyWizardStep.SUBJECTS.toInt())) {
-            return true;
-        }
-
-        if (
-                getPolicyWizardBean().getPrivilegeBean().getViewSubject() == null ||
-                getPolicyWizardBean().getPrivilegeBean().getViewSubject().getSizeLeafs() == 0) {
-
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "noSubjectsSummary"));
-            mb.setDetail(r.getString(this, "noSubjectsDetail"));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-            getMessagesBean().addMessageBean(mb);
-            getPolicyWizardBean().gotoStep(PolicyWizardStep.SUBJECTS.toInt());
-
-            return false;
-        }
-        return true;
-    }
-
     public void setPolicyDao(PolicyDao policyDao) {
         this.policyDao = policyDao;
     }
@@ -529,29 +373,6 @@ public abstract class PolicyWizardHandler
 
     public void setMessagesBean(MessagesBean messagesBean) {
         this.messagesBean = messagesBean;
-    }
-
-    public boolean validateResources() {
-        if (!getWizardBean().isStepEnabled(PolicyWizardStep.RESOURCES.toInt())) {
-            return true;
-        }
-
-        List<Resource> resources = getPolicyWizardBean().getPrivilegeBean().getViewEntitlement().getResources();
-
-        if (resources == null || resources.size() == 0) {
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "noResourcesSummary"));
-            mb.setDetail(r.getString(this, "noResourcesDetail"));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-            getMessagesBean().addMessageBean(mb);
-            getPolicyWizardBean().gotoStep(PolicyWizardStep.RESOURCES.toInt());
-
-            return false;
-        }
-
-        return true;
     }
 
     public MessagesBean getMessagesBean() {

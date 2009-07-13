@@ -22,28 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardHandler.java,v 1.13 2009-06-22 15:08:11 farble1670 Exp $
+ * $Id: ReferralWizardHandler.java,v 1.14 2009-07-13 19:42:42 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
-import com.icesoft.faces.context.effects.Effect;
-import com.sun.identity.admin.NamePattern;
-import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.ReferralDao;
-import com.sun.identity.admin.effect.InputFieldErrorEffect;
-import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.ReferralManageBean;
-import com.sun.identity.admin.model.ReferralResource;
 import com.sun.identity.admin.model.ReferralWizardBean;
-import com.sun.identity.admin.model.ReferralWizardStep;
-import com.sun.identity.admin.model.Resource;
-import com.sun.identity.admin.model.ViewEntitlement;
 import java.util.List;
-import java.util.regex.Matcher;
-import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 
 public abstract class ReferralWizardHandler extends WizardHandler {
@@ -55,20 +44,6 @@ public abstract class ReferralWizardHandler extends WizardHandler {
 
     public void setMessagesBean(MessagesBean messagesBean) {
         this.messagesBean = messagesBean;
-    }
-
-    protected boolean validateSteps() {
-        if (!validateName()) {
-            return false;
-        }
-        if (!validateResources()) {
-            return false;
-        }
-        if (!validateSubjects()) {
-            return false;
-        }
-
-        return true;
     }
 
     public abstract void doFinishNext();
@@ -83,140 +58,6 @@ public abstract class ReferralWizardHandler extends WizardHandler {
         getWizardBean().reset();
 
         doCancelNext();
-    }
-
-    @Override
-    public void expandListener(ActionEvent event) {
-        if (!validateSteps()) {
-            return;
-        }
-
-        super.expandListener(event);
-    }
-
-    protected boolean validateName() {
-        String name = getReferralWizardBean().getReferralBean().getName();
-        Matcher matcher = NamePattern.get().matcher(name);
-
-        if (!matcher.matches()) {
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "invalidNameSummary"));
-            mb.setDetail(r.getString(this, "invalidNameDetail"));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-            Effect e;
-
-            e = new InputFieldErrorEffect();
-            getReferralWizardBean().setNameInputEffect(e);
-
-            getMessagesBean().addMessageBean(mb);
-            getReferralWizardBean().gotoStep(ReferralWizardStep.NAME.toInt());
-
-            return false;
-        }
-
-        return true;
-    }
-
-    protected boolean validateResources() {
-        List<Resource> resources = getReferralWizardBean().getReferralBean().getResources();
-        if (resources != null) {
-            for (Resource r : getReferralWizardBean().getReferralBean().getResources()) {
-                ReferralResource rr = (ReferralResource) r;
-                ViewEntitlement ve = rr.getViewEntitlement();
-                if (ve.getResources() != null && ve.getResources().size() > 0) {
-                    return true;
-                }
-            }
-        }
-
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "noResourcesSummary"));
-        mb.setDetail(r.getString(this, "noResourcesDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-        getMessagesBean().addMessageBean(mb);
-
-        return false;
-    }
-
-    protected boolean validateSubjects() {
-        List<RealmBean> realmBeans = getReferralWizardBean().getReferralBean().getRealmBeans();
-        if (realmBeans == null || realmBeans.size() == 0) {
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "noSubjectsSummary"));
-            mb.setDetail(r.getString(this, "noSubjectsDetail"));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-            getMessagesBean().addMessageBean(mb);
-            
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public void nextListener(ActionEvent event) {
-        int step = getStep(event);
-        ReferralWizardStep rws = ReferralWizardStep.valueOf(step);
-
-        switch (rws) {
-            case NAME:
-                if (!validateName()) {
-                    return;
-                }
-                break;
-
-            case RESOURCES:
-                if (!validateResources()) {
-                    return;
-                }
-                break;
-
-            case SUBJECTS:
-                if (!validateSubjects()) {
-                    return;
-                }
-                break;
-
-            default:
-                throw new AssertionError("unhandled step: " + rws);
-        }
-
-        super.nextListener(event);
-    }
-
-    @Override
-    public void previousListener(ActionEvent event) {
-        int step = getStep(event);
-        ReferralWizardStep rws = ReferralWizardStep.valueOf(step);
-
-        switch (rws) {
-            case NAME:
-                if (!validateName()) {
-                    return;
-                }
-                break;
-
-            case RESOURCES:
-                if (!validateResources()) {
-                    return;
-                }
-                break;
-
-            case SUBJECTS:
-                if (!validateSubjects()) {
-                    return;
-                }
-                break;
-
-            default:
-                throw new AssertionError("unhandled step: " + rws);
-        }
-
-        super.previousListener(event);
     }
 
     public ReferralWizardBean getReferralWizardBean() {

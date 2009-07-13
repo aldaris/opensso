@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralDao.java,v 1.4 2009-06-22 17:18:53 farble1670 Exp $
+ * $Id: ReferralDao.java,v 1.5 2009-07-13 19:42:42 farble1670 Exp $
  */
 
 package com.sun.identity.admin.dao;
 
+import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.PolicyFilterHolder;
 import com.sun.identity.admin.model.RealmBean;
@@ -159,5 +160,11 @@ public class ReferralDao implements Serializable {
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }
+    }
+
+    public static ReferralDao getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        ReferralDao rdao = (ReferralDao)mbr.resolve("referralDao");
+        return rdao;
     }
 }

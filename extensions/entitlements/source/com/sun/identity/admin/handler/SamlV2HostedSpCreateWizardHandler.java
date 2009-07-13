@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.12 2009-07-10 23:13:34 asyhuang Exp $
+ * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.13 2009-07-13 19:42:42 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -31,10 +31,10 @@ import com.icesoft.faces.component.inputfile.InputFile;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.SamlV2HostedSpCreateDao;
-import com.sun.identity.admin.dao.SamlV2CreateSharedDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
+import com.sun.identity.admin.model.CotSamlV2HostedSpCreateWizardStepValidator;
 import com.sun.identity.admin.model.MessageBean;
-import com.sun.identity.admin.model.MessagesBean;
+import com.sun.identity.admin.model.MetadataSamlV2HostedSpCreateWizardStepValidator;
 import com.sun.identity.admin.model.SamlV2HostedSpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2HostedSpCreateWizardStep;
 import java.io.BufferedReader;
@@ -52,7 +52,12 @@ public class SamlV2HostedSpCreateWizardHandler
         implements Serializable {
 
     private SamlV2HostedSpCreateDao samlV2HostedSpCreateDao;
-    private MessagesBean messagesBean;
+
+    @Override
+    public void initWizardStepValidators() {
+        getWizardStepValidators()[SamlV2HostedSpCreateWizardStep.COT.toInt()] = new CotSamlV2HostedSpCreateWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[SamlV2HostedSpCreateWizardStep.METADATA.toInt()] = new MetadataSamlV2HostedSpCreateWizardStepValidator(getWizardBean());
+    }
 
     public void setSamlV2HostedSpCreateDao(SamlV2HostedSpCreateDao samlV2HostedSpCreateDao) {
         this.samlV2HostedSpCreateDao = samlV2HostedSpCreateDao;
@@ -120,162 +125,8 @@ public class SamlV2HostedSpCreateWizardHandler
         }
     }
 
-    @Override
-    public void previousListener(ActionEvent event) {
-        int step = getStep(event);
-        SamlV2HostedSpCreateWizardStep wizardStep = SamlV2HostedSpCreateWizardStep.valueOf(step);
-
-        switch (wizardStep) {
-            case REALM:
-                break;
-            case METADATA:
-                if (!validateMetadata()) {
-                    return;
-                }
-                break;
-            case COT:
-                if (!validateCot()) {
-                    return;
-                }
-                break;
-            case ATTRIBUTEMAPPING:
-                break;
-            case SUMMARY:
-                break;
-            default:
-                assert false : "unhandled step: " + wizardStep;
-        }
-
-        super.previousListener(event);
-    }
-
-    @Override
-    public void nextListener(ActionEvent event) {
-        int step = getStep(event);
-        SamlV2HostedSpCreateWizardStep wizardStep = SamlV2HostedSpCreateWizardStep.valueOf(step);
-
-        switch (wizardStep) {
-            case REALM:
-                break;
-            case METADATA:
-                if (!validateMetadata()) {
-                    return;
-                }
-                break;
-            case COT:
-                if (!validateCot()) {
-                    return;
-                }
-                break;
-            case ATTRIBUTEMAPPING:
-                break;
-            case SUMMARY:
-                break;
-            default:
-                assert false : "unhandled step: " + wizardStep;
-        }
-
-        super.nextListener(event);
-    }
-
-    public boolean validateCot() {
-        boolean usingExitingCot = getSamlV2HostedSpCreateWizardBean().isCot();
-        String cotname = getSamlV2HostedSpCreateWizardBean().getNewCotName();
-
-        if (!usingExitingCot) {
-            if ((cotname == null) || (cotname.length() == 0)) {
-               
-                popUpErrorMessage(
-                        "invalidCotSummary",
-                        "invalidCotDetail",
-                        SamlV2HostedSpCreateWizardStep.COT.toInt());
-
-                return false;
-            }
-
-            if (!SamlV2CreateSharedDao.validateCot(cotname)) {
-               
-                popUpErrorMessage(
-                        "invalidCotSummary",
-                        "invalidCotDetail",
-                        SamlV2HostedSpCreateWizardStep.COT.toInt());
-                return false;
-            }
-
-        }
-        return true;
-    }
-
-    public boolean validateMetadata() {
-        boolean usingMetaDataFile = getSamlV2HostedSpCreateWizardBean().isMeta();
-        String newEntityName = getSamlV2HostedSpCreateWizardBean().getNewEntityName();
-
-        if (!usingMetaDataFile) {
-            if ((newEntityName == null) || newEntityName.length() == 0 || (!SamlV2CreateSharedDao.valideEntityName(newEntityName))) {
-
-                popUpErrorMessage(
-                        "invalidEntityNameSummary",
-                        "invalidEntityNameDetail",
-                        SamlV2HostedSpCreateWizardStep.METADATA.toInt());
-
-                return false;
-            }
-
-        } else {
-            String stdFilename = getSamlV2HostedSpCreateWizardBean().getStdMetaFile();
-            String extFilename = getSamlV2HostedSpCreateWizardBean().getExtMetaFile();
-            if ((stdFilename == null) || (stdFilename.length() == 0) || (extFilename == null) || (extFilename.length() == 0)) {
-
-                popUpErrorMessage(
-                        "invalidMetafileSummary",
-                        "invalidMetafileDetail",
-                        SamlV2HostedSpCreateWizardStep.METADATA.toInt());
-
-                return false;
-            }
-
-            if (!SamlV2CreateSharedDao.validateMetaFormat(stdFilename)) {
-
-                getSamlV2HostedSpCreateWizardBean().setStdMetaFilename("");
-                getSamlV2HostedSpCreateWizardBean().setStdMetaFile("");
-
-                popUpErrorMessage(
-                        "invalidMetaFormatSummary",
-                        "invalidMetaFormatDetail",
-                        SamlV2HostedSpCreateWizardStep.METADATA.toInt());
-
-                return false;
-            }
-
-            if (!SamlV2CreateSharedDao.valideaExtendedMataFormat(extFilename)) {
-
-                getSamlV2HostedSpCreateWizardBean().setExtMetaFilename("");
-                getSamlV2HostedSpCreateWizardBean().setExtMetaFile("");
-
-                popUpErrorMessage(
-                        "invalidMetaFormatSummary",
-                        "invalidMetaFormatNameDetail",
-                        SamlV2HostedSpCreateWizardStep.METADATA.toInt());
-
-                return false;
-            }
-
-        }
-        return true;
-    }
-
     private SamlV2HostedSpCreateWizardBean getSamlV2HostedSpCreateWizardBean() {
         return (SamlV2HostedSpCreateWizardBean) getWizardBean();
-    }
-
-    private boolean validateSteps() {
-        if (!validateMetadata()) {
-            return false;
-        }
-        if (!validateCot()) {
-            return false;
-        }
-        return true;
     }
 
     public void stdMetaUploadFile(ActionEvent event) throws IOException {

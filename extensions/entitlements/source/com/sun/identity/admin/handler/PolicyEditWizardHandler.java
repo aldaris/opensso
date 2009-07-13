@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEditWizardHandler.java,v 1.4 2009-06-10 04:46:22 farble1670 Exp $
+ * $Id: PolicyEditWizardHandler.java,v 1.5 2009-07-13 19:42:42 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -30,10 +30,19 @@ package com.sun.identity.admin.handler;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.NextPopupBean;
+import com.sun.identity.admin.model.PolicyWizardStep;
+import com.sun.identity.admin.model.ResourcesPolicyWizardStepValidator;
+import com.sun.identity.admin.model.SubjectsPolicyWizardStepValidator;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PolicyEditWizardHandler extends PolicyWizardHandler {
+    @Override
+    public void initWizardStepValidators() {
+        getWizardStepValidators()[PolicyWizardStep.RESOURCES.toInt()] = new ResourcesPolicyWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[PolicyWizardStep.SUBJECTS.toInt()] = new SubjectsPolicyWizardStepValidator(getWizardBean());
+    }
+
     public void doFinishNext() {
         NextPopupBean npb = NextPopupBean.getInstance();
         npb.setVisible(true);

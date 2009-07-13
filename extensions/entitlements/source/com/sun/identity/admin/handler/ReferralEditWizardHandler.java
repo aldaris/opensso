@@ -22,28 +22,35 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralEditWizardHandler.java,v 1.2 2009-06-22 15:08:11 farble1670 Exp $
+ * $Id: ReferralEditWizardHandler.java,v 1.3 2009-07-13 19:42:42 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
 
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.LinkBean;
-import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.NextPopupBean;
+import com.sun.identity.admin.model.PolicyWizardStep;
 import com.sun.identity.admin.model.ReferralBean;
+import com.sun.identity.admin.model.ResourcesPolicyWizardStepValidator;
+import com.sun.identity.admin.model.SubjectsPolicyWizardStepValidator;
 import java.util.ArrayList;
 import java.util.List;
-import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 
 public class ReferralEditWizardHandler extends ReferralWizardHandler {
+    @Override
+    public void initWizardStepValidators() {
+        getWizardStepValidators()[PolicyWizardStep.RESOURCES.toInt()] = new ResourcesPolicyWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[PolicyWizardStep.SUBJECTS.toInt()] = new SubjectsPolicyWizardStepValidator(getWizardBean());
+    }
+
     public String getBeanName() {
         return "referralEditWizardHandler";
     }
 
     public void finishListener(ActionEvent event) {
-        if (!validateSteps()) {
+        if (!validateFinish(event)) {
             return;
         }
 
