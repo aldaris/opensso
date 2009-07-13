@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.5 2009-06-30 08:30:39 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.6 2009-07-13 23:22:03 asyhuang Exp $
  */
 package com.sun.identity.admin.model;
 
-import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.dao.AttributeMappingsDao;
 import java.io.Serializable;
 import java.util.ArrayList;

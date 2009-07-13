@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.12 2009-07-13 19:42:42 farble1670 Exp $
+ * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.13 2009-07-13 23:22:02 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -134,7 +134,7 @@ public class SamlV2HostedIdpCreateWizardHandler
                     cot, stdMeta, extMeta, attrMapping);
         }
         if (!result) {
-            getSamlV2HostedIdpCreateWizardBean().setStdMetaFileProgress(0);          
+            getSamlV2HostedIdpCreateWizardBean().setStdMetaFileProgress(0);
             popUpErrorMessage(
                     "creationFailedSummary",
                     "creationFailedDetail",
@@ -231,6 +231,12 @@ public class SamlV2HostedIdpCreateWizardHandler
         }
     }
 
+    public void extMetaFileUploadProgress(EventObject event) {
+        InputFile ifile = (InputFile) event.getSource();
+        getSamlV2HostedIdpCreateWizardBean().setExtMetaFileProgress(
+                ifile.getFileInfo().getPercent());
+    }
+
     // for attrmapping
     public void dropListener(DropEvent dropEvent) {
         int type = dropEvent.getEventType();
@@ -288,11 +294,5 @@ public class SamlV2HostedIdpCreateWizardHandler
 
     public ViewAttribute newViewAttribute() {
         return new SamlV2ViewAttribute();
-    }
-
-    public void extMetaFileUploadProgress(EventObject event) {
-        InputFile ifile = (InputFile) event.getSource();
-        getSamlV2HostedIdpCreateWizardBean().setExtMetaFileProgress(
-                ifile.getFileInfo().getPercent());
     }
 }

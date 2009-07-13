@@ -22,7 +22,7 @@ public class MetadataSamlV2RemoteIdpCreateWizardStepValidator extends SamlV2Remo
                 return false;
             }
 
-            if (!SamlV2CreateSharedDao.validateUrl(url)) {
+            if (!SamlV2CreateSharedDao.getInstance().validateUrl(url)) {
                 popUpErrorMessage(
                         "urlErrorSummary",
                         "urlErrorDetail",
@@ -42,12 +42,12 @@ public class MetadataSamlV2RemoteIdpCreateWizardStepValidator extends SamlV2Remo
                 return false;
             }
 
-            if (!SamlV2CreateSharedDao.validateMetaFormat(meta)) {
+            if (!SamlV2CreateSharedDao.getInstance().validateMetaFormat(meta)) {
                 getSamlV2RemoteIdpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2RemoteIdpCreateWizardBean().setStdMetaFile("");
                 popUpErrorMessage(
-                        "invalidMataFormatSummary",
-                        "invalidMataFormatDetail",
+                        "invalidMetaFormatSummary",
+                        "invalidMetaFormatDetail",
                         SamlV2RemoteIdpCreateWizardStep.METADATA.toInt());
                 return false;
             }

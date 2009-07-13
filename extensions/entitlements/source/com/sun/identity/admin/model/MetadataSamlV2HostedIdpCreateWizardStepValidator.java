@@ -15,7 +15,7 @@ public class MetadataSamlV2HostedIdpCreateWizardStepValidator extends SamlV2Host
         if (!usingMetaDataFile) {
             String newEntityName =
                     getSamlV2HostedIdpCreateWizardBean().getNewEntityName();
-            if ((newEntityName == null) || (newEntityName.length() == 0) || (!SamlV2CreateSharedDao.valideEntityName(newEntityName))) {
+            if ((newEntityName == null) || (newEntityName.length() == 0) || (!SamlV2CreateSharedDao.getInstance().valideEntityName(newEntityName))) {
                 popUpErrorMessage(
                         "invalidNameSummary",
                         "invalidNameDetail",
@@ -35,7 +35,7 @@ public class MetadataSamlV2HostedIdpCreateWizardStepValidator extends SamlV2Host
                 return false;
             }
 
-            if (!SamlV2CreateSharedDao.validateMetaFormat(stdFilename)) {
+            if (!SamlV2CreateSharedDao.getInstance().validateMetaFormat(stdFilename)) {
                 getSamlV2HostedIdpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2HostedIdpCreateWizardBean().setStdMetaFile("");
                 popUpErrorMessage(
@@ -45,7 +45,7 @@ public class MetadataSamlV2HostedIdpCreateWizardStepValidator extends SamlV2Host
                 return false;
             }
 
-            if (!SamlV2CreateSharedDao.valideaExtendedMataFormat(extFilename)) {
+            if (!SamlV2CreateSharedDao.getInstance().valideaExtendedMetaFormat(extFilename)) {
                 getSamlV2HostedIdpCreateWizardBean().setExtMetaFilename("");
                 getSamlV2HostedIdpCreateWizardBean().setExtMetaFile("");
                 popUpErrorMessage(

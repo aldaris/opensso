@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.14 2009-07-13 19:42:42 farble1670 Exp $
+ * $Id: SamlV2RemoteSpCreateWizardHandler.java,v 1.15 2009-07-13 23:22:02 asyhuang Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -160,7 +160,7 @@ public class SamlV2RemoteSpCreateWizardHandler
                         SamlV2RemoteSpCreateWizardStep.METADATA.toInt());
                 return false;
             }
-            if (!SamlV2CreateSharedDao.validateUrl(url)) {
+            if (!SamlV2CreateSharedDao.getInstance().validateUrl(url)) {
                 popUpErrorMessage(
                         "urlErrorSummary",
                         "urlErrorDetail",
@@ -179,12 +179,12 @@ public class SamlV2RemoteSpCreateWizardHandler
                 return false;
             }
 
-            if (!SamlV2CreateSharedDao.validateMetaFormat(meta)) {
+            if (!SamlV2CreateSharedDao.getInstance().validateMetaFormat(meta)) {
                 getSamlV2RemoteSpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2RemoteSpCreateWizardBean().setStdMetaFile("");
                 popUpErrorMessage(
-                        "invalidMataFormatSummary",
-                        "invalidMataFormatDetail",
+                        "invalidMetaFormatSummary",
+                        "invalidMetaFormatDetail",
                         SamlV2RemoteSpCreateWizardStep.METADATA.toInt());
                 return false;
             }

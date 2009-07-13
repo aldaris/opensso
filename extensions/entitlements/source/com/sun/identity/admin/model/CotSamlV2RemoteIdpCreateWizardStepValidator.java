@@ -21,7 +21,7 @@ public class CotSamlV2RemoteIdpCreateWizardStepValidator extends SamlV2RemoteIdp
                 return false;
             }
 
-            if (!SamlV2CreateSharedDao.validateCot(cotname)) {
+            if (!SamlV2CreateSharedDao.getInstance().validateCot(cotname)) {
                 popUpErrorMessage(
                         "cotExistSummary",
                         "cotExistDetail",

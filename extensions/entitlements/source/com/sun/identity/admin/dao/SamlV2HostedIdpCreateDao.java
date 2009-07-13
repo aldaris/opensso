@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateDao.java,v 1.6 2009-07-08 01:08:30 asyhuang Exp $
+ * $Id: SamlV2HostedIdpCreateDao.java,v 1.7 2009-07-13 23:22:02 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -74,10 +74,10 @@ public class SamlV2HostedIdpCreateDao
         try {
             metadata =
                     CreateSAML2HostedProviderTemplate.buildMetaDataTemplate(
-                    entityId, map, SamlV2CreateSharedDao.getRequestURL());
+                    entityId, map, SamlV2CreateSharedDao.getInstance().getRequestURL());
             extendedData =
                     CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
-                    entityId, map, SamlV2CreateSharedDao.getRequestURL());
+                    entityId, map, SamlV2CreateSharedDao.getInstance().getRequestURL());
         } catch (SAML2MetaException ex) {
             Logger.getLogger(SamlV2HostedIdpCreateDao.class.getName()).log(Level.SEVERE, null, ex);
             return false;

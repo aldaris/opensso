@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2CreateSharedDao.java,v 1.3 2009-07-10 23:13:34 asyhuang Exp $
+ * $Id: SamlV2CreateSharedDao.java,v 1.4 2009-07-13 23:22:02 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.cot.COTException;
@@ -68,6 +69,12 @@ import org.w3c.dom.NodeList;
 
 public class SamlV2CreateSharedDao {
 
+    public static SamlV2CreateSharedDao getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        SamlV2CreateSharedDao samlV2CreateSharedDao = (SamlV2CreateSharedDao) mbr.resolve("samlV2CreateSharedDao");
+        return samlV2CreateSharedDao;
+    }
+
     public static String getRequestURL() {
         boolean isConsoleRemote = Boolean.valueOf(
                 SystemProperties.get(Constants.AM_CONSOLE_REMOTE)).booleanValue();
@@ -98,8 +105,8 @@ public class SamlV2CreateSharedDao {
     }
 
     public static boolean validateCot(String newCotName) {
-       
-        List cotList = new ArrayList();       
+
+        List cotList = new ArrayList();
 
         CircleOfTrustManager manager;
         try {
@@ -186,22 +193,22 @@ public class SamlV2CreateSharedDao {
 
             } catch (ProtocolException ex) {
                 Logger.getLogger(SamlV2CreateSharedDao.class.getName()).log(Level.SEVERE, null, ex);
-                return false;            
+                return false;
             } catch (MalformedURLException ex) {
                 Logger.getLogger(SamlV2CreateSharedDao.class.getName()).log(Level.SEVERE, null, ex);
-                return false;           
+                return false;
             } catch (IOException ex) {
                 Logger.getLogger(SamlV2CreateSharedDao.class.getName()).log(Level.SEVERE, null, ex);
-                return false;           
+                return false;
             }
 
             return validateMetaFormat(metadata);
         } else {
-            return true;
+            return false;
         }
     }
 
-    public static boolean valideaExtendedMataFormat(String extended) {
+    public static boolean valideaExtendedMetaFormat(String extended) {
 
         EntityConfigElement configElt = null;
 

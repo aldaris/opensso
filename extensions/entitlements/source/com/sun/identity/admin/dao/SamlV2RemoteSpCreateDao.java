@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2RemoteSpCreateDao.java,v 1.4 2009-07-08 01:08:30 asyhuang Exp $
+ * $Id: SamlV2RemoteSpCreateDao.java,v 1.5 2009-07-13 23:22:02 asyhuang Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -112,7 +112,7 @@ public class SamlV2RemoteSpCreateDao
             String metadataUrl,
             List attrMapping) {
 
-        String metadata = SamlV2CreateSharedDao.getContent(metadataUrl);
+        String metadata = SamlV2CreateSharedDao.getInstance().getContent(metadataUrl);
         String extendedMeta = null;
 
         if (!attrMapping.isEmpty()) {

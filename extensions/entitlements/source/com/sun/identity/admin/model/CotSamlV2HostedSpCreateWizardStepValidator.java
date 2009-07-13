@@ -22,7 +22,7 @@ public class CotSamlV2HostedSpCreateWizardStepValidator extends SamlV2HostedSpCr
                 return false;
             }
 
-            if (!SamlV2CreateSharedDao.validateCot(cotname)) {
+            if (!SamlV2CreateSharedDao.getInstance().validateCot(cotname)) {
 
                 popUpErrorMessage(
                         "invalidCotSummary",

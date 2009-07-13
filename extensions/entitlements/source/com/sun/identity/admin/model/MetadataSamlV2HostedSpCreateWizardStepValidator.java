@@ -13,7 +13,7 @@ public class MetadataSamlV2HostedSpCreateWizardStepValidator extends SamlV2Hoste
         String newEntityName = getSamlV2HostedSpCreateWizardBean().getNewEntityName();
 
         if (!usingMetaDataFile) {
-            if ((newEntityName == null) || newEntityName.length() == 0 || (!SamlV2CreateSharedDao.valideEntityName(newEntityName))) {
+            if ((newEntityName == null) || newEntityName.length() == 0 || (!SamlV2CreateSharedDao.getInstance().valideEntityName(newEntityName))) {
 
                 popUpErrorMessage(
                         "invalidEntityNameSummary",
@@ -36,7 +36,7 @@ public class MetadataSamlV2HostedSpCreateWizardStepValidator extends SamlV2Hoste
                 return false;
             }
 
-            if (!SamlV2CreateSharedDao.validateMetaFormat(stdFilename)) {
+            if (!SamlV2CreateSharedDao.getInstance().validateMetaFormat(stdFilename)) {
 
                 getSamlV2HostedSpCreateWizardBean().setStdMetaFilename("");
                 getSamlV2HostedSpCreateWizardBean().setStdMetaFile("");
@@ -49,7 +49,7 @@ public class MetadataSamlV2HostedSpCreateWizardStepValidator extends SamlV2Hoste
                 return false;
             }
 
-            if (!SamlV2CreateSharedDao.valideaExtendedMataFormat(extFilename)) {
+            if (!SamlV2CreateSharedDao.getInstance().valideaExtendedMetaFormat(extFilename)) {
 
                 getSamlV2HostedSpCreateWizardBean().setExtMetaFilename("");
                 getSamlV2HostedSpCreateWizardBean().setExtMetaFile("");
