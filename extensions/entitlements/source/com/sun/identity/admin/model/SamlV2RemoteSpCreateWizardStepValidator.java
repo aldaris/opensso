@@ -24,7 +24,6 @@ public abstract class SamlV2RemoteSpCreateWizardStepValidator extends WizardStep
         Effect e = new InputFieldErrorEffect();
         getSamlV2RemoteSpCreateWizardBean().setSamlV2RemoteCreateEntityInputEffect(e);
         getMessagesBean().addMessageBean(mb);
-        getSamlV2RemoteSpCreateWizardBean().gotoStep(step);
     }
 
 }

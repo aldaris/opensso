@@ -23,7 +23,6 @@ public abstract class SamlV2HostedIdpCreateWizardStepValidator extends WizardSte
         Effect e = new InputFieldErrorEffect();
         getSamlV2HostedIdpCreateWizardBean().setSamlV2HostedCreateEntityInputEffect(e);
         getMessagesBean().addMessageBean(mb);
-        getSamlV2HostedIdpCreateWizardBean().gotoStep(step);
     }
 
 }
