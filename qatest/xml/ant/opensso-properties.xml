@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-properties.xml,v 1.8 2009-05-27 23:04:18 rmisra Exp $
+ $Id: opensso-properties.xml,v 1.9 2009-07-14 23:26:37 chandp Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,7 +26,15 @@
 <project>
     <property environment="env"/>
     <property name="single_modules" value="idm,delegation,policy,session,authentication,xacml,notification,idsvcs" />
-   
+    <property name="qaweb.dirs.base" value="."/>
+    <property name="qaweb.build.dir" value="${qaweb.dirs.base}/data/qaweb"/>
+    <property name="qaweb.src.dir" value="${qaweb.dirs.base}/source/com/sun/identity/qatest/qaweb"/>
+    <property name="qaweb.common.dir" value="${qaweb.dirs.base}/source/com/sun/identity/qatest/common/qaweb"/>
+    <property name="qaweb.lib.dir" value="${qaweb.dirs.base}/lib/qaweb"/>
+    <property name="qaweb.resource.dir" value="${qaweb.dirs.base}/resources/qaweb"/>
+    <property name="qaweb.web.content" value="${qaweb.dirs.base}/www/qaweb"/>
+    <property name="qaweb.xml.dir" value="${qaweb.dirs.base}/xml/qaweb"/>
+
     <target name="init-common"
         depends="setTimeStamp,setOSVariables">
     </target>
@@ -42,15 +50,23 @@
         <property name="ldif.dir" value="./${SERVER_DIR}/ldif"/>
         <path id="client.classpath">
             <pathelement location="${built.classes.dir}"/>
-	    <fileset dir="./lib">
-		    <include name="**/*.jar"/>
-		    <exclude name="**/opensso-sharedlib.jar"/>
-	    </fileset>
-	    <fileset dir="./lib">
-		    <include name="**/opensso-sharedlib.jar"/>
-	    </fileset>
+            <fileset dir="./lib">
+                <include name="**/*.jar"/>
+                <exclude name="**/opensso-sharedlib.jar"/>
+            </fileset>
+            <fileset dir="./lib">
+                <include name="**/opensso-sharedlib.jar"/>
+            </fileset>
         </path>
         <property name="client.cp" refid="client.classpath"/>
+
+        <path id="qaweb.classpath">
+            <pathelement location="${qaweb.build.dir}/build/classes"/>
+            <fileset dir="${qaweb.lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </path>
+        <property name="qaweb.cp" refid="qaweb.classpath"/>
 
         <path id="module.directories">
             <pathelement location="${.}"/>
@@ -76,12 +92,12 @@
     </target>
 
     <target name="setTimeStamp">
-     <tstamp>
-         <format property="date" pattern="MM_dd_yyyy" locale="en"/>
-      </tstamp>
-     <tstamp>
-         <format property="current.timestamp" pattern="MM_dd_yyyy_hh_mm_aa"
+        <tstamp>
+            <format property="date" pattern="MM_dd_yyyy" locale="en"/>
+        </tstamp>
+        <tstamp>
+            <format property="current.timestamp" pattern="MM_dd_yyyy_hh_mm_aa"
          locale="en"/>
-      </tstamp>
+        </tstamp>
     </target>
 </project>
