@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedSharedAgents.java,v 1.2 2009-01-28 05:35:01 ww203982 Exp $
+ * $Id: AuthenticatedSharedAgents.java,v 1.3 2009-07-16 17:45:58 qcheng Exp $
  *
  */
 
@@ -87,7 +87,7 @@ public class AuthenticatedSharedAgents implements Subject, ServiceListener {
     /**
      * Default Constructor
      */
-    public void AuthenticatedSharedAgents() {
+    public AuthenticatedSharedAgents() {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         if (debug.messageEnabled()) {
@@ -310,8 +310,8 @@ public class AuthenticatedSharedAgents implements Subject, ServiceListener {
                     if ((oc.getSubConfigNames().contains(agentName)) && 
                         (agentType.equalsIgnoreCase("SharedAgent"))) {    
                         isSharedAgent = true;
+                        updateCache(userDNUnivId);
                     }
-                    updateCache(userDNUnivId);
                 }
             }
         } catch (SSOException ssoe) {
@@ -341,7 +341,10 @@ public class AuthenticatedSharedAgents implements Subject, ServiceListener {
             if ((realmCache != null) && (!realmCache.isEmpty()) &&
                 (realmCache.containsKey(realmName))) {
                 orgConfigCache = (ServiceConfig) realmCache.get(realmName);
-                return (orgConfigCache);
+                if (orgConfigCache.isValid()) {
+                    debug.message("AuthenticatedSharedAgents.getOrgConfig() found in cache.");
+                    return (orgConfigCache);
+                }
             }
             if (scm == null) {
                 scm = new ServiceConfigManager(token, agentserviceName,
@@ -382,6 +385,10 @@ public class AuthenticatedSharedAgents implements Subject, ServiceListener {
     // Cache to store the realm name and the organization config.
     private static void updateRealmCache(String realmName,
         ServiceConfig orgConfig) {
+        if (debug.messageEnabled()) {
+            debug.message("AuthenticatedSharedAgents.updateRealmCache: " + 
+                "update cache for realm " + realmName);
+        }
         Map rmap = new HashMap(2);
         rmap.putAll(realmCache);
         rmap.put(realmName, orgConfig);

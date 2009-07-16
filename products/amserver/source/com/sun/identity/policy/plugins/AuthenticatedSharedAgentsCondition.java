@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedSharedAgentsCondition.java,v 1.5 2008-09-30 20:48:38 goodearth Exp $
+ * $Id: AuthenticatedSharedAgentsCondition.java,v 1.6 2009-07-16 17:45:58 qcheng Exp $
  *
  */
 
@@ -90,7 +90,7 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
     private static Map realmCache = new HashMap(2);
 
     // Debug file
-    Debug debug = Debug.getInstance("AuthAgents");
+    private static Debug debug = Debug.getInstance("AuthAgents");
 
     //  Constants for constructing resource names
     static final String RESOURCE_PREFIX = "sms://";
@@ -481,7 +481,10 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
             if ((realmCache != null) && (!realmCache.isEmpty()) &&
                 (realmCache.containsKey(realmName))) {
                 orgConfigCache = (ServiceConfig) realmCache.get(realmName);
-                return (orgConfigCache);
+                if (orgConfigCache.isValid()) {
+                    debug.message("AuthenticatedSharedAgentsCondition.getOrgConfig() found in cache.");
+                    return (orgConfigCache);
+                }
             }
             if (scm == null) {
                 scm = new ServiceConfigManager(token, agentserviceName,
@@ -527,6 +530,10 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
     // Cache to store the realm name and the organization config.
     private static void updateRealmCache(String realmName, 
         ServiceConfig orgConfig) {
+        if (debug.messageEnabled()) {
+            debug.message("AuthenticatedSharedAgents.updateRealmCache: " +
+                "update cache for realm " + realmName);
+        }
         Map rmap = new HashMap(2);
         rmap.putAll(realmCache);
         rmap.put(realmName, orgConfig);
