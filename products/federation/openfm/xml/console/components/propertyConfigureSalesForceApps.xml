@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyConfigureSalesForceApps.xml,v 1.1 2009-07-01 23:30:43 babysunil Exp $
+   $Id: propertyConfigureSalesForceApps.xml,v 1.2 2009-07-16 17:58:37 babysunil Exp $
 
 -->
 
@@ -57,7 +57,7 @@
             <property required="true" span="true">
                 <cc name="tblattrmapping"
                 tagclass="com.sun.web.ui.taglib.table.CCActionTableTag" >
-                    <attribute name="title" value="configure.provider.attributesmapping.title" />
+                    <attribute name="title" value="configure.salesforce.attributesmapping.title" />
                     <attribute name="empty" value="configure.provider.attributesmapping.title.empty" />
                     <attribute name="showPaginationControls" value="false" />
                     <attribute name="selectionType" value="multiple" />
@@ -98,7 +98,7 @@
                     <attribute name="onClick" value="showHelp('ConfigureSalesForceApps.infoMenuUserAttributes', infoMenuUserAttributes);" />
                 </cc>
                 <fieldhelp name="helpattributeName"
-	                       defaultValue="configure.google.apps.help.attributeName" />
+	                       defaultValue="configure.salesforce.apps.help.attributeName" />
             </property>
         </section>
 

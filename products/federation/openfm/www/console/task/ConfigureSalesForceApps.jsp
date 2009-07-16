@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureSalesForceApps.jsp,v 1.1 2009-07-01 23:29:43 babysunil Exp $
+   $Id: ConfigureSalesForceApps.jsp,v 1.2 2009-07-16 17:57:11 babysunil Exp $
 
 --%>
 
@@ -352,7 +352,20 @@
         tBody.appendChild(row);
     }
 
-
+    function deletePropertyRow() {
+        var table = getActionTable();
+        var rows = table.getElementsByTagName('TR');
+        for (var i = rows.length-1; i >=3; --i) {
+            var inputs = rows[i].getElementsByTagName('input');
+            var cb = inputs[0];
+            if (cb.checked) {
+                table.deleteRow(i-1);
+            }
+        }
+        tblBtnCounter['tblButton'] = 0;
+        ccSetButtonDisabled('ConfigureSalesForceApps.deleteAttrMappingBtn', 'ConfigureSalesForceApps', true);
+        return false;
+    }
 
     function getActionTable() {
         var nodes = document.getElementsByTagName("table");
