@@ -23,7 +23,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: DataStore.xml,v 1.8 2008-09-29 07:20:12 mahesh_prasad_r Exp $
+    $Id: DataStore.xml,v 1.9 2009-07-16 04:12:01 cbasha Exp $
 
 -->
 
@@ -32,12 +32,12 @@
 
 
 <ModuleProperties moduleName="DataStore" version="1.0" >
-    <Callbacks length="2" order="1" timeout="120" header="Ce serveur utilise l&apos;authentification du magasin de données." >
+    <Callbacks length="2" order="1" timeout="120" header="Connexion à OpenSSO" >
         <NameCallback>
-            <Prompt> Nom d&apos;utilisateur : </Prompt>
+            <Prompt> Nom d&apos;utilisateur : </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> Mot de passe : </Prompt>
+            <Prompt> Mot de passe : </Prompt>
         </PasswordCallback>
     </Callbacks>
 </ModuleProperties>

@@ -23,7 +23,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: WindowsDesktopSSO.xml,v 1.8 2008-09-29 07:20:11 mahesh_prasad_r Exp $
+    $Id: WindowsDesktopSSO.xml,v 1.9 2009-07-16 04:12:01 cbasha Exp $
 
 -->
 
@@ -34,7 +34,7 @@
 <ModuleProperties moduleName="WindowsDesktopSSO" version="1.0" >
     <Callbacks length="1" order="1" timeout="120" header="Este servidor utiliza la autenticación de WindowsDesktopSSO." >
         <HttpCallback>
-            <HttpHeader>Autorización</HttpHeader>
+            <HttpHeader>Authorization</HttpHeader>
             <Negotiation>WWW-Authenticate:Negotiate</Negotiation> 
             <HttpErrorCode>401</HttpErrorCode>
         </HttpCallback>
