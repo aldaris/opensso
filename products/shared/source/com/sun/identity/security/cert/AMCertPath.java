@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCertPath.java,v 1.4 2008-12-22 19:08:04 beomsuk Exp $
+ * $Id: AMCertPath.java,v 1.5 2009-07-16 00:02:24 beomsuk Exp $
  *
  */
 
@@ -61,6 +61,7 @@ public class AMCertPath {
     private static CertPathValidator cpv = null;
     private CertStore store = null;
     public static Debug debug = SecurityDebug.debug;
+    public static boolean OCSPCheck = false;
     
     static {
     	try {
@@ -115,14 +116,16 @@ public class AMCertPath {
             Method method = trustMgrClass.getMethod("getKeyStore", null);
             KeyStore keystore = (KeyStore) method.invoke(trustMgr, null);
             PKIXParameters pkixparams= new PKIXParameters(keystore);
-            if (ocspEnabled) {
-                OCSPChecker ocspChecker = new OCSPChecker(cp, pkixparams);
-                pkixparams.addCertPathChecker(ocspChecker);
-            }
-            
             if (debug.messageEnabled()) {
                 debug.message("AMCertPath.verify: crlEnabled ---> " + crlEnabled);
+                debug.message("AMCertPath.verify: ocspEnabled ---> " + ocspEnabled);
             }
+
+            if (ocspEnabled && !OCSPCheck) {
+                Security.setProperty("ocsp.enable", "true"); 
+                OCSPCheck = true;
+            }
+
             pkixparams.setRevocationEnabled(crlEnabled);
             if (store != null) {
             	pkixparams.addCertStore(store);
