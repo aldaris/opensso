@@ -39,9 +39,4 @@ public interface SsoServerFedCOTMemberEntryMBean {
      */
     public Integer getFedCOTIndex() throws SnmpStatusException;
 
-    /**
-     * Getter for the "FedCOTName" variable.
-     */
-    public String getFedCOTName() throws SnmpStatusException;
-
 }

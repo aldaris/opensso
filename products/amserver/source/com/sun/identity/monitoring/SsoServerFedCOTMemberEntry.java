@@ -52,12 +52,6 @@ public class SsoServerFedCOTMemberEntry implements SsoServerFedCOTMemberEntryMBe
      */
     protected Integer FedCOTIndex = new Integer(1);
 
-    /**
-     * Variable for storing the value of "FedCOTName".
-     * The variable is identified by: "1.3.6.1.4.1.42.2.230.3.1.1.2.1.18.1.1.2".
-     */
-    protected String FedCOTName = new String("JDMK 5.1");
-
 
     /**
      * Constructor for the "SsoServerFedCOTMemberEntry" group.
@@ -98,13 +92,6 @@ public class SsoServerFedCOTMemberEntry implements SsoServerFedCOTMemberEntryMBe
      */
     public Integer getFedCOTIndex() throws SnmpStatusException {
         return FedCOTIndex;
-    }
-
-    /**
-     * Getter for the "FedCOTName" variable.
-     */
-    public String getFedCOTName() throws SnmpStatusException {
-        return FedCOTName;
     }
 
 }

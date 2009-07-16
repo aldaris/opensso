@@ -80,7 +80,6 @@ public class TableSsoServerFedCOTMemberTable extends SnmpTableSupport implements
             final SnmpOid oid0 = (SnmpOid) v.elementAt(0);
             final SnmpOid oid1 = (SnmpOid) v.elementAt(1);
             final SnmpOid oid2 = (SnmpOid) v.elementAt(2);
-            final SnmpOid oid3 = (SnmpOid) v.elementAt(3);
             ObjectName objname = null;
             if (server != null)
                 objname = buildNameFromIndex( index );
@@ -93,8 +92,7 @@ public class TableSsoServerFedCOTMemberTable extends SnmpTableSupport implements
                  createSsoServerFedCOTMemberEntryMBean(req, rowOid, depth, objname, meta,
                     oid0.toInteger(),
                     oid1.toInteger(),
-                    oid2.toOctetString(),
-                    oid3.toInteger());
+                    oid2.toInteger());
             if (server != null) {
                 server.registerMBean(entry, objname);
             }
@@ -222,10 +220,8 @@ public class TableSsoServerFedCOTMemberTable extends SnmpTableSupport implements
             oid = (SnmpOid) v.elementAt(1);
             String _keyFedCOTIndex = oid.toInteger().toString();
             oid = (SnmpOid) v.elementAt(2);
-            String _keyFedCOTName = oid.toOctetString().toString();
-            oid = (SnmpOid) v.elementAt(3);
             String _keyFedCOTMemberIndex = oid.toInteger().toString();
-            return new ObjectName("TableSsoServerFedCOTMemberTable:name=com.sun.identity.monitoring.SsoServerFedCOTMemberEntry" + ",SsoServerRealmIndex=" + _keySsoServerRealmIndex + ",FedCOTIndex=" + _keyFedCOTIndex + ",FedCOTName=" + _keyFedCOTName + ",FedCOTMemberIndex=" + _keyFedCOTMemberIndex);
+            return new ObjectName("TableSsoServerFedCOTMemberTable:name=com.sun.identity.monitoring.SsoServerFedCOTMemberEntry" + ",SsoServerRealmIndex=" + _keySsoServerRealmIndex + ",FedCOTIndex=" + _keyFedCOTIndex + ",FedCOTMemberIndex=" + _keyFedCOTMemberIndex);
         } catch(ArrayIndexOutOfBoundsException e) {
             throw new SnmpStatusException(SnmpStatusException.snmpRspWrongValue);
         } catch(Exception e) {
@@ -238,16 +234,14 @@ public class TableSsoServerFedCOTMemberTable extends SnmpTableSupport implements
      */
     public SnmpIndex buildSnmpIndex(SsoServerFedCOTMemberEntryMBean entry)
         throws SnmpStatusException {
-        SnmpOid[] oids = new SnmpOid[4];
+        SnmpOid[] oids = new SnmpOid[3];
         SnmpValue val = null;
         val = new SnmpInt(entry.getSsoServerRealmIndex());
         oids[0] = val.toOid();
         val = new SnmpInt(entry.getFedCOTIndex());
         oids[1] = val.toOid();
-        val = new SnmpString(entry.getFedCOTName());
-        oids[2] = val.toOid();
         val = new SnmpInt(entry.getFedCOTMemberIndex());
-        oids[3] = val.toOid();
+        oids[2] = val.toOid();
         return new SnmpIndex(oids);
     }
 
@@ -257,14 +251,13 @@ public class TableSsoServerFedCOTMemberTable extends SnmpTableSupport implements
     public SnmpOid buildOidFromIndex(SnmpIndex index)
         throws SnmpStatusException {
         SnmpOid oid = new SnmpOid();
-        if (index.getNbComponents() != 4)
+        if (index.getNbComponents() != 3)
             throw new SnmpStatusException(SnmpStatusException.noSuchInstance);
         try {
             Vector v = index.getComponents();
             SnmpInt.appendToOid((SnmpOid)v.elementAt(0), oid);
             SnmpInt.appendToOid((SnmpOid)v.elementAt(1), oid);
-            SnmpString.appendToOid((SnmpOid)v.elementAt(2), oid);
-            SnmpInt.appendToOid((SnmpOid)v.elementAt(3), oid);
+            SnmpInt.appendToOid((SnmpOid)v.elementAt(2), oid);
         } catch(ArrayIndexOutOfBoundsException e) {
             throw new SnmpStatusException(SnmpStatusException.noSuchInstance);
         }
@@ -274,13 +267,12 @@ public class TableSsoServerFedCOTMemberTable extends SnmpTableSupport implements
     /**
      * Build index for "SsoServerFedCOTMemberEntry".
      */
-    public SnmpOid buildOidFromIndexVal(Integer aSsoServerRealmIndex, Integer aFedCOTIndex, String aFedCOTName, Integer aFedCOTMemberIndex)
+    public SnmpOid buildOidFromIndexVal(Integer aSsoServerRealmIndex, Integer aFedCOTIndex, Integer aFedCOTMemberIndex)
         throws SnmpStatusException  {
         SnmpOid oid = new SnmpOid();
         try {
             SnmpInt.appendToOid(new SnmpInt(aSsoServerRealmIndex).toOid(), oid);
             SnmpInt.appendToOid(new SnmpInt(aFedCOTIndex).toOid(), oid);
-            SnmpString.appendToOid(new SnmpString(aFedCOTName).toOid(), oid);
             SnmpInt.appendToOid(new SnmpInt(aFedCOTMemberIndex).toOid(), oid);
         } catch(ArrayIndexOutOfBoundsException e) {
             throw new SnmpStatusException(SnmpStatusException.noSuchInstance);
@@ -293,15 +285,13 @@ public class TableSsoServerFedCOTMemberTable extends SnmpTableSupport implements
      */
     public SnmpIndex buildSnmpIndex(long[] index, int start)
         throws SnmpStatusException {
-        SnmpOid[] oids = new SnmpOid[4];
+        SnmpOid[] oids = new SnmpOid[3];
         int pos = start;
         oids[0] = SnmpInt.toOid(index, pos);
         pos = SnmpInt.nextOid(index, pos);
         oids[1] = SnmpInt.toOid(index, pos);
         pos = SnmpInt.nextOid(index, pos);
-        oids[2] = SnmpString.toOid(index, pos);
-        pos = SnmpString.nextOid(index, pos);
-        oids[3] = SnmpInt.toOid(index, pos);
+        oids[2] = SnmpInt.toOid(index, pos);
         return new SnmpIndex(oids);
     }
 
@@ -322,7 +312,7 @@ public class TableSsoServerFedCOTMemberTable extends SnmpTableSupport implements
 
     public Object createSsoServerFedCOTMemberEntryMBean(SnmpMibSubRequest req,
                 SnmpOid rowOid, int depth, ObjectName entryObjName,
-                SnmpMibTable meta, Integer  aSsoServerRealmIndex, Integer  aFedCOTIndex, String  aFedCOTName, Integer  aFedCOTMemberIndex)
+                SnmpMibTable meta, Integer  aSsoServerRealmIndex, Integer  aFedCOTIndex, Integer  aFedCOTMemberIndex)
             throws SnmpStatusException  {
 
         // Note that when using standard metadata,
@@ -332,7 +322,6 @@ public class TableSsoServerFedCOTMemberTable extends SnmpTableSupport implements
         SsoServerFedCOTMemberEntry entry = new SsoServerFedCOTMemberEntry(theMib);
         entry.SsoServerRealmIndex = aSsoServerRealmIndex;
         entry.FedCOTIndex = aFedCOTIndex;
-        entry.FedCOTName = aFedCOTName;
         entry.FedCOTMemberIndex = aFedCOTMemberIndex;
         return entry;
     }

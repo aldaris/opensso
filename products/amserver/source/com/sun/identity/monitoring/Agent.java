@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Agent.java,v 1.2 2009-07-01 05:52:47 bigfatrat Exp $
+ * $Id: Agent.java,v 1.3 2009-07-16 20:16:59 bigfatrat Exp $
  *
  */
 
@@ -2752,7 +2752,6 @@ public class Agent {
                         cmi.FedCOTMemberIndex = new Integer(mi++);
                         cmi.SsoServerRealmIndex = ri;
                         cmi.FedCOTIndex = cotI;  // xxx - need to get from tbl
-                        cmi.FedCOTName = cotname;
                         ObjectName ceName = 
                             cmi.createSsoServerFedCOTMemberEntryObjectName(
                                 server);
@@ -2789,7 +2788,6 @@ public class Agent {
                         cmi.FedCOTMemberName = mbm;
                         cmi.FedCOTMemberIndex = new Integer(mi++);
                         cmi.SsoServerRealmIndex = ri;
-                        cmi.FedCOTName = cotname;
                         cmi.FedCOTIndex = cotI;  // xxx - need to get from tbl
                         ObjectName ceName = 
                             cmi.createSsoServerFedCOTMemberEntryObjectName(
@@ -2829,7 +2827,6 @@ public class Agent {
                         cmi.FedCOTMemberIndex = new Integer(mi++);
                         cmi.SsoServerRealmIndex = ri;
                         cmi.FedCOTIndex = cotI;  // xxx - need to get from tbl
-                        cmi.FedCOTName = cotname;
                         ObjectName ceName = 
                             cmi.createSsoServerFedCOTMemberEntryObjectName(
                                 server);
