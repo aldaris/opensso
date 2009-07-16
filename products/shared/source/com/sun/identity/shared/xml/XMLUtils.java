@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.13 2009-03-14 00:41:14 ericow Exp $
+ * $Id: XMLUtils.java,v 1.14 2009-07-16 17:02:02 ericow Exp $
  *
  */
 
@@ -864,6 +864,15 @@ public class XMLUtils {
             newSet.add(st);
         }
         return newSet;
+    }
+
+    public static String removeNullCharAtEnd(String st) {
+        int index = st.length() - 1;
+        char c = st.charAt(index);
+        if (c == '\u0000') {
+            return st.substring(0, index);
+        }
+        return st;
     }
 
     private static String ATTR_VALUE_PAIR_NODE = "AttributeValuePair";

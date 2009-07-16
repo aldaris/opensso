@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMAuthModule.java,v 1.5 2008-08-19 19:11:41 veiming Exp $
+ * $Id: SMAuthModule.java,v 1.6 2009-07-16 17:04:26 ericow Exp $
  *
  */
 
@@ -47,6 +47,7 @@ import netegrity.siteminder.javaagent.ServerDef;
 import netegrity.siteminder.javaagent.TokenDescriptor;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.shared.xml.XMLUtils;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -219,10 +220,11 @@ public class SMAuthModule extends AMLoginModule {
                        int attrId = attr.id;
                        // debugging
                        System.out.println("Attribute Id: " + attrId);
-                       System.out.println("Attribute value: " + 
-                                          new String(attr.value));
+                       String attrValue = XMLUtils.removeNullCharAtEnd(
+                               new String(attr.value));
+                       System.out.println("Attribute value: " + attrValue);
                        if(attrId == AgentAPI.ATTR_USERDN)
-                          userId = new String(attr.value);
+                           userId = attrValue;
                        }
                  }
 
