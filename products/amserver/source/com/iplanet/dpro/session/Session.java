@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.23 2009-02-19 05:39:23 bhavnab Exp $
+ * $Id: Session.java,v 1.24 2009-07-18 18:59:02 bhavnab Exp $
  *
  */
 
@@ -1528,8 +1528,6 @@ public class Session extends GeneralTaskRunnable {
              appSSOToken = (SSOToken) AccessController.doPrivileged(
                      AdminTokenAction.getInstance());
              createContext(appSSOToken);
-         } else {
-             context = null;
          }
         try {
             if (context != null) {
