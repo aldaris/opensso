@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.73 2009-07-01 02:25:34 veiming Exp $
+  $Id: build.xml,v 1.74 2009-07-18 01:20:01 hengming Exp $
 
 -->
 
@@ -63,6 +63,26 @@
 
     <target name="nightly" depends="build,tools"/>
 
+    <target name="updatejar" if="build.nightly">
+        <jar destfile="${entitlements.war.package.dir}/WEB-INF/lib/amserver.jar"
+            update="true">
+            <fileset dir="${entitlements.war.package.dir}/WEB-INF/classes/" includes="com/sun/identity/entitlement/**,com/sun/identity/log/**,com/sun/identity/policy/**" />
+        </jar>
+        <delete dir="${entitlements.war.package.dir}/WEB-INF/classes/com/sun/identity/entitlement" />
+        <delete dir="${entitlements.war.package.dir}/WEB-INF/classes/com/sun/identity/log" />
+        <delete dir="${entitlements.war.package.dir}/WEB-INF/classes/com/sun/identity/policy" />
+        <jar destfile="${entitlements.war.package.dir}/WEB-INF/lib/opensso-sharedlib.jar" update="true">
+            <fileset dir="${entitlements.war.package.dir}/WEB-INF/classes/"
+                includes="com/sun/identity/shared/**" />
+        </jar>
+        <delete dir="${entitlements.war.package.dir}/WEB-INF/classes/com/sun/identity/shared" />
+        <jar destfile="${entitlements.war.package.dir}/WEB-INF/lib/console.jar" update="true">
+            <fileset dir="${entitlements.war.package.dir}/WEB-INF/classes/" includes="com/sun/identity/console/**,com/sun/identity/admin/**" />
+        </jar>
+        <delete dir="${entitlements.war.package.dir}/WEB-INF/classes/com/sun/identity/console" />
+        <delete dir="${entitlements.war.package.dir}/WEB-INF/classes/com/sun/identity/admin" />
+    </target>
+
     <target name="build" depends="package-war"/>
 
     <target name="build-lite">
@@ -82,10 +102,15 @@
             toFile="${entitlements.built.tools.dir}/template/windows/bin/ssoadm.bat.template"
             overwrite="true"/>
 
-        <mkdir dir="${entitlements.built.tools.dir}/classes" />
-        <copy todir="${entitlements.built.tools.dir}/classes" overwrite="true">
-            <fileset dir="${entitlements.classes.dir}" includes="**/*.class" />
-        </copy>
+        <jar destfile="${entitlements.built.tools.dir}/lib/amserver.jar"
+            update="true">
+            <fileset dir="${entitlements.classes.dir}" includes="com/sun/identity/entitlement/**,com/sun/identity/log/**,com/sun/identity/policy/**" />
+        </jar>
+        <jar destfile="${entitlements.built.tools.dir}/lib/opensso-sharedlib.jar" update="true">
+            <fileset dir="${entitlements.classes.dir}"
+                includes="com/sun/identity/shared/**" />
+        </jar>
+
         <copy todir="${entitlements.built.tools.dir}/lib"
             file="${entitlements.build.lib.local.dir}/json.jar" />
         <copy todir="${entitlements.built.tools.dir}/resources"
@@ -345,7 +370,7 @@
                 merge-libs,
                 merge-resources"/>
 
-    <target name="package-war" depends="src,merge">
+    <target name="package-war" depends="src,merge,updatejar">
         <war
            destfile="${entitlements.dist.dir}/entitlement.war"
            webxml="${entitlements.war.package.dir}/WEB-INF/web.xml">
