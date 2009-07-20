@@ -22,10 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AjaxProxy.jsp,v 1.5 2009-01-09 17:42:54 veiming Exp $
+   $Id: AjaxProxy.jsp,v 1.6 2009-07-20 23:02:31 asyhuang Exp $
 
 --%>
 
+<%@page import="com.sun.identity.console.base.AMViewBeanBase" %>
 <%@page import="com.sun.identity.workflow.ITask" %>
 <%@page import="com.sun.identity.workflow.WorkflowException" %>
 <%@page import="java.util.*" %>
@@ -66,7 +67,8 @@
         map.put("_request_", request);
         out.println("0|" + task.execute(resLocale, map));
     } catch (WorkflowException e) {
-        out.write("1|" + e.getL10NMessage(resLocale));
+        out.write("1|" + AMViewBeanBase.stringToHex(
+            e.getL10NMessage(resLocale)));
     } catch (IllegalAccessException e) {
         out.write("1|" + e.getMessage());
     } catch (InstantiationException e) {

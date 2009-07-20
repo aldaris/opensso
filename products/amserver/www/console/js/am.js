@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.js,v 1.9 2009-01-09 17:42:55 veiming Exp $
+ * $Id: am.js,v 1.10 2009-07-20 23:02:31 asyhuang Exp $
  *
  */
 
@@ -282,9 +282,24 @@ function disableButton(frm, btnName, bDisable) {
     }
 }
 
-
 function escapeEx(d) {
     var escaped = encodeURIComponent(d);
     return escaped.replace(/\+/g, "%2B");
+}
+
+function hexToString(str) {
+    var result = '';
+    var idx = str.indexOf('\\u');
+    while (idx != -1) {
+        if (idx > 0) {
+            result += str.substring(0, idx);
+        }
+        var tmp = str.substring(idx, idx+6);
+        str = str.substring(idx+6);
+        eval("result += '" + tmp + "'");
+        idx = str.indexOf('\\u');
+    }
+    result += str;
+    return result;
 }
 
