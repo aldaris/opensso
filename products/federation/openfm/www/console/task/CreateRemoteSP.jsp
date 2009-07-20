@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateRemoteSP.jsp,v 1.12 2009-01-09 17:42:56 veiming Exp $
+   $Id: CreateRemoteSP.jsp,v 1.13 2009-07-20 23:03:23 asyhuang Exp $
 
 --%>
 
@@ -165,7 +165,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
     btn2.onclick = cancelOp;
     var ajaxObj = getXmlHttpRequestObject();
     var selectOptionCache;
-    var userLocale = "<% viewBean.getUserLocale().toString(); %>";
+    var userLocale = "<%= viewBean.getUserLocale().toString() %>";
 
     function submitPage() {
         document.getElementById('dlg').style.top = '300px';
@@ -215,7 +215,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
 
     function configured() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '<center><p>' + result + '</p></center>';
@@ -238,7 +238,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
 
     function circleOfTrust() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';

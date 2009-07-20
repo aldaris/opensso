@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ValidateSAML2Setup.jsp,v 1.8 2009-01-09 17:42:56 veiming Exp $
+   $Id: ValidateSAML2Setup.jsp,v 1.9 2009-07-20 23:03:23 asyhuang Exp $
 
 --%>
 
@@ -121,7 +121,7 @@
     var readyValidate = "<cc:text name="txtReadyForTest" defaultValue="validate.ready.for.test" bundleID="amConsole" escape="false" />";
     var loggingout = "<p><center><img src=\"../console/images/processing.gif\" /></center></p><cc:text name="txtloggingout" defaultValue="validate.logout" bundleID="amConsole" escape="false" />";
 
-    var userLocale = "<% viewBean.getUserLocale().toString(); %>";
+    var userLocale = "<%= viewBean.getUserLocale().toString() %>";
     var ajaxObj = getXmlHttpRequestObject();
     var frm = document.forms['ValidateSAML2Setup'];
     var btn1 = frm.elements['ValidateSAML2Setup.button1'];
@@ -207,7 +207,7 @@
 
     function gotEntities() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';

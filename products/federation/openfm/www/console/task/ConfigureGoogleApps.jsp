@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleApps.jsp,v 1.6 2009-05-07 21:35:55 asyhuang Exp $
+   $Id: ConfigureGoogleApps.jsp,v 1.7 2009-07-20 23:03:23 asyhuang Exp $
 
 --%>
 
@@ -167,7 +167,7 @@
     btn2.onclick = cancelOp;
     var ajaxObj = getXmlHttpRequestObject();
     var selectOptionCache;
-    var userLocale = "<% viewBean.getUserLocale().toString(); %>";
+    var userLocale = "<%= viewBean.getUserLocale().toString() %>";
 
     function submitPage() {
         document.getElementById('dlg').style.top = '300px';
@@ -211,7 +211,7 @@
 
     function configured() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '<center><p>' + result + '</p></center>';
@@ -255,7 +255,7 @@
 
     function circleOfTrust() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';
@@ -286,7 +286,7 @@
 
     function gotIDPs() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedIDP.jsp,v 1.14 2009-01-09 17:42:56 veiming Exp $
+   $Id: CreateHostedIDP.jsp,v 1.15 2009-07-20 23:03:23 asyhuang Exp $
 
 --%>
 
@@ -221,7 +221,7 @@
     var ajaxObj = getXmlHttpRequestObject();
     var data = '';
     var selectOptionCache;
-    var userLocale = "<% viewBean.getUserLocale().toString(); %>";
+    var userLocale = "<%= viewBean.getUserLocale().toString() %>";
 
     function submitPage() {
         document.getElementById('dlg').style.top = '300px';
@@ -304,7 +304,7 @@
 
     function circleOfTrust() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';
@@ -343,7 +343,7 @@
 
     function configured() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';

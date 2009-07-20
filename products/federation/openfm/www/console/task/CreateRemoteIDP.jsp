@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateRemoteIDP.jsp,v 1.8 2009-01-09 17:42:56 veiming Exp $
+   $Id: CreateRemoteIDP.jsp,v 1.9 2009-07-20 23:03:23 asyhuang Exp $
 
 --%>
 
@@ -163,7 +163,7 @@
     var btn2 = frm.elements['CreateRemoteIDP.button2'];
     btn2.onclick = cancelOp;
     var ajaxObj = getXmlHttpRequestObject();
-    var userLocale = "<% viewBean.getUserLocale().toString(); %>";
+    var userLocale = "<%= viewBean.getUserLocale().toString() %>";
 
     function submitPage() {
         fade();
@@ -198,7 +198,7 @@
 
     function configured() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '<center><p>' + result + '</p></center>';
@@ -221,7 +221,7 @@
 
     function circleOfTrust() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';

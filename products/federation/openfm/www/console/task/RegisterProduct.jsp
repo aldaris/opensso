@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: RegisterProduct.jsp,v 1.4 2009-01-09 17:42:56 veiming Exp $
+   $Id: RegisterProduct.jsp,v 1.5 2009-07-20 23:03:23 asyhuang Exp $
 
 --%>
 
@@ -105,7 +105,7 @@
     btn2.onclick = cancelOp;
     var ajaxObj = getXmlHttpRequestObject();
     var data = '';
-    var userLocale = "<% viewBean.getUserLocale().toString(); %>";
+    var userLocale = "<%= viewBean.getUserLocale().toString() %>";
 
     function submitPage() {
         fade();
@@ -176,7 +176,7 @@
 
     function configured() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';

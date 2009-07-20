@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateFedlet.jsp,v 1.11 2009-06-09 20:29:25 exu Exp $
+   $Id: CreateFedlet.jsp,v 1.12 2009-07-20 23:03:23 asyhuang Exp $
 
 --%>
 
@@ -165,7 +165,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
     var btn2 = frm.elements['CreateFedlet.button2'];
     btn2.onclick = cancelOp;
     var ajaxObj = getXmlHttpRequestObject(); 
-    var userLocale = "<% viewBean.getUserLocale().toString(); %>";
+    var userLocale = "<%= viewBean.getUserLocale().toString() %>";
 
     function submitPage() {
         document.getElementById('dlg').style.top = '300px';
@@ -209,7 +209,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
 
     function configured() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '<center><p>' + result + '</p></center>';
@@ -243,7 +243,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
 
     function circleOfTrust() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';
@@ -274,7 +274,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
 
     function gotIDPs() {
         if (ajaxObj.readyState == 4) {
-            var result = ajaxObj.responseText;
+            var result = hexToString(ajaxObj.responseText);
             var status = result.substring(0, result.indexOf('|'));
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';
