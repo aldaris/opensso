@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementManager.java,v 1.1 2009-06-12 00:02:33 veiming Exp $
+ * $Id: EntitlementManager.java,v 1.2 2009-07-21 08:43:40 veiming Exp $
  *
  */
 
 package com.sun.identity.entitlement.opensso.cli;
 
+import com.sun.identity.cli.AccessManagerConstants;
 import com.sun.identity.cli.CLIDefinitionBase;
 import com.sun.identity.cli.CLIException;
 
@@ -52,7 +53,7 @@ public class EntitlementManager extends CLIDefinitionBase {
      * @return product name.
      */
     public String getProductName() {
-        return "";
+        return rb.getString(AccessManagerConstants.I18N_PRODUCT_NAME);
     }
 
     public boolean isAuthOption(String arg0) {
