@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySecurityTokenService.xml,v 1.2 2008-08-15 23:09:37 asyhuang Exp $
+   $Id: propertySecurityTokenService.xml,v 1.3 2009-07-21 19:02:09 mrudul_uchil Exp $
 
 -->
 
@@ -51,24 +51,6 @@
             </cc>
         </property>
         <property>
-            <label name="lblstsEncryptIssuedKey" 
-                   defaultValue="web.services.security.token.stsEncryptIssuedKey" 
-                   labelFor="stsEncryptIssuedKey"/>
-            <cc name="stsEncryptIssuedKey" 
-                tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                <attribute name="label" value="label.Yes" />
-            </cc>
-        </property>
-        <property>
-            <label name="lblstsEncryptIssuedToken" 
-                   defaultValue="web.services.security.token.stsEncryptIssuedToken" 
-                   labelFor="stsEncryptIssuedToken"/>
-            <cc name="stsEncryptIssuedToken" 
-                tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                <attribute name="label" value="label.Yes" />
-            </cc>
-        </property>
-        <property>
             <label name="lblstsLifetime" 
                    defaultValue="web.services.security.token.stsLifetime" 
                    labelFor="stsLifetime"/>
@@ -79,16 +61,6 @@
             </cc>
             <fieldhelp name="helpstsLifetime" defaultValue="web.services.security.token.stsLifetime.inline.help" />
         </property>        
-        <property>
-            <label name="lblstsTokenImplClass" 
-                   defaultValue="web.services.security.token.stsTokenImplClass" 
-                   labelFor="stsTokenImplClass"/>
-            <cc name="stsTokenImplClass" 
-                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
-                <attribute name="size" value="75"/>
-                <attribute name="autoSubmit" value="false"/>
-            </cc>
-        </property>
         <property>
             <label name="lblstsCertAlias" 
                    defaultValue="web.services.security.token.stsCertAlias" 

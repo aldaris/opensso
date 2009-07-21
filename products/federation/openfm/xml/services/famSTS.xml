@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.16 2009-06-04 01:16:50 mallas Exp $
+   $Id: famSTS.xml,v 1.17 2009-07-21 19:00:19 mrudul_uchil Exp $
                                                                                 
 -->
 
@@ -60,7 +60,7 @@
                <AttributeSchema name="stsEncryptIssuedKey"
                    type="single"
                    syntax="boolean"
-                   i18nKey="a103">
+                   i18nKey="">
                    <DefaultValues>
                        <Value>true</Value>
                    </DefaultValues>
@@ -68,7 +68,7 @@
                <AttributeSchema name="stsEncryptIssuedToken"
                    type="single"
                    syntax="boolean"
-                   i18nKey="a104">
+                   i18nKey="">
                    <DefaultValues>
                        <Value>false</Value>
                    </DefaultValues>
@@ -84,7 +84,7 @@
                <AttributeSchema name="stsTokenImplClass"
                    type="single"
                    syntax="string"
-                   i18nKey="a106">
+                   i18nKey="">
                    <DefaultValues>
                        <Value>com.sun.xml.ws.security.trust.impl.WSTrustContractImpl</Value>
                    </DefaultValues>
