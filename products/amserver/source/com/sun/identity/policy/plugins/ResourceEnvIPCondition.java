@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceEnvIPCondition.java,v 1.3 2009-06-19 22:53:42 mrudul_uchil Exp $
+ * $Id: ResourceEnvIPCondition.java,v 1.4 2009-07-21 18:33:17 mrudul_uchil Exp $
  *
  */
 
@@ -38,6 +38,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.HashSet;
+import java.security.AccessController;
 
 import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.ConditionDecision;
@@ -54,6 +55,7 @@ import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.authentication.config.AMAuthenticationInstance;
 import com.sun.identity.authentication.config.AMConfigurationException;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.security.AdminTokenAction;
 
 
 /**
@@ -260,7 +262,7 @@ public class ResourceEnvIPCondition implements Condition {
             DEBUG.message("ResourceEnvIPCondition:getConditionDecision - " + 
             "client environment map : " + env);
         }
-	boolean allowed = false;
+	    boolean allowed = false;
         Map advices = new HashMap();
         
         String adviceStr = getAdviceStrForEnv(env,token);
@@ -271,113 +273,108 @@ public class ResourceEnvIPCondition implements Condition {
             int index = adviceStr.indexOf("=");
             adviceName = adviceStr.substring(0, index);
             adviceValue = adviceStr.substring(index+1);
+            
+            if ( DEBUG.messageEnabled()) {
+                DEBUG.message("ResourceEnvIPCondition:getConditionDecision - " +
+                "adviceName : " + adviceName + " and adviceValue : "
+                + adviceValue);
+            }
+
+            if ((adviceName != null) && (adviceName.length() != 0) &&
+                (adviceValue != null) && (adviceValue.length() != 0)) {
+                if (adviceName.equalsIgnoreCase(ISAuthConstants.MODULE_PARAM)) {
+                    Set adviceMessages =
+                        getAdviceMessagesforAuthScheme(adviceValue,token,env);
+                    if (adviceMessages.isEmpty()) {
+                        allowed = true;
+                    } else {
+                        advices.put(AUTH_SCHEME_CONDITION_ADVICE,
+                            adviceMessages);
+                    }
+
+                } else if (adviceName.equalsIgnoreCase(
+                        ISAuthConstants.SERVICE_PARAM)) {
+                    Set adviceMessages =
+                        getAdviceMessagesforAuthService(adviceValue,token,env);
+                    if (adviceMessages.isEmpty()) {
+                        allowed = true;
+                    } else {
+                        advices.put(AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE,
+                            adviceMessages);
+                    }
+
+                } else if (adviceName.equalsIgnoreCase(
+                        ISAuthConstants.AUTH_LEVEL_PARAM)) {
+                    Set adviceMessages =
+                        getAdviceMessagesforAuthLevel(adviceValue,token,env);
+                    if (adviceMessages.isEmpty()) {
+                        allowed = true;
+                    } else {
+                        advices.put(AUTH_LEVEL_CONDITION_ADVICE,
+                            adviceMessages);
+                    }
+                } else if (adviceName.equalsIgnoreCase(
+                        ISAuthConstants.ROLE_PARAM)) {
+                    Set adviceMessages =
+                        getAdviceMessagesforRole(adviceValue,token,env);
+                    if (adviceMessages.isEmpty()) {
+                        allowed = true;
+                    } else {
+                        advices.put(PolicyDecisionUtils.AUTH_ROLE_ADVICE,
+                            adviceMessages);
+                    }
+                } else if (adviceName.equalsIgnoreCase(
+                        ISAuthConstants.USER_PARAM)) {
+                    Set adviceMessages =
+                        getAdviceMessagesforUser(adviceValue,token,env);
+                    if (adviceMessages.isEmpty()) {
+                        allowed = true;
+                    } else {
+                        advices.put(PolicyDecisionUtils.AUTH_USER_ADVICE,
+                            adviceMessages);
+                    }
+                } else if (adviceName.equalsIgnoreCase(
+                        ISAuthConstants.REDIRECT_URL_PARAM)) {
+                    Set adviceMessages =
+                        getAdviceMessagesforRedirectURL(adviceValue,token,env);
+                    if (adviceMessages.isEmpty()) {
+                        allowed = true;
+                    } else {
+                        advices.put(PolicyDecisionUtils.AUTH_REDIRECTION_ADVICE,
+                            adviceMessages);
+                    }
+                } else if ((adviceName.equalsIgnoreCase(
+                        ISAuthConstants.REALM_PARAM)) ||
+                        (adviceName.equalsIgnoreCase(
+                        ISAuthConstants.ORG_PARAM))) {
+                    Set adviceMessages =
+                        getAdviceMessagesforRealm(adviceValue,token,env);
+                    if (adviceMessages.isEmpty()) {
+                        allowed = true;
+                    } else {
+                        advices.put(AUTHENTICATE_TO_REALM_CONDITION_ADVICE,
+                            adviceMessages);
+                    }
+                } else {
+                    if ( DEBUG.messageEnabled()) {
+                        DEBUG.message("At ResourceEnvIPCondition."
+                                + "getConditionDecision(): "
+                                + "adviceName is invalid");
+                    }
+                }
+            }
 
         } else if (adviceStr != null) {
             String args[] = { adviceStr };
             throw new PolicyException(ResBundleUtils.rbName,
                 "invalid_property_value", args, null);
         } else {
-            throw new PolicyException(
-                ResBundleUtils.rbName,"adviceName_adviceValue_not_valid",
-                null, null);
-        }
-
-        if ( DEBUG.messageEnabled()) {
-            DEBUG.message("ResourceEnvIPCondition:getConditionDecision - " +
-            "adviceName : " + adviceName + " and adviceValue : "
-            + adviceValue);
-        }
-        if ((adviceName != null) && (adviceName.length() != 0) &&
-                (adviceValue != null) && (adviceValue.length() != 0)) {
-            if (adviceName.equalsIgnoreCase(ISAuthConstants.MODULE_PARAM)) {
-                Set adviceMessages =
-                    getAdviceMessagesforAuthScheme(adviceValue,token,env);
-                if (adviceMessages.isEmpty()) {
-                    allowed = true;
-                } else {
-                    advices.put(AUTH_SCHEME_CONDITION_ADVICE,
-                        adviceMessages);
-                }
-
-            } else if (adviceName.equalsIgnoreCase(
-                    ISAuthConstants.SERVICE_PARAM)) {
-                Set adviceMessages =
-                    getAdviceMessagesforAuthService(adviceValue,token,env);
-                if (adviceMessages.isEmpty()) {
-                    allowed = true;
-                } else {
-                    advices.put(AUTHENTICATE_TO_SERVICE_CONDITION_ADVICE,
-                        adviceMessages);
-                }
-
-            } else if (adviceName.equalsIgnoreCase(
-                    ISAuthConstants.AUTH_LEVEL_PARAM)) {
-                Set adviceMessages =
-                    getAdviceMessagesforAuthLevel(adviceValue,token,env);
-                if (adviceMessages.isEmpty()) {
-                    allowed = true;
-                } else {
-                    advices.put(AUTH_LEVEL_CONDITION_ADVICE,
-                        adviceMessages);
-                }
-            } else if (adviceName.equalsIgnoreCase(
-                    ISAuthConstants.ROLE_PARAM)) {
-                Set adviceMessages =
-                    getAdviceMessagesforRole(adviceValue,token,env);
-                if (adviceMessages.isEmpty()) {
-                    allowed = true;
-                } else {
-                    advices.put(PolicyDecisionUtils.AUTH_ROLE_ADVICE,
-                        adviceMessages);
-                }
-            } else if (adviceName.equalsIgnoreCase(
-                    ISAuthConstants.USER_PARAM)) {
-                Set adviceMessages =
-                    getAdviceMessagesforUser(adviceValue,token,env);
-                if (adviceMessages.isEmpty()) {
-                    allowed = true;
-                } else {
-                    advices.put(PolicyDecisionUtils.AUTH_USER_ADVICE,
-                        adviceMessages);
-                }
-            } else if (adviceName.equalsIgnoreCase(
-                    ISAuthConstants.REDIRECT_URL_PARAM)) {
-                Set adviceMessages =
-                    getAdviceMessagesforRedirectURL(adviceValue,token,env);
-                if (adviceMessages.isEmpty()) {
-                    allowed = true;
-                } else {
-                    advices.put(PolicyDecisionUtils.AUTH_REDIRECTION_ADVICE,
-                        adviceMessages);
-                }
-            } else if ((adviceName.equalsIgnoreCase(
-                    ISAuthConstants.REALM_PARAM)) || 
-                    (adviceName.equalsIgnoreCase(
-                    ISAuthConstants.ORG_PARAM))) {
-                Set adviceMessages =
-                    getAdviceMessagesforRealm(adviceValue,token,env);
-                if (adviceMessages.isEmpty()) {
-                    allowed = true;
-                } else {
-                    advices.put(AUTHENTICATE_TO_REALM_CONDITION_ADVICE,
-                        adviceMessages);
-                }
-            } else {
-                if ( DEBUG.messageEnabled()) {
-                    DEBUG.message("At ResourceEnvIPCondition."
-                            + "getConditionDecision(): "
-                            + "adviceName is invalid");
-                }
-            }
-        } else {
             if ( DEBUG.messageEnabled()) {
                     DEBUG.message("At ResourceEnvIPCondition."
                             + "getConditionDecision(): "
-                            + "adviceName OR adviceValue is NULL");
+                            + "Advice is NULL since there is no matching "
+                            + "condition found.");
             }
-            throw new PolicyException(
-                ResBundleUtils.rbName,"adviceName_adviceValue_not_valid",
-                null, null);
         }
 
 	return new ConditionDecision(allowed, advices);
@@ -779,7 +776,9 @@ public class ResourceEnvIPCondition implements Condition {
                     DEBUG.message("At ResourceEnvIPCondition."
                             + "getAdviceMessagesforRedirectURL(): "
                             + "requestAuthSchemes from env= " 
-                            + requestAuthSchemes);
+                            + requestAuthSchemes
+                            + " AND orgName from env= "
+                            + orgName);
                 }
             } catch (ClassCastException e) {
                 String args[] = { REQUEST_AUTH_SCHEMES };
@@ -796,6 +795,10 @@ public class ResourceEnvIPCondition implements Condition {
                 requestAuthSchemesIgnoreRealm =
                         AMAuthUtils.getAuthenticatedSchemes(token);
                 if ( DEBUG.messageEnabled()) {
+                    DEBUG.message("At ResourceEnvIPCondition."
+                            + "getAdviceMessagesforRedirectURL(): "
+                            + "orgName from ssoToken= "
+                            +  orgName);
                     DEBUG.message("At ResourceEnvIPCondition."
                             + "getAdviceMessagesforRedirectURL(): "
                             + "requestAuthSchemes from ssoToken= " 
@@ -819,6 +822,8 @@ public class ResourceEnvIPCondition implements Condition {
         String schemeInstance = null;
         String authSchemeType = null;
         try {
+            SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
             for (Iterator iter = requestAuthSchemes.iterator();
                 iter.hasNext(); ) {
                 String requestAuthnScheme = (String)iter.next();
@@ -831,7 +836,7 @@ public class ResourceEnvIPCondition implements Condition {
                     break;
                 } else {
                     AMAuthenticationManager authManager = 
-                        new AMAuthenticationManager(token,orgName);
+                        new AMAuthenticationManager(adminToken,orgName);
                     AMAuthenticationInstance authInstance = 
                         authManager.getAuthenticationInstance(schemeInstance);
                     authSchemeType = authInstance.getType();
@@ -847,7 +852,7 @@ public class ResourceEnvIPCondition implements Condition {
                     iter.hasNext(); ) {
                     schemeInstance = (String)iter.next();
                     AMAuthenticationManager authManager = 
-                        new AMAuthenticationManager(token,orgName);
+                        new AMAuthenticationManager(adminToken,orgName);
                     AMAuthenticationInstance authInstance = 
                         authManager.getAuthenticationInstance(schemeInstance);
                     authSchemeType = authInstance.getType();
@@ -1096,19 +1101,33 @@ public class ResourceEnvIPCondition implements Condition {
                             }
                         }
                     } else {
-                        Set ipSet = (Set) env.get(REQUEST_IP);
                         String strIP = null;
-                        if ( (ipSet == null) || (ipSet.isEmpty()) ) {
-                            if (token != null) {
-                                strIP = token.getIPAddress().getHostAddress();
+                        Object object = env.get(REQUEST_IP);
+                        if (object instanceof Set) {
+                            Set ipSet = (Set) object;
+                            if ( (ipSet == null) || (ipSet.isEmpty()) ) {
+                                if (token != null) {
+                                    strIP = token.getIPAddress().getHostAddress();
+                                } else {
+                                    throw new PolicyException(
+                                        ResBundleUtils.rbName,"client_ip_null",
+                                        null, null);
+                                }
                             } else {
-                                throw new PolicyException(
-                                    ResBundleUtils.rbName,"client_ip_null", 
-                                    null, null);
+                                Iterator names = ipSet.iterator();
+                                strIP = (String) names.next();
                             }
-                        } else {
-                            Iterator names = ipSet.iterator();
-                            strIP = (String) names.next();                
+                        } else if (object instanceof String) {
+                            strIP = (String) object;
+                            if (strIP == null) {
+                                if (token != null) {
+                                    strIP = token.getIPAddress().getHostAddress();
+                                } else {
+                                    throw new PolicyException(
+                                        ResBundleUtils.rbName,"client_ip_null",
+                                        null, null);
+                                }
+                            }
                         }
         
                         long requestIp = stringToIp(strIP);
