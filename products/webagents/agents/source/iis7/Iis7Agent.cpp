@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Iis7Agent.cpp,v 1.4 2009-06-02 22:59:00 robertis Exp $
+ * $Id: Iis7Agent.cpp,v 1.5 2009-07-21 19:14:53 robertis Exp $
  *
  *
  */
@@ -123,7 +123,6 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
     void *agent_config=NULL;
     IHttpRequest* req = pHttpContext->GetRequest();
     IHttpResponse* res = pHttpContext->GetResponse();
-
 
     if (readAgentConfigFile == FALSE) {
         EnterCriticalSection(&initLock);
@@ -327,18 +326,59 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
     }
 
     if (status == AM_SUCCESS) {
-        //Check if the user is authorized to access the resource
-        status = am_web_is_access_allowed(dpro_cookie, requestURL.c_str(),
+        char* client_ip_from_ip_header = NULL;
+        char* client_hostname_from_hostname_header = NULL;
+
+        const char* client_ip_header_name = am_web_get_client_ip_header_name(agent_config);
+        const char* client_hostname_header_name = am_web_get_client_hostname_header_name(agent_config);
+        
+        if(client_ip_header_name != NULL && client_ip_header_name[0] != '\0') {
+            PCSTR pszIpHeader;
+            USHORT ccIpHeader;
+            pszIpHeader = req->GetHeader(client_ip_header_name,&ccIpHeader);
+
+            am_web_get_client_ip(pszIpHeader, &client_ip_from_ip_header);
+        }
+
+        if(client_hostname_header_name != NULL && client_hostname_header_name[0] != '\0') {
+            PCSTR pszHostName;
+            USHORT cchostName;
+            pszHostName = req->GetHeader(client_hostname_header_name,&cchostName);
+
+            am_web_get_client_hostname(pszHostName, 
+                &client_hostname_from_hostname_header);
+        }
+
+        // If client IP value is present from above processing, then
+        // set it to env_param_map. Else use from request structure.
+        if(client_ip_from_ip_header != NULL && client_ip_from_ip_header[0] != '\0') {
+
+            am_web_set_host_ip_in_env_map(client_ip_from_ip_header,
+                                  client_hostname_from_hostname_header,
+                                  env_parameter_map,
+                                  agent_config);
+
+            status = am_web_is_access_allowed(dpro_cookie, requestURL.c_str(),
+                                        pathInfo.c_str(), requestMethod,
+                                        client_ip_from_ip_header,
+                                        env_parameter_map,
+                                        &OphResources.result,
+                                        agent_config);
+        } else {
+            status = am_web_is_access_allowed(dpro_cookie, requestURL.c_str(),
                                         pathInfo.c_str(), requestMethod,
                                         (char *)requestClientIP,
                                         env_parameter_map,
                                         &OphResources.result,
                                         agent_config);
+        }
 
         am_web_log_debug("%s: status after "
                          "am_web_is_access_allowed = %s (%d)",thisfunc,
                          am_status_to_string(status), status);
         am_map_destroy(env_parameter_map);
+        am_web_free_memory(client_ip_from_ip_header);
+        am_web_free_memory(client_hostname_from_hostname_header);
     }
 
     //  Check for status and proceed accordingly
@@ -1917,7 +1957,4 @@ void do_deny(IHttpContext* pHttpContext)
         status=AM_FAILURE;
     }
 }
-
-
-
 

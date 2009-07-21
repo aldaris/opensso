@@ -17,7 +17,7 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS7Admin.vbs,v 1.1 2009-02-13 23:52:41 robertis Exp $
+' $Id: IIS7Admin.vbs,v 1.2 2009-07-21 19:15:56 robertis Exp $
 '
 ' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 '
@@ -39,7 +39,7 @@ Dim WshShell, installDir, iis7ConfigDir, iis7LogsDir, iis7AuditDir, iis7DebugDir
 Dim origBootstrapFile, origConfigFile, newConfigDir, newLogsDir, newAuditDir, newDebugDir, moduleDir, modulePath
 Dim newBootstrapFile, newConfigFile, newConfigFileTmp, agentName
 Dim regKey, responseFile, sLine, aLine, wildCardMap
-Dim NewMaps(), count, objWebRoot, IIsWebServiceObj, FSO, dict, dict1
+ ewMaps(), count, objWebRoot, IIsWebServiceObj, FSO, dict, dict1
 Dim scriptFullName, currDir
 Dim iis7InstanceDir
 Const ForReading = 1, ForWriting = 2
@@ -76,7 +76,7 @@ end if
 ' Input : None
 ' Output : None
 ' Description : The Init() function performs the following tasks
-' 1. Opens and reads the configuration file generated from IISCreateConfig.vbs
+' 1. Opens and reads the configuration file generated from IIS7CreateConfig.vbs
 ' 2. Populates few of the tokens request for agent configuration
 '----------------------------------------------------------------------------
 Function Init()
@@ -198,7 +198,7 @@ End Function
 ' 1. Opens the properties file 
 ' 2. Perfoms token replacement in properties file using the agent
 '    configuration file created from IIS7CreateConfig.vbs
-' 3. Under "iis_v6_WINNT_agent\web_agents\iis6_agent directory, creates a 
+' 3. Under "iis_v7_WINNT_agent_3\web_agents\iis7_agent directory", creates a 
 '    sub-directory "Identifier_<id number>"
 ' 4. Updates the windows registry with the location of properties file
 ' 5. Adds the IIS7 agent http module to the web site for which the agent
@@ -263,7 +263,7 @@ Function AgentConfigure(WshShell, FSO, responseFile, objWebRoot, dict1)
    regKey = "HKLM\Software\Sun Microsystems\OpenSSO IIS7 Agent\"
    WshShell.RegWrite regKey + newIdentifier + "\" ,1,"REG_SZ"
    WshShell.RegWrite regKey + newIdentifier + "\Path", newConfigDir,"REG_SZ"
-   WshShell.RegWrite regKey + newIdentifier + "\Version","2.2","REG_SZ"
+   WshShell.RegWrite regKey + newIdentifier + "\Version","3.0","REG_SZ"
 
    Call ConfigureDll()
    WSCript.Echo dict1("133")
@@ -286,10 +286,10 @@ End Function
 ' Input : WshShell, FSO, dict1
 ' Output : None
 ' Description : The AgentUnConfigure() function performs the following tasks:
-' 1.Removes both the AMAgent.properties file under the "Identifier_<id number>"
-'   and the "Identifier_<id number>" directory itself
+' 1.Removes both the OpenSSOAgentBootstrap.properties and OpenSSOAgentConfiguration.properties 
+'   file under the "Identifier_<id number>" and the "Identifier_<id number>" directory itself
 ' 2.Removes the windows registry entry which had information about the 
-'   location of AMAgent.properties file
+'   location of properties file
 ' 3.Removes the IIS7 agent http module from  the web site for which the agent
 '   was configured.
 '----------------------------------------------------------------------------

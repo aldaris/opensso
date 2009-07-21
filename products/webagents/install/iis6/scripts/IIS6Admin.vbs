@@ -17,7 +17,7 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS6Admin.vbs,v 1.1 2009-06-26 21:42:00 robertis Exp $
+' $Id: IIS6Admin.vbs,v 1.2 2009-07-21 19:15:31 robertis Exp $
 '
 ' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 '
@@ -208,7 +208,7 @@ End Function
 ' 1. Opens the properties file 
 ' 2. Perfoms token replacement in properties file using the agent
 '    configuration file created from IIS6CreateConfig.vbs
-' 3. Under "iis_v6_WINNT_agent\web_agents\iis6_agent directory, creates a 
+' 3. Under "iis_v6_WINNT_agent_3\web_agents\iis6_agent" directory, creates a 
 '    sub-directory "Identifier_<id number>"
 ' 4. Updates the windows registry with the location of properties file
 ' 5. Adds the wild card application map to the web site for which the agent
@@ -273,7 +273,7 @@ Function AgentConfigure(WshShell, FSO, responseFile, objWebRoot, dict1)
    regKey = "HKLM\Software\Sun Microsystems\OpenSSO IIS6 Agent\"
    WshShell.RegWrite regKey + newIdentifier + "\" ,1,"REG_SZ"
    WshShell.RegWrite regKey + newIdentifier + "\Path", newConfigDir,"REG_SZ"
-   WshShell.RegWrite regKey + newIdentifier + "\Version","2.2","REG_SZ"
+   WshShell.RegWrite regKey + newIdentifier + "\Version","3.0","REG_SZ"
 
    'Install the wild card application into this web site
    WScript.Echo dict1("132")

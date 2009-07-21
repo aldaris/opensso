@@ -1890,6 +1890,17 @@ DWORD WINAPI HttpExtensionProc(EXTENSION_CONTROL_BLOCK *pECB)
     size_t cookie_header_len;
     char* cookie_header = NULL;
 
+    char* ip_header = NULL;
+    char* hostname_header = NULL;
+    char* client_ip_from_ip_header = NULL;
+    char* client_hostname_from_hostname_header = NULL;
+    char* client_ip_header_name = NULL; 
+    char* client_hostname_header_name = NULL; 
+    DWORD client_ip_size=0;
+    DWORD client_host_size=0;
+    BOOL got_client_ip = FALSE;
+    BOOL got_client_host = FALSE;
+
     // Load Agent Propeties file only once
     if (readAgentConfigFile == FALSE) {
         EnterCriticalSection(&initLock);
@@ -1901,6 +1912,7 @@ DWORD WINAPI HttpExtensionProc(EXTENSION_CONTROL_BLOCK *pECB)
     }
 
     agent_config = am_web_get_agent_configuration();
+
     // Get ther request url and the path info
     status = get_request_url(pECB, &requestURL, &pathInfo, pOphResources, agent_config);
 
@@ -2096,16 +2108,66 @@ DWORD WINAPI HttpExtensionProc(EXTENSION_CONTROL_BLOCK *pECB)
     // This check is not necessary for the "/dummypost/sunpostpreserve" url.
     if ((status == AM_SUCCESS) && (post_page == NULL)) {
         
-        status = am_web_is_access_allowed(dpro_cookie, requestURL,
+        client_ip_header_name = am_web_get_client_ip_header_name(agent_config);
+
+        client_hostname_header_name = 
+            am_web_get_client_hostname_header_name(agent_config);
+
+        // If client ip header property is set, then try to
+        // retrieve header value.
+        if(client_ip_header_name != NULL && client_ip_header_name[0] != '\0') {
+
+            get_header_value(pECB,client_ip_header_name, &ip_header);
+            am_web_log_debug("%s: Header value retrived : %s",thisfunc, ip_header);
+            am_web_get_client_ip(ip_header, &client_ip_from_ip_header);
+        }
+
+        // If client hostname header property is set, then try to retrieve header value.
+        if(client_hostname_header_name != NULL && client_hostname_header_name[0] != '\0') {
+            get_header_value(pECB,client_hostname_header_name, &hostname_header);
+            am_web_get_client_hostname(hostname_header, 
+                            &client_hostname_from_hostname_header);
+        }
+
+        // If client IP value is present from above processing, then
+        // set it to env_param_map. Else use from request structure.
+        if(client_ip_from_ip_header != NULL && client_ip_from_ip_header[0] != '\0') {
+            am_web_set_host_ip_in_env_map(client_ip_from_ip_header,
+                                  client_hostname_from_hostname_header,
+                                  env_parameter_map,
+                                  agent_config);
+
+            status = am_web_is_access_allowed(dpro_cookie, requestURL,
+                                        pathInfo, requestMethod,
+                                        client_ip_from_ip_header,
+                                        env_parameter_map,
+                                        &OphResources.result,
+                                        agent_config);
+        } else {
+            status = am_web_is_access_allowed(dpro_cookie, requestURL,
                                         pathInfo, requestMethod,
                                         (char *)requestClientIP,
                                         env_parameter_map,
                                         &OphResources.result,
                                         agent_config);
+        }
+
+
         am_web_log_debug("%s: status after "
                          "am_web_is_access_allowed = %s (%d)",thisfunc,
                          am_status_to_string(status), status);
         am_map_destroy(env_parameter_map);
+        am_web_free_memory(client_ip_from_ip_header);
+        am_web_free_memory(client_hostname_from_hostname_header);
+
+        if(ip_header !=NULL){
+            free(ip_header);
+            ip_header = NULL;
+        }
+        if(hostname_header != NULL){
+            free(hostname_header);
+            hostname_header = NULL;
+        }
     }
 
     switch(status) {
@@ -2335,8 +2397,8 @@ BOOL iisaPropertiesFilePathGet(CHAR** propertiesFileFullPath, char* instanceId,
 {
     // Max WINAPI path
     const DWORD dwPropertiesFileFullPathSize = MAX_PATH + 1;
-    const CHAR  szPropertiesFileName[]       = "OpenSSOAgentBootstrap.properties";
-    CHAR agentApplicationSubKey[1000] = "";
+    const CHAR  szPropertiesFileName[512]    = "";
+    CHAR agentApplicationSubKey[1000]        = "";
     const CHAR agentDirectoryKeyName[]       = "Path";
     DWORD dwPropertiesFileFullPathLen        = dwPropertiesFileFullPathSize;
     HKEY hKey                                = NULL;
@@ -2467,3 +2529,47 @@ char* string_case_insensitive_search(char *HTTPHeaders, char *KeY)
     return NULL;
 }
 
+/*
+ * This function retrieves the value of a HTTP header. 
+ * header_name is the name of the http header.
+ * the value is assigned in header_value.
+ * This value must be freed by the caller.
+ * */
+am_status_t get_header_value(EXTENSION_CONTROL_BLOCK *pECB, char* header_name, 
+        char** header_value)
+{
+    const char *thisfunc = "get_header_value()";
+    DWORD header_size = 0;
+    BOOL got_header = FALSE;
+    am_status_t status = AM_SUCCESS; 
+    char* http_header = NULL;
+
+    http_header = malloc(strlen("HTTP_")+strlen(header_name)+1);
+    strcpy(http_header,"HTTP_");
+    strcat(http_header,header_name);
+    strcat(http_header,"\0");
+
+    am_web_log_debug("%s: Header to be retrived : %s",thisfunc, http_header);
+
+    if (pECB->GetServerVariable(pECB->ConnID, http_header, NULL, &header_size) == FALSE){
+       *header_value = malloc(header_size);
+       if (*header_value != NULL) {
+           got_header = pECB->GetServerVariable(pECB->ConnID, http_header,
+                               *header_value, &header_size);
+           if ((got_header == FALSE) || (header_size <= 0)) {
+                am_web_log_debug("%s: Invalid header received : %d",thisfunc,
+                         header_size);
+               status = AM_FAILURE;
+           }
+       } else {
+            am_web_log_debug("%s: Header value alloc failed ",thisfunc);
+            status = AM_NO_MEMORY;
+       }
+    }
+
+    if(http_header != NULL){
+        free(http_header);
+        http_header = NULL;
+    }
+    return status;
+}

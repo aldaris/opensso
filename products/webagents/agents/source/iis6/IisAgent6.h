@@ -98,6 +98,9 @@ void logPrimitive(CHAR *message);
 
 char* string_case_insensitive_search(char *HTTPHeaders, char *KeY);
 
+am_status_t get_header_value(EXTENSION_CONTROL_BLOCK *pECB, char* header_name, 
+        char* header_value);
+
 tAgentConfig agentConfig;
 
 // Agent error codes to return to IIS on failure via SetLastError() in
