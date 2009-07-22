@@ -22,16 +22,71 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardBean.java,v 1.1 2009-07-22 16:40:09 farble1670 Exp $
+ * $Id: ApplicationWizardBean.java,v 1.2 2009-07-22 20:32:17 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.dao.ViewApplicationTypeDao;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import javax.faces.model.SelectItem;
 import static com.sun.identity.admin.model.ApplicationWizardStep.*;
 
 public class ApplicationWizardBean extends WizardBean {
     private boolean nameEditable = false;
+    private ApplicationBean applicationBean = new ApplicationBean();
+    private Effect nameInputEffect;
+    private Map<String,ViewApplicationType> viewApplicationTypeMap;
+
+    @Override
+    public void reset() {
+        super.reset();
+
+        applicationBean = new ApplicationBean();
+
+        viewApplicationTypeMap = ViewApplicationTypeDao.getInstance().getViewApplicationTypeMap();
+        applicationBean.setViewApplicationType(viewApplicationTypeMap.entrySet().iterator().next().getValue());
+    }
+
+    public String getViewApplicationTypeName() {
+        return applicationBean.getViewApplicationType().getName();
+    }
+
+    public void setViewApplicationTypeName(String name) {
+        ViewApplicationType vat = viewApplicationTypeMap.get(name);
+        assert(vat != null);
+        applicationBean.setViewApplicationType(vat);
+    }
+
+    public List<SelectItem> getViewApplicationTypeNameItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        for (Map.Entry<String,ViewApplicationType> entry: viewApplicationTypeMap.entrySet()) {
+            SelectItem si = new SelectItem(entry.getValue().getName(), entry.getValue().getTitle());
+            items.add(si);
+        }
+
+        return items;
+    }
+
+    public ApplicationBean getApplicationBean() {
+        return applicationBean;
+    }
+
+    public void setApplicationBean(ApplicationBean applicationBean) {
+        this.applicationBean = applicationBean;
+    }
+
+    public Effect getNameInputEffect() {
+        return nameInputEffect;
+    }
+
+    public void setNameInputEffect(Effect nameInputEffect) {
+        this.nameInputEffect = nameInputEffect;
+    }
 
     public boolean isNameEditable() {
         return nameEditable;

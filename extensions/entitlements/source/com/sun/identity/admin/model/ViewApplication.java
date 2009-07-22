@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.14 2009-06-04 11:49:18 veiming Exp $
+ * $Id: ViewApplication.java,v 1.15 2009-07-22 20:32:17 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -153,6 +153,9 @@ public class ViewApplication implements Serializable {
     public String getTitle() {
         Resources r = new Resources();
         String title = r.getString(this, "title." + name);
+        if (title == null) {
+            title = name;
+        }
         return title;
     }
 

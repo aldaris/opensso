@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ManagedBeanResolver.java,v 1.4 2009-06-09 22:40:36 farble1670 Exp $
+ * $Id: ManagedBeanResolver.java,v 1.5 2009-07-22 20:32:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin;
@@ -47,6 +47,8 @@ public class ManagedBeanResolver {
         ELResolver resolver = fcontext.getELContext().getELResolver();
         Object o = resolver.getValue(fcontext.getELContext(), null, name);
 
+        assert(o != null);
+        
         return o;
     }
 

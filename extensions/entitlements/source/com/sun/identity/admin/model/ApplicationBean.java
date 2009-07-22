@@ -22,12 +22,30 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationCreateWizardBean.java,v 1.2 2009-07-22 20:32:17 farble1670 Exp $
+ * $Id: ApplicationBean.java,v 1.4 2009-07-22 20:32:17 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import com.icesoft.faces.context.effects.Effect;
+import java.io.Serializable;
 
-public class ApplicationCreateWizardBean extends ApplicationWizardBean {
+public class ApplicationBean implements Serializable {
+    private String name;
+    private ViewApplicationType viewApplicationType;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public ViewApplicationType getViewApplicationType() {
+        return viewApplicationType;
+    }
+
+    public void setViewApplicationType(ViewApplicationType viewApplicationType) {
+        this.viewApplicationType = viewApplicationType;
+    }
 }

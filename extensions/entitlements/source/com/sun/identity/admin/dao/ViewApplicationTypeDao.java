@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationTypeDao.java,v 1.8 2009-06-04 11:49:12 veiming Exp $
+ * $Id: ViewApplicationTypeDao.java,v 1.9 2009-07-22 20:32:17 farble1670 Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -36,6 +36,7 @@ import com.sun.identity.entitlement.ApplicationType;
 import com.sun.identity.entitlement.ApplicationTypeManager;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.security.auth.Subject;
@@ -43,7 +44,7 @@ import javax.security.auth.Subject;
 public class ViewApplicationTypeDao implements Serializable {
     public List<ViewApplicationType> getViewApplicationTypes() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        Map<String,ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String,ViewApplicationType>)mbr.resolve("entitlementApplicationNameToViewApplicationTypeMap");
+        Map<String,ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String,ViewApplicationType>)mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
 
         Token token = new Token();
         Subject adminSubject = token.getAdminSubject();
@@ -55,6 +56,10 @@ public class ViewApplicationTypeDao implements Serializable {
                     entitlementApplicationTypeToViewApplicationTypeMap.get(entitlementApplicationType);
             ApplicationType at =
                     ApplicationTypeManager.getAppplicationType(adminSubject, entitlementApplicationType);
+            if (at == null) {
+                // TODO: log?
+                continue;
+            }
             List<Action> actions = new ArrayList<Action>();
             for (String actionName: at.getActions().keySet()) {
                 Boolean value = at.getActions().get(actionName);
@@ -68,5 +73,22 @@ public class ViewApplicationTypeDao implements Serializable {
         }
 
         return viewApplicationTypes;
+    }
+
+    public Map<String,ViewApplicationType> getViewApplicationTypeMap() {
+        Map<String,ViewApplicationType> viewApplicationTypeMap =
+                new HashMap<String,ViewApplicationType>();
+
+        for (ViewApplicationType vat: getViewApplicationTypes()) {
+            viewApplicationTypeMap.put(vat.getName(), vat);
+        }
+
+        return viewApplicationTypeMap;
+    }
+
+    public static ViewApplicationTypeDao getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        ViewApplicationTypeDao vatdao = (ViewApplicationTypeDao)mbr.resolve("viewApplicationTypeDao");
+        return vatdao;
     }
 }
