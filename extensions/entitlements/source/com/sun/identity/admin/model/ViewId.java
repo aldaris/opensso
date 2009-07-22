@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewId.java,v 1.4 2009-06-22 14:53:20 farble1670 Exp $
+ * $Id: ViewId.java,v 1.5 2009-07-22 16:40:09 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -45,7 +45,9 @@ public enum ViewId {
     SAMLV2_HOSTED_IDP_CREATE("/admin/facelet/samlv2-hosted-idp-create.xhtml"),
     SAMLV2_REMOTE_IDP_CREATE("/admin/facelet/samlv2-remote-idp-create.xhtml"),
     NEWS("/admin/facelet/news.xhtml"),
-    PERMISSION_DENIED("/admin/facelet/permission-denied.xhtml");
+    PERMISSION_DENIED("/admin/facelet/permission-denied.xhtml"),
+    APPLICATION("/admin/facelet/application.xhtml"),
+    APPLICATION_CREATE("/admin/facelet/application-create.xhtml");
 
     private static final Map<String, ViewId> idValues = new HashMap<String, ViewId>() {
         {
@@ -64,6 +66,8 @@ public enum ViewId {
             put(FEDERATION.getId(), FEDERATION);
             put(NEWS.getId(), NEWS);
             put(PERMISSION_DENIED.getId(), PERMISSION_DENIED);
+            put(APPLICATION.getId(), APPLICATION);
+            put(APPLICATION_CREATE.getId(), APPLICATION_CREATE);
         }
     };
 

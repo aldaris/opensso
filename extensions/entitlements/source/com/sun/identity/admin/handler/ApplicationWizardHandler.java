@@ -22,26 +22,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Permission.java,v 1.5 2009-07-22 16:40:09 farble1670 Exp $
+ * $Id: ApplicationWizardHandler.java,v 1.1 2009-07-22 16:40:08 farble1670 Exp $
  */
 
-package com.sun.identity.admin.model;
+package com.sun.identity.admin.handler;
 
-public enum Permission {
-    HOME,
-    POLICY,
-    POLICY_CREATE,
-    POLICY_MANAGE,
-    POLICY_EDIT,
-    NEWS,
-    REFERRAL_CREATE,
-    REFERRAL_MANAGE,
-    REFERRAL_EDIT,
-    FEDERATION,
-    SAMLV2_HOSTED_SP_CREATE,
-    SAMLV2_HOSTED_IDP_CREATE,
-    SAMLV2_REMOTE_SP_CREATE,
-    SAMLV2_REMOTE_IDP_CREATE,
-    APPLICATION,
-    APPLICATION_CREATE;
+import com.sun.identity.admin.model.MessagesBean;
+import com.sun.identity.admin.model.QueuedActionBean;
+
+public class ApplicationWizardHandler extends WizardHandler {
+    private QueuedActionBean queuedActionBean;
+    private MessagesBean messagesBean;
+
+    public void setQueuedActionBean(QueuedActionBean queuedActionBean) {
+        this.queuedActionBean = queuedActionBean;
+    }
+
+    public void setMessagesBean(MessagesBean messagesBean) {
+        this.messagesBean = messagesBean;
+    }
 }

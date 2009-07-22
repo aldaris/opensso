@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.98 2009-07-02 12:27:40 veiming Exp $
+  $Id: faces-config.xml,v 1.99 2009-07-22 16:40:09 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1592,6 +1592,40 @@
     </managed-bean>
     <!-- referral edit -->
 
+    <!-- application create -->
+    <managed-bean>
+        <managed-bean-name>applicationCreateWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ApplicationCreateWizardBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>nameEditable</property-name>
+            <value>true</value>
+        </managed-property>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>5</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>applicationCreateWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.ApplicationCreateWizardHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{applicationCreateWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- policy create -->
+
     <!-- policy manage -->
     <managed-bean>
         <managed-bean-name>policyDao</managed-bean-name>
@@ -2077,6 +2111,14 @@
         <navigation-case>
             <from-outcome>permission-denied</from-outcome>
             <to-view-id>/admin/facelet/permission-denied.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>application</from-outcome>
+            <to-view-id>/admin/facelet/application.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>application-create</from-outcome>
+            <to-view-id>/admin/facelet/application-create.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 

@@ -18,7 +18,9 @@ public enum FromAction {
     SAMLV2_REMOTE_SP_CREATE("samlv2-remote-sp-create"),
     SAMLV2_HOSTED_IDP_CREATE("samlv2-hosted-idp-create"),
     SAMLV2_REMOTE_IDP_CREATE("samlv2-remote-idp-create"),
-    PERMISSION_DENIED("permission-denied");
+    PERMISSION_DENIED("permission-denied"),
+    APPLICATION("application"),
+    APPLICATION_CREATE("application-create");
 
     private static final Map<String,FromAction> actionValues = new HashMap<String,FromAction>() {
         {
@@ -37,6 +39,8 @@ public enum FromAction {
             put(FEDERATION.getAction(), FEDERATION);
             put(NEWS.getAction(), NEWS);
             put(PERMISSION_DENIED.getAction(), PERMISSION_DENIED);
+            put(APPLICATION.getAction(), APPLICATION);
+            put(APPLICATION_CREATE.getAction(), APPLICATION_CREATE);
         }
     };
 
