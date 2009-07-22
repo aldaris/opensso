@@ -19,8 +19,6 @@ public class SubjectsReferralWizardStepValidator extends ReferralWizardStepValid
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
             getMessagesBean().addMessageBean(mb);
 
-            getReferralWizardBean().gotoStep(ReferralWizardStep.SUBJECTS.toInt());
-
             return false;
         }
 

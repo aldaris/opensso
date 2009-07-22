@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WizardHandler.java,v 1.12 2009-07-13 19:42:42 farble1670 Exp $
+ * $Id: WizardHandler.java,v 1.13 2009-07-22 14:08:53 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -84,7 +84,12 @@ public class WizardHandler implements Serializable {
             return true;
         }
 
-        return wsv.validate();
+        boolean result = wsv.validate();
+        if (!result) {
+            getWizardBean().gotoStep(step);
+        }
+
+        return result;
     }
 
     public void gotoStepListener(ActionEvent event) {

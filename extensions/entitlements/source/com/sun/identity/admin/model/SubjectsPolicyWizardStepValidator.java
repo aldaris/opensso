@@ -20,7 +20,6 @@ public class SubjectsPolicyWizardStepValidator extends PolicyWizardStepValidator
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
             getMessagesBean().addMessageBean(mb);
-            getPolicyWizardBean().gotoStep(PolicyWizardStep.SUBJECTS.toInt());
 
             return false;
         }

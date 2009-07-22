@@ -28,8 +28,6 @@ public class ResourcesReferralWizardStepValidator extends ReferralWizardStepVali
         mb.setSeverity(FacesMessage.SEVERITY_ERROR);
         getMessagesBean().addMessageBean(mb);
 
-        getReferralWizardBean().gotoStep(ReferralWizardStep.RESOURCES.toInt());
-
         return false;
     }
 }

@@ -46,7 +46,6 @@ public class NamePolicyCreateWizardStepValidator extends PolicyWizardStepValidat
         getPolicyWizardBean().setPolicyNameMessageEffect(e);
 
         getMessagesBean().addMessageBean(mb);
-        getPolicyWizardBean().gotoStep(PolicyWizardStep.NAME.toInt());
 
         return false;
     }

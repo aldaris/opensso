@@ -41,7 +41,6 @@ public class NameReferralCreateWizardStepValidator extends ReferralWizardStepVal
             getReferralWizardBean().setNameInputEffect(e);
 
             getMessagesBean().addMessageBean(mb);
-            getReferralWizardBean().gotoStep(ReferralWizardStep.NAME.toInt());
 
             return false;
         }

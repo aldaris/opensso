@@ -21,7 +21,6 @@ public class ResourcesPolicyWizardStepValidator extends PolicyWizardStepValidato
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
             getMessagesBean().addMessageBean(mb);
-            getPolicyWizardBean().gotoStep(PolicyWizardStep.RESOURCES.toInt());
 
             return false;
         }
