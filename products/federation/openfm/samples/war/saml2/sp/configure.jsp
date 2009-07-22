@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.7 2008-08-15 01:05:37 veiming Exp $
+   $Id: configure.jsp,v 1.8 2009-07-22 00:39:13 sean_brydon Exp $
 
 --%>
 
@@ -257,7 +257,7 @@
 <form action="configure.jsp" method="GET">
     This sample will create and load metadata for a hosted Service Provider and a remote Identity Provider, it will also setup circle of trust for the two providers.
     <p>&nbsp;</p>    
-    Please provide the remote Identity Provider (must also be an Open Federation instance) information:
+    Please provide the remote Identity Provider (must also be an OpenSSO instance) information:
     <p>    
 
     <table border=0 cellpadding=5 cellspacing=0>
