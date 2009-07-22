@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.32 2009-06-25 06:25:34 si224302 Exp $
+ * $Id: AuthClientUtils.java,v 1.33 2009-07-22 21:00:42 manish_rustagi Exp $
  *
  */
 
@@ -165,7 +165,7 @@ public class AuthClientUtils {
     private static String serverURL = null;
     static Debug utilDebug = Debug.getInstance("amAuthClientUtils");
     private static String[] ignoreList = {
-        "IDtoken0", "IDtoken1", "IDtoken2", "IDButton", "AMAuthCookie"
+        "IDtoken0", "IDtoken1", "IDtoken2", "IDButton", "AMAuthCookie", "encoded"
     };
     private static boolean useCache = Boolean.getBoolean(SystemProperties.get(
         com.sun.identity.shared.Constants.URL_CONNECTION_USE_CACHE, "false"));
@@ -276,10 +276,46 @@ public class AuthClientUtils {
                     + clientEncoding
                     + ", encoding=" + encoding);
         }
+        String encoded = request.getParameter("encoded");
+        if(encoded == null){
+        	encoded = "false"; 
+        }
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
             String value = request.getParameter(name);
-            data.put(name, Locale.URLDecodeField(value, encoding, utilDebug));
+            if(name.equalsIgnoreCase("SunQueryParamsString")){
+                // This will nornally be the case when browser back button is 
+                // used and the form is posted again with the base64 encoded 
+                // parameters            	
+                if ((value != null) && (value.length()>0)){
+                    value = getBase64DecodedValue(value);
+                    StringTokenizer st = new StringTokenizer(value, "&");
+                    while (st.hasMoreTokens()) {
+                        String str = st.nextToken();
+                        if (str.indexOf("=") != -1 ) {
+                            int index = str.indexOf("=");
+                            String parameter = str.substring(0,index);
+                            String parameterValue = str.substring(index+1);
+                            data.put(parameter, 
+                            Locale.URLDecodeField(parameterValue, encoding, utilDebug));                            
+                        } 
+                    }          
+            	}            	
+            }else if(name.equals("goto")){
+                // Again this will be the case when browser back
+                // button is used and the form is posted with the
+                // base64 encoded parameters including goto
+                if ((value != null) && (value.length()>0)){
+             	    if(encoded.equalsIgnoreCase("true")){
+             	        value = getBase64DecodedValue(value);
+             	    }
+                }
+                data.put(name, 
+                    Locale.URLDecodeField(value, encoding, utilDebug));             	   
+            }else{
+                data.put(name, 
+                    Locale.URLDecodeField(value, encoding, utilDebug));
+            }
         }// while
         return (data);
     }           
@@ -1489,6 +1525,11 @@ public class AuthClientUtils {
     public static String constructLoginURL(HttpServletRequest request) {
         StringBuffer loginURL = new StringBuffer(serviceURI);
         String queryString = "";
+        String encoded = request.getParameter("encoded");
+        if(encoded == null){
+        	encoded = "false"; 
+        }
+        
         Enumeration parameters = request.getParameterNames();
         for ( ; parameters.hasMoreElements() ;) {
             String parameter = (String)parameters.nextElement();
@@ -1496,35 +1537,38 @@ public class AuthClientUtils {
                 utilDebug.message("constructLoginURL:parameter: "+parameter);
             }
             if(!ignoreParameter(parameter)){
+                // This will nornally be the case when browser back button is 
+                // used and the form is posted again with the base64 encoded 
+                // parameters
                 if (parameter.equalsIgnoreCase("SunQueryParamsString")) {
-                    String queryParams = getBase64DecodedValue(
-                        request.getParameter(parameter));
+                    String queryParams = request.getParameter(parameter);
+                    if ((queryParams != null) && (queryParams.length()>0)){
+                        queryParams = getBase64DecodedValue(queryParams);
+                	}
                     if ((queryParams != null) &&
-                         (queryParams.indexOf(COMPOSITE_ADVICE) != -1)) {
+                         (queryParams.length()>0)) {
                         if(utilDebug.messageEnabled()) {
-                            utilDebug.message("constructLoginURL: found "
-                                 +"composite advice");
+                            utilDebug.message("constructLoginURL: value: "
+                                 + queryParams);
                         }
-                        queryParams = URLencodedCompositeAdvice(queryParams);
+                        // This function will encode all the parameters in
+                        // SunQueryParamsString 
+                        queryParams = URLencodedSunQueryParamsString(queryParams);
                     }
                     queryString = queryString + queryParams;
                 } else {
                     String value = request.getParameter(parameter);
-                    if(( value != null) && !value.equals("")) {
-                        // if goto may be empty, so check value is not null
-                       if(parameter.equals("goto") && value.indexOf("&")>0) {
-                           queryString = queryString + parameter + "="
-                               + Base64.encode(value.getBytes()) + "&encoded=true";
-                       } else {
-                              if (parameter.indexOf(COMPOSITE_ADVICE) != -1) {
-                                  if(utilDebug.messageEnabled()) {
-                                      utilDebug.message("constructLoginURL:found "
-                                           +"composite advice");
-                                  }
-                                  value = AMURLEncDec.encode(value);
-                             }
-                             queryString = queryString + parameter + "=" + value;
-                       }
+                    if(( value != null) && value.length()>0) {
+                       if(parameter.equals("goto")) {
+                    	   // Again this will be the case when browser back
+                    	   // button is used and the form is posted with the
+                    	   // base64 encoded parameters including goto
+                    	   if(encoded.equalsIgnoreCase("true")){
+                    	       value = getBase64DecodedValue(value);
+                    	   }
+                       } 
+                       queryString = queryString + AMURLEncDec.encode(parameter)
+                       + "=" + AMURLEncDec.encode(value);
                     }
                 }
                 if (parameters.hasMoreElements()) {
@@ -1532,19 +1576,20 @@ public class AuthClientUtils {
                 }
             }
         }
-        if(!queryString.equals("")){
+        if(queryString.length() > 0){
             loginURL.append("?");
             loginURL.append(queryString);
         }
         if (utilDebug.messageEnabled()) {
             utilDebug.message("AuthClientUtils.constructLoginURL() " +
-                              "returning login url : " + loginURL.toString());
+                              "returning URLEncoded login url : " + 
+                              loginURL.toString());
         }
-        return(loginURL.toString());
+        return loginURL.toString();
     }
     
     /**
-     * This method takes ina String representing query parameters, and 
+     * This method takes in a String representing query parameters, and 
      * URL encodes "sunamcompositeadvice" parameter out of it.
      */
      private static String URLencodedCompositeAdvice(String queryParams) {
@@ -1565,6 +1610,32 @@ public class AuthClientUtils {
          sb.append(AMURLEncDec.encode(value));
          return sb.toString();
      }
+     
+     /**
+     * This method takes in a String representing base64 decoded 
+     * SunQueryParamsString and URL encodes all the parameters
+     * included in its value
+     */
+      private static String URLencodedSunQueryParamsString(String queryParams){
+          StringBuffer sb = new StringBuffer(400);
+          StringTokenizer st = new StringTokenizer(queryParams, "&");
+          String adviceString = null;
+          while (st.hasMoreTokens()) {
+              String str = st.nextToken();
+              if (str.indexOf("=") != -1 ) {
+                  int index = str.indexOf("=");
+                  String parameter = str.substring(0,index);
+                  String value = str.substring(index+1);
+                  sb.append(AMURLEncDec.encode(parameter));
+                  sb.append("=");
+                  sb.append(AMURLEncDec.encode(value));
+                  if(st.hasMoreTokens()){
+                      sb.append("&");
+                  }
+              } 
+          }          
+          return sb.toString();
+      }     
 
     // Get Original Redirect URL for Auth to redirect the Login request
     public static SSOToken getExistingValidSSOToken(SessionID sessID) {
