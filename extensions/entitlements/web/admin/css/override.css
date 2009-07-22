@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: override.css,v 1.20 2009-06-24 23:47:02 farble1670 Exp $
+ * $Id: override.css,v 1.21 2009-07-22 18:23:30 farble1670 Exp $
  *
  */
 
@@ -40,6 +40,7 @@
 
 .iceMnuBarSubMenu, .iceMnuBarVrtSubMenu {
     margin-top: -2px;
+    width: 160px;
 }
 
 .iceSelInpTxtTxt {
@@ -50,6 +51,12 @@
 .iceMnuItm a:hover {
     padding-top: 5px;
     padding-bottom: 5px;
+}
+
+.iceMnuItm a span,
+.iceMnuItm a:hover span {
+    position: relative;
+    left: -18px;
 }
 
 .iceMnuItm a img {
