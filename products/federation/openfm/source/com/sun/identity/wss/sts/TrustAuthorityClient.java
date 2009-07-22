@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.24 2009-06-22 23:30:35 rh221556 Exp $
+ * $Id: TrustAuthorityClient.java,v 1.25 2009-07-22 15:58:44 mallas Exp $
  *
  */
 
@@ -44,6 +44,7 @@ import javax.servlet.ServletContext;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPException;
 import javax.security.auth.Subject;
+import javax.xml.namespace.QName;
 
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.debug.Debug;
@@ -571,6 +572,8 @@ public class TrustAuthorityClient {
             SOAPRequestHandler handler = new SOAPRequestHandler();
             Map config = new HashMap();
             config.put("providername", stsAgentName);
+            QName serviceQName = new QName(stsAgentName);
+            config.put("javax.xml.ws.wsdl.service", serviceQName);
             handler.init(config);            
             Subject subject = new Subject();
             if(credential != null) {

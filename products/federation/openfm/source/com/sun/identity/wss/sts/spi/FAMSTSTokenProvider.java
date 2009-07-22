@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.14 2009-06-04 01:16:50 mallas Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.15 2009-07-22 15:58:45 mallas Exp $
  *
  */
 
@@ -283,7 +283,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             }
             if (confirMethod == null){
                 if (keyType.equals(wstVer.getBearerKeyTypeURI())){
-                    confirMethod = STSConstants.SAML_BEARER_1_0;
+                    confirMethod = STSConstants.SAML_SENDER_VOUCHES_1_0;
                 } else {
                     confirMethod = STSConstants.SAML_HOLDER_OF_KEY_1_0;
                 }
@@ -344,7 +344,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             }
             if (confirMethod == null) {
                 if (keyType.equals(wstVer.getBearerKeyTypeURI())){
-                    confirMethod = STSConstants.SAML_BEARER_2_0;
+                    confirMethod = STSConstants.SAML_SENDER_VOUCHES_2_0;
                 } else {
                     confirMethod = STSConstants.SAML_HOLDER_OF_KEY_2_0;                  
                 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSRemoteConfig.java,v 1.4 2009-04-21 17:41:26 mallas Exp $
+ * $Id: STSRemoteConfig.java,v 1.5 2009-07-22 15:58:45 mallas Exp $
  */
 
 package com.sun.identity.wss.sts.config;
@@ -123,6 +123,10 @@ public class STSRemoteConfig {
      * This method reads values from service schema.
      */
      private void setValues(Map attrMap) {
+      
+        if(STSUtils.debug.messageEnabled()) {
+           STSUtils.debug.message("STSServiceConfigMap: " + attrMap);
+        }
         
         Set values = (Set)attrMap.get(END_POINT);
         if (values != null && !values.isEmpty()) {
