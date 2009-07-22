@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.6 2009-01-05 19:54:31 subbae Exp $
+# $Id: Makefile,v 1.7 2009-07-22 22:59:05 subbae Exp $
 #
 #
 # Makefile for building the Apache Policy Agent.
@@ -67,6 +67,8 @@ clean: clean_libs clean_objs
 	$(RM) *.pdb
 
 else
+# else of WINNT condition
+
 APACHE2_LIB_NAME := libamapc2
 
 APACHE2_LIB := $(APACHE2_LIB_NAME)$(SO_EXT)
@@ -79,9 +81,19 @@ ifeq ($(OS_ARCH), Linux)
    endif
 endif
 
+
 APACHE2_CFLAGS += -DAPACHE2 -DEAPI -DMOD_PERL -DUSE_EXPAT -DXP_UNIX $(PIC_FLAG) -DCORE_PRIVATE $(APACHE2_INCLUDE_FLAGS) -I$(APACHE_DIR)/include
 
 LDFLAGS += $(LD_COMMON_ORIGIN_FLAG) $(LD_ORIGIN_FLAG)
+
+ifeq ($(OS_ARCH), HP-UX)
+SYSTEM_LIBS := -lpthread -ldld -lc -lm
+CFLAGS += -DXP_UNIX -Ae
+LDLIBS += -L ../../../am/source
+LDLIBS += $(LD_STATIC_FLAG) $(CXX_STD_LIBS)
+LDLIBS += -Bdynamic -L$(NSPR_LIB_DIR) -L$(LIBXML_LIB_DIR) -L$(NSS_LIB_DIR) -lc -lnspr4 -lplds4 -lplc4 -lnss3 -lssl3 -lxml2
+
+else
 
 SYSTEM_LIBS := -lpthread -ldl -lc -lm
 LDFLAGS += $(LD_COMMON_ORIGIN_FLAG) $(LD_ORIGIN_FLAG)
@@ -89,6 +101,8 @@ LDFLAGS += -L$(NSS_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(LIBXML_LIB_DIR)
 $(STD_LIB)_LDLIBS := $(NSS_LIBS) $(NSPR_LIBS)
 LDLIBS += -L ../../../am/source
 LDLIBS += $(LDFLAGS) $(LIBXML_LIBS) $($(STD_LIB)_LDLIBS) $(SYSTEM_LIBS)
+
+endif
 
 ifeq ($(OS_ARCH), SunOS)
 LDFLAGS += -L$(DEST_LIB_DIR)

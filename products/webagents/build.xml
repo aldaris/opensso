@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.16 2009-06-26 21:30:08 robertis Exp $
+   $Id: build.xml,v 1.17 2009-07-22 22:59:05 subbae Exp $
 
 -->
 
@@ -63,6 +63,10 @@
 
     <condition property="build.os" value="WINNT">
         <os family="windows"/>
+    </condition>
+
+    <condition property="build.os" value="HP-UX">
+        <os name="hp-ux"/>
     </condition>
 
     <condition property="iis.build.ok" value="true">

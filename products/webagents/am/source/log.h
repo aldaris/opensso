@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: log.h,v 1.4 2008-07-15 20:12:39 subbae Exp $
+ * $Id: log.h,v 1.5 2009-07-22 22:59:06 subbae Exp $
  *
  * Abstract:
  *
@@ -289,7 +289,7 @@ public:
      * Log url access audit message to remote audit log file.
      *
      */
-    static am_status_t Log::doRemoteAuditLog(ModuleId module,
+    static am_status_t doRemoteAuditLog(ModuleId module,
             int remote_log_level,
             const char *user_sso_token,
             const char *logMsg);
@@ -300,7 +300,7 @@ public:
      * log.disposition property value.
      */
     static am_status_t
-    Log::auditLog(const char* auditDisposition,
+    auditLog(const char* auditDisposition,
             bool localAuditLogRotate,
             long localAuditFileSize,
             ModuleId module,

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.11 2009-07-09 17:04:26 veiming Exp $
+   $Id: build.xml,v 1.12 2009-07-22 22:59:07 subbae Exp $
 
 -->
 
@@ -144,6 +144,14 @@
             <fileset dir="${webagents.apache.src.dir}">
                     <include name="libamapc2.dll"/>
                     <include name="libamapc2.pdb"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copy-HP-UX-library">
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.apache.src.dir}">
+                    <include name="libamapc2.sl"/>
             </fileset>
         </copy>
     </target>

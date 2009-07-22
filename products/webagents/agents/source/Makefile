@@ -23,7 +23,7 @@
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
 #
-# $Id: Makefile,v 1.13 2009-06-26 21:31:26 robertis Exp $
+# $Id: Makefile,v 1.14 2009-07-22 22:59:05 subbae Exp $
 #
 # Makefile file for building the Agents tree.
 #
@@ -42,7 +42,11 @@ AGENT_COMPONENTS := \
 SUBDIRS := common
 
 ifeq ($(BUILD_AGENT),)
+ifeq ($(OS_ARCH), HP-UX)
+SUBDIRS += apache
+else 
 BUILD_AGENT := apache sjsws apache22 proxy40
+endif
 ifeq ($(OS_ARCH), WINNT)
 BUILD_AGENT += iis7
 endif
@@ -67,6 +71,10 @@ else
 SUBDIRS += $(BUILD_AGENT)
 endif
 endif
+
+ifeq ($(OS_ARCH), HP-UX)
+SUBDIRS += apache
+endif 
 
 all: all_subdirs
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConstants.java,v 1.4 2008-06-25 05:54:34 qcheng Exp $
+ * $Id: IConstants.java,v 1.5 2009-07-22 22:59:07 subbae Exp $
  *
  */
 
@@ -105,6 +105,11 @@ public interface IConstants {
      * Apache agent libray extension for Unix platforms    
      */   
     public static final String STR_APC_UNIX_LIB_EXTN = "so";
+
+    /**
+     * Apache agent libray extension for HPUX platform    
+     */   
+    public static final String STR_APC_HPUX_LIB_EXTN = "sl";
 
     public static final String STR_TRUE = "true";
     public static final String STR_FALSE = "false";

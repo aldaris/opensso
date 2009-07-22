@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureDsameFileTask.java,v 1.3 2008-11-21 08:26:00 soumendra Exp $
+ * $Id: ConfigureDsameFileTask.java,v 1.4 2009-07-22 22:59:07 subbae Exp $
  *
  */
 
@@ -149,6 +149,8 @@ public class ConfigureDsameFileTask
             tokens.put("EAPI", STR_APC_TWO_LIB_SUFFIX);
             if (OSChecker.isWindows()) {
                 tokens.put("EXTN", STR_APC_WIN_LIB_EXTN);
+            } else if (OSChecker.isHPUX()) {
+                tokens.put("EXTN", STR_APC_HPUX_LIB_EXTN);
             } else {
                 tokens.put("EXTN", STR_APC_UNIX_LIB_EXTN);
             }
