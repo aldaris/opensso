@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.29 2009-07-01 21:09:16 qcheng Exp $
+ * $Id: LoginViewBean.java,v 1.30 2009-07-23 05:31:20 222713 Exp $
  *
  */
 
@@ -297,10 +297,19 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             // will be used to retrieve the session for session upgrade
             SessionID sessionID = AuthClientUtils.getSessionIDFromRequest(request);
             ssoToken = AuthClientUtils.getExistingValidSSOToken(sessionID);
+            orgName = AuthClientUtils.getDomainNameByRequest(reqDataHash);	 
+            prepareLoginParams();
             //Check for session Timeout
             if((ssoToken == null) && (sessionID != null) &&
               (sessionID.toString().length()!= 0)){
                     if(AuthClientUtils.isTimedOut(sessionID)){
+                        ISLocaleContext localeContext = new ISLocaleContext();	 
+                        localeContext.setLocale(request);	 
+                        locale = localeContext.getLocale();	 
+                        rb =  rbCache.getResBundle(bundleName, locale);	 
+ 	 
+                        timeout_jsp_page = AuthClientUtils.getFileName(	 
+                             JSP_FILE_NAME,locale.toString(),orgName,request,servletContext,indexType,indexName);
                         clearCookie();
                         errorCode = AMAuthErrorCode.AUTH_TIMEOUT;
                         ErrorMessage = AuthClientUtils.getErrorVal(
@@ -310,17 +319,12 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                               AMAuthErrorCode.AUTH_TIMEOUT,
                               AuthClientUtils.ERROR_TEMPLATE);
 
-                        ISLocaleContext localeContext = new ISLocaleContext();
-                        localeContext.setLocale(request);
-                        locale = localeContext.getLocale();
-                        rb =  rbCache.getResBundle(bundleName, locale);
                         loginURL = AuthClientUtils.constructLoginURL(request);
                         session.setAttribute("LoginURL", loginURL);
                         super.forwardTo(requestContext);
                         return;
                   }
             }
-            orgName = AuthClientUtils.getDomainNameByRequest(reqDataHash);
             String authCookieValue = AuthClientUtils.getAuthCookieValue(request);
             loginURL = AuthClientUtils.constructLoginURL(request);
             if (ssoToken != null) {
@@ -527,7 +531,11 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             jsp_page =  "Login.jsp";
         }
         
-        jsp_page = getFileName(jsp_page);
+        if(timeout_jsp_page != null) {
+           jsp_page = timeout_jsp_page;	         
+        } else {	 
+           jsp_page = getFileName(jsp_page);	 
+        }
         
         if ((param != null) && (param.length() != 0)) {
             if (jsp_page.indexOf("?") != -1) {
@@ -1998,6 +2006,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     boolean dontLogIntoDiffOrg = false;
     /** Page name for login */
     public static final String PAGE_NAME="Login";
+    /** Page name for session time out */
+    public static final String JSP_FILE_NAME="session_timeout.jsp";
     /** Result value */
     public String ResultVal = "";
     /** Error message */
@@ -2067,6 +2077,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     /** Default button index */
     public int defaultButtonIndex = 0;
     String jsp_page=null;
+    String timeout_jsp_page=null;
     String param=null;
     SSOTokenManager manager = null;
     java.util.Locale locale;
