@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.22 2009-07-09 17:04:27 veiming Exp $
+   $Id: build.xml,v 1.23 2009-07-23 20:04:27 mrudul_uchil Exp $
 
 -->
 
@@ -69,6 +69,7 @@
         <pathelement location="${library.classes.dir}"/>
         <pathelement location="${sharedlib.classes.dir}"/>
         <pathelement location="${installtools.classes.dir}"/>
+        <pathelement location="${amserver.classes.dir}"/>
         
         <fileset dir="${extlib.dir}">
             <include name="**/*.jar"/>
@@ -89,7 +90,7 @@
             destdir="${wssagents.classes.dir}"
             source="${target.jdk.set}" target="${target.jdk.set}"
             debug="${build.debug}" debuglevel="${build.debuglevel}"
-            excludes="com/sun/identity/wssagents/weblogic/*.*">
+            excludes="com/sun/identity/wssagents/weblogic/*.*,com/sun/identity/wssagents/jaxws/client/*.*,com/sun/identity/wssagents/jaxws/server/*.*">
             <src path="${wssagents.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>
@@ -140,7 +141,7 @@
                 <filename name="META-INF/services/*"/>    
             </fileset>
             <fileset dir="${wssagents.xml.dir}" includes="*.xml" />
-            <zipfileset dir="${wssagents.classes.dir}" />
+            <zipfileset dir="${wssagents.classes.dir}" excludes="com/sun/identity/wssagents/jaxws/client/ClientFilter.class,com/sun/identity/wssagents/jaxws/client/ClientHandler.class,com/sun/identity/wssagents/jaxws/server/ServerHandler.class"/>
             <zipfileset src="${fm.dist.dir}/opensso.jar" includes="com/sun/identity/wss/security/SecurityPrincipal.class,com/sun/identity/wss/security/SecurityException.class,com/sun/identity/classloader/MaskingClassLoader.class"/>
         </jar>
 
@@ -148,7 +149,153 @@
             algorithm="SHA" fileext=".sha" />
     </target>
 
-    <target name="zip" depends="clean, jars">
+    <target name="build-JAX-WS" depends="checkjar, preparebuild">
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${wssagents.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="${build.debug}" debuglevel="${build.debuglevel}" includes="com/sun/identity/wssagents/jaxws/client/*.*,com/sun/identity/wssagents/jaxws/server/*.*">
+            <src path="${wssagents.src.dir}"/>
+            <classpath refid="build.class.path"/>
+        </javac>
+
+        <copy todir="${wssagents.classes.dir}/com">
+            <fileset dir="${wssagents.basedir}/version/jax-ws">
+                <include name=".version"/>
+            </fileset>
+        </copy>
+
+        <concat destfile="${wssagents.classes.dir}/com/.version" append="true">Build Date: ${nightly.date}&#10;&#10;</concat>
+
+        <copy todir="${wssagents.built.res.dir}">
+            <fileset dir="${wssagents.xml.dir}/jax-ws">
+                <include name="*.xml"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="jars-JAX-WS" depends="build-JAX-WS">
+        <tstamp>
+            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
+        </tstamp>
+
+        <jar destfile="${wssagents.dist.dir}/openssowssagents.jar">
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir="${wssagents.classes.dir}/com">
+                <include name=".version" />
+            </fileset>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <zipfileset dir="${wssagents.classes.dir}" includes="com/sun/identity/wssagents/jaxws/client/ClientFilter.class,com/sun/identity/wssagents/jaxws/client/ClientHandler.class,com/sun/identity/wssagents/jaxws/server/ServerHandler.class"/>
+        </jar>
+
+        <checksum file="${wssagents.dist.dir}/openssowssagents.jar"
+            algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="zip-JAX-WS" depends="jars-JAX-WS">
+        <delete dir="${zip.temp.dir}" />
+        <mkdir dir="${zip.temp.dir}" />
+
+        <copy file="${wssagents.basedir}/license.txt"
+            tofile="${zip.temp.dir}/license.txt" />
+        <copy file="${wssagents.basedir}/docs/README.wssagents-jax-ws-zip"
+            tofile="${zip.temp.dir}/README" />
+
+        <copy todir="${zip.temp.dir}/lib">
+            <fileset file="${fm.dist.dir}/openssoclientsdk.jar" />
+            <fileset file="${wssagents.dist.dir}/openssowssagents.jar" />
+        </copy>
+        <copy todir="${zip.temp.dir}/lib">
+            <fileset dir="${extlib.dir}" includes="xmlsec.jar" />
+        </copy>
+        <copy todir="${zip.temp.dir}/samples">
+            <fileset file="${wssagents.samples.dir}/jax-ws/**" />
+        </copy>
+        <copy todir="${zip.temp.dir}/config">
+            <fileset file="${wssagents.xml.dir}/jax-ws/*.xml" />
+        </copy>
+
+        <copy file="${openfm.built.dir}/clientsamples/package/sdk/resources/AMConfig.properties.template" tofile="${zip.temp.dir}/config/AMConfig.properties" />
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@DEBUG_LEVEL@"
+            replace="message"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.iplanet.am.sdk.caching.enabled=true"
+            replace="com.iplanet.am.sdk.caching.enabled=false"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.sun.identity.idm.cache.enabled=true"
+            replace="com.sun.identity.idm.cache.enabled=false"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.sun.identity.sm.cache.enabled=true"
+            replace="com.sun.identity.sm.cache.enabled=false"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@NAMING_URL@"
+            replace="@SERVER_PROTOCOL@://@SERVER_HOST@:@SERVER_PORT@/@DEPLOY_URI@/namingservice"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@APPLICATION_USER@"
+            replace="agentAuth"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@APPLICATION_PASSWD@"
+            replace="changeit"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@ENCODED_APPLICATION_PASSWORD@"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@ENCRYPTION_KEY@"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@ENCRYPTION_KEY_LOCAL@"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="@AM_COOKIE_NAME@"
+            replace="iPlanetDirectoryPro"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.sun.identity.saml.xmlsig.keystore=@BASE_DIR@"
+            replace="com.sun.identity.saml.xmlsig.keystore=@KEYSTORE_LOCATION@"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.sun.identity.saml.xmlsig.storepass=@BASE_DIR@"
+            replace="com.sun.identity.saml.xmlsig.storepass=@KEYSTORE_LOCATION@"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties"
+            match="com.sun.identity.saml.xmlsig.keypass=@BASE_DIR@"
+            replace="com.sun.identity.saml.xmlsig.keypass=@KEYSTORE_LOCATION@"/>
+
+        <copy todir="${zip.temp.dir}/resources">
+            <fileset file="${openfm.clientsamples.dir}/war/keystore.jks" />
+            <fileset file="${openfm.clientsamples.dir}/war/.keypass" />
+            <fileset file="${openfm.clientsamples.dir}/war/.storepass" />
+        </copy>
+
+        <zip destfile="${wssagents.dist.dir}/openssowssagents.zip" whenempty="create">
+            <zipfileset dir="${zip.temp.dir}" filemode="755">
+                <include name="setup"/>
+            </zipfileset>
+            <zipfileset dir="${zip.temp.dir}">
+                <exclude name="setup"/>
+            </zipfileset>
+        </zip>
+
+        <checksum file="${wssagents.dist.dir}/openssowssagents.zip"
+            algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="zip-Providers" depends="jars">
         <delete dir="${zip.temp.dir}" />
         <mkdir dir="${zip.temp.dir}" />
 
@@ -175,7 +322,7 @@
             <fileset dir="${extlib.dir}" includes="webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar,xalan.jar,j2ee.jar" />
         </copy>
         <copy todir="${zip.temp.dir}/samples">
-            <fileset file="${wssagents.samples.dir}/**" />
+            <fileset file="${wssagents.samples.dir}/glassfish/**" />
         </copy>
         <copy todir="${zip.temp.dir}/config">
             <fileset file="${wssagents.config.dir}/**" />
@@ -267,7 +414,12 @@
         <checksum file="${wssagents.dist.dir}/openssowssproviders.zip"
             algorithm="SHA" fileext=".sha" />
     </target>
-    
+
+    <target name="zip" depends="clean">
+        <antcall target="zip-Providers" />
+        <antcall target="zip-JAX-WS" />
+    </target>
+
     <target name="clean" >
         <delete dir="${wssagents.built.docs.dir}"/>
         <delete dir="${wssagents.built.res.dir}"/>
@@ -279,9 +431,13 @@
         <echo message=" "/>
         <echo message=" Following targets are available:"/>
         <echo message=" "/>
-        <echo message=" build      : compiles the sources"/>
+        <echo message=" build      : compiles the sources for OpenSSOWSSProviders"/>
         <echo message=" jars       : creates OpenSSOWSSProviders JAR for deployment"/>
-        <echo message=" zip        : creates OpenSSOWSSProviders ZIP for deployment"/>
+        <echo message=" zip        : creates OpenSSOWSSProviders ZIP and OpenSSOWSSAgents ZIP for deployment"/>
+        <echo message=" zip-Providers : creates OpenSSOWSSProviders ZIP for deployment"/>
+        <echo message=" build-JAX-WS  : compiles the sources for OpenSSOWSSAgents"/>
+        <echo message=" jars-JAX-WS   : creates OpenSSOWSSAgents JAR for deployment"/>
+        <echo message=" zip-JAX-WS    : creates OpenSSOWSSAgents ZIP for deployment"/>
         <echo message=" clean      : deletes the generated files"/>
         <echo message=" samples    : builds the client samples"/>
         <echo message=" samples-clean : deletes generated client samples"/>

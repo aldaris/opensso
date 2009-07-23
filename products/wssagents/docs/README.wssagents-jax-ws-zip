@@ -1,0 +1,97 @@
+<!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
+  
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: README.wssagents-jax-ws-zip,v 1.1 2009-07-23 20:04:28 mrudul_uchil Exp $
+
+-->
+
+I) OpenSSO Web Services Security Agents (based on JAX-WS Handlers) - Zip file
+
+openssowssagents.zip
+             |____ lib/openssoclientsdk.jar (complete OpenSSO clientsdk jar)
+             |____ lib/openssowssagents.jar (complete WSS Agents jar)
+             |____ lib/xmlsec.jar (XML Security library jar)
+             |____ config/AMConfig.properties (complete OpenSSO client properties)
+             |____ config/client_handlers.xml (JAX-WS Handlers configuration file for Client)
+             |____ config/server_handlers.xml (JAX-WS Handlers configuration file for Server)
+             |____ resources/keystore.jks (client keystore file)
+             |____ resources/.keypass (password file for key)
+             |____ resources/.storepass (password file for keystore)
+             |____ README (this file)
+             |____ license.txt
+             |____ samples/jax-ws/* (WSC/WSP samples using WSS Agents)
+
+
+II) Securing a Web Service With OpenSSO Web Services Security Agents (openssowssagents.zip) :
+
+A) OpenSSO Client and Keystore configuration :
+1) copy resources/* to some dir (e.g. @KEYSTORE_LOCATION@ )
+2) Update config/AMConfig.properties for the following properties
+com.iplanet.services.debug.directory=@DEBUG_DIR@
+com.iplanet.am.naming.url=@SERVER_PROTOCOL@://@SERVER_HOST@:@SERVER_PORT@/@DEPLOY_URI@/namingservice
+com.iplanet.am.server.protocol=@SERVER_PROTOCOL@
+com.iplanet.am.server.host=@SERVER_HOST@
+com.iplanet.am.server.port=@SERVER_PORT@
+com.iplanet.am.services.deploymentDescriptor=/@DEPLOY_URI@
+com.sun.identity.loginurl=@SERVER_PROTOCOL@://@SERVER_HOST@:@SERVER_PORT@/@DEPLOY_URI@/UI/Login
+com.sun.identity.saml.xmlsig.keystore=@KEYSTORE_LOCATION@/keystore.jks
+com.sun.identity.saml.xmlsig.storepass=@KEYSTORE_LOCATION@/.storepass
+com.sun.identity.saml.xmlsig.keypass=@KEYSTORE_LOCATION@/.keypass
+
+B) Web Service Provider application modifications :
+1) unwar unsecured Web Service Provider war file
+2) copy lib/*.jar files to WEB-INF/lib (create "lib" dir under "WEB-INF" dir, if it does not exist already)
+3) copy config/AMConfig.properties to WEB-INF/classes
+4) copy config/server_handlers.xml to WEB-INF/classes/../../.. at the .class file level
+Note : If Web Service Provider application already contains handlers xml file at this level, then merge
+this config/server_handlers.xml file into existing handlers xml file in such a way that
+      <handler>
+         <handler-name>ServerHandler</handler-name>
+         <handler-class>com.sun.identity.wssagents.jaxws.server.ServerHandler</handler-class>
+      </handler>
+is the first handler in the handler-chain.
+5) now war secured Web Service Provider war file and deploy it on your favorite container
+
+C) Web Service Client application modifications :
+1) unwar unsecured Web Service Client war file
+2) copy lib/*.jar files to WEB-INF/lib (create "lib" dir under "WEB-INF" dir, if it does not exist already)
+3) copy config/AMConfig.properties to WEB-INF/classes
+4) copy config/client_handlers.xml to WEB-INF/classes/../../.. at the .class file level
+Note : If Web Service Client application already contains handlers xml file at this level, then merge
+this config/client_handlers.xml file into existing handlers xml file in such a way that
+      <handler>
+         <handler-name>ClientHandler</handler-name>
+         <handler-class>com.sun.identity.wssagents.jaxws.client.ClientHandler</handler-class>
+      </handler>
+is the first handler in the handler-chain.
+5) Add client filter to WEB-INF/web.xml as follows :
+ <filter>
+     <filter-name>LoginFilter</filter-name>
+     <filter-class>com.sun.identity.wssagents.jaxws.client.ClientFilter</filter-class>
+ </filter>
+ <filter-mapping>
+     <filter-name>LoginFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+ </filter-mapping>
+6) now war secured Web Service Client war file and deploy it on your favorite container

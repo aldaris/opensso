@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StockService.java,v 1.4 2008-12-20 01:30:46 mallas Exp $
+ * $Id: StockService.java,v 1.5 2009-07-23 20:04:28 mrudul_uchil Exp $
  *
  */
 package com.samples;
@@ -175,6 +175,9 @@ public class StockService implements com.sun.stockquote.StockQuotePortType {
         return null;
     }
    private Map getCachedQuote(String symbol) {
+        if (stockData == null || stockData.isEmpty()) {
+            init();
+        }
         Map data = (Map) stockData.get(symbol);
         if (data == null) {
             data = (Map) stockData.get("ORCL");
