@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HTTPRequestHandler.java,v 1.9 2008-08-22 04:07:57 mallas Exp $
+ * $Id: HTTPRequestHandler.java,v 1.10 2009-07-23 20:42:52 mrudul_uchil Exp $
  *
  */
 
@@ -194,7 +194,7 @@ public class HTTPRequestHandler implements HTTPRequestHandlerInterface {
         
         // This is useful for SAML2 integrations.
         String gotoparam = SystemConfigurationUtil.getProperty(
-                "com.sun.identity.httpprovider.goto", GOTO);
+                "com.sun.identity.loginurl.goto", GOTO);
         loginURL = loginURL + "?" + gotoparam + "=" + requestURL.toString();
         String query = request.getQueryString();
         if(query != null) {
