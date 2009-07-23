@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotCondition.java,v 1.3 2009-05-23 00:58:14 veiming Exp $
+ * $Id: NotCondition.java,v 1.4 2009-07-23 10:33:41 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -130,6 +130,10 @@ public class NotCondition implements EntitlementCondition {
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
+        if (eCondition == null) {
+            return new ConditionDecision(false, Collections.EMPTY_MAP);
+        }
+
         ConditionDecision d = eCondition.evaluate(realm, subject, resourceName,
             environment);
         return new ConditionDecision(!d.isSatisfied(), Collections.EMPTY_MAP);
@@ -182,10 +186,13 @@ public class NotCondition implements EntitlementCondition {
         JSONObject jo = new JSONObject();
         jo.put("pConditionName", pConditionName);
 
-        JSONObject subjo = new JSONObject();
-        subjo.put("className", eCondition.getClass().getName());
-        subjo.put("state", eCondition.getState());
-        jo.put("memberECondition", subjo);
+        if (eCondition != null) {
+            JSONObject subjo = new JSONObject();
+            subjo.put("className", eCondition.getClass().getName());
+            subjo.put("state", eCondition.getState());
+            jo.put("memberECondition", subjo);
+        }
+        
         return jo;
     }
 
