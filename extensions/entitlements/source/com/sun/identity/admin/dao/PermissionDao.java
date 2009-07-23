@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionDao.java,v 1.9 2009-07-22 16:40:08 farble1670 Exp $
+ * $Id: PermissionDao.java,v 1.10 2009-07-23 20:46:54 ggennaro Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -86,6 +86,7 @@ public class PermissionDao implements Serializable {
         permissions.add(Permission.HOME);
         permissions.add(Permission.NEWS);
         permissions.add(Permission.FEDERATION);
+        permissions.add(Permission.WEB_SERVICE_SECURITY);
         permissions.add(Permission.REFERRAL_MANAGE);
         accessMap.put(AccessLevel.READ, permissions);
 
@@ -95,6 +96,7 @@ public class PermissionDao implements Serializable {
         permissions.add(Permission.SAMLV2_HOSTED_SP_CREATE);
         permissions.add(Permission.SAMLV2_REMOTE_IDP_CREATE);
         permissions.add(Permission.SAMLV2_REMOTE_SP_CREATE);
+        permissions.add(Permission.WEB_SERVICE_SECURITY_CREATE);
         accessMap.put(AccessLevel.WRITE, permissions);
 
         permissions = new HashSet<Permission>();

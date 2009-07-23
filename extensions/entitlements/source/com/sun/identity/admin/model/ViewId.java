@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewId.java,v 1.5 2009-07-22 16:40:09 farble1670 Exp $
+ * $Id: ViewId.java,v 1.6 2009-07-23 20:46:54 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -45,9 +45,11 @@ public enum ViewId {
     SAMLV2_HOSTED_IDP_CREATE("/admin/facelet/samlv2-hosted-idp-create.xhtml"),
     SAMLV2_REMOTE_IDP_CREATE("/admin/facelet/samlv2-remote-idp-create.xhtml"),
     NEWS("/admin/facelet/news.xhtml"),
-    PERMISSION_DENIED("/admin/facelet/permission-denied.xhtml"),
     APPLICATION("/admin/facelet/application.xhtml"),
-    APPLICATION_CREATE("/admin/facelet/application-create.xhtml");
+    APPLICATION_CREATE("/admin/facelet/application-create.xhtml"),
+    WEB_SERVICE_SECURITY("/admin/facelet/wss.xhtml"),
+    WEB_SERVICE_SECURITY_CREATE("/admin/facelet/wss-create.xhtml"),
+    PERMISSION_DENIED("/admin/facelet/permission-denied.xhtml");
 
     private static final Map<String, ViewId> idValues = new HashMap<String, ViewId>() {
         {
@@ -65,9 +67,10 @@ public enum ViewId {
             put(SAMLV2_REMOTE_IDP_CREATE.getId(), SAMLV2_REMOTE_IDP_CREATE);
             put(FEDERATION.getId(), FEDERATION);
             put(NEWS.getId(), NEWS);
-            put(PERMISSION_DENIED.getId(), PERMISSION_DENIED);
             put(APPLICATION.getId(), APPLICATION);
             put(APPLICATION_CREATE.getId(), APPLICATION_CREATE);
+            put(WEB_SERVICE_SECURITY.getId(), WEB_SERVICE_SECURITY);
+            put(WEB_SERVICE_SECURITY_CREATE.getId(), WEB_SERVICE_SECURITY_CREATE);
         }
     };
 

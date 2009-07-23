@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Permission.java,v 1.5 2009-07-22 16:40:09 farble1670 Exp $
+ * $Id: Permission.java,v 1.6 2009-07-23 20:46:53 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -43,5 +43,7 @@ public enum Permission {
     SAMLV2_REMOTE_SP_CREATE,
     SAMLV2_REMOTE_IDP_CREATE,
     APPLICATION,
-    APPLICATION_CREATE;
+    APPLICATION_CREATE,
+    WEB_SERVICE_SECURITY,
+    WEB_SERVICE_SECURITY_CREATE;
 }

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.25 2009-07-22 18:23:30 farble1670 Exp $
+   $Id: menu.xhtml,v 1.26 2009-07-23 20:46:56 ggennaro Exp $
 
 -->
 
@@ -44,28 +44,28 @@
             value="#{resources['menu.policyItemValue']}"
             action="policy"
             icon="../image/policy.png">
-            <ice:menuItem
-                rendered="#{permissionsBean.policyCreateAllowed}"
-                value="#{resources['menu.policyCreateItemValue']}"
+        <ice:menuItem
+            rendered="#{permissionsBean.policyCreateAllowed}"
+            value="#{resources['menu.policyCreateItemValue']}"
                 action="#{policyCreateWizardHandler.createAction}"/>
-            <ice:menuItem
-                rendered="#{permissionsBean.policyManageAllowed}"
-                value="#{resources['menu.policyManageItemValue']}"
+        <ice:menuItem
+            rendered="#{permissionsBean.policyManageAllowed}"
+            value="#{resources['menu.policyManageItemValue']}"
                 action="policy-manage"/>
-            <ice:menuItem
-                rendered="#{permissionsBean.referralCreateAllowed &amp;&amp; o:size(realmsBean.realmBeans) &gt; 1}"
-                value="#{resources['menu.referralCreateItemValue']}"
+        <ice:menuItem
+            rendered="#{permissionsBean.referralCreateAllowed &amp;&amp; o:size(realmsBean.realmBeans) &gt; 1}"
+            value="#{resources['menu.referralCreateItemValue']}"
                 action="#{referralCreateWizardHandler.createAction}"/>
-            <ice:menuItem
-                rendered="#{permissionsBean.referralManageAllowed &amp;&amp; o:size(realmsBean.realmBeans) &gt; 1}"
-                value="#{resources['menu.referralManageItemValue']}"
+        <ice:menuItem
+            rendered="#{permissionsBean.referralManageAllowed &amp;&amp; o:size(realmsBean.realmBeans) &gt; 1}"
+            value="#{resources['menu.referralManageItemValue']}"
                 action="referral-manage"/>
-            </ice:menuItem>
+        </ice:menuItem>
         <ice:menuItem
             rendered="#{permissionsBean.applicationAllowed}"
             value="#{resources['menu.applicationItemValue']}"
             action="application"
-            icon="../image/application-24.png">            
+            icon="../image/application-24.png">
             <ice:menuItem
                 rendered="#{permissionsBean.applicationCreateAllowed}"
                 value="#{resources['menu.applicationCreateItemValue']}"
@@ -77,22 +77,33 @@
             action="federation"
             icon="../image/federation.png">
 
-            <ice:menuItem
-                rendered="#{permissionsBean.samlV2HostedIdpCreateAllowed}"
-                value="#{resources['menu.federationSamlV2HostedIdpCreateItemValue']}"
+        <ice:menuItem
+            rendered="#{permissionsBean.samlV2HostedIdpCreateAllowed}"
+            value="#{resources['menu.federationSamlV2HostedIdpCreateItemValue']}"
                 action="samlv2-hosted-idp-create"/>
-            <ice:menuItem
-                rendered="#{permissionsBean.samlV2RemoteIdpCreateAllowed}"
-                value="#{resources['menu.federationSamlV2RemoteIdpCreateItemValue']}"
+        <ice:menuItem
+            rendered="#{permissionsBean.samlV2RemoteIdpCreateAllowed}"
+            value="#{resources['menu.federationSamlV2RemoteIdpCreateItemValue']}"
                 action="samlv2-remote-idp-create"/>
-            <ice:menuItem
-                rendered="#{permissionsBean.samlV2HostedSpCreateAllowed}"
-                value="#{resources['menu.federationSamlV2HostedSpCreateItemValue']}"
+        <ice:menuItem
+            rendered="#{permissionsBean.samlV2HostedSpCreateAllowed}"
+            value="#{resources['menu.federationSamlV2HostedSpCreateItemValue']}"
                 action="samlv2-hosted-sp-create"/>
-            <ice:menuItem
-                rendered="#{permissionsBean.samlV2RemoteSpCreateAllowed}"
-                value="#{resources['menu.federationSamlV2RemoteSpCreateItemValue']}"
+        <ice:menuItem
+            rendered="#{permissionsBean.samlV2RemoteSpCreateAllowed}"
+            value="#{resources['menu.federationSamlV2RemoteSpCreateItemValue']}"
                 action="samlv2-remote-sp-create"/>
+        </ice:menuItem>
+
+        <ice:menuItem
+            rendered="#{permissionsBean.webServiceSecurityAllowed}"
+            value="#{resources['menu.webServiceSecurityItemValue']}"
+            action="wss"
+            icon="../image/wss-24.png">
+            <ice:menuItem
+                rendered="#{permissionsBean.webServiceSecurityCreateAllowed}"
+                value="#{resources['menu.webServiceSecurityCreateItemValue']}"
+                action="wss-create" />
         </ice:menuItem>
 
         <ice:menuItem
