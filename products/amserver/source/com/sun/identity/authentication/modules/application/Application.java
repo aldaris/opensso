@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.8 2008-06-25 05:41:55 qcheng Exp $
+ * $Id: Application.java,v 1.9 2009-07-23 18:54:17 qcheng Exp $
  *
  */
 
@@ -45,9 +45,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.am.util.SystemProperties;
-import com.sun.identity.authentication.internal.AuthContext;
-import com.sun.identity.authentication.internal.AuthPrincipal;
-import com.sun.identity.authentication.internal.AuthSSOProvider;
 import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
 import com.sun.identity.authentication.modules.ldap.LDAPUtilException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
@@ -217,13 +214,7 @@ public class Application extends AMLoginModule {
         }
         
         if (userName != null && (userName.length() != 0)) {
-            if (internalAuth(userName, userPassword)) {
-                if (debug.messageEnabled()){
-                    debug.message(
-                        "Internal Auth is successful : User = " + userTokenId);
-                }
-                success = true;
-            } else if (authenticateToDatastore(userName, userPassword)) {
+            if (authenticateToDatastore(userName, userPassword)) {
                 if (debug.messageEnabled()){
                     debug.message("Application.doFallbackAuth: Authenticating "
                     + "to DataStore Auth Module.");
@@ -491,29 +482,6 @@ public class Application extends AMLoginModule {
                 null, ex);
         }
         
-    }
-    
-    // Use internal authentication to validate the Application user
-    private boolean internalAuth(String userName, String userPassword)
-    throws AuthLoginException {
-        if (debug.messageEnabled()){
-            debug.message("In internalAuth with User : " +  userName);
-        }
-        try {
-            AuthContext ac = new AuthContext(new AuthPrincipal(userName),
-            userPassword.toCharArray());
-            if (ac.getLoginStatus() == AuthContext.AUTH_SUCCESS) {
-                userTokenId = ac.getSSOToken().getPrincipal().getName();
-                debug.message("InternalAuth is successful");
-                AuthSSOProvider authSSOProvider = new AuthSSOProvider();
-                authSSOProvider.destroyToken(ac.getSSOToken());
-                return true;
-            }
-        } catch (Exception ex) {
-            debug.message(
-                "Internal Authentication Exception : " + ex.getMessage());
-        }
-        return false;
     }
     
     public void destroyModuleState() {
