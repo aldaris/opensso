@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadLocalService.java,v 1.6 2009-05-15 18:04:55 huacui Exp $
+ * $Id: ThreadLocalService.java,v 1.7 2009-07-24 15:45:29 huacui Exp $
  *
  */
 
@@ -37,76 +37,57 @@ import com.iplanet.sso.SSOToken;
  */
 public class ThreadLocalService {
     
-    private static ThreadLocal ssoToken = null;    
-    private static ThreadLocal serviceName = null;
-    private static ThreadLocal subj = null;
-    //private static ThreadLocal threadLocal = new ThreadLocal();   
+    private static ThreadLocal ssoToken = new ThreadLocal() {
+        protected synchronized Object initialValue() {
+            return null;
+        }
+    };
+
+    private static ThreadLocal serviceName = new ThreadLocal() {
+        protected synchronized Object initialValue() {
+            return null;
+        }
+    };
+
+    private static ThreadLocal subj = new ThreadLocal() {
+        protected synchronized Object initialValue() {
+            return null;
+        }
+    };
     
     static  synchronized String getServiceName() {
-              
-        if(serviceName != null) {
-           return (String) serviceName.get();
-        }
-        return null;
+        return (String)serviceName.get();
     }
 
-    static synchronized void setServiceName(final String sName) {
-        serviceName = new ThreadLocal() {
-            protected synchronized Object initialValue() {
-                return null;
-            }
-        };
+    static synchronized void setServiceName(String sName) {
         serviceName.set(sName);
     }
     
     static synchronized void removeServiceName(String sName) {
-        if(serviceName != null) {
-           serviceName.remove();
-           serviceName = null;
-        }
+        serviceName.remove();
     }
     
     static  synchronized Object getSSOToken() {
-        if(ssoToken != null) {
-           return ssoToken.get();
-        }
-        return null;
+       return ssoToken.get();
     }
 
-    public static synchronized void setSSOToken(final Object sToken) {
-        ssoToken = new ThreadLocal() {
-            protected synchronized Object initialValue() {
-                return sToken;
-            }
-        };       
+    public static synchronized void setSSOToken(Object sToken) {
+        ssoToken.set(sToken);
     }
     
     public static synchronized void removeSSOToken(Object sToken) {
-        if(ssoToken != null) {
-           ssoToken.remove();
-           ssoToken = null;
-        }
+        ssoToken.remove();
     }
     
     static  synchronized Object getSubject() {
-        if(subj != null) {
-           return subj.get();
-        }
-        return null;
+        return subj.get();
     }
 
-    static synchronized void setSubject(final Object subject) {
-        subj = new ThreadLocal() {
-            protected synchronized Object initialValue() {
-                return subject;
-            }
-        };       
+    static synchronized void setSubject(Object subject) {
+        subj.set(subject);
     }
     
     static synchronized void removeSubject() {
-        if(subj != null) {
-           subj.remove();
-           subj = null;
-        }
+        subj.remove();
     }
 }
