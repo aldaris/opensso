@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIHandler.java,v 1.1 2008-11-22 02:19:55 ak138937 Exp $
+ * $Id: CLIHandler.java,v 1.2 2009-07-24 22:12:26 ak138937 Exp $
  *
  */
 
@@ -62,6 +62,8 @@ public class CLIHandler implements CLIConstants {
     private static HashMap paramMap = new HashMap();
     private static HashMap typeToName = new HashMap();
     private static Set usageSet = null;
+    private static ResourceBundle uiRb = 
+        ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
     
     private static final int INVALID = 0;
     private static final int TOOLNAME = 1;
@@ -86,11 +88,14 @@ public class CLIHandler implements CLIConstants {
         arguments.put("--type", new Integer(CONTAINER_NAME));
         arguments.put("--help", new Integer(HELP));
         arguments.put("-h", new Integer(HELP));
-        //TODO: Create a dynamic map
-        typeToName.put("sjsas", WEB_CONTAINERS[0]);
-        typeToName.put("sjsws", WEB_CONTAINERS[1]);
-        typeToName.put("bea", WEB_CONTAINERS[2]);
-        typeToName.put("ibm", WEB_CONTAINERS[3]);
+        typeToName.put(uiRb.getString("cli_sun_app_server").trim(), 
+            WEB_CONTAINERS[0]);
+        typeToName.put(uiRb.getString("cli_sun_web_server").trim(), 
+            WEB_CONTAINERS[1]);
+        typeToName.put(uiRb.getString("cli_bea_weblogic").trim(), 
+            WEB_CONTAINERS[2]);
+        typeToName.put(uiRb.getString("cli_ibm_websphere").trim(), 
+            WEB_CONTAINERS[3]);
     }
     
     public CLIHandler() {
@@ -163,7 +168,7 @@ public class CLIHandler implements CLIConstants {
             opSet.add(sRes.getMessage());
             opSet.add(sRes.getError());
             opSet.add(sRes.getWarning());
-            sFile.saveToFile(fName, opSet);
+            sFile.saveToFile(fName, opSet, rbundle);
         } catch (Exception e) {
             printCLIMessage("cli-error-file-save", new String[] {e.getMessage()});
         }
@@ -327,10 +332,15 @@ public class CLIHandler implements CLIConstants {
     
     public static void printSubCmdUsage(String cName, String options){
         String str = null;
-        String[] params = {cName, options};
-        if (cName.equalsIgnoreCase("web-container")) {
+        String[] params = {cName, options, 
+            uiRb.getString("cli_sun_app_server"),
+            uiRb.getString("cli_sun_web_server"),
+            uiRb.getString("cli_bea_weblogic"),
+            uiRb.getString("cli_ibm_websphere")};
+
+        if (cName.equalsIgnoreCase(uiRb.getString("category_webcontainer"))) {
             printCLIMessage("cli-usage-sub-cmd-3", params);
-        } else if(cName.equalsIgnoreCase("system")){
+        } else if(cName.equalsIgnoreCase(uiRb.getString("category_system"))) { 
             printCLIMessage("cli-usage-sub-cmd-2", params);
         } else {
             printCLIMessage("cli-usage-sub-cmd-1", params);

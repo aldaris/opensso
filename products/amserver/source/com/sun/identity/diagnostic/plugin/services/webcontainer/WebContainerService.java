@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebContainerService.java,v 1.1 2008-11-22 02:41:23 ak138937 Exp $
+ * $Id: WebContainerService.java,v 1.2 2009-07-24 22:19:43 ak138937 Exp $
  *
  */
 
@@ -56,6 +56,7 @@ public class WebContainerService implements ToolService, ToolConstants {
     private ToolContext tContext;
     private static IToolOutput toolOutWriter;
     private ResourceBundle rb;
+    private static HashMap<String, String> nameToType = new HashMap();
     
     /** Creates a new instance of WebContainerService */
     public WebContainerService() {
@@ -71,6 +72,7 @@ public class WebContainerService implements ToolService, ToolConstants {
         this.tContext = tContext;
         toolOutWriter = tContext.getOutputWriter(); 
         rb = ResourceBundle.getBundle(WEBCONTAINER_RESOURCE_BUNDLE);
+        initStaticMap();
     }
     
     /**
@@ -103,6 +105,7 @@ public class WebContainerService implements ToolService, ToolConstants {
                 String containerDomainPath = (String) params.get(
                     CONTAINER_DOMAIN_DIR);
                 String containerType = (String) params.get(CONTAINER_TYPE);
+                containerType = nameToType.get(containerType);
                 if (containerType != null && containerType.length() > 0 ) {
                     String containerTypePath = 
                         containerType.replaceAll("\\s", "") + ".properties";
@@ -147,6 +150,17 @@ public class WebContainerService implements ToolService, ToolConstants {
     
     static IToolOutput getToolWriter() {
         return toolOutWriter;
+    }
+
+    /**
+     * The reverse mapping is required to obtaine the actual webcontainer 
+     * specific properties file. 
+     */
+    private void initStaticMap() {
+        nameToType.put(WEB_CONTAINERS[0], "Sun Application Server");
+        nameToType.put(WEB_CONTAINERS[1], "Sun WebServer");
+        nameToType.put(WEB_CONTAINERS[2], "BEA Weblogic");
+        nameToType.put(WEB_CONTAINERS[3], "IBM WebSphere");
     }
     
     /**

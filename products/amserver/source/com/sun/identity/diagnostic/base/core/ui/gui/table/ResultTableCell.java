@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResultTableCell.java,v 1.1 2008-11-22 02:19:57 ak138937 Exp $
+ * $Id: ResultTableCell.java,v 1.2 2009-07-24 22:07:43 ak138937 Exp $
  *
  */
 
@@ -30,23 +30,26 @@ package com.sun.identity.diagnostic.base.core.ui.gui.table;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ResourceBundle;
 
 public class ResultTableCell extends LabelTableCell {
     
     private Point point;
+    private ResourceBundle rb;
     
     public static final Color GREEN = new Color(0, 128, 0);
     
     /** Creates a new instance of ResultTableCell */
-    public ResultTableCell() {
+    public ResultTableCell(ResourceBundle rb) {
         super();
+        this.rb = rb;
         point = null;
-        setText("Waiting");
+        setText(rb.getString("test_wait_msg"));
         setColor(Color.BLUE);
     }
     
     public void start() {
-        setText("Processing");
+        setText(rb.getString("test_process_msg"));
         setColor(Color.BLUE);
     }
     
@@ -60,10 +63,10 @@ public class ResultTableCell extends LabelTableCell {
     
     public void setResult(boolean pass) {
         if (pass) {
-            setText("Pass");
+            setText(rb.getString("test_pass_msg"));
             setColor(GREEN);
         } else {
-            setText("Fail");
+            setText(rb.getString("test_fail_msg"));
             setColor(Color.RED);
         }
     }

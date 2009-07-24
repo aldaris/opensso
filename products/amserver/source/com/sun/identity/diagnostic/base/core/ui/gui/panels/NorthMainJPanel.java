@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NorthMainJPanel.java,v 1.1 2008-11-22 02:19:57 ak138937 Exp $
+ * $Id: NorthMainJPanel.java,v 1.2 2009-07-24 22:05:14 ak138937 Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.sun.identity.diagnostic.base.core.ui.gui.list.ImageListEntry;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+import java.util.ResourceBundle;
 import javax.swing.event.ListSelectionListener;
 
 public class NorthMainJPanel extends javax.swing.JPanel {
@@ -42,11 +43,11 @@ public class NorthMainJPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     
     /** Creates new form NorthMainJPanel */
-    public NorthMainJPanel() {
-        initComponents();
+    public NorthMainJPanel(ResourceBundle rb) {
+         initComponents();
          logoPanel = new LogoJPanel();
-         textFieldPanel = new TextFieldJPanel();
-         listPanel = new ListJPanel();
+         textFieldPanel = new TextFieldJPanel(rb);
+         listPanel = new ListJPanel(rb);
          jPanel1.add(logoPanel, java.awt.BorderLayout.NORTH);
          jPanel1.add(textFieldPanel, java.awt.BorderLayout.CENTER);
          add(listPanel, java.awt.BorderLayout.CENTER);

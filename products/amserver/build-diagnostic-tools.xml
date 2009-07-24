@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-diagnostic-tools.xml,v 1.6 2009-07-09 17:04:14 veiming Exp $
+   $Id: build-diagnostic-tools.xml,v 1.7 2009-07-24 22:25:30 ak138937 Exp $
 
 -->
 
@@ -289,6 +289,8 @@
               overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${amserver.built.res.dir}"
                 includes="DiagnosticTool*.properties"/>
+            <fileset dir="${amserver.built.res.dir}"
+                includes="SystemInfo*.properties"/>
         </copy>
         <copy todir="${odt.classes.dir}${odt.path}/base/core/ui/cli"
               overwrite="yes" flatten="yes" encoding="UTF-8">

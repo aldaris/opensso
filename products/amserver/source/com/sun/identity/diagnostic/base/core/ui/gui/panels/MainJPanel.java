@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MainJPanel.java,v 1.1 2008-11-22 02:19:57 ak138937 Exp $
+ * $Id: MainJPanel.java,v 1.2 2009-07-24 22:04:57 ak138937 Exp $
  *
  */
 
@@ -39,6 +39,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.ResourceBundle;
 import java.util.Set;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
@@ -82,6 +83,9 @@ public class MainJPanel extends javax.swing.JPanel implements ToolConstants {
         "/com/sun/identity/diagnostic/base/core/ui/gui/images/BlubOnIcon.gif";
     public static final String NOT_SELECTED_ICON =
         "/com/sun/identity/diagnostic/base/core/ui/gui/images/BlubOffIcon.gif";
+   
+    private final ResourceBundle rb =
+         ResourceBundle.getBundle(ToolConstants.RESOURCE_BUNDLE_NAME);
     
     public MainJPanel() {
         initComponents();
@@ -93,9 +97,9 @@ public class MainJPanel extends javax.swing.JPanel implements ToolConstants {
         });
         counterThread.start();
         previousCategorySelectedIndex = -1;
-        northPanel = new NorthMainJPanel();
-        centerPanel = new CenterMainJPanel();
-        southPanel = new ButtonJPanel(this);
+        northPanel = new NorthMainJPanel(rb);
+        centerPanel = new CenterMainJPanel(rb);
+        southPanel = new ButtonJPanel(this, rb);
         add(northPanel, java.awt.BorderLayout.NORTH);
         add(centerPanel, java.awt.BorderLayout.CENTER);
         add(southPanel, java.awt.BorderLayout.SOUTH);
@@ -143,7 +147,8 @@ public class MainJPanel extends javax.swing.JPanel implements ToolConstants {
             
             public void actionPerformed(ActionEvent e) {
                 if (JOptionPane.showConfirmDialog(centerPanel,
-                    "Clear all test results?", "Confirmation",
+                    rb.getString("dlg_clear_txt_msg"), 
+                    rb.getString("dlg_clear_title_msg"),
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) ==
                     JOptionPane.YES_OPTION) {
                     centerPanel.clearAll();
@@ -210,29 +215,29 @@ public class MainJPanel extends javax.swing.JPanel implements ToolConstants {
             public void itemStateChanged(ItemEvent e) {
                 ImageListEntry entry = (ImageListEntry) e.getItem();
                 String name = entry.getName();
-                if (name.equals("Sun Application Server")) {
+                if (name.equals(rb.getString("dd_sun_app_server"))) {
                     northPanel.setContainerBaseLabel(
-                        "Container Base Directory:");
+                        rb.getString("txt_lbl_container_bdir"));
                     northPanel.setContainerDomainLabel(
-                        "Container Domain Directory:");
+                        rb.getString("txt_lbl_container_ddir"));
                 } else {
-                    if (name.equals("Sun WebServer")) {
+                    if (name.equals(rb.getString("dd_sun_web_server"))) {
                         northPanel.setContainerBaseLabel(
-                            "Container Base Directory:");
+                            rb.getString("txt_lbl_container_bdir"));
                         northPanel.setContainerDomainLabel(
-                            "Container Domain Directory:");
+                            rb.getString("txt_lbl_container_ddir"));
                     } else {
-                        if (name.equals("BEA Weblogic")) {
+                        if (name.equals(rb.getString("dd_bea_weblogic"))) {
                             northPanel.setContainerBaseLabel(
-                                "Container Instance Directory:");
+                                rb.getString("txt_lbl_container_idir"));
                             northPanel.setContainerDomainLabel(
-                                "Container Domain Directory:");
+                                rb.getString("txt_lbl_container_ddir"));
                         } else {
-                            if (name.equals("IBM WebSphere")) {
+                            if (name.equals(rb.getString("dd_ibm_websphere"))) {
                                 northPanel.setContainerBaseLabel(
-                                    "Container Profile Directory:");
+                                    rb.getString("txt_lbl_container_pdir"));
                                 northPanel.setContainerDomainLabel(
-                                    "Container Server Directory:");
+                                    rb.getString("txt_lbl_container_sdir"));
                             }
                         }
                     }
@@ -252,7 +257,7 @@ public class MainJPanel extends javax.swing.JPanel implements ToolConstants {
                     Set<String> serviceName = serviceNameMap.keySet();
                     centerPanel.removeAllTests();
                     for (String name : serviceName) {
-                        if (!name.equalsIgnoreCase("all")) {
+                        if (!name.equalsIgnoreCase(rb.getString("all").trim())) {
                             centerPanel.addTest(new CheckBoxListEntry(name, 
                                 SELECTED_ICON, NOT_SELECTED_ICON));
                         }
@@ -308,13 +313,13 @@ public class MainJPanel extends javax.swing.JPanel implements ToolConstants {
                             Object[] values = 
                                 new Object[tableModel.getColumnCount() + 1];
                             values[TestsTableModel.START_TIME_COLUMN] = 
-                                new StartTimeTableCell();
+                                new StartTimeTableCell(rb);
                             values[TestsTableModel.Test_COLUMN] = 
                                 testEntry.getName();
                             values[TestsTableModel.TIME_ELAPSED_COLUMN] = 
                                 new CounterTableCell();
                             values[TestsTableModel.RESULT_COLUMN] = 
-                                new ResultTableCell();
+                                new ResultTableCell(rb);
                             tableModel.addRow(values);
                             rowNum[i] = tableModel.getRowCount() - 1;
                         }

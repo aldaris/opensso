@@ -22,15 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ToolCLISave.java,v 1.1 2008-11-22 02:19:55 ak138937 Exp $
+ * $Id: ToolCLISave.java,v 1.2 2009-07-24 22:13:08 ak138937 Exp $
  *
  */
 
 package com.sun.identity.diagnostic.base.core.ui.cli;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.io.File;
+import java.util.ResourceBundle;
 
 public class ToolCLISave {
     
@@ -45,27 +46,29 @@ public class ToolCLISave {
      * @param params ArrayList containing the contents to save.
      *
      */
-    public void saveToFile(String fName, ArrayList params) throws Exception {
+    public void saveToFile(String fName, ArrayList params, ResourceBundle rb) 
+        throws Exception 
+    {
         FileWriter fw = new FileWriter(new File(fName));
-        fw.write(formatInput(params));
+        fw.write(formatInput(params, rb));
         fw.flush();
         fw.close();
     }
     
-    private String formatInput(ArrayList params) {
+    private String formatInput(ArrayList params, ResourceBundle rb) {
         StringBuffer buff = new StringBuffer();
         buff.append("========================\n")
-        .append("Status: \n")
+        .append(rb.getString("cli-save-status-msg")).append("\n")
         .append(params.get(0))
         .append("\n========================\n")
         .append("\n========================\n")
-        .append("Message: \n")
+        .append(rb.getString("cli-save-msg")).append("\n")
         .append(params.get(1))
         .append("\n========================\n")
-        .append("Error: \n")
+        .append(rb.getString("cli-save-error-msg")).append("\n")
         .append(params.get(2))
         .append("\n========================\n")
-        .append("Warning: \n")
+        .append(rb.getString("cli-save-warning-msg")).append("\n")
         .append(params.get(3))
         .append("\n========================\n")
         .append("\n");

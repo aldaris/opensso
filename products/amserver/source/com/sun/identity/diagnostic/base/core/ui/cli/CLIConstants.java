@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.1 2008-11-22 02:19:55 ak138937 Exp $
+ * $Id: CLIConstants.java,v 1.2 2009-07-24 22:10:09 ak138937 Exp $
  *
  */
 
@@ -36,5 +36,5 @@ import com.sun.identity.diagnostic.base.core.common.ToolConstants;
  */
 public interface CLIConstants extends ToolConstants {
      public final String CLI_RESOURCE_BUNDLE = 
-         "com.sun.identity.diagnostic.base.core.ui.cli.ToolCLI";
+         "com.sun.identity.diagnostic.base.resources.locale.DiagnosticToolCLI";
 }

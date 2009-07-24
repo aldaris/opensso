@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListJPanel.java,v 1.1 2008-11-22 02:19:57 ak138937 Exp $
+ * $Id: ListJPanel.java,v 1.2 2009-07-24 22:04:13 ak138937 Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.diagnostic.base.core.ui.gui.panels;
 
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ResourceBundle;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -49,9 +50,11 @@ public class ListJPanel extends javax.swing.JPanel {
     private File containerDomainDirFile = null;
     private JFileChooser configDirChooser = null;
     private File configDirFile = null;
+    private ResourceBundle rb;
     
     /** Creates new form ListJPanel */
-    public ListJPanel() {
+    public ListJPanel(ResourceBundle rb) {
+        this.rb = rb;
         initComponents();
         categoryjList.setCellRenderer(new ImageListCellRenderer());
         webContainerjComboBox.setRenderer(new ImageListCellRenderer());        
@@ -80,11 +83,12 @@ public class ListJPanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Component"));
+        setBorder(javax.swing.BorderFactory.createTitledBorder(
+            rb.getString("lbl_component")));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(
-            "Category"));
+            rb.getString("lbl_category")));
         categoryjList.setSelectionMode(
             javax.swing.ListSelectionModel.SINGLE_SELECTION);
         categoryjList.setVisibleRowCount(5);
@@ -97,7 +101,7 @@ public class ListJPanel extends javax.swing.JPanel {
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(
-            "Web Container"));
+            rb.getString("lbl_web_container")));
         configDirjTextField.setColumns(10);
         configDirjTextField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -108,14 +112,14 @@ public class ListJPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel2.add(configDirjTextField, gridBagConstraints);
 
-        jLabel2.setText("Configuration Directory:");
+        jLabel2.setText(rb.getString("txt_lbl_cfg_dir"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel2.add(jLabel2, gridBagConstraints);
 
-        containerBasejLabel.setText("Container Base Directory:");
+        containerBasejLabel.setText(rb.getString("txt_lbl_container_bdir"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -133,14 +137,14 @@ public class ListJPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel2.add(containerDirjTextField, gridBagConstraints);
 
-        jLabel4.setText("Container Type:          ");
+        jLabel4.setText(rb.getString("txt_lbl_container_type"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel2.add(jLabel4, gridBagConstraints);
 
-        configDirBrowsejButton.setText("Browse");
+        configDirBrowsejButton.setText(rb.getString("btn_lbl_browse"));
         configDirBrowsejButton.addActionListener(
             new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -154,7 +158,7 @@ public class ListJPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel2.add(configDirBrowsejButton, gridBagConstraints);
 
-        containerDirBrowsejButton.setText("Browse");
+        containerDirBrowsejButton.setText(rb.getString("btn_lbl_browse"));
         containerDirBrowsejButton.addActionListener(
             new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -182,7 +186,7 @@ public class ListJPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel2.add(webContainerjComboBox, gridBagConstraints);
 
-        containerDomainjLabel.setText("Container Domain Directory:");
+        containerDomainjLabel.setText(rb.getString("txt_lbl_container_ddir"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -197,7 +201,7 @@ public class ListJPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel2.add(containerDomainDirjTextField, gridBagConstraints);
 
-        containerDomainDirBrowsejButton.setText("Browse");
+        containerDomainDirBrowsejButton.setText(rb.getString("btn_lbl_browse"));
         containerDomainDirBrowsejButton.addActionListener(
             new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -213,7 +217,7 @@ public class ListJPanel extends javax.swing.JPanel {
 
         add(jPanel2, java.awt.BorderLayout.CENTER);
 
-        runSelectedjButton.setText("Run Selected");
+        runSelectedjButton.setText(rb.getString("btn_lbl_run_selected"));
         runSelectedjButton.setEnabled(false);
         jPanel3.add(runSelectedjButton);
 
@@ -245,7 +249,7 @@ public class ListJPanel extends javax.swing.JPanel {
             JFileChooser.DIRECTORIES_ONLY);
         containerDomainDirChooser.setMultiSelectionEnabled(false);
         containerDomainDirChooser.setDialogTitle(
-            "Open Web Container Domain Directory");
+            rb.getString("dlg_open_wc_domain_dir_title"));
         if (containerDomainDirChooser.showOpenDialog(this) == 
             JFileChooser.APPROVE_OPTION) {
             containerDomainDirFile = containerDomainDirChooser.getSelectedFile();
@@ -275,7 +279,8 @@ public class ListJPanel extends javax.swing.JPanel {
         }
         containerDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         containerDirChooser.setMultiSelectionEnabled(false);
-        containerDirChooser.setDialogTitle("Open Web Container Base Directory");
+        containerDirChooser.setDialogTitle(
+            rb.getString("dlg_open_wc_base_dir_title"));
         if (containerDirChooser.showOpenDialog(this) == 
             JFileChooser.APPROVE_OPTION) {
             containerDirFile = containerDirChooser.getSelectedFile();
@@ -304,7 +309,7 @@ public class ListJPanel extends javax.swing.JPanel {
         }
         configDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         configDirChooser.setMultiSelectionEnabled(false);
-        configDirChooser.setDialogTitle("Open OpenSSO Configuration Directory");
+        configDirChooser.setDialogTitle(rb.getString("dlg_open_osso_cfg_dir_title"));
         if (configDirChooser.showOpenDialog(this) == 
             JFileChooser.APPROVE_OPTION) {
             configDirFile = configDirChooser.getSelectedFile();

@@ -22,14 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestsTableModel.java,v 1.1 2008-11-22 02:19:57 ak138937 Exp $
+ * $Id: TestsTableModel.java,v 1.2 2009-07-24 22:08:44 ak138937 Exp $
  *
  */
 
 package com.sun.identity.diagnostic.base.core.ui.gui.table;
 
 import java.util.Vector;
+import java.util.ResourceBundle;
 import javax.swing.table.AbstractTableModel;
+
+import com.sun.identity.diagnostic.base.core.common.ToolConstants;
+
+
 
 public class TestsTableModel extends AbstractTableModel {
     
@@ -39,14 +44,22 @@ public class TestsTableModel extends AbstractTableModel {
     public static final int RESULT_COLUMN = 3;
     public static final int CARET_POSITION = 4;
     
-    private static final String[] headers = 
-        {"Start time", "Test", "Time elapsed", "Result"};
-    
     private static final Class columnClasses[] = {LabelTableCell.class, 
         String.class, LabelTableCell.class, LabelTableCell.class, 
             LabelTableCell.class};
     
     private Vector data;
+    private static ResourceBundle rb;
+    private static String[] headers = new String[4];
+
+    static {
+        rb = ResourceBundle.getBundle(ToolConstants.RESOURCE_BUNDLE_NAME);
+        headers[0] = rb.getString("lbl_start_time");
+        headers[1] = rb.getString("lbl_test");
+        headers[2] = rb.getString("lbl_time_elapsed");
+        headers[3] = rb.getString("lbl_result");
+    }
+
     
     /** Creates a new instance of TestsTableModel */
     public TestsTableModel() {

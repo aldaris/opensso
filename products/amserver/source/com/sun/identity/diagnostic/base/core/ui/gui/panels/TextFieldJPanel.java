@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TextFieldJPanel.java,v 1.1 2008-11-22 02:19:57 ak138937 Exp $
+ * $Id: TextFieldJPanel.java,v 1.2 2009-07-24 22:06:32 ak138937 Exp $
  *
  */
 
@@ -31,12 +31,13 @@ package com.sun.identity.diagnostic.base.core.ui.gui.panels;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 public class TextFieldJPanel extends javax.swing.JPanel {
     
     /** Creates new form TextFieldJPanel */
-    public TextFieldJPanel() {
-        initComponents();
+    public TextFieldJPanel(ResourceBundle rb) {
+        initComponents(rb);
         String hostName = null;
         try {
             hostName = InetAddress.getLocalHost().getHostName();
@@ -55,7 +56,7 @@ public class TextFieldJPanel extends javax.swing.JPanel {
         userNamejTextField.setText(System.getProperty("user.name"));
     }
     
-    private void initComponents() {
+    private void initComponents(ResourceBundle rb) {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel10 = new javax.swing.JPanel();
@@ -71,12 +72,12 @@ public class TextFieldJPanel extends javax.swing.JPanel {
         setLayout(new java.awt.GridBagLayout());
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(
-            "Host Server Information"));
+            rb.getString("lbl_host_server_info")));
         jPanel10.setLayout(new java.awt.GridBagLayout());
 
         add(jPanel10, new java.awt.GridBagConstraints());
 
-        jLabel1.setText("Host Name:");
+        jLabel1.setText(rb.getString("txt_lbl_hname"));
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -93,7 +94,7 @@ public class TextFieldJPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         add(hostNamejTextField, gridBagConstraints);
 
-        jLabel2.setText("Date:");
+        jLabel2.setText(rb.getString("txt_lbl_date"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -109,7 +110,7 @@ public class TextFieldJPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         add(datejTextField, gridBagConstraints);
 
-        jLabel3.setText("Operating System:");
+        jLabel3.setText(rb.getString("txt_lbl_os"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -125,7 +126,7 @@ public class TextFieldJPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         add(OSjTextField, gridBagConstraints);
 
-        jLabel4.setText("User Name:");
+        jLabel4.setText(rb.getString("txt_lbl_uname"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;

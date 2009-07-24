@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TableJPanel.java,v 1.1 2008-11-22 02:19:57 ak138937 Exp $
+ * $Id: TableJPanel.java,v 1.2 2009-07-24 22:05:57 ak138937 Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.diagnostic.base.core.ui.gui.panels;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ResourceBundle;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -55,8 +56,8 @@ public class TableJPanel extends javax.swing.JPanel {
     public static final String BLACK = "#000000";
     
     /** Creates new form TableJPanel */
-    public TableJPanel() {
-        initComponents();
+    public TableJPanel(ResourceBundle rb) {
+        initComponents(rb);
         tableModel = new TestsTableModel();
         testsjTable.setModel(tableModel);
         testsjTable.setDefaultRenderer(LabelTableCell.class, 
@@ -76,7 +77,7 @@ public class TableJPanel extends javax.swing.JPanel {
         });
     }
     
-    private void initComponents() {
+    private void initComponents(ResourceBundle rb) {
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         testsjTable = new javax.swing.JTable();
@@ -85,7 +86,8 @@ public class TableJPanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Results"));
+        setBorder(javax.swing.BorderFactory.createTitledBorder(
+            rb.getString("lbl_results")));
         jSplitPane1.setDividerLocation(150);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane1.setAutoscrolls(true);

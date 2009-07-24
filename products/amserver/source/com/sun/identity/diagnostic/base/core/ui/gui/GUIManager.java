@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GUIManager.java,v 1.1 2008-11-22 02:19:55 ak138937 Exp $
+ * $Id: GUIManager.java,v 1.2 2009-07-24 22:01:59 ak138937 Exp $
  *
  */
 
@@ -31,7 +31,9 @@ package com.sun.identity.diagnostic.base.core.ui.gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.ResourceBundle;
 import javax.swing.JFrame;
+import com.sun.identity.diagnostic.base.core.common.ToolConstants;
 import com.sun.identity.diagnostic.base.core.ui.UIManager;
 import com.sun.identity.diagnostic.base.core.ui.gui.panels.MainJPanel;
 
@@ -42,6 +44,12 @@ import com.sun.identity.diagnostic.base.core.ui.gui.panels.MainJPanel;
 public class GUIManager extends UIManager {
     
     MainJPanel mainPanel;
+    private static ResourceBundle rb;
+
+    static {
+        rb = ResourceBundle.getBundle(ToolConstants.RESOURCE_BUNDLE_NAME);
+    }
+
     
     /** Creates a new instance of GUIManager */
     public GUIManager() {
@@ -52,11 +60,11 @@ public class GUIManager extends UIManager {
      * for GUI mode.
      */
     public void init() {
-        System.out.println("Please wait while system initializes....");
+        System.out.println(rb.getString("dt_init_msg"));
         try {
             mainPanel = new MainJPanel();
         } catch (Exception e) {
-            System.out.println("Exception occured in initialization: " + 
+            System.out.println(rb.getString("dt_init_exception_msg") + 
                 e.getMessage());  
         }
     }
@@ -67,8 +75,8 @@ public class GUIManager extends UIManager {
      */
     public void startApplication() {
         try {
-            System.out.println("Initializing JAVA Begin!!!");
-            JFrame frame = new JFrame("OpenSSO Diagnostic Tool");
+            System.out.println(rb.getString("dt_init_gui_msg_begin"));
+            JFrame frame = new JFrame(rb.getString("dt_tool_title_msg"));
             frame.setSize(800, 700);
             frame.getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
             frame.validate();
@@ -84,9 +92,9 @@ public class GUIManager extends UIManager {
                 (screenSize.height - frameSize.height) / 2);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
-            System.out.println("End Initializing JAVA !!!");
+            System.out.println(rb.getString("dt_init_gui_msg_end"));
         } catch (Exception e) {
-            System.out.println("Exception occured starting application: " + 
+            System.out.println(rb.getString("dt_app_exception_msg") + 
                 e.getMessage());  
         }
     }

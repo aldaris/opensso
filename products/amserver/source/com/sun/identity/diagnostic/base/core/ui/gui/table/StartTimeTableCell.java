@@ -22,20 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StartTimeTableCell.java,v 1.1 2008-11-22 02:19:57 ak138937 Exp $
+ * $Id: StartTimeTableCell.java,v 1.2 2009-07-24 22:08:08 ak138937 Exp $
  *
  */
 
 package com.sun.identity.diagnostic.base.core.ui.gui.table;
 
 import java.util.Date;
+import java.util.ResourceBundle;
 
 public class StartTimeTableCell extends LabelTableCell {
     
     /** Creates a new instance of StartTimeTableCell */
-    public StartTimeTableCell() {
+    public StartTimeTableCell(ResourceBundle rb) {
         super();
-        setText("Pending...");
+        setText(rb.getString("test_pending_msg"));
     }
     
     public void start() {

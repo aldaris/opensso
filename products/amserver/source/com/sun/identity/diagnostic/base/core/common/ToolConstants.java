@@ -22,11 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ToolConstants.java,v 1.1 2008-11-22 02:19:53 ak138937 Exp $
+ * $Id: ToolConstants.java,v 1.2 2009-07-24 22:01:21 ak138937 Exp $
  *
  */
 
 package com.sun.identity.diagnostic.base.core.common;
+
+import java.util.ResourceBundle;
 
 /**
  * This defines the constants used by the entire tool.
@@ -123,8 +125,12 @@ public interface ToolConstants {
    /**
     * Name of supported web containers.
     */
-   public static final String[] WEB_CONTAINERS = {"Sun Application Server",
-         "Sun WebServer", "BEA Weblogic",  "IBM WebSphere"};
+   public static final String[] WEB_CONTAINERS = {
+       ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME).getString("dd_sun_app_server"),
+       ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME).getString("dd_sun_web_server"),
+       ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME).getString("dd_bea_weblogic"),
+       ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME).getString("dd_ibm_websphere")};
+
 
    /**
     * Locations of web containers' icon.

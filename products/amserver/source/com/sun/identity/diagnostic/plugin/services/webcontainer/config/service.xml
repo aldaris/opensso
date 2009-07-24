@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: service.xml,v 1.1 2008-11-22 02:41:24 ak138937 Exp $
+   $Id: service.xml,v 1.2 2009-07-24 22:18:51 ak138937 Exp $
 
 -->
 
@@ -47,9 +47,9 @@
      should be presented in the application UI (GUI or CLI) model. 
     -->
     <realization>
-        <category id="Web-Container" operation="get-policy-info" name="Policy File" />
-        <category id="Web-Container" operation="get-jvm-info" name="JVM Settings" />
-        <category id="Web-Container" operation="get-jvm-ver-info" name="JVM Version" />
+        <category id="category_webcontainer" operation="get-policy-info" name="policy_file" />
+        <category id="category_webcontainer" operation="get-jvm-info" name="jvm_settings" />
+        <category id="category_webcontainer" operation="get-jvm-ver-info" name="jvm_version" />
     </realization>    
     
     <!-- 

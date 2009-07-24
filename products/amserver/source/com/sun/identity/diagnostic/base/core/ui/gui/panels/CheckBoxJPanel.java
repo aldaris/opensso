@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CheckBoxJPanel.java,v 1.1 2008-11-22 02:19:57 ak138937 Exp $
+ * $Id: CheckBoxJPanel.java,v 1.2 2009-07-24 22:03:32 ak138937 Exp $
  *
  */
 
 package com.sun.identity.diagnostic.base.core.ui.gui.panels;
 
+import java.util.ResourceBundle;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.ListModel;
 import javax.swing.DefaultListModel;
@@ -39,8 +40,8 @@ import com.sun.identity.diagnostic.base.core.ui.gui.list.CheckBoxListEntry;
 public class CheckBoxJPanel extends javax.swing.JPanel {
     
     /** Creates new form CheckBoxJPanel */
-    public CheckBoxJPanel() {
-        initComponents();
+    public CheckBoxJPanel(ResourceBundle rb) {
+        initComponents(rb);
         checkBoxjList.setCellRenderer(new CheckBoxListCellRenderer());
     }
     
@@ -48,13 +49,14 @@ public class CheckBoxJPanel extends javax.swing.JPanel {
      * This method is called from within the constructor to
      * initialize the form.
      */
-    private void initComponents() {
+    private void initComponents(ResourceBundle rb) {
         jScrollPane1 = new javax.swing.JScrollPane();
         checkBoxjList = new javax.swing.JList();
 
         setLayout(new java.awt.BorderLayout());
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Select Test"));
+        setBorder(javax.swing.BorderFactory.createTitledBorder(
+            rb.getString("lbl_select_test")));
         checkBoxjList.setFixedCellWidth(180);
         jScrollPane1.setViewportView(checkBoxjList);
 

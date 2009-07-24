@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CenterMainJPanel.java,v 1.1 2008-11-22 02:19:57 ak138937 Exp $
+ * $Id: CenterMainJPanel.java,v 1.2 2009-07-24 22:03:11 ak138937 Exp $
  *
  */
 
 package com.sun.identity.diagnostic.base.core.ui.gui.panels;
 
 import java.awt.Point;
+import java.util.ResourceBundle;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
@@ -42,10 +43,10 @@ public class CenterMainJPanel extends javax.swing.JPanel {
     private TableJPanel tablePanel;
     
     /** Creates new form CenterMainJPanel */
-    public CenterMainJPanel() {
-        initComponents();
-        checkBoxPanel = new CheckBoxJPanel();
-        tablePanel = new TableJPanel();
+    public CenterMainJPanel(ResourceBundle rb) {
+        initComponents(rb);
+        checkBoxPanel = new CheckBoxJPanel(rb);
+        tablePanel = new TableJPanel(rb);
         add(checkBoxPanel, java.awt.BorderLayout.WEST);
         add(tablePanel, java.awt.BorderLayout.CENTER);
     }
@@ -54,9 +55,10 @@ public class CenterMainJPanel extends javax.swing.JPanel {
      * This method is called from within the constructor to
      * initialize the form.
      */
-    private void initComponents() {
+    private void initComponents(ResourceBundle rb) {
         setLayout(new java.awt.BorderLayout());
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Test"));
+        setBorder(javax.swing.BorderFactory.createTitledBorder(
+            rb.getString("lbl_test")));
     }
     
     public void addTest(CheckBoxListEntry entry) {

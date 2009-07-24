@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ToolRegistry.java,v 1.1 2008-11-22 02:19:54 ak138937 Exp $
+ * $Id: ToolRegistry.java,v 1.2 2009-07-24 22:13:53 ak138937 Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -53,6 +54,8 @@ public class ToolRegistry {
     private HashMap<String, ServiceDescriptor>  registeredServices = new HashMap();
     private HashMap<String, HashMap> serviceCategories = new HashMap();
     private static Object lock = new Object();
+    private ResourceBundle rb = ResourceBundle.getBundle(
+        ToolConstants.RESOURCE_BUNDLE_NAME);
   
     private ToolRegistry() {
     }
@@ -105,18 +108,19 @@ public class ToolRegistry {
                 //Add the operation and Service ID in a HashMap
                 List<CategoryType> categories = sd.getRealizationCategories();
                 for (CategoryType c: categories) {
-                    if (serviceCategories.containsKey(c.getId())) {
-                        HashMap nameToOpcode = serviceCategories.get(c.getId());
+                    if (serviceCategories.containsKey(rb.getString(c.getId()))) {
+                        HashMap nameToOpcode = serviceCategories.get(
+                            rb.getString(c.getId()));
                         HashMap OpcodeToService = new HashMap();
                         OpcodeToService.put(c.getOperation(), sd.getId());
-                        nameToOpcode.put(c.getName(), OpcodeToService);
-                        serviceCategories.put(c.getId(), nameToOpcode);
+                        nameToOpcode.put(rb.getString(c.getName()), OpcodeToService);
+                        serviceCategories.put(rb.getString(c.getId()), nameToOpcode);
                     } else {
                         HashMap nameToOpcode = new HashMap();
                         HashMap serviceMap = new HashMap();
                         serviceMap.put(c.getOperation(), sd.getId());
-                        nameToOpcode.put(c.getName(), serviceMap);
-                        serviceCategories.put(c.getId(), nameToOpcode);
+                        nameToOpcode.put(rb.getString(c.getName()), serviceMap);
+                        serviceCategories.put(rb.getString(c.getId()), nameToOpcode);
                     }
                 }
             }

@@ -22,23 +22,30 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ButtonJPanel.java,v 1.1 2008-11-22 02:19:57 ak138937 Exp $
+ * $Id: ButtonJPanel.java,v 1.2 2009-07-24 22:02:38 ak138937 Exp $
  *
  */
 
 package com.sun.identity.diagnostic.base.core.ui.gui.panels;
 
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import com.sun.identity.diagnostic.base.core.common.ToolConstants;
 
 public class ButtonJPanel extends javax.swing.JPanel {
     
     private JComponent parent;
+    private javax.swing.JButton clearAlljButton;
+    private javax.swing.JButton quitjButton;
+    private javax.swing.JButton saveAlljButton;
+    private ResourceBundle rb;
     
     /** Creates new form ButtonJPanel */
-    public ButtonJPanel(JComponent parent) {
+    public ButtonJPanel(JComponent parent, ResourceBundle rb) {
         this.parent = parent;
+        this.rb = rb;
         initComponents();
     }
     
@@ -51,15 +58,15 @@ public class ButtonJPanel extends javax.swing.JPanel {
         clearAlljButton = new javax.swing.JButton();
         quitjButton = new javax.swing.JButton();
 
-        saveAlljButton.setText("Save All Results");
+        saveAlljButton.setText(rb.getString("btn_lbl_save_all"));
         saveAlljButton.setEnabled(false);
         add(saveAlljButton);
 
-        clearAlljButton.setText("Clear All");
+        clearAlljButton.setText(rb.getString("btn_lbl_clear_all"));
         clearAlljButton.setEnabled(false);
         add(clearAlljButton);
 
-        quitjButton.setText("Quit");
+        quitjButton.setText(rb.getString("btn_lbl_quit"));
         quitjButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 quitjButtonActionPerformed(evt);
@@ -69,8 +76,9 @@ public class ButtonJPanel extends javax.swing.JPanel {
     }
 
     private void quitjButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (JOptionPane.showConfirmDialog(parent, "Exit program?",
-            "Confirm Exit", JOptionPane.YES_NO_OPTION,
+        if (JOptionPane.showConfirmDialog(parent, 
+            rb.getString("dlg_exit_txt_msg"),
+            rb.getString("dlg_exit_title_msg"), JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
             System.exit(0);
         }
@@ -110,7 +118,4 @@ public class ButtonJPanel extends javax.swing.JPanel {
         disableClearAllButton();
     }
     
-    private javax.swing.JButton clearAlljButton;
-    private javax.swing.JButton quitjButton;
-    private javax.swing.JButton saveAlljButton;
 }
