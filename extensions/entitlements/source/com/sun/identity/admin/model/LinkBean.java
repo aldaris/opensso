@@ -1,8 +1,10 @@
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
+import java.io.IOException;
 import java.io.Serializable;
-import java.net.URL;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 
 public abstract class LinkBean implements Serializable {
 
@@ -89,4 +91,15 @@ public abstract class LinkBean implements Serializable {
     }
 
     public abstract String getRedirect();
+
+    public void redirect() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ExternalContext ec = fc.getExternalContext();
+        try {
+            ec.redirect(getRedirect());
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+
+    }
 }

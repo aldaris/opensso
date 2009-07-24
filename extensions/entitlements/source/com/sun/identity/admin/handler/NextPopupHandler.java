@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NextPopupHandler.java,v 1.3 2009-06-25 17:55:08 farble1670 Exp $
+ * $Id: NextPopupHandler.java,v 1.4 2009-07-24 23:55:37 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -45,27 +45,14 @@ public class NextPopupHandler implements Serializable {
 
     public void closeListener(ActionEvent event) {
         nextPopupBean.reset();
-        redirect(LinkBean.HOME.getRedirect());
-    }
-
-    private void redirect(String url) {
-        FacesContext fc = FacesContext.getCurrentInstance();
-        ExternalContext ec = fc.getExternalContext();
-        try {
-            ec.redirect(url);
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
-
+        LinkBean.HOME.getRedirect();
     }
 
     public void nextListener(ActionEvent event) {
         nextPopupBean.reset();
 
         LinkBean lb = getLinkBean(event);
-        String redirect = lb.getRedirect();
-
-        redirect(redirect);
+        lb.redirect();
     }
 
     public LinkBean getLinkBean(ActionEvent event) {
