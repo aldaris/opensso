@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.21 2009-06-04 01:16:49 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.22 2009-07-24 21:51:06 mallas Exp $
  *
  */
 
@@ -785,8 +785,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
                 if(privObject instanceof EncryptionKey){
                     EncryptionKey encKey = (EncryptionKey)privObject;                                         
                     byte[] keyBytes = encKey.getBytes();
-                    Key secretKey = new SecretKeySpec(keyBytes, 
-                            SAMLConstants.ALGO_ID_MAC_HMAC_SHA1);
+                    Key secretKey = new SecretKeySpec(keyBytes, "DES");                            
                     subject.getPublicCredentials().add(secretKey);
                     break;                    
                 }

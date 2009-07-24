@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BinarySecurityToken.java,v 1.8 2009-01-24 01:31:25 mallas Exp $
+ * $Id: BinarySecurityToken.java,v 1.9 2009-07-24 21:51:06 mallas Exp $
  *
  */
 
@@ -310,25 +310,13 @@ public class BinarySecurityToken implements SecurityToken {
      */
     private void getKerberosToken() throws SecurityException {
         Subject clientSubject = getKerberosSubject();
-        // Obtain the session key to sign using kerberos ticket.
-        Set creds = clientSubject.getPrivateCredentials();
-        Iterator<Object> iter2 = creds.iterator();
-        while(iter2.hasNext()){
-                Object privObject = iter2.next();
-                if(privObject instanceof KerberosTicket){
-                    KerberosTicket kerbTicket = (KerberosTicket)privObject;                                         
-                    secretKey = kerbTicket.getSessionKey();                                                        
-                    break;                  
-                }
-        }
-
+        final String serviceName = kbSpec.getServicePrincipal();
         try {
             Subject.doAs(clientSubject, new PrivilegedExceptionAction(){                
                 public Object run() throws Exception {
                    
                     final GSSManager manager = GSSManager.getInstance();
-                    final Oid krb5Oid = new Oid("1.2.840.113554.1.2.2");
-                    String serviceName = kbSpec.getServicePrincipal();                    
+                    final Oid krb5Oid = new Oid("1.2.840.113554.1.2.2");                    
                     GSSName serverName = manager.createName(serviceName, null);                                        
                     GSSContext context = manager.createContext(serverName,
                                          krb5Oid,
@@ -344,6 +332,21 @@ public class BinarySecurityToken implements SecurityToken {
         } catch (Exception ge) {
             debug.error("BinarySecurityToken.getKerberosToken: GSS Error", ge);
             throw new SecurityException(ge.getMessage());
+        }
+        
+        // Obtain the session key to sign using kerberos ticket.
+        Set creds = clientSubject.getPrivateCredentials();
+        Iterator<Object> iter2 = creds.iterator();
+        while(iter2.hasNext()){
+                Object privObject = iter2.next();
+                if(privObject instanceof KerberosTicket){
+                    KerberosTicket kerbTicket = (KerberosTicket)privObject;
+                    if(!kerbTicket.getServer().getName().equals(serviceName)){
+                       continue;
+                    }
+                    secretKey = kerbTicket.getSessionKey();                                        
+                    break;
+                }
         }
        
     }
