@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.99 2009-06-24 23:47:02 farble1670 Exp $
+* $Id: admin.css,v 1.100 2009-07-24 20:23:30 farble1670 Exp $
 *
 */
 
@@ -1284,6 +1284,27 @@ span.button img.left {
 .next-popup-links a img {
     height: 16px;
     width: 16px;
+}
+
+.landing {
+    padding-top: 20px;
+}
+
+.landing-title {
+    font-size: 18px;
+    font-weight: bold;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.landing-items {
+    background: #fff;
+    padding: 10px;
+    border: 1px solid #aaa;
+}
+
+.litem {
+    padding-top: 20px;
 }
 
 /*

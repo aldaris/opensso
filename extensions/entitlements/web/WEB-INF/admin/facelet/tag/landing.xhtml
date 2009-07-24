@@ -23,28 +23,33 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy.xhtml,v 1.6 2009-07-24 20:23:31 farble1670 Exp $
+   $Id: landing.xhtml,v 1.2 2009-07-24 20:23:30 farble1670 Exp $
 
 -->
 
 <ui:composition
-    template="template/page-no-title.xhtml"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
     xmlns:o="http://opensso.dev.java.net"
+    xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
-
-    <ui:define name="panel-body">
-        <o:landing
-            title="#{resources['policy.landingTitle']}">
+    <div
+        class="landing section-outer">
+        <o:box>
             <ui:define
-                name="litems">
-                <o:litem
-                    title="#{resources['policy.litem.title.managePolicies']}"
-                    action="policy-manage"
-                    details="#{resources['policy.litem.details.managePolicies']}"/>
+                name="body">
+                <div
+                    class="section-inner">
+                    <ice:panelGroup
+                        styleClass="landing-items">
+                        <ice:outputText
+                            styleClass="landing-title"
+                            value="#{title}"/>
+                        <ui:insert
+                            name="litems"/>
+                    </ice:panelGroup>
+                </div>
             </ui:define>
-        </o:landing>
-    </ui:define>
+        </o:box>
+    </div>
 </ui:composition>
