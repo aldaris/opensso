@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: landing.xhtml,v 1.2 2009-07-24 20:23:30 farble1670 Exp $
+   $Id: landing.xhtml,v 1.3 2009-07-24 23:05:57 farble1670 Exp $
 
 -->
 
@@ -44,7 +44,7 @@
                         styleClass="landing-items">
                         <ice:outputText
                             styleClass="landing-title"
-                            value="#{title}"/>
+                            value="#{resources[o:concat(page,'.landingTitle')]}"/>
                         <ui:insert
                             name="litems"/>
                     </ice:panelGroup>

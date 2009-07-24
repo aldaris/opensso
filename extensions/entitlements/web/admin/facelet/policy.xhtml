@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy.xhtml,v 1.6 2009-07-24 20:23:31 farble1670 Exp $
+   $Id: policy.xhtml,v 1.7 2009-07-24 23:05:58 farble1670 Exp $
 
 -->
 
@@ -37,13 +37,11 @@
 
     <ui:define name="panel-body">
         <o:landing
-            title="#{resources['policy.landingTitle']}">
+            page="policy">
             <ui:define
                 name="litems">
                 <o:litem
-                    title="#{resources['policy.litem.title.managePolicies']}"
-                    action="policy-manage"
-                    details="#{resources['policy.litem.details.managePolicies']}"/>
+                    action="policy-manage"/>
             </ui:define>
         </o:landing>
     </ui:define>

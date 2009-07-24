@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: home.xhtml,v 1.10 2009-06-04 11:49:26 veiming Exp $
+   $Id: home.xhtml,v 1.11 2009-07-24 23:05:58 farble1670 Exp $
 
 -->
 
@@ -32,12 +32,22 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:ice="http://www.icesoft.com/icefaces/component"
-    xmlns:o="http://opensso.dev.java.net">
+    xmlns:o="http://opensso.dev.java.net"
+    xmlns:ice="http://www.icesoft.com/icefaces/component">
 
     <ui:define name="panel-body">
-        <o:iframe
-            url="#{resources['home.url']}"
-            localUri="#{resources['home.localUri']}"/>
+        <o:landing
+            page="home">
+            <ui:define
+                name="litems">
+                <o:litem
+                    action="policy"/>
+                <o:litem
+                    action="federation"/>
+                <o:litem
+                    action="wss"/>
+            </ui:define>
+        </o:landing>
     </ui:define>
 </ui:composition>
+

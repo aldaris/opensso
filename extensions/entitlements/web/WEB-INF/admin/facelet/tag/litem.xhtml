@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: litem.xhtml,v 1.2 2009-07-24 20:23:30 farble1670 Exp $
+   $Id: litem.xhtml,v 1.3 2009-07-24 23:05:57 farble1670 Exp $
 
 -->
 
@@ -42,11 +42,11 @@
                 styleClass="command-link"
                 value="home.xhtml?jsf.action=#{action}">
                 <ice:outputText
-                    value="#{title}"/>
+                    value="#{resources[o:concat(o:concat(page,'.litem.title.'),action)]}"/>
             </ice:outputLink>
         </ice:panelGroup>
         <ice:outputText
-            value="#{details}"/>
+                    value="#{resources[o:concat(o:concat(page,'.litem.details.'),action)]}"/>
         <ice:panelGroup>
         </ice:panelGroup>
     </ice:panelGroup>

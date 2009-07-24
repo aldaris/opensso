@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Functions.java,v 1.14 2009-06-10 19:17:29 farble1670 Exp $
+ * $Id: Functions.java,v 1.15 2009-07-24 23:05:57 farble1670 Exp $
  */
 package com.sun.identity.admin;
 
@@ -66,5 +66,9 @@ public class Functions {
             Resources r = new Resources();
             return r.getString(Functions.class, "scrapeError", url, ioe);
         }
+    }
+
+    public static String concat(String s1, String s2) {
+        return s1 + s2;
     }
 }
