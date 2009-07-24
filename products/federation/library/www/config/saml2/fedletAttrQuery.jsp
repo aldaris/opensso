@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletAttrQuery.jsp,v 1.1 2009-06-23 18:59:32 madan_ranganath Exp $
+   $Id: fedletAttrQuery.jsp,v 1.2 2009-07-24 22:53:20 madan_ranganath Exp $
 
    Copyright 2009 Sun Microsystems Inc. All Rights Reserved
 
@@ -48,6 +48,37 @@
 <%@ page import="com.sun.identity.cot.CircleOfTrustManager" %>
 <%@ page import="com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement" %>
 
+<script>
+function enableSubjectDN() {
+
+    for (var i=0; i < document.fedletAttrQuery.attrQueryProfile.length; i++) {
+        if (document.fedletAttrQuery.attrQueryProfile[i].checked) {
+            var rad_val = document.fedletAttrQuery.attrQueryProfile[i].value;
+            if (rad_val == "x509Subject") {
+                document.fedletAttrQuery.subjectDN.disabled=false;
+            } else {
+                document.fedletAttrQuery.subjectDN.disabled=true;
+            }
+       }
+    }
+    return true;
+}
+
+function checkEmptySubjectDN() {
+    for (var i=0; i < document.fedletAttrQuery.attrQueryProfile.length; i++) {
+        if (document.fedletAttrQuery.attrQueryProfile[i].checked) {
+            var rad_val = document.fedletAttrQuery.attrQueryProfile[i].value;
+            if (rad_val == "x509Subject") {
+               if (document.fedletAttrQuery.subjectDN.value == "")  {
+                   alert("X.509 Subject DN cannot be empty");
+                   return false;
+                }        
+            }
+         }
+    }
+    return true;
+}
+</script>
 <%
     String deployuri = request.getRequestURI();
     int slashLoc = deployuri.indexOf("/", 1);
@@ -120,7 +151,7 @@
     <tr>
         <td colspan="2">
         <hr>
-        <form method=get action=fedletAttrResp.jsp>
+        <form method=get name="fedletAttrQuery" action=fedletAttrResp.jsp onsubmit="return checkEmptySubjectDN();">
 	<h1> Attribute Query </h1>
 	<B>Subject</B> <BR>
 	<%
@@ -136,6 +167,10 @@
             Attribute 3 <input type=text name=attr3 value=UserStatus><br>
             <input type=hidden name=idpEntityID value="<%=idpEntityID%>">
             <input type=hidden name=spEntityID value="<%=spEntityID%>">
+	    <p><B> Profile Name </B></p>
+            <input type="radio" name="attrQueryProfile" value="default" onclick="enableSubjectDN()" checked/> Default <br> 
+	    <input type="radio" name="attrQueryProfile" onclick="enableSubjectDN()" value="x509Subject"/> X.509 <br>
+             X.509 Subject DN <input type=text name=subjectDN disabled> <br>
             <input type=submit>
 	</form>
 	<hr>

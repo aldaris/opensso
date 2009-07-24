@@ -137,6 +137,9 @@
         <Attribute name="encryptionCertAlias">
             <Value></Value>
         </Attribute>
+        <Attribute name="wantNameIDEncrypted">
+           <Value></Value>
+        </Attribute>
         <Attribute name="cotlist">
            <Value>fedletcot</Value>
         </Attribute>

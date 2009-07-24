@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.14 2009-06-25 23:17:44 madan_ranganath Exp $
+ * $Id: CreateFedlet.java,v 1.15 2009-07-24 22:54:08 madan_ranganath Exp $
  *
  */
 
@@ -627,6 +627,9 @@ public class CreateFedlet
             "            <Value>" + "</Value>\n" +
             "        </Attribute>\n" +
             "        <Attribute name=\"encryptionCertAlias\">\n" +
+            "            <Value>" + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"wantNameIDEncrypted\">\n" +
             "            <Value>" + "</Value>\n" +
             "        </Attribute>\n" +
             "        <Attribute name=\"cotlist\">\n" +

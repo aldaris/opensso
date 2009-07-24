@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeQueryUtil.java,v 1.10 2009-06-23 19:12:04 madan_ranganath Exp $
+ * $Id: AttributeQueryUtil.java,v 1.11 2009-07-24 22:51:48 madan_ranganath Exp $
  *
  */
 
@@ -297,32 +297,24 @@ public class AttributeQueryUtil {
                 SAML2Constants.RESPONDER, null, se.getMessage(), null);
         }
 
-        if (attrQueryProfileAlias.equals(
-            SAML2Constants.X509_SUBJECT_ATTR_QUERY_PROFILE_ALIAS)) {
-
-            EncryptedID encryptedID = attrQuery.getSubject().getEncryptedID();
-            if (encryptedID != null) {
-                EncryptedAssertion encryptedAssertion = null;
-                try {
-                    signAssertion(assertion, realm, attrAuthorityEntityID,
-                        false);
-                    encryptedAssertion = encryptAssertion(assertion,
+        EncryptedID encryptedID = attrQuery.getSubject().getEncryptedID();
+        if (encryptedID != null) {
+            EncryptedAssertion encryptedAssertion = null;
+            try {
+                signAssertion(assertion, realm, attrAuthorityEntityID, false);
+                encryptedAssertion = encryptAssertion(assertion,
                         encryptedID, attrAuthorityEntityID, requesterEntityID,
                         realm, attrQueryProfileAlias);
-                } catch (SAML2Exception se) {
-                    if (SAML2Utils.debug.messageEnabled()) {
+            } catch (SAML2Exception se) {
+                if (SAML2Utils.debug.messageEnabled()) {
                         SAML2Utils.debug.message(
                             "AttributeQueryUtil.processAttributeQuery:", se);
-                    }
-                    return SAML2Utils.getErrorResponse(attrQuery,
-                        SAML2Constants.RESPONDER, null, se.getMessage(), null);
                 }
-                assertionList.add(encryptedAssertion);        
-                samlResp.setEncryptedAssertion(assertionList);
-            } else {
-                assertionList.add(assertion);        
-                samlResp.setAssertion(assertionList);
+                return SAML2Utils.getErrorResponse(attrQuery,
+                        SAML2Constants.RESPONDER, null, se.getMessage(), null);
             }
+            assertionList.add(encryptedAssertion);        
+            samlResp.setEncryptedAssertion(assertionList);
         } else {
             assertionList.add(assertion);        
             samlResp.setAssertion(assertionList);
@@ -1177,6 +1169,10 @@ public class AttributeQueryUtil {
      * @param nameIDValue  NameID value 
      * @param attrsList The list of attributes whose values needs to be 
      *                  fetched from IDP
+     * @param encrypt  Boolean value to indicate whether the Fedlet will
+     *                 receive the encrypted data
+     * @param attrQueryProfileAlias  Attribute Query Profile Alias
+     * @param subjectDN  Attribute name which contains X.509 subject DN
      *
      * @return the <code>Map</code> object
      * @exception SAML2Exception if the operation is not successful
@@ -1186,7 +1182,9 @@ public class AttributeQueryUtil {
     public static Map getAttributeMapForFedlet(String spEntityID,
                                                String idpEntityID,
                                                String nameIDValue,
-                                               List attrsList)
+                                               List attrsList,
+                                               String attrQueryProfileAlias,
+                                               String subjectDN)
                                                throws SAML2Exception {
 
         AttributeQueryConfigElement attrQueryConfig =
@@ -1209,29 +1207,59 @@ public class AttributeQueryUtil {
              }
             return null;
         }
-
+        
+        boolean wantNameIDEncrypted = SAML2Utils.getWantNameIDEncrypted("/",
+                                              spEntityID,
+                                              SAML2Constants.ATTR_QUERY_ROLE);
+        
         AttributeQuery attrQuery = constructAttrQueryForFedlet(spEntityID,
-                                                               idpEntityID,
-                                                               nameIDValue,
-                                                               attrsList,
-                                                               attrqMetaAlias);
+                                                          idpEntityID,
+                                                          nameIDValue,
+                                                          attrsList,
+                                                          attrqMetaAlias,
+                                                          attrQueryProfileAlias,
+                                                          subjectDN,
+                                                          wantNameIDEncrypted);
+        
+        String attrQueryProfile = null;
+        if (attrQueryProfileAlias.equals(
+                SAML2Constants.DEFAULT_ATTR_QUERY_PROFILE_ALIAS)) {
+            attrQueryProfile = SAML2Constants.DEFAULT_ATTR_QUERY_PROFILE;
+        } else if (attrQueryProfileAlias.equals(
+                SAML2Constants.X509_SUBJECT_ATTR_QUERY_PROFILE_ALIAS)) {
+            attrQueryProfile = SAML2Constants.X509_SUBJECT_ATTR_QUERY_PROFILE;
+        }
 
         Response samlResp = sendAttributeQuery(attrQuery, idpEntityID,
                                   "/",
-                                  SAML2Constants.DEFAULT_ATTR_QUERY_PROFILE,
+                                  attrQueryProfile,
                                   SAML2Constants.BASIC_ATTRIBUTE_PROFILE,
                                   SAML2Constants.SOAP);
 
         // Validate the response
-        boolean validResp = validateSAMLResponseForFedlet(samlResp);
+        boolean validResp = validateSAMLResponseForFedlet(samlResp, 
+                                                          spEntityID,
+                                                          wantNameIDEncrypted);
         Map attrMap = new HashMap();
         if (validResp) {
             // Return back the AttributeMap
             if (samlResp != null) {
-                List assertions = samlResp.getAssertion();
+                List assertions = null;
+                if (wantNameIDEncrypted) {
+                    assertions = samlResp.getEncryptedAssertion();
+                } else {
+                    assertions = samlResp.getAssertion();
+                }
                 for (Iterator asserIter = assertions.iterator();
-                    asserIter.hasNext(); ) {
-                    Assertion assertion = (Assertion)asserIter.next();
+                    asserIter.hasNext();) {
+                    Assertion assertion = null;
+                    if (wantNameIDEncrypted) {
+                        assertion = getDecryptedAssertion(
+                                           (EncryptedAssertion)asserIter.next(),
+                                            spEntityID);
+                    } else {
+                        assertion = (Assertion)asserIter.next();
+                    }
                     if (assertion != null) {
                         List statements = assertion.getAttributeStatements();
                         if (statements != null && statements.size() > 0 ) {
@@ -1304,7 +1332,6 @@ public class AttributeQueryUtil {
     }
 
     /**
-     * 
      * Constructs the Attribute Query used by the Fedlet to retrieve the 
      * values from IDP
      *
@@ -1315,11 +1342,14 @@ public class AttributeQueryUtil {
      * @supported.api
      */
     private static AttributeQuery constructAttrQueryForFedlet(
-                                  String spEntityID,
-                                  String idpEntityID,
-                                  String nameIDValue,
-                                  List attrsList,
-                                  String attrqMetaAlias) throws SAML2Exception
+                             String spEntityID,
+                             String idpEntityID,
+                             String nameIDValue,
+                             List attrsList,
+                             String attrqMetaAlias,
+                             String attrProfileNameAlias,
+                             String subjectDN,
+                             boolean wantNameIDEncrypted) throws SAML2Exception
     {
         String attrqEntityID =
           SAML2Utils.getSAML2MetaManager().getEntityByMetaAlias(attrqMetaAlias);
@@ -1350,13 +1380,37 @@ public class AttributeQueryUtil {
 
         Subject subject = assertionFactory.createSubject();
         NameID nameID = assertionFactory.createNameID();
-
-        nameID.setFormat(SAML2Constants.NAMEID_TRANSIENT_FORMAT);
-        nameID.setValue(nameIDValue);
         nameID.setNameQualifier(idpEntityID);
         nameID.setSPNameQualifier(spEntityID);
 
-        subject.setNameID(nameID);
+        if (attrProfileNameAlias.equals(
+                    SAML2Constants.DEFAULT_ATTR_QUERY_PROFILE_ALIAS)) {
+            nameID.setFormat(SAML2Constants.NAMEID_TRANSIENT_FORMAT);
+            nameID.setValue(nameIDValue);
+        }
+
+        if (attrProfileNameAlias.equals(
+                    SAML2Constants.X509_SUBJECT_ATTR_QUERY_PROFILE_ALIAS)) {
+            nameID.setFormat(SAML2Constants.X509_SUBJECT_NAME);
+            nameID.setValue(subjectDN);            
+        }
+
+        if (!wantNameIDEncrypted) {
+            subject.setNameID(nameID);
+        } else {
+            AttributeAuthorityDescriptorElement aad =
+                  metaManager.getAttributeAuthorityDescriptor("/", idpEntityID);
+
+            EncInfo encInfo = KeyUtil.getEncInfo(aad, idpEntityID,
+                                                 SAML2Constants.ATTR_AUTH_ROLE);            
+
+            EncryptedID encryptedID = nameID.encrypt(encInfo.getWrappingKey(),
+                                                  encInfo.getDataEncAlgorithm(),
+                                                  encInfo.getDataEncStrength(),
+                                                  idpEntityID);
+            subject.setEncryptedID(encryptedID);
+        }
+    
         attrQuery.setSubject(subject);
 
         return attrQuery;
@@ -1371,35 +1425,78 @@ public class AttributeQueryUtil {
      *
      * @supported.api
      */
-    private static boolean validateSAMLResponseForFedlet(Response samlResp)
-            throws SAML2Exception {        
-
+    private static boolean validateSAMLResponseForFedlet(
+                              Response samlResp,
+                              String spEntityID, 
+                              boolean wantNameIDEncrypted) throws SAML2Exception
+    {
         boolean resp = true;
-        if (samlResp != null) {
-            List assertions = samlResp.getAssertion();
+        if (samlResp != null && samlResp.isSigned()) {
+            List assertions = null;
+            if (wantNameIDEncrypted) {
+                assertions = samlResp.getEncryptedAssertion();
+            } else {
+                assertions = samlResp.getAssertion();
+            }
+            if (assertions == null) {
+                return false;
+            }
             for (Iterator asserIter = assertions.iterator();
-                asserIter.hasNext(); ) {
-                    Assertion assertion = (Assertion)asserIter.next();
-                    if (assertion != null) {
-                        Conditions conditions = assertion.getConditions();
-                        if (conditions != null) {
-                            List audienceRes = conditions.
+                 asserIter.hasNext();) {
+                Assertion assertion = null;
+                if (wantNameIDEncrypted) {
+                    assertion = getDecryptedAssertion(
+                                         (EncryptedAssertion)asserIter.next(),
+                                          spEntityID);
+                } else {
+                    assertion = (Assertion)asserIter.next();
+                }
+                if (assertion != null) {
+                    Conditions conditions = assertion.getConditions();
+                    if (conditions != null) {
+                        List audienceRes = conditions.
                                                getAudienceRestrictions();
-                            if (audienceRes.size() > 1) {
+                        if (audienceRes.size() > 1) {
                                 resp = false;
                                 break;
-                            }
                         }
-                        List statements = assertion.getAttributeStatements();
-                        if (statements.size() > 1) {
-                            resp = false;
-                            break;
-                       }
-                    }
+                     }
+                     List statements = assertion.getAttributeStatements();
+                     if (statements.size() > 1) {
+                         resp = false;
+                         break;
+                     }
+                }
             }
         } else {
             resp = false;
         }
         return resp;
+    }
+
+     /**
+     * Returns the decrypted assertion
+     *
+     * @param samlResp saml response
+     *
+     * @exception SAML2Exception if the operation is not successful
+     *
+     * @supported.api
+     */
+    private static Assertion getDecryptedAssertion(
+                                      EncryptedAssertion eAssertion,
+                                      String spEntityID) throws SAML2Exception 
+    {
+        if (eAssertion != null) {
+            String alias = SAML2Utils.getEncryptionCertAlias("/", spEntityID,
+                                      SAML2Constants.ATTR_QUERY_ROLE);
+            PrivateKey privateKey = 
+                       KeyUtil.getKeyProviderInstance().getPrivateKey(alias);
+            if (privateKey != null) {
+                Assertion assertion = eAssertion.decrypt(privateKey);
+                return assertion;
+            }
+        }        
+        return null;
     }
 }

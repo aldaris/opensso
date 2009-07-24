@@ -18,7 +18,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: fedletAttrResp.jsp,v 1.1 2009-06-23 18:59:32 madan_ranganath Exp $
+  $Id: fedletAttrResp.jsp,v 1.2 2009-07-24 22:53:20 madan_ranganath Exp $
 
   Copyright 2009 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -122,11 +122,17 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
             out.print("Requesting all available IDP attributes");	
 	}
 
-       Map attrMap = AttributeQueryUtil.getAttributeMapForFedlet(
+        String attrQueryProfile = request.getParameter("attrQueryProfile");
+
+        String subjectDN = request.getParameter("subjectDN");
+
+        Map attrMap = AttributeQueryUtil.getAttributeMapForFedlet(
                                         spEntityID,
                                         idpEntityID,
                                         newNameIDValue,
-                                        attrsList);
+                                        attrsList,
+                                        attrQueryProfile,
+                                        subjectDN);
                                          
 %>
 <h2> Fedlet Attribute Query Response </h2>
