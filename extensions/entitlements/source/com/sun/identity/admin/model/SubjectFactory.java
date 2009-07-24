@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectFactory.java,v 1.4 2009-06-04 11:49:17 veiming Exp $
+ * $Id: SubjectFactory.java,v 1.5 2009-07-24 21:22:43 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.dao.SubjectDao;
 import com.sun.identity.entitlement.EntitlementSubject;
 import java.io.Serializable;
@@ -84,5 +85,11 @@ public class SubjectFactory implements Serializable {
 
     public void setSubjectTypeToSubjectContainerMap(Map<SubjectType, SubjectContainer> subjectTypeToSubjectContainerMap) {
         this.subjectTypeToSubjectContainerMap = subjectTypeToSubjectContainerMap;
+    }
+
+    public static SubjectFactory getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        SubjectFactory sf = (SubjectFactory)mbr.resolve("subjectFactory");
+        return sf;
     }
 }

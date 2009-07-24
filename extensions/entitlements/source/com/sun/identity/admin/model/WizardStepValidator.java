@@ -1,6 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -24,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WizardStepValidator.java,v 1.2 2009-07-23 20:46:53 ggennaro Exp $
+ * $Id: WizardStepValidator.java,v 1.3 2009-07-24 21:22:43 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
