@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmsHandler.java,v 1.9 2009-07-24 23:55:37 farble1670 Exp $
+ * $Id: RealmsHandler.java,v 1.10 2009-07-24 23:58:33 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -86,17 +86,6 @@ public class RealmsHandler implements Serializable {
 
         realmsBean.resetRealmSelectPopup();
         LinkBean.HOME.redirect();
-    }
-
-    private void redirect(String url) {
-        FacesContext fc = FacesContext.getCurrentInstance();
-        ExternalContext ec = fc.getExternalContext();
-        try {
-            ec.redirect(url);
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
-
     }
 
     public void realmSelectPopupCancelListener(ActionEvent event) {
