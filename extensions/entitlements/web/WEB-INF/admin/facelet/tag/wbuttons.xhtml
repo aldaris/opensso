@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wbuttons.xhtml,v 1.8 2009-06-11 15:25:50 farble1670 Exp $
+   $Id: wbuttons.xhtml,v 1.9 2009-07-24 19:13:56 farble1670 Exp $
 
 -->
 
@@ -41,7 +41,6 @@
         <f:attribute name="step" value="#{step}"/>
         <span
             class="button">
-            <img class="left" src="../image/cancel.png"/>
             <ice:outputText
                 value="#{resources['wbuttons.cancel']}"/>
         </span>
@@ -54,7 +53,6 @@
         <f:attribute name="step" value="#{step}"/>
         <span
             class="button">
-            <img class="left" src="../image/go-previous.png"/>
             <ice:outputText
                 value="#{resources['wbuttons.previous']}"/>
         </span>
@@ -67,7 +65,6 @@
         <f:attribute name="step" value="#{step}"/>
         <span
             class="button">
-            <img class="left" src="../image/execute.png"/>
             <ice:outputText
                 value="#{resources['wbuttons.finish']}"/>
         </span>
@@ -82,7 +79,6 @@
             class="button">
             <ice:outputText
                 value="#{resources['wbuttons.next']}"/>
-            <img class="right" src="../image/go-next.png"/>
         </span>
     </ice:commandLink>
 </ui:composition>
