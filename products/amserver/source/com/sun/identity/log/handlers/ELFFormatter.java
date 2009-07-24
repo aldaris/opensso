@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ELFFormatter.java,v 1.7 2009-03-05 22:55:39 veiming Exp $
+ * $Id: ELFFormatter.java,v 1.8 2009-07-24 20:02:23 ww203982 Exp $
  *
  */
 
@@ -52,9 +52,7 @@ import com.sun.identity.log.spi.ITimestampGenerator;
  */
 public class ELFFormatter extends Formatter {
     
-    private LogManager lmanager = (com.sun.identity.log.LogManager)
-        LogManagerUtil.getLogManager();
-    private String [] allFields;
+    private LogManager lmanager = LogManagerUtil.getLogManager();
     private ITimestampGenerator secureTimestampGenerator;
 
     private final String NOTAVAIL = "Not Available";
@@ -81,20 +79,84 @@ public class ELFFormatter extends Formatter {
                 "not be Instantiated", iae);
         }
     }
-    
-    private void getAllFields() {
-        String strAllFields = lmanager.getProperty(LogConstants.ALL_FIELDS);
-        StringTokenizer strToken = new StringTokenizer(strAllFields, ", ");
-        int count = strToken.countTokens();
-        allFields = new String[count];
-        count = 0;
-        while(strToken.hasMoreElements()) {
-            allFields[count++] = strToken.nextToken().trim();
+
+    /**
+      * Format the given record as per ELF and return a formatted string. <p>
+      * For ELF Specifications refer <LI> www.w3.org/TR/WD-logfile.html</LI>
+      *
+      * @param logRecord the log record to be formatted.
+      * @return formatted string.
+      */
+    public String format(com.sun.identity.log.LogRecord logRecord) {
+        StringBuffer sbuffer = new StringBuffer();
+        try {
+            String strTime;
+            if(secureTimestampGenerator != null) {
+                strTime = secureTimestampGenerator.getTimestamp();
+            } else {
+                strTime = "";
+            }
+            sbuffer.append("\"").append(strTime).append("\"\t");
+            StringBuffer message = processString(formatMessage(logRecord));
+            boolean escapeDone = false;
+            for (int i = 0; i < message.length(); i++) {
+                if ((message.charAt(i) == ' ') || (message.charAt(i) ==
+                    '\t')) {
+                    sbuffer.append("\"").append(message).append("\"\t");
+                    escapeDone = true;
+                    break;
+                }
+            }
+            if (!escapeDone) {
+                sbuffer.append(message).append("\t");
+            }
+            Map logInfoTable = logRecord.getLogInfoMap();
+            String[] allFields = lmanager.getAllFields();
+            Set selectedFields = lmanager.getSelectedFieldSet();
+            if (logInfoTable != null) {
+                String key = null;
+                String value = null;
+                for (int i = 2; i < allFields.length; i ++) {
+                    key = allFields[i];
+                    if ((key != null) && (key.length() != 0) &&
+                        (selectedFields != null) &&
+                        (selectedFields.contains(key))) {
+                        value = (String) logInfoTable.get(key);
+                        StringBuffer valueBuffer;
+                        if ((value != null) && (value.length() != 0)) {
+                            valueBuffer = processString(value);
+                            escapeDone = false;
+                            for (int j = 0; j < valueBuffer.length(); j++) {
+                                if ((valueBuffer.charAt(j) == ' ') ||
+                                    (valueBuffer.charAt(j) == '\t')) {
+                                    escapeDone = true;
+                                    sbuffer.append("\"").append(
+                                        valueBuffer).append("\"\t");
+                                    break;
+                                }
+                            }
+                            if (!escapeDone) {
+                                sbuffer.append(valueBuffer).append("\t");
+                            }
+                        } else {
+                            sbuffer.append("\"").append(NOTAVAIL).append(
+                                "\"\t");
+                        }
+                    } else {
+                        sbuffer.append("-").append("\t");
+                    }
+                }
+            } else {
+                for (int i = 2; i < allFields.length; i ++) {
+                    sbuffer.append("-").append("\t");
+                }
+            }
+
+        } catch (Exception e) {
+            Debug.error("ELFFormatter: Exception in String handling loop", e);
         }
-        String temp = "";
-        for ( int i = 0; i < count; i ++ ) {
-            temp += allFields[i] + "\t";
-        }
+        sbuffer.append("\n");
+        return sbuffer.toString();
     }
     
     /**
@@ -105,49 +167,33 @@ public class ELFFormatter extends Formatter {
      * @return formatted string.
      */
     public String format(java.util.logging.LogRecord logRecord) {
-        StringBuffer sbuffer = new StringBuffer();
-        Map logInfoTable = null;
-        if (logRecord instanceof com.sun.identity.log.ILogRecord) {
-            logInfoTable = ((com.sun.identity.log.ILogRecord)logRecord).
-                getLogInfoMap();
+        if ((LogManagerUtil.isAMLoggingMode()) &&
+            (logRecord instanceof com.sun.identity.log.ILogRecord)) {
+            return format((com.sun.identity.log.LogRecord) logRecord);
         }
+        StringBuffer sbuffer = new StringBuffer();
         try {
-            getAllFields();
-            Set selectedFields = getSelectedFieldSet();
-            String strTime = "";
+            String strTime;
             if(secureTimestampGenerator != null) {
                 strTime = secureTimestampGenerator.getTimestamp();
+            } else {
+                strTime ="";
             }
             sbuffer.append("\"").append(strTime).append("\"\t");
-            String message = processString(formatMessage(logRecord));
-            if ((message.indexOf(' ') != -1) || (message.indexOf('\t') != -1)) {
-                sbuffer.append("\"").append(message).append("\"\t");
-            } else {
+            boolean escapeDone = false;
+            StringBuffer message = processString(formatMessage(logRecord));
+            for (int i = 0; i < message.length(); i++) {
+                if ((message.charAt(i) == ' ') || (message.charAt(i) == '\t')) {
+                    sbuffer.append("\"").append(message).append("\"\t");
+                    escapeDone = true;
+                }
+            }
+            if (!escapeDone) {
                 sbuffer.append(message).append("\t");
             }
-            
-            String key = null;
-            String value = null;
-            for (int i = 2; i < allFields.length; i ++) { 
-                // first 2 fields r compulsory
-                key = allFields[i];
-                if ((key != null) && (key.length() != 0) &&
-                (selectedFields != null) &&
-                (logInfoTable != null) &&
-                (selectedFields.contains(key))) {
-                    value = (String) logInfoTable.get(key);
-                    if ((value != null) && (value.length() != 0)) {
-                        value = processString(value);
-                    } else {
-                        value = NOTAVAIL;
-                    }
-                    if ((value.indexOf(' ') != -1) || 
-                        (value.indexOf('\t') != -1)) {
-                        sbuffer.append("\"").append(value).append("\"\t");
-                    } else {
-                        sbuffer.append(value).append("\t");
-                    }
-                } else {
+            String[] allFields = lmanager.getAllFields();
+            if (allFields != null) {
+                for (int i = 2; i < allFields.length; i ++) {
                     sbuffer.append("-").append("\t");
                 }
             }
@@ -157,7 +203,7 @@ public class ELFFormatter extends Formatter {
         sbuffer.append("\n");
         return sbuffer.toString();
     }
-    
+
     /**
      * According to ELF, the log file should start with a #Version which
      * specifies the ELF version used followed by a #Fields line which specifies
@@ -189,35 +235,22 @@ public class ELFFormatter extends Formatter {
     
     private String constructHeader() {
         StringBuffer sbuffer = new StringBuffer();
+        String[] allFields = lmanager.getAllFields();
         for (int i = 0; i < allFields.length; i ++) {
             sbuffer.append(allFields[i]).append("\t");
         }
         return sbuffer.toString();
     }
-    
-    private Set getSelectedFieldSet() {
-        Set selectedFields = new HashSet();
-        String strSelectedFields = 
-                        lmanager.getProperty(LogConstants.LOG_FIELDS);
-        if ((strSelectedFields != null) && (strSelectedFields.length() != 0)) {
-            StringTokenizer stoken = 
-                new StringTokenizer(strSelectedFields, ", ");
-            
-            while(stoken.hasMoreElements()) {
-                selectedFields.add(stoken.nextToken());
-            }
-        }
-        return selectedFields;
-    }
+
     /**
      * This method is used to process each field to see if it has a quote,
      * if it does then append another quote. If any field has a \r or \n
      * replace them by \\r and \\n. This is essentially to take care of
      * multiline strings(Strings which have \r\n in them)
      */
-    private String processString(String field) {
+    private StringBuffer processString(String field) {
         if ((field == null) || (field.length() == 0)) {
-            return LogConstants.NOTAVAIL;
+            return new StringBuffer(LogConstants.NOTAVAIL);
         }
         StringBuffer sbuffer = new StringBuffer();
         int len = field.length();
@@ -241,6 +274,6 @@ public class ELFFormatter extends Formatter {
             }
             hasUniqueChar = false;
         }
-        return sbuffer.toString();
+        return sbuffer;
     }
 }

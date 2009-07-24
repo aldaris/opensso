@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileHandler.java,v 1.12 2009-06-23 20:06:52 ww203982 Exp $
+ * $Id: FileHandler.java,v 1.13 2009-07-24 20:02:23 ww203982 Exp $
  *
  */
 package com.sun.identity.log.handlers;
@@ -43,9 +43,9 @@ import java.util.LinkedList;
 import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 
+import com.iplanet.am.util.ThreadPoolException;
 import com.iplanet.log.NullLocationException;
 import com.sun.identity.common.HeadTaskRunnable;
 import com.sun.identity.common.GeneralTaskRunnable;
@@ -53,6 +53,7 @@ import com.sun.identity.common.SystemTimer;
 import com.sun.identity.common.TaskRunnable;
 import com.sun.identity.common.TimerPool;
 import com.sun.identity.log.LogConstants;
+import com.sun.identity.log.LogManager;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.Logger;
 import com.sun.identity.log.spi.Debug;
@@ -416,14 +417,16 @@ public class FileHandler extends java.util.logging.Handler {
         if (!isLoggable(lrecord)) {
             return;
         }
+        Formatter formatter = getFormatter();
+        String message = formatter.format(lrecord);
         synchronized (this) {        
-            recordBuffer.add(lrecord);
+            recordBuffer.add(message);
             if (recordBuffer.size() >= recCountLimit) {
                 if (Debug.messageEnabled()) {
                     Debug.message(fileName + ":FileHandler.publish(): got " +
                         recordBuffer.size() + " records, writing all");
                 }
-                flush();
+                nonBlockingFlush();
             }
         }
     }
@@ -438,7 +441,7 @@ public class FileHandler extends java.util.logging.Handler {
     /**
      * Flush any buffered messages.
      */
-    public void flush() {
+    protected void nonBlockingFlush() {
         LinkedList writeBuffer = null;
         synchronized (this) {
             if (recordBuffer.size() <= 0) {
@@ -451,60 +454,54 @@ public class FileHandler extends java.util.logging.Handler {
             writeBuffer = recordBuffer;
             recordBuffer = new LinkedList();
         }
-        final LinkedList tempBuffer = writeBuffer;
-        writeBuffer = null;
-        Runnable logTask = new Runnable() {
-            public void run() {
-                if (writer == null) {
-                    Debug.error(fileName + ":FileHandler: Writer is null");
-                    int recordsToBeDropped = tempBuffer.size();
-                    if (Agent.isRunning() && fileLogHandlerForMonitoring !=
-                        null) {
-                        fileLogHandlerForMonitoring.incHandlerDroppedCount(
-                            recordsToBeDropped);
-                    }
-                    tempBuffer.clear();
-                    return;
-                }
-                if (Debug.messageEnabled()) {
-                    Debug.message(fileName + ":FileHandler.flush: writing " +
-                        "buffered records (" +
-                        tempBuffer.size() + " records)");
-                }
-                Formatter formatter = getFormatter();
-                for (Iterator iter = tempBuffer.iterator(); iter.hasNext();) {
-                    String message = formatter.format((LogRecord) iter.next());
-                    if ((message.length() > 0) &&
-                        ((meteredStream.written + message.length()) >=
-                        maxFileSize)) {
-                        if (Debug.messageEnabled()) {
-                            Debug.message(fileName +
-                                ":FileHandler: Rotation condition reached");
-                        }
-                        // no need to synchronize since there is only 1 logging
-                        // thread.
-                        rotate();
-                    }
-                    try {
-                        if (!headerWritten) {
-                            writer.write(getHeaderString());
-                            headerWritten = true;
-                        }
-                        writer.write(message);
-                        if (Agent.isRunning() &&
-                            fileLogHandlerForMonitoring != null) {                    
-                            fileLogHandlerForMonitoring.incHandlerSuccessCount(
-                                1);
-                        }
-                    } catch (IOException ex) {
-                        Debug.error(fileName +
-                            ":FileHandler: could not write to file: ", ex);
-                    }
-                    cleanup();
-                }
+        LogTask task = new LogTask(writeBuffer);
+        try {
+            thread.run(task);
+        } catch (ThreadPoolException ex) {
+            // use current thread to flush the data if ThreadPool is shutdown
+            synchronized (this) {
+                task.run();
             }
-        };
-        thread.run(logTask);
+        }
+    }
+
+    public void flush() {
+        synchronized (this) {
+            if (recordBuffer.size() <= 0) {
+                return;
+            }
+            if (writer == null) {
+                int recordsToBeDropped = recordBuffer.size();
+                if (Agent.isRunning() && fileLogHandlerForMonitoring !=
+                    null) {
+                    fileLogHandlerForMonitoring.incHandlerDroppedCount(
+                        recordsToBeDropped);
+                }
+                recordBuffer.clear();
+                return;
+            }
+            for (Iterator iter = recordBuffer.iterator(); iter.hasNext();) {
+                String message = (String) iter.next();
+                if ((message.length() > 0) &&
+                    ((meteredStream.written + message.length()) >=
+                    maxFileSize)) {
+                    rotate();
+                }
+                try {
+                    if (!headerWritten) {
+                        writer.write(getHeaderString());
+                        headerWritten = true;
+                    }
+                    writer.write(message);
+                    if (Agent.isRunning() &&
+                        fileLogHandlerForMonitoring != null) {
+                        fileLogHandlerForMonitoring.incHandlerSuccessCount(1);
+                    }
+                } catch (IOException ex) {
+                }
+                cleanup();
+            }
+        }        
     }
 
     private void rotate() {
@@ -618,6 +615,62 @@ public class FileHandler extends java.util.logging.Handler {
         }
     }
 
+    private class LogTask implements Runnable {
+
+        private LinkedList buffer;
+
+        public LogTask(LinkedList buffer) {
+            this.buffer = buffer;
+        }
+
+        public void run() {
+            if (writer == null) {
+                Debug.error(fileName + ":FileHandler: Writer is null");
+                int recordsToBeDropped = buffer.size();
+                if (Agent.isRunning() && fileLogHandlerForMonitoring !=
+                    null) {
+                    fileLogHandlerForMonitoring.incHandlerDroppedCount(
+                        recordsToBeDropped);
+                }
+                buffer.clear();
+                return;
+            }
+            if (Debug.messageEnabled()) {
+                Debug.message(fileName + ":FileHandler.flush: writing " +
+                    "buffered records (" +
+                    buffer.size() + " records)");
+            }
+            for (Iterator iter = buffer.iterator(); iter.hasNext();) {
+                String message = (String) iter.next();
+                if ((message.length() > 0) &&
+                    ((meteredStream.written + message.length()) >=
+                    maxFileSize)) {
+                    if (Debug.messageEnabled()) {
+                        Debug.message(fileName +
+                            ":FileHandler: Rotation condition reached");
+                    }
+                    rotate();
+                }
+                try {
+                    if (!headerWritten) {
+                        writer.write(getHeaderString());
+                        headerWritten = true;
+                    }
+                    writer.write(message);
+                    if (Agent.isRunning() &&
+                        fileLogHandlerForMonitoring != null) {
+                        fileLogHandlerForMonitoring.incHandlerSuccessCount(1);
+                    }
+                } catch (IOException ex) {
+                    Debug.error(fileName +
+                        ":FileHandler: could not write to file: ", ex);
+                }
+                cleanup();
+            }
+        }
+
+    }
+
     private class TimeBufferingTask extends GeneralTaskRunnable {
 
         private long runPeriod;
@@ -634,7 +687,7 @@ public class FileHandler extends java.util.logging.Handler {
                 Debug.message(fileName +
                         ":FileHandler:TimeBufferingTask.run() called");
             }
-            flush();
+            nonBlockingFlush();
         }
 
         /**

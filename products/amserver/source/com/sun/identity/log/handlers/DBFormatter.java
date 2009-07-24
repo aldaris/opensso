@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBFormatter.java,v 1.9 2009-03-05 22:55:38 veiming Exp $
+ * $Id: DBFormatter.java,v 1.10 2009-07-24 20:02:22 ww203982 Exp $
  *
  */
 
@@ -36,9 +36,9 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
-import java.util.logging.LogManager;
 
 import com.sun.identity.log.LogConstants;
+import com.sun.identity.log.LogManager;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.spi.Debug;
 import com.sun.identity.log.spi.ITimestampGenerator;
@@ -55,7 +55,6 @@ import com.sun.identity.log.spi.ITimestampGenerator;
 public class DBFormatter extends Formatter {
     
     private LogManager lmanager = LogManagerUtil.getLogManager();
-    private String [] allFields;
     private ITimestampGenerator secureTimestampGenerator;
 
     private String dateTimeFormat = null;
@@ -134,55 +133,50 @@ public class DBFormatter extends Formatter {
     public String getTail(Handler h) {
         return "";
     }
-    
+
     /**
-     * Format the given LogRecord and return back a formatted String.
-     * <p>
-     * The formatted String has the values of the fields which are selected and
-     * NULL if any field is not selected. All fields are enclosed in single-
-     * quotes.
-     * <p>
-     * A typical formatted string can be given as follows:
-     * '10:10:10', '10th June, 2002', 'NULL', 'NULL',
-     * 'Session Created Successfull', 'INFO', 'NULL', 'NULL'
-     * <p>
-     * This formatted string will be enclosed within braces by Handler to
-     * construct the query string.
-     * 
-     * @param logRecord the log record to be formatted.
-     * @return formatted string.
-     */
-    public String format(java.util.logging.LogRecord logRecord) {
-        getAllFields();
+      * Format the given LogRecord and return back a formatted String.
+      * <p>
+      * The formatted String has the values of the fields which are selected and
+      * NULL if any field is not selected. All fields are enclosed in single-
+      * quotes.
+      * <p>
+      * A typical formatted string can be given as follows:
+      * '10:10:10', '10th June, 2002', 'NULL', 'NULL',
+      * 'Session Created Successfull', 'INFO', 'NULL', 'NULL'
+      * <p>
+      * This formatted string will be enclosed within braces by Handler to
+      * construct the query string.
+      * 
+      * @param logRecord the log record to be formatted.
+      * @return formatted string.
+      */
+    public String format(com.sun.identity.log.LogRecord logRecord) {
         StringBuffer sbuffer = new StringBuffer();
-        Map logInfoTable = null;
-        if (logRecord instanceof com.sun.identity.log.ILogRecord) {
-            logInfoTable = ((com.sun.identity.log.ILogRecord)logRecord).
-                getLogInfoMap();
-        }
-        Set selectedFields = getSelectedFieldSet();
-        String strTime = "";
+        String strTime;
         if(secureTimestampGenerator != null) {
             strTime = secureTimestampGenerator.getTimestamp();
+        } else {
+            strTime ="";
         }
-
         /*
          *  currently assuming that the date/time comes back in
          *  the "yyyy-mm-dd hh:mn:ss" format (24hr).  if it changes
-         *  then there'll need to be a change to the dbdate-format
+         *  then there'll need to be a change to the dbdate-format 
          *  attribute.
          */
-        
         String toDate = null;
         if (!isMySQL) {
             toDate = "TO_DATE('";
         } else {
             toDate = "STR_TO_DATE('";
         }
-
-        sbuffer.append(toDate + strTime + "', '" + dateTimeFormat + "'), ");
-
-        /* Need to check for single-quote in the DATA field to be written 
+        sbuffer.append(toDate);
+        sbuffer.append(strTime);
+        sbuffer.append("', '");
+        sbuffer.append(dateTimeFormat);
+        sbuffer.append("'), ");
+        /* Need to check for single-quote in the DATA field to be written
          * to the db
          */
         String tstr = formatMessage(logRecord);
@@ -205,12 +199,17 @@ public class DBFormatter extends Formatter {
         }
         sbuffer.append("'").append(tstr).append("', ");
         if (Debug.messageEnabled()) {
-            Debug.message("DBFormatter:thisfield3 = #" + sbuffer.toString() 
-                          + "#");
+            Debug.message("DBFormatter:thisfield3 = #" + sbuffer.toString()
+                + "#");
         }
-
-        int len = allFields.length;
-        for (int i = 2; i < len-1; i ++) { // first 2 fields are compulsory
+        String[] allFields = lmanager.getAllFields();
+        Set selectedFields = lmanager.getSelectedFieldSet();
+        int len = 0;
+        if (allFields != null) {
+            len = allFields.length;
+        }
+        Map logInfoTable = logRecord.getLogInfoMap();
+        for (int i = 2; i < len - 1; i ++) { // first 2 fields are compulsory
             if ((logInfoTable != null) &&
             (selectedFields != null) &&
             (selectedFields.contains(allFields[i]))) {
@@ -226,7 +225,7 @@ public class DBFormatter extends Formatter {
                     StringTokenizer tmps = new StringTokenizer(tempstr, "'");
                     StringBuffer thisfield = new StringBuffer();
                     if (Debug.messageEnabled()) {
-                        Debug.message("DBFormatter:found single-quote in: " 
+                        Debug.message("DBFormatter:found single-quote in: "
                                       + tempstr);
                     }
                     //
@@ -259,12 +258,13 @@ public class DBFormatter extends Formatter {
                 }
                 sbuffer.append("'").append(tempstr).append("', ");
             } else {
-                sbuffer.append("'" + LogConstants.NOTAVAIL + "'").append(", ");
+                sbuffer.append("'").append(LogConstants.NOTAVAIL).append(
+                    "'").append(", ");
             }
         }
 
         if (Debug.messageEnabled()) {
-            Debug.message("DBFormatter:format1: sbuffer = " 
+            Debug.message("DBFormatter:format1: sbuffer = "
                           + sbuffer.toString());
         }
 
@@ -275,8 +275,107 @@ public class DBFormatter extends Formatter {
             }
             sbuffer.append("'").append(tmpstr).append("'");
         } else {
-            sbuffer.append("'" + LogConstants.NOTAVAIL + "'");
+            sbuffer.append("'").append(LogConstants.NOTAVAIL).append("'");
         }
+
+        if (Debug.messageEnabled()) {
+            Debug.message("DBFormatter:format2: sbuffer = "
+                    + sbuffer.toString());
+        }
+
+        return sbuffer.toString();
+    }
+
+    /**
+     * Format the given LogRecord and return back a formatted String.
+     * <p>
+     * The formatted String has the values of the fields which are selected and
+     * NULL if any field is not selected. All fields are enclosed in single-
+     * quotes.
+     * <p>
+     * A typical formatted string can be given as follows:
+     * '10:10:10', '10th June, 2002', 'NULL', 'NULL',
+     * 'Session Created Successfull', 'INFO', 'NULL', 'NULL'
+     * <p>
+     * This formatted string will be enclosed within braces by Handler to
+     * construct the query string.
+     * 
+     * @param logRecord the log record to be formatted.
+     * @return formatted string.
+     */
+    public String format(java.util.logging.LogRecord logRecord) {
+        if ((LogManagerUtil.isAMLoggingMode()) &&
+            (logRecord instanceof com.sun.identity.log.ILogRecord)) {
+            return format((com.sun.identity.log.LogRecord) logRecord);
+        }
+        String strTime;
+        if(secureTimestampGenerator != null) {
+            strTime = secureTimestampGenerator.getTimestamp();
+        } else {
+            strTime ="";
+        }
+        StringBuffer sbuffer = new StringBuffer();
+        /*
+         *  currently assuming that the date/time comes back in
+         *  the "yyyy-mm-dd hh:mn:ss" format (24hr).  if it changes
+         *  then there'll need to be a change to the dbdate-format
+         *  attribute.
+         */
+        
+        String toDate = null;
+        if (!isMySQL) {
+            toDate = "TO_DATE('";
+        } else {
+            toDate = "STR_TO_DATE('";
+        }
+
+        sbuffer.append(toDate);
+        sbuffer.append(strTime);
+        sbuffer.append("', '");
+        sbuffer.append(dateTimeFormat);
+        sbuffer.append("'), ");
+
+        /* Need to check for single-quote in the DATA field to be written 
+         * to the db
+         */
+        String tstr = formatMessage(logRecord);
+
+        if ((tstr == null) || (tstr.length() <= 0)) {
+            tstr = LogConstants.NOTAVAIL;
+        } else if (tstr.length() > 0 ) {
+            String str1 = tstr;
+            if (tstr.indexOf("'") != -1) {
+                str1 = checkEscapes(tstr, "'", "''");
+            }
+            String str2 = str1;
+            // Oracle doesn't have a problem with backslash
+            if (isMySQL) {
+                if (str1.indexOf("\\") != -1) {
+                    str2 = checkEscapes(str1, "\\", "\\\\");
+                }
+            }
+            tstr = str2;
+        }
+        sbuffer.append("'").append(tstr).append("', ");
+        if (Debug.messageEnabled()) {
+            Debug.message("DBFormatter:thisfield3 = #" + sbuffer.toString() 
+                          + "#");
+        }
+        String[] allFields = lmanager.getAllFields();
+        int len = 0;
+        if (allFields != null) {
+            len = allFields.length;
+        }
+        for (int i = 2; i < len-1; i ++) { // first 2 fields are compulsory
+            sbuffer.append("'" + LogConstants.NOTAVAIL + "'").append(", ");
+        }
+
+        if (Debug.messageEnabled()) {
+            Debug.message("DBFormatter:format1: sbuffer = " 
+                          + sbuffer.toString());
+        }
+
+        sbuffer.append("'").append(LogConstants.NOTAVAIL).append("'");
 
         if (Debug.messageEnabled()) {
             Debug.message("DBFormatter:format2: sbuffer = " 
@@ -331,36 +430,4 @@ public class DBFormatter extends Formatter {
         return (thisfield.toString());
     }
 
-    private void getAllFields() {
-        String strAllFields = lmanager.getProperty(LogConstants.ALL_FIELDS);
-        StringTokenizer strToken = new StringTokenizer(strAllFields, ", ");
-        int count = strToken.countTokens();
-        allFields = new String[count];
-        count = 0;
-        while(strToken.hasMoreElements()) {
-            allFields[count++] = strToken.nextToken().trim();
-        }
-        String temp = "";
-        for ( int i = 0; i < count; i ++ ) {
-            temp += allFields[i] + "\t";
-        }
-    }
-    
-    private Set getSelectedFieldSet() {
-        Set selectedFields = new HashSet();
-        String strSelectedFields = 
-               lmanager.getProperty(LogConstants.LOG_FIELDS);
-        StringTokenizer stoken = new StringTokenizer(strSelectedFields, ", ");
-        String temp = "", temp1 ="";
-        while(stoken.hasMoreElements()) {
-            temp1 = stoken.nextToken();
-            if (Debug.messageEnabled()) {
-                Debug.message("DBFormatter:getSelectedFieldSet: temp1 = " 
-                    + temp1);
-            }
-            selectedFields.add(temp1);
-            temp += temp1 + "\t";
-        }
-        return selectedFields;
-    }
 }

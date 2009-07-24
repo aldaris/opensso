@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.16 2009-06-23 20:06:52 ww203982 Exp $
+ * $Id: DBHandler.java,v 1.17 2009-07-24 20:02:22 ww203982 Exp $
  *
  */
 
@@ -47,6 +47,7 @@ import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
+import com.iplanet.am.util.ThreadPoolException;
 import com.iplanet.log.ConnectionException;
 import com.iplanet.log.DriverLoadException;
 import com.iplanet.log.NullLocationException;
@@ -74,8 +75,7 @@ import com.sun.identity.monitoring.SsoServerLoggingSvcImpl;
  * By default DBFormatter is used for formatting the logRecords.
  */
 public class DBHandler extends Handler {
-    private LogManager lmanager = (com.sun.identity.log.LogManager)
-        LogManagerUtil.getLogManager();
+    private LogManager lmanager = LogManagerUtil.getLogManager();
     private String driver;
     private String databaseURL;
     private Connection conn = null;
@@ -190,7 +190,7 @@ public class DBHandler extends Handler {
             throw new NullLocationException("Database URL location is null");
         }
 
-        String strFormatter = LogManager.FORMATTER;
+        String strFormatter = com.sun.identity.log.LogManager.FORMATTER;
         if ((strFormatter == null) || (strFormatter.length() == 0)) {
             throw new FormatterInitException(
                 "Unable To Initialize DBFormatter");
@@ -383,8 +383,10 @@ public class DBHandler extends Handler {
             startTimeBufferingThread();
         }
 
-        dbLogHandlerForMonitoring = logServiceImplForMonitoring.getHandler(
-            SsoServerLoggingSvcImpl.DB_HANDLER_NAME);
+        if (Agent.isRunning()) {
+            dbLogHandlerForMonitoring = logServiceImplForMonitoring.getHandler(
+                SsoServerLoggingSvcImpl.DB_HANDLER_NAME);
+        }
     }
 
     /**
@@ -423,7 +425,7 @@ public class DBHandler extends Handler {
                         + recordBuffer.size() + " records, Limit " +
                         recCountLimit + " writing all");
                 }
-                flush();
+                nonBlockingFlush();
             }
         }
     }
@@ -452,7 +454,7 @@ public class DBHandler extends Handler {
     /**
      * Flush any buffered messages.
      */
-    public void flush() {
+    protected void nonBlockingFlush() {
         String tabelName = null;
         LinkedList tempBuffer = null;
         synchronized (this) {
@@ -484,410 +486,318 @@ public class DBHandler extends Handler {
             }
         }
 
-        final LinkedList finalBuffer = tempBuffer;
-        Runnable task = new Runnable() {
+        LogTask task = new LogTask(tempBuffer);
+        try {
+            threadPool.run(task);
+        } catch (ThreadPoolException ex) {
+            // use current thread to flush the data if ThreadPool is shutdown
+            synchronized (this) {
+                task.run();
+            }
+        }
+    }
 
-            public void run() {
+    public void flush() {
+        String tabelName = null;
+        synchronized (this) {
+            if (recordBuffer.size() <= 0) {
+                return;
+            }
+
+            tableName = getTableName();
+            if (tableName == null) {
+                int recordsToBeDropped = recordBuffer.size();
+                recordBuffer.clear();
+                //Monit start
+                if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
+                    dbLogHandlerForMonitoring.incHandlerDroppedCount(
+                    recordsToBeDropped);
+                }
+                //Monit end
+                return;
+            }
+            //
+            //  check if the connection to the db had problems before
+            //  if so, try to reconnect and then make sure the table's
+            //  there.
+            //
+
+            if ((conn == null) || connectionToDBLost) {
                 //
-                //  check if the connection to the db had problems before
-                //  if so, try to reconnect and then make sure the table's
-                //  there.
+                //  either the connection was never initially made, or it
+                //  was lost somewhere along the line.  try to make the
+                //  connection now.
                 //
-
-                if ((conn == null) || connectionToDBLost) {
+                try {
+                    reconnectToDatabase();
+                } catch (DriverLoadException dle) {
                     //
-                    //  either the connection was never initially made, or it
-                    //  was lost somewhere along the line.  try to make the
-                    //  connection now.
+                    //  if the max mem buffer is exceeded, dump the records
                     //
-                    try {
-                        reconnectToDatabase();
-                        Debug.error (tableName +
-                            ":DBHandler:flush:reconnectToDatabase" +
-                            " successful.");
-                    } catch (DriverLoadException dle) {
-                        Debug.error(tableName +
-                            ":DBHandler:flush:reconnectToDatabase:DLE: " +
-                            dle.getMessage());
-                        //
-                        //  if the max mem buffer is exceeded, dump the records
-                        //
-                        clearBuffer(finalBuffer);
-                        throw new AMLogException(AMLogException.LOG_DB_DRIVER +
-                            "'" + driver + "'");
-                    } catch (ConnectionException ce) {
-                        Debug.error(tableName +
-                            ":DBHandler:flush:reconnectToDatabase:CE: " +
-                            ce.getMessage());
-                        //
-                        //  if the max mem buffer is exceeded, dump the records
-                        //
-                        clearBuffer(finalBuffer);
-                        throw new AMLogException(
-                            AMLogException.LOG_DB_CONNECT_FAILED);
-                    }
-
+                    clearBuffer(recordBuffer);
+                    throw new AMLogException(AMLogException.LOG_DB_DRIVER +
+                        "'" + driver + "'");
+                } catch (ConnectionException ce) {
                     //
-                    //  re-established the connection to the DB.  now
-                    //  check on the table.  
+                    //  if the max mem buffer is exceeded, dump the records
                     //
-
-                    connectionToDBLost = false;
-                    try {
-                        //
-                        //  any exception from createTable() might mean the
-                        //  table's not in the DB... just record the error, and
-                        //  let the insert let us know if the record didn't get
-                        //  logged.
-                        //
-                        createTable (tableName);
-                    } catch (SQLException se) {
-                        if (Debug.messageEnabled()) {
-                            Debug.message(tableName +
-                                ":DBHandler:flush:reconnect:cTable:SQLE (" +
-                                se.getErrorCode() + "): " + se.getMessage());
-                        }
-                    } catch (UnsupportedEncodingException usee) {
-                        if (Debug.messageEnabled()) {
-                            Debug.message(tableName +
-                                ":DBHandler:flush:reconnect:cTable:UE: " +
-                                usee.getMessage());
-                        }
-                    }
+                    clearBuffer(recordBuffer);
+                    throw new AMLogException(
+                        AMLogException.LOG_DB_CONNECT_FAILED);
                 }
 
                 //
-                //  when using oracle, and the db is down, you get an
-                //  exception on the createStatement.  unfortunately,
-                //  it's a TTC message (e.g. [ORA-]17310... the getErrorCode
-                //  returns 17310), a vendor-specific error code.
-                //
-                //  MySQL db, on the other hand seems to return from
-                //  the createStatement() call "ok".  catch it on the
-                //  executeUpdate(), below.
+                //  re-established the connection to the DB.  now
+                //  check on the table.  
                 //
 
-                Statement stmt = null;
+                connectionToDBLost = false;
+                try {
+                    //
+                    //  any exception from createTable() might mean the
+                    //  table's not in the DB... just record the error, and
+                    //  let the insert let us know if the record didn't get
+                    //  logged.
+                    //
+                    createTable (tableName);
+                } catch (SQLException se) {
+                    // the error will be handled at later part of the code
+                } catch (UnsupportedEncodingException usee) {
+                    // the error will be handled at later part of the code
+                }
+            }
+
+            //
+            //  when using oracle, and the db is down, you get an
+            //  exception on the createStatement.  unfortunately,
+            //  it's a TTC message (e.g. [ORA-]17310... the getErrorCode
+            //  returns 17310), a vendor-specific error code.
+            //
+            //  MySQL db, on the other hand seems to return from
+            //  the createStatement() call "ok".  catch it on the
+            //  executeUpdate(), below.
+            //
+
+            Statement stmt = null;
+            try {
+                stmt = conn.createStatement();
+            } catch (SQLException se) {
+
+                //
+                // try reconnecting to DB once.  if can't, dump the record
+                // and wait for the next attempt.
+                //
+
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                }
+
+                connectionToDBLost = true;
+                try {
+                    reconnectToDatabase();
+                } catch (DriverLoadException dle) {
+                    //
+                    //  if the max mem buffer is exceeded, dump the records
+                    //
+                    clearBuffer(recordBuffer);
+                    throw new AMLogException(AMLogException.LOG_DB_DRIVER +
+                        "'" + driver + "'");
+                } catch (ConnectionException ce) {
+                    //
+                    //  if the max mem buffer is exceeded, dump the records
+                    //
+                    clearBuffer(recordBuffer);
+                    throw new AMLogException(
+                        AMLogException.LOG_DB_CONNECT_FAILED);
+                }
+                connectionToDBLost = false;
+
+                //
+                //  connection's reestablished, now do the table check.
+                //
+
+                try {
+                    createTable (tableName);
+                } catch (SQLException sqle) {
+                    // the error will be handled by later part of the code
+                } catch (UnsupportedEncodingException usee) {
+                    // the error will be handled by later part of the code
+                }
+
                 try {
                     stmt = conn.createStatement();
-                } catch (SQLException se) {
+                } catch (SQLException sqle) {
                     //
-                    //  observed that when Oracle's down, it's detected here.
-                    //  error code 1034.
+                    //  second time this failed (note that this whole block
+                    //  started with the createStatement()).
+                    //  log the error message, and continue on (for now)
                     //
-                    Debug.error(tableName +
-                        ":DBHandler:flush:cStatement:SQLE (" +
-                        se.getErrorCode() + "): " + se.getMessage());
-
-                    //
-                    // try reconnecting to DB once.  if can't, dump the record
-                    // and wait for the next attempt.
-                    //
-
-                    try {
-                        conn.close();
-                    } catch (SQLException ex) {
-                        //
-                        //  ignore exception and continue
-                        //
-                        if (Debug.messageEnabled()) {
-                            Debug.error (tableName +
-                                ":DBHandler:flush:cStatement:close:SQLE (" +
-                                ex.getErrorCode() + ")" + ex.getMessage());
-                        }
-                    }
-
-                    connectionToDBLost = true;
-                    try {
-                        reconnectToDatabase();
-                        Debug.error (tableName +
-                            ":DBHandler:flush:cStatement:reconnect" + 
-                            " successful.");
-                    } catch (DriverLoadException dle) {
-                        Debug.error(tableName +
-                            ":DBHandler:flush:cStatement:reconnect:DLE: " +
-                            dle.getMessage());
-                        //
-                        //  if the max mem buffer is exceeded, dump the records
-                        //
-                        clearBuffer(finalBuffer);
-                        throw new AMLogException(AMLogException.LOG_DB_DRIVER +
-                            "'" + driver + "'");
-                    } catch (ConnectionException ce) {
-                        Debug.error(tableName +
-                            ":DBHandler:flush:cStatement:reconnect:CE: " +
-                            ce.getMessage());
-                        //
-                        //  if the max mem buffer is exceeded, dump the records
-                        //
-                        clearBuffer(finalBuffer);
-                        throw new AMLogException(
-                            AMLogException.LOG_DB_CONNECT_FAILED);
-                    }
-                    connectionToDBLost = false;
-
-                    //
-                    //  connection's reestablished, now do the table check.
-                    //
-
-                    try {
-                        createTable (tableName);
-                    } catch (SQLException sqle) {
-                        if (Debug.messageEnabled()) {
-                            Debug.message(tableName +
-                                ":DBHandler:flush:cStatement:reconnect:" +
-                                "cTable:SQLE (" + sqle.getErrorCode() + "): " +
-                                sqle.getMessage());
-                        }
-                    } catch (UnsupportedEncodingException usee) {
-                        if (Debug.messageEnabled()) {
-                            Debug.message(tableName +
-                                ":DBHandler:flush:cStatement:reconnect:" + 
-                                "cTable:UE: " + usee.getMessage());
-                        }
-                    }
-
-                    try {
-                        stmt = conn.createStatement();
-                    } catch (SQLException sqle) {
-                        //
-                        //  second time this failed (note that this whole block
-                        //  started with the createStatement()).
-                        //  log the error message, and continue on (for now)
-                        //
-                        Debug.error(tableName +
-                            ":DBHandler:flush:cStatement:reconnect:cSt:SQLE ("
-                            + sqle.getErrorCode() + "): " + sqle.getMessage());
-                        throw new AMLogException(
-                            AMLogException.LOG_DB_CSTATEMENT);
-                    }
+                    throw new AMLogException(
+                        AMLogException.LOG_DB_CSTATEMENT);
                 }
+            }
 
-                String vals = null;                
-                int rbsz = finalBuffer.size();
-                Formatter formatter = getFormatter();
-                for (Iterator iter = finalBuffer.iterator(); iter.hasNext();) {
-                    vals = formatter.format((java.util.logging.LogRecord)
-                        iter.next());
-                    if (Debug.messageEnabled()) {
-                        Debug.message("values = " + vals);
-                    }
-                    StringBuffer insertStringBuffer = new StringBuffer(2000);
-                    insertStringBuffer.append(getColString()).
-                       append(vals).append(")");
+            String vals = null;                
+            int rbsz = recordBuffer.size();
+            Formatter formatter = getFormatter();
+            for (Iterator iter = recordBuffer.iterator(); iter.hasNext();) {
+                vals = formatter.format((java.util.logging.LogRecord)
+                    iter.next());
+                StringBuffer insertStringBuffer = new StringBuffer(2000);
+                insertStringBuffer.append(getColString()).
+                   append(vals).append(")");
 
-                    String insertStr = insertStringBuffer.toString();
+                String insertStr = insertStringBuffer.toString();
                         
-                    if (Debug.messageEnabled()) {
-                        Debug.message(tableName + 
-                            ":DBHandler:insertString is: " + insertStr);
+                try {
+                    stmt.executeUpdate(insertStr);
+                    //Monit start
+                    if (Agent.isRunning() && dbLogHandlerForMonitoring !=
+                        null){
+                        dbLogHandlerForMonitoring.incHandlerSuccessCount(1);
                     }
-                    try {
-                        stmt.executeUpdate(insertStr);
-                        //Monit start
-                        if(Agent.isRunning() && dbLogHandlerForMonitoring !=
-                             null){
-                            dbLogHandlerForMonitoring.incHandlerSuccessCount(
-                                1);
-                        }
-                        //Monit end
-                    } catch (SQLException sqle) {
+                    //Monit end
+                } catch (SQLException sqle) {
+                    /*
+                     *  as mentioned above, connection errors to oracle
+                     *  seem to get caught in the createStatement(), while
+                     *  with mysql, they get caught here.
+                     * 
+                     *  the other thing that could happen is the table was
+                     *  dropped, but not the connection.
+                     */
+                    int sqleErrCode = sqle.getErrorCode();
+                    boolean tableDoesNotExist = false;
+
+                    /*
+                     *  unfortunately have to check which db and specific
+                     *  error codes...
+                     *  see if table's missing
+                     *  MySQL: 1146
+                     *  Oracle: 942
+                     */
+                    if ((isMySQL && (sqleErrCode == 1146)) ||
+                        (!isMySQL && (sqleErrCode == 942))) {
                         /*
-                         *  as mentioned above, connection errors to oracle
-                         *  seem to get caught in the createStatement(), while
-                         *  with mysql, they get caught here.
-                         * 
-                         *  the other thing that could happen is the table was
-                         *  dropped, but not the connection.
+                         *  connection to DB's there, but table's missing
+                         *
+                         *  gotta make the table; try the executeUpdate()
+                         *  again
                          */
-
-                        int sqleErrCode = sqle.getErrorCode();
-                        boolean tableDoesNotExist = false;
-                        if (Debug.messageEnabled()) {
-                            Debug.message(tableName +
-                                "DBHandler:execute:SQLException: insertStr = "
-                                + insertStr);
-                            Debug.message(tableName +
-                                ":DBHandler:execute:SQLException (" +
-                                sqleErrCode + "): " + sqle.getMessage());
+                        try {
+                            createTable(tableName);
+                        } catch (SQLException se) {
+                        // the error will be handled by later part of the code
+                        } catch (UnsupportedEncodingException usee) {
+                        // the error will be handled by later part of the code
                         }
 
-                        /*
-                         *  unfortunately have to check which db and specific
-                         *  error codes...
-                         *  see if table's missing
-                         *  MySQL: 1146
-                         *  Oracle: 942
-                         */
-                        if ((isMySQL && (sqleErrCode == 1146)) ||
-                            (!isMySQL && (sqleErrCode == 942))) {
-                            /*
-                             *  connection to DB's there, but table's missing
-                             *
-                             *  gotta make the table; try the executeUpdate()
-                             *  again
-                             */
-                            try {
-                                createTable(tableName);
-                            } catch (SQLException se) {
-                                //  just log the message and continue, for now
-                                Debug.error(tableName +
-                                    ":DBHandler:flush:execUpdate:cTable:SQLE ("
-                                    + se.getErrorCode() + "): " +
-                                    se.getMessage());
-                            } catch (UnsupportedEncodingException usee) {
-                                //  just log the message and continue, for now
-                                Debug.error(tableName + 
-                                    ":DBHandler:flush:execUpdate:cTable:UE: " +
-                                    usee.getMessage());
-                            }
-
-                            try {
-                                stmt.executeUpdate(insertStr);
-                            } catch (SQLException sqle2) {
-                                //  guess NOW it's an error
-                                Debug.error(tableName +
-                                    ":DBHandler:flush:execUpdate:exUpdate:" +
-                                    "SQLE (" + sqle2.getErrorCode() + "): " +
-                                    sqle2.getMessage());
-                                throw new AMLogException (
-                                    AMLogException.LOG_DB_EXECUPDATE);
-                            }
-                        } else if ((isMySQL && (sqleErrCode == 0)) ||
-                            (!isMySQL && ((sqleErrCode == 17002) ||
-                            (sqleErrCode == 17410))))
-                        {
-                            /*
-                             *  connection's probably gone gotta try everything
-                             *  up to this point again, starting with
-                             *  reconnecting to the db.  any failure along the
-                             *  line this time gets an exception.
-                             */
-
-                            try {
-                                conn.close();
-                            } catch (SQLException ex) {
-                                //  log and continue
-                                if (Debug.messageEnabled()) {
-                                    Debug.message(tableName +
-                                        ":DBHandler:flush:execUpdate:close:" +
-                                        "SQLE (" + ex.getErrorCode() + "): " +
-                                        ex.getMessage());
-                                }
-                            }
-
-                            connectionToDBLost = true;
-                            try {
-                                reconnectToDatabase();
-                                Debug.error (tableName +
-                                   ":DBHandler:flush:execUpdate:" +
-                                   "reconnect successful.");
-                            } catch (DriverLoadException dle) {
-                                if (Debug.messageEnabled()) {
-                                    Debug.message(tableName +
-                                        ":DBHandler:flush:execUpdate:" +
-                                        "reconnect:DLE: " + dle.getMessage());
-                                }
-                                /*
-                                 * if the max mem buffer is exceeded,
-                                 * dump the records
-                                 */
-                                clearBuffer(finalBuffer);
-                                throw new AMLogException (
-                                    AMLogException.LOG_DB_RECONNECT_FAILED);
-                            } catch (ConnectionException ce) {
-                                if (Debug.messageEnabled()) {
-                                    Debug.message(tableName +
-                                        ":DBHandler:flush:execUpdate:" +
-                                        "reconnect:CE: " + ce.getMessage());
-                                }
-                                /*
-                                 * if the max mem buffer is exceeded,
-                                 * dump the records
-                                 */
-                                clearBuffer(finalBuffer);
-                                throw new AMLogException (
-                                    AMLogException.LOG_DB_RECONNECT_FAILED);
-                            }
-                            connectionToDBLost = false;
-
-                            /*
-                             *  bunch the createTable, createStatement, and
-                             *  executeUpdate together because if any of these
-                             *  fail, throw an exception.
-                             */
-                            try {
-                                createTable (tableName);
-                                stmt = conn.createStatement();
-                                stmt.executeUpdate(insertStr);
-                                //Monit start
-                                if (Agent.isRunning() &&
-                                    dbLogHandlerForMonitoring != null)
-                                {
-                                    dbLogHandlerForMonitoring.
-                                        incHandlerSuccessCount(1);
-                                }
-                                //Monit end
-                            } catch (SQLException sqe) {
-                                Debug.error (tableName +
-                                    ":DBHandler:flush:executeUpd:reconnect:" +
-                                    "stmt:SQE: (" + sqe.getErrorCode() + "): "
-                                    + sqe.getMessage());
-                                /*
-                                 *  if the max mem buffer is exceeded,
-                                 *  dump the records
-                                 */
-                                clearBuffer(finalBuffer);
-                                throw new AMLogException (
-                                    AMLogException.LOG_DB_EXECUPDATE);
-                            } catch (UnsupportedEncodingException usee) {
-                                Debug.error (tableName +
-                                    ":DBHandler:flush:execUpd:reconnect:" +
-                                    "stmt:UE: " + usee.getMessage());
-                                /*
-                                 *  if the max mem buffer is exceeded,
-                                 *  dump the records
-                                 */
-                                clearBuffer(finalBuffer);
-                                throw new AMLogException (
-                                    AMLogException.LOG_DB_EXECUPDATE);
-                            }
-                        } else {
-                            /*
-                             *  not sure what to do here yet.  log the error,
-                             *  throw an exception, and see what happens next.
-                             *
-                             *  just for informational purposes, you get the
-                             *  following if the columns don't exist:
-                             *    if ((isMySQL && (sqleErrCode == 1054)) ||
-                             *        (!isMySQL && ((sqleErrCode == 904) ||
-                             *              (sqleErrCode == 913))))
-                             */
-                            Debug.error (tableName +
-                                ":DBHandler:flush:executeUpdate failed (" +
-                                sqleErrCode + "): " + sqle.getMessage());
-                            Debug.error(tableName +
-                                ":DBHandler:execute:SQLException: insertStr = "
-                                + insertStr);
-                            // if the max mem buffer is exceeded, dump the
-                            // records
-                            clearBuffer(finalBuffer);
+                        try {
+                            stmt.executeUpdate(insertStr);
+                        } catch (SQLException sqle2) {
+                            //  guess NOW it's an error
                             throw new AMLogException (
                                 AMLogException.LOG_DB_EXECUPDATE);
                         }
-                    }
-                }
-                try {
-                    stmt.close();
-                } catch (SQLException se) {
-                    if (Debug.warningEnabled()) {
-                        Debug.warning(tableName + ":DBHandler:close:" +
-                            "SQLException (" + se.getErrorCode() + "): ", se);
+                    } else if ((isMySQL && (sqleErrCode == 0)) ||
+                        (!isMySQL && ((sqleErrCode == 17002) ||
+                        (sqleErrCode == 17410))))
+                    {
+                        /*
+                         *  connection's probably gone gotta try everything
+                         *  up to this point again, starting with
+                         *  reconnecting to the db.  any failure along the
+                         *  line this time gets an exception.
+                         */
+
+                        try {
+                            conn.close();
+                        } catch (SQLException ex) {
+                        // the error will be handled by later part of the code
+                        }
+
+                        connectionToDBLost = true;
+                        try {
+                            reconnectToDatabase();
+                        } catch (DriverLoadException dle) {
+                            /*
+                             * if the max mem buffer is exceeded,
+                             * dump the records
+                             */
+                            clearBuffer(recordBuffer);
+                            throw new AMLogException (
+                                AMLogException.LOG_DB_RECONNECT_FAILED);
+                        } catch (ConnectionException ce) {
+                            /*
+                             * if the max mem buffer is exceeded,
+                             * dump the records
+                             */
+                            clearBuffer(recordBuffer);
+                            throw new AMLogException (
+                                AMLogException.LOG_DB_RECONNECT_FAILED);
+                        }
+                        connectionToDBLost = false;
+
+                        /*
+                         *  bunch the createTable, createStatement, and
+                         *  executeUpdate together because if any of these
+                         *  fail, throw an exception.
+                         */
+                        try {
+                            createTable (tableName);
+                            stmt = conn.createStatement();
+                            stmt.executeUpdate(insertStr);
+                            //Monit start
+                            if (Agent.isRunning() &&
+                                dbLogHandlerForMonitoring != null)
+                            {
+                                dbLogHandlerForMonitoring.
+                                    incHandlerSuccessCount(1);
+                            }
+                            //Monit end
+                        } catch (SQLException sqe) {
+                            /*
+                             *  if the max mem buffer is exceeded,
+                             *  dump the records
+                             */
+                            clearBuffer(recordBuffer);
+                            throw new AMLogException (
+                                AMLogException.LOG_DB_EXECUPDATE);
+                        } catch (UnsupportedEncodingException usee) {
+                            /*
+                             *  if the max mem buffer is exceeded,
+                             *  dump the records
+                             */
+                            clearBuffer(recordBuffer);
+                            throw new AMLogException (
+                                AMLogException.LOG_DB_EXECUPDATE);
+                        }
+                    } else {
+                        /*
+                         *  not sure what to do here yet.  log the error,
+                         *  throw an exception, and see what happens next.
+                         *
+                         *  just for informational purposes, you get the
+                         *  following if the columns don't exist:
+                         *    if ((isMySQL && (sqleErrCode == 1054)) ||
+                         *        (!isMySQL && ((sqleErrCode == 904) ||
+                         *              (sqleErrCode == 913))))
+                         */
+                        // if the max mem buffer is exceeded, dump the
+                        // records
+                        clearBuffer(recordBuffer);
+                        throw new AMLogException (
+                            AMLogException.LOG_DB_EXECUPDATE);
                     }
                 }
             }
-        };
-        threadPool.run(task);
+            try {
+                stmt.close();
+            } catch (SQLException se) {
+                // don't need to handle as the function will be exited.
+            }
+        }
     }
     
     /**
@@ -922,7 +832,10 @@ public class DBHandler extends Handler {
 
     private void clearBuffer(LinkedList buffer) {
         synchronized (this) {
-            int reccnt = buffer.size() + recordBuffer.size();
+            int reccnt = recordBuffer.size();
+            if (buffer != recordBuffer) {
+                reccnt += buffer.size();
+            }
             if (reccnt > recMaxDBMem) {            
                 int removeCount = reccnt - recMaxDBMem;
                     Debug.error(tableName + ":DBHandler:dropping " +
@@ -945,7 +858,7 @@ public class DBHandler extends Handler {
                 }
                 //Monit end
             }
-            if (!buffer.isEmpty()) {
+            if ((buffer != recordBuffer) && (!buffer.isEmpty())) {
                 for (int i = 0; i < buffer.size(); i++) {
                     recordBuffer.addFirst(buffer.removeLast());
                 }
@@ -1205,6 +1118,413 @@ public class DBHandler extends Handler {
         }
     }
 
+    private class LogTask implements Runnable {
+
+        private LinkedList buffer;
+
+        public LogTask(LinkedList buffer) {
+            this.buffer = buffer;
+        }
+
+        public void run() {
+            //
+            //  check if the connection to the db had problems before
+            //  if so, try to reconnect and then make sure the table's
+            //  there.
+            //
+
+            if ((conn == null) || connectionToDBLost) {
+                //
+                //  either the connection was never initially made, or it
+                //  was lost somewhere along the line.  try to make the
+                //  connection now.
+                //
+                try {
+                    reconnectToDatabase();
+                    Debug.error (tableName +
+                        ":DBHandler:flush:reconnectToDatabase" +
+                        " successful.");
+                } catch (DriverLoadException dle) {
+                    Debug.error(tableName +
+                        ":DBHandler:flush:reconnectToDatabase:DLE: " +
+                        dle.getMessage());
+                    //
+                    //  if the max mem buffer is exceeded, dump the records
+                    //
+                    clearBuffer(buffer);
+                    throw new AMLogException(AMLogException.LOG_DB_DRIVER +
+                        "'" + driver + "'");
+                } catch (ConnectionException ce) {
+                    Debug.error(tableName +
+                        ":DBHandler:flush:reconnectToDatabase:CE: " +
+                        ce.getMessage());
+                    //
+                    //  if the max mem buffer is exceeded, dump the records
+                    //
+                    clearBuffer(buffer);
+                    throw new AMLogException(
+                        AMLogException.LOG_DB_CONNECT_FAILED);
+                }
+
+                //
+                //  re-established the connection to the DB.  now
+                //  check on the table.  
+                //
+
+                connectionToDBLost = false;
+                try {
+                    //
+                    //  any exception from createTable() might mean the
+                    //  table's not in the DB... just record the error, and
+                    //  let the insert let us know if the record didn't get
+                    //  logged.
+                    //
+                    createTable (tableName);
+                } catch (SQLException se) {
+                    if (Debug.messageEnabled()) {
+                        Debug.message(tableName +
+                            ":DBHandler:flush:reconnect:cTable:SQLE (" +
+                            se.getErrorCode() + "): " + se.getMessage());
+                    }
+                } catch (UnsupportedEncodingException usee) {
+                    if (Debug.messageEnabled()) {
+                        Debug.message(tableName +
+                            ":DBHandler:flush:reconnect:cTable:UE: " +
+                            usee.getMessage());
+                    }
+                }
+            }
+
+                //
+                //  when using oracle, and the db is down, you get an
+                //  exception on the createStatement.  unfortunately,
+                //  it's a TTC message (e.g. [ORA-]17310... the getErrorCode
+                //  returns 17310), a vendor-specific error code.
+                //
+                //  MySQL db, on the other hand seems to return from
+                //  the createStatement() call "ok".  catch it on the
+                //  executeUpdate(), below.
+                //
+
+                Statement stmt = null;
+                try {
+                    stmt = conn.createStatement();
+                } catch (SQLException se) {
+                //
+                //  observed that when Oracle's down, it's detected here.
+                //  error code 1034.
+                //
+                Debug.error(tableName +
+                    ":DBHandler:flush:cStatement:SQLE (" +
+                    se.getErrorCode() + "): " + se.getMessage());
+
+                //
+                // try reconnecting to DB once.  if can't, dump the record
+                // and wait for the next attempt.
+                //
+
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    //
+                    //  ignore exception and continue
+                    //
+                    if (Debug.messageEnabled()) {
+                        Debug.error (tableName +
+                            ":DBHandler:flush:cStatement:close:SQLE (" +
+                            ex.getErrorCode() + ")" + ex.getMessage());
+                    }
+                }
+
+                connectionToDBLost = true;
+                try {
+                    reconnectToDatabase();
+                    Debug.error (tableName +
+                        ":DBHandler:flush:cStatement:reconnect" + 
+                        " successful.");
+                } catch (DriverLoadException dle) {
+                    Debug.error(tableName +
+                        ":DBHandler:flush:cStatement:reconnect:DLE: " +
+                        dle.getMessage());
+                    //
+                    //  if the max mem buffer is exceeded, dump the records
+                    //
+                    clearBuffer(buffer);
+                    throw new AMLogException(AMLogException.LOG_DB_DRIVER +
+                        "'" + driver + "'");
+                } catch (ConnectionException ce) {
+                    Debug.error(tableName +
+                        ":DBHandler:flush:cStatement:reconnect:CE: " +
+                        ce.getMessage());
+                    //
+                    //  if the max mem buffer is exceeded, dump the records
+                    //
+                    clearBuffer(buffer);
+                    throw new AMLogException(
+                        AMLogException.LOG_DB_CONNECT_FAILED);
+                }
+                connectionToDBLost = false;
+
+                //
+                //  connection's reestablished, now do the table check.
+                //
+
+                try {
+                    createTable (tableName);
+                } catch (SQLException sqle) {
+                    if (Debug.messageEnabled()) {
+                        Debug.message(tableName +
+                            ":DBHandler:flush:cStatement:reconnect:" +
+                            "cTable:SQLE (" + sqle.getErrorCode() + "): " +
+                            sqle.getMessage());
+                    }
+                } catch (UnsupportedEncodingException usee) {
+                    if (Debug.messageEnabled()) {
+                        Debug.message(tableName +
+                            ":DBHandler:flush:cStatement:reconnect:" + 
+                            "cTable:UE: " + usee.getMessage());
+                    }
+                }
+
+                try {
+                    stmt = conn.createStatement();
+                } catch (SQLException sqle) {
+                    //
+                    //  second time this failed (note that this whole block
+                    //  started with the createStatement()).
+                    //  log the error message, and continue on (for now)
+                    //
+                    Debug.error(tableName +
+                        ":DBHandler:flush:cStatement:reconnect:cSt:SQLE ("
+                        + sqle.getErrorCode() + "): " + sqle.getMessage());
+                    throw new AMLogException(
+                        AMLogException.LOG_DB_CSTATEMENT);
+                }
+            }
+
+            String vals = null;                
+            int rbsz = buffer.size();
+            Formatter formatter = getFormatter();
+            for (Iterator iter = buffer.iterator(); iter.hasNext();) {
+                vals = formatter.format((java.util.logging.LogRecord)
+                    iter.next());
+                if (Debug.messageEnabled()) {
+                    Debug.message("values = " + vals);
+                }
+                StringBuffer insertStringBuffer = new StringBuffer(2000);
+                insertStringBuffer.append(getColString()).
+                   append(vals).append(")");
+
+                String insertStr = insertStringBuffer.toString();
+                        
+                if (Debug.messageEnabled()) {
+                    Debug.message(tableName + 
+                        ":DBHandler:insertString is: " + insertStr);
+                }
+                try {
+                    stmt.executeUpdate(insertStr);
+                    //Monit start
+                    if (Agent.isRunning() && dbLogHandlerForMonitoring !=
+                        null){
+                        dbLogHandlerForMonitoring.incHandlerSuccessCount(1);
+                    }
+                    //Monit end
+                } catch (SQLException sqle) {
+                    /*
+                     *  as mentioned above, connection errors to oracle
+                     *  seem to get caught in the createStatement(), while
+                     *  with mysql, they get caught here.
+                     * 
+                     *  the other thing that could happen is the table was
+                     *  dropped, but not the connection.
+                     */
+                    int sqleErrCode = sqle.getErrorCode();
+                    boolean tableDoesNotExist = false;
+                    if (Debug.messageEnabled()) {
+                        Debug.message(tableName +
+                            "DBHandler:execute:SQLException: insertStr = "
+                            + insertStr);
+                        Debug.message(tableName +
+                            ":DBHandler:execute:SQLException (" +
+                            sqleErrCode + "): " + sqle.getMessage());
+                    }
+
+                    /*
+                     *  unfortunately have to check which db and specific
+                     *  error codes...
+                     *  see if table's missing
+                     *  MySQL: 1146
+                     *  Oracle: 942
+                     */
+                    if ((isMySQL && (sqleErrCode == 1146)) ||
+                        (!isMySQL && (sqleErrCode == 942))) {
+                        /*
+                         *  connection to DB's there, but table's missing
+                         *
+                         *  gotta make the table; try the executeUpdate()
+                         *  again
+                         */
+                        try {
+                            createTable(tableName);
+                        } catch (SQLException se) {
+                            //  just log the message and continue, for now
+                            Debug.error(tableName +
+                                ":DBHandler:flush:execUpdate:cTable:SQLE ("
+                                + se.getErrorCode() + "): " +
+                                se.getMessage());
+                        } catch (UnsupportedEncodingException usee) {
+                            //  just log the message and continue, for now
+                            Debug.error(tableName + 
+                                ":DBHandler:flush:execUpdate:cTable:UE: " +
+                                usee.getMessage());
+                        }
+
+                        try {
+                            stmt.executeUpdate(insertStr);
+                        } catch (SQLException sqle2) {
+                            //  guess NOW it's an error
+                            Debug.error(tableName +
+                                ":DBHandler:flush:execUpdate:exUpdate:" +
+                                "SQLE (" + sqle2.getErrorCode() + "): " +
+                                sqle2.getMessage());
+                            throw new AMLogException (
+                                AMLogException.LOG_DB_EXECUPDATE);
+                        }
+                    } else if ((isMySQL && (sqleErrCode == 0)) ||
+                        (!isMySQL && ((sqleErrCode == 17002) ||
+                        (sqleErrCode == 17410))))
+                    {
+                        /*
+                         *  connection's probably gone gotta try everything
+                         *  up to this point again, starting with
+                         *  reconnecting to the db.  any failure along the
+                         *  line this time gets an exception.
+                         */
+
+                        try {
+                            conn.close();
+                        } catch (SQLException ex) {
+                            //  log and continue
+                            if (Debug.messageEnabled()) {
+                                Debug.message(tableName +
+                                    ":DBHandler:flush:execUpdate:close:" +
+                                    "SQLE (" + ex.getErrorCode() + "): " +
+                                    ex.getMessage());
+                            }
+                        }
+
+                        connectionToDBLost = true;
+                        try {
+                            reconnectToDatabase();
+                            Debug.error (tableName +
+                               ":DBHandler:flush:execUpdate:" +
+                               "reconnect successful.");
+                        } catch (DriverLoadException dle) {
+                            if (Debug.messageEnabled()) {
+                                Debug.message(tableName +
+                                    ":DBHandler:flush:execUpdate:" +
+                                    "reconnect:DLE: " + dle.getMessage());
+                            }
+                            /*
+                             * if the max mem buffer is exceeded,
+                             * dump the records
+                             */
+                            clearBuffer(buffer);
+                            throw new AMLogException (
+                                AMLogException.LOG_DB_RECONNECT_FAILED);
+                        } catch (ConnectionException ce) {
+                            if (Debug.messageEnabled()) {
+                                Debug.message(tableName +
+                                    ":DBHandler:flush:execUpdate:" +
+                                    "reconnect:CE: " + ce.getMessage());
+                            }
+                            /*
+                             * if the max mem buffer is exceeded,
+                             * dump the records
+                             */
+                            clearBuffer(buffer);
+                            throw new AMLogException (
+                                AMLogException.LOG_DB_RECONNECT_FAILED);
+                        }
+                        connectionToDBLost = false;
+
+                        /*
+                         *  bunch the createTable, createStatement, and
+                         *  executeUpdate together because if any of these
+                         *  fail, throw an exception.
+                         */
+                        try {
+                            createTable (tableName);
+                            stmt = conn.createStatement();
+                            stmt.executeUpdate(insertStr);
+                            //Monit start
+                            if (Agent.isRunning() &&
+                                dbLogHandlerForMonitoring != null)
+                            {
+                                dbLogHandlerForMonitoring.
+                                    incHandlerSuccessCount(1);
+                            }
+                            //Monit end
+                        } catch (SQLException sqe) {
+                            Debug.error (tableName +
+                                ":DBHandler:flush:executeUpd:reconnect:" +
+                                "stmt:SQE: (" + sqe.getErrorCode() + "): "
+                                + sqe.getMessage());
+                            /*
+                             *  if the max mem buffer is exceeded,
+                             *  dump the records
+                             */
+                            clearBuffer(buffer);
+                            throw new AMLogException (
+                                AMLogException.LOG_DB_EXECUPDATE);
+                        } catch (UnsupportedEncodingException usee) {
+                            Debug.error (tableName +
+                                ":DBHandler:flush:execUpd:reconnect:" +
+                                "stmt:UE: " + usee.getMessage());
+                            /*
+                             *  if the max mem buffer is exceeded,
+                             *  dump the records
+                             */
+                            clearBuffer(buffer);
+                            throw new AMLogException (
+                                AMLogException.LOG_DB_EXECUPDATE);
+                        }
+                    } else {
+                        /*
+                         *  not sure what to do here yet.  log the error,
+                         *  throw an exception, and see what happens next.
+                         *
+                         *  just for informational purposes, you get the
+                         *  following if the columns don't exist:
+                         *    if ((isMySQL && (sqleErrCode == 1054)) ||
+                         *        (!isMySQL && ((sqleErrCode == 904) ||
+                         *              (sqleErrCode == 913))))
+                         */
+                        Debug.error (tableName +
+                            ":DBHandler:flush:executeUpdate failed (" +
+                            sqleErrCode + "): " + sqle.getMessage());
+                        Debug.error(tableName +
+                            ":DBHandler:execute:SQLException: insertStr = "
+                            + insertStr);
+                        // if the max mem buffer is exceeded, dump the
+                        // records
+                        clearBuffer(buffer);
+                        throw new AMLogException (
+                            AMLogException.LOG_DB_EXECUPDATE);
+                    }
+                }
+            }
+            try {
+                stmt.close();
+            } catch (SQLException se) {
+                if (Debug.warningEnabled()) {
+                    Debug.warning(tableName + ":DBHandler:close:" +
+                        "SQLException (" + se.getErrorCode() + "): ", se);
+                }
+            }
+        }
+    }
+
     private class TimeBufferingTask extends GeneralTaskRunnable {
 
         private long runPeriod;
@@ -1221,7 +1541,7 @@ public class DBHandler extends Handler {
                 Debug.message(tableName + 
                     ":DBHandler:TimeBufferingTask.run() called");
             }
-            flush();
+            nonBlockingFlush();
         }
 
         /**

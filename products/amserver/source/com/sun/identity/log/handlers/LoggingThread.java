@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoggingThread.java,v 1.1 2009-06-23 20:06:52 ww203982 Exp $
+ * $Id: LoggingThread.java,v 1.2 2009-07-24 20:02:23 ww203982 Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.iplanet.am.util.ThreadPool;
 import com.iplanet.am.util.ThreadPoolException;
 import com.sun.identity.common.ShutdownListener;
 import com.sun.identity.common.ShutdownManager;
+import com.sun.identity.common.ShutdownPriority;
 import com.sun.identity.shared.debug.Debug;
 
 public class LoggingThread {
@@ -59,7 +60,7 @@ public class LoggingThread {
                         public void shutdown() {
                             thread.shutdown();
                         }
-                    }
+                    }, ShutdownPriority.LOWEST
                 );
             } finally {
                 shutdownMan.releaseLockAndNotify();
@@ -74,11 +75,8 @@ public class LoggingThread {
         return instance;
     }
 
-    public void run(Runnable task) {
-        try {
-            thread.run(task);
-            // it will not happen as threshold is 0
-        } catch (ThreadPoolException wontHappen) {}
+    public void run(Runnable task) throws ThreadPoolException {
+        thread.run(task);
     }
 
 }

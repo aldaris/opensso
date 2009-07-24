@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureELFFormatter.java,v 1.7 2009-03-05 22:55:40 veiming Exp $
+ * $Id: SecureELFFormatter.java,v 1.8 2009-07-24 20:02:23 ww203982 Exp $
  *
  */
 
@@ -54,9 +54,7 @@ import com.sun.identity.log.spi.ITimestampGenerator;
  */
 public class SecureELFFormatter extends Formatter {
     
-    private LogManager lmanager = (com.sun.identity.log.LogManager)
-    LogManagerUtil.getLogManager();
-    private String [] allFields;
+    private LogManager lmanager = LogManagerUtil.getLogManager();
     private IGenerator fieldGenerator = new MACGenerator();
     private ITimestampGenerator secureTimestampGenerator;
     private final String NOTAVAIL = "Not Available";
@@ -83,54 +81,40 @@ public class SecureELFFormatter extends Formatter {
         }
     }
     
-    private void getAllFields() {
-        String strAllFields = lmanager.getProperty(LogConstants.ALL_FIELDS);
-        StringTokenizer strToken = new StringTokenizer(strAllFields, ", ");
-        int count = strToken.countTokens();
-        allFields = new String[count];
-        count = 0;
-        while(strToken.hasMoreElements()) {
-            allFields[count++] = strToken.nextToken().trim();
-        }
-        String temp = "";
-        for ( int i = 0; i < count; i ++ ) {
-            temp += allFields[i] + "\t";
-        }
-    }
-    
     /**
-     * Format the given record as per ELF and return a formatted string. <p>
-     *
-     * For ELF Specifications refer <LI> www.w3.org/TR/WD-logfile.html</LI>
-     * @param logRecord The logRecord to be formatted
-     * @return The string formed by formatting the logRecord
-     */
-    public String format(java.util.logging.LogRecord logRecord) {
-        Map logInfoTable = null;
-
-        if (logRecord instanceof com.sun.identity.log.ILogRecord) {
-            logInfoTable = ((com.sun.identity.log.ILogRecord)logRecord).
-                getLogInfoMap();
-        }
+      * Format the given record as per ELF and return a formatted string. <p>
+      *
+      * For ELF Specifications refer <LI> www.w3.org/TR/WD-logfile.html</LI>
+      * @param logRecord The logRecord to be formatted
+      * @return The string formed by formatting the logRecord
+      */
+    public String format(com.sun.identity.log.LogRecord logRecord) {
+        Map logInfoTable = logRecord.getLogInfoMap();;
 
         StringBuffer sbuffer = new StringBuffer();
         StringBuffer stringForMAC = new StringBuffer();
-            
+
         try {
-            getAllFields();
-            Set selectedFields = getSelectedFieldSet();
+            String[] allFields = lmanager.getAllFields();
+            Set selectedFields = lmanager.getSelectedFieldSet();
             String strTime = secureTimestampGenerator.getTimestamp();
             sbuffer.append("\"").append(strTime).append("\"\t");
             stringForMAC.append("\"").append(strTime).append("\"");
-            String message = processString(formatMessage(logRecord));
-            if ((message.indexOf(' ') != -1) || (message.indexOf('\t') != -1)) {
-                sbuffer.append("\"").append(message).append("\"\t");
-                stringForMAC.append("\"").append(message).append("\"");
-            } else {
+            StringBuffer message = processString(formatMessage(logRecord));
+            boolean escapeDone = false;
+            for (int i = 0; i < message.length(); i++) {
+                if ((message.charAt(i) == ' ') || (message.charAt(i) == '\t')) {
+                    sbuffer.append("\"").append(message).append("\"\t");
+                    stringForMAC.append("\"").append(message).append("\"");
+                    escapeDone = true;
+                    break;
+                }
+            }
+            if (!escapeDone) {
                 sbuffer.append(message).append("\t");
                 stringForMAC.append(message);
             }
-            
+
             String key = null;
             String value = null;
             for (int i = 2; i < allFields.length; i ++) {
@@ -140,24 +124,30 @@ public class SecureELFFormatter extends Formatter {
                 (logInfoTable != null) &&
                 (selectedFields.contains(key))) {
                     value = (String) logInfoTable.get(key);
-                    value = processString(value);
+                    StringBuffer valueBuffer = processString(value);
                     // the following check is to check if the string has
                     // a white space ... if it does then it should be
                     // enclosed within quotes.
-                    if ((value.indexOf(' ') != -1) ||
-                        (value.indexOf('\t') != -1)
-                    ) {
-                        sbuffer.append("\"").append(value).append("\"\t");
-                        stringForMAC.append("\"").append(value).append("\"");
-                    } else {
-                        sbuffer.append(value).append("\t");
-                        stringForMAC.append(value);
+                    escapeDone = false;
+                    for (int j = 0; j < valueBuffer.length(); j++) {
+                        if ((valueBuffer.charAt(j) == ' ') ||
+                            (valueBuffer.charAt(j) == '\t')) {
+                            sbuffer.append("\"").append(valueBuffer).append(
+                                "\"\t");
+                            stringForMAC.append("\"").append(
+                                valueBuffer).append("\"");
+                            escapeDone = true;
+                            break;
+                        }
                     }
-                } else {
+                    if (!escapeDone) {
+                        sbuffer.append(valueBuffer).append("\t");
+                        stringForMAC.append(valueBuffer);
+                    }
+                } else {       
                     sbuffer.append("-").append("\t");
                     stringForMAC.append("-");
                 }
-                
             }
         } catch (Exception e) {
             Debug.error("SecureELFFormatter: Exception in String Handling", e);
@@ -171,7 +161,7 @@ public class SecureELFFormatter extends Formatter {
         } else {
             try {
                 Object [] obj = {logRecord.getLoggerName()};
-                String mac = 
+                String mac =
                    fieldGenerator.generateLogField(stringForMAC.toString(),obj);
                 sbuffer.append(mac).append("\t").append("-");
             } catch (Exception e) {
@@ -179,6 +169,67 @@ public class SecureELFFormatter extends Formatter {
                 sbuffer.append("\"MAC NOT AVAILABLE\"")
                        .append("\t").append("-");
             }
+        }
+        sbuffer.append("\n");
+        return sbuffer.toString();
+    }
+    
+    /**
+     * Format the given record as per ELF and return a formatted string. <p>
+     *
+     * For ELF Specifications refer <LI> www.w3.org/TR/WD-logfile.html</LI>
+     * @param logRecord The logRecord to be formatted
+     * @return The string formed by formatting the logRecord
+     */
+    public String format(java.util.logging.LogRecord logRecord) {
+
+        if ((LogManagerUtil.isAMLoggingMode()) &&
+            (logRecord instanceof com.sun.identity.log.ILogRecord)) {
+            return format((com.sun.identity.log.LogRecord) logRecord);
+        }
+
+        StringBuffer sbuffer = new StringBuffer();
+        StringBuffer stringForMAC = new StringBuffer();
+            
+        try {
+            String[] allFields = lmanager.getAllFields();
+            Set selectedFields = lmanager.getSelectedFieldSet();
+            String strTime = secureTimestampGenerator.getTimestamp();
+            sbuffer.append("\"").append(strTime).append("\"\t");
+            stringForMAC.append("\"").append(strTime).append("\"");
+            StringBuffer message = processString(formatMessage(logRecord));
+            boolean escapeDone = false;
+            for (int i = 0; i < message.length(); i++) {
+                if ((message.charAt(i) == ' ') || (message.charAt(i) == '\t')) {
+                    sbuffer.append("\"").append(message).append("\"\t");
+                    stringForMAC.append("\"").append(message).append("\"");
+                    escapeDone = true;
+                    break;
+                }
+            }
+            if (!escapeDone) {
+                sbuffer.append(message).append("\t");
+                stringForMAC.append(message);
+            }
+            for (int i = 2; i < allFields.length; i ++) {
+                sbuffer.append("-").append("\t");
+                stringForMAC.append("-");
+            }
+        } catch (Exception e) {
+            Debug.error("SecureELFFormatter: Exception in String Handling", e);
+        }
+        // adding Secure logging related code here. Check whether the security
+        // status is "on", if yes then add MAC field and SIGN field to the
+        // headers and also generate MAC and write it to the file.
+        try {
+            Object [] obj = {logRecord.getLoggerName()};
+            String mac = 
+               fieldGenerator.generateLogField(stringForMAC.toString(),obj);
+            sbuffer.append(mac).append("\t").append("-");
+        } catch (Exception e) {
+            Debug.error("SecureLFFormatter: couldnot generate mac", e);
+            sbuffer.append("\"MAC NOT AVAILABLE\"")
+                   .append("\t").append("-");
         }
         sbuffer.append("\n");
         return sbuffer.toString();
@@ -215,6 +266,7 @@ public class SecureELFFormatter extends Formatter {
     
     private String constructHeader() {
         StringBuffer sbuffer = new StringBuffer();
+        String[] allFields = lmanager.getAllFields();
         for (int i = 0; i < allFields.length; i ++) {
             sbuffer.append(allFields[i]).append("\t");
         }
@@ -224,29 +276,15 @@ public class SecureELFFormatter extends Formatter {
         return sbuffer.toString();
     }
     
-    private Set getSelectedFieldSet() {
-        Set selectedFields = new HashSet();
-        String strSelectedFields = 
-            lmanager.getProperty(LogConstants.LOG_FIELDS);
-        
-        if ((strSelectedFields != null) && (strSelectedFields.length() != 0)) {
-            StringTokenizer stoken = 
-                new StringTokenizer(strSelectedFields, ", ");
-            while(stoken.hasMoreElements()) {
-                selectedFields.add( stoken.nextToken());
-            }
-        }
-        return selectedFields;
-    }
     /**
      * This method is used to process each field to see if it has a quote,
      * if it does then append another quote. If any field has a \r or \n
      * replace them by \\r and \\n. This is to take care of the multiline
      * messages.
      */
-    private String processString(String field) {
+    private StringBuffer processString(String field) {
         if ((field == null) || (field.length() == 0)) {
-            return LogConstants.NOTAVAIL;
+            return new StringBuffer(LogConstants.NOTAVAIL);
         }
         StringBuffer sbuffer = new StringBuffer();
         int len = field.length();
@@ -270,6 +308,6 @@ public class SecureELFFormatter extends Formatter {
             }
             hasUniqueChar = false;
         }
-        return sbuffer.toString();
+        return sbuffer;
     }
 }

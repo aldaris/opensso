@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManagerUtil.java,v 1.7 2008-08-08 00:40:57 ww203982 Exp $
+ * $Id: LogManagerUtil.java,v 1.8 2009-07-24 20:02:22 ww203982 Exp $
  *
  */
 
@@ -49,7 +49,8 @@ import com.sun.identity.security.AdminTokenAction;
  * the container.
  */
 public class LogManagerUtil {
-    private static LogManager lmgr = null;
+    private static com.sun.identity.log.LogManager lmgr = null;
+    private static boolean isAMLog;
     static {
        /*
         * Uses AM's log manager if in Server Mode
@@ -58,8 +59,12 @@ public class LogManagerUtil {
        String compatMode = SystemProperties.get("LOG_COMPATMODE", "Off");
        if ((compatMode.trim().equalsIgnoreCase("Off")) ||
            SystemProperties.isServerMode()) {
-           lmgr = new com.sun.identity.log.LogManager();
+           isAMLog = true;
+       } else {
+           isAMLog = false;
        }
+       lmgr = new com.sun.identity.log.LogManager();
+       
        /*
         * get admin token for log service's use to write
         * the start and stop records
@@ -74,7 +79,7 @@ public class LogManagerUtil {
                            public void shutdown() {
                                logEndRecords();
                            }
-                       }, ShutdownPriority.HIGHEST);
+                       }, ShutdownPriority.LOWEST);
                } finally {
                    shutdownMan.releaseLockAndNotify();
                }
@@ -89,12 +94,16 @@ public class LogManagerUtil {
      *
      * @return LogManager object.
      */
-    public static LogManager getLogManager() {
-        if (lmgr != null) {
-            return lmgr;
-        } else {
-            return java.util.logging.LogManager.getLogManager();
-        }
+    public static com.sun.identity.log.LogManager getLogManager() {
+        return lmgr;
+    }
+
+    /**
+      * Returns whether should use AMLog mode
+      *
+      */
+    public static boolean isAMLoggingMode() {
+        return isAMLog;
     }
 
     static String oldcclass = null;

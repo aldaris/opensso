@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.11 2009-06-19 02:32:51 bigfatrat Exp $
+ * $Id: LogManager.java,v 1.12 2009-07-24 20:02:22 ww203982 Exp $
  *
  */
 package com.sun.identity.log;
@@ -144,7 +144,7 @@ public class LogManager extends java.util.logging.LogManager {
      *
      * @return <code>allFields</code>
      */
-    public final String[] getAllFields() {
+    public synchronized final String[] getAllFields() {
         return allFields;
     }
 
@@ -153,11 +153,11 @@ public class LogManager extends java.util.logging.LogManager {
      *
      * @return <code>selectedFieldSet</code>
      */
-    public final Set getSelectedFieldSet() {
+    public synchronized final Set getSelectedFieldSet() {
         return selectedFieldSet;
     }
 
-    private final void readAllFields() {
+    private synchronized final void readAllFields() {
         String strAllFields = getProperty(LogConstants.ALL_FIELDS);
         StringTokenizer strToken = new StringTokenizer(strAllFields, ", ");
         int count = strToken.countTokens();
@@ -169,7 +169,7 @@ public class LogManager extends java.util.logging.LogManager {
         allFields = localAllFields;
     }
 
-    private final void readSelectedFieldSet() {
+    private synchronized final void readSelectedFieldSet() {
         HashSet fieldSet = new HashSet();
 
         String strSelectedFields = getProperty(LogConstants.LOG_FIELDS);
