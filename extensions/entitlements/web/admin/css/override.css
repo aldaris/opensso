@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: override.css,v 1.21 2009-07-22 18:23:30 farble1670 Exp $
+ * $Id: override.css,v 1.22 2009-07-25 05:01:45 farble1670 Exp $
  *
  */
 
@@ -30,7 +30,7 @@
     padding-left: 30px;
     padding-top: 5px;
     padding-bottom: 5px;
-    color: #404040;
+    color: #707277;
 }
 
 .iceMnuBarItem img {
@@ -63,6 +63,11 @@
     padding-left: 3px;
 }
 
+
+.iceMnuItm a, .iceMnuItmVrt a {
+    color: #707277;
+}
+
 .iceCmdSrtHdr * {
     font-weight: bold;
 }
@@ -72,9 +77,9 @@
 }
 
 .iceOutFrmt, .iceOutTxt, .iceOutLbl  {
-    color: #404040;
+    color: #707277;
 }
 
 .iceSelOneMnu, .iceSelMnyLb, .iceSelMnyMnu, .iceSelOneLb {
-    color: #404040;
+    color: #707277;
 }

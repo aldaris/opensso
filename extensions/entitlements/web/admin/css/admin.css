@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.100 2009-07-24 20:23:30 farble1670 Exp $
+* $Id: admin.css,v 1.101 2009-07-25 05:01:45 farble1670 Exp $
 *
 */
 
@@ -55,7 +55,7 @@ body {
 }
 
 label {
-    color: #404040;
+    color: #707277;
 }
 
 .width-200 {
@@ -163,7 +163,8 @@ label {
 }
 
 .section-details span {
-    color: #606060;
+    color: #;
+    font-family: Arial,Helvetica,sans-serif;
 }
 
 .packed-input {
@@ -244,7 +245,7 @@ span.button {
 }
 
 span.button span {
-    color: #404040;
+    color: #707277;
     font-size: 100%;
     font-weight: bold;
     font-family: Verdana, Helvetica, Arial, sans-serif;
@@ -281,12 +282,12 @@ span.button img.left {
 
 .command-link span {
     font-weight: bold;
-    color: #0066cc;
+    color: #005480;
     margin-left: 2px;
 }
 
 .command-link:hover span {
-    color: #0066cc;
+    color: #005480;
     text-decoration: underline;
 }
 
@@ -344,21 +345,21 @@ span.button img.left {
 }
 
 #panel-details span {
-    color: #606060;
+    color: #707277;
 }
 
 #panel-body {
 }
 
 #footer {
-    background-color: #8299AF;
+    background-color: #5382a1;
     text-align: right;
     padding-right: 10px;
     color: white;
 }
 
 #status {
-    background-color: #8299AF;
+    background-color: #5382a1;
     color: white;
     float: left;
     position: relative;
@@ -680,7 +681,7 @@ span.button img.left {
     padding-left: 30px;
     font-weight: bold;
     font-size: larger;
-    color: #606060;
+    color: #707277;
     width: 80px;
     background-position: left top;
     margin-left: 0;
@@ -1100,7 +1101,7 @@ span.button img.left {
 }
 
 .feed-title a {
-    text-decoration: underline;
+    border-bottom: 1px solid #707277;
 }
 
 .feed-title a span {
@@ -1121,7 +1122,7 @@ span.button img.left {
 }
 
 .entry-title a {
-    text-decoration: underline;
+    border-bottom: 1px solid #707277;
 }
 
 .entry-title a span {
