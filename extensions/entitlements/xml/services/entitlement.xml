@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.32 2009-07-24 22:24:47 farble1670 Exp $
+   $Id: entitlement.xml,v 1.33 2009-07-25 00:30:06 farble1670 Exp $
 
 -->
 
@@ -334,7 +334,8 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="resources" />
-                            <Value>http*://*</Value>
+                            <Value>http://*</Value>
+                            <Value>https://*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="subjects" />

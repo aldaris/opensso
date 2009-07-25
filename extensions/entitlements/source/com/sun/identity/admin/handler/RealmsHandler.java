@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmsHandler.java,v 1.10 2009-07-24 23:58:33 farble1670 Exp $
+ * $Id: RealmsHandler.java,v 1.11 2009-07-25 00:30:05 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -39,11 +39,8 @@ import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.ReferralCreateWizardBean;
 import com.sun.identity.admin.model.ReferralManageBean;
 import com.sun.identity.admin.model.ViewApplicationsBean;
-import java.io.IOException;
 import java.io.Serializable;
 import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
