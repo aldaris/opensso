@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.20 2009-07-08 01:16:15 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.21 2009-07-25 09:37:22 hengming Exp $
  *
  */
 
@@ -1489,6 +1489,11 @@ public class PolicyEvaluator {
                 pd.addActionDecision(ad, serviceType);
             }
         } else {
+            Map advices = entitlement.getAdvices();
+            if ((advices != null) && (!advices.isEmpty()) &&
+                ((actionNames == null) || actionNames.isEmpty())) {
+                actionNames = serviceType.getActionNames();
+            }
             for (String actionName : actionNames) {
                 Set set = new HashSet();
                 set.add(getActionFalseBooleanValue(actionName));
