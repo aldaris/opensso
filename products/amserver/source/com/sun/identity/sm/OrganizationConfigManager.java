@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.26 2009-06-10 21:11:58 hengming Exp $
+ * $Id: OrganizationConfigManager.java,v 1.27 2009-07-25 05:11:55 qcheng Exp $
  *
  */
 
@@ -1061,7 +1061,8 @@ public class OrganizationConfigManager {
             throws SMSException {
         try {
             ServiceConfigManagerImpl scmi = ServiceConfigManagerImpl
-                    .getInstance(token, serviceName, "1.0");
+                    .getInstance(token, serviceName, 
+                    ServiceManager.getVersion(serviceName));
             ServiceConfigImpl sci = scmi.getOrganizationConfig(token, orgName,
                     null);
             if (sci == null || sci.isNewEntry()) {
@@ -1225,7 +1226,8 @@ public class OrganizationConfigManager {
                     .hasNext();) {
                 String serviceName = (String) names.next();
                 ServiceSchemaManagerImpl ssmi = ServiceSchemaManagerImpl
-                        .getInstance(token, serviceName, "1.0");
+                        .getInstance(token, serviceName, 
+                        ServiceManager.getVersion(serviceName));
                 if (ssmi.getSchema(SchemaType.ORGANIZATION) != null) {
                     // Need to check if the user has permission
                     // to add/assign the service

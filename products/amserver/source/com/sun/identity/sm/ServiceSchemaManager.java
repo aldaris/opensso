@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManager.java,v 1.11 2008-11-03 19:29:54 goodearth Exp $
+ * $Id: ServiceSchemaManager.java,v 1.12 2009-07-25 05:11:55 qcheng Exp $
  *
  */
 
@@ -75,7 +75,8 @@ public class ServiceSchemaManager {
     public ServiceSchemaManager(String serviceName, SSOToken token)
     throws SMSException, SSOException {
         this(token, serviceName, ServiceManager.isCoexistenceMode() ?
-            ServiceManager.serviceDefaultVersion(token, serviceName) : "1.0"); 
+            ServiceManager.serviceDefaultVersion(token, serviceName) :
+            ServiceManager.getVersion(serviceName));
     }
     
     /**

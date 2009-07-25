@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.24 2008-11-03 19:29:54 goodearth Exp $
+ * $Id: ServiceManager.java,v 1.25 2009-07-25 05:11:55 qcheng Exp $
  *
  */
 
@@ -288,7 +288,8 @@ public class ServiceManager {
                                     token, service));
                             } else {
                                 ssm = ServiceSchemaManagerImpl.getInstance(
-                                        token, service, "1.0");
+                                    token, service, 
+                                    ServiceManager.getVersion(service));
                             }
                             if (ssm != null) {
                                 // Check if service has schemaType
@@ -747,6 +748,26 @@ public class ServiceManager {
         return (coexistenceCache);
     }
 
+    /**
+     * Returns the version for a service. This is to handle the co-existence
+     * of OpenSSO and AM 7.1 in realm mode. The co-existence of OpenSSO and
+     * AM 7.1 in legacy mode is handled by the call to isCoexistenceMode() 
+     * method. There is a special service named "iPlanetAMProviderConfigService"
+     * used in AM 7.x code for ID-FF metadata, the version for the service
+     * is "1.1", all the rest of service is "1.0" right now. This method can 
+     * be removed if no need to support Co-existence of OpenSSO and AM 7.x 
+     * any more.
+     * @param serviceName Name of the service.
+     * @return version of the service, the value will be 1.0 or 1.1.
+     */
+    protected static String getVersion(String serviceName) {
+        if ("iPlanetAMProviderConfigService".equals(serviceName)) {
+            return "1.1";
+        } else {
+            return "1.0";
+        }
+    }
+ 
     /**
      * Returns <code>true</code> if current service
      * configuration uses the realm model to store the configuration data.
