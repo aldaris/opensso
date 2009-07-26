@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: opensso.module,v 1.2 2009-07-26 00:42:46 superpat7 Exp $
+ * $Id: opensso.module,v 1.3 2009-07-26 00:46:56 superpat7 Exp $
  *
  */
 
@@ -99,7 +99,7 @@ function opensso_boot() {
 
   if (empty($name)) {
     watchdog('opensso', 'Error parsing name from attribute data. Name attribute is %name, response data is %data, ssotoken is %ssotoken', array('%name' => OPENSSO_DRUPAL_USERNAME_ATTRIBUTE, '%data' => $response->data, '%ssotoken' => $ssotoken), WATCHDOG_ERROR);
-    drupal_set_message('Error getting user name from OpenSSO. Contact your system administrator.', 'error');
+    drupal_set_message(t('Error getting user name from OpenSSO. Contact your system administrator.'), 'error');
     return;
   }
 
@@ -108,7 +108,7 @@ function opensso_boot() {
 
   if (empty($account)) {
     watchdog('opensso', 'Can\'t find %name in Drupal user table', array('%name' => $name), WATCHDOG_ERROR);
-    drupal_set_message('Can\'t find you in Drupal\'s user table. Contact your system administrator.', 'error');
+    drupal_set_message(t('Can\'t find you in Drupal\'s user table. Contact your system administrator.'), 'error');
     return;
   }
   
@@ -233,7 +233,7 @@ function _opensso_is_token_valid($ssotoken) {
   
   if ($response->code != 200) {
     watchdog('opensso', 'Error validating token. URL is %url, response code is %code, error text is %text, ssotoken is %ssotoken', array('%url' => OPENSSO_IS_TOKEN_VALID, '%code' => $response->code, '%text' => $response->error, '%ssotoken' => $ssotoken), WATCHDOG_ERROR);
-    drupal_set_message('Error validating OpenSSO token. Contact your system administrator.', 'error');
+    drupal_set_message(t('Error validating OpenSSO token. Contact your system administrator.'), 'error');
     return -1;
   }
 
@@ -254,7 +254,7 @@ function _opensso_get_name($ssotoken) {
 
   if ($response->code != 200) {
     watchdog('opensso', 'Error getting attributes. URL is %url, response code is %code, error text is %text, ssotoken is %ssotoken', array('%url' => OPENSSO_IS_TOKEN_VALID, '%code' => $response->code, '%text' => $response->error, '%ssotoken' => $ssotoken), WATCHDOG_ERROR);
-    drupal_set_message('Error getting attributes from OpenSSO. Contact your system administrator.', 'error');
+    drupal_set_message(t('Error getting attributes from OpenSSO. Contact your system administrator.'), 'error');
     return;
   }
 
