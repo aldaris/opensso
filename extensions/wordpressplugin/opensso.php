@@ -31,12 +31,12 @@ Author URI: http://opensso.org/
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: opensso.php,v 1.1 2009-07-27 21:40:37 superpat7 Exp $
+ * $Id: opensso.php,v 1.2 2009-07-27 22:33:51 superpat7 Exp $
  *
  */
 
 // WordPress Hooks
-add_action( 'init',       'opensso_init' );
+add_action( 'init',	   'opensso_init' );
 add_action( 'admin_menu', 'opensso_plugin_menu' );
 
 // Options
@@ -75,87 +75,87 @@ function auth_redirect() {
 		}
 	}
 	
-    if ( $user_id = wp_validate_auth_cookie() ) {
-        do_action( 'auth_redirect', $user_id );
-        // If the user wants ssl but the session is not ssl, redirect.
-        if ( !$secure && get_user_option( 'use_ssl', $user_id ) && false !== strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) ) {
-            if ( 0 === strpos($_SERVER['REQUEST_URI'], 'http') ) {
-                wp_redirect( preg_replace( '|^http://|', 'https://', $_SERVER['REQUEST_URI'] ) );
-                exit();
-            } else {
-                wp_redirect( 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
-                exit();
-            }
-        }
+	if ( $user_id = wp_validate_auth_cookie() ) {
+		do_action( 'auth_redirect', $user_id );
+		// If the user wants ssl but the session is not ssl, redirect.
+		if ( !$secure && get_user_option( 'use_ssl', $user_id ) && false !== strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) ) {
+			if ( 0 === strpos($_SERVER['REQUEST_URI'], 'http') ) {
+				wp_redirect( preg_replace( '|^http://|', 'https://', $_SERVER['REQUEST_URI'] ) );
+				exit();
+			} else {
+				wp_redirect( 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+				exit();
+			}
+		}
 
-        return;  // The cookie is good so we're done
-    }
-	        
-    // The cookie is no good so force login
-    nocache_headers();
-    
-    if ( OPENSSO_ENABLED ) {
-    	// Redirect to OpenSSO login page then return here
-    	$login_url = OPENSSO_BASE_URL . '?goto=' . urlencode( opensso_full_url() );
-    } else {
-    	if ( is_ssl() )
-    		$proto = 'https://';
-    	else
-    		$proto = 'http://';
-    
-    	$redirect = ( strpos($_SERVER['REQUEST_URI'], '/options.php') && wp_get_referer() ) ? wp_get_referer() : $proto . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    
-    	$login_url = wp_login_url($redirect);    
+		return;  // The cookie is good so we're done
+	}
+			
+	// The cookie is no good so force login
+	nocache_headers();
+	
+	if ( OPENSSO_ENABLED ) {
+		// Redirect to OpenSSO login page then return here
+		$login_url = OPENSSO_BASE_URL . '?goto=' . urlencode( opensso_full_url() );
+	} else {
+		if ( is_ssl() )
+			$proto = 'https://';
+		else
+			$proto = 'http://';
+	
+		$redirect = ( strpos($_SERVER['REQUEST_URI'], '/options.php') && wp_get_referer() ) ? wp_get_referer() : $proto . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	
+		$login_url = wp_login_url($redirect);	
 	}
 	
 	wp_redirect($login_url);
-	exit();    
+	exit();	
 }
 endif;
 
 if ( !function_exists( 'wp_validate_auth_cookie' ) ) :
 function wp_validate_auth_cookie( $cookie = '', $scheme = '' ) {
-    if ( OPENSSO_ENABLED ) {
-    	// Quick hack to get round the fact that '+' often gets decoded to ' '
-        $ssotoken = str_replace(' ', '+', $_COOKIE[OPENSSO_COOKIE_NAME]);
-        
-        // Is there an SSO token?
-        if ( empty( $ssotoken ) ) {
-            return false;
-        }
-        
-        // Is the token valid?  
-        switch ( opensso_is_token_valid( $ssotoken ) ) {
-            case 0:
-                // Session expired
-                return false;
-            case -1:
-                // Error validating token
-        		do_action( 'auth_cookie_malformed', $cookie, $scheme );
-        		return false;
-        }
-        
-        $username = opensso_get_name( $ssotoken );
-    } else {
-    	if ( ! $cookie_elements = wp_parse_auth_cookie($cookie, $scheme) ) {
-    		do_action('auth_cookie_malformed', $cookie, $scheme);
-    		return false;
-    	}
-    
-    	extract($cookie_elements, EXTR_OVERWRITE);
-    
-    	$expired = $expiration;
-    
-    	// Allow a grace period for POST and AJAX requests
-    	if ( defined('DOING_AJAX') || 'POST' == $_SERVER['REQUEST_METHOD'] )
-    		$expired += 3600;
-    
-    	// Quick check to see if an honest cookie has expired
-    	if ( $expired < time() ) {
-    		do_action('auth_cookie_expired', $cookie_elements);
-    		return false;
-    	}
-    }
+	if ( OPENSSO_ENABLED ) {
+		// Quick hack to get round the fact that '+' often gets decoded to ' '
+		$ssotoken = str_replace(' ', '+', $_COOKIE[OPENSSO_COOKIE_NAME]);
+		
+		// Is there an SSO token?
+		if ( empty( $ssotoken ) ) {
+			return false;
+		}
+		
+		// Is the token valid?  
+		switch ( opensso_is_token_valid( $ssotoken ) ) {
+			case 0:
+				// Session expired
+				return false;
+			case -1:
+				// Error validating token
+				do_action( 'auth_cookie_malformed', $cookie, $scheme );
+				return false;
+		}
+		
+		$username = opensso_get_name( $ssotoken );
+	} else {
+		if ( ! $cookie_elements = wp_parse_auth_cookie($cookie, $scheme) ) {
+			do_action('auth_cookie_malformed', $cookie, $scheme);
+			return false;
+		}
+	
+		extract($cookie_elements, EXTR_OVERWRITE);
+	
+		$expired = $expiration;
+	
+		// Allow a grace period for POST and AJAX requests
+		if ( defined('DOING_AJAX') || 'POST' == $_SERVER['REQUEST_METHOD'] )
+			$expired += 3600;
+	
+		// Quick check to see if an honest cookie has expired
+		if ( $expired < time() ) {
+			do_action('auth_cookie_expired', $cookie_elements);
+			return false;
+		}
+	}
 
 	$user = get_userdatabylogin( $username );
 	if ( ! $user ) {
@@ -163,16 +163,16 @@ function wp_validate_auth_cookie( $cookie = '', $scheme = '' ) {
 		return false;
 	}
 	
-    if ( ! OPENSSO_ENABLED ) {
-    	$pass_frag = substr($user->user_pass, 8, 4);
-    
-    	$key = wp_hash($username . $pass_frag . '|' . $expiration, $scheme);
-    	$hash = hash_hmac('md5', $username . '|' . $expiration, $key);
-    
-    	if ( $hmac != $hash ) {
-    		do_action('auth_cookie_bad_hash', $cookie_elements);
-    		return false;
-    	}
+	if ( ! OPENSSO_ENABLED ) {
+		$pass_frag = substr($user->user_pass, 8, 4);
+	
+		$key = wp_hash($username . $pass_frag . '|' . $expiration, $scheme);
+		$hash = hash_hmac('md5', $username . '|' . $expiration, $key);
+	
+		if ( $hmac != $hash ) {
+			do_action('auth_cookie_bad_hash', $cookie_elements);
+			return false;
+		}
 	}
 
 	do_action( 'auth_cookie_valid', $cookie_elements, $user );
@@ -183,26 +183,26 @@ endif;
 
 if ( !function_exists( 'wp_logout' ) ) :
 function wp_logout() {
-    if ( OPENSSO_ENABLED ) {
-        // Redirect to OpenSSO logout and then to the admin page, where we'll
-        // get another login prompt
-        do_action( 'wp_logout' );
-        wp_redirect( OPENSSO_LOGOUT_URL . '?goto=' . urlencode( admin_url() ) );
-        exit();
+	if ( OPENSSO_ENABLED ) {
+		// Redirect to OpenSSO logout and then to the admin page, where we'll
+		// get another login prompt
+		do_action( 'wp_logout' );
+		wp_redirect( OPENSSO_LOGOUT_URL . '?goto=' . urlencode( admin_url() ) );
+		exit();
 	} else {
-    	wp_clear_auth_cookie();
-    	do_action('wp_logout');
+		wp_clear_auth_cookie();
+		do_action('wp_logout');
 	}
 }
 endif;
 
 function opensso_init() {
-    if ( OPENSSO_ENABLED && strpos($_SERVER['REQUEST_URI'], '/wp-login.php') && $_REQUEST['action'] != 'logout' ) {
-        // If the user is trying to go to the login page, just redirect to 
-        // admin page - above plugin functions will do the rest
-        wp_redirect( admin_url() );
-        exit();
-    }
+	if ( OPENSSO_ENABLED && strpos($_SERVER['REQUEST_URI'], '/wp-login.php') && $_REQUEST['action'] != 'logout' ) {
+		// If the user is trying to go to the login page, just redirect to 
+		// admin page - above plugin functions will do the rest
+		wp_redirect( admin_url() );
+		exit();
+	}
 }
 
 function opensso_plugin_menu() {
@@ -264,49 +264,49 @@ function opensso_plugin_options() {
  * Validate token. Returns 1 for valid token, 0 for invalid token, -1 for error
  */
 function opensso_is_token_valid( $ssotoken ) {
-    $headers = array('Cookie' => OPENSSO_COOKIE_NAME . '=' . $ssotoken);
+	$headers = array('Cookie' => OPENSSO_COOKIE_NAME . '=' . $ssotoken);
 
-    $http = new WP_Http();
-    $response = $http->get( OPENSSO_IS_TOKEN_VALID, array( 'headers' => $headers ) );
+	$http = new WP_Http();
+	$response = $http->get( OPENSSO_IS_TOKEN_VALID, array( 'headers' => $headers ) );
   
-    if ( $response['response']['code'] != 200 ) {
-        return -1;
-    }
+	if ( $response['response']['code'] != 200 ) {
+		return -1;
+	}
 
-    // value will be of the form boolean=true
-    if ( substr( trim( $response['body'] ), 8 ) == 'true' ) {
-        return 1;
-    }
+	// value will be of the form boolean=true
+	if ( substr( trim( $response['body'] ), 8 ) == 'true' ) {
+		return 1;
+	}
 
-    return 0;
+	return 0;
 }
 
 /*
  * Given an SSO token, return the name
  */
 function opensso_get_name( $ssotoken ) {
-    $url = OPENSSO_ATTRIBUTES . '?subjectid=' . urlencode( $ssotoken );
+	$url = OPENSSO_ATTRIBUTES . '?subjectid=' . urlencode( $ssotoken );
 
-    $http = new WP_Http();
-    $response = $http->get( $url, array( 'headers' => $headers ) );
+	$http = new WP_Http();
+	$response = $http->get( $url, array( 'headers' => $headers ) );
 
-    if ( $response['response']['code'] != 200 ) {
-        return null;
-    }
+	if ( $response['response']['code'] != 200 ) {
+		return null;
+	}
 
-    // Need to parse name/value pairs, to get value for Drupal username attribute
-    $lines = explode( "\n", $response['body'] );
-    reset( $lines );
-    foreach ( $lines as $line ) {
-        if ( $line == ( 'userdetails.attribute.name=' . OPENSSO_WORDPRESS_USERNAME_ATTRIBUTE ) ) {
-            // 'current' line holds attribute value
-            // 28 points to character after 'userdetails.attribute.value='
-            $name = substr( current( $lines ), 28 );
-            break;
-        }
-    }
+	// Need to parse name/value pairs, to get value for Drupal username attribute
+	$lines = explode( "\n", $response['body'] );
+	reset( $lines );
+	foreach ( $lines as $line ) {
+		if ( $line == ( 'userdetails.attribute.name=' . OPENSSO_WORDPRESS_USERNAME_ATTRIBUTE ) ) {
+			// 'current' line holds attribute value
+			// 28 points to character after 'userdetails.attribute.value='
+			$name = substr( current( $lines ), 28 );
+			break;
+		}
+	}
   
-    return $name;
+	return $name;
 }
 
 /*
@@ -314,24 +314,24 @@ function opensso_get_name( $ssotoken ) {
  * they authenticate at OpenSSO
  */
 function opensso_full_url() {
-    $full_url = 'http';
+	$full_url = 'http';
 
-    if ( $_SERVER['HTTPS'] == 'on' ) { 
-        $full_url .=  's';
-    }
+	if ( $_SERVER['HTTPS'] == 'on' ) { 
+		$full_url .=  's';
+	}
 
-    $full_url .=  '://';
+	$full_url .=  '://';
 
-    if ( ( $_SERVER['HTTPS'] != 'on' && $_SERVER['SERVER_PORT'] != '80' ) || ( $_SERVER['HTTPS'] == 'on' && $_SERVER['SERVER_PORT'] != '443' ) ) {
-        $full_url .=  $_SERVER['HTTP_HOST'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['SCRIPT_NAME'];
-    } else {
-        $full_url .=  $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'];
-    }
+	if ( ( $_SERVER['HTTPS'] != 'on' && $_SERVER['SERVER_PORT'] != '80' ) || ( $_SERVER['HTTPS'] == 'on' && $_SERVER['SERVER_PORT'] != '443' ) ) {
+		$full_url .=  $_SERVER['HTTP_HOST'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['SCRIPT_NAME'];
+	} else {
+		$full_url .=  $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'];
+	}
 
-    if ( $_SERVER['QUERY_STRING']>' ' ) {
-        $full_url .=  '?'.$_SERVER['QUERY_STRING'];
-    }
+	if ( $_SERVER['QUERY_STRING']>' ' ) {
+		$full_url .=  '?'.$_SERVER['QUERY_STRING'];
+	}
   
-    return $full_url;
+	return $full_url;
 }
 ?>
