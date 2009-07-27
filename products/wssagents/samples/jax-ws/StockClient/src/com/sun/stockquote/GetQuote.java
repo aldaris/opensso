@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetQuote.java,v 1.1 2009-07-25 01:11:03 Kamna Exp $
+ * $Id: GetQuote.java,v 1.2 2009-07-27 21:43:53 mrudul_uchil Exp $
  *
  */
 package com.sun.stockquote;
@@ -62,7 +62,7 @@ public class GetQuote extends HttpServlet {
      * @param response servlet response
      */
     protected void processRequest(HttpServletRequest request,
-            HttpServletResponse response)
+        HttpServletResponse response)
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
@@ -183,22 +183,8 @@ public class GetQuote extends HttpServlet {
             // Link to try again
             out.write("<hr/>\n");
             out.write("<a href=\"index.jsp\">Try again</a>");
-            
             // Image for checking request and response XML
-            
-            
-            // If SSOToken is present, provide a logout link
-            /* Cookie[] cookies = request.getCookies();
-            for (int i = 0; i < cookies.length; i++) {
-                if (cookies[i].getName().equalsIgnoreCase(
-                    "iPlanetDirectoryPro")) {
-                    // Provide a logout link
-                    out.write("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-                        "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-                        "<a href=\"/opensso/UI/Logout\">" +
-                        "Logout</a>\n");
-                }
-            } */
+
             out.write("</body>\n");
             out.write("</html>\n");
         } catch (SOAPFaultException sfe) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StockQuoteImpl.java,v 1.1 2009-07-25 01:11:02 Kamna Exp $
+ * $Id: StockQuoteImpl.java,v 1.2 2009-07-27 21:43:54 mrudul_uchil Exp $
  *
  */
 
@@ -49,20 +49,18 @@ import javax.jws.HandlerChain;
 @HandlerChain(file="server_handlers.xml")
 public class StockQuoteImpl implements StockQuote{
 
-	//@Override
 	public QuoteResponseType getStockQuote(QuoteRequestType body) {
 		 System.out.println("Before processing stock quote request");
    	     QuoteResponseType retVal =
    	                new QuoteResponseType();
    	        try {
    	            String symbol = body.getSymbol();
-
-   	            System.out.println("Symbol: " + symbol);
-   	            //symbol = "JAVA";
+   	            System.out.println("StockQuoteImpl.getStockQuote Symbol: " +
+                    symbol);
    	            Map data = getYahooQuote(symbol);
-   	           if (data == null) {
-   	            // Unable to obtain from Yahoo! Get from local cache
-   	             data = getCachedQuote(symbol);
+   	            if (data == null) {
+   	                // Unable to obtain from Yahoo! Get from local cache
+   	                data = getCachedQuote(symbol);
    	            }
 
    	            // Convert from Map to QuoteResponseType
@@ -145,7 +143,8 @@ public class StockQuoteImpl implements StockQuote{
         }
         return null;
     }
-   private Map getCachedQuote(String symbol) {
+
+    private Map getCachedQuote(String symbol) {
         if (stockData == null || stockData.isEmpty()) {
             init();
         }

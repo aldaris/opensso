@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: README,v 1.1 2009-07-25 01:11:03 Kamna Exp $
+ * $Id: README,v 1.2 2009-07-27 21:43:53 mrudul_uchil Exp $
  */
 
  %% Contents:
@@ -88,8 +88,9 @@ is setup correctly pointing to its location.
    3.1 Download the latest stable version of JAXWS Reference Implementation from
        http://jax-ws.dev.java.net. Execute the jar as
        java -jar <filename>.jar and copy the location of the lib
-       folder, as the value of the "jaxws.lib" property, to the jaxws.properties
-       file for the Web-Service and Client.   
+       folder, as the value of the "jaxws.lib" property, to the
+       <wssagent_unzip_location>/samples/jaxws.properties
+       file for the Web Service Client and Web Service Provider.
    
 %% 4. Building and Deploying the un-secured samples
 
@@ -109,19 +110,20 @@ targets available in the workspace are:
      - secure-war         : Creates the deployable WAR with security 
      - all                : Runs all the targets in the above order
      - usage              : Displays this usage message
+ 
+The protocol, host and port number of the container where the WSP (StockService)
+would be deployed, will need to be changed in 1 place.
+	<wssagent_unzip_location>/samples/StockClient/src/com/sun/stockquote/GetQuote.java
+	@WebServiceRef(wsdlLocation =
+        "http://localhost:8080/StockService/StockService?wsdl")        
 
-Build the un-secure WARs by running "ant war" from
+Then build the un-secure WARs by running "ant war" from
 <wssagent_unzip_location>/samples/StockService for WSP and
 <wssagent_unzip_location>/samples/StockClient for WSC.
 
-The WARs generated above can be deployed on GlassFish 2.x, WebLogic 10.x, 
-JBoss 5.x, Tomcat 6.x & WebSphere 7.x with just one change - 
-The port number of the container where the WSP is deployed will need to be 
-changed in 1 place. 
-	i. WSC Source - GetQuote.java 
-	   @WebServiceRef(wsdlLocation =
-        "http://localhost:8080/StockService/StockService?wsdl")        
-           
+The WARs generated above can be deployed on GlassFish 2.x, WebLogic 10.x,
+JBoss 5.x, Tomcat 6.x & WebSphere 7.x.
+
 NOTE: Except JBoss and Tomcat, all the other containers ship with JAXWS jars. 
 Hence, no configuration change is needed to deploy the web-service on GlassFish, 
 WebLogic & WebSphere. For special instructions on how to make Tomcat and JBoss
@@ -205,36 +207,56 @@ suitable for web-services, refer Sections 8 and 9 of this file.
    
 %% 6. Configuring WSC and WSP profiles in OpenSSO
 
-By default, this sample will use the default wsc/wsp profiles that OpenSSO 
-ships with. If you wish to customize the configuration, you can create new 
-WSC/WSP profiles as explained here:
+   By default, this sample will use the default WSC and WSP profiles that OpenSSO
+   ships with (named as "wsc" and "wsp" respectively).
+   If you wish to customize the configuration, you can create new
+   Web Service Client and Web Service Provider profiles as explained here:
 
-   6.1 Login to OpenSSO as admin, navigate to Access Control > Top Level Realm > 
-       Agents > Web Services Client and click the New button. Create a new
-       profile whose name is the same as the name of the Service (refer the WSDL
-       for Service Name). In the case of this sample, the WSC profile name
-       should be StockService. Provide a password and click Create.
-   6.2 Back on the Web Service Client page, click on the newly created WSC 
-       profile named StockService.
-   6.3 Select a preferred Security Mechanism in the Security section. If you 
-       select STSSecurity, you will need to select SecurityTokenService for the
-       STS Configuration field (right below the Security Mechanism field.)
-   6.4 In the Signing and Encryption section, select "Is Request Signed" and 
-	   "Is Response Signature Verified."
-   6.5 In the End Points section, use the end point URL of your web service as
-       the value for the Web Service End Point field. In this case, it would be
-	   <protocol>://<hostname>:<port>/StockService/StockService. Save the changes to
-	   the profile and click Back to Main Page.
-   6.6 In a similar way, create the WSP profile. The name of this profile should 
-	   be the same as the End Point URL used for the WSC 
-	   (<protocol>://<hostname>:<port>/StockService/StockService).
-   6.7 Click on the newly created WSP profile and select a preferred Security 
-       Mechanism, in the Security section.
-   6.8 In the Signing and Encryption section, select "Is Response Signed" and 
-	   "Is Resquest Signature Verified."
-   6.9 Use the same End Point URL for WSP also. 
-	   For eg. - <protocol>://<hostname>:<port>/StockService/StockService
-   6.10 Save the changes and logout of OpenSSO.
+   Login into the OpenSSO Console with user amadmin and <amadmin password>
+
+   openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
+
+   Note: If you have logged in as any other user, click Logout on the console
+         page and Login again and make sure that you access the OpenSSO Console.
+
+   Go to Access Control -> Default realm -> Agents ->
+
+   6.1 Create "WSC" profile
+       6.1.1 Select Web Service Client -> under Agent, click "new" ->
+       6.1.2 Enter name as "StockService" (Service Name from the Service WSDL)
+             and other required fields and click Save.
+
+       6.1.3 Click on above saved profile to edit ->
+       6.1.4 Select required Security Mechanism.
+       6.1.5 Check "Is Request Signed" as true.
+       6.1.6 Enter "Web Service End Point" as
+             "<protocol>://<host>:<port>/StockService/StockService".
+       6.1.7 Save changes.
+
+       Note : If the required or selected Security Mechanism is "STSSecurity", 
+              then select STS Configuration as "SecurityTokenService".
+
+   6.2 Create "WSP" profile
+       6.2.1 Select Web Service Provider -> under Agent, click "new" ->
+       6.2.2 Enter name as "<protocol>://<host>:<port>/StockService/StockService"
+             (your Web Service End Point URL) and other required fields and click Save.
+
+       6.2.3 Click on above saved profile to edit ->
+       6.2.4 Select all Security Mechanisms.
+       6.2.5 Check "Is Request Signature Verified" as true.
+       6.2.6 Enter "Web Service End Point" as
+             "<protocol>://<host>:<port>/StockService/StockService".
+       6.2.7 Save changes.
+
+   6.3 Update "Agent Authenticator" profile
+       6.3.1 Select Agent Authenticator -> under Agent, click on "agentAuth" ->
+       6.3.2 Under "Agent Profiles allowed to Read",
+             Select newly created agent profiles for WSC and WSP
+             ("StockService" and "<protocol>://<host>:<port>/StockService/StockService")
+             from "Available" list in order to add them to be in "Selected" list.
+       6.3.3 Save changes.
+
+   Save the changes and logout of OpenSSO.
 
 %% 7. Testing the samples
 
@@ -312,17 +334,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.soap.SOAPFaultException;
-import javax.jws.HandlerChain;
 
 public class GetQuote extends HttpServlet {
-    
-    /*@WebServiceRef(wsdlLocation =
-        "http://localhost:8080/StockService/StockService?wsdl")
-    @HandlerChain(file="client_handlers.xml")
-    private com.sun.stockquote.StockService service;*/
-	
 	
     /**
      * Get Stock quote from WSP
@@ -333,14 +347,14 @@ public class GetQuote extends HttpServlet {
     	URL wsdlLocation = null; 
     	try { 
     		wsdlLocation = new URL
-                       ("http://localhost:8080/StockService/StockService?wsdl");
+                ("http://localhost:8080/StockService/StockService?wsdl");
     		} 
     	catch (Exception e){
     		System.out.println(e.toString()); 
     	} 
     	
     	QName serviceName = new QName
-                            ("http://sun.com/stockquote.wsdl", "StockService");
+            ("http://sun.com/stockquote.wsdl", "StockService");
     	Service service = Service.create(wsdlLocation, serviceName); 
     	StockQuote port = service.getPort(StockQuote.class); 
     	

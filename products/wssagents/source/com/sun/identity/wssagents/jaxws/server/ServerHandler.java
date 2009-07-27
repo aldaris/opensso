@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerHandler.java,v 1.1 2009-07-23 20:04:28 mrudul_uchil Exp $
+ * $Id: ServerHandler.java,v 1.2 2009-07-27 21:43:55 mrudul_uchil Exp $
  *
  */
 
@@ -40,6 +40,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 import javax.xml.ws.ProtocolException;
+import javax.servlet.http.HttpServletRequest;
 
 import com.sun.identity.wss.security.handler.SOAPRequestHandler;
 
@@ -75,7 +76,17 @@ public class ServerHandler implements SOAPHandler<SOAPMessageContext>{
         try {
 		    handler = new SOAPRequestHandler();
 		    Map map = new HashMap();
-		    map.put("providername", "wsp");
+
+            // Get the Service End Point URL
+            HttpServletRequest request =
+                (HttpServletRequest)context.get(MessageContext.SERVLET_REQUEST);
+            String providerName = request.getRequestURL().toString();
+            if(logger != null && logger.isLoggable(Level.FINE)) {
+                logger.log(Level.FINE, "ServerHandler: providerName : " +
+                    providerName);
+            }
+
+		    map.put("providername", providerName);
 		    handler.init(map);
 		} catch (Exception ex) {
 		    if(logger != null && logger.isLoggable(Level.SEVERE)) {

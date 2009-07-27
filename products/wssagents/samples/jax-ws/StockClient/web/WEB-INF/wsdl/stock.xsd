@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: stock.xsd,v 1.1 2009-07-25 01:11:01 Kamna Exp $
+  $Id: stock.xsd,v 1.2 2009-07-27 21:43:54 mrudul_uchil Exp $
 
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -31,7 +31,7 @@
  targetNamespace="http://sun.com/stockquote.xsd">
  <xs:annotation>
      <xs:documentation>
-        This is a sample stock ticker web service protocol
+         This is a sample stock ticker web service protocol
      </xs:documentation>
  </xs:annotation>
 
@@ -66,6 +66,5 @@
        <xs:element name="MarketCap" type="xs:string"/>
    </xs:sequence>
  </xs:complexType>
-
 
 </xs:schema>

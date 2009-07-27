@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagents-jax-ws-zip,v 1.1 2009-07-23 20:04:28 mrudul_uchil Exp $
+   $Id: README.wssagents-jax-ws-zip,v 1.2 2009-07-27 21:43:52 mrudul_uchil Exp $
 
 -->
 
@@ -95,3 +95,55 @@ is the first handler in the handler-chain.
      <url-pattern>/*</url-pattern>
  </filter-mapping>
 6) now war secured Web Service Client war file and deploy it on your favorite container
+
+
+III) Configuring profiles for Web Service Client and Web Service Provider
+
+A)  Login into the OpenSSO Console with user amadmin and <amadmin password>
+
+    openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
+
+    Note: If you have logged in as any other user, click Logout on the console page and Login again and
+          make sure that you access the OpenSSO Console.
+
+    Create agent profiles for Web Service Client and Web Service Provider
+    Note : If you do not create these profiles then out of box created profiles will be used for
+           Web Service Client (out of box profile as "wsc") and
+           Web Service Provider (out of box profile as "wsp").
+
+      Go to Access Control -> Default realm -> Agents ->
+
+        1) Create "WSC" profile
+        Select Web Service Client -> under Agent, click "new" -> 
+        Enter name as Service Name (Service Name from the Service WSDL)
+        and other required fields and click Save.
+
+        Click on above saved profile to edit ->
+        Select required Security Mechanism.
+        Check "Is Request Signed" as true.
+        Enter "Web Service End Point" as your Web Service End Point URL.
+        Save changes.
+
+        Note : If the required or selected Security Mechanism is "STSSecurity", then
+               select STS Configuration as "SecurityTokenService".
+
+        2) Create "WSP" profile
+        Select Web Service Provider -> under Agent, click "new" ->
+        Enter name as your Web Service End Point URL
+        and other required fields and click Save.
+
+        Click on above saved profile to edit ->
+        Select all Security Mechanisms.
+        Check "Is Request Signature Verified" as true.
+        Enter "Web Service End Point" as your Web Service End Point URL.
+        Save changes.
+
+        3) Update "Agent Authenticator" profile
+        Select Agent Authenticator -> under Agent, click on "agentAuth" ->
+        Under "Agent Profiles allowed to Read",
+        Select newly created agent profiles for WSC and WSP (in above steps 1 and 2)
+        from "Available" list in order to add them to be in "Selected" list.
+        Save changes.
+
+B)  Logout of OpenSSO Administration console.
+

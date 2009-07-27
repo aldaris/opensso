@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPMessage.java,v 1.1 2009-07-25 01:11:03 Kamna Exp $
+ * $Id: SOAPMessage.java,v 1.2 2009-07-27 21:43:53 mrudul_uchil Exp $
  *
  */
 package com.sun.stockquote;
@@ -51,13 +51,12 @@ public class SOAPMessage extends HttpServlet {
 	 * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
 	 * methods.
 	 * 
-	 * @param request
-	 *            servlet request
-	 * @param response
-	 *            servlet response
+	 * @param request Http Servlet Request
+	 * @param response Http Servlet Response
+	 * 
 	 */
 	protected void processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	    HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/xml;charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		String file = request.getParameter("dir");
@@ -79,26 +78,24 @@ public class SOAPMessage extends HttpServlet {
 	/**
 	 * Handles the HTTP <code>GET</code> method.
 	 * 
-	 * @param request
-	 *            servlet request
-	 * @param response
-	 *            servlet response
+	 * @param request Http Servlet Request
+	 * @param response Http Servlet Response
+     *
 	 */
 	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	    HttpServletResponse response) throws ServletException, IOException {
 		processRequest(request, response);
 	}
 
 	/**
 	 * Handles the HTTP <code>POST</code> method.
 	 * 
-	 * @param request
-	 *            servlet request
-	 * @param response
-	 *            servlet response
+	 * @param request Http Servlet Request
+	 * @param response Http Servlet Response
+     *
 	 */
 	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	    HttpServletResponse response) throws ServletException, IOException {
 		processRequest(request, response);
 	}
 

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.23 2009-07-23 20:04:27 mrudul_uchil Exp $
+   $Id: build.xml,v 1.24 2009-07-27 21:43:52 mrudul_uchil Exp $
 
 -->
 
@@ -34,12 +34,6 @@
     <import file="../federation/library/library.xml" />
     <import file="../installtools/installtools.xml" />
     <import file="wssagents.xml" />
-
-    <fail message="*** jdk target is not set ***">
-        <condition>
-            <not><isset property="target.jdk.set"/></not>
-        </condition>
-    </fail>
 
     <!-- user specific properties -->
     <property file="${user.home}/.opensso"/>
@@ -88,7 +82,6 @@
     <target name="build" depends="checkjar, preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
             destdir="${wssagents.classes.dir}"
-            source="${target.jdk.set}" target="${target.jdk.set}"
             debug="${build.debug}" debuglevel="${build.debuglevel}"
             excludes="com/sun/identity/wssagents/weblogic/*.*,com/sun/identity/wssagents/jaxws/client/*.*,com/sun/identity/wssagents/jaxws/server/*.*">
             <src path="${wssagents.src.dir}"/>
