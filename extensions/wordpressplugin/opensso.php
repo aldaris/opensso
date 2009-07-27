@@ -31,7 +31,7 @@ Author URI: http://opensso.org/
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: opensso.php,v 1.2 2009-07-27 22:33:51 superpat7 Exp $
+ * $Id: opensso.php,v 1.3 2009-07-27 22:34:35 superpat7 Exp $
  *
  */
 
@@ -294,7 +294,7 @@ function opensso_get_name( $ssotoken ) {
 		return null;
 	}
 
-	// Need to parse name/value pairs, to get value for Drupal username attribute
+	// Need to parse name/value pairs, to get value for WordPress username attribute
 	$lines = explode( "\n", $response['body'] );
 	reset( $lines );
 	foreach ( $lines as $line ) {
