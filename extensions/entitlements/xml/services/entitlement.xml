@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.34 2009-07-27 21:01:56 hengming Exp $
+   $Id: entitlement.xml,v 1.35 2009-07-27 23:12:54 hengming Exp $
 
 -->
 
@@ -464,6 +464,137 @@
                         <AttributeValuePair>
                             <Attribute name="resources" />
                             <Value>/*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="entitlementCombiner" />
+                            <Value>com.sun.identity.entitlement.DenyOverride</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="paycheck"
+                        id="application">
+                        <AttributeValuePair>
+                            <Attribute name="applicationType" />
+                            <Value>iPlanetAMWebAgentService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resources" />
+                            <Value>http://paycheck.sun.com:8081/*</Value>
+                            <Value>http://paycheck.sun.com:8081/*/private</Value>
+                            <Value>http://paycheck.sun.com:8081/*/users/*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="subjects" />
+                            <Value>com.sun.identity.admin.model.IdRepoGroupViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.IdRepoRoleViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.IdRepoUserViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.OrViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.AndViewSubject</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="conditions" />
+                            <Value>com.sun.identity.admin.model.DnsNameViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.IpRangeViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.OrViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.AndViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.NotViewCondition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="entitlementCombiner" />
+                            <Value>com.sun.identity.entitlement.DenyOverride</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="calendar"
+                        id="application">
+                        <AttributeValuePair>
+                            <Attribute name="applicationType" />
+                            <Value>iPlanetAMWebAgentService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resources" />
+                            <Value>http://calendar.sun.com/*</Value>
+                            <Value>http://calendar.sun.com/my/*</Value>
+                            <Value>http://calendar.sun.com/admin</Value>
+                            <Value>http://calendar.sun.com/*/calendars?calId=*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="subjects" />
+                            <Value>com.sun.identity.admin.model.IdRepoGroupViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.IdRepoRoleViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.IdRepoUserViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.OrViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.NotViewSubject</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="conditions" />
+                            <Value>com.sun.identity.admin.model.DateRangeCondition</Value>
+                            <Value>com.sun.identity.admin.model.DaysOfWeekCondition</Value>
+                            <Value>com.sun.identity.admin.model.TimeRangeCondition</Value>
+                            <Value>com.sun.identity.admin.model.TimezoneCondition</Value>
+                            <Value>com.sun.identity.admin.model.OrViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.AndViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.NotViewCondition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="entitlementCombiner" />
+                            <Value>com.sun.identity.entitlement.DenyOverride</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="im"
+                        id="application">
+                        <AttributeValuePair>
+                            <Attribute name="applicationType" />
+                            <Value>iPlanetAMWebAgentService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resources" />
+                            <Value>http://im.sun.com/register</Value>
+                            <Value>http://im.sun.com/im.jnlp</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="subjects" />
+                            <Value>com.sun.identity.admin.model.IdRepoGroupViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.IdRepoRoleViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.IdRepoUserViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="conditions" />
+                            <Value>com.sun.identity.admin.model.DaysOfWeekCondition</Value>
+                            <Value>com.sun.identity.admin.model.DnsNameViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.IpRangeViewCondition</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="entitlementCombiner" />
+                            <Value>com.sun.identity.entitlement.DenyOverride</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="sunBank"
+                        id="application">
+                        <AttributeValuePair>
+                            <Attribute name="applicationType" />
+                            <Value>banking</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="resources" />
+                            <Value>*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="subjects" />
+                            <Value>com.sun.identity.admin.model.BankingViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.NotViewSubject</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="conditions" />
+                            <Value>com.sun.identity.admin.model.TransferLimitCondition</Value>
+                            <Value>com.sun.identity.admin.model.DateRangeCondition</Value>
+                            <Value>com.sun.identity.admin.model.DaysOfWeekCondition</Value>
+                            <Value>com.sun.identity.admin.model.TimeRangeCondition</Value>
+                            <Value>com.sun.identity.admin.model.TimezoneCondition</Value>
+                            <Value>com.sun.identity.admin.model.OrViewCondition</Value>
+                            <Value>com.sun.identity.admin.model.AndViewCondition</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />
