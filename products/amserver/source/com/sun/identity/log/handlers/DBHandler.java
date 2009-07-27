@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.17 2009-07-24 20:02:22 ww203982 Exp $
+ * $Id: DBHandler.java,v 1.18 2009-07-27 19:50:55 bigfatrat Exp $
  *
  */
 
@@ -792,6 +792,7 @@ public class DBHandler extends Handler {
                     }
                 }
             }
+            recordBuffer.clear();
             try {
                 stmt.close();
             } catch (SQLException se) {

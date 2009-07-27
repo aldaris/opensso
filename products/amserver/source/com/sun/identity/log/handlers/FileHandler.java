@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileHandler.java,v 1.13 2009-07-24 20:02:23 ww203982 Exp $
+ * $Id: FileHandler.java,v 1.14 2009-07-27 19:50:55 bigfatrat Exp $
  *
  */
 package com.sun.identity.log.handlers;
@@ -501,6 +501,7 @@ public class FileHandler extends java.util.logging.Handler {
                 }
                 cleanup();
             }
+            recordBuffer.clear();
         }        
     }
 
