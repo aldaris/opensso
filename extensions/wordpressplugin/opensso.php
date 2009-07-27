@@ -31,7 +31,7 @@ Author URI: http://opensso.org/
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: opensso.php,v 1.3 2009-07-27 22:34:35 superpat7 Exp $
+ * $Id: opensso.php,v 1.4 2009-07-27 22:55:15 superpat7 Exp $
  *
  */
 
@@ -229,8 +229,7 @@ function opensso_plugin_options() {
 
 <tr valign="top">
 <th scope="row"><label for="opensso_cookie_name"><?php _e('OpenSSO cookie name') ?></label></th>
-<td><input type="text" name="opensso_cookie_name" value="<?php echo get_option('opensso_cookie_name'); ?>" class="regular-text code" />
-<span class="description"><?php _e('This will be <code>iPlanetDirectoryPro</code> unless you\'ve changed it in OpenSSO.') ?></span>
+<td><input type="text" name="opensso_cookie_name" value="<?php echo get_option('opensso_cookie_name'); ?>" class="regular-text code" /><span class="description"><?php _e('This will be <code>iPlanetDirectoryPro</code> unless you\'ve changed it in OpenSSO.') ?></span>
 </td>
 </tr>
 
