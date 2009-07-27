@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureFileHandler.java,v 1.11 2009-06-19 02:32:00 bigfatrat Exp $
+ * $Id: SecureFileHandler.java,v 1.12 2009-07-27 22:29:42 hvijay Exp $
  *
  */
 
@@ -115,8 +115,7 @@ public class SecureFileHandler extends java.util.logging.Handler {
     private static AMPassword verPassword = null;
     private SecureLogHelper helper = null;
     private LogVerifier lv = null;
-    private SsoServerLoggingSvcImpl logServiceImplForMonitoring =
-        (SsoServerLoggingSvcImpl) Agent.getLoggingSvcMBean();
+    private SsoServerLoggingSvcImpl logServiceImplForMonitoring = null;
     private SsoServerLoggingHdlrEntryImpl sfLogHandlerForMonitoring = null;
     private static String token = null;
     
@@ -356,6 +355,15 @@ public class SecureFileHandler extends java.util.logging.Handler {
             logger.setCurrentFile(PREFIX + logName);
             initializeSecurity();
         }
+
+        if(Agent.isRunning()){
+    	    logServiceImplForMonitoring =
+        	(SsoServerLoggingSvcImpl) Agent.getLoggingSvcMBean();
+            sfLogHandlerForMonitoring = 
+		logServiceImplForMonitoring.getHandler(
+                    SsoServerLoggingSvcImpl.SECURE_FILE_HANDLER_NAME);
+        }
+        
     }
     
     /**
@@ -437,6 +445,9 @@ public class SecureFileHandler extends java.util.logging.Handler {
         } catch (IOException ex) {
             Debug.error(logName +
                 ":SecureFileHandler: could not write to file", ex);
+            if (Agent.isRunning() && sfLogHandlerForMonitoring != null) {
+                sfLogHandlerForMonitoring.incHandlerDroppedCount(1);
+            }
         }
         flush();
         // This flag is set only when the Verification is on and at that time
@@ -530,21 +541,9 @@ public class SecureFileHandler extends java.util.logging.Handler {
         message = getFormatter().format(lr);
         try {
             writer.write(message);
-            //Monitoring: Increment log records successfully logged count
-            //Do we need to increment the count in this method ? This block just
-            //writes the signature and not any debug/error message that is
-            //passed using the publish method. So it might disturb the equation:
-            //success-count + dropped-count = requests-count
-            if (Agent.isRunning() && sfLogHandlerForMonitoring != null) {
-                sfLogHandlerForMonitoring.incHandlerSuccessCount(1);
-            }
         } catch (IOException ioe) {
             Debug.error(logName +
                 ":SecureLogHelper: could not write signature to file", ioe);
-            //Monitoring: Increment log records dropped count
-            if (Agent.isRunning() && sfLogHandlerForMonitoring != null) {
-                sfLogHandlerForMonitoring.incHandlerDroppedCount(1);
-            }
         }
         flush();
         try {
