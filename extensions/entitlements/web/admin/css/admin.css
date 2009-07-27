@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.101 2009-07-25 05:01:45 farble1670 Exp $
+* $Id: admin.css,v 1.102 2009-07-27 19:35:26 farble1670 Exp $
 *
 */
 
@@ -296,18 +296,18 @@ span.button img.left {
 }
 
 #header {
-    height: 150px;
-    background: transparent url(../image/curve_right.png) no-repeat;
+    height: 139px;
+    background: transparent url(../image/curve.png) no-repeat;
     z-index: 999;
     position: relative;
 }
 
 #logo {
     height: 60px;
-    width: 240px;
+    width: 640px;
     position: absolute;
-    left: 80px;
-    top: 50px;
+    left: 100px;
+    top: 60px;
     z-index: 10;
     background: transparent url(../image/logo.png) no-repeat;
 }
@@ -327,7 +327,8 @@ span.button img.left {
 }
 
 #menu {
-    margin-left: 8px;
+    position: relative;
+    top: -2px;
 }
 
 #panel {
@@ -1208,6 +1209,9 @@ span.button img.left {
 .realm-select {
     float: right;
     padding-right: 10px;
+    position: relative;
+    top: -16px;
+    z-index: 999;
 }
 
 .realm-select-popup div {

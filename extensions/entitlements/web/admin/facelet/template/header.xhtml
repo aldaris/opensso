@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: header.xhtml,v 1.5 2009-06-04 11:49:27 veiming Exp $
+   $Id: header.xhtml,v 1.6 2009-07-27 19:35:26 farble1670 Exp $
 
 -->
 
@@ -36,6 +36,7 @@
     <div id="java-logo"></div>
     <div id="connection-status">
         <ice:outputConnectionStatus
+            rendered="false"
             inactiveLabel="#{resources['header.statusInactive']}"
             activeLabel="#{resources['header.statusActive']}"
             cautionLabel="#{resources['header.statusCaution']}"

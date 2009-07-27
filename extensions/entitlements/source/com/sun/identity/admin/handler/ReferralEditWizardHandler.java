@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralEditWizardHandler.java,v 1.3 2009-07-13 19:42:42 farble1670 Exp $
+ * $Id: ReferralEditWizardHandler.java,v 1.4 2009-07-27 19:35:24 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -30,10 +30,10 @@ package com.sun.identity.admin.handler;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.NextPopupBean;
-import com.sun.identity.admin.model.PolicyWizardStep;
 import com.sun.identity.admin.model.ReferralBean;
-import com.sun.identity.admin.model.ResourcesPolicyWizardStepValidator;
-import com.sun.identity.admin.model.SubjectsPolicyWizardStepValidator;
+import com.sun.identity.admin.model.ReferralWizardStep;
+import com.sun.identity.admin.model.ResourcesReferralWizardStepValidator;
+import com.sun.identity.admin.model.SubjectsReferralWizardStepValidator;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.event.ActionEvent;
@@ -41,8 +41,8 @@ import javax.faces.event.ActionEvent;
 public class ReferralEditWizardHandler extends ReferralWizardHandler {
     @Override
     public void initWizardStepValidators() {
-        getWizardStepValidators()[PolicyWizardStep.RESOURCES.toInt()] = new ResourcesPolicyWizardStepValidator(getWizardBean());
-        getWizardStepValidators()[PolicyWizardStep.SUBJECTS.toInt()] = new SubjectsPolicyWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[ReferralWizardStep.RESOURCES.toInt()] = new ResourcesReferralWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[ReferralWizardStep.SUBJECTS.toInt()] = new SubjectsReferralWizardStepValidator(getWizardBean());
     }
 
     public String getBeanName() {

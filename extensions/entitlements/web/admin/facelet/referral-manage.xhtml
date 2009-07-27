@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-manage.xhtml,v 1.6 2009-06-23 18:43:48 farble1670 Exp $
+   $Id: referral-manage.xhtml,v 1.7 2009-07-27 19:35:26 farble1670 Exp $
 -->
 
 <ui:composition
@@ -141,17 +141,16 @@
                             <ice:panelGroup
                                 styleClass="referral-manage-cell"
                                 visible="#{true}">
-                                <ice:commandLink
+                                <ice:outputLink
                                     rendered="#{permissionsBean.referralEditAllowed}"
-                                    styleClass="command-link"
-                                    actionListener="#{referralManageHandler.editListener}"
-                                    action="referral-edit">
+                                    value="referral-edit.xhtml?referralName=#{referralBean.name}"
+                                    styleClass="command-link">
                                     <f:attribute
                                         name="referralBean"
                                         value="#{referralBean}"/>
                                     <ice:outputText
                                         value="#{referralBean.name}"/>
-                                </ice:commandLink>
+                                </ice:outputLink>
                                 <ice:outputLabel
                                     rendered="#{!permissionsBean.referralEditAllowed}"
                                     value="#{referralBean.name}"/>

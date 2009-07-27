@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.103 2009-07-25 00:30:05 farble1670 Exp $
+  $Id: faces-config.xml,v 1.104 2009-07-27 19:35:25 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1456,6 +1456,10 @@
             <value>false</value>
         </managed-property>
         <managed-property>
+            <property-name>privilegeName</property-name>
+            <value>#{param.privilegeName}</value>
+        </managed-property>
+        <managed-property>
             <property-name>steps</property-name>
             <value>5</value>
         </managed-property>
@@ -1558,6 +1562,10 @@
         <managed-property>
             <property-name>nameEditable</property-name>
             <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>referralName</property-name>
+            <value>#{param.referralName}</value>
         </managed-property>
         <managed-property>
             <property-name>steps</property-name>
@@ -1680,10 +1688,6 @@
             <value>#{policyDao}</value>
         </managed-property>
         <managed-property>
-            <property-name>policyEditWizardBean</property-name>
-            <value>#{policyEditWizardBean}</value>
-        </managed-property>
-        <managed-property>
             <property-name>messagesBean</property-name>
             <value>#{messagesBean}</value>
         </managed-property>
@@ -1734,10 +1738,6 @@
         <managed-property>
             <property-name>referralDao</property-name>
             <value>#{referralDao}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>referralEditWizardBean</property-name>
-            <value>#{referralEditWizardBean}</value>
         </managed-property>
         <managed-property>
             <property-name>messagesBean</property-name>

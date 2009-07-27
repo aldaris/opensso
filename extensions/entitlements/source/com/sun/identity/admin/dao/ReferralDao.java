@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralDao.java,v 1.5 2009-07-13 19:42:42 farble1670 Exp $
+ * $Id: ReferralDao.java,v 1.6 2009-07-27 19:35:24 farble1670 Exp $
  */
-
 package com.sun.identity.admin.dao;
 
 import com.sun.identity.admin.ManagedBeanResolver;
@@ -47,6 +46,7 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 public class ReferralDao implements Serializable {
+
     private int timeout;
     private int limit;
 
@@ -72,7 +72,7 @@ public class ReferralDao implements Serializable {
     private Set<PrivilegeSearchFilter> getPrivilegeSearchFilters(List<PolicyFilterHolder> policyFilterHolders) {
         Set<PrivilegeSearchFilter> psfs = new HashSet<PrivilegeSearchFilter>();
 
-        for (PolicyFilterHolder pfh: policyFilterHolders) {
+        for (PolicyFilterHolder pfh : policyFilterHolders) {
             List<PrivilegeSearchFilter> l = pfh.getPolicyFilter().getPrivilegeSearchFilters();
             if (l != null) {
                 // TODO: list should never be null
@@ -81,6 +81,21 @@ public class ReferralDao implements Serializable {
         }
 
         return psfs;
+    }
+
+    public ReferralBean getReferralBean(String referralName) {
+        ReferralPrivilegeManager rpm = getReferralPrivilegeManager();
+
+        try {
+            ReferralPrivilege rp = rpm.getReferral(referralName);
+            ReferralBean rb = new ReferralBean(
+                    rp,
+                    ViewApplicationsBean.getInstance().getViewApplications());
+
+            return rb;
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
     }
 
     public List<ReferralBean> getReferralBeans(String filter, List<PolicyFilterHolder> policyFilterHolders) {
@@ -164,7 +179,7 @@ public class ReferralDao implements Serializable {
 
     public static ReferralDao getInstance() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        ReferralDao rdao = (ReferralDao)mbr.resolve("referralDao");
+        ReferralDao rdao = (ReferralDao) mbr.resolve("referralDao");
         return rdao;
     }
 }

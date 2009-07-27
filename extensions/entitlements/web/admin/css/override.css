@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: override.css,v 1.22 2009-07-25 05:01:45 farble1670 Exp $
+ * $Id: override.css,v 1.23 2009-07-27 19:35:26 farble1670 Exp $
  *
  */
 
@@ -35,7 +35,7 @@
 
 .iceMnuBarItem img {
     position: absolute;
-    top: 155px;
+    top: 5px;
 }
 
 .iceMnuBarSubMenu, .iceMnuBarVrtSubMenu {

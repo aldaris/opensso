@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BooleanActionsBean.java,v 1.4 2009-06-04 11:49:14 veiming Exp $
+ * $Id: BooleanActionsBean.java,v 1.5 2009-07-27 19:35:25 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.DeepCloneableArrayList;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -98,5 +99,8 @@ public class BooleanActionsBean implements Serializable {
 
     public void setViewApplication(ViewApplication viewApplication) {
         this.viewApplication = viewApplication;
+
+        getActions().clear();
+        getActions().addAll(new DeepCloneableArrayList<Action>(viewApplication.getActions()).deepClone());
     }
 }

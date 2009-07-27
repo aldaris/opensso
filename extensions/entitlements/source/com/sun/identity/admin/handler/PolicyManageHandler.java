@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManageHandler.java,v 1.25 2009-06-22 14:53:20 farble1670 Exp $
+ * $Id: PolicyManageHandler.java,v 1.26 2009-07-27 19:35:24 farble1670 Exp $
  */
-
 package com.sun.identity.admin.handler;
 
 import com.sun.identity.admin.Resources;
@@ -55,7 +54,6 @@ public class PolicyManageHandler implements Serializable {
     private PolicyManageBean policyManageBean;
     private QueuedActionBean queuedActionBean;
     private PolicyDao policyDao;
-    private PolicyWizardBean policyEditWizardBean;
     private MessagesBean messagesBean;
 
     public PrivilegeBean getPrivilegeBean(ActionEvent event) {
@@ -171,7 +169,7 @@ public class PolicyManageHandler implements Serializable {
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
         b.append("realm=");
         b.append(realmBean.getName());
-        
+
         String u = ec.encodeResourceURL(b.toString());
         return u;
     }
@@ -208,14 +206,6 @@ public class PolicyManageHandler implements Serializable {
         PolicyFilterHolder pfh = getPolicyFilterHolder(event);
         getPolicyManageBean().getPolicyFilterHolders().remove(pfh);
         addResetEvent();
-    }
-
-    public void editListener(ActionEvent event) {
-        PrivilegeBean pb = getPrivilegeBean(event);
-        policyEditWizardBean.reset();
-        policyEditWizardBean.setPrivilegeBean(pb);
-        policyEditWizardBean.setAllEnabled(true);
-        policyEditWizardBean.gotoStep(4);
     }
 
     public void removeListener(ActionEvent event) {
@@ -270,10 +260,6 @@ public class PolicyManageHandler implements Serializable {
 
     public void setPolicyDao(PolicyDao policyDao) {
         this.policyDao = policyDao;
-    }
-
-    public void setPolicyEditWizardBean(PolicyWizardBean policyEditWizardBean) {
-        this.policyEditWizardBean = policyEditWizardBean;
     }
 
     public void setMessagesBean(MessagesBean messagesBean) {

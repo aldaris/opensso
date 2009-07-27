@@ -22,16 +22,36 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralEditWizardBean.java,v 1.1 2009-06-22 14:53:20 farble1670 Exp $
+ * $Id: ReferralEditWizardBean.java,v 1.2 2009-07-27 19:35:25 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.ManagedBeanResolver;
+import com.sun.identity.admin.dao.ReferralDao;
 
 public class ReferralEditWizardBean extends ReferralWizardBean {
+
+    private String referralName;
+
     public static ReferralEditWizardBean getInstance() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        return (ReferralEditWizardBean)mbr.resolve("referralEditWizardBean");
+        return (ReferralEditWizardBean) mbr.resolve("referralEditWizardBean");
+    }
+
+    public void setReferralName(String referralName) {
+        this.referralName = referralName;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+
+        setAllEnabled(true);
+        gotoStep(3);
+    }
+
+    protected void resetReferralBean() {
+        ReferralBean rb = ReferralDao.getInstance().getReferralBean(referralName);
+        setReferralBean(rb);
     }
 }

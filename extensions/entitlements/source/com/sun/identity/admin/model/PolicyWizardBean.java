@@ -22,13 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardBean.java,v 1.20 2009-06-11 15:05:55 farble1670 Exp $
+ * $Id: PolicyWizardBean.java,v 1.21 2009-07-27 19:35:25 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
-import com.sun.identity.admin.DeepCloneableArrayList;
 import com.sun.identity.admin.Functions;
 import com.sun.identity.admin.Resources;
 import java.io.Serializable;
@@ -39,12 +37,12 @@ import java.util.Map;
 import javax.faces.model.SelectItem;
 import static com.sun.identity.admin.model.PolicyWizardStep.*;
 
-public class PolicyWizardBean
+public abstract class PolicyWizardBean
         extends WizardBean
         implements Serializable, PolicyNameBean, PolicyResourcesBean,
         PolicySubjectsBean, PolicyConditionsBean, PolicySummaryBean {
 
-    private PrivilegeBean privilegeBean = new PrivilegeBean();
+    private PrivilegeBean privilegeBean;
     private ViewApplicationsBean viewApplicationsBean;
     private Effect dropConditionEffect;
     private Effect dropSubjectContainerEffect;
@@ -72,27 +70,13 @@ public class PolicyWizardBean
         return privilegeBean.getViewEntitlement();
     }
 
+    protected abstract void resetPrivilegeBean();
+
     @Override
     public void reset() {
-        reset(true);
-    }
-
-    public void reset(boolean resetName) {
         super.reset();
-
-        String name = privilegeBean.getName();
-        String desc = privilegeBean.getDescription();
-        setPrivilegeBean(new PrivilegeBean());
-
-        if (!resetName) {
-            privilegeBean.setName(name);
-            privilegeBean.setDescription(desc);
-        }
-
-        ConditionType oct = getConditionType("or");
-        privilegeBean.setViewCondition(oct.newViewCondition());
-        SubjectType ost = getSubjectType("or");
-        privilegeBean.setViewSubject(ost.newViewSubject());
+        
+        resetPrivilegeBean();
 
         advancedTabsetIndex = 0;
 
@@ -162,22 +146,12 @@ public class PolicyWizardBean
     }
 
     public ViewApplication getViewApplication() {
-        if (getPrivilegeBean().getViewEntitlement().getViewApplication() == null) {
-            resetViewApplication();
-        }
         return getPrivilegeBean().getViewEntitlement().getViewApplication();
     }
 
     public void setViewApplicationName(String viewApplicationName) {
-        if (getViewApplicationName() == null || !viewApplicationName.equals(getViewApplicationName())) {
-            reset(false);
-
-            ViewApplication va = viewApplicationsBean.getViewApplications().get(viewApplicationName);
-            getPrivilegeBean().getViewEntitlement().setViewApplication(va);
-
-            getPrivilegeBean().getViewEntitlement().getBooleanActionsBean().getActions().clear();
-            getPrivilegeBean().getViewEntitlement().getBooleanActionsBean().getActions().addAll(new DeepCloneableArrayList<Action>(va.getActions()).deepClone());
-        }
+        ViewApplication va = viewApplicationsBean.getViewApplications().get(viewApplicationName);
+        getPrivilegeBean().getViewEntitlement().setViewApplication(va);
     }
 
     private void resetViewApplication() {
@@ -190,7 +164,6 @@ public class PolicyWizardBean
 
     public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
         this.viewApplicationsBean = viewApplicationsBean;
-        resetViewApplication();
     }
 
     public ViewApplicationsBean getViewApplicationsBean() {
@@ -203,7 +176,7 @@ public class PolicyWizardBean
 
     public String getViewApplicationName() {
         if (getPrivilegeBean().getViewEntitlement().getViewApplication() == null) {
-            return null;
+            resetViewApplication();
         }
         return getPrivilegeBean().getViewEntitlement().getViewApplication().getName();
     }

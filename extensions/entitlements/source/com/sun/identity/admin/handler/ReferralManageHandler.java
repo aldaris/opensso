@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageHandler.java,v 1.4 2009-06-23 18:43:47 farble1670 Exp $
+ * $Id: ReferralManageHandler.java,v 1.5 2009-07-27 19:35:24 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -49,7 +49,6 @@ public class ReferralManageHandler implements Serializable {
     private ReferralManageBean referralManageBean;
     private QueuedActionBean queuedActionBean;
     private ReferralDao referralDao;
-    private ReferralWizardBean referralEditWizardBean;
     private MessagesBean messagesBean;
 
     public PolicyFilterHolder getPolicyFilterHolder(ActionEvent event) {
@@ -93,10 +92,6 @@ public class ReferralManageHandler implements Serializable {
         this.referralDao = referralDao;
     }
 
-    public void setReferralEditWizardBean(ReferralWizardBean referralEditWizardBean) {
-        this.referralEditWizardBean = referralEditWizardBean;
-    }
-
     public void setMessagesBean(MessagesBean messagesBean) {
         this.messagesBean = messagesBean;
     }
@@ -105,14 +100,6 @@ public class ReferralManageHandler implements Serializable {
         ReferralBean rb = (ReferralBean) event.getComponent().getAttributes().get("referralBean");
         assert (rb != null);
         return rb;
-    }
-
-    public void editListener(ActionEvent event) {
-        ReferralBean rb = getReferralBean(event);
-        referralEditWizardBean.reset();
-        referralEditWizardBean.setReferralBean(rb);
-        referralEditWizardBean.setAllEnabled(true);
-        referralEditWizardBean.gotoStep(3);
     }
 
     public void removeListener(ActionEvent event) {

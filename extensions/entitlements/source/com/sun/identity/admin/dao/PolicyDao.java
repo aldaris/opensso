@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDao.java,v 1.25 2009-07-24 21:00:51 farble1670 Exp $
+ * $Id: PolicyDao.java,v 1.26 2009-07-27 19:35:24 farble1670 Exp $
  */
-
 package com.sun.identity.admin.dao;
 
 import com.iplanet.sso.SSOToken;
@@ -78,7 +77,7 @@ public class PolicyDao implements Serializable {
     private Set<PrivilegeSearchFilter> getPrivilegeSearchFilters(List<PolicyFilterHolder> policyFilterHolders) {
         Set<PrivilegeSearchFilter> psfs = new HashSet<PrivilegeSearchFilter>();
 
-        for (PolicyFilterHolder pfh: policyFilterHolders) {
+        for (PolicyFilterHolder pfh : policyFilterHolders) {
             List<PrivilegeSearchFilter> l = pfh.getPolicyFilter().getPrivilegeSearchFilters();
             if (l != null) {
                 // TODO: list should never be null
@@ -87,6 +86,23 @@ public class PolicyDao implements Serializable {
         }
 
         return psfs;
+    }
+
+    public PrivilegeBean getPrivilegeBean(String privilegeName) {
+        PrivilegeManager pm = getPrivilegeManager();
+        SubjectFactory subjectFactory = SubjectFactory.getInstance();
+
+        try {
+            Privilege p = pm.getPrivilege(privilegeName);
+            PrivilegeBean pb = new PrivilegeBean(
+                    p,
+                    viewApplicationsBean.getViewApplications(),
+                    subjectFactory,
+                    conditionTypeFactory);
+            return pb;
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
     }
 
     public List<PrivilegeBean> getPrivilegeBeans(String filter, List<PolicyFilterHolder> policyFilterHolders) {
@@ -208,7 +224,7 @@ public class PolicyDao implements Serializable {
             if (!validActionName.contains(actionName)) {
                 try {
                     app.addAction(adminSubject, actionName,
-                        actionValues.get(actionName));
+                            actionValues.get(actionName));
                 } catch (EntitlementException ee) {
                     throw new RuntimeException(ee);
                 }
@@ -244,7 +260,7 @@ public class PolicyDao implements Serializable {
 
     public static PolicyDao getInstance() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        PolicyDao pdao = (PolicyDao)mbr.resolve("policyDao");
+        PolicyDao pdao = (PolicyDao) mbr.resolve("policyDao");
         return pdao;
     }
 }

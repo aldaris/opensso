@@ -22,17 +22,36 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEditWizardBean.java,v 1.2 2009-06-04 11:49:16 veiming Exp $
+ * $Id: PolicyEditWizardBean.java,v 1.3 2009-07-27 19:35:25 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.ManagedBeanResolver;
+import com.sun.identity.admin.dao.PolicyDao;
 
 public class PolicyEditWizardBean extends PolicyWizardBean {
+    private String privilegeName;
+
+    @Override
+    public void reset() {
+        super.reset();
+
+        setAllEnabled(true);
+        gotoStep(4);
+    }
     public static PolicyEditWizardBean getInstance() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         PolicyEditWizardBean pewb = (PolicyEditWizardBean)mbr.resolve("policyEditWizardBean");
         return pewb;
+    }
+
+    public void setPrivilegeName(String privilegeName) {
+        this.privilegeName = privilegeName;
+    }
+
+    protected void resetPrivilegeBean() {
+        PrivilegeBean pb = PolicyDao.getInstance().getPrivilegeBean(privilegeName);
+        setPrivilegeBean(pb);
     }
 }
