@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManagerUtil.java,v 1.8 2009-07-24 20:02:22 ww203982 Exp $
+ * $Id: LogManagerUtil.java,v 1.9 2009-07-27 19:46:59 bigfatrat Exp $
  *
  */
 
@@ -188,6 +188,7 @@ public class LogManagerUtil {
                         lr = provider.createLogRecord(
                             LogConstants.END_LOG_NAME, s, ssot);
                         result.log(lr, ssot);
+                        result.flush();
                     }
                 }
             } catch (IOException ioex) {
