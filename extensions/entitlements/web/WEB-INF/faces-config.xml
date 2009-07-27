@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.104 2009-07-27 19:35:25 farble1670 Exp $
+  $Id: faces-config.xml,v 1.105 2009-07-27 22:59:23 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -227,6 +227,27 @@
             <value>com.sun.identity.admin.model.BankingResource</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>personalProfileViewApplicationType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ViewApplicationType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>sunIdentityServerLibertyPPService</value>
+        </managed-property>
+        <managed-property>
+            <property-name>entitlementApplicationType</property-name>
+            <value>sunIdentityServerLibertyPPService</value>
+        </managed-property>
+        <managed-property>
+            <property-name>resourceTemplate</property-name>
+            <value>/admin/facelet/template/resources-personal-profile.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>resourceClassName</property-name>
+            <value>com.sun.identity.admin.model.UrlResource</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
         <managed-bean-name>entitlementApplicationTypeToViewApplicationTypeMap</managed-bean-name>
@@ -246,6 +267,10 @@
             <map-entry>
                 <key>#{discoveryViewApplicationType.entitlementApplicationType}</key>
                 <value>#{discoveryViewApplicationType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{personalProfileViewApplicationType.entitlementApplicationType}</key>
+                <value>#{personalProfileViewApplicationType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
