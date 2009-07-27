@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagents-jax-ws-zip,v 1.2 2009-07-27 21:43:52 mrudul_uchil Exp $
+   $Id: README.wssagents-jax-ws-zip,v 1.3 2009-07-27 22:32:36 mrudul_uchil Exp $
 
 -->
 
@@ -40,7 +40,7 @@ openssowssagents.zip
              |____ resources/.storepass (password file for keystore)
              |____ README (this file)
              |____ license.txt
-             |____ samples/jax-ws/* (WSC/WSP samples using WSS Agents)
+             |____ samples/* (WSC/WSP samples using WSS Agents)
 
 
 II) Securing a Web Service With OpenSSO Web Services Security Agents (openssowssagents.zip) :
@@ -147,3 +147,9 @@ A)  Login into the OpenSSO Console with user amadmin and <amadmin password>
 
 B)  Logout of OpenSSO Administration console.
 
+
+IV) Samples for testing
+
+    Follow samples/README file to test Web Service Client and Web Service Provider
+    samples applications with securing Web Service request / response between them
+    using OpenSSO WSS agents.
