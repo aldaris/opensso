@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: override.css,v 1.23 2009-07-27 19:35:26 farble1670 Exp $
+ * $Id: override.css,v 1.24 2009-07-27 22:04:07 farble1670 Exp $
  *
  */
 
 .iceMnuBarItem span {
-    padding-left: 30px;
     padding-top: 5px;
     padding-bottom: 5px;
     color: #707277;

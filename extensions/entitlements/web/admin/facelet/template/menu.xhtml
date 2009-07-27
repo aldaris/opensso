@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.27 2009-07-24 20:23:31 farble1670 Exp $
+   $Id: menu.xhtml,v 1.28 2009-07-27 22:04:07 farble1670 Exp $
 
 -->
 
@@ -38,13 +38,11 @@
         styleClass="menu">
         <ice:menuItem
             action="home"
-            value="#{resources['menu.homeItemValue']}"
-            icon="../image/home.png"/>
+            value="#{resources['menu.homeItemValue']}"/>
         <ice:menuItem
             rendered="#{permissionsBean.policyAllowed}"
             value="#{resources['menu.policyItemValue']}"
-            action="policy"
-            icon="../image/policy.png">
+            action="policy">
             <ice:menuItem
                 rendered="#{permissionsBean.policyAllowed}"
                 value="#{resources['menu.policiesItemValue']}">
@@ -80,8 +78,7 @@
         <ice:menuItem
             rendered="#{permissionsBean.federationAllowed}"
             value="#{resources['menu.federationItemValue']}"
-            action="federation"
-            icon="../image/federation.png">
+            action="federation">
             <ice:menuItem
                 rendered="#{permissionsBean.samlV2HostedIdpCreateAllowed}"
                 value="#{resources['menu.federationSamlV2HostedIdpCreateItemValue']}"
@@ -102,18 +99,11 @@
         <ice:menuItem
             rendered="#{permissionsBean.webServiceSecurityAllowed}"
             value="#{resources['menu.webServiceSecurityItemValue']}"
-            action="wss"
-            icon="../image/wss-24.png">
+            action="wss">
             <ice:menuItem
                 rendered="#{permissionsBean.webServiceSecurityCreateAllowed}"
                 value="#{resources['menu.webServiceSecurityCreateItemValue']}"
                 action="wss-create" />
-        </ice:menuItem>
-        <ice:menuItem
-            rendered="#{permissionsBean.newsAllowed}"
-            value="#{resources['menu.newsItemValue']}"
-            action="news"
-            icon="../image/rss.png">
         </ice:menuItem>
     </ice:menuBar>
 </span>
