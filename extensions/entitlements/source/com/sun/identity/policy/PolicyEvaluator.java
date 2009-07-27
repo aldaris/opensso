@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.21 2009-07-25 09:37:22 hengming Exp $
+ * $Id: PolicyEvaluator.java,v 1.22 2009-07-27 21:04:02 hengming Exp $
  *
  */
 
@@ -801,8 +801,23 @@ public class PolicyEvaluator {
             actionNames = serviceType.getActionNames();
         }
 
+        // If actions names are of non-boolean syntax, concat them
         Set actions = new HashSet();
-        actions.addAll(actionNames);
+        for (Object an : actionNames) {
+            String actionName = an.toString();
+            ActionSchema as = serviceType.getActionSchema(actionName);
+            if ((as == null) ||
+                as.getSyntax().equals(AttributeSchema.Syntax.BOOLEAN)) {
+                actions.add(actionName);
+            } else {
+                // Concat the action name and value
+                Set values = as.getActionValues();
+                for (Object value : values) {
+                    actions.add(actionName + "_" + value.toString());
+                }
+            }
+        }
+
         SSOToken adminSSOToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
 
@@ -1476,14 +1491,29 @@ public class PolicyEvaluator {
         if ((actionValues != null) && !actionValues.isEmpty()) {
             for (Iterator i = actionValues.keySet().iterator(); i.hasNext();) {
                 String actionName = (String) i.next();
-                Boolean values = (Boolean) actionValues.get(actionName);
-
                 Set set = new HashSet();
-                if (values.booleanValue()) {
-                    set.add(getActionTrueBooleanValue(actionName));
+                // Determinte if the serviceType have boolean action values
+                ActionSchema as = serviceType.getActionSchema(actionName);
+                if ((as == null) ||
+                    as.getSyntax().equals(AttributeSchema.Syntax.BOOLEAN)) {
+                    Boolean values = (Boolean) actionValues.get(actionName);
+
+                    if (values.booleanValue()) {
+                        set.add(getActionTrueBooleanValue(actionName));
+                    } else {
+                        set.add(getActionFalseBooleanValue(actionName));
+                    }
                 } else {
-                    set.add(getActionFalseBooleanValue(actionName));
+                    // Parse the action name to get the value
+                    int index = actionName.indexOf('_');
+                    if (index != -1) {
+                        set.add(actionName.substring(index+1));
+                        actionName = actionName.substring(0, index);
+                    } else {
+                        set.add(actionName);
+                    }
                 }
+
                 ActionDecision ad = new ActionDecision(actionName, set);
                 ad.setAdvices(entitlement.getAdvices());
                 pd.addActionDecision(ad, serviceType);
@@ -1496,7 +1526,14 @@ public class PolicyEvaluator {
             }
             for (String actionName : actionNames) {
                 Set set = new HashSet();
-                set.add(getActionFalseBooleanValue(actionName));
+                // Determinte if the serviceType have boolean action values
+                ActionSchema as = serviceType.getActionSchema(actionName);
+                if ((as == null) ||
+                    as.getSyntax().equals(AttributeSchema.Syntax.BOOLEAN)) {
+                    set.add(getActionFalseBooleanValue(actionName));
+                } else {
+                    set.add(as.getDefaultValues());
+                }
                 ActionDecision ad = new ActionDecision(actionName, set);
                 ad.setAdvices(entitlement.getAdvices());
                 pd.addActionDecision(ad, serviceType);

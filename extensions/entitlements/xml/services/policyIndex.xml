@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policyIndex.xml,v 1.9 2009-06-09 09:44:28 veiming Exp $
+   $Id: policyIndex.xml,v 1.10 2009-07-27 21:01:56 hengming Exp $
 
 -->
 
@@ -33,7 +33,7 @@
     "jar://com/sun/identity/sm/sms.dtd">
 
 <ServicesConfiguration>
-    <Service name="PolicyIndex" version="1.0">
+    <Service name="sunEntitlementIndexes" version="1.0">
         <Schema i18nFileName="" revisionNumber="10">
             <Organization>
                 <AttributeSchema name="indexCount"

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.40 2009-07-10 00:24:27 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.41 2009-07-27 21:03:20 hengming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -74,6 +74,7 @@ import com.sun.identity.policy.plugins.PrivilegeCondition;
 import com.sun.identity.policy.plugins.PrivilegeSubject;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.DNMapper;
 import java.security.AccessController;
 import java.util.Collections;
@@ -929,12 +930,18 @@ public class PrivilegeUtils {
             } else {
                 try {
                     ActionSchema as = st.getActionSchema(action);
-                    String trueValue = as.getTrueValue();
+                    if (as.getSyntax().equals(AttributeSchema.Syntax.BOOLEAN)) {
+                        String trueValue = as.getTrueValue();
 
-                    if (values.contains(trueValue)) {
-                        av.put(action, Boolean.TRUE);
+                        if (values.contains(trueValue)) {
+                            av.put(action, Boolean.TRUE);
+                        } else {
+                            av.put(action, Boolean.FALSE);
+                        }
                     } else {
-                        av.put(action, Boolean.FALSE);
+                        // Append action value to action name
+                        String value = values.iterator().next().toString();
+                        av.put(action + "_" + value, Boolean.TRUE);
                     }
                 } catch (InvalidNameException e) {
                     av.put(action, Boolean.parseBoolean(

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.30 2009-06-30 17:47:37 veiming Exp $
+ * $Id: EntitlementService.java,v 1.31 2009-07-27 21:03:20 hengming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -59,7 +59,7 @@ public class EntitlementService extends EntitlementConfiguration {
     /**
      * Entitlement Service name.
      */
-    public static final String SERVICE_NAME = "openssoEntitlement";
+    public static final String SERVICE_NAME = "sunEntitlementService";
 
     private static final String ATTR_NAME_SUBJECT_ATTR_NAMES =
         "subjectAttributeNames";

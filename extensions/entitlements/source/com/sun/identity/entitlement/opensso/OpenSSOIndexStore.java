@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.20 2009-07-01 21:47:02 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.21 2009-07-27 21:03:20 hengming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -53,6 +53,8 @@ import com.sun.identity.sm.DNMapper;
 
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -72,6 +74,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     private static final int DEFAULT_IDX_CACHE_SIZE = 100000;
     private static final PolicyCache policyCache;
     private static final PolicyCache referralCache;
+    private static final int policyCacheSize;
     private static final Map<String, IndexCache> indexCaches;
     private static final Map<String, IndexCache> referralIndexCaches;
     private static final int indexCacheSize;
@@ -86,15 +89,25 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, "/");
 
-        int cacheSize = getInteger(ec,
+        policyCacheSize = getInteger(ec,
             EntitlementConfiguration.POLICY_CACHE_SIZE, DEFAULT_CACHE_SIZE);
-        policyCache = new PolicyCache(cacheSize);
-        referralCache = new PolicyCache(cacheSize);
+        if (policyCacheSize > 0) {
+            policyCache = new PolicyCache(policyCacheSize);
+            referralCache = new PolicyCache(policyCacheSize);
+        } else {
+            policyCache = null;
+            referralCache = null;
+        }
 
         indexCacheSize = getInteger(ec,
             EntitlementConfiguration.INDEX_CACHE_SIZE, DEFAULT_IDX_CACHE_SIZE);
-        indexCaches = new HashMap<String, IndexCache>();
-        referralIndexCaches = new HashMap<String, IndexCache>();
+        if (indexCacheSize > 0) {
+            indexCaches = new HashMap<String, IndexCache>();
+            referralIndexCaches = new HashMap<String, IndexCache>();
+        } else {
+            indexCaches = null;
+            referralIndexCaches = null;
+        }
 
         int threadSize = getInteger(ec,
             EntitlementConfiguration.POLICY_SEARCH_THREAD_SIZE,
@@ -102,6 +115,18 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         isMultiThreaded = (threadSize > 1);
         threadPool = (isMultiThreaded) ? new EntitlementThreadPool(
             threadSize) : new SequentialThreadPool();
+        // Register listener for realm deletions
+        try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            ServiceConfigManager serviceConfigManager =
+                new ServiceConfigManager(PolicyManager.POLICY_SERVICE_NAME,
+                adminToken);
+            serviceConfigManager.addListener(new EntitlementsListener());
+        } catch (Exception e) {
+            PrivilegeManager.debug.error("OpenSSOIndexStore.init " +
+                "Unable to register for SMS notifications", e);
+        }
     }
 
     private static int getInteger(EntitlementConfiguration ec, String key,
@@ -133,18 +158,21 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
             adminSubject, realm);
 
         // Get Index caches based on realm
-        synchronized (indexCaches) {
-            indexCache = indexCaches.get(realmDN);
-            if (indexCache == null) {
-                indexCache = new IndexCache(indexCacheSize);
-                indexCaches.put(realmDN, indexCache);
+        if (indexCacheSize > 0) {
+
+            synchronized (indexCaches) {
+                indexCache = indexCaches.get(realmDN);
+                if (indexCache == null) {
+                    indexCache = new IndexCache(indexCacheSize);
+                    indexCaches.put(realmDN, indexCache);
+                }
             }
-        }
-        synchronized (referralIndexCaches) {
-            referralIndexCache = referralIndexCaches.get(realmDN);
-            if (referralIndexCache == null) {
-                referralIndexCache = new IndexCache(indexCacheSize);
-                referralIndexCaches.put(realmDN, referralIndexCache);
+            synchronized (referralIndexCaches) {
+                referralIndexCache = referralIndexCaches.get(realmDN);
+                if (referralIndexCache == null) {
+                    referralIndexCache = new IndexCache(indexCacheSize);
+                    referralIndexCaches.put(realmDN, referralIndexCache);
+                }
             }
         }
     }
@@ -237,9 +265,22 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         String realm = getRealm();
 
         for (IPrivilege p : privileges) {
-            String dn = delete(p.getName(), true);
-            indexCache.clear(p.getResourceSaveIndexes(
-                adminSubject, DNMapper.orgNameToRealmName(realm)), dn);
+            String dn = null;
+            if (p instanceof Privilege) {
+                dn = delete(p.getName(), true);
+            } else {
+                dn = deleteReferral(p.getName(), true);
+            }
+            if (indexCacheSize > 0) {
+                if (p instanceof Privilege) {
+                    indexCache.clear(p.getResourceSaveIndexes(
+                        adminSubject, DNMapper.orgNameToRealmName(realm)), dn);
+                } else {
+                    referralIndexCache.clear(p.getResourceSaveIndexes(
+                        adminSubject, DNMapper.orgNameToRealmName(realm)), dn);
+                }
+            }
+
         }
     }
 
@@ -254,7 +295,9 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         } else {
         }
 
-        policyCache.decache(dn, realmDN);
+        if (policyCacheSize > 0) {
+            policyCache.decache(dn, realmDN);
+        }
         return dn;
     }
 
@@ -268,7 +311,9 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         if (notify) {
             dataStore.removeReferral(adminSubject, realm, privilegeName);
         }
-        referralCache.decache(dn, realmDN);
+        if (policyCacheSize > 0) {
+            referralCache.decache(dn, realmDN);
+        }
         return dn;
     }
 
@@ -325,9 +370,12 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         throws EntitlementException {
         BufferedIterator iterator = (isMultiThreaded) ? new BufferedIterator() :
             new SimpleIterator();
-        Set setDNs = searchPrivileges(indexes, subjectIndexes, bSubTree,
-            iterator);
-        setDNs.addAll(searchReferrals(indexes, bSubTree, iterator));
+        Set setDNs = new HashSet();
+        if (indexCacheSize > 0) {
+            setDNs.addAll(searchPrivileges(indexes, subjectIndexes, bSubTree,
+                iterator));
+            setDNs.addAll(searchReferrals(indexes, bSubTree, iterator));
+        }
 
         if (DN.isDN(realm)) {
             realm = DNMapper.orgNameToRealmName(realm);
@@ -339,7 +387,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
             }
         }
         
-        if (doDSSearch()) {
+        if ((indexCacheSize == 0) || doDSSearch()) {
             SearchTask st = new SearchTask(this, iterator, indexes,
                 subjectIndexes, bSubTree, setDNs);
             threadPool.submit(st);
@@ -784,13 +832,39 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 Set<IPrivilege> results = dataStore.search(
                     parent.getAdminSubject(), parent.getRealmDN(), iterator,
                     indexes, subjectIndexes, bSubTree, excludeDNs);
-                for (IPrivilege eval : results) {
-                    parent.cache(eval, subjectIndexes, parent.getRealmDN());
+                if (indexCacheSize > 0) {
+                    for (IPrivilege eval : results) {
+                        parent.cache(eval, subjectIndexes, parent.getRealmDN());
+                    }
                 }
             } catch (EntitlementException ex) {
                 iterator.isDone();
                 PrivilegeManager.debug.error(
                     "OpenSSOIndexStore.SearchTask.runPolicy", ex);
+            }
+        }
+    }
+
+    // SMS Listener to clear cache when realms are deleted
+    static class EntitlementsListener implements ServiceListener {
+
+        public void schemaChanged(String serviceName, String version) {
+        }
+
+        public void globalConfigChanged(String serviceName, String version,
+            String groupName, String serviceComponent, int type) {
+        }
+
+        public void organizationConfigChanged(String serviceName,
+            String version, String orgName, String groupName,
+            String serviceComponent, int type) {
+            if ((type == ServiceListener.REMOVED) &&
+                ((serviceComponent == null) ||
+                (serviceComponent.trim().length() == 0) ||
+                serviceComponent.equals("/"))) {
+                // Realm has been deleted, clear the indexCaches &
+                indexCaches.remove(orgName);
+                referralIndexCaches.remove(orgName);
             }
         }
     }

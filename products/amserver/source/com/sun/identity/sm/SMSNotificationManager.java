@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.12 2008-10-14 04:57:20 arviranga Exp $
+ * $Id: SMSNotificationManager.java,v 1.13 2009-07-27 21:04:44 hengming Exp $
  *
  */
 package com.sun.identity.sm;
@@ -36,6 +36,7 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.jaxrpc.SMSJAXRPCObject;
+import com.sun.identity.sm.jaxrpc.SMSJAXRPCObjectImpl;
 import java.net.URL;
 import java.security.AccessController;
 import java.util.Collections;
@@ -271,19 +272,35 @@ public class SMSNotificationManager implements SMSObjectListener {
             }
         }
         // Change listeners could be one of the following
-        // SMSEventListnerManager c,s -- will be executed by this thread
+        // OrganizationConfigManager, ServiceSchemaManager
+        // ServiceConfigManager
         // SMSLdapObject (s) -- will be exectuted by this thread 
         // SMSJAXRPCObjectImpl (s)-- should create a new task/thread
         // SMSJAXRPCObject (c) -- will be executed by this thread
+        SMSObjectListener jaxrpclistener = null;
         for (Iterator items = nlists.iterator(); items.hasNext();) {
             SMSObjectListener listener = (SMSObjectListener) items.next();
             // Listeners might through exceptions, use try-catch
             try {
-                listener.objectChanged(name, type);
+                if (listener instanceof SMSJAXRPCObjectImpl) {
+                    // Process this at the end
+                    jaxrpclistener = listener;
+                } else {
+                    listener.objectChanged(name, type);
+                }
             } catch (Throwable t) {
                 debug.error("SMSNotificationManager.objectChanged " +
                     "Exception for class: " +
                     listener.getClass().getName(), t);
+            }
+        }
+        if (jaxrpclistener != null) {
+            try {
+                jaxrpclistener.objectChanged(name, type);
+            } catch (Throwable t) {
+                debug.error("SMSNotificationManager.objectChanged " +
+                    "Exception for JAXRPC class: " +
+                    jaxrpclistener.getClass().getName(), t);
             }
         }
     }

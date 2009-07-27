@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.26 2009-06-23 08:24:38 veiming Exp $
+ * $Id: DataStore.java,v 1.27 2009-07-27 21:03:19 hengming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -70,7 +70,7 @@ public class DataStore {
     public static final String POLICY_STORE = "default";
     public static final String REFERRAL_STORE = "referrals";
 
-    private static final String SERVICE_NAME = "PolicyIndex";
+    private static final String SERVICE_NAME = "sunEntitlementIndexes";
     private static final String INDEX_COUNT = "indexCount";
     private static final String REFERRAL_INDEX_COUNT = "referralIndexCount";
     private static final String REALM_DN_TEMPLATE =
