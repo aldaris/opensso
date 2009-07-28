@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.22 2009-07-13 03:07:23 vimal_67 Exp $
+ * $Id: FederationManagerCLI.java,v 1.23 2009-07-28 02:57:13 srivenigan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -4314,6 +4314,119 @@ public class FederationManagerCLI extends CLIUtility
     	setSubcommand(SET_SITE_PRI_URL_SUBCOMMAND);
     	addSiteNameArguments(siteName);
     	addSiteUrlArguments(siteUrl);
+    	addGlobalOptions();
+    	return executeCommand(commandTimeout);
+    }
+    /**
+     * Adds service to realm.
+     * 
+     * @param realmName - name of the realm.
+     * @param serviceName - name of the service.
+     * @param attributeValues - attribute value list as string.
+     * @param useDatafile - if "true" creates attributes in form of list 
+     *        and adds to the file. 
+     * @return int - exit status of the command.
+     * @throws Exception
+     */
+    public int addSvcRealm(String realmName, String serviceName,
+    		String attributeValues, boolean useDatafile)
+    throws Exception {
+    	setSubcommand(ADD_SVC_REALM_SUBCOMMAND);
+    	addRealmArguments(realmName);
+    	addServiceNameArguments(serviceName);
+        if (attributeValues != null) {
+            if (useDatafile) {
+                addDatafileArguments(attributeValues, "addSvcRealmAttrValues", 
+                        ".txt");
+            } else {
+            	addAttributevaluesArguments(attributeValues);
+            }
+        }
+        addGlobalOptions();
+    	return executeCommand(commandTimeout);
+    }
+    
+    /**
+     * Get realm's service attribute values.
+     * 
+     * @param realmName - Name of realm.
+     * @param serviceName - Name of service. 
+     * @return int - exit status of the "get-realm-svc-attrs" sub-command. 
+     * @throws Exception
+     */
+    public int getRealmSvcAttributes(String realmName, String serviceName)
+    throws Exception {
+    	setSubcommand(GET_REALM_SVC_ATTRS_SUBCOMMAND);
+    	addRealmArguments(realmName);
+    	addServiceNameArguments(serviceName);
+    	addGlobalOptions();
+    	return executeCommand(commandTimeout);
+    }
+    
+    /**
+     * List the assignable services to a realm.
+     * 
+     * @param realmName - Name of realm.
+     * @return int - exit status of the "list-realm-assignable-svcs" sub-command.
+     * @throws Exception
+     */
+    public int listRealmAssignableSvcs(String realmName)
+    throws Exception {
+    	setSubcommand(LIST_REALM_ASSIGNABLE_SVCS_SUBCOMMAND);
+    	addRealmArguments(realmName);
+    	addGlobalOptions();
+    	return executeCommand(commandTimeout);
+    }
+    
+    /**
+     * Show services in a realm.
+     * 
+     * @param realmName - Name of the realm.
+     * @param useMandatoryOption - if "true" shows mandatory services. 
+     * @return int - exit status of the show-realm-svcs subcommand.
+     * @throws Exception
+     */
+    public int showRealmSvcs(String realmName, boolean useMandatoryOption)
+    throws Exception {
+    	setSubcommand(SHOW_REALM_SVCS_SUBCOMMAND);
+    	addRealmArguments(realmName);
+    	addMandatoryArguments(useMandatoryOption);
+    	addGlobalOptions();
+    	return executeCommand(commandTimeout);
+    }
+
+    /**
+     * Add mandatory argument/option.
+     * 
+     * @param mandatoryOption - Boolean value of mandatory option.
+     * @throws Exception
+     */
+    private void addMandatoryArguments(boolean mandatoryOption)
+    throws Exception {
+    	String mandatoryArg;
+    	if (mandatoryOption) {
+    		if (useLongOptions) {
+    			mandatoryArg = PREFIX_ARGUMENT_LONG + MANDATORY_ARGUMENT;
+    		} else {
+    			mandatoryArg = PREFIX_ARGUMENT_SHORT + SHORT_MANDATORY_ARGUMENT; 
+    		}
+    		addArgument(mandatoryArg);
+    	}
+    }
+    
+    /**
+     * Remove service from a realm. 
+     * 
+     * @param realmName - Name of the realm.
+     * @param serviceName - Name of the service.
+     * @return int - exit status of the remove-realm-svcs subcommand.  
+     * @throws Exception
+     */
+    public int removeSvcRealm(String realmName, String serviceName)
+    throws Exception {
+    	setSubcommand(REMOVE_SVC_REALM_SUBCOMMAND);
+    	addRealmArguments(realmName);
+    	addServiceNameArguments(serviceName);
     	addGlobalOptions();
     	return executeCommand(commandTimeout);
     }
