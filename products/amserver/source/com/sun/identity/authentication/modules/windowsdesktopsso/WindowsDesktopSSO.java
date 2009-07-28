@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WindowsDesktopSSO.java,v 1.6 2009-04-07 22:55:13 beomsuk Exp $
+ * $Id: WindowsDesktopSSO.java,v 1.7 2009-07-28 19:40:45 beomsuk Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.authentication.spi.HttpCallback;
 import com.sun.identity.authentication.util.DerValue;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import java.io.ByteArrayInputStream;
@@ -134,7 +135,12 @@ public class WindowsDesktopSSO extends AMLoginModule {
         }
 
         // retrieve the spnego token
-        byte[] spnegoToken = getSPNEGOToken();
+        byte[] spnegoToken = 
+            getSPNEGOTokenFromHTTPRequest(getHttpServletRequest());
+        if (spnegoToken == null) {
+            spnegoToken = getSPNEGOTokenFromCallback(callbacks);
+        }
+
         if (spnegoToken == null) {
             debug.message("spnego token is not valid.");
             throw new AuthLoginException(amAuthWindowsDesktopSSO, "token",null);
@@ -312,15 +318,14 @@ public class WindowsDesktopSSO extends AMLoginModule {
             (byte)0x02 };
 
 
-    private byte[] getSPNEGOToken() {
-        byte[] token = null;
-        HttpServletRequest req = getHttpServletRequest();
+    private byte[] getSPNEGOTokenFromHTTPRequest(HttpServletRequest req) {
+        byte[] spnegoToken = null;
         String header = req.getHeader("Authorization");
-        if (header.startsWith("Negotiate")) {
+        if ((header != null) && header.startsWith("Negotiate")) {
             header = header.substring("Negotiate".length()).trim();
             BASE64Decoder decoder = new BASE64Decoder();
             try { 
-                token = decoder.decodeBuffer(header);
+                spnegoToken = decoder.decodeBuffer(header);
             } catch (Exception e) {
                 debug.error("Decoding token error.");
                 if (debug.messageEnabled()) {
@@ -328,7 +333,26 @@ public class WindowsDesktopSSO extends AMLoginModule {
                 }
             }
         }
-        return token;
+        return spnegoToken;
+    }
+
+    private byte[] getSPNEGOTokenFromCallback(Callback[] callbacks) {
+        byte[] spnegoToken = null;
+        if (callbacks != null && callbacks.length != 0) {
+            String spnegoTokenStr =
+                ((HttpCallback)callbacks[0]).getAuthorization();
+            BASE64Decoder decoder = new BASE64Decoder();
+            try {
+                spnegoToken = decoder.decodeBuffer(spnegoTokenStr);
+            } catch (Exception e) {
+                debug.error("Decoding token error.");
+                if (debug.messageEnabled()) {
+                    debug.message("Stack trace: ", e);
+                }
+            }
+        }
+
+        return spnegoToken;
     }
 
     private byte[] parseToken(byte[] rawToken) {

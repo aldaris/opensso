@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.30 2009-07-23 05:31:20 222713 Exp $
+ * $Id: LoginViewBean.java,v 1.31 2009-07-28 19:40:46 beomsuk Exp $
  *
  */
 
@@ -1360,7 +1360,16 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
 
     // Process 'HttpCallback' initiated by Authentication module
     private void processHttpCallback(HttpCallback hc) throws Exception{
-        String auth = request.getHeader(hc.getAuthorizationHeader());
+        String auth = null;
+        if (hc.isForHTTPBasic()) {
+            auth = request.getHeader(hc.getAuthorizationHeader());
+        } else if (hc.isForWindowsDesktopSSO()) {
+            auth = request.getHeader("Authorization");
+            if ((auth != null) && auth.startsWith("Negotiate")) {
+                auth = auth.substring("Negotiate".length()).trim();
+            }
+        }
+
         if (auth != null && auth.length() != 0) {
             if (loginDebug.messageEnabled()){
                 loginDebug.message("Found authorization header.");

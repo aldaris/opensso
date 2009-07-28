@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpCallback.java,v 1.3 2009-06-19 17:54:14 ericow Exp $
+ * $Id: HttpCallback.java,v 1.4 2009-07-28 19:40:45 beomsuk Exp $
  *
  */
 
@@ -46,6 +46,8 @@ public class HttpCallback implements Callback, Serializable {
     private String negoHeader = null;
     private String negoValue = null;
     private int errorCode = HttpServletResponse.SC_UNAUTHORIZED;
+    static final String HTTP_NEGOTIATE = "Negotiate";
+    static final String HTTP_HTTPBASIC = "BASIC realm=\"basic_realm\"";
     
     /**
      * Creates a <code>HttpCallback</code> object.
@@ -145,5 +147,20 @@ public class HttpCallback implements Callback, Serializable {
         this.authToken = authorization;
     }
 
+    /**
+     * Returns <code>true<code> if the callback is for HTTPBasic.
+     */
+    public boolean isForHTTPBasic() {
+        return (negoValue != null)
+            ? negoValue.equalsIgnoreCase(HTTP_HTTPBASIC) : false;
+    }
+
+    /**
+     * Returns <code>true<code> if the callback is for WindowsDesktopSSO.
+     */
+    public boolean isForWindowsDesktopSSO() {
+        return (negoValue != null)
+            ? negoValue.equalsIgnoreCase(HTTP_NEGOTIATE) : false;
+    }
 }
 
