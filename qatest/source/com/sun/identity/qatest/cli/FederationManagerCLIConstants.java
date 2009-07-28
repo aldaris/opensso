@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLIConstants.java,v 1.17 2009-07-13 03:18:23 vimal_67 Exp $
+ * $Id: FederationManagerCLIConstants.java,v 1.18 2009-07-28 02:49:28 srivenigan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -421,6 +421,16 @@ public interface FederationManagerCLIConstants {
     static final String SERVER_NAMES_ARGUMENT = "servernames";
 
     /**
+     * Mandatory argument/option
+     */
+    static final String MANDATORY_ARGUMENT = "mandatory";
+    
+    /**
+     * Short mandatory argument/option
+     */
+    static final String SHORT_MANDATORY_ARGUMENT = "y";
+    
+    /**
      * Entity ID argument/option
      */
     String ENTITYID_ARGUMENT = "--entityid";
@@ -611,16 +621,6 @@ public interface FederationManagerCLIConstants {
     String SHORT_AFFISCERTALIAS_ARGUMENT = "-J";
 
     /**
-     * Policy decision point signing certificate alias argument/option
-     */
-    String XACMLPDPSCERTALIAS_ARGUMENT = "--xacmlpdpscertalias";
-
-    /**
-     * Short Policy decision point signing certificate alias argument/option
-     */
-    String SHORT_XACMLPDPSCERTALIAS_ARGUMENT = "-t";
-
-    /**
      * Policy enforcement point signing certificate alias argument/option
      */
     String XACMLPEPSCERTALIAS_ARGUMENT = "--xacmlpepscertalias";
@@ -629,6 +629,16 @@ public interface FederationManagerCLIConstants {
      * Short Policy enforcement point signing certificate alias argument/option
      */
     String SHORT_XACMLPEPSCERTALIAS_ARGUMENT = "-k";
+
+    /**
+     * Policy decision point signing certificate alias argument/option
+     */
+    String XACMLPDPSCERTALIAS_ARGUMENT = "--xacmlpdpscertalias";
+
+    /**
+     * Short Policy decision point signing certificate alias argument/option
+     */
+    String SHORT_XACMLPDPSCERTALIAS_ARGUMENT = "-t";
 
     /**
      * Service provider encryption certificate alias argument/option
@@ -656,7 +666,8 @@ public interface FederationManagerCLIConstants {
     String ATTRQECERTALIAS_ARGUMENT = "--attrqecertalias";
 
     /**
-     * Short Attribute query provider encryption certificate alias argument/option
+     * Short Attribute query provider encryption certificate alias 
+     * argument/option
      */
     String SHORT_ATTRQECERTALIAS_ARGUMENT = "-R";
 
@@ -670,13 +681,15 @@ public interface FederationManagerCLIConstants {
      */
     String SHORT_ATTRAECERTALIAS_ARGUMENT = "-G";
 
+
     /**
      * Authentication authority encryption certificate alias argument/option
      */
     String AUTHNAECERTALIAS_ARGUMENT = "--authnaecertalias";
 
     /**
-     * Short Authentication authority encryption certificate alias argument/option
+     * Short Authentication authority encryption certificate alias 
+     * argument/option
      */
     String SHORT_AUTHNAECERTALIAS_ARGUMENT = "-E";
 
@@ -711,12 +724,14 @@ public interface FederationManagerCLIConstants {
     String SHORT_XACMLPEPECERTALIAS_ARGUMENT = "-z";
 
     /**
-     * Specify metadata specification, either idff or saml2, defaults to saml2 argument/option
+     * Specify metadata specification, either idff or saml2, defaults to saml2 
+     * argument/option
      */
     String SPEC_ARGUMENT = "--spec";
 
     /**
-     * Short Specify metadata specification, either idff or saml2, defaults to saml2 argument/option
+     * Short Specify metadata specification, either idff or saml2, defaults to 
+     * saml2 argument/option
      */
     String SHORT_SPEC_ARGUMENT = "-c";
 
