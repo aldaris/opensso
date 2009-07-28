@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PostAuthProcessingTest.java,v 1.6 2009-06-02 17:08:18 cmwesley Exp $
+ * $Id: PostAuthProcessingTest.java,v 1.7 2009-07-28 13:42:29 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -226,8 +226,13 @@ public class PostAuthProcessingTest extends AuthenticationCommon {
     }
 
     /**
-     * This test verifies the account login status for the users with 
-     * different account management attributes.
+     * This test sets user profile attributes in the user's SSOToken.  The
+     * test then retrieves these attributes from the <code>SSOToken</code>
+     * using the prefix "am.protected".
+     * @param testModule - the authentication module instance type which will
+     * be used by the user to be authenticated.
+     * @param testRealm - the name of the realm in which the user will be
+     * authenticated.
      */
     @Parameters({"testModule", "testRealm"})
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
@@ -315,6 +320,10 @@ public class PostAuthProcessingTest extends AuthenticationCommon {
     /**
      * Attempt to modify the value of a protected user profile attribute in
      * the <code>SSOToken</code>.
+     * @param testModule - the authentication module instance type which will
+     * be used by the user to be authenticated.
+     * @param testRealm - the name of the realm in which the user will be
+     * authenticated.
      */
     @Parameters({"testModule", "testRealm"})
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 

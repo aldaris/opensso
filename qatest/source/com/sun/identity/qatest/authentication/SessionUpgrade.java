@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUpgrade.java,v 1.12 2009-06-02 17:08:18 cmwesley Exp $
+ * $Id: SessionUpgrade.java,v 1.13 2009-07-28 13:42:29 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.sun.identity.qatest.authentication;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IDMCommon;
@@ -67,8 +66,6 @@ public class SessionUpgrade extends AuthenticationCommon {
     private int failedAuthLevel;
     private ResourceBundle testResources;
     private String testModules;
-    private boolean userExists;
-    private String createUserProp;
     private String firstModuleName;
     private String firstModuleUserName;
     private String firstModulePassword;
@@ -77,8 +74,6 @@ public class SessionUpgrade extends AuthenticationCommon {
     private String secondModuleUserName;
     private String secondModulePassword;
     private String secondModuleLevel;
-    private String userName;
-    private String password;
     private String absoluteRealm;
     private List<String> testUserList = new ArrayList<String>();
     private List<IdType> idTypeList = new ArrayList<IdType>();
@@ -90,7 +85,9 @@ public class SessionUpgrade extends AuthenticationCommon {
     private IDMCommon idmc;
     private String strServiceName = "iPlanetAMAuthService";
     private String profileAttrName = "iplanet-am-auth-dynamic-profile-creation";
-    private String propertyPrefix = "am-auth-session-test-";
+    private String propertyPrefix;
+    private String createUserProfile = "required";
+    private boolean usersDontMatch;
 
     /**
      * Default Constructor
@@ -107,35 +104,21 @@ public class SessionUpgrade extends AuthenticationCommon {
      * create users before testing the session Upgrade feature
      */
     @Parameters({"forceAuth", "testRealm", "useDifferentModules",
-            "createUserProfile", "useSanityMode"})
+            "upgradeTestType"})
     @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
             "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String forceAuth, String testRealm,
-            String useDifferentModules, String createUserProfile,
-            String useSanityMode)
+            String useDifferentModules, String upgradeTestType)
     throws Exception {
         Object[] params = {forceAuth, testRealm, useDifferentModules,
-                createUserProfile, useSanityMode};
+                upgradeTestType};
         entering("setup", params);
+        usersDontMatch = upgradeTestType.equals("mismatch");
 
         try {
             adminToken = getToken(adminUser, adminPassword, realm);
-            testModules = testResources.getString("am-auth-test-modules");
-            failedAuthLevel = new Integer(testResources.getString(
-                    "am-auth-session-failed-auth-level")).intValue();
-            if (Boolean.parseBoolean(useSanityMode)) {
-                propertyPrefix = "am-auth-session-sanity-test-";
-                testModules =
-                        testResources.getString("am-auth-sanity-test-modules");
-            } else {
-                if (createUserProfile.equals("ignore")) {
-                    propertyPrefix = "am-auth-session-ignore-test-";
-                    testModules =
-                            testResources.getString(
-                            "am-auth-ignore-test-modules");
-                }
-            }
-
+            propertyPrefix = "am-auth-session-" + upgradeTestType + "-test-";
+            testModules = testResources.getString(propertyPrefix + "modules");
             String[] moduleTokens = testModules.split(",");
             if (testModules.length() < 2) {
                 log(Level.SEVERE, "setup", "The test modules property " +
@@ -178,28 +161,6 @@ public class SessionUpgrade extends AuthenticationCommon {
                 }
             }
 
-            // Workaround for issue 4974 - RADIUS auth instance not copied to
-            // subrealm.
-            if (createUserProfile.equals("ignore") && !testRealm.equals("/")) {
-                Map<String, String> instanceMap =
-                        getModuleInstanceMap(moduleTokens[1], "1");
-                log(Level.FINE, "createAuthInstances", "Removing key " +
-                        NUMBER_OF_INSTANCES + " from the instance map");
-                instanceMap.remove(NUMBER_OF_INSTANCES);
-                instanceMap.remove(INSTANCE_REALM);
-                String instanceName = instanceMap.get(INSTANCE_NAME);
-                instanceMap.remove(INSTANCE_NAME);
-                log(Level.FINEST, "createAuthInstances",
-                        "instanceMap = " + instanceMap);
-                String instanceService = instanceMap.get(INSTANCE_SERVICE);
-                log(Level.FINE, "createAuthInstances", "Removing key " +
-                        INSTANCE_SERVICE + " from the instance map");
-                instanceMap.remove(INSTANCE_SERVICE);
-                log(Level.FINEST, "setup", "instanceMap = " + instanceMap);
-                createAuthInstance(testRealm, instanceService, instanceName,
-                        instanceMap);
-            }
-
             log(Level.FINEST, "setup", "OrgName " + testRealm);
             log(Level.FINEST, "setup", "firstModuleName: " + firstModuleName);
             log(Level.FINEST, "setup", "firstModuleUserName: " +
@@ -207,16 +168,14 @@ public class SessionUpgrade extends AuthenticationCommon {
             log(Level.FINEST, "setup", "firstModuleUserPass: " +
                     firstModulePassword);
             log(Level.FINEST, "setup", "forceAuthEnabled: " + forceAuth);
-            log(Level.FINEST, "setup", "userProfileCreation: " +
-                    createUserProfile);
-            log(Level.FINEST, "setup", "useSanityMode: " + useSanityMode);
+            log(Level.FINEST, "setup", "upgradeTestType: " +
+                    upgradeTestType);
 
             Reporter.log("OrgName: " + testRealm);
             Reporter.log("firstModuleName: " + firstModuleName);
             Reporter.log("firstModuleUserName: " + firstModuleUserName);
             Reporter.log("firstModuleUserPass: " + firstModulePassword);
-            Reporter.log("User Profile Creation: " + createUserProfile);
-            Reporter.log("Use Sanity Mode: " + useSanityMode);
+            Reporter.log("Upgrade Test Type: " + upgradeTestType);
 
             if (useMultipleModules) {
                 log(Level.FINEST, "setup", "secondModuleName: " +
@@ -247,6 +206,9 @@ public class SessionUpgrade extends AuthenticationCommon {
             log(Level.FINEST, "setup", "Original value of " + profileAttrName +
                     ": "  + oriAuthAttrValues);
 
+            if (upgradeTestType.equals("ignore")) {
+                createUserProfile = upgradeTestType;
+            }
             String testAttrValue = getProfileAttribute(createUserProfile);
             Set valSet = new HashSet();
             valSet.add(testAttrValue);
@@ -263,50 +225,11 @@ public class SessionUpgrade extends AuthenticationCommon {
             Reporter.log("UpgradedAuthLevel: " + upgradedAuthLevel);
 
             failedAuthType = firstModuleName;
-            for (String modName: moduleTokens) {
-                createUserProp = testResources.getString("am-auth-test-" +
-                        modName + "-user-exists");
-                userName = testResources.getString("am-auth-test-" +
-                        modName + "-user");
-                userName.trim();
-                password = testResources.getString("am-auth-test-" +
-                        modName + "-password");
-                password.trim();
-                userExists = new Boolean(createUserProp).booleanValue();
-                log(Level.FINEST, "setup", "createUserProp = " +
-                        createUserProp);
-                log(Level.FINEST, "setup", "userName = " + userName);
-                log(Level.FINEST, "setup", "password = " + password);
-
-                if (!userExists && createUserProfile.equals("required")) {
-                    log(Level.FINE, "setup", "Creating the user " + userName);
-                    testUserList.add(userName);
-                    StringBuffer attrBuffer =
-                            new StringBuffer("sn=" + userName).
-                            append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
-                            append("cn=" + userName).
-                            append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
-                            append("userpassword=" + password).
-                            append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
-                            append("inetuserstatus=Active");
-                    if (!firstModuleUserName.equals(secondModuleUserName)) {
-                        attrBuffer.append(
-                                IDMConstants.IDM_KEY_SEPARATE_CHARACTER).append(
-                                "iplanet-am-user-alias-list=" +
-                                secondModuleUserName);
-                    }
-
-                    log(Level.FINE, "setup", "Creating user " +
-                            userName + " ...");
-                    if (!idmc.createID(userName, "user", attrBuffer.toString(),
-                            adminToken, testRealm)) {
-                        log(Level.SEVERE, "setup",
-                                "Failed to create user identity " +
-                                userName + " ...");
-                        assert false;
-                    } else {
-                        idTypeList.add(IdType.USER);
-                    }
+            if (!upgradeTestType.equals("ignore")) {
+                createUser(testRealm, firstModuleUserName, firstModulePassword);
+                if (!secondModuleUserName.equals(firstModuleUserName)) {
+                    createUser(testRealm, secondModuleUserName,
+                            secondModulePassword);
                 }
             }
         } catch(Exception e) {
@@ -335,37 +258,29 @@ public class SessionUpgrade extends AuthenticationCommon {
      * testRealm - the realm in which the session upgrade will take place
      * testMode - the type of authentication (e.g. module-based or level-based)
      * that will be used in the test case.
-     * useDifferentModules - a String indicating whether two different auth
-     * modules will be used.  If the String is "true" then two auth modules will
-     * be used or if the String is "false" then a single auth module will be
-     * used.
      */
-    @Parameters({"forceAuth", "testRealm", "testMode",
-            "useDifferentModules", "createUserProfile"})
+    @Parameters({"forceAuth", "testRealm", "testMode"})
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
     "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSessionUpgrade(String forceAuth, String testRealm,
-            String testMode, String useDifferentModules,
-            String createUserProfile)
+            String testMode)
     throws Exception {
-        Object[] params = {forceAuth, testRealm, testMode,
-                useDifferentModules, createUserProfile};
+        Object[] params = {forceAuth, testRealm, testMode};
 
         entering("testSessionUpgrade", params);
         log(Level.FINE, "testSessionUpgrade",
                 "Test Description: Testing session upgrade in the realm " +
                 testRealm + " with " + testMode +
                 "-based authentication, forceAuth " + forceAuth + ", " +
+                (usersDontMatch ? "different users, " : "the same user, ") +
                 (useMultipleModules ? "multiple modules" : "a single module") +
                 ", and user profile creation set to " + createUserProfile);
         Reporter.log("Test Description: Testing session upgrade in the realm " +
                 testRealm + " with " + testMode +
-                "-based authentication, forceAuth " + forceAuth +
-                ", " +
+                "-based authentication, forceAuth " + forceAuth + ", " +
+                (usersDontMatch ? "different users, " : "the same user, ") +
                 (useMultipleModules ? "multiple modules" : "a single module") +
                 ", and user profile creation set to " + createUserProfile);
-        AuthContext lc = null;
-        Callback[] callbacks = null;
         Callback[] callbacks2 = null;
         SSOToken obtainedToken = null;
         SSOToken upgradedToken = null;
@@ -412,66 +327,14 @@ public class SessionUpgrade extends AuthenticationCommon {
         Reporter.log("Auth Instance 2 Name: " + secondModuleToSelect);
 
         try {
-            lc = new AuthContext(testRealm);
-            log(Level.FINE, "testSessionUpgrade",
-                    "Invoking AuthContext.login with indexName " + indexName1);
-            lc.login(indexType, indexName1);
-        } catch (AuthLoginException le) {
-            log(Level.SEVERE, "testSessionUpgrade", le.getMessage());
-            le.printStackTrace();
-            cleanup(testRealm);
-            assert false;
-        }
-
-        while (lc.hasMoreRequirements()) {
-            callbacks = lc.getRequirements();
-            if (callbacks != null) {
-                try {
-                    for (int i = 0; i < callbacks.length; i++) {
-                        if (callbacks[i] instanceof NameCallback) {
-                            NameCallback namecallback =
-                                    (NameCallback)callbacks[i];
-                            namecallback.setName(firstModuleUserName);
-                        }
-                        if (callbacks[i] instanceof PasswordCallback) {
-                            PasswordCallback passwordcallback =
-                                    (PasswordCallback)callbacks[i];
-                            passwordcallback.setPassword(
-                                    firstModulePassword.toCharArray());
-                        }
-                        if (callbacks[i] instanceof ChoiceCallback) {
-                            ChoiceCallback choiceCallback =
-                                    (ChoiceCallback)callbacks[i];
-                            String[] strChoices = choiceCallback.getChoices();
-                            int choiceIndex = -1;
-                            for (int j=0; j < strChoices.length; j++) {
-                                log(Level.FINEST, "testSessionUpgrade",
-                                        "choice " + j + " = " +
-                                        strChoices[j]);
-                                if (strChoices[j].equals(firstModuleName)) {
-                                    choiceIndex = j;
-                                    break;
-                                }
-                            }
-                            choiceCallback.setSelectedIndex(choiceIndex);
-                        }
-                    }
-                    lc.submitRequirements(callbacks);
-                } catch (Exception e) {
-                    log(Level.SEVERE, "testSessionUpgrade", e.getMessage());
-                    e.printStackTrace();
-                    assert false;
-                }
-            }
-        }
-        Thread.sleep(notificationSleepTime);
-        if (lc.getStatus() == AuthContext.Status.SUCCESS) {
-            try {
+            obtainedToken = performRemoteLogin(testRealm, testMode, indexName1,
+                    firstModuleUserName, firstModulePassword, firstModuleName);
+            Thread.sleep(notificationSleepTime);
+            if (obtainedToken != null) {
                 log(Level.FINEST, "testSessionUpgrade", "forceAuth = " +
                         forceAuth);
                 Reporter.log("forceAuth = " + forceAuth);
                 boolean useForceAuth = Boolean.parseBoolean(forceAuth);
-                obtainedToken = lc.getSSOToken();
                 AuthContext newlc = new AuthContext(obtainedToken,
                         useForceAuth);
                 log(Level.FINE, "testSessionUpgrade",
@@ -480,7 +343,7 @@ public class SessionUpgrade extends AuthenticationCommon {
                 while (newlc.hasMoreRequirements()) {
                     callbacks2 = newlc.getRequirements();
                     if (callbacks2 != null) {
-                        log(Level.FINEST, "testSessionUpgrade", 
+                        log(Level.FINEST, "testSessionUpgrade",
                                 "Callback array contains " + callbacks2.length +
                                 " callbacks");
                         try {
@@ -518,9 +381,9 @@ public class SessionUpgrade extends AuthenticationCommon {
                                 }
                             }
                             newlc.submitRequirements(callbacks2);
-                        } catch (Exception e) {
+                        } catch (Exception ex1) {
                             log(Level.SEVERE, "testSessionUpgrade",
-                                    e.getMessage());
+                                    ex1.getMessage());
                             assert false;
                         }
                     }
@@ -582,28 +445,40 @@ public class SessionUpgrade extends AuthenticationCommon {
                                 (upgradedSessionID.equals(obtainedSessionID)));
                     }
                 } else {
-                    log(Level.SEVERE, "testSessionUpgrade", "The user " +
-                            secondModuleUserName +
-                            " did not authenticate successfully.");
-                    assert false;
+                    if (!firstModuleUserName.equals(secondModuleUserName)) {
+                        log(Level.FINEST, "testSessionUpgrade",
+                                "Expected session upgrade failed with " +
+                                "user1 = " +  firstModuleUserName +
+                                " and user2 = " + secondModuleUserName);
+                        log(Level.FINE, "testSessionUpgrade",
+                                "Checking validity of the original SSOToken");
+                        SSOTokenManager tokenMgr =
+                                SSOTokenManager.getInstance();
+                        tokenMgr.refreshSession(obtainedToken);
+                        assert tokenMgr.isValidToken(obtainedToken) &&
+                                obtainedToken.getProperty("UserId").
+                                equals(firstModuleUserName);
+                    } else {
+                        log(Level.SEVERE, "testSessionUpgrade",
+                                "The second authentication with user " +
+                                secondModuleUserName + " was not successful.");
+                        assert false;
+                    }
                 }
-            } catch (Exception ex) {
-                log(Level.SEVERE, "testSessionUpgrade", ex.getMessage());
-                ex.printStackTrace();
-                cleanup(testRealm);
-                throw ex;
-            } finally {
-                if (upgradedToken != null) {
-                    destroyToken(upgradedToken);
-                }
+            } else {
+                log(Level.SEVERE, "testSessionUpgrade",
+                        "The first authentication with user" +
+                        firstModuleUserName + " was not successful.");
+                assert false;
             }
             exiting("testSessionUpgrade");
-        } else {
-            log(Level.SEVERE, "testSessionUpgrade", "The user " +
-                    firstModuleUserName +
-                    " did not authenticate successfully.");
+        } catch (Exception e) {
+            log(Level.SEVERE, "testSessionUpgrade", e.getMessage());
+            e.printStackTrace();
+            cleanup(testRealm);
             assert false;
         }
+
     }
 
     /**
@@ -616,29 +491,27 @@ public class SessionUpgrade extends AuthenticationCommon {
      * testMode - the type of authentication (e.g. module-based or level-based)
      * that will be used in the test case.
      */
-    @Parameters({"forceAuth", "testRealm", "testMode",
-        "useDifferentModules", "createUserProfile"})
+    @Parameters({"forceAuth", "testRealm", "testMode"})
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
     "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSessionUpgradeNegative(String forceAuth,
-            String testRealm, String testMode, String useDifferentModules,
-            String createUserProfile)
+            String testRealm, String testMode)
     throws Exception {
-        Object[] params = {forceAuth, testRealm, testMode,
-                useDifferentModules, createUserProfile};
+        Object[] params = {forceAuth, testRealm, testMode};
         entering("testSessionUpgradeNegative", params);
         log(Level.FINE, "testSessionUpgradeNegative",
                 "Test Description: Testing failed auth in the realm " +
                 testRealm + " with " + testMode +
-                "-based authentication, forceAuth " + forceAuth + " and " +
+                "-based authentication, forceAuth " + forceAuth + ", " +
+                (usersDontMatch ? "different users, " : "the same user, ") +
+                "and " +
                 (useMultipleModules ? "multiple modules" : "a single module"));
         Reporter.log("Test Description: Testing failed auth in the realm " +
                 testRealm + " with " + testMode +
-                "-based authentication, forceAuth " + forceAuth +
+                "-based authentication, forceAuth " + forceAuth + ", " +
+                (usersDontMatch ? "different users, " : "the same user, ") + 
                 " and " +
                 (useMultipleModules ? "multiple modules" : "a single module"));
-        AuthContext lc = null;
-        Callback[] callbacks = null;
         Callback[] callbacks2 = null;
         SSOToken obtainedToken = null;
         AuthContext.IndexType indexType = null;
@@ -672,66 +545,15 @@ public class SessionUpgrade extends AuthenticationCommon {
         }
 
         try {
-            lc = new AuthContext(testRealm);
-            lc.login(indexType, indexName1);
-        } catch (AuthLoginException le) {
-            log(Level.SEVERE, "testSessionUpgradeNegative", le.getMessage());
-            le.printStackTrace();
-            cleanup(testRealm);
-            assert false;
-        }
-
-        while (lc.hasMoreRequirements()) {
-            callbacks = lc.getRequirements();
-            if (callbacks != null) {
-                try {
-                    for (int i = 0; i < callbacks.length; i++) {
-                        if (callbacks[i] instanceof NameCallback) {
-                            NameCallback namecallback =
-                                    (NameCallback)callbacks[i];
-                            namecallback.setName(firstModuleUserName);
-                        }
-                        if (callbacks[i] instanceof PasswordCallback) {
-                            PasswordCallback passwordcallback =
-                                    (PasswordCallback)callbacks[i];
-                            passwordcallback.setPassword(
-                                    firstModulePassword.toCharArray());
-                        }
-                        if (callbacks[i] instanceof ChoiceCallback) {
-                            ChoiceCallback choiceCallback =
-                                    (ChoiceCallback)callbacks[i];
-                            String[] strChoices = choiceCallback.getChoices();
-                            int choiceIndex = -1;
-                            for (int j=0; j < strChoices.length; j++) {
-                                log(Level.FINEST, "testSessionUpgrade",
-                                        "module " + j + " = " + strChoices[j]);
-                                 if (strChoices[j].equals(firstModuleName)) {
-                                     choiceIndex = j;
-                                     break;
-                                 }
-                            }
-                            choiceCallback.setSelectedIndex(choiceIndex);
-                        }
-                    }
-                    lc.submitRequirements(callbacks);
-                } catch (Exception e) {
-                    log(Level.SEVERE, "testSessionUpgradeNegative",
-                            e.getMessage());
-                    e.printStackTrace();
-                    cleanup(testRealm);
-                    assert false;
-                }
-            }
-        }
-
-        if (lc.getStatus() == AuthContext.Status.SUCCESS) {
-            try {
+            obtainedToken = performRemoteLogin(testRealm, testMode, indexName1,
+                    firstModuleUserName, firstModulePassword, firstModuleName);
+            Thread.sleep(notificationSleepTime);
+            if (obtainedToken != null) {
                 log(Level.FINEST, "testSessionUpgradeNegative",
                         "forceAuth = " + forceAuth);
                 Reporter.log("ForceAuth = " + forceAuth);
                 String failedPassword = "wrong" + secondModulePassword;
                 boolean useForceAuth = Boolean.parseBoolean(forceAuth);
-                obtainedToken = lc.getSSOToken();
                 AuthContext newlc = new AuthContext(obtainedToken,
                         useForceAuth);
                 newlc.login(indexType, indexName2);
@@ -839,23 +661,23 @@ public class SessionUpgrade extends AuthenticationCommon {
                     assert false;
                 }
                 exiting("testSessionUpgradeNegative");
-            } catch (Exception ex) {
+            } else {
                 log(Level.SEVERE, "testSessionUpgradeNegative",
-                        ex.getMessage());
-                ex.printStackTrace();
-                cleanup(testRealm);
-                throw ex;
-            } finally {
-                if (obtainedToken != null) {
-                    destroyToken(obtainedToken);
-                }
+                        "The first authentication of user " +
+                        firstModuleUserName + " with " + testMode +
+                        " = " + indexName1 + ".");
+                assert false;
             }
-        } else {
-            log(Level.SEVERE, "testSessionUpgradeNegative", "The user " +
-                    firstModuleUserName +
-                    " did not authenticate successfully with " + testMode +
-                    " = " + indexName1 + ".");
-            assert false;
+        } catch (Exception ex) {
+            log(Level.SEVERE, "testSessionUpgradeNegative",
+                    ex.getMessage());
+            ex.printStackTrace();
+            cleanup(testRealm);
+            throw ex;
+        } finally {
+            if (obtainedToken != null) {
+                destroyToken(obtainedToken);
+            }
         }
     }
 
@@ -908,6 +730,35 @@ public class SessionUpgrade extends AuthenticationCommon {
             if (adminToken != null) {
                 destroyToken(adminToken);
             }
+        }
+    }
+
+    /**
+     * Create a user for the session upgrade testing.
+     * @param userRealm - a <code>String</code> containing the realm in which
+     * the user should be created.
+     * @param user - a <code>String</code> containing the user ID.
+     * @param password - a <code>String</code> containing the user's password.
+     */
+    private void createUser(String userRealm, String user, String password)
+    throws Exception {
+        log(Level.FINE, "createUser", "Creating the user " + user);
+        testUserList.add(user);
+        StringBuffer attrBuffer =
+                new StringBuffer("sn=" + user).
+                append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                append("cn=" + user).
+                append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                append("userpassword=" + password).
+                append(IDMConstants.IDM_KEY_SEPARATE_CHARACTER).
+                append("inetuserstatus=Active");
+        if (!idmc.createID(user, "user", attrBuffer.toString(),
+                adminToken, userRealm)) {
+            log(Level.SEVERE, "setup",
+                    "Failed to create user identity " + user + " ...");
+            assert false;
+        } else {
+            idTypeList.add(IdType.USER);
         }
     }
 }
