@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModel.java,v 1.7 2009-07-01 23:26:13 babysunil Exp $
+ * $Id: TaskModel.java,v 1.8 2009-07-28 17:46:24 babysunil Exp $
  *
  */
 
@@ -134,5 +134,15 @@ public interface TaskModel
     
     Map getConfigureSalesForceAppsURLs(String realm, String entityId,
             String attrMap) throws AMConsoleException;
+
+    /**
+     * Saves the Salesforce login url as the Assertion Consumer Service Location
+     * @param realm Realm
+     * @param entityId Entity Name
+     * @param acsUrl assertion consumer service location
+     * @throws AMConsoleException if value cannot be saved.
+     */
+    void setAcsUrl(String realm, String entityId, String acsUrl)
+            throws AMConsoleException;
     
 }

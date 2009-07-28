@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModelImpl.java,v 1.14 2009-07-02 00:04:01 babysunil Exp $
+ * $Id: TaskModelImpl.java,v 1.15 2009-07-28 17:46:24 babysunil Exp $
  *
  */
 package com.sun.identity.console.task.model;
@@ -36,9 +36,11 @@ import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SingleSignOnServiceElement;
+import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
@@ -60,6 +62,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
+
 
 public class TaskModelImpl
         extends AMModelBase
@@ -379,6 +382,45 @@ public class TaskModelImpl
             throw new AMConsoleException(ex.getMessage());
         }
         return map;
+    }
+
+    /**
+     * Saves the Salesforce login url as the Assertion Consumer Service Location
+     * @param realm Realm
+     * @param entityId Entity Name
+     * @param acsUrl assertion consumer service location
+     * @throws AMConsoleException if value cannot be saved.
+     */
+    public void setAcsUrl(
+            String realm,
+            String entityId,
+            String acsUrl) throws AMConsoleException {
+        SPSSODescriptorElement spssoDescriptor = null;
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            EntityDescriptorElement entityDescriptor =
+                    samlManager.getEntityDescriptor(realm, entityId);
+            spssoDescriptor =
+                    samlManager.getSPSSODescriptor(realm, entityId);
+            if (spssoDescriptor != null) {
+                List asconsServiceList =
+                        spssoDescriptor.getAssertionConsumerService();
+
+                for (Iterator i = asconsServiceList.listIterator(); i.hasNext();) {
+                    AssertionConsumerServiceElement acsElem =
+                            (AssertionConsumerServiceElement) i.next();
+                    if (acsElem.getBinding().contains("HTTP-POST")) {
+                        acsElem.setLocation(acsUrl);
+
+                    }
+                }
+                samlManager.setEntityDescriptor(realm, entityDescriptor);
+            }
+
+        } catch (SAML2MetaException e) {
+            debug.warning("SAMLv2ModelImpl.setSPStdAttributeValues:", e);
+        }
+
     }
 
     protected Set returnEmptySetIfValueIsNull(String str) {

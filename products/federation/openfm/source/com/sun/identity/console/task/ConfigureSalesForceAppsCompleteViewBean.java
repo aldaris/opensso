@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSalesForceAppsCompleteViewBean.java,v 1.2 2009-07-06 21:59:32 babysunil Exp $
+ * $Id: ConfigureSalesForceAppsCompleteViewBean.java,v 1.3 2009-07-28 17:45:40 babysunil Exp $
  *
  */
 package com.sun.identity.console.task;
@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.StringTokenizer;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -124,6 +123,7 @@ public class ConfigureSalesForceAppsCompleteViewBean
             String realm = req.getParameter("realm");
             String entityId = req.getParameter("idp");
             String attrMapp = req.getParameter("attrMapp");
+            setPageSessionAttribute("entityRealm", realm);
             TaskModel model = (TaskModel) getModelInternal();
             Map values = model.getConfigureSalesForceAppsURLs(realm, entityId, attrMapp);
 
@@ -139,6 +139,7 @@ public class ConfigureSalesForceAppsCompleteViewBean
             values.put("urllist", returnEmptySetIfValueIsNull(msg));
             AMPropertySheet ps = (AMPropertySheet) getChild(PROPERTIES);
             ps.setAttributeValues(values, model);
+   
         } catch (AMConsoleException ex) {
             Logger.getLogger(ConfigureSalesForceAppsCompleteViewBean.class.getName()).log(Level.SEVERE, null, ex);
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
@@ -174,10 +175,28 @@ public class ConfigureSalesForceAppsCompleteViewBean
      */
     public void handleButton1Request(RequestInvocationEvent event)
             throws ModelControlException {
-        HomeViewBean vb = (HomeViewBean) getViewBean(HomeViewBean.class);
-        backTrail();
-        passPgSessionMap(vb);
-        vb.forwardTo(getRequestContext());
+        String acsUrl = getDisplayFieldStringValue("SalesforceLoginURL");
+        try {
+            if ((acsUrl != null) && (acsUrl.length() > 0)) {
+                String realm = (String) getPageSessionAttribute("entityRealm");
+                String entityId = "https://saml.salesforce.com";
+                TaskModel model = (TaskModel) getModelInternal();
+                model.setAcsUrl(realm, entityId, acsUrl);
+                HomeViewBean vb = (HomeViewBean) getViewBean(HomeViewBean.class);
+                backTrail();
+                passPgSessionMap(vb);
+                vb.forwardTo(getRequestContext());
+            } else if ((acsUrl == null) || !(acsUrl.length() > 0)) {
+                ConfigureSalesForceAppsFinishWarningViewBean vb =
+                        (ConfigureSalesForceAppsFinishWarningViewBean) getViewBean(
+                        ConfigureSalesForceAppsFinishWarningViewBean.class);
+                vb.forwardTo(getRequestContext());
+            }
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage());
+        }
+
     }
 
     /**
