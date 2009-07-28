@@ -17,7 +17,7 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS7Admin.vbs,v 1.2 2009-07-21 19:15:56 robertis Exp $
+' $Id: IIS7Admin.vbs,v 1.3 2009-07-28 18:42:33 robertis Exp $
 '
 ' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 '
@@ -39,7 +39,7 @@ Dim WshShell, installDir, iis7ConfigDir, iis7LogsDir, iis7AuditDir, iis7DebugDir
 Dim origBootstrapFile, origConfigFile, newConfigDir, newLogsDir, newAuditDir, newDebugDir, moduleDir, modulePath
 Dim newBootstrapFile, newConfigFile, newConfigFileTmp, agentName
 Dim regKey, responseFile, sLine, aLine, wildCardMap
- ewMaps(), count, objWebRoot, IIsWebServiceObj, FSO, dict, dict1
+Dim NewMaps(), count, objWebRoot, IIsWebServiceObj, FSO, dict, dict1
 Dim scriptFullName, currDir
 Dim iis7InstanceDir
 Const ForReading = 1, ForWriting = 2

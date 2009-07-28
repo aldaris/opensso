@@ -17,23 +17,23 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS6Resource.en,v 1.4 2009-06-26 21:37:39 robertis Exp $
+' $Id: IIS6Resource.en,v 1.5 2009-07-28 18:40:59 robertis Exp $
 '
-' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+' Copyright 2009 Sun Microsystems Inc. All Rights Reserved
 '
 '
 '--------------------------------------------------------------------
-101 = Fully Qualified Host Name :
+101 = Enter the Agent URL (Example: http://agent.example.com:80) :
 102 = Displaying the list of Web Sites and its corresponding Identifiers
 103 = Site Name (Site Id)
 104 = Web Site Identifier :
-105 = Agent Protocol [http] :
-106 = Agent Port Number
-107 = Agent Deployment URI [/amagent] :
+105 = Invalid Agent URL. 
+106 = Enter the Agent profile password file : 
+107 = The password file does not exist.
 
-108 = Primary Server Host :
-109 = Primary Server Protocol [http] :
-110 = Primary Server Port Number
+108 = Enter the URL where the OpenSSO server is running. Please include the deployment URI also as shown in the example (Example: http://opensso.example.com:58080/opensso):
+109 = Invalid server Url.
+110 = Agent Configuration file created : 
 111 = Primary Server Deployment URI [/opensso] :
 112 = Primary Server Console URI [/opensso] :
 
