@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.13 2009-06-24 22:32:05 srivenigan Exp $
+ * $Id: CLIConstants.java,v 1.14 2009-07-28 15:58:02 cmwesley Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -457,5 +457,65 @@ public interface CLIConstants {
     /**
      * String for the "set-site-pri-url" subcommand
      */
-    public static final String SET_SITE_PRI_URL_SUBCOMMAND = "set-site-pri-url"; 
+    public static final String SET_SITE_PRI_URL_SUBCOMMAND = "set-site-pri-url";
+
+    /**
+     * String for the "add-svc-realm" subcommand
+     */
+    public static final String ADD_SVC_REALM_SUBCOMMAND = "add-svc-realm";
+
+    /**
+     * String for the "get-realm-svc-attrs" subcommand
+     */
+    public static final String GET_REALM_SVC_ATTRS_SUBCOMMAND =
+            "get-realm-svc-attrs";
+
+    /**
+     * String for the "list-realm-assignable-svcs" subcommand
+     */
+    public static final String LIST_REALM_ASSIGNABLE_SVCS_SUBCOMMAND =
+            "list-realm-assignable-svcs";
+
+    /**
+     * String for the "show-realm-svcs" subcommand
+     */
+    public static final String SHOW_REALM_SVCS_SUBCOMMAND = "show-realm-svcs";
+
+    /**
+     * String for the "remove-svc-realm" subcommand
+     */
+    public static final String REMOVE_SVC_REALM_SUBCOMMAND = "remove-svc-realm";
+    /**
+     * String for the "add-svc-identity" subcommand
+     */
+    public static final String ADD_SVC_IDENTITY_SUBCOMMAND = "add-svc-identity";
+    /**
+     * String for the "get-identity-svcs" subcommand
+     */
+    public static final String GET_IDENTITY_SVCS_SUBCOMMAND =
+            "get-identity-svcs";
+
+    /**
+     * String for the "list-identity-assignalbe-svcs" subcommand
+     */
+    public static final String LIST_IDENTITY_ASSIGNABLE_SVCS_SUBCOMMAND =
+            "list-identity-assignable-svcs";
+
+    /**
+     * String for the "remove-svc-identity" subcommand
+     */
+    public static final String REMOVE_SVC_IDENTITY_SUBCOMMAND =
+            "remove-svc-identity";
+
+    /**
+     * String for the "set-identity-svc-attrs" subcommand
+     */
+    public static final String SET_IDENTITY_SVC_ATTRS_SUBCOMMAND =
+            "set-identity-svc-attrs";
+
+    /**
+     * String for the "show-identity-svc-attrs" subcommand
+     */
+    public static final String SHOW_IDENTITY_SVC_ATTRS_SUBCOMMAND =
+            "show-identity-svc-attrs";
 }
