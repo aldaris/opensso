@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureSalesForceAppsFinishWarning.jsp,v 1.1 2009-07-28 17:49:11 babysunil Exp $
+   $Id: ConfigureSalesForceAppsFinishWarning.jsp,v 1.2 2009-07-28 18:37:41 babysunil Exp $
 
 --%>
 
