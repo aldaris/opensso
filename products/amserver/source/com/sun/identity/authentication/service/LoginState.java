@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.50 2009-06-19 01:30:22 manish_rustagi Exp $
+ * $Id: LoginState.java,v 1.51 2009-07-29 22:27:02 weisun2 Exp $
  *
  */
 
@@ -1119,10 +1119,15 @@ public class LoginState {
             }
             
             setSuccessLoginURL(indexType,indexName);
+            // Fix for issue 4909 
+            // Create a new session upon successful authentication 
+            // instead using old session and change state from INVALID
+            // to VALID only.  
+            SessionID oldSessId = session.getID(); 
+            session = ad.newSession(getOrgDN(), null); 
+            sid = session.getID();
             if (AuthD.isHttpSessionUsed()) {
-                session = ad.newSession(getOrgDN(), null); 
                 //save the AuthContext object in Session
-                sid = session.getID();
                 //session.setObject(ISAuthConstants.AUTH_CONTEXT_OBJ, ac);
                 if (hsession != null) {
                     hsession.removeAttribute(
@@ -1135,6 +1140,7 @@ public class LoginState {
             }
 
             this.subject = addSSOTokenPrincipal(subject);
+            AuthD.getSS().destroyInternalSession(oldSessId); 
             setSessionProperties(session);
             if ((modulesInSession) && (loginContext != null)) {
                 session.setObject(ISAuthConstants.LOGIN_CONTEXT,
