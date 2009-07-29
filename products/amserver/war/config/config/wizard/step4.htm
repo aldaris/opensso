@@ -190,9 +190,8 @@
         document.getElementById("activeDirectoryConfigSettings").style.display = "";
         document.getElementById("embeddedConfigSettings").style.display = "none";
         document.getElementById("externalConfigSettings").style.display = "none";        
-        $('nextTabButton').disabled = false;
         ie7fix++;
-        AjaxUtils.call("$context$path?actionLink=setUMEmbedded&ie7fix=" + ie7fix);
+        AjaxUtils.call("$context$path?actionLink=resetUMEmbedded&ie7fix=" + ie7fix);
     }
 
     function setAD() {
@@ -223,6 +222,7 @@
         userStoreChoice = "embedded";
         document.getElementById("embeddedConfigSettings").style.display = "";
         document.getElementById("externalConfigSettings").style.display = "none";        
+        document.getElementById("activeDirectoryConfigSettings").style.display = "none";
         $('nextTabButton').disabled = false;
         ie7fix++;
         AjaxUtils.call("$context$path?actionLink=setUMEmbedded&ie7fix=" + ie7fix);
@@ -231,8 +231,10 @@
     <!-- when external config is selected -->
     function enableExternalConfig() {
         userStoreChoice = "external";
-        document.getElementById("embeddedConfigSettings").style.display = "none";
+        document.getElementById("ldapv3sunds").checked=true;
         document.getElementById("externalConfigSettings").style.display = "";
+        document.getElementById("activeDirectoryConfigSettings").style.display = "none";
+        document.getElementById("embeddedConfigSettings").style.display = "none";
         allValid();
         ie7fix++;
         AjaxUtils.call("$context$path?actionLink=resetUMEmbedded&ie7fix=" + ie7fix);
@@ -252,7 +254,7 @@
 <div style="margin-left:10px;">
     <h1>$page.getLocalizedString("step4.title")<img class="pointer" src="$context/assets/images/message.gif"/></h1>
     <p>$page.getLocalizedString("step4.description")</p>
-    
+
     <input type="radio" id="userStoreDefault" name="userStoreCustom"
         style="margin-left:1em" value="false" $selectEmbeddedUM 
         $radioDataTypeDisabled onclick="enableEmbeddedConfig();"/>
