@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.10 2009-07-08 01:16:14 veiming Exp $
+ * $Id: ReferralPrivilege.java,v 1.11 2009-07-29 21:05:07 hengming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -167,11 +167,11 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
      */
     public void setRealms(Set<String> realms)
         throws EntitlementException {
-        if ((realms == null) || realms.isEmpty()) {
-            throw new EntitlementException(252);
-        }
         this.realms = new HashSet<String>();
-        this.realms.addAll(realms);
+        if ((realms != null) && !realms.isEmpty()) {
+            // Issue 5219
+            this.realms.addAll(realms);
+        }
     }
 
     /**
