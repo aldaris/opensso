@@ -52,6 +52,7 @@ Nightly and stable builds are available on opensso web site.
     %% 1.2 Solaris x86
     %% 1.3 Red Hat Linux AS 4.0/5.0
     %% 1.4 Windows 2003 Enterprise Edition
+    %% 1.5 Windows Server 2008 Enterprise 
 
 %% 1. Platforms
 
@@ -139,14 +140,17 @@ opensso/products/webagents/docs/WINNT/iis/README.txt
 Microsoft Internet Information Services 6 Agent Install instructions:
 opensso/products/webagents/docs/WINNT/iis/INSTALL.txt
 
+Sun Java System Proxy Server Agent Build instructions:
+opensso/products/webagents/docs/WINNT/proxy40/README.txt
+
+Sun Java System Proxy Server Agent Install instructions:
+opensso/products/webagents/docs/WINNT/proxy40/INSTALL.txt
+
+%% 1.5 Windows Server 2008 Enterprise 
+
 Microsoft Internet Information Services 7 Agent Build instructions: 
 opensso/products/webagents/docs/WINNT/iis7/README.txt
 
 Microsoft Internet Information Services 7 Agent Install instructions:
 opensso/products/webagents/docs/WINNT/iis7/INSTALL.txt
 
-Sun Java System Proxy Server Agent Build instructions:
-opensso/products/webagents/docs/WINNT/proxy40/README.txt
-
-Sun Java System Proxy Server Agent Install instructions:
-opensso/products/webagents/docs/WINNT/proxy40/INSTALL.txt
