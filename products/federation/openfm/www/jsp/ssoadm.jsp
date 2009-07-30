@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: ssoadm.jsp,v 1.5 2008-08-26 05:05:40 qcheng Exp $
+   $Id: ssoadm.jsp,v 1.6 2009-07-30 05:30:42 veiming Exp $
   
 --%>
 
@@ -78,7 +78,7 @@
         Object[] param = {Integer.toString(e.getExitCode())};
         out.println(MessageFormat.format(
             CLIConstants.JSP_EXIT_CODE_TAG, param));
-        out.println(e);
+        out.println(WebCLIHelper.escapeTags(e.getMessage()));
     }
 %>
 

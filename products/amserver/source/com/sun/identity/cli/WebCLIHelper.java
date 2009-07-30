@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLIHelper.java,v 1.12 2009-01-29 09:00:09 mahesh_prasad_r Exp $
+ * $Id: WebCLIHelper.java,v 1.13 2009-07-30 05:30:43 veiming Exp $
  *
  */
 
@@ -296,7 +296,7 @@ public class WebCLIHelper {
                 cmd.isSupportedOption("choicevalues"));
     }
 
-    private static String escapeTags(String html) {
+    public static String escapeTags(String html) {
         html = html.replaceAll("&", "&amp;");
         return html.replaceAll("<", "&lt;");
     }
