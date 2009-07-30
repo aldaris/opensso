@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.34 2009-04-02 01:16:07 veiming Exp $
+ * $Id: CommandManager.java,v 1.35 2009-07-30 05:35:34 veiming Exp $
  *
  */
 
@@ -498,7 +498,7 @@ public class CommandManager {
      *
      * @return debugger.
      */
-    static Debug getDebugger() {
+    public static Debug getDebugger() {
         return debugger;
     }
 

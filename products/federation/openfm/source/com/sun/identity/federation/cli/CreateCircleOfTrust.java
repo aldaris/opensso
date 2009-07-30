@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateCircleOfTrust.java,v 1.6 2008-12-16 01:49:36 qcheng Exp $
+ * $Id: CreateCircleOfTrust.java,v 1.7 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
@@ -62,9 +62,12 @@ public class CreateCircleOfTrust extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc) throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
+
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
         prefix = getStringOptionValue(FedCLIConstants.ARGUMENT_PREFIX);

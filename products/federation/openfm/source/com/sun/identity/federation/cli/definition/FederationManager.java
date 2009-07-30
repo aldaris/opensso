@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.38 2009-07-01 21:54:58 veiming Exp $
+ * $Id: FederationManager.java,v 1.39 2009-07-30 05:35:36 veiming Exp $
  *
  */
 
@@ -41,7 +41,8 @@ public class FederationManager {
     private String product;
 
     @ResourceStrings(
-        string="cannot-write-to-file=Unable to write to file, {0}\nfile-not-found=File not found, {0}\nunsupported-specification=Unsupported specification."
+        string={"cannot-write-to-file=Unable to write to file, {0}\nfile-not-found=File not found, {0}\nunsupported-specification=Unsupported specification.",
+        "error-message-no-privilege=User does not have privilege to execute the sub command."}
     )
     private String resourcestrings;
 

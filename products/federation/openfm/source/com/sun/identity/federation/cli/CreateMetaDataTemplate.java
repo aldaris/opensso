@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.36 2008-12-16 01:49:37 qcheng Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.37 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
@@ -103,10 +103,13 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc)
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
+
         getOptions(rc);
         validateOptions();
         normalizeOptions();

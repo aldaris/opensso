@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BulkFederation.java,v 1.3 2008-12-16 01:49:36 qcheng Exp $
+ * $Id: BulkFederation.java,v 1.4 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
@@ -113,10 +113,12 @@ public class BulkFederation extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
-    public void handleRequest(RequestContext rc) 
+    @Override
+    public void handleRequest(RequestContext rc)
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
 
         metaAlias = getStringOptionValue(ARGUMENT_METADATA);
         remoteEntityId = getStringOptionValue(ARGUMENT_REMOTE_ID);

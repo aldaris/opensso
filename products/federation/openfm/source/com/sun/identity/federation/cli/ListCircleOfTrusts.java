@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListCircleOfTrusts.java,v 1.6 2008-12-16 01:49:37 qcheng Exp $
+ * $Id: ListCircleOfTrusts.java,v 1.7 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
 package com.sun.identity.federation.cli;
 
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
@@ -37,7 +36,6 @@ import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTException;
-import com.sun.identity.cot.COTUtils;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Set;
@@ -47,8 +45,6 @@ import java.util.logging.Level;
  * List Circle of Trusts.
  */
 public class ListCircleOfTrusts extends AuthenticatedCommand {
-    private static Debug debug = COTUtils.debug;
-   
     private String realm;
     
     /**
@@ -57,10 +53,13 @@ public class ListCircleOfTrusts extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
+
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         IOutput outputWriter = getOutputWriter();
 
@@ -90,7 +89,7 @@ public class ListCircleOfTrusts extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEEDED_LIST_COTS", params);
         } catch (COTException e) {
-            debug.warning("ListCircleOfTrusts.handleRequest", e);
+            debugWarning("ListCircleOfTrusts.handleRequest", e);
             String[] args = {realm, e.getMessage()}; 
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_LIST_COTS", args);

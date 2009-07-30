@@ -22,21 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedCommand.java,v 1.8 2008-12-05 17:55:19 veiming Exp $
+ * $Id: AuthenticatedCommand.java,v 1.9 2009-07-30 05:35:34 veiming Exp $
  *
  */
 
 package com.sun.identity.cli;
 
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.security.AdminTokenAction;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.AccessController;
 import java.text.MessageFormat;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 /**
@@ -47,6 +52,21 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
     private String adminID;
     private String adminPassword;
     private SSOToken ssoToken;
+    
+    private static String amadminUUID;
+
+    static {
+        String adminUser = SystemProperties.get(
+            "com.sun.identity.authentication.super.user");
+        if (adminUser != null) {
+            SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            AMIdentity adminUserId = new AMIdentity(adminToken, adminUser,
+                IdType.USER, "/", null);
+            amadminUUID = adminUserId.getUniversalId();
+        }
+
+    }
 
     /**
      * Authenticates the administrator. Dervived classes needs to
@@ -57,6 +77,7 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
      * @throws CLIException if authentication fails.
      * @Override this method to get user name and passowrd.
      */
+    @Override
     public void handleRequest(RequestContext rc)
         throws CLIException
     {
@@ -143,6 +164,26 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
         }
     }
 
+    protected void superAdminUserValidation()
+        throws CLIException {
+        if (ssoToken != null) {
+            try {
+                AMIdentity user = new AMIdentity(ssoToken);
+                if (user.getUniversalId().equalsIgnoreCase(amadminUUID)) {
+                    return;
+                }
+            } catch (SSOException ex) {
+                debugError("AuthenticatedCommand.isSuperAdminUser", ex);
+            } catch (IdRepoException ex) {
+                debugError("AuthenticatedCommand.isSuperAdminUser", ex);
+            }
+        }
+        throw new CLIException(
+            getResourceString("error-message-no-privilege"),
+            ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+    }
+
+    @Override
     protected void writeLog(
         int type,
         Level level,

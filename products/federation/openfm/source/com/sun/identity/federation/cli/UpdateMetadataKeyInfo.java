@@ -22,14 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateMetadataKeyInfo.java,v 1.3 2008-12-16 01:49:37 qcheng Exp $
+ * $Id: UpdateMetadataKeyInfo.java,v 1.4 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
 package com.sun.identity.federation.cli;
 
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
@@ -52,7 +50,6 @@ import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import com.sun.org.apache.xml.internal.security.encryption.XMLCipher;
 import java.text.MessageFormat;
 import java.util.logging.Level;
-import javax.xml.bind.JAXBException;
 
 /**
  * Export Meta Data.
@@ -92,10 +89,12 @@ public class UpdateMetadataKeyInfo extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
 
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);
@@ -350,13 +349,13 @@ public class UpdateMetadataKeyInfo extends AuthenticatedCommand {
                 }
             }
             if (!spEncryptionAlias.equals("")) {    
-                String[] objs2 = {entityID, realm};
+                Object[] objs2 = {entityID, realm};
                 throw new CLIException(MessageFormat.format(getResourceString(
                     "update-meta-keyinfo-exception-invalid-option"),
                     objs2), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
             if (!idpEncryptionAlias.equals("")) {
-                String[] objs2 = {entityID, realm};
+                Object[] objs2 = {entityID, realm};
                 throw new CLIException(MessageFormat.format(getResourceString(
                     "update-meta-keyinfo-exception-invalid-option"),
                     objs2), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);

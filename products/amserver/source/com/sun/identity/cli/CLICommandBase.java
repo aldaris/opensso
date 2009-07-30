@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLICommandBase.java,v 1.5 2008-06-25 05:42:08 qcheng Exp $
+ * $Id: CLICommandBase.java,v 1.6 2009-07-30 05:35:34 veiming Exp $
  *
  */
 
@@ -121,7 +121,7 @@ public abstract class CLICommandBase implements CLICommand {
         Debugger.error(mgr, msg, e);
     }
 
-    protected void debugMessage(String msg, Throwable e) {
+    protected void debugMessage(String msg) {
         CommandManager mgr = requestContext.getCommandManager();
         Debugger.message(mgr, msg);
     }

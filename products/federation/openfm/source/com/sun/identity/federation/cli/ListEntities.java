@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListEntities.java,v 1.6 2008-12-16 01:49:37 qcheng Exp $
+ * $Id: ListEntities.java,v 1.7 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
 package com.sun.identity.federation.cli;
 
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
@@ -39,10 +38,8 @@ import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
-import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
-import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Set;
@@ -52,8 +49,6 @@ import java.util.logging.Level;
  * List entities.
  */
 public class ListEntities extends AuthenticatedCommand {
-    private static Debug debug = SAML2MetaUtils.debug;
-    
     private String realm;
 
     /**
@@ -62,10 +57,13 @@ public class ListEntities extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
+
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         
         String spec = FederationManager.getIDFFSubCommandSpecification(rc);
@@ -116,7 +114,7 @@ public class ListEntities extends AuthenticatedCommand {
                 }
             }
         } catch (SAML2MetaException e) {
-            debug.warning("ListEntities.handleRequest", e);
+            debugWarning("ListEntities.handleRequest", e);
             String[] args = {realm, e.getMessage()}; 
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_LIST_ENTITIES", args);
@@ -146,7 +144,7 @@ public class ListEntities extends AuthenticatedCommand {
                 }
             }
         } catch (IDFFMetaException e) {
-            debug.warning("ListEntities.handleIDFFRequest", e);
+            debugWarning("ListEntities.handleIDFFRequest", e);
             String[] args = {realm, e.getMessage()}; 
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_LIST_ENTITIES", args);
@@ -174,7 +172,7 @@ public class ListEntities extends AuthenticatedCommand {
                 }
             }
         } catch (WSFederationMetaException e) {
-            debug.warning("ListEntities.handleRequest", e);
+            debugWarning("ListEntities.handleRequest", e);
             String[] args = {realm, e.getMessage()}; 
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_LIST_ENTITIES", args);

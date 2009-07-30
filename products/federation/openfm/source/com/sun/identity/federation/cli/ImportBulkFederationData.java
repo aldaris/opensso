@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportBulkFederationData.java,v 1.4 2008-12-16 01:49:37 qcheng Exp $
+ * $Id: ImportBulkFederationData.java,v 1.5 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
@@ -88,10 +88,13 @@ public class ImportBulkFederationData extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
+        
         metaAlias = getStringOptionValue(ARGUMENT_METADATA);
         bulkFedData = getStringOptionValue(ARGUMENT_BULK_DATA);
         spec = FederationManager.getIDFFSubCommandSpecification(rc);

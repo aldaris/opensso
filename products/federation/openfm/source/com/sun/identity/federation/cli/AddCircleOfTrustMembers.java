@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddCircleOfTrustMembers.java,v 1.5 2008-12-16 01:49:36 qcheng Exp $
+ * $Id: AddCircleOfTrustMembers.java,v 1.6 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
 package com.sun.identity.federation.cli;
 
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
@@ -36,7 +35,6 @@ import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.COTException;
 import com.sun.identity.cot.CircleOfTrustManager;
-import com.sun.identity.cot.COTUtils;
 import com.sun.identity.shared.locale.L10NMessage;
 import java.text.MessageFormat;
 import java.util.logging.Level;
@@ -45,8 +43,6 @@ import java.util.logging.Level;
  * Add member to a Circle of Trust.
  */
 public class AddCircleOfTrustMembers extends AuthenticatedCommand {
-    private static Debug debug = COTUtils.debug;
-    
     private String realm;
     private String cot;
     private String spec;
@@ -58,9 +54,11 @@ public class AddCircleOfTrustMembers extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc) throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
         spec=FederationManager.getIDFFSubCommandSpecification(rc);
@@ -82,7 +80,7 @@ public class AddCircleOfTrustMembers extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
                 "SUCCEEDED_ADD_COT_MEMBER", params);
         } catch (COTException e) {
-            debug.warning("AddCircleOfTrustMembers.handleRequest", e);
+            debugWarning("AddCircleOfTrustMembers.handleRequest", e);
             if (e instanceof L10NMessage) {
                 String[] args = {realm, entityID, cot, spec, 
                     ((L10NMessage)e).getL10NMessage(

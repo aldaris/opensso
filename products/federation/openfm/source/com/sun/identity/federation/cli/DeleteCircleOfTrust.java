@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteCircleOfTrust.java,v 1.5 2008-12-16 01:49:37 qcheng Exp $
+ * $Id: DeleteCircleOfTrust.java,v 1.6 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
 package com.sun.identity.federation.cli;
 
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
@@ -36,7 +35,6 @@ import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTException;
-import com.sun.identity.cot.COTUtils;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 
@@ -44,8 +42,6 @@ import java.util.logging.Level;
  * Delete a Circle of Trust.
  */
 public class DeleteCircleOfTrust extends AuthenticatedCommand {
-    private static Debug debug = COTUtils.debug;
-    
     private String realm;
     private String cot;
     
@@ -55,10 +51,13 @@ public class DeleteCircleOfTrust extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
+        
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
 
@@ -76,7 +75,7 @@ public class DeleteCircleOfTrust extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEEDED_DELETE_COT", params);
         } catch (COTException e) {
-            debug.warning("DeleteCircleOfTrust.handleRequest", e);
+            debugWarning("DeleteCircleOfTrust.handleRequest", e);
             String[] args = {realm, cot, e.getMessage()};
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_DELETE_COT", args);

@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListCircleOfTrustMembers.java,v 1.6 2008-12-16 01:49:37 qcheng Exp $
+ * $Id: ListCircleOfTrustMembers.java,v 1.7 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
 package com.sun.identity.federation.cli;
 
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
@@ -37,7 +36,6 @@ import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTException;
-import com.sun.identity.cot.COTUtils;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Set;
@@ -47,8 +45,6 @@ import java.util.logging.Level;
  * List members in a Circle of Trust.
  */
 public class ListCircleOfTrustMembers extends AuthenticatedCommand {
-    private static Debug debug = COTUtils.debug;
-    
     private String realm;
     private String cot;
     private String spec;
@@ -59,10 +55,13 @@ public class ListCircleOfTrustMembers extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
+
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
         IOutput outputWriter = getOutputWriter();
@@ -109,7 +108,7 @@ public class ListCircleOfTrustMembers extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEEDED_LIST_COT_MEMBERS", params);
         } catch (COTException e) {
-            debug.warning("ListCircleOfTrustMembers.handleRequest", e);
+            debugWarning("ListCircleOfTrustMembers.handleRequest", e);
             String[] args = {realm, cot, spec, e.getMessage()};
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_LIST_COT_MEMBERS", args);

@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteMetaData.java,v 1.7 2008-12-16 01:49:37 qcheng Exp $
+ * $Id: DeleteMetaData.java,v 1.8 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
 package com.sun.identity.federation.cli;
 
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
@@ -38,10 +37,8 @@ import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
-import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
-import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 
@@ -49,8 +46,6 @@ import java.util.logging.Level;
  * Delete a configuration and/or descriptor.
  */
 public class DeleteMetaData extends AuthenticatedCommand {
-    private static Debug debug = SAML2MetaUtils.debug;
-
     static final String ARGUMENT_REALM = "realm";
 
     private boolean extendedOnly;
@@ -64,10 +59,13 @@ public class DeleteMetaData extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
+        
         extendedOnly = isOptionSet(FedCLIConstants.ARGUMENT_EXTENDED_ONLY);
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM);
         entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);

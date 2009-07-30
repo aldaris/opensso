@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExportMetaData.java,v 1.8 2008-12-16 01:49:37 qcheng Exp $
+ * $Id: ExportMetaData.java,v 1.9 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
 package com.sun.identity.federation.cli;
 
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
@@ -71,8 +70,6 @@ import java.util.logging.Level;
  * Export Meta Data.
  */
 public class ExportMetaData extends AuthenticatedCommand {
-    private static Debug debug = SAML2MetaUtils.debug;
-    
     private String realm;
     private String entityID;
     private boolean sign;
@@ -86,10 +83,13 @@ public class ExportMetaData extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
+
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);
         sign = isOptionSet(FedCLIConstants.ARGUMENT_SIGN);
@@ -230,7 +230,7 @@ public class ExportMetaData extends AuthenticatedCommand {
                         "export-entity-export-descriptor-succeeded"), objs));
             }
         } catch (SAML2MetaException e) {
-            debug.error("ExportMetaData.runExportMetaSign", e);
+            debugError("ExportMetaData.runExportMetaSign", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException jaxbe) {
@@ -240,7 +240,7 @@ public class ExportMetaData extends AuthenticatedCommand {
                     "export-entity-exception-invalid_descriptor"), objs3),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IOException e) {
-            debug.error("ExportMetaData.runExportMetaSign", e);
+            debugError("ExportMetaData.runExportMetaSign", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } finally {
@@ -300,12 +300,12 @@ public class ExportMetaData extends AuthenticatedCommand {
                         "export-entity-export-descriptor-succeeded"), objs));
             }
         } catch (IDFFMetaException e) {
-            debug.error("ExportMetaData.runIDFFExportMetaSign", e);
+            debugError("ExportMetaData.runIDFFExportMetaSign", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
 
         } catch (IOException e) {
-            debug.error("ExportMetaData.runIDFFExportMetaSign", e);
+            debugError("ExportMetaData.runIDFFExportMetaSign", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } finally {
@@ -359,7 +359,7 @@ public class ExportMetaData extends AuthenticatedCommand {
                         "export-entity-export-descriptor-succeeded"), objs));
             }
         } catch (WSFederationMetaException e) {
-            debug.error("ExportMetaData.runExportMetaSign", e);
+            debugError("ExportMetaData.runExportMetaSign", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException jaxbe) {
@@ -369,7 +369,7 @@ public class ExportMetaData extends AuthenticatedCommand {
                     "export-entity-exception-invalid_descriptor"), objs3),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IOException e) {
-            debug.error("ExportMetaData.runExportMetaSign", e);
+            debugError("ExportMetaData.runExportMetaSign", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } finally {
@@ -382,10 +382,6 @@ public class ExportMetaData extends AuthenticatedCommand {
     private void runExportMeta() 
         throws CLIException
     {
-        if (debug.messageEnabled()) {
-            debug.message("ExportMetaData.runExportMeta:");
-        }
-
         PrintWriter pw = null;
         String out = (isWebBase) ? "web" : metadata;
         Object[] objs = {out};
@@ -417,21 +413,21 @@ public class ExportMetaData extends AuthenticatedCommand {
                 getResourceString(
                 "export-entity-export-descriptor-succeeded"), objs));
         } catch (SAML2MetaException e) {
-            debug.error("ExportMetaData.runExportMeta", e);
+            debugError("ExportMetaData.runExportMeta", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IOException e) {
-            debug.error("ExportMetaData.runExportMeta", e);
+            debugError("ExportMetaData.runExportMeta", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.warning("ExportMetaData.runExportMeta", e);
+            debugWarning("ExportMetaData.runExportMeta", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                 "export-entity-exception-invalid_descriptor"), objs2),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.warning("ExportMetaData.runExportMeta", e);
+            debugWarning("ExportMetaData.runExportMeta", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                 "export-entity-exception-invalid_descriptor"), objs2),
@@ -475,21 +471,21 @@ public class ExportMetaData extends AuthenticatedCommand {
                 getResourceString(
                 "export-entity-export-descriptor-succeeded"), objs));
         } catch (IDFFMetaException e) {
-            debug.error("ExportMetaData.runIDFFExportMeta", e);
+            debugError("ExportMetaData.runIDFFExportMeta", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IOException e) {
-            debug.error("ExportMetaData.runIDFFExportMeta", e);
+            debugError("ExportMetaData.runIDFFExportMeta", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.warning("ExportMetaData.runIDFFExportMeta", e);
+            debugWarning("ExportMetaData.runIDFFExportMeta", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                 "export-entity-exception-invalid_descriptor"), objs2),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.warning("ExportMetaData.runExportMeta", e);
+            debugWarning("ExportMetaData.runExportMeta", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                 "export-entity-exception-invalid_descriptor"), objs2),
@@ -534,21 +530,21 @@ public class ExportMetaData extends AuthenticatedCommand {
                 getResourceString(
                 "export-entity-export-descriptor-succeeded"), objs));
         } catch (WSFederationMetaException e) {
-            debug.error("ExportMetaData.runExportMeta", e);
+            debugError("ExportMetaData.runExportMeta", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IOException e) {
-            debug.error("ExportMetaData.runExportMeta", e);
+            debugError("ExportMetaData.runExportMeta", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.warning("ExportMetaData.runExportMeta", e);
+            debugWarning("ExportMetaData.runExportMeta", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                 "export-entity-exception-invalid_descriptor"), objs2),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.warning("ExportMetaData.runExportMeta", e);
+            debugWarning("ExportMetaData.runExportMeta", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                 "export-entity-exception-invalid_descriptor"), objs2),
@@ -594,19 +590,19 @@ public class ExportMetaData extends AuthenticatedCommand {
                 getResourceString(
                 "export-entity-export-config-succeeded"), objs));
         } catch (SAML2MetaException e) {
-            debug.error("ExportMetaData.runExportExtended", e);
+            debugError("ExportMetaData.runExportExtended", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (FileNotFoundException e) {
-            debug.warning("ExportMetaData.runExportExtended", e);
+            debugWarning("ExportMetaData.runExportExtended", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.warning("ExportMetaData.runExportExtended", e);
+            debugWarning("ExportMetaData.runExportExtended", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.warning("ExportMetaData.runExportExtended", e);
+            debugWarning("ExportMetaData.runExportExtended", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                 "export-entity-exception-invalid-config"), objs2),
@@ -653,19 +649,19 @@ public class ExportMetaData extends AuthenticatedCommand {
                 getResourceString(
                 "export-entity-export-config-succeeded"), objs));
         } catch (IDFFMetaException e) {
-            debug.warning("ExportMetaData.runIDFFExportExtended", e);
+            debugWarning("ExportMetaData.runIDFFExportExtended", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IOException e) {
-            debug.warning("ExportMetaData.runIDFFExportExtended", e);
+            debugWarning("ExportMetaData.runIDFFExportExtended", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.warning("ExportMetaData.runIDFFExportExtended", e);
+            debugWarning("ExportMetaData.runIDFFExportExtended", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.warning("ExportMetaData.runIDFFExportExtended", e);
+            debugWarning("ExportMetaData.runIDFFExportExtended", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                 "export-entity-exception-invalid-config"), objs2),
@@ -714,19 +710,19 @@ public class ExportMetaData extends AuthenticatedCommand {
                 getResourceString(
                 "export-entity-export-config-succeeded"), objs));
         } catch (WSFederationMetaException e) {
-            debug.error("ExportMetaData.runExportExtended", e);
+            debugError("ExportMetaData.runExportExtended", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (FileNotFoundException e) {
-            debug.warning("ExportMetaData.runExportExtended", e);
+            debugWarning("ExportMetaData.runExportExtended", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.warning("ExportMetaData.runExportExtended", e);
+            debugWarning("ExportMetaData.runExportExtended", e);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.warning("ExportMetaData.runExportExtended", e);
+            debugWarning("ExportMetaData.runExportExtended", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                 "export-entity-exception-invalid-config"), objs2),
@@ -743,9 +739,6 @@ public class ExportMetaData extends AuthenticatedCommand {
     }
 
     private static String workaroundAbstractRoleDescriptor(String xmlstr) {
-        if (debug.messageEnabled()) {
-            debug.message("ExportMetaData.workaroundAbstractRoleDescriptor:");
-        }
         int index =
             xmlstr.indexOf(":" +SAML2MetaConstants.ATTRIBUTE_QUERY_DESCRIPTOR);
         if (index == -1) {

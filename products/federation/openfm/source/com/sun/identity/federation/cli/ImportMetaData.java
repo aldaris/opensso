@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.13 2009-01-07 21:51:29 veiming Exp $
+ * $Id: ImportMetaData.java,v 1.14 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
@@ -75,7 +75,6 @@ import org.w3c.dom.NodeList;
  * Import Meta Data.
  */
 public class ImportMetaData extends AuthenticatedCommand {
-    static Debug debug = SAML2MetaUtils.debug;
     private String metadata;
     private String extendedData;
     private String cot;
@@ -84,15 +83,18 @@ public class ImportMetaData extends AuthenticatedCommand {
     private boolean webAccess;
 
     /**
- * Imports Meta Data.
+     * Imports Meta Data.
      *
      * @param rc Request Context.
      * @throws CLIException if unable to process this request.
      */
+    @Override
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
+        superAdminUserValidation();
+        
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         metadata = getStringOptionValue(FedCLIConstants.ARGUMENT_METADATA);
         extendedData = getStringOptionValue(
@@ -208,18 +210,12 @@ public class ImportMetaData extends AuthenticatedCommand {
             
             metaManager.createEntity(realm, descriptor, configElt);
             if (descriptor != null) {
-                debug.message(
-                    "ImportMetaData.handleSAML2Request:descriptor is not null");
                 String out = (webAccess) ? "web" : metadata;
                 Object[] objs = { out };
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString("import-entity-succeeded"), objs));
             }
             if (configElt != null) {
-                if (debug.messageEnabled()) {
-                    debug.message("ImportMetaData.handleSAML2Request: "
-                        + "entity config is not null");
-                }
                 String out = (webAccess) ? "web" : extendedData;
                 Object[] objs = { out };
                 getOutputWriter().printlnMessage(MessageFormat.format(
@@ -370,11 +366,12 @@ public class ImportMetaData extends AuthenticatedCommand {
         InputStream is = null;
         String out = (webAccess) ? "web" : metadata;
         Object[] objs = { out };
-        String entityID = null;
         
         try {
             Object obj;
             Document doc;
+            Debug debug = CommandManager.getDebugger();
+            
             if (webAccess) {
                 doc = XMLUtils.toDOMDocument(metadata, debug);
             } else {
@@ -415,13 +412,13 @@ public class ImportMetaData extends AuthenticatedCommand {
                 getResourceString("file-not-found"), objs),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.message("ImportMetaData.importMetaData", e);
+            debugWarning("ImportMetaData.importMetaData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-descriptor-file"),
                 objs), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.message("ImportMetaData.importMetaData", e);
+            debugWarning("ImportMetaData.importMetaData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-descriptor-file"),
@@ -451,7 +448,8 @@ public class ImportMetaData extends AuthenticatedCommand {
                 obj = IDFFMetaUtils.convertStringToJAXB(metadata);
             } else {
                 is = new FileInputStream(metadata);
-                Document doc = XMLUtils.toDOMDocument(is, debug);
+                Document doc = XMLUtils.toDOMDocument(is, 
+                    CommandManager.getDebugger());
                 obj = IDFFMetaUtils.convertNodeToJAXB(doc);
             }
 
@@ -475,13 +473,13 @@ public class ImportMetaData extends AuthenticatedCommand {
                 getResourceString("file-not-found"), objs),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.message("ImportMetaData.importMetaData", e);
+            debugWarning("ImportMetaData.importMetaData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-descriptor-file"),
                 objs), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.message("ImportMetaData.importMetaData", e);
+            debugWarning("ImportMetaData.importMetaData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-descriptor-file"),
@@ -510,10 +508,11 @@ public class ImportMetaData extends AuthenticatedCommand {
             Document doc;
             if (webAccess) {
                 obj = WSFederationMetaUtils.convertStringToJAXB(metadata);
-                doc = XMLUtils.toDOMDocument(metadata, debug);
+                doc = XMLUtils.toDOMDocument(metadata, 
+                    CommandManager.getDebugger());
             } else {
                 is = new FileInputStream(metadata);
-                doc = XMLUtils.toDOMDocument(is, debug);
+                doc = XMLUtils.toDOMDocument(is, CommandManager.getDebugger());
                 obj = WSFederationMetaUtils.convertNodeToJAXB(doc);
             }
 
@@ -543,13 +542,13 @@ public class ImportMetaData extends AuthenticatedCommand {
                 getResourceString("file-not-found"), objs),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.message("ImportMetaData.importMetaData", e);
+            debugWarning("ImportMetaData.importMetaData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-descriptor-file"),
                 objs), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.message("ImportMetaData.importMetaData", e);
+            debugWarning("ImportMetaData.importMetaData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-descriptor-file"),
@@ -587,13 +586,13 @@ public class ImportMetaData extends AuthenticatedCommand {
                 getResourceString("file-not-found"), objs),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.message("ImportMetaData.importExtendedData", e);
+            debugWarning("ImportMetaData.importExtendedData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-config-file"), objs),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.message("ImportMetaData.importExtendedData", e);
+            debugWarning("ImportMetaData.importExtendedData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-config-file"), objs),
@@ -633,13 +632,13 @@ public class ImportMetaData extends AuthenticatedCommand {
                 getResourceString("file-not-found"), objs),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.message("ImportMetaData.importExtendedData", e);
+            debugWarning("ImportMetaData.importExtendedData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-config-file"), objs),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.message("ImportMetaData.importExtendedData", e);
+            debugWarning("ImportMetaData.importExtendedData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-config-file"), objs),
@@ -672,13 +671,13 @@ public class ImportMetaData extends AuthenticatedCommand {
                 getResourceString("file-not-found"), objs),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (JAXBException e) {
-            debug.message("ImportMetaData.importExtendedData", e);
+            debugWarning("ImportMetaData.importExtendedData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-config-file"), objs),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IllegalArgumentException e) {
-            debug.message("ImportMetaData.importExtendedData", e);
+            debugWarning("ImportMetaData.importExtendedData", e);
             throw new CLIException(MessageFormat.format(
                 getResourceString(
                     "import-entity-exception-invalid-config-file"), objs),
@@ -745,7 +744,8 @@ public class ImportMetaData extends AuthenticatedCommand {
                             ">";
                     }
 
-                    Document tmpDoc = XMLUtils.toDOMDocument(xmlstr, debug);
+                    Document tmpDoc = XMLUtils.toDOMDocument(xmlstr,
+                        CommandManager.getDebugger());
                     Node newChild =
                         doc.importNode(tmpDoc.getDocumentElement(), true);
                     child.getParentNode().replaceChild(newChild, child);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.106 2009-07-01 00:57:59 veiming Exp $
+ * $Id: AccessManager.java,v 1.107 2009-07-30 05:35:35 veiming Exp $
  *
  */
 
@@ -48,6 +48,7 @@ public class AccessManager {
         "missing-attributevalues=attributevalues and datafile options are missing.",
         "missing-choicevalues=choicevalues and datafile options are missing.",
         "attribute-schema-not-exist=Attribute schema {0} did not exist.",
+        "error-message-no-privilege=User does not have privilege to execute the sub command.",
         "serverconfig-no-supported=This sub command is not supported because platform service is not upgraded."}
     )
     private String resourcestrings;
