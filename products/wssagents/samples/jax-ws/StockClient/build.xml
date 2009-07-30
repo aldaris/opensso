@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2009-07-25 01:11:01 Kamna Exp $
+   $Id: build.xml,v 1.2 2009-07-30 00:54:57 Kamna Exp $
 
 -->
 
@@ -54,8 +54,11 @@
 		<fileset dir="${jaxws.lib}">
 			<include name="**/*.jar" />
 		</fileset>
-            <fileset dir="web/WEB-INF/lib">
+        <fileset dir="web/WEB-INF/lib">
 			<include name="**/*.jar" />
+		</fileset>        
+        <fileset dir="../../lib">
+			<include name="**/openssowssagents.jar" />
 		</fileset>
 		<fileset dir="build/classes/com/sun/stockquote/">
 			<include name="**/*.class" />
