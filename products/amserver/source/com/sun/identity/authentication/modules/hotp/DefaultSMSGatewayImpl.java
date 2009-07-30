@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSMSGatewayImpl.java,v 1.2 2009-06-03 20:46:51 veiming Exp $
+ * $Id: DefaultSMSGatewayImpl.java,v 1.3 2009-07-30 17:38:00 qcheng Exp $
  *
  */
 package com.sun.identity.authentication.modules.hotp;
@@ -88,7 +88,7 @@ public class DefaultSMSGatewayImpl implements SMSGateway {
                     smtpSSLEnabled == null) {
                 sendMail.postMail(tos, subject, msg, from);
             } else {
-                sendMail.postMail(tos, subject, msg, from, null, smtpHostName,
+                sendMail.postMail(tos, subject, msg, from, "UTF-8", smtpHostName,
                         smtpHostPort, smtpUserName, smtpUserPassword,
                         sslEnabled);
             }

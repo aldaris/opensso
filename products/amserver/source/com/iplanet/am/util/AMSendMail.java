@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSendMail.java,v 1.4 2009-03-24 23:52:12 pluo Exp $
+ * $Id: AMSendMail.java,v 1.5 2009-07-30 17:37:59 qcheng Exp $
  *
  */
 package com.iplanet.am.util;
@@ -71,7 +71,7 @@ public class AMSendMail {
      */
     public void postMail(String recipients[], String subject, String message,
             String from) throws MessagingException {
-        postMail(recipients, subject, message, from, null);
+        postMail(recipients, subject, message, from, "UTF-8");
     }
 
     /**
