@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicy.xml,v 1.4 2009-06-29 14:58:01 veiming Exp $
+    $Id: amPolicy.xml,v 1.5 2009-07-30 00:50:53 hengming Exp $
 
 -->
 
@@ -287,5 +287,12 @@
             i18nFileName="amPolicy"
             i18nKey="SunIdentityServer-subject-AuthenticatedSharedAgents-name"
             propertiesViewBeanURL = "../policy/PMAuthenticatedSharedAgentsSubject" />
+        <!-- should not be included when merging entitlement -->
+        <PluginSchema
+            name="WebServicesClients"
+            interfaceName="Subject"
+            className="com.sun.identity.policy.plugins.WebServicesClients"
+            i18nFileName="amPolicy"
+            i18nKey="SunIdentityServer-subject-WebServicesClients-name" />
     </Service>
 </ServicesConfiguration>
