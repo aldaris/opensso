@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: README,v 1.4 2009-07-31 20:49:43 mrudul_uchil Exp $
+ * $Id: README,v 1.5 2009-07-31 21:24:16 mrudul_uchil Exp $
  */
 
  %% Contents:
@@ -342,10 +342,16 @@ profiles of WSC and WSP are all hosted on a single OpenSSO instance
          <wssagents_unzip_location>/samples/etc/Tomcat/StockClient/GetQuote.java.
    8.3.2 After copying the Tomcat specific GetQuote.java, remember to update the
          protocol, host and port number of the container where the StockService
-         is deployed, in the WSDL URL (shown in the snippet below)
+         is deployed, in the WSDL URL (shown in the snippet below),
+         in GetQuote.java
 
          wsdlLocation = new URL("http://localhost:8080/StockService/" +
                     "StockService?wsdl");
+
+         Note : If you want to test Un-Secured samples for showcasing without
+                security, then you need to comment following line in GetQuote.java
+         handlerChain.add(new com.sun.identity.wssagents.jaxws.client.ClientHandler());
+
    8.3.3 cd <wssagents_unzip_location>/samples/StockClient and run
          "ant war" (for showcasing without security) OR
          "ant secure-war" (for showcasing Web Service Security and after you

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetQuote.java,v 1.2 2009-07-30 00:54:56 Kamna Exp $
+ * $Id: GetQuote.java,v 1.3 2009-07-31 21:24:16 mrudul_uchil Exp $
  *
  */
 package com.sun.stockquote;
@@ -41,7 +41,6 @@ import javax.xml.ws.soap.SOAPFaultException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.Handler;
 import javax.xml.namespace.QName;
-import com.sun.identity.wssagents.jaxws.client.ClientHandler;
 
 public class GetQuote extends HttpServlet {   
     
