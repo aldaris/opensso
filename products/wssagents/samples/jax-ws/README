@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: README,v 1.3 2009-07-29 18:12:48 Kamna Exp $
+ * $Id: README,v 1.4 2009-07-31 20:49:43 mrudul_uchil Exp $
  */
 
  %% Contents:
@@ -31,7 +31,7 @@
     %% 3. Library dependencies
     %% 4. Building and Deploying the un-secured samples
     %% 5. Building and Deploying the secured samples
-    %% 6. Configuring WSC and WSP profiles in OpenSSO
+    %% 6. OpenSSO Server Configuration
     %% 7. Testing the samples
     %% 8. Building the samples for Tomcat
     %% 9. Preparing JBoss for JAX-WS
@@ -40,8 +40,8 @@
 
 %% 1. General Description
 
-The samples provided here are JAX-WS based web service and a web services
-client.
+The samples provided here are JAX-WS based Web Service and a Web Services
+Client.
 
 The sample demonstrates a simple stock quote service where given
 a stock ticker symbol it obtains stock data. The secure communication
@@ -71,74 +71,66 @@ profiles of WSC and WSP are all hosted on a single OpenSSO instance
 
 %% 2. Build requirements
 
-The OpenSSO Web Services Security Agents workspace uses Apache Ant as the build
-tool. The build scripts in this workspace use features not present in releases 
-of Ant prior to 1.6.  Thus, in order to build this workspace you must have 
-Ant version 1.6.5 or above installed and available in your system path.
-Set the ANT_HOME environment variable to the Ant root directory, and add 
-${ANT_HOME}/bin to your PATH environment variable.
+   2.1 Ant 1.6.5 or above
+       The OpenSSO Web Services Security Agents workspace uses Apache Ant as the
+       build tool. The build scripts in this workspace use features not present
+       in releases of Ant prior to 1.6.  Thus, in order to build this workspace
+       you must have Ant version 1.6.5 or above installed and available in your
+       system path.
+       Set the ANT_HOME environment variable to the Ant root directory, and add
+       ${ANT_HOME}/bin to your PATH environment variable.
 
-The sources in this workspace should be compiled using JDK 6.0 with the source
-and target levels set to "1.6". In order to allow this, you must ensure that
-JDK 6.0 is present in your system path and the JAVA_HOME environment variable
-is setup correctly pointing to its location.
+   2.2 JDK 1.6
+       The sources in this workspace should be compiled using JDK 6.0 with the
+       source and target levels set to "1.6". In order to allow this, you must
+       ensure that JDK 6.0 is present in your system path and the JAVA_HOME
+       environment variable is setup correctly pointing to its location.
 
 %% 3. Library dependencies
 
-   3.1 Download the latest stable version of JAXWS Reference Implementation from
+   3.1 JAX-WS Library
+       Download the latest stable version of JAXWS Reference Implementation from
        http://jax-ws.dev.java.net. Execute the jar as
        java -jar <filename>.jar and copy the location of the lib
        folder, as the value of the "jaxws.lib" property, to the
        <wssagents_unzip_location>/samples/jaxws.properties
        file for the Web Service Client and Web Service Provider.
    
-%% 4. Building and Deploying the un-secured samples
+%% 4. Building and Deploying the Un-Secured Samples
 
-The workspace build system offers many build targets. You can view the
-available targets by issuing the ant command from the root of the
-workspace. The default target that is executed is the usage target which
-displays a brief description about the other targets. Currently the main
-targets available in the workspace are:
- 
-     - clean              : Deletes all generated artifacts
-     - generate-from-wsdl : Generates web-service stubs from wsdl to be used by 
-                            the service and the client
-     - compile            : Compiles all files in the project
-     - prepare-to-build   : Copy all artifacts to the "web" folder to be
-                            included in the WAR
-     - war                : Creates the deployable WAR with no security
-     - secure-war         : Creates the deployable WAR with security 
-     - all                : Runs all the targets in the above order
-     - usage              : Displays this usage message
- 
-The protocol, host and port number of the container where the WSP (StockService)
-would be deployed, will need to be changed in 1 place.
-	<wssagents_unzip_location>/samples/StockClient/src/com/sun/stockquote/
-    GetQuote.java
-	@WebServiceRef(wsdlLocation =
-        "http://localhost:8080/StockService/StockService?wsdl")        
+   NOTE: If you are deploying on Tomcat, then follow Section 8. If you are
+         deploying on JBoss, then follow Section 9 first, then follow
+         this section.
 
-Then build the un-secure WARs by running "ant war" from
-<wssagents_unzip_location>/samples/StockService for WSP and
-<wssagents_unzip_location>/samples/StockClient for WSC.
+   4.1 cd <wssagents_unzip_location>/samples/StockService and run "ant war"
+       This will generate StockService.war under "dist" directory, deploy this
+       war on any JAX-WS compliant container running with JDK 1.6.
 
-The WARs generated above can be deployed on GlassFish 2.x, WebLogic 10.x,
-JBoss 5.x, Tomcat 6.x & WebSphere 7.x.
+   4.2 The protocol, host and port number of the container where the
+       StockService is deployed, will need to be changed at,
+	   <wssagents_unzip_location>/samples/StockClient/src/com/sun/stockquote/
+       GetQuote.java
 
-NOTE: Except JBoss and Tomcat, all the other containers ship with JAXWS jars. 
-Hence, no configuration change is needed to deploy the web-service on GlassFish, 
-WebLogic & WebSphere. For special instructions on how to make Tomcat and JBoss
-suitable for web-services, refer Sections 8 and 9 of this file.
+	   @WebServiceRef(wsdlLocation =
+           "http://localhost:8080/StockService/StockService?wsdl")
 
-%% 5. Building and Deploying the secured samples
+   4.3 cd <wssagents_unzip_location>/samples/StockClient and run "ant war"
+       This will generate StockClient.war under "dist" directory, deploy this
+       war on any JAX-WS compliant container running with JDK 1.6.
 
-   5.1 Modify the AMConfig.properties file found in <wssagents_unzip_location>/
-       config/ folder as explained in the Step 2 of Section II A in the README
-       file provided with the openssowssagents.zip download.
+   The WARs generated above can be deployed on GlassFish v2.x, WebLogic 10.x,
+   JBoss 5.x, Tomcat 6.x & WebSphere 7.x, all running with JDK 1.6.
+
+%% 5. Building and Deploying the Secured Samples
+
+   5.1 Modify the <wssagents_unzip_location>/config/AMConfig.properties file
+       as explained in the Step 2 of Section II A in the
+       <wssagents_unzip_location>/README file.
    5.2 Modify the <wssagents_unzip_location>/config/server_handlers.xml file by
        adding the LogServerHandler mapping to the handler chain as explained in
-       Step 4 of section II B so that the final <wssagents_unzip_location>/
-       config/server_handlers.xml has the following contents:
+       Step 4 of section II B in the <wssagents_unzip_location>/README file
+       so that the final <wssagents_unzip_location>/config/server_handlers.xml
+       has the following contents:
 
        <?xml version="1.0" encoding="UTF-8"?>
        <handler-chains xmlns="http://java.sun.com/xml/ns/javaee"
@@ -163,8 +155,9 @@ suitable for web-services, refer Sections 8 and 9 of this file.
 
    5.3 Modify the <wssagents_unzip_location>/config/client_handlers.xml file by
        adding the LogClientHandler mapping to the handler chain as explained in
-       Step 4 of section II C. The final version of <wssagents_unzip_location>
-       /config/client_handlers.xml should be as shown here:
+       Step 4 of section II C in the <wssagents_unzip_location>/README file
+       so that the final <wssagents_unzip_location>/config/client_handlers.xml
+       has the following contents:
 
        <?xml version="1.0" encoding="UTF-8"?>
        <handler-chains xmlns="http://java.sun.com/xml/ns/javaee"
@@ -181,7 +174,7 @@ suitable for web-services, refer Sections 8 and 9 of this file.
                 </handler-class>
             </handler>
             <handler>
-                <handler-name>LogServerHandler</handler-name>
+                <handler-name>LogClientHandler</handler-name>
                 <handler-class>com.sun.stockquote.LogClientHandler</handler-class>
             </handler>
         </handler-chain>
@@ -201,17 +194,30 @@ suitable for web-services, refer Sections 8 and 9 of this file.
      		<url-pattern>/*</url-pattern>
        </filter-mapping>
 
-   5.5 Build the secure WARs by running "ant secure-war" from
-       <wssagents_unzip_location>/samples/StockService for WSP and
-       <wssagents_unzip_location>/samples/StockClient for WSC.
-   5.6 Deployment instructions are same as for unsecure WAR.
-   
-%% 6. Configuring WSC and WSP profiles in OpenSSO
+   NOTE: If you are deploying on Tomcat, then follow Section 8. If you are
+         deploying on JBoss, then follow Section 9 first, then follow
+         the following steps.
 
-   By default, this sample will use the default WSC and WSP profiles that OpenSSO
-   ships with (named as "wsc" and "wsp" respectively).
-   If you wish to customize the configuration, you can create new
-   Web Service Client and Web Service Provider profiles as explained here:
+   5.5 cd <wssagents_unzip_location>/samples/StockService and run "ant secure-war"
+       This will generate StockService.war under "dist" directory, deploy this
+       war on any JAX-WS compliant container running with JDK 1.6.
+
+   5.6 The protocol, host and port number of the container where the
+       StockService is deployed, will need to be changed at,
+	   <wssagents_unzip_location>/samples/StockClient/src/com/sun/stockquote/
+       GetQuote.java
+
+	   @WebServiceRef(wsdlLocation =
+           "http://localhost:8080/StockService/StockService?wsdl")
+
+   5.7 cd <wssagents_unzip_location>/samples/StockClient and run "ant secure-war"
+       This will generate StockClient.war under "dist" directory, deploy this
+       war on any JAX-WS compliant container running with JDK 1.6.
+
+   The WARs generated above can be deployed on GlassFish v2.x, WebLogic 10.x,
+   JBoss 5.x, Tomcat 6.x & WebSphere 7.x, all running with JDK 1.6.
+   
+%% 6. OpenSSO Server Configuration
 
    Login into the OpenSSO Console with user amadmin and <amadmin password>
 
@@ -221,74 +227,91 @@ suitable for web-services, refer Sections 8 and 9 of this file.
    Note: If you have logged in as any other user, click Logout on the console
          page and Login again and make sure that you access the OpenSSO Console.
 
-   Go to Access Control -> Default realm -> Agents ->
+   6.1 Configuring cookie encode property
 
-   6.1 Create "WSC" profile
-       6.1.1 Select Web Service Client -> under Agent, click "new" ->
-       6.1.2 Enter name as "StockService" (Service Name from the Service WSDL)
+       Go to Configuration -> Servers and Sites -> Default Server Settings ->
+       Click on "Advanced" tab and set property value for
+       "com.iplanet.am.cookie.c66Encode" property to be "true".
+       Save changes.
+
+   6.2 Configuring WSC and WSP profiles in OpenSSO
+
+       By default, this sample will use the default WSC and WSP profiles that
+       OpenSSO ships with (named as "wsc" and "wsp" respectively).
+       If you wish to customize the configuration, you can create new
+       Web Service Client and Web Service Provider profiles as explained here:
+
+       Go to Access Control -> Default realm -> Agents ->
+
+       6.2.1 Create "WSC" profile
+       6.2.1.1 Select Web Service Client -> under Agent, click "new" ->
+       6.2.1.2 Enter name as "StockService" (Service Name from the Service WSDL)
              and other required fields and click Save.
-       6.1.3 Click on above saved profile to edit ->
-       6.1.4 Select required Security Mechanism.
-       6.1.5 Check "Is Request Signed" as true.
-       6.1.6 Enter "Web Service End Point" as
+       6.2.1.3 Click on above saved profile to edit ->
+       6.2.1.4 Select required Security Mechanism.
+       6.2.1.5 Check "Preserve Security Headers in Message" as true.
+       6.2.1.6 Check "Is Request Signed" as true.
+       6.2.1.7 Enter "Web Service End Point" as
              "<protocol>://<host>:<port>/StockService/StockService".
-       6.1.7 Save changes.
+       6.2.1.8 Save changes.
 
        Note : If the required or selected Security Mechanism is "STSSecurity", 
               then select STS Configuration as "SecurityTokenService".
 
-   6.2 Create "WSP" profile
-       6.2.1 Select Web Service Provider -> under Agent, click "new" ->
-       6.2.2 Enter name as "<protocol>://<host>:<port>/StockService/StockService"
+       6.2.2 Create "WSP" profile
+       6.2.2.1 Select Web Service Provider -> under Agent, click "new" ->
+       6.2.2.2 Enter name as "<protocol>://<host>:<port>/StockService/StockService"
              (your Web Service End Point URL) and other required fields and
               click Save.
-       6.2.3 Click on above saved profile to edit ->
-       6.2.4 Select all Security Mechanisms.
-       6.2.5 Check "Is Request Signature Verified" as true.
-       6.2.6 Enter "Web Service End Point" as
+       6.2.2.3 Click on above saved profile to edit ->
+       6.2.2.4 Select all Security Mechanisms.
+       6.2.2.5 Check "Preserve Security Headers in Message" as true.
+       6.2.2.6 Check "Is Request Signature Verified" as true.
+       6.2.2.7 Enter "Web Service End Point" as
              "<protocol>://<host>:<port>/StockService/StockService".
-       6.2.7 Save changes.
+       6.2.2.8 Save changes.
 
-   6.3 Update "Agent Authenticator" profile
-       6.3.1 Select Agent Authenticator -> under Agent, click on "agentAuth" ->
-       6.3.2 Under "Agent Profiles allowed to Read",
+       6.2.3 Update "Agent Authenticator" profile
+       6.2.3.1 Select Agent Authenticator -> under Agent, click on "agentAuth" ->
+       6.2.3.2 Under "Agent Profiles allowed to Read",
              Select newly created agent profiles for WSC and WSP
              ("StockService" and "<protocol>://<host>:<port>/StockService/
                StockService")
              from "Available" list in order to add them to be in "Selected" list.
-       6.3.3 Save changes.
+       6.2.3.3 Save changes.
 
    Save the changes and logout of OpenSSO.
 
-%% 7. Testing the samples
+%% 7. Testing the Samples
 
    7.1 From your web browser, access <protocol>://<host>:<port>/StockClient
-   7.2 With unsecure WARs, you should be directed to the page with a simple
+
+   7.2 With unsecure Samples, you should be directed to the page with a simple
        form to enter the Stock Symbol of your choice. Click Get Quote button.
-       The web-service provider should return the stock results. On this page,
+       The StockService should return the stock results. On this page,
        click on the links named Request and Response in the image illustrating
        the communication. You should see the SOAP request and response without
        any security token in the SOAP request/response headers.
-   7.3 With the secure WARs, you will be redirected to OpenSSO's Authentication 
+
+   7.3 With the secure Samples, you will be redirected to OpenSSO's Authentication
        service for end user login. Enter any existing OpenSSO user with the 
        password. Upon successful end user authentication, you will be redirected 
        back to <protocol>://<host>:<port>/StockClient/ page. Click Get Quote for
        a symbol of your choice and by clicking on the Request/Response links on
-       the stock quote results page, you can see the security token in the SOAP
-       request/response headers.
-   7.4 Repeat the steps from 7.2
+       the stock quote results page, you can see the Web Service communication
+       is secured with WS-Security token in the SOAP request/response headers.
    
-%% 8. Building the samples for Tomcat
+%% 8. Building and Deploying the Samples on Tomcat, running with JDK 1.6
 
    8.1 To make Tomcat 6.x JAX-WS aware, edit the <TOMCAT_HOME>/conf/
        catalina.properties file and set the shared.loader property as shown:
 
        shared.loader=<jaxws_install_location>/lib/*.jar
 
-       If you are running multiple instances of Tomcat, then edit CATALINA_BASE/
-       conf/catalina.properties for that particular instance.
+       If you are running multiple instances of Tomcat, then edit 
+       <CATALINA_BASE>/conf/catalina.properties for that particular instance.
 
-   8.2 Web Service WAR
+   8.2 StockService WAR
 
    8.2.1 Because Tomcat is a Web Container (not a Java EE container) and
          does not support JSR 109 service endpoint, the JAX-WS service WAR 
@@ -300,30 +323,36 @@ suitable for web-services, refer Sections 8 and 9 of this file.
    8.2.2 Replace the <wssagents_unzip_location>/samples/StockService/web/WEB-INF/
          web.xml file with <wssagents_unzip_location>/samples/etc/
          Tomcat/StockService/web.xml file.
-   8.2.3 Create the StockService.war file, incorporating the above changes, by
-         running "ant secure-war" from <wssagents_unzip_location>/
-         samples/StockService and deploy using the Tomcat admin console or by
-         copying the files into the <TOMCAT_HOME>/webapps directory.
+   8.2.3 cd <wssagents_unzip_location>/samples/StockService and run
+         "ant war" (for showcasing without security) OR
+         "ant secure-war" (for showcasing Web Service Security and after you
+         follow Section 5 [5.1 to 5.4])
+         This will generate StockService.war under "dist" directory.
+   8.2.4 Deploy this StockService.war using the Tomcat admin console or by
+         copying the war file into the <CATALINA_BASE>/webapps directory.
 
-   8.3 Web Service Client WAR
+   8.3 StockClient WAR
 
-   8.3.1 On the client side, <wssagents_unzip_location>/samples/StockClient/src/
+   8.3.1 The @WebServiceRef and @HandlerChain annotations are not supported by 
+         Tomcat and hence, the web service reference and jax-ws handler chain
+         needs to be invoked programmatically by making the required changes
+         to the implementation class.
+         Due to this, <wssagents_unzip_location>/samples/StockClient/src/
          com/sun/stockquote/GetQuote.java must be replaced with
          <wssagents_unzip_location>/samples/etc/Tomcat/StockClient/GetQuote.java.
-         The @WebServiceRef and @HandlerChain annotations are not supported by 
-         Tomcat and hence, the jax-ws handler chain needs to be invoked 
-         programmatically by making the required changes to the implementation 
-         class.
    8.3.2 After copying the Tomcat specific GetQuote.java, remember to update the
-         protocol, host and port number of the container where the WSP 
-         (StockService) is deployed, in the WSDL URL (shown in the snippet below)
+         protocol, host and port number of the container where the StockService
+         is deployed, in the WSDL URL (shown in the snippet below)
 
          wsdlLocation = new URL("http://localhost:8080/StockService/" +
                     "StockService?wsdl");
-
-   8.3.3 Run "ant secure-war" from <wssagents_unzip_location>/samples/StockClient
-         and deploy the resulting StockClient.war using the Tomcat admin console
-         or by copying the files into the <TOMCAT_HOME>/webapps directory.
+   8.3.3 cd <wssagents_unzip_location>/samples/StockClient and run
+         "ant war" (for showcasing without security) OR
+         "ant secure-war" (for showcasing Web Service Security and after you
+         follow Section 5 [5.1 to 5.4])
+         This will generate StockClient.war under "dist" directory.
+   8.3.4 Deploy this StockClient.war using the Tomcat admin console or by
+         copying the war file into the <CATALINA_BASE>/webapps directory.
 
 %% 9. Preparing JBoss for JAX-WS
 
@@ -342,11 +371,11 @@ suitable for web-services, refer Sections 8 and 9 of this file.
    
 %% 10. Pre-Built WAR Files
 
-The Sample WARs shipped with the WSS Agents Sample assume that the WSP is
-deployed to a container running at localhost using port 8080. If your setup 
-matches this, you can test the WARs directly, without the need of building 
-from scratch. If you are using Tomcat, you will need to follow Step 8 to create
-Tomcat specific WAR files.
+   The Sample WARs shipped with the WSS Agents Sample assume that the 
+   StockService is deployed to a container running at localhost using port 8080.
+   If your setup matches this, you can test the WARs directly, without the need
+   of building from scratch. If you are using Tomcat, you will need to follow
+   Step 8 to create Tomcat specific WAR files.
 
 
 
