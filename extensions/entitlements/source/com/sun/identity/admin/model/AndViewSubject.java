@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndViewSubject.java,v 1.6 2009-07-31 20:38:42 farble1670 Exp $
+ * $Id: AndViewSubject.java,v 1.7 2009-07-31 21:53:48 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -50,5 +50,19 @@ public class AndViewSubject extends ContainerViewSubject implements Serializable
         } else {
             return null;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AndViewSubject)) {
+            return false;
+        }
+        AndViewSubject avs = (AndViewSubject)o;
+        for (ViewSubject vs: avs.getViewSubjects()) {
+            if (!getViewSubjects().contains(vs)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

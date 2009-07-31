@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewSubject.java,v 1.13 2009-06-04 11:49:19 veiming Exp $
+ * $Id: ViewSubject.java,v 1.14 2009-07-31 21:53:48 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -138,4 +138,12 @@ public abstract class ViewSubject implements MultiPanelBean, TreeNode, Serializa
     public String toString() {
         return subjectType.getTitle() + ":" + getTitle();
     }
+
+    @Override
+    public int hashCode() {
+        return new String(getClass().getName() + ":" + getName()).hashCode();
+    }
+
+    @Override
+    public abstract boolean equals(Object o);
 }

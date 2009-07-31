@@ -22,19 +22,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoGroupViewSubject.java,v 1.3 2009-06-04 11:49:15 veiming Exp $
+ * $Id: IdRepoGroupViewSubject.java,v 1.4 2009-07-31 21:53:48 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.IdRepoGroupSubject;
 
 public class IdRepoGroupViewSubject extends IdRepoViewSubject {
+
     public EntitlementSubject getEntitlementSubject() {
         IdRepoGroupSubject idgs = new IdRepoGroupSubject();
         idgs.setID(getName());
 
         return idgs;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof IdRepoGroupViewSubject)) {
+            return false;
+        }
+        IdRepoGroupViewSubject idrgvs = (IdRepoGroupViewSubject) o;
+        return idrgvs.getName().equals(getName());
     }
 }

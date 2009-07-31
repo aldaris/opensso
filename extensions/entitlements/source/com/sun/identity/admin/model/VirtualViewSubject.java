@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VirtualViewSubject.java,v 1.2 2009-06-04 11:49:19 veiming Exp $
+ * $Id: VirtualViewSubject.java,v 1.3 2009-07-31 21:53:48 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -50,5 +50,14 @@ public class VirtualViewSubject extends ViewSubject {
         }
 
         return title;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof VirtualViewSubject)) {
+            return false;
+        }
+        VirtualViewSubject vvs = (VirtualViewSubject)o;
+        return vvs.getName().equals(getName());
     }
 }

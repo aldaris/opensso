@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthFilter.java,v 1.4 2009-06-04 11:49:11 veiming Exp $
+ * $Id: AuthFilter.java,v 1.5 2009-07-31 21:53:47 farble1670 Exp $
  */
 
 package com.sun.identity.admin;
@@ -89,7 +89,13 @@ public class AuthFilter implements Filter {
     }
 
     private String getGotoUrl(HttpServletRequest request) {
-        return request.getRequestURL().toString();
+        String s = request.getRequestURL().toString();
+        String qs = request.getQueryString();
+        if (qs != null && qs.length() > 0) {
+            s += "?" + qs;
+        }
+
+        return s;
     }
 
     private boolean isAuthenticated(HttpServletRequest httpRequest) {

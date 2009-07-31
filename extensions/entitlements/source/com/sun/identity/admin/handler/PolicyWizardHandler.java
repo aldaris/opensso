@@ -22,18 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardHandler.java,v 1.25 2009-07-31 19:41:06 farble1670 Exp $
+ * $Id: PolicyWizardHandler.java,v 1.26 2009-07-31 21:53:48 farble1670 Exp $
  */
-
 package com.sun.identity.admin.handler;
 
 import com.icesoft.faces.component.dragdrop.DndEvent;
 import com.icesoft.faces.component.dragdrop.DropEvent;
 import com.icesoft.faces.context.effects.Effect;
-import com.icesoft.faces.context.effects.Fade;
 import com.icesoft.faces.context.effects.Highlight;
 import com.icesoft.faces.context.effects.SlideDown;
 import com.icesoft.faces.context.effects.SlideUp;
+import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.ConditionType;
 import com.sun.identity.admin.model.AndViewCondition;
@@ -41,11 +40,11 @@ import com.sun.identity.admin.model.AndViewSubject;
 import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.ContainerViewCondition;
 import com.sun.identity.admin.model.ContainerViewSubject;
+import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.MultiPanelBean;
 import com.sun.identity.admin.model.OrViewCondition;
 import com.sun.identity.admin.model.OrViewSubject;
-import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PolicyManageBean;
 import com.sun.identity.admin.model.QueuedActionBean;
@@ -55,13 +54,13 @@ import com.sun.identity.admin.model.ViewCondition;
 import com.sun.identity.admin.model.ViewSubject;
 import com.sun.identity.entitlement.Privilege;
 import java.io.Serializable;
+import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.PhaseId;
 
 public abstract class PolicyWizardHandler
         extends WizardHandler
         implements Serializable {
-    
+
     private PolicyDao policyDao;
     private PolicyManageBean policyManageBean;
     private QueuedActionBean queuedActionBean;
@@ -130,6 +129,18 @@ public abstract class PolicyWizardHandler
                 vs = st.newViewSubject();
             } else {
                 vs = (ViewSubject) dragValue;
+
+                // verify that value isn't being added 2x to the same
+                // subject expression
+                if (dropValue.getViewSubjects().contains(vs)) {
+                    MessageBean mb = new MessageBean();
+                    Resources r = new Resources();
+                    mb.setSummary(r.getString(this, "duplicateSubjectAddedSummary"));
+                    mb.setDetail(r.getString(this, "duplicateSubjectAddedDetail"));
+                    mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+                    messagesBean.addMessageBean(mb);
+                    return;
+                }
             }
 
             if (dropValue == null) {
@@ -356,33 +367,32 @@ public abstract class PolicyWizardHandler
 
     /*
     public void handlePanelRemove(MultiPanelBean mpb) {
-        if (mpb instanceof ViewSubject) {
-            ViewSubject vs = (ViewSubject) mpb;
-            Tree subjectTree = new Tree(getPolicyWizardBean().getPrivilegeBean().getViewSubject());
-            ViewSubject rootVs = (ViewSubject) subjectTree.remove(vs);
-            getPolicyWizardBean().getPrivilegeBean().setViewSubject(rootVs);
-        } else if (mpb instanceof ViewCondition) {
-            ViewCondition vc = (ViewCondition) mpb;
-            Tree conditionTree = new Tree(getPolicyWizardBean().getPrivilegeBean().getViewCondition());
-            ViewCondition rootVc = (ViewCondition) conditionTree.remove(vc);
-            getPolicyWizardBean().getPrivilegeBean().setViewCondition(rootVc);
-        } else {
-            throw new AssertionError("unhandled multi-panel bean: " + mpb);
-        }
+    if (mpb instanceof ViewSubject) {
+    ViewSubject vs = (ViewSubject) mpb;
+    Tree subjectTree = new Tree(getPolicyWizardBean().getPrivilegeBean().getViewSubject());
+    ViewSubject rootVs = (ViewSubject) subjectTree.remove(vs);
+    getPolicyWizardBean().getPrivilegeBean().setViewSubject(rootVs);
+    } else if (mpb instanceof ViewCondition) {
+    ViewCondition vc = (ViewCondition) mpb;
+    Tree conditionTree = new Tree(getPolicyWizardBean().getPrivilegeBean().getViewCondition());
+    ViewCondition rootVc = (ViewCondition) conditionTree.remove(vc);
+    getPolicyWizardBean().getPrivilegeBean().setViewCondition(rootVc);
+    } else {
+    throw new AssertionError("unhandled multi-panel bean: " + mpb);
+    }
     }
 
     private void addPanelRemoveAction(MultiPanelBean mpb) {
-        PhaseEventAction pea = new PhaseEventAction();
-        pea.setDoBeforePhase(false);
-        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
-        pea.setAction("#{" + managedBeanName + ".handlePanelRemove}");
-        pea.setParameters(new Class[]{MultiPanelBean.class});
-        pea.setArguments(new Object[]{mpb});
+    PhaseEventAction pea = new PhaseEventAction();
+    pea.setDoBeforePhase(false);
+    pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+    pea.setAction("#{" + managedBeanName + ".handlePanelRemove}");
+    pea.setParameters(new Class[]{MultiPanelBean.class});
+    pea.setArguments(new Object[]{mpb});
 
-        queuedActionBean.getPhaseEventActions().add(pea);
+    queuedActionBean.getPhaseEventActions().add(pea);
     }
-    */
-    
+     */
     public void setQueuedActionBean(QueuedActionBean queuedActionBean) {
         this.queuedActionBean = queuedActionBean;
     }

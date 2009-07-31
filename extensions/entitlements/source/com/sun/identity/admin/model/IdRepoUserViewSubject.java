@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoUserViewSubject.java,v 1.8 2009-06-04 11:49:15 veiming Exp $
+ * $Id: IdRepoUserViewSubject.java,v 1.9 2009-07-31 21:53:48 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -55,5 +55,14 @@ public class IdRepoUserViewSubject extends IdRepoViewSubject {
 
     public void setSn(String sn) {
         this.sn = sn;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof IdRepoUserViewSubject)) {
+            return false;
+        }
+        IdRepoUserViewSubject idruvs = (IdRepoUserViewSubject) o;
+        return idruvs.getName().equals(getName());
     }
 }

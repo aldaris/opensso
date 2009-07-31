@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeViewSubject.java,v 1.2 2009-06-13 04:02:41 farble1670 Exp $
+ * $Id: AttributeViewSubject.java,v 1.3 2009-07-31 21:53:48 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -74,5 +74,14 @@ public class AttributeViewSubject extends ViewSubject {
         Resources r = new Resources();
         String v = (value == null || value.length() == 0) ? r.getString(this, "emptyValue") : value;
         return getSubjectType().getTitle() + ":" + getTitle() + "=" + v;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AttributeViewSubject)) {
+            return false;
+        }
+        AttributeViewSubject avs = (AttributeViewSubject)o;
+        return avs.getName().equals(getName());
     }
 }
