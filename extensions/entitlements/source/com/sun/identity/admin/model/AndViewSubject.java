@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndViewSubject.java,v 1.5 2009-06-04 11:49:14 veiming Exp $
+ * $Id: AndViewSubject.java,v 1.6 2009-07-31 20:38:42 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.AndSubject;
@@ -34,16 +33,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AndViewSubject extends ContainerViewSubject implements Serializable {
+
     public EntitlementSubject getEntitlementSubject() {
         AndSubject as = new AndSubject();
 
         Set<EntitlementSubject> eSubjects = new HashSet<EntitlementSubject>();
         for (ViewSubject vs : getViewSubjects()) {
             EntitlementSubject es = vs.getEntitlementSubject();
-            eSubjects.add(es);
+            if (es != null) {
+                eSubjects.add(es);
+            }
         }
-        as.setESubjects(eSubjects);
-
-        return as;
+        if (eSubjects.size() > 0) {
+            as.setESubjects(eSubjects);
+            return as;
+        } else {
+            return null;
+        }
     }
 }

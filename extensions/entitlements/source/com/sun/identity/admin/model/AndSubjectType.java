@@ -22,18 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndSubjectType.java,v 1.5 2009-06-04 11:49:14 veiming Exp $
+ * $Id: AndSubjectType.java,v 1.6 2009-07-31 20:38:42 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.AndSubject;
 import com.sun.identity.entitlement.EntitlementSubject;
 import java.io.Serializable;
 
-public class AndSubjectType 
-    extends SubjectType
-    implements Serializable {
+public class AndSubjectType
+        extends SubjectType
+        implements Serializable {
 
     public ViewSubject newViewSubject() {
         AndViewSubject avs = new AndViewSubject();
@@ -50,12 +49,13 @@ public class AndSubjectType
 
         if (as.getESubjects() != null) {
             for (EntitlementSubject childEs : as.getESubjects()) {
-                ViewSubject vs = stf.getViewSubject(childEs);
-                avs.addViewSubject(vs);
+                if (childEs != null) {
+                    ViewSubject vs = stf.getViewSubject(childEs);
+                    avs.addViewSubject(vs);
+                }
             }
         }
 
         return avs;
     }
-
 }

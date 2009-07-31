@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotSubjectType.java,v 1.5 2009-06-04 11:49:15 veiming Exp $
+ * $Id: NotSubjectType.java,v 1.6 2009-07-31 20:38:42 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -48,9 +48,10 @@ public class NotSubjectType
         EntitlementSubject nottedSubject = ns.getESubject();
 
         NotViewSubject nvs = (NotViewSubject)newViewSubject();
-
+        if (nottedSubject != null) {
         ViewSubject nottedViewSubject = stf.getViewSubject(nottedSubject);
-        nvs.addViewSubject(nottedViewSubject);
+            nvs.addViewSubject(nottedViewSubject);
+        }
 
         return nvs;
     }

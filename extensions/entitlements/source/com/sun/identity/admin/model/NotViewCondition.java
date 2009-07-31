@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotViewCondition.java,v 1.9 2009-07-31 19:41:06 farble1670 Exp $
+ * $Id: NotViewCondition.java,v 1.10 2009-07-31 20:38:42 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -40,13 +40,14 @@ public class NotViewCondition
 
     public EntitlementCondition getEntitlementCondition() {
         if (getViewConditions() != null && getViewConditions().size() > 0) {
-            NotCondition nc = new NotCondition();
             EntitlementCondition ec = getViewConditions().get(0).getEntitlementCondition();
-            nc.setECondition(ec);
-            return nc;
+            if (ec != null) {
+                NotCondition nc = new NotCondition();
+                nc.setECondition(ec);
+                return nc;
+            }
         }
         return null;
-
     }
 
     @Override

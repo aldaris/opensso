@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotViewSubject.java,v 1.7 2009-06-04 11:49:15 veiming Exp $
+ * $Id: NotViewSubject.java,v 1.8 2009-07-31 20:38:42 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.EntitlementSubject;
@@ -34,12 +33,14 @@ import java.io.Serializable;
 public class NotViewSubject extends ContainerViewSubject implements Serializable {
 
     public EntitlementSubject getEntitlementSubject() {
-        NotSubject ns = new NotSubject();
-
         if (getViewSubjects() != null && getViewSubjects().size() != 0) {
-            ns.setESubject(getViewSubjects().get(0).getEntitlementSubject());
+            EntitlementSubject es = getViewSubjects().get(0).getEntitlementSubject();
+            if (es != null) {
+                NotSubject ns = new NotSubject();
+                ns.setESubject(getViewSubjects().get(0).getEntitlementSubject());
+                return ns;
+            }
         }
-
-        return ns;
+        return null;
     }
 }

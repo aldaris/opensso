@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrSubjectType.java,v 1.5 2009-06-04 11:49:15 veiming Exp $
+ * $Id: OrSubjectType.java,v 1.6 2009-07-31 20:38:42 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.EntitlementSubject;
@@ -50,8 +49,10 @@ public class OrSubjectType
 
         if (os.getESubjects() != null) {
             for (EntitlementSubject childEs : os.getESubjects()) {
-                ViewSubject vs = stf.getViewSubject(childEs);
-                ovs.addViewSubject(vs);
+                if (childEs != null) {
+                    ViewSubject vs = stf.getViewSubject(childEs);
+                    ovs.addViewSubject(vs);
+                }
             }
         }
 

@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrConditionType.java,v 1.5 2009-06-04 11:49:15 veiming Exp $
+ * $Id: OrConditionType.java,v 1.6 2009-07-31 20:38:42 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.EntitlementCondition;
@@ -50,8 +49,10 @@ public class OrConditionType
 
         if (oc.getEConditions() != null) {
             for (EntitlementCondition childEc : oc.getEConditions()) {
-                ViewCondition vc = conditionTypeFactory.getViewCondition(childEc);
-                ovc.addViewCondition(vc);
+                if (childEc != null) {
+                    ViewCondition vc = conditionTypeFactory.getViewCondition(childEc);
+                    ovc.addViewCondition(vc);
+                }
             }
         }
 

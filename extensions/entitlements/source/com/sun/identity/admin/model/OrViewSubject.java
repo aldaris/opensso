@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrViewSubject.java,v 1.6 2009-06-04 11:49:15 veiming Exp $
+ * $Id: OrViewSubject.java,v 1.7 2009-07-31 20:38:42 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.EntitlementSubject;
@@ -41,10 +40,15 @@ public class OrViewSubject extends ContainerViewSubject implements Serializable 
         Set<EntitlementSubject> eSubjects = new HashSet<EntitlementSubject>();
         for (ViewSubject vs : getViewSubjects()) {
             EntitlementSubject es = vs.getEntitlementSubject();
-            eSubjects.add(es);
+            if (es != null) {
+                eSubjects.add(es);
+            }
         }
-        os.setESubjects(eSubjects);
-
-        return os;
+        if (eSubjects.size() > 0) {
+            os.setESubjects(eSubjects);
+            return os;
+        } else {
+            return null;
+        }
     }
 }
