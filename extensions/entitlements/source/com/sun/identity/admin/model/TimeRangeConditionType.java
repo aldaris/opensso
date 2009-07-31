@@ -22,22 +22,40 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeRangeConditionType.java,v 1.4 2009-06-04 11:49:17 veiming Exp $
+ * $Id: TimeRangeConditionType.java,v 1.5 2009-07-31 19:41:06 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.TimeCondition;
 import java.io.Serializable;
 
-public class TimeRangeConditionType 
-    extends TimeConditionType
-    implements Serializable {
+public class TimeRangeConditionType
+        extends TimeConditionType
+        implements Serializable {
 
     private static class Time {
         int hour;
         int min;
         String period;
+
+        public Time(String timeString) {
+            assert (timeString != null);
+
+            String[] timeArray = timeString.split(":");
+            assert (timeArray.length == 2);
+
+            int h = Integer.valueOf(timeArray[0]);
+            int m = Integer.valueOf(timeArray[1]);
+
+            if (h < 12) {
+                hour = Integer.valueOf(timeArray[0]);
+                period = "AM";
+            } else {
+                hour = Integer.valueOf(timeArray[0]) - 12;
+                period = "PM";
+            }
+            min = Integer.valueOf(timeArray[1]);
+        }
     }
 
     public ViewCondition newViewCondition() {
@@ -48,9 +66,9 @@ public class TimeRangeConditionType
     }
 
     public ViewCondition newViewCondition(TimeCondition tc) {
-        TimeRangeCondition trc = (TimeRangeCondition)newViewCondition();
-        Time startTime = parseTime(tc.getStartTime());
-        Time endTime = parseTime(tc.getEndTime());
+        TimeRangeCondition trc = (TimeRangeCondition) newViewCondition();
+        Time startTime = new Time(tc.getStartTime());
+        Time endTime = new Time(tc.getEndTime());
 
         trc.setStartHour(startTime.hour);
         trc.setStartMinute(startTime.min);
@@ -60,24 +78,5 @@ public class TimeRangeConditionType
         trc.setEndPeriod(endTime.period);
 
         return trc;
-    }
-
-    private Time parseTime(String timeString) {
-        assert(timeString != null);
-        Time t = new Time();
-
-        String[] timeArray = timeString.split(":");
-        assert(timeArray.length == 2);
-
-        if (t.hour < 12) {
-            t.hour = Integer.valueOf(timeArray[0]);
-            t.period = "AM";
-        } else {
-            t.hour = Integer.valueOf(timeArray[0])-12;
-            t.period = "PM";
-        }
-        t.min = Integer.valueOf(timeArray[1]);
-
-        return t;
     }
 }

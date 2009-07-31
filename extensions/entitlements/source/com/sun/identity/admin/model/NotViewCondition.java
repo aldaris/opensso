@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotViewCondition.java,v 1.8 2009-06-04 11:49:15 veiming Exp $
+ * $Id: NotViewCondition.java,v 1.9 2009-07-31 19:41:06 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.EntitlementCondition;
@@ -32,26 +31,27 @@ import com.sun.identity.entitlement.NotCondition;
 import java.io.Serializable;
 
 public class NotViewCondition
-    extends ContainerViewCondition
-    implements Serializable {
+        extends ContainerViewCondition
+        implements Serializable {
 
     public NotViewCondition() {
         super();
     }
 
     public EntitlementCondition getEntitlementCondition() {
-        NotCondition nc = new NotCondition();
         if (getViewConditions() != null && getViewConditions().size() > 0) {
+            NotCondition nc = new NotCondition();
             EntitlementCondition ec = getViewConditions().get(0).getEntitlementCondition();
             nc.setECondition(ec);
+            return nc;
         }
+        return null;
 
-        return nc;
     }
 
     @Override
     public void addViewCondition(ViewCondition vc) {
-        assert(getViewConditionsSize() < 1);
+        assert (getViewConditionsSize() < 1);
         super.addViewCondition(vc);
     }
 }

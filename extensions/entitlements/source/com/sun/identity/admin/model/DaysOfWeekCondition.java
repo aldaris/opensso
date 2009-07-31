@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DaysOfWeekCondition.java,v 1.9 2009-06-04 11:49:14 veiming Exp $
+ * $Id: DaysOfWeekCondition.java,v 1.10 2009-07-31 19:41:06 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
@@ -39,30 +38,40 @@ import java.util.Set;
 import javax.faces.model.SelectItem;
 
 public class DaysOfWeekCondition
-    extends ViewCondition
-    implements Serializable {
+        extends ViewCondition
+        implements Serializable {
 
-    public static String[] DAYS = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
+    public static String[] DAYS = new String[]{"mon", "tue", "wed", "thu", "fri", "sat", "sun"};
     private String[] selectedDays = new String[7];
 
     public EntitlementCondition getEntitlementCondition() {
-        OrCondition oc = new OrCondition();
-        Set<EntitlementCondition> orConditions = new HashSet<EntitlementCondition>();
-        for (String day: selectedDays) {
+        if (selectedDays.length > 1) {
+            OrCondition oc = new OrCondition();
+            Set<EntitlementCondition> orConditions = new HashSet<EntitlementCondition>();
+            for (String day : selectedDays) {
+                TimeCondition tc = new TimeCondition();
+                tc.setStartDay(day);
+                tc.setEndDay(day);
+                orConditions.add(tc);
+            }
+            oc.setEConditions(orConditions);
+            return oc;
+        } else if (selectedDays.length > 0) {
             TimeCondition tc = new TimeCondition();
-            tc.setStartDay(day);
-            tc.setEndDay(day);
-            orConditions.add(tc);
+            if (selectedDays.length > 0) {
+                String day = selectedDays[0];
+                tc.setStartDay(day);
+                tc.setEndDay(day);
+            }
+            return tc;
         }
-        oc.setEConditions(orConditions);
-
-        return oc;
+        return null;
     }
 
     public List<SelectItem> getDayItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
 
-        for (String day: DAYS) {
+        for (String day : DAYS) {
             Resources r = new Resources();
             String label = r.getString(this, day);
             SelectItem si = new SelectItem(day, label);
@@ -90,7 +99,7 @@ public class DaysOfWeekCondition
             Resources r = new Resources();
             String label = r.getString(this, selectedDays[i]);
             b.append(label);
-            if (i < selectedDays.length-1) {
+            if (i < selectedDays.length - 1) {
                 b.append(",");
             }
         }

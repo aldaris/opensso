@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndViewCondition.java,v 1.8 2009-06-11 19:20:40 farble1670 Exp $
+ * $Id: AndViewCondition.java,v 1.9 2009-07-31 19:41:06 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.AndCondition;
@@ -34,8 +33,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AndViewCondition
-    extends ContainerViewCondition
-    implements Serializable {
+        extends ContainerViewCondition
+        implements Serializable {
 
     public AndViewCondition() {
         super();
@@ -45,12 +44,18 @@ public class AndViewCondition
         AndCondition ac = new AndCondition();
         Set<EntitlementCondition> ecs = new HashSet<EntitlementCondition>();
 
-        for (ViewCondition vc: getViewConditions()) {
+        for (ViewCondition vc : getViewConditions()) {
             EntitlementCondition ec = vc.getEntitlementCondition();
-            ecs.add(ec);
+            if (ec != null) {
+                ecs.add(ec);
+            }
         }
-        ac.setEConditions(ecs);
 
-        return ac;
+        if (ecs.size() > 0) {
+            ac.setEConditions(ecs);
+            return ac;
+        } else {
+            return null;
+        }
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardHandler.java,v 1.24 2009-07-13 19:42:42 farble1670 Exp $
+ * $Id: PolicyWizardHandler.java,v 1.25 2009-07-31 19:41:06 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -328,14 +328,33 @@ public abstract class PolicyWizardHandler
         MultiPanelBean mpb = (MultiPanelBean) event.getComponent().getAttributes().get("bean");
         assert (mpb != null);
 
+        if (mpb instanceof ViewSubject) {
+            ViewSubject vs = (ViewSubject) mpb;
+            Tree subjectTree = new Tree(getPolicyWizardBean().getPrivilegeBean().getViewSubject());
+            ViewSubject rootVs = (ViewSubject) subjectTree.remove(vs);
+            getPolicyWizardBean().getPrivilegeBean().setViewSubject(rootVs);
+        } else if (mpb instanceof ViewCondition) {
+            ViewCondition vc = (ViewCondition) mpb;
+            Tree conditionTree = new Tree(getPolicyWizardBean().getPrivilegeBean().getViewCondition());
+            ViewCondition rootVc = (ViewCondition) conditionTree.remove(vc);
+            getPolicyWizardBean().getPrivilegeBean().setViewCondition(rootVc);
+        } else {
+            throw new AssertionError("unhandled multi-panel bean: " + mpb);
+        }
+        /*
+        MultiPanelBean mpb = (MultiPanelBean) event.getComponent().getAttributes().get("bean");
+        assert (mpb != null);
+
         Effect e = new Fade();
         e.setSubmit(true);
         e.setTransitory(false);
         mpb.setPanelEffect(e);
 
         addPanelRemoveAction(mpb);
+         */
     }
 
+    /*
     public void handlePanelRemove(MultiPanelBean mpb) {
         if (mpb instanceof ViewSubject) {
             ViewSubject vs = (ViewSubject) mpb;
@@ -348,7 +367,7 @@ public abstract class PolicyWizardHandler
             ViewCondition rootVc = (ViewCondition) conditionTree.remove(vc);
             getPolicyWizardBean().getPrivilegeBean().setViewCondition(rootVc);
         } else {
-            throw new RuntimeException("unhandled multi-panel bean: " + mpb);
+            throw new AssertionError("unhandled multi-panel bean: " + mpb);
         }
     }
 
@@ -362,7 +381,8 @@ public abstract class PolicyWizardHandler
 
         queuedActionBean.getPhaseEventActions().add(pea);
     }
-
+    */
+    
     public void setQueuedActionBean(QueuedActionBean queuedActionBean) {
         this.queuedActionBean = queuedActionBean;
     }
