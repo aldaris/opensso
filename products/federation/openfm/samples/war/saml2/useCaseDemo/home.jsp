@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: home.jsp,v 1.6 2008-11-25 23:50:43 exu Exp $
+   $Id: home.jsp,v 1.7 2009-08-01 00:21:52 sean_brydon Exp $
 
 -->
 
@@ -41,7 +41,7 @@
 <%@ include file="header.jspf" %>
 
 <p>&nbsp;</p>
-&lt; <a href="Readme.html">SAML2 Sample Page</a>
+&lt; <a href="Readme.html">SAMLv2 Sample Page</a>
 <p>&nbsp;</p>                                                                                
     <h3><center><%= myTitle%> 
             appreciates your business<%= userLoggedIn ? ", " + userLabel : ""%></center></h3>
@@ -67,21 +67,35 @@
         <% if(!userLoggedIn) { %>   <!-- user not logged in -->
                     <% if(iAmIdp) { %>      <!-- not logged in, i am idp -->
                             <a href="<%= localLoginUrl %>?goto=<%= thisUrl %>">
-                                Login</a>
+                                Local Login</a>
                     <% } else { %>          <!-- not logged in, i am sp -->
                             <a href="<%= appBase %>spssoinit?metaAlias=<%= myMetaAlias %>&idpEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=HTTP-Artifact&RelayState=<%= thisUrl %>">
-                            Login, secure service provided by <%=  idpTitle%></a>
+                            SAMLv2 Login through IDP, secure service provided by <%=  idpTitle%></a>
+                         </li>                        
+                         <li>                           
+                            <a href="<%= localLoginUrl %>?goto=<%= thisUrl %>">
+                                Local Login</a>
                     <% } %>
-                <%  } else { %>             <!-- user logged in -->
+        <%  } else { %>             <!-- user logged in -->
                     <% if(iAmIdp) { %>      <!-- logged in, i am idp -->
                             <a href="<%= appBase %>IDPSloInit?<%= SAML2Constants.BINDING %>=<%= SAML2Constants.HTTP_REDIRECT %>&RelayState=<%= thisUrl %>">
-                               Logout</a>
+                               SAMLv2 Logout</a>
                     <% } else { %>          <!-- logged in, i am sp -->
-                            <a href="<%= appBase %>SPSloInit?idpEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=<%= SAML2Constants.HTTP_REDIRECT %>&RelayState=<%= thisUrl %>">
-                                Logout</a>
+                            <% if(isLocalLogin) { %>                           
+                                <a href="<%= localLogoutUrl %>?goto=<%= thisUrl %>">
+                                    Local Logout</a>
+                         </li>
+                         <li>
+                                <a href="<%= appBase %>spssoinit?metaAlias=<%= myMetaAlias %>&idpEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=HTTP-Artifact&RelayState=<%= thisUrl %>">
+                                   SAMLv2 Login through IDP, secure service provided by <%=  idpTitle%></a>                                  
+                            <% } else { %> 
+                                <a href="<%= appBase %>SPSloInit?idpEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=<%= SAML2Constants.HTTP_REDIRECT %>&RelayState=<%= thisUrl %>">
+                                SAMLv2 Logout</a>
+                            <% } %>                               
+                                
                     <% } %>
-                <%  } %>
-            </li>
+        <%  } %>
+        </li>
 
             <!-- Federate/Defederate prompt only if user is logged in -->
                 <% if(userLoggedIn) { %>             <!-- user logged in -->
@@ -120,7 +134,7 @@
             </li>
             <li>
                         <a href="<%= appBase %>idpssoinit?metaAlias=<%= myMetaAlias %>&spEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=<%= SAML2Constants.HTTP_ARTIFACT %>&RelayState=<%= reserveCarWithPartnerUrl %>">
-                            Reserve Car with our assosciate, <%= partnerTitle %>
+                            Reserve Car with our associate, <%= partnerTitle %>
                         </a>
             </li>
             <% } else {%>           <!-- logged in, i am sp -->
@@ -139,7 +153,7 @@
             </li>
             <li>
                         <a href="<%= appBase %>idpssoinit?metaAlias=<%= myMetaAlias %>&spEntityID=<%= partnerEntityID %>&<%= SAML2Constants.BINDING %>=<%= SAML2Constants.HTTP_ARTIFACT %>&RelayState=<%= reserveCarWithPartnerUrl %>">
-                            Reserve Car with our assosciate, <%= partnerTitle %>
+                            Reserve Car with our associate, <%= partnerTitle %>
                         </a>
             </li>
             <% } else {%>           <!-- not logged in, i am sp -->

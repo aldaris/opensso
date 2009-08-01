@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: init.jspf,v 1.4 2008-12-12 01:21:52 qcheng Exp $
+   $Id: init.jspf,v 1.5 2009-08-01 00:21:52 sean_brydon Exp $
 
 -->
 
@@ -86,6 +86,7 @@
     String thisUrl = request.getRequestURL().toString();
     String appBase = thisUrl.substring(0, thisUrl.lastIndexOf("/samples") + 1);
     String localLoginUrl = appBase + "UI/Login";
+    String localLogoutUrl = appBase + "UI/Logout";
     String saml2Base = appBase + "saml2/";
     String jspBase = saml2Base + "useCaseDemo/";
     String samplesBase = appBase + SAMPLES_DIR + "/";
@@ -96,7 +97,9 @@
     boolean userLoggedIn = false;
     String userName = "";
     String userLabel = "";
-    boolean federatedWithPartner = false; 
+    boolean federatedWithPartner = false;
+    //To determine if user is logged in thru SAML or Local login
+    boolean isLocalLogin = true;
 
     SAML2MetaManager mm = SAML2Utils.getSAML2MetaManager();
     List idpMetaAliases = mm.getAllHostedIdentityProviderMetaAliases(REALM);
@@ -199,6 +202,17 @@
                 ssoToken = tokenManager.createSSOToken(request);
                 if ((ssoToken != null) && tokenManager.isValidToken(ssoToken)) {
                     userLoggedIn = true;
+                    if(iAmSp) {
+                      String spMetaAlias = ssoToken.getProperty(SAML2Constants.SP_METAALIAS);
+                      if (spMetaAlias==null || spMetaAlias.trim().length() == 0){
+                        //if detect presence of SP MetaAlias property then
+                        //it means login was thru SAML, else if not then local
+                        isLocalLogin = true;
+                      } else {
+                        //login was thru SAML since SP_METAALIAS was set
+                        isLocalLogin = false;
+                      }
+                    }
                     userName = ssoToken.getProperty(UNIVERSAL_IDENTIFIER);
                     userLabel = userName;
                     int j = userName.indexOf("=");
