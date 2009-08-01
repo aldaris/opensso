@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.txt,v 1.1 2009-08-01 23:27:30 superpat7 Exp $
+$Id: README.txt,v 1.2 2009-08-01 23:39:24 superpat7 Exp $
 
 ------------------------------------------------------------------------------
 
@@ -41,6 +41,13 @@ account.
 request 'Observer' role on OpenSSO.
 3. Go to https://opensso.dev.java.net/servlets/ProjectMailingListList and 
 subscribe to 'users@opensso.dev.java.net'.
+
+Pre-requisites
+--------------
+
+You must have the pecl_http extension (http://pecl.php.net/package/pecl_http) 
+installed into PHP, since Joomla does not seem to implement its own HTTP 
+request function in the same way as Drupal/Wordpress do.
 
 Installation
 ------------
