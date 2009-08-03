@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapCreator.java,v 1.13 2009-05-05 21:24:46 veiming Exp $
+ * $Id: BootstrapCreator.java,v 1.14 2009-08-03 23:32:54 veiming Exp $
  *
  */
 
@@ -42,6 +42,7 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.shared.StringUtils;
 import com.sun.identity.sm.SMSException;
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Collection;
@@ -101,13 +102,29 @@ public class BootstrapCreator {
             String bootstrapString = getBootStrapURL(dsCfg);
             String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
             String file = baseDir + "/" + BootstrapData.BOOTSTRAP;
-            if (isUnix) {
-                Runtime.getRuntime().exec("/bin/chmod 600 " + file);
+            File f = new File(file);
+            boolean exist = f.exists();
+            boolean writable = exist && f.canWrite();
+
+            // make bootstrap writable if it is not
+            if (exist && !writable) {
+                f.setWritable(true);
                 Thread.sleep(3000);
-            }            
+            }
+
             AMSetupServlet.writeToFile(file, bootstrapString);
-            if (isUnix) {
-                Runtime.getRuntime().exec("/bin/chmod 400 " + file);
+
+            // not exist means that the product is first configured.
+            // set permission to 400
+            if (!exist) {
+                if (isUnix) {
+                    Runtime.getRuntime().exec("/bin/chmod 400 " + file);
+                }
+            } else {
+                // make it not writable if it was previously not writable.
+                if (!writable) {
+                    f.setWritable(false);
+                }
             }
         } catch (InterruptedException e) {
             throw new ConfigurationException(e.getMessage());
