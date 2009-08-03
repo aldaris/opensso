@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: YubikeyLoginModule.java,v 1.1 2008-11-20 04:28:42 superpat7 Exp $
+ * $Id: YubikeyLoginModule.java,v 1.2 2009-08-03 22:27:08 superpat7 Exp $
  *
  */
 
@@ -32,6 +32,7 @@ package com.sun.identity.authentication.modules.yubikey;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
@@ -57,9 +58,12 @@ public class YubikeyLoginModule extends AMLoginModule {
     private java.security.Principal userPrincipal = null;
     private String userName = null;
     private String otp = null;
-    private boolean verified = false;
     private static int YUBIKEY_ID_LEN = 12;
+    
+    private boolean getCredentialsFromSharedState;
+    private Map sharedState;
 
+    protected String validatedUserID;
     protected static Debug debug = Debug.getInstance("YubikeyLoginModule");
 
     /**
@@ -71,6 +75,7 @@ public class YubikeyLoginModule extends AMLoginModule {
      */
     @Override
     public void init(Subject subject, Map sharedState, Map options) {
+        this.sharedState = sharedState;
         if (debug.messageEnabled()) {
             debug.message("YubikeyLoginModule.init()");
         }
@@ -89,92 +94,112 @@ public class YubikeyLoginModule extends AMLoginModule {
     @Override
     public int process(Callback[] callbacks,int state)
         throws AuthLoginException {
-        // this module is married to the module properties file
-        // therefore the number of callbacks must match
-        if(callbacks.length != 2) {
-            throw new AuthLoginException("fatal configuration error, "+
-                "wrong number of callbacks");
+
+        if (state == ISAuthConstants.LOGIN_START) {
+            try {
+                if (callbacks !=null && callbacks.length == 0) {
+                    userName = (String) sharedState.get(getUserKey());
+                    otp = (String) sharedState.get(getPwdKey());
+                    if (userName == null || otp == null) {
+                        return ISAuthConstants.LOGIN_START;
+                    }
+                    getCredentialsFromSharedState = true;
+                } else {
+                    // this module is married to the module properties file
+                    // therefore the number of callbacks must match
+                    if(callbacks.length != 2) {
+                        throw new AuthLoginException("fatal configuration error, "+
+                            "wrong number of callbacks");
+                    }
+                    userName = ((NameCallback)callbacks[0]).getName();
+                    if(userName == null || userName.equals("")) {
+                        throw new AuthLoginException("Username cannot be empty");
+                    }
+
+                    otp = new String(((PasswordCallback)callbacks[1]).getPassword());
+                    if(otp == null || otp.equals("")) {
+                        throw new AuthLoginException("OTP cannot be empty");
+                    }
+                }
+
+                // Check that presented Yubikey ID matches saved ID for user
+                //
+                // First, set up the search
+                AMIdentityRepository idrepo = getAMIdentityRepository(
+                    getRequestOrg());
+
+                // We want the Yubikey ID attribute
+                IdSearchControl ctrl = new IdSearchControl();
+                Set attributeNames = new HashSet<String>();
+                attributeNames.add(yubikeyIdAttrName);
+                ctrl.setReturnAttributes(attributeNames);
+
+                // Now do the search
+                IdSearchResults results = null;
+                try {
+                    results = idrepo.searchIdentities(IdType.USER, userName, ctrl);
+                } catch (IdRepoException ex) {
+                    throw new AuthLoginException("Exception looking up username: " +
+                        userName, ex);
+                } catch (SSOException ex) {
+                    throw new AuthLoginException("Exception looking up username: " +
+                        userName, ex);
+                }
+
+                // Get the results
+                Set resultSet = results.getSearchResults();
+
+                // Should be only one result
+                if ( resultSet.size() != 1 ) {
+                    throw new AuthLoginException("Found " + resultSet.size() +
+                        " users with name " + userName);
+                }
+
+                // Get the user object
+                AMIdentity user = (AMIdentity)resultSet.iterator().next();
+
+                // attrMap is a Map of attribute names to sets of values
+                Map attrMap = (Map)results.getResultAttributes().get(user);
+
+                // attrSet is the set of values for the Yubikey ID attribute
+                Set attrSet = (Set)attrMap.get(yubikeyIdAttrName);
+
+                // Assume there is only one Yubikey ID per user
+                String savedId = (String)attrSet.iterator().next();
+
+                // Check that the OTP matches the ID on record for this user
+                if ( ! otp.startsWith(savedId)) {
+                    throw new AuthLoginException("Presented Yubikey ID (" +
+                        otp.substring(0, YUBIKEY_ID_LEN) + ") for user " +
+                        userName + "does not match saved ID (" +  savedId + ")");
+                }
+
+                // Now check that OTP is valid
+                YubikeyWebServiceClient yubikeyWSC =
+                    new YubikeyWebServiceClient(authSvcUrl, clientId);
+                boolean verified = false;
+                try {
+                    verified = yubikeyWSC.validateToken(otp);
+                } catch(Exception ex) {
+                    throw new AuthLoginException("Exception receiving response", ex);
+                }
+
+                if(! verified) {
+                    throw new AuthLoginException("Login failure");
+                }
+
+                // If we get here then all is well
+                validatedUserID = userName;
+            }  catch ( AuthLoginException ale ) {
+                if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
+                    getCredentialsFromSharedState = false;
+                    return ISAuthConstants.LOGIN_START;
+                }
+                throw ale;
+            }
         }
 
-        if(state == 1) {
-            userName = ((NameCallback)callbacks[0]).getName();
-            if(userName == null || userName.equals("")) {
-                throw new AuthLoginException("Username cannot be empty");
-            }
-
-            otp = new String(((PasswordCallback)callbacks[1]).getPassword());
-            if(otp == null || otp.equals("")) {
-                throw new AuthLoginException("OTP cannot be empty");
-            }
-
-            // Check that presented Yubikey ID matches saved ID for user
-            //
-            // First, set up the search
-            AMIdentityRepository idrepo = getAMIdentityRepository(
-                getRequestOrg());
-
-            // We want the Yubikey ID attribute
-            IdSearchControl ctrl = new IdSearchControl();
-            Set attributeNames = new HashSet<String>();
-            attributeNames.add(yubikeyIdAttrName);
-            ctrl.setReturnAttributes(attributeNames);
-
-            // Now do the search
-            IdSearchResults results = null;
-            try {
-                results = idrepo.searchIdentities(IdType.USER, userName, ctrl);
-            } catch (IdRepoException ex) {
-                throw new AuthLoginException("Exception looking up username: " +
-                    userName, ex);
-            } catch (SSOException ex) {
-                throw new AuthLoginException("Exception looking up username: " +
-                    userName, ex);
-            }
-
-            // Get the results
-            Set resultSet = results.getSearchResults();
-
-            // Should be only one result
-            if ( resultSet.size() != 1 ) {
-                throw new AuthLoginException("Found " + resultSet.size() +
-                    " users with name " + userName);
-            }
-
-            // Get the user object
-            AMIdentity user = (AMIdentity)resultSet.iterator().next();
-
-            // attrMap is a Map of attribute names to sets of values
-            Map attrMap = (Map)results.getResultAttributes().get(user);
-
-            // attrSet is the set of values for the Yubikey ID attribute
-            Set attrSet = (Set)attrMap.get(yubikeyIdAttrName);
-
-            // Assume there is only one Yubikey ID per user
-            String savedId = (String)attrSet.iterator().next();
-
-            // Check that the OTP matches the ID on record for this user
-            if ( ! otp.startsWith(savedId)) {
-                throw new AuthLoginException("Presented Yubikey ID (" +
-                    otp.substring(0, YUBIKEY_ID_LEN) + ") for user " +
-                    userName + "does not match saved ID (" +  savedId + ")");
-            }
-
-            // Now check that OTP is valid
-            YubikeyWebServiceClient yubikeyWSC = 
-                new YubikeyWebServiceClient(authSvcUrl, clientId);
-            verified = false;
-            try {
-                verified = yubikeyWSC.validateToken(otp);
-            } catch(Exception ex) {
-                throw new AuthLoginException("Exception receiving response", ex);
-            }
-
-            if(! verified) {
-                throw new AuthLoginException("Login failure");
-            }
-            // If we get here then all is well
-        }
-        return -1; // -1 indicates success
+        return ISAuthConstants.LOGIN_SUCCEED;
     }
 
     /**
@@ -190,10 +215,29 @@ public class YubikeyLoginModule extends AMLoginModule {
      */
     @Override
     public java.security.Principal getPrincipal() {
-        if(verified && userPrincipal == null) {
-            userPrincipal = new YubikeyPrincipal(userName);
+        if (validatedUserID != null && userPrincipal == null) {
+            userPrincipal = new YubikeyPrincipal(validatedUserID);
         }
         return userPrincipal;
         
+    }
+
+    /**
+     * Cleans up state fields.
+     */
+    @Override
+    public void destroyModuleState() {
+        validatedUserID = null;
+        userPrincipal = null;
+    }
+
+    /**
+     * TODO-JAVADOC
+     */
+    @Override
+    public void nullifyUsedVars() {
+        userName = null ;
+        otp = null;
+        sharedState = null;
     }
 }
