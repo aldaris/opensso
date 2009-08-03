@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemInfoConstants.java,v 1.1 2008-11-22 02:24:32 ak138937 Exp $
+ * $Id: SystemInfoConstants.java,v 1.2 2009-08-03 23:57:59 ak138937 Exp $
  *
  */
 
@@ -40,7 +40,7 @@ public interface SystemInfoConstants extends ToolConstants {
      * Resource file name used by System service
      */
     final String SYSTEM_RESOURCE_BUNDLE = 
-        "com.sun.identity.diagnostic.base.services.systeminfo.config.SystemInfo";
+        "com.sun.identity.diagnostic.base.resources.locale.SystemInfo";
 
     /**
      * Property strings for system information.
