@@ -23,24 +23,25 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wss.xhtml,v 1.2 2009-07-23 20:46:56 ggennaro Exp $
+   $Id: wss.xhtml,v 1.3 2009-08-03 22:25:33 ggennaro Exp $
 
 -->
 
-<ui:composition template="template/page.xhtml"
-                xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ice="http://www.icesoft.com/icefaces/component">
+<ui:composition
+    template="template/page-no-title.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:o="http://opensso.dev.java.net"
+    xmlns:ice="http://www.icesoft.com/icefaces/component">
 
-    <ui:define name="panel-title">
-        <ice:outputText value="#{resources['wss.panelTitle']}" />
-    </ui:define>
-    <ui:define name="panel-details">
-        <ice:outputText value="#{resources['wss.panelDetails']}" />
-    </ui:define>
     <ui:define name="panel-body">
-        <ice:outputText value="#{resources['wss.panelBody']}" />
+        <o:landing page="wss">
+            <ui:define name="litems">
+                <o:litem action="wss-create"/>
+                <o:litem action="sts-create"/>
+            </ui:define>
+        </o:landing>
     </ui:define>
 
 </ui:composition>

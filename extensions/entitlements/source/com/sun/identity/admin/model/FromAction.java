@@ -20,6 +20,7 @@ public enum FromAction {
     SAMLV2_REMOTE_IDP_CREATE("samlv2-remote-idp-create"),
     WEB_SERVICE_SECURITY("wss"),
     WEB_SERVICE_SECURITY_CREATE("wss-create"),
+    STS_CREATE("sts-create"),
     APPLICATION("application"),
     APPLICATION_CREATE("application-create"),
     PERMISSION_DENIED("permission-denied");
@@ -42,6 +43,7 @@ public enum FromAction {
             put(NEWS.getAction(), NEWS);
             put(WEB_SERVICE_SECURITY.getAction(), WEB_SERVICE_SECURITY);
             put(WEB_SERVICE_SECURITY_CREATE.getAction(), WEB_SERVICE_SECURITY_CREATE);
+            put(STS_CREATE.getAction(), STS_CREATE);
             put(APPLICATION.getAction(), APPLICATION);
             put(APPLICATION_CREATE.getAction(), APPLICATION_CREATE);
             put(PERMISSION_DENIED.getAction(), PERMISSION_DENIED);

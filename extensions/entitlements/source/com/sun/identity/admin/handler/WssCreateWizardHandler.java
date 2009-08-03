@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WssCreateWizardHandler.java,v 1.2 2009-07-23 20:46:55 ggennaro Exp $
+ * $Id: WssCreateWizardHandler.java,v 1.3 2009-08-03 22:25:32 ggennaro Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -90,7 +90,7 @@ public class WssCreateWizardHandler
             };
 
     private MessagesBean messagesBean;
-    private String selectedSecurityPanel;
+    private String selectedSecurityPanel = PANEL_STS_CONFIGURATION_SETTINGS;
 
 
 
@@ -122,7 +122,7 @@ public class WssCreateWizardHandler
     public void doFinishNext() {
         WssCreateWizardBean wizardBean = (WssCreateWizardBean) getWizardBean();
 
-        setSelectedSecurityPanel(PANEL_NO_SETTINGS);
+        setSelectedSecurityPanel(PANEL_STS_CONFIGURATION_SETTINGS);
 
         NextPopupBean npb = NextPopupBean.getInstance();
         npb.setVisible(true);
@@ -139,7 +139,7 @@ public class WssCreateWizardHandler
     }
 
     public void doCancelNext() {
-        setSelectedSecurityPanel(PANEL_NO_SETTINGS);
+        setSelectedSecurityPanel(PANEL_STS_CONFIGURATION_SETTINGS);
 
         NextPopupBean npb = NextPopupBean.getInstance();
         npb.setVisible(true);
@@ -280,8 +280,11 @@ public class WssCreateWizardHandler
         wsc.setEncryptionAlgorithm(wsp.getEncryptionAlgorithm());
         wsc.setEncryptionStrength(wsp.getEncryptionStrength());
 
-        wsc.setKeyAlias( wsp.getKeyAlias() );
-        wsc.setPublicKeyAlias( wsp.getPublicKeyAlias() );
+        // The Public Key Alias of Web Service Provider will be used to encrypt
+        // requests and the Private Key Alias of Web Service Client will be used
+        // to sign requests, from the web service client
+        wsc.setKeyAlias( wsp.getPublicKeyAlias() );
+        wsc.setPublicKeyAlias( wsp.getKeyAlias() );
 
         switch(wscSecurityMech) {
             case ANONYMOUS:
@@ -398,6 +401,9 @@ public class WssCreateWizardHandler
                 break;
         }
 
+        // The Public Key Alias of Web Service Client will be used to
+        // encrypt responses and the Private Key Alias of Web Service Provider
+        // will be used to sign responses, from the web service provider
         wsp.setKeyAlias(wizardBean.getPrivateKeyAlias());
         wsp.setPublicKeyAlias(wizardBean.getPublicKeyAlias());
 

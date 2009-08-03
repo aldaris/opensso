@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionsBean.java,v 1.7 2009-07-23 20:46:53 ggennaro Exp $
+ * $Id: PermissionsBean.java,v 1.8 2009-08-03 22:25:31 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -161,5 +161,9 @@ public class PermissionsBean implements Serializable {
 
     public boolean isWebServiceSecurityCreateAllowed() {
         return isAllowed(WEB_SERVICE_SECURITY_CREATE);
+    }
+
+    public boolean isStsCreateAllowed() {
+        return isAllowed(STS_CREATE);
     }
 }

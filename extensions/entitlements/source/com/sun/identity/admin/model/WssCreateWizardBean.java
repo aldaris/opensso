@@ -24,7 +24,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WssCreateWizardBean.java,v 1.2 2009-07-23 20:46:54 ggennaro Exp $
+ * $Id: WssCreateWizardBean.java,v 1.3 2009-08-03 22:25:31 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -134,7 +134,7 @@ public class WssCreateWizardBean
         List<SelectItem> stsConfigs = this.getStsConfigurationNameList();
         if( stsConfigs.size() == 1 ) {
             SelectItem stsConfig = stsConfigs.iterator().next();
-            this.setStsConfigurationName(stsConfig.getLabel());
+            this.setStsConfigurationName((String) stsConfig.getValue());
         } else {
             this.setStsConfigurationName(null);
         }
@@ -249,15 +249,7 @@ public class WssCreateWizardBean
     }
 
     public List<SelectItem> getStsConfigurationNameList() {
-        List<SelectItem> items = new ArrayList<SelectItem>();
-
-        Iterator i = ProviderUtils.getAllSTSConfig().iterator();
-        while( i.hasNext() ) {
-            STSConfig stsConfig = (STSConfig) i.next();
-            items.add(new SelectItem(stsConfig.getName()));
-        }
-
-        return items;
+        return StsConfiguration.getSelectItems();
     }
 
 

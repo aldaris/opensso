@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewId.java,v 1.7 2009-07-27 19:35:25 farble1670 Exp $
+ * $Id: ViewId.java,v 1.8 2009-08-03 22:25:31 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ViewId {
+
     HOME("/admin/facelet/home.xhtml"),
     POLICY("/admin/facelet/policy.xhtml"),
     POLICY_CREATE("/admin/facelet/policy-create.xhtml"),
@@ -49,9 +50,11 @@ public enum ViewId {
     APPLICATION_CREATE("/admin/facelet/application-create.xhtml"),
     WEB_SERVICE_SECURITY("/admin/facelet/wss.xhtml"),
     WEB_SERVICE_SECURITY_CREATE("/admin/facelet/wss-create.xhtml"),
+    STS_CREATE("/admin/facelet/sts-create.xhtml"),
     PERMISSION_DENIED("/admin/facelet/permission-denied.xhtml");
 
     private static final Map<String, ViewId> idValues = new HashMap<String, ViewId>() {
+
         {
             put(HOME.getId(), HOME);
             put(POLICY.getId(), POLICY);
@@ -71,6 +74,7 @@ public enum ViewId {
             put(APPLICATION_CREATE.getId(), APPLICATION_CREATE);
             put(WEB_SERVICE_SECURITY.getId(), WEB_SERVICE_SECURITY);
             put(WEB_SERVICE_SECURITY_CREATE.getId(), WEB_SERVICE_SECURITY_CREATE);
+            put(STS_CREATE.getId(), STS_CREATE);
             put(PERMISSION_DENIED.getId(), PERMISSION_DENIED);
         }
     };

@@ -22,29 +22,41 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Permission.java,v 1.7 2009-08-03 22:25:31 ggennaro Exp $
+ * $Id: StsCreateWizardStep.java,v 1.2 2009-08-03 22:25:31 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
-public enum Permission {
-    HOME,
-    POLICY,
-    POLICY_CREATE,
-    POLICY_MANAGE,
-    POLICY_EDIT,
-    NEWS,
-    REFERRAL_CREATE,
-    REFERRAL_MANAGE,
-    REFERRAL_EDIT,
-    FEDERATION,
-    SAMLV2_HOSTED_SP_CREATE,
-    SAMLV2_HOSTED_IDP_CREATE,
-    SAMLV2_REMOTE_SP_CREATE,
-    SAMLV2_REMOTE_IDP_CREATE,
-    APPLICATION,
-    APPLICATION_CREATE,
-    WEB_SERVICE_SECURITY,
-    WEB_SERVICE_SECURITY_CREATE,
-    STS_CREATE;
+import java.util.HashMap;
+import java.util.Map;
+
+public enum StsCreateWizardStep {
+
+    SERVICENAME_ENDPOINT(0),
+    SECURITY(1),
+    SIGN_ENCRYPT(2),
+    SUMMARY(3);
+    
+    private final int stepNumber;
+    private static final Map<Integer, StsCreateWizardStep> intValues =
+            new HashMap<Integer, StsCreateWizardStep>() {
+                {
+                    put(SERVICENAME_ENDPOINT.toInt(), SERVICENAME_ENDPOINT);
+                    put(SECURITY.toInt(), SECURITY);
+                    put(SIGN_ENCRYPT.toInt(), SIGN_ENCRYPT);
+                    put(SUMMARY.toInt(), SUMMARY);
+                }
+            };
+
+    StsCreateWizardStep(int stepNumber) {
+        this.stepNumber = stepNumber;
+    }
+
+    public int toInt() {
+        return stepNumber;
+    }
+
+    public static StsCreateWizardStep valueOf(int i) {
+        return intValues.get(Integer.valueOf(i));
+    }
 }
