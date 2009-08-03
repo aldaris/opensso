@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.18 2009-06-19 02:30:19 bigfatrat Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.19 2009-08-03 18:10:11 hvijay Exp $
  *
  */
 
@@ -347,7 +347,10 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
             return getAttributes(token, type, name, amOrgName, amsdkDN);
         }
         cacheStats.incrementGetRequestCount(getSize());
-        if (Agent.isRunning() && (monIdRepo != null)) {
+        if (Agent.isRunning() && 
+            ((monIdRepo = (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
+	    null))
+	{
             long li = (long)getSize();
             monIdRepo.incGetRqts(li);
         }
@@ -422,7 +425,11 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
                         false, !isStringValues);
             } else { // All attributes found in cache
                 cacheStats.updateGetHitCount(getSize());
-                if (Agent.isRunning() && (monIdRepo != null)) {
+                if (Agent.isRunning() && 
+                    ((monIdRepo =
+		     (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
+	             null))
+	        {
                     long li = (long)getSize();
                     monIdRepo.incCacheHits(li);
                 }
@@ -441,7 +448,10 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         throws IdRepoException, SSOException {
         
         cacheStats.incrementGetRequestCount(getSize());
-        if (Agent.isRunning() && (monIdRepo != null)) {
+        if (Agent.isRunning() && 
+            ((monIdRepo = (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
+	    null))
+	{
             long li = (long)getSize();
             monIdRepo.incGetRqts(li);
         }
@@ -458,7 +468,11 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         AMHashMap attributes;
         if ((cb != null) && cb.hasCompleteSet(principalDN)) {
             cacheStats.updateGetHitCount(getSize());
-            if (Agent.isRunning() && (monIdRepo != null)) {
+            if (Agent.isRunning() && 
+                ((monIdRepo =
+		 (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
+	         null))
+	    {
                 long li = (long)getSize();
                 monIdRepo.incCacheHits(li);
             }
@@ -558,7 +572,10 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         throws IdRepoException, SSOException {
         IdSearchResults answer = new IdSearchResults(type, orgName);
         cacheStats.incrementSearchRequestCount(getSize());
-        if (Agent.isRunning() && (monIdRepo != null)) {
+        if (Agent.isRunning() && 
+            ((monIdRepo = (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
+	    null))
+	{
             long li = (long)getSize();
             monIdRepo.incSearchRqts(li);
         }
@@ -583,10 +600,14 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
                 Map attributes;
                 try {
                     cacheStats.updateSearchHitCount(getSize());
-                        if (Agent.isRunning() && (monIdRepo != null)) {
+                    if (Agent.isRunning() && 
+                        ((monIdRepo =
+			 (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
+	                 null))
+	            {
                         long li = (long)getSize();
                         monIdRepo.incSearchCacheHits(li);
-                        }
+                    }
                     if (ctrl.isGetAllReturnAttributesEnabled()) {
                         attributes = getAttributes(token, type, pattern,
                             orgName, null);
