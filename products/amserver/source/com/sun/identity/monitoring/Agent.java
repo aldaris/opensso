@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Agent.java,v 1.3 2009-07-16 20:16:59 bigfatrat Exp $
+ * $Id: Agent.java,v 1.4 2009-08-03 18:15:01 bigfatrat Exp $
  *
  */
 
@@ -2651,13 +2651,13 @@ public class Agent {
             Set ks = idffEnts.keySet();
             for (Iterator it = ks.iterator(); it.hasNext(); ) {
                 String entname = (String)it.next();
+                HashMap hm = (HashMap)idffEnts.get(entname);
 
                 //  entity name can't have ":" in it, or jdmk gags
                 if (entname.indexOf(":") >= 0) {
                     entname = entname.replaceAll(":", "&#58;");
                 }
                 
-                HashMap hm = (HashMap)idffEnts.get(entname);
                 String loc = (String)hm.get("location");
                 String roles = (String)hm.get("roles");
 

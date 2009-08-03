@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSessionManager.java,v 1.5 2009-06-19 02:46:46 bigfatrat Exp $
+ * $Id: FSSessionManager.java,v 1.6 2009-08-03 18:18:36 bigfatrat Exp $
  *
  */
 
@@ -224,7 +224,7 @@ public final class FSSessionManager {
         idAuthnRequestMap.remove(requestID);
         idDestnMap.remove(requestID);
         if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
-            idffSvc.decIdDestn();
+            idffSvc.setIdDestn((long)idDestnMap.size());
         }
         if (cRunnable != null) {
             cRunnable.removeElement(requestID);
@@ -250,7 +250,7 @@ public final class FSSessionManager {
         FSUtils.debug.message ("FSSessionManager.setLocalSessionToken: Called");
         idLocalSessionTokenMap.put (requestID, localSession);
         if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
-            idffSvc.incIdLocalSessToken();
+            idffSvc.setIdLocalSessToken((long)idLocalSessionTokenMap.size());
         }
     }
 
@@ -263,7 +263,7 @@ public final class FSSessionManager {
             "FSSessionManager.removeLocalSessionToken: Called");
         idLocalSessionTokenMap.remove(requestID);
         if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
-            idffSvc.decIdLocalSessToken();
+            idffSvc.setIdLocalSessToken((long)idLocalSessionTokenMap.size());
         }
     }
 
@@ -289,7 +289,7 @@ public final class FSSessionManager {
         FSUtils.debug.message ("FSSessionManager.setIDPEntityID");
         idDestnMap.put (requestID, idpEntityId);
         if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
-            idffSvc.incIdDestn();
+            idffSvc.setIdDestn((long)idDestnMap.size());
         }
     }
 
@@ -353,7 +353,7 @@ public final class FSSessionManager {
         FSUtils.debug.message ("FSSessionManager.setSessionList: Called");
         userIDSessionListMap.put(userID.toLowerCase(), sessionList);
         if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
-            idffSvc.incUserIDSessionList();
+            idffSvc.setUserIDSessionList((long)userIDSessionListMap.size());
         }
     }
     
@@ -365,7 +365,7 @@ public final class FSSessionManager {
         FSUtils.debug.message ("FSSessionManager.removeSessionList: Called ");
         userIDSessionListMap.remove(userID.toLowerCase());
         if ((agent != null) && agent.isRunning() && (idffSvc != null)) {
-            idffSvc.decUserIDSessionList();
+            idffSvc.setUserIDSessionList((long)userIDSessionListMap.size());
         }
     }
     

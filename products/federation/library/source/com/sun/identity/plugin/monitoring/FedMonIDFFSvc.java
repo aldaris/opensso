@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedMonIDFFSvc.java,v 1.1 2009-06-19 02:48:04 bigfatrat Exp $
+ * $Id: FedMonIDFFSvc.java,v 1.2 2009-08-03 18:18:40 bigfatrat Exp $
  *
  */
 
@@ -52,6 +52,11 @@ public interface FedMonIDFFSvc {
     public void decIdLocalSessToken();
 
     /**
+     * Set the ID-FF service's ID Local Session Token counter.
+     */
+    public void setIdLocalSessToken(long count);
+
+    /**
      * Increment the ID-FF service's ID Authentication request counter.
      */
     public void incIdAuthnRqt();
@@ -67,6 +72,11 @@ public interface FedMonIDFFSvc {
     public void decUserIDSessionList();
 
     /**
+     * Set the ID-FF service's ID Session List counter.
+     */
+    public void setUserIDSessionList(long count);
+
+    /**
      * Increment the ID-FF service's artifact counter.
      */
     public void incArtifacts();
@@ -77,6 +87,11 @@ public interface FedMonIDFFSvc {
     public void decArtifacts();
 
     /**
+     * Set the ID-FF service's artifact counter.
+     */
+    public void setArtifacts(long count);
+
+    /**
      * Increment the ID-FF service's assertion counter.
      */
     public void incAssertions();
@@ -85,6 +100,11 @@ public interface FedMonIDFFSvc {
      * Decrement the ID-FF service's assertion counter.
      */
     public void decAssertions();
+
+    /**
+     * Set the ID-FF service's assertion counter.
+     */
+    public void setAssertions(long count);
 
     /**
      * Set the ID-FF service's relay state indicator.
@@ -101,5 +121,10 @@ public interface FedMonIDFFSvc {
      * Decrement the ID-FF service's Id Destination counter.
      */
     public void decIdDestn();
+
+    /**
+     * Set the ID-FF service's Id Destination counter.
+     */
+    public void setIdDestn(long count);
 
 }

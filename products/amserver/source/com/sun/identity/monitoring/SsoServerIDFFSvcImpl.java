@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerIDFFSvcImpl.java,v 1.1 2009-06-19 02:23:16 bigfatrat Exp $
+ * $Id: SsoServerIDFFSvcImpl.java,v 1.2 2009-08-03 18:15:01 bigfatrat Exp $
  *
  */
 
@@ -80,6 +80,13 @@ public class SsoServerIDFFSvcImpl extends SsoServerIDFFSvc {
         SsoServerIDFFIdLocalSessToken = Long.valueOf(li);
     }
 
+    public void setIdLocalSessToken(long count) {
+        if (SsoServerIDFFStatus.equals("dormant")) {
+            SsoServerIDFFStatus = "operational";
+        }
+        SsoServerIDFFIdLocalSessToken = Long.valueOf(count);
+    }
+
     public void incIdAuthnRqt() {
         if (SsoServerIDFFStatus.equals("dormant")) {
             SsoServerIDFFStatus = "operational";
@@ -104,6 +111,13 @@ public class SsoServerIDFFSvcImpl extends SsoServerIDFFSvc {
         SsoServerIDFFUserIDSessionList = Long.valueOf(li);
     }
 
+    public void setUserIDSessionList(long count) {
+        if (SsoServerIDFFStatus.equals("dormant")) {
+            SsoServerIDFFStatus = "operational";
+        }
+        SsoServerIDFFUserIDSessionList = Long.valueOf(count);
+    }
+
     public void incArtifacts() {
         if (SsoServerIDFFStatus.equals("dormant")) {
             SsoServerIDFFStatus = "operational";
@@ -117,6 +131,13 @@ public class SsoServerIDFFSvcImpl extends SsoServerIDFFSvc {
         long li = SsoServerIDFFArtifacts.longValue();
         li--;
         SsoServerIDFFArtifacts = Long.valueOf(li);
+    }
+
+    public void setArtifacts(long count) {
+        if (SsoServerIDFFStatus.equals("dormant")) {
+            SsoServerIDFFStatus = "operational";
+        }
+        SsoServerIDFFArtifacts = Long.valueOf(count);
     }
 
     public void incAssertions() {
@@ -134,8 +155,18 @@ public class SsoServerIDFFSvcImpl extends SsoServerIDFFSvc {
         SsoServerIDFFAssertions = Long.valueOf(li);
     }
 
+    public void setAssertions(long count) {
+        if (SsoServerIDFFStatus.equals("dormant")) {
+            SsoServerIDFFStatus = "operational";
+        }
+        SsoServerIDFFAssertions = Long.valueOf(count);
+    }
+
     public void setRelayState(long state) {
         // might need to change this attribute's type
+        if (SsoServerIDFFStatus.equals("dormant")) {
+            SsoServerIDFFStatus = "operational";
+        }
         SsoServerIDFFRelayState = Long.valueOf(state);
     }
 
@@ -153,5 +184,12 @@ public class SsoServerIDFFSvcImpl extends SsoServerIDFFSvc {
         long li = SsoServerIDFFIdDestn.longValue();
         li--;
         SsoServerIDFFIdDestn = Long.valueOf(li);
+    }
+
+    public void setIdDestn(long count) {
+        if (SsoServerIDFFStatus.equals("dormant")) {
+            SsoServerIDFFStatus = "operational";
+        }
+        SsoServerIDFFIdDestn = Long.valueOf(count);
     }
 }

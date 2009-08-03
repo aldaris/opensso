@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedMonIDFFSvcProvider.java,v 1.1 2009-06-19 02:43:57 bigfatrat Exp $
+ * $Id: FedMonIDFFSvcProvider.java,v 1.2 2009-08-03 18:18:38 bigfatrat Exp $
  *
  */
 
@@ -59,6 +59,12 @@ public class FedMonIDFFSvcProvider implements FedMonIDFFSvc {
         }
     }
 
+    public void setIdLocalSessToken(long count) {
+        if (sIDFFSvc != null) {
+            sIDFFSvc.setIdLocalSessToken(count);
+        }
+    }
+
     public void incIdAuthnRqt() {
         if (sIDFFSvc != null) {
             sIDFFSvc.incIdAuthnRqt();
@@ -77,6 +83,12 @@ public class FedMonIDFFSvcProvider implements FedMonIDFFSvc {
         }
     }
 
+    public void setUserIDSessionList(long count) {
+        if (sIDFFSvc != null) {
+            sIDFFSvc.setUserIDSessionList(count);
+        }
+    }
+
     public void incArtifacts() {
         if (sIDFFSvc != null) {
             sIDFFSvc.incArtifacts();
@@ -89,6 +101,12 @@ public class FedMonIDFFSvcProvider implements FedMonIDFFSvc {
         }
     }
 
+    public void setArtifacts(long count) {
+        if (sIDFFSvc != null) {
+            sIDFFSvc.setArtifacts(count);
+        }
+    }
+
     public void incAssertions() {
         if (sIDFFSvc != null) {
             sIDFFSvc.incAssertions();
@@ -98,6 +116,12 @@ public class FedMonIDFFSvcProvider implements FedMonIDFFSvc {
     public void decAssertions() {
         if (sIDFFSvc != null) {
             sIDFFSvc.decAssertions();
+        }
+    }
+
+    public void setAssertions(long count) {
+        if (sIDFFSvc != null) {
+            sIDFFSvc.setAssertions(count);
         }
     }
 
@@ -116,6 +140,12 @@ public class FedMonIDFFSvcProvider implements FedMonIDFFSvc {
     public void decIdDestn() {
         if (sIDFFSvc != null) {
             sIDFFSvc.decIdDestn();
+        }
+    }
+
+    public void setIdDestn(long count) {
+        if (sIDFFSvc != null) {
+            sIDFFSvc.setIdDestn(count);
         }
     }
 }
