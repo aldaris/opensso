@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.45 2009-06-21 09:25:33 veiming Exp $
+ * $Id: Entitlement.java,v 1.46 2009-08-04 08:36:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -474,6 +474,10 @@ public class Entitlement {
     
     private Set<String> tagswapResourceNames(Subject sbj, Set<String> set)
         throws EntitlementException {
+        if (sbj == null) {
+            return set;
+        }
+
         Set<String> resources = new HashSet<String>();
         Set<String> userIds = new HashSet<String>();
 

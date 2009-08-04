@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeCondition.java,v 1.9 2009-05-23 00:58:15 veiming Exp $
+ * $Id: TimeCondition.java,v 1.10 2009-08-04 08:36:48 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -87,8 +87,6 @@ public class TimeCondition implements EntitlementCondition {
     private String endDate;
     private String enforcementTimeZone;
     private String pConditionName;
-    transient private int startDateArray[] = {-1,0,0};
-    transient private int endDateArray[] = {-1,0,0};
 
     /**
      * Constructs an TimeCondition
@@ -559,11 +557,12 @@ public class TimeCondition implements EntitlementCondition {
         }
 
         long dateStart = Long.MIN_VALUE;
-        validateDates(startDate, endDate);
-        if ( startDateArray[0] != -1 ) {
-            calendar.set(Calendar.YEAR, startDateArray[0]);
-            calendar.set(Calendar.MONTH, startDateArray[1]);
-            calendar.set(Calendar.DAY_OF_MONTH, startDateArray[2]);
+        DateArray dateArray = validateDates(startDate, endDate);
+
+        if (dateArray.startDateArray[0] != -1) {
+            calendar.set(Calendar.YEAR, dateArray.startDateArray[0]);
+            calendar.set(Calendar.MONTH, dateArray.startDateArray[1]);
+            calendar.set(Calendar.DAY_OF_MONTH, dateArray.startDateArray[2]);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
@@ -572,10 +571,10 @@ public class TimeCondition implements EntitlementCondition {
         }
 
         long dateEnd = Long.MAX_VALUE;
-        if ( endDateArray[0] != -1 ) {
-            calendar.set(Calendar.YEAR, endDateArray[0]);
-            calendar.set(Calendar.MONTH, endDateArray[1]);
-            calendar.set(Calendar.DAY_OF_MONTH, endDateArray[2]);
+        if (dateArray.endDateArray[0] != -1) {
+            calendar.set(Calendar.YEAR, dateArray.endDateArray[0]);
+            calendar.set(Calendar.MONTH, dateArray.endDateArray[1]);
+            calendar.set(Calendar.DAY_OF_MONTH, dateArray.endDateArray[2]);
             calendar.set(Calendar.HOUR_OF_DAY, 24);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
@@ -617,7 +616,7 @@ public class TimeCondition implements EntitlementCondition {
      */
     private static int parseTimeString(String timeString)
         throws EntitlementException {
-        if (timeString == null) {
+        if ((timeString == null) || (timeString.length() == 0)) {
             return -1;
         }
         StringTokenizer st = new StringTokenizer(timeString, ":");
@@ -646,21 +645,18 @@ public class TimeCondition implements EntitlementCondition {
     /**
      * Converts day in <code>String</code> format to an int.
      * based on the <code>DAYS_OF_WEEK</code>
-     * @exception PolicyException for invalid data.
      * @see #DAYS_OF_WEEK
      */
-    private static int parseDayString(String dayString) throws EntitlementException {
+    private static int parseDayString(String dayString) {
         int day = -1;
-        String dayStringLc = dayString.toLowerCase();
-        for ( int i = 1; i < 8; i++ ) {
-            if ( DAYS_OF_WEEK[i].equals(dayStringLc ) ) {
-                day = i;
-                break;
+        if ((dayString != null) && (dayString.length() > 0)) {
+            String dayStringLc = dayString.toLowerCase();
+            for (int i = 1; i < 8; i++) {
+                if (DAYS_OF_WEEK[i].equals(dayStringLc)) {
+                    day = i;
+                    break;
+                }
             }
-        }
-        if ( day == -1 ) {
-            String[] args = { "day", dayString };
-            throw new EntitlementException(400, args);
         }
         return day;
     }
@@ -672,39 +668,48 @@ public class TimeCondition implements EntitlementCondition {
      * @see #START_DATE
      * @see #END_DATE
      */
-    private boolean validateDates(String startDate, String endDate)
+    private DateArray validateDates(String startDate, String endDate)
         throws EntitlementException {
-        DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-        df.setLenient(false);
-        df.setTimeZone(TimeZone.getTimeZone("GMT"));
-        Date date1 = null;
-        Date date2= null;
-        try {
-            date1 = df.parse(startDate);
-        } catch (Exception e) {
-            String[] args = {  startDate };
-            throw new EntitlementException(401, args, e);
+        DateArray dateArray = new DateArray();
+
+        if ((startDate != null) && (startDate.length() > 0) &&
+            (endDate != null) && (endDate.length() > 0)) {
+            DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+            df.setLenient(false);
+            df.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Date date1 = null;
+            Date date2 = null;
+            try {
+                date1 = df.parse(startDate);
+            } catch (Exception e) {
+                String[] args = {startDate};
+                throw new EntitlementException(401, args, e);
+            }
+            try {
+                date2 = df.parse(endDate);
+            } catch (Exception e) {
+                String[] args = {endDate};
+                throw new EntitlementException(401, args, e);
+            }
+            if (date1.getTime() > date2.getTime()) {
+                String[] args = {startDate, endDate};
+                throw new EntitlementException(402, args);
+            }
+            Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+            cal.setTime(date1);
+            dateArray.startDateArray[0] = cal.get(Calendar.YEAR);
+            dateArray.startDateArray[1] = cal.get(Calendar.MONTH);
+            dateArray.startDateArray[2] = cal.get(Calendar.DAY_OF_MONTH);
+            cal.setTime(date2);
+            dateArray.endDateArray[0] = cal.get(Calendar.YEAR);
+            dateArray.endDateArray[1] = cal.get(Calendar.MONTH);
+            dateArray.endDateArray[2] = cal.get(Calendar.DAY_OF_MONTH);
         }
-        try {
-            date2 = df.parse(endDate);
-        } catch (Exception e) {
-            String[] args = { endDate };
-            throw new EntitlementException(401, args, e);
-        }
-        if ( date1.getTime() > date2.getTime() ) {
-            String[] args = { startDate, endDate };
-            throw new EntitlementException(402, args);
-        }
-        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        cal.setTime(date1);
-        startDateArray[0] = cal.get(Calendar.YEAR);
-        startDateArray[1] = cal.get(Calendar.MONTH);
-        startDateArray[2] = cal.get(Calendar.DAY_OF_MONTH);
-        cal.setTime(date2);
-        endDateArray[0] = cal.get(Calendar.YEAR);
-        endDateArray[1] = cal.get(Calendar.MONTH);
-        endDateArray[2] = cal.get(Calendar.DAY_OF_MONTH);
-        return true;
+        return dateArray;
     }
 
+    class DateArray {
+        int startDateArray[] = {-1,0,0};
+        int endDateArray[] = {-1,0,0};
+    }
 }

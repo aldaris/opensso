@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DateRangeCondition.java,v 1.7 2009-06-04 11:49:14 veiming Exp $
+ * $Id: DateRangeCondition.java,v 1.8 2009-08-04 08:36:48 veiming Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -60,7 +60,8 @@ public class DateRangeCondition
         Calendar c = Calendar.getInstance();
         c.setTime(date);
 
-        f.format("%4d-%02d-%02d", c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1, c.get(Calendar.DAY_OF_MONTH));
+        f.format("%4d:%02d:%02d", c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1,
+            c.get(Calendar.DAY_OF_MONTH));
 
         return b.toString();
     }

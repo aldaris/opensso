@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DateRangeConditionType.java,v 1.5 2009-06-04 11:49:14 veiming Exp $
+ * $Id: DateRangeConditionType.java,v 1.6 2009-08-04 08:36:48 veiming Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -68,7 +68,7 @@ public class DateRangeConditionType
         assert(dateString != null);
         Date d = new Date();
 
-        String[] dateArray = dateString.split("-");
+        String[] dateArray = dateString.split(":");
         assert(dateArray.length == 3);
 
         d.year = Integer.valueOf(dateArray[0]);
