@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.42 2009-06-03 19:44:31 goodearth Exp $
+ * $Id: SetupConstants.java,v 1.43 2009-08-04 18:47:45 goodearth Exp $
  *
  */
 
@@ -547,6 +547,11 @@ public interface SetupConstants {
      */
     String USER_STORE_TYPE = "userStoreType";
     
+    /**
+     * Domain Name of the Active Directory ldap store being used.
+     */
+    String USER_STORE_DOMAINNAME = "userStoreDomainName";
+
     /**
      * Host name for the ldap store being used.
      */

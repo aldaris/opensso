@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOConfigurator.java,v 1.2 2009-05-02 23:07:18 kevinserwin Exp $
+ * $Id: OpenSSOConfigurator.java,v 1.3 2009-08-04 18:47:45 goodearth Exp $
  */
 
 package com.sun.identity.setup;
@@ -53,6 +53,7 @@ public class OpenSSOConfigurator {
     private static final String AMLDAPUSERPASSWD = "AMLDAPUSERPASSWD";
     private static final String AMLDAPUSERPASSWD_CONFIRM =
         "AMLDAPUSERPASSWD_CONFIRM";
+    private static final String USERSTORE_TYPE = "USERSTORE_TYPE";
 
     public static void main(String[] args) {
 
@@ -90,6 +91,7 @@ public class OpenSSOConfigurator {
 
         String serverURL = null;
         String deploymentURI = null;
+        String userStoreType = null;
 
         StringBuffer postBodySB = new StringBuffer();
         for(Enumeration e = config.keys(); e.hasMoreElements() ;) {
@@ -124,6 +126,9 @@ public class OpenSSOConfigurator {
                                 .append("=").append(encodedVal);
                         }
                     }
+                    if (key.equals(USERSTORE_TYPE)) {
+                       userStoreType = val;
+                    } 
                 }
             }    
         }
@@ -181,6 +186,9 @@ public class OpenSSOConfigurator {
                 }
             } else {
                 System.out.println(rb.getString("configFailed"));
+                if (userStoreType.equals("LDAPv3ForADDC")) {
+                    System.out.println(rb.getString("cannot.connect.to.UM.datastore"));
+                }
             }
             conn.disconnect();
         } catch (ProtocolException ex) {

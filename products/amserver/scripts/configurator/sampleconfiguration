@@ -110,7 +110,8 @@ DS_DIRMGRPASSWD=11111111
 ### USERSTORE_TYPE is the type of user data store. Valid values are
 ###
 ### 'LDAPv3ForSUNDS'  - Sun Java System Directory Server.
-### 'LDAPv3ForAD'     - Active Directory Server.
+### 'LDAPv3ForAD'     - Active Directory Server with Host and Port.
+### 'LDAPv3ForADDC'   - Active Directory with Domain Name.
 ### 'LDAPv3ForOpenDS' - Sun OpenDS Server.
 ### 'LDAPv3ForTivoli' - IBM Tivoli Directory Server.
 ###
@@ -122,6 +123,22 @@ DS_DIRMGRPASSWD=11111111
 ### Valid values are
 ### 'SSL' - SSL
 ### 'SIMPLE' - none SSL
+###
+### USERSTORE_DOMAINNAME is the Domain Name of the Active Directory
+### user data store.
+### If USERSTORE_TYPE is LDAPv3ForADDC, then USERSTORE_DOMAINNAME
+### should be set to a valid Active Directory Domain Name value.
+### If USERSTORE_TYPE is LDAPv3ForADDC, then USERSTORE_HOST,
+### USERSTORE_PORT and USERSTORE_SUFFIX should not be set.
+### These would be derived from the Active directory domain.
+###
+### Example for domain name and notes:
+### A Domain name such as 'mspress.microsoft.com' will identify 
+### Active Directory domain controllers responsible for the domain, 
+### so any client with DNS access can locate a domain controller. 
+### Active Directory clients can use DNS resolution to locate any 
+### number of services.
+### Reference : http://technet.microsoft.com/en-us/library/bb742424.aspx#XSLTsection126121120120
 ###
 ### USERSTORE_HOST is the host name of the user data store.
 ###
@@ -138,6 +155,7 @@ DS_DIRMGRPASSWD=11111111
 ##############################################################################
 #USERSTORE_TYPE=LDAPv3ForAMDS
 #USERSTORE_SSL=SIMPLE
+#USERSTORE_DOMAINNAME=amqa.test.com 
 #USERSTORE_HOST=sample1.sun.com
 #USERSTORE_PORT=389
 #USERSTORE_SUFFIX=dc=opensso,dc=java,dc=net

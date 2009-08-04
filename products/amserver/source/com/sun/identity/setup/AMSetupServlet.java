@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.107 2009-06-25 00:00:45 mallas Exp $
+ * $Id: AMSetupServlet.java,v 1.108 2009-08-04 18:47:45 goodearth Exp $
  *
  */
 
@@ -98,6 +98,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +113,11 @@ import java.net.Socket;
 import java.security.AccessController;
 import java.security.SecureRandom;
 import java.util.Enumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -320,16 +326,49 @@ public class AMSetupServlet extends HttpServlet {
        if (userStoreType != null) {     
             // site configuration is passed as a map of the site information 
             Map store = new HashMap(12);  
-            String tmp = (String)request.getParameter("USERSTORE_HOST");        
-            store.put(SetupConstants.USER_STORE_HOST, tmp);
-            
-            tmp = (String)request.getParameter("USERSTORE_SSL");         
-            store.put(SetupConstants.USER_STORE_SSL, tmp);            
-
-            tmp = (String)request.getParameter("USERSTORE_PORT"); ;
-            store.put(SetupConstants.USER_STORE_PORT, tmp);
+            String tmp = (String)request.getParameter(
+                "USERSTORE_DOMAINNAME");
+            String domainName = tmp;
+            store.put(SetupConstants.USER_STORE_DOMAINNAME, tmp);
+            tmp = (String)request.getParameter("USERSTORE_HOST"); 
+            if (tmp == null || tmp.length() == 0) {
+                String[] hostAndPort = {""};
+                try {
+                    if (domainName != null && 
+                        domainName.length() > 0) {
+                        hostAndPort = getLdapHostAndPort(domainName);
+                    }
+                } catch (NamingException nex) {
+                    Debug.getInstance(SetupConstants.DEBUG_NAME)
+                        .error("AMSetupServlet:Naming Exception"+
+                        "get host and port from domain name" + nex);
+                        
+                } catch (IOException ioex) {
+                    Debug.getInstance(SetupConstants.DEBUG_NAME)
+                        .error("AMSetupServlet:IO Exception. get"+
+                        " host and port from domain name" + ioex);
+                }
+                String host = hostAndPort[0];
+                String port = hostAndPort[1];
+                if (host != null) {
+                    store.put(SetupConstants.USER_STORE_HOST, host);
+                    store.put(SetupConstants.USER_STORE_PORT, port);
+                }
+            } else {
+                store.put(SetupConstants.USER_STORE_HOST, tmp);
+                tmp = (String)request.getParameter("USERSTORE_PORT");
+                store.put(SetupConstants.USER_STORE_PORT, tmp);
+            }
+            tmp = (String)request.getParameter("USERSTORE_SSL");
+            store.put(SetupConstants.USER_STORE_SSL, tmp);
             tmp = (String)request.getParameter("USERSTORE_SUFFIX"); ;
-            store.put(SetupConstants.USER_STORE_ROOT_SUFFIX, tmp);
+            if (tmp == null || tmp.length() == 0) {
+                if (domainName != null && domainName.length() > 0) {
+                    String umRootSuffix = dnsDomainToDN(domainName);
+                    store.put(SetupConstants.USER_STORE_ROOT_SUFFIX,
+                        umRootSuffix);
+                }
+            }
             tmp = (String)request.getParameter("USERSTORE_MGRDN"); 
             store.put(SetupConstants.USER_STORE_LOGIN_ID, tmp);      
             tmp = (String)request.getParameter("USERSTORE_PASSWD"); 
@@ -2503,4 +2542,85 @@ public class AMSetupServlet extends HttpServlet {
             return servletContext.getResourceAsStream(file);
         }
     }
+
+    // Method to convert the domain name to the root suffix.
+    // eg., Domain Name amqa.test.com is converted to root suffix
+    // DC=amqa,DC=test,DC=com
+    static String dnsDomainToDN(String domainName) {
+        StringBuilder buf = new StringBuilder();
+        for (String token : domainName.split("\\.")) {
+            if(token.length()==0)   continue;
+            if(buf.length()>0)  buf.append(",");
+            buf.append("DC=").append(token);
+        }
+        return buf.toString();
+    }
+
+    // Method to get hostname and port number with the
+    // provided Domain Name for Active Directory user data store.
+    private String[] getLdapHostAndPort(String domainName)
+        throws NamingException, IOException {
+        if (!domainName.endsWith(".")) {
+            domainName+='.';
+        }
+        DirContext ictx = null;
+        // Check if domain name is a valid one.
+        // The resource record type A is defined in RFC 1035.
+        try {
+            Hashtable env = new Hashtable();
+            env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY,
+                "com.sun.jndi.dns.DnsContextFactory");
+            ictx = new InitialDirContext(env);
+            Attributes attributes =
+                ictx.getAttributes(domainName, new String[]{"A"});
+            Attribute attrib = attributes.get("A");
+            if (attrib == null) {
+                throw new NamingException();
+            }
+        } catch (NamingException e) {
+            // Failed to resolve domainName to A record.
+            // throw exception.
+            throw e;
+        }
+
+        // then look for the LDAP server
+        String serverHostName = null;
+        String serverPortStr = null;
+        final String ldapServer = "_ldap._tcp." + domainName;
+        try {
+            // Attempting to resolve ldapServer to SRV record.
+            // This is a mechanism defined in MSDN, querying
+            // SRV records for _ldap._tcp.DOMAINNAME.
+            // and get host and port from domain.
+            Attributes attributes =
+                ictx.getAttributes(ldapServer, new String[]{"SRV"});
+            Attribute attr = attributes.get("SRV");
+            if (attr == null) {
+                throw new NamingException();
+            }
+            String[] srv = attr.get().toString().split(" ");
+            String hostNam = srv[3];
+            serverHostName =
+                hostNam.substring(0, hostNam.length() -1);
+            serverPortStr = srv[2];
+        } catch (NamingException e) {
+            // Failed to resolve ldapServer to SRV record.
+            // throw exception.
+            throw e;
+        }
+       // try to connect to LDAP port to make sure this machine
+       // has LDAP service
+       int serverPort = Integer.parseInt(serverPortStr);
+       try {
+           new Socket(serverHostName, serverPort).close();
+       } catch (IOException e) {
+           throw e;
+       }
+
+       String[] hostAndPort = new String[2];
+       hostAndPort[0] = serverHostName;
+       hostAndPort[1] = serverPortStr;
+
+       return hostAndPort;
+   }
 }
