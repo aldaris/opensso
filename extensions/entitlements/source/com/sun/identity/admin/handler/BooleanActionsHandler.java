@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BooleanActionsHandler.java,v 1.5 2009-06-04 11:49:13 veiming Exp $
+ * $Id: BooleanActionsHandler.java,v 1.6 2009-08-04 22:14:47 farble1670 Exp $
  */
-
 package com.sun.identity.admin.handler;
 
 import com.sun.identity.admin.ManagedBeanResolver;
@@ -80,20 +79,23 @@ public class BooleanActionsHandler
         ba.setAllow(true);
 
         if (booleanActionsBean.getActions().contains(ba)) {
+            // TODO: localize
             MessageBean mb = new MessageBean();
             mb.setSummary("Duplicates not allowed");
             mb.setDetail("Duplicate action names are not allowed.");
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
             ManagedBeanResolver mbr = new ManagedBeanResolver();
-            MessagesBean msb = (MessagesBean)mbr.resolve("messagesBean");
+            MessagesBean msb = (MessagesBean) mbr.resolve("messagesBean");
             msb.addMessageBean(mb);
         } else {
             booleanActionsBean.getActions().add(ba);
 
             ViewApplication va = booleanActionsBean.getViewApplication();
-            va.getActions().add(ba);
-            getViewApplicationDao(event).setViewApplication(va);
+            if (va != null) {
+                va.getBooleanActionsBean().getActions().add(ba);
+                getViewApplicationDao(event).setViewApplication(va);
+            }
         }
 
         getViewApplicationsBean(event).reset();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardBean.java,v 1.4 2009-08-04 19:41:56 farble1670 Exp $
+ * $Id: ApplicationWizardBean.java,v 1.5 2009-08-04 22:14:47 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -133,7 +133,7 @@ public class ApplicationWizardBean extends WizardBean {
 
             case ACTIONS:
                 // TODO: count
-                label = r.getString(this, "actionsPanelLabel");
+                label = r.getString(this, "actionsPanelLabel", getViewApplication().getBooleanActionsBean().getActions().size());
                 break;
 
             case CONDITIONS:

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.16 2009-08-04 18:50:46 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.17 2009-08-04 22:14:47 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,6 +30,7 @@ package com.sun.identity.admin.model;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.Token;
+import com.sun.identity.admin.handler.BooleanActionsHandler;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.EntitlementException;
@@ -47,12 +48,13 @@ public class ViewApplication implements Serializable {
     private String description;
     private ViewApplicationType viewApplicationType;
     private List<Resource> resources = new ArrayList<Resource>();
-    private List<Action> actions = new ArrayList<Action>();
+    private BooleanActionsBean booleanActionsBean = new BooleanActionsBean();
+    private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();
     private List<ConditionType> conditionTypes = new ArrayList<ConditionType>();
     private List<SubjectType> subjectTypes = new ArrayList<SubjectType>();
 
     public ViewApplication() {
-        // nothing
+        booleanActionsHandler.setBooleanActionsBean(booleanActionsBean);
     }
 
     public ViewApplication(Application a) {
@@ -86,7 +88,7 @@ public class ViewApplication implements Serializable {
             BooleanAction ba = new BooleanAction();
             ba.setName(actionName);
             ba.setAllow(value.booleanValue());
-            actions.add(ba);
+            booleanActionsBean.getActions().add(ba);
         }
 
         // conditions
@@ -180,14 +182,6 @@ public class ViewApplication implements Serializable {
         this.resources = resources;
     }
 
-    public List<Action> getActions() {
-        return actions;
-    }
-
-    public void setActions(List<Action> actions) {
-        this.actions = actions;
-    }
-
     public Application toApplication() {
         //
         // this is really just modifies the applications.
@@ -207,7 +201,7 @@ public class ViewApplication implements Serializable {
         // actions
         Map appActions = app.getActions();
 
-        for (Action action : actions) {
+        for (Action action : booleanActionsBean.getActions()) {
             if (!appActions.containsKey(action.getName())) {
                 try {
                     app.addAction(adminSubject, action.getName(),
@@ -245,5 +239,13 @@ public class ViewApplication implements Serializable {
 
     public List<SubjectType> getSubjectTypes() {
         return subjectTypes;
+    }
+
+    public BooleanActionsBean getBooleanActionsBean() {
+        return booleanActionsBean;
+    }
+
+    public BooleanActionsHandler getBooleanActionsHandler() {
+        return booleanActionsHandler;
     }
 }

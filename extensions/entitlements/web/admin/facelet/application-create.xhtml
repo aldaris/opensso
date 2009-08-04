@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-create.xhtml,v 1.4 2009-08-04 19:41:57 farble1670 Exp $
+   $Id: application-create.xhtml,v 1.5 2009-08-04 22:14:47 farble1670 Exp $
 
 -->
 
@@ -104,7 +104,15 @@
                     step="4"
                     label="#{applicationCreateWizardBean.actionsPanelLabel}">
                     <ui:define name="wizard-step-body">
-                        TODO
+                        <ui:include
+                            src="/admin/facelet/template/actions.xhtml">
+                            <ui:param
+                                name="booleanActionsBean"
+                                value="#{applicationCreateWizardBean.viewApplication.booleanActionsBean}"/>
+                            <ui:param
+                                name="booleanActionsHandler"
+                                value="#{applicationCreateWizardBean.viewApplication.booleanActionsHandler}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
