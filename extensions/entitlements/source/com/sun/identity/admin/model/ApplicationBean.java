@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationBean.java,v 1.4 2009-07-22 20:32:17 farble1670 Exp $
+ * $Id: ApplicationBean.java,v 1.5 2009-08-04 18:50:46 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,6 +31,7 @@ import java.io.Serializable;
 
 public class ApplicationBean implements Serializable {
     private String name;
+    private String description;
     private ViewApplicationType viewApplicationType;
 
     public String getName() {
@@ -47,5 +48,13 @@ public class ApplicationBean implements Serializable {
 
     public void setViewApplicationType(ViewApplicationType viewApplicationType) {
         this.viewApplicationType = viewApplicationType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

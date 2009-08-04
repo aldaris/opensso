@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationType.java,v 1.4 2009-07-22 20:32:17 farble1670 Exp $
+ * $Id: ViewApplicationType.java,v 1.5 2009-08-04 18:50:46 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -35,6 +35,7 @@ public class ViewApplicationType implements Serializable {
     private String name;
     private List<Action> actions;
     private String resourceTemplate;
+    private String applicationResourceTemplate;
     private String resourceClassName;
     private String entitlementApplicationType;
 
@@ -85,5 +86,13 @@ public class ViewApplicationType implements Serializable {
             title = name;
         }
         return title;
+    }
+
+    public String getApplicationResourceTemplate() {
+        return applicationResourceTemplate;
+    }
+
+    public void setApplicationResourceTemplate(String applicationResourceTemplate) {
+        this.applicationResourceTemplate = applicationResourceTemplate;
     }
 }

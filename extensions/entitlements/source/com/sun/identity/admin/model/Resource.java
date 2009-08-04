@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Resource.java,v 1.9 2009-06-04 11:49:17 veiming Exp $
+ * $Id: Resource.java,v 1.10 2009-08-04 18:50:46 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,6 +30,7 @@ package com.sun.identity.admin.model;
 import com.sun.identity.admin.DeepCloneable;
 import com.sun.identity.admin.Resources;
 import java.io.Serializable;
+import org.apache.commons.collections.comparators.NullComparator;
 
 public abstract class Resource implements Serializable, DeepCloneable {
     private String name;
@@ -73,7 +74,9 @@ public abstract class Resource implements Serializable, DeepCloneable {
     @Override
     public boolean equals(Object o) {
         if (o instanceof Resource) {
-            return ((Resource)o).getName().equals(name);
+            Resource other = (Resource)o;
+            NullComparator nc = new NullComparator();
+            return nc.compare(getName(), other.getName()) == 0;
         }
 
         return false;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectFactory.java,v 1.5 2009-07-24 21:22:43 farble1670 Exp $
+ * $Id: SubjectFactory.java,v 1.6 2009-08-04 18:50:46 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,7 +31,11 @@ import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.dao.SubjectDao;
 import com.sun.identity.entitlement.EntitlementSubject;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.faces.model.SelectItem;
 
 public class SubjectFactory implements Serializable {
     private Map<String,SubjectType> entitlementSubjectToSubjectTypeMap;
@@ -42,6 +46,29 @@ public class SubjectFactory implements Serializable {
     private SubjectType getSubjectType(EntitlementSubject es) {
         String className = es.getClass().getName();
         return entitlementSubjectToSubjectTypeMap.get(className);
+    }
+
+    public List<SelectItem> getSubjectTypeNameItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        for (SubjectType st: getSubjectTypes()) {
+            SelectItem si = new SelectItem(st.getName(), st.getTitle());
+            items.add(si);
+        }
+
+        return items;
+    }
+
+    public Map<String,SubjectType> getSubjectTypeNameMap() {
+        Map<String,SubjectType> m = new HashMap<String,SubjectType>();
+        for (SubjectType st: getSubjectTypes()) {
+            m.put(st.getName(), st);
+        }
+
+        return m;
+    }
+
+    public List<SubjectType> getSubjectTypes() {
+        return new ArrayList<SubjectType>(subjectTypeToSubjectContainerMap.keySet());
     }
 
     public SubjectDao getSubjectDao(ViewSubject vs) {

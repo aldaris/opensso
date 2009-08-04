@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.108 2009-08-04 17:03:15 ggennaro Exp $
+  $Id: faces-config.xml,v 1.109 2009-08-04 18:50:46 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -181,6 +181,10 @@
             <value>/admin/facelet/template/resources-web.xhtml</value>
         </managed-property>
         <managed-property>
+            <property-name>applicationResourceTemplate</property-name>
+            <value>/admin/facelet/template/application-resources-web.xhtml</value>
+        </managed-property>
+        <managed-property>
             <property-name>resourceClassName</property-name>
             <value>com.sun.identity.admin.model.UrlResource</value>
         </managed-property>
@@ -200,6 +204,10 @@
         <managed-property>
             <property-name>resourceTemplate</property-name>
             <value>/admin/facelet/template/resources-discovery.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>applicationResourceTemplate</property-name>
+            <value>/admin/facelet/template/application-resources-discovery.xhtml</value>
         </managed-property>
         <managed-property>
             <property-name>resourceClassName</property-name>
@@ -223,6 +231,10 @@
             <value>/admin/facelet/template/resources-banking.xhtml</value>
         </managed-property>
         <managed-property>
+            <property-name>applicationResourceTemplate</property-name>
+            <value>/admin/facelet/template/application-resources-banking.xhtml</value>
+        </managed-property>
+        <managed-property>
             <property-name>resourceClassName</property-name>
             <value>com.sun.identity.admin.model.BankingResource</value>
         </managed-property>
@@ -242,6 +254,10 @@
         <managed-property>
             <property-name>resourceTemplate</property-name>
             <value>/admin/facelet/template/resources-personal-profile.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>applicationResourceTemplate</property-name>
+            <value>/admin/facelet/template/application-resources-personal-profile.xhtml</value>
         </managed-property>
         <managed-property>
             <property-name>resourceClassName</property-name>
@@ -1371,6 +1387,27 @@
         </managed-property>
     </managed-bean>
     <!-- url resource -->
+
+    <!-- url application resources -->
+    <managed-bean>
+        <managed-bean-name>urlApplicationResourcesBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.UrlApplicationResourcesBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>urlApplicationResourcesHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.UrlApplicationResourcesHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>urlApplicationResourcesBean</property-name>
+            <value>#{urlApplicationResourcesBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- url application resource -->
 
     <!-- banking resources -->
     <managed-bean>

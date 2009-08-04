@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-name.xhtml,v 1.1 2009-07-22 20:32:18 farble1670 Exp $
+   $Id: application-name.xhtml,v 1.2 2009-08-04 18:50:47 farble1670 Exp $
 
 -->
 
@@ -59,9 +59,23 @@
                         id="nameInput"
                         readonly="#{!applicationNameBean.nameEditable}"
                         partialSubmit="false"
-                        value="#{applicationNameBean.applicationBean.name}"
+                        value="#{applicationNameBean.viewApplication.name}"
                         effect="#{applicationNameBean.nameInputEffect}"/>
                 </ice:panelGroup>
+                <ice:panelGroup>
+                    <ice:outputLabel
+                        for="descriptionInput"
+                        value="#{resources['application-name.description']}"/>
+                    <ice:panelGroup>
+                        <ice:outputLabel
+                            for="descriptionInput"
+                            value="#{resources['application-name.optional']}"/>
+                    </ice:panelGroup>
+                </ice:panelGroup>
+                <ice:inputTextarea
+                    id="descriptionInput"
+                    value="#{applicationNameBean.viewApplication.description}"
+                    styleClass="application-description"/>
             </ice:panelGrid>
         </ui:define>
     </o:section>

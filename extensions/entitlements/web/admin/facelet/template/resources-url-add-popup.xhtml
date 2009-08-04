@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: resources-url-add-popup.xhtml,v 1.12 2009-06-05 05:21:09 farble1670 Exp $
+   $Id: resources-url-add-popup.xhtml,v 1.13 2009-08-04 18:50:48 farble1670 Exp $
 
 -->
 
@@ -106,10 +106,10 @@
                         <ui:define name="attributes">
                             <f:attribute
                                 name="availableResources"
-                                value="#{policyResourcesBean.viewEntitlement.availableResources}"/>
+                                value="#{resourcesBean.viewEntitlement.availableResources}"/>
                             <f:attribute
                                 name="viewEntitlement"
-                                value="#{policyResourcesBean.viewEntitlement}"/>
+                                value="#{resourcesBean.viewEntitlement}"/>
                         </ui:define>
                     </o:button>
                 </ice:panelGrid>

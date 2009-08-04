@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardBean.java,v 1.2 2009-07-22 20:32:17 farble1670 Exp $
+ * $Id: ApplicationWizardBean.java,v 1.3 2009-08-04 18:50:46 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
@@ -37,47 +36,66 @@ import javax.faces.model.SelectItem;
 import static com.sun.identity.admin.model.ApplicationWizardStep.*;
 
 public class ApplicationWizardBean extends WizardBean {
+
     private boolean nameEditable = false;
-    private ApplicationBean applicationBean = new ApplicationBean();
+    private ViewApplication viewApplication;
     private Effect nameInputEffect;
-    private Map<String,ViewApplicationType> viewApplicationTypeMap;
+    private Map<String, ViewApplicationType> viewApplicationTypeMap;
+    private ViewEntitlement viewEntitlement;
 
     @Override
     public void reset() {
         super.reset();
+        reset(true, null);
+    }
 
-        applicationBean = new ApplicationBean();
+    private void reset(boolean resetName, ViewApplicationType vat) {
+        String name = null;
+        String description = null;
+        if (!resetName && viewApplication != null) {
+            name = viewApplication.getName();
+            description = viewApplication.getDescription();
+        }
 
-        viewApplicationTypeMap = ViewApplicationTypeDao.getInstance().getViewApplicationTypeMap();
-        applicationBean.setViewApplicationType(viewApplicationTypeMap.entrySet().iterator().next().getValue());
+        viewApplication = new ViewApplication();
+        if (name != null) {
+            viewApplication.setName(name);
+        }
+        if (description != null) {
+            viewApplication.setDescription(description);
+        }
+        viewApplication.getResources().add(new UrlResource());
+        viewEntitlement = new ViewEntitlement();
+        getViewEntitlement().setViewApplication(getViewApplication());
+
+        if (vat == null) {
+            viewApplicationTypeMap = ViewApplicationTypeDao.getInstance().getViewApplicationTypeMap();
+            getViewApplication().setViewApplicationType(viewApplicationTypeMap.entrySet().iterator().next().getValue());
+        } else {
+            viewApplication.setViewApplicationType(vat);
+        }
     }
 
     public String getViewApplicationTypeName() {
-        return applicationBean.getViewApplicationType().getName();
+        return getViewApplication().getViewApplicationType().getName();
     }
 
     public void setViewApplicationTypeName(String name) {
-        ViewApplicationType vat = viewApplicationTypeMap.get(name);
-        assert(vat != null);
-        applicationBean.setViewApplicationType(vat);
+        if (!name.equals(viewApplication.getViewApplicationType().getName())) {
+            ViewApplicationType vat = viewApplicationTypeMap.get(name);
+            assert (vat != null);
+            reset(false, vat);
+        }
     }
 
     public List<SelectItem> getViewApplicationTypeNameItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
-        for (Map.Entry<String,ViewApplicationType> entry: viewApplicationTypeMap.entrySet()) {
+        for (Map.Entry<String, ViewApplicationType> entry : viewApplicationTypeMap.entrySet()) {
             SelectItem si = new SelectItem(entry.getValue().getName(), entry.getValue().getTitle());
             items.add(si);
         }
 
         return items;
-    }
-
-    public ApplicationBean getApplicationBean() {
-        return applicationBean;
-    }
-
-    public void setApplicationBean(ApplicationBean applicationBean) {
-        this.applicationBean = applicationBean;
     }
 
     public Effect getNameInputEffect() {
@@ -103,6 +121,14 @@ public class ApplicationWizardBean extends WizardBean {
         switch (aws) {
             case NAME:
                 label = r.getString(this, "namePanelLabel");
+                break;
+
+            case RESOURCES:
+                label = r.getString(this, "resourcesPanelLabel", getViewApplication().getResources().size());
+                break;
+
+            case SUBJECTS:
+                label = r.getString(this, "subjectsPanelLabel", getViewApplication().getSubjectTypes().size());
                 break;
 
             case ACTIONS:
@@ -134,6 +160,14 @@ public class ApplicationWizardBean extends WizardBean {
         return getPanelLabel(NAME);
     }
 
+    public String getResourcesPanelLabel() {
+        return getPanelLabel(RESOURCES);
+    }
+
+    public String getSubjectsPanelLabel() {
+        return getPanelLabel(SUBJECTS);
+    }
+
     public String getActionsPanelLabel() {
         return getPanelLabel(ACTIONS);
     }
@@ -148,5 +182,32 @@ public class ApplicationWizardBean extends WizardBean {
 
     public String getSummaryPanelLabel() {
         return getPanelLabel(SUMMARY);
+    }
+
+    public ViewApplication getViewApplication() {
+        return viewApplication;
+    }
+
+    public ViewEntitlement getViewEntitlement() {
+        return viewEntitlement;
+    }
+
+    public List<String> getSubjectTypeNames() {
+        List<String> names = new ArrayList<String>();
+        for (SubjectType st : viewApplication.getSubjectTypes()) {
+            names.add(st.getName());
+        }
+
+        return names;
+    }
+
+    public void setSubjectTypeNames(List<String> subjectTypeNames) {
+        Map<String, SubjectType> subjectTypeNameMap = SubjectFactory.getInstance().getSubjectTypeNameMap();
+        viewApplication.getSubjectTypes().clear();
+        for (String name : subjectTypeNames) {
+            SubjectType st = subjectTypeNameMap.get(name);
+            assert(st != null);
+            viewApplication.getSubjectTypes().add(st);
+        }
     }
 }

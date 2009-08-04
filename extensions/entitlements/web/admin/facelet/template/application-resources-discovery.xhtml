@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,23 +23,20 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application.xhtml,v 1.1 2009-07-22 16:40:10 farble1670 Exp $
-
+   $Id: application-resources-discovery.xhtml,v 1.1 2009-08-04 18:50:47 farble1670 Exp $
 -->
 
-<ui:composition
-    template="template/page.xhtml"
+<span
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:ice="http://www.icesoft.com/icefaces/component">
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
 
-    <ui:define name="panel-title">
-        <ice:outputText 
-            value="#{resources['application.panelTitle']}" />
-    </ui:define>
-    <ui:define name="panel-details">
-        <ice:outputText
-            value="#{resources['application.panelDetails']}" />
-    </ui:define>
-</ui:composition>
+    <ice:panelGroup
+        rendered="#{resourcesBean.viewApplication.viewApplicationType.name == 'sunIdentityServerDiscoveryService'}">
+        <ui:include src="application-resources-url.xhtml"/>
+    </ice:panelGroup>
+</span>

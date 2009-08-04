@@ -22,10 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationCreateWizardHandler.java,v 1.1 2009-07-22 16:40:08 farble1670 Exp $
+ * $Id: ApplicationCreateWizardHandler.java,v 1.2 2009-08-04 18:50:45 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
 
+import com.sun.identity.admin.model.ApplicationWizardStep;
+import com.sun.identity.admin.model.NameApplicationCreateWizardStepValidator;
+import com.sun.identity.admin.model.ResourcesApplicationWizardStepValidator;
+
 public class ApplicationCreateWizardHandler extends ApplicationWizardHandler {
+    @Override
+    public void initWizardStepValidators() {
+        getWizardStepValidators()[ApplicationWizardStep.NAME.toInt()] = new NameApplicationCreateWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[ApplicationWizardStep.RESOURCES.toInt()] = new ResourcesApplicationWizardStepValidator(getWizardBean());
+    }
 }

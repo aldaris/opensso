@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: resources-url.xhtml,v 1.34 2009-07-25 00:30:06 farble1670 Exp $
+   $Id: resources-url.xhtml,v 1.35 2009-08-04 18:50:48 farble1670 Exp $
 
 -->
 
@@ -52,7 +52,7 @@
                     actionListener="#{urlResourcesHandler.addListener}">
                     <f:attribute
                         name="availableResources"
-                        value="#{policyResourcesBean.viewEntitlement.availableResources}"/>
+                        value="#{resourcesBean.viewEntitlement.availableResources}"/>
                     <ice:graphicImage
                         value="../image/add.png"/>
                     <ice:outputText
@@ -68,7 +68,7 @@
                         valueChangeListener="#{urlResourcesHandler.searchFilterChangedListener}">
                         <f:attribute
                             name="viewEntitlement"
-                            value="#{policyResourcesBean.viewEntitlement}"/>
+                            value="#{resourcesBean.viewEntitlement}"/>
                     </ice:inputText>
                 </ice:panelGroup>
             </ice:panelGrid>
@@ -82,16 +82,16 @@
                 id="resource-select"
                 layout="spread"
                 partialSubmit="true"
-                value="#{policyResourcesBean.viewEntitlement.resources}"
+                value="#{resourcesBean.viewEntitlement.resources}"
                 converter="urlResourceConverter">
                 <f:selectItems
-                    value="#{policyResourcesBean.viewEntitlement.availableResourceItems}"/>
+                    value="#{resourcesBean.viewEntitlement.availableResourceItems}"/>
             </ice:selectManyCheckbox>
             <ice:panelGroup
                 scrollHeight="200px">
                 <ice:panelSeries
                     var="urlResource"
-                    value="#{policyResourcesBean.viewEntitlement.availableResources}">
+                    value="#{resourcesBean.viewEntitlement.availableResources}">
                     <ice:panelGroup
                         styleClass="url-resource-outer"
                         visible="#{urlResource.visible}">
@@ -103,7 +103,7 @@
                                     columnClasses="url-resource-tableCol1,url-resource-tableCol2">
                                     <ice:checkbox
                                         for="resource-select"
-                                        index="#{o:indexOf(policyResourcesBean.viewEntitlement.availableResources,urlResource)}">
+                                        index="#{o:indexOf(resourcesBean.viewEntitlement.availableResources,urlResource)}">
                                     </ice:checkbox>
                                     <ice:panelGroup
                                         styleClass="float-right"
@@ -129,7 +129,7 @@
         </ui:define>
     </o:section>
     <o:section
-        visible="#{o:size(policyResourcesBean.viewEntitlement.exceptions) > 0}">
+        visible="#{o:size(resourcesBean.viewEntitlement.exceptions) > 0}">
         <ui:define name="section-title">
             <ice:outputText
                 value="#{resources['resources-url.exceptionSectionTitle']}"/>
@@ -140,7 +140,7 @@
                 <ice:panelSeries
                     var="urlResource"
                     styleClass="inline-input"
-                    value="#{policyResourcesBean.viewEntitlement.exceptions}">
+                    value="#{resourcesBean.viewEntitlement.exceptions}">
                     <ice:panelGroup
                         styleClass="url-resource-outer"
                         visible="#{urlResource.visible}">
@@ -164,7 +164,7 @@
                                                     value="#{urlResource}"/>
                                                 <f:attribute
                                                     name="viewEntitlement"
-                                                    value="#{policyResourcesBean.viewEntitlement}"/>
+                                                    value="#{resourcesBean.viewEntitlement}"/>
                                             </ui:define>
                                         </o:clink>
                                     </ice:panelGroup>

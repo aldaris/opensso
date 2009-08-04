@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: resources-banking.xhtml,v 1.9 2009-06-05 05:21:09 farble1670 Exp $
+   $Id: resources-banking.xhtml,v 1.10 2009-08-04 18:50:48 farble1670 Exp $
 
 -->
 
@@ -37,7 +37,7 @@
     xmlns:o="http://opensso.dev.java.net">
 
     <ice:panelGroup
-        rendered="#{policyResourcesBean.viewEntitlement.viewApplication.viewApplicationType.name == 'banking'}">
+        rendered="#{resourcesBean.viewEntitlement.viewApplication.viewApplicationType.name == 'banking'}">
 
         <ui:include
             src="resources-banking-add-popup.xhtml"/>
@@ -55,7 +55,7 @@
                         actionListener="#{bankingResourcesHandler.addListener}">
                         <f:attribute
                             name="viewEntitlement"
-                            value="#{policyResourcesBean.viewEntitlement}"/>
+                            value="#{resourcesBean.viewEntitlement}"/>
                         <ice:graphicImage
                             value="../image/add.png"/>
                         <ice:outputText
@@ -65,17 +65,17 @@
             </ui:define>
             <ui:define name="section-body">
                 <ice:panelGroup
-                    rendered="#{o:size(policyResourcesBean.viewEntitlement.resources) == 0}">
+                    rendered="#{o:size(resourcesBean.viewEntitlement.resources) == 0}">
                     <ice:outputText
                         value="#{resources['resources-banking.noResources']}"/>
                 </ice:panelGroup>
                 <ice:panelGroup
-                    rendered="#{o:size(policyResourcesBean.viewEntitlement.resources) > 0}">
+                    rendered="#{o:size(resourcesBean.viewEntitlement.resources) > 0}">
                     <ice:dataTable
                         styleClass="banking-resources"
                         columnClasses="banking-resourcesCol1,banking-resourcesCol2,banking-resourcesCol3"
                         var="bankingResource"
-                        value="#{policyResourcesBean.viewEntitlement.resources}">
+                        value="#{resourcesBean.viewEntitlement.resources}">
                         <ice:column>
                             <f:facet name="header">
                                 <ice:outputText
@@ -110,7 +110,7 @@
                                         value="#{bankingResource}"/>
                                     <f:attribute
                                         name="viewEntitlement"
-                                        value="#{policyResourcesBean.viewEntitlement}"/>
+                                        value="#{resourcesBean.viewEntitlement}"/>
                                     <ice:graphicImage
                                         value="../image/remove-16.png"/>
                                 </ice:commandLink>

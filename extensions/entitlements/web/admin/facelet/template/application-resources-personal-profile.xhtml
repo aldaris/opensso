@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: resources-web.xhtml,v 1.2 2009-08-04 18:50:48 farble1670 Exp $
+   $Id: application-resources-personal-profile.xhtml,v 1.1 2009-08-04 18:50:47 farble1670 Exp $
 -->
 
 <span
@@ -36,7 +36,7 @@
     xmlns:o="http://opensso.dev.java.net">
 
     <ice:panelGroup
-        rendered="#{resourcesBean.viewEntitlement.viewApplication.viewApplicationType.name == 'iPlanetAMWebAgentService'}">
-        <ui:include src="resources-url.xhtml"/>
+        rendered="#{resourcesBean.viewApplication.viewApplicationType.name == 'sunIdentityServerLibertyPPService'}">
+        <ui:include src="application-resources-url.xhtml"/>
     </ice:panelGroup>
 </span>

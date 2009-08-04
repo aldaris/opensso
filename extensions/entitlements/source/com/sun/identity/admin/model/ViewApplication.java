@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.15 2009-07-22 20:32:17 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.16 2009-08-04 18:50:46 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -44,11 +44,16 @@ import javax.security.auth.Subject;
 public class ViewApplication implements Serializable {
 
     private String name;
+    private String description;
     private ViewApplicationType viewApplicationType;
     private List<Resource> resources = new ArrayList<Resource>();
     private List<Action> actions = new ArrayList<Action>();
     private List<ConditionType> conditionTypes = new ArrayList<ConditionType>();
     private List<SubjectType> subjectTypes = new ArrayList<SubjectType>();
+
+    public ViewApplication() {
+        // nothing
+    }
 
     public ViewApplication(Application a) {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
@@ -112,7 +117,7 @@ public class ViewApplication implements Serializable {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         SubjectFactory sf = (SubjectFactory) mbr.resolve("subjectFactory");
         List<SubjectContainer> subjectContainers = new ArrayList<SubjectContainer>();
-        for (SubjectType st : subjectTypes) {
+        for (SubjectType st : getSubjectTypes()) {
             SubjectContainer sc = sf.getSubjectContainer(st);
             if (sc != null && sc.isVisible()) {
                 subjectContainers.add(sc);
@@ -124,7 +129,7 @@ public class ViewApplication implements Serializable {
 
     public List<SubjectType> getExpressionSubjectTypes() {
         List<SubjectType> ests = new ArrayList<SubjectType>();
-        for (SubjectType st: subjectTypes) {
+        for (SubjectType st: getSubjectTypes()) {
             if (st.isExpression()) {
                 ests.add(st);
             }
@@ -228,5 +233,17 @@ public class ViewApplication implements Serializable {
 
     public void setConditionTypes(List<ConditionType> conditionTypes) {
         this.conditionTypes = conditionTypes;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<SubjectType> getSubjectTypes() {
+        return subjectTypes;
     }
 }

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-create.xhtml,v 1.2 2009-07-22 20:32:18 farble1670 Exp $
+   $Id: application-create.xhtml,v 1.3 2009-08-04 18:50:47 farble1670 Exp $
 
 -->
 
@@ -63,27 +63,54 @@
                 </o:wstep>
                 <o:wstep
                     step="1"
-                    label="#{applicationCreateWizardBean.actionsPanelLabel}">
+                    label="#{applicationCreateWizardBean.resourcesPanelLabel}">
                     <ui:define name="wizard-step-body">
-                        TODO
+                        <ui:include
+                            src="#{applicationCreateWizardBean.viewApplication.viewApplicationType.applicationResourceTemplate}">
+                            <ui:param
+                                name="resourcesBean"
+                                value="#{applicationCreateWizardBean}"/>
+                            <ui:param
+                                name="allowExceptions"
+                                value="false"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="2"
+                    label="#{applicationCreateWizardBean.subjectsPanelLabel}">
+                    <ui:define name="wizard-step-body">
+                        <ui:include
+                            src="/admin/facelet/template/application-subjects.xhtml">
+                            <ui:param
+                                name="resourcesBean"
+                                value="#{applicationCreateWizardBean}"/>
+                        </ui:include>
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="3"
                     label="#{applicationCreateWizardBean.conditionsPanelLabel}">
                     <ui:define name="wizard-step-body">
                         TODO
                     </ui:define>
                 </o:wstep>
                 <o:wstep
-                    step="3"
+                    step="4"
+                    label="#{applicationCreateWizardBean.actionsPanelLabel}">
+                    <ui:define name="wizard-step-body">
+                        TODO
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="5"
                     label="#{applicationCreateWizardBean.overridePanelLabel}">
                     <ui:define name="wizard-step-body">
                         TODO
                     </ui:define>
                 </o:wstep>
                 <o:wstep
-                    step="4"
+                    step="6"
                     label="#{applicationCreateWizardBean.summaryPanelLabel}">
                     <ui:define name="wizard-step-body">
                         TODO
