@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-subjects.xhtml,v 1.2 2009-08-04 19:41:57 farble1670 Exp $
+   $Id: application-conditions.xhtml,v 1.1 2009-08-04 19:41:57 farble1670 Exp $
 
 -->
 
@@ -39,31 +39,31 @@
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="#{resources['application-subjects.sectionTitle']}"/>
+                value="#{resources['application-conditions.sectionTitle']}"/>
         </ui:define>
         <ui:define name="section-details">
             <ice:outputText
-                value="#{resources['application-subjects.sectionDescription']}"/>
+                value="#{resources['application-conditions.sectionDescription']}"/>
         </ui:define>
         <ui:define name="section-body">
             <ice:panelGroup>
                 <ice:selectManyCheckbox
-                    id="subject-types"
+                    id="condition-types"
                     layout="spread"
                     partialSubmit="false"
-                    value="#{subjectsBean.subjectTypeNames}">
+                    value="#{conditionsBean.conditionTypeNames}">
                     <f:selectItems
-                        value="#{subjectFactory.subjectTypeNameItems}"/>
+                        value="#{conditionTypeFactory.conditionTypeNameItems}"/>
                 </ice:selectManyCheckbox>
                 <ice:panelGrid
-                    styleClass="application-subjects"
+                    styleClass="application-conditions"
                     columns="3">
                     <c:forEach
-                        var="subjectType"
-                        items="#{subjectFactory.subjectTypes}" >
+                        var="conditionType"
+                        items="#{conditionTypeFactory.conditionTypes}" >
                         <ice:checkbox
-                            for="subject-types"
-                            index="#{o:indexOf(subjectFactory.subjectTypes,subjectType)}"/>
+                            for="condition-types"
+                            index="#{o:indexOf(conditionTypeFactory.conditionTypes,conditionType)}"/>
                     </c:forEach>
                 </ice:panelGrid>
             </ice:panelGroup>

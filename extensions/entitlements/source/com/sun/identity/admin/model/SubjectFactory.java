@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectFactory.java,v 1.6 2009-08-04 18:50:46 farble1670 Exp $
+ * $Id: SubjectFactory.java,v 1.7 2009-08-04 19:41:56 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -68,7 +68,23 @@ public class SubjectFactory implements Serializable {
     }
 
     public List<SubjectType> getSubjectTypes() {
-        return new ArrayList<SubjectType>(subjectTypeToSubjectContainerMap.keySet());
+        List<SubjectType> subjectTypes = new ArrayList<SubjectType>(subjectTypeToSubjectContainerMap.keySet());
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        SubjectType st;
+
+        st = (SubjectType)mbr.resolve("orSubjectType");
+        assert(st != null);
+        subjectTypes.add(st);
+
+        st = (SubjectType)mbr.resolve("andSubjectType");
+        assert(st != null);
+        subjectTypes.add(st);
+
+        st = (SubjectType)mbr.resolve("notSubjectType");
+        assert(st != null);
+        subjectTypes.add(st);
+
+        return subjectTypes;
     }
 
     public SubjectDao getSubjectDao(ViewSubject vs) {

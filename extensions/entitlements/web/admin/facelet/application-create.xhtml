@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-create.xhtml,v 1.3 2009-08-04 18:50:47 farble1670 Exp $
+   $Id: application-create.xhtml,v 1.4 2009-08-04 19:41:57 farble1670 Exp $
 
 -->
 
@@ -83,7 +83,7 @@
                         <ui:include
                             src="/admin/facelet/template/application-subjects.xhtml">
                             <ui:param
-                                name="resourcesBean"
+                                name="subjectsBean"
                                 value="#{applicationCreateWizardBean}"/>
                         </ui:include>
                     </ui:define>
@@ -92,7 +92,12 @@
                     step="3"
                     label="#{applicationCreateWizardBean.conditionsPanelLabel}">
                     <ui:define name="wizard-step-body">
-                        TODO
+                        <ui:include
+                            src="/admin/facelet/template/application-conditions.xhtml">
+                            <ui:param
+                                name="conditionsBean"
+                                value="#{applicationCreateWizardBean}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep

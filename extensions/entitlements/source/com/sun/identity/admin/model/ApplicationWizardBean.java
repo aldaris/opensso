@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardBean.java,v 1.3 2009-08-04 18:50:46 farble1670 Exp $
+ * $Id: ApplicationWizardBean.java,v 1.4 2009-08-04 19:41:56 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -138,7 +138,7 @@ public class ApplicationWizardBean extends WizardBean {
 
             case CONDITIONS:
                 // TODO: count
-                label = r.getString(this, "conditionsPanelLabel");
+                label = r.getString(this, "conditionsPanelLabel", getViewApplication().getConditionTypes().size());
                 break;
 
             case OVERRIDE:
@@ -201,6 +201,15 @@ public class ApplicationWizardBean extends WizardBean {
         return names;
     }
 
+    public List<String> getConditionTypeNames() {
+        List<String> names = new ArrayList<String>();
+        for (ConditionType st : viewApplication.getConditionTypes()) {
+            names.add(st.getName());
+        }
+
+        return names;
+    }
+
     public void setSubjectTypeNames(List<String> subjectTypeNames) {
         Map<String, SubjectType> subjectTypeNameMap = SubjectFactory.getInstance().getSubjectTypeNameMap();
         viewApplication.getSubjectTypes().clear();
@@ -208,6 +217,16 @@ public class ApplicationWizardBean extends WizardBean {
             SubjectType st = subjectTypeNameMap.get(name);
             assert(st != null);
             viewApplication.getSubjectTypes().add(st);
+        }
+    }
+
+    public void setConditionTypeNames(List<String> conditionTypeNames) {
+        Map<String,ConditionType> conditionTypeNameMap = ConditionTypeFactory.getInstance().getConditionTypeNameMap();
+        viewApplication.getConditionTypes().clear();
+        for (String name : conditionTypeNames) {
+            ConditionType ct = conditionTypeNameMap.get(name);
+            assert(ct != null);
+            viewApplication.getConditionTypes().add(ct);
         }
     }
 }

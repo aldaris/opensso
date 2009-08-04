@@ -22,16 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionTypeFactory.java,v 1.3 2009-06-04 11:49:14 veiming Exp $
+ * $Id: ConditionTypeFactory.java,v 1.4 2009-08-04 19:41:56 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.entitlement.EntitlementCondition;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.faces.model.SelectItem;
 
 public class ConditionTypeFactory implements Serializable {
     private Map<String,ConditionType> entitlementConditionToConditionTypeMap;
@@ -79,5 +82,30 @@ public class ConditionTypeFactory implements Serializable {
 
     public void setViewConditionToConditionTypeMap(Map<String, ConditionType> viewConditionToConditionTypeMap) {
         this.viewConditionToConditionTypeMap = viewConditionToConditionTypeMap;
+    }
+
+    public static ConditionTypeFactory getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        ConditionTypeFactory cf = (ConditionTypeFactory)mbr.resolve("conditionTypeFactory");
+        return cf;
+    }
+
+    public Map<String,ConditionType> getConditionTypeNameMap() {
+        Map<String,ConditionType> m = new HashMap<String,ConditionType>();
+        for (ConditionType ct: getConditionTypes()) {
+            m.put(ct.getName(), ct);
+        }
+
+        return m;
+    }
+
+    public List<SelectItem> getConditionTypeNameItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        for (ConditionType ct: getConditionTypes()) {
+            SelectItem si = new SelectItem(ct.getName(), ct.getTitle());
+            items.add(si);
+        }
+
+        return items;
     }
 }

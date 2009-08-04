@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.104 2009-08-04 18:50:47 farble1670 Exp $
+* $Id: admin.css,v 1.105 2009-08-04 19:41:56 farble1670 Exp $
 *
 */
 
@@ -1323,6 +1323,13 @@ span.button img.left {
 
 .application-subjects * > input,
 .application-subjects * > label {
+    padding-left: 5px;
+    padding-right: 10px;
+    vertical-align: middle;
+}
+
+.application-conditions * > input,
+.application-conditions * > label {
     padding-left: 5px;
     padding-right: 10px;
     vertical-align: middle;
