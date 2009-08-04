@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.107 2009-08-04 07:43:43 hengming Exp $
+  $Id: faces-config.xml,v 1.108 2009-08-04 17:03:15 ggennaro Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1667,10 +1667,6 @@
         <managed-property>
             <property-name>viewApplicationsBean</property-name>
             <value>#{viewApplicationsBean}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>subjectFactory</property-name>
-            <value>#{subjectFactory}</value>
         </managed-property>
         <managed-property>
             <property-name>conditionTypeFactory</property-name>
