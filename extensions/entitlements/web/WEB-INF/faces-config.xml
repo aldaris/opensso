@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.106 2009-08-03 22:25:33 ggennaro Exp $
+  $Id: faces-config.xml,v 1.107 2009-08-04 07:43:43 hengming Exp $
 -->
 
 <faces-config version="1.2" 
@@ -643,7 +643,7 @@
                 <value>#{idRepoRoleSubjectType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.entitlement.IdRepoGroupSubject</key>
+                <key>com.sun.identity.entitlement.opensso.OpenSSOGroupSubject</key>
                 <value>#{idRepoGroupSubjectType}</value>
             </map-entry>
             <map-entry>

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoGroupSubjectType.java,v 1.2 2009-06-04 11:49:15 veiming Exp $
+ * $Id: IdRepoGroupSubjectType.java,v 1.3 2009-08-04 07:38:10 hengming Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,7 +30,7 @@ package com.sun.identity.admin.model;
 import com.sun.identity.admin.dao.SubjectDao;
 import com.sun.identity.entitlement.IdRepoRoleSubject;
 import com.sun.identity.entitlement.EntitlementSubject;
-import com.sun.identity.entitlement.IdRepoGroupSubject;
+import com.sun.identity.entitlement.opensso.OpenSSOGroupSubject;
 import java.io.Serializable;
 
 public class IdRepoGroupSubjectType
@@ -45,8 +45,8 @@ public class IdRepoGroupSubjectType
     }
 
     public ViewSubject newViewSubject(EntitlementSubject es, SubjectFactory stf) {
-        assert(es instanceof IdRepoGroupSubject);
-        IdRepoGroupSubject gs = (IdRepoGroupSubject)es;
+        assert(es instanceof OpenSSOGroupSubject);
+        OpenSSOGroupSubject gs = (OpenSSOGroupSubject)es;
 
         IdRepoGroupViewSubject idgs = (IdRepoGroupViewSubject)newViewSubject();
         idgs.setName(gs.getID());
