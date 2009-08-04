@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-checkjars.xml,v 1.5 2009-01-28 05:34:43 ww203982 Exp $
+   $Id: build-checkjars.xml,v 1.6 2009-08-04 21:54:47 veiming Exp $
 
 -->
 
@@ -54,9 +54,10 @@
         property="click.jar.present"/>
     <available file="${extlib.dir}/click-extras.jar" type="file"
         property="click-extras.jar.present"/>
+    <available file="${extlib.dir}/esapiport.jar" type="file"
+        property="esapiport.jar.present"/>
 
     <target name="all">
-
 	<condition property="extlib.jar.exists">
 	    <and>
             <isset property="activation.jar.present" />
@@ -71,9 +72,9 @@
             <isset property="saaj.impl.jar.present" />
             <isset property="click.jar.present" />
             <isset property="click-extras.jar.present" />
-        </and>
+            <isset property="esapiport.jar.present" />
+            </and>
 	</condition>
-    
 
     <fail message="*** missing ${extlib.dir}/activation.jar ***">
         <condition>
@@ -125,6 +126,12 @@
             <not><isset property="saaj.impl.jar.present" /></not>
         </condition>
     </fail>
+    <fail message="*** missing  ${extlib.dir}/esapiport.jar ***">
+        <condition>
+            <not><isset property="esapiport.jar.present" /></not>
+        </condition>
+    </fail>
+
     <fail message="*** missing  ${extlib.dir}/click.jar.  Download Click 1.4 beta from http://click.sourceforge.net.  The .jar file should be renamed to click.jar (without the version number in the filename) ***">
         <condition>
             <not><isset property="saaj.impl.jar.present" /></not>

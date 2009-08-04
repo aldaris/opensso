@@ -125,7 +125,7 @@
     </servlet>
     <servlet>
         <servlet-name>Help2Servlet</servlet-name>
-        <servlet-class>com.sun.web.ui.servlet.help2.OnlineHelp2Servlet</servlet-class>
+        <servlet-class>com.sun.identity.console.help.Help2Servlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>VersionServlet</servlet-name>

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLIHelper.java,v 1.13 2009-07-30 05:30:43 veiming Exp $
+ * $Id: WebCLIHelper.java,v 1.14 2009-08-04 21:54:47 veiming Exp $
  *
  */
 
@@ -37,12 +37,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
-
+import org.owasp.esapi.reference.DefaultEncoder;
 
 /**
  * Helper class for web based CLI JSP.
  */
 public class WebCLIHelper {
+    private static final DefaultEncoder encoder = new DefaultEncoder();
     private BufferOutputWriter outputWriter;
     private String jspName;
     private CommandManager cmdMgr;
@@ -297,8 +298,7 @@ public class WebCLIHelper {
     }
 
     public static String escapeTags(String html) {
-        html = html.replaceAll("&", "&amp;");
-        return html.replaceAll("<", "&lt;");
+        return encoder.encodeForHTML(html);
     }
 
 }
