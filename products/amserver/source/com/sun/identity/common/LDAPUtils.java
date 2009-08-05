@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUtils.java,v 1.8 2009-06-03 19:42:57 goodearth Exp $
+ * $Id: LDAPUtils.java,v 1.9 2009-08-05 20:39:01 hengming Exp $
  *
  */
 
@@ -39,6 +39,7 @@ import com.sun.identity.shared.ldap.LDAPException;
 import com.sun.identity.shared.ldap.LDAPModification;
 import com.sun.identity.shared.ldap.LDAPModificationSet;
 import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.util.DN;
 import com.sun.identity.shared.ldap.util.LDIF;
 import com.sun.identity.shared.ldap.util.LDIFAddContent;
 import com.sun.identity.shared.ldap.util.LDIFAttributeContent;
@@ -89,32 +90,66 @@ public class LDAPUtils {
         LDIF ldif,
         LDAPConnection ld
     ) throws IOException, LDAPException {
-        String filter = "cn=referential integrity postoperation";
+        DN ripDN = new DN(
+            "cn=referential integrity postoperation,cn=plugins,cn=config");
+        CaseInsensitiveHashSet existPlugins = null;
+        int nextPluginIndex = 0;
         for(LDIFRecord rec = ldif.nextRecord(); rec != null; 
             rec = ldif.nextRecord()
         ) {
             LDIFContent content = null;
-            String DN = null;
+            String ldifDN = null;
             
             try {
                 content = rec.getContent();
-                DN = rec.getDN();
-                // This is to avoid overwriting the referential integrity
-                // plugin data with the default entry from plugin.ldif.
-                // Use case : Configuring user store against existing DIT.
-                if (DN.startsWith(filter)) {
-                    LDAPSearchResults results = ld.search(
-                    filter + ", cn=plugins, cn=config", 
-                        LDAPConnection.SCOPE_SUB, filter, null, false);
-                    if (results.hasMoreElements()) {
-                        break;
-                    }
-                }
+                ldifDN = rec.getDN();
 
                 if (content instanceof LDIFModifyContent) {
-                    ld.modify(DN, 
-                        ((LDIFModifyContent)content).getModifications());
-                    
+
+                    LDAPModification[] mods =
+                        ((LDIFModifyContent)content).getModifications();
+                    if (ripDN.equals(new DN(ldifDN))) {
+                        LDAPModificationSet modSet = new LDAPModificationSet();
+                        for(int i=0; i<mods.length; i++) {
+                            LDAPAttribute attr = mods[i].getAttribute();
+                            String attrName = attr.getName().toLowerCase();
+                            if (!attrName.startsWith("nsslapd-pluginarg")) {
+                                modSet.add(mods[i].getOp(), attr);
+                                continue;
+                            }
+
+                            if (existPlugins == null) {
+                                existPlugins = new CaseInsensitiveHashSet();
+                                LDAPEntry entry = ld.read(ldifDN);
+                                    
+                                while(true) {
+                                    LDAPAttribute pluginAttr =
+                                        entry.getAttribute("nsslapd-pluginarg" +
+                                        nextPluginIndex);
+                                    if (pluginAttr == null) {
+                                        break;
+                                    }
+
+                                    existPlugins.add(pluginAttr.
+                                        getStringValueArray()[0]);
+                                    nextPluginIndex++;
+                                }
+                            }
+                            String value = attr.getStringValueArray()[0];
+                            if (!existPlugins.contains(value)) {
+                                attr = new LDAPAttribute(
+                                    "nsslapd-pluginarg" + nextPluginIndex,
+                                    value);
+                                modSet.add(mods[i].getOp(), attr);
+                                nextPluginIndex++;
+                            }
+                        }
+                        if (modSet.size() > 0) {
+                            ld.modify(ldifDN, modSet);
+                        }
+                    } else {
+                        ld.modify(ldifDN, mods);
+                    }
                 } else if ((content instanceof LDIFAttributeContent) ||
                     (content instanceof LDIFAddContent)
                     ) {
@@ -123,7 +158,7 @@ public class LDAPUtils {
                         (content instanceof LDIFAttributeContent) ?
                             ((LDIFAttributeContent)content).getAttributes():
                             ((LDIFAddContent)content).getAttributes();
-                    LDAPEntry amEntry = new LDAPEntry(DN,
+                    LDAPEntry amEntry = new LDAPEntry(ldifDN,
                         new LDAPAttributeSet(attrs));
                     ld.add(amEntry);
                 }
@@ -143,7 +178,7 @@ public class LDAPUtils {
                             modSet.add(LDAPModification.ADD, attrs[i]);
                         }
                         try {
-                            ld.modify(DN, modSet);
+                            ld.modify(ldifDN, modSet);
                         } catch (LDAPException ex) {
                             //Ignore the exception
                         }
