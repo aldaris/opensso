@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeTest.java,v 1.9 2009-06-12 00:02:34 veiming Exp $
+ * $Id: ApplicationTypeTest.java,v 1.10 2009-08-05 09:09:40 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -32,6 +32,7 @@ import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 import org.testng.annotations.AfterClass;
@@ -90,11 +91,19 @@ public class ApplicationTypeTest {
             throw new Exception("ApplicationTypeTest.testApplication cannot get application");
         }
 
+        app.addAction("action", true);
         ApplicationManager.saveApplication(adminSubject,"/", app);
+
         app = ApplicationManager.getApplication(adminSubject, "/",
-            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
+            APPL_NAME);
         if (app == null) {
             throw new Exception("ApplicationTypeTest.testApplication application lost");
+        }
+
+        Map<String, Boolean> actions = app.getActions();
+        Boolean actionVal = actions.get("action");
+        if ((actionVal == null) || !actionVal) {
+            throw new Exception("ApplicationTypeTest.testApplication action is not saved");
         }
 
         ValidateResourceResult r = app.validateResourceName("http://www.appplicationtypetest.com:80/hr");

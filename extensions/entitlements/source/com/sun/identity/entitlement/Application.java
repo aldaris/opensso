@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.27 2009-07-06 19:34:17 veiming Exp $
+ * $Id: Application.java,v 1.28 2009-08-05 09:09:40 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -395,16 +395,16 @@ public final class Application implements Cloneable {
     /**
      * Adds a new action with its default value.
      *
-     * @param adminSubject Admin Subject who has the rights to access datastore
      * @param name Action name.
      * @param val Default value.
      * @throws EntitlementException if action cannot be added.
      */
-    public void addAction(Subject adminSubject, String name, boolean val)
+    public void addAction(String name, boolean val)
         throws EntitlementException {
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            adminSubject, realm);
-        ec.addApplicationAction(this.name, name, val);
+        if (actions == null) {
+            actions = new HashMap<String, Boolean>();
+        }
+        actions.put(name, val);
     }
 
     /**

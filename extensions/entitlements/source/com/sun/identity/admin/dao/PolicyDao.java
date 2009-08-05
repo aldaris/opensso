@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDao.java,v 1.26 2009-07-27 19:35:24 farble1670 Exp $
+ * $Id: PolicyDao.java,v 1.27 2009-08-05 09:09:39 veiming Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -223,8 +223,7 @@ public class PolicyDao implements Serializable {
         for (String actionName : actionValues.keySet()) {
             if (!validActionName.contains(actionName)) {
                 try {
-                    app.addAction(adminSubject, actionName,
-                            actionValues.get(actionName));
+                    app.addAction(actionName, actionValues.get(actionName));
                 } catch (EntitlementException ee) {
                     throw new RuntimeException(ee);
                 }
