@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPrimaryMastHeadViewBean.java,v 1.8 2008-08-24 19:38:11 veiming Exp $
+ * $Id: AMPrimaryMastHeadViewBean.java,v 1.9 2009-08-05 20:15:52 veiming Exp $
  *
  */
 
@@ -60,6 +60,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.text.MessageFormat;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.errors.EncodingException;
 
 /**
  * This is the base class for all view beans that have primary
@@ -237,6 +239,13 @@ public abstract class AMPrimaryMastHeadViewBean
          */
         String logo = 
             "../" + consoleDirectory + "/images/PrimaryProductName.png";
+        try {
+            logo = ESAPI.encoder().encodeForURL(logo);
+        } catch (EncodingException e) {
+            debug.error("AMPrimaryMastheadViewBean.createMastheadModel", e);
+            logo = "";
+        }
+
         mm.setSrc(logo);
         mm.setWidth("78");
         mm.setHeight("40");

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.62 2009-08-04 21:54:47 veiming Exp $
+   $Id: build.xml,v 1.63 2009-08-05 20:15:53 veiming Exp $
 
 -->
 
@@ -114,8 +114,9 @@
                 <include name="button/primary*.gif" />
             </zipfileset>
             <zipfileset dir="${lockhart.dir}/js" prefix="com_sun_web_ui/js" />
-            <zipfileset dir="${lockhart.dir}/jsp" excludes="help2/*.jsp" prefix="com_sun_web_ui/jsp" />
+            <zipfileset dir="${lockhart.dir}/jsp" excludes="help2/*.jsp,version/*.jsp" prefix="com_sun_web_ui/jsp" />
             <zipfileset dir="${amserver.www.dir}/console/help" prefix="com_sun_web_ui/jsp/help2" />
+            <zipfileset dir="${amserver.www.dir}/console/version" prefix="com_sun_web_ui/jsp/version" />
             <zipfileset dir="${amserver.www.dir}/authentication/UI" prefix="config/auth/default">
                 <include name="*.jsp" />
                 <include name="*.html" />

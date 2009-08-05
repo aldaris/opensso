@@ -129,7 +129,7 @@
     </servlet>
     <servlet>
         <servlet-name>VersionServlet</servlet-name>
-        <servlet-class>com.sun.web.ui.servlet.version.VersionServlet</servlet-class>
+        <servlet-class>com.sun.identity.console.version.VersionServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>click-servlet</servlet-name>

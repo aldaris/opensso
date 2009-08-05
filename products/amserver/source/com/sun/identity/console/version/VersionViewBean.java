@@ -22,27 +22,47 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Help2ViewBean.java,v 1.2 2009-08-05 20:15:53 veiming Exp $
+ * $Id: VersionViewBean.java,v 1.1 2009-08-05 20:15:51 veiming Exp $
  */
 
-package com.sun.identity.console.help;
+package com.sun.identity.console.version;
 
 import javax.servlet.http.HttpServletRequest;
 import org.owasp.esapi.ESAPI;
 
-public class Help2ViewBean extends com.sun.web.ui.servlet.help2.Help2ViewBean {
-    public static String validateHelpFile(
-        HttpServletRequest request,
-        String helpFile) {
-        if (helpFile.length() == 0) {
-            return helpFile;
-        }
+public class VersionViewBean extends 
+    com.sun.web.ui.servlet.version.VersionViewBean {
 
-        if (!helpFile.startsWith(getCurrentURL(request) + "/help")) {
+    public VersionViewBean() {
+        super();
+    }
+
+    public static String validateVersionFile(
+        HttpServletRequest request,
+        String versionFile) {
+        if (versionFile.length() == 0) {
+            return versionFile;
+        }
+        if (!versionFile.startsWith(request.getContextPath()) &&
+            !versionFile.startsWith(getCurrentURL(request))
+        ) {
+            return "../console/blank.html";
+        }
+        return versionFile;
+    }
+
+    public static String validateProductImage(
+        HttpServletRequest request,
+        String productImage) {
+        if (productImage.length() == 0) {
+            return productImage;
+        }
+        if (!productImage.startsWith("../")) {
             return "";
         }
-        return helpFile;
+        return productImage;
     }
+
 
     public static String getCurrentURL(HttpServletRequest httpRequest) {
         return httpRequest.getScheme() + "://" +
