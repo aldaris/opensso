@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Notifier.java,v 1.2 2009-06-16 20:30:37 veiming Exp $
+ * $Id: Notifier.java,v 1.3 2009-08-05 19:05:27 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -54,6 +54,8 @@ public class Notifier implements Runnable {
     private String action;
     private Map<String, String> params;
     private static IThreadPool threadPool = new EntitlementThreadPool(4);
+    private static boolean ssoadm = Boolean.valueOf(
+        System.getProperty("ssoadm", "false")).booleanValue();
 
     public static void submit(String action, Map<String, String> params) {
         threadPool.submit(new Notifier(action, params));
@@ -77,7 +79,7 @@ public class Notifier implements Runnable {
                     url = url.substring(0, idx);
                 }
 
-                if (!url.equals(currentServerInstance)) {
+                if (ssoadm || !url.equals(currentServerInstance)) {
                     String strURL = url + NotificationServlet.CONTEXT_PATH +
                         "/" + action;
 
