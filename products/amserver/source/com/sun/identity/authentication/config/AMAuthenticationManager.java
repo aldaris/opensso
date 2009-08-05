@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthenticationManager.java,v 1.8 2008-10-07 18:32:54 ww203982 Exp $
+ * $Id: AMAuthenticationManager.java,v 1.9 2009-08-05 19:57:27 qcheng Exp $
  *
  */
 
@@ -484,8 +484,9 @@ public class AMAuthenticationManager {
                     if ((((String)e.getKey()).endsWith("passwd")) ||
                        (((String)e.getKey()).endsWith("Passwd")) ||
                        (((String)e.getKey()).endsWith("password")) ||
+                       (((String)e.getKey()).endsWith("Password")) ||
                        (((String)e.getKey()).endsWith("secret"))) {
-                    debug.message(e.getKey() + ": " + "<BLOCKED>");
+                        debug.message(e.getKey() + ": " + "<BLOCKED>");
                     }
                     else {
                         debug.message(e.getKey() + ": " + e.getValue());
