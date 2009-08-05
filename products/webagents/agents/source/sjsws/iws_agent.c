@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.23 2009-06-30 01:01:36 subbae Exp $
+ * $Id: iws_agent.c,v 1.24 2009-08-05 22:00:44 subbae Exp $
  *
  *
  */
@@ -62,6 +62,7 @@
 
 #define	MAGIC_STR		"sunpostpreserve"
 #define	POST_PRESERVE_URI	"/dummypost/"MAGIC_STR
+#define   EMPTY_STRING	""
 
 
 typedef struct agent_props {
@@ -1142,20 +1143,10 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
         //reset the cookie CDSSO. 
         if (am_web_is_cdsso_enabled(agent_config) == B_TRUE)
         {
-            cookie_name= am_web_get_cookie_name(agent_config);
-            cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
-            cookie_header = malloc(cookie_header_len+1);
-            snprintf(cookie_header, cookie_header_len,CDSSO_RESET_COOKIE_TEMPLATE,cookie_name);
-            cdStatus = reset_cookie(cookie_header,args);
+            cdStatus = am_web_do_cookie_domain_set(set_cookie, args, EMPTY_STRING, agent_config);        
             if(cdStatus != AM_SUCCESS) {
-                am_web_log_error("validate_session_policy :CDSSO reset_cookie failed");
+                am_web_log_error("validate_session_policy : CDSSO reset cookie failed");
             }
-
-            if(cookie_header!=NULL) {
-                free(cookie_header);
-                cookie_header = NULL;
-            }
-
         }
 
 

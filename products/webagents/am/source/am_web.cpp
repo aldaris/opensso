@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.50 2009-06-30 01:01:37 subbae Exp $
+ * $Id: am_web.cpp,v 1.51 2009-08-05 22:01:50 subbae Exp $
  *
  */
 
@@ -153,6 +153,7 @@ static int initialized = AM_FALSE;
 #define COOKIE_INFO_LIST_INITIALIZER {0, COOKIE_INFO_PTR_NULL}
 
 #define INSTANCE_NAME  "unused"
+#define EMPTY_STRING  ""
 
 static const char* requestIp = "requestIp";
 static const char* requestDnsName = "requestDnsName";
@@ -5826,18 +5827,14 @@ process_request(am_web_request_params_t *req_params,
                 args[0] = req_func;
                 // reset the CDSSO cookie first
                 if (cdsso_enabled == B_TRUE) {
-                    const char* cookie_name= am_web_get_cookie_name(agent_config);
-                    int cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
-                    char* cookie_value = (char*) malloc(cookie_header_len+1);
-                    snprintf(cookie_value, cookie_header_len,CDSSO_RESET_COOKIE_TEMPLATE,cookie_name);
-                    am_status_t cdStatus = add_cookie_in_response(cookie_value,args);
+                    am_status_t cdStatus = am_web_do_cookie_domain_set(add_cookie_in_response, 
+                                               args, 
+                                               EMPTY_STRING, 
+                                               agent_config);
                     if(cdStatus != AM_SUCCESS) {
-                        am_web_log_error("process_request : CDSSO reset_cookie failed");
+                        am_web_log_error("process_request : CDSSO reset cookie failed");
                     }
-                    if(cookie_value!=NULL) {
-                        free(cookie_value);
-                        cookie_value = NULL;
-                    }
+
                 }
                 // reset cookies on invalid session.
                 local_sts = am_web_do_cookies_reset(add_cookie_in_response,
