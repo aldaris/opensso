@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPeerRealmReferral.java,v 1.2 2009-01-27 00:10:44 nithyas Exp $
+ * $Id: PolicyPeerRealmReferral.java,v 1.3 2009-08-05 21:42:36 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,7 +103,6 @@ public class PolicyPeerRealmReferral extends TestCommon {
                             "policy" + fileseparator + strLocRB, polIdx,
                             strLocRB +  ".xml", strPeAtOrg);
                     assert (mpc.createPolicy(strLocRB + ".xml", strPeAtOrg));
-                    Thread.sleep(notificationSleepTime);
                 } else {
                     mpc.createRealm("/" + strPeAtOrg);
                     mpc.createRealm("/" + referringPeerOrg);
@@ -117,7 +116,6 @@ public class PolicyPeerRealmReferral extends TestCommon {
                                 "policy" + fileseparator + strLocRB, polIdx,
                                 strRefRB + ".xml");
                         assert (mpc.createPolicy(strRefRB + ".xml", "/" ));
-                        Thread.sleep(notificationSleepTime);
 
                     //now create the referral policy at peerorg 
                         mpc.createPeerReferralPolicyXML("policy" + 
@@ -128,7 +126,6 @@ public class PolicyPeerRealmReferral extends TestCommon {
                                 strReferringPeerOrg);
                         assert (mpc.createPolicy(strRefRB + "peerOrg" + ".xml",
                                 strReferringPeerOrg ));
-                        Thread.sleep(notificationSleepTime);
  
                     } else {
                         strDynamicRefValue = "true";
@@ -137,13 +134,11 @@ public class PolicyPeerRealmReferral extends TestCommon {
                                 strGblRB, "policy" + fileseparator + strRefRB,
                                 "policy" + fileseparator + strLocRB, polIdx,
                                 strPeAtOrg);
-                        Thread.sleep(notificationSleepTime);
                     }
                     mpc.createPolicyXML("policy" + fileseparator + strGblRB,
                             "policy" + fileseparator + strLocRB, polIdx,
                             strLocRB + ".xml", strPeAtOrg);
                     assert (mpc.createPolicy(strLocRB + ".xml", strPeAtOrg));
-                    Thread.sleep(notificationSleepTime);
                 }
             }
         } catch (Exception e) {
@@ -226,7 +221,6 @@ public class PolicyPeerRealmReferral extends TestCommon {
                     } else {
                         strDynamicRefValue = "false";
                         mpc.setDynamicReferral(strDynamicRefValue);
-                        Thread.sleep(5000);
                     }                   
                 }
             }

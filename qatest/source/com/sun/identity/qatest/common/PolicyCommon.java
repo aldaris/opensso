@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.18 2009-04-10 01:49:10 inthanga Exp $
+ * $Id: PolicyCommon.java,v 1.19 2009-08-05 21:42:35 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -267,7 +267,6 @@ public class PolicyCommon extends TestCommon {
                         map.put(strDynamicAttribute, list);
                         modifyDynamicRespAttribute(strSubRealm, dynSetlist,
                                 "add");
-                        Thread.sleep(notificationSleepTime);
                         createRPXML(out, "ResponseProvider", name, type, map);
                     }
                 }
@@ -1234,7 +1233,6 @@ public class PolicyCommon extends TestCommon {
             throw e;
         } finally {
             consoleLogout(webClient, logoutURL);
-            Thread.sleep(notificationSleepTime);
         }
     }
     
@@ -1283,8 +1281,6 @@ public class PolicyCommon extends TestCommon {
             throw e;
         } finally {
             consoleLogout(webClient, logoutURL);
-        // Added sleep so the realm creation can be self notified to the server
-            Thread.sleep(notificationSleepTime);
         }
     }
     

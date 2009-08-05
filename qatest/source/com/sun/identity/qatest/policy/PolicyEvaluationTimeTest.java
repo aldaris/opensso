@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluationTimeTest.java,v 1.6 2009-01-27 00:10:44 nithyas Exp $:
+ * $Id: PolicyEvaluationTimeTest.java,v 1.7 2009-08-05 21:42:36 rmisra Exp $:
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -759,9 +759,6 @@ public class PolicyEvaluationTimeTest extends TestCommon {
             //create the policy xml and load the policy in the server
             createPolicyXmlMultiTime(mapIdentity, pXmlParams, testCaseId);
             pc. createPolicy(policyName);
-            
-            //minimum sleep required while evalauting thru API
-            Thread.sleep(2000);
             
             //user params for the policy evaluation
             String userName = (String)mapIdentity.get("test" + testCaseId +

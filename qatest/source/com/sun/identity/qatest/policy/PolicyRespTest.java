@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRespTest.java,v 1.7 2009-01-27 00:10:44 nithyas Exp $
+ * $Id: PolicyRespTest.java,v 1.8 2009-08-05 21:42:36 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,7 +104,6 @@ public class PolicyRespTest extends TestCommon {
                             "policy" + fileseparator + strLocRB, polIdx,
                             strLocRB + ".xml", strPeAtOrg);
                     assert (mpc.createPolicy(strLocRB + ".xml", strPeAtOrg));
-                    Thread.sleep(notificationSleepTime);
                 } else {
                     mpc.createRealm("/" + strPeAtOrg);
                     mpc.createIdentities("policy" + fileseparator + strLocRB,
@@ -119,7 +118,6 @@ public class PolicyRespTest extends TestCommon {
                                 ".referringOrg");
                         assert (mpc.createPolicy(strRefRB + ".xml", 
                                 strReferringOrg ));
-                        Thread.sleep(notificationSleepTime);
                     } else {
                         strDynamicRefValue = "true";
                         mpc.setDynamicReferral(strDynamicRefValue);
@@ -127,13 +125,11 @@ public class PolicyRespTest extends TestCommon {
                                 strGblRB, "policy" + fileseparator + strRefRB,
                                 "policy" + fileseparator + strLocRB, polIdx,
                                 strPeAtOrg);
-                        Thread.sleep(notificationSleepTime);
                     }
                     mpc.createPolicyXML("policy" + fileseparator + strGblRB,
                             "policy" + fileseparator + strLocRB, polIdx,
                             strLocRB + ".xml", strPeAtOrg);
                     assert (mpc.createPolicy(strLocRB + ".xml", strPeAtOrg));
-                    Thread.sleep(notificationSleepTime);
                 }
             }
         } catch (Exception e) {

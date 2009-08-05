@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.77 2009-07-02 18:48:13 cmwesley Exp $
+ * $Id: TestCommon.java,v 1.78 2009-08-05 21:42:36 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1689,6 +1689,10 @@ public class TestCommon implements TestConstants {
                 deployURI);
         server.setHandler(wac);
         server.start();
+
+        // This is added as jetty takes some time to bootstrap and we
+        // do not want to register for notification unless server is up
+        Thread.sleep(10000);
 
         map = registerNotificationServerURL();
         log(Level.FINE, "startNotificationServer", "Registered the " +
