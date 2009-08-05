@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: actions-add-popup.xhtml,v 1.4 2009-08-05 14:37:16 farble1670 Exp $
+   $Id: actions-add-popup.xhtml,v 1.5 2009-08-05 16:00:43 farble1670 Exp $
 
 -->
 
@@ -36,7 +36,7 @@
 
     <o:popup
         width="300"
-        type="warning"
+        type="#{viewApplicationHolder == null ? 'question' : 'warning'}"
         handler="#{booleanActionsHandler}"
         modal="true"
         title="Add Action"
@@ -49,12 +49,12 @@
                     <ice:outputFormat
                         rendered="#{viewApplicationHolder != null}"
                         escape="false"
-                        value="#{resources['policy-actions-add-popup.warning']}">
+                        value="#{resources['actions-add-popup.warning']}">
                         <f:param value="#{viewApplicationHolder.viewApplication.title}"/>
                     </ice:outputFormat>
                     <ice:outputText
                         rendered="#{viewApplicationHolder == null}"
-                        value="TODO."/>
+                        value="#{resources['actions-add-popup.question']}"/>
                 </ice:panelGroup>
                 <ice:panelGrid
                     columns="2">
