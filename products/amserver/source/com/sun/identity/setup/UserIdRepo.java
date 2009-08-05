@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.18 2009-06-20 06:30:18 hengming Exp $
+ * $Id: UserIdRepo.java,v 1.19 2009-08-05 20:35:17 hengming Exp $
  *
  */
 
@@ -224,7 +224,10 @@ class UserIdRepo {
                 servletCtx, strFiles, userRepo);
             for (Iterator i = schemas.iterator(); i.hasNext(); ) {
                 String file = (String)i.next();
+                Object[] params = {file};
+                SetupProgress.reportStart("emb.loadingschema", params);
                 LDAPUtils.createSchemaFromLDIF(file, ld);
+                SetupProgress.reportEnd("emb.success", null);
 
                 File f = new File(file);
                 f.delete();
