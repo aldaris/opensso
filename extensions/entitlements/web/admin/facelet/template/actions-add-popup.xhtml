@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: actions-add-popup.xhtml,v 1.3 2009-08-04 22:14:48 farble1670 Exp $
+   $Id: actions-add-popup.xhtml,v 1.4 2009-08-05 14:37:16 farble1670 Exp $
 
 -->
 
@@ -47,10 +47,14 @@
                 <ice:panelGroup
                     style="text-align: left; padding-bottom: 10px">
                     <ice:outputFormat
+                        rendered="#{viewApplicationHolder != null}"
                         escape="false"
                         value="#{resources['policy-actions-add-popup.warning']}">
-                        <f:param value="#{booleanActionsBean.viewApplication.title}"/>
+                        <f:param value="#{viewApplicationHolder.viewApplication.title}"/>
                     </ice:outputFormat>
+                    <ice:outputText
+                        rendered="#{viewApplicationHolder == null}"
+                        value="TODO."/>
                 </ice:panelGroup>
                 <ice:panelGrid
                     columns="2">
@@ -79,6 +83,9 @@
                             <f:attribute
                                 name="viewApplicationDao"
                                 value="#{viewApplicationDao}"/>
+                            <f:attribute
+                                name="viewApplication"
+                                value="#{viewApplicationHolder.viewApplication}"/>
                         </ui:define>
                     </o:button>
                 </ice:panelGrid>

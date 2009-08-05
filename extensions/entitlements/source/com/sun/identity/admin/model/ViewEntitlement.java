@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewEntitlement.java,v 1.23 2009-06-29 13:48:01 farble1670 Exp $
+ * $Id: ViewEntitlement.java,v 1.24 2009-08-05 14:37:15 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -205,8 +205,6 @@ public class ViewEntitlement implements Serializable {
 
     public void setViewApplication(ViewApplication viewApplication) {
         this.viewApplication = viewApplication;
-        booleanActionsBean.setViewApplication(viewApplication);
-
         resetAvailableResources();
     }
 

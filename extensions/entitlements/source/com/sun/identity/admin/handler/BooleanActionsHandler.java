@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BooleanActionsHandler.java,v 1.6 2009-08-04 22:14:47 farble1670 Exp $
+ * $Id: BooleanActionsHandler.java,v 1.7 2009-08-05 14:37:15 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -55,6 +55,11 @@ public class BooleanActionsHandler
         assert (vab != null);
 
         return vab;
+    }
+
+    protected ViewApplication getViewApplication(ActionEvent event) {
+        ViewApplication va = (ViewApplication)event.getComponent().getAttributes().get("viewApplication");
+        return va;
     }
 
     protected ViewApplicationDao getViewApplicationDao(ActionEvent event) {
@@ -91,7 +96,7 @@ public class BooleanActionsHandler
         } else {
             booleanActionsBean.getActions().add(ba);
 
-            ViewApplication va = booleanActionsBean.getViewApplication();
+            ViewApplication va = getViewApplication(event);
             if (va != null) {
                 va.getBooleanActionsBean().getActions().add(ba);
                 getViewApplicationDao(event).setViewApplication(va);

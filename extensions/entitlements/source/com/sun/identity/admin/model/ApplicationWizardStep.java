@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardStep.java,v 1.2 2009-08-04 18:50:46 farble1670 Exp $
+ * $Id: ApplicationWizardStep.java,v 1.3 2009-08-05 14:37:15 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -35,8 +35,8 @@ public enum ApplicationWizardStep {
     NAME(0),
     RESOURCES(1),
     SUBJECTS(2),
-    CONDITIONS(3),
-    ACTIONS(4),
+    ACTIONS(3),
+    CONDITIONS(4),
     OVERRIDE(5),
     SUMMARY(6);
 

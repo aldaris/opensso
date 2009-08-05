@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-advanced.xhtml,v 1.7 2009-08-04 22:14:48 farble1670 Exp $
+   $Id: policy-advanced.xhtml,v 1.8 2009-08-05 14:37:16 farble1670 Exp $
 
 -->
 
@@ -46,6 +46,9 @@
                 <ui:param
                     name="booleanActionsHandler"
                     value="#{policyWizardBean.privilegeBean.viewEntitlement.booleanActionsHandler}"/>
+                <ui:param
+                    name="viewApplicationHolder"
+                    value="#{policyWizardBean.privilegeBean.viewEntitlement}"/>
             </ui:include>
         </ice:panelTab>
         <ice:panelTab

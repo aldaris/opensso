@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-create.xhtml,v 1.5 2009-08-04 22:14:47 farble1670 Exp $
+   $Id: application-create.xhtml,v 1.6 2009-08-05 14:37:16 farble1670 Exp $
 
 -->
 
@@ -43,7 +43,7 @@
     </ui:define>
     <ui:define name="panel-body">
         <o:wizard
-            steps="5"
+            steps="7"
             wizardHandler="#{applicationCreateWizardHandler}"
             wizardBean="#{applicationCreateWizardBean}">
             <ui:define name="wizard-steps">
@@ -90,18 +90,6 @@
                 </o:wstep>
                 <o:wstep
                     step="3"
-                    label="#{applicationCreateWizardBean.conditionsPanelLabel}">
-                    <ui:define name="wizard-step-body">
-                        <ui:include
-                            src="/admin/facelet/template/application-conditions.xhtml">
-                            <ui:param
-                                name="conditionsBean"
-                                value="#{applicationCreateWizardBean}"/>
-                        </ui:include>
-                    </ui:define>
-                </o:wstep>
-                <o:wstep
-                    step="4"
                     label="#{applicationCreateWizardBean.actionsPanelLabel}">
                     <ui:define name="wizard-step-body">
                         <ui:include
@@ -112,6 +100,18 @@
                             <ui:param
                                 name="booleanActionsHandler"
                                 value="#{applicationCreateWizardBean.viewApplication.booleanActionsHandler}"/>
+                        </ui:include>
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="4"
+                    label="#{applicationCreateWizardBean.conditionsPanelLabel}">
+                    <ui:define name="wizard-step-body">
+                        <ui:include
+                            src="/admin/facelet/template/application-conditions.xhtml">
+                            <ui:param
+                                name="conditionsBean"
+                                value="#{applicationCreateWizardBean}"/>
                         </ui:include>
                     </ui:define>
                 </o:wstep>
