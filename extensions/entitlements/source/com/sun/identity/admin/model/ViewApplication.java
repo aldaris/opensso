@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.20 2009-08-06 14:44:00 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.21 2009-08-06 19:39:14 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -36,10 +36,12 @@ import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.EntitlementException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.faces.model.SelectItem;
 import javax.security.auth.Subject;
 
 public class ViewApplication implements Serializable {
@@ -52,6 +54,7 @@ public class ViewApplication implements Serializable {
     private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();
     private List<ConditionType> conditionTypes = new ArrayList<ConditionType>();
     private List<SubjectType> subjectTypes = new ArrayList<SubjectType>();
+    private OverrideRule overrideRule = OverrideRule.DENY_OVERRIDE;
 
     public ViewApplication() {
         booleanActionsHandler.setBooleanActionsBean(booleanActionsBean);
@@ -113,6 +116,10 @@ public class ViewApplication implements Serializable {
             assert (st != null);
             subjectTypes.add(st);
         }
+
+        // override rule
+        Class ecClass = a.getEntitlementCombinerClass();
+        overrideRule = OverrideRule.valueOf(ecClass);
     }
 
     public List<SubjectContainer> getSubjectContainers() {
@@ -226,6 +233,12 @@ public class ViewApplication implements Serializable {
         }
         app.setSubjects(subjects);
 
+        // override rule
+        if (overrideRule != null) {
+            Class ecClass = overrideRule.getEntitlementCombinerClass();
+            app.setEntitlementCombiner(ecClass);
+        }
+
         return app;
     }
 
@@ -265,5 +278,37 @@ public class ViewApplication implements Serializable {
             }
         }
         return size;
+    }
+
+    public OverrideRule getOverrideRule() {
+        return overrideRule;
+    }
+
+    public void setOverrideRule(OverrideRule overrideRule) {
+        this.overrideRule = overrideRule;
+    }
+
+    public List<SelectItem> getOverrideRuleNameItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        for (OverrideRule or: OverrideRule.values()) {
+            SelectItem si = new SelectItem(or.toString(), or.getTitle());
+            items.add(si);
+        }
+
+        return items;
+    }
+
+    public String getOverrideRuleName() {
+        return overrideRule == null ? null : overrideRule.toString();
+    }
+
+    public void setOverrideRuleName(String name) {
+        if (name != null) {
+        overrideRule = OverrideRule.valueOf(name);
+        }
+    }
+
+    public List<OverrideRule> getOverrideRuleValues() {
+        return Arrays.asList(OverrideRule.values());
     }
 }

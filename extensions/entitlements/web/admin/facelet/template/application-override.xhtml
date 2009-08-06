@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-override.xhtml,v 1.1 2009-08-06 14:44:01 farble1670 Exp $
+   $Id: application-override.xhtml,v 1.2 2009-08-06 19:39:15 farble1670 Exp $
 
 -->
 
@@ -46,7 +46,23 @@
                 value="#{resources['application-override.sectionDescription']}"/>
         </ui:define>
         <ui:define name="section-body">
-            TODO
+            <ice:selectOneRadio
+                id="override-select"
+                layout="spread"
+                partialSubmit="true"
+                value="#{overrideBean.viewApplication.overrideRuleName}">
+                <f:selectItems
+                    value="#{overrideBean.viewApplication.overrideRuleNameItems}"/>
+            </ice:selectOneRadio>
+            <ice:panelSeries
+                styleClass="application-override-rules"
+                var="overrideRule"
+                value="#{overrideBean.viewApplication.overrideRuleValues}">
+                <ice:radio
+                    for="override-select"
+                    index="#{o:indexOf(overrideBean.viewApplication.overrideRuleValues,overrideRule)}">
+                </ice:radio>
+            </ice:panelSeries>
         </ui:define>
     </o:section>
 </span>

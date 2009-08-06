@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.105 2009-08-04 19:41:56 farble1670 Exp $
+* $Id: admin.css,v 1.106 2009-08-06 19:39:14 farble1670 Exp $
 *
 */
 
@@ -1330,6 +1330,17 @@ span.button img.left {
 
 .application-conditions * > input,
 .application-conditions * > label {
+    padding-left: 5px;
+    padding-right: 10px;
+    vertical-align: middle;
+}
+
+.application-override-rules span {
+    padding-left: 20px;
+}
+
+.application-override-rules * > input,
+.application-override-rules * > label {
     padding-left: 5px;
     padding-right: 10px;
     vertical-align: middle;
