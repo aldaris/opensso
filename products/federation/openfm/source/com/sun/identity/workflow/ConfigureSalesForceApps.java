@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSalesForceApps.java,v 1.1 2009-07-01 23:28:38 babysunil Exp $
+ * $Id: ConfigureSalesForceApps.java,v 1.2 2009-08-06 18:06:17 babysunil Exp $
  *
  */
 package com.sun.identity.workflow;
@@ -75,15 +75,16 @@ public class ConfigureSalesForceApps
             throws WorkflowException {
 
         String metadata = "<EntityDescriptor entityID=\"https://saml.salesfor" +
-                "ce.com\" xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"><SPSS" +
-                "ODescriptor AuthnRequestsSigned=\"false\" WantAssertionsSigned" +
-                "=\"false\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAM" +
-                "L:2.0:protocol\"> <NameIDFormat>urn:oasis:names:tc:SAML:2.0:na" +
-                "meid-format:transient</NameIDFormat> <AssertionConsumerService" +
-                " index=\"1\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:" +
-                "HTTP-POST\" Location=\"https://login.salesforce.com/?saml=EK03" +
-                "Almz90MS21X.PYnVDfIyr3Qn18UIMGNV0M9mexv4NYQr136.m9" +
-                "IgAw\"/></SPSSODescriptor></EntityDescriptor>";
+                "ce.com\" xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"><SP" +
+                "SSODescriptor AuthnRequestsSigned=\"false\" WantAssertionsSi" +
+                "gned=\"false\" protocolSupportEnumeration=\"urn:oasis:name" +
+                "s:tc:SAML:2.0:protocol\"> <NameIDFormat>urn:oasis:names:t" +
+                "c:SAML:1.1:nameid-format:unspecified</NameIDFormat><NameIDF" +
+                "ormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</N" +
+                "ameIDFormat> <AssertionConsumerService index=\"1\" Bindin" +
+                "g=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Locati" +
+                "on=\"https://login.salesforce.com\"/></SPSSODescript" +
+                "or></EntityDescriptor>";
         String extendedMeta = null;
         try {
             EntityDescriptorElement e =
