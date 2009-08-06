@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestListener.java,v 1.6 2009-05-29 22:13:21 dillidorai Exp $
+ * $Id: TestListener.java,v 1.7 2009-08-06 22:45:12 dillidorai Exp $
  */
 
 package com.sun.identity.unittest;
@@ -53,7 +53,8 @@ public class TestListener implements ITestListener {
             result.getMethod().getMethodName());
         Throwable t = result.getThrowable();
         if (t != null) {
-            UnittestLog.logError("Exception STACKTRACE:" + t.getMessage());
+            UnittestLog.logError("Exception STACKTRACE, message:" + t.getMessage());
+            UnittestLog.logError("Exception Class:" + t.getClass().getName());
             StackTraceElement[] elems = t.getStackTrace();
             for (StackTraceElement elem : elems) {
                 UnittestLog.logError(elem.toString());
@@ -70,7 +71,8 @@ public class TestListener implements ITestListener {
             result.getMethod().getMethodName());
         Throwable t = result.getThrowable();
         if (t != null) {
-            UnittestLog.logError("Exception STACKTRACE:" + t.getMessage());
+            UnittestLog.logError("Exception STACKTRACE, message:" + t.getMessage());
+            UnittestLog.logError("Exception Class:" + t.getClass().getName());
             StackTraceElement[] elems = t.getStackTrace();
             for (StackTraceElement elem : elems) {
                 UnittestLog.logMessage(elem.toString());
@@ -87,7 +89,8 @@ public class TestListener implements ITestListener {
             result.getMethod().getMethodName());
         Throwable t = result.getThrowable();
         if (t != null) {
-            UnittestLog.logError("Exception STACKTRACE:" + t.getMessage());
+            UnittestLog.logError("Exception STACKTRACE, message:" + t.getMessage());
+            UnittestLog.logError("Exception Class:" + t.getClass().getName());
             StackTraceElement[] elems = t.getStackTrace();
             for (StackTraceElement elem : elems) {
                 UnittestLog.logMessage(elem.toString());

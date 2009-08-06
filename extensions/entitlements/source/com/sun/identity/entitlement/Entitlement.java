@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.46 2009-08-04 08:36:48 veiming Exp $
+ * $Id: Entitlement.java,v 1.47 2009-08-06 22:45:11 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -435,7 +435,9 @@ public class Entitlement {
 
         Set<String> matched = new HashSet<String>();
 
-        Set<String> resources = tagswapResourceNames(subject, resourceNames);
+        Set<String> resources = (subject != null) ? 
+                tagswapResourceNames(subject, resourceNames) : resourceNames;
+        
         for (String r : resources) {
             ResourceMatch match = resComparator.compare(resourceName, r, true);
             if (match.equals(ResourceMatch.EXACT_MATCH) ||
