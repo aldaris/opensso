@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.21 2009-08-06 19:39:14 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.22 2009-08-06 20:45:18 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.ListFormatter;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.Token;
@@ -311,4 +312,13 @@ public class ViewApplication implements Serializable {
     public List<OverrideRule> getOverrideRuleValues() {
         return Arrays.asList(OverrideRule.values());
     }
+
+    public String getResourcesToString() {
+        return new ListFormatter(resources).toString();
+    }
+
+    public String getResourcesToFormattedString() {
+        return new ListFormatter(resources).toFormattedString();
+    }
+
 }

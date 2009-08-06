@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardBean.java,v 1.8 2009-08-06 15:25:31 farble1670 Exp $
+ * $Id: ApplicationWizardBean.java,v 1.9 2009-08-06 20:45:18 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -43,6 +43,8 @@ public class ApplicationWizardBean extends WizardBean {
     private Map<String, ViewApplicationType> viewApplicationTypeMap;
     private ApplicationSummary nameSummary = new NameApplicationSummary(this);
     private ApplicationSummary descriptionSummary = new DescriptionApplicationSummary(this);
+    private ApplicationSummary resourcesSummary = new ResourcesApplicationSummary(this);
+    private ApplicationSummary actionsSummary = new ActionsApplicationSummary(this);
 
     @Override
     public void reset() {
@@ -231,5 +233,13 @@ public class ApplicationWizardBean extends WizardBean {
 
     public ApplicationSummary getDescriptionSummary() {
         return descriptionSummary;
+    }
+
+    public ApplicationSummary getResourcesSummary() {
+        return resourcesSummary;
+    }
+
+    public ApplicationSummary getActionsSummary() {
+        return actionsSummary;
     }
 }
