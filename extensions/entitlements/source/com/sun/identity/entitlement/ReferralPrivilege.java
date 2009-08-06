@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.11 2009-07-29 21:05:07 hengming Exp $
+ * $Id: ReferralPrivilege.java,v 1.12 2009-08-06 22:26:49 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -144,19 +144,22 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
      */
     public void setMapApplNameToResources(Map<String, Set<String>> map)
         throws EntitlementException {
-        if ((map == null) || map.isEmpty()) {
-            throw new EntitlementException(251);
-        }
 
-        for (String k : map.keySet()) {
-            Set<String> v = map.get(k);
-            if ((v == null) || v.isEmpty()) {
-                throw new EntitlementException(251);
+        // map would be null, when a referral policy is created without rule
+        // see issue 5291
+        if (map != null) {
+            for (String k : map.keySet()) {
+                Set<String> v = map.get(k);
+                if ((v == null) || v.isEmpty()) {
+                    throw new EntitlementException(251);
+                }
             }
         }
 
         this.mapApplNameToResources = new HashMap<String, Set<String>>();
-        this.mapApplNameToResources.putAll(map);
+        if (map != null) {
+            this.mapApplNameToResources.putAll(map);
+        }
     }
 
     /**

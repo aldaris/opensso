@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.7 2009-06-30 17:47:37 veiming Exp $
+ * $Id: IndexCache.java,v 1.8 2009-08-06 22:26:50 dillidorai Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -97,9 +97,11 @@ public class IndexCache {
      * @param dn Distinguished name of the privilege.
      */
     public void clear(ResourceSaveIndexes indexes, String dn) {
-        clear(dn, indexes.getHostIndexes(), hostIndexCache);
-        clear(dn, indexes.getPathIndexes(), pathIndexCache);
-        clear(dn, indexes.getParentPathIndexes(), parentPathIndexCache);
+        if (indexes != null) {
+            clear(dn, indexes.getHostIndexes(), hostIndexCache);
+            clear(dn, indexes.getPathIndexes(), pathIndexCache);
+            clear(dn, indexes.getParentPathIndexes(), parentPathIndexCache);
+        }
     }
 
     private void clear(String dn, Set<String> indexes, Cache cache) {

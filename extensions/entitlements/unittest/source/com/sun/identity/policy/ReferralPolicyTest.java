@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPolicyTest.java,v 1.2 2009-06-23 07:00:18 veiming Exp $
+ * $Id: ReferralPolicyTest.java,v 1.3 2009-08-06 22:26:50 dillidorai Exp $
  */
 
 package com.sun.identity.policy;
@@ -49,8 +49,10 @@ import org.testng.annotations.Test;
 
 
 public class ReferralPolicyTest {
-    private static final String REFERRAL_POLICY_NAME =
-        "ReferralPolicyTestReferralPolicy";
+    private static final String REFERRAL_POLICY_NAME1 =
+        "ReferralPolicyTestReferralPolicy1";
+    private static final String REFERRAL_POLICY_NAME2 =
+        "ReferralPolicyTestReferralPolicy2";
     private static final String POLICY_NAME =
         "ReferralPolicyTestPolicy";
     private static final String SUB_REALM1 = "/ReferralPolicyTestSubRealm1";
@@ -89,7 +91,7 @@ public class ReferralPolicyTest {
     }
 
     private void createReferralPolicy1() throws Exception {
-        Policy policy = new Policy(REFERRAL_POLICY_NAME, "", true);
+        Policy policy = new Policy(REFERRAL_POLICY_NAME1, "", true);
         PolicyManager pm = new PolicyManager(adminToken, "/");
 
         ReferralTypeManager rm = pm.getReferralTypeManager();
@@ -117,12 +119,40 @@ public class ReferralPolicyTest {
         ocm.createSubOrganization(subRealm, Collections.EMPTY_MAP);
     }
 
+    @Test
+    private void createReferralPolicyWithoutRule() throws Exception {
+        Policy policy = new Policy(REFERRAL_POLICY_NAME2, 
+                "",  // description
+                true, // referral?
+                true // active?
+                ); 
+        PolicyManager pm = new PolicyManager(adminToken, "/");
+
+        pm.addPolicy(policy);
+    }
+
+    @Test(dependsOnMethods={"createReferralPolicyWithoutRule"})
+    private void addRuleToReferralPolicy() throws Exception {
+        PolicyManager pm = new PolicyManager(adminToken, "/");
+        Policy policy = pm.getPolicy(REFERRAL_POLICY_NAME2);
+
+        Rule rule = new Rule("iPlanetAMWebAgentService",
+            Collections.EMPTY_MAP);
+        Set<String> set = new HashSet<String>();
+        set.add("http://www.ReferredResourcesTest.com/1/*");
+        rule.setResourceNames(set);
+        policy.addRule(rule);
+
+        pm.replacePolicy(policy);
+    }
+
     @AfterClass
     public void cleanup() throws Exception {
         PolicyManager pm = new PolicyManager(adminToken, SUB_REALM1);
         pm.removePolicy(POLICY_NAME);
         pm = new PolicyManager(adminToken, "/");
-        pm.removePolicy(REFERRAL_POLICY_NAME);
+        pm.removePolicy(REFERRAL_POLICY_NAME1);
+        pm.removePolicy(REFERRAL_POLICY_NAME2);
 
         OrganizationConfigManager ocm = new OrganizationConfigManager(
             adminToken, "/");
@@ -138,7 +168,7 @@ public class ReferralPolicyTest {
             adminSubject);
         PrivilegeSearchFilter f = new PrivilegeSearchFilter(
             Privilege.NAME_ATTRIBUTE, "*");
-        ReferralPrivilege ref = rfm.getReferral(REFERRAL_POLICY_NAME);
+        ReferralPrivilege ref = rfm.getReferral(REFERRAL_POLICY_NAME1);
         Map<String, Set<String>> map = ref.getMapApplNameToResources();
         if ((map == null) || map.isEmpty()) {
             throw new Exception("ReferralPolicyTest.getReferralInRootRealm: " +

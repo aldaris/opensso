@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.27 2009-07-27 21:03:19 hengming Exp $
+ * $Id: DataStore.java,v 1.28 2009-08-06 22:26:50 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -416,14 +416,16 @@ public class DataStore {
             Set<String> searchable = new HashSet<String>();
             map.put(SMSEntry.ATTR_XML_KEYVAL, searchable);
 
-            for (String i : indexes.getHostIndexes()) {
-                searchable.add(HOST_INDEX_KEY + "=" + i);
-            }
-            for (String i : indexes.getPathIndexes()) {
-                searchable.add(PATH_INDEX_KEY + "=" + i);
-            }
-            for (String i : indexes.getParentPathIndexes()) {
-                searchable.add(PATH_PARENT_INDEX_KEY + "=" + i);
+            if (indexes != null) {
+                for (String i : indexes.getHostIndexes()) {
+                    searchable.add(HOST_INDEX_KEY + "=" + i);
+                }
+                for (String i : indexes.getPathIndexes()) {
+                    searchable.add(PATH_INDEX_KEY + "=" + i);
+                }
+                for (String i : indexes.getParentPathIndexes()) {
+                    searchable.add(PATH_PARENT_INDEX_KEY + "=" + i);
+                }
             }
 
             Set<String> set = new HashSet<String>(2);
