@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UrlResource.java,v 1.13 2009-06-04 11:49:18 veiming Exp $
+ * $Id: UrlResource.java,v 1.14 2009-08-06 14:44:00 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -32,6 +32,15 @@ import java.util.List;
 
 public class UrlResource extends Resource implements Serializable {
     private List<Part> parts;
+
+    public UrlResource() {
+        super();
+    }
+
+    public UrlResource(String name) {
+        this();
+        setName(name);
+    }
 
     public List<Part> getParts() {
         return parts;

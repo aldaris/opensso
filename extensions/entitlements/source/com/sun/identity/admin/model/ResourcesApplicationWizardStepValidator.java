@@ -23,7 +23,7 @@ public class ResourcesApplicationWizardStepValidator extends ApplicationWizardSt
         resources.removeAll(trimmed);
 
         if (resources == null || resources.size() == 0) {
-            resources.add(new UrlResource());
+            resources.add(new UrlResource("*"));
 
             MessageBean mb = new MessageBean();
             Resources r = new Resources();
@@ -32,8 +32,6 @@ public class ResourcesApplicationWizardStepValidator extends ApplicationWizardSt
             mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
             getMessagesBean().addMessageBean(mb);
-
-            return false;
         }
 
         return true;

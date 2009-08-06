@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: web.xml,v 1.24 2009-06-23 00:13:26 pbryan Exp $
+  $Id: web.xml,v 1.25 2009-08-06 14:44:01 farble1670 Exp $
 
 -->
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
@@ -33,7 +33,7 @@
     </context-param>
     <context-param>
         <param-name>com.icesoft.faces.concurrentDOMViews</param-name>
-        <param-value>false</param-value>
+        <param-value>true</param-value>
     </context-param>
     <context-param>
         <param-name>com.icesoft.faces.debugDOMUpdate</param-name>

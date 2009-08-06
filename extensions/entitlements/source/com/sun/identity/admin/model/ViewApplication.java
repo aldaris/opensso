@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.19 2009-08-05 14:37:15 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.20 2009-08-06 14:44:00 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -255,5 +255,15 @@ public class ViewApplication implements Serializable {
 
     public BooleanActionsHandler getBooleanActionsHandler() {
         return booleanActionsHandler;
+    }
+
+    public int getResourcesSize() {
+        int size = 0;
+        for (Resource r: resources) {
+            if (r.getName() != null && r.getName().length() > 0) {
+                size++;
+            }
+        }
+        return size;
     }
 }

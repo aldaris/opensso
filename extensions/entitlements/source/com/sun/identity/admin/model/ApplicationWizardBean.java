@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardBean.java,v 1.6 2009-08-05 14:37:15 farble1670 Exp $
+ * $Id: ApplicationWizardBean.java,v 1.7 2009-08-06 14:44:00 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -121,7 +121,7 @@ public class ApplicationWizardBean extends WizardBean {
                 break;
 
             case RESOURCES:
-                label = r.getString(this, "resourcesPanelLabel", getViewApplication().getResources().size());
+                label = r.getString(this, "resourcesPanelLabel", getViewApplication().getResourcesSize());
                 break;
 
             case SUBJECTS:

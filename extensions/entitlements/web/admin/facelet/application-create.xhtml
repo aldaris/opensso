@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-create.xhtml,v 1.6 2009-08-05 14:37:16 farble1670 Exp $
+   $Id: application-create.xhtml,v 1.7 2009-08-06 14:44:01 farble1670 Exp $
 
 -->
 
@@ -119,14 +119,24 @@
                     step="5"
                     label="#{applicationCreateWizardBean.overridePanelLabel}">
                     <ui:define name="wizard-step-body">
-                        TODO
+                        <ui:include
+                            src="/admin/facelet/template/application-override.xhtml">
+                            <ui:param
+                                name="overrideBean"
+                                value="#{applicationCreateWizardBean}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="6"
                     label="#{applicationCreateWizardBean.summaryPanelLabel}">
                     <ui:define name="wizard-step-body">
-                        TODO
+                        <ui:include
+                            src="/admin/facelet/template/application-summary.xhtml">
+                            <ui:param
+                                name="summaryBean"
+                                value="#{applicationCreateWizardBean}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
             </ui:define>
