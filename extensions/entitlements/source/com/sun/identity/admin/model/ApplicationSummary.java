@@ -22,19 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralSummary.java,v 1.2 2009-08-06 15:25:31 farble1670 Exp $
+ * $Id: ApplicationSummary.java,v 1.1 2009-08-06 15:25:31 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import javax.faces.event.ActionEvent;
 
-public abstract class ReferralSummary extends Summary {
+public abstract class ApplicationSummary extends Summary {
 
-    private ReferralWizardBean referralWizardBean;
+    private ApplicationWizardBean applicationWizardBean;
 
-    public ReferralSummary(ReferralWizardBean referralWizardBean) {
-        this.referralWizardBean = referralWizardBean;
+    public ApplicationSummary(ApplicationWizardBean applicationWizardBean) {
+        this.applicationWizardBean = applicationWizardBean;
     }
 
     public abstract String getLabel();
@@ -47,23 +47,21 @@ public abstract class ReferralSummary extends Summary {
 
     public abstract boolean isExpandable();
 
-    public abstract int getGotoStep();
-
-    protected ReferralWizardStep getGotoStep(ActionEvent event) {
-        Object o = event.getComponent().getAttributes().get("gotoStep");
-        Integer i = (Integer)o;
-        ReferralWizardStep rws = ReferralWizardStep.valueOf(i.intValue());
-
-        return rws;
+    public ApplicationWizardBean getApplicationWizardBean() {
+        return applicationWizardBean;
     }
 
-    public ReferralWizardBean getReferralWizardBean() {
-        return referralWizardBean;
+    protected ApplicationWizardStep getGotoStep(ActionEvent event) {
+        Object o = event.getComponent().getAttributes().get("gotoStep");
+        Integer i = (Integer)o;
+        ApplicationWizardStep aws = ApplicationWizardStep.valueOf(i.intValue());
+
+        return aws;
     }
 
     public void editListener(ActionEvent event) {
-        ReferralWizardStep gotoStep = getGotoStep(event);
-        getReferralWizardBean().gotoStep(gotoStep.toInt());
+        ApplicationWizardStep gotoStep = getGotoStep(event);
+        getApplicationWizardBean().gotoStep(gotoStep.toInt());
     }
 
     public int getTabIndex() {

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-summary.xhtml,v 1.1 2009-08-06 14:44:01 farble1670 Exp $
+   $Id: application-summary.xhtml,v 1.2 2009-08-06 15:25:32 farble1670 Exp $
 
 -->
 
@@ -46,7 +46,10 @@
                 value="#{resources['application-summary.sectionDescription']}"/>
         </ui:define>
         <ui:define name="section-body">
-            TODO
+            <o:summarypanel
+                summary="#{summaryBean.nameSummary}"/>
+            <o:summarypanel
+                summary="#{summaryBean.descriptionSummary}"/>
         </ui:define>
     </o:section>
 </span>
