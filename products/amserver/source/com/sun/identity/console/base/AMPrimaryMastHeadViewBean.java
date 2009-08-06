@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPrimaryMastHeadViewBean.java,v 1.9 2009-08-05 20:15:52 veiming Exp $
+ * $Id: AMPrimaryMastHeadViewBean.java,v 1.10 2009-08-06 22:00:07 veiming Exp $
  *
  */
 
@@ -52,8 +52,8 @@ import com.sun.web.ui.view.breadcrumb.CCBreadCrumbs;
 import com.sun.web.ui.view.masthead.CCPrimaryMasthead;
 import com.sun.web.ui.view.tabs.CCNodeEventHandlerInterface;
 import com.sun.web.ui.view.tabs.CCTabs;
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -62,6 +62,7 @@ import java.util.Set;
 import java.text.MessageFormat;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.EncodingException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is the base class for all view beans that have primary
@@ -163,7 +164,7 @@ public abstract class AMPrimaryMastHeadViewBean
             CCPrimaryMasthead mh = new CCPrimaryMasthead(
                 this, createMastheadModel(), name);
             mh.setLogoutCommand(AMLogoutCommand.class);
-            mh.setUserName(getUserDisplayName());
+            mh.setUserName(ESAPI.encoder().encodeForHTML(getUserDisplayName()));
             view = mh;
         } else if (name.equals(BREAD_CRUMB)) {
             view = createBreadCrumb(name);
