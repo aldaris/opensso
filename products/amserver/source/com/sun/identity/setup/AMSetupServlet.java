@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.108 2009-08-04 18:47:45 goodearth Exp $
+ * $Id: AMSetupServlet.java,v 1.109 2009-08-06 18:07:28 goodearth Exp $
  *
  */
 
@@ -368,6 +368,8 @@ public class AMSetupServlet extends HttpServlet {
                     store.put(SetupConstants.USER_STORE_ROOT_SUFFIX,
                         umRootSuffix);
                 }
+            } else {
+                store.put(SetupConstants.USER_STORE_ROOT_SUFFIX, tmp);
             }
             tmp = (String)request.getParameter("USERSTORE_MGRDN"); 
             store.put(SetupConstants.USER_STORE_LOGIN_ID, tmp);      
