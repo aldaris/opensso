@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Agent.java,v 1.5 2009-08-07 20:07:22 bigfatrat Exp $
+ * $Id: Agent.java,v 1.6 2009-08-07 22:51:14 bigfatrat Exp $
  *
  */
 
@@ -1281,6 +1281,7 @@ public class Agent {
             String siteId = (String)siteIdTable.get(svrId);
             String svrURL = (String)namingTable.get(siteId);
             String siteName = (String)urlSites.get(svrURL);
+            String escSiteName = getEscapedString(siteName);
             SsoServerTopologyImpl tg =
                 (SsoServerTopologyImpl)mib2.getTopologyGroup();
             if (siteId.equals(svrId)) { // is a site
@@ -1294,9 +1295,7 @@ public class Agent {
                         siteId + "): " + nfe.getMessage(), nfe);
                 }
                 ssse.SsoServerSiteId = sid;
-                
-                String tsn = siteName;
-                ssse.SsoServerSiteName = getEscapedString(tsn);
+                ssse.SsoServerSiteName = escSiteName;
 
                 if (debug.messageEnabled()) {
                     debug.message(classMethod + "doing siteName " + siteName +
@@ -1319,7 +1318,7 @@ public class Agent {
                 SsoServerSiteMapEntryImpl ssse =
                     new SsoServerSiteMapEntryImpl(mib2);
                 ssse.SsoServerMapServerURL = (String)namingTable.get(svrId);
-                ssse.SsoServerMapSiteName = siteName;
+                ssse.SsoServerMapSiteName = escSiteName;
                 ssse.SsoServerMapId = siteId;
                 try {
                     ssse.SsoServerSiteMapId = new Integer(svrId);
