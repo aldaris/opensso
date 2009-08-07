@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSAML2SPEntryImpl.java,v 1.1 2009-06-19 02:23:18 bigfatrat Exp $
+ * $Id: SsoServerSAML2SPEntryImpl.java,v 1.2 2009-08-07 20:07:23 bigfatrat Exp $
  *
  */
 
@@ -61,7 +61,7 @@ public class SsoServerSAML2SPEntryImpl extends SsoServerSAML2SPEntry {
         String classModule = "SsoServerSAML2SPEntryImpl." +
             "createSsoServerSAML2SPEntryObjectName: ";
         String prfx = "ssoServerSAML2SPEntry.";
-        String realm = Agent.getRealmNameFromIndex(SsoServerRealmIndex);
+        String realm = Agent.getEscRealmNameFromIndex(SsoServerRealmIndex);
 
         if (debug.messageEnabled()) {
             debug.message(classModule +

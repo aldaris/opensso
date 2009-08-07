@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerWSSAgentsDSCAgentEntryImpl.java,v 1.1 2009-06-19 02:23:19 bigfatrat Exp $
+ * $Id: SsoServerWSSAgentsDSCAgentEntryImpl.java,v 1.2 2009-08-07 20:07:22 bigfatrat Exp $
  *
  */
 
@@ -72,7 +72,7 @@ public class SsoServerWSSAgentsDSCAgentEntryImpl extends
                 WssAgentsDSCAgentName);
         }
 
-        String realm = Agent.getRealmNameFromIndex(SsoServerRealmIndex);
+        String realm = Agent.getEscRealmNameFromIndex(SsoServerRealmIndex);
         String objname = myMibName +
             "/ssoServerWSSAgentsDSCAgentTable:" +
             prfx + "ssoServerRealmName=" + realm + "," +

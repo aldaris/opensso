@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Agent.java,v 1.4 2009-08-03 18:15:01 bigfatrat Exp $
+ * $Id: Agent.java,v 1.5 2009-08-07 20:07:22 bigfatrat Exp $
  *
  */
 
@@ -1294,7 +1294,9 @@ public class Agent {
                         siteId + "): " + nfe.getMessage(), nfe);
                 }
                 ssse.SsoServerSiteId = sid;
-                ssse.SsoServerSiteName = siteName;
+                
+                String tsn = siteName;
+                ssse.SsoServerSiteName = getEscapedString(tsn);
 
                 if (debug.messageEnabled()) {
                     debug.message(classMethod + "doing siteName " + siteName +
@@ -1384,7 +1386,9 @@ public class Agent {
             String ss = (String)realmList.get(i);
             SsoServerRealmEntryImpl rei = new SsoServerRealmEntryImpl(mib2);
             rei.SsoServerRealmIndex = new Integer(i+1);
-            rei.SsoServerRealmName = ss;
+            String ss2 = ss;
+            ss2 = getEscapedString(ss2);
+            rei.SsoServerRealmName = ss2;
             ObjectName oname = rei.createSsoServerRealmEntryObjectName(server);
             String rlmToDN = DNMapper.orgNameToDN(ss);
 
@@ -1471,7 +1475,7 @@ public class Agent {
             aei.SsoServerRealmIndex = realmIndex;
             aei.SsoServerAuthModuleIndex = new Integer(i++);
             aei.SsoServerAuthModuleName = modInst;
-            aei.SsoServerAuthModuleType = modType;
+            aei.SsoServerAuthModuleType = getEscapedString(modType);
             aei.SsoServerAuthModuleSuccessCount = new Long(0);
             aei.SsoServerAuthModuleFailureCount = new Long(0);
             ObjectName aname =
@@ -1607,9 +1611,14 @@ public class Agent {
             HashMap hm = (HashMap)agtAttrs.get(agtname);
             String atype = (String)hm.get(CLIConstants.ATTR_NAME_AGENT_TYPE);
             String grpmem = (String)hm.get("groupmembership");
+
+            //  group and agent name can't have ":" in it, or jdmk gags
             if (grpmem == null) {
                 grpmem = None;
+            } else {
+                grpmem = getEscapedString(grpmem);
             }
+            agtname = getEscapedString(agtname);
 
             if (debug.messageEnabled()) {
                 sb.append("  agent name = ").append(agtname).
@@ -1929,6 +1938,8 @@ public class Agent {
                     append(", type = ").append(atype).append("\n");
             }
 
+            agtname = getEscapedString(agtname);
+
             if (atype.equals("WebAgent")) {
                 String lurl =
                     (String)hm.get("com.sun.identity.agents.config.login.url");
@@ -2122,7 +2133,7 @@ public class Agent {
             SsoServerSAML1TrustPrtnrsEntryImpl sstpe =
                 new SsoServerSAML1TrustPrtnrsEntryImpl(mib2);
             sstpe.SsoServerSAML1TrustPrtnrIndex = new Integer(i+1);
-            sstpe.SsoServerSAML1TrustPrtnrName = pName;
+            sstpe.SsoServerSAML1TrustPrtnrName = getEscapedString(pName);
 
             SsoServerSAML1Svc sss =
                 (SsoServerSAML1SvcImpl)mib2.getSaml1SvcGroup();
@@ -2369,9 +2380,7 @@ public class Agent {
             int i = 1;
             for (Iterator it = cots.iterator(); it.hasNext(); ) {
                 String ss = (String)it.next();
-                if (ss.indexOf(":") >= 0) {
-                    ss = ss.replaceAll(":", "&#58;");
-                }
+                ss = getEscapedString(ss);
 
                 if (debug.messageEnabled()) {
                         sb.append("  #").append(i).append(": ").append(ss).
@@ -2456,14 +2465,10 @@ public class Agent {
                 String loc = (String)hm.get("location");
                 String roles = (String)hm.get("roles");
 
-                //  entity name can't have ":" in it, or jdmk gags
-                if (entname.indexOf(":") >= 0) {
-                    entname = entname.replaceAll(":", "&#58;");
-                }
                 SsoServerFedEntitiesEntryImpl cei =
                     new SsoServerFedEntitiesEntryImpl(mib2);
                 cei.SsoServerRealmIndex = ri;
-                cei.FedEntityName = entname;
+                cei.FedEntityName = getEscapedString(entname);
                 cei.FedEntityIndex = new Integer(tabinx++);
                 cei.FedEntityProto = "SAMLv2";
                 cei.FedEntityType = roles;
@@ -2499,7 +2504,7 @@ public class Agent {
                     sei.SsoServerSAML2IDPArtifactsInCache = new Long(0);
                     sei.SsoServerSAML2IDPAssertionsInCache = new Long(0);
                     sei.SsoServerSAML2IDPIndex = new Integer(idpi++);
-                    sei.SsoServerSAML2IDPName = entname;
+                    sei.SsoServerSAML2IDPName = getEscapedString(entname);
                     sei.SsoServerRealmIndex = ri;
 
                     oname = sei.createSsoServerSAML2IDPEntryObjectName(server);
@@ -2538,7 +2543,7 @@ public class Agent {
                     sei.SsoServerSAML2SPInvalidArtifactsRcvd = new Long(0);
                     sei.SsoServerSAML2SPValidAssertionsRcvd = new Long(0);
                     sei.SsoServerSAML2SPRqtsSent = new Long(0);
-                    sei.SsoServerSAML2SPName = entname;
+                    sei.SsoServerSAML2SPName = getEscapedString(entname);
                     sei.SsoServerRealmIndex = ri;
                     sei.SsoServerSAML2SPIndex = new Integer(spi++);
 
@@ -2597,15 +2602,10 @@ public class Agent {
                 String loc = (String)hm.get("location");
                 String roles = (String)hm.get("roles");
 
-                //  entity name can't have ":" in it, or jdmk gags
-                if (entname.indexOf(":") >= 0) {
-                    entname = entname.replaceAll(":", "&#58;");
-                }
-
                 SsoServerFedEntitiesEntryImpl cei =
                     new SsoServerFedEntitiesEntryImpl(mib2);
                 cei.SsoServerRealmIndex = ri;
-                cei.FedEntityName = entname;
+                cei.FedEntityName = getEscapedString(entname);
                 cei.FedEntityIndex = new Integer(tabinx++);
                 cei.FedEntityProto = "WSFed";
                 cei.FedEntityType = roles;
@@ -2653,18 +2653,13 @@ public class Agent {
                 String entname = (String)it.next();
                 HashMap hm = (HashMap)idffEnts.get(entname);
 
-                //  entity name can't have ":" in it, or jdmk gags
-                if (entname.indexOf(":") >= 0) {
-                    entname = entname.replaceAll(":", "&#58;");
-                }
-                
                 String loc = (String)hm.get("location");
                 String roles = (String)hm.get("roles");
 
                 SsoServerFedEntitiesEntryImpl cei =
                     new SsoServerFedEntitiesEntryImpl(mib2);
                 cei.SsoServerRealmIndex = ri;
-                cei.FedEntityName = entname;
+                cei.FedEntityName = getEscapedString(entname);
                 cei.FedEntityIndex = new Integer(tabinx++);
                 cei.FedEntityProto = "IDFF";
                 cei.FedEntityType = roles;
@@ -2722,9 +2717,7 @@ public class Agent {
             for (Iterator it = ks.iterator(); it.hasNext(); ) {
                 String cotname = (String)it.next();
                 HashMap hm = (HashMap)cotMembs.get(cotname);
-                if (cotname.indexOf(":") >= 0) {
-                    cotname = cotname.replaceAll(":", "&#58;");
-                }
+                cotname = getEscapedString(cotname);
 
                 if (debug.messageEnabled()) {
                     sb.append("  COT name = ").append(cotname).
@@ -2745,10 +2738,7 @@ public class Agent {
                         SsoServerFedCOTMemberEntryImpl cmi =
                             new SsoServerFedCOTMemberEntryImpl(mib2);
                         cmi.FedCOTMemberType = "SAMLv2";
-                        if (mbm.indexOf(":") >= 0) {
-                                mbm = mbm.replaceAll(":", "&#58;");
-                        }
-                        cmi.FedCOTMemberName = mbm;
+                        cmi.FedCOTMemberName = getEscapedString(mbm);
                         cmi.FedCOTMemberIndex = new Integer(mi++);
                         cmi.SsoServerRealmIndex = ri;
                         cmi.FedCOTIndex = cotI;  // xxx - need to get from tbl
@@ -2785,7 +2775,7 @@ public class Agent {
                         SsoServerFedCOTMemberEntryImpl cmi =
                             new SsoServerFedCOTMemberEntryImpl(mib2);
                         cmi.FedCOTMemberType = "IDFF";
-                        cmi.FedCOTMemberName = mbm;
+                        cmi.FedCOTMemberName = getEscapedString(mbm);
                         cmi.FedCOTMemberIndex = new Integer(mi++);
                         cmi.SsoServerRealmIndex = ri;
                         cmi.FedCOTIndex = cotI;  // xxx - need to get from tbl
@@ -2823,7 +2813,7 @@ public class Agent {
                         SsoServerFedCOTMemberEntryImpl cmi =
                             new SsoServerFedCOTMemberEntryImpl(mib2);
                         cmi.FedCOTMemberType = "WSFed";
-                        cmi.FedCOTMemberName = mbm;
+                        cmi.FedCOTMemberName = getEscapedString(mbm);
                         cmi.FedCOTMemberIndex = new Integer(mi++);
                         cmi.SsoServerRealmIndex = ri;
                         cmi.FedCOTIndex = cotI;  // xxx - need to get from tbl
@@ -2919,8 +2909,22 @@ public class Agent {
         return 0;
     }
 
+    private static String getEscapedString (String str) {
+        if (str != null) {
+            if (str.indexOf(":") >= 0) {
+                str = str.replaceAll(":", "&#58;");
+            }
+        }
+        return (str);
+    }
+
     public static String getRealmNameFromIndex (Integer index) {
         return ((String)index2Realm.get(index));
+    }
+
+    public static String getEscRealmNameFromIndex (Integer index) {
+        String ss = (String)index2Realm.get(index);
+        return (getEscapedString(ss));
     }
 
     public static Integer getRealmIndexFromName (String name) {

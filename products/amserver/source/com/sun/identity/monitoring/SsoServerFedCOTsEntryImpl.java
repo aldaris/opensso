@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerFedCOTsEntryImpl.java,v 1.1 2009-06-19 02:23:15 bigfatrat Exp $
+ * $Id: SsoServerFedCOTsEntryImpl.java,v 1.2 2009-08-07 20:07:23 bigfatrat Exp $
  *
  */
 
@@ -68,7 +68,7 @@ public class SsoServerFedCOTsEntryImpl extends SsoServerFedCOTsEntry {
                 "\n    FedCOTName = " + FedCOTName);
         }
 
-        String realm = Agent.getRealmNameFromIndex(SsoServerRealmIndex);
+        String realm = Agent.getEscRealmNameFromIndex(SsoServerRealmIndex);
         String objname = myMibName +
             "/ssoServerFedCOTsTable:" +
             prfx + "ssoServerRealmName=" + realm + "," +

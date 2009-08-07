@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerPolicyJ2EEAgentEntryImpl.java,v 1.1 2009-06-19 02:23:17 bigfatrat Exp $
+ * $Id: SsoServerPolicyJ2EEAgentEntryImpl.java,v 1.2 2009-08-07 20:07:22 bigfatrat Exp $
  *
  */
 
@@ -79,7 +79,7 @@ public class SsoServerPolicyJ2EEAgentEntryImpl extends
                 SsoServerPolicyJ2EEAgentAgentURL);
         }
 
-        String realm = Agent.getRealmNameFromIndex(SsoServerRealmIndex);
+        String realm = Agent.getEscRealmNameFromIndex(SsoServerRealmIndex);
         String objname = myMibName +
             "/ssoServerPolicyJ2EEAgentTable:" +
             prfx + "ssoServerRealmName=" + realm + "," +
