@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2009-07-25 01:11:04 Kamna Exp $
+   $Id: build.xml,v 1.2 2009-08-07 05:13:27 Kamna Exp $
 
 -->
 
@@ -99,7 +99,7 @@
 		</copy>
 		<copy file="../../config/AMConfig.properties"
               todir="web/WEB-INF/classes" overwrite="true"/>
-		<copy file="../../config/server_handlers.xml"
+		<copy file="../etc/config/StockService/server_handlers.xml"
               todir="web/WEB-INF/classes/com/sun/stockquote/" overwrite="true"/>
 
 		<delete file="dist/StockService.war">

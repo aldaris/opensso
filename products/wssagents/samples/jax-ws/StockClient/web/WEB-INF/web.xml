@@ -3,20 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
   http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"> 
-  
-  <!-- Un-comment the following commented lines to include the servlet
-       filter for secured Stock Client-->
-  <!-- <filter>
-      		<filter-name>LoginFilter</filter-name>
-      		<filter-class>com.sun.identity.wssagents.jaxws.client.ClientFilter
-            </filter-class>
- 	   </filter>
- 	   <filter-mapping>
-     		<filter-name>LoginFilter</filter-name>
-     		<url-pattern>/*</url-pattern>
-       </filter-mapping>
-   -->
-       
+        
   <servlet>  
   	<servlet-name>GetQuote</servlet-name>  
   	<servlet-class>com.sun.stockquote.GetQuote</servlet-class>  
