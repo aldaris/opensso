@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCondition.java,v 1.2 2009-07-08 01:16:15 veiming Exp $
+ * $Id: PolicyCondition.java,v 1.3 2009-08-07 23:18:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -30,7 +30,7 @@ package com.sun.identity.entitlement.opensso;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.ConditionDecision;
-import com.sun.identity.entitlement.EntitlementCondition;
+import com.sun.identity.entitlement.EntitlementConditionAdaptor;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.policy.PolicyException;
@@ -48,7 +48,7 @@ import org.json.JSONObject;
 /**
  * This condition wraps all OpenSSO policy condition.
  */
-public class PolicyCondition implements EntitlementCondition {
+public class PolicyCondition extends  EntitlementConditionAdaptor {
     private String className;
     private String name;
     private Map<String, Set<String>> properties;
@@ -106,6 +106,7 @@ public class PolicyCondition implements EntitlementCondition {
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
+            setState(jo);
             this.name = jo.optString("name");
             this.className = jo.optString("className");
             this.properties = getProperties((JSONObject)jo.opt("properties"));
@@ -139,6 +140,7 @@ public class PolicyCondition implements EntitlementCondition {
         JSONObject jo = new JSONObject();
 
         try {
+            toJSONObject(jo);
             jo.put("className", className);
             jo.put("name", name);
             jo.put("properties", properties);
@@ -196,5 +198,23 @@ public class PolicyCondition implements EntitlementCondition {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!getClass().equals(obj.getClass())) {
+            return false;
+        }
+        PolicyCondition other = (PolicyCondition)obj;
+        if (!compareString(this.className, other.className)) {
+            return false;
+        }
+        if (!compareString(this.name, other.name)) {
+            return false;
+        }
+        return compareMap(this.properties, other.properties);
     }
 }

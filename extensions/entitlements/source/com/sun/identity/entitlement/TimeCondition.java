@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeCondition.java,v 1.10 2009-08-04 08:36:48 veiming Exp $
+ * $Id: TimeCondition.java,v 1.11 2009-08-07 23:18:53 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -46,7 +46,7 @@ import org.json.JSONException;
  * EntitlementCondition to represent time based constraint
  * @author dorai
  */
-public class TimeCondition implements EntitlementCondition {
+public class TimeCondition extends EntitlementConditionAdaptor {
     /**
      * Key that is used to define current time that is passed in the
      *  <code>env</code> parameter while invoking <code>getConditionDecision
@@ -124,6 +124,7 @@ public class TimeCondition implements EntitlementCondition {
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
+            setState(jo);
             startTime = jo.optString("startTime");
             endTime = jo.optString("endTime");
             startDay = jo.optString("startDay");
@@ -326,6 +327,7 @@ public class TimeCondition implements EntitlementCondition {
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
+        toJSONObject(jo);
         jo.put("startTime", startTime);
         jo.put("endTime", endTime);
         jo.put("startDay", startDay);
@@ -344,7 +346,7 @@ public class TimeCondition implements EntitlementCondition {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (!super.equals(obj)) {
             return false;
         }
         if (!getClass().equals(obj.getClass())) {
@@ -416,7 +418,7 @@ public class TimeCondition implements EntitlementCondition {
      */
     @Override
     public int hashCode() {
-        int code = 0;
+        int code = super.hashCode();
         if (startTime != null) {
             code += startTime.hashCode();
         }

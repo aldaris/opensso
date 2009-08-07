@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringAttributeConditionEvaluation.java,v 1.1 2009-08-06 20:46:36 veiming Exp $
+ * $Id: StringAttributeConditionEvaluation.java,v 1.2 2009-08-07 23:18:54 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -70,9 +70,25 @@ public class StringAttributeConditionEvaluation {
         privilege.setSubject(new AnyUserSubject());
 
         StringAttributeCondition tc = new StringAttributeCondition();
-        tc.setAttributeName("attributeN");
-        tc.setCaseSensitive(true);
-        tc.setValue("hello");
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        {
+            Set<String> set = new HashSet<String>();
+            set.add("attributeN");
+            map.put(StringAttributeCondition.ATTR_NAME_ATTRIBUTE_NAME, set);
+        }
+        {
+            Set<String> set = new HashSet<String>();
+            set.add("true");
+            map.put(StringAttributeCondition.ATTR_NAME_CASE_SENSITIVE, set);
+        }
+        {
+            Set<String> set = new HashSet<String>();
+            set.add("hello");
+            map.put(StringAttributeCondition.ATTR_NAME_VALUE, set);
+        }
+
+        tc.init(map);
+        tc.setDisplayType("displayName");
         privilege.setCondition(tc);
         pm.addPrivilege(privilege);
         Thread.sleep(1000);

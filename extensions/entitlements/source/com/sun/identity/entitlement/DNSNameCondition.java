@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNSNameCondition.java,v 1.5 2009-05-23 00:58:14 veiming Exp $
+ * $Id: DNSNameCondition.java,v 1.6 2009-08-07 23:18:53 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -37,7 +37,7 @@ import org.json.JSONException;
 /**
  * EntitlementCondition to represent IP, DNS name based  constraint
   */
-public class DNSNameCondition implements EntitlementCondition {
+public class DNSNameCondition extends EntitlementConditionAdaptor {
     /** Key that is used in an <code>DNSNameCondition</code> to define the DNS
      * name values for which a policy applies. The value corresponding to the
      * key has to be a <code>Set</code> with at most one element is a
@@ -109,6 +109,7 @@ public class DNSNameCondition implements EntitlementCondition {
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
+            setState(jo);
             domainNameMask = jo.optString("domainNameMask");
             pConditionName = jo.optString("pConditionName");
         } catch (JSONException joe) {
@@ -209,6 +210,7 @@ public class DNSNameCondition implements EntitlementCondition {
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
+        toJSONObject(jo);
         jo.put("domainNameMask", domainNameMask);
         jo.put("pConditionName", pConditionName);
         return jo;
@@ -221,7 +223,10 @@ public class DNSNameCondition implements EntitlementCondition {
      */
     @Override
     public boolean equals(Object obj) {
-        if ((obj == null) || !getClass().equals(obj.getClass())) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!getClass().equals(obj.getClass())) {
             return false;
         }
         DNSNameCondition object = (DNSNameCondition) obj;
@@ -252,7 +257,7 @@ public class DNSNameCondition implements EntitlementCondition {
      */
     @Override
     public int hashCode() {
-        int code = 0;
+        int code = super.hashCode();
         if (domainNameMask != null) {
             code += domainNameMask.hashCode();
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NumericAttributeCondition.java,v 1.1 2009-08-06 20:46:36 veiming Exp $
+ * $Id: NumericAttributeCondition.java,v 1.2 2009-08-07 23:18:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -37,16 +37,66 @@ import org.json.JSONObject;
 /**
  * Condition for evaluating attribute value of numeric type.
  */
-public class NumericAttributeCondition implements EntitlementCondition {
+public class NumericAttributeCondition extends EntitlementConditionAdaptor {
+    public static final String ATTR_NAME_ATTRIBUTE_NAME = "attributeName";
+    public static final String ATTR_NAME_OPERATOR = "caseSensitive";
+    public static final String ATTR_NAME_VALUE = "value";
+
     public static enum Operator {LESS_THAN, LESS_THAN_OR_EQUAL, EQUAL, 
         GREATER_THAN_OR_EQUAL, GREATER_THAN};
     private String attributeName;
     private Operator operator = Operator.EQUAL;
     private float value;
 
+
+    @Override
+    public void init(Map<String, Set<String>> parameters) {
+        for (String key : parameters.keySet()) {
+            if (key.equalsIgnoreCase(ATTR_NAME_ATTRIBUTE_NAME)) {
+                attributeName = getInitStringValue(parameters.get(key));
+            } else if (key.equals(ATTR_NAME_OPERATOR)) {
+                operator = getInitOperatorValue(parameters.get(key));
+            } else if (key.equals(ATTR_NAME_VALUE)) {
+                value = getInitFloatValue(parameters.get(key));
+            }
+        }
+    }
+
+    private static String getInitStringValue(Set<String> set) {
+        return ((set == null) || set.isEmpty()) ? null : set.iterator().next();
+    }
+
+    private static Operator getInitOperatorValue(Set<String> set) {
+        String value = ((set == null) || set.isEmpty()) ? null :
+            set.iterator().next();
+        if (value == null) {
+            return Operator.EQUAL;
+        }
+        for (Operator o : Operator.values()) {
+            if (o.toString().equals(value)) {
+                return o;
+            }
+        }
+        return Operator.EQUAL;
+    }
+
+    private static float getInitFloatValue(Set<String> set) {
+        String value = ((set == null) || set.isEmpty()) ? null :
+            set.iterator().next();
+        if (value == null) {
+            return 0f;
+        }
+        try {
+            return Float.parseFloat(value);
+        } catch (NumberFormatException e) {
+            return 0f;
+        }
+    }
+
     public void setState(String state) {
           try {
             JSONObject jo = new JSONObject(state);
+            setState(jo);
             if (jo.has("attributeName")) {
                 attributeName = jo.optString("attributeName");
             }
@@ -80,6 +130,7 @@ public class NumericAttributeCondition implements EntitlementCondition {
     public String getState() {
         try {
             JSONObject jo = new JSONObject();
+            toJSONObject(jo);
             if (attributeName != null) {
                 jo.put("attributeName", attributeName);
             }
@@ -166,5 +217,34 @@ public class NumericAttributeCondition implements EntitlementCondition {
 
     public float getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!getClass().equals(obj.getClass())) {
+            return false;
+        }
+        NumericAttributeCondition other = (NumericAttributeCondition)obj;
+        if (!compareString(this.attributeName, other.attributeName)) {
+            return false;
+        }
+        if (this.operator != other.operator) {
+            return false;
+        }
+        return (this.value == other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int hc = super.hashCode();
+        if (attributeName != null) {
+            hc += attributeName.hashCode();
+        }
+        hc += operator.hashCode();
+        hc += value;
+        return hc;
     }
 }

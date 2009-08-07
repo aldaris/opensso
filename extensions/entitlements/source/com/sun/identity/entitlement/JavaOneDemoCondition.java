@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JavaOneDemoCondition.java,v 1.4 2009-06-10 18:50:10 superpat7 Exp $
+ * $Id: JavaOneDemoCondition.java,v 1.5 2009-08-07 23:18:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -45,7 +45,7 @@ import javax.security.auth.Subject;
  *
  * @author dennis
  */
-public class JavaOneDemoCondition implements EntitlementCondition {
+public class JavaOneDemoCondition extends EntitlementConditionAdaptor {
 
     public void setState(String state) {
         //DO NOTHING

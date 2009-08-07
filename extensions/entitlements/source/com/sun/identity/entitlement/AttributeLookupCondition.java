@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeLookupCondition.java,v 1.3 2009-05-23 00:58:14 veiming Exp $
+ * $Id: AttributeLookupCondition.java,v 1.4 2009-08-07 23:18:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -41,7 +41,7 @@ import org.json.JSONObject;
  * This condition evaluates if a given attribute from subject matches with
  * the one in resource.
  */
-public class AttributeLookupCondition implements EntitlementCondition {
+public class AttributeLookupCondition extends EntitlementConditionAdaptor {
     /**
      * User Macro
      */
@@ -80,6 +80,7 @@ public class AttributeLookupCondition implements EntitlementCondition {
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
+            setState(jo);
             key = jo.optString("key");
             value = jo.optString("value");
             pConditionName = jo.optString("pConditionName");
@@ -234,6 +235,7 @@ public class AttributeLookupCondition implements EntitlementCondition {
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
+        toJSONObject(jo);
         jo.put("key", key);
         jo.put("value", value);
         jo.put("pConditionName", pConditionName);
@@ -247,7 +249,10 @@ public class AttributeLookupCondition implements EntitlementCondition {
      */
     @Override
     public boolean equals(Object obj) {
-        if ((obj == null) || !getClass().equals(obj.getClass())) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!getClass().equals(obj.getClass())) {
             return false;
         }
         AttributeLookupCondition object = (AttributeLookupCondition) obj;
@@ -288,7 +293,7 @@ public class AttributeLookupCondition implements EntitlementCondition {
      */
     @Override
     public int hashCode() {
-        int code = 0;
+        int code = super.hashCode();
         if (key != null) {
             code += key.hashCode();
         }

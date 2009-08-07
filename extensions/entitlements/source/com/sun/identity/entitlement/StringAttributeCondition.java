@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringAttributeCondition.java,v 1.1 2009-08-06 20:46:36 veiming Exp $
+ * $Id: StringAttributeCondition.java,v 1.2 2009-08-07 23:18:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -37,14 +37,42 @@ import org.json.JSONObject;
 /**
  * Condition for evaluating attribute value of string type.
  */
-public class StringAttributeCondition implements EntitlementCondition {
+public class StringAttributeCondition extends EntitlementConditionAdaptor {
+    public static final String ATTR_NAME_ATTRIBUTE_NAME = "attributeName";
+    public static final String ATTR_NAME_CASE_SENSITIVE = "caseSensitive";
+    public static final String ATTR_NAME_VALUE = "value";
+
     private String attributeName;
     private boolean bCaseSensitive;
     private String value;
 
+    @Override
+    public void init(Map<String, Set<String>> parameters) {
+        for (String key : parameters.keySet()) {
+            if (key.equalsIgnoreCase(ATTR_NAME_ATTRIBUTE_NAME)) {
+                attributeName = getInitStringValue(parameters.get(key));
+            } else if (key.equals(ATTR_NAME_CASE_SENSITIVE)) {
+                bCaseSensitive = getInitBooleanValue(parameters.get(key));
+            } else if (key.equals(ATTR_NAME_VALUE)) {
+                value = getInitStringValue(parameters.get(key));
+            }
+        }
+    }
+
+    private static String getInitStringValue(Set<String> set) {
+        return ((set == null) || set.isEmpty()) ? null : set.iterator().next();
+    }
+
+    private static boolean getInitBooleanValue(Set<String> set) {
+        String value = ((set == null) || set.isEmpty()) ? null :
+            set.iterator().next();
+        return (value == null) ? false : Boolean.parseBoolean(value);
+    }
+
     public void setState(String state) {
           try {
             JSONObject jo = new JSONObject(state);
+            setState(jo);
             if (jo.has("attributeName")) {
                 attributeName = jo.optString("attributeName");
             }
@@ -62,6 +90,7 @@ public class StringAttributeCondition implements EntitlementCondition {
     public String getState() {
         try {
             JSONObject jo = new JSONObject();
+            toJSONObject(jo);
             if (attributeName != null) {
                 jo.put("attributeName", attributeName);
             }
@@ -123,4 +152,37 @@ public class StringAttributeCondition implements EntitlementCondition {
     public String getValue() {
         return value;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!getClass().equals(obj.getClass())) {
+            return false;
+        }
+        StringAttributeCondition other = (StringAttributeCondition)obj;
+        if (!compareString(this.attributeName, other.attributeName)) {
+            return false;
+        }
+        if (this.bCaseSensitive != other.bCaseSensitive) {
+            return false;
+        }
+        return compareString(this.value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int hc = super.hashCode();
+        if (attributeName != null) {
+            hc += attributeName.hashCode();
+        }
+        hc += (bCaseSensitive) ? 1 : 0;
+
+        if (value != null) {
+            hc += value.hashCode();
+        }
+        return hc;
+    }
+
 }

@@ -22,18 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BankTransferLimitCondition.java,v 1.3 2009-06-04 11:49:19 veiming Exp $
+ * $Id: BankTransferLimitCondition.java,v 1.4 2009-08-07 23:18:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.security.auth.Subject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class BankTransferLimitCondition implements EntitlementCondition {
+public class BankTransferLimitCondition extends EntitlementConditionAdaptor {
     
     public static final String MAX_TRANSFER_LIMIT =
         "banking.funds.maxTransferLimit";
@@ -80,23 +81,41 @@ public class BankTransferLimitCondition implements EntitlementCondition {
     }
 
     public String getState() {
-        return (getLimitType() + "=" + getTransferLimit());
+        try {
+            JSONObject jo = new JSONObject();
+            toJSONObject(jo);
+            jo.put("transferLimit", transferLimit);
+            if (limitType != null) {
+                jo.put("limitType", limitType);
+            }
+            return jo.toString(2);
+        } catch (JSONException e) {
+            PrivilegeManager.debug.error("BankTransferLimitCondition.getState",
+                e);
+            return null;
+        }
     }
 
     public void setState(String state) {
-        StringTokenizer st = new StringTokenizer(state, "=");
-        if (st.hasMoreTokens()) {
-            // Get the key
-            setLimitType(st.nextToken());
-        }
-        // Get the transfer amount
-        if (st.hasMoreTokens()) {
-            String valueString = st.nextToken();
-            try {
-                setTransferLimit(Integer.parseInt(valueString));
-            } catch (NumberFormatException nfe) {
-                //Ignore, value will be zero
+        try {
+            JSONObject jo = new JSONObject(state);
+            setState(jo);
+
+            if (jo.has("transferLimit")) {
+                String str = jo.getString("transferLimit");
+                try {
+                    transferLimit = Integer.parseInt(str);
+                } catch (NumberFormatException e) {
+                    PrivilegeManager.debug.error(
+                        "BankTransferLimitCondition.setState", e);
+                    transferLimit = 0;
+                }
+            } else {
+                transferLimit = 0;
             }
+        } catch (JSONException ex) {
+            PrivilegeManager.debug.error(
+                "BankTransferLimitCondition.setState", ex);
         }
     }
 
@@ -114,5 +133,41 @@ public class BankTransferLimitCondition implements EntitlementCondition {
 
     public void setLimitType(String limitType) {
         this.limitType = limitType;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!getClass().equals(obj.getClass())) {
+            return false;
+        }
+        BankTransferLimitCondition other = (BankTransferLimitCondition)obj;
+        if (this.transferLimit != other.transferLimit) {
+            return false;
+        }
+        if ((this.limitType == null) && (other.limitType == null)) {
+            return true;
+        }
+        if ((this.limitType != null) && (other.limitType == null)) {
+            return false;
+        }
+        if ((this.limitType == null) && (other.limitType != null)) {
+            return false;
+        }
+        return (this.limitType.equals(other.limitType));
+    }
+
+    @Override
+    public int hashCode() {
+        int hc = super.hashCode();
+        hc += transferLimit;
+
+        if (limitType != null) {
+            hc += limitType.hashCode();
+        }
+
+        return hc;
     }
 }

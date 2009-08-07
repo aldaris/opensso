@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCondition.java,v 1.5 2009-05-27 07:31:56 veiming Exp $
+ * $Id: EntitlementCondition.java,v 1.6 2009-08-07 23:18:53 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -34,6 +34,27 @@ import javax.security.auth.Subject;
  * Interface specification for entitlement <code>EntitlementCondition</code>
  */
 public interface EntitlementCondition {
+
+    /**
+     * Sets display type.
+     *
+     * @param displayType Display Type.
+     */
+    void setDisplayType(String displayType);
+
+    /**
+     * Returns display type.
+     *
+     * @return Display Type.
+     */
+    String getDisplayType();
+
+    /**
+     * Initializes the condition object.
+     *
+     * @param parameters Parameters for initializing the condition.
+     */
+    void init(Map<String, Set<String>> parameters);
 
     /**
      * Sets state of the object

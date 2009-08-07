@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotCondition.java,v 1.4 2009-07-23 10:33:41 veiming Exp $
+ * $Id: NotCondition.java,v 1.5 2009-08-07 23:18:53 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,7 +39,7 @@ import org.json.JSONException;
  * Membership of <code>NotCondition</code> is satisfied in the user is not a
  * member of the nested <code>EntitlementCondition</code>.
  */
-public class NotCondition implements EntitlementCondition {
+public class NotCondition extends EntitlementConditionAdaptor {
     private EntitlementCondition eCondition;
     private String pConditionName;
 
@@ -82,6 +82,7 @@ public class NotCondition implements EntitlementCondition {
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
+            setState(jo);
             pConditionName = (jo.has("pConditionName")) ?
                 jo.optString("pConditionName") : null;
 
@@ -184,6 +185,7 @@ public class NotCondition implements EntitlementCondition {
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
+        toJSONObject(jo);
         jo.put("pConditionName", pConditionName);
 
         if (eCondition != null) {
@@ -219,8 +221,7 @@ public class NotCondition implements EntitlementCondition {
      */
     @Override
     public boolean equals(Object obj) {
-        boolean equalled = true;
-        if (obj == null) {
+        if (!super.equals(obj)) {
             return false;
         }
         if (!getClass().equals(obj.getClass())) {
@@ -246,7 +247,7 @@ public class NotCondition implements EntitlementCondition {
                 return false;
             }
         }
-        return equalled;
+        return true;
     }
 
     /**
@@ -255,7 +256,8 @@ public class NotCondition implements EntitlementCondition {
      */
     @Override
     public int hashCode() {
-        int code = 0;
+        int code = super.hashCode();
+        
         if (eCondition != null) {
             code += eCondition.hashCode();
         }

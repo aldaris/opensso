@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPCondition.java,v 1.8 2009-05-23 00:58:14 veiming Exp $
+ * $Id: IPCondition.java,v 1.9 2009-08-07 23:18:53 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -38,7 +38,7 @@ import org.json.JSONException;
 /**
  * Entitlement Condition to represent IP constraint
   */
-public class IPCondition implements EntitlementCondition {
+public class IPCondition extends EntitlementConditionAdaptor {
     /** Key that is used to define request IP address that is passed in
      * the <code>env</code> parameter while invoking
      * <code>getConditionDecision</code> method of an <code>IPCondition</code>.
@@ -86,6 +86,7 @@ public class IPCondition implements EntitlementCondition {
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
+            setState(jo);
             startIp = jo.optString("startIp");
             endIp = jo.optString("endIp");
             pConditionName = jo.optString("pConditionName");
@@ -216,6 +217,7 @@ public class IPCondition implements EntitlementCondition {
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
+        toJSONObject(jo);
         jo.put("startIp", startIp);
         jo.put("endIp", endIp);
         jo.put("pConditionName", pConditionName);
@@ -229,7 +231,7 @@ public class IPCondition implements EntitlementCondition {
      */
     @Override
     public boolean equals(Object obj) {
-        if ((obj == null) || !getClass().equals(obj.getClass())) {
+        if (!super.equals(obj)) {
             return false;
         }
         IPCondition object = (IPCondition) obj;
@@ -269,7 +271,8 @@ public class IPCondition implements EntitlementCondition {
      */
     @Override
     public int hashCode() {
-        int code = 0;
+        int code = super.hashCode();
+        
         if (startIp != null) {
             code += startIp.hashCode();
         }

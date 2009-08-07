@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogicalCondition.java,v 1.1 2009-05-30 00:12:47 veiming Exp $
+ * $Id: LogicalCondition.java,v 1.2 2009-08-07 23:18:53 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -34,7 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
-public abstract class LogicalCondition implements EntitlementCondition {
+public abstract class LogicalCondition extends EntitlementConditionAdaptor {
     private Set<EntitlementCondition> eConditions;
     private String pConditionName;
 
@@ -77,6 +77,7 @@ public abstract class LogicalCondition implements EntitlementCondition {
     public void setState(String state) {
         try {
             JSONObject jo = new JSONObject(state);
+            setState(jo);
             pConditionName = (jo.has("pConditionName")) ?
                 jo.optString("pConditionName") : null;
             JSONArray memberConditions = jo.optJSONArray("memberECondition");
@@ -181,6 +182,7 @@ public abstract class LogicalCondition implements EntitlementCondition {
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
+        toJSONObject(jo);
         jo.put("pConditionName", pConditionName);
 
         if ((eConditions != null) && !eConditions.isEmpty()) {
@@ -217,11 +219,7 @@ public abstract class LogicalCondition implements EntitlementCondition {
      */
     @Override
     public boolean equals(Object obj) {
-        boolean equalled = true;
-        if (obj == null) {
-            return false;
-        }
-        if (!getClass().equals(obj.getClass())) {
+        if (!super.equals(obj)) {
             return false;
         }
         LogicalCondition object = (LogicalCondition) obj;
@@ -233,7 +231,7 @@ public abstract class LogicalCondition implements EntitlementCondition {
             if ((object.getEConditions()) == null) {
                 return false;
             } else if (!eConditions.containsAll(object.getEConditions())) {
-                equalled = false;
+                return false;
             } else if (!object.getEConditions().containsAll(eConditions)) {
                 return false;
             }
@@ -247,7 +245,7 @@ public abstract class LogicalCondition implements EntitlementCondition {
                 return false;
             }
         }
-        return equalled;
+        return true;
     }
 
     /**
@@ -256,7 +254,7 @@ public abstract class LogicalCondition implements EntitlementCondition {
      */
     @Override
     public int hashCode() {
-        int code = 0;
+        int code = super.hashCode();
         if (eConditions != null) {
             for (EntitlementCondition eCondition : eConditions) {
                 code += eCondition.hashCode();
