@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_config_fetch.h,v 1.3 2008-06-25 08:14:23 qcheng Exp $
+ * $Id: agent_config_fetch.h,v 1.4 2009-08-07 21:08:24 subbae Exp $
  *
  * Abstract:
  * AgentConfigFetch: Timer based class when invoked calls the function
@@ -102,6 +102,7 @@ public:
     }
        
     void operator()() const {
+        am_status_t sts = AM_SUCCESS;
         PRTime tps = PR_TicksPerSecond(), sleepCount = 0, rollover = 0;       
         while(stayAlive) {           
             /**
@@ -140,6 +141,16 @@ public:
                         "Starting %s. Fetching latest Agent Config "
                         "Properties", message);
 
+                Log::log(htcID, Log::LOG_INFO,
+                        "First validate agent(app) ssotoken");
+                sts = agentProfileService->validateAgentSSOToken();
+                if( sts == AM_INVALID_SESSION) {
+                    Log::log(htcID, Log::LOG_INFO,
+                        "validation of  agent(app) ssotoken failed. "
+                        "Redo agent authentication before fetching agent profile");
+                    agentProfileService->agentLogin();
+                  
+                }
                 agentProfileService->fetchAndUpdateAgentConfigCache();                
 
                 Log::log(htcID, Log::LOG_INFO,

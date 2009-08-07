@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.32 2009-03-04 23:17:17 robertis Exp $
+ * $Id: service.cpp,v 1.33 2009-08-07 21:08:24 subbae Exp $
  *
  */
 
@@ -1825,7 +1825,7 @@ Service::add_attribute_value_pair_xml(const KeyValueMap::const_iterator &entry,
 */
 void
 Service::reinitialize() {
-
+    am_status_t sts = AM_SUCCESS;
     bool gotPermToCleanup = false; 
     {
         ScopeLock myLock(lock);
@@ -1842,8 +1842,15 @@ Service::reinitialize() {
     if (gotPermToCleanup) {
     // If we need to update the agent SSOToken
         // we cleanup the entire cache.
-        Log::log(logID, Log::LOG_WARNING, "Invoking initialize().");
-        agentProfileService->agentLogin();
+        Log::log(logID, Log::LOG_WARNING, "Invoking initialize()."
+                 "First validate agent(app) ssotoken.");
+        sts = agentProfileService->validateAgentSSOToken();
+        if( sts == AM_INVALID_SESSION) {
+            Log::log(logID, Log::LOG_WARNING,
+                "validation of  agent(app) ssotoken failed. "
+                "Redo agent authentication.");
+            agentProfileService->agentLogin();
+        }
         initialize();
     } else {
         int counter = 0;

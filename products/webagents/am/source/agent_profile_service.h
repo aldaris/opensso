@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.h,v 1.12 2008-11-10 22:56:37 madan_ranganath Exp $
+ * $Id: agent_profile_service.h,v 1.13 2009-08-07 21:08:24 subbae Exp $
  *
  */
 
@@ -42,7 +42,7 @@
 #include "agent_config_cache.h"
 #include "am_web.h"
 #include "utils.h"
-//#include "am_web_utils.h"
+#include "sso_token_service.h"
 
 
 BEGIN_PRIVATE_NAMESPACE
@@ -53,6 +53,7 @@ BEGIN_PRIVATE_NAMESPACE
 * 2. Agent authentication.
 * 3. Fetches agent profile properties using REST attribute service.
 * 4. Agent logout
+* 5. Agent appSSOToken validation
 */
 
 
@@ -91,6 +92,8 @@ public:
                                      AgentConfigurationRefCntPtr& agentConfig);
     void deleteOldAgentConfigInstances();
     AgentConfigurationRefCntPtr getAgentConfigInstance();
+    am_status_t validateAgentSSOToken(); 
+
 
 private:
 

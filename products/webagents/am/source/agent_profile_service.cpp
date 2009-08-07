@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.cpp,v 1.22 2008-11-10 22:56:36 madan_ranganath Exp $
+ * $Id: agent_profile_service.cpp,v 1.23 2009-08-07 21:08:24 subbae Exp $
  *
  */
 
@@ -70,6 +70,7 @@ const std::string portPart("%port");
 const std::string uriPart("%uri");
 const std::size_t MAX_PORT_LENGTH = 5;
 const unsigned long DEFAULT_TIMEOUT = 3;
+extern smi::SSOTokenService *get_sso_token_service();
 
 AgentProfileService::AgentProfileService(const Properties& config, 
                                          Utils::boot_info_t boot_info_prop)
@@ -78,10 +79,10 @@ AgentProfileService::AgentProfileService(const Properties& config,
                 config.get(AM_COMMON_CERT_DB_PASSWORD_PROPERTY, ""),
                 config.get(AM_AUTH_CERT_ALIAS_PROPERTY, ""),
                 config.getBool(AM_COMMON_TRUST_SERVER_CERTS_PROPERTY, false)),
-                agentAuthnd(false),
-                mNamingServiceURL(config.get(AM_COMMON_NAMING_URL_PROPERTY, "")),
-                mNamingServiceInfo(mNamingServiceURL),
-                mNamingService(config,
+      agentAuthnd(false),
+      mNamingServiceURL(config.get(AM_COMMON_NAMING_URL_PROPERTY, "")),
+      mNamingServiceInfo(mNamingServiceURL),
+      mNamingService(config,
                 config.get(AM_COMMON_CERT_DB_PASSWORD_PROPERTY,""),
                 config.get(AM_AUTH_CERT_ALIAS_PROPERTY,""),
                 config.getBool(AM_COMMON_TRUST_SERVER_CERTS_PROPERTY, false))
@@ -1098,4 +1099,54 @@ void AgentProfileService::setEncodedAgentSSOToken(std::string appSSOToken) {
     if(encodedAppSSOTokenString != NULL) {
        free(encodedAppSSOTokenString);
     }
+}
+
+
+/*
+* Validate App SSOToken
+*/
+am_status_t AgentProfileService::validateAgentSSOToken() {
+    am_status_t sts = AM_FAILURE;
+    const char *thisfunc = "AgentProfileService::validateAgentSSOToken()";
+    SessionInfo *sessionInfo = NULL;
+    try {
+        sessionInfo = new SessionInfo();
+        Http::CookieList cookieList;
+        SSOTokenService *ssoTokenSvc = get_sso_token_service();
+        sts = ssoTokenSvc->getSessionInfo(ServiceInfo(),
+                                          agentSSOToken,
+                                          cookieList,
+                                          false,
+                                          *sessionInfo,
+                                          true);
+        if (sts == AM_SUCCESS) {
+            sts = sessionInfo->isValid() ? AM_SUCCESS : AM_INVALID_SESSION;
+        }
+        else {
+            Log::log(logModule, Log::LOG_ERROR,
+                 "%s: Invalid Agent(app) SSO token %s.",
+                 thisfunc, agentSSOToken.c_str());
+        }
+    }
+    catch (InternalException& ex) {
+        Log::log(logModule, Log::LOG_ERROR, ex);
+        sts = AM_FAILURE;
+    }
+    catch (std::bad_alloc& exb) {
+        Log::log(logModule, Log::LOG_ERROR, exb);
+        sts = AM_NO_MEMORY;
+    }
+    catch (std::exception& exs) {
+        Log::log(logModule, Log::LOG_ERROR, exs);
+        sts = AM_FAILURE;
+    }
+    catch (...) {
+        Log::log(logModule, Log::LOG_ERROR,
+                 "%s: Unknown exception encountered.");
+        sts = AM_FAILURE;
+    }
+    if(sessionInfo != NULL) {
+        delete sessionInfo;
+    }
+    return sts;
 }
