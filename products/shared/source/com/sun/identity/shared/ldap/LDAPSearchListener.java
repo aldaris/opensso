@@ -334,7 +334,8 @@ public class LDAPSearchListener extends LDAPMessageQueue {
                     }   
                     if (currentWaitRequest == null) {
                         hasListener = false;
-                        return null;
+                        throw new LDAPException("Invalid response",
+                            LDAPException.OTHER);
                     }
                     Vector tempMessages = m_messageQueue;
                     LDAPMessage tempResponse = (LDAPMessage)
@@ -394,11 +395,13 @@ public class LDAPSearchListener extends LDAPMessageQueue {
                 }
                 if (m_asynchOp) {
                     if (m_requestList.isEmpty()) {
-                        return null;
+                        throw new LDAPException("Invalid response",
+                            LDAPException.OTHER);
                     }  
                 } else {
                     if (currentWaitRequest == null) {
-                        return null;
+                        throw new LDAPException("Invalid response",
+                            LDAPException.OTHER);
                     }
                 }
                 tempResponse = (LDAPMessage) m_messageQueue.remove(0);
