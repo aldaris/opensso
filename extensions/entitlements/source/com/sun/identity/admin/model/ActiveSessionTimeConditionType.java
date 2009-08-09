@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ActiveSessionTimeConditionType.java,v 1.4 2009-06-04 11:49:13 veiming Exp $
+ * $Id: ActiveSessionTimeConditionType.java,v 1.5 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -40,7 +40,7 @@ public class ActiveSessionTimeConditionType
         return vc;
     }
 
-    public ViewCondition newViewCondition(EntitlementCondition ec, ConditionTypeFactory conditionTypeFactory) {
+    public ViewCondition newViewCondition(EntitlementCondition ec, ConditionFactory conditionTypeFactory) {
         // TODO
         return null;
     }

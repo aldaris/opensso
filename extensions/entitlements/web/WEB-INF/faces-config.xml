@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.110 2009-08-05 14:37:16 farble1670 Exp $
+  $Id: faces-config.xml,v 1.111 2009-08-09 06:04:21 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1091,24 +1091,118 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
-        <managed-bean-name>transferLimitConditionType</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.TransferLimitConditionType</managed-bean-class>
+        <managed-bean-name>lowerTransferLimitConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.NumericConditionType</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
         <managed-property>
-            <property-name>expression</property-name>
-            <value>false</value>
+            <property-name>name</property-name>
+            <value>lowerTransferLimit</value>
         </managed-property>
+        <managed-property>
+            <property-name>i18nKey</property-name>
+            <value>condition-numeric.transferAmount</value>
+        </managed-property>
+        <managed-property>
+            <property-name>operators</property-name>
+            <property-class>java.util.ArrayList</property-class>
+            <list-entries>
+                <value-class>com.sun.identity.admin.model.NumericConditionType$Operator</value-class>
+                <value>GREATER_THAN</value>
+            </list-entries>
+        </managed-property>
+        <managed-property>
+            <property-name>attribute</property-name>
+            <value>default</value>
+        </managed-property>
+        <managed-property>
+            <property-name>parameters</property-name>
+            <property-class>java.util.HashMap</property-class>
+            <map-entries>
+                <key-class>java.lang.String</key-class>
+                <value-class>java.lang.String</value-class>
+                <map-entry>
+                    <key>foo</key>
+                    <value>bar</value>
+                </map-entry>
+            </map-entries>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>upperTransferLimitConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.NumericConditionType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
         <managed-property>
             <property-name>name</property-name>
-            <value>transferLimit</value>
+            <value>upperTransferLimit</value>
         </managed-property>
         <managed-property>
-            <property-name>template</property-name>
-            <value>/admin/facelet/template/condition-transfer-limit.xhtml</value>
+            <property-name>i18nKey</property-name>
+            <value>condition-numeric.transferAmount</value>
         </managed-property>
         <managed-property>
-            <property-name>conditionIconUri</property-name>
-            <value>/admin/image/money.png</value>
+            <property-name>operators</property-name>
+            <property-class>java.util.ArrayList</property-class>
+            <list-entries>
+                <value-class>com.sun.identity.admin.model.NumericConditionType$Operator</value-class>
+                <value>LESS_THAN</value>
+            </list-entries>
+        </managed-property>
+        <managed-property>
+            <property-name>attribute</property-name>
+            <value>default</value>
+        </managed-property>
+        <managed-property>
+            <property-name>parameters</property-name>
+            <property-class>java.util.HashMap</property-class>
+            <map-entries>
+                <key-class>java.lang.String</key-class>
+                <value-class>java.lang.String</value-class>
+                <map-entry>
+                    <key>foo</key>
+                    <value>bar</value>
+                </map-entry>
+            </map-entries>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>anyTransferLimitConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.NumericConditionType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>anyTransferLimit</value>
+        </managed-property>
+        <managed-property>
+            <property-name>i18nKey</property-name>
+            <value>condition-numeric.transferAmount</value>
+        </managed-property>
+        <managed-property>
+            <property-name>operators</property-name>
+            <property-class>java.util.ArrayList</property-class>
+            <list-entries>
+                <value-class>com.sun.identity.admin.model.NumericConditionType$Operator</value-class>
+                <value>LESS_THAN</value>
+                <value>LESS_THAN_OR_EQUAL</value>
+                <value>GREATER_THAN</value>
+                <value>GREATER_THAN_OR_EQUAL</value>
+                <value>EQUAL</value>
+            </list-entries>
+        </managed-property>
+        <managed-property>
+            <property-name>attribute</property-name>
+            <value>default</value>
+        </managed-property>
+        <managed-property>
+            <property-name>parameters</property-name>
+            <property-class>java.util.HashMap</property-class>
+            <map-entries>
+                <key-class>java.lang.String</key-class>
+                <value-class>java.lang.String</value-class>
+                <map-entry>
+                    <key>foo</key>
+                    <value>bar</value>
+                </map-entry>
+            </map-entries>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -1260,7 +1354,7 @@
     </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>viewConditionToConditionTypeMap</managed-bean-name>
+        <managed-bean-name>conditionTypeNameMap</managed-bean-name>
         <managed-bean-class>java.util.HashMap</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
         <map-entries>
@@ -1273,43 +1367,51 @@
             </map-entry>
             -->
             <map-entry>
-                <key>com.sun.identity.admin.model.IpRangeViewCondition</key>
+                <key>#{ipRangeConditionType.name}</key>
                 <value>#{ipRangeConditionType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.model.DnsNameViewCondition</key>
+                <key>#{dnsNameConditionType.name}</key>
                 <value>#{dnsNameConditionType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.model.TimeRangeCondition</key>
+                <key>#{timeRangeConditionType.name}</key>
                 <value>#{timeRangeConditionType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.model.DateRangeCondition</key>
+                <key>#{dateRangeConditionType.name}</key>
                 <value>#{dateRangeConditionType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.model.TimezoneCondition</key>
+                <key>#{timezoneConditionType.name}</key>
                 <value>#{timezoneConditionType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.model.DaysOfWeekCondition</key>
+                <key>#{daysOfWeekConditionType.name}</key>
                 <value>#{daysOfWeekConditionType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.model.TransferLimitCondition</key>
-                <value>#{transferLimitConditionType}</value>
+                <key>#{upperTransferLimitConditionType.name}</key>
+                <value>#{upperTransferLimitConditionType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.model.OrViewCondition</key>
+                <key>#{lowerTransferLimitConditionType.name}</key>
+                <value>#{lowerTransferLimitConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{anyTransferLimitConditionType.name}</key>
+                <value>#{anyTransferLimitConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{orConditionType.name}</key>
                 <value>#{orConditionType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.model.AndViewCondition</key>
+                <key>#{andConditionType.name}</key>
                 <value>#{andConditionType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.admin.model.NotViewCondition</key>
+                <key>#{notConditionType.name}</key>
                 <value>#{notConditionType}</value>
             </map-entry>
         </map-entries>
@@ -1346,23 +1448,23 @@
                 <value>#{ipRangeConditionType}</value>
             </map-entry>
             <map-entry>
-                <key>com.sun.identity.entitlement.BankTransferLimitCondition</key>
-                <value>#{transferLimitConditionType}</value>
+                <key>com.sun.identity.entitlement.LimitCondition</key>
+                <value>#{limitConditionType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>conditionTypeFactory</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.ConditionTypeFactory</managed-bean-class>
+        <managed-bean-name>conditionFactory</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ConditionFactory</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
         <managed-property>
             <property-name>entitlementConditionToConditionTypeMap</property-name>
             <value>#{entitlementConditionToConditionTypeMap}</value>
         </managed-property>
         <managed-property>
-            <property-name>viewConditionToConditionTypeMap</property-name>
-            <value>#{viewConditionToConditionTypeMap}</value>
+            <property-name>conditionTypeNameMap</property-name>
+            <value>#{conditionTypeNameMap}</value>
         </managed-property>
     </managed-bean>
     <!-- condition types -->
@@ -1445,7 +1547,7 @@
         <managed-bean-scope>request</managed-bean-scope>
         <managed-property>
             <property-name>conditionTypes</property-name>
-            <value>#{conditionTypeFactory.conditionTypes}</value>
+            <value>#{conditionFactory.conditionTypes}</value>
         </managed-property>
         <managed-property>
             <property-name>subjectTypes</property-name>
@@ -1503,7 +1605,7 @@
         <managed-bean-scope>request</managed-bean-scope>
         <managed-property>
             <property-name>conditionTypes</property-name>
-            <value>#{conditionTypeFactory.conditionTypes}</value>
+            <value>#{conditionFactory.conditionTypes}</value>
         </managed-property>
         <managed-property>
             <property-name>subjectTypes</property-name>
@@ -1704,10 +1806,6 @@
         <managed-property>
             <property-name>viewApplicationsBean</property-name>
             <value>#{viewApplicationsBean}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>conditionTypeFactory</property-name>
-            <value>#{conditionTypeFactory}</value>
         </managed-property>
         <managed-property>
             <property-name>limit</property-name>
@@ -2106,7 +2204,7 @@
     <!--remote -->
 
     <!--idp end -->
-    
+
   <!--  federation manage   -->
 
     <managed-bean>
@@ -2266,3 +2364,5 @@
         </phase-listener>
     </lifecycle>
 </faces-config>
+
+

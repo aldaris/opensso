@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IpRangeViewCondition.java,v 1.2 2009-06-04 11:49:15 veiming Exp $
+ * $Id: IpRangeViewCondition.java,v 1.3 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -40,6 +40,7 @@ public class IpRangeViewCondition
 
     public EntitlementCondition getEntitlementCondition() {
         IPCondition ipc = new IPCondition();
+        ipc.setDisplayType(getConditionType().getName());
 
         ipc.setStartIp(getIpString(startIp));
         ipc.setEndIp(getIpString(endIp));

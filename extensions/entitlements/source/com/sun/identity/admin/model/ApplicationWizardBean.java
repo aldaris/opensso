@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardBean.java,v 1.9 2009-08-06 20:45:18 farble1670 Exp $
+ * $Id: ApplicationWizardBean.java,v 1.10 2009-08-09 06:04:20 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -218,7 +218,7 @@ public class ApplicationWizardBean extends WizardBean {
     }
 
     public void setConditionTypeNames(List<String> conditionTypeNames) {
-        Map<String,ConditionType> conditionTypeNameMap = ConditionTypeFactory.getInstance().getConditionTypeNameMap();
+        Map<String,ConditionType> conditionTypeNameMap = ConditionFactory.getInstance().getConditionTypeNameMap();
         viewApplication.getConditionTypes().clear();
         for (String name : conditionTypeNames) {
             ConditionType ct = conditionTypeNameMap.get(name);

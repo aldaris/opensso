@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeBean.java,v 1.36 2009-06-22 14:53:20 farble1670 Exp $
+ * $Id: PrivilegeBean.java,v 1.37 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -242,8 +242,7 @@ public class PrivilegeBean implements Serializable {
     public PrivilegeBean(
                 Privilege p,
                 Map<String,ViewApplication> viewApplications,
-                SubjectFactory subjectFactory,
-                ConditionTypeFactory conditionTypeFactory) {
+                SubjectFactory subjectFactory) {
 
         name = p.getName();
         description = p.getDescription();
@@ -255,7 +254,7 @@ public class PrivilegeBean implements Serializable {
         viewSubject = subjectFactory.getViewSubject(p.getSubject());
 
         // conditions
-        viewCondition = conditionTypeFactory.getViewCondition(p.getCondition());
+        viewCondition = ConditionFactory.getInstance().getViewCondition(p.getCondition());
 
         // attributes
         AttributesBean ab;

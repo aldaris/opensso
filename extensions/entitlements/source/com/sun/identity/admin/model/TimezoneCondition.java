@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimezoneCondition.java,v 1.6 2009-06-11 19:20:40 farble1670 Exp $
+ * $Id: TimezoneCondition.java,v 1.7 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -47,6 +47,7 @@ public class TimezoneCondition
 
     public EntitlementCondition getEntitlementCondition() {
         TimeCondition tc = new TimeCondition();
+        tc.setDisplayType(getConditionType().getName());
         tc.setEnforcementTimeZone(timezoneId);
 
         return tc;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DaysOfWeekCondition.java,v 1.10 2009-07-31 19:41:06 farble1670 Exp $
+ * $Id: DaysOfWeekCondition.java,v 1.11 2009-08-09 06:04:20 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -47,9 +47,11 @@ public class DaysOfWeekCondition
     public EntitlementCondition getEntitlementCondition() {
         if (selectedDays.length > 1) {
             OrCondition oc = new OrCondition();
+            oc.setDisplayType("or");
             Set<EntitlementCondition> orConditions = new HashSet<EntitlementCondition>();
             for (String day : selectedDays) {
                 TimeCondition tc = new TimeCondition();
+                tc.setDisplayType(getConditionType().getName());
                 tc.setStartDay(day);
                 tc.setEndDay(day);
                 orConditions.add(tc);
@@ -58,6 +60,7 @@ public class DaysOfWeekCondition
             return oc;
         } else if (selectedDays.length > 0) {
             TimeCondition tc = new TimeCondition();
+            tc.setDisplayType(getConditionType().getName());
             if (selectedDays.length > 0) {
                 String day = selectedDays[0];
                 tc.setStartDay(day);

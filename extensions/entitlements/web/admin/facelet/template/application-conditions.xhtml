@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-conditions.xhtml,v 1.1 2009-08-04 19:41:57 farble1670 Exp $
+   $Id: application-conditions.xhtml,v 1.2 2009-08-09 06:04:22 farble1670 Exp $
 
 -->
 
@@ -53,17 +53,17 @@
                     partialSubmit="false"
                     value="#{conditionsBean.conditionTypeNames}">
                     <f:selectItems
-                        value="#{conditionTypeFactory.conditionTypeNameItems}"/>
+                        value="#{conditionFactory.conditionTypeNameItems}"/>
                 </ice:selectManyCheckbox>
                 <ice:panelGrid
                     styleClass="application-conditions"
                     columns="3">
                     <c:forEach
                         var="conditionType"
-                        items="#{conditionTypeFactory.conditionTypes}" >
+                        items="#{conditionFactory.conditionTypes}" >
                         <ice:checkbox
                             for="condition-types"
-                            index="#{o:indexOf(conditionTypeFactory.conditionTypes,conditionType)}"/>
+                            index="#{o:indexOf(conditionFactory.conditionTypes,conditionType)}"/>
                     </c:forEach>
                 </ice:panelGrid>
             </ice:panelGroup>

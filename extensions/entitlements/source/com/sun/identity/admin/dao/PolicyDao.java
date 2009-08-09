@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDao.java,v 1.27 2009-08-05 09:09:39 veiming Exp $
+ * $Id: PolicyDao.java,v 1.28 2009-08-09 06:04:19 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
-import com.sun.identity.admin.model.ConditionTypeFactory;
+import com.sun.identity.admin.model.ConditionFactory;
 import com.sun.identity.admin.model.PolicyFilterHolder;
 import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.RealmBean;
@@ -55,7 +55,6 @@ import javax.security.auth.Subject;
 public class PolicyDao implements Serializable {
 
     private ViewApplicationsBean viewApplicationsBean;
-    private ConditionTypeFactory conditionTypeFactory;
     private int timeout;
     private int limit;
 
@@ -97,8 +96,7 @@ public class PolicyDao implements Serializable {
             PrivilegeBean pb = new PrivilegeBean(
                     p,
                     viewApplicationsBean.getViewApplications(),
-                    subjectFactory,
-                    conditionTypeFactory);
+                    subjectFactory);
             return pb;
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
@@ -124,8 +122,7 @@ public class PolicyDao implements Serializable {
                 PrivilegeBean pb = new PrivilegeBean(
                         p,
                         viewApplicationsBean.getViewApplications(),
-                        subjectFactory,
-                        conditionTypeFactory);
+                        subjectFactory);
                 privilegeBeans.add(pb);
             }
         } catch (EntitlementException ee) {
@@ -243,10 +240,6 @@ public class PolicyDao implements Serializable {
 
     public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
         this.viewApplicationsBean = viewApplicationsBean;
-    }
-
-    public void setConditionTypeFactory(ConditionTypeFactory conditionTypeFactory) {
-        this.conditionTypeFactory = conditionTypeFactory;
     }
 
     public void setTimeout(int timeout) {

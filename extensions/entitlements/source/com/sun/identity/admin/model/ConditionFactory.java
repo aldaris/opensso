@@ -22,33 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionTypeFactory.java,v 1.4 2009-08-04 19:41:56 farble1670 Exp $
+ * $Id: ConditionFactory.java,v 1.1 2009-08-09 06:04:20 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.entitlement.EntitlementCondition;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.faces.model.SelectItem;
 
-public class ConditionTypeFactory implements Serializable {
-    private Map<String,ConditionType> entitlementConditionToConditionTypeMap;
-    private Map<String,ConditionType> viewConditionToConditionTypeMap;
+public class ConditionFactory implements Serializable {
 
-    public ConditionType getConditionType(Class c) {
-        ConditionType ct;
-        String className = c.getName();
+    private Map<String, ConditionType> entitlementConditionToConditionTypeMap;
+    private Map<String, ConditionType> conditionTypeNameMap;
 
-        ct = entitlementConditionToConditionTypeMap.get(className);
-        if (ct == null) {
-            ct = viewConditionToConditionTypeMap.get(className);
-        }
-
+    public ConditionType getConditionType(String name) {
+        ConditionType ct = conditionTypeNameMap.get(name);
+        assert (ct != null);
         return ct;
     }
 
@@ -57,7 +50,9 @@ public class ConditionTypeFactory implements Serializable {
             return null;
         }
 
-        ConditionType ct = getConditionType(ec.getClass());
+        String dt = ec.getDisplayType();
+        assert (dt != null);
+        ConditionType ct = getConditionType(dt);
         assert (ct != null);
         ViewCondition vc = ct.newViewCondition(ec, this);
 
@@ -65,7 +60,11 @@ public class ConditionTypeFactory implements Serializable {
     }
 
     public List<ConditionType> getConditionTypes() {
-        return new ArrayList<ConditionType>(viewConditionToConditionTypeMap.values());
+        List<ConditionType> cts = new ArrayList<ConditionType>();
+        for (ConditionType ct : conditionTypeNameMap.values()) {
+            cts.add(ct);
+        }
+        return cts;
     }
 
     public Map<String, ConditionType> getEntitlementConditionToConditionTypeMap() {
@@ -76,36 +75,27 @@ public class ConditionTypeFactory implements Serializable {
         this.entitlementConditionToConditionTypeMap = entitlementConditionToConditionTypeMap;
     }
 
-    public Map<String, ConditionType> getViewConditionToConditionTypeMap() {
-        return viewConditionToConditionTypeMap;
-    }
-
-    public void setViewConditionToConditionTypeMap(Map<String, ConditionType> viewConditionToConditionTypeMap) {
-        this.viewConditionToConditionTypeMap = viewConditionToConditionTypeMap;
-    }
-
-    public static ConditionTypeFactory getInstance() {
+    public static ConditionFactory getInstance() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        ConditionTypeFactory cf = (ConditionTypeFactory)mbr.resolve("conditionTypeFactory");
+        ConditionFactory cf = (ConditionFactory) mbr.resolve("conditionFactory");
         return cf;
-    }
-
-    public Map<String,ConditionType> getConditionTypeNameMap() {
-        Map<String,ConditionType> m = new HashMap<String,ConditionType>();
-        for (ConditionType ct: getConditionTypes()) {
-            m.put(ct.getName(), ct);
-        }
-
-        return m;
     }
 
     public List<SelectItem> getConditionTypeNameItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
-        for (ConditionType ct: getConditionTypes()) {
+        for (ConditionType ct : getConditionTypes()) {
             SelectItem si = new SelectItem(ct.getName(), ct.getTitle());
             items.add(si);
         }
 
         return items;
+    }
+
+    public void setConditionTypeNameMap(Map<String, ConditionType> conditionTypeNameMap) {
+        this.conditionTypeNameMap = conditionTypeNameMap;
+    }
+
+    public Map<String, ConditionType> getConditionTypeNameMap() {
+        return conditionTypeNameMap;
     }
 }

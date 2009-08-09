@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IpRangeConditionType.java,v 1.2 2009-06-04 11:49:15 veiming Exp $
+ * $Id: IpRangeConditionType.java,v 1.3 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -41,7 +41,7 @@ public class IpRangeConditionType
         return vc;
     }
     
-    public ViewCondition newViewCondition(EntitlementCondition ec, ConditionTypeFactory conditionTypeFactory) {
+    public ViewCondition newViewCondition(EntitlementCondition ec, ConditionFactory conditionTypeFactory) {
         assert(ec instanceof IPCondition);
         IPCondition ipc = (IPCondition)ec;
 

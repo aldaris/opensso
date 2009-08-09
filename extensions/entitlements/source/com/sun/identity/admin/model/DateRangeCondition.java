@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DateRangeCondition.java,v 1.8 2009-08-04 08:36:48 veiming Exp $
+ * $Id: DateRangeCondition.java,v 1.9 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -43,6 +43,7 @@ public class DateRangeCondition
 
     public EntitlementCondition getEntitlementCondition() {
         TimeCondition tc = new TimeCondition();
+        tc.setDisplayType(getConditionType().getName());
 
         String startDateString = getEDateString(startDate);
         tc.setStartDate(startDateString);

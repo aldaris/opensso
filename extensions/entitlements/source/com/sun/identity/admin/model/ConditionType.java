@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionType.java,v 1.11 2009-06-04 11:49:14 veiming Exp $
+ * $Id: ConditionType.java,v 1.12 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -34,10 +34,10 @@ public abstract class ConditionType {
     private String name;
     private String template;
     private String conditionIconUri;
-    private boolean expression;
+    private boolean expression = false;
 
     public abstract ViewCondition newViewCondition();
-    public abstract ViewCondition newViewCondition(EntitlementCondition ec, ConditionTypeFactory conditionTypeFactory);
+    public abstract ViewCondition newViewCondition(EntitlementCondition ec, ConditionFactory conditionTypeFactory);
 
     public String getName() {
         return name;
@@ -74,6 +74,9 @@ public abstract class ConditionType {
     public String getTitle() {
         Resources r = new Resources();
         String title = r.getString(this, "title");
+        if (title == null) {
+            title = r.getString(this, "title." + getName());
+        }
         if (title == null) {
             title = getName();
         }

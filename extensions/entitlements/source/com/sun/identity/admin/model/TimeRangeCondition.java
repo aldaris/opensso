@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeRangeCondition.java,v 1.6 2009-06-04 11:49:17 veiming Exp $
+ * $Id: TimeRangeCondition.java,v 1.7 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -45,7 +45,7 @@ public class TimeRangeCondition
 
     public EntitlementCondition getEntitlementCondition() {
         TimeCondition tc = new TimeCondition();
-
+        tc.setDisplayType(getConditionType().getName());
         String startETime = getETimeString(startHour, startMinute, startPeriod);
         tc.setStartTime(startETime);
         String endETime = getETimeString(endHour, endMinute, endPeriod);

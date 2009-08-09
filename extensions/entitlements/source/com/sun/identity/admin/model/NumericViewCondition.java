@@ -22,39 +22,52 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DnsNameViewCondition.java,v 1.5 2009-08-09 06:04:20 farble1670 Exp $
+ * $Id: NumericViewCondition.java,v 1.1 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.model.NumericConditionType.Operator;
 import com.sun.identity.entitlement.EntitlementCondition;
-import com.sun.identity.entitlement.DNSNameCondition;
+import com.sun.identity.entitlement.NumericAttributeCondition;
 import java.io.Serializable;
 
-public class DnsNameViewCondition
+public class NumericViewCondition
     extends ViewCondition
     implements Serializable {
 
-    private String domainNameMask;
+    private float value = 0;
+    private Operator operator;
 
     public EntitlementCondition getEntitlementCondition() {
-        DNSNameCondition dnsNameCondition = new DNSNameCondition();
-        dnsNameCondition.setDisplayType(getConditionType().getName());
-        dnsNameCondition.setDomainNameMask(getDomainNameMask());
+        NumericAttributeCondition nac = new NumericAttributeCondition();
+        nac.setDisplayType(getConditionType().getName());
+        NumericConditionType lct = (NumericConditionType)getConditionType();
+        nac.setValue(getValue());
+        nac.setOperator(NumericAttributeCondition.Operator.valueOf(getOperator().toString()));
+        nac.setAttributeName(lct.getAttribute());
 
-        return dnsNameCondition;
-    }
-
-    public String getDomainNameMask() {
-        return domainNameMask;
-    }
-
-    public void setDomainNameMask(String domainNameMask) {
-        this.domainNameMask = domainNameMask;
+        return nac;
     }
 
     @Override
     public String toString() {
-        return getTitle() + ":{" + domainNameMask + "}";
+        return getTitle() + ": {" +  getOperator().getTitle() + " " + getValue() + "}";
+    }
+
+    public float getValue() {
+        return value;
+    }
+
+    public void setValue(float value) {
+        this.value = value;
+    }
+
+    public Operator getOperator() {
+        return operator;
+    }
+
+    public void setOperator(Operator operator) {
+        this.operator = operator;
     }
 }

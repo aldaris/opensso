@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DnsNameConditionType.java,v 1.3 2009-06-04 11:49:14 veiming Exp $
+ * $Id: DnsNameConditionType.java,v 1.4 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -41,7 +41,7 @@ public class DnsNameConditionType
         return vc;
     }
 
-    public ViewCondition newViewCondition(EntitlementCondition ec, ConditionTypeFactory conditionTypeFactory) {
+    public ViewCondition newViewCondition(EntitlementCondition ec, ConditionFactory conditionTypeFactory) {
         assert(ec instanceof DNSNameCondition);
         DNSNameCondition dnsnc = (DNSNameCondition)ec;
 

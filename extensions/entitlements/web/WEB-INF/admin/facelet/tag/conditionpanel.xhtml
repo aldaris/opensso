@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: conditionpanel.xhtml,v 1.10 2009-06-04 11:49:24 veiming Exp $
+   $Id: conditionpanel.xhtml,v 1.11 2009-08-09 06:04:21 farble1670 Exp $
 
 -->
 
@@ -73,7 +73,7 @@
                 </ui:define>
                 <ui:define name="panel-body">
                     <ui:include
-                        src="/admin/facelet/template/condition-template-includer.xhtml">
+                        src="#{viewCondition.conditionType.template}">
                         <ui:param name="viewCondition" value="#{viewCondition}"/>
                     </ui:include>
                 </ui:define>

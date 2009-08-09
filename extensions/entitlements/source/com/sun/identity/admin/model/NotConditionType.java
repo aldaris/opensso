@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotConditionType.java,v 1.5 2009-06-04 11:49:15 veiming Exp $
+ * $Id: NotConditionType.java,v 1.6 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -42,7 +42,7 @@ public class NotConditionType
         return vc;
     }
 
-    public ViewCondition newViewCondition(EntitlementCondition ec, ConditionTypeFactory conditionTypeFactory) {
+    public ViewCondition newViewCondition(EntitlementCondition ec, ConditionFactory conditionTypeFactory) {
         assert (ec instanceof NotCondition);
         NotCondition nc = (NotCondition) ec;
 

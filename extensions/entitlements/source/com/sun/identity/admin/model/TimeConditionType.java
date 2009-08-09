@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeConditionType.java,v 1.5 2009-06-04 11:49:17 veiming Exp $
+ * $Id: TimeConditionType.java,v 1.6 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -36,35 +36,35 @@ public abstract class TimeConditionType extends ConditionType {
 
     public abstract ViewCondition newViewCondition(TimeCondition tc);
 
-    public ViewCondition newViewCondition(EntitlementCondition ec, ConditionTypeFactory conditionTypeFactory) {
+    public ViewCondition newViewCondition(EntitlementCondition ec, ConditionFactory conditionTypeFactory) {
         assert (ec instanceof TimeCondition);
         TimeCondition tc = (TimeCondition) ec;
         TimeConditionType tct;
         List<ViewCondition> timeViewConditions = new ArrayList<ViewCondition>();
 
         if (tc.getStartDate() != null && tc.getStartDate().length() > 0) {
-            tct = (TimeConditionType) conditionTypeFactory.getConditionType(DateRangeCondition.class);
+            tct = (TimeConditionType) conditionTypeFactory.getConditionType("dateRange");
             assert (tct != null);
             ViewCondition vc = tct.newViewCondition(tc);
             timeViewConditions.add(vc);
         }
 
         if (tc.getStartTime() != null && tc.getStartTime().length() > 0) {
-            tct = (TimeConditionType) conditionTypeFactory.getConditionType(TimeRangeCondition.class);
+            tct = (TimeConditionType) conditionTypeFactory.getConditionType("timeRange");
             assert (tct != null);
             ViewCondition vc = tct.newViewCondition(tc);
             timeViewConditions.add(vc);
         }
 
         if (tc.getStartDay() != null && tc.getStartDay().length() > 0) {
-            tct = (TimeConditionType) conditionTypeFactory.getConditionType(DaysOfWeekCondition.class);
+            tct = (TimeConditionType) conditionTypeFactory.getConditionType("daysOfWeek");
             assert (tct != null);
             ViewCondition vc = tct.newViewCondition(tc);
             timeViewConditions.add(vc);
         }
 
         if (tc.getEnforcementTimeZone() != null && tc.getEnforcementTimeZone().length() > 0) {
-            tct = (TimeConditionType) conditionTypeFactory.getConditionType(TimezoneCondition.class);
+            tct = (TimeConditionType) conditionTypeFactory.getConditionType("timezone");
             assert (tct != null);
             ViewCondition vc = tct.newViewCondition(tc);
             timeViewConditions.add(vc);
@@ -73,7 +73,7 @@ public abstract class TimeConditionType extends ConditionType {
         ViewCondition newVc = null;
 
         if (timeViewConditions.size() > 1) {
-            ConditionType ct = conditionTypeFactory.getConditionType(AndViewCondition.class);
+            ConditionType ct = conditionTypeFactory.getConditionType("and");
             assert (ct != null);
             AndViewCondition avc = (AndViewCondition) ct.newViewCondition();
             avc.setViewConditions(timeViewConditions);

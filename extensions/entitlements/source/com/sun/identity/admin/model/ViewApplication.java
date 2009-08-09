@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.22 2009-08-06 20:45:18 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.23 2009-08-09 06:04:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -96,16 +96,10 @@ public class ViewApplication implements Serializable {
         }
 
         // conditions
-        ConditionTypeFactory ctf = (ConditionTypeFactory) mbr.resolve("conditionTypeFactory");
-        for (String viewConditionClassName : a.getConditions()) {
-            Class c;
-            try {
-                c = Class.forName(viewConditionClassName);
-            } catch (ClassNotFoundException cnfe) {
-                // TODO: log
-                continue;
-            }
-            ConditionType ct = ctf.getConditionType(c);
+        ConditionFactory ctf = (ConditionFactory) mbr.resolve("conditionFactory");
+        Map<String,ConditionType> conditionTypeNameMap = ctf.getConditionTypeNameMap();
+        for (String conditionTypeName : a.getConditions()) {
+            ConditionType ct = conditionTypeNameMap.get(conditionTypeName);
             assert (ct != null);
             conditionTypes.add(ct);
         }
@@ -221,8 +215,8 @@ public class ViewApplication implements Serializable {
         // conditions
         Set<String> conditions = new HashSet<String>();
         for (ConditionType ct: conditionTypes) {
-            String viewClassName = ct.newViewCondition().getClass().getName();
-            conditions.add(viewClassName);
+            String name = ct.getName();
+            conditions.add(name);
         }
         app.setConditions(conditions);
 
@@ -305,7 +299,7 @@ public class ViewApplication implements Serializable {
 
     public void setOverrideRuleName(String name) {
         if (name != null) {
-        overrideRule = OverrideRule.valueOf(name);
+            overrideRule = OverrideRule.valueOf(name);
         }
     }
 

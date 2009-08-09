@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: condition-or.xhtml,v 1.7 2009-06-04 11:49:27 veiming Exp $
+   $Id: condition-or.xhtml,v 1.8 2009-08-09 06:04:22 farble1670 Exp $
 
 -->
 
@@ -34,27 +34,24 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-    <c:if
-        test="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'or'}">
+    <ice:outputLabel
+        value="#{resources['condition-or.label']}"/>
+    <ice:panelGroup
+        styleClass="conditions">
+        <c:forEach
+            var="vc"
+            items="#{viewCondition.viewConditions}">
+            <o:conditionpanel
+                viewCondition="#{vc}"/>
+        </c:forEach>
+    </ice:panelGroup>
+    <ice:panelGroup
+        styleClass="drop-target"
+        dropTarget="true"
+        dropMask="hover_start"
+        dropValue="#{viewCondition}"
+        dropListener="#{policyCreateWizardHandler.conditionDropListener}">
         <ice:outputLabel
-            value="#{resources['condition-or.label']}"/>
-        <ice:panelGroup
-            styleClass="conditions">
-            <c:forEach
-                var="vc"
-                items="#{viewCondition.viewConditions}">
-                <o:conditionpanel
-                    viewCondition="#{vc}"/>
-            </c:forEach>
-        </ice:panelGroup>
-        <ice:panelGroup
-            styleClass="drop-target"
-            dropTarget="true"
-            dropMask="hover_start"
-            dropValue="#{viewCondition}"
-            dropListener="#{policyCreateWizardHandler.conditionDropListener}">
-            <ice:outputLabel
-                value="#{resources['condition-or.dropTextLabel']}"/>
-        </ice:panelGroup>
-    </c:if>
+            value="#{resources['condition-or.dropTextLabel']}"/>
+    </ice:panelGroup>
 </span>

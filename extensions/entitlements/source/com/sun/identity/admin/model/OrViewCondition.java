@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrViewCondition.java,v 1.9 2009-07-31 19:41:06 farble1670 Exp $
+ * $Id: OrViewCondition.java,v 1.10 2009-08-09 06:04:20 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -42,6 +42,7 @@ public class OrViewCondition
 
     public EntitlementCondition getEntitlementCondition() {
         OrCondition oc = new OrCondition();
+        oc.setDisplayType(getConditionType().getName());
         Set<EntitlementCondition> ecs = new HashSet<EntitlementCondition>();
 
         for (ViewCondition vc : getViewConditions()) {
