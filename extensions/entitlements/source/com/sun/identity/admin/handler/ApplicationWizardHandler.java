@@ -22,15 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardHandler.java,v 1.1 2009-07-22 16:40:08 farble1670 Exp $
+ * $Id: ApplicationWizardHandler.java,v 1.2 2009-08-10 15:18:37 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
 
+import com.sun.identity.admin.dao.ViewApplicationDao;
+import com.sun.identity.admin.model.ApplicationWizardBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.QueuedActionBean;
+import com.sun.identity.admin.model.ViewApplication;
+import javax.faces.event.ActionEvent;
 
-public class ApplicationWizardHandler extends WizardHandler {
+public abstract class ApplicationWizardHandler extends WizardHandler {
     private QueuedActionBean queuedActionBean;
     private MessagesBean messagesBean;
 
@@ -40,5 +44,30 @@ public class ApplicationWizardHandler extends WizardHandler {
 
     public void setMessagesBean(MessagesBean messagesBean) {
         this.messagesBean = messagesBean;
+    }
+
+    public abstract void doFinishNext();
+
+    public abstract void doCancelNext();
+
+    public ApplicationWizardBean getApplicationWizardBean() {
+        return (ApplicationWizardBean)getWizardBean();
+    }
+
+    @Override
+    public void finishListener(ActionEvent event) {
+        if (!validateFinish(event)) {
+            return;
+        }
+
+        ViewApplication va = getApplicationWizardBean().getViewApplication();
+        ViewApplicationDao.getInstance().setViewApplication(va);
+
+        doFinishNext();
+    }
+
+    @Override
+    public void cancelListener(ActionEvent event) {
+        doCancelNext();
     }
 }

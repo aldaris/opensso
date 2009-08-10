@@ -29,7 +29,7 @@ public class ResourcesApplicationWizardStepValidator extends ApplicationWizardSt
             Resources r = new Resources();
             mb.setSummary(r.getString(this, "noResourcesSummary"));
             mb.setDetail(r.getString(this, "noResourcesDetail"));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            mb.setSeverity(FacesMessage.SEVERITY_INFO);
 
             getMessagesBean().addMessageBean(mb);
         }

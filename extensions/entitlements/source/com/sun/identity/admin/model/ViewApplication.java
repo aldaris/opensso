@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.24 2009-08-10 14:22:16 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.25 2009-08-10 15:18:38 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -33,7 +33,8 @@ import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.Token;
 import com.sun.identity.admin.handler.BooleanActionsHandler;
 import com.sun.identity.entitlement.Application;
-import com.sun.identity.entitlement.ApplicationManager;
+import com.sun.identity.entitlement.ApplicationType;
+import com.sun.identity.entitlement.ApplicationTypeManager;
 import com.sun.identity.entitlement.EntitlementException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -189,9 +190,10 @@ public class ViewApplication implements Serializable {
         // this is really just modifies the applications.
         //
         Subject adminSubject = new Token().getAdminSubject();
-
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
-        Application app = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
+
+        ApplicationType appType = ApplicationTypeManager.getAppplicationType(adminSubject, viewApplicationType.getName());
+        Application app = new Application(realmBean.getName(), name, appType);
 
         // resources
         Set<String> resourceStrings = new HashSet<String>();
@@ -215,8 +217,8 @@ public class ViewApplication implements Serializable {
         // conditions
         Set<String> conditions = new HashSet<String>();
         for (ConditionType ct: conditionTypes) {
-            String name = ct.getName();
-            conditions.add(name);
+            String ctName = ct.getName();
+            conditions.add(ctName);
         }
         app.setConditions(conditions);
 
