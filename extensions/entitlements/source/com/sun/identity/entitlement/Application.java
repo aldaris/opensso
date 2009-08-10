@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.29 2009-08-10 18:17:17 veiming Exp $
+ * $Id: Application.java,v 1.30 2009-08-10 23:26:27 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -46,7 +46,7 @@ public final class Application implements Cloneable {
     private String name;
     private String description;
     private ApplicationType applicationType;
-    private Map<String, Boolean> actions;
+    private Map<String, Boolean> actions = new HashMap<String, Boolean>();
     private Set<String> conditions;
     private Set<String> subjects;
     private Set<String> resources;
@@ -77,6 +77,7 @@ public final class Application implements Cloneable {
         this.realm = realm;
         this.name = name;
         this.applicationType = applicationType;
+        setActions(applicationType.getActions());
     }
 
     @Override
@@ -129,9 +130,6 @@ public final class Application implements Cloneable {
      */
     public Map<String, Boolean> getActions() {
         Map<String, Boolean> results = new HashMap<String, Boolean>();
-        if (applicationType.getActions() != null) {
-            results.putAll(applicationType.getActions());
-        }
         if (actions != null) {
             results.putAll(actions);
         }
@@ -208,7 +206,8 @@ public final class Application implements Cloneable {
      * @param actions Set of supported action names and its default values.
      */
     public void setActions(Map<String, Boolean> actions) {
-        this.actions = actions;
+        this.actions.clear();
+        this.actions.putAll(actions);
     }
 
     /**
@@ -405,6 +404,18 @@ public final class Application implements Cloneable {
             actions = new HashMap<String, Boolean>();
         }
         actions.put(name, val);
+    }
+
+    /**
+     * Removes an action.
+     *
+     * @param name Action name.
+     */
+    public void removeAction(String name)
+        throws EntitlementException {
+        if (actions != null) {
+            actions.remove(name);
+        }
     }
 
     /**

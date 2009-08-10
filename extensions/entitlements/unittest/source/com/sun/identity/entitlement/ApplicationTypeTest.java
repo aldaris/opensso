@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeTest.java,v 1.11 2009-08-10 18:17:18 veiming Exp $
+ * $Id: ApplicationTypeTest.java,v 1.12 2009-08-10 23:26:27 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -31,6 +31,7 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -93,7 +94,9 @@ public class ApplicationTypeTest {
             throw new Exception("ApplicationTypeTest.testApplication cannot get application");
         }
 
-        app.addAction("action", true);
+        Map<String, Boolean> actions = new HashMap<String, Boolean>();
+        actions.put("action", true);
+        app.setActions(actions);
         ApplicationManager.saveApplication(adminSubject,"/", app);
 
         app = ApplicationManager.getApplication(adminSubject, "/",
@@ -102,10 +105,14 @@ public class ApplicationTypeTest {
             throw new Exception("ApplicationTypeTest.testApplication application lost");
         }
 
-        Map<String, Boolean> actions = app.getActions();
+        actions = app.getActions();
+        if ((actions == null) || (actions.size()!= 1)) {
+            throw new Exception("ApplicationTypeTest.testApplication action is not saved");
+        }
+
         Boolean actionVal = actions.get("action");
         if ((actionVal == null) || !actionVal) {
-            throw new Exception("ApplicationTypeTest.testApplication action is not saved");
+            throw new Exception("ApplicationTypeTest.testApplication \"action\" is not saved");
         }
 
         ValidateResourceResult r = app.validateResourceName("http://www.appplicationtypetest.com:80/hr");
