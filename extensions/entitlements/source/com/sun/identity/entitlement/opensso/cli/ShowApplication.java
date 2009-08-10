@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowApplication.java,v 1.1 2009-06-12 00:02:34 veiming Exp $
+ * $Id: ShowApplication.java,v 1.2 2009-08-10 19:57:30 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso.cli;
@@ -76,6 +76,12 @@ public class ShowApplication extends ApplicationImpl {
     private void displayAttrs(IOutput writer, Application appl) {
         ApplicationType applType = appl.getApplicationType();
         writer.printlnMessage(ATTR_APPLICATIONTYPE + '=' + applType.getName());
+
+        String description = appl.getDescription();
+        if (description == null) {
+            description = "";
+        }
+        writer.printlnMessage(ATTR_DESCRIPTION + "=" + description);
 
         Map<String, Boolean> actions = appl.getActions();
         if ((actions != null) && !actions.isEmpty()) {

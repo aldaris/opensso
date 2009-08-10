@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationImpl.java,v 1.1 2009-06-12 00:02:33 veiming Exp $
+ * $Id: ApplicationImpl.java,v 1.2 2009-08-10 19:57:30 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso.cli;
@@ -56,6 +56,7 @@ public class ApplicationImpl extends AuthenticatedCommand {
     public static final String ATTR_CONDITIONS = "conditions";
     public static final String ATTR_ENTITLEMENT_COMBINER = 
         "entitlementCombiner";
+    public static final String ATTR_DESCRIPTION = "description";
     public static final String ATTR_SUBJECT_ATTRIBUTE_NAMES =
         "subjectAttributeNames";
     public static final String ATTR_RESOURCE_COMPARATOR =
