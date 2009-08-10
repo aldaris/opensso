@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectType.java,v 1.10 2009-06-04 11:49:17 veiming Exp $
+ * $Id: SubjectType.java,v 1.11 2009-08-10 14:22:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -74,7 +74,7 @@ public abstract class SubjectType implements Serializable {
 
     @Override
     public String toString() {
-        return getName();
+        return getTitle();
     }
 
     public String getTitle() {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.23 2009-08-09 06:04:20 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.24 2009-08-10 14:22:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -315,4 +315,11 @@ public class ViewApplication implements Serializable {
         return new ListFormatter(resources).toFormattedString();
     }
 
+    public String getSubjectTypesToFormattedString() {
+        return new ListFormatter(subjectTypes).toFormattedString();
+    }
+
+    public String getConditionTypesToFormattedString() {
+        return new ListFormatter(conditionTypes).toFormattedString();
+    }
 }

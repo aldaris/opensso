@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionType.java,v 1.12 2009-08-09 06:04:20 farble1670 Exp $
+ * $Id: ConditionType.java,v 1.13 2009-08-10 14:22:15 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -81,5 +81,10 @@ public abstract class ConditionType {
             title = getName();
         }
         return title;
+    }
+
+    @Override
+    public String toString() {
+        return getTitle();
     }
 }
