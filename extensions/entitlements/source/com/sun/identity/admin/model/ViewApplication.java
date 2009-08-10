@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.25 2009-08-10 15:18:38 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.26 2009-08-10 19:31:28 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -66,6 +66,7 @@ public class ViewApplication implements Serializable {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
 
         name = a.getName();
+        description = a.getDescription();
 
         // application type
         Map<String, ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String, ViewApplicationType>) mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
@@ -194,6 +195,7 @@ public class ViewApplication implements Serializable {
 
         ApplicationType appType = ApplicationTypeManager.getAppplicationType(adminSubject, viewApplicationType.getName());
         Application app = new Application(realmBean.getName(), name, appType);
+        app.setDescription(description);
 
         // resources
         Set<String> resourceStrings = new HashSet<String>();

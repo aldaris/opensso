@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: status.xhtml,v 1.5 2009-06-06 00:12:37 farble1670 Exp $
+   $Id: status.xhtml,v 1.6 2009-08-10 19:31:28 farble1670 Exp $
 
 -->
 
@@ -64,8 +64,13 @@
             </ice:panelGroup>
         </ice:panelGrid>
         <ice:panelGrid
-            columnClasses="status-help,status-logout"
-            columns="2">
+            columnClasses="status-standard-console,status-help,status-logout"
+            columns="3">
+            <ice:outputLink
+                value="#{statusBean.standardConsoleLink}">
+                <ice:outputLabel
+                    value="#{resources['status.standardConsole']}"/>
+            </ice:outputLink>
             <ice:outputLink
                 target="blank"
                 value="#{statusBean.helpLink}">

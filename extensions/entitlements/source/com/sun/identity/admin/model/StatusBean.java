@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatusBean.java,v 1.3 2009-06-11 19:20:40 farble1670 Exp $
+ * $Id: StatusBean.java,v 1.4 2009-08-10 19:31:28 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -74,5 +74,9 @@ public class StatusBean implements Serializable {
 
     public String getVersion() {
         return AMSystemConfig.version;
+    }
+
+    public String getStandardConsoleLink() {
+        return LinkBean.COMMON_TASKS.getRedirect();
     }
 }

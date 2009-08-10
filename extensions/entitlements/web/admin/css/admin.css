@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.106 2009-08-06 19:39:14 farble1670 Exp $
+* $Id: admin.css,v 1.107 2009-08-10 19:31:28 farble1670 Exp $
 *
 */
 
@@ -428,12 +428,19 @@ span.button img.left {
 }
 
 .status-help,
-.status-logout {
+.status-logout,
+.status-standard-console {
     padding-top: 2px;
     padding-bottom: 2px;
 }
 
 .status-help {
+    padding-left: 5px;
+    padding-right: 5px;
+    border-right: 2px solid #fff;
+}
+
+.status-standard-console {
     padding-right: 5px;
     border-right: 2px solid #fff;
 }
