@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.31 2009-07-27 21:03:20 hengming Exp $
+ * $Id: EntitlementService.java,v 1.32 2009-08-10 18:17:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -65,6 +65,7 @@ public class EntitlementService extends EntitlementConfiguration {
         "subjectAttributeNames";
     private static final String CONFIG_APPLICATIONS = "registeredApplications";
     private static final String CONFIG_APPLICATION = "application";
+    private static final String CONFIG_APPLICATION_DESC = "description";
     private static final String SCHEMA_APPLICATIONS = "applications";
     private static final String CONFIG_APPLICATIONTYPE = "applicationType";
     private static final String CONFIG_ACTIONS = "actions";
@@ -824,6 +825,7 @@ public class EntitlementService extends EntitlementConfiguration {
         Map<String, Set<String>> data = new HashMap<String, Set<String>>();
         data.put(CONFIG_APPLICATIONTYPE, 
             getSet(app.getApplicationType().getName()));
+        data.put(CONFIG_APPLICATION_DESC, getSet(appl.getDescription()));
         data.put(CONFIG_ACTIONS, getActionSet(app.getActions()));
         data.put(CONFIG_RESOURCES, (resources == null) ? Collections.EMPTY_SET :
             resources);
@@ -903,6 +905,11 @@ public class EntitlementService extends EntitlementConfiguration {
         Set<String> resources = data.get(CONFIG_RESOURCES);
         if (resources != null) {
             app.setResources(resources);
+        }
+
+        String description = getAttribute(data, CONFIG_APPLICATION_DESC);
+        if (description != null) {
+            app.setDescription(description);
         }
 
         String entitlementCombiner = getAttribute(data,

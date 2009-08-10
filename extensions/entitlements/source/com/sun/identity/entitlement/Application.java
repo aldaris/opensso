@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.28 2009-08-05 09:09:40 veiming Exp $
+ * $Id: Application.java,v 1.29 2009-08-10 18:17:17 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.security.auth.Subject;
 
 /**
  * Application class contains the information on how an application behaves
@@ -45,6 +44,7 @@ import javax.security.auth.Subject;
 public final class Application implements Cloneable {
     private String realm = "/";
     private String name;
+    private String description;
     private ApplicationType applicationType;
     private Map<String, Boolean> actions;
     private Set<String> conditions;
@@ -495,5 +495,23 @@ public final class Application implements Cloneable {
         clone.resources.clear();
         clone.resources.addAll(res);
         return clone;
+    }
+
+    /**
+     * Returns description.
+     *
+     * @return description.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Set description.
+     *
+     * @aparam description description.
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

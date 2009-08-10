@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeTest.java,v 1.10 2009-08-05 09:09:40 veiming Exp $
+ * $Id: ApplicationTypeTest.java,v 1.11 2009-08-10 18:17:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -41,6 +41,7 @@ import org.testng.annotations.Test;
 
 public class ApplicationTypeTest {
     private static final String APPL_NAME = "ApplicationTypeTestApp";
+    private static final String DESC = "doh";
     private Subject adminSubject;
 
     @BeforeClass
@@ -56,6 +57,7 @@ public class ApplicationTypeTest {
         resources.add("http://*");
         appl.addResources(resources);
         appl.setEntitlementCombiner(DenyOverride.class);
+        appl.setDescription(DESC);
         
         Set<String> subjects = new HashSet<String>();
         subjects.add("com.sun.identity.admin.model.OrViewSubject");
@@ -125,6 +127,12 @@ public class ApplicationTypeTest {
         if (!subjects.contains("com.sun.identity.admin.model.OrViewSubject")) {
             throw new Exception(
                 "ApplicationTypeTest.testApplication, subject test fails");
+        }
+
+        String desc = app.getDescription();
+        if ((desc == null) || !desc.equals(DESC)) {
+            throw new Exception(
+                "ApplicationTypeTest.testApplication, description test fails");
         }
     }
 }
