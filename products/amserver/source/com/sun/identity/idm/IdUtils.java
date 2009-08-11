@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.30 2009-01-28 05:34:59 ww203982 Exp $
+ * $Id: IdUtils.java,v 1.31 2009-08-11 03:06:18 goodearth Exp $
  *
  */
 
@@ -582,6 +582,33 @@ public final class IdUtils {
                     orgAliases = sm.searchOrganizationNames(
                     IdConstants.REPO_SERVICE,
                     IdConstants.ORGANIZATION_ALIAS_ATTR, vals);
+                }
+                // Search for realms with orgIdentifier name
+                // This is to check nonexistent orgIdentifier.
+                if (!foundOrg && ((orgAliases != null) && 
+                    !orgAliases.isEmpty()) &&
+                    (!orgIdentifier.startsWith("http://") && 
+                     !orgIdentifier.startsWith("https://")) || 
+                     (orgIdentifier.indexOf("/UI/Login") < 0)) {
+                    try {
+                        OrganizationConfigManager newocm = 
+                            new OrganizationConfigManager(token, 
+                            orgIdentifier);
+                    } catch (SMSException smse) {
+                        // debug message here.
+                        if (debug.messageEnabled()) {
+                            debug.message("IdUtils.getOrganization " +
+                                "Exception in getting realm name from"
+                                + " the configuration store", smse);
+                        }
+                        ocm.removeAttributeValues(
+                            IdConstants.REPO_SERVICE, 
+                            IdConstants.ORGANIZATION_ALIAS_ATTR, 
+                            vals);
+                        Object[] args = { orgIdentifier };
+                        throw new IdRepoException(
+                            IdRepoBundle.BUNDLE_NAME, "401", args);
+                    }
                 }
                 if (!foundOrg &&
                     ((orgAliases == null) || orgAliases.isEmpty())) {
