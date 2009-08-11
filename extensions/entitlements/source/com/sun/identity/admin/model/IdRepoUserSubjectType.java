@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoUserSubjectType.java,v 1.4 2009-06-04 11:49:15 veiming Exp $
+ * $Id: IdRepoUserSubjectType.java,v 1.5 2009-08-11 00:56:30 hengming Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.dao.SubjectDao;
-import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.EntitlementSubject;
+import com.sun.identity.entitlement.opensso.OpenSSOUserSubject;
 import java.io.Serializable;
 
 public class IdRepoUserSubjectType
@@ -44,8 +44,8 @@ public class IdRepoUserSubjectType
     }
 
     public ViewSubject newViewSubject(EntitlementSubject es, SubjectFactory stf) {
-        assert(es instanceof IdRepoUserSubject);
-        IdRepoUserSubject us = (IdRepoUserSubject)es;
+        assert(es instanceof OpenSSOUserSubject);
+        OpenSSOUserSubject us = (OpenSSOUserSubject)es;
 
         IdRepoUserViewSubject idus = (IdRepoUserViewSubject)newViewSubject();
         idus.setName(us.getID());

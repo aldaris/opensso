@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLPrivilegeUtils.java,v 1.3 2009-06-22 10:14:35 veiming Exp $
+ * $Id: XACMLPrivilegeUtils.java,v 1.4 2009-08-11 00:59:10 hengming Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -30,13 +30,13 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.EntitlementSubject;
-import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ResourceAttribute;
 
 import com.sun.identity.entitlement.UserSubject;
 
+import com.sun.identity.entitlement.opensso.OpenSSOUserSubject;
 import com.sun.identity.entitlement.opensso.XACMLOpenSSOPrivilege;
 import com.sun.identity.entitlement.xacml3.core.AllOf;
 import com.sun.identity.entitlement.xacml3.core.Apply;
@@ -698,8 +698,8 @@ public class XACMLPrivilegeUtils {
 
         //TODO: fix properly
         String user1 = "id=user11,ou=user," + ServiceManager.getBaseDN();
-        EntitlementSubject es = new IdRepoUserSubject();
-        ((IdRepoUserSubject)es).setID(user1);
+        EntitlementSubject es = new OpenSSOUserSubject();
+        ((OpenSSOUserSubject)es).setID(user1);
 
         EntitlementCondition ec = null;
 

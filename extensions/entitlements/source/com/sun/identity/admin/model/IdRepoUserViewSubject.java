@@ -22,20 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoUserViewSubject.java,v 1.9 2009-07-31 21:53:48 farble1670 Exp $
+ * $Id: IdRepoUserViewSubject.java,v 1.10 2009-08-11 00:56:30 hengming Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.EntitlementSubject;
+import com.sun.identity.entitlement.opensso.OpenSSOUserSubject;
 
 public class IdRepoUserViewSubject extends IdRepoViewSubject {
     private String employeeNumber;
     private String sn;
 
     public EntitlementSubject getEntitlementSubject() {
-        IdRepoUserSubject idus = new IdRepoUserSubject();
+        OpenSSOUserSubject idus = new OpenSSOUserSubject();
         idus.setID(getName());
 
         return idus;

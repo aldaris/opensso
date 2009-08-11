@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.7 2009-06-22 10:14:36 veiming Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.8 2009-08-11 01:00:43 hengming Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -31,7 +31,6 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.IPCondition;
-import com.sun.identity.entitlement.IdRepoUserSubject;
 import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.Privilege;
@@ -39,6 +38,7 @@ import com.sun.identity.entitlement.ResourceAttribute;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserAttributes;
 import com.sun.identity.entitlement.UserSubject;
+import com.sun.identity.entitlement.opensso.OpenSSOUserSubject;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.unittest.UnittestLog;
 import java.util.HashMap;
@@ -89,9 +89,9 @@ public class PrivilegeUtilsTest {
 
         String user11 = "id=user11,ou=user," + ServiceManager.getBaseDN();
         String user12 = "id=user12,ou=user," + ServiceManager.getBaseDN();
-        UserSubject ua1 = new IdRepoUserSubject();
+        UserSubject ua1 = new OpenSSOUserSubject();
         ua1.setID(user11);
-        UserSubject ua2 = new IdRepoUserSubject();
+        UserSubject ua2 = new OpenSSOUserSubject();
         ua2.setID(user12);
         Set<EntitlementSubject> subjects = new HashSet<EntitlementSubject>();
         subjects.add(ua1);

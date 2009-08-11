@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOSubjectAttributesCollector.java,v 1.9 2009-06-24 08:33:49 veiming Exp $
+ * $Id: OpenSSOSubjectAttributesCollector.java,v 1.10 2009-08-11 00:58:42 hengming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -39,6 +39,7 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.ldap.LDAPDN;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.SMSException;
@@ -121,7 +122,7 @@ public class OpenSSOSubjectAttributesCollector
             AMIdentity amid = new AMIdentity(adminToken, uuid);
 
             Set<String> set = new HashSet<String>(2);
-            set.add(uuid);
+            set.add(getIDWithoutOrgName(amid));
             results.put(NAMESPACE_IDENTITY, set);
 
             Set<String> primitiveAttrNames = getAttributeNames(attrNames,
@@ -311,4 +312,15 @@ public class OpenSSOSubjectAttributesCollector
         }
     }
 
+    /**
+     * Returns the universal identifier of this object without organization
+     * name.
+     * 
+     * @return String representing the universal identifier of this object
+     *     without organization name.
+     */
+    protected static String getIDWithoutOrgName(AMIdentity amidentity) {
+        return ("id=" + LDAPDN.escapeValue(amidentity.getName()) + ",ou=" +
+            amidentity.getType().getName());
+    }
 }
