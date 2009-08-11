@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOConfigurator.java,v 1.3 2009-08-04 18:47:45 goodearth Exp $
+ * $Id: OpenSSOConfigurator.java,v 1.4 2009-08-11 23:50:42 goodearth Exp $
  */
 
 package com.sun.identity.setup;
@@ -186,7 +186,8 @@ public class OpenSSOConfigurator {
                 }
             } else {
                 System.out.println(rb.getString("configFailed"));
-                if (userStoreType.equals("LDAPv3ForADDC")) {
+                if ((userStoreType != null) && 
+                    (userStoreType.equals("LDAPv3ForADDC"))) {
                     System.out.println(rb.getString("cannot.connect.to.UM.datastore"));
                 }
             }
