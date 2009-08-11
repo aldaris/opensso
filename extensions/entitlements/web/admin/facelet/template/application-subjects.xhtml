@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-subjects.xhtml,v 1.2 2009-08-04 19:41:57 farble1670 Exp $
+   $Id: application-subjects.xhtml,v 1.3 2009-08-11 14:18:52 farble1670 Exp $
 
 -->
 
@@ -50,21 +50,45 @@
                 <ice:selectManyCheckbox
                     id="subject-types"
                     layout="spread"
-                    partialSubmit="false"
                     value="#{subjectsBean.subjectTypeNames}">
                     <f:selectItems
                         value="#{subjectFactory.subjectTypeNameItems}"/>
                 </ice:selectManyCheckbox>
                 <ice:panelGrid
-                    styleClass="application-subjects"
-                    columns="3">
-                    <c:forEach
-                        var="subjectType"
-                        items="#{subjectFactory.subjectTypes}" >
-                        <ice:checkbox
-                            for="subject-types"
-                            index="#{o:indexOf(subjectFactory.subjectTypes,subjectType)}"/>
-                    </c:forEach>
+                    columns="2"
+                    columnClasses="types-column,types-column">
+                    <ice:panelGroup>
+                        <ice:outputLabel
+                            value="#{resources['application-subjects.subjectTypes']}"/>
+                        <ice:panelGrid
+                            styleClass="application-subjects"
+                            columns="3">
+                            <c:forEach
+                                var="subjectType"
+                                items="#{subjectFactory.subjectTypes}" >
+                                <ice:checkbox
+                                    rendered="#{!subjectType.expression}"
+                                    for="subject-types"
+                                    index="#{o:indexOf(subjectFactory.subjectTypes,subjectType)}"/>
+                            </c:forEach>
+                        </ice:panelGrid>
+                    </ice:panelGroup>
+                    <ice:panelGroup>
+                        <ice:outputLabel
+                            value="#{resources['application-subjects.expressions']}"/>
+                        <ice:panelGrid
+                            styleClass="application-subjects"
+                            columns="3">
+                            <c:forEach
+                                var="subjectType"
+                                items="#{subjectFactory.subjectTypes}" >
+                                <ice:checkbox
+                                    rendered="#{subjectType.expression}"
+                                    for="subject-types"
+                                    index="#{o:indexOf(subjectFactory.subjectTypes,subjectType)}"/>
+                            </c:forEach>
+                        </ice:panelGrid>
+                        </ice:panelGroup>
                 </ice:panelGrid>
             </ice:panelGroup>
         </ui:define>
