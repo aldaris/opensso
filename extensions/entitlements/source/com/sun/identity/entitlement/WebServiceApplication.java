@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceApplication.java,v 1.1 2009-08-11 12:47:18 veiming Exp $
+ * $Id: WebServiceApplication.java,v 1.2 2009-08-11 21:04:23 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -31,7 +31,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -122,15 +124,16 @@ public class WebServiceApplication extends Application {
     private void initialize(WSDLParser parser) throws EntitlementException {
         Set<String> actions = parser.getOperationNames();
         if (actions != null) {
+            Map<String, Boolean> actionMap = new HashMap<String, Boolean>();
             for (String a : actions) {
-                super.addAction(a, true);
+                actionMap.put(a, true);
             }
+            super.setActions(actionMap);
         }
 
         Set<String> resources = parser.getResources();
         if (resources != null) {
             Set<String> res = new HashSet<String>();
-
             for (String r : resources) {
                 if (!r.endsWith("/")) {
                     r += "/";
@@ -138,7 +141,7 @@ public class WebServiceApplication extends Application {
                 r += "*";
                 res.add(r);
             }
-            addResources(res);
+            setResources(res);
         }
     }
 }
