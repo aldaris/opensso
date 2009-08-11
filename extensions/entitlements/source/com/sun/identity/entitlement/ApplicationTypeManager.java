@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeManager.java,v 1.12 2009-06-12 00:02:33 veiming Exp $
+ * $Id: ApplicationTypeManager.java,v 1.13 2009-08-11 12:46:00 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -42,6 +42,8 @@ public final class ApplicationTypeManager {
         "iPlanetAMWebAgentService";
     public static final String DELEGATION_APPLICATION_TYPE_NAME =
         "sunAMDelegationService";
+    public static final String WEB_SERVICE_APPLICATION_TYPE_NAME =
+        "webservices";
     
     /**
      * Returns application type names.

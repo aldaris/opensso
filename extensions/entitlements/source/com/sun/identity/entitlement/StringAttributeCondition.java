@@ -22,12 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringAttributeCondition.java,v 1.2 2009-08-07 23:18:53 veiming Exp $
+ * $Id: StringAttributeCondition.java,v 1.3 2009-08-11 12:46:00 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -126,6 +128,17 @@ public class StringAttributeCondition extends EntitlementConditionAdaptor {
                 "StringAttributeCondition cannot be evaluated because either attribute name or value is null"
                 , null);
         }
+
+        if (!allowed && (attributeName != null) && (attributeName.length() > 0)
+        ) {
+            Map<String, Set<String>> advices =
+                new HashMap<String, Set<String>>();
+            Set<String> set = new HashSet<String>();
+            set.add(attributeName);
+            advices.put(getClass().getName(), set);
+            return new ConditionDecision(false, advices);
+        }
+        
         return new ConditionDecision(allowed, Collections.EMPTY_MAP);
     }
 

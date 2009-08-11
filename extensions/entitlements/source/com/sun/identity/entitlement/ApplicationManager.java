@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.20 2009-06-21 09:25:32 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.21 2009-08-11 12:46:00 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -30,6 +30,8 @@ import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.policy.ResourceMatch;
 import com.sun.identity.shared.ldap.util.DN;
 import com.sun.identity.sm.DNMapper;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -301,5 +303,41 @@ public final class ApplicationManager {
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             adminSubject, realm);
         return pis.getReferredResources(applicationTypeName);
+    }
+
+    /**
+     * Creates an application.
+     *
+     * @param realm Realm name.
+     * @param name Name of application.
+     * @param applicationType application type.
+     * @throws EntitlementException if application class is not found.
+     */
+    public static Application newApplication(
+        String realm,
+        String name,
+        ApplicationType applicationType
+    ) throws EntitlementException {
+        Class clazz = applicationType.getApplicationClass();
+        Class[] parameterTypes = {String.class, String.class,
+            ApplicationType.class};
+        Constructor constructor;
+        try {
+            constructor = clazz.getConstructor(parameterTypes);
+            Object[] parameters = {realm, name, applicationType};
+            return (Application) constructor.newInstance(parameters);
+        } catch (NoSuchMethodException ex) {
+            throw new EntitlementException(6, ex);
+        } catch (SecurityException ex) {
+            throw new EntitlementException(6, ex);
+        } catch (InstantiationException ex) {
+            throw new EntitlementException(6, ex);
+        } catch (IllegalAccessException ex) {
+            throw new EntitlementException(6, ex);
+        } catch (IllegalArgumentException ex) {
+            throw new EntitlementException(6, ex);
+        } catch (InvocationTargetException ex) {
+            throw new EntitlementException(6, ex);
+        }
     }
 }

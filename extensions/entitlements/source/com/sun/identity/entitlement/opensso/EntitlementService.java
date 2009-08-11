@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.32 2009-08-10 18:17:18 veiming Exp $
+ * $Id: EntitlementService.java,v 1.33 2009-08-11 12:46:00 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -30,6 +30,7 @@ package com.sun.identity.entitlement.opensso;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.Application;
+import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.ApplicationType;
 import com.sun.identity.entitlement.ApplicationTypeManager;
 import com.sun.identity.entitlement.EntitlementConfiguration;
@@ -85,6 +86,7 @@ public class EntitlementService extends EntitlementConfiguration {
         "migratedtoentitlementservice";
     private static final String XACML_PRIVILEGE_ENABLED =
         "xacml-privilege-enabled";
+    private static final String APPLICATION_CLASSNAME = "applicationClassName";
 
     private String realm;
     private static SSOToken adminToken =
@@ -395,6 +397,12 @@ public class EntitlementService extends EntitlementConfiguration {
                     "EntitlementService.getApplications, admin token is missing",
                     null);
             }
+        } catch (EntitlementException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplications", ex);
+        } catch (ClassCastException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getApplications", ex);
         } catch (InstantiationException ex) {
             PrivilegeManager.debug.error(
                 "EntitlementService.getApplications", ex);
@@ -880,22 +888,28 @@ public class EntitlementService extends EntitlementConfiguration {
             CONFIG_RESOURCE_COMP_IMPL);
         Class resComp =
             ApplicationTypeManager.getResourceComparator(resourceComp);
+        String applicationClassName = getAttribute(data,APPLICATION_CLASSNAME);
 
-        return new ApplicationType(name, actions, searchIndex, saveIndex,
-            resComp);
+        ApplicationType appType = new ApplicationType(name, actions,
+            searchIndex, saveIndex, resComp);
+        if (applicationClassName != null) {
+            appType.setApplicationClassName(applicationClassName);
+        }
+        return appType;
     }
     
     private Application createApplication(
         String realm,
         String name,
         Map<String, Set<String>> data
-    ) throws InstantiationException, IllegalAccessException {
+    ) throws InstantiationException, IllegalAccessException,
+        EntitlementException {
         String applicationType = getAttribute(data,
             CONFIG_APPLICATIONTYPE);
-
         ApplicationType appType = ApplicationTypeManager.getAppplicationType(
             getAdminSubject(), applicationType);
-        Application app = new Application(realm, name, appType);
+        Application app = ApplicationManager.newApplication(realm, name,
+            appType);
 
         Map<String, Boolean> actions = getActions(data);
         if (actions != null) {
@@ -986,6 +1000,9 @@ public class EntitlementService extends EntitlementConfiguration {
                     return app.getAttributeNames();
                 }
             }
+        } catch (EntitlementException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getSubjectAttributeNames", ex);
         } catch (InstantiationException ex) {
             PrivilegeManager.debug.error(
                 "EntitlementService.getSubjectAttributeNames", ex);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationType.java,v 1.10 2009-07-06 19:34:17 veiming Exp $
+ * $Id: ApplicationType.java,v 1.11 2009-08-11 12:46:00 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -43,6 +43,7 @@ public final class ApplicationType {
     private ResourceName resourceCompInstance;
     private ISaveIndex saveIndexInstance;
     private ISearchIndex searchIndexInstance;
+    private String applicationClassName;
 
     /**
      * Constructs an instance.
@@ -69,6 +70,42 @@ public final class ApplicationType {
         Class resourceCompClass = (resourceComp == null) ?
             URLResourceName.class : resourceComp;
         resourceCompInstance = (ResourceName)resourceCompClass.newInstance();
+    }
+
+    /**
+     * Sets application class name.
+     *
+     * @param applicationClassName Application class name.
+     */
+    public void setApplicationClassName(String applicationClassName) {
+        this.applicationClassName = applicationClassName;
+    }
+
+    /**
+     * Returns application class name.
+     *
+     * @return application class name.
+     */
+    public String getApplicationClassName() {
+        return applicationClassName;
+    }
+
+    /**
+     * Returns application class
+     *
+     * @return application class
+     */
+    public Class getApplicationClass()
+        throws EntitlementException {
+        if ((applicationClassName == null) ||
+            (applicationClassName.length() == 0)) {
+            return Application.class;
+        }
+        try {
+            return Class.forName(applicationClassName);
+        } catch (ClassNotFoundException ex) {
+            throw new EntitlementException(6, ex);
+        }
     }
 
     /**

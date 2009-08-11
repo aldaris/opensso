@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteApplicationsTest.java,v 1.1 2009-06-12 00:02:35 veiming Exp $
+ * $Id: DeleteApplicationsTest.java,v 1.2 2009-08-11 12:46:01 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso.cli;
@@ -50,7 +50,7 @@ public class DeleteApplicationsTest extends CLITestImpl {
     @Override
     public void setup() throws Exception {
         super.setup();
-        Application appl = new Application("/", APPL_NAME,
+        Application appl = ApplicationManager.newApplication("/", APPL_NAME,
             ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
 

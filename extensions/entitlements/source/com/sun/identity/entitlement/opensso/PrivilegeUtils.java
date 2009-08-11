@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.41 2009-07-27 21:03:20 hengming Exp $
+ * $Id: PrivilegeUtils.java,v 1.42 2009-08-11 12:46:00 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -887,21 +887,34 @@ public class PrivilegeUtils {
         if (actionValues == null) {
             return null;
         }
-        ServiceType st = svcTypeManager.getServiceType(serviceName);
+
+        ServiceType serviceType = null;
+        try {
+            serviceType = svcTypeManager.getServiceType(serviceName);
+        } catch (NameNotFoundException e) {
+            //ignore
+        }
+
         Map av = new HashMap();
         Set<String> keySet = actionValues.keySet();
         for (String action : keySet) {
             try {
-                ActionSchema as = st.getActionSchema(action);
-                String trueValue = as.getTrueValue();
-                String falseValue = as.getFalseValue();
-                Boolean value = actionValues.get(action);
                 Set values = new HashSet();
-                if (value.equals(Boolean.TRUE)) {
-                    values.add(trueValue);
+                Boolean value = actionValues.get(action);
+
+                if (serviceType != null) {
+                    ActionSchema as = serviceType.getActionSchema(action);
+                    String trueValue = as.getTrueValue();
+                    String falseValue = as.getFalseValue();
+                    if (value.equals(Boolean.TRUE)) {
+                        values.add(trueValue);
+                    } else {
+                        values.add(falseValue);
+                    }
                 } else {
-                    values.add(falseValue);
+                    values.add(value.toString());
                 }
+
                 av.put(action, values);
             } catch (InvalidNameException e) {
                 Boolean value = actionValues.get(action);
@@ -918,7 +931,16 @@ public class PrivilegeUtils {
         if (actionValues == null) {
             return null;
         }
-        ServiceType st = svcTypeManager.getServiceType(serviceName);
+
+        ServiceType serviceType = null;
+        if (serviceName != null) {
+            try {
+                serviceType = svcTypeManager.getServiceType(serviceName);
+            } catch (NameNotFoundException e) {
+                //ignore
+            }
+        }
+
         Map av = new HashMap();
         Set keySet = (Set) actionValues.keySet();
         for (Object actionObj : keySet) {
@@ -928,24 +950,32 @@ public class PrivilegeUtils {
             if ((values == null) || values.isEmpty()) {
                 av.put(action, Boolean.FALSE);
             } else {
-                try {
-                    ActionSchema as = st.getActionSchema(action);
-                    if (as.getSyntax().equals(AttributeSchema.Syntax.BOOLEAN)) {
-                        String trueValue = as.getTrueValue();
+                if (serviceType != null) {
+                    try {
+                        ActionSchema as = serviceType.getActionSchema(action);
+                        if (as.getSyntax().equals(
+                            AttributeSchema.Syntax.BOOLEAN)) {
+                            String trueValue = as.getTrueValue();
 
-                        if (values.contains(trueValue)) {
-                            av.put(action, Boolean.TRUE);
+                            if (values.contains(trueValue)) {
+                                av.put(action, Boolean.TRUE);
+                            } else {
+                                av.put(action, Boolean.FALSE);
+                            }
                         } else {
-                            av.put(action, Boolean.FALSE);
+                            // Append action value to action name
+                            String value = values.iterator().next().toString();
+                            av.put(action + "_" + value, Boolean.TRUE);
                         }
-                    } else {
-                        // Append action value to action name
-                        String value = values.iterator().next().toString();
-                        av.put(action + "_" + value, Boolean.TRUE);
+                    } catch (InvalidNameException e) {
+                        av.put(action, Boolean.parseBoolean(
+                            (String) values.iterator().next()));
                     }
-                } catch (InvalidNameException e) {
-                    av.put(action, Boolean.parseBoolean(
-                        (String)values.iterator().next()));
+                } else {
+                    if (!values.isEmpty()) {
+                        av.put(action, Boolean.parseBoolean(
+                            (String)values.iterator().next()));
+                    }
                 }
             }
 

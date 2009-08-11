@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: banking.xml,v 1.2 2009-05-14 21:32:23 farble1670 Exp $
+    $Id: banking.xml,v 1.3 2009-08-11 12:46:02 veiming Exp $
 
 -->
 
@@ -41,7 +41,7 @@
                 <AttributeSchema name="serviceObjectClasses"
                     type="list"
                     syntax="string"
-		    i18nKey="">
+                    i18nKey="">
                     <DefaultValues>
                         <Value>banking-service</Value>
                     </DefaultValues>
@@ -51,7 +51,7 @@
             <Policy>
                 <AttributeSchema name="TRANSFER"
                     type="single"
-        		    syntax="boolean"
+                    syntax="boolean"
                     uitype="radio"
                     i18nKey="">
                     <IsResourceNameAllowed/>

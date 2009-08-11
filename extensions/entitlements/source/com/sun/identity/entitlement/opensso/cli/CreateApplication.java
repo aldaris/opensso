@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateApplication.java,v 1.1 2009-06-12 00:02:33 veiming Exp $
+ * $Id: CreateApplication.java,v 1.2 2009-08-11 12:46:01 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso.cli;
@@ -73,9 +73,11 @@ public class CreateApplication extends ApplicationImpl {
         String[] params = {realm, appName};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
             "ATTEMPT_CREATE_APPLICATION", params);
-        Application appl = new Application(realm, appName, applicationType);
         try {
-            setApplicationAttributes(appl, attributeValues, true);
+            Application appl = ApplicationManager.newApplication(realm,
+                appName, applicationType);
+            setApplicationAttributes(appl, attributeValues,
+                true);
             ApplicationManager.saveApplication(getAdminSubject(), realm, appl);
             String[] param = {appName};
             getOutputWriter().printlnMessage(

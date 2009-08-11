@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestListener.java,v 1.7 2009-08-06 22:45:12 dillidorai Exp $
+ * $Id: TestListener.java,v 1.8 2009-08-11 12:46:02 veiming Exp $
  */
 
 package com.sun.identity.unittest;
@@ -79,7 +79,7 @@ public class TestListener implements ITestListener {
             }
             UnittestLog.logMessage("END STACTRACE");
         } else {
-                UnittestLog.logMessage("No Exception Stacktrace:");
+            UnittestLog.logMessage("No Exception Stacktrace:");
         }
     }
     
