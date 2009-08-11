@@ -22,32 +22,71 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagents-jax-ws-zip,v 1.4 2009-07-31 20:49:43 mrudul_uchil Exp $
+   $Id: README.wssagents-jax-ws-zip,v 1.5 2009-08-11 07:14:42 mrudul_uchil Exp $
 
 -->
 
-I) OpenSSO Web Services Security Agents (based on JAX-WS Handlers) - Zip file :
+Contents:
+    (I)  OpenSSO Web Services Security Agents ZIP Structure
+    (II) Securing a Web Service With OpenSSO Web Services Security Agents
+    (III)OpenSSO Server Configuration
+    (IV) Pre-Deployment container specific tasks
+    (V)  Samples for Testing
+
+
+(I) OpenSSO Web Services Security Agents (based on JAX-WS Handlers) - Zip file :
 
 openssowssagents.zip
-             |____ lib/openssoclientsdk.jar (complete OpenSSO clientsdk jar)
-             |____ lib/openssowssagents.jar (complete WSS Agents jar)
-             |____ lib/xmlsec.jar (XML Security library jar)
-             |____ config/AMConfig.properties (complete OpenSSO client properties)
-             |____ config/client_handlers.xml (JAX-WS Handlers configuration file for Client)
-             |____ config/server_handlers.xml (JAX-WS Handlers configuration file for Server)
-             |____ resources/keystore.jks (client keystore file)
-             |____ resources/.keypass (password file for key)
-             |____ resources/.storepass (password file for keystore)
-             |____ README (this file)
-             |____ license.txt
-             |____ samples/* (WSC/WSP samples using WSS Agents)
+|____ lib/openssoclientsdk.jar (complete OpenSSO clientsdk jar)
+|____ lib/openssowssagents.jar (complete WSS Agents jar)
+|____ lib/xmlsec.jar (XML Security library jar)
+|____ config/AMConfig.properties (complete OpenSSO client properties)
+|____ config/client_handlers.xml (JAX-WS Handlers configuration file for Client)
+|____ config/server_handlers.xml (JAX-WS Handlers configuration file for Server)
+|____ resources/keystore.jks (client keystore file)
+|____ resources/.keypass (password file for key)
+|____ resources/.storepass (password file for keystore)
+|____ README (this file)
+|____ license.txt
+|____ samples/* (WSC/WSP samples using WSS Agents)
 
 
-II) Securing a Web Service With OpenSSO Web Services Security Agents (openssowssagents.zip) :
+(II) Securing a Web Service With OpenSSO Web Services Security Agents
+    (openssowssagents.zip) :
+
+    The following diagram depicts a simple deployment scenario where the
+    Web Service communication between any WSC and WSP is secured using OpenSSO
+    WSS Agents and profiles of WSC and WSP (agents) are all hosted on a single
+    OpenSSO server instance.
+
+     JAX-WS Compliant Container 1       JAX-WS Compliant Container 2
+           _______________                   ________________
+          |       |       |                  |       |       |
+          |       |       |                  |       |       |
+          |       |       |                  |  WSS  |       |
+          |  WSC  | WSS   |                  | Agent | WSP   |
+          |       | Agent |<---------------->|       |       |
+          |       |       |                  |       |       |
+          |       |       |<---------------->|       |       |
+          |_______|_______|   |      |       |_______|_______|
+                              |      |
+               Machine 1      |      |           Machine 2
+                            __V______V_
+                            |          |
+                            |          | Machine 3
+                            | OpenSSO  |
+                            |(WSC,WSP  |
+                            | Profiles)|
+                            |__________|
+
 
 A) OpenSSO Client and Keystore configuration :
-1) copy resources/* to some dir (e.g. @KEYSTORE_LOCATION@ )
+1) copy resources/keystore.jks, resources/.keypass and resources/.storepass
+   to some dir (e.g. @KEYSTORE_LOCATION@ )
 2) Update config/AMConfig.properties for the following properties
+
+   Note : These properties are at the top of the file, under heading
+   "Following properties need to be updated for OpenSSO WSS Agents".
 
 com.iplanet.services.debug.directory=@DEBUG_DIR@
 com.iplanet.am.naming.url=@SERVER_PROTOCOL@://@SERVER_HOST@:@SERVER_PORT@/@DEPLOY_URI@/namingservice
@@ -60,11 +99,14 @@ com.sun.identity.saml.xmlsig.keystore=@KEYSTORE_LOCATION@/keystore.jks
 com.sun.identity.saml.xmlsig.storepass=@KEYSTORE_LOCATION@/.storepass
 com.sun.identity.saml.xmlsig.keypass=@KEYSTORE_LOCATION@/.keypass
 
-Note : @SERVER_PROTOCOL@, @SERVER_HOST@, @SERVER_PORT@ and @DEPLOY_URI@ are the
-OpenSSO server's protocol, host, port and deploy URI. This is the OpenSSO server
-to which OpenSSO client SDK talks to, for WSS agents profiles / configurations.
+   Note : @SERVER_PROTOCOL@, @SERVER_HOST@, @SERVER_PORT@ and @DEPLOY_URI@ are
+   the OpenSSO server's protocol, host, port and deploy URI. This is the OpenSSO
+   server to which OpenSSO client SDK talks to, for WSS agents profiles.
+   @KEYSTORE_LOCATION@ is the directory created at step (1) above.
 
-B) Web Service Provider application modifications :
+B) If you have any existing Web Service Provider application, then follow this
+   section for Web Service Provider application modifications, else follow
+   section (V) to try out included sample applications :
 1) unwar unsecured Web Service Provider war file
 2) copy lib/*.jar files to WEB-INF/lib
 (create "lib" dir under "WEB-INF" dir, if it does not exist already)
@@ -79,7 +121,9 @@ this config/server_handlers.xml file into existing handlers xml file in such a w
 is the first handler in the handler-chain.
 5) now war secured Web Service Provider war file and deploy it on your favorite container
 
-C) Web Service Client application modifications :
+C) If you have any existing Web Service Client application, then follow this
+   section for Web Service Client application modifications, else follow
+   section (V) to try out included sample applications :
 1) unwar unsecured Web Service Client war file
 2) copy lib/*.jar files to WEB-INF/lib
 (create "lib" dir under "WEB-INF" dir, if it does not exist already)
@@ -104,9 +148,10 @@ is the first handler in the handler-chain.
 6) now war secured Web Service Client war file and deploy it on your favorite container
 
 
-III) OpenSSO Server Configuration :
+(III) OpenSSO Server Configuration :
 
-    Login into the OpenSSO Console with user amadmin and <amadmin password>
+    Login into the OpenSSO Console with user amadmin and <amadmin password>,
+    invoking following URL
 
     openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
 
@@ -123,30 +168,15 @@ III) OpenSSO Server Configuration :
     B) Configuring profiles for Web Service Client and Web Service Provider
 
     Create agent profiles for Web Service Client and Web Service Provider
-    Note : If you do not create these profiles then out of box created profiles will be used for
-           Web Service Client (out of box profile as "wsc") and
+    Note : If you do not create these profiles then out of box created profiles 
+           will be used for Web Service Client (out of box profile as "wsc") and
            Web Service Provider (out of box profile as "wsp").
 
         Go to Access Control -> Default realm -> Agents ->
 
-        1) Create "WSC" profile
-        Select Web Service Client -> under Agent, click "new" -> 
-        Enter name as Service Name (Service Name from the Service WSDL)
-        and other required fields and click Save.
-
-        Click on above saved profile to edit ->
-        Select required Security Mechanism.
-        Check "Preserve Security Headers in Message" as true.
-        Check "Is Request Signed" as true.
-        Enter "Web Service End Point" as your Web Service End Point URL.
-        Save changes.
-
-        Note : If the required or selected Security Mechanism is "STSSecurity", then
-               select STS Configuration as "SecurityTokenService".
-
-        2) Create "WSP" profile
+        1) Create "WSP" profile
         Select Web Service Provider -> under Agent, click "new" ->
-        Enter name as your Web Service End Point URL
+        Enter profile name as your Web Service End Point URL
         and other required fields and click Save.
 
         Click on above saved profile to edit ->
@@ -156,6 +186,21 @@ III) OpenSSO Server Configuration :
         Enter "Web Service End Point" as your Web Service End Point URL.
         Save changes.
 
+        2) Create "WSC" profile
+        Select Web Service Client -> under Agent, click "new" -> 
+        Enter profile name as Service Name (Service Name from the Service WSDL)
+        and other required fields and click Save.
+
+        Click on above saved profile to edit ->
+        Select required Security Mechanism.
+        Check "Preserve Security Headers in Message" as true.
+        Check "Is Request Signed" as true.
+        Enter "Web Service End Point" as your Web Service End Point URL.
+        Save changes.
+
+        Note : If the required or selected Security Mechanism is "STSSecurity", 
+               then select STS Configuration as "SecurityTokenService".
+
         3) Update "Agent Authenticator" profile
         Select Agent Authenticator -> under Agent, click on "agentAuth" ->
         Under "Agent Profiles allowed to Read",
@@ -163,11 +208,127 @@ III) OpenSSO Server Configuration :
         from "Available" list in order to add them to be in "Selected" list.
         Save changes.
 
-    Logout of OpenSSO Administration console.
+    Logout of OpenSSO Administration console and Restart the container.
 
 
-IV) Samples for Testing :
+(IV) Pre-Deployment container specific tasks :
+
+    Only Jboss and Tomcat containers need pre-deployment tasks with respect to
+    making them JAX-WS aware.
+    Rest of the containers support JAX-WS out of box, hence they do not need
+    any pre-deployment tasks.
+
+    A) JBoss 5.x
+        1) To make JBoss 5.x JAX-WS aware, download JBossWS, the JBoss Web
+           Services stack (Metro/Apache CXF version 3.1.1.GA).
+           The version of JBossWS needed depends on the version of JBoss
+           Application Server that you are running.
+        2) To install the stack downloaded in the previous step, unzip the
+           downloaded file and modify the file ant.properties.example by
+           providing the JBOSS_HOME value based on the version of JBoss you
+           are using. All the other values can be left to default. Save the
+           file as ant.properties in the same location.
+        3) Run the ant target deploy-jbossxxx where xxx is the version of JBoss.
+           For example, if you are using JBoss 5.0.0.GA, the command would be:
+           ant deploy-jboss500
+           Refer to the JBoss website for detailed installation instructions.
+
+    B) Tomcat 6.x
+        1) To make Tomcat 6.x JAX-WS aware, edit the <TOMCAT_HOME>/conf/
+           catalina.properties file and set the shared.loader property as shown:
+
+           shared.loader=<jaxws_install_location>/lib/*.jar
+
+           If you are running multiple instances of Tomcat, then edit
+           <CATALINA_BASE>/conf/catalina.properties for that particular instance.
+
+        2) Building Web Service Provider Application (If you have any existing
+           Web Service Provider application)
+
+           2.1 Because Tomcat is a Web Container (not a Java EE container) and
+               does not support JSR 109 service endpoint, the JAX-WS service WAR
+               (WSP application) deployed in Tomcat needs a special deployment
+               descriptor which defines a set of "endpoints". Each endpoint
+               represents a web particular published JAX-WS Web Service, and
+               includes information about the implementation class, URL pattern,
+               and (optionally) other technical details such as the WSDL service
+               and port. This descriptor file is the XML file named sun-jaxws.xml
+               and you need to place this file in your WEB-INF directory.
+               For example, the sun-jaxws.xml file looks like this:
+
+               <?xml version="1.0" encoding="UTF-8"?>
+               <endpoints xmlns='http://java.sun.com/xml/ns/jax-ws/ri/runtime' version='2.0'>
+                   <endpoint name='StockQuote'
+                   implementation='com.sun.stockquote.StockQuoteImpl'
+                   url-pattern='/StockService'/>
+               </endpoints>
+
+           2.2 The Web Service servlet in the web.xml file of Web Service 
+               Provider Application needs to be configured to the
+               com.sun.xml.ws.transport.http.servlet.WSServlet class from
+               JAX-WS Reference implementation that comes with JAX-WS libraries
+               after download and install of JAX-WS RI.
+               For example, the web.xml file looks like :
+
+                <?xml version="1.0" encoding="UTF-8"?>
+                <web-app version="2.5"
+                         xmlns="http://java.sun.com/xml/ns/javaee"
+                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                         http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+                <listener>
+                    <listener-class>
+                        com.sun.xml.ws.transport.http.servlet.WSServletContextListener
+                    </listener-class>
+                </listener>
+                <servlet>
+                    <servlet-name>StockService</servlet-name>
+                    <servlet-class>
+                        com.sun.xml.ws.transport.http.servlet.WSServlet
+                    </servlet-class>
+                </servlet>
+                <servlet-mapping>
+                    <servlet-name>StockService</servlet-name>
+                    <url-pattern>/StockService</url-pattern>
+                </servlet-mapping>
+                <session-config>
+                    <session-timeout>30</session-timeout>
+                </session-config>
+                </web-app>
+
+        3) Building Web Service Client Application (If you have any existing
+           Web Service Client application)
+
+           3.1 The @WebServiceRef and @HandlerChain annotations are not supported
+               by Tomcat and hence, the web service reference and jax-ws handler
+               chain needs to be invoked programmatically by making the required
+               changes to the implementation class.
+               For example, the Client implementation class needs to have
+               invocations like this :
+
+               URL wsdlLocation = null;
+               try {
+                    wsdlLocation = new URL("http://localhost:8080/StockService/" +
+                            "StockService?wsdl");
+               } catch (Exception e) {
+                    System.out.println(e.toString());
+               }
+               QName serviceName = new QName("http://sun.com/stockquote.wsdl",
+                        "StockService");
+               Service service = Service.create(wsdlLocation, serviceName);
+               StockQuote port = service.getPort(StockQuote.class);
+
+               BindingProvider bindingProvider = (BindingProvider)port;
+               List<Handler> handlerChain = new ArrayList<Handler>();
+               handlerChain.add(new com.sun.identity.wssagents.jaxws.client.ClientHandler());
+               handlerChain.add(new com.sun.stockquote.LogClientHandler());
+               bindingProvider.getBinding().setHandlerChain(handlerChain);
+
+
+(V) Samples for Testing :
 
     Follow samples/README file to test included Web Service Client and
     Web Service Provider sample applications with securing Web Service request /
     response between them using OpenSSO WSS agents.
+
+

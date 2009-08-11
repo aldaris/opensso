@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2009-08-07 05:13:27 Kamna Exp $
+   $Id: build.xml,v 1.3 2009-08-11 07:14:44 mrudul_uchil Exp $
 
 -->
 
@@ -80,6 +80,37 @@
 		<copy todir="web/WEB-INF">
 			<fileset dir="build/"/>
 		</copy>
+	</target>
+
+    <!-- Copy all Tomcat specific files to the "web" folder to be included in the WAR-->
+	<target name="tomcat-build">
+		<copy file="../etc/Tomcat/StockService/sun-jaxws.xml"
+              todir="web/WEB-INF" />
+
+		<copy file="../etc/Tomcat/StockService/web.xml"
+              todir="web/WEB-INF" overwrite="true"/>
+	</target>
+
+    <!-- Delete all Tomcat specific files from the "web" folder-->
+	<target name="tomcat-clean">
+		<delete file="web/WEB-INF/sun-jaxws.xml"/>
+
+		<copy file="../etc/config/StockService/web_orig.xml"
+              tofile="web/WEB-INF/web.xml" overwrite="true"/>
+	</target>
+
+    <!--Create the unsecure WAR file for the Stock Service for Tomcat deployment-->
+	<target name="tomcat-war">
+        <antcall target="tomcat-build" />
+		<antcall target="war" />
+        <antcall target="tomcat-clean" />
+	</target>
+
+	<!--Create the secure WAR file for the Stock Service for Tomcat deployment-->
+	<target name="tomcat-secure-war">
+        <antcall target="tomcat-build" />
+		<antcall target="secure-war" />
+        <antcall target="tomcat-clean" />
 	</target>
 
 	<!--Create the unsecure WAR file for the Stock Service -->
@@ -140,6 +171,10 @@
                                              security"/>
 		<echo message=" secure-war         : Creates the deployable WAR with
                                              security"/>
+        <echo message=" tomcat-war         : Creates the deployable WAR with no
+                                             security for Tomcat container"/>
+		<echo message=" tomcat-secure-war  : Creates the deployable WAR with
+                                             security for Tomcat container"/>
 		<echo message=" all                : Runs all the targets in the above
                                              order"/>
 		<echo message=" usage              : Displays this usage message"/>

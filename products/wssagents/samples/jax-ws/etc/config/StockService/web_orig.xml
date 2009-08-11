@@ -24,25 +24,23 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: client_handlers.xml,v 1.2 2009-08-11 07:14:47 mrudul_uchil Exp $
+   $Id: web_orig.xml,v 1.1 2009-08-11 07:14:47 mrudul_uchil Exp $
 
 -->
 
-<handler-chains xmlns="http://java.sun.com/xml/ns/javaee"
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-                javaee_web_services_1_2.xsd">
-    <handler-chain>
-        <protocol-bindings>##SOAP11_HTTP</protocol-bindings>
-        <handler>
-            <handler-name>ClientHandler</handler-name>
-            <handler-class>
-                    com.sun.identity.wssagents.jaxws.client.ClientHandler
-            </handler-class>
-        </handler>
-        <handler>
-            <handler-name>LogClientHandler</handler-name>
-            <handler-class>com.sun.stockquote.LogClientHandler</handler-class>
-        </handler>
-    </handler-chain>
-</handler-chains>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                             http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<servlet>  
+<servlet-name>StockService</servlet-name>  
+<servlet-class>com.sun.stockquote.StockQuoteImpl</servlet-class>  
+</servlet>  
+<servlet-mapping>  
+<servlet-name>StockService</servlet-name>  
+<url-pattern>/StockService</url-pattern>  
+</servlet-mapping>
+<session-config>  
+	<session-timeout>30</session-timeout>  
+</session-config>  
+</web-app> 

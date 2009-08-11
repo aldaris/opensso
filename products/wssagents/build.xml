@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.24 2009-07-27 21:43:52 mrudul_uchil Exp $
+   $Id: build.xml,v 1.25 2009-08-11 07:14:42 mrudul_uchil Exp $
 
 -->
 
@@ -211,63 +211,98 @@
             <fileset file="${wssagents.xml.dir}/jax-ws/*.xml" />
         </copy>
 
-        <copy file="${openfm.built.dir}/clientsamples/package/sdk/resources/AMConfig.properties.template" tofile="${zip.temp.dir}/config/AMConfig.properties" />
+        <copy file="${openfm.built.dir}/clientsamples/package/sdk/resources/AMConfig.properties.template" 
+              tofile="${zip.temp.dir}/config/AMConfig.properties.template" />
+
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="@DEBUG_LEVEL@"
             replace="message"/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="com.iplanet.am.sdk.caching.enabled=true"
             replace="com.iplanet.am.sdk.caching.enabled=false"/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="com.sun.identity.idm.cache.enabled=true"
             replace="com.sun.identity.idm.cache.enabled=false"/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="com.sun.identity.sm.cache.enabled=true"
             replace="com.sun.identity.sm.cache.enabled=false"/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
-            match="@NAMING_URL@"
-            replace="@SERVER_PROTOCOL@://@SERVER_HOST@:@SERVER_PORT@/@DEPLOY_URI@/namingservice"/>
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="com.iplanet.am.naming.url=@NAMING_URL@"
+            replace=""/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="@APPLICATION_USER@"
             replace="agentAuth"/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="@APPLICATION_PASSWD@"
             replace="changeit"/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="@ENCODED_APPLICATION_PASSWORD@"
             replace=""/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="@ENCRYPTION_KEY@"
             replace=""/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="@ENCRYPTION_KEY_LOCAL@"
             replace=""/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="@AM_COOKIE_NAME@"
             replace="iPlanetDirectoryPro"/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
-            match="com.sun.identity.saml.xmlsig.keystore=@BASE_DIR@"
-            replace="com.sun.identity.saml.xmlsig.keystore=@KEYSTORE_LOCATION@"/>
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="com.sun.identity.saml.xmlsig.keystore=@BASE_DIR@/keystore.jks"
+            replace=""/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
-            match="com.sun.identity.saml.xmlsig.storepass=@BASE_DIR@"
-            replace="com.sun.identity.saml.xmlsig.storepass=@KEYSTORE_LOCATION@"/>
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="com.sun.identity.saml.xmlsig.storepass=@BASE_DIR@/.storepass"
+            replace=""/>
         <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties"
-            match="com.sun.identity.saml.xmlsig.keypass=@BASE_DIR@"
-            replace="com.sun.identity.saml.xmlsig.keypass=@KEYSTORE_LOCATION@"/>
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="com.sun.identity.saml.xmlsig.keypass=@BASE_DIR@/.keypass"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="com.iplanet.services.debug.directory=@DEBUG_DIR@"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="com.sun.identity.loginurl=@SERVER_PROTOCOL@://@SERVER_HOST@:@SERVER_PORT@/@DEPLOY_URI@/UI/Login"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="com.iplanet.am.server.protocol=@SERVER_PROTOCOL@"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="com.iplanet.am.server.host=@SERVER_HOST@"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="com.iplanet.am.server.port=@SERVER_PORT@"
+            replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="com.iplanet.am.services.deploymentDescriptor=@DEPLOY_URI@"
+            replace=""/>
+
+        <java classname="com.sun.identity.setup.MergeClientConfig" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="${wssagents.config.res.dir}/WSSAgent_Client.properties" />
+            <arg value="${zip.temp.dir}/config/AMConfig.properties.template"/>
+            <arg value="${zip.temp.dir}/config/AMConfig.properties"/>
+        </java>
+
+        <delete file="${zip.temp.dir}/config/AMConfig.properties.template" />
 
         <copy todir="${zip.temp.dir}/resources">
             <fileset file="${openfm.clientsamples.dir}/war/keystore.jks" />
