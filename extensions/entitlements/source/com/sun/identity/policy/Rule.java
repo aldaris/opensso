@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.15 2009-08-11 12:46:01 veiming Exp $
+ * $Id: Rule.java,v 1.16 2009-08-11 23:11:37 veiming Exp $
  *
  */
 package com.sun.identity.policy;
@@ -340,6 +340,10 @@ public class Rule extends Object implements Cloneable {
             PolicyManager.debug.error("Unable to get admin SSO token" + ssoe);
             throw (new NameNotFoundException(ssoe,
                     serviceTypeName, PolicyException.SERVICE));
+        } catch (NameNotFoundException e) {
+            if (!PolicyManager.migratedToEntitlementService) {
+                throw e;
+            }
         }
     }
 

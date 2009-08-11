@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceApplicationTest.java,v 1.1 2009-08-11 12:47:18 veiming Exp $
+ * $Id: WebServiceApplicationTest.java,v 1.2 2009-08-11 23:11:37 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -66,10 +66,7 @@ public class WebServiceApplicationTest {
         InputStream is = null;
         try {
             is = new ByteArrayInputStream(WSDL.getBytes("UTF-8"));
-            wsAppl.initialize("file:///tmp/WSDL");
-        } catch (IOException ex) {
-            throw new Exception(
-                "WebServiceApplicationTest.setup cannot get WSDL input stream");
+            wsAppl.initialize(is);
         } finally {
             try {
                 if (is != null) {
@@ -94,6 +91,8 @@ public class WebServiceApplicationTest {
         privilege.setEntitlement(entitlement);
         privilege.setSubject(new AuthenticatedESubject());
         pm.addPrivilege(privilege);
+
+        Privilege p = pm.getPrivilege(POLICY_NAME);
     }
 
     @AfterClass
