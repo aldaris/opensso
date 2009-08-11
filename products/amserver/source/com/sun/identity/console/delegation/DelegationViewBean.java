@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationViewBean.java,v 1.3 2008-11-17 21:21:13 veiming Exp $
+ * $Id: DelegationViewBean.java,v 1.4 2009-08-11 18:17:09 asyhuang Exp $
  *
  */
 
@@ -137,7 +137,7 @@ public class DelegationViewBean
 
         setPageTitle(model, "page.title.delegation");
         tblModel.setTitle("table.delegation.title.name");
-        tblModel.setTitleLabel("table.delegation.title.name");
+        tblModel.setTitleLabel("table.delegation.summary");
         tblModel.setSummary("table.delegation.summary");
         getSubjects();
     }
