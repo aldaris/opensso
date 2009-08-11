@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.33 2009-08-11 12:46:00 veiming Exp $
+ * $Id: EntitlementService.java,v 1.34 2009-08-11 17:31:34 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -912,7 +912,7 @@ public class EntitlementService extends EntitlementConfiguration {
             appType);
 
         Map<String, Boolean> actions = getActions(data);
-        if (actions != null) {
+        if ((actions != null) && !actions.isEmpty()) {
             app.setActions(actions);
         }
 

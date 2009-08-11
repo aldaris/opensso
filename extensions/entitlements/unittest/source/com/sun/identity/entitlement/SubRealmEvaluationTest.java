@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubRealmEvaluationTest.java,v 1.2 2009-06-22 10:14:36 veiming Exp $
+ * $Id: SubRealmEvaluationTest.java,v 1.3 2009-08-11 17:31:34 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -30,6 +30,7 @@ package com.sun.identity.entitlement;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
+import com.sun.identity.entitlement.opensso.OpenSSOUserSubject;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -68,6 +69,7 @@ public class SubRealmEvaluationTest {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         adminSubject = SubjectUtils.createSubject(adminToken);
+
         Application appl = new Application("/", APPL_NAME,
             ApplicationTypeManager.getAppplicationType(adminSubject,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME));
@@ -112,8 +114,8 @@ public class SubRealmEvaluationTest {
         user1 = createUser(USER1_NAME);
         user2 = createUser(USER2_NAME);
         Set<EntitlementSubject> esSet = new HashSet<EntitlementSubject>();
-        EntitlementSubject es1 = new UserSubject(user1.getUniversalId());
-        EntitlementSubject es2 = new UserSubject(user2.getUniversalId());
+        EntitlementSubject es1 = new OpenSSOUserSubject(user1.getUniversalId());
+        EntitlementSubject es2 = new OpenSSOUserSubject(user2.getUniversalId());
         esSet.add(es1);
         esSet.add(es2);
 
@@ -127,13 +129,13 @@ public class SubRealmEvaluationTest {
     }
 
     @AfterClass
-    public void cleanup() throws Exception {
+    private void x() throws EntitlementException {
+        ApplicationManager.deleteApplication(adminSubject, "/", APPL_NAME);
+    }
+
+    private void removeOrganization() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        PrivilegeManager pm = PrivilegeManager.getInstance(SUB_REALM,
-            adminSubject);
-        pm.removePrivilege(PRIVILEGE1_NAME);
-
         ReferralPrivilegeManager mgr = new ReferralPrivilegeManager("/",
             adminSubject);
         mgr.delete(REFERRAL_NAME);
@@ -145,19 +147,35 @@ public class SubRealmEvaluationTest {
         identities.add(user2);
         amir.deleteIdentities(identities);
 
-        ApplicationManager.deleteApplication(adminSubject, "/", APPL_NAME);
-
         OrganizationConfigManager orgMgr = new OrganizationConfigManager(
             adminToken, "/");
         orgMgr.deleteSubOrganization(SUB_REALM, true);
     }
 
     @Test
-    public void postiveTest()
+    public void positiveTest()
         throws Exception {
         Thread.sleep(1000);
         if (!evaluate(URL1)) {
             throw new Exception("TestEvaluator.postiveTest failed");
+        }
+    }
+
+    @Test(dependsOnMethods = {"positiveTest"})
+    public void negativeTest()
+        throws Exception {
+        removeOrganization();
+        Thread.sleep(1000);
+
+        //this should return false since privileges are already deleted.
+        try {
+            if (evaluate(URL1)) {
+                throw new Exception("TestEvaluator.negativeTest failed");
+            }
+        } catch (EntitlementException e) {
+            if (e.getErrorCode() != 248) {
+                throw e;
+            }
         }
     }
 

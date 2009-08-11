@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOUserSubject.java,v 1.2 2009-08-11 00:58:42 hengming Exp $
+ * $Id: OpenSSOUserSubject.java,v 1.3 2009-08-11 17:31:34 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -79,6 +79,7 @@ public class OpenSSOUserSubject extends UserSubject {
      *
      * @return search index attributes.
      */
+    @Override
     public Map<String, Set<String>> getSearchIndexAttributes() {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
         Set<String> set = new HashSet<String>();
@@ -100,6 +101,7 @@ public class OpenSSOUserSubject extends UserSubject {
         return map;
     }
 
+    @Override
     protected boolean hasPrincipal(Subject subject, String uuid) {
         Set<Principal> userPrincipals = subject.getPrincipals();
         for (Principal p : userPrincipals) {
