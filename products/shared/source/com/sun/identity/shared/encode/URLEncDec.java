@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLEncDec.java,v 1.4 2009-02-03 17:29:52 veiming Exp $
+ * $Id: URLEncDec.java,v 1.5 2009-08-11 13:18:15 si224302 Exp $
  *
  */
 
@@ -441,12 +441,18 @@ public class URLEncDec {
     public static String encodeUrlPath(String u) throws MalformedURLException {
         URL url = new URL(u);
         String path = url.getPath();
-        String[] ps = path.split("/");
-        StringBuffer sb = new StringBuffer(u.length() + 20);
-        for (int i = 1; i < ps.length; i++) {
-            sb.append('/').append(encode(ps[i]));
+        if (path.length() != 0 && !path.equals("/")) {
+            String[] ps = path.split("/");
+            StringBuffer sb = new StringBuffer(u.length() + 20);
+            for (int i = 1; i < ps.length; i++) {
+                sb.append('/').append(encode(ps[i]));
+            }
+            // add '/' back if original path has it at the end
+            if (path.lastIndexOf('/') == (path.length() - 1)) {
+                sb.append('/');
+            }
+            u = u.replaceFirst(path, sb.toString());
         }
-        u = u.replaceFirst(path, sb.toString());
         return u;
     }
 }
