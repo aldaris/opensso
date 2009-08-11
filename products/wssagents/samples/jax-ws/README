@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: README,v 1.6 2009-08-11 07:14:43 mrudul_uchil Exp $
+ * $Id: README,v 1.7 2009-08-11 21:31:17 mrudul_uchil Exp $
  */
 
  %% Contents:
@@ -106,6 +106,9 @@ Assumption :
        <wssagents_unzip_location>/samples/jaxws.properties
        file for the Web Service Client and Web Service Provider.
 
+       For example, the value of "jaxws.lib" property would be:
+       jaxws.lib=<jaxws_install_location>/lib
+
    2.4 [Only for deployment on Tomcat container]
 
        To make Tomcat 6.x JAX-WS aware, edit the <TOMCAT_HOME>/conf/
@@ -144,7 +147,7 @@ Assumption :
        higher.
 
    3.2 cd <wssagents_unzip_location>/samples/StockClient
-       [If your deployment container is Tomcat, then first run "ant tomcat-build"]
+       If your deployment container is Tomcat, then first run "ant tomcat-build".
        The protocol, host and port number of the container where the
        StockService is deployed, will need to be changed in,
 	   src/com/sun/stockquote/GetQuote.java for "wsdlLocation".
@@ -176,7 +179,8 @@ Assumption :
        higher.
 
    4.3 cd <wssagents_unzip_location>/samples/StockClient
-       [If your deployment container is Tomcat, then first run "ant tomcat-secure-build"]
+       If your deployment container is Tomcat, then first run
+       "ant tomcat-secure-build".
        The protocol, host and port number of the container where the
        StockService is deployed, will need to be changed in,
 	   src/com/sun/stockquote/GetQuote.java for "wsdlLocation".

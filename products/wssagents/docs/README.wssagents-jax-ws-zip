@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagents-jax-ws-zip,v 1.5 2009-08-11 07:14:42 mrudul_uchil Exp $
+   $Id: README.wssagents-jax-ws-zip,v 1.6 2009-08-11 21:31:17 mrudul_uchil Exp $
 
 -->
 
@@ -108,8 +108,9 @@ B) If you have any existing Web Service Provider application, then follow this
    section for Web Service Provider application modifications, else follow
    section (V) to try out included sample applications :
 1) unwar unsecured Web Service Provider war file
-2) copy lib/*.jar files to WEB-INF/lib
-(create "lib" dir under "WEB-INF" dir, if it does not exist already)
+2) copy lib/openssoclientsdk.jar, lib/openssowssagents.jar and lib/xmlsec.jar
+   files to WEB-INF/lib
+   (create "lib" dir under "WEB-INF" dir, if it does not exist already)
 3) copy config/AMConfig.properties to WEB-INF/classes
 4) copy config/server_handlers.xml to WEB-INF/classes/../../.. at the .class file level
 Note : If Web Service Provider application already contains handlers xml file at this level, then merge
@@ -125,8 +126,9 @@ C) If you have any existing Web Service Client application, then follow this
    section for Web Service Client application modifications, else follow
    section (V) to try out included sample applications :
 1) unwar unsecured Web Service Client war file
-2) copy lib/*.jar files to WEB-INF/lib
-(create "lib" dir under "WEB-INF" dir, if it does not exist already)
+2) copy lib/openssoclientsdk.jar, lib/openssowssagents.jar and lib/xmlsec.jar
+   files to WEB-INF/lib
+   (create "lib" dir under "WEB-INF" dir, if it does not exist already)
 3) copy config/AMConfig.properties to WEB-INF/classes
 4) copy config/client_handlers.xml to WEB-INF/classes/../../.. at the .class file level
 Note : If Web Service Client application already contains handlers xml file at this level, then merge
