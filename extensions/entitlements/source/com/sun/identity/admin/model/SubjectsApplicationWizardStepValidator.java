@@ -12,8 +12,15 @@ public class SubjectsApplicationWizardStepValidator extends ApplicationWizardSte
     public boolean validate() {
         List<SubjectType> sts =
                 getApplicationWizardBean().getViewApplication().getSubjectTypes();
+        boolean set = false;
+        for (SubjectType st: sts) {
+            if (st.isExpression()) {
+                set = true;
+                break;
+            }
+        }
 
-        if (sts == null || sts.size() == 0) {
+        if (!set) {
             MessageBean mb = new MessageBean();
             Resources r = new Resources();
             mb.setSummary(r.getString(this, "noSubjectTypesSummary"));

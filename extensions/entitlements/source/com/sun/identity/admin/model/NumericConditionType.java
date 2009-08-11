@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NumericConditionType.java,v 1.1 2009-08-09 06:04:20 farble1670 Exp $
+ * $Id: NumericConditionType.java,v 1.2 2009-08-11 15:34:34 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -42,7 +42,6 @@ public class NumericConditionType
 
     private static final String DEFAULT_TEMPLATE = "/admin/facelet/template/condition-numeric.xhtml";
     private static final String DEFAULT_ICON = "../image/limit.png";
-    private static final String DEFAULT_I18NKEY = "condition-numeric.default";
 
     public Map<String,String> getParameters() {
         return parameters;
@@ -94,7 +93,6 @@ public class NumericConditionType
         }
     }
 
-    private String i18nKey;
     private Map<String,String> parameters = new HashMap<String,String>();
     private List<Operator> operators = new ArrayList<Operator>();
     private String attribute;
@@ -102,7 +100,6 @@ public class NumericConditionType
     public NumericConditionType() {
         setTemplate(DEFAULT_TEMPLATE);
         setConditionIconUri(DEFAULT_ICON);
-        setI18nKey(DEFAULT_I18NKEY);
     }
 
     public ViewCondition newViewCondition() {
@@ -128,14 +125,6 @@ public class NumericConditionType
         nvc.setOperator(op);
 
         return nvc;
-    }
-
-    public String getI18nKey() {
-        return i18nKey;
-    }
-
-    public void setI18nKey(String i18nKey) {
-        this.i18nKey = i18nKey;
     }
 
     public List<SelectItem> getOperatorItems() {

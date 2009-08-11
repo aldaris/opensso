@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.112 2009-08-11 00:59:47 hengming Exp $
+  $Id: faces-config.xml,v 1.113 2009-08-11 15:34:34 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1099,10 +1099,6 @@
             <value>lowerTransferLimit</value>
         </managed-property>
         <managed-property>
-            <property-name>i18nKey</property-name>
-            <value>condition-numeric.transferAmount</value>
-        </managed-property>
-        <managed-property>
             <property-name>operators</property-name>
             <property-class>java.util.ArrayList</property-class>
             <list-entries>
@@ -1112,7 +1108,7 @@
         </managed-property>
         <managed-property>
             <property-name>attribute</property-name>
-            <value>default</value>
+            <value>transferAmount</value>
         </managed-property>
         <managed-property>
             <property-name>parameters</property-name>
@@ -1136,10 +1132,6 @@
             <value>upperTransferLimit</value>
         </managed-property>
         <managed-property>
-            <property-name>i18nKey</property-name>
-            <value>condition-numeric.transferAmount</value>
-        </managed-property>
-        <managed-property>
             <property-name>operators</property-name>
             <property-class>java.util.ArrayList</property-class>
             <list-entries>
@@ -1149,7 +1141,7 @@
         </managed-property>
         <managed-property>
             <property-name>attribute</property-name>
-            <value>default</value>
+            <value>transferAmount</value>
         </managed-property>
         <managed-property>
             <property-name>parameters</property-name>
@@ -1173,10 +1165,6 @@
             <value>anyTransferLimit</value>
         </managed-property>
         <managed-property>
-            <property-name>i18nKey</property-name>
-            <value>condition-numeric.transferAmount</value>
-        </managed-property>
-        <managed-property>
             <property-name>operators</property-name>
             <property-class>java.util.ArrayList</property-class>
             <list-entries>
@@ -1190,7 +1178,7 @@
         </managed-property>
         <managed-property>
             <property-name>attribute</property-name>
-            <value>default</value>
+            <value>transferAmount</value>
         </managed-property>
         <managed-property>
             <property-name>parameters</property-name>

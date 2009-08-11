@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: condition-numeric.xhtml,v 1.1 2009-08-09 06:04:22 farble1670 Exp $
+   $Id: condition-numeric.xhtml,v 1.2 2009-08-11 15:34:34 farble1670 Exp $
 
 -->
 
@@ -40,7 +40,7 @@
             styleClass="inline-input"
             columns="3">
             <ice:outputLabel
-                value="#{resources[viewCondition.conditionType.i18nKey]}"/>
+                value="#{resources[o:concat('condition-numeric.',viewCondition.conditionType.attribute)]}"/>
             <ice:selectOneMenu
                 rendered="#{o:size(viewCondition.conditionType.operators) > 1}"
                 value="#{viewCondition.operator}">
