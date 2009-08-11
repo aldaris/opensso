@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.113 2009-08-11 15:34:34 farble1670 Exp $
+  $Id: faces-config.xml,v 1.114 2009-08-11 18:04:57 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1110,18 +1110,6 @@
             <property-name>attribute</property-name>
             <value>transferAmount</value>
         </managed-property>
-        <managed-property>
-            <property-name>parameters</property-name>
-            <property-class>java.util.HashMap</property-class>
-            <map-entries>
-                <key-class>java.lang.String</key-class>
-                <value-class>java.lang.String</value-class>
-                <map-entry>
-                    <key>foo</key>
-                    <value>bar</value>
-                </map-entry>
-            </map-entries>
-        </managed-property>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>upperTransferLimitConditionType</managed-bean-name>
@@ -1142,18 +1130,6 @@
         <managed-property>
             <property-name>attribute</property-name>
             <value>transferAmount</value>
-        </managed-property>
-        <managed-property>
-            <property-name>parameters</property-name>
-            <property-class>java.util.HashMap</property-class>
-            <map-entries>
-                <key-class>java.lang.String</key-class>
-                <value-class>java.lang.String</value-class>
-                <map-entry>
-                    <key>foo</key>
-                    <value>bar</value>
-                </map-entry>
-            </map-entries>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -1179,18 +1155,6 @@
         <managed-property>
             <property-name>attribute</property-name>
             <value>transferAmount</value>
-        </managed-property>
-        <managed-property>
-            <property-name>parameters</property-name>
-            <property-class>java.util.HashMap</property-class>
-            <map-entries>
-                <key-class>java.lang.String</key-class>
-                <value-class>java.lang.String</value-class>
-                <map-entry>
-                    <key>foo</key>
-                    <value>bar</value>
-                </map-entry>
-            </map-entries>
         </managed-property>
     </managed-bean>
     <managed-bean>

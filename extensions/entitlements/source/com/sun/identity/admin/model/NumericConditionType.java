@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NumericConditionType.java,v 1.2 2009-08-11 15:34:34 farble1670 Exp $
+ * $Id: NumericConditionType.java,v 1.3 2009-08-11 18:04:57 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -42,14 +42,6 @@ public class NumericConditionType
 
     private static final String DEFAULT_TEMPLATE = "/admin/facelet/template/condition-numeric.xhtml";
     private static final String DEFAULT_ICON = "../image/limit.png";
-
-    public Map<String,String> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(Map<String,String> parameters) {
-        this.parameters = parameters;
-    }
 
     public List<Operator> getOperators() {
         return operators;
@@ -93,7 +85,6 @@ public class NumericConditionType
         }
     }
 
-    private Map<String,String> parameters = new HashMap<String,String>();
     private List<Operator> operators = new ArrayList<Operator>();
     private String attribute;
 
