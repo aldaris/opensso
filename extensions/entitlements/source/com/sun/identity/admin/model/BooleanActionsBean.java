@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BooleanActionsBean.java,v 1.7 2009-08-05 14:37:15 farble1670 Exp $
+ * $Id: BooleanActionsBean.java,v 1.8 2009-08-11 15:06:17 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,8 +30,10 @@ package com.sun.identity.admin.model;
 import com.sun.identity.admin.DeepCloneableArrayList;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class BooleanActionsBean implements Serializable {
     private List<Action> actions = new ArrayList<Action>();
@@ -95,5 +97,14 @@ public class BooleanActionsBean implements Serializable {
     public void setActions(ViewApplication viewApplication) {
         getActions().clear();
         getActions().addAll(new DeepCloneableArrayList<Action>(viewApplication.getBooleanActionsBean().getActions()).deepClone());
+    }
+
+    public Map<String,Boolean> getActionMap() {
+        Map<String,Boolean> am = new HashMap<String,Boolean>();
+        for (Action a: actions) {
+            am.put(a.getName(), (Boolean)a.getValue());
+        }
+
+        return am;
     }
 }

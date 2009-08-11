@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardStep.java,v 1.3 2009-08-05 14:37:15 farble1670 Exp $
+ * $Id: ApplicationWizardStep.java,v 1.4 2009-08-11 15:06:17 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -44,8 +44,8 @@ public enum ApplicationWizardStep {
     private static final Map<Integer, ApplicationWizardStep> intValues = new HashMap<Integer, ApplicationWizardStep>() {
         {
             put(NAME.toInt(), NAME);
-            put(RESOURCES.toInt(), NAME);
-            put(SUBJECTS.toInt(), NAME);
+            put(RESOURCES.toInt(), RESOURCES);
+            put(SUBJECTS.toInt(), SUBJECTS);
             put(CONDITIONS.toInt(), CONDITIONS);
             put(ACTIONS.toInt(), ACTIONS);
             put(OVERRIDE.toInt(), OVERRIDE);
