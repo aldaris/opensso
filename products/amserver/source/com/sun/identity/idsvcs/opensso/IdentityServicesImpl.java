@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.16 2009-01-28 05:35:00 ww203982 Exp $
+ * $Id: IdentityServicesImpl.java,v 1.17 2009-08-12 23:21:50 weisun2 Exp $
  *
  */
 
@@ -385,7 +385,20 @@ public class IdentityServicesImpl
         UserDetails details = new UserDetails();
         try {
             SSOToken ssoToken = getSSOToken(subject);
-            
+            Map sessionAttributes = new HashMap();
+            Set s = null; 
+            if (attributeNames != null) {
+                String attrNext = null; 
+                String propertyNext = null;
+                for (Iterator attrIt = attributeNames.iterator();
+                     attrIt.hasNext();) {
+                     attrNext = (String) attrIt.next();
+                     propertyNext = ssoToken.getProperty(attrNext); 
+                     s = new HashSet(); 
+                     s.add(propertyNext);
+                     sessionAttributes.put(attrNext, s); 
+                }
+            } 
             // Obtain user memberships (roles and groups)
             AMIdentity userIdentity = IdUtils.getIdentity(ssoToken);
 
@@ -430,14 +443,31 @@ public class IdentityServicesImpl
             } else {
                 userAttributes = userIdentity.getAttributes();
             }
+            String name = null; 
+            Iterator it= null; 
+            Set value = null; 
+            if (userAttributes != null && sessionAttributes != null) {
+                for (it = sessionAttributes.keySet().iterator();
+                    it.hasNext();) {
+                    name = (String) it.next();
+                    value = (Set) sessionAttributes.get(name);
+                    if (userAttributes.keySet().contains(name)) {
+                       ((Set) userAttributes.get(name)).addAll(value); 
+                    } else {
+                        userAttributes.put(name,value); 
+                    }    
+                }
+            } else if (sessionAttributes != null) {
+                userAttributes = sessionAttributes;
+            }
             if (userAttributes != null) {
                 List attributes = new ArrayList(userAttributes.size());
-                for (Iterator it = userAttributes.keySet().iterator();
+                for (it = userAttributes.keySet().iterator();
                     it.hasNext();) {
                     Attribute attribute = new Attribute();
-                    String name = it.next().toString();
+                    name = it.next().toString();
                     attribute.setName(name);
-                    Set value = (Set) userAttributes.get(name);
+                    value = (Set) userAttributes.get(name);
                     List valueList = new ArrayList(value.size());
                     // Convert the set to a List of String
                     if (value != null) {
@@ -451,7 +481,7 @@ public class IdentityServicesImpl
                     }
                     String[] v = new String[valueList.size()];
                     attribute.setValues((String[]) valueList.toArray(v));
-                    attributes.add(attribute);
+                    attributes.add(attribute); 
                 }
                 Attribute[] a = new Attribute[attributes.size()];
                 details.setAttributes((Attribute[]) attributes.toArray(a));
