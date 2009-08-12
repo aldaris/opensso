@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-   $Id: ac-security.xml,v 1.4 2009-02-26 19:52:40 wstrange Exp $
+   $Id: ac-security.xml,v 1.5 2009-08-12 18:18:18 wstrange Exp $
 
 -->
 
@@ -34,9 +34,10 @@
                             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
 
 
-<!--
-    <security:global-method-security  jsr250-annotations="enabled"/>
--->
+    <!-- Allows us to access parameters in AMConfig.properties  -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+       <property name="location" value="classpath:AMConfig.properties" />
+   </bean>
 
     <bean id="filterChainProxy"
             class="org.springframework.security.util.FilterChainProxy">
@@ -114,8 +115,8 @@
         <property name="filterProcessesUrl" value="/j_spring_security_check"/>
     </bean>
     
-    <bean id="authenticationEntryPoint" class="com.sun.identity.provider.springsecurity.OpenSSOProcessingFilterEntryPoint">
-        <property name="loginUrl" value="http://opensso.my2do.com:8080/opensso/UI/Login"/>
+    <bean id="authenticationEntryPoint" class="com.sun.identity.provider.springsecurity.OpenSsoProcessingFilterEntryPoint">
+        <property name="loginUrl" value="${com.sun.identity.loginurl}"/>
         <property name="filterProcessesUrl" value="/j_spring_security_check"/>
     </bean>
     
