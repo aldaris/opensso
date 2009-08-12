@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.45 2009-04-07 22:55:14 beomsuk Exp $
+ * $Id: Constants.java,v 1.46 2009-08-12 17:43:04 beomsuk Exp $
  *
  */
 
@@ -511,7 +511,7 @@ public interface Constants {
      * System property name that is a list of package name prefixes is used to
      * resolve protocol names into actual handler class names. 
      */
-    String PROTOCOL_HANDLER = "java.protocol.handler.pkgs";
+    String PROTOCOL_HANDLER = "opensso.protocol.handler.pkgs";
 
     /**
      * The package name prefix for JSSE based protocol implementations.

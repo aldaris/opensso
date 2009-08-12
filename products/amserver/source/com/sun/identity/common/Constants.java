@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.15 2008-08-19 19:08:59 veiming Exp $
+ * $Id: Constants.java,v 1.16 2009-08-12 17:43:04 beomsuk Exp $
  *
  */
 
@@ -826,7 +826,7 @@ public interface Constants {
     /**
      * Property for Protocol Handler.
      */
-    public static final String PROTOCOL_HANDLER = "java.protocol.handler.pkgs";
+    public static final String PROTOCOL_HANDLER = "opensso.protocol.handler.pkgs";
 
     public static final String JSS_HANDLER = "com.iplanet.services.comm";
 

@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMDistAuthConfig.properties.template,v 1.5 2008-06-25 05:40:27 qcheng Exp $
+# $Id: AMDistAuthConfig.properties.template,v 1.6 2009-08-12 17:43:03 beomsuk Exp $
 #
 #
 
@@ -197,4 +197,13 @@ com.sun.identity.monitoring=off
 * Specify if allow to use cached data for HttpURLConnection
 */
 com.sun.identity.urlconnection.useCache=false
+
+/*
+ * Protocol handler pkg name for HTTPS protocol.
+ * Default value is none.
+ * Available impl classes are:
+ *   com.iplanet.services.comm (uses JSS)
+ *   com.sun.identity.protocol (pure Java)
+ */
+opensso.protocol.handler.pkgs=
 
