@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.46 2009-08-12 17:43:04 beomsuk Exp $
+ * $Id: Constants.java,v 1.47 2009-08-12 23:10:44 ericow Exp $
  *
  */
 
@@ -178,6 +178,11 @@ public interface Constants {
      * Property string for secure cookie.
      */
     String AM_COOKIE_SECURE = "com.iplanet.am.cookie.secure";
+
+    /**
+     * Property string for cookie httponly flag.
+     */
+    String AM_COOKIE_HTTPONLY = "com.sun.identity.cookie.httponly";
 
     /**
      * Property string for cookie encoding.

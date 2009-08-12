@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.33 2009-07-22 21:00:42 manish_rustagi Exp $
+ * $Id: AuthClientUtils.java,v 1.34 2009-08-12 23:06:16 ericow Exp $
  *
  */
 
@@ -77,7 +77,6 @@ import com.iplanet.services.cdm.Client;
 import com.iplanet.services.cdm.AuthClient;
 import com.iplanet.services.cdm.ClientsManager;
 import com.iplanet.services.util.Crypt;
-import com.iplanet.services.util.CookieUtils;
 import com.iplanet.services.naming.ServerEntryNotFoundException;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.services.util.Base64;
@@ -100,6 +99,7 @@ import com.sun.identity.common.RequestUtils;
 import com.sun.identity.common.ISLocaleContext;
 
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -454,10 +454,10 @@ public class AuthClientUtils {
                 for (Iterator it = domains.iterator(); it.hasNext(); ) {
                     String domain = (String)it.next();
                     Cookie cookie = createlbCookie(domain);
-                    response.addCookie(cookie);
+                    CookieUtils.addCookieToResponse(response, cookie);
                 }
             } else {
-                response.addCookie(createlbCookie(null));
+                CookieUtils.addCookieToResponse(response, createlbCookie(null));
             }
         }
     }
@@ -2450,10 +2450,11 @@ public class AuthClientUtils {
                     String domain = (String)it.next();
                     Cookie cookie = createCookie(cookieName, cookieValue,
                         domain);
-                    response.addCookie(cookie);
+                    CookieUtils.addCookieToResponse(response, cookie);
                 }
             } else {
-                response.addCookie(createCookie(cookieName,cookieValue,null));
+                CookieUtils.addCookieToResponse(response,
+                        createCookie(cookieName,cookieValue,null));
             }
         }
     } 
@@ -2478,10 +2479,11 @@ public class AuthClientUtils {
                     String domain = (String)it.next();
                     Cookie cookie = createCookie(cookieName, cookieValue,
                         domain);
-                    response.addCookie(cookie);
+                    CookieUtils.addCookieToResponse(response, cookie);
                 }
             } else {
-                response.addCookie(createCookie(cookieName,cookieValue,null));
+                CookieUtils.addCookieToResponse(response,
+                        createCookie(cookieName,cookieValue,null));
             }
         }
     }
@@ -2718,7 +2720,7 @@ public class AuthClientUtils {
             try {
                 Cookie cookie = createCookie(hostUrlCookieName,
                 hostUrlCookieValue, hostUrlCookieDomain);
-                response.addCookie(cookie);
+                CookieUtils.addCookieToResponse(response, cookie);
             } catch (Exception e) {
                 utilDebug.message("AuthClientUtils.setHostUrlCookie:", e);
             }

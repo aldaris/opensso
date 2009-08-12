@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.25 2009-01-17 02:08:50 higapa Exp $
+ * $Id: AuthUtils.java,v 1.26 2009-08-12 23:06:47 ericow Exp $
  *
  */
 
@@ -61,8 +61,6 @@ import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.Misc;
 import com.sun.identity.common.Constants;
 
-import com.iplanet.services.util.CookieUtils;
-
 import com.sun.identity.security.AdminTokenAction;
 
 import com.sun.identity.authentication.AuthContext;
@@ -79,6 +77,7 @@ import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.common.ResourceLookup;
 import com.sun.identity.common.Constants;
 
+import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceSchema;
@@ -712,10 +711,11 @@ public class AuthUtils extends AuthClientUtils {
                 for (Iterator it = domains.iterator(); it.hasNext(); ) {
                     String domain = (String)it.next();
                     Cookie cookie = createlbCookie(authContext, domain, false);
-                    response.addCookie(cookie);
+                    CookieUtils.addCookieToResponse(response, cookie);
                 }
             } else {
-                response.addCookie(createlbCookie(authContext, null, false));
+                CookieUtils.addCookieToResponse(response, 
+                        createlbCookie(authContext, null, false));
             }
         }
     }     

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieUtils.java,v 1.3 2008-06-25 05:53:02 qcheng Exp $
+ * $Id: CookieUtils.java,v 1.4 2009-08-12 23:10:44 ericow Exp $
  *
  */
 
@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Implements utility methods for handling Cookie.
@@ -45,6 +46,11 @@ public class CookieUtils {
     static boolean secureCookie = 
         (SystemPropertiesManager.get(Constants.AM_COOKIE_SECURE) != null) && 
         (SystemPropertiesManager.get(Constants.AM_COOKIE_SECURE).
+            equalsIgnoreCase("true"));
+
+    static boolean cookieHttpOnly = 
+        (SystemPropertiesManager.get(Constants.AM_COOKIE_HTTPONLY) != null) && 
+        (SystemPropertiesManager.get(Constants.AM_COOKIE_HTTPONLY).
             equalsIgnoreCase("true"));
 
     static boolean cookieEncoding = 
@@ -126,6 +132,15 @@ public class CookieUtils {
      */
     public static boolean isCookieSecure() {
         return secureCookie;
+    }
+
+    /**
+     * Returns property value of "com.iplanet.am.cookie.httponly"
+     * 
+     * @return the property value of "com.iplanet.am.cookie.httponly"
+     */
+    public static boolean isCookieHttpOnly() {
+        return cookieHttpOnly;
     }
 
     /**
@@ -334,5 +349,49 @@ public class CookieUtils {
             cookie = cookie.substring(1, last);
         }
         return cookie;
+    }
+
+    /**
+     * Add cookie to HttpServletResponse as custom header
+     * 
+     * @param HttpServletResponse object
+     * @param Cookie object
+     */
+    public static void addCookieToResponse(HttpServletResponse response,
+            Cookie cookie) {
+        if (cookie == null) {
+            return;
+        }
+        if (!isCookieHttpOnly()) {
+            response.addCookie(cookie);
+            return;
+        }
+
+        // Once JavaEE6 is available, the following code can be simplified
+        // to be one line response.addCookie(cookie)
+        StringBuffer sb = new StringBuffer(150);
+        sb.append(cookie.getName()).append("=").append(cookie.getValue());
+        String path = cookie.getPath();
+        if (path != null && path.length() > 0) {
+            sb.append(";path=").append(path);
+        } else {
+            sb.append(";path=/");
+        }
+        String domain = cookie.getDomain();
+        if (domain != null && domain.length() > 0) {
+            sb.append(";domain=").append(domain);
+        }
+        int age = cookie.getMaxAge();
+        if (age > -1) {
+            sb.append(";max-age=").append(age);
+        }
+        if (CookieUtils.isCookieSecure()) {
+            sb.append(";secure");
+        }
+        sb.append(";httponly");
+        if (debug.messageEnabled()) {
+            debug.message("CookieUtils:addCookieToResponse adds " + sb);
+        }
+        response.addHeader("SET-COOKIE", sb.toString());
     }
 }

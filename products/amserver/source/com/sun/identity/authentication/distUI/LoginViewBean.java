@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.31 2009-07-28 19:40:46 beomsuk Exp $
+ * $Id: LoginViewBean.java,v 1.32 2009-08-12 23:07:56 ericow Exp $
  *
  */
 
@@ -57,6 +57,7 @@ import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.locale.L10NMessage;
 import com.sun.identity.shared.locale.L10NMessageImpl;
 import java.util.ArrayList;
@@ -1539,7 +1540,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
 			cookie.setMaxAge(cookieTimeToLive);
 		    }
 		}
-                response.addCookie(cookie);
+                CookieUtils.addCookieToResponse(response, cookie);
             } catch (Exception e) {
                 loginDebug.message("Cound not set AM or AMAuth Cookie!");
             }
@@ -1562,7 +1563,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("cookie for new request : " + cookie);
                 }
-                response.addCookie(cookie);
+                CookieUtils.addCookieToResponse(response, cookie);
             }
         }
         if (ac.getStatus() == AuthContext.Status.SUCCESS) {

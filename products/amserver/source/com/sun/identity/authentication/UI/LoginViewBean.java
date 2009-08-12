@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.24 2009-07-01 21:09:16 qcheng Exp $
+ * $Id: LoginViewBean.java,v 1.25 2009-08-12 23:07:34 ericow Exp $
  *
  */
 
@@ -1713,7 +1713,7 @@ public class LoginViewBean extends AuthViewBeanBase {
 			cookie.setMaxAge(cookieTimeToLive);
 		    }
 		}
-                response.addCookie(cookie);
+                CookieUtils.addCookieToResponse(response, cookie);
                 if ((cookie.getName()).equals(AuthUtils.getCookieName())) {
                     AuthUtils.setHostUrlCookie(response);
                 }
@@ -1744,7 +1744,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                     loginDebug.message("cookie for new request : "
                     + cookie.toString());
                 }
-                response.addCookie(cookie);
+                CookieUtils.addCookieToResponse(response, cookie);
                 if ((cookie.getName()).equals(AuthUtils.getCookieName())) {
                     AuthUtils.setHostUrlCookie(response);
                 }
@@ -1886,7 +1886,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                     + cookie.toString());
                     loginDebug.message("Cookie domain is null.");
                 }
-                response.addCookie(cookie);
+                CookieUtils.addCookieToResponse(response, cookie);
             } catch (Exception e) {
                 loginDebug.message("Could not set Persistent Cookie!");
             }
@@ -1900,7 +1900,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                         loginDebug.message("cookie for new request : "
                         + cookie.toString());
                     }
-                    response.addCookie(cookie);
+                    CookieUtils.addCookieToResponse(response, cookie);
                 }
             } catch (Exception e) {
                 loginDebug.message("Could not set Persistent Cookie!");
