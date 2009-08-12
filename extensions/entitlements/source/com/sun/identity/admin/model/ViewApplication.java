@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.27 2009-08-11 15:06:17 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.28 2009-08-12 04:35:53 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,11 +31,11 @@ import com.sun.identity.admin.ListFormatter;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.Token;
+import com.sun.identity.admin.dao.ViewApplicationDao;
 import com.sun.identity.admin.handler.BooleanActionsHandler;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationType;
 import com.sun.identity.entitlement.ApplicationTypeManager;
-import com.sun.identity.entitlement.EntitlementException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -193,8 +193,7 @@ public class ViewApplication implements Serializable {
         Subject adminSubject = new Token().getAdminSubject();
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
 
-        ApplicationType appType = ApplicationTypeManager.getAppplicationType(adminSubject, viewApplicationType.getName());
-        Application app = new Application(realmBean.getName(), name, appType);
+        Application app = ViewApplicationDao.getInstance().newApplication(name, viewApplicationType);
         app.setDescription(description);
 
         // resources

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationDao.java,v 1.13 2009-08-05 14:37:15 farble1670 Exp $
+ * $Id: ViewApplicationDao.java,v 1.14 2009-08-12 04:35:52 farble1670 Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -35,6 +35,8 @@ import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewApplicationType;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
+import com.sun.identity.entitlement.ApplicationType;
+import com.sun.identity.entitlement.ApplicationTypeManager;
 import com.sun.identity.entitlement.EntitlementException;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -81,6 +83,23 @@ public class ViewApplicationDao implements Serializable {
         return viewApplications;
     }
 
+    public Application newApplication(String name, ViewApplicationType vat) {
+        String eApplicationTypeName = vat.getEntitlementApplicationType();
+        Token token = new Token();
+        Subject adminSubject = token.getAdminSubject();
+        String realm = RealmsBean.getInstance().getRealmBean().getName();
+        ApplicationType at = ApplicationTypeManager.getAppplicationType(adminSubject, eApplicationTypeName);
+        Application a;
+        try {
+            a = ApplicationManager.newApplication(realm, name, at);
+        } catch (EntitlementException ee) {
+            throw new AssertionError(ee);
+        }
+
+        return a;
+
+
+    }
     public boolean exists(ViewApplication va) {
         Token token = new Token();
         Subject adminSubject = token.getAdminSubject();

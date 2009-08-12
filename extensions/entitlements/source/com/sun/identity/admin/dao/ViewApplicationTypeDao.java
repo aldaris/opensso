@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationTypeDao.java,v 1.9 2009-07-22 20:32:17 farble1670 Exp $
+ * $Id: ViewApplicationTypeDao.java,v 1.10 2009-08-12 04:35:52 farble1670 Exp $
  */
-
 package com.sun.identity.admin.dao;
 
 import com.sun.identity.admin.ManagedBeanResolver;
@@ -42,16 +41,17 @@ import java.util.Map;
 import javax.security.auth.Subject;
 
 public class ViewApplicationTypeDao implements Serializable {
+
     public List<ViewApplicationType> getViewApplicationTypes() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        Map<String,ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String,ViewApplicationType>)mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
+        Map<String, ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String, ViewApplicationType>) mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
 
         Token token = new Token();
         Subject adminSubject = token.getAdminSubject();
 
         List<ViewApplicationType> viewApplicationTypes =
                 new ArrayList<ViewApplicationType>();
-        for (String entitlementApplicationType: entitlementApplicationTypeToViewApplicationTypeMap.keySet()) {
+        for (String entitlementApplicationType : entitlementApplicationTypeToViewApplicationTypeMap.keySet()) {
             ViewApplicationType vat =
                     entitlementApplicationTypeToViewApplicationTypeMap.get(entitlementApplicationType);
             ApplicationType at =
@@ -61,7 +61,7 @@ public class ViewApplicationTypeDao implements Serializable {
                 continue;
             }
             List<Action> actions = new ArrayList<Action>();
-            for (String actionName: at.getActions().keySet()) {
+            for (String actionName : at.getActions().keySet()) {
                 Boolean value = at.getActions().get(actionName);
                 BooleanAction ba = new BooleanAction();
                 ba.setName(actionName);
@@ -75,11 +75,20 @@ public class ViewApplicationTypeDao implements Serializable {
         return viewApplicationTypes;
     }
 
-    public Map<String,ViewApplicationType> getViewApplicationTypeMap() {
-        Map<String,ViewApplicationType> viewApplicationTypeMap =
-                new HashMap<String,ViewApplicationType>();
+    public ApplicationType getApplicationType(String entitlementApplicationType) {
+        Token token = new Token();
+        Subject adminSubject = token.getAdminSubject();
+        ApplicationType at =
+                ApplicationTypeManager.getAppplicationType(adminSubject, entitlementApplicationType);
+        assert (at != null);
+        return at;
+    }
 
-        for (ViewApplicationType vat: getViewApplicationTypes()) {
+    public Map<String, ViewApplicationType> getViewApplicationTypeMap() {
+        Map<String, ViewApplicationType> viewApplicationTypeMap =
+                new HashMap<String, ViewApplicationType>();
+
+        for (ViewApplicationType vat : getViewApplicationTypes()) {
             viewApplicationTypeMap.put(vat.getName(), vat);
         }
 
@@ -88,7 +97,7 @@ public class ViewApplicationTypeDao implements Serializable {
 
     public static ViewApplicationTypeDao getInstance() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
-        ViewApplicationTypeDao vatdao = (ViewApplicationTypeDao)mbr.resolve("viewApplicationTypeDao");
+        ViewApplicationTypeDao vatdao = (ViewApplicationTypeDao) mbr.resolve("viewApplicationTypeDao");
         return vatdao;
     }
 }

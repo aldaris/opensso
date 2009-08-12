@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.114 2009-08-11 18:04:57 farble1670 Exp $
+  $Id: faces-config.xml,v 1.115 2009-08-12 04:35:53 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -240,6 +240,31 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>webServiceViewApplicationType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ViewApplicationType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>webService</value>
+        </managed-property>
+        <managed-property>
+            <property-name>entitlementApplicationType</property-name>
+            <value>webservices</value>
+        </managed-property>
+        <managed-property>
+            <property-name>resourceTemplate</property-name>
+            <value>/admin/facelet/template/resources-web-service.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>applicationResourceTemplate</property-name>
+            <value>/admin/facelet/template/application-resources-web-service.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>resourceClassName</property-name>
+            <value>com.sun.identity.admin.model.UrlResource</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>personalProfileViewApplicationType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.ViewApplicationType</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
@@ -287,6 +312,10 @@
             <map-entry>
                 <key>#{personalProfileViewApplicationType.entitlementApplicationType}</key>
                 <value>#{personalProfileViewApplicationType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{webServiceViewApplicationType.entitlementApplicationType}</key>
+                <value>#{webServiceViewApplicationType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
@@ -1459,6 +1488,27 @@
         <managed-property>
             <property-name>messagesBean</property-name>
             <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- url application resource -->
+
+    <!-- web service application resources -->
+    <managed-bean>
+        <managed-bean-name>webServiceApplicationResourcesBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.WebServiceApplicationResourcesBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>webServiceApplicationResourcesHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.WebServiceApplicationResourcesHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>webServiceApplicationResourcesBean</property-name>
+            <value>#{webServiceApplicationResourcesBean}</value>
         </managed-property>
     </managed-bean>
     <!-- url application resource -->

@@ -14,7 +14,7 @@ public class SubjectsApplicationWizardStepValidator extends ApplicationWizardSte
                 getApplicationWizardBean().getViewApplication().getSubjectTypes();
         boolean set = false;
         for (SubjectType st: sts) {
-            if (st.isExpression()) {
+            if (!st.isExpression()) {
                 set = true;
                 break;
             }

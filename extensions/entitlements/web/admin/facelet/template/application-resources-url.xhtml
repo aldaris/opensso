@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-resources-url.xhtml,v 1.1 2009-08-04 18:50:47 farble1670 Exp $
+   $Id: application-resources-url.xhtml,v 1.2 2009-08-12 04:35:54 farble1670 Exp $
 
 -->
 
@@ -35,15 +35,15 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-    
+
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="#{resources['application-resources-url.sectionTitle']}"/>
+                value="#{resources[o:concat(resourcePrefix,'.sectionTitleUrl')]}"/>
         </ui:define>
         <ui:define name="section-details">
             <ice:outputText
-                value="#{resources['application-resources-url.sectionDescription']}"/>
+                value="#{resources[o:concat(resourcePrefix,'.sectionDescriptionUrl')]}"/>
         </ui:define>
         <ui:define name="section-body">
             <ice:panelSeries
@@ -51,39 +51,43 @@
                 value="#{resourcesBean.viewApplication.resources}">
                 <ice:panelGrid
                     styleClass="application-resource"
-                    columns="3">
+                    columns="2"
+                    columnClasses="label-column,input-column">
                     <ice:outputLabel
-                        value="URL"/>
-                    <ice:inputText
-                        size="64"
-                        value="#{urlResource.name}"/>
-                    <ice:commandLink
-                        actionListener="#{urlApplicationResourcesHandler.removeListener}"
-                        rendered="#{o:indexOf(resourcesBean.viewApplication.resources,urlResource) &lt; o:size(resourcesBean.viewApplication.resources)-1}"
-                        styleClass="command-link">
-                        <f:attribute
-                            name="viewApplication"
-                            value="#{resourcesBean.viewApplication}"/>
-                        <f:attribute
-                            name="urlResource"
-                            value="#{urlResource}"/>
-                        <ice:graphicImage
-                            value="../image/remove-16.png"/>
-                        <ice:outputText                          
-                            value="#{resources['application-resources-url.remove']}"/>
-                    </ice:commandLink>
-                    <ice:commandLink
-                        actionListener="#{urlApplicationResourcesHandler.addListener}"
-                        rendered="#{o:indexOf(resourcesBean.viewApplication.resources,urlResource) == o:size(resourcesBean.viewApplication.resources)-1}"
-                        styleClass="command-link">
-                        <f:attribute
-                            name="viewApplication"
-                            value="#{resourcesBean.viewApplication}"/>
-                        <ice:graphicImage
-                            value="../image/add-16.png"/>
-                        <ice:outputText
-                            value="#{resources['application-resources-url.add']}"/>
-                    </ice:commandLink>
+                        value="#{resources[o:concat(resourcePrefix,'.url')]}"/>
+                    <ice:panelGroup>
+                        <ice:inputText
+                            onkeyup="submitNow(this);"
+                            size="64"
+                            value="#{urlResource.name}"/>
+                        <ice:commandLink
+                            actionListener="#{urlApplicationResourcesHandler.removeListener}"
+                            rendered="#{o:indexOf(resourcesBean.viewApplication.resources,urlResource) &lt; o:size(resourcesBean.viewApplication.resources)-1}"
+                            styleClass="command-link">
+                            <f:attribute
+                                name="viewApplication"
+                                value="#{resourcesBean.viewApplication}"/>
+                            <f:attribute
+                                name="urlResource"
+                                value="#{urlResource}"/>
+                            <ice:graphicImage
+                                value="../image/remove-16.png"/>
+                            <ice:outputText
+                                value="#{resources[o:concat(resourcePrefix,'.remove')]}"/>
+                        </ice:commandLink>
+                        <ice:commandLink
+                            actionListener="#{urlApplicationResourcesHandler.addListener}"
+                            rendered="#{!(urlResource.name == null) &amp;&amp; o:indexOf(resourcesBean.viewApplication.resources,urlResource) &gt;= o:size(resourcesBean.viewApplication.resources)-1}"
+                            styleClass="command-link">
+                            <f:attribute
+                                name="viewApplication"
+                                value="#{resourcesBean.viewApplication}"/>
+                            <ice:graphicImage
+                                value="../image/add-16.png"/>
+                            <ice:outputText
+                                value="#{resources[o:concat(resourcePrefix,'.add')]}"/>
+                        </ice:commandLink>
+                    </ice:panelGroup>
                 </ice:panelGrid>
             </ice:panelSeries>
         </ui:define>
