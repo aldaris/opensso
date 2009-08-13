@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IpRangeConditionType.java,v 1.3 2009-08-09 06:04:20 farble1670 Exp $
+ * $Id: IpRangeConditionType.java,v 1.4 2009-08-13 16:55:04 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.model.IpRangeViewCondition.IpAddress;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.IPCondition;
 import java.io.Serializable;
@@ -46,22 +47,9 @@ public class IpRangeConditionType
         IPCondition ipc = (IPCondition)ec;
 
         IpRangeViewCondition ipvc = (IpRangeViewCondition)newViewCondition();
-        ipvc.setStartIp(parseIp(ipc.getStartIp()));
-        ipvc.setEndIp(parseIp(ipc.getEndIp()));
+        ipvc.setStartIp(new IpAddress(ipc.getStartIp()));
+        ipvc.setEndIp(new IpAddress(ipc.getEndIp()));
 
         return ipvc;
     }
-
-    private int[] parseIp(String ipString) {
-        String[] ips = ipString.split("\\.");
-        assert(ips.length == 4);
-
-        int[] ipi = new int[4];
-        for (int i = 0; i < 4; i++) {
-            ipi[i] = Integer.valueOf(ips[i]);
-        }
-
-        return ipi;
-    }
-
 }

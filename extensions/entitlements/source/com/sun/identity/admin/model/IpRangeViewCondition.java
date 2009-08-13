@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IpRangeViewCondition.java,v 1.3 2009-08-09 06:04:20 farble1670 Exp $
+ * $Id: IpRangeViewCondition.java,v 1.4 2009-08-13 16:55:04 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.EntitlementCondition;
@@ -32,45 +31,101 @@ import com.sun.identity.entitlement.IPCondition;
 import java.io.Serializable;
 
 public class IpRangeViewCondition
-    extends ViewCondition
-    implements Serializable {
+        extends ViewCondition
+        implements Serializable {
 
-    private int[] startIp = new int[4];
-    private int[] endIp = new int[4];
+    public IpAddress getStartIp() {
+        return startIp;
+    }
+
+    public void setStartIp(IpAddress startIp) {
+        this.startIp = startIp;
+    }
+
+    public IpAddress getEndIp() {
+        return endIp;
+    }
+
+    public void setEndIp(IpAddress endIp) {
+        this.endIp = endIp;
+    }
+
+    public static class IpAddress {
+
+        private Octet[] octets;
+
+        public static class Octet {
+
+            private int value;
+
+            public Octet(int value) {
+                this.value = value;
+            }
+
+            public int getValue() {
+                return value;
+            }
+
+            public void setValue(int value) {
+                this.value = value;
+            }
+
+            @Override
+            public String toString() {
+                return Integer.toString(value);
+            }
+        }
+
+        public IpAddress() {
+            Octet[] os = {new Octet(0), new Octet(0), new Octet(0), new Octet(0)};
+            octets = os;
+        }
+
+        public IpAddress(int o1, int o2, int o3, int o4) {
+            Octet[] os = {new Octet(o1), new Octet(o2), new Octet(o3), new Octet(o4)};
+            octets = os;
+        }
+
+        public IpAddress(String ipString) {
+            String[] ips = ipString.split("\\.");
+            assert (ips.length == 4);
+
+            Octet[] os = {new Octet(0), new Octet(0), new Octet(0), new Octet(0)};
+            octets = os;
+            for (int i = 0; i < 4; i++) {
+                octets[i].setValue(Integer.valueOf(ips[i]));
+            }
+        }
+
+        public Octet[] getOctets() {
+            return octets;
+        }
+
+        public void setOctets(Octet[] octets) {
+            this.octets = octets;
+        }
+
+        @Override
+        public String toString() {
+            String s = octets[0] + "." + octets[1] + "." + octets[2] + "." + octets[3];
+            return s;
+        }
+    }
+    private IpAddress startIp = new IpAddress(0, 0, 0, 0);
+    private IpAddress endIp = new IpAddress(255, 255, 255, 255);
 
     public EntitlementCondition getEntitlementCondition() {
         IPCondition ipc = new IPCondition();
         ipc.setDisplayType(getConditionType().getName());
 
-        ipc.setStartIp(getIpString(startIp));
-        ipc.setEndIp(getIpString(endIp));
+        ipc.setStartIp(getStartIp().toString());
+        ipc.setEndIp(getEndIp().toString());
 
         return ipc;
     }
 
-    private String getIpString(int[] parts) {
-        String s = parts[0]+"."+parts[1]+"."+parts[2]+"."+parts[3];
-        return s;
-    }
-
-    public int[] getEndIp() {
-        return endIp;
-    }
-
-    public void setEndIp(int[] endIp) {
-        this.endIp = endIp;
-    }
-
-    public int[] getStartIp() {
-        return startIp;
-    }
-
-    public void setStartIp(int[] startIp) {
-        this.startIp = startIp;
-    }
-
     @Override
     public String toString() {
-        return getTitle() + ":{" + getIpString(startIp) + ">" + getIpString(endIp) + "}";
+        return getTitle() + ":{" + getStartIp().toString() + ">" + getEndIp().toString() + "}";
     }
 }
