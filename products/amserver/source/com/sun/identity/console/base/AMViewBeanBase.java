@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.13 2009-03-16 17:17:06 babysunil Exp $
+ * $Id: AMViewBeanBase.java,v 1.14 2009-08-13 21:21:53 rajeevangal Exp $
  *
  */
 
@@ -90,6 +90,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.owasp.esapi.ESAPI;
 
 /**
  * This is the base class for all view beans in Console.
@@ -328,9 +329,10 @@ public abstract class AMViewBeanBase
         String message
     ) {
         CCAlertInline alert = (CCAlertInline)getChild(IALERT_COMMON);
+        org.owasp.esapi.Encoder enc = ESAPI.encoder();
         alert.setType(type);
-        alert.setSummary(title);
-        alert.setDetail(message);
+        alert.setSummary(enc.encodeForHTML(title));
+        alert.setDetail(enc.encodeForHTML(message));
     }
 
     /**
