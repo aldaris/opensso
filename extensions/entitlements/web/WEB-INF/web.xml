@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: web.xml,v 1.25 2009-08-06 14:44:01 farble1670 Exp $
+  $Id: web.xml,v 1.26 2009-08-13 13:27:01 farble1670 Exp $
 
 -->
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
@@ -56,12 +56,8 @@
         <param-value>server</param-value>
     </context-param>
     <context-param>
-        <param-name>com.sun.faces.enableRestoreView11Compatibility</param-name>
-        <param-value>true</param-value>
-    </context-param>
-    <context-param>
         <param-name>com.icesoft.faces.synchronousUpdate</param-name>
-        <param-value>true</param-value>
+        <param-value>false</param-value>
     </context-param>
     <context-param>
         <param-name>facelets.LIBRARIES</param-name>
@@ -154,6 +150,10 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>UploadServlet</servlet-name>
+        <servlet-class>com.sun.identity.admin.UploadServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PrivilegeXmlServlet</servlet-name>
         <url-pattern>/admin/pxml/*</url-pattern>
@@ -190,4 +190,8 @@
         <servlet-name>ws</servlet-name>
         <url-pattern>/ws/*</url-pattern>
     </servlet-mapping>
-</web-app>
+    <servlet-mapping>
+        <servlet-name>UploadServlet</servlet-name>
+        <url-pattern>/admin/upload/*</url-pattern>
+    </servlet-mapping>
+    </web-app>

@@ -22,15 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceApplicationResourcesBean.java,v 1.1 2009-08-12 04:35:53 farble1670 Exp $
+ * $Id: WebServiceApplicationResourcesBean.java,v 1.2 2009-08-13 13:27:00 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import java.io.File;
 import java.io.Serializable;
 
 public class WebServiceApplicationResourcesBean implements Serializable {
     private String wsdlUrl;
+    private File wsdlFile;
+    private String location = "remote";
 
     public String getWsdlUrl() {
         return wsdlUrl;
@@ -38,6 +41,22 @@ public class WebServiceApplicationResourcesBean implements Serializable {
 
     public void setWsdlUrl(String wsdlUrl) {
         this.wsdlUrl = wsdlUrl;
+    }
+
+    public File getWsdlFile() {
+        return wsdlFile;
+    }
+
+    public void setWsdlFile(File wsdlFile) {
+        this.wsdlFile = wsdlFile;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
 }

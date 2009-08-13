@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.108 2009-08-11 14:18:51 farble1670 Exp $
+* $Id: admin.css,v 1.109 2009-08-13 13:27:01 farble1670 Exp $
 *
 */
 
@@ -1360,6 +1360,10 @@ span.button img.left {
 
 .types-column * > table {
     padding-left: 10px;
+}
+
+
+.upload {
 }
 
 /*

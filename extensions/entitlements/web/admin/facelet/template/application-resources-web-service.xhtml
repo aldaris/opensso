@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-resources-web-service.xhtml,v 1.1 2009-08-12 04:35:54 farble1670 Exp $
+   $Id: application-resources-web-service.xhtml,v 1.2 2009-08-13 13:27:01 farble1670 Exp $
 -->
 
 <span
@@ -46,17 +46,34 @@
         </ui:define>
         <ui:define name="section-body">
             <ice:panelGrid
+                columns="2">
+                <ice:outputLabel
+                    for="wsdl-location-select"
+                    value="#{resources['application-resources-web-service.wsdlLocation']}"/>
+                <ice:selectOneRadio
+                    id="wsdl-location-select"
+                    value="#{webServiceApplicationResourcesBean.location}">
+                    <f:selectItem
+                        itemValue="local"
+                        itemLabel="Local"/>
+                    <f:selectItem
+                        itemValue="remote"
+                        itemLabel="Remote"/>
+                </ice:selectOneRadio>
+            </ice:panelGrid>
+            <ice:panelGrid
+                visible="#{webServiceApplicationResourcesBean.location == 'remote'}"
                 columns="3"
                 columnClasses="label-column,input-column,label-column">
                 <ice:panelGroup>
                     <ice:outputLabel
-                        for="wsdlInput"
-                        value="#{resources['application-resources-web-service.wsdl']}"/>
+                        for="wsdlUrlInput"
+                        value="#{resources['application-resources-web-service.wsdlUrl']}"/>
                 </ice:panelGroup>
                 <ice:panelGroup>
                     <ice:inputText
-                        id="wsdlInput"
-                        size="48"
+                        id="wsdlUrlInput"
+                        size="64"
                         value="#{webServiceApplicationResourcesBean.wsdlUrl}"
                         partialSubmit="false"/>
                     <ice:commandLink
@@ -67,11 +84,30 @@
                         <span
                             class="button">
                             <ice:outputText
-                                value="Import"/>
+                                value="#{resources['application-resources-web-service.import']}"/>
                         </span>
                     </ice:commandLink>
                 </ice:panelGroup>
-            </ice:panelGrid>                
+            </ice:panelGrid>
+            <ice:panelGrid
+                visible="#{webServiceApplicationResourcesBean.location == 'local'}"
+                columns="2"
+                columnClasses="label-column,input-column">
+                <ice:panelGroup>
+                    <ice:outputLabel
+                        for="wsdlInputFile"
+                        value="#{resources['application-resources-web-service.wsdlFile']}"/>
+                </ice:panelGroup>
+                <ice:panelGroup>
+                    <ice:inputFile
+                        styleClass="upload"
+                        actionListener="#{webServiceApplicationResourcesHandler.uploadListener}">
+                        <f:attribute
+                            name="viewApplication"
+                            value="#{resourcesBean.viewApplication}"/>
+                    </ice:inputFile>
+                </ice:panelGroup>
+            </ice:panelGrid>
         </ui:define>
     </o:section>
     <ui:include src="application-resources-url.xhtml">

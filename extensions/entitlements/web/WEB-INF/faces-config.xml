@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.115 2009-08-12 04:35:53 farble1670 Exp $
+  $Id: faces-config.xml,v 1.116 2009-08-13 13:27:01 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -2253,6 +2253,12 @@
             <property-name>steps</property-name>
             <value>4</value>
         </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>fileUploadBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.FileUploadBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <navigation-rule>

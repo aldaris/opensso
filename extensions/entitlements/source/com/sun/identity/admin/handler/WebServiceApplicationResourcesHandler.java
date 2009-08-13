@@ -22,15 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceApplicationResourcesHandler.java,v 1.1 2009-08-12 04:35:52 farble1670 Exp $
+ * $Id: WebServiceApplicationResourcesHandler.java,v 1.2 2009-08-13 13:27:00 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
+import com.icesoft.faces.component.inputfile.InputFile;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.ViewApplicationDao;
 import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
+import com.sun.identity.admin.model.PhaseEventAction;
+import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.UrlResource;
 import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewApplicationType;
@@ -38,11 +41,16 @@ import com.sun.identity.admin.model.WebServiceApplicationResourcesBean;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.WebServiceApplication;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Map;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.FacesEvent;
+import javax.faces.event.PhaseId;
 
 public class WebServiceApplicationResourcesHandler implements Serializable {
 
@@ -64,13 +72,64 @@ public class WebServiceApplicationResourcesHandler implements Serializable {
         this.messagesBean = messagesBean;
     }
 
+    public void uploadListener(ActionEvent event) {
+        InputFile inputFile = (InputFile) event.getComponent();
+        File wsdlFile = inputFile.getFileInfo().getFile();
+        webServiceApplicationResourcesBean.setWsdlFile(wsdlFile);
+
+        ViewApplication va = getViewApplication(event);
+        initWebServiceApplication(va);
+    }
+
     public void importListener(ActionEvent event) {
         ViewApplication va = getViewApplication(event);
+        initWebServiceApplication(va);
+    }
+
+    private void initWebServiceApplication(ViewApplication va) {
         ViewApplicationType vat = va.getViewApplicationType();
         Application a = ViewApplicationDao.getInstance().newApplication("dummy", vat);
-        WebServiceApplication wsa = (WebServiceApplication)a;
+        WebServiceApplication wsa = (WebServiceApplication) a;
         try {
-            wsa.initialize(webServiceApplicationResourcesBean.getWsdlUrl());
+            if (webServiceApplicationResourcesBean.getLocation().equals("remote")) {
+                wsa.initialize(webServiceApplicationResourcesBean.getWsdlUrl());
+            } else {
+                File wsdlFile = webServiceApplicationResourcesBean.getWsdlFile();
+                if (wsdlFile == null) {
+                    MessageBean mb = new MessageBean();
+                    Resources r = new Resources();
+                    mb.setSummary(r.getString(this, "noWsdlFileSummary"));
+                    mb.setDetail(r.getString(this, "noWsdlFileDetail"));
+                    mb.setSeverity(FacesMessage.SEVERITY_WARN);
+                    messagesBean.addMessageBean(mb);
+
+                    /*
+                    PhaseEventAction pea = new PhaseEventAction();
+                    pea.setDoBeforePhase(false);
+                    pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+                    pea.setAction("#{webServiceApplicationResourcesHandler.handleNoWsdlFile}");
+                    pea.setParameters(new Class[]{});
+                    pea.setArguments(new Object[]{});
+                    QueuedActionBean.getInstance().getPhaseEventActions().add(pea);
+                     */
+
+                    return;
+                }
+                InputStream is;
+                try {
+                    is = new FileInputStream(wsdlFile);
+                } catch (IOException ioe) {
+                    MessageBean mb = new MessageBean();
+                    Resources r = new Resources();
+                    mb.setSummary(r.getString(this, "invalidWsdlFileSummary", ioe.getMessage()));
+                    mb.setDetail(r.getString(this, "invalidWsdlFileDetail", ioe.getMessage()));
+                    mb.setSeverity(FacesMessage.SEVERITY_WARN);
+                    messagesBean.addMessageBean(mb);
+
+                    return;
+                }
+                wsa.initialize(is);
+            }
         } catch (EntitlementException ee) {
             MessageBean mb = new MessageBean();
             Resources r = new Resources();

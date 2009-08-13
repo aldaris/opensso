@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueuedActionBean.java,v 1.2 2009-06-04 11:49:16 veiming Exp $
+ * $Id: QueuedActionBean.java,v 1.3 2009-08-13 13:27:00 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.ManagedBeanResolver;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,5 +37,11 @@ public class QueuedActionBean implements Serializable {
 
     public List<PhaseEventAction> getPhaseEventActions() {
         return phaseEventActions;
+    }
+
+    public static QueuedActionBean getInstance() {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        QueuedActionBean qab = (QueuedActionBean)mbr.resolve("queuedActionBean");
+        return qab;
     }
 }
