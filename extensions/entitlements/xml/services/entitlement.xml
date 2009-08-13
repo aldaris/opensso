@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.38 2009-08-11 12:46:02 veiming Exp $
+   $Id: entitlement.xml,v 1.39 2009-08-13 19:02:03 farble1670 Exp $
 
 -->
 
@@ -622,8 +622,10 @@
                             <Value>daysOfWeek</Value>
                             <Value>timeRange</Value>
                             <Value>timezone</Value>
+                            <Value>ipRange</Value>
                             <Value>or</Value>
                             <Value>and</Value>
+                            <Value>not</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />
