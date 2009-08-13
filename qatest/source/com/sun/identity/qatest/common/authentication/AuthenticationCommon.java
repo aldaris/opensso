@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.14 2009-07-02 18:48:12 cmwesley Exp $
+ * $Id: AuthenticationCommon.java,v 1.15 2009-08-13 12:32:31 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,6 +108,7 @@ public class AuthenticationCommon extends TestCommon
         entering("createAuthInstancesMap", null);
         Map globalDefaultMap = new HashMap();
         Map globalMap = new HashMap();
+        Map globalDatastoreMap = new HashMap();
         Map moduleSpecificMap = new HashMap();
         String umPrefix = "UM_CONFIG1";
         String keyPrefix = "UMGlobalDatastoreConfig1";
@@ -140,17 +141,15 @@ public class AuthenticationCommon extends TestCommon
                     globalMap.containsValue("UM_CONFIG_BIND_DN") ||
                     globalMap.containsValue("UM_CONFIG_BIND_PW") ||
                     globalMap.containsValue("")) {
-                ResourceBundle umGlobalBundle = null;
-                try {
-                    umGlobalBundle = ResourceBundle.getBundle("config" +
-                            fileseparator + "UMGlobalDatastoreConfig");
-                } catch (MissingResourceException mre) {
-                    log(Level.SEVERE, "createAuthInstancesMap",
-                            "Unable to retrieve the " +
-                            "UMGlobalDatastoreConfig resource bundle.");
-                    assert false;
-                    throw mre;
-                }
+                StringBuffer globalUMBuffer = new StringBuffer(getBaseDir()).
+                        append(fileseparator).append(serverName).
+                        append(fileseparator).append("built").
+                        append(fileseparator).append("classes").
+                        append(fileseparator).append("config").
+                        append(fileseparator).
+                        append("UMGlobalDatastoreConfig-Generated.properties");
+                globalDatastoreMap =
+                        getMapFromProperties(globalUMBuffer.toString());
 
                 log(Level.FINE, "createAuthInstancesMap",
                         "Retrieving datastore " +
@@ -166,11 +165,11 @@ public class AuthenticationCommon extends TestCommon
                 if (globalLDAPServer.equals(DEFAULT_LDAP_SERVER) ||
                         globalLDAPServer.equals("")) {
                     String umDirectoryHost =
-                            umGlobalBundle.getString(keyPrefix + "." +
-                            UM_LDAPv3_LDAP_SERVER + ".0").trim();
+                            ((String) globalDatastoreMap.get(keyPrefix + "." +
+                            UM_LDAPv3_LDAP_SERVER + ".0")).trim();
                     String umDirectoryPort =
-                            umGlobalBundle.getString(keyPrefix + "." +
-                            UM_LDAPv3_LDAP_PORT + ".0").trim();
+                            ((String) globalDatastoreMap.get(keyPrefix + "." +
+                            UM_LDAPv3_LDAP_PORT + ".0")).trim();
                     log(Level.FINEST, "createAuthInstancesMap",
                             "Replacing the value of ldap." + LDAP_AUTH_SERVER +
                             " with " + umDirectoryHost + ":" + umDirectoryPort);
@@ -183,8 +182,8 @@ public class AuthenticationCommon extends TestCommon
                 if (globalLDAPBaseDN.equals(DEFAULT_LDAP_BASEDN) ||
                         globalLDAPBaseDN.equals("")) {
                     String umDirectoryBaseDN =
-                            umGlobalBundle.getString(keyPrefix + "." +
-                            "datastore-root-suffix.0").trim();
+                            ((String) globalDatastoreMap.get(keyPrefix + "." +
+                            "datastore-root-suffix.0")).trim();
                     log(Level.FINEST, "createAuthInstancesMap",
                             "Replacing the value of ldap." + LDAP_AUTH_BASEDN +
                             " with " + umDirectoryBaseDN);
@@ -198,8 +197,8 @@ public class AuthenticationCommon extends TestCommon
                 if (globalLDAPBindDN.equals(DEFAULT_LDAP_BINDDN) ||
                         globalLDAPBindDN.equals("")) {
                     String umDirectoryBindDN =
-                            umGlobalBundle.getString(keyPrefix + "." +
-                            UM_LDAPv3_AUTHID + ".0").trim();
+                            ((String) globalDatastoreMap.get(keyPrefix + "." +
+                            UM_LDAPv3_AUTHID + ".0")).trim();
                     log(Level.FINEST, "createAuthInstancesMap",
                             "Replacing the value of ldap." + LDAP_AUTH_BINDDN +
                             " with " + umDirectoryBindDN);
@@ -213,8 +212,8 @@ public class AuthenticationCommon extends TestCommon
                 if (globalLDAPBindPw.equals(DEFAULT_LDAP_BINDPW) ||
                         globalLDAPBindPw.equals("")) {
                     String umDirectoryBindPw =
-                            umGlobalBundle.getString(keyPrefix + "." +
-                            UM_LDAPv3_AUTHPW + ".0").trim();
+                            ((String) globalDatastoreMap.get(keyPrefix + "." +
+                            UM_LDAPv3_AUTHPW + ".0")).trim();
                     log(Level.FINEST, "createAuthInstancesMap",
                             "Replacing the value of ldap." +
                             LDAP_AUTH_BIND_PASSWD +
