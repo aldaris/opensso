@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MessagesBean.java,v 1.5 2009-06-22 17:54:32 farble1670 Exp $
+ * $Id: MessagesBean.java,v 1.6 2009-08-13 21:30:23 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -39,6 +39,7 @@ import javax.faces.context.FacesContext;
 
 public class MessagesBean implements Serializable {
     private String clientId;
+    private List<MessageBean> phasedMessageBeans = new ArrayList<MessageBean>();
 
     public static String getClientId(String componentId) {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -144,5 +145,9 @@ public class MessagesBean implements Serializable {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         MessagesBean msb = (MessagesBean)mbr.resolve("messagesBean");
         return msb;
+    }
+
+    public List<MessageBean> getPhasedMessageBeans() {
+        return phasedMessageBeans;
     }
 }

@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.116 2009-08-13 13:27:01 farble1670 Exp $
+  $Id: faces-config.xml,v 1.117 2009-08-13 21:30:23 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1917,6 +1917,15 @@
             <value>#{null}</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>messagesHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.MessagesHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
         <managed-bean-name>navigationHandler</managed-bean-name>
@@ -2369,6 +2378,9 @@
         </phase-listener>
         <phase-listener>
             com.sun.identity.admin.ActionPhaseListener
+        </phase-listener>
+        <phase-listener>
+            com.sun.identity.admin.MessagePhaseListener
         </phase-listener>
     </lifecycle>
 </faces-config>

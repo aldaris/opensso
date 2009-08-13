@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceApplicationResourcesHandler.java,v 1.2 2009-08-13 13:27:00 farble1670 Exp $
+ * $Id: WebServiceApplicationResourcesHandler.java,v 1.3 2009-08-13 21:30:22 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -32,8 +32,6 @@ import com.sun.identity.admin.dao.ViewApplicationDao;
 import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
-import com.sun.identity.admin.model.PhaseEventAction;
-import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.UrlResource;
 import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewApplicationType;
@@ -50,12 +48,19 @@ import java.util.Map;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.FacesEvent;
-import javax.faces.event.PhaseId;
 
 public class WebServiceApplicationResourcesHandler implements Serializable {
 
+    private MessageBean noWsdlFileMessageBean;
+    private MessageBean invalidWsdlFileMessageBean;
+
     private MessagesBean messagesBean;
     private WebServiceApplicationResourcesBean webServiceApplicationResourcesBean;
+
+    public WebServiceApplicationResourcesHandler() {
+        noWsdlFileMessageBean = new MessageBean();
+        invalidWsdlFileMessageBean = new MessageBean();
+    }
 
     private ViewApplication getViewApplication(FacesEvent event) {
         ViewApplication va = (ViewApplication) event.getComponent().getAttributes().get("viewApplication");
@@ -96,22 +101,11 @@ public class WebServiceApplicationResourcesHandler implements Serializable {
             } else {
                 File wsdlFile = webServiceApplicationResourcesBean.getWsdlFile();
                 if (wsdlFile == null) {
-                    MessageBean mb = new MessageBean();
                     Resources r = new Resources();
-                    mb.setSummary(r.getString(this, "noWsdlFileSummary"));
-                    mb.setDetail(r.getString(this, "noWsdlFileDetail"));
-                    mb.setSeverity(FacesMessage.SEVERITY_WARN);
-                    messagesBean.addMessageBean(mb);
-
-                    /*
-                    PhaseEventAction pea = new PhaseEventAction();
-                    pea.setDoBeforePhase(false);
-                    pea.setPhaseId(PhaseId.RENDER_RESPONSE);
-                    pea.setAction("#{webServiceApplicationResourcesHandler.handleNoWsdlFile}");
-                    pea.setParameters(new Class[]{});
-                    pea.setArguments(new Object[]{});
-                    QueuedActionBean.getInstance().getPhaseEventActions().add(pea);
-                     */
+                    noWsdlFileMessageBean.setSummary(r.getString(this, "noWsdlFileSummary"));
+                    noWsdlFileMessageBean.setDetail(r.getString(this, "noWsdlFileDetail"));
+                    noWsdlFileMessageBean.setSeverity(FacesMessage.SEVERITY_WARN);
+                    messagesBean.getPhasedMessageBeans().add(noWsdlFileMessageBean);
 
                     return;
                 }
@@ -119,16 +113,17 @@ public class WebServiceApplicationResourcesHandler implements Serializable {
                 try {
                     is = new FileInputStream(wsdlFile);
                 } catch (IOException ioe) {
-                    MessageBean mb = new MessageBean();
                     Resources r = new Resources();
-                    mb.setSummary(r.getString(this, "invalidWsdlFileSummary", ioe.getMessage()));
-                    mb.setDetail(r.getString(this, "invalidWsdlFileDetail", ioe.getMessage()));
-                    mb.setSeverity(FacesMessage.SEVERITY_WARN);
-                    messagesBean.addMessageBean(mb);
+                    invalidWsdlFileMessageBean.setSummary(r.getString(this, "invalidWsdlFileSummary", ioe.getMessage()));
+                    invalidWsdlFileMessageBean.setDetail(r.getString(this, "invalidWsdlFileDetail", ioe.getMessage()));
+                    invalidWsdlFileMessageBean.setSeverity(FacesMessage.SEVERITY_WARN);
+                    messagesBean.getPhasedMessageBeans().add(invalidWsdlFileMessageBean);
 
                     return;
                 }
                 wsa.initialize(is);
+                messagesBean.getPhasedMessageBeans().remove(noWsdlFileMessageBean);
+                messagesBean.getPhasedMessageBeans().remove(invalidWsdlFileMessageBean);
             }
         } catch (EntitlementException ee) {
             MessageBean mb = new MessageBean();

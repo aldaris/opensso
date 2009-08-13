@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: messages.xhtml,v 1.6 2009-06-22 14:53:21 farble1670 Exp $
+   $Id: messages.xhtml,v 1.7 2009-08-13 21:30:23 farble1670 Exp $
 
 -->
 
@@ -39,7 +39,7 @@
         type="error"
         modal="true"
         handler="#{messagesHandler}"
-        closeListenerMethod="messagesPopupListener"
+        closeListenerMethod="closeListener"
         title="Error"
         visible="#{messagesBean.existsError}">
         <ui:define name="body">
@@ -65,7 +65,7 @@
         type="warning"
         modal="true"
         handler="#{messagesHandler}"
-        closeListenerMethod="messagesPopupListener"
+        closeListenerMethod="closeListener"
         title="Warning"
         visible="#{messagesBean.existsWarning}">
         <ui:define name="body">
@@ -91,7 +91,7 @@
         type="info"
         modal="true"
         handler="#{messagesHandler}"
-        closeListenerMethod="messagesPopupListener"
+        closeListenerMethod="closeListener"
         title="Info"
         visible="#{messagesBean.existsInfo}">
         <ui:define name="body">
