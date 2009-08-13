@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.65 2009-07-02 20:33:30 hengming Exp $
+ * $Id: LDAPv3Repo.java,v 1.66 2009-08-13 01:33:45 hengming Exp $
  *
  */
 
@@ -1908,6 +1908,17 @@ public class LDAPv3Repo extends IdRepo {
                     // ignore empty set because some servers can't handle it.
                         if ((attrNameValue != null) &&
                             (!attrNameValue.isEmpty())) {
+
+                            if (dsType.equalsIgnoreCase(
+                                LDAPv3Config_LDAPV3AD) ||
+                                dsType.equalsIgnoreCase(
+                                LDAPv3Config_LDAPV3ADAM)) {
+
+                                attrNameValue.remove("");
+                                if (attrNameValue.isEmpty()) {
+                                    continue;
+                                }
+                            } 
                             privAttrMap.put(attrName, attrNameValue);
                         }
                     }
