@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.24 2009-07-18 18:59:02 bhavnab Exp $
+ * $Id: Session.java,v 1.25 2009-08-14 17:53:35 weisun2 Exp $
  *
  */
 
@@ -950,7 +950,7 @@ public class Session extends GeneralTaskRunnable {
      *
      * @param sid Session ID.
      */
-    protected static void removeSID(SessionID sid) {
+    public static void removeSID(SessionID sid) {
 
         Session session = null;
         session = (Session) sessionTable.remove(sid);
