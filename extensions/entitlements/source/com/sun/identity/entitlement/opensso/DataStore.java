@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.28 2009-08-06 22:26:50 dillidorai Exp $
+ * $Id: DataStore.java,v 1.29 2009-08-14 22:46:19 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -853,48 +853,67 @@ public class DataStore {
         Set<String> subjectIndexes,
         boolean bSubTree
     ) {
-        StringBuffer filter = new StringBuffer();
+        StringBuilder filter = new StringBuilder();
 
+        StringBuilder subjectBuffer = new StringBuilder();
         if ((subjectIndexes != null) && !subjectIndexes.isEmpty()) {
-            filter.append("(|");
             for (String i : subjectIndexes) {
-                Object[] o = {i};
-                filter.append(MessageFormat.format(SUBJECT_FILTER_TEMPLATE, o));
+                if (!CacheTaboo.isTaboo(IndexCache.SUBJECT_ID, i)) {
+                    Object[] o = {i};
+                    subjectBuffer.append(
+                        MessageFormat.format(SUBJECT_FILTER_TEMPLATE, o));
+                }
             }
-            filter.append(")");
+        }
+        if (subjectBuffer.length() > 0) {
+            filter.append("(|").append(subjectBuffer.toString()).append(")");
         }
 
         Set<String> hostIndexes = indexes.getHostIndexes();
+        StringBuilder hostBuffer = new StringBuilder();
         if ((hostIndexes != null) && !hostIndexes.isEmpty()) {
-            filter.append("(|");
             for (String h : indexes.getHostIndexes()) {
-                Object[] o = {h};
-                filter.append(MessageFormat.format(HOST_FILTER_TEMPLATE, o));
+                if (!CacheTaboo.isTaboo(IndexCache.HOST_ID, h)) {
+                    Object[] o = {h};
+                    hostBuffer.append(MessageFormat.format(
+                        HOST_FILTER_TEMPLATE, o));
+                }
             }
-            filter.append(")");
+        }
+        if (hostBuffer.length() > 0) {
+            filter.append("(|").append(hostBuffer.toString()).append(")");
         }
 
         if (bSubTree) {
+            StringBuilder parentPathBuffer = new StringBuilder();
             Set<String> parentPathIndexes = indexes.getParentPathIndexes();
-            filter.append("(|");
             if ((parentPathIndexes != null) && !parentPathIndexes.isEmpty()) {
                 for (String p : parentPathIndexes) {
-                    Object[] o = {p};
-                    filter.append(MessageFormat.format(
-                        PATH_PARENT_FILTER_TEMPLATE, o));
+                    if (!CacheTaboo.isTaboo(IndexCache.PARENTPATH_ID, p)) {
+                        Object[] o = {p};
+                        parentPathBuffer.append(MessageFormat.format(
+                            PATH_PARENT_FILTER_TEMPLATE, o));
+                    }
                 }
             }
-            filter.append(")");
+            if (parentPathBuffer.length() > 0) {
+                filter.append("(|").append(parentPathBuffer.toString())
+                    .append(")");
+            }
         } else {
             Set<String> pathIndexes = indexes.getPathIndexes();
+            StringBuilder pathBuffer = new StringBuilder();
             if ((pathIndexes != null) && !pathIndexes.isEmpty()) {
-                filter.append("(|");
                 for (String p : pathIndexes) {
-                    Object[] o = {p};
-                    filter.append(MessageFormat.format(
-                        PATH_FILTER_TEMPLATE, o));
+                    if (!CacheTaboo.isTaboo(IndexCache.PATH_ID, p)) {
+                        Object[] o = {p};
+                        pathBuffer.append(MessageFormat.format(
+                            PATH_FILTER_TEMPLATE, o));
+                    }
                 }
-                filter.append(")");
+            }
+            if (pathBuffer.length() > 0) {
+                filter.append("(|").append(pathBuffer.toString()).append(")");
             }
         }
 

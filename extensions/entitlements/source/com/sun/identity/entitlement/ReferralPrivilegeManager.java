@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilegeManager.java,v 1.3 2009-06-16 10:37:44 veiming Exp $
+ * $Id: ReferralPrivilegeManager.java,v 1.4 2009-08-14 22:46:19 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
-import com.sun.identity.policy.ResourceMatch;
 import java.security.Principal;
 import java.util.Date;
 import java.util.Map;

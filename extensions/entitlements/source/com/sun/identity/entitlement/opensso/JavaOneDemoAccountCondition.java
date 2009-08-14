@@ -22,13 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JavaOneDemoAccountCondition.java,v 1.3 2009-08-07 23:18:53 veiming Exp $
+ * $Id: JavaOneDemoAccountCondition.java,v 1.1 2009-08-14 22:46:20 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.ConditionDecision;
+import com.sun.identity.entitlement.EntitlementConditionAdaptor;
+import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;

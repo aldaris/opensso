@@ -22,19 +22,40 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoggerProvider.java,v 1.1 2009-04-07 10:25:10 veiming Exp $
+ * $Id: LogProvider.java,v 1.1 2009-08-14 22:46:20 veiming Exp $
  */
 
-package com.sun.identity.entitlement.log;
+package com.sun.identity.log;
 
-import java.util.logging.Logger;
+import com.sun.identity.entitlement.util.ILogProvider;
+import java.util.logging.Level;
+
 
 /**
- * Adaptor to OpenSSO logger class
+ *
+ * @author dennis
  */
-public class LoggerProvider implements ILoggerProvider {
+public class LogProvider implements ILogProvider {
+    LogProvider() {
+    }
 
-    public Logger getLogger(String name) {
-        return com.sun.identity.log.Logger.getLogger(name);
+    /**
+     * Logs an entries
+     *
+     * @param logName Name of the log handler.
+     * @param level a logging level value.
+     * @param message log message.
+     * @param actor Actor involved in the activity.
+     * @param cred Credential
+     */
+    public void log(
+        String logName,
+        Level level,
+        String message,
+        Object actor, 
+        Object cred
+    ) {
+        LogRecord rec = new LogRecord(level, message, actor);
+        ((Logger)Logger.getLogger(logName)).log(rec, cred);
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoggerFactory.java,v 1.3 2009-05-26 21:46:28 veiming Exp $
+ * $Id: LoggerFactory.java,v 1.4 2009-08-14 22:46:19 veiming Exp $
  */
 
 package com.sun.identity.entitlement.log;
@@ -54,7 +54,7 @@ public class LoggerFactory {
 
         if (provider == null) {
             provider = getLoggerProvider(
-                "com.sun.identity.entitlement.log.LoggerProvider",
+                "com.sun.identity.log.LoggerProvider",
                 true);
         }
     }

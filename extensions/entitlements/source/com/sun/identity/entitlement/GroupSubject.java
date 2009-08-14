@@ -22,11 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.19 2009-07-10 00:24:27 veiming Exp $
+ * $Id: GroupSubject.java,v 1.20 2009-08-14 22:46:18 veiming Exp $
  */
 package com.sun.identity.entitlement;
-
-import com.sun.identity.idm.IdType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,6 +37,8 @@ import javax.security.auth.Subject;
  * This class represents group identity for membership check
  */
 public class GroupSubject extends EntitlementSubjectImpl {
+    public static final String GROUP_NAME = "group";
+
     /**
      * Constructor.
      */
@@ -96,8 +96,7 @@ public class GroupSubject extends EntitlementSubjectImpl {
             Map<String, Set<String>> attributes = (Map<String, Set<String>>)
                 publicCreds.iterator().next();
             Set<String> values = attributes.get(
-                SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
-                IdType.GROUP.getName());
+                SubjectAttributesCollector.NAMESPACE_MEMBERSHIP + GROUP_NAME);
             satified = (values != null) ? values.contains(getID()) : false;
         }
         satified = satified ^ isExclusive();
@@ -115,7 +114,7 @@ public class GroupSubject extends EntitlementSubjectImpl {
             Set<String> set = new HashSet<String>();
             set.add(getID());
             map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
-                IdType.GROUP.getName(), set);
+                GROUP_NAME, set);
         }
         {
             Set<String> set = new HashSet<String>();
@@ -133,8 +132,7 @@ public class GroupSubject extends EntitlementSubjectImpl {
      */
     public Set<String> getRequiredAttributeNames() {
         Set<String> set = new HashSet<String>(2);
-        set.add(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
-            IdType.GROUP.getName());
+        set.add(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP + GROUP_NAME);
         return set;
     }
 

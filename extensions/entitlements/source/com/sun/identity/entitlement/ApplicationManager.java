@@ -22,14 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.21 2009-08-11 12:46:00 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.22 2009-08-14 22:46:18 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
-import com.sun.identity.policy.ResourceMatch;
-import com.sun.identity.shared.ldap.util.DN;
-import com.sun.identity.sm.DNMapper;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -72,9 +69,6 @@ public final class ApplicationManager {
 
     private static Set<Application> getApplications(Subject adminSubject,
         String realm) {
-        if (DN.isDN(realm)) {
-            realm = DNMapper.orgNameToRealmName(realm);
-        }
         Set<Application> appls = applications.get(realm);
 
         if (appls == null) {
@@ -127,9 +121,6 @@ public final class ApplicationManager {
             name = ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
         }
 
-        if (DN.isDN(realm)) {
-            realm = DNMapper.orgNameToRealmName(realm);
-        }
         Set<Application> appls = getApplications(adminSubject, realm);
         for (Application appl : appls) {
             if (appl.getName().equals(name)) {

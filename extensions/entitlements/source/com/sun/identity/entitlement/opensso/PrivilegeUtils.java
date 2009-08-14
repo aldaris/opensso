@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.42 2009-08-11 12:46:00 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.43 2009-08-14 22:46:20 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -574,10 +574,13 @@ public class PrivilegeUtils {
         Map<String, Set<String>> map =
             referralPrivilege.getOriginalMapApplNameToResources();
         count = 1;
+        String realmName = (DN.isDN(realm)) ?
+            DNMapper.orgNameToRealmName(realm) : realm;
+
         for (String appName : map.keySet()) {
             Set<String> res = map.get(appName);
             Application appl = ApplicationManager.getApplication(
-                adminSubject, realm, appName);
+                adminSubject, realmName, appName);
             if (appl == null) {
                 Object[] params = {appName, realm};
                 throw new EntitlementException(105, params);
@@ -644,8 +647,11 @@ public class PrivilegeUtils {
 
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance()); //TODO - who added?
+        String realmName = (DN.isDN(realm)) ?
+            DNMapper.orgNameToRealmName(realm) : realm;
+
         Application appl = ApplicationManager.getApplication(
-            SubjectUtils.createSubject(adminToken), realm, appName);
+            SubjectUtils.createSubject(adminToken), realmName, appName);
         if (appl == null) {
             Object[] params = {appName, realm};
             throw new EntitlementException(105, params);
@@ -1016,7 +1022,7 @@ public class PrivilegeUtils {
         Set<IPrivilege> privileges = null;
         if (policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
             Privilege privilege = XACMLPrivilegeUtils.policyToPrivilege(
-                    (com.sun.identity.entitlement.xacml3.core.Policy)policy);
+                (com.sun.identity.entitlement.xacml3.core.Policy)policy);
             privileges = new HashSet<IPrivilege>();
             privileges.add(privilege);
         } else if (policy instanceof Policy) {

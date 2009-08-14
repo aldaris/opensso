@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubRealmEvaluationTest.java,v 1.3 2009-08-11 17:31:34 veiming Exp $
+ * $Id: SubRealmEvaluationTest.java,v 1.4 2009-08-14 22:46:21 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -53,7 +53,7 @@ import org.testng.annotations.Test;
 
 public class SubRealmEvaluationTest {
     private static final String APPL_NAME = "TestEvaluatorAppl";
-    private static final String SUB_REALM = "/TestEvaluator";
+    private static final String SUB_REALM = "/SubRealmEvaluationTest";
     private static final String REFERRAL_NAME = "testEvaluatorReferral";
     private static final String PRIVILEGE1_NAME = "entitlementPrivilege1";
     private static final String USER1_NAME = "privilegeEvalTestUser1";

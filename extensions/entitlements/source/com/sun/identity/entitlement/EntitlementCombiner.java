@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCombiner.java,v 1.15 2009-07-25 09:37:22 hengming Exp $
+ * $Id: EntitlementCombiner.java,v 1.16 2009-08-14 22:46:18 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
-import com.sun.identity.policy.ResourceMatch;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

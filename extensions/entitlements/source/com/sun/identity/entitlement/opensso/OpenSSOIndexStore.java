@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.21 2009-07-27 21:03:20 hengming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.22 2009-08-14 22:46:20 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.ApplicationTypeManager;
@@ -75,8 +76,8 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     private static final PolicyCache policyCache;
     private static final PolicyCache referralCache;
     private static final int policyCacheSize;
-    private static final Map<String, IndexCache> indexCaches;
-    private static final Map<String, IndexCache> referralIndexCaches;
+    private static final Map indexCaches;
+    private static final Map referralIndexCaches;
     private static final int indexCacheSize;
     private static final DataStore dataStore = DataStore.getInstance();
     private static IThreadPool threadPool;
@@ -102,8 +103,8 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         indexCacheSize = getInteger(ec,
             EntitlementConfiguration.INDEX_CACHE_SIZE, DEFAULT_IDX_CACHE_SIZE);
         if (indexCacheSize > 0) {
-            indexCaches = new HashMap<String, IndexCache>();
-            referralIndexCaches = new HashMap<String, IndexCache>();
+            indexCaches = new CaseInsensitiveHashMap();
+            referralIndexCaches = new CaseInsensitiveHashMap();
         } else {
             indexCaches = null;
             referralIndexCaches = null;
@@ -161,14 +162,15 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         if (indexCacheSize > 0) {
 
             synchronized (indexCaches) {
-                indexCache = indexCaches.get(realmDN);
+                indexCache = (IndexCache)indexCaches.get(realmDN);
                 if (indexCache == null) {
                     indexCache = new IndexCache(indexCacheSize);
                     indexCaches.put(realmDN, indexCache);
                 }
             }
             synchronized (referralIndexCaches) {
-                referralIndexCache = referralIndexCaches.get(realmDN);
+                referralIndexCache = (IndexCache)referralIndexCaches.get(
+                    realmDN);
                 if (referralIndexCache == null) {
                     referralIndexCache = new IndexCache(indexCacheSize);
                     referralIndexCaches.put(realmDN, referralIndexCache);
@@ -678,13 +680,14 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
 
             for (String rlm : referrals.keySet()) {
                 Set<ReferralPrivilege> rPrivileges = referrals.get(rlm);
-
+                String realmName = (DN.isDN(rlm)) ?
+                    DNMapper.orgNameToRealmName(rlm) : rlm;
                 for (ReferralPrivilege r : rPrivileges) {
                     Map<String, Set<String>> map =
                         r.getOriginalMapApplNameToResources();
                     for (String a : map.keySet()) {
                         Application appl = ApplicationManager.getApplication(
-                            superAdminSubject, rlm, a);
+                            superAdminSubject, realmName, a);
                         if (appl.getApplicationType().getName().equals(
                             applicationTypeName)) {
                             results.addAll(map.get(a));

@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.74 2009-07-18 01:20:01 hengming Exp $
+  $Id: build.xml,v 1.75 2009-08-14 22:46:18 veiming Exp $
 
 -->
 
@@ -157,6 +157,14 @@
                 <include name="*.jar"/>
             </fileset>
         </path>
+
+        <path id="build.ent.class.path">
+            <fileset dir="${entitlements.extlib.dir}">
+                <include name="opensso-sharedlib.jar"/>
+            </fileset>
+            <path refid="war.lib.path"/>
+            <path refid="build.lib.path"/>
+        </path>
 		
         <path id="build.class.path">
             <fileset dir="${entitlements.extlib.dir}">
@@ -204,10 +212,10 @@
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
               debug="${build.debug}" debuglevel="${build.debuglevel}"
-	      excludes = "opensso/** xacml3/**" >
-            <src path="${entitlements.src.dir}/com/sun/identity/entitlement"/>
-            <src path="${entitlements.src.dir}/com/sun/identity/shared/debug"/>
-            <classpath refid="build.class.path"/>
+              srcdir="${entitlements.src.dir}"
+              includes="com/sun/identity/entitlement/**,com/sun/identity/shared/debug/**"
+	      excludes = "com/sun/identity/entitlement/opensso/**,com/sun/identity/entitlement/xacml3/**,com/sun/identity/entitlement/log/**" >
+            <classpath refid="build.ent.class.path"/>
         </javac>
         <mkdir dir="${entitlements.classes.dir}/com/sun/identity/log/messageid" />
         <copy file="${entitlements.xml.log.dir}/CLILogMessageIDs.xml"
@@ -228,7 +236,9 @@
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
               debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${entitlements.src.dir}/com/sun/identity/entitlement/opensso"/>
+            <src path="${entitlements.src.dir}/com/sun/identity/entitlement/log"/>
             <src path="${entitlements.src.dir}/com/sun/identity/console"/>
+            <src path="${entitlements.src.dir}/com/sun/identity/log"/>
             <src path="${entitlements.src.dir}/com/sun/identity/policy"/>
             <src path="${entitlements.src.dir}/com/sun/identity/entitlement/xacml3"/>
             <classpath refid="build.class.path"/>

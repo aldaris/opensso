@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.22 2009-06-30 17:47:38 veiming Exp $
+ * $Id: PolicyManager.java,v 1.23 2009-08-14 22:46:21 veiming Exp $
  *
  */
 
@@ -1281,19 +1281,26 @@ public final class PolicyManager {
         Set<String> resourcePrefixes,
         String resourceName) throws PolicyException, EntitlementException {
 
+        String realmName = (DN.isDN(realm)) ?
+            DNMapper.orgNameToRealmName(realm) :realm;
+
         Application appl = ApplicationManager.getApplication(
-            adminSubject, realm, serviceName);
+            adminSubject, realmName, serviceName);
         com.sun.identity.entitlement.interfaces.ResourceName resComp = appl.
             getResourceComparator();
         resourceName = resComp.canonicalize(resourceName);
 
         for (String prefix : resourcePrefixes) {
             boolean interpretWildCard = true;
-            ResourceMatch resMatch = resComp.compare(resourceName,
+            com.sun.identity.entitlement.ResourceMatch resMatch =
+                resComp.compare(resourceName,
                 resComp.canonicalize(prefix), interpretWildCard);
-            if ( resMatch.equals(ResourceMatch.SUPER_RESOURCE_MATCH)
-                        || resMatch.equals(ResourceMatch.WILDCARD_MATCH)
-                        || resMatch.equals(ResourceMatch.EXACT_MATCH) ) {
+            if ( resMatch.equals(
+                com.sun.identity.entitlement.ResourceMatch.SUPER_RESOURCE_MATCH)
+                || resMatch.equals(
+                    com.sun.identity.entitlement.ResourceMatch.WILDCARD_MATCH)
+                || resMatch.equals(
+                    com.sun.identity.entitlement.ResourceMatch.EXACT_MATCH) ) {
                 return true;
             }
 

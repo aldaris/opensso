@@ -22,13 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.8 2009-08-06 22:26:50 dillidorai Exp $
+ * $Id: IndexCache.java,v 1.9 2009-08-14 22:46:20 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -37,13 +39,20 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Caches the indexes which are stored in Directory Server.
  */
 public class IndexCache {
+    public static final String HOST_ID = "host";
+    public static final String SUBJECT_ID = "subject";
+    public static final String PATH_ID = "path";
+    public static final String PARENTPATH_ID = "parentpath";
+
+    private static final int CACHE_BUCKET_LIMIT = 25;
+
     private int size = 1000000;
     private Cache subjectIndexCache;
     private Cache hostIndexCache;
     private Cache pathIndexCache;
     private Cache parentPathIndexCache;
+    private Map<Cache, String> cacheToName = new HashMap<Cache, String>();
     private ReadWriteLock rwlock = new ReentrantReadWriteLock();
-
 
     /**
      * Constructs
@@ -76,14 +85,25 @@ public class IndexCache {
 
     private void cache(String dn, Set<String> indexes, Cache cache) {
         rwlock.writeLock().lock();
+        String cacheName = cacheToName.get(cache);
+
         try {
             for (String s : indexes) {
                 Set<String> setDNs = (Set<String>)cache.get(s);
                 if (setDNs == null) {
                     setDNs = new HashSet<String>();
                     cache.put(s, setDNs);
+                    setDNs.add(dn);
+                } else {
+                    if (!CacheTaboo.isTaboo(cacheName, s)) {
+                        if (setDNs.size() >= CACHE_BUCKET_LIMIT) {
+                            CacheTaboo.taboo(cacheName, s);
+                            cache.remove(s);
+                        } else {
+                            setDNs.add(dn);
+                        }
+                    }
                 }
-                setDNs.add(dn);
             }
         } finally {
             rwlock.writeLock().unlock();
@@ -125,6 +145,11 @@ public class IndexCache {
             hostIndexCache = new Cache(size);
             pathIndexCache = new Cache(size);
             parentPathIndexCache = new Cache(size);
+            cacheToName.clear();
+            cacheToName.put(subjectIndexCache, SUBJECT_ID);
+            cacheToName.put(hostIndexCache, HOST_ID);
+            cacheToName.put(pathIndexCache, PATH_ID);
+            cacheToName.put(parentPathIndexCache, PARENTPATH_ID);
         } finally {
             rwlock.writeLock().unlock();
         }

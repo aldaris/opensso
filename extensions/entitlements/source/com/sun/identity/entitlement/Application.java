@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.31 2009-08-11 12:46:00 veiming Exp $
+ * $Id: Application.java,v 1.32 2009-08-14 22:46:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -30,7 +30,6 @@ package com.sun.identity.entitlement;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
-import com.sun.identity.policy.ResourceMatch;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

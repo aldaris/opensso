@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogFactory.java,v 1.2 2009-05-21 08:17:49 veiming Exp $
+ * $Id: LogFactory.java,v 1.3 2009-08-14 22:46:20 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
+
+import com.sun.identity.entitlement.PrivilegeManager;
 
 /**
  * Provides Log Provider handler.
@@ -36,8 +38,18 @@ public class LogFactory {
     private ILogProvider impl;
 
     private LogFactory() {
-        //TODO load different log provider.
-        impl = new LogProvider();
+        try {
+            //TODO load different log provider.
+            Class clazz = Class.forName(
+                "com.sun.identity.entitlement.opensso.LogProvider");
+            impl = (ILogProvider)clazz.newInstance();
+        } catch (InstantiationException e) {
+            PrivilegeManager.debug.error("LogFactory.<init>", e);
+        } catch (IllegalAccessException e) {
+            PrivilegeManager.debug.error("LogFactory.<init>", e);
+        } catch (ClassNotFoundException e) {
+            PrivilegeManager.debug.error("LogFactory.<init>", e);
+        }
     }
 
     /**

@@ -22,11 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleSubject.java,v 1.13 2009-07-02 15:53:15 veiming Exp $
+ * $Id: RoleSubject.java,v 1.14 2009-08-14 22:46:19 veiming Exp $
  */
 package com.sun.identity.entitlement;
-
-import com.sun.identity.idm.IdType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,6 +37,8 @@ import javax.security.auth.Subject;
  * EntitlementSubject to represent role identity for membership check.
  */
 public class RoleSubject extends EntitlementSubjectImpl {
+    public static final String ROLE_NAME = "role";
+
     /**
      * Constructs an RoleSubject
      */
@@ -90,8 +90,7 @@ public class RoleSubject extends EntitlementSubjectImpl {
             Map<String, Set<String>> attributes = (Map<String, Set<String>>)
                 publicCreds.iterator().next();
             Set<String> values = attributes.get(
-                SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
-                    IdType.ROLE.getName());
+                SubjectAttributesCollector.NAMESPACE_MEMBERSHIP + ROLE_NAME);
             satified = (values != null) ? values.contains(getID()) : false;
         }
 
@@ -109,8 +108,8 @@ public class RoleSubject extends EntitlementSubjectImpl {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>(2);
         Set<String> set = new HashSet<String>();
         set.add(getID());
-        map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
-            IdType.ROLE.getName(), set);
+        map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP + ROLE_NAME,
+            set);
         return map;
     }
 
@@ -121,8 +120,7 @@ public class RoleSubject extends EntitlementSubjectImpl {
      */
     public Set<String> getRequiredAttributeNames() {
         Set<String> set = new HashSet<String>(2);
-        set.add(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
-            IdType.ROLE.getName());
+        set.add(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP + ROLE_NAME);
         return set;
     }
 

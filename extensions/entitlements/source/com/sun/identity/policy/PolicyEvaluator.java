@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.22 2009-07-27 21:04:02 hengming Exp $
+ * $Id: PolicyEvaluator.java,v 1.23 2009-08-14 22:46:21 veiming Exp $
  *
  */
 
@@ -61,6 +61,7 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.sm.DNMapper;
 import java.security.AccessController;
 import java.util.List;
 import javax.security.auth.Subject;
@@ -533,9 +534,11 @@ public class PolicyEvaluator {
         Set originalResourceNames = new HashSet(2);
         originalResourceNames.add(resourceName);
 
+        String realmName = (DN.isDN(realm)) ?
+            DNMapper.orgNameToRealmName(realm) : realm;
         Application appl = ApplicationManager.getApplication(
             SubjectUtils.createSubject(token),
-            realm, serviceTypeName);
+            realmName, serviceTypeName);
         try {
             resourceName = appl.getResourceComparator().canonicalize(
                 resourceName);
@@ -756,7 +759,7 @@ public class PolicyEvaluator {
         try {
             EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
                 SubjectUtils.createSuperAdminSubject(), realm);
-            return (ec.migratedToEntitlementService()) ? getPolicyDecisionE(
+            return (ec.migratedToEntitlementService()) ? Realm(
                 token, resourceName, actionNames,
                 envParameters) : getPolicyDecisionO(token, resourceName,
                 actionNames,
@@ -786,7 +789,7 @@ public class PolicyEvaluator {
      * @exception SSOException single-sign-on token invalid or expired
      * @exception PolicyException if any policy evaluation error.
      */
-    private PolicyDecision getPolicyDecisionE(
+    private PolicyDecision Realm(
         SSOToken token, String resourceName, Set actionNames,
         Map envParameters)
         throws PolicyException, SSOException {

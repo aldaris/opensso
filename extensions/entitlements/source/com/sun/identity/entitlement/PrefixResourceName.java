@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrefixResourceName.java,v 1.2 2009-06-26 02:31:11 veiming Exp $
+ * $Id: PrefixResourceName.java,v 1.3 2009-08-14 22:46:18 veiming Exp $
  *
  */
 
@@ -32,7 +32,6 @@ import com.sun.identity.entitlement.interfaces.ResourceName;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import com.sun.identity.policy.ResourceMatch;
 
 /**
  * This is a plugin impelmentation of the <code>ResourceName</code> interface

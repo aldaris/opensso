@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExactMatchResourceName.java,v 1.2 2009-05-14 05:34:07 farble1670 Exp $
+ * $Id: ExactMatchResourceName.java,v 1.3 2009-08-14 22:46:18 veiming Exp $
  *
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
-import com.sun.identity.policy.ResourceMatch;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;

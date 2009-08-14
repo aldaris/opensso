@@ -19,11 +19,12 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.9 2009-07-01 01:27:42 pbryan Exp $
+ * $Id: DecisionResource.java,v 1.10 2009-08-14 22:46:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.util.AuthSPrincipal;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,7 +36,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
-import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 
 /**
  * Exposes the entitlement decision REST resource.

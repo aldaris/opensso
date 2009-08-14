@@ -22,16 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceName.java,v 1.3 2009-06-23 07:00:16 veiming Exp $
+ * $Id: ResourceName.java,v 1.4 2009-08-14 22:46:19 veiming Exp $
  *
  */
 
 package com.sun.identity.entitlement.interfaces;
 
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.ResourceMatch;
 import java.util.Map;
 import java.util.Set;
-import com.sun.identity.policy.ResourceMatch;
 
 /**
  * The interface <code>ResourceName</code> provides
