@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.22 2009-06-19 02:50:26 bigfatrat Exp $
+ * $Id: IDPSingleLogout.java,v 1.23 2009-08-14 18:29:52 mallas Exp $
  *
  */
 
@@ -49,6 +49,7 @@ import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.saml2.assertion.Issuer;
+import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
@@ -248,9 +249,11 @@ public class IDPSingleLogout {
             for (int i = 0; i < n; i++) {
                 NameIDandSPpair pair = null;
                 if (binding.equals(SAML2Constants.HTTP_POST)) {
-                     pair = (NameIDandSPpair) list.remove(0);
+                    pair = (NameIDandSPpair) list.remove(0);
+                    removeTransientNameIDFromCache(pair.getNameID());
                 } else if (binding.equals(SAML2Constants.HTTP_REDIRECT)) {
                     pair = (NameIDandSPpair) list.remove(0);
+                    removeTransientNameIDFromCache(pair.getNameID());
                 } else if (binding.equals(SAML2Constants.SOAP)) {
                     pair = (NameIDandSPpair) list.get(i);
                 } else {
@@ -1059,6 +1062,7 @@ public class IDPSingleLogout {
             // send Next Request
             NameIDandSPpair pair = (NameIDandSPpair)list.remove(0);
             spEntityID = pair.getSPEntityID();
+            removeTransientNameIDFromCache(pair.getNameID());
 
             SPSSODescriptorElement spsso = null;
             // get SPSSODescriptor
@@ -1293,6 +1297,7 @@ public class IDPSingleLogout {
                     pair = (NameIDandSPpair) list.get(i);
                     if (pair.getSPEntityID().equals(spIssuer)) {
                         list.remove(i);
+                        removeTransientNameIDFromCache(pair.getNameID());
                         break;
                     }
                 }
@@ -1338,6 +1343,7 @@ public class IDPSingleLogout {
                     if (binding.equals(SAML2Constants.HTTP_REDIRECT) ||
                         binding.equals(SAML2Constants.HTTP_POST)) {
                         pair = (NameIDandSPpair)list.remove(0);
+                        removeTransientNameIDFromCache(pair.getNameID());
                     } else {
                         // for SOAP binding
                         pair = (NameIDandSPpair) list.get(i);
@@ -1641,5 +1647,23 @@ public class IDPSingleLogout {
             debug.error("IDPSingleLogout.copyAndMakeMutable:", ex);
         }
         return dest;
+    }
+
+   /**
+     * Removes transient nameid from the cache.
+     */
+    private static void removeTransientNameIDFromCache(NameID nameID) {
+        if(nameID == null) {
+           return;
+        }
+        if(SAML2Constants.NAMEID_TRANSIENT_FORMAT.equals(
+               nameID.getFormat())) {
+           String nameIDValue = nameID.getValue();
+           if(IDPCache.userIDByTransientNameIDValue.containsKey(
+              nameIDValue)) {
+              IDPCache.userIDByTransientNameIDValue.remove(
+              nameIDValue);
+           }
+        }
     }
 }
