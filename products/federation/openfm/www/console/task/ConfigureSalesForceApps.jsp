@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureSalesForceApps.jsp,v 1.3 2009-07-20 23:03:23 asyhuang Exp $
+   $Id: ConfigureSalesForceApps.jsp,v 1.4 2009-08-14 18:32:46 asyhuang Exp $
 
 --%>
 
@@ -74,10 +74,18 @@
         hideCOTObjs();
         hideIDPObjs();
         getCircleOfTrust(radio.value);
+        var choiceCOT = frm.elements['ConfigureSalesForceApps.choiceCOT'];
+        if(choiceCOT.length>0) {
+            cotSelect(choiceCOT.options[0]);
+        }
     }
 
     function cotSelect(radio) {
         getIDP(radio.value);
+        var idpobj = frm.elements['ConfigureSalesForceApps.choiceIDP'];
+        if (idpobj.options.length > 1) {
+            showIDPObjs();
+        }
     }
 
     function hideRealm() {
@@ -262,6 +270,9 @@
                 } else {
                     var cots = result.split('|');
                     var choiceCOT = frm.elements['ConfigureSalesForceApps.choiceCOT'];
+                    for (var i = choiceCOT.length - 1; i>=0; i--) {
+                       choiceCOT.remove(i);
+                    }
                     for (var i = 0; i < cots.length; i++) {
                         choiceCOT.options[i] = new Option(cots[i], cots[i]);
                     }

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateFedlet.jsp,v 1.12 2009-07-20 23:03:23 asyhuang Exp $
+   $Id: CreateFedlet.jsp,v 1.13 2009-08-14 18:32:47 asyhuang Exp $
 
 --%>
 
@@ -73,10 +73,18 @@
         hideCOTObjs();
         hideIDPObjs();
         getCircleOfTrust(radio.value);
+        var choiceCOT = frm.elements['CreateFedlet.choiceCOT'];        
+        if(choiceCOT.length>0) {
+            cotSelect(choiceCOT.options[0]);
+        }
     }
 
-    function cotSelect(radio) {
+    function cotSelect(radio) {       
         getIDP(radio.value);
+        var idpobj = frm.elements['CreateFedlet.choiceIDP'];
+        if (idpobj.options.length > 1) {
+            showIDPObjs();
+        }
     }
 
     function hideRealm() {
@@ -254,6 +262,9 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
                 } else {
                     var cots = result.split('|');
                     var choiceCOT = frm.elements['CreateFedlet.choiceCOT'];
+                    for (var i = choiceCOT.length - 1; i>=0; i--) {
+                       choiceCOT.remove(i);
+                    }
                     for (var i = 0; i < cots.length; i++) {
                         choiceCOT.options[i] = new Option(cots[i], cots[i]);
                     }

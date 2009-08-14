@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleApps.jsp,v 1.7 2009-07-20 23:03:23 asyhuang Exp $
+   $Id: ConfigureGoogleApps.jsp,v 1.8 2009-08-14 18:32:46 asyhuang Exp $
 
 --%>
 
@@ -74,10 +74,18 @@
         hideCOTObjs();
         hideIDPObjs();
         getCircleOfTrust(radio.value);
+        var choiceCOT = frm.elements['ConfigureGoogleApps.choiceCOT'];
+        if(choiceCOT.length>0) {
+            cotSelect(choiceCOT.options[0]);
+        }
     }
 
     function cotSelect(radio) {
         getIDP(radio.value);
+        var idpobj = frm.elements['ConfigureGoogleApps.choiceIDP'];
+        if (idpobj.options.length > 1) {
+            showIDPObjs();
+        }
     }
 
     function hideRealm() {
@@ -266,6 +274,9 @@
                 } else {
                     var cots = result.split('|');
                     var choiceCOT = frm.elements['ConfigureGoogleApps.choiceCOT'];
+                    for (var i = choiceCOT.length - 1; i>=0; i--) {
+                       choiceCOT.remove(i);
+                    }
                     for (var i = 0; i < cots.length; i++) {
                         choiceCOT.options[i] = new Option(cots[i], cots[i]);
                     }

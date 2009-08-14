@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyConfigureSalesForceApps.xml,v 1.2 2009-07-16 17:58:37 babysunil Exp $
+   $Id: propertyConfigureSalesForceApps.xml,v 1.3 2009-08-14 18:33:23 asyhuang Exp $
 
 -->
 
@@ -33,12 +33,14 @@
             <property required="true">
                 <label name="lblRealm" defaultValue="configure.salesforce.apps.label.realm" labelFor="tfRealm" />
                 <cc name="tfRealm" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+                    <attribute name="onClick" value="realmSelect(this);" />
                     <attribute name="onChange" value="realmSelect(this);" />
                 </cc>
             </property>
             <property required="true">
                 <label name="lblCOT" defaultValue="configure.salesforce.apps.label.cot" labelFor="choiceCOT" />
                 <cc name="choiceCOT" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+                    <attribute name="onClick" value="cotSelect(this);" />
                     <attribute name="onChange" value="cotSelect(this);" />
                 </cc>
             </property>
