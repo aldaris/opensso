@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.31 2009-08-11 03:06:18 goodearth Exp $
+ * $Id: IdUtils.java,v 1.32 2009-08-15 15:47:25 goodearth Exp $
  *
  */
 
@@ -55,6 +55,8 @@ import com.sun.identity.sm.ServiceManager;
 
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashSet;
@@ -588,26 +590,32 @@ public final class IdUtils {
                 if (!foundOrg && ((orgAliases != null) && 
                     !orgAliases.isEmpty()) &&
                     (!orgIdentifier.startsWith("http://") && 
-                     !orgIdentifier.startsWith("https://")) || 
-                     (orgIdentifier.indexOf("/UI/Login") < 0)) {
-                    try {
-                        OrganizationConfigManager newocm = 
-                            new OrganizationConfigManager(token, 
-                            orgIdentifier);
-                    } catch (SMSException smse) {
-                        // debug message here.
-                        if (debug.messageEnabled()) {
-                            debug.message("IdUtils.getOrganization " +
+                    !orgIdentifier.startsWith("https://")) ||
+                    (orgIdentifier.indexOf("/UI/Login") < 0)) {
+                    String hostAddr = token.getHostName();
+                    InetAddress ia = InetAddress.getByName(hostAddr);
+                    String hostName = ia.getHostName();
+                    if (orgIdentifier.indexOf(hostName) < 0) {
+                        try {
+                            OrganizationConfigManager newocm = 
+                                new OrganizationConfigManager(token, 
+                                orgIdentifier);
+                        } catch (SMSException smse) {
+                            // debug message here.
+                            if (debug.messageEnabled()) {
+                                debug.message(
+                                "IdUtils.getOrganization " +
                                 "Exception in getting realm name from"
                                 + " the configuration store", smse);
+                            }
+                            ocm.removeAttributeValues(
+                                IdConstants.REPO_SERVICE, 
+                                IdConstants.ORGANIZATION_ALIAS_ATTR, 
+                                vals);
+                            Object[] args = { orgIdentifier };
+                            throw new IdRepoException(
+                                IdRepoBundle.BUNDLE_NAME,"401",args);
                         }
-                        ocm.removeAttributeValues(
-                            IdConstants.REPO_SERVICE, 
-                            IdConstants.ORGANIZATION_ALIAS_ATTR, 
-                            vals);
-                        Object[] args = { orgIdentifier };
-                        throw new IdRepoException(
-                            IdRepoBundle.BUNDLE_NAME, "401", args);
                     }
                 }
                 if (!foundOrg &&
@@ -639,6 +647,15 @@ public final class IdUtils {
                 if (debug.messageEnabled()) {
                     debug.message("IdUtils.getOrganization Exception in "
                             + "getting org name from SMS", smse);
+                }
+                Object[] args = { orgIdentifier };
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "401", 
+                        args);
+            } catch (UnknownHostException uke) {
+                // debug message here.
+                if (debug.messageEnabled()) {
+                    debug.message("IdUtils.getOrganization Exception in "
+                            + "getting org name from SMS", uke);
                 }
                 Object[] args = { orgIdentifier };
                 throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "401", 
