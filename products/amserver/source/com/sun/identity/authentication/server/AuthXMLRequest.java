@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequest.java,v 1.9 2009-04-29 18:07:03 qcheng Exp $
+ * $Id: AuthXMLRequest.java,v 1.10 2009-08-17 21:17:50 mrudul_uchil Exp $
  *
  */
 
@@ -242,11 +242,11 @@ public class AuthXMLRequest {
             this.indexType = AuthContext.IndexType.MODULE_INSTANCE;
         } else if (strIndexType.equalsIgnoreCase("user")) {
             this.indexType = AuthContext.IndexType.USER;
+        } else if (strIndexType.equalsIgnoreCase("compositeAdvice")) {
+            this.indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
         } else if (strIndexType.equalsIgnoreCase(
             ISAuthConstants.IP_RESOURCE_ENV_PARAM)) {
             this.indexType = AuthContext.IndexType.RESOURCE;
-        } else if (strIndexType.equalsIgnoreCase("compositeAdvice")) {
-            this.indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
         }
    }
 

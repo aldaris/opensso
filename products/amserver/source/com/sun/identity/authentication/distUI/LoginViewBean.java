@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.32 2009-08-12 23:07:56 ericow Exp $
+ * $Id: LoginViewBean.java,v 1.33 2009-08-17 21:17:49 mrudul_uchil Exp $
  *
  */
 
@@ -1345,7 +1345,10 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         } else if ( reqDataHash.get("authlevel") != null ) {
             indexType = AuthContext.IndexType.LEVEL;
             indexName = (String)reqDataHash.get("authlevel");
-        } else if (((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM) 
+        } else if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
+            indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
+            indexName = (String)reqDataHash.get(Constants.COMPOSITE_ADVICE);
+        } else if (((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM)
             != null) && "true".equalsIgnoreCase((String) reqDataHash.get(
                  ISAuthConstants.IP_RESOURCE_ENV_PARAM)))||
             ((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM) == null) &&
@@ -1353,9 +1356,6 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             indexType = AuthContext.IndexType.RESOURCE;
             indexName = AuthClientUtils.getResourceURL(request);
             envMap = AuthClientUtils.getEnvMap(request);
-        } else if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
-            indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
-            indexName = (String)reqDataHash.get(Constants.COMPOSITE_ADVICE);
         }
     }
 

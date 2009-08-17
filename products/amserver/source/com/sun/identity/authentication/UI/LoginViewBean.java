@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.25 2009-08-12 23:07:34 ericow Exp $
+ * $Id: LoginViewBean.java,v 1.26 2009-08-17 21:17:49 mrudul_uchil Exp $
  *
  */
 
@@ -1608,7 +1608,10 @@ public class LoginViewBean extends AuthViewBeanBase {
             indexType = AuthContext.IndexType.LEVEL;
             indexName = (String)reqDataHash.get("authlevel");
             
-        } else if (((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM) 
+        } else if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
+            indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
+            indexName = (String)reqDataHash.get(Constants.COMPOSITE_ADVICE);
+        } else if (((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM)
             != null) && "true".equalsIgnoreCase((String) reqDataHash.get(
                  ISAuthConstants.IP_RESOURCE_ENV_PARAM))) ||
             ((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM) == null) &&
@@ -1616,10 +1619,7 @@ public class LoginViewBean extends AuthViewBeanBase {
             indexType = AuthContext.IndexType.RESOURCE;
             indexName = AuthClientUtils.getResourceURL(request);
             envMap = AuthClientUtils.getEnvMap(request);
-        } else if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
-            indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
-            indexName = (String)reqDataHash.get(Constants.COMPOSITE_ADVICE);
-        }
+        } 
     }
     
     // Method to check if this is Session Upgrade
