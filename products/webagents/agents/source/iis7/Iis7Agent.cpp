@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Iis7Agent.cpp,v 1.5 2009-07-21 19:14:53 robertis Exp $
+ * $Id: Iis7Agent.cpp,v 1.6 2009-08-18 22:50:03 robertis Exp $
  *
  *
  */
@@ -48,6 +48,7 @@ static agent_props_t agent_props = {
 
 boolean_t agentInitialized = B_FALSE;
 
+#define EMPTY_STRING        ""
 #define AGENT_DESCRIPTION   "Sun OpenSSO Policy Agent 3.0 for Microsoft IIS 7.0"
 const CHAR agentDescription[]       = { AGENT_DESCRIPTION };
 const CHAR httpProtocol[]           = "http";
@@ -104,7 +105,6 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
     PCSTR requestClientIP = NULL;
     DWORD requestClientIPSize = 0;
     CHAR* orig_req_method = NULL;
-    CHAR* query = NULL;
     CHAR* dpro_cookie = NULL;
     BOOL isLocalAlloc = FALSE;
     BOOL redirectRequest = FALSE;
@@ -157,8 +157,8 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
     }
 
 
-    req->SetHeader("Cache-Control","no-cache",strlen("no-cache"),TRUE);
-    res->SetHeader("Cache-Control","no-store",strlen("no-store"),TRUE);
+    req->SetHeader("Cache-Control","no-cache",(USHORT)strlen("no-cache"),TRUE);
+    res->SetHeader("Cache-Control","no-store",(USHORT)strlen("no-store"),TRUE);
 
     res->DisableKernelCache(9);
 
@@ -172,6 +172,7 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
         am_web_handle_notification(data.c_str(), data.size(), agent_config);
         OphResourcesFree(pOphResources);
         retStatus = RQ_NOTIFICATION_FINISH_REQUEST;
+        am_web_delete_agent_configuration(agent_config);
         return retStatus;
     }
 
@@ -293,10 +294,6 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
                                 set_method, agent_config);
                         if (status == AM_SUCCESS) {
                             requestURL = req_url;
-                            if(req_url != NULL) {
-                                delete [] req_url;
-                                req_url = NULL;
-                            }
                             isLocalAlloc = FALSE;
                             am_web_log_debug("%s: SSO token found in "
                                              "assertion.",thisfunc);
@@ -306,6 +303,10 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
                                    "assertion. Redirecting to login page.",
                                    thisfunc);
                             status = AM_INVALID_SESSION;
+                        }
+                        if(req_url != NULL) {
+                            delete [] req_url;
+                            req_url = NULL;
                         }
                     }
                 }
@@ -336,6 +337,11 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
             PCSTR pszIpHeader;
             USHORT ccIpHeader;
             pszIpHeader = req->GetHeader(client_ip_header_name,&ccIpHeader);
+            pszIpHeader = (PCSTR) pHttpContext->AllocateRequestMemory( ccIpHeader + 1 );
+            if(pszIpHeader == NULL) {
+                am_web_log_debug("%s: pszIpHeader not allocated. ", thisfunc);
+            }
+            pszIpHeader = req->GetHeader(client_ip_header_name,&ccIpHeader);
 
             am_web_get_client_ip(pszIpHeader, &client_ip_from_ip_header);
         }
@@ -343,6 +349,11 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
         if(client_hostname_header_name != NULL && client_hostname_header_name[0] != '\0') {
             PCSTR pszHostName;
             USHORT cchostName;
+            pszHostName = req->GetHeader(client_hostname_header_name,&cchostName);
+            pszHostName = (PCSTR) pHttpContext->AllocateRequestMemory( cchostName + 1 );
+            if(pszHostName == NULL) {
+                am_web_log_debug("%s: pszHostName not allocated. ", thisfunc);
+            }
             pszHostName = req->GetHeader(client_hostname_header_name,&cchostName);
 
             am_web_get_client_hostname(pszHostName, 
@@ -428,18 +439,15 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
                             "after return from CDC servlet",thisfunc);
                     retStatus = redirect_to_request_url(pHttpContext, 
                             requestURL.c_str(), request_hdrs);
-                    return retStatus;
                 } 
                 else 
                 {
-                    //let the webserver handle the request
-                    //now that the session is validated.
-                    return RQ_NOTIFICATION_CONTINUE; 
+                    retStatus = RQ_NOTIFICATION_CONTINUE;
                 }
-            }
-            if (set_cookies_list != NULL) {
-                free(set_cookies_list);
-                set_cookies_list = NULL;
+                if (set_cookies_list != NULL) {
+                    free(set_cookies_list);
+                    set_cookies_list = NULL;
+                }
             }
             break;
 
@@ -470,24 +478,32 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
             status = am_web_get_logout_url(&logout_url, agent_config);
             if(status == AM_SUCCESS)
             {
-                //reset the cookie in the agent domain
-                PCSTR pcHeader = "Set-Cookie";
-                char * tmpVal = "=;Max-Age=300;Path=/";
-                const char *cookie_name = am_web_get_cookie_name(agent_config);
-                PCSTR pcValue = (PCSTR)pHttpContext->
-                    AllocateRequestMemory(strlen(cookie_name)+ strlen(tmpVal)+1);
-                strcpy((char*)pcValue,cookie_name);
-                strcat((char*)pcValue,tmpVal);
-                strcat((char*)pcValue,"\0");
-                res->SetHeader(pcHeader, pcValue, (USHORT)strlen(pcValue),FALSE);
+
+
+                if (am_web_is_cdsso_enabled(agent_config) == B_TRUE)
+                {
+                    am_status_t cdStatus = am_web_do_cookie_domain_set(set_cookie, args, EMPTY_STRING, agent_config);        
+                    if (set_cookies_list != NULL && strlen(set_cookies_list) > 0) 
+                    {
+                        set_headers_in_context(pHttpContext, set_cookies_list, FALSE);
+                    }
+                    if(cdStatus != AM_SUCCESS) {
+                    }
+                }
                 res->Redirect(logout_url, true, false);
             }
             else
             {
                 am_web_log_debug("validate_session_policy(): "
                     "am_web_get_logout_url failed. ");
-                return RQ_NOTIFICATION_FINISH_REQUEST;
+                am_web_delete_agent_configuration(agent_config);
+                retStatus = RQ_NOTIFICATION_FINISH_REQUEST;
             }
+            if (set_cookies_list != NULL) {
+                free(set_cookies_list);
+                set_cookies_list = NULL;
+            }
+            am_web_free_memory(logout_url);
         break;
 
         case AM_INVALID_ARGUMENT:
@@ -515,12 +531,22 @@ REQUEST_NOTIFICATION_STATUS ProcessRequest(IHttpContext* pHttpContext,
         request_hdrs = NULL;
     }
 
-    if(dpro_cookie){
-        free(dpro_cookie);
+    if(dpro_cookie != NULL) {
+        if(isLocalAlloc) {
+            free(dpro_cookie);
+        } else {
+            am_web_free_memory(dpro_cookie);
+        }
         dpro_cookie = NULL;
     }
 
+    if (orig_req_method != NULL) {
+        free(orig_req_method);
+        orig_req_method = NULL;
+    }
+
     OphResourcesFree(pOphResources);
+    am_web_delete_agent_configuration(agent_config);
     return retStatus;
 }
 
@@ -948,6 +974,11 @@ am_status_t get_request_url(IHttpContext* pHttpContext,
         }
     }
 
+    if(newPathInfo != NULL){
+        free(newPathInfo);
+        newPathInfo = NULL;
+    }
+
     return status;
 }
 
@@ -1061,11 +1092,7 @@ static am_status_t set_cookie(const char *header, void **args)
      CHAR* set_cookies_list = NULL;
 
      if (header != NULL && args != NULL ) {
-#if defined(_AMD64_)
         size_t cookie_length = 0;
-#else
-        int cookie_length = 0;
-#endif
         char* cdssoCookie = NULL;
         char* tmpStr = NULL;
 
@@ -1145,11 +1172,7 @@ static am_status_t reset_cookie(const char *header, void **args)
 
    if (header != NULL && args != NULL) {
 
-#if defined(_AMD64_)
         size_t reset_cookie_length = 0;
-#else
-        int reset_cookie_length = 0;
-#endif
         char *resetCookie = NULL;
         char *tmpStr = NULL;
         CHAR* set_cookies_list = NULL;
@@ -1233,23 +1256,19 @@ static am_status_t set_header(const char *key, const char *values, void **args)
         int cookie_length = 0;
         char* httpHeaderName = NULL;
         char* tmpHeader = NULL;
-#if defined(_AMD64_)
         size_t header_length = 0;
-#else
-        int header_length = 0;
-#endif
 
         ptr = (CHAR **) args[1];
         set_headers_list = *ptr;
 
-          header_length = strlen(key) + strlen("\r\n") + 1;
-          if (values != NULL) {
-             header_length += strlen(values);
-          }
-          httpHeaderName = (char *) malloc(header_length + 1);
+        header_length = strlen(key) + strlen("\r\n") + 1;
+        if (values != NULL) {
+            header_length += strlen(values);
+        }
+        httpHeaderName = (char *) malloc(header_length + 1);
 
 
-       if (status == AM_SUCCESS) {
+        if (status == AM_SUCCESS) {
           if (httpHeaderName != NULL) {
              memset(httpHeaderName, 0, sizeof(char) * (header_length + 1));
              strcpy(httpHeaderName, key);
@@ -1314,11 +1333,7 @@ static am_status_t set_cookie_in_response(const char *header, void **args)
     am_status_t status = AM_SUCCESS;
 
     if (header != NULL && args != NULL ) {
-#if defined(_AMD64_)
         size_t header_length = 0;
-#else
-        int header_length = 0;
-#endif
 
         CHAR* httpHeader = NULL;
         CHAR* new_cookie_str = NULL;
@@ -1411,7 +1426,7 @@ void ConstructReqCookieValue(string& completeString,string value)
 
     c1=value.find_first_of('=');
     c2=value.find_first_of(';');
-    int diffr= (int) c2-c1;
+    size_t diffr=c2-c1;
     if(diffr>1)
     {
         string newKey = value.substr(0,c1);
@@ -1447,7 +1462,7 @@ am_status_t set_headers_in_context(IHttpContext *pHttpContext,
         if(cl!=string::npos && cr!=string::npos)
         {
             header = st.substr(h1,cl);
-            value = st.substr(cl+2,cr-cl-2);
+            value = st.substr(cl+1,cr-cl-1);
             st= st.substr(cr+2);
 
             ConstructReqCookieValue(tmpCookieString, value);
@@ -1700,11 +1715,7 @@ static DWORD do_redirect(IHttpContext* pHttpContext,
     size_t redirect_hdr_len = 0;
     char *redirect_url = NULL;
     DWORD redirect_url_len = 0;
-#if defined(_AMD64_)
-    DWORD64 advice_headers_len = 0;
-#else
-    DWORD advice_headers_len = 0;
-#endif
+    size_t advice_headers_len = 0;
     char *advice_headers = NULL;
     const char advice_headers_template[] = {
              "Content-Length: %d\r\n"
@@ -1752,7 +1763,6 @@ static DWORD do_redirect(IHttpContext* pHttpContext,
                     size_t data_length = (advice_txt != NULL)?strlen(advice_txt):0;
                     if(data_length > 0) 
                     {
-                        PCSTR d_length;
                         char buff[256];
                         itoa(data_length,buff,10);
 
@@ -1761,9 +1771,9 @@ static DWORD do_redirect(IHttpContext* pHttpContext,
 
                         hr = pHttpResponse->SetStatus(200,"Status OK",0, S_OK);
                         hr = pHttpResponse->SetHeader("Content-Type","text/html",
-                                                    strlen("text/html"),TRUE);
+					      (USHORT)strlen("text/html"),TRUE);
                         hr = pHttpResponse->SetHeader("Content-Length",buff, 
-                                                        strlen(buff),TRUE);
+						   (USHORT)strlen(buff),TRUE);
                         if (FAILED(hr)){
                             am_web_log_error("%s: SetHeader failed.", thisfunc);
                         }
