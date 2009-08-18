@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.17 2009-06-24 23:02:47 mrudulahg Exp $
+ * $Id: SAMLv2Common.java,v 1.18 2009-08-18 19:09:52 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.qatest.common;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.sun.identity.qatest.common.MultiProtocolCommon;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Enumeration;
@@ -884,16 +885,10 @@ public class SAMLv2Common extends TestCommon {
      * This method grep Metadata from the htmlpage & returns as the string.
      * @param HtmlPage page which contains metadata
      */
-    public static String getMetadataFromPage(HtmlPage page) {
+    public static String getMetadataFromPage(HtmlPage page)
+    throws Exception {
         String metadata = "";
-        String metaPage = page.getWebResponse().getContentAsString();
-        if (!(metaPage.indexOf("EntityConfig") == -1)) {
-            metadata = metaPage.substring(metaPage.
-                    indexOf("EntityDescriptor") - 4,
-                    metaPage.lastIndexOf("EntityDescriptor") + 17);
-            metadata = metadata.replaceAll("&lt;", "<");
-            metadata = metadata.replaceAll("&gt;", ">");
-        }
+        metadata = MultiProtocolCommon.getMetadataFromPage(page);
         return metadata;
     }
     
@@ -901,16 +896,10 @@ public class SAMLv2Common extends TestCommon {
      * This method grep ExtendedMetadata from the htmlpage & returns the string
      * @param HtmlPage page which contains extended metadata
      */
-    public static String getExtMetadataFromPage(HtmlPage page) {
+    public static String getExtMetadataFromPage(HtmlPage page)
+    throws Exception {
         String metadata = "";
-        String metaPage = page.getWebResponse().getContentAsString();
-        if (!(metaPage.indexOf("EntityConfig") == -1)) {
-            metadata = metaPage.substring(metaPage.
-                    indexOf("EntityConfig") - 4,
-                    metaPage.lastIndexOf("EntityConfig") + 13);
-            metadata = metadata.replaceAll("&lt;", "<");
-            metadata = metadata.replaceAll("&gt;", ">");
-        }
+        metadata = MultiProtocolCommon.getExtMetadataFromPage(page);
         return metadata;
     }
     
@@ -1142,26 +1131,12 @@ public class SAMLv2Common extends TestCommon {
                 assert false;
             }
             
-            String spPage = spmetaPage.getWebResponse().getContentAsString();
-            if (spPage.indexOf("EntityDescriptor") != -1) {
-                arrMetadata[0] = spPage.substring(
-                        spPage.indexOf("EntityDescriptor") - 4,
-                        spPage.lastIndexOf("EntityDescriptor") + 17);
-                arrMetadata[1] = spPage.substring(
-                        spPage.indexOf("EntityConfig") - 4,
-                        spPage.lastIndexOf("EntityConfig") + 13);
-            } else {
-                arrMetadata[0] = null;
-                arrMetadata[1] = null;
-                assert false;
-            }
+            arrMetadata[0] = MultiProtocolCommon.getMetadataFromPage(spmetaPage);
+            arrMetadata[1] = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
+
             if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
-                arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
-                arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 if (FederationManager.getExitCode(spfm.importEntity(webClient,
                         (String)m.get(TestConstants.KEY_SP_EXECUTION_REALM),
                         arrMetadata[0], arrMetadata[1],
@@ -1218,26 +1193,14 @@ public class SAMLv2Common extends TestCommon {
             if (FederationManager.getExitCode(idpmetaPage) != 0) {
                 assert false;
             }
-            String idpPage = idpmetaPage.getWebResponse().getContentAsString();
-            if (idpPage.indexOf("EntityDescriptor") != -1) {
-                arrMetadata[0] = idpPage.substring(
-                        idpPage.indexOf("EntityDescriptor") - 4,
-                        idpPage.lastIndexOf("EntityDescriptor") + 17);
-                arrMetadata[1] = idpPage.substring(
-                        idpPage.indexOf("EntityConfig") - 4,
-                        idpPage.lastIndexOf("EntityConfig") + 13);
-            } else {
-                arrMetadata[0] = null;
-                arrMetadata[1] = null;
-                assert false;
-            }
+            arrMetadata[0] = MultiProtocolCommon.getMetadataFromPage(
+                    idpmetaPage);
+            arrMetadata[1] = MultiProtocolCommon.getExtMetadataFromPage(
+                    idpmetaPage);
+         
             if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
-                arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
-                arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 if (FederationManager.getExitCode(idpfm.importEntity(webClient,
                         (String)m.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         arrMetadata[0], arrMetadata[1],

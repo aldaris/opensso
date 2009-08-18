@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletCommon.java,v 1.1 2009-03-20 17:29:28 vimal_67 Exp $
+ * $Id: FedletCommon.java,v 1.2 2009-08-18 19:10:17 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.qatest.common;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.sun.identity.qatest.common.MultiProtocolCommon;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Enumeration;
@@ -100,16 +101,10 @@ public class FedletCommon extends TestCommon {
      * This method grep Metadata from the htmlpage & returns as the string.
      * @param HtmlPage page which contains metadata
      */
-    public static String getMetadataFromPage(HtmlPage page) {
+    public static String getMetadataFromPage(HtmlPage page)
+    throws Exception {
         String metadata = "";
-        String metaPage = page.getWebResponse().getContentAsString();
-        if (!(metaPage.indexOf("EntityConfig") == -1)) {
-            metadata = metaPage.substring(metaPage.
-                    indexOf("EntityDescriptor") - 4,
-                    metaPage.lastIndexOf("EntityDescriptor") + 17);
-            metadata = metadata.replaceAll("&lt;", "<");
-            metadata = metadata.replaceAll("&gt;", ">");
-        }
+        metadata = MultiProtocolCommon.getMetadataFromPage(page);
         return metadata;
     }
 
@@ -117,16 +112,10 @@ public class FedletCommon extends TestCommon {
      * This method grep ExtendedMetadata from the htmlpage & returns the string
      * @param HtmlPage page which contains extended metadata
      */
-    public static String getExtMetadataFromPage(HtmlPage page) {
+    public static String getExtMetadataFromPage(HtmlPage page)
+    throws Exception {
         String metadata = "";
-        String metaPage = page.getWebResponse().getContentAsString();
-        if (!(metaPage.indexOf("EntityConfig") == -1)) {
-            metadata = metaPage.substring(metaPage.
-                    indexOf("EntityConfig") - 4,
-                    metaPage.lastIndexOf("EntityConfig") + 13);
-            metadata = metadata.replaceAll("&lt;", "<");
-            metadata = metadata.replaceAll("&gt;", ">");
-        }
+        metadata = MultiProtocolCommon.getExtMetadataFromPage(page);
         return metadata;
     }
     
@@ -251,27 +240,13 @@ public class FedletCommon extends TestCommon {
                 assert false;
             }
             
-            String page = metaPage.getWebResponse().getContentAsString();
-            if (page.indexOf("EntityDescriptor") != -1) {
-                arrMetadata[0] = page.substring(
-                        page.indexOf("EntityDescriptor") - 4,
-                        page.lastIndexOf("EntityDescriptor") + 17);
-                arrMetadata[1] = page.substring(
-                        page.indexOf("EntityConfig") - 4,
-                        page.lastIndexOf("EntityConfig") + 13);
-            } else {
-                arrMetadata[0] = null;
-                arrMetadata[1] = null;
-                assert false;
-            }
+            arrMetadata[0] = MultiProtocolCommon.getMetadataFromPage(metaPage);
+            arrMetadata[1] = MultiProtocolCommon.getExtMetadataFromPage(metaPage);
+
             if ((arrMetadata[0].equals(null)) || 
                     (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
-                arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
-                arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 if (FederationManager.getExitCode(fm.importEntity(webClient,
                         executionRealm, arrMetadata[0], arrMetadata[1],
                         cot, "saml2")) != 0) {

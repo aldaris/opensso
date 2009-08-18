@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.15 2008-08-15 22:10:27 mrudulahg Exp $
+ * $Id: MultiProtocolCommon.java,v 1.16 2009-08-18 19:10:32 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,12 +31,16 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import org.owasp.esapi.codecs.HTMLEntityCodec;
+
 
 /**
  * This class contains common helper methods for samlv2, IDFF tests
  */
 public class MultiProtocolCommon extends TestCommon {
     
+    private static HTMLEntityCodec decoder = new HTMLEntityCodec();;
+
     /** Creates a new instance of MultiProtocolCommon */
     public MultiProtocolCommon() {
         super("MultiProtocolCommon");
@@ -88,10 +92,6 @@ public class MultiProtocolCommon extends TestCommon {
             if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
-                arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
-                arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 if (FederationManager.getExitCode(spfm.importEntity(webClient,
                         (String)m.get(TestConstants.KEY_SP_REALM),
                         arrMetadata[0], arrMetadata[1],
@@ -154,10 +154,6 @@ public class MultiProtocolCommon extends TestCommon {
             if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
-                arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
-                arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 if (FederationManager.getExitCode(idpfm.importEntity(webClient,
                         (String)m.get(TestConstants.KEY_IDP_REALM),
                         arrMetadata[0], arrMetadata[1],
@@ -263,16 +259,20 @@ public class MultiProtocolCommon extends TestCommon {
      * This method grep Metadata from the htmlpage & returns as the string.
      * @param HtmlPage page which contains metadata
      */
-    public static String getMetadataFromPage(HtmlPage page) {
+    public static String getMetadataFromPage(HtmlPage page)
+    throws Exception {
         String metadata = "";
         String metaPage = page.getWebResponse().getContentAsString();
         if (!(metaPage.indexOf("EntityDescriptor") == -1)) {
             metadata = metaPage.substring(metaPage.
                     indexOf("EntityDescriptor") - 4,
-                    metaPage.lastIndexOf("EntityDescriptor") + 17);
-            metadata = metadata.replaceAll("&lt;", "<");
-            metadata = metadata.replaceAll("&gt;", ">");
+                    metaPage.lastIndexOf("EntityDescriptor") + 20);
         }
+        log(Level.FINEST, "getMetadataFromPage", "Encoded metadata = " +
+                metadata);
+        metadata = decoder.decode(metadata);
+        log(Level.FINEST, "getMetadataFromPage", "Decoded metadata = " +
+                metadata);
         return metadata;
     }
     
@@ -280,16 +280,22 @@ public class MultiProtocolCommon extends TestCommon {
      * This method grep ExtendedMetadata from the htmlpage & returns the string
      * @param HtmlPage page which contains extended metadata
      */
-    public static String getExtMetadataFromPage(HtmlPage page) {
+    public static String getExtMetadataFromPage(HtmlPage page)
+    throws Exception {
         String metadata = "";
         String metaPage = page.getWebResponse().getContentAsString();
+        log(Level.FINEST, "getMetadataFromPage", "metaPage  = " +
+                "metaPage");
         if (!(metaPage.indexOf("EntityConfig") == -1)) {
             metadata = metaPage.substring(metaPage.
                     indexOf("EntityConfig") - 4,
-                    metaPage.lastIndexOf("EntityConfig") + 13);
-            metadata = metadata.replaceAll("&lt;", "<");
-            metadata = metadata.replaceAll("&gt;", ">");
+                    metaPage.lastIndexOf("EntityConfig") + 16);
         }
+        log(Level.FINEST, "getMetadataFromPage", "Encoded metadata = " +
+                metadata);
+        metadata = decoder.decode(metadata);
+        log(Level.FINEST, "getMetadataFromPage", "Decoded metadata = " +
+                metadata);
         return metadata;
     }
     
@@ -297,21 +303,31 @@ public class MultiProtocolCommon extends TestCommon {
      * This method grep Metadata from the htmlpage & returns as the string.
      * @param HtmlPage page which contains metadata
      */
-    public static String getMetadataFromPage(HtmlPage page, String spec) {
+    public static String getMetadataFromPage(HtmlPage page, String spec)
+    throws Exception {
         String metadata = "";
         if (spec.equals("wsfed")) {
             String metaPage = page.getWebResponse().getContentAsString();
+            log(Level.FINEST, "getMetadataFromPage", "Encoded metaPage  for " +
+                    "wsfed = " + metaPage);
+            metaPage = decoder.decode(metaPage);
+            log(Level.FINEST, "getMetadataFromPage", "Decoded metaPage  for " +
+                    "wsfed = " +  metaPage);
             if (!(metaPage.indexOf("Federation ") == -1)) {
                 metadata = metaPage.substring(metaPage.
-                        indexOf("Federation ") - 4,
+                        indexOf("Federation ") - 1,
                         metaPage.indexOf("/Federation", metaPage.
                         indexOf("Federation ")) + 12);
-                metadata = metadata.replaceAll("&lt;", "<");
-                metadata = metadata.replaceAll("&gt;", ">");
             }
         } else if ((spec.equals("saml2")) || (spec.equals("idff"))) {
             metadata = getMetadataFromPage(page);
+            log(Level.FINEST, "getMetadataFromPage", "Encoded metadata = " +
+                    metadata);
+            metadata = decoder.decode(metadata);
         }
+        log(Level.FINEST, "getMetadataFromPage", "Decoded metadata = " +
+                metadata);
+
         return metadata;
     }
     
@@ -319,20 +335,30 @@ public class MultiProtocolCommon extends TestCommon {
      * This method grep ExtendedMetadata from the htmlpage & returns the string
      * @param HtmlPage page which contains extended metadata
      */
-    public static String getExtMetadataFromPage(HtmlPage page, String spec) {
+    public static String getExtMetadataFromPage(HtmlPage page, String spec)
+    throws Exception {
         String metadata = "";
         if (spec.equals("wsfed")) {
             String metaPage = page.getWebResponse().getContentAsString();
+            log(Level.FINEST, "getExtMetadataFromPage", "Encoded metaPage for " +
+                    "wsfed = " + metaPage);
+            metaPage = decoder.decode(metaPage);
+            log(Level.FINEST, "getExtMetadataFromPage", "Decoded metaPage for " +
+                    "wsfed = " + metaPage);
             if (!(metaPage.indexOf("FederationConfig") == -1)) {
                 metadata = metaPage.substring(metaPage.
-                        indexOf("FederationConfig") - 4,
+                        indexOf("FederationConfig") - 1,
                         metaPage.lastIndexOf("FederationConfig") + 17);
-                metadata = metadata.replaceAll("&lt;", "<");
-                metadata = metadata.replaceAll("&gt;", ">");
             }
         } else if ((spec.equals("saml2")) || (spec.equals("idff"))) {
             metadata = getExtMetadataFromPage(page);
+            log(Level.FINEST, "getExtMetadataFromPage", "Encoded metadata = " +
+                    metadata);
+            metadata = decoder.decode(metadata);
         }
+        log(Level.FINEST, "getExtMetadataFromPage", "Decoded metadata = " +
+                metadata);
+
         return metadata;
     }
     
@@ -633,25 +659,11 @@ public class MultiProtocolCommon extends TestCommon {
             }
             
             String page = metaPage.getWebResponse().getContentAsString();
-            if (page.indexOf("EntityDescriptor") != -1) {
-                arrMetadata[0] = page.substring(
-                        page.indexOf("EntityDescriptor") - 4,
-                        page.lastIndexOf("EntityDescriptor") + 17);
-                arrMetadata[1] = page.substring(
-                        page.indexOf("EntityConfig") - 4,
-                        page.lastIndexOf("EntityConfig") + 13);
-            } else {
-                arrMetadata[0] = null;
-                arrMetadata[1] = null;
-                assert false;
-            }
+            arrMetadata[0] = getMetadataFromPage(metaPage);
+            arrMetadata[1] = getExtMetadataFromPage(metaPage);
             if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
-                arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
-                arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 if (FederationManager.getExitCode(fm.importEntity(webClient,
                         executionRealm, arrMetadata[0], arrMetadata[1],
                         cot, "saml2")) != 0) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLTest.java,v 1.4 2009-01-27 00:19:23 nithyas Exp $
+ * $Id: XACMLTest.java,v 1.5 2009-08-18 19:11:07 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -182,6 +182,7 @@ public class XACMLTest extends TestCommon {
                 if (FederationManager.getExitCode(spfm.importEntity(webClient,
                         realm , arrpMetadata[0], arrpMetadata[1],
                         pdpCot, " ")) != 0) {
+                    log(Level.SEVERE, "setup", "import-entity command failed");
                     arrpMetadata[0] = null;
                     arrpMetadata[1] = null;
                     assert(false);
@@ -413,7 +414,8 @@ public class XACMLTest extends TestCommon {
      * @param HtmlPage page which contains metadata
      * @param spec spec
      */
-    private String getMetadataFromPage(HtmlPage page, String spec) {
+    private String getMetadataFromPage(HtmlPage page, String spec)
+    throws Exception {
         String metadata = "";
         if ((spec.equals("saml2")) || (spec.equals("idff"))) {
             metadata = MultiProtocolCommon.getMetadataFromPage(page);
@@ -426,7 +428,8 @@ public class XACMLTest extends TestCommon {
      * @param HtmlPage page which contains extended metadata
      * @param spec spec
      */
-    private String getExtMetadataFromPage(HtmlPage page, String spec) {
+    private String getExtMetadataFromPage(HtmlPage page, String spec) 
+            throws Exception {
         String metadata = "";
         if ((spec.equals("saml2")) || (spec.equals("idff"))) {
             metadata = MultiProtocolCommon.getExtMetadataFromPage(page);
