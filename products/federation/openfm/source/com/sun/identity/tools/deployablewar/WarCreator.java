@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WarCreator.java,v 1.1 2009-01-05 23:51:32 veiming Exp $
+ * $Id: WarCreator.java,v 1.2 2009-08-18 16:08:55 kevinserwin Exp $
  */
 
 package com.sun.identity.tools.deployablewar;
@@ -147,6 +147,7 @@ public class WarCreator {
             fileList = getTargetedList(type, type);
             for (Iterator i = fileList.iterator(); i.hasNext(); ) {
                 String f = (String)i.next();
+                f= f.replaceAll("\\"+System.getProperty("file.separator"), "/");
                 out.putNextEntry(new JarEntry(f));
                 FileInputStream in = new FileInputStream(type + "/" + f);
 
