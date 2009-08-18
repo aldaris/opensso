@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PeriodicCleanUpMap.java,v 1.2 2008-06-25 05:52:51 qcheng Exp $
+ * $Id: PeriodicCleanUpMap.java,v 1.3 2009-08-18 21:16:39 ww203982 Exp $
  *
  */
 
@@ -69,9 +69,11 @@ public class PeriodicCleanUpMap extends PeriodicGroupMap {
      */
     
     public void run() {
-        synchronized (thisTurn) {
-            map.keySet().removeAll(thisTurn);
-            thisTurn.clear();
+        synchronized (map) {
+            synchronized (thisTurn) {
+                map.keySet().removeAll(thisTurn);
+                thisTurn.clear();
+            }
         }
         // containers swapping
         synchronized (nextTurn[containerNeeded - 1]) {

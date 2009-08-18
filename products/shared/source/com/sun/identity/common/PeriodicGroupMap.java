@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PeriodicGroupMap.java,v 1.2 2008-06-25 05:52:51 qcheng Exp $
+ * $Id: PeriodicGroupMap.java,v 1.3 2009-08-18 21:16:39 ww203982 Exp $
  *
  */
 
@@ -247,5 +247,39 @@ public class PeriodicGroupMap extends PeriodicGroupRunnable implements Map {
     
     public int hashCode() {
         return map.hashCode();
+    }
+
+    /**
+      * Implements for TaskRunnable. Run the function of ScheduleableGroupAction
+      * on the objects in thisTurn 1 by 1, and interchange thisTurn and nextTurn.
+      */
+
+    public void run() {
+        synchronized (map) {
+            synchronized (thisTurn) {
+                if (!thisTurn.isEmpty()) {
+                    for (Iterator iter = thisTurn.iterator();
+                        iter.hasNext();) {
+                        Object obj = iter.next();
+                        doGroupAction(obj);
+                        iter.remove();
+                    }
+                }
+            }
+        }
+        synchronized (nextTurn[containerNeeded - 1]) {
+            Set tempSet = thisTurn;
+            for (int i = 0; i < containerNeeded + 1; i++) {
+                if (i == 0) {
+                    thisTurn = nextTurn[0];
+                } else {
+                    if (i == containerNeeded) {
+                        nextTurn[containerNeeded - 1] = tempSet;
+                    } else {
+                        nextTurn[i - 1] = nextTurn[i];
+                    }
+                }
+            }
+        }
     }
 }
