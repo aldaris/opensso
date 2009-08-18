@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-diagnostic-tools.xml,v 1.7 2009-07-24 22:25:30 ak138937 Exp $
+   $Id: build-diagnostic-tools.xml,v 1.8 2009-08-18 01:04:27 ak138937 Exp $
 
 -->
 
@@ -350,7 +350,7 @@
         <copy todir="${odt.lib.dir}"
               overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${extlib.dir}"
-                     includes="xsdlib.jar, jaxb-api.jar, jaxb-impl.jar, webservices-rt.jar, OpenDS.jar"/>
+                     includes="xsdlib.jar, jaxb-api.jar, jaxb-impl.jar, webservices-rt.jar, jdmkrt.jar, OpenDS.jar"/>
             <fileset dir="${sharedlib.dist.dir}"
                      includes="opensso-sharedlib.jar"/>
             <fileset dir="${amserver.dist.dir}"
