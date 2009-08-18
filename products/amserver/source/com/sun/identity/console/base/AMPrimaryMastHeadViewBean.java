@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPrimaryMastHeadViewBean.java,v 1.10 2009-08-06 22:00:07 veiming Exp $
+ * $Id: AMPrimaryMastHeadViewBean.java,v 1.11 2009-08-18 22:38:10 veiming Exp $
  *
  */
 
@@ -240,12 +240,6 @@ public abstract class AMPrimaryMastHeadViewBean
          */
         String logo = 
             "../" + consoleDirectory + "/images/PrimaryProductName.png";
-        try {
-            logo = ESAPI.encoder().encodeForURL(logo);
-        } catch (EncodingException e) {
-            debug.error("AMPrimaryMastheadViewBean.createMastheadModel", e);
-            logo = "";
-        }
 
         mm.setSrc(logo);
         mm.setWidth("78");
