@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.37 2009-07-01 01:11:43 veiming Exp $
+   $Id: build-zip.xml,v 1.38 2009-08-19 05:40:42 veiming Exp $
 
 -->
 
@@ -43,8 +43,9 @@
 
     <target name="all" depends="consoleonlywebxml, noconsolewebxml, unixhelper,
             patchtools">
-        <copy file="${openfm.dir}/license.txt"
-            tofile="${zip.temp.dir}/license.txt" />
+        <copy todir="${zip.temp.dir}">
+            <fileset dir="${products.license.dir}" includes="*.txt" />
+        </copy>
         <copy file="${openfm.dir}/docs/README.famzip"
             tofile="${zip.temp.dir}/README" />
             

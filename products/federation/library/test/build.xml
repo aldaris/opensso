@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2009-06-23 20:29:27 kevinserwin Exp $
+   $Id: build.xml,v 1.10 2009-08-19 05:40:42 veiming Exp $
 
 -->
 
@@ -66,7 +66,8 @@
         <echo file="${test.package.dir}/.manifest"
               message="version=${library.version}, ${touch.time}" />
 
-        <copy file="${library.basedir}/license.txt" todir="${test.package.dir}" />
+        <copy file="${products.license.dir}/license.txt"
+            todir="${test.package.dir}" />
 
         <copy todir="${test.package.dir}/mock">
             <fileset dir="${library.unittest.dir}/mock" />

@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicy.xml,v 1.9 2009-05-05 18:53:03 mrudul_uchil Exp $
+    $Id: amPolicy.xml,v 1.10 2009-08-19 05:40:40 veiming Exp $
 
 -->
 
@@ -157,6 +157,12 @@
             i18nKey="SunIdentityServer-subject-AMIdentitySubject-name"
             propertiesViewBeanURL = "../policy/IdentitySubject" />
         <PluginSchema
+            name="PrivilegeSubject"
+            interfaceName="Subject"
+            className="com.sun.identity.policy.plugins.PrivilegeSubject"
+            i18nFileName="amPolicy"
+            i18nKey="SunIdentityServer-subject-PrivilegeSubject-name" />
+        <PluginSchema
             name="AuthRoleCondition"
             interfaceName="Condition" 
             className="com.sun.identity.policy.plugins.AuthRoleCondition"
@@ -243,6 +249,12 @@
             className="com.sun.identity.policy.plugins.LDAPFilterCondition"
             i18nFileName="amPolicy"
             i18nKey="sun-ldapfilter-condition-name" />
+        <PluginSchema
+            name="PrivilegeCondition"
+            interfaceName="Condition"
+            className="com.sun.identity.policy.plugins.PrivilegeCondition"
+            i18nFileName="amPolicy"
+            i18nKey="sun-privilege-condition-name" />
         <PluginSchema
             name="AMIdentityMembershipCondition"
             interfaceName="Condition"

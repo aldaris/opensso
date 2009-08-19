@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.33 2008-12-16 01:49:03 qcheng Exp $
+    $Id: CLILogMessageIDs.xml,v 1.34 2009-08-19 05:40:40 veiming Exp $
 
 -->
 
@@ -6604,4 +6604,296 @@
             <item>Look under debug file for more information.</item>
         </actions>
     </logmessage>
+
+    <logmessage name="ATTEMPT_CREATE_APPLICATION" id="5500"
+        loglevel="LL_INFO"
+        description="Attempt to create application.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Application name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create application Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_CREATE_APPLICATION" id="5501"
+        loglevel="LL_INFO"
+        description="Create application succeeded.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Application name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create application Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_APPLICATION" id="5502"
+        loglevel="LL_INFO"
+        description="Failed to create application.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Application name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create application Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_LIST_APPLICATIONS" id="5510"
+        loglevel="LL_INFO"
+        description="Attempt to list applications in a realm.">
+        <datainfo>
+            <item>Realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list applications Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_LIST_APPLICATIONS" id="5511"
+        loglevel="LL_INFO"
+        description="List applications in a realm succeeded.">
+        <datainfo>
+            <item>Realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list applications Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_APPLICATIONS" id="5512"
+        loglevel="LL_INFO"
+        description="Failed to list applications.">
+        <datainfo>
+            <item>Realm</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list applications Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_LIST_APPLICATION_TYPES" id="5520"
+        loglevel="LL_INFO"
+        description="Attempt to list application types.">
+        <datainfo />
+        <triggers>
+            <item>Execute list application types Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_LIST_APPLICATION_TYPES" id="5521"
+        loglevel="LL_INFO"
+        description="List application types succeeded.">
+        <datainfo />
+        <triggers>
+            <item>Execute list application types Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_APPLICATION_TYPES" id="5522"
+        loglevel="LL_INFO"
+        description="Failed to list application types.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list application types Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_SHOW_APPLICATION" id="5530"
+        loglevel="LL_INFO"
+        description="Attempt to show application attributes.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Application Name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show application Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_SHOW_APPLICATION" id="5531"
+        loglevel="LL_INFO"
+        description="Attributes of application is displayed succeeded.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Application Name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show application Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SHOW_APPLICATION" id="5532"
+        loglevel="LL_INFO"
+        description="Failed to show application attributes.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Application Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show application Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_SET_APPLICATION" id="5540"
+        loglevel="LL_INFO"
+        description="Attempt to set application attributes.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Application Name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set application attributes Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_SET_APPLICATION" id="5541"
+        loglevel="LL_INFO"
+        description="Attributes of application is modified succeeded.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Application Name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set application attributes Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SET_APPLICATION" id="5542"
+        loglevel="LL_INFO"
+        description="Failed to set application attributes.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Application Name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set application attributes Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_DELETE_APPLICATIONS" id="5550"
+        loglevel="LL_INFO"
+        description="Attempt to delete applications.">
+        <datainfo>
+            <item>Realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete applications Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_DELETE_APPLICATIONS" id="5551"
+        loglevel="LL_INFO"
+        description="Application are deleted.">
+        <datainfo>
+            <item>Realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete applications Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DELETE_APPLICATIONS" id="5552"
+        loglevel="LL_INFO"
+        description="Failed to delete applications.">
+        <datainfo>
+            <item>Realm</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete applications Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_SHOW_ENTITLEMENT_SVC" id="5600"
+        loglevel="LL_INFO"
+        description="Attempt to show entitlement service configuration.">
+        <datainfo />
+        <triggers>
+            <item>Execute show entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_SHOW_ENTITLEMENT_SVC" id="5601"
+        loglevel="LL_INFO"
+        description="Entitlement service configuration is displayed.">
+        <datainfo />
+        <triggers>
+            <item>Execute show entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SHOW_ENTITLEMENT_SVC" id="5602"
+        loglevel="LL_INFO"
+        description="Failed to display entitlement service configuration.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_MODIFY_ENTITLEMENT_SVC" id="5610"
+        loglevel="LL_INFO"
+        description="Attempt to modify entitlement service configuration.">
+        <datainfo />
+        <triggers>
+            <item>Execute set entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_MODIFY_ENTITLEMENT_SVC" id="5611"
+        loglevel="LL_INFO"
+        description="Entitlement service configuration is modified.">
+        <datainfo />
+        <triggers>
+            <item>Execute set entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_MODIFY_ENTITLEMENT_SVC" id="5612"
+        loglevel="LL_INFO"
+        description="Failed to modify entitlement service configuration.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set entitlement service configuration Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+
 </logmessages>

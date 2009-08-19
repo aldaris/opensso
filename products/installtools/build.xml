@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2009-07-09 17:04:18 veiming Exp $
+   $Id: build.xml,v 1.7 2009-08-19 05:41:16 veiming Exp $
 
 -->
 
@@ -63,9 +63,7 @@
             <manifest>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>   
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>      
+            <fileset dir="${products.license.dir}" includes="license.txt" />
             <fileset dir="${installtools.classes.dir}">
                 <patternset refid="installtool-classes"/>
             </fileset>         
@@ -76,9 +74,7 @@
             <manifest>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>   
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>      
+            <fileset dir="${products.license.dir}" includes="*.txt" />
             <fileset dir="${installtools.classes.dir}">
                 <patternset refid="installtool-launcher-classes"/>
             </fileset>

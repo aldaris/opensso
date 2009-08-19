@@ -24,12 +24,12 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-session-tools.xml,v 1.5 2009-03-26 20:45:34 weisun2 Exp $
+   $Id: build-session-tools.xml,v 1.6 2009-08-19 05:40:29 veiming Exp $
 
 -->
 
 <project name="createsessiontools.zip" default="createZipFile" basedir=".">
-    <description>OpenWebSingle Sign-On: amSessionTools.zip Creation</description>
+    <description>OpenSSO: amSessionTools.zip Creation</description>
     <fail message="*** nightly build may be built from top level only ***">
         <condition>
             <or>
@@ -38,32 +38,6 @@
         </condition>
     </fail>
     
-    <property name="amsession.package.path"
-        value="com/sun/identity/tools/bundles"/>
-    <property name="amsession.unix.scripts.dir"
-        value="${amserver.basedir}/scripts/bin"/>
-    <property name="amsession.windows.scripts.dir"
-        value="${amserver.basedir}/scripts/bin"/>     
-    <property name="amsession.tools.dir" value="${amserver.built.dir}/session-tools"/>
-    <property name="amsession.locale.dir" value="${amsession.tools.dir}/locale"/>
-    <property name="amsession.lib.dir" value="${amsession.tools.dir}/lib"/>
-    <property name="amsession.ext.dir" value="${amsession.tools.dir}/ext"/>
-    <property name="amsession.template.dir" value="${amsession.tools.dir}/template"/>
-    <property name="amsession.windows.dir" value="${amsession.template.dir}/windows"/>
-    <property name="amsession.windows.bin.dir" value="${amsession.windows.dir}/bin"/>
-    <property name="amsession.windows.config.path" value="${amsession.windows.dir}/config"/>
-    <property name="amsession.windows.config.lib.path" value="${amsession.windows.config.path}/lib"/>    
-    <property name="amsession.unix.dir" value="${amsession.template.dir}/unix"/>
-    <property name="amsession.unix.bin.dir" value="${amsession.unix.dir}/bin"/>
-    <property name="amsession.unix.config.path" value="${amsession.unix.dir}/config"/>
-    <property name="amsession.unix.config.lib.path" value="${amsession.unix.config.path}/lib"/>            
-    <property name="amsession.classes.dir" value="${amsession.tools.dir}/classes"/>
-    <property name="amsession.package.dir"
-        value="${amsession.classes.dir}/${amsession.package.path}"/>
-    <property name="amsession.tools.scripts.dir"
-        value="${amserver.script.dir}/session-tools"/>
-        
-        
     <target name="prepareBuild">
         <mkdir dir="${amsession.locale.dir}"/>
         <mkdir dir="${amsession.lib.dir}"/>
@@ -87,9 +61,9 @@
     <target name="makeJar" depends="prepareBuild">
         <copy todir="${amsession.package.dir}"
             overwrite="yes" encoding="UTF-8">
-            <fileset dir="${amserver.built.dir}/classes/${amsession.package.path}"
+            <fileset dir="${amserver.classes.dir}/${amsession.package.path}"
                 includes="*"/>
-            <fileset dir="${amserver.res.dir}/locale"
+            <fileset dir="${amserver.res.i18n.dir}"
                 includes="amsessiontoolssetup.properties"/>
         </copy>
         <jar destfile="${amsession.lib.dir}/am_session_setup.jar"
@@ -105,12 +79,12 @@
         <mkdir dir="${amsession.classes.dir}/com/sun/identity/ha/jmqdb/client"/>
         <copy todir="${amsession.classes.dir}/com/sun/identity/ha/jmqdb"
             overwrite="yes" encoding="UTF-8">
-            <fileset dir="${amserver.built.dir}/classes/com/sun/identity/ha/jmqdb"
+            <fileset dir="${amserver.classes.dir}/com/sun/identity/ha/jmqdb"
                 includes="*"/>
         </copy>
         <copy todir="${amsession.classes.dir}/com/sun/identity/ha/jmqdb/client"
             overwrite="yes" encoding="UTF-8">
-            <fileset dir="${amserver.built.dir}/classes/com/sun/identity/ha/jmqdb/client"
+            <fileset dir="${amserver.classes.dir}/com/sun/identity/ha/jmqdb/client"
                 includes="*"/>
         </copy>       
         <jar destfile="${amsession.lib.dir}/am_sessiondb.jar"
@@ -126,12 +100,12 @@
     <target name="copyNeededFiles" depends="makeJar">
         <copy todir="${amsession.ext.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">
-            <fileset dir="${extlib.dir}"
-                includes="je.jar, mq4_3-Linux_X86.zip, mq4_3-SunOS_X86.zip, mq4_3-SunOS.zip, mq4_3-WINNT.zip"/>
+            <fileset dir="${extlib.dir}" includes="${amsession-bundle-jars}" />
         </copy>
         <copy todir="${amsession.locale.dir}"
             overwrite="yes" encoding="UTF-8">
-            <fileset dir="${amserver.built.res.dir}" includes="amSessionDB.properties"/>
+            <fileset dir="${amserver.built.res.dir}"
+                includes="amSessionDB.properties"/>
         </copy>
         <copy todir="${amsession.tools.dir}" overwrite="yes" flatten="yes"
             encoding="UTF-8">

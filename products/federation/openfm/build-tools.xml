@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.20 2008-10-10 18:44:20 kevinserwin Exp $
+   $Id: build-tools.xml,v 1.21 2009-08-19 05:40:42 veiming Exp $
 
 -->
 
@@ -46,8 +46,9 @@
         <unzip src="${openfm.extlib.dir}/amAdminTools.zip"
             dest="${tools.temp.dir}" />
 
-        <copy file="${openfm.dir}/license.txt"
-            tofile="${tools.temp.dir}/license.txt" />
+        <copy todir="${tools.temp.dir}">
+            <fileset dir="${products.license.dir}" includes="*.txt" />
+        </copy>
 
         <copy todir="${tools.temp.dir}/lib">
             <fileset file="${fm.dist.dir}/opensso.jar" />

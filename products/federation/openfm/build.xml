@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.63 2009-07-18 01:20:02 hengming Exp $
+   $Id: build.xml,v 1.64 2009-08-19 05:40:42 veiming Exp $
 
 -->
 
@@ -39,13 +39,6 @@
             <not><isset property="target.jdk.set"/></not>
         </condition>
     </fail>
-
-    <!-- user specific properties -->
-    <property file="${user.home}/.opensso"/>
-
-    <!-- overridable properties -->
-    <property name="build.debug" value="on"/>
-    <property name="build.debuglevel" value="lines,vars,source"/>
 
     <!-- build class path -->
     <path id="build.class.path">
@@ -78,9 +71,7 @@
     <target name="build" depends="preparebuild">
         <mkdir dir="${openfm.classes.dir}/com/sun/identity/log/messageid" />
         <copy todir="${openfm.classes.dir}/com/sun/identity/log/messageid">
-            <fileset dir="${openfm.xml.dir}/log">
-                <include name="*.xml" />
-            </fileset>
+            <fileset dir="${openfm.xml.dir}/log" includes="*.xml" />
         </copy>
 
         <javac memoryInitialSize="256m" memoryMaximumSize="1024m" fork="true"
@@ -97,6 +88,7 @@
             <arg value="${openfm.res.i18n.dir}"/>
             <arg value="com.sun.identity.federation.cli.definition.FederationManager"/>
         </java>
+        <ant antfile="${unittest.dir}/build.xml" inheritRefs="true"/>
     </target>
 
     <target name="clihelper" depends="preparebuild">
@@ -118,7 +110,6 @@
     <target name="nightly">
         <antcall target="tools" />
         <antcall target="war" />
-        <antcall target="unittest" />
         <antcall target="clientsdk" />
         <antcall target="clientsamples" />
         <antcall target="embedsample" />
@@ -217,9 +208,7 @@
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>
+            <fileset dir="${products.license.dir}" includes="license.txt" />
             <fileset dir="${openfm.dir}/resources"
                 includes="META-INF/services/*"
                 excludes="META-INF/services/com.sun.xml.ws.assembler.ClientPipelineHook, 
@@ -227,8 +216,7 @@
             </fileset>
             <fileset dir="${openfm.services.xml.dir}" includes="*.xml" />
             <zipfileset dir="${openfm.classes.dir}"
-                excludes="com/sun/identity/console/**, 
-                com/sun/identity/fedlet/**" />
+                excludes="${console.packages},com/sun/identity/fedlet/**" />
         </jar>
 
         <copy tofile="${fm.dist.dir}/console.jar"
@@ -244,7 +232,7 @@
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
             <zipfileset dir="${openfm.classes.dir}"
-                includes="com/sun/identity/console/**" />
+                includes="${console.packages}" />
         </jar>
 
         <checksum file="${fm.dist.dir}/opensso.jar" 
@@ -334,9 +322,7 @@
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>
+            <fileset dir="${products.license.dir}" includes="license.txt" />
             <zipfileset dir="${openfm.built.publicapidocs.dir}"/>
         </jar>
     </target>
@@ -353,11 +339,13 @@
         <mkdir dir="${openfm.built.apidocs.dir}"/>
     </target>
 
-    <target name="clean" depends="war-clean,tools-clean,unittest-clean,clientsdk-clean,clientsamples-clean,embedsample-clean">
+    <target name="clean" depends="war-clean,tools-clean,clientsdk-clean,clientsamples-clean,embedsample-clean">
         <delete dir="${openfm.built.apidocs.dir}"/>
         <delete dir="${openfm.built.docs.dir}"/>
         <delete dir="${openfm.classes.dir}"/>
         <delete dir="${openfm.built.dir}"/>
+        <ant antfile="${unittest.dir}/build.xml" inheritRefs="true"
+            target="clean"/>
     </target>
   
     <target name="war-clean">
@@ -374,14 +362,6 @@
             inheritRefs="true" target="clean"/>
     </target>
 
-    <target name="unittest" depends="build">
-        <ant antfile="${openfm.unittest.dir}/build.xml" target="all" inheritRefs="true"/>
-    </target>
-
-    <target name="unittest-clean">
-        <ant antfile="${openfm.unittest.dir}/build.xml" inheritRefs="true" target="clean"/>
-    </target>
-  
     <target name="extlib-clean">
         <delete file="${openfm.extlib.dir}/amclientsdk.jar"/>
         <delete file="${openfm.extlib.dir}/amAdminTools.zip"/>
@@ -390,7 +370,6 @@
         <delete file="${openfm.extlib.dir}/opensso-register.jar"/>
         <delete file="${openfm.extlib.dir}/opensso.war"/>
         <delete file="${openfm.extlib.dir}/opensso-sharedlib.jar"/>
-        <delete file="${openfm.extlib.dir}/opensso-test.jar"/>
         <delete file="${openfm.extlib.dir}/opensso_server_samples.war"/>
         <delete file="${openfm.extlib.dir}/openssosamples.zip"/>
         <delete file="${openfm.extlib.dir}/amSessionTools.zip"/>
@@ -430,7 +409,6 @@
         <echo message=" "/>
         <echo message=" build               : compiles the sources"/>
         <echo message=" nightly             : generates nightly build binaries"/>
-        <echo message=" unittest            : generates unit test zip file"/>
         <echo message=" clientsamples       : generates client samples war file"/>
         <echo message=" war                 : creates WAR with server samples for deployment"/>
         <echo message=" tools               : creates tools zip"/>
@@ -439,7 +417,6 @@
         <echo message=" doc                 : creates javadocs"/>
         <echo message=" publicdoc           : creates public javadocs"/>
         <echo message=" clean               : deletes the generated files"/>
-        <echo message=" unittest-clean      : deletes the generated unit test resources"/>
         <echo message=" extlib-clean        : deletes the shared and amserver libraries under extlib "/>
         <echo message=" clientsamples-clean : deletes the generated client samples resources"/>
         <echo message=" clientsdk-clean     : deletes the generated client SDK jar file"/>

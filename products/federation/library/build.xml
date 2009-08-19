@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.27 2009-07-09 17:04:16 veiming Exp $
+   $Id: build.xml,v 1.28 2009-08-19 05:40:41 veiming Exp $
 
 -->
 
@@ -41,41 +41,19 @@
     <property name="libtracker" value="${library.basedir}/tracker.properties" />
     <touch file="${libtracker}" />
 
-    <!-- user specific properties -->
-    <property file="${user.home}/.opensso"/>
-
-    <!-- overridable properties -->
-    <property name="build.debug" value="on"/>
-    <property name="build.debuglevel" value="lines,vars,source"/>
-
-    <condition property="target.jdk.set" value="${target.jdk}">
-        <isset property="target.jdk"/>
-    </condition>
-    <condition property="target.jdk.set" value="1.5">
-        <not><isset property="target.jdk"/></not>
-    </condition>
-    <echo message="OpenSSO JDK Version: ${target.jdk.set}"/>
-
-    <property name="fedlibrary.clientsdkbase.dir" value="${library.basedir}/clientsdk"/>
+    <property name="fedlibrary.clientsdkbase.dir"
+        value="${library.basedir}/clientsdk"/>
 
     <!-- build class path -->
     <path id="build.class.path">
         <pathelement location="${sharedlib.classes.dir}"/>
         <pathelement location="${library.classes.dir}"/>
-        <fileset dir="${extlib.dir}">
-            <include name="**/*.jar"/>
-            <exclude name="webservices-api.jar"/>
-            <exclude name="webservices-rt.jar"/>
-            <exclude name="webservices-tools.jar"/>
-        </fileset>
-        <fileset dir="${library.extlib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
+        <fileset dir="${extlib.dir}"
+            includes="**/*.jar"
+            excludes="webservices-api.jar,webservices-rt.jar,webservices-tools.jar"/>
     </path>
 
     <target name="xsd.liberty" depends="preparebuild" unless="library.xsd.liberty.done">
-        <property name="xsd.liberty.dir" value="${library.xsd.dir}/liberty"/>
-        <property name="xsd.liberty.files" value="${xsd.liberty.dir}/lib-id-sis-pp.xsd ${xsd.liberty.dir}/lib-arch-metadata.xsd ${xsd.liberty.dir}/idff-entity-config-schema.xsd ${xsd.liberty.dir}/lib-arch-disco-svc.xsd ${xsd.liberty.dir}/lib-arch-interact-svc.xsd ${xsd.liberty.dir}/lib-arch-paos.xsd ${xsd.liberty.dir}/lib-arch-soap-binding.xsd ${xsd.liberty.dir}/lib-arch-security-fmwk.xsd ${xsd.liberty.dir}/secext.xsd ${xsd.liberty.dir}/discoentry.xsd ${xsd.liberty.dir}/ppextension.xsd ${xsd.liberty.dir}/lib-idwsf-authn-svc.xsd ${xsd.liberty.dir}/liberty-idwsf-disco-svc-v1.1.xsd ${xsd.liberty.dir}/liberty-idwsf-soap-binding-v1.1.xsd"/>
         <java classname="com.sun.tools.xjc.Driver" 
             maxmemory="128m" failonerror="true" fork="true">
             <classpath refid="build.class.path"/>
@@ -86,8 +64,6 @@
     </target>
 
     <target name="xsd.saml2" depends="preparebuild" unless="library.xsd.saml2.done">
-        <property name="xsd.saml2.dir" value="${library.xsd.dir}/saml2"/>
-        <property name="xsd.saml2.files" value="${xsd.saml2.dir}/entity-config-schema.xsd ${xsd.saml2.dir}/saml-schema-assertion-2.0.xsd ${xsd.saml2.dir}/saml-schema-metadata-2.0.xsd  ${xsd.saml2.dir}/schema.xsd ${xsd.saml2.dir}/sstc-saml-metadata-ext-query.xsd ${xsd.saml2.dir}/sstc-saml-metadata-x509-query.xsd"/>
         <java classname="com.sun.tools.xjc.Driver" 
             maxmemory="128m" failonerror="true" fork="true">
             <classpath refid="build.class.path"/>
@@ -100,10 +76,6 @@
     </target>
 
     <target name="xsd.wsfederation" depends="preparebuild" unless="library.xsd.wsfederation.done">
-        <property name="xsd.wsfederation.dir" value="${library.xsd.dir}/wsfederation"/>
-        <property name="xsd.wsfederation.catalog" value="${xsd.wsfederation.dir}/catalog.xml"/>
-        <property name="xsd.wsfederation.files" value="${xsd.wsfederation.dir}/xmldsig-core-schema.xsd ${xsd.wsfederation.dir}/oasis-200401-wss-wssecurity-utility-1.0.xsd ${xsd.wsfederation.dir}/oasis-200401-wss-wssecurity-secext-1.0.xsd
-${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.wsfederation.dir}/ws-securitypolicy-1.2.xsd ${xsd.wsfederation.dir}/ws-federation.xsd ${xsd.wsfederation.dir}/entity-config-schema.xsd" />
         <java classname="com.sun.tools.xjc.Driver" 
             maxmemory="128m" failonerror="true" fork="true">
             <classpath refid="build.class.path"/>
@@ -135,7 +107,6 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
     </target>
 
     <target name="nightly">
-        <antcall target="unittest" />
         <antcall target="clientsdk" />
         <filter token="DATE" value="${nightly.date}" />
         <copy file="${library.docs.dir}/nightly.html" tofile="${fedlibrary.dist.dir}/index.html" filtering="true" />
@@ -152,7 +123,6 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
         </javac>
 
         <antcall target="jaxb.properties" />
-
         <antcall target="jaxrpc" />
 
         <tstamp>
@@ -164,14 +134,11 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
                 <attribute name="Version" value="${version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>
+            <fileset dir="${products.license.dir}" includes="license.txt" />
             <fileset dir="${library.xml.dir}" includes="*.xml" />
             <zipfileset dir="${library.classes.dir}"
                 excludes="com/sun/identity/saml2/idpdiscovery/*.class" />
         </jar>
-
         <checksum file="${fedlibrary.dist.dir}/openfedlib.jar" 
             algorithm="SHA" fileext=".sha" />
 
@@ -180,13 +147,10 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
                 <attribute name="Version" value="${version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>
+            <fileset dir="${products.license.dir}" includes="license.txt" />
             <zipfileset dir="${library.classes.dir}"
                 includes="com/sun/identity/saml2/idpdiscovery/*.class" />
         </jar>
-
         <checksum file="${fedlibrary.dist.dir}/idpdiscovery.jar"
             algorithm="SHA" fileext=".sha" />
     </target>
@@ -264,18 +228,8 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
         <javadoc maxmemory="512m" destdir="${library.built.apidocs.dir}" 
             windowtitle="Open Federation API" failonerror="true">
             <classpath refid="build.class.path"/>
-            <packageset dir="${library.src.dir}">
-                <include name="com/sun/identity/federation/**"/>
-                <include name="com/sun/identity/liberty/ws/**"/>
-                <include name="com/sun/identity/plugin/**"/>
-                <include name="com/sun/identity/saml/**"/>
-                <include name="com/sun/identity/saml2/**"/>
-                <include name="com/sun/identity/sae/**"/>
-                <include name="com/sun/identity/wsfederation/**"/>
-                <include name="com/sun/identity/multiprotocol/**"/>
-                <include name="com/sun/identity/xacml/**"/>
-                <include name="com/sun/liberty/**"/>
-            </packageset>
+            <packageset dir="${library.src.dir}"
+                includes="${fedlib.public.doc},${fedlib.doc}" />
             <tag name="supported.all.api" description="" />
             <tag name="supported.api" description="" />
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
@@ -287,19 +241,10 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
         <javadoc maxmemory="512m" destdir="${library.built.publicapidocs.dir}"
                  windowtitle="Public Open Federation API" failonerror="true">
             <classpath refid="build.class.path"/>
-            <packageset dir="${library.src.dir}">
-                <include name="com/sun/identity/federation/**"/>
-                <include name="com/sun/identity/liberty/ws/**"/>
-                <include name="com/sun/identity/plugin/**"/>
-                <include name="com/sun/identity/saml/**"/>
-                <include name="com/sun/identity/saml2/**"/>
-                <include name="com/sun/identity/sae/**"/>
-                <include name="com/sun/identity/wsfederation/**"/>
-                <include name="com/sun/identity/xacml/**"/>
-                <include name="com/sun/liberty/**"/>
-            </packageset>
+            <packageset dir="${library.src.dir}"
+                includes="${fedlib.public.doc}" />
             <doclet name="com.sun.identity.tools.javadocs.SupportedAPIDoclet"
-                    path="${library.classes.dir}" />
+                path="${library.classes.dir}" />
             <tag name="supported.all.api" description="" />
             <tag name="supported.api" description="" />
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
@@ -308,12 +253,7 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
     </target>
 
     <target name="checklib">
-        <ant antfile="${library.basedir}/check-library-jars.xml" inheritRefs="true" />
-        <fail message="*** missing library ***">
-            <condition>
-                <isset property="extlib.jar.exists"/>
-            </condition>
-        </fail>
+        <ant antfile="${products.basedir}/build-checkjars.xml" />
     </target>
 
     <target name="preparebuild" depends="checklib">
@@ -325,7 +265,7 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
         <mkdir dir="${library.built.publicapidocs.dir}"/>
     </target>
 
-    <target name="clean" depends="unittest-clean,clientsdk-clean">
+    <target name="clean" depends="clientsdk-clean">
         <delete dir="${jaxb.liberty.authnsvc}"/>
         <delete dir="${jaxb.liberty.common}"/>
         <delete dir="${jaxb.liberty.disco.plugins}"/>
@@ -351,18 +291,6 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
         <delete file="${libtracker}"/>
     </target>
 
-    <target name="unittest" depends="build">
-        <ant antfile="${library.test.dir}/build.xml" target="all" inheritRefs="true"/>
-    </target>
-
-    <target name="unittest-clean">
-        <ant antfile="${library.test.dir}/build.xml" inheritRefs="true" target="clean"/>
-    </target>
-
-    <target name="extlib-clean">
-        <delete file="${library.extlib.dir}/opensso-sharedlib.jar"/>
-    </target>
-
     <target name="cvsdiff">
         <mkdir dir="${library.built.diff.dir}" />
         <cvs command="-q diff -cw" output="${library.built.diff.dir}/.diffs"/>
@@ -384,12 +312,10 @@ ${xsd.wsfederation.dir}/ws-addr.xsd ${xsd.wsfederation.dir}/ws-policy.xsd ${xsd.
         <echo message=" nightly    : generates nightly build binaries"/>
         <echo message=" build      : compiles the sources"/>
         <echo message=" clientsdk  : creates client SDK jar file"/>
-        <echo message=" unittest   : generates unit test zip file"/>
         <echo message=" publicdoc  : creates javadocs for publicly supported API"/>
         <echo message=" doc        : creates javadocs"/>
         <echo message=" clean      : deletes the generated files"/>
         <echo message=" clientsdk-clean : deletes the generated client SDK jar file"/>
-        <echo message=" unittest-clean : deletes the generated unit test resources"/>
         <echo message=" extlib-clean   : deletes shared library under extlib"/>
         <echo message=" usage          : displays this usage message"/>
         <echo message=" "/>

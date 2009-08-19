@@ -22,14 +22,12 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2009-07-09 17:04:25 veiming Exp $
+   $Id: build.xml,v 1.9 2009-08-19 05:41:17 veiming Exp $
 
 -->
 
 <project name="opensso shared library" default="all">
-                
     <description>Open Web Single Sign-On Shared library</description>
-
     <import file="../products.xml" />
 
     <fail message="*** jdk target is not set ***">
@@ -38,16 +36,10 @@
         </condition>
     </fail>
 
-    <!-- overridable properties -->
-    <property name="build.debug" value="on"/>
-    <property name="build.debuglevel" value="lines,vars,source"/>
-
     <!-- build class path -->
     <path id="build.class.path">
         <pathelement location="${sharedlib.classes.dir}"/>
-        <fileset dir="${extlib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
+        <fileset dir="${extlib.dir}" includes="**/*.jar" />
     </path>
 
     <target name="all" depends="build">
@@ -56,10 +48,8 @@
                 <attribute name="Version" value="${version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>
             <zipfileset dir="${sharedlib.classes.dir}" />
+            <fileset dir="${products.license.dir}" includes="license.txt" />
         </jar>
         <checksum file="${sharedlib.dist.dir}//opensso-sharedlib.jar"
             algorithm="SHA" fileext=".sha" />
@@ -73,16 +63,7 @@
             <compilerarg value="-Xlint:deprecation" />
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
-            <exclude name="**/com/sun/identity/shared/test/**/*.java"/>
-        </javac>
-        <javac destdir="${sharedlib.classes.dir}"
-            source="${target.jdk.set}" target="${target.jdk.set}"
-            debug="${build.debug}" debuglevel="${build.debuglevel}">
-            <src path="${sharedlib.src.dir}"/>
-            <compilerarg value="-Xlint:deprecation" />
-            <classpath refid="build.class.path"/>
-            <exclude name="**/package-info.java"/>
-            <include name="**/com/sun/identity/shared/test/**/*.java"/>
+            <exclude name="**/com/sun/identity/shared/test/**"/>
         </javac>
     </target>
 
@@ -93,9 +74,6 @@
     </target>
 
     <target name="clean">
-        <delete file="${sharedlib.dist.dir}/opensso-sharedlib.jar"/>
-        <delete file="${sharedlib.dist.dir}/opensso-sharedlib.jar.sha"/>
-        <delete dir="${sharedlib.classes.dir}"/>
         <delete dir="${sharedlib.built.dir}"/>
     </target>
 </project>

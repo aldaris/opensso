@@ -22,41 +22,57 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.11 2009-06-30 17:46:02 veiming Exp $
+ * $Id: PolicyManager.java,v 1.12 2009-08-19 05:40:37 veiming Exp $
  *
  */
 
-
-
 package com.sun.identity.policy;
 
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Collections;
-import org.w3c.dom.Node;
-import org.w3c.dom.Document;
-
+import com.sun.identity.entitlement.opensso.PrivilegeUtils;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
-import com.sun.identity.sm.*;
-import com.iplanet.am.util.Cache;
-import com.iplanet.am.util.SystemProperties;
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.xml.XMLUtils;
-
+import com.sun.identity.entitlement.Application;
+import com.sun.identity.entitlement.ApplicationManager;
+import com.sun.identity.entitlement.EntitlementConfiguration;
+import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
-
-import com.sun.identity.policy.interfaces.Subject;
-
+import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.IPrivilege;
+import com.sun.identity.entitlement.PrivilegeIndexStore;
+import com.sun.identity.entitlement.ReferralPrivilege;
+import com.sun.identity.entitlement.ReferralPrivilegeManager;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.sm.DNMapper;
+import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.PluginSchema;
+import com.sun.identity.sm.SMSEntry;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceAlreadyExistsException;
+import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceManager;
+import com.sun.identity.sm.ServiceNotFoundException;
+import com.sun.identity.sm.ServiceSchemaManager;
+import java.io.ByteArrayInputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.AccessController;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import org.w3c.dom.Node;
+import org.w3c.dom.Document;
 
 /**
  * The <code>PolicyManager</code> class manages policies
@@ -90,7 +106,7 @@ public final class PolicyManager {
     public static final String DELEGATION_REALM = 
                       "/sunamhiddenrealmdelegationservicepermissions";
 
-    static final String NAMED_POLICY = "Policies";
+    public static final String NAMED_POLICY = "Policies";
     static final String REALM_SUBJECTS = "RealmSubjects";
     static final String XML_REALM_SUBJECTS = "xmlRealmSubjects";
     private static final String NAMED_POLICY_ID = "NamedPolicy";
@@ -106,7 +122,7 @@ public final class PolicyManager {
     private static final String POLICY_XML = "xmlpolicy";
     static final String POLICY_VERSION = "1.0";
 
-    static final String POLICY_ROOT_NODE = "Policy";
+    public static final String POLICY_ROOT_NODE = "Policy";
     static final String POLICY_RULE_NODE = "Rule";
     static final String POLICY_SUBJECTS_NODE = "Subjects";
     static final String POLICY_CONDITIONS_NODE = "Conditions";
@@ -114,12 +130,19 @@ public final class PolicyManager {
     static final String POLICY_REFERRALS_NODE = "Referrals";
     static final String POLICY_RULE_SERVICE_NODE = "ServiceName";
     static final String POLICY_RULE_RESOURCE_NODE = "ResourceName";
+    static final String POLICY_RULE_EXCLUDED_RESOURCE_NODE =
+        "ExcludedResourceName";
+    static final String POLICY_RULE_APPLICATION_NAME_NODE = "ApplicationName";
     static final String ATTR_VALUE_PAIR_NODE = "AttributeValuePair";
     static final String ATTR_NODE = "Attribute";
     static final String ATTR_VALUE_NODE = "Value";
     static final String NAME_ATTRIBUTE = "name";
     static final String TYPE_ATTRIBUTE = "type";
     static final String DESCRIPTION_ATTRIBUTE = "description";
+    static final String CREATED_BY_ATTRIBUTE = "createdby";
+    static final String CREATION_DATE_ATTRIBUTE = "creationdate";
+    static final String LAST_MODIFIED_BY_ATTRIBUTE = "lastmodifiedby";
+    static final String LAST_MODIFIED_DATE_ATTRIBUTE = "lastmodifieddate";
     static final String PRIORITY_ATTRIBUTE = "priority";
     static final String STATUS_ATTRIBUTE = "priority";
     static final String STATUS_ACTIVE = "active";
@@ -138,11 +161,11 @@ public final class PolicyManager {
     static final long DEFAULT_SUBJECTS_RESULT_TTL = 10 * 60 * 1000;
 
     static final String WEB_AGENT_SERVICE = "iPlanetAMWebAgentService";
-    static final String ID_REPO_SERVICE = "sunIdentityRepositoryService";
-    static final String ORG_ALIAS = "sunOrganizationAliases";
-    static final String ORG_ALIAS_URL_HTTP_PREFIX = "http://";
-    static final String ORG_ALIAS_URL_HTTPS_PREFIX = "https://";
-    static final String ORG_ALIAS_URL_SUFFIX = ":*";
+    public static final String ID_REPO_SERVICE = "sunIdentityRepositoryService";
+    public static final String ORG_ALIAS = "sunOrganizationAliases";
+    public static final String ORG_ALIAS_URL_HTTP_PREFIX = "http://";
+    public static final String ORG_ALIAS_URL_HTTPS_PREFIX = "https://";
+    public static final String ORG_ALIAS_URL_SUFFIX = ":*";
 
     private String org = "/";
     private String givenOrgName = "";
@@ -158,12 +181,25 @@ public final class PolicyManager {
     private ResourceIndexManager rim;
 
     private static ServiceSchemaManager ssm;
-
+    private static SSOToken superAdminToken =
+        (SSOToken) AccessController.doPrivileged(
+        AdminTokenAction.getInstance());
+    private static javax.security.auth.Subject adminSubject =
+        SubjectUtils.createSubject(superAdminToken);
     SSOToken token;
 
     // Can be shared by classes
     static Debug debug = Debug.getInstance(POLICY_DEBUG_NAME);
     static DN delegationRealm = new DN(DNMapper.orgNameToDN(DELEGATION_REALM));
+    static boolean migratedToEntitlementService = false;
+
+    static {
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            adminSubject, "/");
+        migratedToEntitlementService = ec.migratedToEntitlementService();
+    }
+
+
 
     /**
      * Constructor for <code>PolicyManager</code> for the
@@ -219,18 +255,18 @@ public final class PolicyManager {
         this.token = token;
         try {
             scm = new ServiceConfigManager(POLICY_SERVICE_NAME, token);
-        
+
             // Check name i.e., org name
             org = verifyOrgName(name);
             givenOrgName = name;
-        
+
             rm = new ResourceManager(org);
         } catch (SMSException se) {
             debug.error("In constructor for PolicyManager with orgName" +
                 "Unable to get service config manager", se);
             throw (new PolicyException(se));
         }
-
+            
         if (debug.messageEnabled()) {
             debug.message("Policy Manager constructed with SSO token " +
                 " for organization: " + org);
@@ -436,7 +472,6 @@ public final class PolicyManager {
         // Check the cache %%% Need to have notification for policy changes
         Policy answer = null;
 
-
         try {
             ServiceConfig oConfig = scm.getOrganizationConfig(org, null);
             ServiceConfig namedPolicy = (oConfig == null) ? null :
@@ -554,6 +589,17 @@ public final class PolicyManager {
         }
         validateForResourcePrefix(policy);
         validateReferrals(policy);
+
+        String testCreatedBy = policy.getCreatedBy();
+        //testCreatedBy is set if we are doing policy replaced.
+        if ((testCreatedBy == null) || (testCreatedBy.length() == 0)) {
+            Date creationDate = new Date();
+            policy.setCreatedBy(token.getPrincipal().getName());
+            policy.setCreationDate(creationDate.getTime());
+            policy.setLastModifiedBy(token.getPrincipal().getName());
+            policy.setLastModifiedDate(creationDate.getTime());
+        }
+
         // Construct the named policy
         String policyXml = policy.toXML();
         Map attrs = new HashMap();
@@ -568,9 +614,27 @@ public final class PolicyManager {
             //create the policy entry
             namedPolicy.addSubConfig(policy.getName(),
                 NAMED_POLICY_ID, 0, attrs);
-            // do the addition in resources tree
-            //rm.addPolicyToResourceTree(policy);
-            rim.addPolicyToResourceTree(svtm, token, policy);
+            if (migratedToEntitlementService) {
+                PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
+                    adminSubject, realmName);
+                Set<IPrivilege> privileges = PrivilegeUtils.policyToPrivileges(
+                    policy);
+                pis.add(privileges);
+                if (policy.isReferralPolicy()) {
+                    ReferralPrivilegeManager refpm =
+                        new ReferralPrivilegeManager(realmName, adminSubject);
+                    refpm.addApplicationToSubRealm(
+                        (ReferralPrivilege)privileges.iterator().next());
+                }
+            } else {
+                // do the addition in resources tree
+                //rm.addPolicyToResourceTree(policy);
+                rim.addPolicyToResourceTree(svtm, token, policy);
+            }
+        } catch (EntitlementException e) {
+            String[] objs = { policy.getName(), org };
+            throw (new PolicyException(ResBundleUtils.rbName, 
+                "unable_to_add_policy", objs, e)); 
         } catch (ServiceAlreadyExistsException e) {
             String[] objs = { policy.getName(), org };
             if (PolicyUtils.logStatus) {
@@ -626,21 +690,26 @@ public final class PolicyManager {
         NameNotFoundException, NoPermissionException,
         InvalidFormatException, PolicyException {
 
-        String realmName = getOrganizationDN();
+        String realm = getOrganizationDN();
         String subjectRealm = policy.getSubjectRealm();
-        String[] realmNames = {realmName, subjectRealm};
-        if ((subjectRealm != null) && !subjectRealm.equals(realmName)) {
+        String[] realmNames = {realm, subjectRealm};
+        if ((subjectRealm != null) && !subjectRealm.equals(realm)) {
 
             if (debug.messageEnabled()) {
                 debug.message("Can not replace policy in realm :"
-                        + realmName + ", policy has realm subjects "
+                        + realm + ", policy has realm subjects "
                         + " from realm : " + subjectRealm);
             }
 
             throw (new InvalidFormatException(ResBundleUtils.rbName,
-                "policy_realm_does_not_match", realmNames, null, realmName, 
+                "policy_realm_does_not_match", realmNames, null, realm,
                 PolicyException.POLICY));
         }
+
+        policy.setLastModifiedBy(token.getPrincipal().getName());
+        Date lastModifiedDate = new Date();
+        policy.setLastModifiedDate(lastModifiedDate.getTime());
+
         // Construct the named policy
         String policyXml = policy.toXML();
         Map attrs = new HashMap();
@@ -678,7 +747,6 @@ public final class PolicyManager {
                          policy.getName(), PolicyException.POLICY));
                 }
             } else { //newPolicy exisits
-
                 String[] objs = { policy.getName(), org };
                 if((oldPolicyName != null) && 
                             !policy.getName().equalsIgnoreCase(oldPolicyName)) {
@@ -697,11 +765,24 @@ public final class PolicyManager {
                 validateReferrals(policy);
                 policyEntry.setAttributes(attrs);
                 if (oldPolicy != null) {
-                    //rm.replacePolicyInResourceTree(oldPolicy, policy);
-                    rim.replacePolicyInResourceTree(svtm, token, oldPolicy, 
+                    if (migratedToEntitlementService) {
+                        PrivilegeIndexStore pis = PrivilegeIndexStore.
+                            getInstance(SubjectUtils.createSubject(token),
+                            realm);
+                        pis.delete(PrivilegeUtils.policyToPrivileges(
+                            oldPolicy));
+                        pis.add(PrivilegeUtils.policyToPrivileges(policy));
+                    } else {
+                        //rm.replacePolicyInResourceTree(oldPolicy, policy);
+                        rim.replacePolicyInResourceTree(svtm, token, oldPolicy,
                             policy);
+                    }
                 }
             }
+        } catch (EntitlementException e) {
+            String[] objs = { name, org };
+            throw (new PolicyException(ResBundleUtils.rbName,
+                "unable_to_replace_policy", objs, e));
         } catch (SMSException se) {
             String[] objs = { name, org };
             if (PolicyUtils.logStatus) {
@@ -764,11 +845,26 @@ public final class PolicyManager {
                 // do the removal of policy 
                 namedPolicy.removeSubConfig(policyName);
 
-                // do the removal in resources tree
                 if (policy != null) {
-                    rim.removePolicyFromResourceTree(svtm, token, policy);
+                    if (migratedToEntitlementService) {
+                        PrivilegeIndexStore pis = PrivilegeIndexStore.
+                            getInstance(
+                            SubjectUtils.createSubject(token),
+                            getOrganizationDN());
+                        if (policy.isReferralPolicy()) {
+                            pis.deleteReferral((policyName));
+                        } else {
+                            pis.delete(PrivilegeUtils.policyToPrivileges(policy));
+                        }
+                    } else {
+                        // do the removal in resources tree
+                        rim.removePolicyFromResourceTree(svtm, token, policy);
+
+                    }
                 }
             }
+        } catch (EntitlementException e) {
+            debug.error("Error while removing policy : " + e.getMessage());
         } catch (ServiceNotFoundException snfe) {
             debug.error("Error while removing policy : " +
                     snfe.getMessage() );
@@ -1172,28 +1268,118 @@ public final class PolicyManager {
     }
 
     private boolean validateResourceForPrefix(ServiceType resourceType, 
-            String resourceName) throws PolicyException {
-        boolean validResource = false;
-        Set resourcePrefixes = getManagedResourceNames(
+        String resourceName) throws PolicyException {
+        Set<String> resourcePrefixes = getManagedResourceNames(
                 resourceType.getName());
-        Iterator iter = resourcePrefixes.iterator();
-        while ( iter.hasNext() ) {
-            String prefix = (String) iter.next();
+        return validateResourceForPrefix(resourceType,
+            resourcePrefixes, resourceName);
+    }
+
+    private boolean validateResourceForPrefixE(
+        String realm,
+        String serviceName,
+        Set<String> resourcePrefixes,
+        String resourceName) throws PolicyException, EntitlementException {
+
+        String realmName = (DN.isDN(realm)) ?
+            DNMapper.orgNameToRealmName(realm) :realm;
+
+        Application appl = ApplicationManager.getApplication(
+            adminSubject, realmName, serviceName);
+        com.sun.identity.entitlement.interfaces.ResourceName resComp = appl.
+            getResourceComparator();
+        resourceName = resComp.canonicalize(resourceName);
+
+        for (String prefix : resourcePrefixes) {
             boolean interpretWildCard = true;
-            ResourceMatch rm = resourceType.compare(resourceName, prefix, 
-                    interpretWildCard);
-            if ( rm.equals(ResourceMatch.SUPER_RESOURCE_MATCH)
-                        || rm.equals(ResourceMatch.WILDCARD_MATCH)
-                        || rm.equals(ResourceMatch.EXACT_MATCH) ) {
-                validResource = true;
-                break;
+            com.sun.identity.entitlement.ResourceMatch resMatch =
+                resComp.compare(resourceName,
+                resComp.canonicalize(prefix), interpretWildCard);
+            if ( resMatch.equals(
+                com.sun.identity.entitlement.ResourceMatch.SUPER_RESOURCE_MATCH)
+                || resMatch.equals(
+                    com.sun.identity.entitlement.ResourceMatch.WILDCARD_MATCH)
+                || resMatch.equals(
+                    com.sun.identity.entitlement.ResourceMatch.EXACT_MATCH) ) {
+                return true;
             }
 
         }
-        return validResource;
+        return false;
     }
 
-    private void validateForResourcePrefix(Policy policy) 
+    private boolean validateResourceForPrefix(
+        ServiceType resourceType,
+        Set<String> resourcePrefixes,
+        String resourceName) throws PolicyException {
+
+        for (String prefix : resourcePrefixes) {
+            boolean interpretWildCard = true;
+            ResourceMatch resMatch = resourceType.compare(resourceName, prefix,
+                    interpretWildCard);
+            if ( resMatch.equals(ResourceMatch.SUPER_RESOURCE_MATCH)
+                        || resMatch.equals(ResourceMatch.WILDCARD_MATCH)
+                        || resMatch.equals(ResourceMatch.EXACT_MATCH) ) {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    private void validateForResourcePrefix(Policy policy)
+                throws SSOException, PolicyException {
+        if (migratedToEntitlementService) {
+            validateForResourcePrefixE(policy);
+        } else {
+            validateForResourcePrefixO(policy);
+        }
+    }
+
+    private void validateForResourcePrefixE(Policy policy)
+        throws SSOException, PolicyException {
+        DN orgDN = new DN(org);
+        DN baseDN = new DN(ServiceManager.getBaseDN());
+
+        if (!orgDN.equals(baseDN) && !orgDN.equals(delegationRealm)) {
+            String realm = DNMapper.orgNameToRealmName(getOrganizationDN());
+            Iterator ruleNames = policy.getRuleNames().iterator();
+            while (ruleNames.hasNext()) {
+                try {
+                    String ruleName = (String) ruleNames.next();
+                    Rule rule = (Rule) policy.getRule(ruleName);
+                    String serviceTypeName = rule.getServiceTypeName();
+                    String ruleResource = rule.getResourceName();
+
+                    Set<String> referredResources = ApplicationManager.
+                        getReferredResources(adminSubject,
+                        realm, serviceTypeName);
+                    if ((referredResources == null) || referredResources.
+                        isEmpty()) {
+                        String[] objs = {org};
+                        throw new PolicyException(ResBundleUtils.rbName,
+                            "no_referral_can_not_create_policy", objs, null);
+                    }
+                    ServiceType resourceType = getServiceTypeManager().
+                        getServiceType(serviceTypeName);
+
+                    if (!validateResourceForPrefixE(realm, serviceTypeName,
+                        referredResources, ruleResource)) {
+                        String[] objs = {ruleResource, resourceType.getName()};
+                        throw new PolicyException(ResBundleUtils.rbName,
+                            "resource_name_not_permitted_by_prefix_names", objs,
+                            null);
+                    }
+                } catch (EntitlementException ex) {
+                    String[] objs = {org};
+                    throw new PolicyException(ResBundleUtils.rbName,
+                        "no_referral_can_not_create_policy", objs, null);
+                }
+            }
+        }
+    }
+
+    private void validateForResourcePrefixO(Policy policy)
             throws SSOException, PolicyException {
         DN orgDN = new DN(org);
         DN baseDN = new DN(ServiceManager.getBaseDN());
@@ -1500,4 +1686,56 @@ public final class PolicyManager {
         return aliasMappedOrg;
     }
 
+    public boolean canCreatePolicies(Set<String> services) 
+        throws EntitlementException {
+        String realm = DNMapper.orgNameToRealmName(getOrganizationDN());
+        if (realm.equals("/")) {
+            return true;
+        }
+
+        if (migratedToEntitlementService) {
+            for (String s : services) {
+                Set<String> res = ApplicationManager.getReferredResources(
+                    adminSubject, realm, s);
+                if ((res != null) && !res.isEmpty()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return canCreateNewResource(services) ||
+            hasReferredResources();
+    }
+    
+    private boolean canCreateNewResource(Set<String> services) {
+        boolean can = false;
+        ResourceManager resMgr = getResourceManager();
+
+        if (resMgr != null) {
+            if ((services != null) && !services.isEmpty()) {
+                for (Iterator i = services.iterator(); (i.hasNext() && !can);) {
+                    String svcName = (String)i.next();
+                    try {
+                        can = resMgr.canCreateNewResource(svcName);
+                    } catch (PolicyException  e) {
+                        debug.warning("PolicyManager.canCreateNewResource",e);
+                    }
+                }
+            }
+        }
+
+        return can;
+    }
+
+    private boolean hasReferredResources() {
+        boolean hasPrefixes = false;
+        try {
+            Set prefixes = getManagedResourceNames();
+            hasPrefixes = (prefixes != null) && !prefixes.isEmpty();
+        } catch (PolicyException e) {
+            debug.warning("PolicyManager.hasReferredResources", e);
+        }
+        return hasPrefixes;
+    }
 }

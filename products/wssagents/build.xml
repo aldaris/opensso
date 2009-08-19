@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.25 2009-08-11 07:14:42 mrudul_uchil Exp $
+   $Id: build.xml,v 1.26 2009-08-19 05:41:18 veiming Exp $
 
 -->
 
@@ -127,9 +127,7 @@
                 <attribute name="Version" value="${version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>
+            <fileset dir="${products.license.dir}" includes="license.txt" />
             <fileset dir="${wssagents.res.dir}">
                 <filename name="META-INF/services/*"/>    
             </fileset>
@@ -178,9 +176,7 @@
             <fileset dir="${wssagents.classes.dir}/com">
                 <include name=".version" />
             </fileset>
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>
+            <fileset dir="${products.license.dir}" includes="license.txt" />
             <zipfileset dir="${wssagents.classes.dir}" includes="com/sun/identity/wssagents/jaxws/client/ClientFilter.class,com/sun/identity/wssagents/jaxws/client/ClientHandler.class,com/sun/identity/wssagents/jaxws/server/ServerHandler.class"/>
         </jar>
 
@@ -192,7 +188,7 @@
         <delete dir="${zip.temp.dir}" />
         <mkdir dir="${zip.temp.dir}" />
 
-        <copy file="${wssagents.basedir}/license.txt"
+        <copy file="${products.license.dir}/license.txt"
             tofile="${zip.temp.dir}/license.txt" />
         <copy file="${wssagents.basedir}/docs/README.wssagents-jax-ws-zip"
             tofile="${zip.temp.dir}/README" />
@@ -327,8 +323,9 @@
         <delete dir="${zip.temp.dir}" />
         <mkdir dir="${zip.temp.dir}" />
 
-        <copy file="${wssagents.basedir}/license.txt"
-            tofile="${zip.temp.dir}/license.txt" />
+        <copy todir="${zip.temp.dir}">
+            <fileset dir="${products.license.dir}" includes="*.txt" />
+        </copy>
         <copy file="${wssagents.basedir}/docs/README.wssagentszip"
             tofile="${zip.temp.dir}/README" />
         <copy file="${wssagents.basedir}/docs/README.glassfish"

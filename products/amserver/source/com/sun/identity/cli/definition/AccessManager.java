@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.107 2009-07-30 05:35:35 veiming Exp $
+ * $Id: AccessManager.java,v 1.108 2009-08-19 05:40:30 veiming Exp $
  *
  */
 
@@ -49,7 +49,22 @@ public class AccessManager {
         "missing-choicevalues=choicevalues and datafile options are missing.",
         "attribute-schema-not-exist=Attribute schema {0} did not exist.",
         "error-message-no-privilege=User does not have privilege to execute the sub command.",
-        "serverconfig-no-supported=This sub command is not supported because platform service is not upgraded."}
+        "serverconfig-no-supported=This sub command is not supported because platform service is not upgraded.",
+        "application-type-invalid=Application Type {0} is invalid.",
+        "actions-required=actions attributes are required. Example: get=true",
+        "resources-required=resources attributes are required. This defines the resources that are supported by this application.",
+        "subjects-required=subjects attributes are required. This defines the subject plugin classes for administration console.",
+        "conditions-required=conditions attributes are required. This defines the condition plugin classes for administration console.",
+        "entitlement-combiner-required=entitlementCombiner attribute is required.",
+        "entitlement-combiner-class-not-found=entitlementCombiner {0} class not found.",
+        "entitlement-combiner-does-not-extend-superclass=entitlementCombiner {0} did not extend EntitlementCombiner base class.",
+        "resource-comparator-class-not-found=resourceComparator {0} class not found.",
+        "resource-comparator-does-not-extend-interface=resourceComparator {0} did not implement ResourceName interface.",
+        "save-index-class-not-found=saveIndexImpl {0} class not found.",
+        "save-index-does-not-extend-interface=saveIndexImpl {0} did not implement ISaveIndex interface.",
+        "search-index-class-not-found=searchIndexImpl {0} class not found.",
+        "search-index-does-not-extend-interface=searchIndexImpl {0} did not implement ISearchIndex interface."
+        }
     )
     private String resourcestrings;
 
@@ -2501,4 +2516,118 @@ public class AccessManager {
         }
     )
     private String unregister_auth_module;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.CreateApplication",
+        description="Create application.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "applicationtype|t|s|Application type name",
+            "name|m|s|Application name"},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|Attribute values e.g. applicationType=iPlanetAMWebAgentService.",
+            "datafile|D|s|Name of file that contains attribute values data. Mandatory attributes are resources, subjects, conditions and entitlementCombiner. Optional ones are actions, searchIndexImpl, saveIndexImpl, resourceComparator, subjectAttributeNames."},
+        resourceStrings={
+            "create-application-succeeded={0} was created."})
+    private String create_appl;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.ListApplicationTypes",
+        description="List application types.",
+        webSupport="true",
+        mandatoryOptions={},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "list-applications-type-no-entries=There were no application types."})
+    private String list_appl_types;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.ListApplications",
+        description="List applications in a realm.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name"},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "list-applications-no-entries=There were no applications."})
+    private String list_appls;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.ShowApplication",
+        description="Show application attributes.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "name|m|s|Application name"},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "show-application-not-found={0} did not exist."})
+    private String show_appl;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.SetApplication",
+        description="Set application attributes.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "name|m|s|Application name"},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "attributevalues|a|m|Attribute values e.g. applicationType=iPlanetAMWebAgentService.",
+            "datafile|D|s|Name of file that contains attribute values data. Possible attributes are resources, subjects, conditions, actions, searchIndexImpl, saveIndexImpl, resourceComparator, subjectAttributeNames and entitlementCombiner."},
+        resourceStrings={
+            "set-application-not-found={0} did not exist.",
+            "set-application-modified={0} was modified."})
+    private String set_appl;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.DeleteApplications",
+        description="Delete applications.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "names|m|m|Application names"},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "delete-applications-succeeded=Applications were deleted."})
+    private String delete_appls;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.ShowConfigurations",
+        description="Display entitlements service configuration",
+        webSupport="true",
+        mandatoryOptions={},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={"get-attr-values-of-entitlement-service={0}={1}"})
+    private String show_entitlement_conf;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.SetConfigurations",
+        description="Set entitlements service configuration",
+        webSupport="true",
+        mandatoryOptions={},
+        optionAliases={},
+        optionalOptions={
+            "attributevalues|a|m|Attribute values e.g. evalThreadSize=4.",
+            "datafile|D|s|Name of file that contains attribute values data. Possible attributes are evalThreadSize, searchThreadSize, policyCacheSize and indexCacheSize."},
+        macro="authentication",
+        resourceStrings={
+            "set-entitlement-config-unidentified-attr={0} was unidentified.",
+            "set-entitlement-config-succeeded=Entitlements Service configuration is updated."})
+    private String set_entitlement_conf;
 }
+

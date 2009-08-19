@@ -22,11 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.4 2008-06-25 05:43:45 qcheng Exp $
+ * $Id: Rule.java,v 1.5 2009-08-19 05:40:38 veiming Exp $
  *
  */
-
-
 package com.sun.identity.policy;
 
 import java.util.*;
@@ -35,7 +33,6 @@ import org.w3c.dom.*;
 
 import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.sso.SSOException;
-import com.sun.identity.policy.interfaces.*;
 
 /**
  * The class <code>Rule</code> provides interfaces to manage
@@ -48,6 +45,8 @@ import com.sun.identity.policy.interfaces.*;
 public class Rule extends Object implements Cloneable {
 
     public static final String EMPTY_RESOURCE_NAME = "";
+    public static final String EXCLUDED_RESOURCE_NAMES = "EXCLUDED_resource_NAMES";
+
     // Name of the rule
     private String ruleName;
 
@@ -56,7 +55,9 @@ public class Rule extends Object implements Cloneable {
     private ServiceType serviceType;
 
     // Resource for which the rule applies
-    String resourceName = EMPTY_RESOURCE_NAME;
+    Set<String> resourceNames = new HashSet<String>();
+    Set<String> excludedResourceNames;
+    private String applicationName;
 
     // Actions allowed on the resource
     private Map actions;
@@ -91,7 +92,7 @@ public class Rule extends Object implements Cloneable {
      * @supported.api
      */
     public Rule(String serviceName, String resourceName, Map actions) throws
-        NameNotFoundException, InvalidNameException {
+            NameNotFoundException, InvalidNameException {
         this(null, serviceName, resourceName, actions);
     }
 
@@ -119,7 +120,7 @@ public class Rule extends Object implements Cloneable {
      * @supported.api
      */
     public Rule(String serviceName, Map actions) throws
-        NameNotFoundException, InvalidNameException {
+            NameNotFoundException, InvalidNameException {
         this(null, serviceName, null, actions);
     }
 
@@ -147,128 +148,181 @@ public class Rule extends Object implements Cloneable {
      * @supported.api
      */
     public Rule(String ruleName, String serviceName,
-        String resourceName, Map actions) throws
-        NameNotFoundException, InvalidNameException {
+            String resourceName, Map actions) throws
+            NameNotFoundException, InvalidNameException {
         // Rule and resource name can be null
         this.ruleName = (ruleName != null) ? ruleName :
-                ("rule" + ServiceTypeManager.generateRandomName());
-        if ( (resourceName == null) || ( resourceName == "" ) ) {
-            resourceName = EMPTY_RESOURCE_NAME;
-        }
-        this.resourceName = resourceName.trim();
-
-        // Check the service type name
-        checkAndSetServiceType(serviceName);
+            ("rule" + ServiceTypeManager.generateRandomName());
+        this.resourceNames = new HashSet<String>();
         this.serviceTypeName = serviceName;
 
-        // Verify the action names
-        serviceType.validateActionValues(actions);
-        this.actions = new HashMap(actions);
-        try {
-            this.resourceName = serviceType.canonicalize(resourceName);
-        } catch (PolicyException pe) {
-            throw new InvalidNameException(pe, resourceName, 2);
+        if ((resourceName == null) || (resourceName.length() == 0)) {
+            resourceNames.add(EMPTY_RESOURCE_NAME);
+        } else {
+            resourceName = resourceName.trim();
+
+            if (PolicyManager.migratedToEntitlementService) {
+                resourceNames.add(resourceName);
+            } else {
+                // Check the service type name
+                checkAndSetServiceType(serviceName);
+                
+                // Verify the action names
+                serviceType.validateActionValues(actions);
+                this.actions = new HashMap(actions);
+
+                try {
+                    resourceNames.add(serviceType.canonicalize(resourceName));
+                } catch (PolicyException pe) {
+                    throw new InvalidNameException(pe, resourceName, 2);
+                }
+            }
         }
+        
+        // Verify the action names
+        //serviceType.validateActionValues(actions);
+        this.actions = new HashMap(actions);
     }
+
+    /**
+     * Sets application Name.
+     *
+     * @param applicationName Application name.
+     */
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    /**
+     * Returns application name.
+     * 
+     * @return application name.
+     */
+    public String getApplicationName() {
+        return (applicationName == null) ? serviceTypeName : applicationName;
+    }
+
 
     /**
      * Constructor to create a <code>Rule</code> object from a XML Node
      * @param ruleNode XML node representation of <code>Rule</code>
      */
     protected Rule(Node ruleNode) throws InvalidFormatException,
-        InvalidNameException, NameNotFoundException {
+            InvalidNameException, NameNotFoundException {
         // Make sure the node name is rule
         if (!ruleNode.getNodeName().equalsIgnoreCase(
-            PolicyManager.POLICY_RULE_NODE)) {
+                PolicyManager.POLICY_RULE_NODE)) {
             if (PolicyManager.debug.warningEnabled()) {
                 PolicyManager.debug.warning(
-                    "invalid rule xml blob given to constructor");
+                        "invalid rule xml blob given to constructor");
             }
             throw (new InvalidFormatException(ResBundleUtils.rbName,
-                "invalid_xml_rule_node", null, "", PolicyException.RULE));
+                    "invalid_xml_rule_node", null, "", PolicyException.RULE));
         }
 
         // Get rule name, can be null
         if ((ruleName = XMLUtils.getNodeAttributeValue(ruleNode,
-            PolicyManager.NAME_ATTRIBUTE)) == null) {
+                PolicyManager.NAME_ATTRIBUTE)) == null) {
             ruleName = "rule" + ServiceTypeManager.generateRandomName();
-        } 
+        }
 
         // Get the service type name, cannot be null
         Node serviceNode = XMLUtils.getChildNode(ruleNode,
-            PolicyManager.POLICY_RULE_SERVICE_NODE);
+                PolicyManager.POLICY_RULE_SERVICE_NODE);
         if ((serviceNode == null) || ((serviceTypeName =
-            XMLUtils.getNodeAttributeValue(serviceNode,
-            PolicyManager.NAME_ATTRIBUTE)) == null)) {
+                XMLUtils.getNodeAttributeValue(serviceNode,
+                PolicyManager.NAME_ATTRIBUTE)) == null)) {
             if (PolicyManager.debug.warningEnabled()) {
                 PolicyManager.debug.warning(
-                    "invalid service name in rule xml blob in constructor");
+                        "invalid service name in rule xml blob in constructor");
             }
-            String objs[] = { ((serviceTypeName == null) ?
-                "null" : serviceTypeName) };
+            String objs[] = {((serviceTypeName == null) ? "null" : serviceTypeName)};
             throw (new InvalidFormatException(ResBundleUtils.rbName,
-                "invalid_xml_rule_service_name", objs,
-                ruleName, PolicyException.RULE));
+                    "invalid_xml_rule_service_name", objs,
+                    ruleName, PolicyException.RULE));
         }
         checkAndSetServiceType(serviceTypeName);
 
-        // Get resource node, can be null
-        Node resourceNode = XMLUtils.getChildNode(ruleNode,
-            PolicyManager.POLICY_RULE_RESOURCE_NODE);
-        if ((resourceNode != null) && ((resourceName =
-            XMLUtils.getNodeAttributeValue(resourceNode,
-            PolicyManager.NAME_ATTRIBUTE)) == null)) {
-            if (PolicyManager.debug.warningEnabled()) {
-                PolicyManager.debug.warning(
-                    "invalid resource name in rule xml blob in constructor");
-            }
-            String objs[] = 
-                { ((resourceName == null) ? "null" : resourceName) };
-            throw (new InvalidFormatException(ResBundleUtils.rbName,
-                "invalid_xml_rule_resource_name", objs,
-                ruleName, PolicyException.RULE));
+        Node applicationNameNode = XMLUtils.getChildNode(ruleNode,
+            PolicyManager.POLICY_RULE_APPLICATION_NAME_NODE);
+        if (applicationNameNode != null) {
+            applicationName = XMLUtils.getNodeAttributeValue(
+                applicationNameNode, PolicyManager.NAME_ATTRIBUTE);
         }
-        if( resourceName != null ) {
-            resourceName = resourceName.trim();
-            try {
-                resourceName = serviceType.canonicalize(resourceName);
-            } catch (PolicyException pe) {
-                throw new InvalidNameException(pe, resourceName, 2);
-            }
+
+        resourceNames = new HashSet<String>();
+        resourceNames.addAll(getResources(ruleNode,
+            PolicyManager.POLICY_RULE_RESOURCE_NODE,
+                PolicyManager.migratedToEntitlementService));
+        
+        Set<String> excludeResources = getResources(ruleNode,
+            PolicyManager.POLICY_RULE_EXCLUDED_RESOURCE_NODE,
+                PolicyManager.migratedToEntitlementService);
+        if (excludeResources != null) {
+            excludedResourceNames = new HashSet<String>();
+            excludedResourceNames.addAll(excludeResources);
         }
 
         // Get the actions and action values, cannot be null
         Set actionNodes = XMLUtils.getChildNodes(ruleNode,
-            PolicyManager.ATTR_VALUE_PAIR_NODE);
+                PolicyManager.ATTR_VALUE_PAIR_NODE);
         actions = new HashMap();
-        if ( actionNodes != null ) {
+        if (actionNodes != null) {
             Iterator items = actionNodes.iterator();
             while (items.hasNext()) {
                 // Get action name & values
                 String actionName = null;
                 Set actionValues = null;
                 Node node = (Node) items.next();
-                Node attrNode 
-                        = XMLUtils.getChildNode(node, PolicyManager.ATTR_NODE);
-                if ((attrNode == null) || ((actionName 
-                            = XMLUtils.getNodeAttributeValue(attrNode,
-                            PolicyManager.NAME_ATTRIBUTE)) == null) 
-                            || ((actionValues =
-                            XMLUtils.getAttributeValuePair(node)) == null)) {
-                    String objs[] 
-                            = { ((actionName == null) ? "null" : actionName) };
+                Node attrNode = XMLUtils.getChildNode(node, PolicyManager.ATTR_NODE);
+                if ((attrNode == null) || ((actionName = XMLUtils.getNodeAttributeValue(attrNode,
+                        PolicyManager.NAME_ATTRIBUTE)) == null) || ((actionValues =
+                        XMLUtils.getAttributeValuePair(node)) == null)) {
+                    String objs[] = {((actionName == null) ? "null" : actionName)};
                     throw (new InvalidFormatException(
                             ResBundleUtils.rbName,
                             "invalid_xml_rule_action_name", objs,
                             ruleName, PolicyException.RULE));
                 }
                 actions.put(actionName, actionValues);
+
             }
             // Validate the action values
-            serviceType.validateActionValues(actions);
+            //serviceType.validateActionValues(actions);
         }
     }
-        
+
+    private Set<String> getResources(
+        Node ruleNode,
+        String childNodeName,
+        boolean migratedToEntitlementService
+    ) throws InvalidNameException {
+        Set<String> container = null;
+        Set children = XMLUtils.getChildNodes(ruleNode, childNodeName);
+
+        if ((children != null) && !children.isEmpty()) {
+            container = new HashSet<String>();
+            for (Iterator i = children.iterator(); i.hasNext();) {
+                Node resourceNode = (Node) i.next();
+                String resourceName = XMLUtils.getNodeAttributeValue(
+                    resourceNode, PolicyManager.NAME_ATTRIBUTE);
+                if (resourceName != null) {
+                    resourceName = resourceName.trim();
+                    if (!migratedToEntitlementService) {
+                        try {
+                            resourceName = serviceType.canonicalize(
+                                resourceName);
+                        } catch (PolicyException pe) {
+                            throw new InvalidNameException(pe, resourceName, 2);
+                        }
+                    }
+                    container.add(resourceName);
+                }
+            }
+        }
+        return container;
+    }
+
     /**
      * Sets the service type name of this object
      * @param serviceTypeName service type name for this object
@@ -276,7 +330,7 @@ public class Rule extends Object implements Cloneable {
      * not exist
      */
     private void checkAndSetServiceType(String serviceTypeName)
-        throws NameNotFoundException {
+            throws NameNotFoundException {
         // Check the service type name
         ServiceTypeManager stm = null;
         try {
@@ -285,7 +339,11 @@ public class Rule extends Object implements Cloneable {
         } catch (SSOException ssoe) {
             PolicyManager.debug.error("Unable to get admin SSO token" + ssoe);
             throw (new NameNotFoundException(ssoe,
-                serviceTypeName, PolicyException.SERVICE));
+                    serviceTypeName, PolicyException.SERVICE));
+        } catch (NameNotFoundException e) {
+            if (!PolicyManager.migratedToEntitlementService) {
+                throw e;
+            }
         }
     }
 
@@ -338,7 +396,64 @@ public class Rule extends Object implements Cloneable {
      * @supported.api
      */
     public String getResourceName() {
-        return (resourceName);
+        return ((resourceNames == null) || resourceNames.isEmpty()) ?
+            EMPTY_RESOURCE_NAME : resourceNames.iterator().next();
+    }
+
+    /**
+     * Returns the resource names for which the rule has been created.
+     * If the service does not support resource names, the method
+     * will return <code>null</code>. The resource name of
+     * the rule cannot be changed once the rule is created.
+     *
+     * @return resource name
+     * @supported.api
+     */
+    public Set<String> getResourceNames() {
+        return resourceNames;
+    }
+
+    /**
+     * Sets the resource names for which the rule has been created.
+     * If the service does not support resource names, the method
+     * will return <code>null</code>. The resource name of
+     * the rule cannot be changed once the rule is created.
+     *
+     * @param resourceNames resource name
+     * @supported.api
+     */
+    public void setResourceNames(Set<String> resourceNames) {
+        this.resourceNames = new HashSet<String>();
+        if (resourceNames != null) {
+            this.resourceNames.addAll(resourceNames);
+        }
+    }
+
+
+    /**
+     * Returns the excluded resource names for which the rule should not apply.
+     * If the service does not support resource names, the method
+     * will return <code>null</code>.
+     * @return excluded resource names
+     * @supported.api
+     */
+    public Set<String> getExcludedResourceNames() {
+        return excludedResourceNames;
+    }
+
+    /**
+     * Sets the excluded resource names for which the rule should not apply.
+     * @param excludedResourceNames excluded resource names
+     * @supported.api
+     */
+    public void setExcludedResourceNames(
+            Set<String> excludedResourceNames) {
+        if (excludedResourceNames != null) {
+            this.excludedResourceNames = new HashSet();
+            this.excludedResourceNames.addAll(excludedResourceNames);
+        } else {
+            this.excludedResourceNames = null;
+        }
     }
 
     /**
@@ -364,10 +479,10 @@ public class Rule extends Object implements Cloneable {
      * @supported.api
      */
     public Set getActionValues(String actionName)
-        throws NameNotFoundException {
+            throws NameNotFoundException {
         Set answer = (Set) actions.get(actionName);
-        if ( answer != null ) {
-                answer = (Set)((HashSet) answer).clone();
+        if (answer != null) {
+            answer = (Set) ((HashSet) answer).clone();
         }
         return (answer);
     }
@@ -395,7 +510,7 @@ public class Rule extends Object implements Cloneable {
      * @supported.api
      */
     public void setActionValues(Map actionValues)
-        throws InvalidNameException {
+            throws InvalidNameException {
         serviceType.validateActionValues(actionValues);
         actions = new HashMap(actionValues);
     }
@@ -411,15 +526,43 @@ public class Rule extends Object implements Cloneable {
      * @return <code>true</code> if the service type, resource, actions
      * and action values match, <code>false</code> otherwise.
      */
-    public boolean equals(Object o) {
-        if (o instanceof Rule) {
-            Rule rule = (Rule) o;
-            if (isResourceMatch(rule.serviceTypeName,
-                rule.resourceName).equals(ResourceMatch.EXACT_MATCH)) {
-                return (actions.equals(rule.actions));
+    @Override
+    public boolean equals(Object obj) {
+        boolean matched = true;
+        if (obj == null || !(obj instanceof Rule)) {
+            return false;
+        }
+        Rule other = (Rule) obj;
+        if (excludedResourceNames == null) {
+            if (other.getExcludedResourceNames() != null) {
+                return false;
+            }
+        } else if (!excludedResourceNames.equals(other.getExcludedResourceNames())) {
+            return false;
+        }
+
+        if (applicationName == null) {
+            if (other.applicationName != null) {
+                return false;
+            }
+        } else if (!applicationName.equals(other.applicationName)) {
+            return false;
+        }
+
+        if (resourceNames == null) {
+            if (other.resourceNames != null) {
+                return false;
+            }
+        } else {
+            if (!resourceNames.equals(other.resourceNames)) {
+                return false;
             }
         }
-        return (false);
+
+        if (!actions.equals(other.actions)) {
+            return false;
+        }
+        return matched;
     }
 
     /**
@@ -438,15 +581,19 @@ public class Rule extends Object implements Cloneable {
      * specifies if the service name and resource name are exact match, or
      * otherwise.
      */
-    public ResourceMatch isResourceMatch(String serviceName,
-        String resourceName) {
+    public ResourceMatch isResourceMatch(
+            String serviceName,
+            String resourceName) {
+        //TODO: account for excludedResourceNames
         ResourceMatch rm = null;
         if (!serviceName.equalsIgnoreCase(serviceTypeName)) {
             rm = ResourceMatch.NO_MATCH;
         } else {
             //rm = serviceType.compare(this.resourceName, resourceName);
-            rm = serviceType.compare(resourceName, this.resourceName);
+            String res = getResourceNames().iterator().next();
+            rm = serviceType.compare(resourceName, res);
         }
+
         return rm;
     }
 
@@ -466,24 +613,47 @@ public class Rule extends Object implements Cloneable {
         } else {
             answer.append(">");
         }
+
         answer.append("\n").append("<ServiceName name=\"");
         answer.append(XMLUtils.escapeSpecialCharacters(serviceTypeName));
         answer.append("\" />");
-        if (resourceName != null) {
-            answer.append("\n").append("<ResourceName name=\"");
-            answer.append(
+        if (resourceNames != null) {
+            for (String resourceName : resourceNames) {
+                answer.append("\n").append("<ResourceName name=\"");
+                answer.append(
                     XMLUtils.escapeSpecialCharacters(resourceName));
-            answer.append("\" />");
+                answer.append("\" />");
+            }
+        }
+        if (excludedResourceNames != null) {
+        for (String r : excludedResourceNames) {
+                answer.append("\n").append("<ExcludedResourceName name=\"");
+                answer.append(
+                    XMLUtils.escapeSpecialCharacters(r));
+                answer.append("\" />");
+            }
         }
 
-        Iterator actionNameItems = actions.keySet().iterator();
-        while (actionNameItems.hasNext()) {
-            String actionName = (String) actionNameItems.next();
+        if (applicationName != null) {
+            answer.append("\n").append("<")
+                .append(PolicyManager.POLICY_RULE_APPLICATION_NAME_NODE)
+                .append(" name=\"")
+                .append(XMLUtils.escapeSpecialCharacters(applicationName))
+                .append("\" />");
+        }
+
+        Set actionNames = new HashSet();
+        actionNames.addAll(actions.keySet());
+
+        Iterator actionNamesIter = actionNames.iterator();
+        while (actionNamesIter.hasNext()) {
+            String actionName = (String) actionNamesIter.next();
             answer.append("\n").append("<AttributeValuePair>");
             answer.append("\n").append("<Attribute name=\"");
             answer.append(XMLUtils.escapeSpecialCharacters(actionName));
             answer.append("\" />");
             Set values = (Set) actions.get(actionName);
+
             if (values.size() > 0) {
                 Iterator items = values.iterator();
                 while (items.hasNext()) {
@@ -493,9 +663,11 @@ public class Rule extends Object implements Cloneable {
                             (String) items.next()));
                     answer.append("</Value>");
                 }
+
             }
             answer.append("\n").append("</AttributeValuePair>");
         }
+
         answer.append("\n").append("</Rule>");
         return (answer.toString());
     }
@@ -507,7 +679,7 @@ public class Rule extends Object implements Cloneable {
     protected ServiceType getServiceType() {
         return (serviceType);
     }
-    
+
     /**
      * Returns an XML respresentation of the rule with policy name to
      * use in resource index tree
@@ -515,28 +687,20 @@ public class Rule extends Object implements Cloneable {
      * @return an XML respresentation of the rule with policy name to
      * use in resource index tree
      */
-
     protected String toResourcesXml(String policyName) {
         StringBuffer beginning = new StringBuffer(100);
         // "<PolicyCrossReferences name=\"" + serviceTypeName +
         // "\" type=\"Resources\">"
-        beginning.append("<")
-            .append(PolicyManager.POLICY_INDEX_ROOT_NODE)
-            .append(" ")
-            .append(PolicyManager.POLICY_INDEX_ROOT_NODE_NAME_ATTR)
-            .append("=\"")
-            .append(serviceTypeName)
-            .append("\" ")
-            .append(PolicyManager.POLICY_INDEX_ROOT_NODE_TYPE_ATTR)
-            .append("=\"").append(
-                PolicyManager.POLICY_INDEX_ROOT_NODE_TYPE_ATTR_RESOURCES_VALUE)
-            .append("\">");
+        beginning.append("<").append(PolicyManager.POLICY_INDEX_ROOT_NODE).append(" ").append(PolicyManager.POLICY_INDEX_ROOT_NODE_NAME_ATTR).append("=\"").append(serviceTypeName).append("\" ").append(PolicyManager.POLICY_INDEX_ROOT_NODE_TYPE_ATTR).append("=\"").append(
+                PolicyManager.POLICY_INDEX_ROOT_NODE_TYPE_ATTR_RESOURCES_VALUE).append("\">");
 
-        String normalizedResName = resourceName;
-        if (resourceName == null || resourceName.length() == 0) {
+        String normalizedResName = null;
+        if ((resourceNames == null) || resourceNames.isEmpty()) {
             normalizedResName = ResourceManager.EMPTY_RESOURCE_NAME;
+        } else {
+            normalizedResName = resourceNames.iterator().next();
         }
-        
+
         String[] resources = serviceType.split(normalizedResName);
         int n = resources.length;
 
@@ -544,30 +708,18 @@ public class Rule extends Object implements Cloneable {
         // "<Reference name=\"" + resources[n-1]) +
         // "\"><PolicyName name=\"" + policyName +
         // "\"/></Reference>"
-        middle.append("<")
-            .append(PolicyManager.POLICY_INDEX_REFERENCE_NODE)
-            .append(" ")
-            .append(PolicyManager.POLICY_INDEX_REFERENCE_NODE_NAME_ATTR)
-            .append("=\"")
-            .append(resources[n-1])
-            .append("\"><")
-            .append(PolicyManager.POLICY_INDEX_POLICYNAME_NODE)
-            .append(" ")
-            .append(PolicyManager.POLICY_INDEX_POLICYNAME_NODE_NAME_ATTR)
-            .append("=\"")
-            .append(policyName)
-            .append("\"/></")
-            .append(PolicyManager.POLICY_INDEX_REFERENCE_NODE)
-            .append(">");
+        middle.append("<").append(PolicyManager.POLICY_INDEX_REFERENCE_NODE).append(" ").append(PolicyManager.POLICY_INDEX_REFERENCE_NODE_NAME_ATTR).append("=\"").append(resources[n - 1]).append("\"><").append(PolicyManager.POLICY_INDEX_POLICYNAME_NODE).append(" ").append(PolicyManager.POLICY_INDEX_POLICYNAME_NODE_NAME_ATTR).append("=\"").append(policyName).append("\"/></").append(PolicyManager.POLICY_INDEX_REFERENCE_NODE).append(">");
         String tmp = middle.toString();
-        for (int i = n-2; i>=0; i--) {
+        for (int i = n - 2; i >=
+                0; i--) {
             //tmp = "<Reference name=\"" + resources[i] +"\">" +
             //    tmp + "</Reference>";
             tmp = "<" + PolicyManager.POLICY_INDEX_REFERENCE_NODE +
-                " " + PolicyManager.POLICY_INDEX_REFERENCE_NODE_NAME_ATTR +
-                "=\"" + resources[i] +"\">" + tmp + "</" +
-                PolicyManager.POLICY_INDEX_REFERENCE_NODE + ">";
+                    " " + PolicyManager.POLICY_INDEX_REFERENCE_NODE_NAME_ATTR +
+                    "=\"" + resources[i] + "\">" + tmp + "</" +
+                    PolicyManager.POLICY_INDEX_REFERENCE_NODE + ">";
         }
+
         return (beginning + tmp + "</" +
                 PolicyManager.POLICY_INDEX_ROOT_NODE + ">");
     }
@@ -577,6 +729,7 @@ public class Rule extends Object implements Cloneable {
      *
      * @return xml string representation of the rule
      */
+    @Override
     public String toString() {
         return (toXML());
     }
@@ -592,6 +745,7 @@ public class Rule extends Object implements Cloneable {
      *
      * @return a copy of this object
      */
+    @Override
     public Object clone() {
         Rule answer = null;
         try {
@@ -599,10 +753,20 @@ public class Rule extends Object implements Cloneable {
         } catch (CloneNotSupportedException se) {
             answer = new Rule();
         }
+
         answer.ruleName = ruleName;
         answer.serviceTypeName = serviceTypeName;
+        answer.applicationName = applicationName;
         answer.serviceType = serviceType;
-        answer.resourceName = resourceName;
+        answer.resourceNames = new HashSet();
+        if (resourceNames != null) {
+            answer.resourceNames.addAll(resourceNames);
+        }
+        
+        if (excludedResourceNames != null) {
+            answer.excludedResourceNames = new HashSet();
+            answer.excludedResourceNames.addAll(excludedResourceNames);
+        }
 
         // Copy the actions
         answer.actions = new HashMap();
@@ -617,7 +781,6 @@ public class Rule extends Object implements Cloneable {
 
         return (answer);
     }
-        
 
     /**
      * Returns action values given resource type, resource name and a set of
@@ -626,7 +789,7 @@ public class Rule extends Object implements Cloneable {
      * @param resourceType resource type
      * @param resourceName resource name
      * @param actionNames a set of action names for which to compute values.
-     * Each element of the set should be a <code>String</code> 
+     * Each element of the set should be a <code>String</code>
      * valued action name
      * @return a map of action values for actions
      *         Each key of the map is a String valued action name
@@ -634,24 +797,22 @@ public class Rule extends Object implements Cloneable {
      * @throws NameNotFoundException if any name in <code>actionNames</code> is
      *         not found in the rule.
      */
-    Map getActionValues(String resourceType, String resourceName, 
+    Map getActionValues(String resourceType, String resourceName,
             Set actionNames) throws NameNotFoundException {
         Map actionValues = null;
-        String serviceTypeName = getServiceTypeName();
-        if ((serviceTypeName.equalsIgnoreCase(resourceType)) 
-                    && (actionNames != null)) {
+        if ((serviceTypeName.equalsIgnoreCase(resourceType)) && (actionNames != null)) {
             ResourceMatch rm = isResourceMatch(resourceType, resourceName);
-            if (ResourceMatch.EXACT_MATCH.equals(rm) 
-                         || ResourceMatch.WILDCARD_MATCH.equals(rm)) {
-            //if (ResourceMatch.EXACT_MATCH.equals(rm) ) {
+            if (ResourceMatch.EXACT_MATCH.equals(rm) || ResourceMatch.WILDCARD_MATCH.equals(rm)) {
+                //if (ResourceMatch.EXACT_MATCH.equals(rm) ) {
                 actionValues = new HashMap();
                 Iterator actionIter = actionNames.iterator();
                 while (actionIter.hasNext()) {
                     String actionName = (String) actionIter.next();
                     Set values = getActionValues(actionName);
-                    if ( values != null ) {
+                    if (values != null) {
                         actionValues.put(actionName, values);
                     }
+
                 }
             }
         }

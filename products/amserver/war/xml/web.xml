@@ -106,6 +106,28 @@
         </init-param>
     </servlet>
 
+    <servlet>
+        <servlet-name>notificationservlet</servlet-name>
+        <servlet-class>com.sun.identity.entitlement.opensso.NotificationServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>entitlementmonitor</servlet-name>
+        <servlet-class>com.sun.identity.entitlement.util.NetworkMonitor</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ws</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
+            <param-value>com.sun.jersey.api.core.PackagesResourceConfig</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>com.sun.identity.entitlement</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <!-- servlet declaration -->
 
     <servlet-mapping>
@@ -187,6 +209,19 @@
     <servlet-mapping>
         <servlet-name>IdentityServicesHandler</servlet-name>
         <url-pattern>/identity/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>notificationservlet</servlet-name>
+        <url-pattern>/notification/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>entitlementmonitor</servlet-name>
+        <url-pattern>/entitlementmonitor/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ws</servlet-name>
+        <url-pattern>/ws/*</url-pattern>
     </servlet-mapping>
 
     <!-- servlet mapping -->

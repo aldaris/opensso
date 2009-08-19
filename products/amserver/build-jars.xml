@@ -22,12 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-jars.xml,v 1.9 2008-07-23 17:14:25 veiming Exp $
+   $Id: build-jars.xml,v 1.10 2009-08-19 05:40:29 veiming Exp $
 
 -->
 
 <project name="opensso-jars" default="all">
-                
     <description>Open Web Single Sign-On: Jars Creation</description>
 
     <!-- enforce invocation via top level build only -->
@@ -39,32 +38,25 @@
         </condition>
     </fail>
 
-    <target name="all" depends="preparebuild">
-        <antcall target="openssojar" />
-        <antcall target="openssotestjar" />
-        <antcall target="openssoregjar" />
+    <target name="all" depends="preparebuild,amserverjar,openssoregjar">
     </target>
 
-    <target name="openssojar" depends="preparebuild">
+    <target name="amserverjar" depends="preparebuild">
         <jar destfile="${amserver.dist.dir}/amserver.jar">
             <manifest>
                 <attribute name="Version" value="${version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>
-            <zipfileset dir="${amserver.built.dir}/classes" excludes="com/sun/identity/console,com/sun/enterprise/**" />
-            <zipfileset dir="${amserver.www.dir}" prefix="www" />
-            <fileset dir="${amserver.xml.dir}">
-                <include name="serverconfig.xml" />
-            </fileset>
+            <fileset dir="${products.license.dir}" includes="license.txt" />
+            <zipfileset dir="${amserver.built.dir}/classes"
+                excludes="${console.packages},com/sun/enterprise/**" />
         </jar>
 
         <antcall target="jar-legacy" />
 
         <jar destfile="${amserver.dist.dir}/console.jar">
-            <zipfileset dir="${amserver.built.dir}/classes" includes="com/sun/identity/console/**" />
+            <zipfileset dir="${amserver.built.dir}/classes"
+                includes="${console.packages}" />
             <zipfileset dir="${amserver.console.res.dir}" />
             <zipfileset dir="${amserver.console.xml.dir}/components"
                 prefix="com/sun/identity/console"/>
@@ -77,30 +69,11 @@
     </target>
 
     <target name="jar-legacy" if="legacy">
-        <ant antfile="${legacy.base.dir}/build.xml" inheritRefs="true" target="build" />
+        <ant antfile="${legacy.base.dir}/build.xml" inheritRefs="true"
+            target="build" />
         <jar destfile="${amserver.dist.dir}/amserver.jar" update="true">
             <zipfileset dir="${legacy.built.dir}/classes" />
         </jar>
-    </target>
-
-    <target name="openssotestjar" depends="preparebuild">
-        <jar destfile="${amserver.dist.dir}/opensso-test.jar">
-            <manifest>
-                <attribute name="Version" value="${version}"/>
-                <attribute name="Create-On" value="${touch.time}"/>
-            </manifest>
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>
-            <zipfileset dir="${amserver.built.dir}/classes" />
-            <zipfileset dir="${amserver.built.dir}/test/classes" />
-            <zipfileset dir="${amserver.script.dir}" prefix="script" />
-            <zipfileset dir="${amserver.res.i18n.dir}" />
-            <zipfileset dir="${amserver.console.res.dir}" />
-            <zipfileset dir="${amserver.www.dir}" prefix="www" />
-        </jar>
-        <checksum file="${amserver.dist.dir}/opensso-test.jar" 
-            algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="openssoregjar" depends="preparebuild">
@@ -109,10 +82,9 @@
                 <attribute name="Version" value="${version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
-            <fileset dir=".">
-                <include name="license.txt" />
-            </fileset>
-            <zipfileset dir="${amserver.built.dir}/classes" includes="com/sun/identity/servicetag/**" />
+            <fileset dir="${products.license.dir}" includes="license.txt" />
+            <zipfileset dir="${amserver.built.dir}/classes"
+                includes="com/sun/identity/servicetag/**" />
         </jar>
         <checksum file="${amserver.dist.dir}/opensso-register.jar" 
             algorithm="SHA" fileext=".sha" />
@@ -125,8 +97,8 @@
     <target name="clean">
         <delete file="${amserver.dist.dir}/amserver.jar"/>
         <delete file="${amserver.dist.dir}/amserver.jar.sha"/>
-        <delete file="${amserver.dist.dir}/opensso-test.jar"/>
-        <delete file="${amserver.dist.dir}/opensso-test.jar.sha"/>
+        <delete file="${amserver.dist.dir}/console.jar"/>
+        <delete file="${amserver.dist.dir}/console.jar.sha"/>
         <delete file="${amserver.dist.dir}/opensso-register.jar"/>
         <delete file="${amserver.dist.dir}/opensso-register.jar.sha"/>
     </target>

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.63 2009-08-05 20:15:53 veiming Exp $
+   $Id: build.xml,v 1.64 2009-08-19 05:40:38 veiming Exp $
 
 -->
 
@@ -78,9 +78,8 @@
             filtering="true"/>
         <copy file="${war.xml.dir}/template/sms/legacy.properties"
             tofile="${amserver.built.res.dir}/legacy.properties" />
-
         <war destfile="${amserver.dist.dir}/opensso-amserver.war" webxml="${amserver.dist.dir}/web.xml">
-            <lib dir="${extlib.dir}" includes="*.jar" excludes="mq4_1*.jar,j2ee.jar,db.jar,testng-5.1-jdk15.jar,fmsae.dll,jaxb-api.jar,jaxb-impl.jar,jaxb-xjc.jar,jaxb-libs.jar,jaxb1-impl.jar,saaj-api.jar,saaj-impl.jar,xmlsec.jar" />
+            <lib dir="${extlib.dir}" includes="${war.lib}" />
             <lib dir="${lockhart.dir}/lib" />
             <lib dir="${javahelp.dir}/lib" />
             <lib dir="${jatolib.dir}">
@@ -415,6 +414,27 @@
         </java>
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
+            <arg value="&lt;listener&gt;.+?&lt;/listener&gt;" />
+            <arg value="${amserver.warbase.dir}/xml/console/web.xml" />
+            <arg value="${amserver.dist.dir}/web.xml" />
+            <arg value="&lt;!-- listener declaration --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;filter&gt;.+?&lt;/filter&gt;" />
+            <arg value="${amserver.warbase.dir}/xml/console/web.xml" />
+            <arg value="${amserver.dist.dir}/web.xml" />
+            <arg value="&lt;!-- filter declaration --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;filter-mapping&gt;.+?&lt;/filter-mapping&gt;" />
+            <arg value="${amserver.warbase.dir}/xml/console/web.xml" />
+            <arg value="${amserver.dist.dir}/web.xml" />
+            <arg value="&lt;!-- filter mapping --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
             <arg value="&lt;servlet&gt;.+?&lt;/servlet&gt;" />
             <arg value="${amserver.warbase.dir}/xml/console/web.xml" />
             <arg value="${amserver.dist.dir}/web.xml" />
@@ -427,6 +447,14 @@
             <arg value="${amserver.dist.dir}/web.xml" />
             <arg value="&lt;!-- servlet mapping --&gt;" />
         </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;session-config&gt;.+?&lt;/session-config&gt;" />
+            <arg value="${amserver.warbase.dir}/xml/console/web.xml" />
+            <arg value="${amserver.dist.dir}/web.xml" />
+            <arg value="&lt;!-- taglib definition --&gt;" />
+        </java>
+
     </target>
 
     <target name="war-legacy" if="legacy">

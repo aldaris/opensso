@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.25 2009-06-30 17:46:01 veiming Exp $
+   $Id: build-tools.xml,v 1.26 2009-08-19 05:40:29 veiming Exp $
 
 -->
 
@@ -163,7 +163,7 @@
         <copy todir="${amadm.lib.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${extlib.dir}"
-                includes="j2ee.jar, xercesImpl.jar, mail.jar, activation.jar, db.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, webservices-api.jar, webservices-rt.jar, webservices-tools.jar, OpenDS.jar, jdmkrt.jar, jdmktk.jar"/>
+                includes="${ssoadm.required-jars}"/>
             <fileset dir="${sharedlib.dist.dir}"
                 includes="opensso-sharedlib.jar"/>
             <fileset dir="${amserver.dist.dir}"
@@ -176,7 +176,7 @@
         </copy>
         <copy todir="${amadm.tools.dir}" overwrite="yes" flatten="yes"
             encoding="UTF-8">
-            <fileset dir="${amserver.basedir}" includes="license.txt"/>
+            <fileset dir="${products.license.dir}" includes="*.txt"/>
             <fileset dir="${amadm.tools.scripts.dir}"
                 includes="setup, setup.bat, README.setup"/>
         </copy>
@@ -241,7 +241,7 @@
                 filemode="755">
                 <include name="setup"/>
                 <include name="setup.bat"/>
-                <include name="license.txt"/>
+                <include name="*.txt"/>
                 <include name="README.setup"/>
             </zipfileset>
             <zipfileset dir="${amadm.tools.dir}" filemode="755">

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyModelImpl.java,v 1.3 2008-08-15 19:41:31 veiming Exp $
+ * $Id: PolicyModelImpl.java,v 1.4 2009-08-19 05:40:31 veiming Exp $
  *
  */
 
@@ -47,6 +47,7 @@ import com.sun.identity.console.base.model.AMResBundleCacher;
 import com.sun.identity.console.base.model.QueryResults;
 import com.sun.identity.console.property.PolicyPropertyXMLBuilder;
 import com.sun.identity.console.property.ResponseProviderXMLBuilder;
+import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.policy.ActionSchema;
 import com.sun.identity.policy.ConditionTypeManager;
 import com.sun.identity.policy.InvalidFormatException;
@@ -58,7 +59,6 @@ import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.ReferralTypeManager;
 import com.sun.identity.policy.ResponseProviderTypeManager;
-import com.sun.identity.policy.ResourceManager;
 import com.sun.identity.policy.Rule;
 import com.sun.identity.policy.ServiceType;
 import com.sun.identity.policy.ServiceTypeManager;
@@ -726,18 +726,13 @@ public class PolicyModelImpl
     public boolean canCreateNewResource(String realmName, String svcTypeName) {
         boolean can = false;
         try {
-        PolicyManager mgr = getPolicyManager(realmName);
-            if (mgr != null) {
-                ResourceManager resMgr = mgr.getResourceManager();
-                if (resMgr != null) {
-                    try {
-                        can = resMgr.canCreateNewResource(svcTypeName);
-                    } catch (PolicyException e) {
-                        debug.warning("PolicyModelImpl.canCreateNewResource",e);
-                    }
-                }
-            }
+            PolicyManager mgr = getPolicyManager(realmName);
+            Set<String> tmp = new HashSet<String>();
+            tmp.add(svcTypeName);
+            can = mgr.canCreatePolicies(tmp);
         } catch (AMConsoleException e) {
+            debug.warning("PolicyModelImpl.canCreateNewResource", e);
+        } catch (EntitlementException e) {
             debug.warning("PolicyModelImpl.canCreateNewResource", e);
         }
 
@@ -1816,13 +1811,16 @@ public class PolicyModelImpl
         try {
             PolicyManager policyMgr = getPolicyManager(realmName);
             if (policyMgr != null) {
-                if (!canCreateNewResource(policyMgr) &&
-                    !hasReferredResources(policyMgr)) {
+                Set<String> services = getServiceTypeNames().keySet();
+
+                if (!policyMgr.canCreatePolicies(services)) {
                     message = "noReferralForOrg.message";
                 } else if (!hasPolicyConfigSvcRegistered(realmName)) {
                     message = "noPolicyConfigSvc.message";
                 }
             }
+        } catch (EntitlementException e) {
+            message = e.getMessage();
         } catch (AMConsoleException e) {
             message = e.getMessage();
         }
@@ -1843,38 +1841,7 @@ public class PolicyModelImpl
         }
     }
 
-    private boolean canCreateNewResource(PolicyManager policyMgr) {
-        boolean can = false;
-        ResourceManager resMgr = policyMgr.getResourceManager();
 
-        if (resMgr != null) {
-            Set services = getServiceTypeNames().keySet();
-                                                                                
-            if ((services != null) && !services.isEmpty()) {
-                for (Iterator i = services.iterator(); (i.hasNext() && !can);) {
-                    String svcName = (String)i.next();
-                    try {
-                        can = resMgr.canCreateNewResource(svcName);
-                    } catch (PolicyException  e) {
-                        debug.warning("PolicyModelImpl.canCreateNewResource",e);
-                    }
-                }
-            }
-        }
-
-        return can;
-    }
-
-    private boolean hasReferredResources(PolicyManager policyMgr) {
-        boolean hasPrefixes = false;
-        try {
-            Set prefixes = policyMgr.getManagedResourceNames();
-            hasPrefixes = (prefixes != null) && !prefixes.isEmpty();
-        } catch (PolicyException e) {
-            debug.warning("PolicyModelImpl.hasReferredResources", e);
-        }
-        return hasPrefixes;
-    }
 
     /**
      * Returns set of authentication instances.

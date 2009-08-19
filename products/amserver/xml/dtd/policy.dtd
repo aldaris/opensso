@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: policy.dtd,v 1.2 2008-06-25 05:45:34 qcheng Exp $
+    $Id: policy.dtd,v 1.3 2009-08-19 05:40:39 veiming Exp $
 
 -->
 
@@ -69,7 +69,11 @@ and adding another element to that container in the policy.
 <!ATTLIST	Policy
 	name		CDATA		#REQUIRED
 	description	CDATA		#IMPLIED
-	version		CDATA		"2.0"
+	version		CDATA		"3.0"
+        createdby       CDATA           #IMPLIED
+        lastmodifiedby  CDATA           #IMPLIED
+        creationdate    CDATA           #IMPLIED
+        lastmodifieddate CDATA          #IMPLIED 
 	referralPolicy	(true | false)		"false"
 	active		(true | false)		"true"
 >
@@ -82,9 +86,17 @@ service, "ResourceName" give the resource name, and "AttributeValuePair"
 provides the action names and corresponding action values. A rule can be
 defined without any actions. A referral policy rule doesn't have any actions.
  -->
-<!ELEMENT	Rule		( ServiceName, ResourceName?,
-				  AttributeValuePair*  ) >
+<!ELEMENT	Rule		( ServiceName, ApplicationName?, ResourceName*,
+                                  ExcludedResourceName*, AttributeValuePair*  ) >
 <!ATTLIST	Rule
+	name		CDATA		#REQUIRED
+>
+
+<!-- Application provides the name of the application for which a
+     rule has been created. The attribute "name" provides the application
+      name. -->
+<!ELEMENT    ApplicationName        EMPTY>
+<!ATTLIST    ApplicationName
 	name		CDATA		#REQUIRED
 >
 
@@ -102,6 +114,13 @@ this element will not be there for the rule. The attribute "name"
 provides the resoruce name. -->
 <!ELEMENT	ResourceName		EMPTY>
 <!ATTLIST	ResourceName
+	name		CDATA		#REQUIRED
+>
+
+<!-- ExcludedResourceName provides the name of the excluded resource for which
+a rule has been created. -->
+<!ELEMENT	ExcludedResourceName	EMPTY>
+<!ATTLIST	ExcludedResourceName
 	name		CDATA		#REQUIRED
 >
 

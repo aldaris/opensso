@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Policy.java,v 1.6 2009-01-28 05:35:00 ww203982 Exp $
+ * $Id: Policy.java,v 1.7 2009-08-19 05:40:37 veiming Exp $
  *
  */
 
@@ -43,7 +43,6 @@ import com.iplanet.sso.*;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.Cache;
 import com.sun.identity.shared.xml.XMLUtils;
-import com.iplanet.services.util.*;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.policy.plugins.OrgReferral;
 
@@ -94,6 +93,10 @@ public class Policy implements Cloneable {
     private String origPolicyName;
     private String policyName;
     private String description = "";
+    private String createdBy;
+    private String lastModifiedBy;
+    private long creationDate;
+    private long lastModifiedDate;
     private boolean referralPolicy=false;
     private boolean active = true;
 
@@ -252,6 +255,8 @@ public class Policy implements Cloneable {
         description = XMLUtils.getNodeAttributeValue(policyNode,
                 PolicyManager.DESCRIPTION_ATTRIBUTE);
 
+        getModificationInfo(policyNode);
+
         // Get referralPolicy flag
         String referralPolicy = XMLUtils.getNodeAttributeValue(policyNode,
                 Policy.REFERRAL_POLICY);
@@ -326,7 +331,34 @@ public class Policy implements Cloneable {
                 referrals = new Referrals(pm, referralsNode);
             }
         }
+    }
 
+    private void getModificationInfo(Node policyNode) {
+        String strCreationDate = XMLUtils.getNodeAttributeValue(policyNode,
+                PolicyManager.CREATION_DATE_ATTRIBUTE);
+        if ((strCreationDate != null) && (strCreationDate.length() > 0)) {
+            try {
+                creationDate = Long.parseLong(strCreationDate);
+            } catch (NumberFormatException e) {
+                //ignore
+            }
+        }
+        String strLastModifiediDate = XMLUtils.getNodeAttributeValue(
+            policyNode, PolicyManager.LAST_MODIFIED_DATE_ATTRIBUTE);
+        if ((strLastModifiediDate != null) &&
+            (strLastModifiediDate.length() > 0)
+        ) {
+            try {
+                lastModifiedDate = Long.parseLong(strLastModifiediDate);
+            } catch (NumberFormatException e) {
+                //ignore
+            }
+        }
+
+        createdBy = XMLUtils.getNodeAttributeValue(policyNode,
+            PolicyManager.CREATED_BY_ATTRIBUTE);
+        lastModifiedBy = XMLUtils.getNodeAttributeValue(policyNode,
+            PolicyManager.LAST_MODIFIED_BY_ATTRIBUTE);
     }
 
     /**
@@ -1371,12 +1403,39 @@ public class Policy implements Cloneable {
             answer.append("\" description=\"");
             answer.append(XMLUtils.escapeSpecialCharacters(description));
         }
+
+        if ((createdBy != null) && (createdBy.length() > 0)) {
+            answer.append("\" ")
+                .append(PolicyManager.CREATED_BY_ATTRIBUTE)
+                .append("=\"")
+                .append(XMLUtils.escapeSpecialCharacters(createdBy));
+        }
+        if ((lastModifiedBy != null) && (lastModifiedBy.length() > 0)) {
+            answer.append("\" ")
+                .append(PolicyManager.LAST_MODIFIED_BY_ATTRIBUTE)
+                .append("=\"")
+                .append(XMLUtils.escapeSpecialCharacters(lastModifiedBy));
+        }
+        if (creationDate > 0) {
+            answer.append("\" ")
+                .append(PolicyManager.CREATION_DATE_ATTRIBUTE)
+                .append("=\"")
+                .append(XMLUtils.escapeSpecialCharacters(
+                    Long.toString(creationDate)));
+        }
+        if (lastModifiedDate > 0) {
+            answer.append("\" ")
+                .append(PolicyManager.LAST_MODIFIED_DATE_ATTRIBUTE)
+                .append("=\"")
+                .append(XMLUtils.escapeSpecialCharacters(
+                    Long.toString(lastModifiedDate)));
+        }
+
         answer.append("\" referralPolicy=\"").append(referralPolicy);
         answer.append("\" active=\"").append(active);
         answer.append("\" >");
-        Iterator rules = getRuleNames().iterator();
-        while (rules.hasNext()) {
-            String ruleName = (String) rules.next();
+        for (Iterator i = getRuleNames().iterator(); i.hasNext(); ) {
+            String ruleName = (String)i.next();
             try {
                 Rule rule = getRule(ruleName);
                 answer.append(rule.toXML());
@@ -2607,4 +2666,75 @@ public class Policy implements Cloneable {
         users.clearSubjectResultCache(tokenIdString);
     }
 
+    /**
+     * Returns creation date.
+     *
+     * @return creation date.
+     */
+    public long getCreationDate() {
+        return creationDate;
+    }
+    
+    /**
+     * Sets the creation date.
+     * 
+     * @param creationDate creation date.
+     */
+    public void setCreationDate(long creationDate) {
+        this.creationDate = creationDate;
+    }
+    
+    /**
+     * Returns last modified date.
+     * 
+     * @return last modified date.
+     */
+    public long getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    /**
+     * Sets the last modified date.
+     *
+     * @param lastModifiedDate last modified date.
+     */
+    public void setLastModifiedDate(long lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    /**
+     * Returns the user ID who last modified the policy.
+     *
+     * @return user ID who last modified the policy.
+     */
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    /**
+     * Sets the user ID who last modified the policy.
+     *
+     * @param createdBy user ID who last modified the policy.
+     */
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    /**
+     * Returns the user ID who created the policy.
+     *
+     * @return user ID who created the policy.
+     */
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * Sets the user ID who created the policy.
+     *
+     * @param createdBy user ID who created the policy.
+     */
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 }

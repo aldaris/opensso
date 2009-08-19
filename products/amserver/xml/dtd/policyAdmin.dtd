@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: policyAdmin.dtd,v 1.5 2008-08-19 19:10:50 veiming Exp $
+   $Id: policyAdmin.dtd,v 1.6 2009-08-19 05:40:39 veiming Exp $
   
 -->
 
@@ -72,7 +72,7 @@
 <!ATTLIST Policy
     name            CDATA            #REQUIRED
     description     CDATA            #IMPLIED
-    version         CDATA            "2.0"
+    version         CDATA            "3.0"
     referralPolicy  (true | false)   "false"
     active          (true | false)   "true"
 >
@@ -86,7 +86,7 @@
      defined without any actions. A referral policy rule doesn't have any
      actions.
 -->
-<!ELEMENT Rule ( ServiceName, ResourceName?, AttributeValuePair*  ) >
+<!ELEMENT Rule ( ServiceName, ResourceName*, AttributeValuePair*  ) >
 <!ATTLIST Rule
     name    CDATA   #REQUIRED
 >
