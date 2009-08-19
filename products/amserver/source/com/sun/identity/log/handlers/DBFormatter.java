@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBFormatter.java,v 1.10 2009-07-24 20:02:22 ww203982 Exp $
+ * $Id: DBFormatter.java,v 1.11 2009-08-19 21:12:50 ww203982 Exp $
  *
  */
 
@@ -116,6 +116,7 @@ public class DBFormatter extends Formatter {
      * @param h The target handler (can be null)
      * @return the set of all fields converted into a COMMA seperated string.
      */
+    @Override
     public String getHead(Handler h) {
         String retString = lmanager.getProperty(LogConstants.ALL_FIELDS);
         if (Debug.messageEnabled()) {
@@ -130,6 +131,7 @@ public class DBFormatter extends Formatter {
      * @param h The target handler (can be null)
      * @return a null string whenever called.
      */
+    @Override
     public String getTail(Handler h) {
         return "";
     }
@@ -151,7 +153,13 @@ public class DBFormatter extends Formatter {
       * @param logRecord the log record to be formatted.
       * @return formatted string.
       */
-    public String format(com.sun.identity.log.LogRecord logRecord) {
+    public String format(java.util.logging.LogRecord logRecord) {
+        Map logInfoTable = null;
+        if ((LogManagerUtil.isAMLoggingMode()) &&
+            (logRecord instanceof com.sun.identity.log.ILogRecord)) {
+            logInfoTable = ((com.sun.identity.log.ILogRecord) logRecord)
+                .getLogInfoMap();
+        }
         StringBuffer sbuffer = new StringBuffer();
         String strTime;
         if(secureTimestampGenerator != null) {
@@ -208,7 +216,6 @@ public class DBFormatter extends Formatter {
         if (allFields != null) {
             len = allFields.length;
         }
-        Map logInfoTable = logRecord.getLogInfoMap();
         for (int i = 2; i < len - 1; i ++) { // first 2 fields are compulsory
             if ((logInfoTable != null) &&
             (selectedFields != null) &&
@@ -268,7 +275,8 @@ public class DBFormatter extends Formatter {
                           + sbuffer.toString());
         }
 
-        if (selectedFields.contains(allFields[len-1])) {
+        if ((selectedFields != null) && (logInfoTable != null) &&
+            (selectedFields.contains(allFields[len-1]))) {
             String tmpstr = (String)logInfoTable.get(allFields[len-1]);
             if (tmpstr == null) {
                 tmpstr = LogConstants.NOTAVAIL;
@@ -286,105 +294,6 @@ public class DBFormatter extends Formatter {
         return sbuffer.toString();
     }
 
-    /**
-     * Format the given LogRecord and return back a formatted String.
-     * <p>
-     * The formatted String has the values of the fields which are selected and
-     * NULL if any field is not selected. All fields are enclosed in single-
-     * quotes.
-     * <p>
-     * A typical formatted string can be given as follows:
-     * '10:10:10', '10th June, 2002', 'NULL', 'NULL',
-     * 'Session Created Successfull', 'INFO', 'NULL', 'NULL'
-     * <p>
-     * This formatted string will be enclosed within braces by Handler to
-     * construct the query string.
-     * 
-     * @param logRecord the log record to be formatted.
-     * @return formatted string.
-     */
-    public String format(java.util.logging.LogRecord logRecord) {
-        if ((LogManagerUtil.isAMLoggingMode()) &&
-            (logRecord instanceof com.sun.identity.log.ILogRecord)) {
-            return format((com.sun.identity.log.LogRecord) logRecord);
-        }
-        String strTime;
-        if(secureTimestampGenerator != null) {
-            strTime = secureTimestampGenerator.getTimestamp();
-        } else {
-            strTime ="";
-        }
-        StringBuffer sbuffer = new StringBuffer();
-        /*
-         *  currently assuming that the date/time comes back in
-         *  the "yyyy-mm-dd hh:mn:ss" format (24hr).  if it changes
-         *  then there'll need to be a change to the dbdate-format
-         *  attribute.
-         */
-        
-        String toDate = null;
-        if (!isMySQL) {
-            toDate = "TO_DATE('";
-        } else {
-            toDate = "STR_TO_DATE('";
-        }
-
-        sbuffer.append(toDate);
-        sbuffer.append(strTime);
-        sbuffer.append("', '");
-        sbuffer.append(dateTimeFormat);
-        sbuffer.append("'), ");
-
-        /* Need to check for single-quote in the DATA field to be written 
-         * to the db
-         */
-        String tstr = formatMessage(logRecord);
-
-        if ((tstr == null) || (tstr.length() <= 0)) {
-            tstr = LogConstants.NOTAVAIL;
-        } else if (tstr.length() > 0 ) {
-            String str1 = tstr;
-            if (tstr.indexOf("'") != -1) {
-                str1 = checkEscapes(tstr, "'", "''");
-            }
-            String str2 = str1;
-            // Oracle doesn't have a problem with backslash
-            if (isMySQL) {
-                if (str1.indexOf("\\") != -1) {
-                    str2 = checkEscapes(str1, "\\", "\\\\");
-                }
-            }
-            tstr = str2;
-        }
-        sbuffer.append("'").append(tstr).append("', ");
-        if (Debug.messageEnabled()) {
-            Debug.message("DBFormatter:thisfield3 = #" + sbuffer.toString() 
-                          + "#");
-        }
-        String[] allFields = lmanager.getAllFields();
-        int len = 0;
-        if (allFields != null) {
-            len = allFields.length;
-        }
-        for (int i = 2; i < len-1; i ++) { // first 2 fields are compulsory
-            sbuffer.append("'" + LogConstants.NOTAVAIL + "'").append(", ");
-        }
-
-        if (Debug.messageEnabled()) {
-            Debug.message("DBFormatter:format1: sbuffer = " 
-                          + sbuffer.toString());
-        }
-
-        sbuffer.append("'").append(LogConstants.NOTAVAIL).append("'");
-
-        if (Debug.messageEnabled()) {
-            Debug.message("DBFormatter:format2: sbuffer = " 
-                    + sbuffer.toString());
-        }
-
-        return sbuffer.toString();
-    }
-    
     private String checkEscapes(String theString, String charToEscape,
         String doubledChar)
     {

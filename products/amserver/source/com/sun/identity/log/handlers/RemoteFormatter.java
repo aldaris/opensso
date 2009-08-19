@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteFormatter.java,v 1.8 2009-07-24 20:02:23 ww203982 Exp $
+ * $Id: RemoteFormatter.java,v 1.9 2009-08-19 21:12:50 ww203982 Exp $
  *
  */
 
@@ -76,9 +76,14 @@ public class RemoteFormatter extends Formatter {
       * @param logRecord The logRecord to be formatted
       * @return The string formed by formatting the logRecord
       */
-    public String format(com.sun.identity.log.LogRecord logRecord) {
+    public String format(java.util.logging.LogRecord logRecord) {
+        Map logInfo = null;
+        if ((LogManagerUtil.isAMLoggingMode()) &&
+            (logRecord instanceof ILogRecord)) {
+            logInfo = ((com.sun.identity.log.ILogRecord) logRecord)
+                .getLogInfoMap();
+        }
         String logName = logRecord.getLoggerName();
-        Map logInfo = logRecord.getLogInfoMap();
         String loggedBySid = null;
 
         if (logInfo != null) {
@@ -149,54 +154,4 @@ public class RemoteFormatter extends Formatter {
         return xml.toString();
     }
 
-    /**
-     * The method which does the actual formatting of the LogRecord.
-     * @param logRecord The logRecord to be formatted
-     * @return The string formed by formatting the logRecord
-     */
-    public String format(java.util.logging.LogRecord logRecord){
-        if ((LogManagerUtil.isAMLoggingMode()) &&
-            (logRecord instanceof ILogRecord)) {
-            return format((com.sun.identity.log.LogRecord) logRecord);
-        }
-
-        String logName = logRecord.getLoggerName();
-        String loggedBySid = null;
-        
-        Object [] parameters = logRecord.getParameters();
-        StringBuffer xml = new StringBuffer();
-        xml.append("<logRecWrite><log logName=\"");
-        xml.append(logName);
-        xml.append("\" sid=\"");
-        xml.append(loggedBySid);
-        xml.append("\"></log><logRecord><level>");
-        xml.append(logRecord.getLevel().intValue());
-        xml.append("</level><recMsg>");
-
-        String msg = formatMessage(logRecord);
-        if ((msg == null) || (msg.length() == 0)) {
-            msg = LogConstants.NOTAVAIL;
-        }
-        msg = com.sun.identity.shared.encode.Base64.encode(msg.getBytes());
-        
-        xml.append(msg);
-        xml.append("</recMsg>");
-
-        if ((parameters != null) && (parameters.length > 0)) {
-            xml.append("<parameters>");
-            for (int i=0; i<parameters.length; i++) {
-                xml.append("<parameter><paramIndex>");
-                xml.append(String.valueOf(i));
-                xml.append("</paramIndex><paramValue>");
-                xml.append(parameters[i].toString());
-                xml.append("</paramValue></parameter>");
-            }
-            xml.append("</parameters>");
-        }
-        xml.append("</logRecord></logRecWrite>");
-        if (Debug.messageEnabled()) {
-            Debug.message("RemoteFormatter: XML Req string = " + xml);
-        }
-        return xml.toString();
-    }
 }
