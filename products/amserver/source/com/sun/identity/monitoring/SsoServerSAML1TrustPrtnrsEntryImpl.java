@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSAML1TrustPrtnrsEntryImpl.java,v 1.1 2009-06-19 02:23:18 bigfatrat Exp $
+ * $Id: SsoServerSAML1TrustPrtnrsEntryImpl.java,v 1.2 2009-08-19 20:27:57 bigfatrat Exp $
  *
  */
 
@@ -79,7 +79,7 @@ public class SsoServerSAML1TrustPrtnrsEntryImpl extends
         String objname = myMibName +
             "/ssoServerSAML1TrustPrtnrsTable:" +
             prfx + "ssoServerSAML1TrustPrtnrName=" +
-            "ssoServerSAML1TrustPrtnrName";
+            SsoServerSAML1TrustPrtnrName;
 
         try {
             if (server == null) {
