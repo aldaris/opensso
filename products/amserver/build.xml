@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.84 2009-08-19 05:40:29 veiming Exp $
+   $Id: build.xml,v 1.85 2009-08-19 21:44:19 veiming Exp $
 
 -->
 
@@ -82,7 +82,14 @@
         <mkdir dir="${amserver.built.src.dir}" />
         <mkdir dir="${amserver.built.xsd.dir}" />
 
-        <filter token="ENTITLEMENT_BASE_DIR" value="${amserver.basedir}"/>
+        <path id="amserver.basedir.forXSD">
+            <pathelement path="${amserver.basedir}"/>
+        </path>
+        <pathconvert targetos="unix" setonempty="false"
+            property="amserver.basedir.forXSD"
+            refid="amserver.basedir.forXSD" />
+        <filter token="ENTITLEMENT_BASE_DIR"
+            value="${amserver.basedir.forXSD}"/>
         <copy todir="${amserver.built.xsd.dir}" filtering="true">
             <fileset dir="${amserver.basedir}/xsd" includes="*.*" />
         </copy>
