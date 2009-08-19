@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigMonitoring.java,v 1.2 2009-07-01 05:53:48 bigfatrat Exp $
+ * $Id: ConfigMonitoring.java,v 1.3 2009-08-19 20:30:08 bigfatrat Exp $
  *
  */
 
@@ -130,8 +130,16 @@ public class ConfigMonitoring {
 
         Agent.setSFOStatus(isSessFOEnabled);
 
-        // if monitoring disabled, go no further
-        if (getMonServiceAttrs() != 0) {
+        /*
+         * if monitoring disabled, go no further.  any error
+         * from getMonServiceAttrs() or Agent.startAgent()
+         * will result in monitoring getting disabled.
+         */
+        int i = getMonServiceAttrs();
+        if (i != 0) {
+            debug.error(classMethod + "getMonServiceAttrs returns " + i +
+                ", monitoring disabled");
+            Agent.setMonitoringDisabled();
             return;
         }
 
@@ -151,18 +159,37 @@ public class ConfigMonitoring {
             }
         } catch (SMSException smex) {
             debug.error(classMethod + "SMS exception: " + smex.getMessage());
+            Agent.stopRMI();
+            Agent.setMonitoringDisabled();
+            return;
         } catch (SSOException ssoex) {
             debug.error(classMethod + "SSO exception: " + ssoex.getMessage());
+            Agent.stopRMI();
+            Agent.setMonitoringDisabled();
+            return;
         }
         Agent.siteNames(puMap, siteMap);
 
         getRealmsList("/");
-        Agent.realmsConfig(realmList);
+        if (Agent.realmsConfig(realmList) != 0) {
+            debug.error(classMethod + "no realm mbeans; monitoring disabled.");
+            Agent.stopRMI();
+            Agent.setMonitoringDisabled();
+            return;
+        }
+
+        /*
+         *  probably could combine getAllRealms() and getAllRealmsSpecific()
+         *  to do auth modules, and agents and groups, when auth modules'
+         *  statistics can be handled per realm.
+         */
         if (!skipGettingAuthModules) {
             getAllRealms("/");
         }
         getAllRealmsSpecific("/");
-        doSubRealms("/");  // start with the root realm ("/")
+        if (debug.messageEnabled()) {
+            doSubRealms("/");  // start with the root realm ("/")
+        }
         date1 = new Date();
         if (debug.messageEnabled()) {
             debug.message(classMethod + "\n" +
@@ -231,7 +258,18 @@ public class ConfigMonitoring {
             SSOServerRealmInfo srInfo =
                 new SSOServerRealmInfo.SSOServerRealmInfoBuilder("/").
                    authModules(authHM).build();
-            Agent.realmConfigMonitoringAgent(srInfo);
+            int i = Agent.realmConfigMonitoringAgent(srInfo);
+
+            /*
+             *  if realmConfigMonitoringAgent() had a problem with
+             *  this realm, there's not much point in processing its
+             *  subrealms...
+             */
+            if (i != 0) {
+                debug.error(classMethod + "error processing root realm; " +
+                    "skip subrealms.");
+                return;
+            }
 
             // then all the subrealms; they have leading "/"
             for (Iterator it = orgs.iterator(); it.hasNext(); ) {
@@ -269,7 +307,16 @@ public class ConfigMonitoring {
                     srInfo =
                         new SSOServerRealmInfo.SSOServerRealmInfoBuilder(ss).
                            authModules(authHM).build();
-                    Agent.realmConfigMonitoringAgent(srInfo);
+                    i = Agent.realmConfigMonitoringAgent(srInfo);
+                    /*
+                     *  problem with this subrealm, but at least the
+                     *  root realm was added.  just output error and do next
+                     *  subrealm.
+                     */
+                    if (i != 0) {
+                        debug.error(classMethod +
+                            "error processing realm " + ss);
+                    }
                 } catch (IdRepoException ire) {
                     debug.error(classMethod +
                         "IdRepoException getting AMIdentityRepository" +
@@ -332,10 +379,20 @@ public class ConfigMonitoring {
                  debug.error(classMethod +
                      "IdRepoException getting AMIdentityRepository" +
                      " object for realm: /: " + ire.getMessage());
+                /*
+                 *  if we can't get the AMIdentityRepository, there's
+                 *  not much we can do
+                 */
+                return;
             } catch (SSOException ssoe) {
                  debug.error(classMethod +
                      "SSOException getting info for realm /: "
                      + ssoe.getMessage());
+                /*
+                 *  likewise, if there's an issue with our SSOToken...
+                 *  there's not much we can do
+                 */
+                return;
             }
 
             // then all the subrealms; they have leading "/"
@@ -1088,6 +1145,7 @@ public class ConfigMonitoring {
                     monRmiEnabled(rmiEna).
                     monSnmpEnabled(snmpEna).build();
 
+            debug.error("starting monitoring Agent");
             int i = Agent.startAgent(sMonInfo);
             if (i != 0) {
                 if (debug.warningEnabled()) {
@@ -1097,9 +1155,9 @@ public class ConfigMonitoring {
                 return (i);
             }
         } catch (Exception ex) {
-            debug.error(classMethod + "error reading Monitoring attributes: " +
-                ex.getMessage());
-            return (-1);
+            debug.error(classMethod +
+                "error reading Monitoring attributes: ", ex);
+            return (Agent.MON_READATTRS_PROBLEM);
         }
         return 0;
     }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Agent.java,v 1.6 2009-08-07 22:51:14 bigfatrat Exp $
+ * $Id: Agent.java,v 1.7 2009-08-19 20:30:10 bigfatrat Exp $
  *
  */
 
@@ -95,6 +95,7 @@ import com.sun.identity.sm.DNMapper;
 public class Agent {
 
     static SnmpAdaptorServer snmpAdaptor = null;
+    static HtmlAdaptorServer htmlAdaptor = null;
     private static Debug debug;
     
     /**
@@ -149,8 +150,15 @@ public class Agent {
     private static SimpleDateFormat sdf =
         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    public static final int MON_CONFIG_DISABLED   =    -1;
+    public static final int MON_MBEANSRVR_PROBLEM =    -2;
+    public static final int MON_RMICONNECTOR_PROBLEM = -3;
+    public static final int MON_CREATEMIB_PROBLEM =    -4;
+    public static final int MON_READATTRS_PROBLEM =    -5;
+
     static final String NotAvail = "NotAvailable";
     static final String None = "NONE";
+
 
     static {
         if (debug == null) {
@@ -165,7 +173,7 @@ public class Agent {
     private Agent() {
     }
 
-    protected static void stopRMI() {
+    public static void stopRMI() {
         if (monitoringEnabled && monRmiPortEnabled && (cs != null)) {
             if ((server != null) && (mibObjName != null)) {
                 try {
@@ -186,6 +194,7 @@ public class Agent {
             }
             try {
                 cs.stop();
+                debug.warning("Agent.stopRMI:rmi adaptor stopped.");
             } catch (Exception ex) {
                 debug.error("Agent.stopRMI: error stopping monitoring " +
                     " agent RMI server: ", ex);
@@ -193,6 +202,14 @@ public class Agent {
         } else {
             debug.warning("Agent.stopRMI: cs is null, or " +
                 "monitoring or RMI port not enabled.");
+        }
+        if (monitoringEnabled && monSnmpPortEnabled && (snmpAdaptor != null)) {
+            snmpAdaptor.stop();
+            debug.warning("Agent.stopRMI:snmp adaptor stopped.");
+        }
+        if (monitoringEnabled && monHtmlPortEnabled && (htmlAdaptor != null)) {
+            htmlAdaptor.stop();
+            debug.warning("Agent.stopRMI:html adaptor stopped.");
         }
     }
 
@@ -454,11 +471,15 @@ public class Agent {
      *
      *  @param monConfig SSOServerMonConfig structure of OpenSSO configuration
      *  @return 0 (zero) if at least one of HTML/SNMP/RMI adaptors started up;
-     *          -1 if monitoring configured as disabled
-     *          -2 if MBeanServer problem encountered
-     *          -3 if RMI connector problem
+     *     MON_CONFIG_DISABLED:
+     *       if monitoring configured as disabled
+     *     MON_MBEANSRVR_PROBLEM:
+     *       if MBeanServer problem encountered
+     *     MON_RMICONNECTOR_PROBLEM:
+     *       if RMI connector problem
      *             (MIB not registered with MBeanServer)
-     *          -4 if problem creating/registering MIB
+     *     MON_CREATEMIB_PROBLEM:
+     *       if problem creating/registering MIB
      */
     public static int startAgent (SSOServerMonConfig monConfig) {
         monHtmlPort = monConfig.htmlPort;
@@ -492,7 +513,7 @@ public class Agent {
 
         if (!monitoringEnabled) {
             debug.warning(classMethod + "Monitoring configured as disabled.");
-            return -1;
+            return MON_CONFIG_DISABLED;
         }
 
         /*
@@ -509,7 +530,7 @@ public class Agent {
                 debug.error(classMethod +
                     "RMI port conflicts with OpenSSO server port (" +
                     sport + "); Monitoring disabled.");
-                return -3;
+                return MON_RMICONNECTOR_PROBLEM;
             }
             if (monHtmlPort == sport) {
                 monHtmlPortEnabled = false;
@@ -583,28 +604,28 @@ public class Agent {
                         "createMBeanServer permission error: " +
                         ex.getMessage());
                 }
-                return -2;
+                return MON_MBEANSRVR_PROBLEM;
             } catch (JMRuntimeException ex) {
                 if (debug.warningEnabled()) {
                     debug.warning(classMethod +
                         "createMBeanServer JMRuntime error: " +
                         ex.getMessage());
                 }
-                return -2;
+                return MON_MBEANSRVR_PROBLEM;
             } catch (ClassCastException ex) {
                 if (debug.warningEnabled()) {
                     debug.warning(classMethod +
                         "createMBeanServer ClassCast error: " +
                         ex.getMessage());
                 }
-                return -2;
+                return MON_MBEANSRVR_PROBLEM;
             }
         }
         if (server == null) {
             if (debug.warningEnabled()) {
                 debug.warning(classMethod + "no MBeanServer");
             }
-            return (-2);
+            return MON_MBEANSRVR_PROBLEM;
         }
 
         String domain = server.getDefaultDomain();  // throws no exception
@@ -626,11 +647,19 @@ public class Agent {
                     "Error getting ObjectName for the MIB: " +
                     ex.getMessage());
             }
-            return -4;
+            return MON_CREATEMIB_PROBLEM;
         }
 
         // Create an instance of the customized MIB
-        mib2 = new SUN_OPENSSO_SERVER_MIB();
+        try {
+            mib2 = new SUN_OPENSSO_SERVER_MIB();
+        } catch (RuntimeException ex) {
+            debug.error (classMethod + "Runtime error instantiating MIB", ex);
+            return MON_CREATEMIB_PROBLEM;
+        } catch (Exception ex) {
+            debug.error (classMethod + "Error instantiating MIB", ex);
+            return MON_CREATEMIB_PROBLEM;
+        }
 
         try {
             server.registerMBean(mib2, mibObjName);
@@ -641,7 +670,7 @@ public class Agent {
                     "Null parameter or no object name for MIB specified: " +
                     ex.getMessage());
             }
-            return -4;
+            return MON_CREATEMIB_PROBLEM;
         } catch (InstanceAlreadyExistsException ex) {
             // from registerMBean
             if (debug.warningEnabled()) {
@@ -657,7 +686,7 @@ public class Agent {
                     "Error registering MIB MBean: " +
                     ex.getMessage());
             }
-            return -4;
+            return MON_CREATEMIB_PROBLEM;
         } catch (NotCompliantMBeanException ex) {
             // from registerMBean
             if (debug.warningEnabled()) {
@@ -665,7 +694,7 @@ public class Agent {
                     "Error registering MIB MBean: " +
                     ex.getMessage());
             }
-            return -4;
+            return MON_CREATEMIB_PROBLEM;
         }
 
         /*
@@ -690,7 +719,7 @@ public class Agent {
                         "HTML adaptor is bound on TCP port " + monHtmlPort);
                 }
 
-                HtmlAdaptorServer htmlAdaptor =
+                htmlAdaptor =
                     new HtmlAdaptorServer(monHtmlPort); // throws no exception
                 if (htmlAdaptor == null) {
                     if (debug.warningEnabled()) {
@@ -967,7 +996,7 @@ public class Agent {
         if (!monRMIStarted && !monSNMPStarted && !monHTMLStarted) {
             debug.warning(classMethod +
                 "No Monitoring interfaces started; monitoring disabled.");
-            return -3;
+            return MON_RMICONNECTOR_PROBLEM;
         } else {
             agentStarted = true;  // if all/enough has gone well
             startMonitoringAgent(agentSvrInfo);
@@ -1304,6 +1333,12 @@ public class Agent {
 
                 final ObjectName stName =
                     ssse.createSsoServerSitesEntryObjectName(server);
+                if (stName == null) {
+                    debug.error(classMethod +
+                        "Error creating object for siteName '" + siteName +
+                        "'");
+                    continue;
+                }
                 try {
                     TableSsoServerSitesTable stTbl =
                         tg.accessSsoServerSitesTable();
@@ -1325,10 +1360,18 @@ public class Agent {
                 } catch (NumberFormatException nfe) {
                     debug.error(classMethod + "invalid serverID (" +
                         svrId + "): " + nfe.getMessage(), nfe);
+                    continue;
                 }
                 ssse.SsoServerSiteMapIndex = new Integer(i++);
                 final ObjectName smName =
                     ssse.createSsoServerSiteMapEntryObjectName(server);
+
+                if (smName == null) {
+                    debug.error(classMethod +
+                        "Error creating object for server siteName '" +
+                        siteName + "'");
+                    continue;
+                }
 
                 if (debug.messageEnabled()) {
                     debug.message(classMethod +
@@ -1360,7 +1403,7 @@ public class Agent {
     /*
      *  receive ordered list of realms
      */
-    public static void realmsConfig (ArrayList realmList) {
+    public static int realmsConfig (ArrayList realmList) {
         String classMethod = "Agent.realmsConfig:";
 
         /*
@@ -1379,8 +1422,10 @@ public class Agent {
                 rtab = sig.accessSsoServerRealmTable();
             } catch (SnmpStatusException ex) {
                 debug.error(classMethod + "getting realm table: ", ex);
+                return (-1);
             } 
         }
+        int realmsAdded = 0;
         for (int i = 0; i < realmList.size(); i++) {
             String ss = (String)realmList.get(i);
             SsoServerRealmEntryImpl rei = new SsoServerRealmEntryImpl(mib2);
@@ -1389,6 +1434,13 @@ public class Agent {
             ss2 = getEscapedString(ss2);
             rei.SsoServerRealmName = ss2;
             ObjectName oname = rei.createSsoServerRealmEntryObjectName(server);
+
+            if (oname == null) {
+                debug.error(classMethod + "Error creating object for realm '" +
+                   ss + "'");
+                continue;
+            }
+
             String rlmToDN = DNMapper.orgNameToDN(ss);
 
             sb.append("  realm #").append(i).append(" = ").append(ss).
@@ -1411,7 +1463,19 @@ public class Agent {
             } catch (SnmpStatusException ex) {
                 debug.error(classMethod + ss, ex);
             }
+            realmsAdded++;
         }
+
+        /*
+         * could have used TableSsoServerRealmTable.getEntries(),
+         * but that's a little more complicated than just counting
+         * entries as they're successfully added here.
+         */
+        if (realmsAdded == 0) {
+            debug.error(classMethod + "No realms processed successfully.");
+            return -2;
+        }
+
         if (debug.messageEnabled()) {
             debug.message (classMethod + sb.toString());
         }
@@ -1422,6 +1486,7 @@ public class Agent {
             debug.message("Agent.realmsConfig:\n    Start Time = " +
                 stDate + "\n      End Time = " + endDate);
         }
+        return 0;
     }
 
     /*
@@ -1446,6 +1511,7 @@ public class Agent {
                 atab = sig.accessSsoServerAuthModulesTable();
             } catch (SnmpStatusException ex) {
                 debug.error(classMethod + "getting auth table: ", ex);
+                return -2;
             } 
         }
 
@@ -1479,6 +1545,14 @@ public class Agent {
             aei.SsoServerAuthModuleFailureCount = new Long(0);
             ObjectName aname =
                 aei.createSsoServerAuthModulesEntryObjectName(server);
+
+            if (aname == null) {
+                debug.error(classMethod +
+                    "Error creating object for auth module name '" +
+                    modInst + "', type '" + modType + "'");
+                continue;
+            }
+
             try {
                 atab.addEntry(aei, aname);
                 if ((server != null) && (aei != null)) {
@@ -1493,6 +1567,11 @@ public class Agent {
             } catch (SnmpStatusException ex) {
                 debug.error(classMethod + modInst, ex);
             }
+        }
+
+        // if no realm info added because mbean not created...
+        if (realmAuthInst.isEmpty()) {
+            return -3;
         }
 
         if (debug.messageEnabled()) {
@@ -1605,6 +1684,17 @@ public class Agent {
         int wsci = 1;  // index for WSC agents
         int dsci = 1;  // index for DSC agents
         Integer ri = getRealmIndexFromName(realm);
+
+        /*
+         *  if the realm isn't in the table, there's not much point
+         *  in doing the rest
+         */
+        if (ri == null) {
+            debug.error(classMethod + "didn't find index for realm " +
+                realm);
+            return;
+        }
+
         for (Iterator it = ks.iterator(); it.hasNext(); ) {
             String agtname = (String)it.next();
             HashMap hm = (HashMap)agtAttrs.get(agtname);
@@ -1642,6 +1732,13 @@ public class Agent {
                 ObjectName aname =
                     aei.createSsoServerPolicyWebAgentEntryObjectName(server);
         
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy WebAgent '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     watab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -1661,6 +1758,14 @@ public class Agent {
 
                 ObjectName aname =
                     aei.createSsoServerPolicy22AgentEntryObjectName(server);
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy 2.2 Agent '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     t22tab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -1689,6 +1794,14 @@ public class Agent {
                 aei.SsoServerRealmIndex = ri;
                 ObjectName aname =
                     aei.createSsoServerPolicyJ2EEAgentEntryObjectName(server);
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy J2EE Agent '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     j2eetab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -1722,6 +1835,14 @@ public class Agent {
                 // no entry for group membership...
                 ObjectName aname =
                     aei.createSsoServerWSSAgentsWSPAgentEntryObjectName(server);
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy WSP Agent '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     if (wsptab != null) {
                         wsptab.addEntry(aei, aname);
@@ -1762,6 +1883,14 @@ public class Agent {
                 // no entry for group membership...
                 ObjectName aname =
                     aei.createSsoServerWSSAgentsWSCAgentEntryObjectName(server);
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy WSC Agent '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     wsctab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -1785,6 +1914,14 @@ public class Agent {
 
                 ObjectName aname =
                     aei.createSsoServerWSSAgentsSTSAgentEntryObjectName(server);
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy STS Agent '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     ststab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -1814,6 +1951,14 @@ public class Agent {
                 // no entry for group membership...
                 ObjectName aname =
                     aei.createSsoServerWSSAgentsDSCAgentEntryObjectName(server);
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy Discovery Agent '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     dsctab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -1927,6 +2072,17 @@ public class Agent {
         int wsci = 1;  // index for WSC agent groups
         int dsci = 1;  // index for DSC agent groups
         Integer ri = getRealmIndexFromName(realm);
+
+        /*
+         *  if the realm isn't in the table, there's not much point
+         *  in doing the rest
+         */
+        if (ri == null) {
+            debug.error(classMethod + "didn't find index for realm " +
+                realm);
+            return;
+        }
+
         for (Iterator it = ks.iterator(); it.hasNext(); ) {
             String agtname = (String)it.next();
             HashMap hm = (HashMap)agtAttrs.get(agtname);
@@ -1940,6 +2096,9 @@ public class Agent {
             agtname = getEscapedString(agtname);
 
             if (atype.equals("WebAgent")) {
+                if (wgtab == null) {
+                    continue;  // no table to put it into
+                }
                 String lurl =
                     (String)hm.get("com.sun.identity.agents.config.login.url");
                 SsoServerPolicyWebGroupEntryImpl aei =
@@ -1950,7 +2109,14 @@ public class Agent {
                 aei.SsoServerPolicyWebGroupServerURL = lurl;
                 ObjectName aname =
                     aei.createSsoServerPolicyWebGroupEntryObjectName(server);
-        
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy Web Agent Group '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     wgtab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -1962,6 +2128,9 @@ public class Agent {
                     debug.error(classMethod + agtname + ": " + ex.getMessage());
                 }
             } else if (atype.equals("J2EEAgent")) {
+                if (j2eetab == null) {
+                    continue;  // no table to put it into
+                }
                 SsoServerPolicyJ2EEGroupEntryImpl aei =
                     new SsoServerPolicyJ2EEGroupEntryImpl(mib2);
                 String lurl =
@@ -1972,6 +2141,14 @@ public class Agent {
                 aei.SsoServerRealmIndex = ri;
                 ObjectName aname =
                     aei.createSsoServerPolicyJ2EEGroupEntryObjectName(server);
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy J2EE Agent Group '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     j2eetab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -1983,6 +2160,9 @@ public class Agent {
                     debug.error(classMethod + agtname + ": " + ex.getMessage());
                 }
             } else if (atype.equals("WSPAgent")) {
+                if (wsptab == null) {
+                    continue;  // no table to put it into
+                }
                 SsoServerWSSAgentsWSPAgtGrpEntryImpl aei =
                     new SsoServerWSSAgentsWSPAgtGrpEntryImpl(mib2);
                 String wep = (String)hm.get("wsendpoint");
@@ -2001,6 +2181,14 @@ public class Agent {
                 ObjectName aname =
                     aei.createSsoServerWSSAgentsWSPAgtGrpEntryObjectName(
                         server);
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy WSP Agent Group '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     wsptab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -2012,6 +2200,9 @@ public class Agent {
                     debug.error(classMethod + agtname + ": " + ex.getMessage());
                 }
             } else if (atype.equals("WSCAgent")) {
+                if (wsctab == null) {
+                    continue;  // no table to put it into
+                }
                 SsoServerWSSAgentsWSCAgtGrpEntryImpl aei =
                     new SsoServerWSSAgentsWSCAgtGrpEntryImpl(mib2);
                 String wep = (String)hm.get("wsendpoint");
@@ -2030,6 +2221,14 @@ public class Agent {
                 ObjectName aname =
                     aei.createSsoServerWSSAgentsWSCAgtGrpEntryObjectName(
                         server);
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy WSC Agent Group '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     wsctab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -2041,6 +2240,9 @@ public class Agent {
                     debug.error(classMethod + agtname + ": " + ex.getMessage());
                 }
             } else if (atype.equals("STSAgent")) {
+                if (ststab == null) {
+                    continue;  // no table to put it into
+                }
                 SsoServerWSSAgentsSTSAgtGrpEntryImpl aei =
                     new SsoServerWSSAgentsSTSAgtGrpEntryImpl(mib2);
                 String sep = (String)hm.get("stsendpoint");
@@ -2056,6 +2258,14 @@ public class Agent {
                 ObjectName aname =
                     aei.createSsoServerWSSAgentsSTSAgtGrpEntryObjectName(
                         server);
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy STS Agent Group '" +
+                        agtname + "'");
+                    continue;
+                }
+
                 try {
                     ststab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -2067,6 +2277,9 @@ public class Agent {
                     debug.error(classMethod + agtname + ": " + ex.getMessage());
                 }
             } else if (atype.equals("DiscoveryAgent")) {
+                if (dsctab == null) {
+                    continue;  // no table to put it into
+                }
                 SsoServerWSSAgentsDSCAgtGrpEntryImpl aei =
                     new SsoServerWSSAgentsDSCAgtGrpEntryImpl(mib2);
                 String dep = (String)hm.get("discoveryendpoint");
@@ -2085,6 +2298,14 @@ public class Agent {
                 ObjectName aname =
                     aei.createSsoServerWSSAgentsDSCAgtGrpEntryObjectName(
                         server);
+
+                if (aname == null) {
+                    debug.error(classMethod +
+                        "Error creating object for Policy Discovery Agent " +
+                        "Group '" + agtname + "'");
+                    continue;
+                }
+
                 try {
                     dsctab.addEntry(aei, aname);
                     if ((server != null) && (aei != null)) {
@@ -2122,6 +2343,11 @@ public class Agent {
                 append("\n");
         }
 
+        if (server == null) {  // can't do anything without a server
+            debug.error(classMethod + "no server");
+            return -1;
+        }
+
         for (int i = 0; i < sz; i++) {
             String pName = (String)s1TPInfo.get(i);
 
@@ -2143,15 +2369,26 @@ public class Agent {
                 } catch (SnmpStatusException ex) {
                     debug.error(classMethod +
                         "getting SAML1 trusted partner table: ", ex);
+                    return -2; // can't do anything without the table
                 }
+            }
+            if (tptab == null) {
+                return -2;  // can't do anything without the table
             }
 
             ObjectName aname =
                 sstpe.createSsoServerSAML1TrustPrtnrsEntryObjectName(server);
         
+            if (aname == null) {
+                debug.error(classMethod +
+                    "Error creating object for SAML1 Trusted Partner '" +
+                    pName + "'");
+                continue;
+            }
+
             try {
                 tptab.addEntry(sstpe, aname);
-                if ((server != null) && (sstpe != null)) {
+                if (sstpe != null) {
                     server.registerMBean(sstpe, aname);
                 }
             } catch (JMException ex) {
@@ -2185,6 +2422,7 @@ public class Agent {
         SsoServerSAML1SvcImpl sss =
             (SsoServerSAML1SvcImpl)mib2.getSaml1SvcGroup();
         TableSsoServerSAML1CacheTable tptab = null;
+
         if (sss != null) {
             try {
                 tptab = sss.accessSsoServerSAML1CacheTable();
@@ -2192,50 +2430,59 @@ public class Agent {
                 debug.error(classMethod + "getting SAML1 Cache table: ", ex);
             }
         }
+        if (tptab != null) {  // if sss is null, so will tptab
+            sss.assertCache = ssce;
 
-        sss.assertCache = ssce;
-
-        ObjectName aname =
-            ssce.createSsoServerSAML1CacheEntryObjectName(server);
+            ObjectName aname =
+                ssce.createSsoServerSAML1CacheEntryObjectName(server);
         
-        try {
-            tptab.addEntry(ssce, aname);
-            if ((server != null) && (ssce != null)) {
-                server.registerMBean(ssce, aname);
+            if (aname == null) {
+                debug.error(classMethod +
+                    "Error creating object for SAML1 Assertion Cache");
+            } else {
+                try {
+                    tptab.addEntry(ssce, aname);
+                    if (ssce != null) {
+                        server.registerMBean(ssce, aname);
+                    }
+                } catch (JMException ex) {
+                    debug.error(classMethod +
+                        "SAML1 Assertion Cache table: " + ex.getMessage());
+                } catch (SnmpStatusException ex) {
+                    debug.error(classMethod +
+                        "SAML1 Assertion Cache table: " + ex.getMessage());
+                }
             }
-        } catch (JMException ex) {
-            debug.error(classMethod + "SAML1 Assertion Cache table: " +
-                ex.getMessage());
-        } catch (SnmpStatusException ex) {
-            debug.error(classMethod + "SAML1 Assertion Cache table: " +
-                ex.getMessage());
-        }
 
-        // artifacts
-        ssce = new SsoServerSAML1CacheEntryImpl(mib2);
-        ssce.SsoServerSAML1CacheIndex = new Integer(2);
-        ssce.SsoServerSAML1CacheName = "Artifact_Cache";
-        ssce.SsoServerSAML1CacheMisses = new Long(0);
-        ssce.SsoServerSAML1CacheHits = new Long(0);
-        ssce.SsoServerSAML1CacheWrites = new Long(0);
-        ssce.SsoServerSAML1CacheReads = new Long(0);
+            // artifacts
+            ssce = new SsoServerSAML1CacheEntryImpl(mib2);
+            ssce.SsoServerSAML1CacheIndex = new Integer(2);
+            ssce.SsoServerSAML1CacheName = "Artifact_Cache";
+            ssce.SsoServerSAML1CacheMisses = new Long(0);
+            ssce.SsoServerSAML1CacheHits = new Long(0);
+            ssce.SsoServerSAML1CacheWrites = new Long(0);
+            ssce.SsoServerSAML1CacheReads = new Long(0);
 
-        aname = ssce.createSsoServerSAML1CacheEntryObjectName(server);
-        
-        try {
-            tptab.addEntry(ssce, aname);
-            if ((server != null) && (ssce != null)) {
-                server.registerMBean(ssce, aname);
+            aname = ssce.createSsoServerSAML1CacheEntryObjectName(server);
+            if (aname == null) {
+                debug.error(classMethod +
+                    "Error creating object for SAML1 Artifact Cache");
+            } else {
+                try {
+                    tptab.addEntry(ssce, aname);
+                    if (ssce != null) {
+                        server.registerMBean(ssce, aname);
+                    }
+                } catch (JMException ex) {
+                    debug.error(classMethod + "SAML1 Artifact Cache table: " +
+                        ex.getMessage());
+                } catch (SnmpStatusException ex) {
+                    debug.error(classMethod + "SAML1 Artifact Cache table: " +
+                        ex.getMessage());
+                }
+                sss.artifactCache = ssce;
             }
-        } catch (JMException ex) {
-            debug.error(classMethod + "SAML1 Artifact Cache table: " +
-                ex.getMessage());
-        } catch (SnmpStatusException ex) {
-            debug.error(classMethod + "SAML1 Artifact Cache table: " +
-                ex.getMessage());
         }
-
-        sss.artifactCache = ssce;
 
         // SOAPReceiver endpoint
         if (!skipSAML1EndPoints) {
@@ -2258,79 +2505,97 @@ public class Agent {
                     "getting SAML1 EndPoint table: ", ex);
             }
         }
+        if (tetab != null) {  // if sss is null, so will tetab
+            ObjectName aname =
+                ssee.createSsoServerSAML1EndPointEntryObjectName(server);
 
-        aname = ssee.createSsoServerSAML1EndPointEntryObjectName(server);
-        
-        try {
-            tetab.addEntry(ssee, aname);
-            if ((server != null) && (ssee != null)) {
-                server.registerMBean(ssee, aname);
+            if (aname == null) {
+                debug.error(classMethod +
+                    "Error creating object for SAML1 SOAPReceiver_EndPoint");
+            } else {
+                try {
+                    tetab.addEntry(ssee, aname);
+                    if (ssee != null) {
+                        server.registerMBean(ssee, aname);
+                    }
+                } catch (JMException ex) {
+                    debug.error(classMethod +
+                        "SAML1 SOAPReceiver EndPoint table: " +
+                        ex.getMessage());
+                } catch (SnmpStatusException ex) {
+                    debug.error(classMethod +
+                        "SAML1 SOAPReceiver EndPoint table: " +
+                        ex.getMessage());
+                }
+                sss.soapEP = ssee;
             }
-        } catch (JMException ex) {
-            debug.error(classMethod + "SAML1 SOAPReceiver EndPoint table: " +
-                ex.getMessage());
-        } catch (SnmpStatusException ex) {
-            debug.error(classMethod + "SAML1 SOAPReceiver EndPoint table: " +
-                ex.getMessage());
-        }
 
-        sss.soapEP = ssee;
+            // POSTProfile table
+            ssee = new SsoServerSAML1EndPointEntryImpl(mib2);
+            ssee.SsoServerSAML1EndPointIndex = new Integer(2);
+            ssee.SsoServerSAML1EndPointName = "POSTProfile_EndPoint";
+            ssee.SsoServerSAML1EndPointRqtFailed = new Long(0);
+            ssee.SsoServerSAML1EndPointRqtOut = new Long(0);
+            ssee.SsoServerSAML1EndPointRqtIn = new Long(0);
+            ssee.SsoServerSAML1EndPointRqtAborted = new Long(0);
+            ssee.SsoServerSAML1EndPointStatus = "operational";
 
-        // POSTProfile table
-        ssee = new SsoServerSAML1EndPointEntryImpl(mib2);
-        ssee.SsoServerSAML1EndPointIndex = new Integer(2);
-        ssee.SsoServerSAML1EndPointName = "POSTProfile_EndPoint";
-        ssee.SsoServerSAML1EndPointRqtFailed = new Long(0);
-        ssee.SsoServerSAML1EndPointRqtOut = new Long(0);
-        ssee.SsoServerSAML1EndPointRqtIn = new Long(0);
-        ssee.SsoServerSAML1EndPointRqtAborted = new Long(0);
-        ssee.SsoServerSAML1EndPointStatus = "operational";
+            aname = ssee.createSsoServerSAML1EndPointEntryObjectName(server);
 
-        aname = ssee.createSsoServerSAML1EndPointEntryObjectName(server);
-        
-        try {
-            tetab.addEntry(ssee, aname);
-            if ((server != null) && (ssee != null)) {
-                server.registerMBean(ssee, aname);
+            if (aname == null) {
+                debug.error(classMethod +
+                    "Error creating object for SAML1 POSTProfile_EndPoint");
+            } else {
+                try {
+                    tetab.addEntry(ssee, aname);
+                    if (ssee != null) {
+                        server.registerMBean(ssee, aname);
+                    }
+                } catch (JMException ex) {
+                    debug.error(classMethod +
+                        "SAML1 POSTProfile EndPoint table: " +
+                        ex.getMessage());
+                } catch (SnmpStatusException ex) {
+                    debug.error(classMethod +
+                        "SAML1 POSTProfile EndPoint table: " +
+                        ex.getMessage());
+                }
+                sss.pprofEP = ssee;
             }
-        } catch (JMException ex) {
-            debug.error(classMethod + "SAML1 POSTProfile EndPoint table: " +
-                ex.getMessage());
-        } catch (SnmpStatusException ex) {
-            debug.error(classMethod + "SAML1 POSTProfile EndPoint table: " +
-                ex.getMessage());
-        }
 
-        sss.pprofEP = ssee;
+            // SAMLAware/ArtifactProfile table
+            ssee = new SsoServerSAML1EndPointEntryImpl(mib2);
+            ssee.SsoServerSAML1EndPointIndex = new Integer(3);
+            ssee.SsoServerSAML1EndPointName = "SAMLAware_EndPoint";
+            ssee.SsoServerSAML1EndPointRqtFailed = new Long(0);
+            ssee.SsoServerSAML1EndPointRqtOut = new Long(0);
+            ssee.SsoServerSAML1EndPointRqtIn = new Long(0);
+            ssee.SsoServerSAML1EndPointRqtAborted = new Long(0);
+            ssee.SsoServerSAML1EndPointStatus = "operational";
 
-        // SAMLAware/ArtifactProfile table
-        ssee = new SsoServerSAML1EndPointEntryImpl(mib2);
-        ssee.SsoServerSAML1EndPointIndex = new Integer(3);
-        ssee.SsoServerSAML1EndPointName = "SAMLAware_EndPoint";
-        ssee.SsoServerSAML1EndPointRqtFailed = new Long(0);
-        ssee.SsoServerSAML1EndPointRqtOut = new Long(0);
-        ssee.SsoServerSAML1EndPointRqtIn = new Long(0);
-        ssee.SsoServerSAML1EndPointRqtAborted = new Long(0);
-        ssee.SsoServerSAML1EndPointStatus = "operational";
+            aname = ssee.createSsoServerSAML1EndPointEntryObjectName(server);
 
-        aname = ssee.createSsoServerSAML1EndPointEntryObjectName(server);
-        
-        try {
-            tetab.addEntry(ssee, aname);
-            if ((server != null) && (ssee != null)) {
-                server.registerMBean(ssee, aname);
+            if (aname == null) {
+                debug.error(classMethod +
+                    "Error creating object for SAML1 SAMLAware_EndPoint");
+            } else {
+                try {
+                    tetab.addEntry(ssee, aname);
+                    if (ssee != null) {
+                        server.registerMBean(ssee, aname);
+                    }
+                } catch (JMException ex) {
+                    debug.error(classMethod +
+                        "SAML1 SAMLAware/ArtifactProfile EndPoint table: " +
+                        ex.getMessage());
+                } catch (SnmpStatusException ex) {
+                    debug.error(classMethod +
+                        "SAML1 SAMLAware/ArtifactProfile EndPoint table: " +
+                        ex.getMessage());
+                }
+                sss.samlAwareEP = ssee;
             }
-        } catch (JMException ex) {
-            debug.error(classMethod +
-                "SAML1 SAMLAware/ArtifactProfile EndPoint table: " +
-                ex.getMessage());
-        } catch (SnmpStatusException ex) {
-            debug.error(classMethod +
-                "SAML1 SAMLAware/ArtifactProfile EndPoint table: " +
-                ex.getMessage());
         }
-
-        sss.samlAwareEP = ssee;
         } // if (!skipSAML1EndPoints)
 
         Date stopDate = new Date();
@@ -2363,6 +2628,11 @@ public class Agent {
             sb.append("  Circle of Trusts set has ");
         }
 
+        if (server == null) {  // can't do anything without a server
+            debug.error(classMethod + "no server");
+            return -1;
+        }
+
         SsoServerFedCOTs ssfc = (SsoServerFedCOTs)getFedCOTsMBean();
 
         if ((cots != null) && (cots.size() > 0)) {
@@ -2376,37 +2646,46 @@ public class Agent {
                 debug.error(classMethod +
                     "getting fed COTs table: ", ex);
             }
-            int i = 1;
-            for (Iterator it = cots.iterator(); it.hasNext(); ) {
-                String ss = (String)it.next();
-                ss = getEscapedString(ss);
+            if (ftab != null) {
+                int i = 1;
+                for (Iterator it = cots.iterator(); it.hasNext(); ) {
+                    String ss = (String)it.next();
+                    ss = getEscapedString(ss);
 
-                if (debug.messageEnabled()) {
-                        sb.append("  #").append(i).append(": ").append(ss).
-                            append("\n");
-                }
-
-                SsoServerFedCOTsEntryImpl cei =
-                    new SsoServerFedCOTsEntryImpl(mib2);
-                cei.SsoServerRealmIndex = ri;
-                cei.FedCOTName = ss;
-                cei.FedCOTIndex = new Integer(i++);
-                ObjectName oname =
-                    cei.createSsoServerFedCOTsEntryObjectName(server);
-                try {
-                    ftab.addEntry(cei, oname);
-                    if ((server != null) && (cei != null)) {
-                        server.registerMBean(cei, oname);
+                    if (debug.messageEnabled()) {
+                            sb.append("  #").append(i).append(": ").append(ss).
+                                append("\n");
                     }
-                } catch (JMException ex) {
-                    debug.error(classMethod + ss, ex);
-                } catch (SnmpStatusException ex) {
-                    debug.error(classMethod + ss, ex);
+
+                    SsoServerFedCOTsEntryImpl cei =
+                        new SsoServerFedCOTsEntryImpl(mib2);
+                    cei.SsoServerRealmIndex = ri;
+                    cei.FedCOTName = ss;
+                    cei.FedCOTIndex = new Integer(i++);
+                    ObjectName oname =
+                        cei.createSsoServerFedCOTsEntryObjectName(server);
+
+                    if (oname == null) {
+                        debug.error(classMethod +
+                            "Error creating object for Fed COT '" + ss + "'");
+                        continue;
+                    }
+
+                    try {
+                        ftab.addEntry(cei, oname);
+                        if (cei != null) {
+                            server.registerMBean(cei, oname);
+                        }
+                    } catch (JMException ex) {
+                        debug.error(classMethod + ss, ex);
+                    } catch (SnmpStatusException ex) {
+                        debug.error(classMethod + ss, ex);
+                    }
                 }
-            }
-        } else {
-            if (debug.messageEnabled()) {
-                sb.append("no entries\n");
+            } else {
+                if (debug.messageEnabled()) {
+                    sb.append("no entries\n");
+                }
             }
         }
 
@@ -2425,268 +2704,311 @@ public class Agent {
             return -1;  // can't proceed without the table
         }
 
-        /*
-         *  the SAML2 entities map:
-         *    entity name -> hashmap of:
-         *      key="location"; value="hosted" or "remote"
-         *      key="roles"; value=some combo of IDP;SP
-         */
+        if (ftab != null) {
+            /*
+             *  the SAML2 entities map:
+             *    entity name -> hashmap of:
+             *      key="location"; value="hosted" or "remote"
+             *      key="roles"; value=some combo of IDP;SP
+             */
         
-        int tabinx = 1;  // increments for all entries
-        if (debug.messageEnabled()) {
-            sb.append("\n  SAML2 entities map has ");
-        }
+            int tabinx = 1;  // increments for all entries
+            if (debug.messageEnabled()) {
+                sb.append("\n  SAML2 entities map has ");
+            }
 
-        if ((saml2Ents != null) && (saml2Ents.size() > 0)) {
-            TableSsoServerSAML2IDPTable iTab = null;
-            TableSsoServerSAML2SPTable sTab = null;
-            SsoServerSAML2SvcImpl ss2s =
-                (SsoServerSAML2SvcImpl)getSAML2SvcGroup();
-            try {
-                iTab = ss2s.accessSsoServerSAML2IDPTable();
-                sTab = ss2s.accessSsoServerSAML2SPTable();
-            } catch (SnmpStatusException ex) {
-                debug.error(classMethod +
+            if ((saml2Ents != null) && (saml2Ents.size() > 0)) {
+                TableSsoServerSAML2IDPTable iTab = null;
+                TableSsoServerSAML2SPTable sTab = null;
+                SsoServerSAML2SvcImpl ss2s =
+                    (SsoServerSAML2SvcImpl)getSAML2SvcGroup();
+                try {
+                    iTab = ss2s.accessSsoServerSAML2IDPTable();
+                    sTab = ss2s.accessSsoServerSAML2SPTable();
+                } catch (SnmpStatusException ex) {
+                    debug.error(classMethod +
                         "getting SAML2 IDP and/or SP tables: ", ex);
-                return -1;  // can't proceed without the tables
-            }
-
-            if (debug.messageEnabled()) {
-                sb.append(saml2Ents.size()).append(" entries:\n");
-            }
-
-            Set ks = saml2Ents.keySet();
-            int idpi = 1;
-            int spi = 1;
-            for (Iterator it = ks.iterator(); it.hasNext(); ) {
-                String entname = (String)it.next();
-                HashMap hm = (HashMap)saml2Ents.get(entname);
-                String loc = (String)hm.get("location");
-                String roles = (String)hm.get("roles");
-
-                SsoServerFedEntitiesEntryImpl cei =
-                    new SsoServerFedEntitiesEntryImpl(mib2);
-                cei.SsoServerRealmIndex = ri;
-                cei.FedEntityName = getEscapedString(entname);
-                cei.FedEntityIndex = new Integer(tabinx++);
-                cei.FedEntityProto = "SAMLv2";
-                cei.FedEntityType = roles;
-                cei.FedEntityLoc = loc;
-                ObjectName oname =
-                    cei.createSsoServerFedEntitiesEntryObjectName(server);
-                try {
-                    ftab.addEntry(cei, oname);
-                    if ((server != null) && (cei != null)) {
-                        server.registerMBean(cei, oname);
-                    }
-                } catch (JMException ex) {
-                    debug.error(classMethod + "JMEx adding SAMLv2 entity " +
-                        entname + " in realm " + realm, ex);
-                } catch (SnmpStatusException ex) {
-                    debug.error(classMethod + "SnmpEx adding SAMLv2 entity " +
-                        entname + " in realm " + realm, ex);
-                }
-
-                /*
-                 * these also need to be added to either (possibly
-                 * both if in both roles?) SAML2's IDP or SP table
-                 */
-                if (((roles.indexOf("IDP")) >= 0) &&
-                    loc.equalsIgnoreCase("hosted"))
-                {
-                    SsoServerSAML2IDPEntryImpl sei =
-                        new SsoServerSAML2IDPEntryImpl(mib2);
-                    sei.SsoServerSAML2IDPArtifactsIssued = new Long(0);
-                    sei.SsoServerSAML2IDPAssertionsIssued = new Long(0);
-                    sei.SsoServerSAML2IDPInvalRqtsRcvd = new Long(0);
-                    sei.SsoServerSAML2IDPRqtsRcvd = new Long(0);
-                    sei.SsoServerSAML2IDPArtifactsInCache = new Long(0);
-                    sei.SsoServerSAML2IDPAssertionsInCache = new Long(0);
-                    sei.SsoServerSAML2IDPIndex = new Integer(idpi++);
-                    sei.SsoServerSAML2IDPName = getEscapedString(entname);
-                    sei.SsoServerRealmIndex = ri;
-
-                    oname = sei.createSsoServerSAML2IDPEntryObjectName(server);
-
-                    ss2s.incHostedIDPCount();
-                    try {
-                        iTab.addEntry(sei, oname);
-                        if ((server != null) && (sei != null)) {
-                            server.registerMBean(sei, oname);
-                        }
-                       /* is a Map of realm/saml2idp to index needed? */
-                       String rai = realm + "|" + entname;
-                       // sei is this bean's instance
-                       realmSAML2IDPs.put(rai, sei);
-                    } catch (JMException ex) {
-                        debug.error(classMethod +
-                            "JMEx adding SAMLv2 IDP entity " +
-                            entname + " in realm " + realm, ex);
-                    } catch (SnmpStatusException ex) {
-                        debug.error(classMethod +
-                            "SnmpEx adding SAMLv2 IDP entity " +
-                            entname + " in realm " + realm, ex);
-                    }
-                }
-                if (((roles.indexOf("IDP")) >= 0) &&
-                    loc.equalsIgnoreCase("remote"))
-                {
-                    ss2s.incRemoteIDPCount();
-                }
-
-                if (((roles.indexOf("SP")) >= 0) &&
-                    loc.equalsIgnoreCase("hosted"))
-                {
-                    SsoServerSAML2SPEntryImpl sei =
-                        new SsoServerSAML2SPEntryImpl(mib2);
-                    sei.SsoServerSAML2SPInvalidArtifactsRcvd = new Long(0);
-                    sei.SsoServerSAML2SPValidAssertionsRcvd = new Long(0);
-                    sei.SsoServerSAML2SPRqtsSent = new Long(0);
-                    sei.SsoServerSAML2SPName = getEscapedString(entname);
-                    sei.SsoServerRealmIndex = ri;
-                    sei.SsoServerSAML2SPIndex = new Integer(spi++);
-
-                    oname = sei.createSsoServerSAML2SPEntryObjectName(server);
-                    try {
-                        sTab.addEntry(sei, oname);
-                        if ((server != null) && (sei != null)) {
-                            server.registerMBean(sei, oname);
-                        }
-                       /* is a Map of realm/saml2sp to index needed? */
-                       String rai = realm + "|" + entname;
-                       // sei is this bean's instance
-                       realmSAML2SPs.put(rai, sei);
-                    } catch (JMException ex) {
-                        debug.error(classMethod +
-                            "JMEx adding SAMLv2 SP entity " +
-                            entname + " in realm " + realm, ex);
-                    } catch (SnmpStatusException ex) {
-                        debug.error(classMethod +
-                            "SnmpEx adding SAMLv2 SP entity " +
-                            entname + " in realm " + realm, ex);
-                    }
+                    return -1;  // can't proceed without the tables
                 }
 
                 if (debug.messageEnabled()) {
+                    sb.append(saml2Ents.size()).append(" entries:\n");
+                }
+
+                Set ks = saml2Ents.keySet();
+                int idpi = 1;
+                int spi = 1;
+                for (Iterator it = ks.iterator(); it.hasNext(); ) {
+                    String entname = (String)it.next();
+                    HashMap hm = (HashMap)saml2Ents.get(entname);
+                    String loc = (String)hm.get("location");
+                    String roles = (String)hm.get("roles");
+
+                    SsoServerFedEntitiesEntryImpl cei =
+                        new SsoServerFedEntitiesEntryImpl(mib2);
+                    cei.SsoServerRealmIndex = ri;
+                    cei.FedEntityName = getEscapedString(entname);
+                    cei.FedEntityIndex = new Integer(tabinx++);
+                    cei.FedEntityProto = "SAMLv2";
+                    cei.FedEntityType = roles;
+                    cei.FedEntityLoc = loc;
+                    ObjectName oname =
+                        cei.createSsoServerFedEntitiesEntryObjectName(server);
+
+                    if (oname == null) {
+                        debug.error(classMethod +
+                            "Error creating object for SAML2 Entity '" +
+                            entname + "'");
+                        continue;
+                    }
+
+                    try {
+                        ftab.addEntry(cei, oname);
+                        if (cei != null) {
+                            server.registerMBean(cei, oname);
+                        }
+                    } catch (JMException ex) {
+                        debug.error(classMethod +
+                            "JMEx adding SAMLv2 entity " +
+                            entname + " in realm " + realm, ex);
+                    } catch (SnmpStatusException ex) {
+                        debug.error(classMethod +
+                            "SnmpEx adding SAMLv2 entity " +
+                            entname + " in realm " + realm, ex);
+                    }
+
+                    /*
+                     * these also need to be added to either (possibly
+                     * both if in both roles?) SAML2's IDP or SP table
+                     */
+                    if (((roles.indexOf("IDP")) >= 0) &&
+                        loc.equalsIgnoreCase("hosted"))
+                    {
+                        if (iTab == null) {
+                            continue;
+                        }
+
+                        SsoServerSAML2IDPEntryImpl sei =
+                            new SsoServerSAML2IDPEntryImpl(mib2);
+                        sei.SsoServerSAML2IDPArtifactsIssued = new Long(0);
+                        sei.SsoServerSAML2IDPAssertionsIssued = new Long(0);
+                        sei.SsoServerSAML2IDPInvalRqtsRcvd = new Long(0);
+                        sei.SsoServerSAML2IDPRqtsRcvd = new Long(0);
+                        sei.SsoServerSAML2IDPArtifactsInCache = new Long(0);
+                        sei.SsoServerSAML2IDPAssertionsInCache = new Long(0);
+                        sei.SsoServerSAML2IDPIndex = new Integer(idpi++);
+                        sei.SsoServerSAML2IDPName = getEscapedString(entname);
+                        sei.SsoServerRealmIndex = ri;
+
+                        oname =
+                            sei.createSsoServerSAML2IDPEntryObjectName(server);
+
+                        ss2s.incHostedIDPCount();
+                        try {
+                            iTab.addEntry(sei, oname);
+                            if (sei != null) {
+                                server.registerMBean(sei, oname);
+                            }
+                           /* is a Map of realm/saml2idp to index needed? */
+                           String rai = realm + "|" + entname;
+                           // sei is this bean's instance
+                           realmSAML2IDPs.put(rai, sei);
+                        } catch (JMException ex) {
+                            debug.error(classMethod +
+                                "JMEx adding SAMLv2 IDP entity " +
+                                entname + " in realm " + realm, ex);
+                        } catch (SnmpStatusException ex) {
+                            debug.error(classMethod +
+                                "SnmpEx adding SAMLv2 IDP entity " +
+                                entname + " in realm " + realm, ex);
+                        }
+                    }
+                    if (((roles.indexOf("IDP")) >= 0) &&
+                        loc.equalsIgnoreCase("remote"))
+                    {
+                        ss2s.incRemoteIDPCount();
+                    }
+
+                    if (((roles.indexOf("SP")) >= 0) &&
+                        loc.equalsIgnoreCase("hosted"))
+                    {
+                        if (sTab == null) {
+                            continue;
+                        }
+                        SsoServerSAML2SPEntryImpl sei =
+                            new SsoServerSAML2SPEntryImpl(mib2);
+                        sei.SsoServerSAML2SPInvalidArtifactsRcvd = new Long(0);
+                        sei.SsoServerSAML2SPValidAssertionsRcvd = new Long(0);
+                        sei.SsoServerSAML2SPRqtsSent = new Long(0);
+                        sei.SsoServerSAML2SPName = getEscapedString(entname);
+                        sei.SsoServerRealmIndex = ri;
+                        sei.SsoServerSAML2SPIndex = new Integer(spi++);
+
+                        oname =
+                            sei.createSsoServerSAML2SPEntryObjectName(server);
+                        try {
+                            sTab.addEntry(sei, oname);
+                            if (sei != null) {
+                                server.registerMBean(sei, oname);
+                            }
+                           /* is a Map of realm/saml2sp to index needed? */
+                           String rai = realm + "|" + entname;
+                           // sei is this bean's instance
+                               realmSAML2SPs.put(rai, sei);
+                        } catch (JMException ex) {
+                            debug.error(classMethod +
+                                "JMEx adding SAMLv2 SP entity " +
+                                entname + " in realm " + realm, ex);
+                        } catch (SnmpStatusException ex) {
+                            debug.error(classMethod +
+                                "SnmpEx adding SAMLv2 SP entity " +
+                                entname + " in realm " + realm, ex);
+                        }
+                    }
+
+                    if (debug.messageEnabled()) {
+                        sb.append("    name=").append(entname).
+                            append(", loc=").append(loc).append(", roles=").
+                            append(roles).append("\n");
+                    }
+                }
+            } else {
+                if (debug.messageEnabled()) {
+                    sb.append("no entries\n");
+                }
+            }
+
+            /*
+             *  the WSFed entities map:
+             *    entity name -> hashmap of:
+             *      key="location"; value="hosted" or "remote"
+             *      key="roles"; value=some combo of IDP;SP
+             */
+            if (debug.messageEnabled()) {
+                sb.append("\n  WSFed entities map has ");
+            }
+
+            if ((wsEnts != null) && (wsEnts.size() > 0)) {
+                if (debug.messageEnabled()) {
+                    sb.append(wsEnts.size()).append(" entries:\n");
+                }
+
+                Set ks = wsEnts.keySet();
+                for (Iterator it = ks.iterator(); it.hasNext(); ) {
+                    String entname = (String)it.next();
+                    HashMap hm = (HashMap)wsEnts.get(entname);
+                    String loc = (String)hm.get("location");
+                    String roles = (String)hm.get("roles");
+
+                    SsoServerFedEntitiesEntryImpl cei =
+                        new SsoServerFedEntitiesEntryImpl(mib2);
+                    cei.SsoServerRealmIndex = ri;
+                    cei.FedEntityName = getEscapedString(entname);
+                    cei.FedEntityIndex = new Integer(tabinx++);
+                    cei.FedEntityProto = "WSFed";
+                    cei.FedEntityType = roles;
+                    cei.FedEntityLoc = loc;
+                    ObjectName oname =
+                        cei.createSsoServerFedEntitiesEntryObjectName(server);
+
+                    if (oname == null) {
+                        debug.error(classMethod +
+                            "Error creating object for WSFed Entity '" +
+                            entname + "'");
+                        continue;
+                    }
+
+                    try {
+                        ftab.addEntry(cei, oname);
+                        if (cei != null) {
+                            server.registerMBean(cei, oname);
+                        }
+                    } catch (JMException ex) {
+                        debug.error(classMethod + "JMEx adding WSFed entity " +
+                            entname + " in realm " + realm, ex);
+                    } catch (SnmpStatusException ex) {
+                        debug.error(classMethod +
+                            "SnmpEx adding WSFed entity " +
+                            entname + " in realm " + realm, ex);
+                    }
                     sb.append("    name=").append(entname).append(", loc=").
                         append(loc).append(", roles=").append(roles).
                         append("\n");
                 }
-            }
-        } else {
-            if (debug.messageEnabled()) {
-                sb.append("no entries\n");
-            }
-        }
-
-        /*
-         *  the WSFed entities map:
-         *    entity name -> hashmap of:
-         *      key="location"; value="hosted" or "remote"
-         *      key="roles"; value=some combo of IDP;SP
-         */
-        if (debug.messageEnabled()) {
-            sb.append("\n  WSFed entities map has ");
-        }
-
-        if ((wsEnts != null) && (wsEnts.size() > 0)) {
-            if (debug.messageEnabled()) {
-                sb.append(wsEnts.size()).append(" entries:\n");
-            }
-
-            Set ks = wsEnts.keySet();
-            for (Iterator it = ks.iterator(); it.hasNext(); ) {
-                String entname = (String)it.next();
-                HashMap hm = (HashMap)wsEnts.get(entname);
-                String loc = (String)hm.get("location");
-                String roles = (String)hm.get("roles");
-
-                SsoServerFedEntitiesEntryImpl cei =
-                    new SsoServerFedEntitiesEntryImpl(mib2);
-                cei.SsoServerRealmIndex = ri;
-                cei.FedEntityName = getEscapedString(entname);
-                cei.FedEntityIndex = new Integer(tabinx++);
-                cei.FedEntityProto = "WSFed";
-                cei.FedEntityType = roles;
-                cei.FedEntityLoc = loc;
-                ObjectName oname =
-                    cei.createSsoServerFedEntitiesEntryObjectName(server);
-                try {
-                    ftab.addEntry(cei, oname);
-                    if ((server != null) && (cei != null)) {
-                        server.registerMBean(cei, oname);
-                    }
-                } catch (JMException ex) {
-                    debug.error(classMethod + "JMEx adding WSFed entity " +
-                        entname + " in realm " + realm, ex);
-                } catch (SnmpStatusException ex) {
-                    debug.error(classMethod + "SnmpEx adding WSFed entity " +
-                        entname + " in realm " + realm, ex);
-                }
-                sb.append("    name=").append(entname).append(", loc=").
-                    append(loc).append(", roles=").append(roles).append("\n");
-            }
-        } else {
-            if (debug.messageEnabled()) {
-                sb.append("no entries\n");
-            }
-        }
-
-        /*
-         *  the IDFF entities map:
-         *    entity name -> hashmap of:
-         *      key="location"; value="hosted" or "remote"
-         *      key="roles"; value=some combo of IDP;SP
-         */
-        if (debug.messageEnabled()) {
-            sb.append("\n  IDFF entities map has ");
-        }
-
-        if ((idffEnts != null) && (idffEnts.size() > 0)) {
-            if (debug.messageEnabled()) {
-                sb.append(idffEnts.size()).append(" entries:\n");
-            }
-
-            Set ks = idffEnts.keySet();
-            for (Iterator it = ks.iterator(); it.hasNext(); ) {
-                String entname = (String)it.next();
-                HashMap hm = (HashMap)idffEnts.get(entname);
-
-                String loc = (String)hm.get("location");
-                String roles = (String)hm.get("roles");
-
-                SsoServerFedEntitiesEntryImpl cei =
-                    new SsoServerFedEntitiesEntryImpl(mib2);
-                cei.SsoServerRealmIndex = ri;
-                cei.FedEntityName = getEscapedString(entname);
-                cei.FedEntityIndex = new Integer(tabinx++);
-                cei.FedEntityProto = "IDFF";
-                cei.FedEntityType = roles;
-                cei.FedEntityLoc = loc;
-                ObjectName oname =
-                    cei.createSsoServerFedEntitiesEntryObjectName(server);
-                try {
-                    ftab.addEntry(cei, oname);
-                    if ((server != null) && (cei != null)) {
-                        server.registerMBean(cei, oname);
-                    }
-                } catch (JMException ex) {
-                    debug.error(classMethod + "JMEx adding IDFF entity " +
-                        entname + " in realm " + realm, ex);
-                } catch (SnmpStatusException ex) {
-                    debug.error(classMethod + "SnmpEx adding IDFF entity " +
-                        entname + " in realm " + realm, ex);
-                }
+            } else {
                 if (debug.messageEnabled()) {
-                    sb.append("    name=").append(entname).append(", loc=").
-                        append(loc).append(", roles=").append(roles).
-                        append("\n");
+                    sb.append("no entries\n");
+                }
+            }
+
+            /*
+             *  the IDFF entities map:
+             *    entity name -> hashmap of:
+             *      key="location"; value="hosted" or "remote"
+             *      key="roles"; value=some combo of IDP;SP
+             */
+            if (debug.messageEnabled()) {
+                sb.append("\n  IDFF entities map has ");
+            }
+
+            if ((idffEnts != null) && (idffEnts.size() > 0)) {
+                if (debug.messageEnabled()) {
+                    sb.append(idffEnts.size()).append(" entries:\n");
+                }
+
+                Set ks = idffEnts.keySet();
+                for (Iterator it = ks.iterator(); it.hasNext(); ) {
+                    String entname = (String)it.next();
+                    HashMap hm = (HashMap)idffEnts.get(entname);
+
+                    String loc = (String)hm.get("location");
+                    String roles = (String)hm.get("roles");
+
+                    SsoServerFedEntitiesEntryImpl cei =
+                        new SsoServerFedEntitiesEntryImpl(mib2);
+                    cei.SsoServerRealmIndex = ri;
+                    cei.FedEntityName = getEscapedString(entname);
+                    cei.FedEntityIndex = new Integer(tabinx++);
+                    cei.FedEntityProto = "IDFF";
+                    cei.FedEntityType = roles;
+                    cei.FedEntityLoc = loc;
+                    ObjectName oname =
+                        cei.createSsoServerFedEntitiesEntryObjectName(server);
+
+                    if (oname == null) {
+                        debug.error(classMethod +
+                            "Error creating object for IDFF Entity '" +
+                            entname + "'");
+                        continue;
+                    }
+
+                    try {
+                        ftab.addEntry(cei, oname);
+                        if (cei != null) {
+                            server.registerMBean(cei, oname);
+                        }
+                    } catch (JMException ex) {
+                        debug.error(classMethod + "JMEx adding IDFF entity " +
+                            entname + " in realm " + realm, ex);
+                    } catch (SnmpStatusException ex) {
+                        debug.error(classMethod +
+                            "SnmpEx adding IDFF entity " +
+                            entname + " in realm " + realm, ex);
+                    }
+                    if (debug.messageEnabled()) {
+                        sb.append("    name=").append(entname).
+                            append(", loc=").append(loc).append(", roles=").
+                            append(roles).append("\n");
+                    }
+                }
+            } else {
+                if (debug.messageEnabled()) {
+                    sb.append("no entries\n");
                 }
             }
         } else {
-            if (debug.messageEnabled()) {
-                sb.append("no entries\n");
-            }
+            debug.error(classMethod +
+                "FederationEntities table is null");
         }
 
         /*
@@ -2744,9 +3066,17 @@ public class Agent {
                         ObjectName ceName = 
                             cmi.createSsoServerFedCOTMemberEntryObjectName(
                                 server);
+
+                        if (ceName == null) {
+                            debug.error(classMethod +
+                                "Error creating object for SAMLv2 COT Member '"+
+                                mbm + "'");
+                            continue;
+                        }
+
                         try {
                             mtab.addEntry(cmi, ceName);
-                            if ((server != null) && (ceName != null)) {
+                            if (ceName != null) {
                                 server.registerMBean(cmi, ceName);
                             }
                         } catch (Exception ex) {
@@ -2781,9 +3111,17 @@ public class Agent {
                         ObjectName ceName = 
                             cmi.createSsoServerFedCOTMemberEntryObjectName(
                                 server);
+
+                        if (ceName == null) {
+                            debug.error(classMethod +
+                                "Error creating object for IDFF COT Member '" +
+                                mbm + "'");
+                            continue;
+                        }
+
                         try {
                             mtab.addEntry(cmi, ceName);
-                            if ((server != null) && (ceName != null)) {
+                            if (ceName != null) {
                                 server.registerMBean(cmi, ceName);
                             }
                         } catch (Exception ex) {
@@ -2819,9 +3157,17 @@ public class Agent {
                         ObjectName ceName = 
                             cmi.createSsoServerFedCOTMemberEntryObjectName(
                                 server);
+
+                        if (ceName == null) {
+                            debug.error(classMethod +
+                                "Error creating object for WSFed Member '" +
+                                mbm + "'");
+                            continue;
+                        }
+
                         try {
                             mtab.addEntry(cmi, ceName);
-                            if ((server != null) && (ceName != null)) {
+                            if (ceName != null) {
                                 server.registerMBean(cmi, ceName);
                             }
                         } catch (Exception ex) {
@@ -2844,62 +3190,50 @@ public class Agent {
          *  have to do it here?
          */
         
-        try {
-            DSConfigMgr dscm = DSConfigMgr.getDSConfigMgr();
-            ServerGroup sgrp = dscm.getServerGroup("sms");
-            Collection slist = sgrp.getServersList();
-            StringBuffer sbp1 = new StringBuffer("DSConfigMgr:\n");
-            for (Iterator it = slist.iterator(); it.hasNext(); ) {
-                Server sobj = (Server)it.next();
-                String svr = sobj.getServerName();
-                int port = sobj.getPort();
-                if (debug.messageEnabled()) {
+        if (debug.messageEnabled()) {
+            try {
+                DSConfigMgr dscm = DSConfigMgr.getDSConfigMgr();
+                ServerGroup sgrp = dscm.getServerGroup("sms");
+                Collection slist = sgrp.getServersList();
+                StringBuffer sbp1 = new StringBuffer("DSConfigMgr:\n");
+                for (Iterator it = slist.iterator(); it.hasNext(); ) {
+                    Server sobj = (Server)it.next();
+                    String svr = sobj.getServerName();
+                    int port = sobj.getPort();
                     sbp1.append("  svrname = ").append(svr).
                         append(", port = ").append(port).append("\n");
                 }
-            }
-            if (debug.messageEnabled()) {
-                debug.error(classMethod + sbp1.toString());
-            }
-        } catch (Exception d) {
-            if (debug.messageEnabled()) {
-                debug.error(classMethod +
+                debug.message(classMethod + sbp1.toString());
+            } catch (Exception d) {
+                debug.message(classMethod +
                     "trying to get Directory Server Config");
             }
-        }
 
-        Properties props = SystemProperties.getProperties();
-        Set kset = props.keySet();
-        StringBuffer sbp = new StringBuffer("SYSPROPS:\n");
-        for (Iterator it = kset.iterator(); it.hasNext(); ) {
-            String entname = (String)it.next();
-            String val = (String)props.get(entname);
+            Properties props = SystemProperties.getProperties();
+            Set kset = props.keySet();
+            StringBuffer sbp = new StringBuffer("SYSPROPS:\n");
+            for (Iterator it = kset.iterator(); it.hasNext(); ) {
+                String entname = (String)it.next();
+                String val = (String)props.get(entname);
 
-            if (debug.messageEnabled()) {
-                 sbp.append("  key = ").append(entname).append(", val = ").
-                     append(val).append("\n");
+                sbp.append("  key = ").append(entname).append(", val = ").
+                    append(val).append("\n");
             }
-        }
-        if (debug.messageEnabled()) {
             debug.message(classMethod + sbp.toString());
-        }
 
-        String dirHost = SystemProperties.get(Constants.AM_DIRECTORY_HOST);
-        String dirPort = SystemProperties.get(Constants.AM_DIRECTORY_PORT);
-        String drSSL =
-            SystemProperties.get(Constants.AM_DIRECTORY_SSL_ENABLED);
-        boolean dirSSL = Boolean.valueOf(
-            SystemProperties.get(
-                Constants.AM_DIRECTORY_SSL_ENABLED)).booleanValue();
+            String dirHost = SystemProperties.get(Constants.AM_DIRECTORY_HOST);
+            String dirPort = SystemProperties.get(Constants.AM_DIRECTORY_PORT);
+            String drSSL =
+                SystemProperties.get(Constants.AM_DIRECTORY_SSL_ENABLED);
+            boolean dirSSL = Boolean.valueOf(
+                SystemProperties.get(
+                    Constants.AM_DIRECTORY_SSL_ENABLED)).booleanValue();
 
-        if (debug.messageEnabled()) {
             debug.message(classMethod + "SMS CONFIG:\n    host = " + dirHost +
                 "\n    port = " + dirPort + "\n    ssl = " + drSSL +
                 "\n    dirSSL = " + dirSSL);
-        }
 
-        Date stopDate = new Date();
-        if (debug.messageEnabled()) {
+            Date stopDate = new Date();
             String stDate = sdf.format(startDate);
             String endDate = sdf.format(stopDate);
             debug.message("Agent.federationConfig:\n    Start Time = " +
@@ -2963,6 +3297,11 @@ public class Agent {
 
     public static boolean getSFOStatus() {
         return isSessFOEnabled;
+    }
+
+    public static void setMonitoringDisabled () {
+        monitoringEnabled = false;
+        agentStarted = false; // so Agent.isRunning() is false
     }
 
     /**
