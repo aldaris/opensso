@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.18 2009-08-19 18:52:40 veiming Exp $
+   $Id: build.xml,v 1.19 2009-08-19 21:22:18 veiming Exp $
 
 -->
 
@@ -118,8 +118,8 @@
                         value="Sun Microsystems, Inc."/>
                 </section>
             </manifest>
-            <zipfileset src="${sharedlib.built.dir}/opensso-sharedlib.jar" includes="**/*.class"/>
-            <zipfileset src="${openfm.extlib.dir}/amclientsdk.jar" includes="**/*.class, **/*.properties"/>
+            <zipfileset src="${sharedlib.dist.dir}/opensso-sharedlib.jar" includes="**/*.class"/>
+            <zipfileset src="${amserver.dist.dir}/amclientsdk.jar" includes="**/*.class, **/*.properties"/>
         </jar>
 
         <checksum file="${fm.dist.dir}/openssoclientsdk.jar"
