@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.17 2009-08-19 17:25:28 veiming Exp $
+   $Id: build.xml,v 1.18 2009-08-19 18:52:40 veiming Exp $
 
 -->
 
@@ -67,7 +67,7 @@
                 <include name="COTLogMessageIDs.xml"/>
             </fileset>
         </copy>
-        <jar destfile="${sharedlib.dist.dir}/openssoclientsdk.jar" duplicate="preserve">
+        <jar destfile="${fm.dist.dir}/openssoclientsdk.jar" duplicate="preserve">
             <manifest>
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
