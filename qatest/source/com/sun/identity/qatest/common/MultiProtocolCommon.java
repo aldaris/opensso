@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.16 2009-08-18 19:10:32 nithyas Exp $
+ * $Id: MultiProtocolCommon.java,v 1.17 2009-08-19 22:56:54 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -263,14 +263,14 @@ public class MultiProtocolCommon extends TestCommon {
     throws Exception {
         String metadata = "";
         String metaPage = page.getWebResponse().getContentAsString();
+        metaPage = decoder.decode(metaPage);
         if (!(metaPage.indexOf("EntityDescriptor") == -1)) {
             metadata = metaPage.substring(metaPage.
-                    indexOf("EntityDescriptor") - 4,
-                    metaPage.lastIndexOf("EntityDescriptor") + 20);
+                    indexOf("EntityDescriptor") - 1,
+                    metaPage.lastIndexOf("EntityDescriptor") + 17);
         }
         log(Level.FINEST, "getMetadataFromPage", "Encoded metadata = " +
                 metadata);
-        metadata = decoder.decode(metadata);
         log(Level.FINEST, "getMetadataFromPage", "Decoded metadata = " +
                 metadata);
         return metadata;
@@ -284,16 +284,16 @@ public class MultiProtocolCommon extends TestCommon {
     throws Exception {
         String metadata = "";
         String metaPage = page.getWebResponse().getContentAsString();
+        metaPage = decoder.decode(metaPage);
         log(Level.FINEST, "getMetadataFromPage", "metaPage  = " +
                 "metaPage");
         if (!(metaPage.indexOf("EntityConfig") == -1)) {
             metadata = metaPage.substring(metaPage.
-                    indexOf("EntityConfig") - 4,
-                    metaPage.lastIndexOf("EntityConfig") + 16);
+                    indexOf("EntityConfig") - 1,
+                    metaPage.lastIndexOf("EntityConfig") + 13);
         }
         log(Level.FINEST, "getMetadataFromPage", "Encoded metadata = " +
                 metadata);
-        metadata = decoder.decode(metadata);
         log(Level.FINEST, "getMetadataFromPage", "Decoded metadata = " +
                 metadata);
         return metadata;
@@ -323,7 +323,6 @@ public class MultiProtocolCommon extends TestCommon {
             metadata = getMetadataFromPage(page);
             log(Level.FINEST, "getMetadataFromPage", "Encoded metadata = " +
                     metadata);
-            metadata = decoder.decode(metadata);
         }
         log(Level.FINEST, "getMetadataFromPage", "Decoded metadata = " +
                 metadata);
@@ -354,7 +353,6 @@ public class MultiProtocolCommon extends TestCommon {
             metadata = getExtMetadataFromPage(page);
             log(Level.FINEST, "getExtMetadataFromPage", "Encoded metadata = " +
                     metadata);
-            metadata = decoder.decode(metadata);
         }
         log(Level.FINEST, "getExtMetadataFromPage", "Decoded metadata = " +
                 metadata);
