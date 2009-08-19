@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: README,v 1.7 2009-08-11 21:31:17 mrudul_uchil Exp $
+ * $Id: README,v 1.8 2009-08-19 19:15:33 mrudul_uchil Exp $
  */
 
  %% Contents:
@@ -33,6 +33,7 @@
     %% 5. OpenSSO Server Configuration
     %% 6. Testing the samples
     %% 7. Explanation of changes for Tomcat
+    %% 8. Deployment changes for WebSphere Application Server (WAS)
     
 
 %% 1. General Description and Assumption
@@ -162,6 +163,7 @@ Assumption :
    The WARs generated above can be deployed on GlassFish v2.x, WebLogic 10.x,
    JBoss 5.x, Tomcat 6.x & WebSphere 7.x, all running with JDK "1.6.0_12" or
    higher.
+   For deployment changes required on WebSphere 7.x, go to section 8.
 
 %% 4. Building and Deploying the Secured Samples
 
@@ -195,6 +197,7 @@ Assumption :
    The WARs generated above can be deployed on GlassFish v2.x, WebLogic 10.x,
    JBoss 5.x, Tomcat 6.x & WebSphere 7.x, all running with JDK "1.6.0_12" or
    higher.
+   For deployment changes required on WebSphere 7.x, go to section 8.
    
 %% 5. OpenSSO Server Configuration
 
@@ -287,4 +290,41 @@ Assumption :
 
              This line is required by Client application in order to invoke the
              WSS Client Handler for securing outgoing Web Service requests.
+
+%% 8. Deployment changes for WebSphere Application Server (WAS)
+
+   8.1 Upgrade to JDK "1.6.0_12" or higher.
+
+       WAS 7.0 is bundling with java version "1.6.0", hence you need to
+       upgrade WAS 7.0 to 7.0.0.5 and upgrade its JDK to IBM JDK 1.6.0 SR5,
+       equivalent to SUN JDK 1.6.0.13.
+
+   8.2 Create shared libraries.
+
+       8.2.1 Create a directory for shared libraries e.g. shared_libs.
+       8.2.2 Copy <wssagents_unzip_location>/lib/xmlsec.jar and
+             <wssagents_unzip_location>/lib/openssoclientsdk.jar to shared_libs.
+       8.2.3 Get xalan.jar and xercesImpl.jar from opensso external libraries
+             at http://download.java.net/general/opensso/extlib/latest/opensso-sun-extlib.zip
+             and copy them to shared_libs.
+       8.2.4 On WAS console, load these four jars under shared_libs as
+             shared libraries.
+       8.2.5 Restart WAS.
+
+   8.3 StockService and StockClient Applications modifications.
+
+       8.3.1 Unwar StockService and StockClient applications (war files),
+             delete WEB-INF/lib/xmlsec.jar and WEB-INF/lib/openssoclientsdk.jar
+             from these applications and re-war back these applications.
+       8.3.2 Deploy StockService and StockClient applications (war files),
+             and change both applications to reference the above shared
+             libraries (created in step 8.2.4).
+       8.3.3 From WAS console, change StockService and StockClient applications'
+             classloader behaviors to:
+             "Class loader order" - Classes loaded with local class loader first (parent last)
+             "WAR class loader policy" - Single class loader for application
+       8.3.4 Add the following JVM options to genericJVMArguments in server.xml
+             and save the file:
+             -DamCryptoDescriptor.provider=IBMJCE -DamKeyGenDescriptor.provider=IBMJCE
+       8.3.5 Restart WAS.
 

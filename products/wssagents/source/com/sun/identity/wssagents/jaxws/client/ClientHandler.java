@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.2 2009-07-27 21:43:55 mrudul_uchil Exp $
+ * $Id: ClientHandler.java,v 1.3 2009-08-19 19:15:34 mrudul_uchil Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.ProtocolException;
+import com.iplanet.am.util.SystemProperties;
 
 import com.sun.identity.wss.security.handler.SOAPRequestHandler;
 
@@ -76,9 +77,14 @@ public class ClientHandler implements SOAPHandler<SOAPMessageContext>{
 		    handler = new SOAPRequestHandler();
 		    Map map = new HashMap();
 
-            // Get the Service Name
-            QName providerQ = (QName)context.get(MessageContext.WSDL_SERVICE);
-            String providerName = providerQ.getLocalPart();
+            // Get the WSC provider name for WSC profile
+            String providerName = SystemProperties.get(
+                "com.sun.identity.wss.wsc.providername");
+            if((providerName == null) || (providerName.length() == 0)) {
+                QName providerQ = (QName)context.get(
+                    MessageContext.WSDL_SERVICE);
+                providerName = providerQ.getLocalPart();
+            }
             if(logger != null && logger.isLoggable(Level.FINE)) {
                 logger.log(Level.FINE, "ClientHandler: providerName : " +
                     providerName);

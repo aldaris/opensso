@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientFilter.java,v 1.1 2009-07-23 20:04:29 mrudul_uchil Exp $
+ * $Id: ClientFilter.java,v 1.2 2009-08-19 19:15:34 mrudul_uchil Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.wss.provider.ProviderConfig;
 
 public class ClientFilter implements Filter {
 
@@ -60,30 +61,40 @@ public class ClientFilter implements Filter {
          HttpServletResponse httpResponse = (HttpServletResponse)response;
          SSOToken ssoToken = null;
 
-         String redirectLoginUrl = getLoginURL(httpRequest);
-
          try {
              SSOTokenManager manager = SSOTokenManager.getInstance();
              ssoToken = manager.createSSOToken(httpRequest);
-             if (!manager.isValidToken(ssoToken)) {
-                 httpResponse.sendRedirect(redirectLoginUrl);
-                 return;
+             if (manager.isValidToken(ssoToken)) {
+                 Subject subject = new Subject();
+                 subject.getPrivateCredentials().add(ssoToken);
+                 cred.set(subject);
+             } else {
+                 if (shouldAuthenticate()) {
+                     httpResponse.sendRedirect(getLoginURL(httpRequest));
+                     return;
+                 }
              }
-             Subject subject = new Subject();
-             subject.getPrivateCredentials().add(ssoToken);
-             cred.set(subject);
-             chain.doFilter(request, response);
          } catch (Exception e) {
              //Invalid SSOToken, hence redirect to Login URL
              try {
-                 httpResponse.sendRedirect(redirectLoginUrl);
+                 if (shouldAuthenticate()) {
+                     httpResponse.sendRedirect(getLoginURL(httpRequest));
+                     return;
+                 }
              } catch (IOException ie) {
                 ie.printStackTrace();
-                throw new ServletException(ie.getMessage());
+                // continue
              }
-             return;
          }
-         
+
+         try {
+             chain.doFilter(request, response);
+         } catch (IOException ie) {
+             ie.printStackTrace();
+             throw new ServletException(ie.getMessage());
+         }
+
+         return;
      }
 
     /**
@@ -109,6 +120,29 @@ public class ClientFilter implements Filter {
 
      }
 
+    /**
+     * Checks whether end user authentication is required for WSC configuration
+     * or not.
+     *
+     * @return boolean result
+     */
+     public boolean shouldAuthenticate() {
+         String providername = SystemProperties.get(
+             "com.sun.identity.wss.wsc.providername");
+         if((providername != null) && (providername.length() != 0)) {
+             try {
+                 ProviderConfig pc = ProviderConfig.getProvider(
+                     providername,ProviderConfig.WSC);
+                 if((pc != null) && (!pc.forceUserAuthentication())) {
+                     return false;
+                 }
+             } catch (Exception e) {
+                 // continue
+             }
+         }
+         return true;
+     }
+     
      public void destroy() {
      }
 

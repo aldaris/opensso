@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagents-jax-ws-zip,v 1.6 2009-08-11 21:31:17 mrudul_uchil Exp $
+   $Id: README.wssagents-jax-ws-zip,v 1.7 2009-08-19 19:15:33 mrudul_uchil Exp $
 
 -->
 
@@ -120,7 +120,8 @@ this config/server_handlers.xml file into existing handlers xml file in such a w
          <handler-class>com.sun.identity.wssagents.jaxws.server.ServerHandler</handler-class>
       </handler>
 is the first handler in the handler-chain.
-5) now war secured Web Service Provider war file and deploy it on your favorite container
+5) now war secured Web Service Provider war file and deploy it on your favorite 
+   container running with JDK "1.6.0_12" or higher.
 
 C) If you have any existing Web Service Client application, then follow this
    section for Web Service Client application modifications, else follow
@@ -147,7 +148,8 @@ is the first handler in the handler-chain.
      <filter-name>LoginFilter</filter-name>
      <url-pattern>/*</url-pattern>
  </filter-mapping>
-6) now war secured Web Service Client war file and deploy it on your favorite container
+6) now war secured Web Service Client war file and deploy it on your favorite 
+   container running with JDK "1.6.0_12" or higher.
 
 
 (III) OpenSSO Server Configuration :
@@ -215,8 +217,8 @@ is the first handler in the handler-chain.
 
 (IV) Pre-Deployment container specific tasks :
 
-    Only Jboss and Tomcat containers need pre-deployment tasks with respect to
-    making them JAX-WS aware.
+    Make sure that the container is running with JDK "1.6.0_12" or higher.
+    Only Jboss, Tomcat and WebSphere containers need pre-deployment tasks.
     Rest of the containers support JAX-WS out of box, hence they do not need
     any pre-deployment tasks.
 
@@ -325,6 +327,43 @@ is the first handler in the handler-chain.
                handlerChain.add(new com.sun.identity.wssagents.jaxws.client.ClientHandler());
                handlerChain.add(new com.sun.stockquote.LogClientHandler());
                bindingProvider.getBinding().setHandlerChain(handlerChain);
+
+    C) WebSphere Application Server (WAS) V7.x
+        1) Upgrade to JDK "1.6.0_12" or higher.
+
+           WAS 7.0 is bundling with java version "1.6.0", hence you need to
+           upgrade WAS 7.0 to 7.0.0.5 and upgrade its JDK to IBM JDK 1.6.0 SR5,
+           equivalent to SUN JDK 1.6.0.13.
+
+        2) Create shared libraries.
+
+           2.1 Create a directory for shared libraries e.g. shared_libs.
+           2.2 Copy lib/xmlsec.jar and lib/openssoclientsdk.jar to shared_libs.
+           2.3 Get xalan.jar and xercesImpl.jar from opensso external libraries
+               at http://download.java.net/general/opensso/extlib/latest/opensso-sun-extlib.zip
+               and copy them to shared_libs.
+           2.4 On WAS console, load these four jars under shared_libs as
+               shared libraries.
+           2.5 Restart WAS.
+
+        3) Web Service Provider and Web Service Client Applications
+           modifications.
+
+           3.1 Unwar Web Service Provider and Web Service Client applications 
+               (war files),
+               delete WEB-INF/lib/xmlsec.jar and WEB-INF/lib/openssoclientsdk.jar
+               from these applications and re-war back these applications.
+           3.2 Deploy Web Service Provider and Web Service Client applications
+               (war files), and change both applications to reference the above
+               shared libraries (created in step 2.4).
+           3.3 From WAS console, change Web Service Provider and Web Service
+               Client applications' classloader behaviors to:
+               "Class loader order" - Classes loaded with local class loader first (parent last)
+               "WAR class loader policy" - Single class loader for application
+           3.4 Add the following JVM options to genericJVMArguments in server.xml
+               and save the file:
+               -DamCryptoDescriptor.provider=IBMJCE -DamKeyGenDescriptor.provider=IBMJCE
+           3.5 Restart WAS.
 
 
 (V) Samples for Testing :
