@@ -105,8 +105,8 @@
                 <include name="@mode@"/>
             </run>
         </groups>
-        <classes>            
-            <class name="com.sun.identity.qatest.fedlet.FedletTests"/>                                 
+        <classes>                        
+            <class name="com.sun.identity.qatest.fedlet.FedletTests"/>            
         </classes>
     </test>  
     <test name="FedletTests-Attr-MSISDN">
@@ -132,7 +132,7 @@
         <classes>            
             <class name="com.sun.identity.qatest.fedlet.FedletTests"/>                                 
         </classes>
-    </test>
+    </test> 
     <test name="FedletTests-Attr-title">
         <parameter name="ptestName" value="AttrSingleValue-title"/>        
         <parameter name="pAttribute" value="title"/>
@@ -144,5 +144,17 @@
         <classes>            
             <class name="com.sun.identity.qatest.fedlet.FedletTests"/>                                 
         </classes>
-    </test>
-  
+    </test> 
+    <test name="FedletTests-Attr-cn-SLO">
+        <parameter name="ptestName" value="AttrMultiValue-cn-SLO"/>
+        <parameter name="pAttribute" value="cn"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>            
+            <class name="com.sun.identity.qatest.fedlet.FedletSingleLogoutTests"/>            
+        </classes>
+    </test>    
+    
