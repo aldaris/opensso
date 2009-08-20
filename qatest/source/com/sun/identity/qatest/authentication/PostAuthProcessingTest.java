@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PostAuthProcessingTest.java,v 1.7 2009-07-28 13:42:29 cmwesley Exp $
+ * $Id: PostAuthProcessingTest.java,v 1.8 2009-08-20 11:20:58 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,12 +25,14 @@ package com.sun.identity.qatest.authentication;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
 import com.sun.identity.qatest.idm.IDMConstants;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -210,7 +212,7 @@ public class PostAuthProcessingTest extends AuthenticationCommon {
             if (oriAuthAttrValues == null) {
                 oriAuthAttrValues = new HashSet();
             }            
-            cleanup(testModule, testRealm);
+            cleanup(testRealm);
             throw e;
         } finally {
             if (realmToken != null) {
@@ -307,7 +309,7 @@ public class PostAuthProcessingTest extends AuthenticationCommon {
                     e.getMessage());
             log(Level.SEVERE, "loginModule", testUserName +
                     " login resulted in an exception.");
-            cleanup(testModule, testRealm);
+            cleanup(testRealm);
             throw e;
         } finally {
             if (userToken != null) {
@@ -386,27 +388,197 @@ public class PostAuthProcessingTest extends AuthenticationCommon {
                         expectedAttrValue + "\'.");
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "loginModule", "Exception message: " +
-                    e.getMessage());
-            log(Level.SEVERE, "loginModule", testUserName +
+            log(Level.SEVERE, "testSessionAttrModification",
+                    "Exception message: " + e.getMessage());
+            log(Level.SEVERE, "testSessionAttrModification", testUserName +
                     " login resulted in an exception.");
-            cleanup(testModule, testRealm);
+            cleanup(testRealm);
             throw e;
         } finally {
             destroyToken(userToken);
             assert propertyUnchanged;
         }
     }
+
+    /**
+     * Attempt to modify the authentication related attributes in
+     * the <code>SSOToken</code>.  Such modifications should result in an
+     * <code>SSOException</code> being thrown.
+     * @param testModule - the authentication module instance type which will
+     * be used by the user to be authenticated.
+     * @param testRealm - the name of the realm in which the user will be
+     * authenticated.
+     */
+    @Parameters({"testModule", "testRealm"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    public void testAuthCredModification(String testModule, String testRealm)
+    throws Exception {
+        SSOToken userToken = null;
+        boolean credsModified = false;
+        Object[] params = {testRealm};
+        Principal userPrincipal = null;
+        int userAuthLevel = -1;
+        String tokenUserID = null;
+        String userAuthType = null;
+
+        entering("testAuthCredModification", params);
+        String testCaseName = "SSOTokenAuthCredentialModification";
+        String testCaseDesc = "Attepmt to modify auth credentials " +
+                "(e.g. AuthLevel, UserID, AuthType, Principal) in an " +
+                "an authenticated user's SSOToken.";
+        log(Level.FINEST, "setup", "testCaseName: " + testCaseName);
+        log(Level.FINEST, "setup", "testCaseDescription: " + testCaseDesc);
+        Reporter.log("TestCaseName: " + testCaseName);
+        Reporter.log("TestCaseDescription: " + testCaseDesc);
+
+        try {
+            userToken = performRemoteLogin(testRealm, "module",
+                            moduleInstance, testUserName, testUserPass);
+
+            if (userToken != null) {
+                userPrincipal = userToken.getPrincipal();
+                userAuthLevel = userToken.getAuthLevel();
+                tokenUserID = userToken.getProperty("UserId");
+                userAuthType = userToken.getProperty("AuthType");
+                // attempt to change the token principal to the amadmin user
+                try {
+                    String badPrincipal = "uid=amadmin,ou=people," + basedn;
+                    log(Level.FINE, "testAuthCredModification",
+                            "Attempting to change the principal in the user " +
+                            "token to " + badPrincipal + " ...");
+                    userToken.setProperty("Principal", badPrincipal);
+                    log(Level.SEVERE, "testAuthCredModification",
+                            "Attempt to modify token principal did not " +
+                            "result in an SSOException");
+                    credsModified = true;
+                } catch (SSOException ssoe) {
+                    log(Level.FINEST, "testAuthCredModification",
+                            "Attempt to modify token principal resulted in " +
+                            "SSOException as expected");
+                    log(Level.FINEST, "testAuthCredModification",
+                            "SSOException message = " + ssoe.getMessage());
+                    Principal currentPrincipal = userToken.getPrincipal();
+                    if (!currentPrincipal.equals(userPrincipal)) {
+                        log(Level.FINEST, " testAuthCredModification",
+                                "The principal in the user token was " +
+                                "modified to " + currentPrincipal);
+                        credsModified = true;
+                    }
+                }
+
+                // attempt to change the token auth level to a higher value
+                try {
+                    int badLevel = userAuthLevel + 50;
+                    log(Level.FINE, "testAuthCredModification",
+                            "Attempting to change the auth level in the user " +
+                            "token to " + badLevel + " ...");
+                    userToken.setProperty("AuthLevel",
+                            Integer.toString(badLevel));
+                    log(Level.SEVERE, "testAuthCredModification",
+                            "Attempt to modify token auth level did not " +
+                            "result in an SSOException");
+                    credsModified = true;
+                } catch (SSOException ssoe) {
+                    log(Level.FINEST, "testAuthCredModification",
+                            "Attempt to modify token auth level resulted in " +
+                            "SSOException as expected");
+                    log(Level.FINEST, "testAuthCredModification",
+                            "SSOException message = " + ssoe.getMessage());
+                    int currentAuthLevel = userToken.getAuthLevel();
+                    if (currentAuthLevel != userAuthLevel) {
+                        log(Level.FINEST, " testAuthCredModification",
+                                "The auth level in the user token was " +
+                                "modified to " + currentAuthLevel);
+                        credsModified = true;
+                    }
+                }
+
+                // attempt to change the token user ID to another user
+                try {
+                    log(Level.FINE, "testAuthCredModification",
+                            "Attempting to change the user ID in the user " +
+                            "token to " + adminUser + " ...");
+                    userToken.setProperty("UserId", adminUser);
+                    log(Level.SEVERE, "testAuthCredModification",
+                            "Attempt to modify token user ID did not " +
+                            "result in an SSOException");
+                    credsModified = true;
+                } catch (SSOException ssoe) {
+                    log(Level.FINEST, "testAuthCredModification",
+                            "Attempt to modify token user ID resulted in " +
+                            "SSOException as expected");
+                    log(Level.FINEST, "testAuthCredModification",
+                            "SSOException message = " + ssoe.getMessage());
+                    String currentUserID = userToken.getProperty("UserId");
+                    if (!currentUserID.equals(tokenUserID)) {
+                        log(Level.FINEST, " testAuthCredModification",
+                                "The user ID in the user token was " +
+                                "modified to " + currentUserID);
+                        credsModified = true;
+                    }
+                }
+
+                // attempt to change the token auth type to another value
+                try {
+                    if ((userToken != null) &&
+                            SSOTokenManager.getInstance().isValidToken(
+                            userToken)) {
+                        log(Level.FINE, "testAuthCredModification",
+                                "Attempting to change the auth type in the " +
+                                "user token to badAuthType ...");
+                        userToken.setProperty("AuthType", "badAuthType");
+                        log(Level.SEVERE, "testAuthCredModification",
+                                "Attempt to modify token auth type did not " +
+                                "result in an SSOException");
+                        credsModified = true;
+                    } else {
+                        log(Level.SEVERE, "testAuthCredModification",
+                                "The token for user " + testUserName +
+                                " is no longer valid!");
+                        assert false;
+                    }
+                } catch (SSOException ssoe) {
+                    log(Level.FINEST, "testAuthCredModification",
+                            "Attempt to modify token auth type resulted in " +
+                            "SSOException as expected");
+                    log(Level.FINEST, "testAuthCredModification",
+                            "SSOException message = " + ssoe.getMessage());
+                    String currentAuthType = userToken.getProperty("AuthType");
+                    if (!currentAuthType.equals(userAuthType)) {
+                        log(Level.FINEST, " testAuthCredModification",
+                                "The user ID in the user token was " +
+                                "modified to " + currentAuthType);
+                        credsModified = true;
+                    }
+                }
+            } else {
+                log(Level.SEVERE, "testAuthCredModification",
+                        "The user " + testUserName +
+                        " failed to be authenticated!");
+                assert false;
+            }
+         } catch (Exception e) {
+            log(Level.SEVERE, "testAuthCredModification",
+                    "Unexpected Exception : " + e.toString());
+            cleanup(testRealm);
+            throw e;
+        } finally {
+            destroyToken(userToken);
+            assert !credsModified;
+        }
+    }
     
     /**
      * performs cleanup after tests are done.
+     * @param testRealm - if not the top-level realm, this realm will be removed
      */
-    @Parameters({"testModule", "testRealm"})
+    @Parameters({"testRealm"})
     @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
       "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void cleanup(String testModule, String testRealm) 
+    public void cleanup(String testRealm) 
     throws Exception {
-        Object[] params = {testModule, testRealm};
+        Object[] params = {testRealm};
         entering("cleanup", params);
         SSOToken realmToken = null;
         SSOToken idToken = null;
