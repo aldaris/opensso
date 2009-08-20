@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureFedlet.java,v 1.2 2009-05-07 22:27:57 vimal_67 Exp $
+ * $Id: ConfigureFedlet.java,v 1.3 2009-08-20 17:03:36 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,7 +71,87 @@ public class ConfigureFedlet extends TestCommon {
     private JarUtility jarUti;
     File zipLocation;
     File UnzipLocation;
-    private ResourceBundle rb_clientGlobal;    
+    private ResourceBundle rb_clientGlobal; 
+    private String RoleDescriptor_Def = "<RoleDescriptor xmlns:xsi=\"http://" +
+            "www.w3.org/2001/XMLSchema-instance\" xsi:type=\"query:Attribute" +
+            "QueryDescriptorType\" protocolSupportEnumeration=\"urn:oasis:" +
+            "names:tc:SAML:2.0:protocol\" xmlns:query=\"urn:oasis:names:tc:" +
+            "SAML:metadata:ext:query\"/>";
+    private String RoleDescriptor_Mod = "<RoleDescriptor xmlns:xsi=\"http:" +
+            "//www.w3.org/2001/XMLSchema-instance\" xmlns:query=\"urn:" +
+            "oasis:names:tc:SAML:metadata:ext:query\" xsi:type=\"query:" +
+            "AttributeQueryDescriptorType\" protocolSupportEnumeration=\"urn:" +
+            "oasis:names:tc:SAML:2.0:protocol\">\n" +
+            "<KeyDescriptor use=\"signing\">\n" +
+            "<ds:KeyInfo xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\">\n" +
+            "<ds:X509Data>\n" +
+            "<ds:X509Certificate>\n" +
+            "MIICQDCCAakCBEeNB0swDQYJKoZIhvcNAQEEBQAwZzELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNh\n" +
+            "bGlmb3JuaWExFDASBgNVBAcTC1NhbnRhIENsYXJhMQwwCgYDVQQKEwNTdW4xEDAOBgNVBAsTB09w\n" +
+            "ZW5TU08xDTALBgNVBAMTBHRlc3QwHhcNMDgwMTE1MTkxOTM5WhcNMTgwMTEyMTkxOTM5WjBnMQsw\n" +
+            "CQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEUMBIGA1UEBxMLU2FudGEgQ2xhcmExDDAK\n" +
+            "BgNVBAoTA1N1bjEQMA4GA1UECxMHT3BlblNTTzENMAsGA1UEAxMEdGVzdDCBnzANBgkqhkiG9w0B\n" +
+            "AQEFAAOBjQAwgYkCgYEArSQc/U75GB2AtKhbGS5piiLkmJzqEsp64rDxbMJ+xDrye0EN/q1U5Of+\n" +
+            "RkDsaN/igkAvV1cuXEgTL6RlafFPcUX7QxDhZBhsYF9pbwtMzi4A4su9hnxIhURebGEmxKW9qJNY\n" +
+            "Js0Vo5+IgjxuEWnjnnVgHTs1+mq5QYTA7E6ZyL8CAwEAATANBgkqhkiG9w0BAQQFAAOBgQB3Pw/U\n" +
+            "QzPKTPTYi9upbFXlrAKMwtFf2OW4yvGWWvlcwcNSZJmTJ8ARvVYOMEVNbsT4OFcfu2/PeYoAdiDA\n" +
+            "cGy/F2Zuj8XJJpuQRSE6PtQqBuDEHjjmOQJ0rV/r8mO1ZCtHRhpZ5zYRjhRC9eCbjx9VrFax0JDC\n" +
+            "/FfwWigmrW0Y0Q==\n" +
+            "</ds:X509Certificate>\n" +
+            "</ds:X509Data>\n" +
+            "</ds:KeyInfo>\n" +
+            "</KeyDescriptor>\n" +
+            "</RoleDescriptor>";
+    private String oriex = "<AttributeQueryConfig metaAlias=\"/attrQuery\">\n" +
+                "        <Attribute name=\"signingCertAlias\">\n" +
+                "            <Value/>";
+    private String modex = "<AttributeQueryConfig metaAlias=\"/attrQuery\">\n" +
+                "        <Attribute name=\"signingCertAlias\">\n" +
+                "            <Value>test</Value>";
+    private String ATTRIB_MAP_DEFAULT = "<Attribute name=\""
+            + "attributeMap\"/>\n";
+    private String ATTRIB_MAP_VALUE = "<Attribute name=\""
+            + "attributeMap\">\n"
+            + "            <Value>Mail=mail</Value>\n"
+            + "            <Value>GivenName=givenname</Value>\n"
+            + "            <Value>PostAddr=postaladdress</Value>\n"
+            + "            <Value>EmpNum=employeenumber</Value>\n"
+            + "            <Value>MSISDN=sunIdentityMSISDNNumber"
+            +"</Value>\n"
+            + "            <Value>Tel=telephonenumber</Value>\n"
+            + "            <Value>CommonName=cn</Value>\n"            
+            + "            <Value>Mgr=manager</Value>\n"
+            + "            <Value>nsrole=nsrole</Value>\n"
+            + "            <Value>UID=uid</Value>\n"
+            + "            <Value>UserStatus=inetuserstatus</Value>\n"
+            + "            <Value>SN=sn</Value>\n"            
+            + "            <Value>Tle=title</Value>\n"
+            + "            <Value>SessionQuota=iplanet-am-session-quota-limit</Value>\n"
+            + "            <Value>EntryDN=entrydn</Value>\n"
+            + "        </Attribute>";
+    private String ATTRIB_X509_DEFAULT = "<Attribute name=\""
+            + "x509SubjectDataStoreAttrName\">\n"
+            + "            <Value/>\n"
+            + "        </Attribute>";
+    private String ATTRIB_X509_VALUE = "<Attribute name=\""
+            + "x509SubjectDataStoreAttrName\">\n"
+            + "            <Value>Mail=mail</Value>\n"
+            + "            <Value>GivenName=givenname</Value>\n"
+            + "            <Value>PostAddr=postaladdress</Value>\n"
+            + "            <Value>EmpNum=employeenumber</Value>\n"
+            + "            <Value>MSISDN=sunIdentityMSISDNNumber"
+            +"</Value>\n"
+            + "            <Value>Tel=telephonenumber</Value>\n"
+            + "            <Value>CommonName=cn</Value>\n"            
+            + "            <Value>Mgr=manager</Value>\n"
+            + "            <Value>nsrole=nsrole</Value>\n"
+            + "            <Value>UID=uid</Value>\n"
+            + "            <Value>UserStatus=inetuserstatus</Value>\n"
+            + "            <Value>SN=sn</Value>\n"
+            + "            <Value>Tle=title</Value>\n"
+            + "            <Value>SessionQuota=iplanet-am-session-quota-limit</Value>\n"
+            + "            <Value>EntryDN=entrydn</Value>\n"
+            + "        </Attribute>";
     
     /** Creates a new instance of configureFedlet */
     public ConfigureFedlet() {
@@ -247,7 +327,36 @@ public class ConfigureFedlet extends TestCommon {
             log(Level.FINEST, "configureFedlet", "idp metadata" +
                     idpMetadata[0]);
             log(Level.FINEST, "configureFedlet", "idp Ext metadata" +
-                    idpMetadata[1]);      
+                    idpMetadata[1]);
+
+            // idp metadata modification on idp side
+            idpMetadata[1] =
+                    FedletCommon.getExtMetadataFromPage(idpExportEntityPage);
+            String idpmetadataMod = idpMetadata[1].replaceAll(
+                    ATTRIB_MAP_DEFAULT, ATTRIB_MAP_VALUE);
+            idpmetadataMod = idpmetadataMod.replaceAll(ATTRIB_X509_DEFAULT,
+                    ATTRIB_X509_VALUE);
+            log(Level.FINEST, "configureFedlet", "Modified IDP" +
+                    " metadata:" + idpmetadataMod);
+
+            if (FederationManager.getExitCode(idpfm.deleteEntity(idpWebClient,
+                    configMap.get(TestConstants.KEY_FEDLETIDP_ENTITY_NAME),
+                    configMap.get(TestConstants.KEY_ATT_EXECUTION_REALM),
+                    true, "saml2")) != 0) {
+                log(Level.SEVERE, "configureFedlet", "Deletion of" +
+                        " idp Extended entity failed");
+                log(Level.SEVERE, "configureFedlet", "deleteEntity" +
+                        " famadm command failed");                
+            }
+            if (FederationManager.getExitCode(idpfm.importEntity(idpWebClient,
+                    configMap.get(TestConstants.KEY_ATT_EXECUTION_REALM), "",
+                    idpmetadataMod, "", "saml2")) != 0) {
+                log(Level.SEVERE, "configureFedlet", "Failed to" +
+                        " import idp extended metadata");
+                log(Level.SEVERE, "configureFedlet", "importEntity" +
+                        " famadm command failed");
+                assert(false);
+            }
             
             // Fedlet 
             fedleturl = fedletidpurl + "/task/CreateFedlet";
@@ -361,10 +470,78 @@ public class ConfigureFedlet extends TestCommon {
                     assert false;
                 }    
                 
-            } else {            
+            } else {
+                String[] fedletMetadata = {"", ""};
                 clientURL = warFile;
                 CreateFedlet(fedUrl);                
-                Thread.sleep(6000);               
+                Thread.sleep(6000);
+
+                // Fedlet metadata modification on idp side
+                idpfm = new FederationManager(fedletidpurl);            
+
+                // Export fedlet metadata 
+                HtmlPage fedletExportEntityPage;
+                if (strGroupName.contains("sec")) {
+                    fedletExportEntityPage = idpfm.exportEntity(idpWebClient,
+                            configMap.get(TestConstants.KEY_FEDLET_NAME),
+                            configMap.get(TestConstants.
+                            KEY_ATT_EXECUTION_REALM),
+                            true, true, true, "saml2");
+                } else {
+                    fedletExportEntityPage = idpfm.exportEntity(idpWebClient,
+                            configMap.get(TestConstants.KEY_FEDLET_NAME),
+                            configMap.get(TestConstants.
+                            KEY_ATT_EXECUTION_REALM),
+                            false, true, true, "saml2");
+                }
+
+                if (FederationManager.getExitCode(
+                        fedletExportEntityPage) != 0) {
+                    log(Level.SEVERE, "configureFedlet", "exportEntity famadm" +
+                            " command failed");
+                    assert false;
+                }
+                fedletMetadata[0] = FedletCommon.getMetadataFromPage(
+                        fedletExportEntityPage);
+                fedletMetadata[1] = FedletCommon.getExtMetadataFromPage(
+                        fedletExportEntityPage);
+                
+                log(Level.FINEST, "configureFedlet", "fedlet metadata: " +
+                        fedletMetadata[0]);
+                log(Level.FINEST, "configureFedlet", "fedlet Ext metadata: " +
+                        fedletMetadata[1]);                
+                
+                String fedletmetadataMod = fedletMetadata[0].replaceAll(
+                        RoleDescriptor_Def, RoleDescriptor_Mod);                
+                log(Level.FINEST, "configureFedlet", "Modified fedlet" +
+                        " metadata: " + fedletmetadataMod);
+
+                String fedletExtmetadataMod = fedletMetadata[1].replaceAll(
+                        oriex, modex);
+                log(Level.FINEST, "configureFedlet", "Modified extended " +
+                        "fedlet metadata: " + fedletExtmetadataMod);
+
+                if (FederationManager.getExitCode(idpfm.deleteEntity(
+                        idpWebClient, configMap.get(TestConstants.
+                        KEY_FEDLET_NAME), configMap.get(TestConstants.
+                        KEY_ATT_EXECUTION_REALM), false, "saml2")) != 0) {
+                    log(Level.SEVERE, "configureFedlet", "Deletion of" +
+                            " fedlet Extended entity failed");
+                    log(Level.SEVERE, "configureFedlet", "deleteEntity" +
+                            " famadm command failed");                    
+                }
+
+                if (FederationManager.getExitCode(idpfm.importEntity(
+                        idpWebClient, configMap.get(TestConstants.
+                        KEY_ATT_EXECUTION_REALM), fedletmetadataMod, 
+                        fedletExtmetadataMod, configMap.get(
+                        TestConstants.KEY_FEDLET_COT), "saml2")) != 0) {
+                    log(Level.SEVERE, "configureFedlet", "Failed to" +
+                            " import fedlet extended metadata");
+                    log(Level.SEVERE, "configureFedlet", "importEntity" +
+                            " famadm command failed");
+                    assert(false);
+                }                
                 
                 log(Level.FINEST, "configureFedlet", "Configuring an " +
                         "external war"); 
@@ -397,7 +574,10 @@ public class ConfigureFedlet extends TestCommon {
                             "is: ", page.getWebResponse().getContentAsString());
                     assert false;
                 }                     
-            }            
+            } else {
+                log(Level.FINEST, "Fedlet is already configured:",
+                    page.getWebResponse().getContentAsString());
+            }
             
             page = (HtmlPage)idpWebClient.getPage(clientURL + "/index.jsp");
             log(Level.FINEST, "Fedlet Index Page:", 
