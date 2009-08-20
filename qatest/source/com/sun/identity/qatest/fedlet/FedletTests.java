@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletTests.java,v 1.2 2009-05-07 22:29:46 vimal_67 Exp $
+ * $Id: FedletTests.java,v 1.3 2009-08-20 17:07:35 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.sun.identity.qatest.fedlet;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.FedletCommon;
 import com.sun.identity.qatest.common.TestCommon;
@@ -62,8 +61,10 @@ public class FedletTests extends TestCommon {
     private FederationManager fmfedletIDP;
     private String fedletURL;
     private HtmlPage page1;
+    private HtmlPage fedletPage;
     private String testAttribute;
     private ArrayList idpattrmultiVal;
+    String fedletidpurl;
     
     /**
      * This is constructor for this class.
@@ -98,9 +99,12 @@ public class FedletTests extends TestCommon {
                     + fileseparator;                                  
             fedletURL = configMap.get(TestConstants.KEY_FEDLET_WAR_LOCATION);
             log(Level.FINEST, "setup", "Fedlet URL is : " + fedletURL);
+            fedletPage = (HtmlPage) webClient.getPage(fedletURL);
+            log(Level.FINEST, "setup", "Fedlet Index Page: " +
+                    fedletPage.getWebResponse().getContentAsString());
             
             // Create idp user
-            String fedletidpurl = configMap.get(TestConstants.KEY_AMC_PROTOCOL)
+            fedletidpurl = configMap.get(TestConstants.KEY_AMC_PROTOCOL)
             + "://" + configMap.get(TestConstants.KEY_AMC_HOST) + ":"
                     + configMap.get(TestConstants.KEY_AMC_PORT)
                     + configMap.get(TestConstants.KEY_AMC_URI);
@@ -172,7 +176,7 @@ public class FedletTests extends TestCommon {
     /**
      * Run fedlet(SP) initiated Single-Sign-On using HTTP Artifact binding      
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
       "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSPSSOHTTPArtifact()
     throws Exception {
@@ -191,7 +195,7 @@ public class FedletTests extends TestCommon {
                     testAttribute);
             getWebClient();
             xmlfile = baseDir + "testspssohttpartifact.xml";            
-            String urlStr = getAnchors(str);
+            String urlStr = FedletCommon.getAnchors(fedletPage, str);
             FedletCommon.getxmlFedletSSO(xmlfile, configMap, urlStr);            
             log(Level.FINEST, "testSPSSOHTTPArtifact", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
@@ -205,12 +209,13 @@ public class FedletTests extends TestCommon {
                 String multiVal = (String) iter.next();             
                     if (!page1.getWebResponse().getContentAsString().
                             contains(multiVal)) {
-                        log(Level.SEVERE, "attributeQueryTest", 
+                        log(Level.SEVERE, "testSPSSOHTTPArtifact",
                             "Couldn't find attribute value " +
                             multiVal);
                         assert false;
                     }     
             }
+            consoleLogout(webClient, fedletidpurl + "/UI/Logout");
         } catch (Exception e) {
             log(Level.SEVERE, "testSPSSOHTTPArtifact", e.getMessage());
             e.printStackTrace();
@@ -223,7 +228,7 @@ public class FedletTests extends TestCommon {
      * Run IDP initiated Single-Sign-On using HTTP Artifact
      * binding     
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
       "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testIDPSSOHTTPArtifact()
     throws Exception {
@@ -241,7 +246,7 @@ public class FedletTests extends TestCommon {
                     testAttribute);
             getWebClient();
             xmlfile = baseDir + "testidpssohttpartifact.xml";
-            String urlStr = getAnchors(str);
+            String urlStr = FedletCommon.getAnchors(fedletPage, str);
             FedletCommon.getxmlFedletSSO(xmlfile, configMap, urlStr);                        
             log(Level.FINEST, "testIDPSSOHTTPArtifact", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
@@ -255,12 +260,13 @@ public class FedletTests extends TestCommon {
                 String multiVal = (String) iter.next();             
                     if (!page1.getWebResponse().getContentAsString().
                             contains(multiVal)) {
-                        log(Level.SEVERE, "attributeQueryTest", 
+                        log(Level.SEVERE, "testIDPSSOHTTPArtifact",
                             "Couldn't find attribute value " +
                             multiVal);
                         assert false;
                     }     
             }
+            consoleLogout(webClient, fedletidpurl + "/UI/Logout");
         } catch (Exception e) {
             log(Level.SEVERE, "testIDPSSOHTTPArtifact", e.getMessage());
             e.printStackTrace();
@@ -289,7 +295,7 @@ public class FedletTests extends TestCommon {
                     testAttribute);
             getWebClient();
             xmlfile = baseDir + "testspssohttppost.xml";
-            String urlStr = getAnchors(str);
+            String urlStr = FedletCommon.getAnchors(fedletPage, str);
             FedletCommon.getxmlFedletSSO(xmlfile, configMap, urlStr);                        
             log(Level.FINEST, "testSPSSOHTTPPost", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
@@ -303,12 +309,13 @@ public class FedletTests extends TestCommon {
                 String multiVal = (String) iter.next();             
                     if (!page1.getWebResponse().getContentAsString().
                             contains(multiVal)) {
-                        log(Level.SEVERE, "attributeQueryTest", 
+                        log(Level.SEVERE, "testSPSSOHTTPPost",
                             "Couldn't find attribute value " +
                             multiVal);
                         assert false;
                     }     
             }
+            consoleLogout(webClient, fedletidpurl + "/UI/Logout");
         } catch (Exception e) {
             log(Level.SEVERE, "testSPSSOHTTPPost", e.getMessage());
             e.printStackTrace();
@@ -337,7 +344,7 @@ public class FedletTests extends TestCommon {
                     testAttribute);
             getWebClient();
             xmlfile = baseDir + "testidpssohttppost.xml";
-            String urlStr = getAnchors(str);
+            String urlStr = FedletCommon.getAnchors(fedletPage, str);
             FedletCommon.getxmlFedletSSO(xmlfile, configMap, urlStr);                        
             log(Level.FINEST, "testIDPSSOHTTPPost", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
@@ -351,24 +358,25 @@ public class FedletTests extends TestCommon {
                 String multiVal = (String) iter.next();             
                     if (!page1.getWebResponse().getContentAsString().
                             contains(multiVal)) {
-                        log(Level.SEVERE, "attributeQueryTest", 
+                        log(Level.SEVERE, "testIDPSSOHTTPPost",
                             "Couldn't find attribute value " +
                             multiVal);
                         assert false;
                     }     
             }
+            consoleLogout(webClient, fedletidpurl + "/UI/Logout");
         } catch (Exception e) {
             log(Level.SEVERE, "testIDPSSOHTTPPost", e.getMessage());
             e.printStackTrace();
             throw e;
         }
         exiting("testIDPSSOHTTPPost");        
-    }  
+    }    
    
     /**
      * Cleanup method deletes all the users which were created in setup
      */
-    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
       "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
@@ -378,7 +386,7 @@ public class FedletTests extends TestCommon {
             getWebClient();
             
             // delete idp users
-            String fedletidpurl = configMap.get(TestConstants.KEY_AMC_PROTOCOL)
+            fedletidpurl = configMap.get(TestConstants.KEY_AMC_PROTOCOL)
             + "://" + configMap.get(TestConstants.KEY_AMC_HOST) + ":"
                     + configMap.get(TestConstants.KEY_AMC_PORT)
                     + configMap.get(TestConstants.KEY_AMC_URI);
@@ -406,38 +414,6 @@ public class FedletTests extends TestCommon {
             throw e;
         }
         exiting("cleanup");
-    }    
-    
-    /**
-     * @param str is the string passed whether it is Fedlet(SP) or IDP
-     * initated HTTP-POST or HTTP-Artifact profile
-     */    
-    public String getAnchors(String string) throws Exception {
-            try {
-            getWebClient();
-            String urlStr = "";       
+    }       
 
-            // Get Anchors        
-            HtmlPage page = (HtmlPage) webClient.getPage(fedletURL);
-            log(Level.FINEST, "getAnchors", "Fedlet Index Page: " + 
-                    page.getWebResponse().getContentAsString());        
-        
-            HtmlAnchor anchor = page.getFirstAnchorByText(string);
-                
-            int index = anchor.toString().indexOf("\"");
-            if (index != -1) {
-                String str = anchor.toString().substring(
-                        index + 1, anchor.toString().length()).trim();            
-                int inx = str.indexOf("\"");
-                if (inx != -1) {
-                    urlStr = str.substring(0, inx);
-                }            
-            }
-            return urlStr;
-        } catch (Exception e) {
-            log(Level.FINEST, "getAnchors", e.getMessage());
-            e.printStackTrace();
-            throw e;            
-        }
-    }
 }
