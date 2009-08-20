@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletCommon.java,v 1.2 2009-08-18 19:10:17 nithyas Exp $
+ * $Id: FedletCommon.java,v 1.3 2009-08-20 17:09:04 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,17 +26,22 @@ package com.sun.identity.qatest.common;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.sun.identity.qatest.common.MultiProtocolCommon;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 /**
  * This class contains helper methods for samlv2 fedlet tests
  */
 public class FedletCommon extends TestCommon {
+
+    public static WebClient webClient;
     
     /** Creates a new instance of FedletCommon */
     public FedletCommon() {
@@ -55,8 +60,7 @@ public class FedletCommon extends TestCommon {
      * @param urlStr is the URL link of the fedlet initated or idp initated 
      * HTTP-POST or HTTP-Artifact     
      */
-    public static void getxmlFedletSSO(String xmlFileName,            
-            Map m, String urlStr)
+    public static void getxmlFedletSSO(String xmlFileName, Map m, String urlStr)
             throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);           
@@ -85,6 +89,81 @@ public class FedletCommon extends TestCommon {
     }
 
     /**
+     * This method creates the xml file
+     * 1. It logsout the user session from IDP
+     * @param xmlFileName is the file to be created.
+     * @param Map m contains all the data for xml generation
+     * @param urlStr is the URL link of the fedlet(SP) initated or idp initated
+     * Single Logout using SOAP, HTTP-Redirect or HTTP-POST
+     */
+    public static void getxmlFedletSLO(String xmlFileName, Map m,
+            String logouturlStr, String strResult) throws Exception {
+        FileWriter fstream = new FileWriter(xmlFileName);
+        BufferedWriter out = new BufferedWriter(fstream);
+        out.write("<url href=\"" + logouturlStr);
+        out.write("\">");
+        out.write(newline);
+        out.write("<form>");
+        out.write(newline);
+        out.write("<result text=\"" + strResult + "\"/>");
+        out.write(newline);
+        out.write("</form>");
+        out.write(newline);
+        out.write("</url>");
+        out.write(newline);
+        out.close();
+    }
+
+    /**
+     * Creates the webClient which will be used for rest of the tests.
+     */
+    public static void getWebClient()
+    throws Exception {
+        try {
+            webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
+        } catch (Exception e) {
+            log(Level.SEVERE, "getWebClient", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * @param str is the string passed whether it is Fedlet(SP) or IDP
+     * initated HTTP-POST or HTTP-Artifact profile
+     */
+    public static String getAnchors(HtmlPage page, String string)
+            throws Exception {
+            try {
+            getWebClient();
+            String urlStr = "";
+
+            // Get Anchors
+            log(Level.FINEST, "getAnchors", "Page: " +
+                    page.getWebResponse().getContentAsString());
+
+            HtmlAnchor anchor = page.getFirstAnchorByText(string);
+
+            int index = anchor.toString().indexOf("\"");
+            if (index != -1) {
+                String str = anchor.toString().substring(
+                        index + 1, anchor.toString().length()).trim();
+                int inx = str.indexOf("\"");
+                if (inx != -1) {
+                    urlStr = str.substring(0, inx);
+                }
+            }
+
+            log(Level.FINEST, "getAnchors", "String: " + urlStr);
+            return urlStr;
+        } catch (Exception e) {
+            log(Level.FINEST, "getAnchors", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }    
+
+    /**
      * This method loads the resource bundle & puts all the values in map
      * @param String rbName Resource bundle name
      * @param Map m will be populated with resource bundle data
@@ -104,7 +183,7 @@ public class FedletCommon extends TestCommon {
     public static String getMetadataFromPage(HtmlPage page)
     throws Exception {
         String metadata = "";
-        metadata = MultiProtocolCommon.getMetadataFromPage(page);
+        metadata = MultiProtocolCommon.getMetadataFromPage(page);       
         return metadata;
     }
 
@@ -114,7 +193,7 @@ public class FedletCommon extends TestCommon {
      */
     public static String getExtMetadataFromPage(HtmlPage page)
     throws Exception {
-        String metadata = "";
+        String metadata = "";        
         metadata = MultiProtocolCommon.getExtMetadataFromPage(page);
         return metadata;
     }
@@ -238,7 +317,7 @@ public class FedletCommon extends TestCommon {
             }
             if (FederationManager.getExitCode(metaPage) != 0) {
                 assert false;
-            }
+            }            
             
             arrMetadata[0] = MultiProtocolCommon.getMetadataFromPage(metaPage);
             arrMetadata[1] = MultiProtocolCommon.getExtMetadataFromPage(metaPage);
@@ -246,7 +325,7 @@ public class FedletCommon extends TestCommon {
             if ((arrMetadata[0].equals(null)) || 
                     (arrMetadata[1].equals(null))) {
                 assert(false);
-            } else {
+            } else {                
                 if (FederationManager.getExitCode(fm.importEntity(webClient,
                         executionRealm, arrMetadata[0], arrMetadata[1],
                         cot, "saml2")) != 0) {
