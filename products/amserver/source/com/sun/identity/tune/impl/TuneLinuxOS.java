@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneLinuxOS.java,v 1.4 2009-08-21 01:27:10 ykwon Exp $
+ * $Id: TuneLinuxOS.java,v 1.5 2009-08-21 02:04:46 ykwon Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -190,7 +190,7 @@ public class TuneLinuxOS extends TuneOS {
                 recVal = LNX_IPV4_TCP_WINDOW_SCALING + " = " +
                         AMTUNE_LINUX_IPV4_TCP_WIN_SCALE;
                 mWriter.writeln(recVal);
-                recVal.add(recVal);
+                recVals.add(recVal);
                 mWriter.writeln(" ");
                 
                 mWriter.writelnLocaleMsg("pt-lnx-tcp-keepalive-time-msg");
