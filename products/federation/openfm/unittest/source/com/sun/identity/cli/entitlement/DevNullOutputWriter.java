@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DevNullOutputWriter.java,v 1.1 2009-08-19 05:40:59 veiming Exp $
+ * $Id: DevNullOutputWriter.java,v 1.1 2009-08-21 22:27:55 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;

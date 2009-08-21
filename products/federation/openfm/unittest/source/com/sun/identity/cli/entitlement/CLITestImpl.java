@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLITestImpl.java,v 1.1 2009-08-19 05:40:59 veiming Exp $
+ * $Id: CLITestImpl.java,v 1.1 2009-08-21 22:27:55 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.CLIConstants;
-import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CommandManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.security.AdminTokenAction;
@@ -52,7 +51,7 @@ public class CLITestImpl {
         Map<String, Object> env = new HashMap<String, Object>();
         env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "testclifw");
         env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
-            "com.sun.identity.entitlement.opensso.cli.EntitlementManager");
+            "com.sun.identity.cli.AccessManager");
         env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER, outputWriter);
         cmdManager = new CommandManager(env);
     }

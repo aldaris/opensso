@@ -22,21 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListApplicationTypesTest.java,v 1.1 2009-08-19 05:40:59 veiming Exp $
+ * $Id: ListApplicationsTest.java,v 1.1 2009-08-21 22:27:55 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;
 
+import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CLIRequest;
+import com.sun.identity.cli.IArgument;
 import org.testng.annotations.Test;
 
 
-public class ListApplicationTypesTest extends CLITestImpl {
+public class ListApplicationsTest extends CLITestImpl {
     @Test
-    public void listAppTypes() throws CLIException {
-        String[] args = new String[1];
-        args[0] = "list-appl-types";
+    public void listApps() throws CLIException {
+        String[] args = new String[3];
+        args[0] = "list-appls";
+        args[1] = CLIConstants.PREFIX_ARGUMENT_LONG +
+            IArgument.REALM_NAME;
+        args[2] = "/";
         CLIRequest req = new CLIRequest(null, args, adminToken);
         cmdManager.addToRequestQueue(req);
         cmdManager.serviceRequestQueue();

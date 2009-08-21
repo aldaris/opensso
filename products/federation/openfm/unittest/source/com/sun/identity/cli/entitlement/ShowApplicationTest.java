@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListApplicationsTest.java,v 1.1 2009-08-19 05:40:59 veiming Exp $
+ * $Id: ShowApplicationTest.java,v 1.1 2009-08-21 22:27:56 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;
@@ -31,17 +31,22 @@ import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CLIRequest;
 import com.sun.identity.cli.IArgument;
+import com.sun.identity.entitlement.ApplicationTypeManager;
 import org.testng.annotations.Test;
 
 
-public class ListApplicationsTest extends CLITestImpl {
+public class ShowApplicationTest extends CLITestImpl {
     @Test
-    public void listApps() throws CLIException {
-        String[] args = new String[3];
-        args[0] = "list-appls";
+    public void createApp() throws CLIException {
+        String[] args = new String[5];
+        args[0] = "show-appl";
         args[1] = CLIConstants.PREFIX_ARGUMENT_LONG +
             IArgument.REALM_NAME;
         args[2] = "/";
+        args[3] = CLIConstants.PREFIX_ARGUMENT_LONG +
+            CreateApplication.PARAM_APPL_NAME;
+        args[4] = ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
+
         CLIRequest req = new CLIRequest(null, args, adminToken);
         cmdManager.addToRequestQueue(req);
         cmdManager.serviceRequestQueue();
