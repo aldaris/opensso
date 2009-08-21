@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOUserSubject.java,v 1.1 2009-08-19 05:40:35 veiming Exp $
+ * $Id: OpenSSOUserSubject.java,v 1.2 2009-08-21 21:52:01 hengming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -93,7 +93,7 @@ public class OpenSSOUserSubject extends UserSubject {
         } catch (IdRepoException ex) {
             if (PrivilegeManager.debug.messageEnabled()) {
                 PrivilegeManager.debug.message(
-                    "UserSubject.getSearchIndexAttributes", ex);
+                    "OpenSSOUserSubject.getSearchIndexAttributes", ex);
             }
             set.add(uuid);
         }

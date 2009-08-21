@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPrivilege.java,v 1.1 2009-08-19 05:40:35 veiming Exp $
+ * $Id: OpenSSOPrivilege.java,v 1.2 2009-08-21 21:52:01 hengming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -86,8 +86,8 @@ public class OpenSSOPrivilege extends Privilege {
         }
 
         Map<String, Set<String>> advices = new HashMap<String, Set<String>>();
-        if (doesSubjectMatch(realm, advices, subject, resourceName,
-            environment) &&
+        if (doesSubjectMatch(adminSubject, realm, advices, subject,
+            resourceName, environment) &&
             doesConditionMatch(realm, advices, subject, resourceName,
             environment)
         ) {

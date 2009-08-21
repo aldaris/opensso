@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOGroupSubject.java,v 1.1 2009-08-19 05:40:35 veiming Exp $
+ * $Id: OpenSSOGroupSubject.java,v 1.2 2009-08-21 21:52:01 hengming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -40,6 +40,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
+import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -112,7 +113,30 @@ public class OpenSSOGroupSubject extends GroupSubject {
                 Set<String> values = attributes.get(
                     SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
                     IdType.GROUP.getName());
-                satified = (values != null) ? values.contains(getID()) : false;
+                String grpID = getID();
+                if (values != null) {
+                    if (values.contains(grpID)) {
+                        satified = true;
+                    } else {
+                        try {
+                            SSOToken adminToken = (SSOToken)AccessController.
+                                doPrivileged(AdminTokenAction.getInstance());
+                            AMIdentity idGroup = IdUtils.getIdentity(adminToken,
+                                grpID);
+                            for(String value: values) {
+                                AMIdentity amgrp = IdUtils.getIdentity(
+                                    adminToken, value);
+                                if (idGroup.equals(amgrp)) {
+                                    satified = true;
+                                    break;
+                                }
+                            }
+                        } catch (IdRepoException e) {
+                            PrivilegeManager.debug.error(
+                                "GroupSubject.evaluate", e);
+                        }
+                    }
+                }
             }
         } else {
             try {
@@ -148,7 +172,20 @@ public class OpenSSOGroupSubject extends GroupSubject {
                 new HashMap<String, Set<String>>(4);
             if (sam.isGroupMembershipSearchIndexEnabled()) {
                 Set<String> set = new HashSet<String>();
-                set.add(getID());
+                String uuid = getID();
+                SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+                try {
+                    AMIdentity amid = IdUtils.getIdentity(adminToken, uuid);
+                    set.add(OpenSSOSubjectAttributesCollector.
+                        getIDWithoutOrgName(amid));
+                } catch (IdRepoException ex) {
+                    if (PrivilegeManager.debug.messageEnabled()) {
+                        PrivilegeManager.debug.message(
+                            "OpenSSOGroupSubject.getSearchIndexAttributes", ex);
+                    }
+                    set.add(uuid);
+                }
                 map.put(SubjectAttributesCollector.NAMESPACE_MEMBERSHIP +
                     IdType.GROUP.getName(), set);
             } else {
@@ -189,10 +226,16 @@ public class OpenSSOGroupSubject extends GroupSubject {
         IdType type, 
         AMIdentity idGroup
     ) throws IdRepoException, SSOException {
-        Set<AMIdentity> members = idGroup.getMembers(type);
-        for (AMIdentity amid : members) {
-            if (hasPrincipal(subject, amid.getUniversalId())) {
-                return true;
+        Set<Principal> userPrincipals = subject.getPrincipals();
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        for (Principal p : userPrincipals) {
+            AMIdentity amid = IdUtils.getIdentity(adminToken, p.getName());
+            Set<AMIdentity> memberships = amid.getMemberships(IdType.GROUP);
+            for(AMIdentity amgrp: memberships) {
+                if (amgrp.equals(idGroup)) {
+                    return true;
+                }
             }
         }
         return false;
