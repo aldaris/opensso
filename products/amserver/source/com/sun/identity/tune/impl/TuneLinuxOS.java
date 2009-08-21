@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneLinuxOS.java,v 1.3 2008-08-29 10:25:40 kanduls Exp $
+ * $Id: TuneLinuxOS.java,v 1.4 2009-08-21 01:27:10 ykwon Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -124,6 +124,7 @@ public class TuneLinuxOS extends TuneOS {
                 mWriter.writeln(recVal);
                 recVals.add(recVal);
                 mWriter.writeln(" ");
+                
                 mWriter.writelnLocaleMsg("pt-lnx-core-rmem-max-msg");
                 mWriter.writeLocaleMsg("pt-cur-val");
                 reqLine = sysOutHdlr.getLine(LNX_CORE_RMEM_MAX);
@@ -134,17 +135,7 @@ public class TuneLinuxOS extends TuneOS {
                 mWriter.writeln(recVal);
                 recVals.add(recVal);
                 mWriter.writeln(" ");
-                mWriter.writelnLocaleMsg("pt-lnx-core-rmem-default-msg");
-                mWriter.writeLocaleMsg("pt-cur-val");
-                reqLine = sysOutHdlr.getLine(LNX_CORE_RMEM_DEFAULT);
-                mWriter.writeln(LNX_CORE_RMEM_DEFAULT + " = " + 
-                        AMTuneUtil.getLastToken(reqLine, "="));
-                mWriter.writeLocaleMsg("pt-rec-val");
-                recVal = LNX_CORE_RMEM_DEFAULT + " = " + 
-                        AMTUNE_LINUX_CORE_RMEM_DEFAULT;
-                mWriter.writeln(recVal);
-                recVals.add(recVal);
-                mWriter.writeln(" ");
+                
                 mWriter.writelnLocaleMsg("pt-lnx-tcp-rmem-msg");
                 mWriter.writeLocaleMsg("pt-cur-val");
                 reqLine = sysOutHdlr.getLine(LNX_IPV4_TCP_RMEM);
@@ -199,6 +190,7 @@ public class TuneLinuxOS extends TuneOS {
                 recVal = LNX_IPV4_TCP_WINDOW_SCALING + " = " +
                         AMTUNE_LINUX_IPV4_TCP_WIN_SCALE;
                 mWriter.writeln(recVal);
+                recVal.add(recVal);
                 mWriter.writeln(" ");
                 
                 mWriter.writelnLocaleMsg("pt-lnx-tcp-keepalive-time-msg");
