@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPCondition.java,v 1.1 2009-08-19 05:40:33 veiming Exp $
+ * $Id: IPCondition.java,v 1.2 2009-08-21 05:27:00 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -113,9 +113,21 @@ public class IPCondition extends EntitlementConditionAdaptor {
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
-        Set<String> setIP = environment.get(REQUEST_IP);
-        String ip = ((setIP != null) && !setIP.isEmpty()) ?
-            setIP.iterator().next() : null;
+
+        String ip = null;
+        Set<String> setIP = null;
+        Object ipObject = environment.get(REQUEST_IP);
+        // code changed to fix issue 5440
+        // IPCondition evaluation is breaking
+        if (ipObject != null) {
+            if (ipObject instanceof String) {
+                ip = (String)ipObject;
+            } else if (ipObject instanceof Set) {
+                setIP = (Set<String>)ipObject;
+                ip =  !setIP.isEmpty() ?
+                    setIP.iterator().next() : null;
+            }
+        }
 
         boolean allowed = (ip != null) && isAllowedByIp(ip);
         return new ConditionDecision(allowed, Collections.EMPTY_MAP);
