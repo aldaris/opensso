@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConstants.java,v 1.11 2009-05-04 23:32:08 ykwon Exp $
+ * $Id: AMTuneConstants.java,v 1.12 2009-08-21 01:25:18 ykwon Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -148,15 +148,14 @@ public interface AMTuneConstants {
     static int AMTUNE_INVALID_ENVIRON_SETTING = 200;
     
     static String AMTUNE_LINUX_IPV4_LOCAL_PORT_RANGE = "1204 65000";
-    static String AMTUNE_LINUX_CORE_RMEM_MAX = "262140";
-    static String AMTUNE_LINUX_CORE_RMEM_DEFAULT = "262140";
-    static String AMTUNE_LINUX_IPV4_TCP_RMEM = "4096 131072 262140";
-    static String AMTUNE_LINUX_IPV4_TCP_WMEM = "4096 131072 262140";
+    static String AMTUNE_LINUX_CORE_RMEM_MAX = "8388608";
+    static String AMTUNE_LINUX_IPV4_TCP_RMEM = "4096 131072 8388608";
+    static String AMTUNE_LINUX_IPV4_TCP_WMEM = "4096 131072 8388608";
     static String AMTUNE_LINUX_IPV4_TCP_SACK = "0";
     static String AMTUNE_LINUX_IPV4_TCP_TIMESTAMPS = "0";
     static String AMTUNE_LINUX_IPV4_TCP_WIN_SCALE = "0";
-    static String AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_TIME = "60000";
-    static String AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_INTVL = "15000";
+    static String AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_TIME = "60";
+    static String AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_INTVL = "75";
     static String AMTUNE_LINUX_IPV4_TCP_FIN_TIMEOUT = "30";
     static String AMTUNE_LINUX_STACK_SIZE_LIMITS = "256";
     //All password contants
