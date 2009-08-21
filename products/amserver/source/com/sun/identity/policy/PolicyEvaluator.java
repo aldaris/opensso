@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.13 2009-08-19 05:40:37 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.14 2009-08-21 21:50:15 hengming Exp $
  *
  */
 
@@ -607,6 +607,11 @@ public class PolicyEvaluator {
 
     private String getActionFalseBooleanValue(String actionName)
         throws InvalidNameException {
+
+        if (serviceType == null) {
+            return Boolean.FALSE.toString();
+        }
+
         ActionSchema schema = serviceType.getActionSchema(actionName);
 
         // Cache the false values for the action names
@@ -625,6 +630,11 @@ public class PolicyEvaluator {
 
     private String getActionTrueBooleanValue(String actionName)
         throws InvalidNameException {
+
+        if (serviceType == null) {
+            return Boolean.TRUE.toString();
+        }
+
         ActionSchema schema = serviceType.getActionSchema(actionName);
 
         // Cache the true values for the action names
@@ -802,23 +812,6 @@ public class PolicyEvaluator {
            null or empty */
         if ( (actionNames == null) || (actionNames.isEmpty()) ) {
             actionNames = serviceType.getActionNames();
-        }
-
-        // If actions names are of non-boolean syntax, concat them
-        Set actions = new HashSet();
-        for (Object an : actionNames) {
-            String actionName = an.toString();
-            ActionSchema as = serviceType.getActionSchema(actionName);
-            if ((as == null) ||
-                as.getSyntax().equals(AttributeSchema.Syntax.BOOLEAN)) {
-                actions.add(actionName);
-            } else {
-                // Concat the action name and value
-                Set values = as.getActionValues();
-                for (Object value : values) {
-                    actions.add(actionName + "_" + value.toString());
-                }
-            }
         }
 
         SSOToken adminSSOToken = (SSOToken) AccessController.doPrivileged(
@@ -1495,10 +1488,23 @@ public class PolicyEvaluator {
             for (Iterator i = actionValues.keySet().iterator(); i.hasNext();) {
                 String actionName = (String) i.next();
                 Set set = new HashSet();
-                // Determinte if the serviceType have boolean action values
-                ActionSchema as = serviceType.getActionSchema(actionName);
-                if ((as == null) ||
-                    as.getSyntax().equals(AttributeSchema.Syntax.BOOLEAN)) {
+                boolean isBooleanAction = true;
+                if (serviceType != null) {
+                    ActionSchema as = null;
+                    try {
+                        as = serviceType.getActionSchema(actionName);
+                    } catch (InvalidNameException inex) {
+                        if (DEBUG.warningEnabled()) {
+                            DEBUG.warning("PolicyEvaluator." +
+                                "entitlementToPolicyDecision:", inex);
+                        }
+                    }
+                    isBooleanAction = (as != null) &&
+                        as.getSyntax().equals(AttributeSchema.Syntax.BOOLEAN);
+                }
+
+                if (isBooleanAction) {
+
                     Boolean values = (Boolean) actionValues.get(actionName);
 
                     if (values.booleanValue()) {
@@ -1530,12 +1536,22 @@ public class PolicyEvaluator {
             for (String actionName : actionNames) {
                 Set set = new HashSet();
                 // Determinte if the serviceType have boolean action values
-                ActionSchema as = serviceType.getActionSchema(actionName);
+                ActionSchema as = null;
+                if (serviceType != null) {
+                    try {
+                        as = serviceType.getActionSchema(actionName);
+                    } catch (InvalidNameException inex) {
+                        if (DEBUG.warningEnabled()) {
+                            DEBUG.warning("PolicyEvaluator." +
+                                "entitlementToPolicyDecision:", inex);
+                        }
+                    }
+                }
                 if ((as == null) ||
                     as.getSyntax().equals(AttributeSchema.Syntax.BOOLEAN)) {
                     set.add(getActionFalseBooleanValue(actionName));
                 } else {
-                    set.add(as.getDefaultValues());
+                    set.addAll(as.getDefaultValues());
                 }
                 ActionDecision ad = new ActionDecision(actionName, set);
                 ad.setAdvices(entitlement.getAdvices());
