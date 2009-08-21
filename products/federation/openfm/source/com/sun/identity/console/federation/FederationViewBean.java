@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.24 2009-02-20 00:39:40 babysunil Exp $
+ * $Id: FederationViewBean.java,v 1.25 2009-08-21 20:09:23 veiming Exp $
  *
  */
 
@@ -55,12 +55,11 @@ import com.sun.identity.console.federation.model.FSSAMLServiceModelImpl;
 import com.sun.identity.cot.CircleOfTrustDescriptor;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.shared.datastruct.OrderedSet;
-
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.table.CCActionTable;
-
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -642,8 +641,8 @@ public  class FederationViewBean
         List list = (List)szCache.getSerializedObj ();
 
         FSAuthDomainsModel model = (FSAuthDomainsModel)getModel ();
-        StringBuffer successMessage = new StringBuffer ();
-        StringBuffer errorMessage  = new StringBuffer ();
+        StringBuilder deletedNames = new StringBuilder();
+        StringBuilder cannotDeleteds = new StringBuilder();
 
         // each COT is deleted separately as they can be in separate realms
         for ( int i = 0; i < selected.length; i++) {
@@ -651,27 +650,40 @@ public  class FederationViewBean
             int pipeIndex = str.indexOf (",");
             String name = str.substring (0, pipeIndex);
             String realm = str.substring (pipeIndex+1);
+
             try {
                 model.deleteAuthenticationDomain (realm, name);
-                if (successMessage.length () < 1) {
-                    successMessage.append (
-                        model.getLocalizedString ("authDomain.message.deleted"))
-                        .append ("<ul>");
+                if (deletedNames.length() > 0) {
+                    deletedNames.append(", ");
                 }
-                successMessage.append ("<li>").append (name);
+                deletedNames.append(name);
             } catch (AMConsoleException e) {
-                if (errorMessage.length () < 1) {
-                    errorMessage.append (
-                        model.getLocalizedString ("general.error.message"))
-                        .append ("<ul>");
+                if (cannotDeleteds.length() > 0) {
+                    cannotDeleteds.append(", ");
                 }
-                errorMessage.append ("<li>").append (e.getMessage ());
+                cannotDeleteds.append(e.getMessage());
             }
         }
 
-        successMessage.append ("</ul>").append (errorMessage);
-        setInlineAlertMessage (CCAlert.TYPE_INFO, "message.information",
-            successMessage.toString ());
+        StringBuilder message = new StringBuilder();
+        if (deletedNames.length () > 0) {
+            Object[] params = {deletedNames};
+            message.append(MessageFormat.format(
+                model.getLocalizedString("authDomain.message.deleted"),
+                params));
+        }
+
+        if (cannotDeleteds.length() > 0) {
+            Object[] params = {cannotDeleteds};
+            message.append(MessageFormat.format(
+                model.getLocalizedString("generic.error.message"),
+                params));
+        }
+
+        if (message.length() > 0) {
+            setInlineAlertMessage (CCAlert.TYPE_INFO, "message.information",
+                message.toString ());
+        }
 
         forwardTo ();
     }
@@ -740,37 +752,51 @@ public  class FederationViewBean
             }
 
         }
-        StringBuffer finalStr = printDeleteMessage(model, successList, failureList);
+        String finalStr = printDeleteMessage(model, successList,
+            failureList);
         setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-               finalStr.toString());
+               finalStr);
         forwardTo();
     }
 
-    private StringBuffer printDeleteMessage(
+    private String printDeleteMessage(
         EntityModel model,
-        List slist,
-        List flist
+        List<String> slist,
+        List<String> flist
     ) {
-        StringBuffer fBuffer = new StringBuffer();
-        StringBuffer sBuffer = new StringBuffer();
-        if (slist.size()>0 ) {
-            sBuffer.append(model.getLocalizedString(
-                    "entity.deleted.message")).append("<ul>");
-            for (Iterator it = slist.iterator(); it.hasNext();) {
-                String key = (String)it.next();
-                sBuffer.append("<li>").append(key);
+        StringBuilder buffer = new StringBuilder();
+
+        if ((slist != null) && !slist.isEmpty()) {
+            StringBuilder buff = new StringBuilder();
+            for (String s : slist) {
+                if (buff.length() > 0) {
+                    buff.append(", ");
+                }
+                buff.append(s);
             }
+
+            Object[] params = {buff.toString()};
+            buffer.append(MessageFormat.format(
+                model.getLocalizedString("entity.deleted.message"),
+                params));
         }
-        if (flist.size()>0 ) {
-            fBuffer.append(model.getLocalizedString(
-                    "entity.deleted.failed.message")).append("<ul>");
-            for (Iterator it = flist.iterator(); it.hasNext();) {
-                String key = (String)it.next();
-                fBuffer.append("<li>").append(key);
+
+        if ((flist != null) && !flist.isEmpty()) {
+            StringBuilder buff = new StringBuilder();
+            for (String s : flist) {
+                if (buff.length() > 0) {
+                    buff.append(", ");
+                }
+                buff.append(s);
             }
+
+            Object[] params = {buff.toString()};
+            buffer.append(MessageFormat.format(
+                model.getLocalizedString("entity.deleted.failed.message"),
+                params));
         }
-        StringBuffer strBuffer = sBuffer.append("<br>").append(fBuffer);
-      return strBuffer;
+
+        return buffer.toString();
 
     }
 

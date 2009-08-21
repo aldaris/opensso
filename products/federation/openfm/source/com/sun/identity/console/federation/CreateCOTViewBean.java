@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateCOTViewBean.java,v 1.5 2008-06-25 05:49:34 qcheng Exp $
+ * $Id: CreateCOTViewBean.java,v 1.6 2009-08-21 20:09:23 veiming Exp $
  *
  */
 
@@ -54,6 +54,7 @@ import com.sun.web.ui.view.addremove.CCAddRemove;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.html.CCDropDownMenu;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -243,9 +244,9 @@ public class CreateCOTViewBean
                     (CCAddRemoveModel)addRemoveList.getModel();
                 Set providers = new HashSet(getSelectedValues(addRemoveModel));            
                 model.createAuthenticationDomain(values, providers);            
-                String message = model.getLocalizedString(
-                    "authentication.domain.create.message") +
-                    "<ul><li>" + name;
+                Object[] params = {name};
+                String message = MessageFormat.format(model.getLocalizedString(
+                    "authentication.domain.create.message"), params);
                 setPageSessionAttribute(
                     FederationViewBean.MESSAGE_TEXT, message);
                 backTrail();                    

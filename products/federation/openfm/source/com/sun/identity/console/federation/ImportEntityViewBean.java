@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityViewBean.java,v 1.6 2008-07-31 17:28:34 asyhuang Exp $
+ * $Id: ImportEntityViewBean.java,v 1.7 2009-08-21 20:09:23 veiming Exp $
  *
  */
 
@@ -48,6 +48,7 @@ import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import com.sun.web.ui.view.html.CCDropDownMenu;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -225,21 +226,22 @@ public class ImportEntityViewBean
             try {
                 model.importEntity(data);
                
-                StringBuffer message = new StringBuffer();
-                message.append(
-                    model.getLocalizedString("import.entity.metadata.success"))
-                        .append("<ul>");                       
-                        
+                StringBuilder buff = new StringBuilder();
+
                 // build the success message.
                 // don't need the realm name in the message so remove it first.
                 data.remove(ImportEntityModel.REALM_NAME);                
                 for (Iterator i = data.keySet().iterator(); i.hasNext();) {
                     String key = (String)i.next();  
                     String value = (String)data.get(key);
+
                     if ((value != null) && (value.length() > 0)) {
                         String val = (String)data.get(key);
                         if (val.startsWith("http")) {
-                            message.append("<li>").append(val);
+                            if (buff.length() > 0) {
+                                buff.append(", ");
+                            }
+                            buff.append(val);
                         } else {
                             int idx = val.lastIndexOf("<!-- ");
                             if (idx != -1) {
@@ -248,14 +250,25 @@ public class ImportEntityViewBean
                                     val = val.substring(idx+5, idx1);
                                 }
                             }
-                            message.append("<li>").append(val);
+                            if (buff.length() > 0) {
+                                buff.append(", ");
+                            }
+                            buff.append(val);
                         }
                     }
+                }
+
+                String message = "";
+
+                if (buff.length() > 0) {
+                    Object[] params = {buff.toString()};
+                    message = MessageFormat.format(model.getLocalizedString(
+                        "import.entity.metadata.success"), params);
                 }
                 
                 // set the message in the main view
                 setPageSessionAttribute(
-                    FederationViewBean.MESSAGE_TEXT, message.toString());                
+                    FederationViewBean.MESSAGE_TEXT, message);                
                 FederationViewBean vb = 
                     (FederationViewBean)getViewBean(FederationViewBean.class);
                 passPgSessionMap(vb);
