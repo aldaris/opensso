@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LinkBean.java,v 1.1 2009-08-19 05:40:51 veiming Exp $
+ * $Id: LinkBean.java,v 1.2 2009-08-21 21:07:35 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -46,6 +46,8 @@ public abstract class LinkBean implements Serializable {
     public static final LinkBean SAMLV2_REMOTE_SP_CREATE;
     public static final LinkBean COMMON_TASKS;
     public static final LinkBean APPLICATION_CREATE;
+    public static final LinkBean WSS;
+    public static final LinkBean WSC_CREATE;
 
     static {
         HOME = new CommandLinkBean();
@@ -91,6 +93,14 @@ public abstract class LinkBean implements Serializable {
         APPLICATION_CREATE = new CommandLinkBean();
         APPLICATION_CREATE.setValue("application-create");
         APPLICATION_CREATE.setIconUri("/admin/image/new.png");
+
+        WSS = new CommandLinkBean();
+        WSS.setValue("wss");
+        WSS.setIconUri("/admin/image/home.png");
+
+        WSC_CREATE = new CommandLinkBean();
+        WSC_CREATE.setValue("wsc-create");
+        WSC_CREATE.setIconUri("/admin/image/new.png");
     }
 
     private String value;

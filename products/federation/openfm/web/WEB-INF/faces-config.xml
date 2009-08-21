@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.1 2009-08-19 05:41:05 veiming Exp $
+  $Id: faces-config.xml,v 1.2 2009-08-21 21:07:37 ggennaro Exp $
 -->
 
 <faces-config version="1.2" 
@@ -2219,6 +2219,29 @@
   <!--  federation manage   -->
 
     <managed-bean>
+        <managed-bean-name>wscCreateWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.WscCreateWizardHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{wscCreateWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>wscCreateWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.WscCreateWizardBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>5</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
         <managed-bean-name>wssCreateWizardHandler</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.handler.WssCreateWizardHandler</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
@@ -2353,6 +2376,31 @@
         <navigation-case>
             <from-outcome>wss</from-outcome>
             <to-view-id>/admin/facelet/wss.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>wsp-create</from-outcome>
+            <to-view-id>/admin/facelet/wsp-create.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>wsp-manage</from-outcome>
+            <to-view-id>/admin/facelet/wsp-manage.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>wsc-create</from-outcome>
+            <to-view-id>/admin/facelet/wsc-create.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>wsc-manage</from-outcome>
+            <to-view-id>/admin/facelet/wsc-manage.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>sts-manage</from-outcome>
+            <to-view-id>/admin/facelet/sts-manage.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>

@@ -19,6 +19,11 @@ public enum FromAction {
     SAMLV2_HOSTED_IDP_CREATE("samlv2-hosted-idp-create"),
     SAMLV2_REMOTE_IDP_CREATE("samlv2-remote-idp-create"),
     WEB_SERVICE_SECURITY("wss"),
+    WSP_CREATE("wsp-create"),
+    WSP_MANAGE("wsp-manage"),
+    WSC_CREATE("wsc-create"),
+    WSC_MANAGE("wsc-manage"),
+    STS_MANAGE("sts-manage"),
     WEB_SERVICE_SECURITY_CREATE("wss-create"),
     STS_CREATE("sts-create"),
     APPLICATION("application"),
@@ -42,6 +47,11 @@ public enum FromAction {
             put(FEDERATION.getAction(), FEDERATION);
             put(NEWS.getAction(), NEWS);
             put(WEB_SERVICE_SECURITY.getAction(), WEB_SERVICE_SECURITY);
+            put(WSP_CREATE.getAction(), WSP_CREATE);
+            put(WSP_MANAGE.getAction(), WSP_MANAGE);
+            put(WSC_CREATE.getAction(), WSC_CREATE);
+            put(WSC_MANAGE.getAction(), WSC_MANAGE);
+            put(STS_MANAGE.getAction(), STS_MANAGE);
             put(WEB_SERVICE_SECURITY_CREATE.getAction(), WEB_SERVICE_SECURITY_CREATE);
             put(STS_CREATE.getAction(), STS_CREATE);
             put(APPLICATION.getAction(), APPLICATION);

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.1 2009-08-19 05:41:10 veiming Exp $
+   $Id: menu.xhtml,v 1.2 2009-08-21 21:07:36 ggennaro Exp $
 
 -->
 
@@ -101,13 +101,45 @@
             value="#{resources['menu.webServiceSecurityItemValue']}"
             action="wss">
             <ice:menuItem
-                rendered="#{permissionsBean.webServiceSecurityCreateAllowed}"
-                value="#{resources['menu.webServiceSecurityCreateItemValue']}"
-                action="wss-create" />
+                rendered="#{permissionsBean.webServiceSecurityAllowed}"
+                value="#{resources['menu.wspItemValue']}">
+                <ice:menuItem
+                    rendered="#{permissionsBean.wspCreateAllowed}"
+                    value="#{resources['menu.wspCreateItemValue']}"
+                    action="wsp-create" />
+                <ice:menuItem
+                    rendered="#{permissionsBean.wspManageAllowed}"
+                    value="#{resources['menu.wspManageItemValue']}"
+                    action="wsp-manage" />
+            </ice:menuItem>
             <ice:menuItem
-                rendered="#{permissionsBean.stsCreateAllowed}"
-                value="#{resources['menu.stsCreateItemValue']}"
-                action="sts-create" />
+                rendered="#{permissionsBean.webServiceSecurityCreateAllowed}"
+                value="#{resources['menu.wscItemValue']}">
+                <ice:menuItem
+                    rendered="#{permissionsBean.wscCreateAllowed}"
+                    value="#{resources['menu.wscCreateItemValue']}"
+                    action="wsc-create" />
+                <ice:menuItem
+                    rendered="#{permissionsBean.wscManageAllowed}"
+                    value="#{resources['menu.wscManageItemValue']}"
+                    action="wsc-manage" />
+            </ice:menuItem>
+            <ice:menuItem
+                rendered="#{permissionsBean.stsManageAllowed}"
+                value="#{resources['menu.stsManageItemValue']}"
+                action="sts-manage" />
+            <ice:menuItem
+                rendered="#{permissionsBean.webServiceSecurityAllowed}"
+                value="Deprecated">
+                <ice:menuItem
+                    rendered="#{permissionsBean.webServiceSecurityCreateAllowed}"
+                    value="#{resources['menu.webServiceSecurityCreateItemValue']}"
+                    action="wss-create" />
+                <ice:menuItem
+                    rendered="#{permissionsBean.stsCreateAllowed}"
+                    value="#{resources['menu.stsCreateItemValue']}"
+                    action="sts-create" />
+            </ice:menuItem>
         </ice:menuItem>
     </ice:menuBar>
 </span>

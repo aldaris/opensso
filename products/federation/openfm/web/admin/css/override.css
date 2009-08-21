@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: override.css,v 1.1 2009-08-19 05:41:07 veiming Exp $
+ * $Id: override.css,v 1.2 2009-08-21 21:07:37 ggennaro Exp $
  *
 */
 
@@ -43,7 +43,29 @@
 }
 
 .iceSelInpTxtTxt {
-    margin: 2px;
+    border:1px solid #D9D9D9;
+    -x-system-font:none;
+    background:#FFFFFF none repeat scroll 0 0;
+    border:1px solid #D9D9D9;
+    font-family:tahoma;
+    font-size:11px;
+    font-size-adjust:none;
+    font-stretch:normal;
+    font-style:normal;
+    font-variant:normal;
+    font-weight:normal;
+    line-height:normal;
+    margin:2px;
+    padding: 3px;
+}
+
+.iceSelInpTxtSelRow {
+background-color:#5382a1;
+border-bottom:1px solid #FFFFFF;
+color:#FFFFFF;
+display:block;
+padding:2px 2px 2px 10px;
+position:relative;
 }
 
 .iceMnuItm a,
@@ -67,6 +89,10 @@
     color: #707277;
 }
 
+.iceCmdLnk-dis {
+    border-width: 0px;
+}
+
 .iceCmdSrtHdr * {
     font-weight: bold;
 }
@@ -82,3 +108,8 @@
 .iceSelOneMnu, .iceSelMnyLb, .iceSelMnyMnu, .iceSelOneLb {
     color: #707277;
 }
+
+.iceSelOneMnu option {
+    padding-right: 10px;
+}
+

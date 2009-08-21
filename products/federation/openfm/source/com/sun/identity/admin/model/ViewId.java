@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewId.java,v 1.1 2009-08-19 05:40:57 veiming Exp $
+ * $Id: ViewId.java,v 1.2 2009-08-21 21:07:35 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -49,6 +49,11 @@ public enum ViewId {
     APPLICATION("/admin/facelet/application.xhtml"),
     APPLICATION_CREATE("/admin/facelet/application-create.xhtml"),
     WEB_SERVICE_SECURITY("/admin/facelet/wss.xhtml"),
+    WSP_CREATE("/admin/facelet/wsp-create.xhtml"),
+    WSP_MANAGE("/admin/facelet/wsp-manage.xhtml"),
+    WSC_CREATE("/admin/facelet/wsc-create.xhtml"),
+    WSC_MANAGE("/admin/facelet/wsc-manage.xhtml"),
+    STS_MANAGE("/admin/facelet/sts-manage.xhtml"),
     WEB_SERVICE_SECURITY_CREATE("/admin/facelet/wss-create.xhtml"),
     STS_CREATE("/admin/facelet/sts-create.xhtml"),
     PERMISSION_DENIED("/admin/facelet/permission-denied.xhtml");
@@ -73,6 +78,11 @@ public enum ViewId {
             put(APPLICATION.getId(), APPLICATION);
             put(APPLICATION_CREATE.getId(), APPLICATION_CREATE);
             put(WEB_SERVICE_SECURITY.getId(), WEB_SERVICE_SECURITY);
+            put(WSP_CREATE.getId(), WSP_CREATE);
+            put(WSP_MANAGE.getId(), WSP_MANAGE);
+            put(WSC_CREATE.getId(), WSC_CREATE);
+            put(WSC_MANAGE.getId(), WSC_MANAGE);
+            put(STS_MANAGE.getId(), STS_MANAGE);
             put(WEB_SERVICE_SECURITY_CREATE.getId(), WEB_SERVICE_SECURITY_CREATE);
             put(STS_CREATE.getId(), STS_CREATE);
             put(PERMISSION_DENIED.getId(), PERMISSION_DENIED);

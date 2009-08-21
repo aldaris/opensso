@@ -1,4 +1,6 @@
-/**
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -22,34 +24,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Permission.java,v 1.2 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: WscCreateWizardStepValidator.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
-public enum Permission {
-    HOME,
-    POLICY,
-    POLICY_CREATE,
-    POLICY_MANAGE,
-    POLICY_EDIT,
-    NEWS,
-    REFERRAL_CREATE,
-    REFERRAL_MANAGE,
-    REFERRAL_EDIT,
-    FEDERATION,
-    SAMLV2_HOSTED_SP_CREATE,
-    SAMLV2_HOSTED_IDP_CREATE,
-    SAMLV2_REMOTE_SP_CREATE,
-    SAMLV2_REMOTE_IDP_CREATE,
-    APPLICATION,
-    APPLICATION_CREATE,
-    WEB_SERVICE_SECURITY,
-    WSP_CREATE,
-    WSP_MANAGE,
-    WSC_CREATE,
-    WSC_MANAGE,
-    STS_MANAGE,
-    WEB_SERVICE_SECURITY_CREATE,
-    STS_CREATE;
+public abstract class WscCreateWizardStepValidator extends WizardStepValidator {
+    public WscCreateWizardStepValidator(WizardBean wb) {
+        super(wb);
+    }
+
+    protected WscCreateWizardBean getWscCreateWizardBean() {
+        return (WscCreateWizardBean)getWizardBean();
+    }
 }

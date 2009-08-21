@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: summarypanel.xhtml,v 1.1 2009-08-19 05:41:06 veiming Exp $
+   $Id: summarypanel.xhtml,v 1.2 2009-08-21 21:07:37 ggennaro Exp $
 
 -->
 
@@ -55,6 +55,7 @@
                         <ice:commandLink
                             actionListener="#{summary.editListener}"
                             partialSubmit="true"
+                            disabled="#{summary.gotoStep &lt; 0}"
                             styleClass="command-link">
                             <f:attribute
                                 name="gotoStep"
