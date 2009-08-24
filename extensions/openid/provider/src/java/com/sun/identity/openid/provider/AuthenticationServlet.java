@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationServlet.java,v 1.1 2009-04-24 21:01:58 rparekh Exp $
+ * $Id: AuthenticationServlet.java,v 1.2 2009-08-24 11:55:07 hubertlvg Exp $
  *
  */ 
 
@@ -45,7 +45,7 @@ import javax.servlet.http.*;
 
 /**
  * 
- * @author robert
+ * @author robert, hubert A. le van gong
  */
 
 public class AuthenticationServlet extends HttpServlet {
@@ -104,6 +104,7 @@ public class AuthenticationServlet extends HttpServlet {
 				HttpSession session = request.getSession();
 				session.setAttribute("login", "true");
 				session.setAttribute("principalAttrs", attrs);
+                session.setAttribute("principal", token.getPrincipal());
 
 			}
 		} catch (SSOException ex) {
