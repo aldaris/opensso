@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUtils.java,v 1.1 2009-04-24 21:01:57 rparekh Exp $
+ * $Id: LDAPUtils.java,v 1.2 2009-08-24 11:37:44 hubertlvg Exp $
  *
  */ 
 
@@ -543,7 +543,7 @@ public class LDAPUtils {
 		env.put(Context.INITIAL_CONTEXT_FACTORY,
 				"com.sun.jndi.ldap.LdapCtxFactory");
 
-		tmpStr = "ldap://" + ldapHost + "." + ":" + ldapPort;
+		tmpStr = "ldap://" + ldapHost + ":" + ldapPort;
 
 		env.put(Context.PROVIDER_URL, tmpStr);
 
