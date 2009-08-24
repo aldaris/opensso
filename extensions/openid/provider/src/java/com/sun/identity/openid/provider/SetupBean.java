@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupBean.java,v 1.1 2009-04-24 21:01:58 rparekh Exp $
+ * $Id: SetupBean.java,v 1.2 2009-08-24 11:48:24 hubertlvg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan and Robert Nguyen
@@ -25,6 +25,7 @@
 package com.sun.identity.openid.provider;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,14 +57,16 @@ import org.openid4java.server.ServerManager;
 
 import com.sun.identity.openid.persistence.AttributePersistenceFactory;
 import com.sun.identity.openid.persistence.BackendException;
+import java.net.URL;
+import java.security.Principal;
 
 /**
  * TODO: Description.
  * 
- * @author pbryan, robert nguyen
+ * @author pbryan, robert nguyen, hubert A. le van gong
  * 
  */
-public class SetupBean extends BackingBean {
+public class SetupBean extends CheckidBean {
 
 	/**
 	 * persistent instance, used to retrieve and save attibutes. This is Ldap
@@ -435,6 +438,19 @@ public class SetupBean extends BackingBean {
 		sendRedirect(((AuthSuccess) responsem).getDestinationUrl(true));
 	}
 
+
+    private void cancel() {
+		Boolean authenticatedAndApproved = Boolean.FALSE;
+
+		responsem = manager.authResponse(requestp, userSelectedId,
+				userSelectedClaimedId, authenticatedAndApproved.booleanValue());
+		request.getSession().removeAttribute("parameterlist");
+		request.getSession().removeAttribute("servermanager");
+
+		sendRedirect((responsem).getDestinationUrl(true));
+    }
+
+
 	/**
 	 * Redirects to the OpenSSO login page.
 	 */
@@ -576,6 +592,21 @@ public class SetupBean extends BackingBean {
 			redirectToLogin();
 			return;
 		}
+
+        Principal principal = (Principal) session.getAttribute("principal");
+
+
+        URL userSelectedIdUrl = null;
+        try {
+            userSelectedIdUrl = new URL(userSelectedId);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(SetupBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (!this.identityMatches(principal, userSelectedIdUrl)) {
+            cancel();
+            return;
+        }
+
 
 		// TODO: persistent trust: call grant/deny method here accordingly
 
