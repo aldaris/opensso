@@ -22,15 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigXML.java,v 1.2 2008-06-25 05:42:28 qcheng Exp $
+ * $Id: ServerConfigXML.java,v 1.3 2009-08-24 21:04:20 veiming Exp $
  *
  */
 
 package com.sun.identity.common.configuration;
 
 import com.iplanet.services.ldap.DSConfigMgr;
-import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.shared.xml.XMLUtils;
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -58,7 +58,7 @@ public class ServerConfigXML implements Serializable {
         throws Exception
     {
         Document doc = XMLUtils.getXMLDocument(
-            AMAdminUtils.getInputStreamFromString(xml));
+            new ByteArrayInputStream(xml.getBytes("UTF-8")));
         Node root = XMLUtils.getRootNode(doc,
             DSConfigMgr.ROOT);
         
