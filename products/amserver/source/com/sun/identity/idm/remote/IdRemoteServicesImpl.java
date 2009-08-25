@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.21 2009-07-02 20:33:30 hengming Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.22 2009-08-25 06:53:14 hengming Exp $
  *
  */
 
@@ -768,9 +768,17 @@ public class IdRemoteServicesImpl implements IdServices {
                 while (it.hasNext()) {
                     String idStr = (String) it.next();
                     AMIdentity id = IdUtils.getIdentity(token, idStr);
-                    CaseInsensitiveHashMap attrMap =
-                        new CaseInsensitiveHashMap((Map) attrMaps.get(idStr));
-                    results.addResult(id, attrMap);
+                    CaseInsensitiveHashMap resultAttrMap =
+                        new CaseInsensitiveHashMap();
+                    Map attrMap = (Map)attrMaps.get(idStr);
+                    for(Iterator iter = attrMap.keySet().iterator();
+                        iter.hasNext();) {
+                        String attrName = (String)iter.next();
+                        Set values = (Set)attrMap.get(attrName);
+                        values = XMLUtils.decodeAttributeSet(values);
+                        resultAttrMap.put(attrName, values);
+                    }
+                    results.addResult(id, resultAttrMap);
                 }
             }
             if (err != null) {
