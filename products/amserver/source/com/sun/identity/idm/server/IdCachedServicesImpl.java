@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.20 2009-08-04 18:35:15 hvijay Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.21 2009-08-25 06:50:53 hengming Exp $
  *
  */
 
@@ -524,7 +524,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         
         // Get identity DN
         AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkDN);
-        String dn = IdUtils.getUniversalId(id);
+        String dn = IdUtils.getUniversalId(id).toLowerCase();
 
         // Update the cache
         if (type.equals(IdType.USER)) {
@@ -559,7 +559,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
 
         // Update the cache
         AMIdentity id = new AMIdentity(token, name, type, orgName, amsdkDN);
-        String dn = id.getUniversalId();
+        String dn = id.getUniversalId().toLowerCase();
         IdCacheBlock cb = (IdCacheBlock) idRepoCache.get(dn);
         if ((cb != null) && !cb.hasExpiredAndUpdated() && cb.isExists()) {
             // Remove the attributes

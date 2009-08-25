@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteCachedServicesImpl.java,v 1.17 2009-05-08 00:47:07 hengming Exp $
+ * $Id: IdRemoteCachedServicesImpl.java,v 1.18 2009-08-25 06:50:53 hengming Exp $
  *
  */
 
@@ -285,7 +285,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
      */
     private void updateCache(SSOToken token, String dn, Map stringAttributes,
         Map byteAttributes) throws IdRepoException, SSOException {
-        String key = dn; // This is already normalized
+        String key = dn.toLowerCase(); // This is already normalized
         IdCacheBlock cb = (IdCacheBlock) idRepoCache.get(key);
         if (cb != null && !cb.hasExpiredAndUpdated() && cb.isExists()) {
             AMIdentity tokenId = IdUtils.getIdentity(token);
@@ -527,7 +527,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         
         // Update the cache
         AMIdentity id = new AMIdentity (token, name, type, orgName, amsdkDN);
-        String dn = id.getUniversalId ();
+        String dn = id.getUniversalId ().toLowerCase();
         IdCacheBlock cb = (IdCacheBlock) idRepoCache.get (dn);
         if ((cb != null) && !cb.hasExpiredAndUpdated () && cb.isExists ()) {
             // Remove the attributes
