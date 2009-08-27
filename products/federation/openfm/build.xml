@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.64 2009-08-19 05:40:42 veiming Exp $
+   $Id: build.xml,v 1.65 2009-08-27 19:52:00 farble1670 Exp $
 
 -->
 
@@ -123,9 +123,11 @@
         <ant antfile="${openfm.dir}/build-zip.xml" inheritRefs="true"/>
     </target>
     
-    <target name="war" depends="jars">
+    <target name="war" depends="jar">
         <ant antfile="${openfm.dir}/build-war.xml" inheritRefs="true"/>
     </target>
+
+    <target name="jar" depends="jar-opensso,jar-console"/>
 
     <target name="fedlet" depends="war">
         <delete file="${openfm.dir}/built/dist/Fedlet-unconfigured.zip"/>
@@ -189,16 +191,16 @@
         <delete dir="${openfm.dir}/built/dist/.fedletdotnet" />
     </target>
 
-    <target name="externaltools" depends="jars">
+    <target name="externaltools" depends="jar">
 	<ant antfile="${openfm.dir}/build-external-tools.xml" inheritRefs="true"/>
     </target>
 
-    <target name="tools" depends="jars">
+    <target name="tools" depends="jar">
         <ant antfile="${openfm.dir}/build-tools.xml" inheritRefs="true"/>
         <ant antfile="${openfm.dir}/build-session-tools.xml" inheritRefs="true"/>
     </target>
 
-    <target name="jars" depends="build">
+    <target name="jar-opensso" depends="build">
         <tstamp>
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
@@ -219,6 +221,11 @@
                 excludes="${console.packages},com/sun/identity/fedlet/**" />
         </jar>
 
+        <checksum file="${fm.dist.dir}/opensso.jar" 
+            algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="jar-console" depends="build">
         <copy tofile="${fm.dist.dir}/console.jar"
             file="${openfm.extlib.dir}/console.jar" />
         <copy todir="${openfm.classes.dir}/com/sun/identity/console">
@@ -234,9 +241,6 @@
             <zipfileset dir="${openfm.classes.dir}"
                 includes="${console.packages}" />
         </jar>
-
-        <checksum file="${fm.dist.dir}/opensso.jar" 
-            algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="clientsdk" depends="build">
