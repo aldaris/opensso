@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewId.java,v 1.2 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: ViewId.java,v 1.3 2009-08-27 21:47:12 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -48,6 +48,7 @@ public enum ViewId {
     NEWS("/admin/facelet/news.xhtml"),
     APPLICATION("/admin/facelet/application.xhtml"),
     APPLICATION_CREATE("/admin/facelet/application-create.xhtml"),
+    APPLICATION_MANAGE("/admin/facelet/application-manage.xhtml"),
     WEB_SERVICE_SECURITY("/admin/facelet/wss.xhtml"),
     WSP_CREATE("/admin/facelet/wsp-create.xhtml"),
     WSP_MANAGE("/admin/facelet/wsp-manage.xhtml"),
@@ -77,6 +78,7 @@ public enum ViewId {
             put(NEWS.getId(), NEWS);
             put(APPLICATION.getId(), APPLICATION);
             put(APPLICATION_CREATE.getId(), APPLICATION_CREATE);
+            put(APPLICATION_MANAGE.getId(), APPLICATION_MANAGE);
             put(WEB_SERVICE_SECURITY.getId(), WEB_SERVICE_SECURITY);
             put(WSP_CREATE.getId(), WSP_CREATE);
             put(WSP_MANAGE.getId(), WSP_MANAGE);

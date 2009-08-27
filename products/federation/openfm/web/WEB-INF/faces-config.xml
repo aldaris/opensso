@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.3 2009-08-26 16:16:50 ggennaro Exp $
+  $Id: faces-config.xml,v 1.4 2009-08-27 21:47:12 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -2371,6 +2371,11 @@
         <navigation-case>
             <from-outcome>application-create</from-outcome>
             <to-view-id>/admin/facelet/application-create.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>application-manage</from-outcome>
+            <to-view-id>/admin/facelet/application-manage.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>

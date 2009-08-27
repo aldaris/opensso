@@ -28,6 +28,7 @@ public enum FromAction {
     STS_CREATE("sts-create"),
     APPLICATION("application"),
     APPLICATION_CREATE("application-create"),
+    APPLICATION_MANAGE("application-manage"),
     PERMISSION_DENIED("permission-denied");
 
     private static final Map<String,FromAction> actionValues = new HashMap<String,FromAction>() {
@@ -56,6 +57,7 @@ public enum FromAction {
             put(STS_CREATE.getAction(), STS_CREATE);
             put(APPLICATION.getAction(), APPLICATION);
             put(APPLICATION_CREATE.getAction(), APPLICATION_CREATE);
+            put(APPLICATION_MANAGE.getAction(), APPLICATION_MANAGE);
             put(PERMISSION_DENIED.getAction(), PERMISSION_DENIED);
         }
     };
