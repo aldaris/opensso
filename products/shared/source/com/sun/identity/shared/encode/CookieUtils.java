@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieUtils.java,v 1.4 2009-08-12 23:10:44 ericow Exp $
+ * $Id: CookieUtils.java,v 1.5 2009-08-27 05:17:30 manish_rustagi Exp $
  *
  */
 
@@ -311,7 +311,7 @@ public class CookieUtils {
 
         // Based on property value it does url encoding.
         // BEA, IBM
-        if (cookieEncoding) {
+        if (cookieEncoding && value != null) {
             cookie = new Cookie(name, URLEncDec.encode(value));
         } else {
             cookie = new Cookie(name, value);
