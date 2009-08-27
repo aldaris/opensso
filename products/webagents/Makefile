@@ -80,9 +80,15 @@ ifeq ($(OS_ARCH), HP-UX)
 	$(TAR) cvf ../../../../$@.tar *; \
 	gzip -f ../../../../$@.tar
 else
+ifeq ($(OS_ARCH), AIX)
+	cd $(DEST_PACKAGE_SCRATCH_DIR)/SUNWamcom; \
+	zip -r ../../../../$@.zip *
+else
+
 	cd $(DEST_PACKAGE_SCRATCH_DIR); \
 	$(TAR) cvf ../../../$@.tar is_csdk; \
 	gzip -f ../../../$@.tar
+endif
 endif
 endif
 endif

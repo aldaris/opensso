@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2009-07-09 17:04:26 veiming Exp $
+   $Id: build.xml,v 1.9 2009-08-27 21:41:32 subbae Exp $
 
 -->
 
@@ -147,6 +147,17 @@
             </fileset>
         </copy>
     </target>
+
+    <target name="copy-AIX-library">
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.apache22.src.dir}">
+                    <include name="libamapc22.so"/>
+            </fileset>
+        </copy>
+        <copy file="${webagents.am.src.dir}/libamsdk.so.3"
+            tofile="${container.web_agent.lib.dir}/libamsdk.so"/>
+    </target>
+
 
 </project>
 

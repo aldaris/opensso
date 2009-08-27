@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_types.h,v 1.10 2008-10-04 01:34:27 robertis Exp $
+ * $Id: am_types.h,v 1.11 2009-08-27 21:41:30 subbae Exp $
  *
  * Abstract:
  *
@@ -81,6 +81,13 @@ typedef enum {
 #else 
 #include <sys/types.h>   /* for time_t and boolean_t */
 #endif /* WINNT */
+
+#if defined(AIX)
+typedef enum {
+    B_FALSE=0,
+    B_TRUE
+} booleant;
+#endif
 
 typedef enum {
     AM_FALSE = 0,

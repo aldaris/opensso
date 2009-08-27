@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: http.h,v 1.4 2008-06-25 08:14:32 qcheng Exp $
+ * $Id: http.h,v 1.5 2009-08-27 21:41:30 subbae Exp $
  *
  *
  * Abstract:
@@ -92,7 +92,12 @@ namespace Http {
 	INTERNAL_SERVER_ERROR = 500,
 	NOT_IMPLEMENTED,
 	BAD_GATEWAY,
+#if defined(AIX)
+	SERVICE_UNAVAILABLE_AIX,
+#else
 	SERVICE_UNAVAILABLE,
+#endif
+
 	GATEWAY_TIMEOUT,
 	HTTP_VERSION_NOT_SUPPORTED
     };

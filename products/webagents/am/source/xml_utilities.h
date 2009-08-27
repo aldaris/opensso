@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: xml_utilities.h,v 1.4 2008-09-13 01:11:54 robertis Exp $
+ * $Id: xml_utilities.h,v 1.5 2009-08-27 21:41:30 subbae Exp $
  *
  * Abstract:
  *
@@ -46,7 +46,7 @@ BEGIN_PRIVATE_NAMESPACE
 
 inline bool matchesXMLString(const std::string& str1, const xmlChar *str2)
 {
-#if	defined(SOLARIS) || defined(LINUX) || defined(HPUX)
+#if	defined(SOLARIS) || defined(LINUX) || defined(HPUX) || defined(AIX)
     return (0 == strcasecmp(str1.c_str(),
 			    reinterpret_cast<const char *>(str2)));
 #elif	(defined(WINNT) || defined(_AMD64_))

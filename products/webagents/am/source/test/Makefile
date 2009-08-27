@@ -42,7 +42,11 @@ vpath %.c $(REAL_SRC_DIR)
 vpath %.cpp $(REAL_SRC_DIR)
 
 AM_DIR := ..
+ifneq ($(OS_ARCH), AIX)
 LIBS = -L$(DEST_LIB_DIR) -L$(LIBXML_LIB_DIR) $(LIBXML_LIBS) -L$(NSS_LIB_DIR) $(NSS_LIBS) -L$(NSPR_LIB_DIR) $(NSPR_LIBS)
+else
+LIBS = -brtl -L$(DEST_LIB_DIR) -L$(LIBXML_LIB_DIR) $(LIBXML_LIBS) -L$(NSS_LIB_DIR) $(NSS_LIBS) -L$(NSPR_LIB_DIR) $(NSPR_LIBS)
+endif
 
 ifeq ($(OS_ARCH), WINNT)
 ifdef   OS_IS_CYGWIN

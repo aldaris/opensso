@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.15 2009-07-22 22:59:06 subbae Exp $
+   $Id: build.xml,v 1.16 2009-08-27 21:41:31 subbae Exp $
 
 -->
 
@@ -254,6 +254,39 @@
         <copy todir="${container.web_agent.lib.dir}">
             <fileset dir="${webagents.basedir}/extlib/HP-UX/libxml2${build.type.suffix}/lib">
                     <include name="libxml2.sl.9"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copy-AIX-files">
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.install.dir}/scripts">
+                    <include name="agentadmin"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.am.src.dir}">
+                    <include name="crypt_util"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.bin.dir}">
+            <fileset dir="${webagents.basedir}/extlib/AIX/nss${build.type.suffix}/bin">
+                    <include name="certutil"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib/AIX/nss${build.type.suffix}/lib">
+                    <include name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib/AIX/nspr${build.type.suffix}/lib">
+                    <include name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib/AIX/libxml2${build.type.suffix}/lib">
+                    <include name="libxml2.so.2"/>
             </fileset>
         </copy>
     </target>

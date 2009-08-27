@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.7 2009-07-22 22:59:05 subbae Exp $
+# $Id: Makefile,v 1.8 2009-08-27 21:41:29 subbae Exp $
 #
 #
 # Makefile for building the Apache Policy Agent.
@@ -81,7 +81,6 @@ ifeq ($(OS_ARCH), Linux)
    endif
 endif
 
-
 APACHE2_CFLAGS += -DAPACHE2 -DEAPI -DMOD_PERL -DUSE_EXPAT -DXP_UNIX $(PIC_FLAG) -DCORE_PRIVATE $(APACHE2_INCLUDE_FLAGS) -I$(APACHE_DIR)/include
 
 LDFLAGS += $(LD_COMMON_ORIGIN_FLAG) $(LD_ORIGIN_FLAG)
@@ -103,6 +102,18 @@ LDLIBS += -L ../../../am/source
 LDLIBS += $(LDFLAGS) $(LIBXML_LIBS) $($(STD_LIB)_LDLIBS) $(SYSTEM_LIBS)
 
 endif
+
+### AIX
+ifeq ($(OS_ARCH), AIX)
+
+SYSTEM_LIBS := -lpthread -ldl -lc -lm -liconv
+LDFLAGS := $(LD_COMMON_ORIGIN_FLAG) $(LD_ORIGIN_FLAG) -L$(NSS_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(LIBXML_LIB_DIR) -brtl -blibpath:/usr/lib:/lib:/usr/lib/mps -L$(APACHE_LIB_DIR)
+LDLIBS := -L ../../am $(LIBXML_LIBS) $($(STD_LIB)_LDLIBS) -L${DEST_LIB_DIR} -lamsdk -lapr-0 -laprutil-0 -lexpat
+LINKOPTS := -bE:libamapache.exp -bnoentry -bquiet
+MAKE_SHARED_LIB := $(CC) -o libamapc2.so libamapc2.o $(LINKOPTS) ${LDFLAGS} -bI:$(APACHE_DIR)/modules/httpd.exp \
+        $(LDLIBS) ${SYSTEM_LIBS}
+endif
+########
 
 ifeq ($(OS_ARCH), SunOS)
 LDFLAGS += -L$(DEST_LIB_DIR)
@@ -151,6 +162,12 @@ clean: clean_libs clean_objs
 	$(RM) $(EXPORTED_LIBS) pkginfo.apache
 	$(RM) -r $(DEST_PACKAGE_SCRATCH_DIR)/RPMS
 	$(RM) $(APACHE2_LIB_NAME).o
+## AIX
+ifeq ($(OS_ARCH), AIX)
+	$(RM) $((APACHE2_LIB_NAME).so
+endif
+####
+
 endif
 
 include $(USERX_ROOT)/arch/rules.mk

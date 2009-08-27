@@ -1,8 +1,11 @@
-#!/bin/sh
 #
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 #
-# Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+# Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+#
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the License). You may not use this file except in
 #
 # The contents of this file are subject to the terms
 # of the Common Development and Distribution License
@@ -23,25 +26,31 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: agentadmin,v 1.4 2009-08-27 21:41:32 subbae Exp $
+# $Id: rules_AIX.mk,v 1.1 2009-08-27 21:41:31 subbae Exp $
 #
 #
 
-if [ -z "$AGENT_HOME" ]; then
-    AGENT_HOME=`dirname $0`/..
-fi
+%.cpp %.cxx %.u:
 
-if [ -z "$JAVA_HOME" ]; then
-    JAVA_VM=java
-else
-    JAVA_VM=${JAVA_HOME}/bin/java
-fi
+%.o: %.cpp
+	$(COMPILE.cc) $< $(OUTPUT_OPTION)
 
-AGENT_CLASSPATH=${AGENT_HOME}/lib/opensso-installtools-launcher.jar
+%.o: %.cxx
+	$(COMPILE.cc) $< $(OUTPUT_OPTION)
 
-$JAVA_VM -classpath "$AGENT_CLASSPATH" com.sun.identity.install.tools.launch.AdminToolLauncher $*
+%.u: %.c
+	set -e; $(filter-out -g3,$(COMPILE.c)) -M $< \
+		| sed 's;\($*\.o\)[ :]*;\1 $@ : ;' > $@; [ -s $@ ] || $(RM) $@
+
+%.u: %.cpp
+	set -e; $(COMPILE.cc) -M $< ; [ -s $@ ] || $(RM) $@
+
+%.u: %.cxx
+	set -e; $(filter-out -g3,$(COMPILE.cc)) -M $< \
+		| sed 's;\($*\.o\)[ :]*;\1 $@ : ;' > $@; [ -s $@ ] || $(RM) $@
 
 #
-# If IBM JDK/JRE in use, then comment the above line and uncomment the below line
+# Clean up OS/compiler specific junk. 
 #
-#$JAVA_VM -DamKeyGenDescriptor.provider=IBMJCE -DamCryptoDescriptor.provider=IBMJCE -DamRandomGenProvider=IBMJCE -classpath "$AGENT_CLASSPATH" com.sun.identity.install.tools.launch.AdminToolLauncher $*
+clean_objs:
+	$(RM) $(OBJS) $(DEPENDS)

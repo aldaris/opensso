@@ -26,7 +26,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: comlib_linux,v 1.6 2009-08-27 21:41:30 subbae Exp $
+# $Id: comlib_AIX,v 1.1 2009-08-27 21:41:30 subbae Exp $
 #
 #
 
@@ -40,18 +40,13 @@ init_common_pkg_variables() {
     typeset pkg_name=$1
 
     NOT_ENFORCELIST_ATTR=com.sun.am.policy.agents.notenforcedList
-    WS_TYPE=$1
-    PKG_DIR=$COMMON_BASE_DIR/$COMMON_PRODUCT_DIR/$1
-    DEBUG_DIR_PREFIX=/tmp
+    PKG_DIR=$BASEDIR
+    COMMON_DIR_PREFIX=opt/agents/$WS_TYPE
+    DEBUG_DIR_PREFIX=/$COMMON_DIR_PREFIX
     TEMP_DIR_PREFIX=/var
-    TEMP_PKG_DIR=$TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX
-    AGENT_CONFIG_ROOT=/etc/opt/$COMMON_PRODUCT_DIR/$WS_TYPE/config
-    AGENT_NAME=libam$($ECHO $pkg_name).so
-    if [ "$pkg_name" = "proxy4" ]
-    then
-        AGENT_NAME=libampxy4.so
-    fi
-	
+    TEMP_PKG_DIR=$TEMP_DIR_PREFIX$COMMON_DIR_PREFIX
+    AGENT_CONFIG_ROOT=/etc/$COMMON_DIR_PREFIX/config
+    AGENT_NAME=lib$($ECHO $pkg_name | $SED -e 's/SUNW//').sl
     NOTIFICATION_ENABLE=true
     LOG_ROTATION=true
     AGENT_URL_CASE_IGNORE=false
@@ -60,7 +55,7 @@ init_common_pkg_variables() {
     typeset domain=$(domainname)
     result=`echo $hostname | $GREP "\."`
     if [ "$result" = "" ]
-    then
+    then 
         typeset localhost=$hostname.$domain
     else
         typeset localhost=$hostname
@@ -74,7 +69,7 @@ init_common_pkg_variables() {
     AGENT_DEPLOY_URI=/amagent
     AGENT_CERT_PREFIX=
 
-    #OpenSSO Server info
+    #Sun Java System Access Manager info
     PRIMARY_SERVER_PROTOCOL=http
     PRIMARY_SERVER_HOST=$localhost
     PRIMARY_SERVER_PORT=$def_id_server_port
@@ -93,23 +88,25 @@ init_common_pkg_variables() {
 }
 
 init_program_variables() {
-    AWK=/bin/awk
-    BASENAME=/bin/basename
-    CHMOD=/bin/chmod
-    CHOWN=/bin/chown
-    CP=/bin/cp
-    CUT=/bin/cut
+    AWK=/usr/bin/awk
+    BASENAME=/usr/bin/basename
+    CHMOD=/usr/bin/chmod
+    CHOWN=/usr/bin/chown
+    CP=/usr/bin/cp
+    CUT=/usr/bin/cut
     DIRNAME=/usr/bin/dirname
-    ECHO=/bin/echo
-    GETTEXT=/bin/gettext
-    GREP=/bin/grep
-    LN=/bin/ln
-    MKDIR=/bin/mkdir
-    MV=/bin/mv
-    PING=/bin/ping
-    RM=/bin/rm
-    RMDIR=/bin/rmdir
-    SED=/bin/sed
+    ECHO=/usr/bin/echo
+    GETTEXT=/usr/bin/echo
+    GREP=/usr/bin/grep
+    LN=/usr/bin/ln
+    MKDIR=/usr/bin/mkdir
+    CD=/usr/bin/cd
+    MV=/usr/bin/mv
+    PING=/usr/sbin/ping
+    NSLOOKUP=/usr/sbin/nslookup
+    RM=/usr/bin/rm
+    RMDIR=/usr/bin/rmdir
+    SED=/usr/bin/sed
     WC=/usr/bin/wc
     TR=/usr/bin/tr
     TAIL=/usr/bin/tail
@@ -117,29 +114,29 @@ init_program_variables() {
 
 init_variables() {
     umask 022
+    prop_perm=600
+    dbg_dir_allow=755
     # this value is needed when the script is executed from a
     # package's postinstall script.
     IFS=' '
     PATH=/bin:/usr/bin:/sbin:/usr/sbin
-
     init_program_variables
 
-    NEW_OWNER=nobody
-    COMMON_BASE_DIR=$1
+    NEW_OWNER=root
+    COMMON_BASEDIR=$1
     COMMON_PRODUCT_DIR=$2
-    COMMON_PKG_DIR=$COMMON_BASE_DIR/$COMMON_PRODUCT_DIR
+    COMMON_PKG_DIR=$COMMON_BASEDIR/$COMMON_PRODUCT_DIR
 
-    if [ "$4" == "" ] ; then 
-        COOKIE_ENCODED=false
-    else 
-        COOKIE_ENCODED=$4
-    fi
+#    if [ "$4" == "" ] ; then 
+#        COOKIE_ENCODED=false
+#    else 
+#        COOKIE_ENCODED=$4
+#    fi
 
     init_common_pkg_variables $3
 
-    AGENT_ACCESS_DENY_FILE=$COMMON_PKG_DIR/html/URLAccessDenied.html
-    AGENT_PROPERTIES_FILE_NAME=OpenSSOAgentBootstrap.properties
-    AGENT_PROPERTIES_FILE_ORIG=$COMMON_PKG_DIR/config/$AGENT_PROPERTIES_FILE_NAME.orig
+    AGENT_PROPERTIES_FILE_NAME=AMAgent.properties
+    AGENT_PROPERTIES_FILE_ORIG=$BASEDIR/config/$AGENT_PROPERTIES_FILE_NAME.orig
 
     agent_init_variables
 }
@@ -207,29 +204,10 @@ delete_multi_line() {
 
 set_encrypt_password(){
 
-    COMMON_PKG_BASEDIR=`$RPM -q --queryformat '%{INSTALLPREFIX}' apcagent-2.2-0`
-    if [ $? = 1 ]; then
-    	COMMON_PKG_BASEDIR=`$RPM -q --queryformat '%{INSTALLPREFIX}' domino6agent-2.2-0`
-	fi	
+    ENCRYPT_SHARED_SECRET=`$BASEDIR/bin/crypt_util $SHARED_SECRET 2>&1`
 
-    if [ $? = 1 ]; then
-    	COMMON_PKG_BASEDIR=`$RPM -q --queryformat '%{INSTALLPREFIX}' es6agent-2.2-0`
-	fi	
-		
-    if [ $? = 1 ]; then
-    	COMMON_PKG_BASEDIR=`$RPM -q --queryformat '%{INSTALLPREFIX}' proxy4agent-2.2-0`
-    fi	
-
-    if [ $? = 1 ]; then
-	echo "`$GETTEXT 'Required agent packages are not installed. Exiting...'`"
-	exit 1
-    fi
-
-    COMMON_PKG_PRODUCT_DIR=agents
-    ENCRYPT_SHARED_SECRET=`$COMMON_PKG_BASEDIR/$COMMON_PKG_PRODUCT_DIR/bin/crypt_util $SHARED_SECRET 2>&1`
-    $CHMOD 0500 $COMMON_PKG_BASEDIR/$COMMON_PKG_PRODUCT_DIR/bin/crypt_util
     if [ $? != 0 ]; then
-	$ECHO "$($GETTEXT 'Failed to encrypt password in agent config file.')"
+	$ECHO "\n$($GETTEXT 'Failed to encrypt password in agent config file.')"
     fi
 
 }
@@ -238,19 +216,16 @@ set_encrypt_password(){
 do_variable_replacement_in_files() {
     typeset file=
     typeset temp_file=
-
     # We need to encrypt password before we put in Agent Config file
     set_encrypt_password
-
     for file in "$@"; do
 	temp_file=$file-temp-$$
-
 	if [[ "$SERVER_PROTO" != "" ]]; then
 	    sed -e "s#AGENT_URL_PREFIX#$AGENT_URL_PREFIX#g" \
 	    -e "s#DEBUG_DIR_PREFIX#${DEBUG_DIR_PREFIX}#g" \
+	    -e "s#AGENT_CERT_PREFIX#$AGENT_CERT_PREFIX#g" \
 	    -e "s#FAILOVER_LOGIN_URL#$FAILOVER_LOGIN_URL#g" \
 	    -e "s#FAILOVER_NAMING_URL#$FAILOVER_NAMING_URL#g" \
-	    -e "s#AGENT_CERT_PREFIX#AGENT_CERT_PREFIX#g" \
 	    -e "s#PKGDIR#${WEBAPPSDIR}#g" \
 	    -e "s#PRIMARY_LOGIN_URL#$PRIMARY_LOGIN_URL#g" \
 	    -e "s#PRIMARY_NAMING_URL#$PRIMARY_NAMING_URL#g" \
@@ -276,9 +251,9 @@ do_variable_replacement_in_files() {
 	else
 	    sed -e "s#AGENT_URL_PREFIX#$AGENT_URL_PREFIX#g" \
 	    -e "s#DEBUG_DIR_PREFIX#${DEBUG_DIR_PREFIX}#g" \
+            -e "s#AGENT_CERT_PREFIX#$AGENT_CERT_PREFIX#g" \
 	    -e "s#FAILOVER_LOGIN_URL#$FAILOVER_LOGIN_URL#g" \
 	    -e "s#FAILOVER_NAMING_URL#$FAILOVER_NAMING_URL#g" \
-	    -e "s#AGENT_CERT_PREFIX#$AGENT_CERT_PREFIX#g" \
 	    -e "s#PKGDIR#${WEBAPPSDIR}#g" \
 	    -e "s#PRIMARY_LOGIN_URL#$PRIMARY_LOGIN_URL#g" \
 	    -e "s#PRIMARY_NAMING_URL#$PRIMARY_NAMING_URL#g" \
@@ -385,22 +360,20 @@ get_value() {
 	# the response.
 	if [[ "$no_echo" = "y" ]]; then
 	    stty -echo
-#	    read "value?$prompt_str "
-            echo -n $prompt_str
-	    read value
+	    read "value?$prompt_str "
 	    stty echo
 	else
-#	    read "value?$prompt_str [$def_value] "
-            echo -n "$prompt_str [$def_value] "
-	    read value
+	    read "value?$prompt_str [$def_value] "
 	    value=$($ECHO $value | $SED -e 's/^[ 	]*//' -e 's/[ 	]*$//')
 	fi
 	if [ "$value" = "" ]; then
 	    value=$def_value
 	fi
-	if $validate_func $value; then
-	    break
-	fi
+        if [ "$value" != "" ]; then
+	    if $validate_func $value; then
+	        break
+	    fi
+        fi
 	$ECHO "$error_str"
     done
 }
@@ -435,13 +408,13 @@ get_agent_uri() {
 
 get_failover_server_host() {
     typeset value=
-    get_value "Enter the Failover OpenSSO Server Hostname:" "Invalid failover OpenSSO server hostname !" "$FAILOVER_SERVER_HOST" is_valid_host
+    get_value "Enter the Failover Access Manager Hostname:" "Invalid failover Access Manager hostname !" "$FAILOVER_SERVER_HOST" is_valid_host
     FAILOVER_SERVER_HOST=$value
 }
 
 get_failover_server_port() {
     typeset value=
-    get_value "Enter the Failover OpenSSO Server Port:" "Invalid failover OpenSSO server port number !" "$FAILOVER_SERVER_PORT" is_valid_port
+    get_value "Enter the Failover Access Manager Port:" "Invalid failover Access Manager port number !" "$FAILOVER_SERVER_PORT" is_valid_port
     FAILOVER_SERVER_PORT=$value
 }
 
@@ -466,7 +439,7 @@ get_failover_server_protocol() {
 
 is_failover_server_present() {
     typeset value=
-    get_value "Do You Want Failover Server Support: [1] yes [2] No -->" "Invalid Failover Server Support option!" "2" is_valid_failover_support
+    get_value "Do You Want Failover Server Support: [1] yes [2] No -->" "Invalid Failover Server Support option !" "2" is_valid_failover_support
     if [ "$value" = "1" ]; then
 	FAILOVER_SERVER_SUPPORT=yes
     elif [ "$value" = "2" ]; then
@@ -476,31 +449,31 @@ is_failover_server_present() {
 
 get_failover_server_uri() {
     typeset value=
-    get_value "Enter the OpenSSO Server Deployment URI" "Invalid OpenSSO server deployment URI !" "$PRIMARY_SERVER_DEPLOY_URI" is_valid_uri
+    get_value "Enter the Access Manager Deployment URI" "Invalid Access Manager deployment URI !" "$PRIMARY_SERVER_DEPLOY_URI" is_valid_uri
     FAILOVER_SERVER_DEPLOY_URI=$value
 }
 
 get_failover_console_uri() {
     typeset value=
-    get_value "Enter the OpenSSO Server's Console Deployment URI" "Invalid OpenSSO server's console deployment URI !" "$PRIMARY_CONSOLE_DEPLOY_URI" is_valid_uri
+    get_value "Enter the Access Manager's Console Deployment URI" "Invalid Access Manager's console deployment URI !" "$PRIMARY_CONSOLE_DEPLOY_URI" is_valid_uri
     FAILOVER_CONSOLE_DEPLOY_URI=$value
 }
 
 get_primary_server_host() {
     typeset value=
-    get_value "Enter the OpenSSO Server Hostname:" "Invalid OpenSSO server hostname !" "$PRIMARY_SERVER_HOST" is_valid_host
+    get_value "Enter the Access Manager Hostname:" "Invalid Access Manager hostname !" "$PRIMARY_SERVER_HOST" is_valid_host
     PRIMARY_SERVER_HOST=$value
 }
 
 get_primary_server_port() {
     typeset value=
-    get_value "Enter the OpenSSO Server Port:" "Invalid OpenSSO server port number !" "$PRIMARY_SERVER_PORT" is_valid_port
+    get_value "Enter the Access Manager Port:" "Invalid Access Manager port number !" "$PRIMARY_SERVER_PORT" is_valid_port
     PRIMARY_SERVER_PORT=$value
 }
 
 get_primary_server_protocol() {
     typeset value=
-    get_value "Select OpenSSO Server Protocol: [1] http [2] https -->" "Invalid OpenSSO server protocol !" "1" is_valid_protocol
+    get_value "Select Access Manager Protocol: [1] http [2] https -->" "Invalid Access Manager protocol !" "1" is_valid_protocol
     if [ "$value" = "1" ]; then
 	PRIMARY_SERVER_PROTOCOL=http
     elif [ "$value" = "2" ]; then
@@ -510,19 +483,19 @@ get_primary_server_protocol() {
 
 get_primary_server_uri() {
     typeset value=
-    get_value "Enter the OpenSSO Server Deployment URI" "Invalid OpenSSO server deployment URI !" "$PRIMARY_SERVER_DEPLOY_URI" is_valid_uri
+    get_value "Enter the Access Manager Deployment URI" "Invalid Access Manager deployment URI !" "$PRIMARY_SERVER_DEPLOY_URI" is_valid_uri
     PRIMARY_SERVER_DEPLOY_URI=$value
 }
 
 get_primary_console_uri() {
     typeset value=
-    get_value "Enter the OpenSSO Server's Console Deployment URI" "Invalid OpenSSO server's console deployment URI !" "$PRIMARY_CONSOLE_DEPLOY_URI" is_valid_uri
+    get_value "Enter the Access Manager's Console Deployment URI" "Invalid Access Manager's console deployment URI !" "$PRIMARY_CONSOLE_DEPLOY_URI" is_valid_uri
     PRIMARY_CONSOLE_DEPLOY_URI=$value
 }
 
 get_user_name() {
     typeset value=
-    get_value "Enter the User Name" "Invalid User Name !" "$USER_NAME" is_valid_user_name
+    get_value "Enter the User Name" "Invalid User Name !" "$USER_NAME" is_valid_user_name 
     USER_NAME=$value
 }
 
@@ -531,15 +504,15 @@ get_shared_secret() {
     typeset error_msg="Shared secret may not be empty or contain spaces!"
 
     while true; do
-	get_value "Enter Agent-OpenSSO Server shared secret:" "$error_msg" "" is_valid_shared_secret noecho
+	get_value "Enter Agent-Access Manager shared secret:" "$error_msg" "" is_valid_shared_secret noecho
 	SHARED_SECRET=$value
-	$ECHO 
-	get_value "Re-enter Agent-OpenSSO Server shared secret:" "$error_msg" "" is_valid_shared_secret noecho
-	$ECHO 
+	$ECHO "\a"
+	get_value "Re-enter Agent-Access Manager shared secret:" "$error_msg" "" is_valid_shared_secret noecho
+	$ECHO "\a"
 	if [[ "$SHARED_SECRET" = "$value" ]]; then
 	    return 0;
 	fi
-	$ECHO "$($GETTEXT 'Shared secret verification failed!')"
+	$ECHO "\a$($GETTEXT 'Shared secret verification failed!')"
     done
 }
 
@@ -553,21 +526,32 @@ is_iplanet_server_instance() {
     [[ -f "$1"/config/obj.conf ]]
 }
 
+is_iplanet_proxy_server_instance() {
+    [[ -f "$1"/config/obj.conf ]]
+    if [[ $? != 0 ]]; then
+        return 1
+    fi
+    grep "Service fn=proxy-retrieve" "$1"/config/obj.conf 2>&1 >/dev/null
+    if [[ $? != 0 ]]; then
+        grep "Service fn=\"proxy-retrieve\"" "$1"/config/obj.conf 2>&1 >/dev/null
+        if [[ $? != 0 ]]; then
+            return 1
+        fi
+    fi
+}
 
 is_valid_failover_support() {
     [[ $1 -ge 1 && $1 -le 2 ]]
 }
 
 is_valid_failover_protocol() {
-#    [[ $1 -gt 0 && $1 -lt 4 ]]
     [[ $1 -ge 1 && $1 -le 3 ]]
-#    [[ $1 -ge 0 ]]
 }
 
 is_valid_host() {
-    typeset is_host_valid=$($PING -c 1 $1 2>&1| $GREP "packet" | $WC -l)
-    typeset is_fqdn=$($ECHO $1 2>&1 |$CUT -s -d"." -f3| $WC -l)	    
-    if [[ $is_host_valid -eq 1 ]]; then
+    typeset is_host_valid=$($NSLOOKUP $1 2>&1| $GREP $1 | $WC -l)
+    typeset is_fqdn=$($ECHO $1 2>&1 |$CUT -s -d"." -f2| $WC -l)	    
+    if [[ $is_host_valid -ne 1 ]]; then
 	if [[ $is_fqdn -eq 1 ]]; then
 	    return 0	
 	fi
@@ -584,13 +568,9 @@ is_valid_protocol() {
     [[ $1 -ge 1 && $1 -le 2 ]]
 }
 
-is_valid_cdsso_input() {
-    [[ $1 -ge 1 && $1 -le 2 ]]
-}
-
 is_valid_user_name() {
     $ECHO "$1" | $GREP " " > /dev/null 2>&1
-	[[ $? -ne 0 && "$1" != "" ]]
+    [[ $? -ne 0 && "$1" != "" ]]
 }
 
 is_valid_shared_secret() {
@@ -602,12 +582,15 @@ is_valid_uri() {
     $ECHO $1 | $GREP "^/" > /dev/null 2>&1
 }
 
+is_valid_cdsso_input() {
+    [[ $1 -ge 1 && $1 -le 2 ]]
+}
+
 #
 # This is the "main" entry point for getting user input.
 #
 get_config() {
     agent_get_config
-
     check_for_agent_config_dir
 
     get_agent_host
@@ -615,8 +598,8 @@ get_config() {
     get_agent_protocol
     get_agent_uri
     get_primary_server_host
-    get_primary_server_protocol
     get_primary_server_port
+    get_primary_server_protocol
     get_primary_server_uri
     get_primary_console_uri
     get_failover_server_protocol
@@ -647,22 +630,12 @@ check_for_agent_config_dir () {
 
 check_response() {
     if [[ "$SERVER_INSTANCE" != "" ]]; then
-        setup_server_instance_variables $SERVER_INSTANCE
+	setup_server_instance_variables $SERVER_INSTANCE
 	check_for_agent_config_dir
     else
 	$ECHO "$($GETTEXT 'SERVER_INSTANCE missing from response file')"
 	exit 1
     fi
-}
-
-setup_server_instance_variables() {
-    SERVER_INSTANCE=$1
-    # convert SERVER_INSTANCE into WSDIR and WS_INSTANCE, which
-    # are used by some of the configuration scripts
-    WSDIR=$($DIRNAME $SERVER_INSTANCE)
-    WS_INSTANCE=$($BASENAME $SERVER_INSTANCE)
-    AGENT_INSTANCE_NAME=$($ECHO $SERVER_INSTANCE | $SED -e 's;/$;;' -e 's;/;_;g')
-    AGENT_CONFIG_DIR=$AGENT_CONFIG_ROOT/$AGENT_INSTANCE_NAME
 }
 
 check_root() {
@@ -688,12 +661,12 @@ config_parse_args() {
     if [ $# != 0 ]; then
 	if [ "$1" = "-R" ]; then
 	    show_response_template
-	    exit 5;
+	    exit 5
 	elif [ "$1" = "-r" ]; then
 	    response=$2
 	    if [ "$response" = "" ]; then
 		config_show_usage
-		exit 1;
+		exit 1
 	    fi
 	    check_root
 	    . $response 2>/dev/null
@@ -701,24 +674,68 @@ config_parse_args() {
 	    check_response
 	elif [ "$1" = "-h" ]; then
 	    config_show_usage
-	    exit 5;
+	    exit 5
 	else
 	    config_show_usage
-	    exit 1;
+	    exit 1
 	fi
     else
 	check_root
 	get_config
     fi
 
-	create_urls
+    create_urls
 }
 
 config_show_usage() {
     $ECHO "$($GETTEXT 'Usage: config [ -r response_file | -R | -h ]')"
-    $ECHO "$($GETTEXT -- '-h prints out this message.')"
-    $ECHO "`$GETTEXT -- '-r configure a server using values in the given response file, including the SERVER_INSTANCE variable which specifies the server instance to configure.'`"
-    $ECHO "`$GETTEXT -- '-R prints out the response file template.'`"
+    $ECHO "$($GETTEXT '\t-h prints out this message.')"
+    $ECHO "$($GETTEXT '\t-r configure a server using values in the given response file, including the SERVER_INSTANCE variable which specifies the server instance to configure.')"
+    $ECHO "$($GETTEXT '\t-R prints out the response file template.')"
+}
+
+configure() {
+    typeset -i status=0
+    typeset LIBDIR="/opt/SUNWam/lib"
+    config_parse_args "$@"
+    $MKDIR -p $AGENT_CONFIG_DIR
+    status=$?
+    if [[ $status -eq 0 ]]; then
+	(agent_configure)
+	status=$?
+	if [[ $status -eq 0 ]]; then
+	    configure_properties_file
+	    save_response_file
+	    $ECHO "$($GETTEXT 'Done.')"
+	else
+	    $RM -rf $AGENT_CONFIG_DIR
+	    $ECHO "$($GETTEXT 'Failed to configure agent.')"
+	fi
+    else
+	$ECHO "$($GETTEXT 'Unable to create Agent config directory:') $AGENT_CONFIG_DIR"
+    fi
+
+    if [ ! -d $LIBDIR ]; then
+        $MKDIR -p $LIBDIR
+    fi
+
+    exit $status
+}
+
+configure_properties_file() {
+    typeset WS_DEBUG_DIR=`echo $SERVER_INSTANCE | sed -e 's;[^a-zA-Z0-9];_;g'`
+    typeset properties_file=$AGENT_CONFIG_DIR/$AGENT_PROPERTIES_FILE_NAME
+    if [ ! -d $TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX/debug ]; then
+	$MKDIR -p $TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX/debug
+    fi
+    $MKDIR -p $TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX/debug/$WS_DEBUG_DIR
+    $CHMOD 777 $TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX/debug
+    $CHMOD $dbg_dir_allow $TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX/debug/$WS_DEBUG_DIR
+    $CHOWN -R $NEW_OWNER $TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX/debug/$WS_DEBUG_DIR
+    $CP $AGENT_PROPERTIES_FILE_ORIG $properties_file
+    do_variable_replacement_in_files $properties_file
+    $CHOWN $NEW_OWNER $properties_file
+    $CHMOD $prop_perm $properties_file
 }
 
 create_urls() {
@@ -739,8 +756,8 @@ create_urls() {
     fi
     AGENT_URL_PREFIX=${AGENT_PROTOCOL}://${AGENT_HOST}:${AGENT_PORT}${AGENT_DEPLOY_URI}
 
-	create_not_enforcedListTags
-        create_cdc
+    create_not_enforcedListTags
+    create_cdc
 }
 
 create_cdc() {
@@ -748,75 +765,33 @@ create_cdc() {
     typeset cdc_base_url=${PRIMARY_SERVER_PROTOCOL}://${PRIMARY_SERVER_HOST}:${PRIMARY_SERVER_PORT}${PRIMARY_SERVER_DEPLOY_URI}
 
     if [[ "$CDSSO_SUPPORT" = "true" ]]; then
-        CDSSO_ENABLED=yes
+        CDSSO_ENABLED=true
 	CDSSO_SERVER_LOGIN_URL=$cdc_base_url$cdc_uri
+    elif [[ "$CDSSO_SUPPORT" = "false" ]]; then
+        CDSSO_ENABLED=false
     fi
 }
 
 create_not_enforcedListTags() {
     SERVER_PROTO=""
 
-    if [[ "$AGENT_HOST" == "$PRIMARY_SERVER_HOST" && "$AGENT_PORT" == "$PRIMARY_SERVER_PORT" ]]; then
+    if [[ "$AGENT_HOST" = "$PRIMARY_SERVER_HOST" && "$AGENT_PORT" = "$PRIMARY_SERVER_PORT" ]]; then
 	SERVER_PROTO=${PRIMARY_SERVER_PROTOCOL}
 	SERVER_HOST=${PRIMARY_SERVER_HOST}
 	SERVER_PORT=${PRIMARY_SERVER_PORT}
-	SERVER_DEPLOY_URI=${PRIMARY_SERVER_URI}
-	CONSOLE_DEPLOY_URI=${PRIMARY_CONSOLE_URI}
+	SERVER_DEPLOY_URI=${PRIMARY_SERVER_DEPLOY_URI}
+	CONSOLE_DEPLOY_URI=${PRIMARY_CONSOLE_DEPLOY_URI}
     else
 	if [[ "$FAILOVER_SERVER_PROTOCOL" != "" && \
-	    "$AGENT_HOST" == "$FAILOVER_SERVER_HOST" && \
-	    "$AGENT_PORT" == "$FAILOVER_SERVER_PORT" ]]; then
+	    "$AGENT_HOST" = "$FAILOVER_SERVER_HOST" && \
+	    "$AGENT_PORT" = "$FAILOVER_SERVER_PORT" ]]; then
 		SERVER_PROTO=${FAILOVER_SERVER_PROTOCOL}
 		SERVER_HOST=${FAILOVER_SERVER_HOST}
 		SERVER_PORT=${FAILOVER_SERVER_PORT}
-		SERVER_DEPLOY_URI=${FAILOVER_SERVER_URI}
-		CONSOLE_DEPLOY_URI=${FAILOVER_CONSOLE_URI}
+		SERVER_DEPLOY_URI=${FAILOVER_SERVER_DEPLOY_URI}
+		CONSOLE_DEPLOY_URI=${FAILOVER_CONSOLE_DEPLOY_URI}
 	fi
     fi
-
-}
-
-configure() {
-    typeset -i status=0
-
-    config_parse_args "$@"
-
-    $MKDIR -p $AGENT_CONFIG_DIR
-    status=$?
-
-    if [[ $status -eq 0 ]]; then
-	agent_configure
-	status=$?
-	if [[ $status -eq 0 ]]; then
-	    configure_properties_file
-	    save_response_file
-	    $ECHO "$($GETTEXT 'Done.')"
-	else
-	    $RM -rf $AGENT_CONFIG_DIR
-	    $ECHO "$($GETTEXT 'Failed to configure agent.')"
-	fi
-    else
-	$ECHO "$($GETTEXT 'Unable to create Agent config directory:') $AGENT_CONFIG_DIR"
-    fi
-
-    exit $status
-}
-
-configure_properties_file() {
-    typeset WS_DEBUG_DIR=`echo $SERVER_INSTANCE | sed -e 's;[^a-zA-Z0-9];_;g'`
-    typeset properties_file=$AGENT_CONFIG_DIR/$AGENT_PROPERTIES_FILE_NAME
-
-    if [ ! -d $TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX/debug ]; then
-	$MKDIR $TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX/debug
-    fi
-    $CHMOD 777 $TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX/debug
-    $MKDIR $TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX/debug/$WS_DEBUG_DIR
-    $CHOWN -R $NEW_OWNER $TEMP_DIR_PREFIX$DEBUG_DIR_PREFIX/debug/$WS_DEBUG_DIR
-
-    $CP $AGENT_PROPERTIES_FILE_ORIG $properties_file
-    do_variable_replacement_in_files $properties_file
-    $CHOWN $NEW_OWNER $properties_file
-    $CHMOD 600 $properties_file
 }
 
 save_response_file() {
@@ -838,17 +813,25 @@ save_response_file() {
     $ECHO "PRIMARY_SERVER_DEPLOY_URI=$PRIMARY_SERVER_DEPLOY_URI" >> $response_file
     $ECHO "PRIMARY_CONSOLE_DEPLOY_URI=$PRIMARY_CONSOLE_DEPLOY_URI" >> $response_file
     $ECHO "SERVER_INSTANCE=$SERVER_INSTANCE" >> $response_file
-    $ECHO "SHARED_SECRET=$SHARED_SECRET"  >> $response_file
+    $ECHO "AGENT_CERT_PREFIX=$AGENT_CERT_PREFIX" >> $response_file
     $ECHO "NOTIFICATION_ENABLE=$NOTIFICATION_ENABLE" >> $response_file
-    $ECHO "LOG_ROTATION=$LOG_ROTATION" >> $response_file
     $ECHO "AGENT_URL_CASE_IGNORE=$AGENT_URL_CASE_IGNORE" >> $response_file
     $ECHO "CDSSO_ENABLED=$CDSSO_ENABLED" >> $response_file
     $ECHO "CDSSO_SERVER_LOGIN_URL=$CDSSO_SERVER_LOGIN_URL" >> $response_file
-
     # We intentionally do not save the shared secret in this response file
 
     $CHOWN $NEW_OWNER $response_file
-    $CHMOD 600 $response_file
+    $CHMOD $prop_perm $response_file
+}
+
+setup_server_instance_variables() {
+    SERVER_INSTANCE=$1
+    # convert SERVER_INSTANCE into WSDIR and WS_INSTANCE, which
+    # are used by some of the configuration scripts
+    WSDIR=$($DIRNAME $SERVER_INSTANCE)
+    WS_INSTANCE=$($BASENAME $SERVER_INSTANCE)
+    AGENT_INSTANCE_NAME=$($ECHO $SERVER_INSTANCE | $SED -e 's;/$;;' -e 's;/;_;g')
+    AGENT_CONFIG_DIR=$AGENT_CONFIG_ROOT/$AGENT_INSTANCE_NAME
 }
 
 show_response_template() {
@@ -872,8 +855,8 @@ show_response_template() {
     $ECHO "NOTIFICATION_ENABLE        # $($GETTEXT 'notification enabled')"
     $ECHO "LOG_ROTATION               # $($GETTEXT 'log rotation')"
     $ECHO "AGENT_URL_CASE_IGNORE      # $($GETTEXT 'url comparison case ignore')"
-    $ECHO "CDSSO_ENABLED      # $($GETTEXT 'cdsso enabled true|false')"
-    $ECHO "CDSSO_SERVER_LOGIN_URL      # $($GETTEXT 'cdc url ')"
+    $ECHO "CDSSO_ENABLED              # $($GETTEXT 'cdsso enabled true|false ')"
+    $ECHO "CDSSO_SERVER_LOGIN_URL     # $($GETTEXT 'url comparison case ignore')"
 
 }
 
@@ -901,22 +884,19 @@ unconfig_parse_args() {
 
 unconfig_show_usage() {
     $ECHO "$($GETTEXT 'Usage: unconfig [ -h ] agent_server_instance_directory')"
-    $ECHO "$($GETTEXT -- '-h prints out this message.')"
+    $ECHO "$($GETTEXT '\t-h prints out this message.')"
 }
 
 unconfigure() {
     unconfig_parse_args "$@"
 
     agent_unconfigure
-
-    rm -rf $AGENT_CONFIG_DIR
+    rm -rf $AGENT_CONFIG_DIR/*
 
     # Try an delete the base config directory in case this was the last
     # configured agent of this (or any) type.
-#    rmdir -p -s $CONFIG_ROOT
-    if [[ "$CONFIG_ROOT" != "" ]]; then
-        rmdir -p $CONFIG_ROOT >/dev/null
-    fi
+    $RMDIR  -p $AGENT_CONFIG_DIR > /dev/null 2>&1
+
     $ECHO "$($GETTEXT 'done.')"
 
     exit 0

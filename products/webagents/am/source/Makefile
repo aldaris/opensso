@@ -209,7 +209,11 @@ CFLAGS += -DAM_BUILDING_LIB
 
 include $(USERX_ROOT)/arch/rules.mk
 
+ifneq ($(OS_ARCH), AIX)
 all: version.h $(USERX_ROOT)/.version depends export_headers export_static_libs export_libs $(TEST_LIB) softlink_so $(DEST_BIN_DIR)/$(CRYPT_EXE) all_subdirs
+else
+all: version.h $(USERX_ROOT)/.version export_headers export_static_libs export_libs $(TEST_LIB) softlink_so $(DEST_BIN_DIR)/$(CRYPT_EXE) all_subdirs
+endif
 
 $(EXPORTED_LIBS): $(OBJS) $(STD_LIB_MAP_FILE)
 	$(MAKE_SHARED_LIB)

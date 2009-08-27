@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: policy_engine.cpp,v 1.9 2008-10-01 23:52:37 madan_ranganath Exp $
+ * $Id: policy_engine.cpp,v 1.10 2009-08-27 21:41:30 subbae Exp $
  *
  */ 
 
@@ -39,6 +39,9 @@
 #include "am_types.h"
 #include "log.h"
 #include "policy_engine.h"
+#if defined(AIX)
+#include "sso_token_service.h"
+#endif
 #include "service.h"
 
 #if (defined(WINNT) || defined(_AMD64_))

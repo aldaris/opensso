@@ -26,7 +26,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.13 2009-02-14 00:03:13 robertis Exp $
+# $Id: components.mk,v 1.14 2009-08-27 21:41:31 subbae Exp $
 # 
 #
 
@@ -57,6 +57,7 @@ include $(USERX_ROOT)/arch/defines.mk
 APACHE_DIR = $(EXTERNAL_DIR)/apache
 APACHE_INC_DIR = $(APACHE_DIR)/include
 APACHE_LIB_DIR = $(APACHE_DIR)/lib
+APACHE_MOD_DIR = $(APACHE_DIR)/modules
 
 ##########################################
 # SJSWS  defines
