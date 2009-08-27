@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.51 2009-07-29 22:27:02 weisun2 Exp $
+ * $Id: LoginState.java,v 1.52 2009-08-27 08:39:52 si224302 Exp $
  *
  */
 
@@ -93,6 +93,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -4648,6 +4649,23 @@ public class LoginState {
                 props.put(LogConstants.LOGIN_ID, userDN);
             } else if (failureTokenId != null) {
                 props.put(LogConstants.LOGIN_ID, failureTokenId);
+            } else if (callbacksPerState != null && callbacksPerState.values() != null
+            		&& callbacksPerState.values().size() > 0) {
+                Object[] ob = callbacksPerState.values().toArray();
+                for (int i = 0; i < ob.length; i++) {
+                    if (ob[i] instanceof Callback[]) {
+                        Callback[] cb = (Callback[]) ob[i];
+                        for (int j = 0; j < cb.length; j++) {
+                            if (cb[j] instanceof NameCallback) {
+                                userDN = ((NameCallback) cb[j]).getName();
+                                if (ad.debug.messageEnabled()) {
+                                    ad.debug.message("userDN is null, setting to " + userDN);
+                                }
+                                props.put(LogConstants.LOGIN_ID, userDN);
+                            }
+                        }
+                    }
+                }
             }
             if (orgDN != null) {
                 props.put(LogConstants.DOMAIN, orgDN);
