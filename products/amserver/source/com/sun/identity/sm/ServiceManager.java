@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.25 2009-07-25 05:11:55 qcheng Exp $
+ * $Id: ServiceManager.java,v 1.26 2009-08-28 23:18:56 hengming Exp $
  *
  */
 
@@ -548,7 +548,7 @@ public class ServiceManager {
         }
         SMSEntry.validateToken(token);
         String[] objs = { serviceName };
-        Iterator results = SMSEntry.search(
+        Iterator results = SMSEntry.search(token, SMSEntry.baseDN,
             MessageFormat.format(SMSEntry.FILTER_PATTERN, (Object[])objs))
             .iterator();
         while (results.hasNext()) {
