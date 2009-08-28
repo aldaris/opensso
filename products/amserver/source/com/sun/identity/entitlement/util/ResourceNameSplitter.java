@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitter.java,v 1.1 2009-08-19 05:40:36 veiming Exp $
+ * $Id: ResourceNameSplitter.java,v 1.2 2009-08-28 06:16:31 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -70,6 +70,11 @@ public class ResourceNameSplitter implements ISearchIndex {
         } catch (MalformedURLException e) {
             Set<String> setHost = new HashSet<String>();
             setHost.add(".");
+            
+            if (!resName.startsWith("/")) {
+                resName = "/" + resName;
+            }
+
             Set<String> setPath = splitPath(resName);
             Set<String> parentPath = new HashSet<String>();
             parentPath.add(resName);
@@ -146,6 +151,7 @@ public class ResourceNameSplitter implements ISearchIndex {
 
     private static Set<String> splitPath(String path) {
         Set<String> results = new HashSet<String>();
+        results.add("/");
         path = path.toLowerCase();
 
         if ((path.length() > 0) && !path.equals("/")) {

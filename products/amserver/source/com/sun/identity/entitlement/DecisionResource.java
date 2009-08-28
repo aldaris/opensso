@@ -19,25 +19,23 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.2 2009-08-26 23:40:10 rh221556 Exp $
+ * $Id: DecisionResource.java,v 1.3 2009-08-28 06:16:31 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
+
 import com.sun.identity.entitlement.util.AuthSPrincipal;
 import java.security.Principal;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.SecurityContext;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Exposes the entitlement decision REST resource.
@@ -48,42 +46,73 @@ import java.util.Map;
 @Path("/1/entitlement")
 public class DecisionResource {
 
-    public enum Permission { deny, allow }
+    private enum Permission {
+        deny, allow
+    }
 
-    private @Context SecurityContext security;
+    private Subject getCaller() {
+        //TOFIX: hardcoded to amadmin
+        return toSubject(
+            "id=amAdmin,ou=user,dc=opensso,dc=java,dc=net");
+    }
 
+    private Evaluator getEvaluator(Subject caller, String application)
+        throws EntitlementException {
+        return ((application == null) || (application.length() == 0))
+            ? new Evaluator(caller) : new Evaluator(caller, application);
+    }
+
+    /**
+     * Returns entitlement decision of a given user.
+     *
+     * @param realm Realm name.
+     * @param subject Subject of interest.
+     * @param action Action to be evaluated.
+     * @param resource Resource to be evaluated.
+     * @param application Application name.
+     * @param environment environment parameters.
+     * @return entitlement decision of a given user. Either "deny" or "allow".
+     */
     @GET
     @Produces("text/plain")
     @Path("/decision")
     public String decision(
-     @QueryParam("realm") String realm,
-     @QueryParam("subject") String subject,
-     @QueryParam("action") String action,
-     @QueryParam("resource") String resource,
-     @QueryParam("application") String application) {
-        
-// FIXME: once OAuth filter comes stock, let's use it to authenticate the caller
-Subject caller = toSubject("id=amAdmin,ou=user,dc=opensso,dc=java,dc=net");
-//        Subject caller = toSubject(security.getUserPrincipal());
-        
-        try {
-            Evaluator evaluator = (application == null ?
-             new Evaluator(caller) : new Evaluator(caller, application));
-                   
-            return permission(evaluator.hasEntitlement(realm, toSubject(subject),
-             toEntitlement(resource, action), Collections.EMPTY_MAP));
-        }
+        @QueryParam("realm") String realm,
+        @QueryParam("subject") String subject,
+        @QueryParam("action") String action,
+        @QueryParam("resource") String resource,
+        @QueryParam("application") String application,
+        @QueryParam("env") List<String> environment) {
 
-        // fail safe
-        catch (EntitlementException ee) {
-            return permission(false);
+        Subject caller = getCaller();
+        Map env = getMap(environment);
+
+        try {
+            Evaluator evaluator = getEvaluator(caller, application);
+            return permission(evaluator.hasEntitlement(realm,
+                toSubject(subject), toEntitlement(resource, action),
+                env));
+        } catch (EntitlementException e) {
+            PrivilegeManager.debug.warning("DecisionResource.decision", e);
+            return Integer.toString(e.getErrorCode());
         }
     }
 
-     @GET
-     @Produces("application/json")
-     @Path("/entitlement")
-     public String entitlement (
+    /**
+     * Returns the entitlement of a given subject.
+     *
+     * @param realm Realm Name.
+     * @param subject Subject of interest.
+     * @param action action to be evaluated.
+     * @param resource resource to be evaluated
+     * @param application application name.
+     * @param environment environment parameters.
+     * @return entitlement of a given subject (in JSON string).
+     */
+    @GET
+    @Produces("application/json")
+    @Path("/entitlement")
+    public String entitlement(
         @QueryParam("realm") String realm,
         @QueryParam("subject") String subject,
         @QueryParam("action") String action,
@@ -92,45 +121,43 @@ Subject caller = toSubject("id=amAdmin,ou=user,dc=opensso,dc=java,dc=net");
         @QueryParam("env") List<String> environment) {
 
         Map env = getMap(environment);
-        // FIXME: once OAuth filter comes stock, let's use it to authenticate the caller
-        Subject caller = toSubject("id=amAdmin,ou=user,dc=opensso,dc=java,dc=net");
-        //        Subject caller = toSubject(security.getUserPrincipal());
+        Subject caller = getCaller();
 
         try {
-            Evaluator evaluator = (application == null ?
-                new Evaluator(caller) : new Evaluator(caller, application));
-            List<Entitlement> entitlement = evaluator.evaluate(realm, caller,
-                resource, env, false);
+            Evaluator evaluator = getEvaluator(caller, application);
+            List<Entitlement> entitlement = evaluator.evaluate(
+                realm, caller, resource, env, false);
             return entitlement.get(0).toString();
-        } 
-        catch (EntitlementException e) {
+        } catch (EntitlementException e) {
             PrivilegeManager.debug.warning("DecisionResource.evaluate", e);
             return Integer.toString(e.getErrorCode());
         }
     }
 
-    private Map getMap(List<String> list) {
+    private Map<String, Set<String>> getMap(List<String> list) {
+        Map<String, Set<String>> env = new HashMap<String, Set<String>>();
 
-      Map<String,Set<String>> env = new HashMap<String,Set<String>>();
-      for (String l :  list) {
-          if (l.contains("=")) {
-              String[] cond = l.split("=",2);
-              if (env.containsKey(cond[0])) {
-                   Set set = env.get(cond[0]);
-                   set.add(cond[1]);
+        if ((list != null) && !list.isEmpty()) {
+            for (String l : list) {
+                if (l.contains("=")) {
+                    String[] cond = l.split("=", 2);
+                    Set<String> set = env.get(cond[0]);
 
-              } else {
-                  Set<String> set = new HashSet<String>();
-                  set.add(cond[1]);
-                  env.put(cond[0],set);
-              }
-          }
-      }
-      return env;
-   } 
-    
+                    if (set == null) {
+                        set = new HashSet<String>();
+                        env.put(cond[0], set);
+                    }
+
+                    set.add(cond[1]);
+                }
+            }
+        }
+        
+        return env;
+    }
+
     private Entitlement toEntitlement(String resource, String action) {
-        HashSet set = new HashSet<String>();
+        Set<String> set = new HashSet<String>();
         set.add(action);
         return new Entitlement(resource, set);
     }
@@ -145,10 +172,8 @@ Subject caller = toSubject("id=amAdmin,ou=user,dc=opensso,dc=java,dc=net");
     }
 
     private Subject toSubject(String subject) {
-        if (subject == null) {
-            return null;
-        }
-        return toSubject(new AuthSPrincipal(subject));
+        return (subject == null) ? null :
+            toSubject(new AuthSPrincipal(subject));
     }
 
     private String permission(boolean b) {

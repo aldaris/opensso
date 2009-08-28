@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestTest.java,v 1.1 2009-08-26 23:40:11 rh221556 Exp $
+ * $Id: RestTest.java,v 1.2 2009-08-28 06:16:31 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -64,7 +64,8 @@ public class RestTest {
     private Subject adminSubject = SubjectUtils.createSuperAdminSubject();
     private static final String RESOURCE_NAME = "http://www.resttest.com";
     private AMIdentity user;
-    private WebResource client;
+    private WebResource entitlementClient;
+    private WebResource decisionClient;
 
     @BeforeClass
     public void setup() throws Exception {
@@ -88,7 +89,10 @@ public class RestTest {
             adminToken, REALM);
         user = createUser(amir, "RestTestUser");
 
-        client = Client.create().resource(
+        decisionClient = Client.create().resource(
+            SystemProperties.getServerInstanceName() +
+            "/ws/1/entitlement/decision");
+        entitlementClient = Client.create().resource(
             SystemProperties.getServerInstanceName() +
             "/ws/1/entitlement/entitlement");
     }
@@ -107,7 +111,8 @@ public class RestTest {
 
     private AMIdentity createUser(AMIdentityRepository amir, String id)
         throws SSOException, IdRepoException {
-        Map<String, Set<String>> attrValues = new HashMap<String, Set<String>>();
+        Map<String, Set<String>> attrValues =
+            new HashMap<String, Set<String>>();
         Set<String> set = new HashSet<String>();
         set.add(id);
         attrValues.put("givenname", set);
@@ -121,12 +126,19 @@ public class RestTest {
     public void positiveTest() throws Exception {
         MultivaluedMap params = getMultivaluedMap();
         params.add("env", IPCondition.REQUEST_IP + "=127.1.1.1");
-        String json = client.queryParams(params).accept("application/json").
-           get(String.class);
+
+        String decision = decisionClient.queryParams(params).accept(
+            "text/plain").get(String.class);
+        if ((decision == null) || !decision.equals("allow")) {
+            throw new Exception("RESTTest.positiveTest (/decision) failed");
+        }
+
+        String json = entitlementClient.queryParams(params).accept(
+            "application/json").get(String.class);
         Entitlement ent = new Entitlement(new JSONObject(json));
         boolean result = ent.getActionValue("GET");
         if (!result) {
-            throw new Exception("RESTTest.positiveTest failed");
+            throw new Exception("RESTTest.positiveTest (/entitlement) failed");
         }
     }
 
@@ -134,8 +146,15 @@ public class RestTest {
     public void negativeTest() throws Exception {
         MultivaluedMap params = getMultivaluedMap();
         params.add("env", IPCondition.REQUEST_IP + "=128.1.1.1");
-        String json = client.queryParams(params).accept("application/json").
-           get(String.class);
+
+        String decision = decisionClient.queryParams(params).accept(
+            "text/plain").get(String.class);
+        if ((decision != null) && decision.equals("allow")) {
+            throw new Exception("RESTTest.negativeTest (/entitlement) failed");
+        }
+
+        String json = entitlementClient.queryParams(params).accept(
+            "application/json").get(String.class);
         Entitlement ent = new Entitlement(new JSONObject(json));
         Boolean result = ent.getActionValue("GET");
         if ((result != null) && (result.booleanValue())) {
@@ -151,7 +170,4 @@ public class RestTest {
         params.add("realm", REALM);
         return params;
     }
-
-
-
 }

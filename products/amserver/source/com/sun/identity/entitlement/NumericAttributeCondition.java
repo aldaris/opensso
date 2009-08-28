@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NumericAttributeCondition.java,v 1.1 2009-08-19 05:40:33 veiming Exp $
+ * $Id: NumericAttributeCondition.java,v 1.2 2009-08-28 06:16:31 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -154,10 +154,12 @@ public class NumericAttributeCondition extends EntitlementConditionAdaptor {
         boolean allowed = false;
         if ((attributeName != null) && (attributeName.length() > 0)) {
             Set<String> values = environment.get(attributeName);
-            for (String v : values) {
-                allowed = match(v);
-                if (allowed) {
-                    break;
+            if ((values != null) && !values.isEmpty()) {
+                for (String v : values) {
+                    allowed = match(v);
+                    if (allowed) {
+                        break;
+                    }
                 }
             }
         } else {
