@@ -22,11 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeerror.jsp,v 1.3 2008-10-29 03:11:52 veiming Exp $
+   $Id: saeerror.jsp,v 1.4 2009-08-28 00:25:39 sean_brydon Exp $
 
 --%>
 
-
+<%@ page import="org.owasp.esapi.ESAPI" %>
 
 <html>
 <head>
@@ -37,7 +37,9 @@
 <body>
 <%
     String codeParam = request.getParameter("errorcode");
+    codeParam = ESAPI.encoder().encodeForHTML(codeParam);
     String messageParam = request.getParameter("errorstring");
+    messageParam  = ESAPI.encoder().encodeForHTML(messageParam);
 %>
     errorcode= <%= codeParam %>
     messageParam= <%= messageParam %>
