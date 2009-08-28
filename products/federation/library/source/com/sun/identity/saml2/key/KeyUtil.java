@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.9 2009-06-09 00:25:22 madan_ranganath Exp $
+ * $Id: KeyUtil.java,v 1.10 2009-08-28 23:42:14 exu Exp $
  *
  */
 
@@ -678,5 +678,13 @@ public class KeyUtil {
         }
         sigHash.put(index, cert);
         return cert;
+    }
+
+    /**
+     * Clears the cache. This method is called when metadata is updated.
+     */
+    public static void clear() {
+        sigHash.clear();
+        encHash.clear();
     }
 } 

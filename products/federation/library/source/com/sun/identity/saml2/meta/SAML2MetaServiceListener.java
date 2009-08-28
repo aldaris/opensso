@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaServiceListener.java,v 1.4 2008-06-25 05:47:49 qcheng Exp $
+ * $Id: SAML2MetaServiceListener.java,v 1.5 2009-08-28 23:42:14 exu Exp $
  *
  */
 
@@ -30,6 +30,7 @@
 package com.sun.identity.saml2.meta;
 
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.profile.IDPCache;
 import com.sun.identity.saml2.profile.SPCache;
 import com.sun.identity.plugin.configuration.ConfigurationListener;
@@ -63,5 +64,6 @@ class SAML2MetaServiceListener implements ConfigurationListener
         String realm = e.getRealm();
         SPCache.clear(realm);
         IDPCache.clear(realm);
+        KeyUtil.clear();
     }
 }
