@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.16 2008-12-18 20:08:09 qcheng Exp $
+ * $Id: SAML2MetaManager.java,v 1.17 2009-08-28 23:39:40 exu Exp $
  *
  */
 
@@ -1463,7 +1463,7 @@ public class SAML2MetaManager {
             for (Iterator iter = entityIds.iterator(); iter.hasNext();) {
                 String entityId = (String)iter.next();
                 EntityConfigElement config = getEntityConfig(realm, entityId);
-                if (config == null) {
+                if ((config == null) || !config.isHosted()) {
                     continue;
                 }
                 List list =
