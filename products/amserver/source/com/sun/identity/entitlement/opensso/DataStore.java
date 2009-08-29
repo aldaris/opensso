@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.1 2009-08-19 05:40:35 veiming Exp $
+ * $Id: DataStore.java,v 1.2 2009-08-29 00:56:24 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -162,7 +162,7 @@ public class DataStore {
 
         Set<String> subConfigNames = orgConf.getSubConfigNames();
         if (!subConfigNames.contains(indexName)) {
-            orgConf.addSubConfig(indexName, "indexes", 0,
+            orgConf.addSubConfig(indexName, "type", 0,
                 Collections.EMPTY_MAP);
         }
         ServiceConfig defSubConfig = orgConf.getSubConfig(indexName);
@@ -319,6 +319,10 @@ public class DataStore {
                 searchable.add(SUBJECT_INDEX_KEY + "=" + i);
             }
 
+            Set<String> setServiceID = new HashSet<String>(2);
+            map.put(SMSEntry.ATTR_SERVICE_ID, setServiceID);
+            setServiceID.add("indexes");
+
             Set<String> set = new HashSet<String>(2);
             map.put(SMSEntry.ATTR_KEYVAL, set);
             set.add(SERIALIZABLE_INDEX_KEY + "=" + p.toJSONObject().toString());
@@ -427,6 +431,10 @@ public class DataStore {
                     searchable.add(PATH_PARENT_INDEX_KEY + "=" + i);
                 }
             }
+
+            Set<String> setServiceID = new HashSet<String>(2);
+            map.put(SMSEntry.ATTR_SERVICE_ID, setServiceID);
+            setServiceID.add("indexes");
 
             Set<String> set = new HashSet<String>(2);
             map.put(SMSEntry.ATTR_KEYVAL, set);

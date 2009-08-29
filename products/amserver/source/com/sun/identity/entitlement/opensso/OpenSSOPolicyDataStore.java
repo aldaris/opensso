@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPolicyDataStore.java,v 1.1 2009-08-19 05:40:35 veiming Exp $
+ * $Id: OpenSSOPolicyDataStore.java,v 1.2 2009-08-29 00:56:24 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -80,7 +80,12 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
                 createParentNode(adminToken, realm);
 
                 SMSEntry s = new SMSEntry(adminToken, dn);
-                Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+                Map<String, Set<String>> map = new
+                    HashMap<String, Set<String>>();
+
+                Set<String> setServiceID = new HashSet<String>(2);
+                map.put(SMSEntry.ATTR_SERVICE_ID, setServiceID);
+                setServiceID.add("NamedPolicy");
 
                 Set<String> setObjectClass = new HashSet<String>(4);
                 map.put(SMSEntry.ATTR_OBJECTCLASS, setObjectClass);
@@ -338,6 +343,10 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
 
             SMSEntry s = new SMSEntry(adminToken, dn);
             Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+
+            Set<String> setServiceID = new HashSet<String>(2);
+            map.put(SMSEntry.ATTR_SERVICE_ID, setServiceID);
+            setServiceID.add("NamedPolicy");
 
             Set<String> setObjectClass = new HashSet<String>(4);
             map.put(SMSEntry.ATTR_OBJECTCLASS, setObjectClass);

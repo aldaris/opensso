@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policyIndex.xml,v 1.1 2009-08-19 05:40:40 veiming Exp $
+   $Id: policyIndex.xml,v 1.2 2009-08-29 00:56:25 veiming Exp $
 
 -->
 
@@ -48,17 +48,19 @@
                     type="list"
                     syntax="string"
                     i18nKey="" />
-                <SubSchema name="indexes" inheritance="multiple">
-                    <AttributeSchema name="subjectindex"
-                        type="list"  isSearchable="yes" />
-                    <AttributeSchema name="hostindex"
-                        type="list"  isSearchable="yes" />
-                    <AttributeSchema name="pathindex"
-                        type="list"  isSearchable="yes" />
-                    <AttributeSchema name="pathparentindex"
-                        type="list"  isSearchable="yes" />
-                    <AttributeSchema name="serializable"
-                        type="single" />
+                <SubSchema name="type" inheritance="multiple">
+                    <SubSchema name="indexes" inheritance="multiple">
+                        <AttributeSchema name="subjectindex"
+                            type="list"  isSearchable="yes" />
+                        <AttributeSchema name="hostindex"
+                            type="list"  isSearchable="yes" />
+                        <AttributeSchema name="pathindex"
+                            type="list"  isSearchable="yes" />
+                        <AttributeSchema name="pathparentindex"
+                            type="list"  isSearchable="yes" />
+                        <AttributeSchema name="serializable"
+                            type="single" />
+                    </SubSchema>
                  </SubSchema>
             </Organization>
         </Schema>
@@ -69,7 +71,8 @@
                     <Attribute name="indexCount" />
                         <Value>0</Value>
                 </AttributeValuePair>
-                <SubConfiguration name="default" id="indexes" />
+                <SubConfiguration name="default" id="type" />
+                <SubConfiguration name="referrals" id="type" />
             </OrganizationConfiguration>
         </Configuration>
     </Service>
