@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptionProvider.java,v 1.4 2008-06-25 05:48:17 qcheng Exp $
+ * $Id: EncryptionProvider.java,v 1.5 2009-08-29 07:30:38 mallas Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.xmlenc;
 
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * <code>EncryptionProvier</code> is an interface for encrypting and 
@@ -195,5 +196,12 @@ public interface EncryptionProvider{
         Document encryptedDoc,
         java.security.Key privKey)
      throws EncryptionException;
-
+    
+    /**
+     * Decrypt the given encrypted key.
+     * @param encryptedKey the encrypted key element
+     * @param certAlias the private key alias
+     * @return the key associated with the decrypted key.
+     */
+    public java.security.Key decryptKey(Element encryptedKey, String certAlias);
 } 

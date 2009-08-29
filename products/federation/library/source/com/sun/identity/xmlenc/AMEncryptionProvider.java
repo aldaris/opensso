@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEncryptionProvider.java,v 1.6 2009-06-08 23:43:57 madan_ranganath Exp $
+ * $Id: AMEncryptionProvider.java,v 1.7 2009-08-29 07:30:38 mallas Exp $
  *
  */
 
@@ -682,4 +682,13 @@ public class AMEncryptionProvider implements EncryptionProvider {
         return pk;
     }
     
+    /**
+     * Decrypt the given encrypted key.
+     * @param encryptedKey the encrypted key element
+     * @param certAlias the private key alias
+     * @return the key associated with the decrypted key.
+     */
+    public Key decryptKey(Element encryptedKey, String certAlias) {
+        return null;
+    }
 }

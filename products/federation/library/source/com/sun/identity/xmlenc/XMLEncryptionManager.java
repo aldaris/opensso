@@ -22,16 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLEncryptionManager.java,v 1.4 2008-06-25 05:48:17 qcheng Exp $
+ * $Id: XMLEncryptionManager.java,v 1.5 2009-08-29 07:30:38 mallas Exp $
  *
  */
 
 
 package com.sun.identity.xmlenc;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import java.security.Key;
+
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
-import org.w3c.dom.Document;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
 
@@ -316,6 +319,16 @@ public class XMLEncryptionManager {
         java.security.Key privKey)
       throws EncryptionException {
         return ep.decryptAndReplace(encryptedDoc, privKey); 
+    }
+    
+    /**
+     * Decrypts key and returns the associated secret key.
+     * @param encryptedKey the encrypted key.
+     * @param certAlias the private key alias that is used to decrypt the key.
+     * @return the decrypted secret key.
+     */
+    public Key decryptKey(Element encryptedKey, String certAlias) {
+        return ep.decryptKey(encryptedKey, certAlias);
     }
 
 } 
