@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SignatureProvider.java,v 1.9 2008-11-10 22:57:01 veiming Exp $
+ * $Id: SignatureProvider.java,v 1.10 2009-08-29 03:06:47 mallas Exp $
  *
  */
 
@@ -327,6 +327,33 @@ public interface SignatureProvider {
         java.lang.String algorithm,
         java.util.List ids)
         throws XMLSignatureException;
+    
+    /**
+     * Sign part of the XML document referred by the supplied a list
+     * of id attributes of nodes using SAML Token.
+     * @param doc XML dom object
+     * @param key the key that will be used to sign the document.
+     * @param symmetricKey true if the supplied key is a symmetric key type.     
+     * @param signingCert signer's Certificate. If present, this certificate
+     *        will be added as part of signature <code>KeyInfo</code>.
+     * @param encryptCert the certificate if present will be used to encrypt
+     *        the symmetric key and replay it as part of <code>KeyInfo</code>
+     * @param assertionID assertion ID for the SAML Security Token
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @return SAML Security Token  signature
+     * @throws XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithSAMLToken(
+        org.w3c.dom.Document doc,
+        java.security.Key key,
+        boolean symmetricKey,
+        java.security.cert.Certificate signingCert,
+        java.security.cert.Certificate encryptCert,
+        java.lang.String assertionID,
+        java.lang.String algorithm,
+        java.util.List ids)
+        throws XMLSignatureException;
 
     /**
      * Sign part of the XML document wth binary security token using
@@ -560,6 +587,23 @@ public interface SignatureProvider {
                          java.security.Key key)
         throws XMLSignatureException;
 
+    /**
+     * Verify web services message signature using specified key
+     * @param doc the document to be validated
+     * @param key the secret key to be used for validating signature
+     * @param certAlias the certificate alias used for validating the signature
+     *        if the key is not available.
+     * @param encryptAlias the certificate alias that may be used to decrypt
+     *        the symmetric key that may be part of <code>KeyInfo</code>
+     * @return true if verification is successful.
+     * @throws com.sun.identity.saml.xmlsig.XMLSignatureException
+     */
+    public boolean verifyWSSSignature(org.w3c.dom.Document document,
+                         java.security.Key key,
+                         String certAlias,
+                         String encryptAlias)
+        throws XMLSignatureException;
+    
     /**
      * Returns the real key provider.
      *

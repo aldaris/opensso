@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2TokenUtils.java,v 1.6 2009-06-04 01:16:49 mallas Exp $
+ * $Id: SAML2TokenUtils.java,v 1.7 2009-08-29 03:05:57 mallas Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import com.sun.identity.saml2.assertion.SubjectConfirmation;
 import com.sun.identity.saml2.assertion.SubjectConfirmationData;
 import com.sun.identity.saml2.assertion.NameID;
 import java.security.Principal;
+import java.security.Key;
 
 /**
  * This class provides utility classes for the SAML2 token support
@@ -64,7 +65,21 @@ public class SAML2TokenUtils {
         }
         Assertion assertion = saml2Token.getAssertion();
         Element keyInfo = getKeyInfo(assertion);
-        return WSSUtils.getCertificate(keyInfo);
+        if(keyInfo == null) {
+           return null; 
+        }
+        return WSSUtils.getCertificate(keyInfo);       
+    }
+    
+    public static Key getSecretKey(SecurityToken securityToken, 
+            String certAlias) throws SecurityException {
+        SAML2Token saml2Token = (SAML2Token)securityToken;
+        if(saml2Token.isSenderVouches()) {
+           return null;
+        }
+        Assertion assertion = saml2Token.getAssertion();
+        Element keyInfo = getKeyInfo(assertion);
+        return WSSUtils.getXMLEncryptionManager().decryptKey(keyInfo, certAlias);
     }
     
     /**

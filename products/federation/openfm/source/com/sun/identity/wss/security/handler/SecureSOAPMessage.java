@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.24 2009-06-04 01:16:49 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.25 2009-08-29 03:05:58 mallas Exp $
  *
  */
 
@@ -79,6 +79,7 @@ import java.security.Principal;
 import java.security.Key;
 import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
+import java.security.PublicKey;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.debug.Debug;
@@ -116,7 +117,8 @@ public class SecureSOAPMessage {
      private List signingIds = new ArrayList();
      private String messageID = null;
      private long msgTimestamp = 0;
-
+     private SecurityContext securityContext = null;
+    
      /**
       * Constructor to create secure SOAP message. 
       *
@@ -303,7 +305,7 @@ public class SecureSOAPMessage {
                                  SecurityMechanism.WSS_NULL_SAML2_HK;
                          }
                          messageCertificate = 
-                             SAML2TokenUtils.getCertificate(saml2Token);
+                             SAML2TokenUtils.getCertificate(saml2Token);                         
                      } catch (SAML2Exception se) {
                          debug.error("SecureSOAPMessage.parseSecurity" +
                              "Header: unable to parse the token", se);
@@ -447,6 +449,14 @@ public class SecureSOAPMessage {
      public SecurityToken getSecurityToken() {
          return securityToken;
      }
+     
+     public SecurityContext getSecurityContext() {
+         return securityContext;
+     }
+     
+     public void setSecurityContext(SecurityContext securityContext) {
+         this.securityContext = securityContext;
+     }
 
      /**
       * Adds the WSSE related name spaces to the SOAP Envelope.
@@ -558,11 +568,13 @@ public class SecureSOAPMessage {
     /**
      * Signs the <code>SOAPMessage</code>  for the given security profile.
      *
-     * @param certAlias the certificate alias
+     * @param certAlias the certificate alias to be used for signing.
+     *        This cert alias is used for signing asymmetric keys.
      * @param refType signing refence type.
+     * @param signingKey If signing key is present
      * @exception SecurityException if there is any failure in signing.
      */
-     public void sign(String certAlias, String refType) 
+     public void sign() 
              throws SecurityException {
 
          Document doc = toDocument();
@@ -581,14 +593,15 @@ public class SecureSOAPMessage {
 
          if(SecurityToken.WSS_SAML_TOKEN.equals(tokenType) ||
                  SecurityToken.WSS_SAML2_TOKEN.equals(tokenType)) {
-            signWithAssertion(doc, certAlias);
+            signWithAssertion(doc);
          } else if(SecurityToken.WSS_X509_TOKEN.equals(tokenType)) {
-            signWithBinaryToken(doc, certAlias, refType);
+            signWithBinaryToken(doc, securityContext.getSigningCertAlias(),
+                    securityContext.getSigningRef());
             // treat Anonymous secmech (securityToken=null) same as UserName
             // Token
          } else if ((SecurityToken.WSS_USERNAME_TOKEN.equals(tokenType)) ||
                  (null==securityToken)){
-             signWithUNToken(doc, certAlias);
+             signWithUNToken(doc, securityContext.getSigningCertAlias());
          } else if ((SecurityToken.WSS_KERBEROS_TOKEN.equals(tokenType))) {
              signWithKerberosToken(doc);
          } else {
@@ -605,42 +618,54 @@ public class SecureSOAPMessage {
      /**
       * Signs the SOAP Message with SAML Assertion.
       */
-     private void signWithAssertion(Document doc, String certAlias)
-              throws SecurityException {
+     private void signWithAssertion(Document doc) throws SecurityException {
          
          XMLSignatureManager sigManager = WSSUtils.getXMLSignatureManager();
          KeyProvider keyProvider = sigManager.getKeyProvider();
          Certificate cert = null;
          String uri =  securityMechanism.getURI(); 
 
+         boolean symmetricKey =   SecurityContext.SYMMETRIC_KEY.equals(
+                 securityContext.getKeyType()) ? true : false;
+         
          if( (SecurityMechanism.WSS_NULL_SAML_HK_URI.equals(uri)) ||
              (SecurityMechanism.WSS_TLS_SAML_HK_URI.equals(uri)) ||
              (SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI.equals(uri))) {
-             cert = WSSUtils.getCertificate(securityToken);
+             if(!symmetricKey) {
+                cert = WSSUtils.getCertificate(securityToken);
+             }
              
          } else if( (SecurityMechanism.WSS_NULL_SAML2_HK_URI.equals(uri)) ||
              (SecurityMechanism.WSS_TLS_SAML2_HK_URI.equals(uri)) ||
              (SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI.equals(uri))) {
-             cert = SAML2TokenUtils.getCertificate(securityToken);
+             if(!symmetricKey) {
+                cert = SAML2TokenUtils.getCertificate(securityToken);
+             }
              
          } else if( (SecurityMechanism.WSS_NULL_SAML_SV_URI.equals(uri)) ||
              (SecurityMechanism.WSS_TLS_SAML_SV_URI.equals(uri)) ||
              (SecurityMechanism.WSS_CLIENT_TLS_SAML_SV_URI.equals(uri)) ||
              (SecurityMechanism.WSS_NULL_SAML2_SV_URI.equals(uri)) ||
              (SecurityMechanism.WSS_TLS_SAML2_SV_URI.equals(uri)) ||
-             (SecurityMechanism.WSS_CLIENT_TLS_SAML2_SV_URI.equals(uri))) {
-             cert =  keyProvider.getX509Certificate(certAlias);
+             (SecurityMechanism.WSS_CLIENT_TLS_SAML2_SV_URI.equals(uri))) {             
+             cert =  keyProvider.getX509Certificate(
+                     securityContext.getSigningCertAlias());
              
          } else if (SecurityMechanism.STS_SECURITY_URI.equals(uri)) {
              if(SecurityToken.WSS_SAML_TOKEN.equals(
                  securityToken.getTokenType())) {
-                 cert = WSSUtils.getCertificate(securityToken);
+                 if(!symmetricKey) {
+                    cert = WSSUtils.getCertificate(securityToken);
+                 }
              } else if(SecurityToken.WSS_SAML2_TOKEN.equals(
                  securityToken.getTokenType())) {
-                 cert = SAML2TokenUtils.getCertificate(securityToken);
+                 if(!symmetricKey) {
+                    cert = SAML2TokenUtils.getCertificate(securityToken);
+                 }
              } 
              if (cert == null) {
-                 cert =  keyProvider.getX509Certificate(certAlias);
+                 cert =  keyProvider.getX509Certificate(
+                         securityContext.getSigningCertAlias());
              }
              
          } else {
@@ -660,9 +685,28 @@ public class SecureSOAPMessage {
                 SAML2Token saml2Token = (SAML2Token)securityToken;
                 assertionID = saml2Token.getAssertion().getID();
              }
-
+             Key signingKey = securityContext.getSigningKey();
+             if(signingKey == null) {
+                if(cert != null) {
+                   String signAlias = keyProvider.getCertificateAlias(cert);
+                   signingKey = keyProvider.getPrivateKey(signAlias);
+                }               
+             }
+             
+             Key encryptionKey = securityContext.getEncryptionKey();
+             Certificate encryptCert = null;
+             if(encryptionKey == null) {
+                String encryptAlias = securityContext.getEncryptionKeyAlias();
+                encryptCert = keyProvider.getX509Certificate(encryptAlias);
+             } else {
+                encryptCert = keyProvider.getCertificate(
+                        (PublicKey)encryptionKey); 
+             }
+             
              sigElement = sigManager.signWithSAMLToken(doc,
-                   cert, assertionID, "", getSigningIds());
+                   signingKey, symmetricKey, cert, encryptCert, 
+                   assertionID, "", getSigningIds()); 
+            
 
          } catch (XMLSignatureException se) {
              debug.error("SecureSOAPMessage.signWithAssertion:: " +
@@ -864,19 +908,68 @@ public class SecureSOAPMessage {
       * @return true if the signature verification is successful.
       * @exception SecurityException if there is any failure in validation. 
       */
-     public boolean verifySignature(String alias) throws SecurityException {
+     public boolean verifySignature() throws SecurityException {
 
         try {
             Document doc = toDocument();
+            Key verificationKey = null;
             XMLSignatureManager sigManager = WSSUtils.getXMLSignatureManager();
-            String certAlias = null;
-            if(messageCertificate != null) {
-               certAlias = sigManager.getKeyProvider().
-                           getCertificateAlias(messageCertificate);
-            } else {
-               certAlias = alias; 
+            String tokenType = securityToken.getTokenType();
+            if(tokenType.equals(SecurityToken.WSS_SAML2_TOKEN) ||
+                    tokenType.equals(SecurityToken.WSS_SAML_TOKEN)) {
+                
+               String issuer = null;
+               if(tokenType.equals(SecurityToken.WSS_SAML2_TOKEN)) {
+                  SAML2Token saml2Token = (SAML2Token)securityToken;
+                  issuer = saml2Token.getAssertion().getIssuer().getValue();                  
+               } else if (tokenType.equals(SecurityToken.WSS_SAML_TOKEN)) {
+                  AssertionToken assertionToken = (AssertionToken)securityToken;
+                  issuer = assertionToken.getAssertion().getIssuer();
+               }
+               String issuerAlias = WSSUtils.getCertAlias(issuer);
+               if(issuerAlias == null) {
+                  WSSUtils.debug.message("SecureSOAPMessage.verifySignature: "
+                          + " issuer alias does not present in the trusted ca" +
+                          " alias list");
+                  return false; 
+               }
+               Element assertionE = securityToken.toDocumentElement();
+               Document document = XMLUtils.newDocument();
+               document.appendChild(document.importNode(assertionE, true));
+               if(!sigManager.verifyXMLSignature(document, issuerAlias)){
+                  if(WSSUtils.debug.messageEnabled()) {
+                     WSSUtils.debug.message("SecureSOAPMessage.verifySignature:"
+                             + " Signature verification for the assertion"); 
+                  }
+                  return false; 
+               } else {
+                 if(WSSUtils.debug.messageEnabled()) {
+                    WSSUtils.debug.message("SecureSOAPMessage.verifySignature:"
+                       + "Signature verification successful for the assertion");
+                 }
+               }
+               
             }
-            return sigManager.verifyWSSSignature(doc, certAlias);            
+                        
+            if(messageCertificate != null) {
+               String alias = sigManager.getKeyProvider().
+                           getCertificateAlias(messageCertificate);
+               verificationKey = sigManager.getKeyProvider().getPublicKey(alias);
+            } else {
+                // check if this symmetric encrypted key
+                if(tokenType.equals(SecurityToken.WSS_SAML2_TOKEN)) {
+                   verificationKey = SAML2TokenUtils.getSecretKey(securityToken, 
+                        securityContext.getDecryptionAlias());
+                } else if (tokenType.equals(SecurityToken.WSS_SAML_TOKEN)) {
+                   verificationKey = WSSUtils.getSecretKey(securityToken, 
+                        securityContext.getDecryptionAlias());
+                }
+            }
+                                
+            return sigManager.verifyWSSSignature(doc, verificationKey, 
+                        securityContext.getVerificationCertAlias(), 
+                        securityContext.getDecryptionAlias());              
+                        
         } catch (SAMLException se) {
             debug.error("SecureSOAPMessage.verify:: Signature validation " +
                    "failed", se);
@@ -887,7 +980,12 @@ public class SecureSOAPMessage {
                         null);
             throw new SecurityException(
                 bundle.getString("signatureValidationFailed"));
-        }
+        } catch (Exception ex) {
+            debug.error("SecureSOAPMessage.verify:: Signature validation " +
+                   "failed", ex);
+            throw new SecurityException(
+                bundle.getString("signatureValidationFailed"));
+        }        
      }
      
      /**
@@ -1053,9 +1151,19 @@ public class SecureSOAPMessage {
          }
          
          try {
-             Element encryptedKeyElem = 
-                 (Element)encryptedDoc.getElementsByTagNameNS(
-                 EncryptionConstants.ENC_XML_NS, "EncryptedKey").item(0);
+             Element encryptedKeyElem = null;
+             
+             NodeList nl = encryptedDoc.getElementsByTagNameNS(
+                 EncryptionConstants.ENC_XML_NS, "EncryptedKey");
+             for(int i=0; i < nl.getLength(); i++ ) {                 
+                 Element elem = (Element)nl.item(i);
+                 if(elem.getParentNode().getParentNode().getLocalName()
+                         .equals("Signature")) {
+                    continue; 
+                 }
+                 encryptedKeyElem = elem;
+                 break;
+             }
              if(debug.messageEnabled()) {
                  debug.message("SecureSOAPMessage.encrypt:EncryptedKey DOC : " 
                      + WSSUtils.print(encryptedKeyElem)); 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.20 2009-06-04 01:16:48 mallas Exp $
+ * $Id: STSAgent.java,v 1.21 2009-08-29 03:05:56 mallas Exp $
  *
  */
 
@@ -88,6 +88,7 @@ public class STSAgent extends STSConfig {
     private static final String INCLUDE_MEMBERSHIPS = "includeMemberships";
     private static final String SAML_ATTRIBUTE_NS = "AttributeNamespace";
     private static final String NAMEID_MAPPER = "NameIDMapper";
+    private static final String KEYTYPE = "KeyType";
      
     private static Debug debug = ProviderUtils.debug;
     
@@ -120,6 +121,7 @@ public class STSAgent extends STSConfig {
         attrNames.add(SAML_ATTRIBUTE_MAPPING);
         attrNames.add(SAML_ATTRIBUTE_NS);
         attrNames.add(NAMEID_MAPPER);
+        attrNames.add(KEYTYPE);
     }
 
     /** Creates a new instance of STSAgent */
@@ -321,6 +323,10 @@ public class STSAgent extends STSConfig {
            this.attributeNS = value;
         } else if(attr.equals(NAMEID_MAPPER)) {
            this.nameIDMapper = value;
+        } else if(attr.equals(KEYTYPE)) {
+           if(value != null) {
+              this.keyType = value;
+           }
         }
     }
         
@@ -452,6 +458,10 @@ public class STSAgent extends STSConfig {
         if(includeMemberships) {
            config.put(INCLUDE_MEMBERSHIPS,
                        Boolean.toString(includeMemberships));
+        }
+        
+        if(keyType != null) {
+           config.put(KEYTYPE, keyType);
         }
         
         // Save the entry in Agent's profile

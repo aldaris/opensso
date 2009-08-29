@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConfig.java,v 1.7 2009-06-04 01:16:48 mallas Exp $
+ * $Id: STSConfig.java,v 1.8 2009-08-29 03:05:55 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider;
@@ -47,6 +47,7 @@ package com.sun.identity.wss.provider;
  */
 
 import java.util.Set;
+import com.sun.identity.wss.sts.STSConstants;
 
 public abstract class STSConfig extends TrustAuthorityConfig {
     
@@ -61,6 +62,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     protected boolean includeMemberships = false;
     protected String nameIDMapper = null;
     protected String attributeNS = null;
+    protected String keyType = STSConstants.PUBLIC_KEY;
     
     /** Creates a new instance of STSConfig */
     public STSConfig() {
@@ -81,6 +83,22 @@ public abstract class STSConfig extends TrustAuthorityConfig {
      */
     public void setMexEndpoint(String mexEndpoint) {
         this.mexEndpoint = mexEndpoint;
+    }
+    
+    /**
+     * Returns the keytype. Example of keytype are symmetric or asymmetric
+     * @return the keytype.
+     */
+    public String getKeyType() {
+        return keyType;
+    }
+    
+    /**
+     * Sets the keytype
+     * @param keyType
+     */
+    public void setKeyType(String keyType) {
+        this.keyType = keyType;
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.19 2009-06-09 00:42:07 madan_ranganath Exp $
+ * $Id: WSSUtils.java,v 1.20 2009-08-29 03:05:57 mallas Exp $
  *
  */
 
@@ -49,7 +49,10 @@ import org.w3c.dom.NodeList;
 import java.security.Principal;
 import java.security.AccessController;
 import java.security.cert.CertificateFactory;
+import java.security.Key;
 import java.security.PublicKey;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import javax.xml.soap.SOAPConstants;
 import com.sun.org.apache.xml.internal.security.exceptions.XMLSecurityException;
@@ -91,6 +94,7 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.namespace.QName;
+import javax.crypto.spec.SecretKeySpec;
 import com.sun.identity.wss.xmlsig.WSSSignatureProvider;
 import com.sun.identity.wss.xmlenc.WSSEncryptionProvider;
 import com.sun.identity.idm.IdSearchControl;
@@ -100,6 +104,10 @@ import com.sun.org.apache.xml.internal.security.keys.content.X509Data;
 import com.sun.identity.wss.security.handler.WSSCacheRepository;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.wss.sts.spi.NameIdentifierMapper;
+import com.sun.identity.xmlenc.EncryptionConstants;
+import com.sun.org.apache.xml.internal.security.encryption.EncryptedKey;
+import com.sun.org.apache.xml.internal.security.encryption.XMLCipher;
+import com.sun.org.apache.xml.internal.security.keys.KeyInfo;
 
 /**
  * This class provides util methods for the web services security. 
@@ -116,9 +124,39 @@ public class WSSUtils {
                         "com.sun.identity.wss.security.cacherepository.plugin";
      private static WSSCacheRepository cacheRepository = null;
      private static final String MEMBERSHIPS = "Memberships";
+     private static Set trustedCACertAliases = new HashSet();
+     private static Map issuerTrustedCACertAliases = new HashMap();
      
      static {
-            bundle = Locale.getInstallResourceBundle("fmWSSecurity");
+        bundle = Locale.getInstallResourceBundle("fmWSSecurity");
+        String tmpStr = SystemConfigurationUtil.getProperty(
+                         "com.sun.identity.liberty.ws.trustedca.certaliases");
+        if (debug.messageEnabled()) {
+            debug.message("WSSUtils.static: trusted ca certaliases = " +
+                    tmpStr);
+        }
+        if (tmpStr != null) {
+            StringTokenizer stz = new StringTokenizer(tmpStr, "|");
+            while(stz.hasMoreTokens()) {
+                String aliasIssuer = stz.nextToken().trim();
+                if (aliasIssuer.length() > 0) {
+                    int index = aliasIssuer.indexOf(":");
+                    if (index == -1) {
+                        trustedCACertAliases.add(aliasIssuer);                       
+                    } else {
+                        String alias = aliasIssuer.substring(0, index).trim();
+                        if (alias.length() > 0) {
+                            trustedCACertAliases.add(alias);                            
+                            String issuer =
+                                    aliasIssuer.substring(index + 1).trim();
+                            if (issuer.length() > 0) {
+                                issuerTrustedCACertAliases.put(issuer, alias);                                                                
+                            }
+                        }
+                    }
+                }
+            }
+        }
      }
 
      /**
@@ -206,6 +244,14 @@ public class WSSUtils {
         if (debug.messageEnabled()) {
             debug.message("KeyInfo = " + XMLUtils.print(keyinfo));
         }
+        
+        
+        Element encryptedKey = (Element)keyinfo.getElementsByTagNameNS(
+                EncryptionConstants.ENC_XML_NS, "EncryptedKey").item(0);
+        if(encryptedKey != null) {
+           return null;
+        }
+        
 
         Element x509 = (Element) keyinfo.getElementsByTagNameNS(
                                 Constants.SignatureSpecNS,
@@ -228,7 +274,7 @@ public class WSSUtils {
 
         return cert;
     }
-
+       
     private static PublicKey getPublicKey(Element reference)
     throws XMLSignatureException {
 
@@ -895,5 +941,53 @@ public class WSSUtils {
     public static long getTimeSkew() {
         return Long.parseLong(SystemConfigurationUtil.getProperty(
                 "com.sun.identity.wss.security.timeskew", "5000"));                
+    }
+    
+    public static EncryptedKey encryptKey(final Document doc,
+            final byte[] encryptedKey, final X509Certificate cert,
+            final String keyWrapAlgorithm) {
+        
+        try {
+            final PublicKey pubKey = cert.getPublicKey();
+            final XMLCipher cipher;
+            if(keyWrapAlgorithm != null){
+               cipher = XMLCipher.getInstance(keyWrapAlgorithm);
+            } else {
+               cipher = XMLCipher.getInstance(XMLCipher.RSA_OAEP);
+            }
+            cipher.init(XMLCipher.WRAP_MODE, pubKey);
+
+            EncryptedKey encKey = cipher.encryptKey(doc, 
+                    new SecretKeySpec(encryptedKey, "AES"));
+            final KeyInfo keyinfo = new KeyInfo(doc);        
+            encKey.setKeyInfo(keyinfo);        
+            return encKey;
+        } catch (Exception ex) {
+            debug.error("WSSUtils.encryptKey: failed", ex);
+            return null;    
+        }
+    }
+    
+    /**
+     * Returns the secret key from the security token from SAML1 Assertion.
+     */
+    public static Key getSecretKey(SecurityToken securityToken, 
+            String certAlias) throws SecurityException {
+        AssertionToken samlToken = (AssertionToken)securityToken;
+        if(samlToken.isSenderVouches()) {
+           return null;
+        }
+        Assertion assertion = samlToken.getAssertion();
+        Element keyInfo = getKeyInfo(assertion);
+        return WSSUtils.getXMLEncryptionManager().decryptKey(
+               keyInfo, certAlias);
+    }
+        
+    
+    /**
+     * Returns the trusted certificate alias from the issuer.
+     */
+    public static String getCertAlias(String issuer) {
+        return (String)issuerTrustedCACertAliases.get(issuer);
     }
 }

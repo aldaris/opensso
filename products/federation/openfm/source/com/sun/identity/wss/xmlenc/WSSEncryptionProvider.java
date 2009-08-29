@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSEncryptionProvider.java,v 1.6 2008-08-22 04:07:58 mallas Exp $
+ * $Id: WSSEncryptionProvider.java,v 1.7 2009-08-29 03:06:01 mallas Exp $
  *
  */
 
@@ -319,6 +319,32 @@ public class WSSEncryptionProvider extends AMEncryptionProvider {
         }
         
         return resultDoc;
+    }
+    
+    /**
+     * Decrypt the given encrypted key.
+     * @param encryptedKey the encrypted key element
+     * @param certAlias the private key alias
+     * @return the key associated with the decrypted key.
+     */
+    public Key decryptKey(Element encryptedKey, String certAlias) {
+        
+        Element encryptedElem = (Element)encryptedKey.getElementsByTagNameNS(
+                EncryptionConstants.ENC_XML_NS, "EncryptedKey").item(0);
+        if(encryptedElem == null) {
+           return null; 
+        }        
+        try {
+            XMLCipher cipher = XMLCipher.getInstance();
+            cipher.init(XMLCipher.UNWRAP_MODE, 
+                    keyProvider.getPrivateKey(certAlias));
+            EncryptedKey encKey = cipher.loadEncryptedKey(encryptedKey);
+            return cipher.decryptKey(encKey,
+                    encKey.getEncryptionMethod().getAlgorithm());
+        } catch (XMLEncryptionException xe) {
+            EncryptionUtils.debug.error("WSSEncryptionProvider.decryptKey", xe);                  
+            return null;
+        }              
     }
     
 }  

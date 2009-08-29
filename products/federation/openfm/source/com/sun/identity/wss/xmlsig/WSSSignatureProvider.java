@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.11 2009-05-09 15:44:02 mallas Exp $
+ * $Id: WSSSignatureProvider.java,v 1.12 2009-08-29 03:06:02 mallas Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
@@ -47,6 +48,7 @@ import com.sun.org.apache.xpath.internal.XPathAPI;
 import com.sun.org.apache.xml.internal.security.utils.IdResolver;
 import com.sun.org.apache.xml.internal.security.transforms.Transforms;
 import com.sun.org.apache.xml.internal.security.transforms.Transform;
+import com.sun.org.apache.xml.internal.security.encryption.EncryptedKey;
 
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
@@ -106,8 +108,39 @@ public class WSSSignatureProvider extends AMSignatureProvider {
      * @throws XMLSignatureException if the document could not be signed
      */
     public org.w3c.dom.Element signWithSAMLToken(
+                               org.w3c.dom.Document doc,
+                               java.security.cert.Certificate cert,
+                               String assertionID,
+                               java.lang.String algorithm,
+                               java.util.List ids) throws XMLSignatureException{
+        String certAlias = keystore.getCertificateAlias(cert);
+        PrivateKey privateKey = keystore.getPrivateKey(certAlias);
+        return signWithSAMLToken(doc, privateKey, false, cert, null,
+               assertionID, algorithm, ids);        
+    }
+                         
+    /**
+     * Sign part of the XML document referred by the supplied a list
+     * of id attributes of nodes using SAML Token.
+     * @param doc XML dom object
+     * @param key the key that will be used to sign the document.
+     * @param symmetricKey true if the supplied key is a symmetric key type.     
+     * @param signingCert signer's Certificate. If present, this certificate
+     *        will be added as part of signature <code>KeyInfo</code>.
+     * @param encryptCert the certificate if present will be used to encrypt
+     *        the symmetric key and replay it as part of <code>KeyInfo</code>
+     * @param assertionID assertion ID for the SAML Security Token
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @return SAML Security Token  signature
+     * @throws XMLSignatureException if the document could not be signed
+     */
+    public org.w3c.dom.Element signWithSAMLToken(
                                    org.w3c.dom.Document doc,
-                                   java.security.cert.Certificate cert,
+                                   java.security.Key key,
+                                   boolean symmetricKey,
+                                   java.security.cert.Certificate signingCert,
+                                   java.security.cert.Certificate encCert,                                   
                                    String assertionID,
                                    java.lang.String algorithm,
                                    java.util.List ids)
@@ -131,13 +164,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
         if(assertionElement != null) {
            isSAML2Token = true; 
         }
-        
-        if (cert == null) {
-            WSSUtils.debug.error("WSSSignatureProvider.signWithSAMLToken: " +
-                                        "Certificate is null");
-            throw new XMLSignatureException(
-                      WSSUtils.bundle.getString("nullInput"));
-        }
+                
         if (assertionID == null) {
             WSSUtils.debug.error("WSSSignatureProvider.signWithSAMLToken: " +
                                         "Certificate is null");
@@ -153,26 +180,20 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                          WSSConstants.TIME_STAMP).item(0);
         XMLSignature signature = null;
         try {
-            Constants.setSignatureSpecNSprefix("ds");
-
-            String certAlias = keystore.getCertificateAlias(cert);            
-            PrivateKey privateKey =
-                                (PrivateKey) keystore.getPrivateKey(certAlias);
-            if (privateKey == null) {
-                WSSUtils.debug.error("WSSSignatureProvider.signWithSAMLToken:"
-                           + "Private Key is null for " + certAlias);
-                throw new XMLSignatureException(
-                          WSSUtils.bundle.getString("nullprivatekey"));
-            }
+            Constants.setSignatureSpecNSprefix("ds");            
+            if(symmetricKey) {
+               algorithm = SAMLConstants.ALGO_ID_MAC_HMAC_SHA1;               
+            } else {                                                    
+               if (algorithm == null || algorithm.length() == 0) {
+                  algorithm = getPublicKey(
+                          (X509Certificate)signingCert).getAlgorithm();                                
+                  algorithm = getAlgorithmURI(algorithm);
+              }
             
-            if (algorithm == null || algorithm.length() == 0) {
-                algorithm = getPublicKey((X509Certificate)cert).getAlgorithm();                                
-                algorithm = getAlgorithmURI(algorithm);
-            }
-            
-            if (!isValidAlgorithm(algorithm)) {
-                throw new XMLSignatureException(
+              if (!isValidAlgorithm(algorithm)) {
+                  throw new XMLSignatureException(
                            WSSUtils.bundle.getString("invalidalgorithm"));
+              }
             }
             Element wsucontext = com.sun.org.apache.xml.internal.security.utils.
                     XMLUtils.createDSctx(doc, "wsu", WSSConstants.WSU_NS);
@@ -235,9 +256,18 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                     WSSConstants.TOKEN_TYPE, WSSConstants.SAML11_TOKEN_TYPE); 
             }
 
-            signature.addKeyInfo((X509Certificate)cert);
             KeyInfo keyInfo = signature.getKeyInfo();
             keyInfo.addUnknownElement(securityTokenRef);
+            
+            if(symmetricKey && (encCert != null)) {
+               EncryptedKey encKey =  
+                    WSSUtils.encryptKey(doc, key.getEncoded(), 
+                    (X509Certificate)encCert,null);
+               keyInfo.add(encKey);                
+            } else {               
+               signature.addKeyInfo((X509Certificate)signingCert);                              
+            }
+            
             IdResolver.registerElementById(securityTokenRef, secRefId);
 
             int size = ids.size();
@@ -278,7 +308,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
             }
                                           
             securityTokenRef.appendChild(keyIdentifier);
-            signature.sign(privateKey);
+            signature.sign(key);
         } catch (Exception e) {
             WSSUtils.debug.error("WSSSignatureProvider.signWithSAMLToken" +
                       " Exception: ", e);
@@ -601,11 +631,20 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                 signature.addResourceResolver (
                     new com.sun.identity.saml.xmlsig.OfflineResolver ());
                 KeyInfo ki = signature.getKeyInfo ();
+                EncryptedKey encKey = ki.itemEncryptedKey(0);
+                if(encKey != null) {                   
+                   Key verificationKey = WSSUtils.getXMLEncryptionManager().
+                           decryptKey(ki.getElement(), certAlias);
+                   if (signature.checkSignatureValue (verificationKey)) {
+                       return true;
+                   } else {
+                       return false; 
+                   }
+                   
+                }
                 PublicKey pk = this.getX509PublicKey(doc, ki);
                 if (pk!=null) {
-
-
-                                    if (signature.checkSignatureValue (pk)) {
+                    if (signature.checkSignatureValue (pk)) {
                         if (WSSUtils.debug.messageEnabled ()) {
                             WSSUtils.debug.message ("verifyWSSSignature:" +
                                 " Signature " + i + " verified");
@@ -889,19 +928,40 @@ public class WSSSignatureProvider extends AMSignatureProvider {
     
     /**
      * Verify web services message signature using specified key
-     * @param doc the document to be validated
+     * @param document the document to be validated
      * @param key the secret key to be used for validating signature
      * @return true if verification is successful.
      * @throws com.sun.identity.saml.xmlsig.XMLSignatureException
      */
-    public boolean verifyWSSSignature(Document doc, java.security.Key key)
-         throws XMLSignatureException {
-        if (doc == null || key == null) {
+    public boolean verifyWSSSignature(org.w3c.dom.Document document,
+                         java.security.Key key)
+        throws XMLSignatureException {
+        return verifyWSSSignature(document, key, null, null);
+    }
+    
+    /**
+     * Verify web services message signature using specified key
+     * @param doc the document to be validated
+     * @param key the secret key to be used for validating signature
+     * @param certAlias the certificate alias used for validating the signature
+     *        if the key is not available.
+     * @param encryptAlias the certificate alias that may be used to decrypt
+     *        the symmetric key that is part of <code>KeyInfo</code>
+     * @return true if verification is successful.
+     * @throws com.sun.identity.saml.xmlsig.XMLSignatureException
+     */
+    public boolean verifyWSSSignature(Document doc, java.security.Key key,
+          String certAlias, String encryptAlias) throws XMLSignatureException {
+        if (doc == null) {
             WSSUtils.debug.error("WSSSignatureProvider.verifyWSSSignature: " +
                     "document or key is null.");
             throw new XMLSignatureException(
                       WSSUtils.bundle.getString("nullInput"));
-        }                
+        }
+        
+        if(useSTRTransformation && !isSTRTransformRegistered) {
+           registerSTRTransform();
+        }
 
         try {
             Element wsucontext = com.sun.org.apache.xml.internal.security.utils.
@@ -932,7 +992,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
             if(sigElementsLength == 0) {
                return false;
             }
-            
+                        
             Element sigElement = null;
             //loop
             for(int i = 0; i < sigElements.getLength(); i++) {
@@ -941,12 +1001,50 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                     WSSUtils.debug.message("Sig(" + i + ") = " +
                         XMLUtils.print(sigElement));
                 }
+                if(sigElement.getParentNode().getLocalName().equals("Assertion")) {
+                   continue; 
+                }
                 XMLSignature signature = new XMLSignature (sigElement, "");
                 signature.addResourceResolver (
-                    new com.sun.identity.saml.xmlsig.OfflineResolver ());
+                    new com.sun.identity.saml.xmlsig.OfflineResolver ());                
+                if(key != null) {
+                   if(!signature.checkSignatureValue(key)) {
+                       return false;
+                   } else {
+                      continue; 
+                   }
+                }                
+                //check if it's a symmetric key
+                KeyInfo ki = signature.getKeyInfo ();
+                EncryptedKey encKey = ki.itemEncryptedKey(0);
+                if(encKey != null) {                   
+                   Key verificationKey = WSSUtils.getXMLEncryptionManager().
+                           decryptKey(ki.getElement(), encryptAlias);
+                    if(!signature.checkSignatureValue (verificationKey)) {
+                       return false;
+                    } else {
+                       continue;
+                    }
+                }
+                
+                PublicKey pk = this.getX509PublicKey(doc, ki);
+                if (pk!=null) {
+                    if(!signature.checkSignatureValue (pk)) {
+                        return false;
+                    } else {
+                       continue;
+                    }
+                }
+                
+                if(certAlias != null) {
+                   X509Certificate newcert= 
+                           keystore.getX509Certificate (certAlias); 
+                }
+                
                 if (!signature.checkSignatureValue (key)) {
                     return false;
-                }                
+                }
+                return false;                                
             }
             return true;
         } catch (Exception ex) {

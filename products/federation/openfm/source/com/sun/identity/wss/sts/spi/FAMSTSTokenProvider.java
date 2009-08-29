@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.15 2009-07-22 15:58:45 mallas Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.16 2009-08-29 03:05:59 mallas Exp $
  *
  */
 
@@ -304,7 +304,10 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             }
             tokenSpec.setAuthenticationMethod(authMethod);
             tokenSpec.setAssertionID(assertionId);
-            tokenSpec.setSigningAlias(stsKey);            
+            tokenSpec.setSigningAlias(stsKey);
+            if(keyInfo != null) {
+               tokenSpec.setKeyInfo(keyInfo.getElement());
+            }
             AssertionToken token =
                     (AssertionToken)stFactory.getSecurityToken(tokenSpec);
             return token.toDocumentElement();
@@ -368,7 +371,10 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             tokenSpec.setAssertionInterval(lifeSpan);
             tokenSpec.setAuthnContextClassRef(authnCtx);
             tokenSpec.setIssuer(issuer);
-            tokenSpec.setSigningAlias(stsKey);            
+            tokenSpec.setSigningAlias(stsKey);
+            if(keyInfo != null) {
+               tokenSpec.setKeyInfo(keyInfo.getElement());
+            }
             SAML2Token saml2Token =
                     (SAML2Token)stFactory.getSecurityToken(tokenSpec);
             return saml2Token.toDocumentElement();

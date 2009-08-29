@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionTokenSpec.java,v 1.5 2009-06-04 01:16:49 mallas Exp $
+ * $Id: AssertionTokenSpec.java,v 1.6 2009-08-29 03:05:57 mallas Exp $
  *
  */
 
 package com.sun.identity.wss.security;
 
+import org.w3c.dom.Element;
 import java.util.Map;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -54,6 +55,7 @@ public class AssertionTokenSpec implements SecurityTokenSpec {
     private String authMethod = null;
     private String assertionID = null;
     private String signingAlias = null;
+    private Element keyInfo = null;
        
     public AssertionTokenSpec() {
            
@@ -248,6 +250,22 @@ public class AssertionTokenSpec implements SecurityTokenSpec {
      */
     public void setSigningAlias(String alias) {
         this.signingAlias = alias;
+    }
+    
+    /**
+     * Returns the keyinfo element.
+     * @return the keyinfo element.
+     */
+    public Element getKeyInfo() {
+        return keyInfo;
+    }
+    
+    /**
+     * Sets the keyinfo element.
+     * @param keyInfo the keyinfo element.
+     */
+    public void setKeyInfo(Element keyInfo) {
+        this.keyInfo = keyInfo;
     }
 
 }

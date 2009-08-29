@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2TokenSpec.java,v 1.6 2009-06-04 01:16:49 mallas Exp $
+ * $Id: SAML2TokenSpec.java,v 1.7 2009-08-29 03:05:57 mallas Exp $
  *
  */
 
@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.List;
 import javax.xml.namespace.QName;
 import com.sun.identity.saml2.assertion.NameID;
+
+import org.w3c.dom.Element;
 
 /**
  * This class implements the interface <code>SecurityTokenSpec</code> to
@@ -52,6 +54,7 @@ public class SAML2TokenSpec implements SecurityTokenSpec {
     private String authnContextClassRef = null;
     private String assertionID = null;
     private String signingAlias = null;
+    private Element keyInfo = null;
     
     public SAML2TokenSpec() {
         
@@ -239,4 +242,19 @@ public class SAML2TokenSpec implements SecurityTokenSpec {
         this.signingAlias = alias;
     }
     
+    /**
+     * Returns the keyinfo element.
+     * @return the keyinfo element.
+     */
+    public Element getKeyInfo() {
+        return keyInfo;
+    }
+    
+    /**
+     * Sets the keyinfo element.
+     * @param keyInfo the keyinfo element.
+     */
+    public void setKeyInfo(Element keyInfo) {
+        this.keyInfo = keyInfo;
+    }
 }

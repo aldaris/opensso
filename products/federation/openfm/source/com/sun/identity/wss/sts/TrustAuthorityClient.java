@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.25 2009-07-22 15:58:44 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.26 2009-08-29 03:05:58 mallas Exp $
  *
  */
 
@@ -45,6 +45,8 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPException;
 import javax.security.auth.Subject;
 import javax.xml.namespace.QName;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
 
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.debug.Debug;
@@ -68,6 +70,8 @@ import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.wss.security.handler.SOAPRequestHandler;
 import com.sun.identity.wss.security.SecurityException;
+import com.sun.identity.wss.trust.RequestedProofToken;
+import com.sun.identity.wss.trust.BinarySecret;
 
 /**
  * The class <code>TrustAuthorityClient</code> is a client API class that is 
@@ -84,6 +88,7 @@ public class TrustAuthorityClient {
     
     private static Debug debug = STSUtils.debug;
     private static Class clientTokenClass;
+    private byte[] secretKey;
     
     /** 
      * Creates a new instance of TrustAuthorityClient.
@@ -190,7 +195,8 @@ public class TrustAuthorityClient {
             String securityMech,
             String tokenType,
             ServletContext context) throws FAMSTSException {
-        String keyType = STSConstants.WST13_PUBLIC_KEY;
+        
+        String keyTypeURI = STSConstants.WST13_PUBLIC_KEY;        
         String stsAgentName = null;
         String wstVersion = STSConstants.WST_VERSION_13;                
         if (pc != null) {
@@ -214,10 +220,18 @@ public class TrustAuthorityClient {
             }
             stsAgentName = stsConfig.getName();
             stsEndPoint = stsConfig.getEndpoint();        
-            stsMexEndPoint = stsConfig.getMexEndpoint();                                
+            stsMexEndPoint = stsConfig.getMexEndpoint();
+            String keyType = stsConfig.getKeyType();
+             if(keyType.equals(STSConstants.SYMMETRIC_KEY)) {
+                keyTypeURI = STSConstants.WST13_SYMMETRIC_KEY; 
+            }
             wstVersion = stsConfig.getProtocolVersion();
             if(STSConstants.WST_VERSION_10.equals(wstVersion)) {
-               keyType = STSConstants.WST10_PUBLIC_KEY;  
+               if(keyType.equals(STSConstants.SYMMETRIC_KEY)) {
+                  keyTypeURI = STSConstants.WST10_SYMMETRIC_KEY;
+               } else {
+                  keyTypeURI = STSConstants.WST10_PUBLIC_KEY;
+               }
             }
             String stsSecMech = (String)stsConfig.getSecurityMech().get(0);
             if(stsSecMech.equals(
@@ -232,9 +246,9 @@ public class TrustAuthorityClient {
                     SecurityMechanism.WSS_NULL_SAML_SV_URI) ||    
                 stsSecMech.equals(SecurityMechanism.STS_SECURITY_URI)) {               
                 if(STSConstants.WST_VERSION_10.equals(wstVersion)) {
-                   keyType = STSConstants.WST10_BEARER_KEY;
+                   keyTypeURI = STSConstants.WST10_BEARER_KEY;
                 } else {
-                   keyType = STSConstants.WST13_BEARER_KEY;
+                   keyTypeURI = STSConstants.WST13_BEARER_KEY;
                 }
             } 
             wspEndPoint = pc.getWSPEndpoint();
@@ -247,8 +261,17 @@ public class TrustAuthorityClient {
             if((wstVersion == null) || wstVersion.length() == 0)  {
                 wstVersion = STSConstants.WST_VERSION_13;
             }
+            Set keySet = (Set)attrMap.get("KEYTYPE");
+            String keyType = (String)keySet.iterator().next();
+            if(keyType.equals(STSConstants.SYMMETRIC_KEY)) {
+               keyTypeURI = STSConstants.WST13_SYMMETRIC_KEY; 
+            }
             if(STSConstants.WST_VERSION_10.equals(wstVersion)) {
-               keyType = STSConstants.WST10_PUBLIC_KEY;  
+               if(keyType.equals(STSConstants.SYMMETRIC_KEY)) {
+                  keyTypeURI = STSConstants.WST10_SYMMETRIC_KEY;
+               } else {
+                  keyTypeURI = STSConstants.WST10_PUBLIC_KEY; 
+               }
             }
             Set values = (Set)attrMap.get("SecurityMech");
             if (values != null && !values.isEmpty()) {
@@ -265,9 +288,9 @@ public class TrustAuthorityClient {
                     SecurityMechanism.WSS_NULL_SAML_SV_URI) ||
                     stsSecMechTemp.equals(SecurityMechanism.STS_SECURITY_URI)) {
                     if(wstVersion.equals(STSConstants.WST_VERSION_10)) {
-                       keyType = STSConstants.WST10_BEARER_KEY;
+                       keyTypeURI = STSConstants.WST10_BEARER_KEY;
                     } else {
-                       keyType = STSConstants.WST13_BEARER_KEY;
+                       keyTypeURI = STSConstants.WST13_BEARER_KEY;
                     }
                 }
             }
@@ -279,10 +302,10 @@ public class TrustAuthorityClient {
                             "true");
            if(!(Boolean.valueOf(useMetro)).booleanValue()) {
                return getSTSToken(wspEndPoint, stsEndPoint, stsMexEndPoint, 
-                   credential, keyType, tokenType, wstVersion, stsAgentName); 
+                   credential, keyTypeURI, tokenType, wstVersion, stsAgentName); 
            } else {
                return getSTSToken(wspEndPoint,stsEndPoint,stsMexEndPoint,
-                   credential,keyType, tokenType, wstVersion,context); 
+                   credential,keyTypeURI, tokenType, wstVersion,context); 
            }
         } else if (securityMech.equals(
                 SecurityMechanism.LIBERTY_DS_SECURITY_URI)) {
@@ -542,7 +565,19 @@ public class TrustAuthorityClient {
             rst.setTokenType(tokenType);
             RequestSecurityTokenResponse rstR = 
                    getTrustResponse(rst, stsEndPoint, stsAgentName, 
-                   wstVersion, credential); 
+                   wstVersion, credential);
+            RequestedProofToken reqProofToken = rstR.getRequestedProofToken();
+            if(reqProofToken != null) {
+               Object proofToken = reqProofToken.getProofToken();
+               if(proofToken instanceof BinarySecret) {
+                  BinarySecret binarySecret = 
+                          (BinarySecret)reqProofToken.getProofToken();
+                  if(binarySecret != null) {
+                     secretKey = binarySecret.getSecret();
+                  }
+               }//TODO handle encrypted key case. Not critical for now.
+               
+            }
             Element secTokenE = 
                     (Element)rstR.getRequestedSecurityToken().getFirstChild();
             return parseSecurityToken(secTokenE);
@@ -676,6 +711,18 @@ public class TrustAuthorityClient {
         }
             
         
+    }
+    
+    /**
+     * Returns the secret key obtained as a proof token from STS.
+     * This is available only when the requested token type is symmetric.
+     * @return the secret key obtained from STS.
+     */
+    public Key getSecretKey() {
+        if(secretKey == null) {
+           return null;
+        }
+        return new SecretKeySpec(secretKey, "AES");
     }
     
     private Element getClientUserToken(Object credential) 

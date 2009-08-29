@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Token.java,v 1.8 2009-06-04 01:16:49 mallas Exp $
+ * $Id: SAML2Token.java,v 1.9 2009-08-29 03:05:57 mallas Exp $
  *
  */
 
@@ -86,7 +86,7 @@ public class SAML2Token implements SecurityToken {
     private Assertion assertion;
     private String certAlias = "";
     private String signingAlias = "";
-    private Element assertionE = null;
+    private Element assertionE = null;    
     private static final String KEY_INFO_TYPE =
          "com.sun.identity.liberty.ws.security.keyinfotype";
     private static String keyInfoType = SystemConfigurationUtil.getProperty(
@@ -267,6 +267,10 @@ public class SAML2Token implements SecurityToken {
               } else if(confirmationMethod.equals(
                    SAML2Constants.SUBJECT_CONFIRMATION_METHOD_SENDER_VOUCHES)) {
                  subConfirmation.setMethod(confirmationMethod);
+                 
+              } else if(confirmationMethod.equals(
+                   SAML2Constants.SUBJECT_CONFIRMATION_METHOD_BEARER)) {
+                 subConfirmation.setMethod(confirmationMethod);
 
               } else {
                  throw new SecurityException(
@@ -347,6 +351,10 @@ public class SAML2Token implements SecurityToken {
        * creates key info
        */
       private Element createKeyInfo() throws SecurityException {
+          Element keyInfo = spec.getKeyInfo();
+          if(keyInfo != null) {
+             return keyInfo; 
+          }
           X509Certificate cert = getX509Certificate();
           Document doc = null;
           try {
@@ -368,7 +376,7 @@ public class SAML2Token implements SecurityToken {
               throw new SecurityException(e.getMessage());
           }
 
-          Element keyInfo = doc.createElementNS(
+          keyInfo = doc.createElementNS(
                             SAML2Constants.NS_XMLSIG,
                             WSSConstants.TAG_KEYINFO);
           keyInfo.setPrefix("ds");

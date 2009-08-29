@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionToken.java,v 1.8 2009-06-04 01:16:49 mallas Exp $
+ * $Id: AssertionToken.java,v 1.9 2009-08-29 03:05:56 mallas Exp $
  *
  */
 
@@ -83,6 +83,7 @@ public class AssertionToken implements SecurityToken {
       private String certAlias = null;
       private Assertion assertion = null;
       private Element assertionE = null;
+      private AssertionTokenSpec spec = null;
       private static final String KEY_INFO_TYPE =
          "com.sun.identity.liberty.ws.security.keyinfotype";
       
@@ -100,7 +101,7 @@ public class AssertionToken implements SecurityToken {
              throw new SecurityException(
                    WSSUtils.bundle.getString("tokenSpecNotSpecified"));
           }
-
+          this.spec = spec;
           validateSSOToken(ssoToken);
           createAssertion(spec);
       }
@@ -263,7 +264,9 @@ public class AssertionToken implements SecurityToken {
               } else if(confirmationMethod.equals(
                    SAMLConstants.CONFIRMATION_METHOD_SENDERVOUCHES)) {
                  subConfirmation =  new SubjectConfirmation(confirmationMethod);
-
+              } else if(confirmationMethod.equals(
+                   SAMLConstants.CONFIRMATION_METHOD_BEARER)) {
+                 subConfirmation =  new SubjectConfirmation(confirmationMethod);
               } else {
                  throw new SecurityException(
                        WSSUtils.bundle.getString("invalidConfirmationMethod"));
@@ -377,6 +380,11 @@ public class AssertionToken implements SecurityToken {
        */
       private Element createKeyInfo() throws SecurityException {
 
+        Element keyInfo = spec.getKeyInfo();
+        if(keyInfo != null) {
+           return keyInfo; 
+        }
+        
         X509Certificate cert = getX509Certificate();
         Document doc = null;
         try {
@@ -398,7 +406,7 @@ public class AssertionToken implements SecurityToken {
             throw new SecurityException(e.getMessage());
         }
 
-        Element keyInfo = doc.createElementNS(
+        keyInfo = doc.createElementNS(
                             SAMLConstants.XMLSIG_NAMESPACE_URI,
                             SAMLConstants.TAG_KEYINFO);
         //keyInfo.setAttribute("xmlns", SAMLConstants.XMLSIG_NAMESPACE_URI);

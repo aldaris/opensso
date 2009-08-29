@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestSecurityTokenResponse_Impl.java,v 1.1 2008-09-19 16:00:57 mallas Exp $
+ * $Id: RequestSecurityTokenResponse_Impl.java,v 1.2 2009-08-29 03:06:01 mallas Exp $
  *
  */
 
@@ -79,8 +79,11 @@ public class RequestSecurityTokenResponse_Impl extends
                requestedSecurityToken = child; 
             } else if(APPLIES_TO.equals(localName)) {
                appliesTo = STSUtils.getAppliesTo(child);
-            } else if(REQUEST_TYPE.equals(requestType)) {
+            } else if(REQUEST_TYPE.equals(localName)) {
                requestType =  XMLUtils.getElementValue(child);
+            } else if(REQUESTED_PROOF_TOKEN.equals(localName)) {
+               requestedProofToken = 
+                       new RequestedProofToken_Impl((Element)child); 
             }
         }
     }
@@ -132,6 +135,10 @@ public class RequestSecurityTokenResponse_Impl extends
              .append(EP_REFERENCE).append(">")
              .append("</").append(STSConstants.WSP_PREFIX)
              .append(APPLIES_TO).append(">"); 
+        }
+        
+        if(requestedProofToken != null) {
+           sb.append(requestedProofToken.toXMLString());
         }
         
         sb.append("</").append(STSConstants.WST_PREFIX)

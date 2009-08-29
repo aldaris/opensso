@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.15 2008-09-19 16:00:55 mallas Exp $
+ * $Id: STSConstants.java,v 1.16 2009-08-29 03:05:58 mallas Exp $
  *
  */
 
@@ -55,8 +55,10 @@ public class STSConstants {
                   
    
     /**
-     * URI for KeyType
+     * URI for KeyType     
      */
+    public static final String SYMMETRIC_KEY = "SymmetricKey";
+    public static final String PUBLIC_KEY = "PublicKey";
     public static final String WST10_PUBLIC_KEY = WST10_NAMESPACE+ "/PublicKey";
     public static final String WST10_SYMMETRIC_KEY =
                                WST10_NAMESPACE + "/SymmetricKey";

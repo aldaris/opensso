@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestSecurityTokenResponse.java,v 1.1 2008-09-19 16:00:56 mallas Exp $
+ * $Id: RequestSecurityTokenResponse.java,v 1.2 2009-08-29 03:05:59 mallas Exp $
  *
  */
 
@@ -42,6 +42,7 @@ public abstract class RequestSecurityTokenResponse {
                   "RequestSecurityTokenResponse";
     protected static final String REQUESTED_SECURITY_TOKEN =
                   "RequestedSecurityToken";
+    protected static final String REQUESTED_PROOF_TOKEN = "RequestedProofToken";
     protected static final String APPLIES_TO = "AppliesTo";
     protected static final String TOKEN_TYPE = "TokenType";
     protected static final String REQUEST_TYPE = "RequestType";
@@ -52,6 +53,7 @@ public abstract class RequestSecurityTokenResponse {
     protected Element requestedSecurityToken = null;
     protected String appliesTo = null;
     protected String requestType = null;
+    protected RequestedProofToken requestedProofToken = null;
     
     /**
      * Returns the token type.
@@ -109,8 +111,28 @@ public abstract class RequestSecurityTokenResponse {
         return appliesTo;
     }
     
+    /**
+     * Sets the appliesTo attribute element
+     * @param appliesTo the appliesTo attribute element.
+     */
     public void setAppliesTo(String appliesTo) {
         this.appliesTo = appliesTo;
+    }
+    
+    /**
+     * Returns the requested proof token.
+     * @return the requested proof token.
+     */
+    public RequestedProofToken getRequestedProofToken() {
+        return requestedProofToken;
+    }
+    
+    /**
+     * Sets the requested proof token.
+     * @param requestedProofToken the requested proof token.
+     */
+    public void setRequestedProofToken(RequestedProofToken requestedProofToken){
+        this.requestedProofToken = requestedProofToken;
     }
     
     //TODO - Add more element protocols.
