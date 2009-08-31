@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNMapper.java,v 1.11 2009-01-28 05:35:03 ww203982 Exp $
+ * $Id: DNMapper.java,v 1.12 2009-08-31 19:45:14 veiming Exp $
  *
  */
 
@@ -249,30 +249,38 @@ public class DNMapper {
      * @return DN format "/" separated realm name of organization name.
      */
     public static String orgNameToRealmName(String orgName) {
-	StringBuffer answer = new StringBuffer(100);
-            answer.append("/");
-        if (orgName != null && orgName.length() != 0
-                && !orgName.equalsIgnoreCase(SMSEntry.baseDN)
-                && !orgName.equalsIgnoreCase(serviceDN) && DN.isDN(orgName)) {
+        if ((orgName == null) || (orgName.length() == 0)) {
+            return "/";
+        }
+        if (orgName.equalsIgnoreCase(SMSEntry.baseDN) ||
+            orgName.equalsIgnoreCase(serviceDN)
+        ) {
+            return "/";
+        }
+        if (!DN.isDN(orgName)) {
+            return orgName;
+        }
 
-            Set resultSet = new HashSet(2);
-            resultSet.add(orgName);
+        StringBuilder answer = new StringBuilder(100);
+        answer.append("/");
 
-            // Check if orgName ends with baseDN or serviceDN
-            String orgdn = (new DN(orgName)).toRFCString();
-            String orgdnlc = orgdn.toLowerCase();
-            Set returnSet = null;
+        Set resultSet = new HashSet(2);
+        resultSet.add(orgName);
 
-            if (orgdnlc.endsWith(serviceDN)) {
-                returnSet = SMSEntry.parseResult(resultSet, serviceDN, true);
-            } else if (orgdnlc.endsWith(SMSEntry.baseDN)) {
-                returnSet = SMSEntry.parseResult(resultSet, serviceDN, true);
-            }
-	    if (returnSet != null && !returnSet.isEmpty()) {
-		answer.append(returnSet.iterator().next().toString());
-	    }
-	}
-	return (answer.toString());
+        // Check if orgName ends with baseDN or serviceDN
+        String orgdn = (new DN(orgName)).toRFCString();
+        String orgdnlc = orgdn.toLowerCase();
+        Set returnSet = null;
+
+        if (orgdnlc.endsWith(serviceDN)) {
+            returnSet = SMSEntry.parseResult(resultSet, serviceDN, true);
+        } else if (orgdnlc.endsWith(SMSEntry.baseDN)) {
+            returnSet = SMSEntry.parseResult(resultSet, serviceDN, true);
+        }
+        if (returnSet != null && !returnSet.isEmpty()) {
+            answer.append(returnSet.iterator().next().toString());
+        }
+        return (answer.toString());
     }
 
     /*
