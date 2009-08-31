@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestTest.java,v 1.2 2009-08-28 06:16:31 veiming Exp $
+ * $Id: RestTest.java,v 1.3 2009-08-31 19:48:44 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -63,6 +63,8 @@ public class RestTest {
         AccessController.doPrivileged(AdminTokenAction.getInstance());
     private Subject adminSubject = SubjectUtils.createSuperAdminSubject();
     private static final String RESOURCE_NAME = "http://www.resttest.com";
+    private static final String ATTR_NAME = "bankAcc";
+    private static final float ATTR_VAL = 1234f;
     private AMIdentity user;
     private WebResource entitlementClient;
     private WebResource decisionClient;
@@ -82,8 +84,11 @@ public class RestTest {
         EntitlementSubject sbj = new AuthenticatedESubject();
         privilege.setSubject(sbj);
 
-        IPCondition ipc = new IPCondition("127.0.0.0", "128.0.0.0");
-        privilege.setCondition(ipc);
+        NumericAttributeCondition cond = new NumericAttributeCondition();
+        cond.setAttributeName(ATTR_NAME);
+        cond.setOperator(NumericAttributeCondition.Operator.EQUAL);
+        cond.setValue(ATTR_VAL);
+        privilege.setCondition(cond);
         pm.addPrivilege(privilege);
         AMIdentityRepository amir = new AMIdentityRepository(
             adminToken, REALM);
@@ -125,7 +130,7 @@ public class RestTest {
     @Test
     public void positiveTest() throws Exception {
         MultivaluedMap params = getMultivaluedMap();
-        params.add("env", IPCondition.REQUEST_IP + "=127.1.1.1");
+        params.add("env", ATTR_NAME + "=" + ATTR_VAL);
 
         String decision = decisionClient.queryParams(params).accept(
             "text/plain").get(String.class);
@@ -145,12 +150,11 @@ public class RestTest {
     @Test
     public void negativeTest() throws Exception {
         MultivaluedMap params = getMultivaluedMap();
-        params.add("env", IPCondition.REQUEST_IP + "=128.1.1.1");
 
         String decision = decisionClient.queryParams(params).accept(
             "text/plain").get(String.class);
         if ((decision != null) && decision.equals("allow")) {
-            throw new Exception("RESTTest.negativeTest (/entitlement) failed");
+            throw new Exception("RESTTest.negativeTest (/decision) failed");
         }
 
         String json = entitlementClient.queryParams(params).accept(
@@ -158,7 +162,17 @@ public class RestTest {
         Entitlement ent = new Entitlement(new JSONObject(json));
         Boolean result = ent.getActionValue("GET");
         if ((result != null) && (result.booleanValue())) {
-            throw new Exception("RESTTest.negativeTest failed");
+            throw new Exception("RESTTest.negativeTest (/entitlement) failed");
+        }
+        Map<String, Set<String>> advices = ent.getAdvices();
+        Set<String> setNumericCondAdvice = advices.get(
+            NumericAttributeCondition.class.getName());
+        if ((setNumericCondAdvice == null) || setNumericCondAdvice.isEmpty()) {
+            throw new Exception("RESTTest.negativeTest: no advice");
+        }
+        String advice = setNumericCondAdvice.iterator().next();
+        if (!advice.equals(ATTR_NAME + "=" + ATTR_VAL)) {
+            throw new Exception("RESTTest.negativeTest: incorrect advice");
         }
     }
 

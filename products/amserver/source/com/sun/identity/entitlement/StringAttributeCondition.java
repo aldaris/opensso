@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringAttributeCondition.java,v 1.2 2009-08-28 06:16:31 veiming Exp $
+ * $Id: StringAttributeCondition.java,v 1.3 2009-08-31 19:48:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -136,7 +136,18 @@ public class StringAttributeCondition extends EntitlementConditionAdaptor {
             Map<String, Set<String>> advices =
                 new HashMap<String, Set<String>>();
             Set<String> set = new HashSet<String>();
-            set.add(attributeName);
+            StringBuilder advice = new StringBuilder();
+            advice.append(attributeName).append("=");
+            if (value != null) {
+                advice.append(value);
+            }
+            if (bCaseSensitive) {
+                advice.append("(").
+                    append("casesensitive").
+                    append(")");
+            }
+
+            set.add(advice.toString());
             advices.put(getClass().getName(), set);
             return new ConditionDecision(false, advices);
         }

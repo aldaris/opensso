@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NumericAttributeCondition.java,v 1.2 2009-08-28 06:16:31 veiming Exp $
+ * $Id: NumericAttributeCondition.java,v 1.3 2009-08-31 19:48:13 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -44,8 +44,6 @@ public class NumericAttributeCondition extends EntitlementConditionAdaptor {
     public static final String ATTR_NAME_OPERATOR = "caseSensitive";
     public static final String ATTR_NAME_VALUE = "value";
 
-    public static enum Operator {LESS_THAN, LESS_THAN_OR_EQUAL, EQUAL, 
-        GREATER_THAN_OR_EQUAL, GREATER_THAN};
     private String attributeName;
     private Operator operator = Operator.EQUAL;
     private float value;
@@ -173,7 +171,7 @@ public class NumericAttributeCondition extends EntitlementConditionAdaptor {
             Map<String, Set<String>> advices =
                 new HashMap<String, Set<String>>();
             Set<String> set = new HashSet<String>();
-            set.add(attributeName);
+            set.add(attributeName + operator.symbol + value);
             advices.put(getClass().getName(), set);
             return new ConditionDecision(false, advices);
         }
@@ -260,5 +258,18 @@ public class NumericAttributeCondition extends EntitlementConditionAdaptor {
         hc += operator.hashCode();
         hc += value;
         return hc;
+    }
+
+    public enum Operator {
+        LESS_THAN("<"),
+        LESS_THAN_OR_EQUAL("<="),
+        EQUAL("="),
+        GREATER_THAN_OR_EQUAL(">="),
+        GREATER_THAN(">");
+
+        private final String symbol;
+        Operator(String symbol) {
+            this.symbol = symbol;
+        }
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringAttributeConditionEvaluation.java,v 1.1 2009-08-19 05:41:00 veiming Exp $
+ * $Id: StringAttributeConditionEvaluation.java,v 1.2 2009-08-31 19:48:45 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -33,6 +33,7 @@ import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -47,6 +48,9 @@ public class StringAttributeConditionEvaluation {
         "http://www.StringAttributeConditionEvaluation.com";
     private SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
+    private static final String ATTR_NAME = "attributeN";
+    private static final String ATTR_VALUE = "hello";
+
     private Subject adminSubject = SubjectUtils.createSubject(adminToken);
     private boolean migrated = EntitlementConfiguration.getInstance(
         adminSubject, "/").migratedToEntitlementService();
@@ -70,24 +74,9 @@ public class StringAttributeConditionEvaluation {
         privilege.setSubject(new AnyUserSubject());
 
         StringAttributeCondition tc = new StringAttributeCondition();
-        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
-        {
-            Set<String> set = new HashSet<String>();
-            set.add("attributeN");
-            map.put(StringAttributeCondition.ATTR_NAME_ATTRIBUTE_NAME, set);
-        }
-        {
-            Set<String> set = new HashSet<String>();
-            set.add("true");
-            map.put(StringAttributeCondition.ATTR_NAME_CASE_SENSITIVE, set);
-        }
-        {
-            Set<String> set = new HashSet<String>();
-            set.add("hello");
-            map.put(StringAttributeCondition.ATTR_NAME_VALUE, set);
-        }
-
-        tc.init(map);
+        tc.setAttributeName(ATTR_NAME);
+        tc.setCaseSensitive(true);
+        tc.setValue(ATTR_VALUE);
         tc.setDisplayType("displayName");
         privilege.setCondition(tc);
         pm.addPrivilege(privilege);
@@ -114,8 +103,8 @@ public class StringAttributeConditionEvaluation {
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
         Map<String, Set<String>> env = new HashMap<String, Set<String>>();
         Set<String> setValues = new HashSet<String>();
-        setValues.add("hello");
-        env.put("attributeN", setValues);
+        setValues.add(ATTR_VALUE);
+        env.put(ATTR_NAME, setValues);
         Boolean result = evaluator.hasEntitlement("/", null,
             new Entitlement(URL, actions), env);
         if (!result) {
@@ -127,20 +116,49 @@ public class StringAttributeConditionEvaluation {
     @Test
     public void negativeTest()
         throws Exception {
-        Set actions = new HashSet();
-        actions.add("GET");
         Evaluator evaluator = new Evaluator(
             SubjectUtils.createSubject(adminToken),
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
         Map<String, Set<String>> env = new HashMap<String, Set<String>>();
         Set<String> setValues = new HashSet<String>();
-        setValues.add("Hello");
-        env.put("attributeN", setValues);
-        Boolean result = evaluator.hasEntitlement("/", null,
-            new Entitlement(URL, actions), env);
-        if (result) {
+        setValues.add(ATTR_VALUE.toUpperCase());
+        env.put(ATTR_NAME, setValues);
+
+        List<Entitlement> entitlements = evaluator.evaluate(
+            "/", null, URL, env, false);
+
+        if ((entitlements == null) || entitlements.isEmpty()) {
             throw new Exception(
-                "StringAttributeConditionEvaluation.negativeTest fails");
+                "StringAttributeConditionEvaluation.negativeTest: no entitlements returned");
+        }
+        Entitlement ent = entitlements.get(0);
+        Boolean result = ent.getActionValue("GET");
+        if ((result != null) && !result) {
+            throw new Exception(
+                "StringAttributeConditionEvaluation.negativeTest: fails");
+        }
+        Map<String, Set<String>> advices = ent.getAdvices();
+        if ((advices == null) || advices.isEmpty()) {
+            throw new Exception(
+                "StringAttributeConditionEvaluation.negativeTest: no advices returned");
+        }
+        Set<String> advice = advices.get(
+            StringAttributeCondition.class.getName());
+        if ((advice == null) || advices.isEmpty()) {
+            throw new Exception(
+                "StringAttributeConditionEvaluation.negativeTest: no advices for String attribute condition");
+        }
+
+        if (advice.size() != 1) {
+            throw new Exception(
+                "StringAttributeConditionEvaluation.negativeTest: more than expected number of advices returned.");
+        }
+
+        String adv = advice.iterator().next();
+        if ((adv == null) ||
+            !adv.equals(ATTR_NAME + "=" + ATTR_VALUE + "(casesensitive)")) {
+            throw new Exception(
+                "StringAttributeConditionEvaluation.negativeTest: incorrect advice.");
         }
     }
 }
