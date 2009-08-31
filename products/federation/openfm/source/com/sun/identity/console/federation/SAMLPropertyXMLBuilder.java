@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLPropertyXMLBuilder.java,v 1.5 2008-10-09 19:08:53 babysunil Exp $
+ * $Id: SAMLPropertyXMLBuilder.java,v 1.6 2009-08-31 18:24:02 asyhuang Exp $
  *
  */
 
@@ -63,6 +63,7 @@ public class SAMLPropertyXMLBuilder
             SAMLConstants.HOST_LIST,
             SAMLConstants.SITEATTRIBUTEMAPPER,
             SAMLConstants.NAMEIDENTIFIERMAPPER,
+            SAMLConstants.ACCOUNTMAPPER,
             SAMLConstants.VERSION
         };
         String[] mand = {
@@ -88,6 +89,7 @@ public class SAMLPropertyXMLBuilder
             SAMLConstants.POSTURL,
             SAMLConstants.SITEATTRIBUTEMAPPER,
             SAMLConstants.NAMEIDENTIFIERMAPPER,
+            SAMLConstants.ACCOUNTMAPPER,
             SAMLConstants.VERSION
         };
         String[] mand = {
@@ -108,8 +110,7 @@ public class SAMLPropertyXMLBuilder
         String[] attrs = {
             SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
-            SAMLConstants.SOAPUrl,
-            SAMLConstants.ACCOUNTMAPPER,
+            SAMLConstants.SOAPUrl,           
             SAMLConstants.AUTHTYPE,
             SAMLConstants.AUTH_UID,
             SAMLConstants.AUTH_PASSWORD,
@@ -134,8 +135,7 @@ public class SAMLPropertyXMLBuilder
         String[] attrs = {
             SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
-            SAMLConstants.ISSUER,
-            SAMLConstants.ACCOUNTMAPPER,
+            SAMLConstants.ISSUER,           
             SAMLConstants.CERTALIAS
         };
         String[] mand = {
@@ -156,8 +156,7 @@ public class SAMLPropertyXMLBuilder
             SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
             SAMLConstants.HOST_LIST,
-            SAMLConstants.ATTRIBUTEMAPPER,
-            SAMLConstants.ACCOUNTMAPPER,
+            SAMLConstants.ATTRIBUTEMAPPER,            
             SAMLConstants.ACTIONMAPPER,
             SAMLConstants.CERTALIAS,
             SAMLConstants.ISSUER,
