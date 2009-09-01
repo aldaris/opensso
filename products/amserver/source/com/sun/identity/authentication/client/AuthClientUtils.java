@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.34 2009-08-12 23:06:16 ericow Exp $
+ * $Id: AuthClientUtils.java,v 1.35 2009-09-01 23:25:07 qcheng Exp $
  *
  */
 
@@ -2773,10 +2773,12 @@ public class AuthClientUtils {
     public static Map getEnvMap(HttpServletRequest request) {
         Map envParameters = new HashMap();
         // add all query parameters
-        String strIP = request.getRemoteAddr();
-        Set ipSet = new HashSet(1);
-        ipSet.add((String) strIP);
-        envParameters.put(ISAuthConstants.REQUEST_IP,ipSet);
+        String strIP = getClientIPAddress(request);
+        if (strIP != null) {
+            Set ipSet = new HashSet(1);
+            ipSet.add((String) strIP);
+            envParameters.put(ISAuthConstants.REQUEST_IP,ipSet);
+        }
         Enumeration enum1 = request.getParameterNames();
         while (enum1.hasMoreElements()) {
             String paramName = (String) enum1.nextElement();
@@ -2809,7 +2811,42 @@ public class AuthClientUtils {
         }
         return envParameters;
     }
-    
+
+    /**
+     * Returns client IP address. The method checks the special HTTP header
+     * first (handles Load Balancer case), then checks the remote address.
+     * 
+     * @param request HttpServletRequest object
+     * @return client IP address.
+     */
+    private static String getClientIPAddress(HttpServletRequest request) {
+        String result = null;
+        String ipAddrHeader = getClientIPAddressHeader();
+        if ((ipAddrHeader != null) && (ipAddrHeader.length() != 0)) {
+            result = request.getHeader(ipAddrHeader);
+        }
+        if ((result == null) || (result.length() == 0)) {
+            result = request.getRemoteAddr();
+        }
+        if (utilDebug.messageEnabled()) {
+            utilDebug.message("AuthClientUtils.getClientIPAddress : header=["
+                + ipAddrHeader + "], result=[" + result + "]"); 
+        }
+        return result;
+    }
+
+    /**
+     * Returns the HTTP header property name which contains the client IP 
+     * address. This is used in the Load Balancer case, the 
+     * HttpServletRequest.getRemoteAddr() retruns the LoadBalancer IP address
+     * in stead of the user agent's (e.g. browser) IP address. There is a 
+     * feature in most LoadBalancer which can forward user agent's IP address 
+     * as value of a HTTP header property.
+     */
+    private static String getClientIPAddressHeader() {
+        return SystemProperties.get(Constants.CLIENT_IP_ADDR_HEADER);
+    }    
+   
     /**
      * Returns unescaped text. This method replaces "&#124;" with "|".
      *

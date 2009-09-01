@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.16 2009-08-12 17:43:04 beomsuk Exp $
+ * $Id: Constants.java,v 1.17 2009-09-01 23:25:07 qcheng Exp $
  *
  */
 
@@ -975,5 +975,10 @@ public interface Constants {
     String SM_THREADPOOL_SIZE =
         "com.sun.identity.sm.notification.threadpool.size";
 
+    /**
+     * Property string for client IP address header.
+     */
+    String CLIENT_IP_ADDR_HEADER = 
+        "com.sun.identity.authentication.client.ipAddressHeader";
 }
 
