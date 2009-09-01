@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: README,v 1.8 2009-08-19 19:15:33 mrudul_uchil Exp $
+ * $Id: README,v 1.9 2009-09-01 21:45:18 mrudul_uchil Exp $
  */
 
  %% Contents:
@@ -167,11 +167,17 @@ Assumption :
 
 %% 4. Building and Deploying the Secured Samples
 
-   4.1 Follow section II A in the <wssagents_unzip_location>/README file 
-       (if you have not done already) to add the keystore related files to 
-       the local file system, as explained in the Step 1 of Section II A and to 
-       modify the <wssagents_unzip_location>/config/AMConfig.properties file,
-       as explained in the Step 2 of Section II A.
+   4.1 Follow <wssagents_unzip_location>/README file (if you have not done 
+       already)
+       a) To add the keystore related files to the local file system,
+       by copying <wssagents_unzip_location>/resources/keystore.jks,
+       <wssagents_unzip_location>/resources/.keypass and
+       <wssagents_unzip_location>/resources/.storepass files to some directory
+       that can be later referred in 
+       <wssagents_unzip_location>/config/AMConfig.properties file and
+       b) To modify the <wssagents_unzip_location>/config/AMConfig.properties
+       file, in order to update properties that are at the top of the file, under
+       heading "Following properties need to be updated for OpenSSO WSS Agents".
 
    4.2 cd <wssagents_unzip_location>/samples/StockService
        If you plan to deploy on Tomcat, then run "ant tomcat-secure-war" Else
