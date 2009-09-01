@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.35 2009-07-30 05:35:34 veiming Exp $
+ * $Id: CommandManager.java,v 1.36 2009-09-01 17:11:45 bigfatrat Exp $
  *
  */
 
@@ -785,7 +785,9 @@ public class CommandManager {
                 SSOToken token = (SSOToken)i.next();
                 mgr.destroyToken(token);
             }
-	    Logger.token.set(null);
+            if (!importSvcCmd) {
+                Logger.token.set(null);
+            }
         } catch (SSOException e) {
             Debugger.error(this, "CommandManager.destroySSOTokens", e);
         }
