@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSUtils.java,v 1.7 2009-01-28 05:35:06 ww203982 Exp $
+ * $Id: FSUtils.java,v 1.8 2009-09-02 09:21:52 mchlbgs Exp $
  *
  */
 
@@ -235,7 +235,60 @@ public class FSUtils {
              }
         }    
     }
-    
+   
+/**
+     * Test if url in argument is
+     *  in  the same web container as current opensso web
+     * apps serving the request.
+     * @param request HttpServletRequest
+     * @param url
+     * @return true if request and url are in the same web container else false
+     */
+    public static boolean isSameContainer(
+            HttpServletRequest request,
+            String url) {
+
+        boolean result = false;
+        FSUtils.debug.message("FSUtils.isSameContainer: called");
+
+        try {
+            //get source host and port
+            String sourceHost = request.getServerName();
+            int sourcePort = request.getServerPort();
+            if (debug.messageEnabled()) {
+		FSUtils.debug.message("FSUtils.isSameContainer: " +
+                    "SourceHost=" + sourceHost + " SourcePort=" + sourcePort);
+ 	    }
+            //get target host and port
+            URL target = new URL(url);
+            String targetHost = target.getHost();
+            int targetPort = target.getPort();
+            if (debug.messageEnabled()) {
+		FSUtils.debug.message("FSUtils.isSameContainer: targetHost=" + 
+			targetHost + " targetPort=" + targetPort);
+            }
+            int index = url.indexOf(deploymentURI + "/");
+            if (!(sourceHost.equals(targetHost)) ||
+                    !(sourcePort == targetPort) ||
+                    !(index > 0)) {
+                if (debug.messageEnabled()) {
+			FSUtils.debug.message("FSUtils.isSameContainer: Source and "
+			 + "Target are not on the same container.");
+		}
+
+            } else {
+                if (debug.messageEnabled()) {
+		FSUtils.debug.message("FSUtils.isSameContainer: Source and " +
+                        "Target are on the same container.");
+		}
+                result = true;
+            }
+        } catch (Exception ex) {
+            FSUtils.debug.error("FSUtils.isSameContainer: Exception occured", ex);
+        }
+        return result;
+    }
+ 
     /**
      * Forwards or redirects to a new URL. This method will do forwarding
      * if the target url is in  the same web deployment URI as current web 
