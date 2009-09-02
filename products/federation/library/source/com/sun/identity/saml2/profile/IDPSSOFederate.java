@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.24 2009-06-19 20:44:45 exu Exp $
+ * $Id: IDPSSOFederate.java,v 1.25 2009-09-02 09:24:32 mchlbgs Exp $
  *
  */
 
@@ -81,6 +81,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import javax.servlet.ServletException;
+import com.sun.identity.federation.common.FSUtils;
 
 /**
  * This class handles the federation and/or single sign on request
@@ -887,8 +889,28 @@ public class IDPSSOFederate {
             return null;
         }
     }
+
+    private static StringBuffer getAppliRootUrl(HttpServletRequest request) {
+        StringBuffer result = new StringBuffer();
+        String scheme = request.getScheme();             // http
+        String serverName = request.getServerName();     // hostname.com
+        int serverPort = request.getServerPort();        // 80
+        String contextPath = request.getContextPath();   // /mywebapp
+        result.append(scheme).append("://").append(serverName).append(":").
+                append(serverPort);
+        result.append(contextPath);
+        return result ;
+    }
+
+    private static String getRelativePath(String absUrl, String appliRootUrl) {
+        return absUrl.substring(appliRootUrl.length(), absUrl.length());
+    }
+
     /**
      * Redirect to authenticate service
+     * If authentication service and federation code are
+     * is the same j2ee container do a forward instead of
+     * a redirection
      */
     private static void redirectAuthentication(HttpServletRequest request,
         HttpServletResponse response, String reqID, IDPAuthnContextInfo info,
@@ -897,10 +919,24 @@ public class IDPSSOFederate {
 
         String classMethod = "IDPSSOFederate.redirectAuthentication: ";
         // get the authentication service url 
-
-        StringBuffer newURL = new StringBuffer(
-                                IDPSSOUtil.getAuthenticationServiceURL(
-                                realm, idpEntityID, request));
+        String authService =
+                IDPSSOUtil.getAuthenticationServiceURL(
+                realm, idpEntityID, request);
+        StringBuffer appliRootUrl = getAppliRootUrl(request);
+        boolean forward ;
+        StringBuffer newURL;
+        // build newUrl to auth service and test if redirect or forward
+        if(FSUtils.isSameContainer(request,authService)){
+            forward = true;
+            String relativePath = getRelativePath(authService, appliRootUrl.
+                    toString());
+            // in this case continue to forward to SSORedirect after login
+            newURL = new StringBuffer(relativePath).append("&forward=true");
+        } else {
+            // cannot forward so redirect
+            forward = false ;
+            newURL = new StringBuffer(authService);
+        }
 
         // Pass spEntityID to IdP Auth Module
         if (spEntityID != null) {
@@ -957,16 +993,38 @@ public class IDPSSOFederate {
             } 
             newURL.append("&goto=");
         }
-        newURL.append(URLEncDec.encode(request.getRequestURL().
-                       append("?ReqID=").append(reqID).toString()));
+        // compute gotoURL differently in case of forward or in case
+        // of redirection, forward needs a relative URI.
+        StringBuffer gotoURL ;
+        if(forward){
+            gotoURL = new StringBuffer(getRelativePath(request.getRequestURL().
+                    toString(),appliRootUrl.toString()));
+        }else{
+            gotoURL = request.getRequestURL();
+        }
+        newURL.append(URLEncDec.encode(gotoURL.
+                append("?ReqID=").append(reqID).toString()));
+        
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message(classMethod +
                 "New URL for authentication: " + newURL.toString());
         }
-        // TODO: here we should check if the new URL is one
-        //       the same web container, if yes, forward,
-        //       if not, redirect
-        response.sendRedirect(newURL.toString());
+
+        // do forward if we are in the same container ,
+        // else redirection
+        if (forward) {
+
+            SAML2Utils.debug.message("forward to " + newURL.toString());
+            try {
+                request.getRequestDispatcher(newURL.toString()).
+                        forward(request, response);
+            } catch (ServletException se) {
+                SAML2Utils.debug.error("Exception Bad Forward URL" +
+                        newURL.toString());
+            }
+        } else {
+            response.sendRedirect(newURL.toString());
+        }
         return;
     }
     
