@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedCommand.java,v 1.9 2009-07-30 05:35:34 veiming Exp $
+ * $Id: AuthenticatedCommand.java,v 1.10 2009-09-03 17:07:04 veiming Exp $
  *
  */
 
@@ -115,7 +115,7 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
                     int idx = s.indexOf(" ");
                     if (idx != -1) {
                         String permission = s.substring(0, idx);
-                        if (!permission.equals("-r--------")) {
+                        if (!permission.startsWith("-r--------")) {
                             String msg = getCommandManager().getResourceBundle()
                                 .getString(
                                     "error-message-password-file-not-readonly");
