@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeConditionEvaluation.java,v 1.1 2009-08-19 05:41:01 veiming Exp $
+ * $Id: TimeConditionEvaluation.java,v 1.2 2009-09-03 06:09:28 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -33,6 +33,7 @@ import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -69,8 +70,9 @@ public class TimeConditionEvaluation {
         privilege.setSubject(new AnyUserSubject());
 
         TimeCondition tc = new TimeCondition();
-        tc.setStartTime("00:00");
-        tc.setEndTime("02:00");
+        tc.setStartTime("15:00");
+        tc.setEndTime("16:00");
+
         privilege.setCondition(tc);
         pm.addPrivilege(privilege);
         Thread.sleep(1000);
@@ -87,23 +89,108 @@ public class TimeConditionEvaluation {
     }
 
     @Test
-    public void evaluate()
+    public void positiveTest()
         throws Exception {
-        Set actions = new HashSet();
-        actions.add("GET");
         Evaluator evaluator = new Evaluator(
             SubjectUtils.createSubject(adminToken),
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
+        List<Entitlement> entitlements = evaluator.evaluate(
+            "/", null, URL, envTime("1251847000000"), false);
+
+        if ((entitlements == null) || entitlements.isEmpty()) {
+            throw new Exception("TimeConditionEvaluation.positiveTest: no entitlements");
+        }
+
+        Entitlement ent = entitlements.get(0);
+        Boolean result = ent.getActionValue("GET");
+        if ((result == null) || !result) {
+            throw new Exception("TimeConditionEvaluation.positiveTest: incorrect result");
+        }
+
+        Map<String, Set<String>> advices = ent.getAdvices();
+        if ((advices == null) || advices.isEmpty()) {
+            throw new Exception("TimeConditionEvaluation.positiveTest: no advices");
+        }
+
+        Set<String> set = advices.get(ConditionDecision.MAX_TIME);
+
+        if ((set == null) || set.isEmpty()) {
+            throw new Exception("TimeConditionEvaluation.positiveTest: no advices for MAX_TIME");
+        }
+
+        if (!set.contains("1251849600000")) {
+            throw new Exception("TimeConditionEvaluation.positiveTest: incorrect advices for MAX_TIME");
+        }
+    }
+
+
+    @Test
+    public void negativeLowerLimitTest()
+        throws Exception {
+        Evaluator evaluator = new Evaluator(
+            SubjectUtils.createSubject(adminToken),
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
+        List<Entitlement> entitlements = evaluator.evaluate(
+            "/", null, URL, envTime("1248994000000"), false);
+
+        if ((entitlements == null) || entitlements.isEmpty()) {
+            throw new Exception("TimeConditionEvaluation.negativeLowerLimitTest: no entitlements");
+        }
+
+        Entitlement ent = entitlements.get(0);
+        Boolean result = ent.getActionValue("GET");
+        if ((result != null) && result) {
+            throw new Exception("TimeConditionEvaluation.negativeLowerLimitTest: incorrect result");
+        }
+
+        Map<String, Set<String>> advices = ent.getAdvices();
+        if ((advices == null) || advices.isEmpty()) {
+            throw new Exception("TimeConditionEvaluation.negativeLowerLimitTest: no advices");
+        }
+
+        Set<String> set = advices.get(ConditionDecision.MAX_TIME);
+
+        if ((set == null) || set.isEmpty()) {
+            throw new Exception("TimeConditionEvaluation.negativeLowerLimitTest: no advices for MAX_TIME");
+        }
+
+        if (!set.contains("1248994800000")) {
+            throw new Exception("TimeConditionEvaluation.negativeLowerLimitTest: incorrect advices for MAX_TIME");
+        }
+    }
+
+    @Test
+    public void negativeUpperLimitTest()
+        throws Exception {
+        Evaluator evaluator = new Evaluator(
+            SubjectUtils.createSubject(adminToken),
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
+        List<Entitlement> entitlements = evaluator.evaluate(
+            "/", null, URL, envTime("128999400000"), false);
+
+        if ((entitlements == null) || entitlements.isEmpty()) {
+            throw new Exception("TimeConditionEvaluation.negativeUpperLimitTest: no entitlements");
+        }
+
+        Entitlement ent = entitlements.get(0);
+        Boolean result = ent.getActionValue("GET");
+        if ((result != null) && result) {
+            throw new Exception("TimeConditionEvaluation.negativeUpperLimitTest: incorrect result");
+        }
+
+        Map<String, Set<String>> advices = ent.getAdvices();
+        if ((advices != null) && !advices.isEmpty()) {
+            throw new Exception("TimeConditionEvaluation.negativeUpperLimitTest: no advices");
+        }
+    }
+
+    private Map<String, Set<String>> envTime(String time) {
         Map<String, Set<String>> conditions = new
             HashMap<String, Set<String>>();
         Set<String> setTime = new HashSet<String>();
-        setTime.add("1249027551534");
+        setTime.add(time);
         conditions.put(TimeCondition.REQUEST_TIME, setTime);
-        Boolean result = evaluator.hasEntitlement("/", null,
-            new Entitlement(URL, actions), conditions);
-        if (!result) {
-            throw new Exception("TimeConditionEvaluation.evaluate fails");
-        }
+        return conditions;
     }
 }
 

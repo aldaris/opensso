@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionDecision.java,v 1.1 2009-08-19 05:40:32 veiming Exp $
+ * $Id: ConditionDecision.java,v 1.2 2009-09-03 06:09:27 veiming Exp $
  */
 package com.sun.identity.entitlement;
 import java.util.Map;
@@ -35,6 +35,7 @@ public class ConditionDecision {
     private boolean satisfied;
     private Map<String, Set<String>> advices;
     public static final String TIME_TO_LIVE = "timeToLive";
+    public static final String MAX_TIME = "maxTime";
 
     /**
      * Constructs an instance of <code>ConditionDecision</code>

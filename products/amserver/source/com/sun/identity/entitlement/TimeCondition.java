@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeCondition.java,v 1.1 2009-08-19 05:40:34 veiming Exp $
+ * $Id: TimeCondition.java,v 1.2 2009-09-03 06:09:27 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -158,6 +158,8 @@ public class TimeCondition extends EntitlementConditionAdaptor {
         throws EntitlementException {
         boolean allowed = false;
         long currentGmt = System.currentTimeMillis();
+
+
         TimeZone timeZone = TimeZone.getDefault();
         if (environment != null) {
             String time = getProperty(environment, REQUEST_TIME);
@@ -176,23 +178,30 @@ public class TimeCondition extends EntitlementConditionAdaptor {
         }
 
         long[] effectiveRange = getEffectiveRange(currentGmt, timeZone);
-        long timeToLive = Long.MAX_VALUE;
-        if ( (currentGmt >= effectiveRange[0])
-                && ( currentGmt <= effectiveRange[1]) ) {
-            allowed = true;
-            timeToLive = effectiveRange[1];
-        } else if ( currentGmt < effectiveRange[0] ) {
-            timeToLive = effectiveRange[0];
-        }
-        String sTimeToLove = Long.toString(timeToLive);
-        Set<String> setAdvice = new HashSet<String>();
-        setAdvice.add(sTimeToLove);
         Map<String, Set<String>> advices = new HashMap<String, Set<String>>();
-        advices.put(ConditionDecision.TIME_TO_LIVE, setAdvice);
+
+        if ((currentGmt >= effectiveRange[0]) &&
+            (currentGmt <= effectiveRange[1])
+        ) {
+            allowed = true;
+            long timeToLive = effectiveRange[1] - currentGmt;
+            Set<String> setDuration = new HashSet<String>(2);
+            Set<String> setMaxTime = new HashSet<String>(2);
+            setDuration.add(Long.toString(timeToLive));
+            setMaxTime.add(Long.toString(effectiveRange[1]));
+            advices.put(ConditionDecision.TIME_TO_LIVE, setDuration);
+            advices.put(ConditionDecision.MAX_TIME, setMaxTime);
+        } else if (currentGmt < effectiveRange[0]) {
+            long timeToLive = effectiveRange[0] - currentGmt;
+            Set<String> setDuration = new HashSet<String>(2);
+            Set<String> setMaxTime = new HashSet<String>(2);
+            setDuration.add(Long.toString(timeToLive));
+            setMaxTime.add(Long.toString(effectiveRange[0]));
+            advices.put(ConditionDecision.TIME_TO_LIVE, setDuration);
+            advices.put(ConditionDecision.MAX_TIME, setMaxTime);
+        }
 
         return new ConditionDecision(allowed, advices);
-
-
     }
 
     private static String getProperty(

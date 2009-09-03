@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.2 2009-08-21 21:52:00 hengming Exp $
+ * $Id: Privilege.java,v 1.3 2009-09-03 06:09:27 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -590,14 +590,11 @@ public abstract class Privilege implements IPrivilege {
 
         ConditionDecision decision = eCondition.evaluate(realm,
             subject, resourceName, environment);
-        if (!decision.isSatisfied()) {
-            Map<String, Set<String>> advices = decision.getAdvices();
-            if (advices != null) {
-                resultAdvices.putAll(advices);
-            }
-            return false;
+        Map<String, Set<String>> advices = decision.getAdvices();
+        if (advices != null) {
+            resultAdvices.putAll(advices);
         }
-        return true;
+        return decision.isSatisfied();
     }
     
     /**
