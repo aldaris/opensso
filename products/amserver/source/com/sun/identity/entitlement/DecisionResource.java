@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.4 2009-08-31 19:45:14 veiming Exp $
+ * $Id: DecisionResource.java,v 1.5 2009-09-03 17:06:23 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -29,13 +29,19 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
 
 /**
  * Exposes the entitlement decision REST resource.
@@ -45,7 +51,6 @@ import javax.ws.rs.QueryParam;
  */
 @Path("/1/entitlement")
 public class DecisionResource {
-
     private enum Permission {
         deny, allow
     }
@@ -77,24 +82,33 @@ public class DecisionResource {
     @Produces("text/plain")
     @Path("/decision")
     public String decision(
-        @QueryParam("realm") String realm,
+        @Context HttpHeaders headers,
+        @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("subject") String subject,
         @QueryParam("action") String action,
         @QueryParam("resource") String resource,
         @QueryParam("application") String application,
-        @QueryParam("env") List<String> environment) {
-
+        @QueryParam("env") List<String> environment
+    ) {
+        if (!realm.startsWith("/")) {
+            realm = "/" + realm;
+        }
         Subject caller = getCaller();
         Map env = getMap(environment);
 
         try {
+            validateSubjectAndResource(subject, resource);
+
+            if ((action == null) || (action.trim().length() == 0)) {
+                throw new EntitlementException(702);
+            }
             Evaluator evaluator = getEvaluator(caller, application);
             return permission(evaluator.hasEntitlement(realm,
                 toSubject(subject), toEntitlement(resource, action),
                 env));
         } catch (EntitlementException e) {
             PrivilegeManager.debug.warning("DecisionResource.decision", e);
-            return Integer.toString(e.getErrorCode());
+            throw getWebApplicationException(headers, e);
         }
     }
 
@@ -113,24 +127,29 @@ public class DecisionResource {
     @Produces("application/json")
     @Path("/entitlement")
     public String entitlement(
-        @QueryParam("realm") String realm,
+        @Context HttpHeaders headers,
+        @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("subject") String subject,
-        @QueryParam("action") String action,
         @QueryParam("resource") String resource,
         @QueryParam("application") String application,
-        @QueryParam("env") List<String> environment) {
+        @QueryParam("env") List<String> environment
+    ) {
+        if (!realm.startsWith("/")) {
+            realm = "/" + realm;
+        }
 
         Map env = getMap(environment);
         Subject caller = getCaller();
 
         try {
+            validateSubjectAndResource(subject, resource);
             Evaluator evaluator = getEvaluator(caller, application);
             List<Entitlement> entitlement = evaluator.evaluate(
                 realm, toSubject(subject), resource, env, false);
             return entitlement.get(0).toString();
         } catch (EntitlementException e) {
             PrivilegeManager.debug.warning("DecisionResource.evaluate", e);
-            return Integer.toString(e.getErrorCode());
+            throw getWebApplicationException(headers, e);
         }
     }
 
@@ -179,5 +198,32 @@ public class DecisionResource {
     private String permission(boolean b) {
         return (b ? Permission.allow.toString() : Permission.deny.toString());
     }
+
+    private WebApplicationException getWebApplicationException(
+        HttpHeaders headers,
+        EntitlementException e) {
+        throw new WebApplicationException(
+              Response.status(e.getErrorCode())
+              .entity(e.getLocalizedMessage(getUserLocale(headers)))
+              .type("text/plain; charset=UTF-8").build());
+    }
+
+    private Locale getUserLocale(HttpHeaders headers) {
+        List<Locale> locales = headers.getAcceptableLanguages();
+        return ((locales == null) || locales.isEmpty()) ? Locale.getDefault() :
+            locales.get(0);
+    }
+
+    private void validateSubjectAndResource(String subject, String resource)
+        throws EntitlementException {
+        if ((subject == null) || (subject.trim().length() == 0)) {
+            throw new EntitlementException(701);
+        }
+        if ((resource == null) || (resource.trim().length() == 0)) {
+            throw new EntitlementException(700);
+        }
+
+    }
+
 }
 

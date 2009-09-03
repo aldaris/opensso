@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestTest.java,v 1.3 2009-08-31 19:48:44 veiming Exp $
+ * $Id: RestTest.java,v 1.4 2009-09-03 17:06:23 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -39,6 +39,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -173,6 +174,67 @@ public class RestTest {
         String advice = setNumericCondAdvice.iterator().next();
         if (!advice.equals(ATTR_NAME + "=" + ATTR_VAL)) {
             throw new Exception("RESTTest.negativeTest: incorrect advice");
+        }
+    }
+
+    @Test
+    public void missingResourceTest() throws Exception {
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("subject", user.getUniversalId());
+        params.add("realm", REALM);
+
+        try {
+            entitlementClient.queryParams(params).accept(
+                "application/json").get(String.class);
+            throw new Exception(
+                "RESTTest.missingResourceTest: no exception thrown.");
+        } catch (UniformInterfaceException e) {
+            int errorCode = e.getResponse().getStatus();
+            if (errorCode != 420) {
+                throw new Exception(
+                    "RESTTest.missingResourceTest: incorrect error code");
+            }
+        }
+    }
+
+    @Test
+    public void missingSubjectTest() throws Exception {
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("resource", "http://whatever.com");
+        params.add("realm", REALM);
+
+        try {
+            entitlementClient.queryParams(params).accept(
+                "application/json").get(String.class);
+            throw new Exception(
+                "RESTTest.missingSubjectTest: no exception thrown.");
+        } catch (UniformInterfaceException e) {
+            int errorCode = e.getResponse().getStatus();
+            if (errorCode != 421) {
+                throw new Exception(
+                    "RESTTest.missingSubjectTest: incorrect error code");
+            }
+        }
+    }
+
+    @Test
+    public void missingActionTest() throws Exception {
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("resource", "http://whatever.com");
+        params.add("subject", user.getUniversalId());
+        params.add("realm", REALM);
+
+        try {
+            decisionClient.queryParams(params).accept(
+                "text/plain").get(String.class);
+            throw new Exception(
+                "RESTTest.missingActionTest: no exception thrown.");
+        } catch (UniformInterfaceException e) {
+            int errorCode = e.getResponse().getStatus();
+            if (errorCode != 422) {
+                throw new Exception(
+                    "RESTTest.missingActionTest: incorrect error code");
+            }
         }
     }
 
