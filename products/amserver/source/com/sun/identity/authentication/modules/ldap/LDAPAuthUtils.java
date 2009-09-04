@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.17 2009-01-28 05:34:53 ww203982 Exp $
+ * $Id: LDAPAuthUtils.java,v 1.18 2009-09-04 04:30:05 222713 Exp $
  *
  */
 
@@ -216,6 +216,21 @@ public class LDAPAuthUtils {
             throw new LDAPUtilException("HostInvalid", (Object[])null);
         }
     }
+
+    private static HashSet getAllHostNames(String hostName, int portNumber, String bindingUser) {
+        HashSet obj = new HashSet();
+        StringTokenizer tokenStr = new StringTokenizer(hostName);
+        while(tokenStr.hasMoreTokens()) {
+           String key = tokenStr.nextToken().trim();
+           if(key.indexOf(":") > 0) {
+              key = key.substring(0,key.indexOf(":")) + ":" + portNumber + ":" + bindingUser;
+           } else {
+              key = key + ":" + portNumber + ":" + bindingUser;
+           }
+           obj.add(key);
+        }
+        return obj;
+    }
     
     private static LDAPConnectionPool createConnectionPool(
         HashMap connectionPools,
@@ -231,6 +246,7 @@ public class LDAPAuthUtils {
         LDAPConnection ldc = null;
         try {
             String key = hostName + ":" + portNumber + ":" + bindingUser;
+            HashSet allHostNames = getAllHostNames(hostName, portNumber, bindingUser);
             conPool = (LDAPConnectionPool)connectionPools.get(key);
             
             if (conPool == null) {
@@ -257,7 +273,7 @@ public class LDAPAuthUtils {
                         if (stz.countTokens() == 4) {
                             String h = stz.nextToken();
                             String p = stz.nextToken();
-                            if (key.equals(h + ":" + p)) {
+                            if (allHostNames.contains(h + ":" + p + ":" + bindingUser)) {
                                 tmpmin = stz.nextToken();
                                 tmpmax = stz.nextToken();
                                 break;
