@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.5 2009-09-03 17:06:23 veiming Exp $
+ * $Id: DecisionResource.java,v 1.6 2009-09-04 08:50:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -100,7 +100,7 @@ public class DecisionResource {
             validateSubjectAndResource(subject, resource);
 
             if ((action == null) || (action.trim().length() == 0)) {
-                throw new EntitlementException(702);
+                throw new EntitlementException(422);
             }
             Evaluator evaluator = getEvaluator(caller, application);
             return permission(evaluator.hasEntitlement(realm,
@@ -217,10 +217,10 @@ public class DecisionResource {
     private void validateSubjectAndResource(String subject, String resource)
         throws EntitlementException {
         if ((subject == null) || (subject.trim().length() == 0)) {
-            throw new EntitlementException(701);
+            throw new EntitlementException(421);
         }
         if ((resource == null) || (resource.trim().length() == 0)) {
-            throw new EntitlementException(700);
+            throw new EntitlementException(420);
         }
 
     }
