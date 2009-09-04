@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [ of copyright owner]"
  *
- * $Id: StockQuoteSampleTest.java,v 1.3 2009-06-29 17:07:41 nithyas Exp $
+ * $Id: 
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.wss;
@@ -33,10 +33,14 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.TestCommon;
+import com.sun.identity.qatest.common.WSSCommon;
+import com.sun.identity.qatest.common.authentication.AuthenticationCommon;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import com.sun.identity.wss.provider.DiscoveryConfig;
 import com.sun.identity.wss.provider.ProviderConfig;
@@ -47,6 +51,7 @@ import java.io.FileWriter;
 import java.net.URL;
 import java.security.AccessController;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -69,19 +74,33 @@ import org.testng.annotations.Test;
  * accessing the StockQuoteClient
  */
 public class StockQuoteSampleTest extends TestCommon {
-    
-    private int testIndex;
+    private String testIndex;
+    private boolean isAuthChain;
+    private int wscIndex;
+    private int wspIndex;
+    private int stsClientIndex;
+    private int stsServiceIndex;
     private String strTestDescription;
+    private String strTestCaseDetail;
+    private String strAuthChain ;
+    private String strWSPDescription;
+    private String strWSCDescription;
+    private String strSTSClientDescription;
+    private String strSTSServiceDescription;
     private String strClientURL;
     private String strExpResult;
     private String strWSCId;
     private String strWSPId;
+    private String strSTSId;
+    private String strReplay;
     private String baseDir;
     private ResourceBundle rbp;
     private ResourceBundle rbg;
     private SSOToken token;
     private IDMCommon idmc;
     private SMSCommon smsc;
+    private WSSCommon wssc;
+    private AuthenticationCommon authCommon;
     private boolean isLibertyToken;
     private TrustAuthorityConfig taconfig;
     private TrustAuthorityConfig stsconfig;
@@ -91,10 +110,14 @@ public class StockQuoteSampleTest extends TestCommon {
     private String strUser = "sampletestuser";
     private String strSTSSecurity;
     private String strSTSConfigName;
+    private String strSTSServiceType;
+    private String strServiceURL;
     private String strUserAuth;
     private String strEvaluateClient;
     private WebClient webClient;
-    
+    private Set origAuthPostSet;
+    private Map<String, Set> STSServiceMap;
+    private long entryTime;
     /**
      * Default constructor. Creates admintoken and helper class instances.
      */
@@ -103,9 +126,10 @@ public class StockQuoteSampleTest extends TestCommon {
         super("StockQuoteSampleTest");
         rbp = ResourceBundle.getBundle("wss" + fileseparator + strLocRB);
         rbg = ResourceBundle.getBundle("wss" + fileseparator + strGlbRB);
-        token = getToken(adminUser, adminPassword, basedn);
         idmc = new IDMCommon();
-        smsc = new SMSCommon(token);
+        wssc = new WSSCommon();
+        authCommon = new AuthenticationCommon("wss");
+        strServiceURL = rbg.getString(strGlbRB + ".RemoteSTSServiceURL");
         
     }
     
@@ -113,16 +137,18 @@ public class StockQuoteSampleTest extends TestCommon {
      * Updates bootstrap security mechanism in Discovery service to null:X509
      * and creates users.
      */
-    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
+    @BeforeSuite(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", 
+    "jdbc_sec"})
     public void createUser()
     throws Exception {
         try {
+            token = getToken(adminUser, adminPassword, basedn);
+            smsc = new SMSCommon(token);
             Set set = new HashSet();
-            set.add(getBootsrapDiscoEntry("2005-02:null:X509"));
+            set.add(wssc.getBootsrapDiscoEntry("2005-02:null:X509"));
             smsc.updateSvcSchemaAttribute(
                     "sunIdentityServerDiscoveryService",
                     "sunIdentityServerBootstrappingDiscoEntry", set, "Global");
-            
             Map map = new HashMap();
             set = new HashSet();
             set.add(strUser);
@@ -141,15 +167,18 @@ public class StockQuoteSampleTest extends TestCommon {
             log(Level.SEVERE, "createUser", e.getMessage());
             e.printStackTrace();
             throw e;
+        } finally {
+            destroyToken(token);
         }
     }
     
     /**
      * Changes the runtime application user from UrlAccessAgent to amadmin
      */
-    @BeforeSuite(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
+    @BeforeSuite(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", 
+    "jdbc_sec"})
     public void changeRunTimeUser() throws
-            Exception{
+            Exception {
         try {
             SSOToken runtimeToken = null;
             runtimeToken = (SSOToken) AccessController.doPrivileged(
@@ -167,12 +196,11 @@ public class StockQuoteSampleTest extends TestCommon {
                     "agents.app.username", adminUser);
             SystemProperties.initializeProperties("com.iplanet.am." +
                     "service.password", adminPassword);
-            
             SSOToken newToken = null;
             newToken = (SSOToken) AccessController.doPrivileged(
                     AdminTokenAction.getInstance());
             log(Level.FINEST, "changeRunTimeUser", "Runtime user name after " +
-                    "change \n" + runtimeToken.getPrincipal().getName());
+                    "change \n" + newToken.getPrincipal().getName());
         } catch(Exception e) {
             log(Level.SEVERE, "changeRunTimeUser", e.getMessage());
             e.printStackTrace();
@@ -183,51 +211,99 @@ public class StockQuoteSampleTest extends TestCommon {
     /**
      * Creates agent profiles for web service providers and web service clients.
      */
-    @Parameters({"testIdx", "STSSecurity", "UserAuth", "EvaluateClient"})
-    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
-    public void setup(String testIdx, String STSSecurity, String UserAuth,
-            String EvaluateClient)
+    @Parameters({"testIdx", "wscIdx", "wspIdx", "STSSecurity", "STSClientIdx",
+    "STSServiceIdx", "UserAuth","replay","authchain", "EvaluateClient"})
+    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", 
+    "jdbc_sec"})
+    public void setup(String testIdx, String wscIdx, String wspIdx,
+            String STSSecurity, String  STSClientIdx, String STSServiceIdx,
+            String UserAuth, String replay ,String authchain, String EvaluateClient)
             throws Exception {
-        Object[] params = {testIdx, STSSecurity, UserAuth, EvaluateClient};
+        Object[] params = {testIdx, wscIdx, wspIdx, STSSecurity, STSClientIdx,
+        STSServiceIdx, UserAuth, EvaluateClient};
         entering("setup", params);
         try {
-            
-            testIndex = new Integer(testIdx).intValue();
+            entryTime = System.currentTimeMillis();
+            //changeRunTimeUser();
+            testIndex = testIdx;
+            wscIndex = new Integer(wscIdx).intValue();
+            wspIndex = new Integer(wspIdx).intValue();
+            if (!STSClientIdx.equals(""))
+                stsClientIndex = new Integer(STSClientIdx).intValue();
+            if (!STSServiceIdx.equals(""))
+                stsServiceIndex = new Integer(STSServiceIdx).intValue();
             strSTSSecurity = STSSecurity;
             strUserAuth = UserAuth;
+            strReplay = replay;
+            strAuthChain = authchain;
             strEvaluateClient = EvaluateClient;
+            log(Level.FINEST, "setup", "testIndex: " + testIndex);
+            log(Level.FINEST, "setup", "wscIdx: " + wscIndex);
+            log(Level.FINEST, "setup", "wspIdx: " + wspIndex);
+            log(Level.FINEST, "setup", "stsClientIndex: " + stsClientIndex);
+            log(Level.FINEST, "setup", "stsServiceIndex: " + stsServiceIndex);
             
-            strTestDescription = rbp.getString(strLocRB + testIndex
+            strWSPDescription = rbp.getString(strLocRB + wspIndex
                     + ".description");
+            strWSCDescription = rbp.getString(strLocRB + wscIndex
+                    + ".description");
+            if (strSTSSecurity.equals("true"))
+                strTestDescription = strWSPDescription + " at wsp \n " ;
+            else
+                strTestDescription = strWSPDescription + " at wsp \n " +
+                        strWSCDescription + " at wsc \n";
+            
             log(Level.FINEST, "setup", "Description: " + strTestDescription);
             
             strClientURL = rbg.getString(strGlbRB + ".clienturl");
             log(Level.FINEST, "setup", "Client URL: " + strClientURL);
             
-            strSTSConfigName = rbg.getString(strGlbRB + ".stsconfigname");
+            strSTSConfigName = rbg.getString(strGlbRB + ".stsclient.name");
             log(Level.FINEST, "setup", "STS config Name: " + strSTSConfigName);
             
             strExpResult = rbp.getString(strLocRB + testIndex + ".passmessage");
             log(Level.FINEST, "setup", "Expected Result: " + strExpResult);
             
-            isLibertyToken = new Boolean(rbp.getString(strLocRB + testIndex +
+            strTestCaseDetail = rbp.getString(strLocRB + testIndex +
+                    ".testcasedetail");
+            log(Level.FINEST, "setup", "Description: " + strTestCaseDetail);
+            
+            isLibertyToken = new Boolean(rbp.getString(strLocRB + wscIndex +
                     ".isLibertyToken")).booleanValue();
             log(Level.FINEST, "setup", "Is Liberty Token: " + isLibertyToken);
             
-            strWSCId = createAgentProfile(testIndex, "WSC");
+            if(strReplay.equals("true")){
+                isAuthChain = true;
+                Map chainMap = new HashMap();
+                String[] configInstances = {"WSSAuthModule,REQUIRED"};
+                authCommon.createAuthConfig("/","wssAuthChain", configInstances,
+                        chainMap);
+            }
+            
+            long startTime = System.currentTimeMillis();
+            strWSCId = wssc.createAgentProfile("WSC", strGlbRB, strLocRB,
+                    isLibertyToken, taconfig, wscIdx,strAuthChain);
+            long endTime = System.currentTimeMillis();
+            long timetaken =  (long)(endTime - startTime);
+            log(Level.FINEST, "setup",
+                    "Time to setup WSC : " + (timetaken/1000));
             log(Level.FINEST, "setup", "WSC Agent Id: " + strWSCId);
             
-            strWSPId = createAgentProfile(testIndex, "WSP");
+            startTime = System.currentTimeMillis();
+            strWSPId = wssc.createAgentProfile("WSP", strGlbRB, strLocRB,
+                    isLibertyToken, taconfig, wspIdx,strReplay);
+            endTime = System.currentTimeMillis();
+            timetaken =  (long)(endTime - startTime);
+            log(Level.FINEST, "setup",
+                    "Time to setup WSP : " + (timetaken/1000));
             log(Level.FINEST, "setup", "WSP Agent Id: " + strWSPId);
-            
             if (isLibertyToken)
-                registerWSPWithDisco(strWSPId);
+                wssc.registerWSPWithDisco(strWSPId, taconfig);
         } catch(Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
         }
-        
         exiting("setup");
     }
     
@@ -235,138 +311,225 @@ public class StockQuoteSampleTest extends TestCommon {
      * Accesses the StockQuoteClient and submits the request and verifies the
      * expected result
      */
-    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", "jdbc_sec"})
     public void evaluateStockQuoteClient()
     throws Exception {
         entering("evaluateStockQuoteClient", null);
         ProviderConfig stockPc = ProviderConfig.getProvider(strWSCId,
                 ProviderConfig.WSC);
+        ProviderConfig wspPc = ProviderConfig.getProvider(strWSPId,
+                ProviderConfig.WSP);
+        wssc.displayAgentProfile(wspPc);
+        Reporter.log("******************************************");
+        Reporter.log("Test Case detail:" + strTestCaseDetail);
         if (strEvaluateClient.equals("true")) {
             try {
                 if (strSTSSecurity.equals("true")) {
+                    //Creates the STSCLIENT profile
+                    log(Level.FINEST, "setup", "creating STS client profile:");
+                    long startTime = System.currentTimeMillis();
+                    strSTSId = wssc.createAgentProfile("STSCLIENT", strGlbRB,
+                            strLocRB, isLibertyToken, taconfig, "" +
+                            stsClientIndex,strAuthChain);
+                    long endTime = System.currentTimeMillis();
+                    long timetaken =  (long)(endTime - startTime);
+                    log(Level.FINEST, "setup",
+                            "Time to setup STSCLIENT : " + (timetaken/1000));
+                    log(Level.FINEST, "setup", "STSCLIENT Agent Id: " +
+                            strSTSId);
                     List listSecMech = new ArrayList();
                     String secMechanism = "urn:sun:wss:sts:security";
                     listSecMech.add(secMechanism);
                     stockPc.setSecurityMechanisms(listSecMech);
-                    
+                    //Add other code for setting the STS attributes
                     stsconfig = TrustAuthorityConfig.getConfig(strSTSConfigName,
                             TrustAuthorityConfig.STS_TRUST_AUTHORITY);
-                    TrustAuthorityConfig.saveConfig(stsconfig);
                     stockPc.setTrustAuthorityConfig(stsconfig);
                     ProviderConfig.saveProvider(stockPc);
                     stockPc = ProviderConfig.getProvider(strWSCId,
-                            ProviderConfig.WSC);                  
+                            ProviderConfig.WSC);
+                    wssc.displayAgentProfile(stockPc);
+                    TrustAuthorityConfig stockpcConfig =
+                            stockPc.getTrustAuthorityConfig();
+                    Reporter.log("name of the trust authority from " +
+                            "stockservice" + stockpcConfig.getName());
+                    strSTSServiceType = rbp.getString( strLocRB +
+                            stsClientIndex + ".stsclient.stsservicetype");
+                    
+                    if (strSTSServiceType.equals("remote")) {
+                        //code for remote sts service
+                        //updateSTSServiceLocalRemote
+                    } else {
+                        token = getToken(adminUser, adminPassword, basedn);
+                        startTime = System.currentTimeMillis();
+                        STSServiceMap = wssc.getSTSServiceLocalAttributes(
+                                token);
+                        wssc.updateSTSServiceLocal(strGlbRB, strLocRB,
+                                "" + stsClientIndex, "" + stsServiceIndex,
+                                token, strAuthChain);
+                        endTime = System.currentTimeMillis();
+                        timetaken =  (long)(endTime - startTime);
+                        Map STSServiceLatestMap = new HashMap();
+                        STSServiceLatestMap = wssc.getSTSServiceLocalAttributes(
+                                token);
+                        Reporter.log("STSService Attributes after modification:"
+                                + STSServiceLatestMap);
+                        log(Level.FINEST, "evaluateStockQuoteClient",
+                                "STSService Attributes after modification: "
+                                + STSServiceLatestMap);
+                        
+                        stockPc = ProviderConfig.getProvider(strWSCId,
+                                ProviderConfig.WSC);
+                        wspPc = ProviderConfig.getProvider(strWSPId,
+                                ProviderConfig.WSP);
+                    }
+                    if(strReplay.equals("true")){
+                        origAuthPostSet = wssc.updateAuthService(token);
+                    }
                 }
-                webClient = new WebClient();
-                URL cmdUrl = new URL(strClientURL);
-                HtmlPage page = (HtmlPage) webClient.getPage(cmdUrl);
-                HtmlForm form = (HtmlForm) page.getFormByName("GetQuote");
-                
-                HtmlTextInput txtagentname = (HtmlTextInput) form.
-                        getInputByName("symbol");
-                txtagentname.setValueAttribute("JAVA");
-                
-                HtmlPage returnPage = (HtmlPage) form.submit();
-                log(Level.FINEST, "evaluateStockQuoteClient",
-                        " Page after request submission \n" +
-                        returnPage.getWebResponse().getContentAsString());
-                
-                int iIdx = getHtmlPageStringIndex(returnPage, strExpResult);
-                assert (iIdx != -1);
-                
+                if (strUserAuth.equals("true")) {                    
+                    log(Level.FINEST, "evaluateStockQuoteClient","Using end " +
+                            "user auth");
+                    stockPc.setForceUserAuthentication(true);
+                    ProviderConfig.saveProvider(stockPc);
+                    Thread.sleep(1000);
+                    String xmlFile = "generateUserAuthenticateXML" + testIndex
+                            + ".xml";
+                    String xmlFileLocation = getTestBase() +
+                            System.getProperty("file.separator") + "wss" +
+                            System.getProperty("file.separator") + xmlFile;
+                    wssc.generateUserAuthenticateXML(strUser, strUser,
+                            xmlFileLocation, strExpResult, strClientURL);
+                    task = new DefaultTaskHandler(xmlFileLocation);
+                    webClient = new WebClient();
+                    long startTime = System.currentTimeMillis();
+                    HtmlPage page = task.execute(webClient);
+                    long endTime = System.currentTimeMillis();
+                    long timetaken =  (long)(endTime - startTime);
+                    log(Level.FINEST, "evaluateStockQuoteClient",
+                            "Time to get StockQuote: " + (timetaken/1000));
+                    log(Level.FINEST, "evaluateStockQuoteClient",
+                            "evaluateStockQuoteClient page after " +
+                            "login\n" + page.getWebResponse().
+                            getContentAsString());
+                    int iIdx = getHtmlPageStringIndex(page, strExpResult);                    
+                    if (iIdx == -1) {
+                        assert false;
+                    } else
+                        assert true;
+                } else {
+                    log(Level.FINEST, "evaluateStockQuoteClient","Using WSC" +
+                            "auth");
+                    stockPc.setForceUserAuthentication(false);
+                    Thread.sleep(1000);
+                    webClient = new WebClient();
+                    webClient.setCookiesEnabled(true);
+                    URL cmdUrl = new URL(strClientURL);
+                    HtmlPage page = (HtmlPage) webClient.getPage(cmdUrl);
+                    HtmlForm form = (HtmlForm) page.getFormByName("GetQuote");                    
+                    HtmlTextInput txtagentname = (HtmlTextInput) form.
+                            getInputByName("symbol");
+                    txtagentname.setValueAttribute("JAVA");
+                    long startTime = System.currentTimeMillis();
+                    HtmlPage returnPage = (HtmlPage) form.submit();
+                    long endTime = System.currentTimeMillis();
+                    long timetaken = endTime - startTime;
+                    log(Level.FINEST, "evaluateStockQuoteClient",
+                            "Time to get StockQuote: " + (timetaken/1000));
+                    log(Level.FINEST, "evaluateStockQuoteClient",
+                            " Page after request submission \n" +
+                            returnPage.getWebResponse().getContentAsString());
+                    
+                    int iIdx = getHtmlPageStringIndex(returnPage, strExpResult);
+                    assert (iIdx != -1);
+                }
             } catch (Exception e) {
                 log(Level.SEVERE, "evaluateStockQuoteClient", e.getMessage());
                 e.printStackTrace();
                 throw e;
             } finally {
+                long exitTime = System.currentTimeMillis();
+                log(Level.FINEST, "evaluateStockQuoteClient",
+                        "Time to execute " +
+                        "test case: " + ((exitTime - entryTime)/1000));
+                
+                if (strSTSSecurity.equals("true")) {
+                    strTestDescription = strTestDescription + ",using a STS " +
+                            "Client profile and STSService is "+ rbp.getString(
+                            strLocRB + stsClientIndex + ".stsclient." +
+                            "stsservicetype");
+                }
                 Reporter.log("Test Description: "  + strTestDescription);
+                Reporter.log("Test Id: " + testIndex );
+                Reporter.log("WSC Index: " + wscIndex );
+                Reporter.log("WSP Index: " + wspIndex );
+                Reporter.log("Is sts security enabled: " + strSTSSecurity );
+                if (strSTSSecurity.equals("true")) {
+                    Reporter.log("STSClientIndex: " + stsClientIndex);
+                    Reporter.log("STSServiceIndex: " + stsServiceIndex);
+                }
+                Reporter.log("Is user auth enabled: " + strUserAuth );
+                Reporter.log("Expected Result: " + strExpResult);
+                Reporter.log("Replay Pasword:" + strReplay);
+                Reporter.log("Auth Chain:" +  strAuthChain);
             }
-	    Thread.sleep(1000);            
             exiting("evaluateStockQuoteClient");
         }
     }
-    
-    /**
-     * Configures the WSC profile to get the from STS service and
-     * accesses the StockQuoteClient and submits the request and verifies the
-     * expected result
-     */
-    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
-    dependsOnMethods = {"evaluateStockQuoteClient"})
-    public void evaluateStockQuoteClientWithEndUser()
-    throws Exception {
-        entering("evaluateStockQuoteClientWithEndUser", null);
-        ProviderConfig stockPc = ProviderConfig.getProvider(strWSCId,
-                ProviderConfig.WSC);
-        if (strUserAuth.equals("true")) {
-            try {
-                if (strSTSSecurity.equals("true")) {                    
-                    List listSecMech = new ArrayList();
-                    String secMechanism = "urn:sun:wss:sts:security";
-                    listSecMech.add(secMechanism);
-                    stockPc.setSecurityMechanisms(listSecMech);
-                    stsconfig = TrustAuthorityConfig.getConfig(strSTSConfigName,
-                            TrustAuthorityConfig.STS_TRUST_AUTHORITY);
-                    TrustAuthorityConfig.saveConfig(stsconfig);
-                    stockPc.setTrustAuthorityConfig(stsconfig);
-                    ProviderConfig.saveProvider(stockPc);
-                    stockPc = ProviderConfig.getProvider(strWSCId,
-                            ProviderConfig.WSC);                    
-                }
-                
-                ProviderConfig stockPC = null ;
-                ProviderConfig wspPC = null ;
-                String xmlFile = "generateUserAuthenticateXML" + testIndex +
-                        ".xml";
-                String xmlFileLocation = getTestBase() +
-                        System.getProperty("file.separator") + "wss" +
-                        System.getProperty("file.separator") + xmlFile;
-                
-                stockPC = ProviderConfig.getProvider("StockService",
-                        ProviderConfig.WSC);
-                stockPC.setForceUserAuthentication(true);
-                ProviderConfig.saveProvider(stockPC);
-                generateUserAuthenticateXML(adminUser, adminPassword,
-                        xmlFileLocation, strExpResult);
-                task = new DefaultTaskHandler(xmlFileLocation);
-                webClient = new WebClient();
-                HtmlPage page = task.execute(webClient);
-                log(Level.FINEST, "evaluateStockQuoteClientWithEndUser",
-                        "evaluateStockQuoteClientWithEndUser page after " +
-                        "login\n" + page.getWebResponse().getContentAsString());
-                
-                if (getHtmlPageStringIndex(page, strExpResult) == -1)
-                    assert false;
-            } catch (Exception e) {
-                log(Level.SEVERE, "evaluateStockQuoteClientWithEndUser",
-                        e.getMessage());
-                e.printStackTrace();
-                throw e;
-            } finally {
-                Reporter.log("Test Description: "  + strTestDescription );
-            }
-            exiting("evaluateStockQuoteClient WithEndUser");
-        }
-    }
-    
     /**
      * Deletes the agent profiles for webservice clients and providers.
      */
-    @AfterClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
+    @AfterClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", 
+    "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
-        
+        token = getToken(adminUser, adminPassword, basedn);
+        smsc = new SMSCommon(token);
         log(Level.FINEST, "cleanup", "WSC Agent Id: " + strWSCId + "WSC");
         log(Level.FINEST, "cleanup", "WSP Agent Id: " + strWSPId + "WSP");
         
+        if (strSTSSecurity.equals("true")) {
+            log(Level.FINEST, "cleanup", "After updating Auth->Core->Authn" +
+                    "post processing classes: " );
+            if(strReplay.equals("true")){
+                smsc.updateSvcAttribute("/", "iPlanetAMAuthService",
+                        "iplanet-am-auth-post-login-process-class",
+                        origAuthPostSet, "Organization"
+                        );
+            }
+            if (strSTSServiceType.equals("remote")) {
+                //code to reset STS service in a remote machine
+            } else {
+                log(Level.FINEST, "cleanup", "Resetting STS LocalService");
+                
+                Set falseSet= new HashSet();
+                falseSet.add("false");
+                STSServiceMap. put("isRequestSign", falseSet);
+                STSServiceMap. put("isResponseSign", falseSet);
+                STSServiceMap. put("isRequestEncrypt", falseSet);
+                STSServiceMap. put("isResponseEncrypt", falseSet);
+                STSServiceMap. put("isResponseEncrypt", falseSet);
+                if(isAuthChain==true){
+                    falseSet= new HashSet();
+                    falseSet.add("[Empty]");
+                    STSServiceMap. put("AuthenticationChain", falseSet);
+                }
+                wssc.setSTSServiceLocalAttributes(token, STSServiceMap);
+            }
+        }
         if (isLibertyToken) {
-            unregisterWSPWithDisco("urn:wsp");
+            wssc.unregisterWSPWithDisco("urn:wsp", taconfig);
             ProviderConfig.deleteProvider("localDisco", "Discovery");
         }
         ProviderConfig.deleteProvider(strWSCId, ProviderConfig.WSC);
         ProviderConfig.deleteProvider(strWSPId, ProviderConfig.WSP);
-        
+        TrustAuthorityConfig.deleteConfig(strSTSId,
+                TrustAuthorityConfig.STS_TRUST_AUTHORITY);
+        destroyToken(token);
+        if(isAuthChain==true){
+            authCommon.deleteAuthConfig("/", "wssAuthChain");}
+        Thread.sleep(1000);
         exiting("cleanup");
     }
     
@@ -374,238 +537,21 @@ public class StockQuoteSampleTest extends TestCommon {
      * Deletes users and resets bootstrap security mechanism in Discovery
      * service to null:null.
      */
-    @AfterClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
+    @AfterSuite(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void deleteUser()
     throws Exception {
-        idmc.deleteIdentity(token, realm, IdType.USER, strUser);
-        Set set = new HashSet();
-        set.add(getBootsrapDiscoEntry("2003-08:null:null"));
-        smsc.updateSvcSchemaAttribute("sunIdentityServerDiscoveryService",
-                "sunIdentityServerBootstrappingDiscoEntry", set, "Global");
-        destroyToken(token);
-    }
-    
-    /**
-     * Registers webservice agent with Discovery service.
-     */
-    private void registerWSPWithDisco(String name)
-    throws Exception {
-        entering("registerWSPWithDisco", null);
-        DiscoveryConfig discoConfig = (DiscoveryConfig)taconfig;
-        ProviderConfig pc = ProviderConfig.getProvider(name, "WSP");
-        discoConfig.registerProviderWithTA(pc, pc.getServiceType());
-        exiting("registerWSPWithDisco");
-    }
-    
-    /**
-     * unregisters webservice agent with Discovery service.
-     */
-    private void unregisterWSPWithDisco(String name)
-    throws Exception {
-        entering("unregisterWSPWithDisco", null);
-        DiscoveryConfig discoConfig = (DiscoveryConfig)taconfig;
-        discoConfig.unregisterProviderWithTA(name);
-        exiting("unregisterWSPWithDisco");
-    }
-    
-    /**
-     * Creates agent profile for webservice clients and providers.
-     */
-    private String createAgentProfile(int testIndex, String agentType)
-    throws Exception {
         try {
-            ProviderConfig pc = null ;
-            String strIdx =  strLocRB + testIndex + "." +
-                    agentType.toLowerCase() + ".";
-            log(Level.FINEST, "createAgentProfile",
-                    "Property file string index: " + strIdx);
-            
-            String name = rbp.getString(strIdx + "name");
-            String secMechanism = rbp.getString(strIdx + "secMechanism");
-            boolean hasUserCredential = new Boolean(rbp.getString(strIdx +
-                    "hasUserCredential")).booleanValue();
-            boolean isRequestSigned = new Boolean(rbp.getString(strIdx +
-                    "isRequestSigned")).booleanValue();
-            boolean isRequestEncrypted = new Boolean(rbp.getString(strIdx +
-                    "isRequestEncrypted")).booleanValue();
-            boolean isResponseSigVerified = new Boolean(rbp.getString(strIdx +
-                    "isResponseSigVerified")).booleanValue();
-            boolean isResponseDecrypted = new Boolean(rbp.getString(strIdx +
-                    "isResponseDecrypted")).booleanValue();
-            boolean keystoreUsage = new Boolean(rbp.getString(strIdx +
-                    "keystoreUsage")).booleanValue();
-            boolean keepPrivateSecHeaderInMsg = new Boolean(rbp.getString(strIdx +
-                    "keepPrivateSecHeaderInMsg")).booleanValue();
-            String svcType = rbp.getString(strIdx + "svcType");
-            
-            log(Level.FINEST, "createAgentProfile", "name: " + name);
-            log(Level.FINEST, "createAgentProfile", "secMechanism: " +
-                    secMechanism);
-            log(Level.FINEST, "createAgentProfile", "hasUserCredential: " +
-                    hasUserCredential);
-            log(Level.FINEST, "createAgentProfile", "isRequestSigned: " +
-                    isRequestSigned);
-            log(Level.FINEST, "createAgentProfile", "isRequestEncrypted: " +
-                    isRequestEncrypted);
-            log(Level.FINEST, "createAgentProfile", "isResponseSigVerified: " +
-                    isResponseSigVerified);
-            log(Level.FINEST, "createAgentProfile", "isResponseDecrypted: " +
-                    isResponseDecrypted);
-            log(Level.FINEST, "createAgentProfile", "keystoreUsage: " +
-                    keystoreUsage);
-            log(Level.FINEST, "createAgentProfile", "keepPrivateSecHeaderInMsg: " +
-                    keepPrivateSecHeaderInMsg);
-            log(Level.FINEST, "createAgentProfile", "svcType: " +
-                    svcType);
-            log(Level.FINEST, "createAgentProfile", "isLibertyToken: " +
-                    isLibertyToken);
-            if (agentType.equals("WSP")) {
-                pc = ProviderConfig.getProvider(name, ProviderConfig.WSP);
-            } else if  (agentType.equals("WSC")) {
-                pc = ProviderConfig.getProvider(name, ProviderConfig.WSC);
-            }
-            
-            List listSec = new ArrayList();
-            listSec.add(secMechanism);
-            pc.setSecurityMechanisms(listSec);
-            if (hasUserCredential) {
-                List listUsers = new ArrayList();
-                int noOfCred = new Integer(rbp.getString(strIdx +
-                        "noUserCredential")).intValue();
-                String strUsername;
-                String strPassword;
-                PasswordCredential cred;
-                for (int i = 0; i < noOfCred; i++) {
-                    strUsername = rbp.getString(strIdx + "UserCredential" + i +
-                            ".username");
-                    strPassword = rbp.getString(strIdx + "UserCredential" + i +
-                            ".password");
-                    cred = new PasswordCredential(strUsername, strPassword);
-                    listUsers.add(cred);
-                }
-                log(Level.FINEST, "createAgentProfile", "UserCredential: " +
-                        listUsers);
-                pc.setUsers(listUsers);
-            }
-            pc.setRequestSignEnabled(isRequestSigned);
-            pc.setRequestEncryptEnabled(isRequestEncrypted);
-            pc.setResponseSignEnabled(isResponseSigVerified);
-            pc.setResponseEncryptEnabled(isResponseDecrypted);
-            pc.setDefaultKeyStore(keystoreUsage);
-            pc.setPreserveSecurityHeader(keepPrivateSecHeaderInMsg);
-            pc.setServiceType(svcType);
-            pc.setKeyAlias(keyAlias);
-            pc.setPublicKeyAlias(keyAlias);
-            pc.setWSPEndpoint("default");
-            
-            if (agentType.equals("WSC")) {
-                if (isLibertyToken) {
-                    //Trust AuthoritiyConfig
-                    taconfig = TrustAuthorityConfig.getConfig("localDisco",
-                            TrustAuthorityConfig.DISCOVERY_TRUST_AUTHORITY);
-                    taconfig.setEndpoint(protocol + ":" + "//" + host + ":" +
-                            port + uri + "/Liberty/disco");
-                    TrustAuthorityConfig.saveConfig(taconfig);
-                    pc.setTrustAuthorityConfig(taconfig);
-                }
-            }
-            ProviderConfig.saveProvider(pc);
-            if (agentType.equals("WSP")) {
-                log(Level.FINEST, "createAgentProfile",
-                        "WSP provider is exists()\n" +
-                        ProviderConfig.isProviderExists(name,
-                        ProviderConfig.WSP));
-                ProviderConfig WSPpc = null ;
-                WSPpc = ProviderConfig.getProvider(name, ProviderConfig.WSP);
-            }
-            if (agentType.equals("WSC")) {
-                log(Level.FINEST, "createAgentProfile",
-                        "WSC provider is exists()\n" +
-                        ProviderConfig.isProviderExists(name,
-                        ProviderConfig.WSC));
-                ProviderConfig WSCpc = null ;
-                WSCpc = ProviderConfig.getProvider(name, ProviderConfig.WSC);
-            }
-            return (name);
-        } catch(Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage());
+            token = getToken(adminUser, adminPassword, basedn);
+            idmc.deleteIdentity(token, realm, IdType.USER, strUser);
+            Set set = new HashSet();
+            set.add(wssc.getBootsrapDiscoEntry("2003-08:null:null"));
+            destroyToken(token);
+        }catch (Exception e) {
+            log(Level.SEVERE, "deleteUser", e.getMessage());
             e.printStackTrace();
             throw e;
+        } finally {
+            destroyToken(token);
         }
     }
-    
-    /**
-     * Creates the XML for updating the Discovery service security bootstrap
-     * entry.
-     */
-    private String getBootsrapDiscoEntry(String strSec) {
-        StringBuffer sb = new StringBuffer(1024);
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"");
-        sb.append("standalone=\"yes\"?>");
-        sb.append("<DiscoEntry xmlns=" +
-                "\"urn:com:sun:identityserver:liberty:ws:disco:discoentry\">");
-        sb.append("<ResourceOffering xmlns=\"urn:liberty:disco:2003-08\">");
-        sb.append("<ResourceID>");
-        sb.append("</ResourceID>");
-        sb.append("<ServiceInstance>");
-        sb.append("<ServiceType>urn:liberty:disco:2003-08");
-        sb.append("</ServiceType>");
-        sb.append("<ProviderID>" +  protocol + ":" + "//" + host + ":" +
-                port + uri + "/Liberty/disco");
-        sb.append("</ProviderID>");
-        sb.append("<Description>");
-        sb.append("<SecurityMechID>urn:liberty:security:" + strSec);
-        sb.append("</SecurityMechID>");
-        sb.append("<Endpoint>" +  protocol + ":" + "//" + host + ":" + port +
-                uri + "/Liberty/disco");
-        sb.append("</Endpoint>");
-        sb.append("</Description>");
-        sb.append("</ServiceInstance>");
-        sb.append("</ResourceOffering>");
-        sb.append("</DiscoEntry>");
-        log(Level.FINEST, "getBootsrapDiscoEntry", "Discovery Bootstrap" +
-                " Resource Offering:" + sb.toString());
-        return (sb.toString());
-    }
-    
-    /**
-     * Generates XML for end user authentication testcases.
-     */
-    private void generateUserAuthenticateXML( String username,
-            String password, String xmlFile, String result)
-            throws Exception {
-        
-        FileWriter fstream = new FileWriter(xmlFile);
-        BufferedWriter out = new BufferedWriter(fstream);
-        
-        log(Level.FINEST, "generateUserAuthenticateXML", "Result: " + result);
-        log(Level.FINEST, "generateUserAuthenticateXML", "Username: "
-                + username);
-        log(Level.FINEST, "generateUserAuthenticateXML", "Password: "
-                + password);
-        log(Level.FINEST, "generateUserAuthenticateXML", "XML File: "
-                + xmlFile);
-        
-        out.write("<url href=\"" + strClientURL);
-        out.write("\">");
-        out.write(newline);
-        out.write("<form name=\"Login\" IDButton=\"\" >");
-        out.write(newline);
-        out.write("<input name=\"IDToken1\" value=\"" + username + "\" />");
-        out.write(newline);
-        out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
-        out.write(newline);
-        out.write("</form>");
-        out.write("<form name=\"GetQuote\" IDButton=\"\" >");
-        out.write(newline);
-        out.write("<input name=\"symbol\" value=\"" + "JAVA" + "\" />");
-        out.write(newline);
-        out.write("<result text=\"" + result + "\"/>");
-        out.write(newline);
-        out.write("</form>");
-        out.write(newline);
-        out.write("</url>");
-        out.write(newline);
-        out.close();
-    }    
 }
