@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndCondition.java,v 1.1 2009-08-19 05:40:32 veiming Exp $
+ * $Id: AndCondition.java,v 1.2 2009-09-05 00:24:03 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -88,16 +88,21 @@ public class AndCondition extends LogicalCondition {
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
+        ConditionDecision decision = new ConditionDecision(
+            true, Collections.EMPTY_MAP);
         Set<EntitlementCondition> eConditions = getEConditions();
+
         if ((eConditions != null) && !eConditions.isEmpty()) {
             for (EntitlementCondition ec : eConditions) {
                 ConditionDecision d = ec.evaluate(realm, subject, resourceName,
                     environment);
+                decision.addAdvices(d);
                 if (!d.isSatisfied()) {
-                    return d;
+                    decision.setSatisfied(false);
+                    return decision;
                 }
             }
         }
-        return new ConditionDecision(true, Collections.EMPTY_MAP);
+        return decision;
     }
 }

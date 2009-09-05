@@ -22,9 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionDecision.java,v 1.2 2009-09-03 06:09:27 veiming Exp $
+ * $Id: ConditionDecision.java,v 1.3 2009-09-05 00:24:04 veiming Exp $
  */
 package com.sun.identity.entitlement;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,11 +51,21 @@ public class ConditionDecision {
     }
 
     /**
-     * Returns boolean result of condition decsion
-     * @return boolean result of condiiton decision
+     * Returns true if condition is fulfilled.
+     *
+     * @return true if condition is fulfilled.
      */
     public boolean isSatisfied() {
         return satisfied;
+    }
+
+    /**
+     * Sets satisfied member.
+     *
+     * @param satisfied value for satified member.
+     */
+    public void setSatisfied(boolean satisfied) {
+        this.satisfied = satisfied;
     }
 
     /**
@@ -63,5 +74,17 @@ public class ConditionDecision {
      */
     public Map<String, Set<String>> getAdvices() {
         return advices;
+    }
+
+    public void addAdvices(ConditionDecision decision) {
+        if (decision != null) {
+            Map<String, Set<String>> otherAdvices = decision.getAdvices();
+            if ((otherAdvices != null) && !otherAdvices.isEmpty()) {
+                if ((advices == null) || advices.isEmpty()) {
+                    advices = new HashMap<String, Set<String>>();
+                }
+                advices.putAll(otherAdvices);
+            }
+        }
     }
 }

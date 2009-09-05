@@ -22,14 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrConditionTest.java,v 1.1 2009-08-19 05:41:00 veiming Exp $
+ * $Id: OrConditionTest.java,v 1.2 2009-09-05 00:24:03 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.unittest.UnittestLog;
-
-import java.util.Date;
-
 import java.util.HashSet;
 import java.util.Set;
 import org.testng.annotations.Test;

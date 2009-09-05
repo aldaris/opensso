@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrCondition.java,v 1.1 2009-08-19 05:40:33 veiming Exp $
+ * $Id: OrCondition.java,v 1.2 2009-09-05 00:24:04 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -89,36 +89,24 @@ public class OrCondition extends LogicalCondition {
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
-        ConditionDecision results = new ConditionDecision(false, 
-            Collections.EMPTY_MAP);
         Set<EntitlementCondition> eConditions = getEConditions();
         if ((eConditions == null) || eConditions.isEmpty()) {
-            return new ConditionDecision(true,
-                Collections.EMPTY_MAP);
+            return new ConditionDecision(true, Collections.EMPTY_MAP);
         }
 
+        ConditionDecision decision = new ConditionDecision(false,
+            Collections.EMPTY_MAP);
         for (EntitlementCondition ec : eConditions) {
             ConditionDecision d = ec.evaluate(realm, subject, resourceName,
                 environment);
-            if (d.isSatisfied()) {
-                return d;
-            }
-            if (results == null) {
-                results = d;
-            } else {
-                Map<String, Set<String>> advices = results.getAdvices();
-                Map<String, Set<String>> dAdvices = d.getAdvices();
+            decision.addAdvices(d);
 
-                if ((dAdvices != null) && !dAdvices.isEmpty()) {
-                    if ((advices == null) || advices.isEmpty()) {
-                        results = new ConditionDecision(false, dAdvices);
-                    } else {
-                        advices.putAll(dAdvices);
-                        results = new ConditionDecision(false, advices);
-                    }
-                }
+            if (d.isSatisfied()) {
+                decision.setSatisfied(true);
+                return decision;
             }
         }
-        return results;
+
+        return decision;
     }
 }

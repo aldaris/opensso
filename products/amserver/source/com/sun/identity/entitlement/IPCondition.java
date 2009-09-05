@@ -22,12 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPCondition.java,v 1.2 2009-08-21 05:27:00 dillidorai Exp $
+ * $Id: IPCondition.java,v 1.3 2009-09-05 00:24:04 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -113,24 +115,30 @@ public class IPCondition extends EntitlementConditionAdaptor {
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
-
         String ip = null;
-        Set<String> setIP = null;
         Object ipObject = environment.get(REQUEST_IP);
+
         // code changed to fix issue 5440
         // IPCondition evaluation is breaking
         if (ipObject != null) {
             if (ipObject instanceof String) {
                 ip = (String)ipObject;
             } else if (ipObject instanceof Set) {
-                setIP = (Set<String>)ipObject;
+                Set<String> setIP= (Set<String>)ipObject;
                 ip =  !setIP.isEmpty() ?
                     setIP.iterator().next() : null;
             }
         }
 
-        boolean allowed = (ip != null) && isAllowedByIp(ip);
-        return new ConditionDecision(allowed, Collections.EMPTY_MAP);
+        if ((ip != null) && isAllowedByIp(ip)) {
+            return new ConditionDecision(true, Collections.EMPTY_MAP);
+        }
+
+        Set<String> set = new HashSet<String>();
+        set.add(REQUEST_IP + "=" + startIp + "-" + endIp);
+        Map<String, Set<String>> advice = new HashMap<String, Set<String>>();
+        advice.put(getClass().getName(), set);
+        return new ConditionDecision(false, advice);
     }
 
     private boolean isAllowedByIp(String ip)

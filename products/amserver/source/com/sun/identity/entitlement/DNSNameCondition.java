@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNSNameCondition.java,v 1.1 2009-08-19 05:40:32 veiming Exp $
+ * $Id: DNSNameCondition.java,v 1.2 2009-09-05 00:24:04 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -91,7 +92,7 @@ public class DNSNameCondition extends EntitlementConditionAdaptor {
      * only wild card allowed is *
      */
     public DNSNameCondition(String domainNameMask) {
-        this.domainNameMask = domainNameMask.toLowerCase();
+        this.domainNameMask = domainNameMask;
     }
 
     /**
@@ -136,52 +137,69 @@ public class DNSNameCondition extends EntitlementConditionAdaptor {
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
-        boolean allowed = true;
-        Set reqDnsNames = (Set)environment.get(REQUEST_DNS_NAME);
+        if (environment != null) {
+            Set<String> reqDnsNames = environment.get(REQUEST_DNS_NAME);
 
-        if ((reqDnsNames != null) && !reqDnsNames.isEmpty()) {
-            for (Iterator names = reqDnsNames.iterator();
-                names.hasNext() && allowed; ) {
-                allowed = isAllowedByDns((String)names.next());
+            if ((reqDnsNames == null) || reqDnsNames.isEmpty()) {
+                return getFalseDecision();
             }
+
+            for (String dns : reqDnsNames) {
+                if (!isAllowedByDns(dns)) {
+                    return getFalseDecision();
+                }
+            }
+
+            return new ConditionDecision(true, Collections.EMPTY_MAP);
         }
-        return new ConditionDecision(allowed, Collections.EMPTY_MAP);
+
+        return getFalseDecision();
+    }
+
+    private ConditionDecision getFalseDecision() {
+        Set<String> set = new HashSet<String>();
+        set.add(REQUEST_DNS_NAME + "=" + domainNameMask);
+        Map<String, Set<String>> advice = new HashMap<String, Set<String>>();
+        advice.put(getClass().getName(), set);
+        return new ConditionDecision(false, advice);
     }
 
     private boolean isAllowedByDns(String dnsName)
         throws EntitlementException {
-        boolean allowed = false;
-        dnsName = dnsName.toLowerCase();
         if (domainNameMask.equals("*")) {
-            allowed = true;
-        } else {
-            int starIndex = domainNameMask.indexOf("*");
-            if (starIndex != -1) {
-                // the dnsPattern is a string like *.ccc.ccc
-                String dnsWildSuffix = domainNameMask.substring(1);
-                if (dnsName.endsWith(dnsWildSuffix)) {
-                    allowed = true;
-                }
-            } else if (domainNameMask.equalsIgnoreCase(dnsName)) {
-                allowed = true;
-            }
+            return true;
         }
-        return allowed;
+
+        dnsName = dnsName.toLowerCase();
+        String mask = domainNameMask.toLowerCase();
+        int starIndex = mask.indexOf("*");
+
+        if (starIndex != -1) {
+            // the dnsPattern is a string like *.ccc.ccc
+            String dnsWildSuffix = mask.substring(starIndex+1);
+            return dnsName.endsWith(dnsWildSuffix);
+        }
+        
+        return mask.equalsIgnoreCase(dnsName);
     }
 
 
     /**
-     * @return the domainNameMask
+     * Returns the Domain Name Mask
+     *
+     * @return the Domain Name Mask
      */
     public String getDomainNameMask() {
         return domainNameMask;
     }
 
     /**
-     * @param domainNameMask the domainNameMask to set
+     * Sets the Domain Name Mask.
+     *
+     * @param domainNameMask the value for Domain Name Mask.
      */
     public void setDomainNameMask(String domainNameMask) {
-        this.domainNameMask = domainNameMask.toLowerCase();
+        this.domainNameMask = domainNameMask;
     }
 
     /**
