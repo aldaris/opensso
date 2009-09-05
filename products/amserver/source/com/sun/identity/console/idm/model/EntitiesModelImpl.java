@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.16 2008-12-05 20:00:50 farble1670 Exp $
+ * $Id: EntitiesModelImpl.java,v 1.17 2009-09-05 01:30:46 veiming Exp $
  *
  */
 
 package com.sun.identity.console.idm.model;
 
-import com.sun.identity.shared.locale.Locale;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.config.AMAuthConfigUtils;
@@ -40,6 +39,7 @@ import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.delegation.model.DelegationConfig;
 import com.sun.identity.console.property.PropertyTemplate;
 import com.sun.identity.console.property.PropertyXMLBuilder;
+import com.sun.identity.common.BackwardCompSupport;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.idm.AMIdentity;
@@ -53,6 +53,7 @@ import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchOpModifier;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.RequiredValueValidator;
 import com.sun.identity.sm.SchemaType;

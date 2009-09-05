@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListDataStoreTypes.java,v 1.3 2008-12-16 06:47:05 veiming Exp $
+ * $Id: ListDataStoreTypes.java,v 1.4 2009-09-05 01:30:45 veiming Exp $
  *
  */
 
@@ -35,7 +35,6 @@ import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.FormatUtils;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
-import com.sun.identity.console.base.model.AMResBundleCacher;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.log.Level;
 import com.sun.identity.sm.SMSException;
@@ -102,7 +101,7 @@ public class ListDataStoreTypes extends AuthenticatedCommand {
         throws SMSException, SSOException {
             ServiceSchemaManager schemaMgr = new ServiceSchemaManager(
                 IdConstants.REPO_SERVICE, getAdminSSOToken());
-            ResourceBundle rb = AMResBundleCacher.getBundle(
+            ResourceBundle rb = ResourceBundle.getBundle(
                 schemaMgr.getI18NFileName(), getCommandManager().getLocale());
             ServiceSchema orgSchema = schemaMgr.getOrganizationSchema();
             Set names = orgSchema.getSubSchemaNames();

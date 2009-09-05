@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAttributes.java,v 1.8 2008-08-27 23:41:30 sean_brydon Exp $
+ * $Id: GetAttributes.java,v 1.9 2009-09-05 01:30:46 veiming Exp $
  *
  */
 
@@ -30,13 +30,13 @@ package com.sun.identity.cli.idrepo;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.common.BackwardCompSupport;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
-import com.sun.identity.console.idm.model.BackwardCompSupport;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;

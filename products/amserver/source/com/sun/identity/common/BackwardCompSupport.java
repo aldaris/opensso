@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,17 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BackwardCompSupport.java,v 1.4 2008-08-27 22:05:41 veiming Exp $
+ * $Id: BackwardCompSupport.java,v 1.1 2009-09-05 01:30:45 veiming Exp $
  *
  */
 
-package com.sun.identity.console.idm.model;
+package com.sun.identity.common;
 
 import com.iplanet.am.sdk.AMObject;
 import com.sun.identity.common.admin.AdminInterfaceUtils;
-import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.ServiceManager;
 import java.util.HashMap;
@@ -41,10 +41,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-/* - NEED NOT LOG - */
-
 public class BackwardCompSupport {
     private static BackwardCompSupport instance;
+    private static final String DEBUG_NAME = "common";
 
     private Map mapIdTypeToServiceName = new HashMap();
     private Map mapIdTypeToSchemaType = new HashMap();
@@ -76,7 +75,7 @@ public class BackwardCompSupport {
 
         if (ServiceManager.isAMSDKEnabled()) {
             namingAttribute = AdminInterfaceUtils.getNamingAttribute(
-                AMObject.USER, AMModelBase.debug);
+                AMObject.USER, Debug.getInstance(DEBUG_NAME));
         } else {
             // Since naming attribute cannot be obtained for IdRepo
             // hardcode to "uid"
