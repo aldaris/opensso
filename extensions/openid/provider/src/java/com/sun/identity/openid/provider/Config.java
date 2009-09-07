@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Config.java,v 1.1 2009-04-24 21:01:58 rparekh Exp $
+ * $Id: Config.java,v 1.2 2009-09-07 15:03:48 hubertlvg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan and Robert Nguyen
@@ -97,11 +97,13 @@ public class Config {
 	private static Properties properties = null;
 
 	/* attribute persistence flag */
-	public static String PERSIST = PREFIX + "pesistence.enabled";
-	
+	public static String PERSIST = PREFIX + "persistence.enabled";
 	
 	/* attribute persistence class */
-	public static String PERSISTENCE_IMPL = PREFIX + "pesistence.class.name";
+	public static String PERSISTENCE_IMPL = PREFIX + "persistence.class.name";
+
+    /* Enforce RP/realm validation flag  */
+    public static final String ENFORCERPID = PREFIX + "enforcerpid";
 
 	/**
 	 * TODO: Description.

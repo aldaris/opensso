@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderServlet.java,v 1.1 2009-04-24 21:01:58 rparekh Exp $
+ * $Id: ProviderServlet.java,v 1.2 2009-09-07 15:03:48 hubertlvg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2007 Paul C. Bryan and Robert Nguyen
@@ -44,7 +44,7 @@ import org.openid4java.server.ServerManager;
 /**
  * TODO: Description.
  * 
- * @author pbryan, Robert Nguyen
+ * @author pbryan, Robert Nguyen, Hubert A. Le Van Gong
  */
 public class ProviderServlet extends HttpServlet {
 	
@@ -140,11 +140,7 @@ public class ProviderServlet extends HttpServlet {
 			serverManager.setPrivateAssociations(new InMemoryServerAssociationStore());
 			serverManager.setOPEndpointUrl(serviceURL);
 			
-			// do we need to do this, spec says it needs to be done for OPs
-			// should have it configurable via Provider.properties
-			
-			//serverManager.setEnforceRpId(true);
-
+			serverManager.setEnforceRpId(Config.getBoolean(Config.ENFORCERPID));
 		}
 		return serverManager;
 
