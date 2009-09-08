@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.5 2009-08-19 05:40:38 veiming Exp $
+ * $Id: Rule.java,v 1.6 2009-09-08 06:17:55 dillidorai Exp $
  *
  */
 package com.sun.identity.policy;
@@ -161,7 +161,7 @@ public class Rule extends Object implements Cloneable {
         } else {
             resourceName = resourceName.trim();
 
-            if (PolicyManager.migratedToEntitlementService) {
+            if (PolicyManager.isMigratedToEntitlementService()) {
                 resourceNames.add(resourceName);
             } else {
                 // Check the service type name
@@ -253,11 +253,11 @@ public class Rule extends Object implements Cloneable {
         resourceNames = new HashSet<String>();
         resourceNames.addAll(getResources(ruleNode,
             PolicyManager.POLICY_RULE_RESOURCE_NODE,
-                PolicyManager.migratedToEntitlementService));
+                PolicyManager.isMigratedToEntitlementService()));
         
         Set<String> excludeResources = getResources(ruleNode,
             PolicyManager.POLICY_RULE_EXCLUDED_RESOURCE_NODE,
-                PolicyManager.migratedToEntitlementService);
+                PolicyManager.isMigratedToEntitlementService());
         if (excludeResources != null) {
             excludedResourceNames = new HashSet<String>();
             excludedResourceNames.addAll(excludeResources);
@@ -295,7 +295,7 @@ public class Rule extends Object implements Cloneable {
     private Set<String> getResources(
         Node ruleNode,
         String childNodeName,
-        boolean migratedToEntitlementService
+        boolean isMigratedToEntitlementService
     ) throws InvalidNameException {
         Set<String> container = null;
         Set children = XMLUtils.getChildNodes(ruleNode, childNodeName);
@@ -308,7 +308,7 @@ public class Rule extends Object implements Cloneable {
                     resourceNode, PolicyManager.NAME_ATTRIBUTE);
                 if (resourceName != null) {
                     resourceName = resourceName.trim();
-                    if (!migratedToEntitlementService) {
+                    if (!PolicyManager.isMigratedToEntitlementService()) {
                         try {
                             resourceName = serviceType.canonicalize(
                                 resourceName);
@@ -341,7 +341,7 @@ public class Rule extends Object implements Cloneable {
             throw (new NameNotFoundException(ssoe,
                     serviceTypeName, PolicyException.SERVICE));
         } catch (NameNotFoundException e) {
-            if (!PolicyManager.migratedToEntitlementService) {
+            if (!PolicyManager.isMigratedToEntitlementService()) {
                 throw e;
             }
         }

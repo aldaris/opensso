@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.14 2009-08-21 21:50:15 hengming Exp $
+ * $Id: PolicyEvaluator.java,v 1.15 2009-09-08 06:17:54 dillidorai Exp $
  *
  */
 
@@ -52,7 +52,6 @@ import com.sun.identity.monitoring.SsoServerPolicySvcImpl;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.Entitlement;
-import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Evaluator;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
@@ -457,7 +456,7 @@ public class PolicyEvaluator {
     public boolean isAllowed(SSOToken token, String resourceName,
         String actionName, Map envParameters) throws SSOException,
         PolicyException {
-        if (PolicyManager.migratedToEntitlementService) {
+        if (PolicyManager.isMigratedToEntitlementService()) {
             return isAllowedE(token, resourceName, actionName, envParameters);
         }
         return isAllowedO(token, resourceName, actionName, envParameters);
@@ -767,9 +766,7 @@ public class PolicyEvaluator {
         }
 
         try {
-            EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-                SubjectUtils.createSuperAdminSubject(), realm);
-            return (ec.migratedToEntitlementService()) ? Realm(
+            return (PolicyManager.isMigratedToEntitlementService()) ? Realm(
                 token, resourceName, actionNames,
                 envParameters) : getPolicyDecisionO(token, resourceName,
                 actionNames,
@@ -1370,9 +1367,7 @@ public class PolicyEvaluator {
     public Set getResourceResults(SSOToken token, 
             String resourceName, String scope, Map envParameters) 
             throws SSOException, PolicyException {
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            SubjectUtils.createSubject(token), realm);
-        return (ec.migratedToEntitlementService()) ?
+        return (PolicyManager.isMigratedToEntitlementService()) ?
             getResourceResultsE(token, resourceName, scope, envParameters) :
             getResourceResultsO(token, resourceName, scope, envParameters);
     }

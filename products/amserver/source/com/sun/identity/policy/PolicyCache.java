@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.6 2009-01-30 11:48:39 kalpanakm Exp $
+ * $Id: PolicyCache.java,v 1.7 2009-09-08 06:17:54 dillidorai Exp $
  *
  */
 
@@ -95,7 +95,16 @@ class PolicyCache implements ServiceListener {
                 policyCache.scm = new ServiceConfigManager(
                         PolicyManager.POLICY_SERVICE_NAME,
                         policyCache.token);
-                policyCache.scm.addListener(policyCache);
+                if (!PolicyManager.isMigratedToEntitlementService()) {
+                    policyCache.scm.addListener(policyCache);
+                } else {
+                    if ( DEBUG.messageEnabled() ) {
+                        DEBUG.message("PolicyCache.getInstance():"
+                                + " migrated to entilement service,  "
+                                + " not registering notification listener with SMS");
+                    }
+                }
+                
             } catch (SMSException smse) {
                 DEBUG.error(ResBundleUtils.getString(
                     "can_not_create_policy_cache"), smse);

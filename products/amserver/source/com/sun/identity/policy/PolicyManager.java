@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.12 2009-08-19 05:40:37 veiming Exp $
+ * $Id: PolicyManager.java,v 1.13 2009-09-08 06:17:54 dillidorai Exp $
  *
  */
 
@@ -191,7 +191,7 @@ public final class PolicyManager {
     // Can be shared by classes
     static Debug debug = Debug.getInstance(POLICY_DEBUG_NAME);
     static DN delegationRealm = new DN(DNMapper.orgNameToDN(DELEGATION_REALM));
-    static boolean migratedToEntitlementService = false;
+    private static boolean migratedToEntitlementService = false;
 
     static {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
@@ -614,7 +614,7 @@ public final class PolicyManager {
             //create the policy entry
             namedPolicy.addSubConfig(policy.getName(),
                 NAMED_POLICY_ID, 0, attrs);
-            if (migratedToEntitlementService) {
+            if (isMigratedToEntitlementService()) {
                 PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
                     adminSubject, realmName);
                 Set<IPrivilege> privileges = PrivilegeUtils.policyToPrivileges(
@@ -765,7 +765,7 @@ public final class PolicyManager {
                 validateReferrals(policy);
                 policyEntry.setAttributes(attrs);
                 if (oldPolicy != null) {
-                    if (migratedToEntitlementService) {
+                    if (isMigratedToEntitlementService()) {
                         PrivilegeIndexStore pis = PrivilegeIndexStore.
                             getInstance(SubjectUtils.createSubject(token),
                             realm);
@@ -846,7 +846,7 @@ public final class PolicyManager {
                 namedPolicy.removeSubConfig(policyName);
 
                 if (policy != null) {
-                    if (migratedToEntitlementService) {
+                    if (isMigratedToEntitlementService()) {
                         PrivilegeIndexStore pis = PrivilegeIndexStore.
                             getInstance(
                             SubjectUtils.createSubject(token),
@@ -1329,7 +1329,7 @@ public final class PolicyManager {
 
     private void validateForResourcePrefix(Policy policy)
                 throws SSOException, PolicyException {
-        if (migratedToEntitlementService) {
+        if (isMigratedToEntitlementService()) {
             validateForResourcePrefixE(policy);
         } else {
             validateForResourcePrefixO(policy);
@@ -1693,7 +1693,7 @@ public final class PolicyManager {
             return true;
         }
 
-        if (migratedToEntitlementService) {
+        if (isMigratedToEntitlementService()) {
             for (String s : services) {
                 Set<String> res = ApplicationManager.getReferredResources(
                     adminSubject, realm, s);
@@ -1737,5 +1737,9 @@ public final class PolicyManager {
             debug.warning("PolicyManager.hasReferredResources", e);
         }
         return hasPrefixes;
+    }
+
+    static boolean isMigratedToEntitlementService() {
+        return migratedToEntitlementService;
     }
 }
