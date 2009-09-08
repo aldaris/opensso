@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoEmbeddedOpenDS.xml,v 1.9 2008-07-10 16:26:01 kenwho Exp $
+   $Id: idRepoEmbeddedOpenDS.xml,v 1.10 2009-09-08 22:28:26 hengming Exp $
   
 -->
 
@@ -86,6 +86,7 @@
             <Value>authorityRevocationList</Value>
             <Value>cACertificate</Value>
             <Value>cn</Value>
+            <Value>dn</Value>
             <Value>distinguishedName</Value>
             <Value>employeenumber</Value>
             <Value>givenname</Value>
