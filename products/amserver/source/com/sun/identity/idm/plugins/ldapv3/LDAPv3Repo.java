@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.66 2009-08-13 01:33:45 hengming Exp $
+ * $Id: LDAPv3Repo.java,v 1.67 2009-09-08 22:29:33 hengming Exp $
  *
  */
 
@@ -2282,6 +2282,18 @@ public class LDAPv3Repo extends IdRepo {
                 connPool.close(ld, resultCode);
             }
         }
+
+        /*
+         * Add this 'dn' explicitly to the result set and return. reason:
+         * when queried with this entrydn/dn the lower level api/ ldapjdk
+         * does not return this attribute, but returns other ones.
+         */
+        if (attrNamesCase.contains("dn") && (!theAttrMap.containsKey("dn"))) {
+            Set values = new HashSet();
+            values.add(dn);
+            theAttrMap.put("dn", values);
+        }
+
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: getAttributes returns theAttrMap = " +
             IdRepoUtils.getAttrMapWithoutPasswordAttrs(theAttrMap, null));
