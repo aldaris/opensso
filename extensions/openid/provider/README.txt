@@ -23,7 +23,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.2 2009-04-24 21:11:40 rparekh Exp $
+$Id: README.txt,v 1.4 2009-09-08 08:31:53 hubertlvg Exp $
 
 ------------------------------------------------------------------------------
 
