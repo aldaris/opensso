@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.85 2009-08-19 21:44:19 veiming Exp $
+   $Id: build.xml,v 1.86 2009-09-08 22:43:10 babysunil Exp $
 
 -->
 
@@ -278,7 +278,8 @@
     </target>
 
     <target name="javadoc" depends="preparebuild">
-        <javadoc destdir="${amserver.built.apidocs.dir}" windowtitle="OpenSSO API">
+        <javadoc destdir="${amserver.built.apidocs.dir}" windowtitle="OpenSSO API"
+            maxmemory="512M" useexternalfile="yes">
             <classpath refid="build.class.path"/>
             <fileset dir="${amserver.src.dir}" defaultexcludes="yes"
                 includes="${amserver.javadoc-includes}"
@@ -292,7 +293,8 @@
     
     <target name="publicjavadoc" depends="preparebuild">
         <javadoc destdir="${amserver.built.publicapidocs.dir}"
-                 windowtitle="Public OpenSSO API">
+                 windowtitle="Public OpenSSO API"
+                 maxmemory="512M" useexternalfile="yes">
             <classpath refid="build.class.path"/>
             <fileset dir="${amserver.src.dir}" defaultexcludes="yes"
                 includes="${amserver.public.javadoc-includes}"
