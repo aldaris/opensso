@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationCreateWizardBean.java,v 1.1 2009-08-19 05:40:48 veiming Exp $
+ * $Id: ApplicationCreateWizardBean.java,v 1.2 2009-09-09 19:19:13 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,4 +30,7 @@ package com.sun.identity.admin.model;
 import com.icesoft.faces.context.effects.Effect;
 
 public class ApplicationCreateWizardBean extends ApplicationWizardBean {
+    protected void resetViewApplication() {
+        setViewApplication(new ViewApplication());
+    }
 }

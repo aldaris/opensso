@@ -22,36 +22,30 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Permission.java,v 1.4 2009-09-09 19:19:13 farble1670 Exp $
+ * $Id: ApplicationEditWizardBean.java,v 1.1 2009-09-09 19:19:13 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-public enum Permission {
-    HOME,
-    POLICY,
-    POLICY_CREATE,
-    POLICY_MANAGE,
-    POLICY_EDIT,
-    NEWS,
-    REFERRAL_CREATE,
-    REFERRAL_MANAGE,
-    REFERRAL_EDIT,
-    FEDERATION,
-    SAMLV2_HOSTED_SP_CREATE,
-    SAMLV2_HOSTED_IDP_CREATE,
-    SAMLV2_REMOTE_SP_CREATE,
-    SAMLV2_REMOTE_IDP_CREATE,
-    APPLICATION,
-    APPLICATION_CREATE,
-    APPLICATION_EDIT,
-    APPLICATION_MANAGE,
-    WEB_SERVICE_SECURITY,
-    WSP_CREATE,
-    WSP_MANAGE,
-    WSC_CREATE,
-    WSC_MANAGE,
-    STS_MANAGE,
-    WEB_SERVICE_SECURITY_CREATE,
-    STS_CREATE;
+import com.sun.identity.admin.dao.ViewApplicationDao;
+
+public class ApplicationEditWizardBean extends ApplicationWizardBean {
+    private String viewApplicationName;
+
+    @Override
+    public void reset() {
+        super.reset();
+
+        setAllEnabled(true);
+        gotoStep(6);
+    }
+
+    protected void resetViewApplication() {
+        ViewApplication va = ViewApplicationDao.getInstance().getViewApplication(viewApplicationName);
+        setViewApplication(va);
+    }
+
+    public void setViewApplicationName(String viewApplicationName) {
+        this.viewApplicationName = viewApplicationName;
+    }
 }

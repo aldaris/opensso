@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardBean.java,v 1.1 2009-08-19 05:40:48 veiming Exp $
+ * $Id: ApplicationWizardBean.java,v 1.2 2009-09-09 19:19:13 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -35,7 +35,7 @@ import java.util.Map;
 import javax.faces.model.SelectItem;
 import static com.sun.identity.admin.model.ApplicationWizardStep.*;
 
-public class ApplicationWizardBean extends WizardBean {
+public abstract class ApplicationWizardBean extends WizardBean {
 
     private boolean nameEditable = false;
     private ViewApplication viewApplication;
@@ -50,6 +50,8 @@ public class ApplicationWizardBean extends WizardBean {
     private ApplicationSummary overrideSummary = new OverrideApplicationSummary(this);
     private ApplicationSummary applicationTypeSummary = new ApplicationTypeApplicationSummary(this);
 
+    protected abstract void resetViewApplication();
+
     @Override
     public void reset() {
         super.reset();
@@ -57,14 +59,17 @@ public class ApplicationWizardBean extends WizardBean {
     }
 
     private void reset(boolean resetName, ViewApplicationType vat) {
-        String name = null;
+        viewApplicationTypeMap = ViewApplicationTypeDao.getInstance().getViewApplicationTypeMap();
+
+                String name = null;
         String description = null;
         if (!resetName && viewApplication != null) {
             name = viewApplication.getName();
             description = viewApplication.getDescription();
         }
 
-        viewApplication = new ViewApplication();
+        resetViewApplication();
+
         if (name != null) {
             viewApplication.setName(name);
         }
@@ -73,11 +78,12 @@ public class ApplicationWizardBean extends WizardBean {
         }
         viewApplication.getResources().add(new UrlResource());
 
-        if (vat == null) {
-            viewApplicationTypeMap = ViewApplicationTypeDao.getInstance().getViewApplicationTypeMap();
-            getViewApplication().setViewApplicationType(viewApplicationTypeMap.entrySet().iterator().next().getValue());
-        } else {
-            viewApplication.setViewApplicationType(vat);
+        if (viewApplication.getViewApplicationType() == null) {
+            if (vat == null) {
+                viewApplication.setViewApplicationType(viewApplicationTypeMap.entrySet().iterator().next().getValue());
+            } else {
+                viewApplication.setViewApplicationType(vat);
+            }
         }
     }
 
@@ -90,7 +96,7 @@ public class ApplicationWizardBean extends WizardBean {
             ViewApplicationType vat = viewApplicationTypeMap.get(name);
             assert (vat != null);
             reset(false, vat);
-            viewApplication.getBooleanActionsBean().setActions(vat.getActions());
+            getViewApplication().getBooleanActionsBean().setActions(vat.getActions());
         }
     }
 
@@ -196,7 +202,7 @@ public class ApplicationWizardBean extends WizardBean {
 
     public List<String> getSubjectTypeNames() {
         List<String> names = new ArrayList<String>();
-        for (SubjectType st : viewApplication.getSubjectTypes()) {
+        for (SubjectType st : getViewApplication().getSubjectTypes()) {
             names.add(st.getName());
         }
 
@@ -205,7 +211,7 @@ public class ApplicationWizardBean extends WizardBean {
 
     public List<String> getConditionTypeNames() {
         List<String> names = new ArrayList<String>();
-        for (ConditionType st : viewApplication.getConditionTypes()) {
+        for (ConditionType st : getViewApplication().getConditionTypes()) {
             names.add(st.getName());
         }
 
@@ -214,21 +220,21 @@ public class ApplicationWizardBean extends WizardBean {
 
     public void setSubjectTypeNames(List<String> subjectTypeNames) {
         Map<String, SubjectType> subjectTypeNameMap = SubjectFactory.getInstance().getSubjectTypeNameMap();
-        viewApplication.getSubjectTypes().clear();
+        getViewApplication().getSubjectTypes().clear();
         for (String name : subjectTypeNames) {
             SubjectType st = subjectTypeNameMap.get(name);
-            assert(st != null);
-            viewApplication.getSubjectTypes().add(st);
+            assert (st != null);
+            getViewApplication().getSubjectTypes().add(st);
         }
     }
 
     public void setConditionTypeNames(List<String> conditionTypeNames) {
-        Map<String,ConditionType> conditionTypeNameMap = ConditionFactory.getInstance().getConditionTypeNameMap();
-        viewApplication.getConditionTypes().clear();
+        Map<String, ConditionType> conditionTypeNameMap = ConditionFactory.getInstance().getConditionTypeNameMap();
+        getViewApplication().getConditionTypes().clear();
         for (String name : conditionTypeNames) {
             ConditionType ct = conditionTypeNameMap.get(name);
-            assert(ct != null);
-            viewApplication.getConditionTypes().add(ct);
+            assert (ct != null);
+            getViewApplication().getConditionTypes().add(ct);
         }
     }
 
@@ -262,5 +268,9 @@ public class ApplicationWizardBean extends WizardBean {
 
     public ApplicationSummary getApplicationTypeSummary() {
         return applicationTypeSummary;
+    }
+
+    public void setViewApplication(ViewApplication viewApplication) {
+        this.viewApplication = viewApplication;
     }
 }

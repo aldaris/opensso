@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.5 2009-09-09 17:13:43 farble1670 Exp $
+  $Id: faces-config.xml,v 1.6 2009-09-09 19:19:13 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1942,6 +1942,44 @@
     </managed-bean>
     <!-- referral manage -->
 
+    <!-- application edit -->
+    <managed-bean>
+        <managed-bean-name>applicationEditWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ApplicationEditWizardBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>nameEditable</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>viewApplicationName</property-name>
+            <value>#{param.viewApplicationName}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>7</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>applicationEditWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.ApplicationEditWizardHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{applicationEditWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- application edit -->
+
     <managed-bean>
         <managed-bean-name>messagesBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.MessagesBean</managed-bean-class>
@@ -2410,6 +2448,11 @@
         <navigation-case>
             <from-outcome>application-manage</from-outcome>
             <to-view-id>/admin/facelet/application-manage.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>application-edit</from-outcome>
+            <to-view-id>/admin/facelet/application-edit.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>

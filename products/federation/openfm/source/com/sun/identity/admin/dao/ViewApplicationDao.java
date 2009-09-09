@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationDao.java,v 1.1 2009-08-19 05:40:45 veiming Exp $
+ * $Id: ViewApplicationDao.java,v 1.2 2009-09-09 19:19:12 farble1670 Exp $
  */
-
 package com.sun.identity.admin.dao;
 
 import com.sun.identity.admin.ManagedBeanResolver;
@@ -83,6 +82,30 @@ public class ViewApplicationDao implements Serializable {
         return viewApplications;
     }
 
+    public ViewApplication getViewApplication(String name) {
+        ManagedBeanResolver mbr = new ManagedBeanResolver();
+        Map<String, ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String, ViewApplicationType>) mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
+
+        Token token = new Token();
+        Subject adminSubject = token.getAdminSubject();
+
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+
+        Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
+        if (a.getResources() == null || a.getResources().size() == 0) {
+            return null;
+        }
+
+        // application type
+        ViewApplicationType vat = entitlementApplicationTypeToViewApplicationTypeMap.get(a.getApplicationType().getName());
+        if (vat == null) {
+            return null;
+        }
+
+        ViewApplication va = new ViewApplication(a);
+        return va;
+    }
+
     public Application newApplication(String name, ViewApplicationType vat) {
         String eApplicationTypeName = vat.getEntitlementApplicationType();
         Token token = new Token();
@@ -100,6 +123,7 @@ public class ViewApplicationDao implements Serializable {
 
 
     }
+
     public boolean exists(ViewApplication va) {
         Token token = new Token();
         Subject adminSubject = token.getAdminSubject();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEditWizardBean.java,v 1.1 2009-08-19 05:40:52 veiming Exp $
+ * $Id: PolicyEditWizardBean.java,v 1.2 2009-09-09 19:19:13 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -40,6 +40,7 @@ public class PolicyEditWizardBean extends PolicyWizardBean {
         setAllEnabled(true);
         gotoStep(4);
     }
+
     public static PolicyEditWizardBean getInstance() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         PolicyEditWizardBean pewb = (PolicyEditWizardBean)mbr.resolve("policyEditWizardBean");
