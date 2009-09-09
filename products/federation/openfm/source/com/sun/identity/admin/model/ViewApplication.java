@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.1 2009-08-19 05:40:57 veiming Exp $
+ * $Id: ViewApplication.java,v 1.2 2009-09-09 17:13:43 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -48,6 +48,30 @@ import javax.security.auth.Subject;
 
 public class ViewApplication implements Serializable {
 
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+    public static class NameComparator extends TableColumnComparator {
+        public NameComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            ViewApplication va1 = (ViewApplication) o1;
+            ViewApplication va2 = (ViewApplication) o2;
+
+            if (!isAscending()) {
+                return va1.getName().compareTo(va2.getName());
+            } else {
+                return va2.getName().compareTo(va1.getName());
+            }
+        }
+    }
+
     private String name;
     private String description;
     private ViewApplicationType viewApplicationType;
@@ -57,6 +81,7 @@ public class ViewApplication implements Serializable {
     private List<ConditionType> conditionTypes = new ArrayList<ConditionType>();
     private List<SubjectType> subjectTypes = new ArrayList<SubjectType>();
     private OverrideRule overrideRule = OverrideRule.DENY_OVERRIDE;
+    private boolean selected;
 
     public ViewApplication() {
         booleanActionsHandler.setBooleanActionsBean(booleanActionsBean);

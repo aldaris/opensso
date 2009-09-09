@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.4 2009-08-27 21:47:12 farble1670 Exp $
+  $Id: faces-config.xml,v 1.5 2009-09-09 17:13:43 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1855,6 +1855,40 @@
         </managed-property>
     </managed-bean>
     <!-- policy manage -->
+
+    <!-- application manage -->
+    <managed-bean>
+        <managed-bean-name>applicationManageBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ApplicationManageBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>viewApplicationDao</property-name>
+            <value>#{viewApplicationDao}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>applicationManageHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.ApplicationManageHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>applicationManageBean</property-name>
+            <value>#{applicationManageBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>viewApplicationDao</property-name>
+            <value>#{viewApplicationDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- application manage -->
 
     <!-- referral manage -->
     <managed-bean>
