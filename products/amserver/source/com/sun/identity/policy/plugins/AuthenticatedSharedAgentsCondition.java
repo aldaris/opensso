@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedSharedAgentsCondition.java,v 1.6 2009-07-16 17:45:58 qcheng Exp $
+ * $Id: AuthenticatedSharedAgentsCondition.java,v 1.7 2009-09-09 23:52:28 veiming Exp $
  *
  */
 
@@ -300,6 +300,9 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
 
                     retVal[0] = getAgentNameFromEnv(resourceName);
 
+                    if (retVal[0] == null) {
+                        return new ConditionDecision(false);
+                    }
                     if (retVal[0].equalsIgnoreCase(sharedAgentName)) {
                         Map envMap = getAttributes(orgConfig, retVal[0]);
                         agentsFromEnv = (Set) envMap.get(attributeToRead);
