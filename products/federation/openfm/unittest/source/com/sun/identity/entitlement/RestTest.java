@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestTest.java,v 1.4 2009-09-03 17:06:23 veiming Exp $
+ * $Id: RestTest.java,v 1.5 2009-09-10 16:35:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -141,7 +141,7 @@ public class RestTest {
 
         String json = entitlementClient.queryParams(params).accept(
             "application/json").get(String.class);
-        Entitlement ent = new Entitlement(new JSONObject(json));
+        JSONEntitlement ent = new JSONEntitlement(new JSONObject(json));
         boolean result = ent.getActionValue("GET");
         if (!result) {
             throw new Exception("RESTTest.positiveTest (/entitlement) failed");
@@ -160,7 +160,7 @@ public class RestTest {
 
         String json = entitlementClient.queryParams(params).accept(
             "application/json").get(String.class);
-        Entitlement ent = new Entitlement(new JSONObject(json));
+        JSONEntitlement ent = new JSONEntitlement(new JSONObject(json));
         Boolean result = ent.getActionValue("GET");
         if ((result != null) && (result.booleanValue())) {
             throw new Exception("RESTTest.negativeTest (/entitlement) failed");

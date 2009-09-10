@@ -19,13 +19,14 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.6 2009-09-04 08:50:53 veiming Exp $
+ * $Id: DecisionResource.java,v 1.7 2009-09-10 16:35:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.util.AuthSPrincipal;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Exposes the entitlement decision REST resource.
@@ -51,6 +54,8 @@ import javax.ws.rs.core.Response;
  */
 @Path("/1/entitlement")
 public class DecisionResource {
+    public static final String JSON_DECISION_ARRAY_KEY = "results";
+
     private enum Permission {
         deny, allow
     }
@@ -113,6 +118,69 @@ public class DecisionResource {
     }
 
     /**
+     * Returns the entitlements of a given subject.
+     *
+     * @param realm Realm Name.
+     * @param subject Subject of interest.
+     * @param action action to be evaluated.
+     * @param resource resources to be evaluated
+     * @param application application name.
+     * @param environment environment parameters.
+     * @return entitlement of a given subject (in JSON string).
+     */
+    @GET
+    @Produces("application/json")
+    @Path("/decisions")
+    public String decisions(
+        @Context HttpHeaders headers,
+        @QueryParam("realm") @DefaultValue("/") String realm,
+        @QueryParam("subject") String subject,
+        @QueryParam("resources") List<String> resources,
+        @QueryParam("application") String application,
+        @QueryParam("env") List<String> environment
+    ) {
+        try {
+            if (!realm.startsWith("/")) {
+                realm = "/" + realm;
+            }
+            if ((resources == null) || resources.isEmpty()) {
+                throw new EntitlementException(424);
+            }
+
+            Map env = getMap(environment);
+            Set<String> setResources = new HashSet<String>();
+            setResources.addAll(resources);
+            validateSubject(subject);
+            Evaluator evaluator = getEvaluator( getCaller(), application);
+            List<Entitlement> entitlements = evaluator.evaluate(
+                realm, toSubject(subject), setResources, env);
+
+            List<JSONObject> results = new ArrayList<JSONObject>();
+            if (entitlements != null) {
+                for (Entitlement e : entitlements) {
+                    Map<String, Boolean> actionValues = e.getActionValues();
+                    if ((actionValues != null) && !actionValues.isEmpty()) {
+                        JSONEntitlement je = new JSONEntitlement(
+                            e.getResourceName(), actionValues, e.getAdvices(),
+                            e.getAttributes());
+                        results.add(je.toJSONObject());
+                    }
+                }
+            }
+
+            JSONObject jo = new JSONObject();
+            jo.put(JSON_DECISION_ARRAY_KEY, results);
+            return jo.toString();
+        } catch (JSONException e) {
+            PrivilegeManager.debug.warning("DecisionResource.decisions", e);
+            throw getWebApplicationException(e);
+        } catch (EntitlementException e) {
+            PrivilegeManager.debug.warning("DecisionResource.decisions", e);
+            throw getWebApplicationException(headers, e);
+        }
+    }
+
+    /**
      * Returns the entitlement of a given subject.
      *
      * @param realm Realm Name.
@@ -144,9 +212,16 @@ public class DecisionResource {
         try {
             validateSubjectAndResource(subject, resource);
             Evaluator evaluator = getEvaluator(caller, application);
-            List<Entitlement> entitlement = evaluator.evaluate(
+            List<Entitlement> entitlements = evaluator.evaluate(
                 realm, toSubject(subject), resource, env, false);
-            return entitlement.get(0).toString();
+
+            Entitlement e = entitlements.get(0);
+            JSONEntitlement jsonE = new JSONEntitlement(e.getResourceName(),
+                e.getActionValues(), e.getAdvices(), e.getAttributes());
+            return jsonE.toJSONObject().toString();
+        } catch (JSONException e) {
+            PrivilegeManager.debug.warning("DecisionResource.evaluate", e);
+            throw getWebApplicationException(e);
         } catch (EntitlementException e) {
             PrivilegeManager.debug.warning("DecisionResource.evaluate", e);
             throw getWebApplicationException(headers, e);
@@ -208,6 +283,14 @@ public class DecisionResource {
               .type("text/plain; charset=UTF-8").build());
     }
 
+    private WebApplicationException getWebApplicationException(
+        JSONException e) {
+        throw new WebApplicationException(
+              Response.status(425)
+              .entity(e.getLocalizedMessage())
+              .type("text/plain; charset=UTF-8").build());
+    }
+    
     private Locale getUserLocale(HttpHeaders headers) {
         List<Locale> locales = headers.getAcceptableLanguages();
         return ((locales == null) || locales.isEmpty()) ? Locale.getDefault() :
@@ -216,14 +299,22 @@ public class DecisionResource {
 
     private void validateSubjectAndResource(String subject, String resource)
         throws EntitlementException {
+        validateSubject(subject);
+        validateResource(resource);
+    }
+
+    private void validateSubject(String subject)
+        throws EntitlementException {
         if ((subject == null) || (subject.trim().length() == 0)) {
             throw new EntitlementException(421);
         }
+    }
+
+    private void validateResource(String resource)
+        throws EntitlementException {
         if ((resource == null) || (resource.trim().length() == 0)) {
             throw new EntitlementException(420);
         }
-
     }
-
 }
 

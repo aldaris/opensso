@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.1 2009-08-19 05:40:32 veiming Exp $
+ * $Id: Evaluator.java,v 1.2 2009-09-10 16:35:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.util.NetworkMonitor;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -115,6 +116,40 @@ public class Evaluator {
 
         HAS_ENTITLEMENT_MONITOR.end(start);
         return result;
+    }
+
+    /**
+     * Returns a list of entitlements for a given subject, resource names
+     * and environment.
+     *
+     * @param realm Realm Name.
+     * @param subject Subject who is under evaluation.
+     * @param resourceNames Resource names.
+     * @param environment Environment parameters.
+     * @return a list of entitlements for a given subject, resource name
+     *         and environment.
+     * @throws EntitlementException if the result cannot be determined.
+     */
+    public List<Entitlement> evaluate(
+        String realm,
+        Subject subject,
+        Set<String> resourceNames,
+        Map<String, Set<String>> environment
+    ) throws EntitlementException {
+        if ((resourceNames == null) || resourceNames.isEmpty()) {
+            throw new EntitlementException(424);
+        }
+
+        List<Entitlement> results = new ArrayList<Entitlement>();
+
+        for (String res : resourceNames) {
+            List<Entitlement> r = evaluate(realm, subject, res, environment,
+                false);
+            if ((r != null) && !r.isEmpty()) {
+                results.addAll(r);
+            }
+        }
+        return results;
     }
 
     /**

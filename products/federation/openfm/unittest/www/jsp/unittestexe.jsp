@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: unittestexe.jsp,v 1.1 2009-08-19 05:41:04 veiming Exp $
+   $Id: unittestexe.jsp,v 1.2 2009-09-10 16:35:39 veiming Exp $
   
 --%>
 
@@ -55,18 +55,18 @@
     <script language="Javascript" src="../console/js/am.js"></script>
     <script language="Javascript">
         var ajaxObj = getXmlHttpRequestObject();
+        var timeId;
 
         function runtest() {
             var frm = document.forms[0];
             frm.elements['tests'].value = '<%= tests %>';
             frm.submit();
-            setTimeout("getLog()", 1000);
+            timeId = setInterval("getLog()", 1000);
         }
 
         function getLog() {
             ajaxPost(ajaxObj, 'unittestlog.jsp', 'd=<%=datestamp %>',
                 displayLog);
-            setTimeout("getLog()", 1000);
         }
 
         function displayLog() {
@@ -77,6 +77,7 @@
                     var str = resultArray[i];
                     if (str.length > 0) {
                         if (str == "MESSAGE: TestHarness:DONE") {
+                            clearTimeout(timeId);
                             setTimeout("doneWithTest()", 1000);
                         } else {
                             writeToLog(str);
