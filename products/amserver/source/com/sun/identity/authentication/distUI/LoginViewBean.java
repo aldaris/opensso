@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.33 2009-08-17 21:17:49 mrudul_uchil Exp $
+ * $Id: LoginViewBean.java,v 1.34 2009-09-10 04:27:05 bina Exp $
  *
  */
 
@@ -81,6 +81,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import com.sun.identity.shared.xml.XMLUtils;
 
 /**
  * A default implementation of <code>LoginViewBean</code> auth Login UI.
@@ -787,11 +788,13 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             if (credentials != null) {
                 onePageLogin = true;
                 userCredentials = new String[2];
-                userCredentials[0] = (String)reqDataHash.get(
-                        tokenType + ((Integer)credentials.get(0)).toString());
+                userCredentials[0] =  XMLUtils.escapeSpecialCharacters(
+                        (String)reqDataHash.get(
+                        tokenType + ((Integer)credentials.get(0)).toString()));
                 if (credentials.size() >= 2) {
-                    userCredentials[1] = (String)reqDataHash.get(
-                        tokenType + ((Integer)credentials.get(1)).toString());
+                    userCredentials[1] = XMLUtils.escapeSpecialCharacters(
+                        (String)reqDataHash.get(tokenType + 
+                         ((Integer)credentials.get(1)).toString()));
                 } else {
                     userCredentials[1] = "";
                 }
