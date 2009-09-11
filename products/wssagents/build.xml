@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.26 2009-08-19 05:41:18 veiming Exp $
+   $Id: build.xml,v 1.27 2009-09-11 23:17:47 mrudul_uchil Exp $
 
 -->
 
@@ -290,6 +290,10 @@
             file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="com.iplanet.am.services.deploymentDescriptor=@DEPLOY_URI@"
             replace=""/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="com.sun.identity.liberty.ws.trustedca.certaliases=test:SunSTS|test:@SERVER_HOST@"
+            replace="##"/>
 
         <java classname="com.sun.identity.setup.MergeClientConfig" fork="true">
             <classpath refid="build.class.path"/>
