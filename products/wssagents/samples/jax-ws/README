@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: README,v 1.9 2009-09-01 21:45:18 mrudul_uchil Exp $
+ * $Id: README,v 1.10 2009-09-11 20:36:22 mrudul_uchil Exp $
  */
 
  %% Contents:
@@ -78,11 +78,11 @@ Assumption :
 
 %% 2. Environment requirements
 
-   2.1 Ant (version "1.6.5" or higher)
+   2.1 Ant (version "1.7" or higher)
        The OpenSSO Web Services Security Agents workspace uses Apache Ant as the
        build tool. The build scripts in this workspace use features not present
-       in releases of Ant prior to 1.6.  Thus, in order to build this workspace
-       you must have Ant version 1.6.5 or above installed and available in your
+       in releases of Ant prior to 1.7.  Thus, in order to build this workspace
+       you must have Ant version 1.7 or above installed and available in your
        system path.
        Set the ANT_HOME environment variable to the Ant root directory, and add
        ${ANT_HOME}/bin to your PATH environment variable.
@@ -254,6 +254,28 @@ Assumption :
        a symbol of your choice and by clicking on the Request/Response links on
        the stock quote results page, you can see the Web Service communication
        is secured with WS-Security token in the SOAP request/response headers.
+
+   Notes :
+       1) With the secure Samples, you will be always redirected to OpenSSO's
+          Authentication service for end user login first. If you want this end
+          user authentication redirection to be done based on WSC's profile /
+          configuration by reading "User Authentication Required" flag setting, 
+          then the property "com.sun.identity.wss.wsc.providername" needs to be
+          added in the StockClient side AMConfig.properties file and its value
+          should be the WSC provider name.
+
+          For this sample, you can use and add this property as shown below :
+          com.sun.identity.wss.wsc.providername=wsc
+
+          Make sure to re-war the StockClient web application (war file) and
+          redeploy on the required JAX-WS compliant container running with
+          JDK "1.6.0_12" or higher.
+
+       2) Even after successfully retrieving stock quote results page, if the
+          request / response links on the StockClient web page do not show any
+          data or have exception showing data, then create "opensso" directory
+          under your "user.home" directory on the machine where StockClient and
+          StockService web applications are running.
 
 %% 7. Explanation of changes for Tomcat
 
