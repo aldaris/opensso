@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExportServiceConfiguration.java,v 1.4 2008-08-06 21:19:39 veiming Exp $
+ * $Id: ExportServiceConfiguration.java,v 1.5 2009-09-12 00:32:47 veiming Exp $
  *
  */
 
@@ -87,6 +87,9 @@ public class ExportServiceConfiguration extends AuthenticatedCommand {
             } else {
                 System.out.write(resultXML.getBytes("ISO-8859-1"));
             }
+
+            getOutputWriter().printlnMessage(getResourceString(
+                "export-service-configuration-succeeded"));
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEEDED_IMPORT_SM_CONFIG_DATA", param);
         } catch (UnsupportedEncodingException e) {
