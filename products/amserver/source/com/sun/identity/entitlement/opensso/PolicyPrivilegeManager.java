@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.1 2009-08-19 05:40:36 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.2 2009-09-14 23:02:41 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -149,7 +149,9 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 pm.addPolicy((Policy)policyObject);
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                pdb.addPolicy(getAdminSubject(), getRealm(), policyObject);
+                String currentRealm = getRealm();
+                pdb.addPolicy(getAdminSubject(), currentRealm, policyObject);
+                notifyPrivilegeChanged(currentRealm, null, privilege);
             }
         } catch (PolicyException e) {
             Object[] params = {name};
@@ -172,8 +174,12 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
             if (!migratedToEntitlementSvc) {
                 pm.removePolicy(privilegeName);
             } else {
+                Privilege privilege = getPrivilege(privilegeName);
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                pdb.removePolicy(getAdminSubject(), getRealm(), privilegeName);
+                String currentRealm = getRealm();
+                pdb.removePolicy(getAdminSubject(), currentRealm,
+                    privilegeName);
+                notifyPrivilegeChanged(currentRealm, null, privilege);
             }
         } catch (PolicyException e) {
             Object[] params = {privilegeName};
@@ -201,12 +207,14 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 pm.addPolicy(PrivilegeUtils.privilegeToPolicy(realm, privilege));
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
+                Privilege oldP = getPrivilege(privilegeName);
                 pdb.removePolicy(getAdminSubject(), getRealm(),
-                        privilege.getName());
-                pdb.addPolicy(getAdminSubject(),
-                        getRealm(),
-                        PrivilegeUtils.privilegeToPolicyObject(
-                                getRealm(), privilege));
+                    privilege.getName());
+                String currentRealm = getRealm();
+                pdb.addPolicy(getAdminSubject(), getRealm(),
+                    PrivilegeUtils.privilegeToPolicyObject(
+                    currentRealm, privilege));
+                notifyPrivilegeChanged(currentRealm, oldP, privilege);
             }
         } catch (PolicyException e) {
             Object[] params = {privilegeName};
@@ -262,7 +270,6 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     public static boolean xacmlPrivilegeEnabled() {
         return xacmlEnabled;
     }
-
 }
 
 

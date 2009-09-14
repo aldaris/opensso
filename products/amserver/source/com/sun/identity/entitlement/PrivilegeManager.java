@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.1 2009-08-19 05:40:33 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.2 2009-09-14 23:02:40 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -31,6 +31,7 @@ import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import com.sun.identity.shared.debug.IDebug;
 import java.security.Principal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -238,5 +239,28 @@ public abstract class PrivilegeManager {
 
     protected Subject getAdminSubject() {
         return adminSubject;
+    }
+
+    protected void notifyPrivilegeChanged(
+        String realm,
+        Privilege previous,
+        Privilege current) {
+        Set<String> resourceNames = new HashSet<String>();
+        if (previous != null) {
+            Set<String> r = previous.getEntitlement().getResourceNames();
+            if (r != null) {
+                resourceNames.addAll(r);
+            }
+        }
+
+        Set<String> r = current.getEntitlement().getResourceNames();
+        if (r != null) {
+            resourceNames.addAll(r);
+        }
+
+        String applicationName = current.getEntitlement().getApplicationName();
+
+        PrivilegeChangeNotifier.getInstance().notify(adminSubject, realm,
+            applicationName, current.getName(), resourceNames);
     }
 }

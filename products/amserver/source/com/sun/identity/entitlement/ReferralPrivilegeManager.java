@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilegeManager.java,v 1.1 2009-08-19 05:40:33 veiming Exp $
+ * $Id: ReferralPrivilegeManager.java,v 1.2 2009-09-14 23:02:40 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -31,8 +31,11 @@ import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
 import java.security.Principal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.persistence.EntityExistsException;
 import javax.security.auth.Subject;
 
 /**
@@ -79,6 +82,7 @@ public final class ReferralPrivilegeManager {
         pdb.addReferral(adminSubject, realm, referral);
 
         addApplicationToSubRealm(referral);
+        notifyPrivilegeChanged(null, referral);
     }
 
     private void validateReferral(ReferralPrivilege referral)
@@ -158,6 +162,7 @@ public final class ReferralPrivilegeManager {
             removeApplicationFromSubRealm(referral);
             PolicyDataStore pdb = PolicyDataStore.getInstance();
             pdb.removeReferral(adminSubject, realm, name);
+            notifyPrivilegeChanged(null, referral);
         }
     }
 
@@ -198,6 +203,7 @@ public final class ReferralPrivilegeManager {
         PolicyDataStore pdb = PolicyDataStore.getInstance();
         pdb.removeReferral(adminSubject, realm, referral.getName());
         pdb.addReferral(adminSubject, realm, referral);
+        notifyPrivilegeChanged(orig, referral);
     }
 
     /**
@@ -234,5 +240,54 @@ public final class ReferralPrivilegeManager {
             adminSubject, realm);
         return pis.searchReferralPrivilegeNames(filter, true, 0, false, false);
         //TODO Search size and time limit
+    }
+
+    protected void notifyPrivilegeChanged(
+        ReferralPrivilege previous,
+        ReferralPrivilege current) {
+
+        Map<String, Set<String>> mapApplNameToRes = new
+            HashMap<String, Set<String>>();
+
+        if (previous != null) {
+            Map<String, Set<String>> m = previous.getMapApplNameToResources();
+            if (m != null) {
+                mapApplNameToRes.putAll(m);
+            }
+        }
+
+        Map<String, Set<String>> m = current.getMapApplNameToResources();
+        if (m != null) {
+            combineMap(mapApplNameToRes, m);
+        }
+
+        String name = current.getName();
+        for (String app : mapApplNameToRes.keySet()) {
+            Set<String> resourceNames = mapApplNameToRes.get(app);
+            PrivilegeChangeNotifier.getInstance().notify(adminSubject,
+                realm, app, name, resourceNames);
+        }
+    }
+
+    private void combineMap(
+        Map<String, Set<String>> m1,
+        Map<String, Set<String>> m2
+    ) {
+        Set<String> keys = new HashSet<String>();
+        keys.addAll(m1.keySet());
+        keys.addAll(m2.keySet());
+
+        for (String k : keys) {
+            Set<String> s1 = m1.get(k);
+            if (s1 == null) {
+                s1 = new HashSet<String>();
+                m1.put(k, s1);
+            }
+
+            Set<String> s2 = m2.get(k);
+            if (s2 != null) {
+               s1.addAll(s2);
+            }
+        }
     }
 }

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.1 2009-08-19 05:40:40 veiming Exp $
+   $Id: entitlement.xml,v 1.2 2009-09-14 23:02:42 veiming Exp $
 
 -->
 
@@ -34,7 +34,7 @@
 
 <ServicesConfiguration>
     <Service name="sunEntitlementService" version="1.0">
-        <Schema i18nFileName="" revisionNumber="10">
+        <Schema i18nFileName="" revisionNumber="20">
             <Global>
                 <AttributeSchema name="usenewconsole"
                     type="single"
@@ -96,6 +96,10 @@
                         <Value>100000</Value>
                     </DefaultValues>
                 </AttributeSchema>
+                <AttributeSchema name="listeners"
+                    type="list"
+                    syntax="string"
+                    i18nKey="" />
                 <SubSchema name="applicationTypes" inheritance="multiple">
                     <SubSchema name="applicationType" inheritance="multiple">
                         <AttributeSchema name="applicationClassName"

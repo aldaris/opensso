@@ -19,18 +19,14 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.7 2009-09-10 16:35:38 veiming Exp $
+ * $Id: DecisionResource.java,v 1.8 2009-09-14 23:02:40 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.util.AuthSPrincipal;
-import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -39,10 +35,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -53,17 +47,11 @@ import org.json.JSONObject;
  * @author Ravi Hingarajiya <ravi.hingarajiya@sun.com>
  */
 @Path("/1/entitlement")
-public class DecisionResource {
+public class DecisionResource extends ResourceBase {
     public static final String JSON_DECISION_ARRAY_KEY = "results";
 
     private enum Permission {
         deny, allow
-    }
-
-    private Subject getCaller() {
-        //TOFIX: hardcoded to amadmin
-        return toSubject(
-            "id=amAdmin,ou=user,dc=opensso,dc=java,dc=net");
     }
 
     private Evaluator getEvaluator(Subject caller, String application)
@@ -88,6 +76,7 @@ public class DecisionResource {
     @Path("/decision")
     public String decision(
         @Context HttpHeaders headers,
+        @QueryParam("admin") String admin,
         @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("subject") String subject,
         @QueryParam("action") String action,
@@ -95,10 +84,11 @@ public class DecisionResource {
         @QueryParam("application") String application,
         @QueryParam("env") List<String> environment
     ) {
+
         if (!realm.startsWith("/")) {
             realm = "/" + realm;
         }
-        Subject caller = getCaller();
+        Subject caller = delegationCheck(admin);
         Map env = getMap(environment);
 
         try {
@@ -133,6 +123,7 @@ public class DecisionResource {
     @Path("/decisions")
     public String decisions(
         @Context HttpHeaders headers,
+        @QueryParam("admin") String admin,
         @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("subject") String subject,
         @QueryParam("resources") List<String> resources,
@@ -147,11 +138,13 @@ public class DecisionResource {
                 throw new EntitlementException(424);
             }
 
+            Subject caller = delegationCheck(admin);
+
             Map env = getMap(environment);
             Set<String> setResources = new HashSet<String>();
             setResources.addAll(resources);
             validateSubject(subject);
-            Evaluator evaluator = getEvaluator( getCaller(), application);
+            Evaluator evaluator = getEvaluator(caller, application);
             List<Entitlement> entitlements = evaluator.evaluate(
                 realm, toSubject(subject), setResources, env);
 
@@ -196,6 +189,7 @@ public class DecisionResource {
     @Path("/entitlement")
     public String entitlement(
         @Context HttpHeaders headers,
+        @QueryParam("admin") String admin,
         @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("subject") String subject,
         @QueryParam("resource") String resource,
@@ -207,7 +201,7 @@ public class DecisionResource {
         }
 
         Map env = getMap(environment);
-        Subject caller = getCaller();
+        Subject caller = delegationCheck(admin);
 
         try {
             validateSubjectAndResource(subject, resource);
@@ -228,73 +222,8 @@ public class DecisionResource {
         }
     }
 
-    private Map<String, Set<String>> getMap(List<String> list) {
-        Map<String, Set<String>> env = new HashMap<String, Set<String>>();
-
-        if ((list != null) && !list.isEmpty()) {
-            for (String l : list) {
-                if (l.contains("=")) {
-                    String[] cond = l.split("=", 2);
-                    Set<String> set = env.get(cond[0]);
-
-                    if (set == null) {
-                        set = new HashSet<String>();
-                        env.put(cond[0], set);
-                    }
-
-                    set.add(cond[1]);
-                }
-            }
-        }
-        
-        return env;
-    }
-
-    private Entitlement toEntitlement(String resource, String action) {
-        Set<String> set = new HashSet<String>();
-        set.add(action);
-        return new Entitlement(resource, set);
-    }
-
-    private Subject toSubject(Principal principal) {
-        if (principal == null) {
-            return null;
-        }
-        Set<Principal> set = new HashSet<Principal>();
-        set.add(principal);
-        return new Subject(false, set, new HashSet(), new HashSet());
-    }
-
-    private Subject toSubject(String subject) {
-        return (subject == null) ? null :
-            toSubject(new AuthSPrincipal(subject));
-    }
-
     private String permission(boolean b) {
         return (b ? Permission.allow.toString() : Permission.deny.toString());
-    }
-
-    private WebApplicationException getWebApplicationException(
-        HttpHeaders headers,
-        EntitlementException e) {
-        throw new WebApplicationException(
-              Response.status(e.getErrorCode())
-              .entity(e.getLocalizedMessage(getUserLocale(headers)))
-              .type("text/plain; charset=UTF-8").build());
-    }
-
-    private WebApplicationException getWebApplicationException(
-        JSONException e) {
-        throw new WebApplicationException(
-              Response.status(425)
-              .entity(e.getLocalizedMessage())
-              .type("text/plain; charset=UTF-8").build());
-    }
-    
-    private Locale getUserLocale(HttpHeaders headers) {
-        List<Locale> locales = headers.getAcceptableLanguages();
-        return ((locales == null) || locales.isEmpty()) ? Locale.getDefault() :
-            locales.get(0);
     }
 
     private void validateSubjectAndResource(String subject, String resource)
