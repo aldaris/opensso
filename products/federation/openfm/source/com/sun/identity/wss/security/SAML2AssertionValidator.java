@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2AssertionValidator.java,v 1.4 2008-07-21 17:18:32 mallas Exp $
+ * $Id: SAML2AssertionValidator.java,v 1.5 2009-09-14 23:02:33 huacui Exp $
  *
  */
 
@@ -164,16 +164,10 @@ public class SAML2AssertionValidator {
         for (Iterator iter = attributes.iterator(); iter.hasNext();) {
              Attribute attribute = (Attribute)iter.next();                
              String attrName = attribute.getName();             
-             List <java.lang.String>  values = 
-                        attribute.getAttributeValue();
-             if(values != null && !values.isEmpty()) {
-                String value = (String)values.get(0);
-                Element attrElement = XMLUtils.toDOMDocument(value, 
-                        WSSUtils.debug).getDocumentElement();
-                String attrValue = XMLUtils.getElementValue(attrElement);
-                if(attrValue != null && attrValue.length() != 0) {
-                   attributeMap.put(attrName, value);
-                }
+             List <String>  values = 
+                        attribute.getAttributeValueString();
+             if (values != null && !values.isEmpty()) {
+                attributeMap.put(attrName, (String)values.get(0));
              }            
         }       
     }
