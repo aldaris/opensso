@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.16 2009-08-29 03:05:59 mallas Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.17 2009-09-14 23:04:22 huacui Exp $
  *
  */
 
@@ -555,7 +555,12 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                    String attrName = (String)attrIter.next();
                    String attrValue = (String)attributeMap.get(attrName);
                    ssoToken.setProperty(attrName, attrValue);
-                   
+                   if(STSUtils.debug.messageEnabled()) {
+                       STSUtils.debug.message(
+                           "FAMSTSTokenProvider.generateSSOToken: " +
+                           "setting session property " + attrName + "=" +
+                           attrValue);
+                   }
                }
             }
             STSClientUserToken wscToken = new STSClientUserToken();
