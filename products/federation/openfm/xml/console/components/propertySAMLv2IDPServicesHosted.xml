@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2IDPServicesHosted.xml,v 1.4 2008-07-15 17:16:09 babysunil Exp $
+   $Id: propertySAMLv2IDPServicesHosted.xml,v 1.5 2009-09-15 00:01:55 asyhuang Exp $
 
 -->
 
@@ -32,10 +32,11 @@
     <section name="IDPMetaalias" defaultValue="samlv2idp.attribute.label.IDPMetaAlias">
         <property>
             <label name="lblIDPMetaalias" 
-                   defaultValue="samlv2idp.attribute.label.idpmetaalias" 
+                   defaultValue="samlv2idp.attribute.label.IDPMetaAlias"
                    labelFor="metaAlias" />
             <cc name="metaAlias" 
                 tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+            <fieldhelp name="helpmetaAlias" defaultValue="samlv2idp.attribute.label.IDPMetaAlias.help" />
         </property>                
     </section>
     <section name="services" defaultValue="samlv2idp.provider.section.title.idpcommonServices" >
