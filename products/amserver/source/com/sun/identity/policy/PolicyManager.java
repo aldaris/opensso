@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.13 2009-09-08 06:17:54 dillidorai Exp $
+ * $Id: PolicyManager.java,v 1.14 2009-09-15 17:08:47 veiming Exp $
  *
  */
 
@@ -1702,10 +1702,10 @@ public final class PolicyManager {
                 }
             }
             return false;
+        } else {
+            return canCreateNewResource(services) ||
+                hasReferredResources();
         }
-
-        return canCreateNewResource(services) ||
-            hasReferredResources();
     }
     
     private boolean canCreateNewResource(Set<String> services) {
@@ -1741,5 +1741,23 @@ public final class PolicyManager {
 
     static boolean isMigratedToEntitlementService() {
         return migratedToEntitlementService;
+    }
+
+    public boolean canCreateNewResource(String svcTypeName) {
+        boolean can = false;
+        if (migratedToEntitlementService) {
+            ResourceManager resMgr = getResourceManager();
+            if (resMgr != null) {
+                try {
+                    can = resMgr.canCreateNewResource(svcTypeName);
+                } catch (PolicyException e) {
+                    debug.warning("PolicyManager.canCreateNewResource",e);
+                }
+            }
+        } else {
+            String realm = DNMapper.orgNameToRealmName(getOrganizationDN());
+            can = realm.equals("/");
+        }
+        return can;
     }
 }
