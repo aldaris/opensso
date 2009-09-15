@@ -83,7 +83,7 @@
         <property name="opensso-images.dir" value="${opensso-root.dir}/images" />
 
         <copy file="${dist.jar}" todir="${opensso-lib.dir}" />
-        <copy file="extlib/Xmldap.org/xmldap-1.0.jar" todir="${opensso-lib.dir}" />
+        <copy file="extlib/xmldap-1.0.jar" todir="${opensso-lib.dir}" />
         <copy file="xml/services/amAuthInfocard.xml" todir="${opensso-root.dir}/WEB-INF/classes" />
         <copy file="xml/services/amUser.xml" todir="${opensso-root.dir}/WEB-INF/classes" />
         <copy file="resources/locale/amAuthInfocard.properties" todir="${opensso-root.dir}/WEB-INF/classes" />
