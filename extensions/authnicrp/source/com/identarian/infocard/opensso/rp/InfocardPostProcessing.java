@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InfocardPostProcessing.java,v 1.1 2009-07-08 08:59:28 ppetitsm Exp $
+ * $Id: InfocardPostProcessing.java,v 1.2 2009-09-15 10:45:39 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -30,7 +30,6 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
 import com.sun.identity.authentication.spi.AuthenticationException;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;

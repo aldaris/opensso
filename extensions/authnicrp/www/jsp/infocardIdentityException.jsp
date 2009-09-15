@@ -18,25 +18,28 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: infocardInvalidToken.jsp,v 1.1 2009-07-08 08:59:27 ppetitsm Exp $
+   $Id: infocardIdentityException.jsp,v 1.1 2009-09-15 10:45:38 ppetitsm Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
    Portions Copyrighted 2008 Patrick Petit Consulting
+                                                                                
 --%>
+
+
+
 
 <html>
 
-<%@page info="Invalid Information Card Token" language="java"%>
+<%@page info="OpenSSO Information Authentication Module: Authentication Failed" language="java"%>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato"%>
 <%@taglib uri="/WEB-INF/auth.tld" prefix="auth"%>
-
 <jato:useViewBean className="com.sun.identity.authentication.UI.LoginViewBean">
 
 
 <%@ page contentType="text/html" %>
 
 <head>
-<title><jato:text name="htmlTitle_AuthError" /></title>
+<title><jato:text name="htmlTitle_AuthFailed" /></title>
 
 <% 
 String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI);
@@ -78,7 +81,7 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
             <td width="260"><img src="<%= ServiceURI %>/images/dot.gif" width="260" height="245" alt="" /></td>
             <td width="415" bgcolor="#ffffff" valign="top"><img name="Login.productLogo" 
             src="<%= ServiceURI %>/images/PrimaryProductName.png" alt="<auth:resBundle bundleName="amAuthUI" resourceKey="basic_realm" />" 
-            border="0" />                                          
+            border="0" />
               <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td colspan="2">
@@ -94,16 +97,18 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
                 <div class="AlrtErrTxt"> 
                 <img name="Login.AlertImage" src="<%= ServiceURI %>/images/error_large.gif" alt="Error" 
                 height="21" width="21" />
-                <auth:resBundle bundleName="amAuthInfocard" resourceKey="invalidToken" />
-                </div>
+
+                <auth:resBundle bundleName="amAuthInfocard" resourceKey="invalidInfocard" /></div>
                 <div class="AlrtMsgTxt">
-                <auth:resBundle bundleName="amAuthUI" resourceKey="contactadmin" />
-                  
-                <!---- hyperlink ---->
+                <!-- warning message -->
+                <jato:content name="ContentStaticWarning"><br>
+                <jato:getDisplayFieldValue name='StaticTextWarning' defaultValue='' fireDisplayEvents='true' escape='false'/>
+                </jato:content>
+
+                <!-- hyperlink -->
                 <jato:content name="ContentHref">
-                <p><auth:href name="DefaultLoginURL"
-                fireDisplayEvents='true'><jato:text
-                name="txtGotoLoginAfterFail" /></auth:href></p>
+                <p><auth:href name="LoginURL" fireDisplayEvents='true'>
+                    <jato:text name="txtGotoLoginAfterFail" /></auth:href></p>
                 </jato:content>
                 </div>
                 </td></tr></table></div></td>

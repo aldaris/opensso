@@ -2,9 +2,10 @@
 <!-- You may freely edit this file. See commented blocks below for -->
 <!-- some examples of how to customize the build. -->
 <!-- (If you delete it and reopen the project it will be recreated.) -->
-<project name="AuthInfocard" default="default" basedir=".">
+<project name="Authnicrp" default="default" basedir=".">
     <description>Builds, tests, and runs of project authnicrp.
-    Information Cards authentication module</description>
+    Information Cards Authentication Module
+    </description>
     <import file="nbproject/build-impl.xml"/>
     
     <!--
@@ -68,7 +69,7 @@
     nbproject/build-impl.xml file. 
 
     -->
-    
+
     <!-- Check project properties correctness before invoking the install target -->
     <target name="-post-jar">
         <property file="nbproject/project.properties"/>
@@ -82,7 +83,7 @@
         <property name="opensso-images.dir" value="${opensso-root.dir}/images" />
 
         <copy file="${dist.jar}" todir="${opensso-lib.dir}" />
-        <copy file="extlib/xmldap-1.0.jar" todir="${opensso-lib.dir}" />
+        <copy file="extlib/Xmldap.org/xmldap-1.0.jar" todir="${opensso-lib.dir}" />
         <copy file="xml/services/amAuthInfocard.xml" todir="${opensso-root.dir}/WEB-INF/classes" />
         <copy file="xml/services/amUser.xml" todir="${opensso-root.dir}/WEB-INF/classes" />
         <copy file="resources/locale/amAuthInfocard.properties" todir="${opensso-root.dir}/WEB-INF/classes" />
@@ -91,14 +92,14 @@
         <copy file="resources/locale/amUser.properties" tofile="${opensso-root.dir}/WEB-INF/classes/amUser_en.properties" />
         <copy file="xml/auth-module/Infocard.xml" todir="${opensso-config.dir}/default" />
         <copy file="xml/auth-module/Infocard.xml" todir="${opensso-config.dir}/default_en" />
-        <copy file="www/jsp/infocardInvalidToken.jsp" todir="${opensso-config.dir}/default" />
-        <copy file="www/jsp/infocardInvalidSignature.jsp" todir="${opensso-config.dir}/default" />
-        <copy file="www/jsp/infocardInvalidCert.jsp" todir="${opensso-config.dir}/default" />
-        <copy file="www/jsp/infocardProcessing.jsp" todir="${opensso-config.dir}/default" />
+        <copy file="www/jsp/infocardException.jsp" todir="${opensso-config.dir}/default" />
+        <copy file="www/jsp/infocardIdentityException.jsp" todir="${opensso-config.dir}/default" />
         <copy file="www/jsp/infocard.jsp" todir="${opensso-config.dir}/default" />
         <copy file="www/js/Infocard.js" todir="${opensso-root.dir}/js" />
         <copy file="www/css/Infocard.css" todir="${opensso-root.dir}/css" />
-        <copy file="www/images/Infocard_56x39.png" todir="${opensso-images.dir}" />
+        <copy file="www/images/Infocard_81x57.png" todir="${opensso-images.dir}" />
+        <copy file="www/images/Infocard_81x57_on.png" todir="${opensso-images.dir}" />
+        <copy file="www/images/openssoex.gif" todir="${opensso-images.dir}" />
         <copy file="www/PrivacyPolicy.html" todir="${opensso-root.dir}" />
 
     </target>

@@ -17,21 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Infocard.java,v 1.7 2009-07-08 08:59:28 ppetitsm Exp $
+ * $Id: Infocard.java,v 1.8 2009-09-15 10:45:39 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
  */
 package com.identarian.infocard.opensso.rp;
 
-import com.identarian.infocard.opensso.exception.InfocardException;
-import com.identarian.infocard.opensso.exception.InvalidCertException;
-import com.identarian.infocard.opensso.exception.InvalidTokenConditionException;
-import com.identarian.infocard.opensso.exception.InvalidTokenSignatureException;
+import com.identarian.infocard.opensso.rp.exception.InfocardException;
+import com.identarian.infocard.opensso.rp.exception.InfocardIdentityException;
+import com.identarian.infocard.opensso.rp.rcheck.RoleCheckPlugin;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AuthException;
+import com.sun.identity.authentication.service.AuthenticationPrincipalDataRetriever;
 import java.util.Map;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -52,10 +52,8 @@ import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import java.security.*;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -66,32 +64,29 @@ import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.servlet.http.HttpServletRequest;
-import org.xmldap.exceptions.*;
-import org.xmldap.rp.Token;
+import javax.servlet.http.HttpSession;
 import org.xmldap.util.KeystoreUtil;
 
 /**
  * Sample Login Module.
  */
-public class Infocard extends AMLoginModule {
+public class Infocard extends AMLoginModule implements AuthenticationPrincipalDataRetriever {
 
     public static final String amAuthInfocard = "amAuthInfocard";
-    public static final String PPID_CLAIM = "privatepersonalidentifier";
-    public static final String USERNAME_CLAIM = "username";
-    public static final String PASSWORD_CLAIM = "password";
-    public static final String GIVENNAME_CLAIM = "givenname";
-    public static final String SURNAME_CLAIM = "surname";
-    public static final String REQUIRED_CLAIMS = "";
     public static final String DEFAULT_REQUIRED_CLAIMS =
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/privatepersonalidentifier";
-    public static final String DEFAULT_OPTIONAL_CLAIMS = "";
     private static final String DEFAULT_TOKEN_TYPE = "urn:oasis:names:tc:SAML:1.0:assertion";
-    // Process states
+    /*
+     * Process method states
+     */
     private static final int DEFAULT_AUTH_LEVEL = 0;
-    private static final int BEGIN_STATE = ISAuthConstants.LOGIN_START;
+    private static final int BEGIN_STATE = ISAuthConstants.LOGIN_START; //1
     private static final int BINDING_STATE = 2;
     private static final int REGISTRATION_STATE = 3;
     private static final int CHOOSE_USERNAME = 4;
+    /*
+     * Error return codes: Trigger inormative JSP page defined in infocard.xml
+     */
     private static final int NO_USERID_ERROR = 5;
     private static final int NO_PASSWD_ERROR = 6;
     private static final int NO_CONFIRM_ERROR = 7;
@@ -99,60 +94,46 @@ public class Infocard extends AMLoginModule {
     private static final int PASSWORD_MISMATCH_ERROR = 9;
     private static final int USER_EXISTS_ERROR = 10;
     private static final int USER_PASSWD_SAME_ERROR = 11;
-    private static final int MISSING_REQ_FIELD_ERROR = 12;
-    private static final int PROFILE_ERROR = 13;
-    private static final int USER_PASSWORD_SAME_ERROR = 14;
-    private static final int INFOCARD_INVALID_TOKEN_ERROR = 15;
-    private static final int INFOCARD_INVALID_CERT_ERROR = 16;
-    private static final int INFOCARD_INVALID_SIGNATURE_ERROR = 17;
-    private static final int INFOCARD_TOKEN_PROCESSING_ERROR = 18;
-    private static final int INFOCARD_NOCONFIG_ERROR = 19;
+    private static final int PROFILE_ERROR = 12;
+    private static final int USER_PASSWORD_SAME_ERROR = 13;
+    private static final int INFOCARD_VALIDATION_ERROR = 14;
+    private static final int INTERNAL_ERROR = 15;
 
     // Global variables
-    private static Debug debug = null;
-    protected ResourceBundle bundle = null;
+    protected static Debug debug = null;
+    protected static ResourceBundle bundle = null;
     protected static String authType = null;
-    private static PrivateKey privateKey;
+    private static PrivateKey privateKey = null;
     private static String keyStorePath;
     private static String keyStorePasswd;
     private static String keyAlias;
     private static AuthD authd = AuthD.getAuth();
-    private static final int minPasswordLength = 8;
+    private int minPasswordLength;
+    private boolean ignoreUserProfile;
+    private boolean checkVerificationMethod;
+    private boolean checkRequiredClaims;
     private String validatedUserID = null;
     private java.security.Principal userPrincipal = null;
     private Map sharedState = null;
     private Map options = null;
-    private ServiceConfig serviceConfig = null;
-    private int requiredPasswordLength = 0;
-    private Token xmlToken = null;
-    private String ppid = null;
-    private String digest = null;
+    private InfocardIdentity infocardIdentity = null;
     private String serviceStatus = null;
     private String userID = null;
     private String myOwnID = null;
     private String userPasswd = null;
     private String defaultAnonUser = null;
-    private String confirmationMethod = null;
-    private String verifiedClaims = null;
-    private Date beginValidityPeriod = null;
-    private Date endValidityPeriod = null;
-    private String audienceRestriction = null;
+    private String verificationMethod = null;
     private String audience = null;
+    private Set requiredClaims = null;
     private String regEx = null;
-    private Map<String, String> userClaimValues = null;
-    private Map<String, Set> userAttributeValues = null;
-    private Map<String, String> claimToAttributeMap = null;
-    private Set defaultRoles = null;
+    private Map<String, Set<String>> idRepoAttributes = null;
+    private Map<String, String> infocardIdentityToIdRepoIdentityMap = null;
+    private Map<String, String> roleToRoleCheckPluginMap = null;
+    private Set identityRoles = null;
     private String errorMsg = null;
-    private boolean ignoreUserProfile = false;
-    private boolean isConditionValid = false;
-    private boolean checkAudienceRestriction = false;
-    private boolean checkAge18OrOver = false;
-    private boolean checkCoppaCertified = false;
-    private boolean checkAge21OrOver = false;
-    private boolean checkConfirmationMethod = false;
-    private boolean checkVerifiedClaims = false;
-    private boolean checkValidityPeriod = false;
+    private String issuer = null;
+    private String ppid = null;
+    private boolean initialized = false;
 
     /**
      * Creates an instance of this class.
@@ -203,25 +184,31 @@ public class Infocard extends AMLoginModule {
 
         authType = bundle.getString("iplanet-am-auth-infocard-service-description");
 
-        if (debug.messageEnabled()) {
-            String ModuleName = (String) options.get(ISAuthConstants.MODULE_INSTANCE_NAME);
-            if (options != null) {
-                debugPrintMap(">>> " + ModuleName + " options", options);
-            }
-            if (serviceConfig != null) {
-                debugPrintMap(">>> " + ModuleName + " service config", serviceConfig.getAttributes());
-            }
-            if (sharedState != null) {
-                debugPrintMap(">>> " + ModuleName + " Shared State", sharedState);
-            }
-        }
-
         int authLevel = CollectionHelper.getIntMapAttr(options,
                 "iplanet-am-auth-infocard-auth-level", DEFAULT_AUTH_LEVEL, debug);
         try {
             setAuthLevel(authLevel);
         } catch (Exception e) {
             debug.error("Unable to set auth level " + authLevel, e);
+            return;
+        }
+
+        serviceStatus = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-infocard-default-user-status", "Active");
+
+        Set defaultRoles = (Set) options.get("iplanet-am-auth-infocard-default-roles");
+        if (debug.messageEnabled()) {
+            debug.message("defaultRoles is : " + defaultRoles);
+        }
+        identityRoles = new HashSet();
+        identityRoles.addAll(defaultRoles);
+
+        regEx = CollectionHelper.getMapAttr(options, "iplanet-am-auth-infocard-invalid-chars");
+
+        String passwordLength = CollectionHelper.getMapAttr(options,
+                "iplanet-am-auth-infocard-min-password-length", "8");
+        if (passwordLength != null && passwordLength.length() != 0) {
+            minPasswordLength = Integer.parseInt(passwordLength);
         }
 
         /*
@@ -230,13 +217,13 @@ public class Infocard extends AMLoginModule {
         HttpServletRequest request = getHttpServletRequest();
         if (request != null && options != null) {
 
-            String requiredClaims = getMapAttrValues(options,
+            String rclaims = getMapAttrValue(options,
                     "iplanet-am-auth-infocard-requiredClaims", DEFAULT_REQUIRED_CLAIMS);
-            request.setAttribute("requiredClaims", requiredClaims);
+            request.setAttribute("requiredClaims", rclaims);
 
-            String optionalClaims = getMapAttrValues(options,
-                    "iplanet-am-auth-infocard-optionalClaims", DEFAULT_OPTIONAL_CLAIMS);
-            request.setAttribute("optionalClaims", optionalClaims);
+            String oclaims = getMapAttrValue(options,
+                    "iplanet-am-auth-infocard-optionalClaims", "");
+            request.setAttribute("optionalClaims", oclaims);
 
             String tokenType = CollectionHelper.getMapAttr(options,
                     "iplanet-am-auth-infocard-tokenType", DEFAULT_TOKEN_TYPE);
@@ -246,95 +233,33 @@ public class Infocard extends AMLoginModule {
                     "iplanet-am-auth-infocard-privacyUrl");
             if (privacyUrl != null && privacyUrl.length() > 0) {
                 request.setAttribute("privacyUrl", privacyUrl);
+                // If privacyUrl != null, then privacyVersion must > 0
+                String privacyVersion = CollectionHelper.getMapAttr(options,
+                        "iplanet-am-auth-infocard-privacyVersion");
+                if (privacyVersion == null || privacyVersion.length() == 0) {
+                    privacyVersion = "1";
+                    request.setAttribute("privacyVersion", privacyVersion);
+                }
             }
 
-            String privacyVersion = CollectionHelper.getMapAttr(options,
-                    "iplanet-am-auth-infocard-privacyVersion");
-            if (privacyVersion != null && privacyVersion.length() > 0) {
-                request.setAttribute("privacyVersion", privacyVersion);
-            }
-
-            String issuer = CollectionHelper.getMapAttr(options,
-                    "iplanet-am-auth-infocard-issuer");
+            issuer = CollectionHelper.getMapAttr(options, "iplanet-am-auth-infocard-issuer");
             if (issuer != null && issuer.length() > 0) {
+                // URI specifying token issuer
                 request.setAttribute("issuer", issuer);
-            }
 
-            String issuerPolicy = CollectionHelper.getMapAttr(options,
-                    "iplanet-am-auth-infocard-issuerPolicy");
-            if (issuerPolicy != null && issuerPolicy.length() > 0) {
+                // MetadataExchange endpoint of issuer
+                String issuerPolicy = CollectionHelper.getMapAttr(options,
+                        "iplanet-am-auth-infocard-issuerPolicy");
+                if (issuerPolicy == null || issuerPolicy.length() == 0) {
+                    issuerPolicy = new String(issuer.concat("/mex"));
+                }
+                if (issuerPolicy.startsWith("http")) {
+                    issuerPolicy.replaceFirst("http", "https");
+                }
                 request.setAttribute("issuerPolicy", issuer);
             }
         }
-    }
-
-    private void initAuthInfocard() throws InfocardException {
-
-        serviceStatus = CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-default-user-status", "Active");
-
-        defaultRoles = (Set) options.get("iplanet-am-auth-infocard-default-roles");
-        if (debug.messageEnabled()) {
-            debug.message("defaultRoles is : " + defaultRoles);
-        }
-
-        regEx = CollectionHelper.getMapAttr(options, "iplanet-am-auth-infocard-invalid-chars");
-
-        String var = CollectionHelper.getMapAttr(options,
-                "iplanet-am-auth-infocard-min-password-length", "8");
-
-        if (var != null && var.length() != 0) {
-            requiredPasswordLength = Integer.parseInt(var);
-        }
-
-        defaultAnonUser = CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-default-user-name", "Anonymous");
-
-        // Get Information Card validation parameters
-        audienceRestriction = CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-audience-url", null);
-        if (audienceRestriction != null && audienceRestriction.length() > 0) {
-            checkAudienceRestriction = true;
-        }
-        checkAge18OrOver = Boolean.valueOf(CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-age-18-or-over", "false")).booleanValue();
-        checkCoppaCertified = Boolean.valueOf(CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-coppa-certified", "false")).booleanValue();
-        checkAge21OrOver = Boolean.valueOf(CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-age-21-or-over", "false")).booleanValue();
-        confirmationMethod = CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-confirmation-method", null);
-        if (confirmationMethod != null && confirmationMethod.length() > 0) {
-            checkConfirmationMethod = true;
-        }
-        verifiedClaims = CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-verified-claims", null);
-        if (verifiedClaims != null && verifiedClaims.length() > 0) {
-            checkVerifiedClaims = true;
-        }
-        checkValidityPeriod = Boolean.valueOf(CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-validity-period", "true")).booleanValue();
-
-        // Get auth service to determine authentication profile
-        OrganizationConfigManager orgConfigMgr = authd.getOrgConfigManager(getRequestOrg());
-        ServiceConfig svcConfig;
-        try {
-            svcConfig = orgConfigMgr.getServiceConfig(ISAuthConstants.AUTH_SERVICE_NAME);
-            Map params = svcConfig.getAttributes();
-            var = CollectionHelper.getMapAttr(params, ISAuthConstants.DYNAMIC_PROFILE);
-            if (var.equalsIgnoreCase("ignore")) {
-                ignoreUserProfile = true;
-            }
-        } catch (SMSException ex) {
-            throw new InfocardException("Failed to get Auth Service config", ex);
-        }
-
-        /*
-         * Compute user's attributes creation map
-         */
-        claimToAttributeMap = new HashMap<String, String>();
-        userAttributeValues = new HashMap<String, Set>();
-        setClaimToAttributeMap(options);
+        initialized = true;
     }
 
     /**
@@ -352,9 +277,9 @@ public class Infocard extends AMLoginModule {
         int action;
         int retval = ISAuthConstants.LOGIN_IGNORE;
 
-        if (options == null || privateKey == null) {
-            debug.error("Internal configuration error");
-            return INFOCARD_NOCONFIG_ERROR;
+        if (!initialized) {
+            debug.error("Information Card Module not initialiazed");
+            return INTERNAL_ERROR;
         }
 
         switch (state) {
@@ -362,30 +287,24 @@ public class Infocard extends AMLoginModule {
             case BEGIN_STATE:
 
                 try {
-                    xmlToken = getToken();
-                    if (xmlToken != null) {
-                        // An information card is presented
+                    infocardIdentity = getInfocardIdentity();
+                    if (infocardIdentity != null) {
+                        // Proceed with infocard authentication
                         initAuthInfocard();
+                        //Check token validity
+                        validateInfocardIdentity();
                         retval = LoginWithInfocard();
                     } else {
-                        // No infocard is presented: Regular login
+                        // No infocard, proceed with credential authentication
                         retval = LoginWithUserNamePasswd(callbacks);
                     }
-                } catch (InfoCardProcessingException ex) {
-                    debug.error("Information Card processing error:", ex);
-                    retval = INFOCARD_TOKEN_PROCESSING_ERROR;
-                } catch (InvalidCertException ex) {
-                    debug.error("Information Card certificate error:", ex);
-                    retval = INFOCARD_INVALID_CERT_ERROR;
-                } catch (InvalidTokenConditionException ex) {
-                    debug.error("Information Card validity error:", ex);
-                    retval = INFOCARD_INVALID_TOKEN_ERROR;
-                } catch (InvalidTokenSignatureException ex) {
-                    debug.error("Information Card signature error:", ex);
-                    retval = INFOCARD_INVALID_SIGNATURE_ERROR;
+                } catch (InfocardIdentityException e) {
+                    debug.error(errorMsg, e);
+                    //forwardErrorMsg(errorMsg);
+                    retval = INFOCARD_VALIDATION_ERROR;
                 } catch (InfocardException e) {
-                    debug.error("Internal configuration error:", e);
-                    retval = INFOCARD_NOCONFIG_ERROR;
+                    debug.error("Internal error", e);
+                    retval = INTERNAL_ERROR;
                 }
                 break;
 
@@ -399,7 +318,7 @@ public class Infocard extends AMLoginModule {
                 }
                 if (action == 0) {
                     // Confirm Information Card binding
-                    retval = registerInfocardWithExistingUserEntry(callbacks);
+                    retval = registerInfocardWithExistingUser(callbacks);
                 } else if (action == 1) {
                     retval = REGISTRATION_STATE;
                 } else {
@@ -409,8 +328,8 @@ public class Infocard extends AMLoginModule {
                 break;
 
             case REGISTRATION_STATE:
-                // Registration will attempt to create a new user account.
-
+                // Registration will create a new user account and by the
+                // Information Card to this account
                 if (callbacks != null && callbacks.length != 0) {
                     // callbacks[3] is confirmation callback
                     action = ((ConfirmationCallback) callbacks[3]).getSelectedIndex();
@@ -418,9 +337,9 @@ public class Infocard extends AMLoginModule {
                     throw new AuthLoginException(amAuthInfocard, "authFailed", null);
                 }
                 if (action == 0) { // Register button
-                    retval = registerInfocardWithNewUserEntry(callbacks);
+                    retval = getNewUserCredentials(callbacks);
                     if (retval == ISAuthConstants.LOGIN_SUCCEED) {
-                        retval = registerNewUser();
+                        retval = registerInfocardWithNewUser();
                     }
                 } else if (action == 1) { // Cancel
                     clearCallbacks(callbacks);
@@ -444,14 +363,37 @@ public class Infocard extends AMLoginModule {
                     userID = userChoiceID;
                     Set<String> values = new HashSet<String>();
                     values.add(userID);
-                    userAttributeValues.put("uid", values);
-                    retval = registerNewUser();
+                    idRepoAttributes.put("uid", values);
+                    retval = registerInfocardWithNewUser();
                 }
 
                 break;
         }
-        if (xmlToken != null && retval == ISAuthConstants.LOGIN_SUCCEED) {
-            addInfocardClaimsToSession();
+        if (retval == ISAuthConstants.LOGIN_SUCCEED && infocardIdentity != null) {
+            try {
+                Map<String, Set<String>> claims = infocardIdentity.getClaims();
+                Iterator itr = claims.keySet().iterator();
+                while (itr.hasNext()) {
+                    String claimUri = (String) itr.next();
+                    Set<String> claimValues = infocardIdentity.getClaimValues(claimUri);
+                    if (claimValues != null && claimValues.size() != 0) {
+                        try {
+                            // Must be called from within process()
+                            setUserSessionProperty(InfocardClaims.canonicalizeClaimUri(claimUri),
+                                    InfocardClaims.canonicalizeClaimValue(claimValues.toString()));
+                            if (debug.messageEnabled()) {
+                                debug.message("Added claim to user session '" + claimUri + "' values = " + claimValues.toString());
+                            }
+                        } catch (AuthLoginException e) {
+                            throw new InfocardException(e);
+                        }
+                    }
+                }
+            } catch (InfocardException e) {
+                setFailureID(userID);
+                debug.error("Caught unexpected exception: ", e);
+                return INTERNAL_ERROR;
+            }
         }
         return retval;
     }
@@ -477,41 +419,129 @@ public class Infocard extends AMLoginModule {
 
     @Override
     public void nullifyUsedVars() {
-        bundle = null;
+        userPrincipal = null;
         sharedState = null;
-        errorMsg = null;
+        options = null;
+        infocardIdentity = null;
+        serviceStatus = null;
         userID = null;
         myOwnID = null;
-        serviceStatus = null;
         userPasswd = null;
         defaultAnonUser = null;
-        serviceConfig = null;
-        xmlToken = null;
-        ppid = null;
-        digest = null;
-        userClaimValues = null;
-        confirmationMethod = null;
-        verifiedClaims = null;
-        beginValidityPeriod = null;
-        endValidityPeriod = null;
-        audienceRestriction = null;
+        verificationMethod = null;
         audience = null;
+        requiredClaims = null;
         regEx = null;
-        requiredPasswordLength = 0;
-        options = null;
-        userAttributeValues = null;
-        claimToAttributeMap = null;
-        defaultRoles = null;
+        idRepoAttributes = null;
+        infocardIdentityToIdRepoIdentityMap = null;
+        roleToRoleCheckPluginMap = null;
+        identityRoles = null;
         errorMsg = null;
-        ignoreUserProfile = false;
-        isConditionValid = false;
-        checkAudienceRestriction = false;
-        checkAge18OrOver = false;
-        checkCoppaCertified = false;
-        checkAge21OrOver = false;
-        checkConfirmationMethod = false;
-        checkVerifiedClaims = false;
-        checkValidityPeriod = false;
+        issuer = null;
+        ppid = null;
+        initialized = false;
+    }
+
+    private void initAuthInfocard() throws InfocardException {
+
+        defaultAnonUser = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-infocard-default-user-name", "Anonymous");
+        audience = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-infocard-audience-url", null);
+        requiredClaims = getMapAttrValueSet(
+                options, "iplanet-am-auth-infocard-requiredClaims", DEFAULT_REQUIRED_CLAIMS);
+        checkRequiredClaims = Boolean.valueOf(CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-infocard-check-requiredClaims")).booleanValue();
+        verificationMethod = CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-infocard-verificationMethod", null);
+        checkVerificationMethod = Boolean.valueOf(CollectionHelper.getMapAttr(
+                options, "iplanet-am-auth-infocard-check-verificationMethod")).booleanValue();
+
+        // Get auth service to determine authentication profile
+        OrganizationConfigManager orgConfigMgr = authd.getOrgConfigManager(getRequestOrg());
+        ServiceConfig svcConfig;
+        try {
+            svcConfig = orgConfigMgr.getServiceConfig(ISAuthConstants.AUTH_SERVICE_NAME);
+            Map params = svcConfig.getAttributes();
+            String dynamicProfile = CollectionHelper.getMapAttr(params, ISAuthConstants.DYNAMIC_PROFILE);
+            if (dynamicProfile.equalsIgnoreCase("ignore")) {
+                ignoreUserProfile = true;
+            }
+        } catch (SMSException ex) {
+            throw new InfocardException("Failed to get Auth Service config", ex);
+        }
+
+        /*
+         * Compute user's attributes creation map
+         */
+        infocardIdentityToIdRepoIdentityMap = new HashMap<String, String>();
+        roleToRoleCheckPluginMap = new HashMap<String, String>();
+        idRepoAttributes = new HashMap<String, Set<String>>();
+        setInfocardIdentityToIdRepoIdentityMap(options);
+        setRoleToRoleCheckPluginMap(options);
+    }
+
+    @Override
+    public Map getAttrMapForAuthenticationModule(Subject authSubject) {
+
+        debug.message("getAttrMapForAuthnticationModule(" + authSubject + ")");
+
+        return infocardIdentity.getClaims();
+    }
+
+    private void validateInfocardIdentity() throws InfocardIdentityException {
+
+        if (checkVerificationMethod && infocardIdentity.isClaimSupplied(
+                InfocardClaims.getVERIFIED_CLAIMS_URI())) {
+
+            String var = infocardIdentity.getClaimValue(InfocardClaims.getVERIFICATION_METHOD_URI());
+            if (!verificationMethod.equals(var)) {
+                errorMsg = bundle.getString("missingVerificationMethod");
+                throw new InfocardIdentityException("error validating claims identity: " + errorMsg);
+            }
+        }
+
+        if (issuer != null && !issuer.equals(infocardIdentity.getIssuer())) {
+            errorMsg = bundle.getString("invalidIssuer");
+            throw new InfocardIdentityException("error validating claims identity: " + errorMsg);
+        }
+
+        // Override issuer with value from token
+        issuer = infocardIdentity.getIssuer();
+
+        if (audience != null && !audience.equals(infocardIdentity.getAudience())) {
+            errorMsg = bundle.getString("invalidIssuer");
+            throw new InfocardIdentityException("error validating claims identity: " + errorMsg);
+        }
+
+        // Check all other required claims
+        if (checkRequiredClaims && !infocardIdentity.areClaimsSupplied(requiredClaims)) {
+            errorMsg = bundle.getString("missingRequiredClaims");
+            throw new InfocardIdentityException("error validating claims identity: " + errorMsg);
+        }
+    }
+
+    private void validateInfocardIdentityRoles() throws InfocardException {
+
+        Set<String> roles = roleToRoleCheckPluginMap.keySet();
+        if (roles != null) {
+            Iterator itr = roles.iterator();
+            String role, clazz;
+            while (itr.hasNext()) {
+                role = (String) itr.next();
+                clazz = roleToRoleCheckPluginMap.get(role).trim();
+                if (clazz != null && clazz.length() > 0) {
+                    try {
+                        RoleCheckPlugin plugin = (RoleCheckPlugin) Class.forName(clazz).newInstance();
+                        if (plugin.isIdentityMatchingRole(infocardIdentity)) {
+                            identityRoles.add(role);
+                        }
+                    } catch (Exception e) {
+                        throw new InfocardException(e);
+                    }
+                }
+            }
+        }
     }
 
     private int LoginWithUserNamePasswd(Callback[] callbacks) throws AuthLoginException {
@@ -571,48 +601,37 @@ public class Infocard extends AMLoginModule {
         }
     }
 
-    private int LoginWithInfocard() throws AuthLoginException {
+    private int LoginWithInfocard() throws AuthLoginException,
+            InvalidPasswordException, InfocardIdentityException {
 
         Callback[] callbacks = new Callback[2];
 
         try {
-            ppid = getPpid();
-            if (ppid == null) {
-                if (debug.errorEnabled()) {
-                    debug.error("Manadatory 'PPID' claim is missing");
-                }
-                errorMsg = bundle.getString("missingPPID");
-                throw new AuthLoginException(amAuthInfocard, "invalidInfocard",
-                        new Object[]{errorMsg});
-            }
-            digest = getDigest();
-            if (digest == null) {
-                errorMsg = bundle.getString("missingDigest");
-                throw new AuthLoginException(amAuthInfocard, "invalidInfocard",
-                        new Object[]{errorMsg});
-            }
 
-            if (debug.messageEnabled()) {
-                HttpServletRequest request = getHttpServletRequest();
-                if (request != null) {
-                    String cardSelectorName = request.getHeader("X-ID-Selector");
-                    debug.message("Received Information Card authentication request for ppid = " + ppid + "sent from Identity Selector type:'" + cardSelectorName + "'");
+            ppid = infocardIdentity.getClaimValue(InfocardClaims.getPPID_URI());
+            if (ppid == null) {
+                errorMsg = bundle.getString("missingPPID");
+                if (debug.errorEnabled()) {
+                    debug.error("error validating claims identity: " + errorMsg);
                 }
+                throw new InfocardIdentityException("error validating claims identity: " + errorMsg);
             }
             // TODO: I think we have a problem here because searchUserIdentity returns
-            // too many entries. Must improve search criteria filter.
+            // too many entries. Must improve search criteria filter scheme.
             AMIdentityRepository idrepo = getAMIdentityRepository(getRequestOrg());
-            AMIdentity userIdentity = InfocardUtils.searchUserIdentity(idrepo, ppid, "*");
+            AMIdentity repoIdentity = InfocardIdRepoUtils.searchUserIdentity(idrepo, ppid, "*");
 
-            if (userIdentity != null) { // Information Card already linked with this entry
-                userID = userIdentity.getName();
-                InfocardData infocardData = InfocardUtils.readInfocardData(userIdentity, ppid);
-                if (infocardData != null) {
-                    userPasswd = infocardData.getPassword();
-                    if (!digest.equals(infocardData.get(ppid))) {
+            if (repoIdentity != null) { // Information Card already linked with this entry
+                userID = repoIdentity.getName();
+                InfocardIdRepoData icRepoData =
+                        InfocardIdRepoUtils.getInfocardRepoData(repoIdentity, ppid);
+                if (icRepoData != null) {
+                    userPasswd = icRepoData.getPassword();
+
+                    if (!issuer.equals(icRepoData.getIssuer())) {
                         // Forgery ?
                         debug.error(
-                                "Information Card token digest doesn't match stored digest for PPID =" + ppid);
+                                "Information Card token doesn't match stored issuer for PPID =" + ppid);
                         throw new AuthLoginException(amAuthInfocard, "authFailed", null);
                     }
                 }
@@ -634,53 +653,39 @@ public class Infocard extends AMLoginModule {
                 try {
                     boolean success = idrepo.authenticate(callbacks);
                     if (success) {
-                        if (isInformationCardValid()) {
-                            validatedUserID = userID;
-                            return ISAuthConstants.LOGIN_SUCCEED;
-                        } else {
-                            setFailureID(userID);
-                            throw new AuthLoginException(amAuthInfocard, "invalidInfocard",
-                                    new Object[]{errorMsg});
-                        }
+                        validatedUserID = userID;
+                        return ISAuthConstants.LOGIN_SUCCEED;
                     } else {
-                        // Current password and stored password for IC are different
-                        // TODO: that's not very clean... To be improved
-                        InfocardUtils.removeInfocards(userIdentity);
-                        setFailureID(userID);
+                        // Stored password is invalid. Remove iDRepo Infocard data
+                        // and return to BEGIN_STATE
+                        InfocardIdRepoUtils.removeRepoInfocardData(repoIdentity, ppid);
                         debug.error("User password has changed since Information Card registration. " +
-                                "Deleting all Information Cards for that user: " + userID);
-                        return PROFILE_ERROR;
+                                "Deleting stored Information Card for that user: " + userID);
+                        return BEGIN_STATE;
                     }
                 } catch (IdRepoException e) {
                     setFailureID(userID);
-                    debug.error("profile exception occured: ", e);
-                    return PROFILE_ERROR;
+                    throw new AuthLoginException(amAuthInfocard, "authFailed", null, e);
                 }
             } else if (ignoreUserProfile) {
                 // Since user profile is ignored, user is allowed to login provided
                 // Information Card claims meet validation conditions
                 userID = defaultAnonUser;
                 storeUsernamePasswd(userID, null);
-                if (isInformationCardValid()) {
-                    validatedUserID = userID;
-                    return ISAuthConstants.LOGIN_SUCCEED;
-                } else {
-                    setFailureID(userID);
-                    throw new AuthLoginException(amAuthInfocard, "invalidInfocard",
-                            new Object[]{errorMsg}, null);
-                }
+                validatedUserID = userID;
+                return ISAuthConstants.LOGIN_SUCCEED;
             } else {
                 // Bind this Information Card with a new or existing user account
                 return BINDING_STATE;
             }
         } catch (InfocardException e) {
-            // Ooops... something unexpected happened!
-            e.printStackTrace();
-            throw new AuthLoginException(amAuthInfocard, "internalError", null, e);
+            setFailureID(userID);
+            debug.error("Caught unexpected exception: ", e);
+            return INTERNAL_ERROR;
         }
     }
 
-    private int registerInfocardWithExistingUserEntry(Callback[] callbacks)
+    private int registerInfocardWithExistingUser(Callback[] callbacks)
             throws AuthLoginException {
 
         if (callbacks != null && callbacks.length != 0) {
@@ -701,35 +706,28 @@ public class Infocard extends AMLoginModule {
                 AMIdentityRepository idrepo = getAMIdentityRepository(getRequestOrg());
                 boolean success = idrepo.authenticate(callbacks);
                 if (success) {
-                    if (isInformationCardValid()) {
-                        AMIdentity userIdentity = getUserIdentity(userID, getRequestOrg());
-                        InfocardUtils.addInfocard(userIdentity, ppid, digest, userPasswd);
-                        validatedUserID = userID;
-                        return ISAuthConstants.LOGIN_SUCCEED;
-                    } else {
-                        setFailureID(userID);
-                        throw new AuthLoginException(amAuthInfocard, "invalidInfocard",
-                                new Object[]{errorMsg}, null);
-                    }
+                    AMIdentity repoIdentity = getUserIdentity(userID, getRequestOrg());
+                    InfocardIdRepoUtils.addRepoInfocardData(repoIdentity, ppid, issuer, userPasswd);
+                    validatedUserID = userID;
+                    return ISAuthConstants.LOGIN_SUCCEED;
                 } else {
                     setFailureID(userID);
                     throw new AuthLoginException(amAuthInfocard, "authFailed", null);
                 }
             } catch (IdRepoException e) {
-                // This user doesn't exist
                 setFailureID(userID);
                 throw new AuthLoginException(amAuthInfocard, "authFailed", null, e);
             } catch (InfocardException e) {
-                // Ooops... something bad happened!
-                e.printStackTrace();
-                throw new AuthLoginException(amAuthInfocard, "internalError", null, e);
+                setFailureID(userID);
+                debug.error("Caught unexpected exception: ", e);
+                return INTERNAL_ERROR;
             }
         } else {
             throw new AuthLoginException(amAuthInfocard, "authFailed", null);
         }
     }
 
-    private int registerInfocardWithNewUserEntry(Callback[] callbacks)
+    private int getNewUserCredentials(Callback[] callbacks)
             throws AuthLoginException {
 
         // callback[0] is for user name
@@ -771,29 +769,33 @@ public class Infocard extends AMLoginModule {
 
             Set<String> values = new HashSet<String>();
             values.add(userID);
-            userAttributeValues.put("uid", values);
+            idRepoAttributes.put("uid", values);
 
             values = new HashSet<String>();
             values.add(userPasswd);
-            userAttributeValues.put("userPassword", values);
+            idRepoAttributes.put("userPassword", values);
 
             // check user ID uniqueness
             try {
                 if (isUserRegistered(userID)) {
-                    if (debug.messageEnabled()) {
-                        debug.message("user ID " + userID + " already exists");
+                    String var = infocardIdentity.getClaimValue(
+                            InfocardClaims.getGIVEN_NAME_URI());
+                    if (var != null && var.length() > 0) {
+                        values = new HashSet<String>();
+                        values.add(var);
+                        idRepoAttributes.put("givenname", values);
                     }
 
-                    values = new HashSet<String>();
-                    values.add(getFirstName());
-                    userAttributeValues.put("givenname", values);
-
-                    values = new HashSet<String>();
-                    values.add(getLastName());
-                    userAttributeValues.put("sn", values);
+                    var = infocardIdentity.getClaimValue(
+                            InfocardClaims.getSURNAME_URI());
+                    if (var != null && var.length() > 0) {
+                        values = new HashSet<String>();
+                        values.add(var);
+                        idRepoAttributes.put("sn", values);
+                    }
 
                     // get a list of user IDs from the generator
-                    Set generatedUserIDs = getNewUserIDs(userAttributeValues, 6);
+                    Set generatedUserIDs = getNewUserIDs(idRepoAttributes, 6);
                     if (generatedUserIDs == null) {
                         // user name generator is disable
                         return USER_EXISTS_ERROR;
@@ -819,59 +821,48 @@ public class Infocard extends AMLoginModule {
                     return CHOOSE_USERNAME;
                 }
             } catch (SSOException e) {
-                debug.error("profile exception occured: ", e);
-                return PROFILE_ERROR;
+                setFailureID(userID);
+                debug.error("Caught unexpected exception: ", e);
+                return INTERNAL_ERROR;
             } catch (IdRepoException e) {
-                debug.error("profile exception occured: ", e);
-                return PROFILE_ERROR;
+                setFailureID(userID);
+                debug.error("Caught unexpected exception: ", e);
+                return INTERNAL_ERROR;
             }
         } else {
             throw new AuthLoginException(amAuthInfocard, "authFailed", null);
         }
-
         return ISAuthConstants.LOGIN_SUCCEED;
     }
 
-    private int registerNewUser() throws AuthLoginException {
+    private int registerInfocardWithNewUser() throws AuthLoginException {
 
         try {
-            // Check again ?
-            if (isUserRegistered(userID)) {
-                return USER_EXISTS_ERROR;
-            }
-
             Set<String> values = new HashSet<String>();
             values.add(serviceStatus);
-            userAttributeValues.put("inetuserstatus", values);
-
-            if (isInformationCardValid()) {
-                if (isDynamicProfileCreationEnabled()) {
-                    addClaimsToAttributeValues();
-                }
-                createIdentity(userID, userAttributeValues, defaultRoles);
-                // Should optimize this ...
-                AMIdentity userIdentity = getUserIdentity(userID, getRequestOrg());
-                InfocardUtils.addInfocard(userIdentity, ppid, digest, userPasswd);
-                validatedUserID = userID;
-                return ISAuthConstants.LOGIN_SUCCEED;
-            } else {
-                setFailureID(userID);
-                throw new AuthLoginException(amAuthInfocard, "invalidInfocard",
-                        new Object[]{errorMsg}, null);
+            idRepoAttributes.put("inetuserstatus", values);
+            if (isDynamicProfileCreationEnabled()) {
+                addInfocardClaimsToIdRepoAttributes();
             }
+            validateInfocardIdentityRoles();
+            createIdentity(userID, idRepoAttributes, identityRoles);
+            // Should optimize this ...
+            AMIdentity repoIdentity = getUserIdentity(userID, getRequestOrg());
+            InfocardIdRepoUtils.addRepoInfocardData(repoIdentity, ppid, issuer, userPasswd);
+            validatedUserID = userID;
+            return ISAuthConstants.LOGIN_SUCCEED;
         } catch (SSOException e) {
             setFailureID(userID);
-            debug.error("profile exception occured: ", e);
-            return PROFILE_ERROR;
-
+            debug.error("Caught unexpected exception: ", e);
+            return INTERNAL_ERROR;
         } catch (IdRepoException e) {
             setFailureID(userID);
-            debug.error("profile exception occured: ", e);
-            return PROFILE_ERROR;
+            debug.error("Caught unexpected exception: ", e);
+            return INTERNAL_ERROR;
         } catch (InfocardException e) {
-            // Ooops... something unexpected happened!
-            e.printStackTrace();
-            throw new AuthLoginException(amAuthInfocard, "internalError", null, e);
+            setFailureID(userID);
+            debug.error("Caught unexpected exception: ", e);
+            return INTERNAL_ERROR;
         }
     }
 
@@ -881,17 +872,17 @@ public class Infocard extends AMLoginModule {
 
     private AMIdentity getUserIdentity(String userName, String org) {
 
-        AMIdentity userIdentity = null;
+        AMIdentity repoIdentity = null;
 
         if (org != null && org.length() != 0) {
             try {
-                userIdentity = AuthD.getAuth().getIdentity(IdType.USER, userName, org);
-                if (userIdentity.isExists() && userIdentity.isActive()) {
+                repoIdentity = AuthD.getAuth().getIdentity(IdType.USER, userName, org);
+                if (repoIdentity.isExists() && repoIdentity.isActive()) {
                     if (debug.messageEnabled()) {
                         debug.message(
                                 "getUserIdentity: Found identity for '" +
-                                userName + "' in realm = " + userIdentity.getRealm() +
-                                " id = " + userIdentity.getUniversalId());
+                                userName + "' in realm = " + repoIdentity.getRealm() +
+                                " id = " + repoIdentity.getUniversalId());
                     }
                 }
             } catch (AuthException e1) {
@@ -902,36 +893,7 @@ public class Infocard extends AMLoginModule {
                 debug.error("getUserIdentity: caught exception", e3);
             }
         }
-        return userIdentity;
-    }
-
-    private boolean isInformationCardValid() {
-
-
-        if (checkValidityPeriod && !isConditionValid) {
-            errorMsg = "Token validity period not before [" + beginValidityPeriod.toString() +
-                    "] and not after [" + endValidityPeriod.toString() + "]";
-            return false;
-        }
-        if (checkAudienceRestriction) {
-        }
-
-        if (checkAge18OrOver) {
-        }
-
-        if (checkCoppaCertified) {
-        }
-
-        if (checkAge21OrOver) {
-        }
-
-        if (checkConfirmationMethod) {
-        }
-
-        if (checkVerifiedClaims) {
-        }
-
-        return true;
+        return repoIdentity;
     }
 
     private ArrayList getNonExistingUserIDs(Set userIDs)
@@ -1019,7 +981,7 @@ public class Infocard extends AMLoginModule {
         return (new String(pwd));
     }
 
-    private static int checkPassword(String uid, String password, String confirmPassword) {
+    private int checkPassword(String uid, String password, String confirmPassword) {
 
         if ((password == null) || password.length() == 0) {
             // missing the password field
@@ -1082,170 +1044,103 @@ public class Infocard extends AMLoginModule {
         return !results.isEmpty();
     }
 
-    private void setClaimToAttributeMap(Map currentConfig) {
+    private void setInfocardIdentityToIdRepoIdentityMap(Map currentConfig) {
 
-        Set parameter = (Set) currentConfig.get("iplanet-am-auth-infocard-creation-attr-list");
-        if (debug.messageEnabled()) {
-            debug.message("User attributes creation list is : " + parameter);
-        }
-        if ((parameter != null) && (!parameter.isEmpty())) {
-            Iterator attrIterator = parameter.iterator();
-            while (attrIterator.hasNext()) {
-                String attr = (String) attrIterator.next();
-                int i = attr.indexOf("|");
+        Set claimUriToAttrList = (Set) currentConfig.get("iplanet-am-auth-infocard-creation-attr-list");
+
+        if ((claimUriToAttrList != null)) {
+            if (debug.messageEnabled()) {
+                debug.message("User attributes creation list = " + claimUriToAttrList);
+            }
+            Iterator itr = claimUriToAttrList.iterator();
+            while (itr.hasNext()) {
+                String entry = (String) itr.next();
+                int i = entry.indexOf("|");
                 if (i != -1) {
-                    String claimName = attr.substring(0, i);
-                    String attrName = attr.substring(i + 1, attr.length());
-                    if ((attrName == null) || (attrName.length() == 0)) {
-                        claimToAttributeMap.put(claimName, claimName);
-                    } else {
-                        claimToAttributeMap.put(claimName, attrName);
+                    String claimUri = entry.substring(0, i).trim();
+                    String attrName = entry.substring(i + 1, entry.length()).trim();
+                    if ((attrName != null) && (attrName.length() != 0) &&
+                            (claimUri != null) && (claimUri.length() != 0)) {
+                        infocardIdentityToIdRepoIdentityMap.put(claimUri, attrName);
                     }
-                } else {
-                    claimToAttributeMap.put(attr, attr);
                 }
             }
         }
-        return;
     }
 
-    private void addClaimsToAttributeValues() {
+    private void setRoleToRoleCheckPluginMap(Map currentConfig) {
 
-        if (debug.messageEnabled()) {
-            debug.message("claims map = " + userClaimValues);
+        Set roleToPluginClass = (Set) currentConfig.get("iplanet-am-auth-infocard-role-to-plugin-list");
+
+        if ((roleToPluginClass != null)) {
+            if (debug.messageEnabled()) {
+                debug.message("role to plugin class list = " + roleToPluginClass);
+            }
+            Iterator itr = roleToPluginClass.iterator();
+            while (itr.hasNext()) {
+                String entry = (String) itr.next();
+                int i = entry.indexOf("|");
+                if (i != -1) {
+                    String role = entry.substring(0, i).trim();
+                    String className = entry.substring(i + 1, entry.length()).trim();
+                    if ((role != null) && (role.length() != 0) &&
+                            (className != null) && (className.length() != 0)) {
+                        roleToRoleCheckPluginMap.put(role, className);
+                    }
+                }
+            }
         }
+    }
 
-        Iterator itr = claimToAttributeMap.keySet().iterator();
+    private void addInfocardClaimsToIdRepoAttributes() {
+
+        Iterator itr = infocardIdentityToIdRepoIdentityMap.keySet().iterator();
         while (itr.hasNext()) {
-            String claimName = (String) itr.next();
-            String attrName = (String) claimToAttributeMap.get(claimName);
-            String value = userClaimValues.get(claimName);
-
-            if (value != null && value.length() != 0) {
-                Set<String> newSet = new HashSet<String>();
-                newSet.add(value);
-                userAttributeValues.put(attrName, newSet);
-                if (debug.messageEnabled()) {
-                    debug.message("Added claim '" + claimName + "' value = " + value + "entry attributes list");
-                }
+            String claimUri = (String) itr.next();
+            String attrName = (String) infocardIdentityToIdRepoIdentityMap.get(claimUri);
+            Set<String> claimValues = infocardIdentity.getClaimValues(claimUri);
+            if (claimValues != null && claimValues.size() != 0) {
+                idRepoAttributes.put(attrName, claimValues);
             }
         }
         if (debug.messageEnabled()) {
-            debug.message("Attributes map = " + userAttributeValues);
+            debug.message("IdRepo attributes creation list = " + idRepoAttributes);
         }
     }
 
-    private void addInfocardClaimsToSession() {
+    private InfocardIdentity getInfocardIdentity() throws InfocardIdentityException {
 
-        if (userClaimValues != null) {
-            Set<String> keys = userClaimValues.keySet();
-            try {
-                Iterator itr = keys.iterator();
-                while (itr.hasNext()) {
-                    String claim = (String) itr.next();
-                    setUserSessionProperty(claim, (String) userClaimValues.get(claim));
-                }
-            } catch (AuthLoginException e) {
-                debug.message("Error setting session's attributes", e);
-            }
-        }
-    }
-
-    private Token getToken()
-            throws InfoCardProcessingException, InvalidCertException,
-            InvalidTokenConditionException, InvalidTokenSignatureException {
-
-        Token token = null;
+        InfocardIdentity identity = null;
 
         HttpServletRequest request = getHttpServletRequest();
         if (request != null) {
-            String encXmlToken = request.getParameter("xmlToken");
-            if (encXmlToken != null && encXmlToken.length() != 0) {
-                token = new Token(encXmlToken, privateKey);
-                if (token.isSignatureValid()) {
-                    X509Certificate cert = token.getCertificateOrNull();
-                    if (cert == null || (cert != null && token.isCertificateValid())) {
-                        try {
-                            userClaimValues = (Map<String, String>)token.getClaims();
-                            confirmationMethod = token.getConfirmationMethod();
-                            audience = token.getAudience();
-                            digest = token.getClientDigest();
-                            endValidityPeriod = token.getEndValidityPeriod().getTime();
-                            beginValidityPeriod = token.getStartValidityPeriod().getTime();
-                            isConditionValid = token.isConditionsValid();
-                        } catch (CryptoException e) {
-                            throw new InfoCardProcessingException("Information Card Token processing error", e);
-                        }
-                    } else {
-                        throw new InvalidCertException("Information Card has an invalid certificate");
-                    }
-                } else {
-                    throw new InvalidTokenSignatureException("Information token has an invalid signature");
+            String samlToken = request.getParameter("xmlToken");
+            if (samlToken != null && samlToken.length() != 0) {
+                try {
+                    identity = new InfocardIdentity(samlToken, privateKey);
+                } catch (InfocardIdentityException e) {
+                    String fmtMsg = bundle.getString("invalidInfocard");
+                    errorMsg = com.sun.identity.shared.locale.Locale.formatMessage(fmtMsg, e.getMessage());
+                    debug.error(errorMsg, e);
+                    throw new InfocardIdentityException(errorMsg);
                 }
             }
         }
-
-        return token;
+        return identity;
     }
 
-    private String getPpid() {
+    private void forwardErrorMsg(String msg) {
 
-        return getClaim(PPID_CLAIM);
-    }
-
-    private String getFirstName() {
-
-        return getClaim(GIVENNAME_CLAIM);
-    }
-
-    private String getLastName() {
-
-        return getClaim(SURNAME_CLAIM);
-    }
-
-    private String getClaim(String cname) {
-
-        Map var = getClaims();
-        Set keys = var.keySet();
-        Iterator iter = keys.iterator();
-        while (iter.hasNext()) {
-            String name = (String) iter.next();
-            if (cname.equals(name)) {
-                return (String) userClaimValues.get(name);
+        assert (msg != null && msg.length() > 0);
+        ErrorMsgBean bean = new ErrorMsgBean();
+        bean.setMessage(msg);
+        HttpServletRequest request = getHttpServletRequest();
+        if (request != null) {
+            HttpSession session = request.getSession();
+            if (session != null) {
+                session.setAttribute(ErrorMsgBean.ID, bean);
             }
-
         }
-        return null;
-    }
-
-    private Map getClaims() {
-
-        return userClaimValues;
-    }
-
-    private String getDigest() {
-
-        return digest;
-    }
-
-    private String getAudience() {
-
-        return audience;
-    }
-
-    private String getConfirmationMethod() {
-
-        return confirmationMethod;
-    }
-
-    private Date getBeginValidityPeriod() {
-
-        return beginValidityPeriod;
-    }
-
-    private Date getEndValidityPeriod() {
-
-        return endValidityPeriod;
     }
 
     /**
@@ -1274,7 +1169,7 @@ public class Infocard extends AMLoginModule {
 
     }
 
-    private static String getMapAttrValues(Map map, String attrName, String defValue) {
+    private static String getMapAttrValue(Map map, String attrName, String defValue) {
 
         String value = defValue;
         Set keys = map.keySet();
@@ -1291,23 +1186,23 @@ public class Infocard extends AMLoginModule {
         return value;
     }
 
-    private void dumpXmlToken() {
+    private static Set getMapAttrValueSet(Map map, String attrName, String defValue) {
 
-        try {
-            Map var = getClaims();
+        Set value = null;
+        Set keys = map.keySet();
 
-            System.out.println(">>> You provided the following claims:\n");
-            Set keys = var.keySet();
-            Iterator iter = keys.iterator();
-            while (iter.hasNext()) {
-                String name = (String) iter.next();
-                String value = (String) var.get(name);
-                System.out.println(">>> \t" + name + ":" + value + "\n");
+        for (Iterator iter = keys.iterator(); iter.hasNext();) {
+            String key = (String) iter.next();
+            if (key.equals(attrName)) {
+                value = (Set) map.get(key);
+                break;
             }
-
-        } catch (Exception e1) {
-            // System.out.println("Error getting token" + e1.getMessage());
         }
+        if (value == null) {
+            value = new HashSet();
+            value.add(defValue);
+        }
+        return value;
     }
 }
             

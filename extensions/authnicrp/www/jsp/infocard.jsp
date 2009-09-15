@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: infocard.jsp,v 1.1 2009-07-08 08:59:26 ppetitsm Exp $
+   $Id: infocard.jsp,v 1.2 2009-09-15 10:45:38 ppetitsm Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
    Portions Copyrighted 2008 Patrick Petit Consulting
@@ -65,8 +65,8 @@ private static final String[] iCClaims = {"issuer", "issuerPolicy",
                 iCObject[<%= property %>] = [<%= value %>];
             </script>
             <%
-               }
             }
+         }
             %>
             <link rel="stylesheet" href="<%= ServiceURI %>/css/styles.css" type="text/css">
             <link rel="stylesheet" href="<%= ServiceURI %>/css/Infocard.css" type="text/css">
@@ -158,7 +158,7 @@ private static final String[] iCClaims = {"issuer", "issuerPolicy",
                                 <td width="260"><img src="<%= ServiceURI %>/images/dot.gif" width="260" height="245" alt="" /></td>
                                 <td width="415" bgcolor="#ffffff" valign="top">
                                     <img src="<%= ServiceURI %>/images/dot.gif" width="30" height="1" alt="" />
-                                    <img name="Login.productLogo" src="<%= ServiceURI %>/images/PrimaryProductName.png" alt="" />
+                                    <img name="Login.productLogo" src="<%= ServiceURI %>/images/openssoex.gif" alt="" />
                                     <table border="0" cellspacing="0" cellpadding="0">
                                         <tr>
                                             <td colspan="2">
@@ -173,23 +173,25 @@ private static final String[] iCClaims = {"issuer", "issuerPolicy",
                                             <td>
                                                 <div class="InformationCardsSupported">
                                                     <form name="infocardForm" onSubmit="InfocardSubmit(); return false;" method="post">
-                                                        <input type="image" src="<%= ServiceURI %>/images/Infocard_56x39.png"
-                                                               value="Click me to send your card" />
+                                                        <input type="image" src="<%= ServiceURI %>/images/Infocard_81x57.png"
+                                                               value="Click me to send your card"
+                                                               onmouseover="this.src='<%= ServiceURI %>/images/Infocard_81x57_on.png';"
+                                                               onmouseout="this.src='<%= ServiceURI %>/images/Infocard_81x57.png';" />
                                                     </form>
                                                 </div>
                                                 <div class="InformationCardsNotSupported">
-                                                    <img src='<%= ServiceURI %>/images/Infocard_56x39.png'/>
+                                                    <img src='<%= ServiceURI %>/images/ic-outline-icon-61x42.png'/>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="InformationCardsSupported">
-                                                    Your system supports Information Cards or I-Cards<br>
+                                                    Your browser supports Information Cards<br>
                                                     <a href="http://informationcard.net/quick-overview"
                                                        onclick="openLink(this.href)">
-                                                    How do I get started ?</a><br>
+                                                    What are they ?</a><br>
                                                 </div>
                                                 <div class="InformationCardsNotSupported">
-                                                    Your system doesn't support Information Cards or I-Cards
+                                                    Your browser doesn't support Information Cards
                                                     <a href="http://informationcard.net/quick-overview"
                                                        onclick="openLink(this.href)">
                                                     What are they?</a><br>

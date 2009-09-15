@@ -1,5 +1,0 @@
-OpenSSO Authentication Module for Information Cards (RP) Todo Items list
-
-1 - Check compatibility / evaluate work to do to make authnicrp work on
-    Distributed Authentication User Interface
-2 - Handle ic-data update when a PPID is removed from console
