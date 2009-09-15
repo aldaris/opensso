@@ -15,9 +15,9 @@
  * If applicable, add the following below the CDDL Header,
  * with the fields enclosed by brackets [] replaced by
  * your own identifying information:
- * "Portions Copyrighted [year] [name of copyright owner]"
+ * "Portions Copyrighted [year] [name of copyright owner]" 
  *
- * $Id: InfocardIdentityException.java,v 1.1 2009-09-15 10:45:40 ppetitsm Exp $
+ * $Id: InfocardIdentityException.java,v 1.2 2009-09-15 13:27:13 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting

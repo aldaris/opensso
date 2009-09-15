@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InfocardIdentity.java,v 1.1 2009-09-15 10:45:39 ppetitsm Exp $
+ * $Id: InfocardIdentity.java,v 1.2 2009-09-15 13:27:13 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -25,7 +25,6 @@
 package com.identarian.infocard.opensso.rp;
 
 import com.identarian.infocard.opensso.rp.exception.InfocardIdentityException;
-import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
@@ -37,7 +36,7 @@ import org.xmldap.rp.Token;
 import org.xmldap.exceptions.InfoCardProcessingException;
 
 /**
- *
+ * 
  * @author Patrick
  */
 public class InfocardIdentity {

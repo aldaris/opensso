@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CryptoUtils.java,v 1.1 2009-09-15 10:45:39 ppetitsm Exp $
+ * $Id: CryptoUtils.java,v 1.2 2009-09-15 13:27:13 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -26,14 +26,13 @@ package com.identarian.infocard.opensso.rp;
 
 import com.identarian.infocard.opensso.rp.exception.InfocardException;
 import java.security.Key;
-import java.security.Security;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
+/** 
  *
  * @author Patrick
  */

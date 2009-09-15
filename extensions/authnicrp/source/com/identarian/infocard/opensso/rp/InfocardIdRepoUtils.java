@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InfocardIdRepoUtils.java,v 1.1 2009-09-15 10:45:39 ppetitsm Exp $
+ * $Id: InfocardIdRepoUtils.java,v 1.2 2009-09-15 13:27:13 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -51,7 +51,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- *
+ * 
  * @author Patrick
  *
  */
