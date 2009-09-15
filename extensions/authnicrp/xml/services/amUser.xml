@@ -1,17 +1,21 @@
 <?xml version='1.0' encoding="UTF-8"?> 
 
 <!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
    compliance with the License.
-
+  
    You can obtain a copy of the License at
    https://opensso.dev.java.net/public/CDDLv1.0.html or
    opensso/legal/CDDLv1.0.txt
    See the License for the specific language governing
    permission and limitations under the License.
-
+  
    When distributing Covered Code, include this CDDL
    Header Notice in each file and include the License file
    at opensso/legal/CDDLv1.0.txt.
@@ -19,9 +23,8 @@
    with the fields enclosed by brackets [] replaced by
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
-
-   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
-   Portions Copyrighted 2008 Patrick Petit Consulting
+  
+   $Id: amUser.xml,v 1.2 2009-09-15 13:35:16 ppetitsm Exp $
   
 -->
 
@@ -158,22 +161,10 @@
 		    any="adminDisplay"
                     i18nKey="u107">
                 </AttributeSchema>
-                <AttributeSchema name="telephonenumber"
-                    type="single"
-                    syntax="string"
-                    any="display"
-                    i18nKey="u108">
-                </AttributeSchema>
                 <AttributeSchema name="manager"
                     type="single"
                     syntax="string"
                     i18nKey="u109">
-                </AttributeSchema>
-                <AttributeSchema name="postaladdress"
-                    type="single"
-                    syntax="string"
-                    any="display"
-                    i18nKey="u110">
                 </AttributeSchema>
                 <AttributeSchema name="inetuserstatus"
                     type="single_choice"
@@ -250,6 +241,36 @@
                         <Value/>
                     </DefaultValues>
                 </AttributeSchema>
+                <AttributeSchema name="postaladdress"
+                    type="single"
+                    syntax="string"
+                    any="display"
+                    i18nKey="u122">
+                </AttributeSchema>
+                <AttributeSchema name="postalcode"
+                    type="single"
+                    syntax="string"
+                    any="display"
+                    i18nKey="u123">
+                </AttributeSchema>
+                <AttributeSchema name="localityname"
+                    type="single"
+                    syntax="string"
+                    any="display"
+                    i18nKey="u124">
+                </AttributeSchema>
+                <AttributeSchema name="telephonenumber"
+                    type="single"
+                    syntax="string"
+                    any="display"
+                    i18nKey="u125">
+                </AttributeSchema>
+                <AttributeSchema name="mobile"
+                    type="single"
+                    syntax="string"
+                    any="display"
+                    i18nKey="u126">
+                </AttributeSchema>
                 <AttributeSchema name="iplanet-am-user-password-reset-question-answer"
                     type="list"
                     syntax="string"
@@ -282,9 +303,8 @@
                     type="list"
                     syntax="string"
                     any="display"
-                    i18nKey="ic-ppid">
+                    i18nKey="u127">
                 </AttributeSchema>
-
             </User>
         </Schema>
     </Service>

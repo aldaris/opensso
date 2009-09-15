@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Infocard.xml,v 1.1 2009-07-08 08:59:30 ppetitsm Exp $
+   $Id: Infocard.xml,v 1.2 2009-09-15 13:35:16 ppetitsm Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
    Portions Copyrighted 2008 Patrick Petit Consulting
@@ -31,7 +31,7 @@ PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
 "jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">
 <ModuleProperties moduleName="Infocard" version="1.0" >
     <Callbacks length="2" order="1" timeout="120"
-    header="Sign in with your user name and password" template="infocard.jsp">
+    header="Or, sign in with your user name and password" template="infocard.jsp">
         <NameCallback>
             <Prompt> User ID : </Prompt>
         </NameCallback>
@@ -63,9 +63,9 @@ PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
         </ConfirmationCallback>
     </Callbacks>
     <Callbacks length="4" order="3" timeout="300"
-            header="You are about to provision a new user account using the claims of your Information Card.&lt;BR&gt;
+            header="You are about to create a new user account using the claims of your Information Card.&lt;BR&gt;
                     Please choose a user ID and password or click 'cancel' to abort.&lt;BR&gt;
-                    Afterwards, you will be able to use your Information Card in place of your credentials for login" >
+                    Afterwards, you will be able to use your Information Card in place of your credentials to log in" >
         <NameCallback isRequired="true" attribute="uid" >
             <Prompt> UserID: </Prompt>
         </NameCallback>
@@ -112,12 +112,8 @@ one&lt;BR&gt;of the following user names,&lt;BR&gt;or create your own:
     <Callbacks length="0" order="9" timeout="120" template="passwordMismatch.jsp" />
     <Callbacks length="0" order="10" timeout="120" template="userExists.jsp" />
     <Callbacks length="0" order="11" timeout="120" template="userPasswordSame.jsp" />
-    <Callbacks length="0" order="12" timeout="120" template="missingReqField.jsp" />
-    <Callbacks length="0" order="13" timeout="120" template="profileException.jsp" />
-    <Callbacks length="0" order="14" timeout="120" template="userPasswordSame.jsp" />
-    <Callbacks length="0" order="15" timeout="120" template="infocardInvalidToken.jsp" />
-    <Callbacks length="0" order="16" timeout="120" template="infocardInvalidCert.jsp" />
-    <Callbacks length="0" order="17" timeout="120" template="infocardInvalidSignature.jsp" />
-    <Callbacks length="0" order="18" timeout="120" template="infocardProcessing.jsp" />
-    <Callbacks length="0" order="19" timeout="120" template="noConfig.jsp" />
+    <Callbacks length="0" order="12" timeout="120" template="profileException.jsp" />
+    <Callbacks length="0" order="13" timeout="120" template="userPasswordSame.jsp" />
+    <Callbacks length="0" order="14" timeout="120" template="infocardIdentityException.jsp" />
+    <Callbacks length="0" order="15" timeout="120" template="infocardException.jsp" />
 </ModuleProperties>
