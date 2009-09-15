@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultipleResourceRestTest.java,v 1.1 2009-09-10 16:35:38 veiming Exp $
+ * $Id: MultipleResourceRestTest.java,v 1.2 2009-09-15 20:56:16 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -67,6 +67,7 @@ public class MultipleResourceRestTest {
         "http://www.MultipleResourceRestTest.com";
     private AMIdentity user;
     private WebResource decisionsClient;
+    private WebResource entitlementsClient;
 
     @BeforeClass
     public void setup() throws Exception {
@@ -106,6 +107,9 @@ public class MultipleResourceRestTest {
         decisionsClient = Client.create().resource(
             SystemProperties.getServerInstanceName() +
             "/ws/1/entitlement/decisions");
+        entitlementsClient = Client.create().resource(
+            SystemProperties.getServerInstanceName() +
+            "/ws/1/entitlement/entitlements");
     }
 
     @AfterClass
@@ -135,8 +139,13 @@ public class MultipleResourceRestTest {
     }
 
     @Test
-    public void test() throws Exception {
-        MultivaluedMap params = getMultivaluedMap();
+    public void testDecisions() throws Exception {
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("subject", user.getUniversalId());
+        params.add("resources", RESOURCE_NAME + "/index.html");
+        params.add("resources", RESOURCE_NAME + "/a");
+        params.add("action", "GET");
+        params.add("realm", REALM);
 
         String json = decisionsClient.queryParams(params).accept(
             "application/json").get(String.class);
@@ -149,25 +158,49 @@ public class MultipleResourceRestTest {
             if (res.equals(RESOURCE_NAME + "/index.html")) {
                 if (actionValues.get("GET")) {
                     throw new Exception(
-                        "MultipleResourceRestTest.test: incorrect result for /index.html");
+                        "MultipleResourceRestTest.testDecisions: incorrect result for /index.html");
                 }
             } else if (res.equals(RESOURCE_NAME + "/a")) {
                 if (!actionValues.get("GET")) {
                     throw new Exception(
-                        "MultipleResourceRestTest.test: incorrect result for /a");
+                        "MultipleResourceRestTest.testDecisions: incorrect result for /a");
                 }
             }
 
         }
     }
 
-    private MultivaluedMap getMultivaluedMap() {
+    @Test
+    public void testEntitlements() throws Exception {
         MultivaluedMap params = new MultivaluedMapImpl();
         params.add("subject", user.getUniversalId());
-        params.add("resources", RESOURCE_NAME + "/index.html");
-        params.add("resources", RESOURCE_NAME + "/a");
-        params.add("action", "GET");
+        params.add("resource", RESOURCE_NAME);
         params.add("realm", REALM);
-        return params;
+
+        String json = entitlementsClient.queryParams(params).accept(
+            "application/json").get(String.class);
+        List<JSONEntitlement> entitlements = JSONEntitlement.getEntitlements(
+            new JSONObject(json));
+        for (JSONEntitlement e : entitlements) {
+            String res = e.getResourceName();
+            Map<String, Boolean> actionValues = e.getActionValues();
+
+            if (res.equals(RESOURCE_NAME)) {
+                if (!actionValues.isEmpty()) {
+                    throw new Exception(
+                        "MultipleResourceRestTest.testEntitlements: incorrect result for root");
+                }
+            } else if (res.equals(RESOURCE_NAME + ":80/index.html")) {
+                if (actionValues.get("GET")) {
+                    throw new Exception(
+                        "MultipleResourceRestTest.testEntitlements: incorrect result for /index.html");
+                }
+            } else if (res.equals(RESOURCE_NAME + ":80/*")) {
+                if (!actionValues.get("GET")) {
+                    throw new Exception(
+                        "MultipleResourceRestTest.testEntitlements: incorrect result for /*");
+                }
+            }
+        }
     }
 }

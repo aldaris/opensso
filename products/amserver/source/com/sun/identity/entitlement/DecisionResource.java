@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.8 2009-09-14 23:02:40 veiming Exp $
+ * $Id: DecisionResource.java,v 1.9 2009-09-15 20:56:15 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -213,6 +213,61 @@ public class DecisionResource extends ResourceBase {
             JSONEntitlement jsonE = new JSONEntitlement(e.getResourceName(),
                 e.getActionValues(), e.getAdvices(), e.getAttributes());
             return jsonE.toJSONObject().toString();
+        } catch (JSONException e) {
+            PrivilegeManager.debug.warning("DecisionResource.evaluate", e);
+            throw getWebApplicationException(e);
+        } catch (EntitlementException e) {
+            PrivilegeManager.debug.warning("DecisionResource.evaluate", e);
+            throw getWebApplicationException(headers, e);
+        }
+    }
+
+    /**
+     * Returns the entitlements of a given subject.
+     *
+     * @param realm Realm Name.
+     * @param subject Subject of interest.
+     * @param action action to be evaluated.
+     * @param resource resource to be evaluated
+     * @param application application name.
+     * @param environment environment parameters.
+     * @return entitlements of a given subject (in JSON string).
+     */
+    @GET
+    @Produces("application/json")
+    @Path("/entitlements")
+    public String entitlements(
+        @Context HttpHeaders headers,
+        @QueryParam("admin") String admin,
+        @QueryParam("realm") @DefaultValue("/") String realm,
+        @QueryParam("subject") String subject,
+        @QueryParam("resource") String resource,
+        @QueryParam("application") String application,
+        @QueryParam("env") List<String> environment
+    ) {
+        if (!realm.startsWith("/")) {
+            realm = "/" + realm;
+        }
+
+        Map env = getMap(environment);
+        Subject caller = delegationCheck(admin);
+
+        try {
+            validateSubjectAndResource(subject, resource);
+            Evaluator evaluator = getEvaluator(caller, application);
+            List<Entitlement> entitlements = evaluator.evaluate(
+                realm, toSubject(subject), resource, env, true);
+            List<JSONObject> result = new ArrayList<JSONObject>();
+
+            for (Entitlement e : entitlements) {
+                JSONEntitlement json = new JSONEntitlement(e.getResourceName(),
+                    e.getActionValues(), e.getAdvices(), e.getAttributes());
+                result.add(json.toJSONObject());
+            }
+
+            JSONObject jo = new JSONObject();
+            jo.put(JSON_DECISION_ARRAY_KEY, result);
+            return jo.toString();
         } catch (JSONException e) {
             PrivilegeManager.debug.warning("DecisionResource.evaluate", e);
             throw getWebApplicationException(e);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cache.java,v 1.1 2009-08-19 05:40:35 veiming Exp $
+ * $Id: Cache.java,v 1.2 2009-09-15 20:56:15 veiming Exp $
  *
  */
 
@@ -307,7 +307,7 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
         }
 
         boolean found = false;
-        rwlock.readLock();
+        rwlock.readLock().lock();
 
         try {
             Entry tab[] = table;
