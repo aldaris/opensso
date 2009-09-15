@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageTableBean.java,v 1.1 2009-09-09 17:13:43 farble1670 Exp $
+ * $Id: ApplicationManageTableBean.java,v 1.2 2009-09-15 19:30:00 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -72,10 +72,12 @@ public class ApplicationManageTableBean implements Serializable {
     static {
         comparators.put(new TableSortKey("name", true), new ViewApplication.NameComparator(true));
         comparators.put(new TableSortKey("name", false), new ViewApplication.NameComparator(false));
+        comparators.put(new TableSortKey("description", true), new ViewApplication.DescriptionComparator(true));
+        comparators.put(new TableSortKey("description", false), new ViewApplication.DescriptionComparator(false));
     }
 
     public ApplicationManageTableBean() {
-        // TODO: add columns visible
+        columnsVisible.add("description");
     }
 
     public TableSortKey getSortKey() {
@@ -93,5 +95,9 @@ public class ApplicationManageTableBean implements Serializable {
 
     public void setViewApplications(List<ViewApplication> viewApplications) {
         this.viewApplications = viewApplications;
+    }
+
+    public boolean isDescriptionColumnVisible() {
+        return columnsVisible.contains("description");
     }
 }
