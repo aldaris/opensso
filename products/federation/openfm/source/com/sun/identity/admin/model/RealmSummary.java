@@ -1,6 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -24,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: RealmSummary.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: RealmSummary.java,v 1.2 2009-09-16 23:53:57 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -44,7 +42,7 @@ public class RealmSummary extends Summary {
     @Override
     public String getValue() {
         RealmBean realm = RealmsBean.getInstance().getRealmBean();
-        return realm.getName();
+        return realm.getTitle();
     }
 
     @Override
