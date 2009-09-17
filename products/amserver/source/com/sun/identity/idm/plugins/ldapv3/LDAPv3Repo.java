@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.67 2009-09-08 22:29:33 hengming Exp $
+ * $Id: LDAPv3Repo.java,v 1.68 2009-09-17 00:46:28 ericow Exp $
  *
  */
 
@@ -174,6 +174,8 @@ public class LDAPv3Repo extends IdRepo {
         "(&(objectclass=ldapsubentry)(objectclass=nsfilteredroledefinition))";
 
     private String agentSearchFilter = null;
+
+    private String userAuthNamingAttr = null;
 
     private String userSearchNamingAttr = null;
 
@@ -341,6 +343,9 @@ public class LDAPv3Repo extends IdRepo {
 
     private static final String LDAPv3Config_LDAP_USERS_SEARCH_ATTRIBUTE = 
         "sun-idrepo-ldapv3-config-users-search-attribute";
+
+    private static final String LDAPv3Config_LDAP_USERS_NAMING_ATTRIBUTE =
+        "sun-idrepo-ldapv3-config-auth-naming-attr";
 
     private static final String LDAPv3Config_LDAP_AGENT_SEARCH_ATTRIBUTE =
         "sun-idrepo-ldapv3-config-agent-search-attribute";
@@ -858,6 +863,8 @@ public class LDAPv3Repo extends IdRepo {
            LDAPv3Config_LDAP_FILTERROLES_SEARCH_FILTER, filterroleSearchFilter);
         agentSearchFilter = getPropertyStringValue(configParams,
             LDAPv3Config_LDAP_AGENT_SEARCH_FILTER);
+        userAuthNamingAttr = getPropertyStringValue(configParams,
+            LDAPv3Config_LDAP_USERS_NAMING_ATTRIBUTE);
         userSearchNamingAttr = getPropertyStringValue(configParams,
             LDAPv3Config_LDAP_USERS_SEARCH_ATTRIBUTE);
         agentSearchNamingAttr = getPropertyStringValue(configParams,
@@ -4711,12 +4718,16 @@ public class LDAPv3Repo extends IdRepo {
         throws IdRepoException,
                AuthLoginException {
 
-        String userid = username;
-        String baseDN = getBaseDN(type);
-        String namingAttr = getNamingAttr(type);
         if (!type.equals(IdType.USER) && !type.equals(IdType.AGENT) &&
             !type.equals(IdType.GROUP) ) {
             return (false);
+        }
+
+        String userid = username;
+        String baseDN = getBaseDN(type);
+        String namingAttr = getNamingAttr(type);
+        if (type.equals(IdType.USER)) {
+            namingAttr = userAuthNamingAttr;
         }
 
         try {
