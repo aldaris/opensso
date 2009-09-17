@@ -23,25 +23,26 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wss.xhtml,v 1.2 2009-09-17 21:56:07 ggennaro Exp $
+   $Id: inlineHelp.xhtml,v 1.1 2009-09-17 21:56:06 ggennaro Exp $
 
 -->
 
 <ui:composition
-    template="template/page-no-title.xhtml"
-    xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net"
-    xmlns:ice="http://www.icesoft.com/icefaces/component">
+    xmlns:f="http://java.sun.com/jsf/core">
 
-    <ui:define name="panel-body">
-        <o:landing page="wss">
-            <ui:define name="litems">
-                <o:litem action="wsc-create"/>
-                <o:litem action="sts-manage"/>
-            </ui:define>
-        </o:landing>
-    </ui:define>
+    <f:subview>
 
+        <ice:outputText 
+            rendered="#{resources[key] != null}"
+            style="font-style: italic;"
+            value="#{resources[key]}" />
+        <ice:outputText 
+            rendered="#{resources[key] == null}"
+            value="#{'???' + key + '???'}" />
+
+    </f:subview>
 </ui:composition>

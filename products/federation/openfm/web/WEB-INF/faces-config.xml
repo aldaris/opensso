@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.6 2009-09-09 19:19:13 farble1670 Exp $
+  $Id: faces-config.xml,v 1.7 2009-09-17 21:56:08 ggennaro Exp $
 -->
 
 <faces-config version="1.2" 
@@ -143,6 +143,16 @@
         <managed-property>
             <property-name>urlKey</property-name>
             <value>news.url</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>editableSelectOneHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.EditableSelectOneHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
         </managed-property>
     </managed-bean>
 
@@ -2310,6 +2320,29 @@
         <managed-property>
             <property-name>steps</property-name>
             <value>5</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>stsManageWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.StsManageWizardHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{stsManageWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>stsManageWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.StsManageWizardBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>6</value>
         </managed-property>
     </managed-bean>
 

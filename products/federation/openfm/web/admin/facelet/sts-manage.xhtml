@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sts-manage.xhtml,v 1.1 2009-08-21 21:07:34 ggennaro Exp $
+   $Id: sts-manage.xhtml,v 1.2 2009-09-17 21:56:07 ggennaro Exp $
 
 -->
 
@@ -43,6 +43,105 @@
     </ui:define>
     <ui:define name="panel-body">
 
+        <o:wizard
+            steps="6"
+            wizardHandler="#{stsManageWizardHandler}"
+            wizardBean="#{stsManageWizardBean}">
+            <ui:define name="wizard-steps">
+                <o:wstep
+                    step="0"
+                    label="#{resources['sts-manage.step1PanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <ui:include src="template/sts-token-issuance.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{stsManageWizardBean}"/>
+                        </ui:include>
+
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="1"
+                    label="#{resources['sts-manage.step2PanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <ui:include src="template/sts-security2.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{stsManageWizardBean}"/>
+                        </ui:include>
+
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="2"
+                    label="#{resources['sts-manage.step3PanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <ui:include src="template/sts-sign-encrypt2.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{stsManageWizardBean}"/>
+                        </ui:include>
+
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="3"
+                    label="#{resources['sts-manage.step4PanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <ui:include src="template/sts-saml.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{stsManageWizardBean}"/>
+                        </ui:include>
+
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="4"
+                    label="#{resources['sts-manage.step5PanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <ui:include src="template/sts-token-validation.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{stsManageWizardBean}"/>
+                        </ui:include>
+
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="5"
+                    label="#{resources['sts-manage.summaryPanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <o:section>
+                            <ui:define name="section-title">
+                                <ice:outputText
+                                    value="#{resources['sts-manage.summaryPanelLabel.section-title']}"/>
+                            </ui:define>
+                            <ui:define name="section-details">
+                                <ice:outputText
+                                    value="#{resources['sts-manage.summaryPanelLabel.section-details']}"/>
+                            </ui:define>
+                            <ui:define name="section-body">
+
+                                <o:summarypanel summary="#{stsManageWizardBean.tokenIssuanceSummary}" />
+                                <o:summarypanel summary="#{stsManageWizardBean.serviceSecuritySummary}" />
+                                <o:summarypanel summary="#{stsManageWizardBean.signEncryptSummary}" />
+                                <o:summarypanel summary="#{stsManageWizardBean.samlSummary}" />
+                                <o:summarypanel summary="#{stsManageWizardBean.tokenValidationSummary}" />
+
+                            </ui:define>
+                        </o:section>
+
+                    </ui:define>
+                </o:wstep>
+            </ui:define>
+        </o:wizard>
 
     </ui:define>
 </ui:composition>

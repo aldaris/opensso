@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityMechanism.java,v 1.1 2009-08-19 05:40:55 veiming Exp $
+ * $Id: SecurityMechanism.java,v 1.2 2009-09-17 21:56:04 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -61,6 +61,7 @@ public enum SecurityMechanism {
                     put(STS_SECURITY.toInt(), STS_SECURITY);
                 }
             };
+
     private static final Map<Integer, String> localeKeys =
             new HashMap<Integer, String>() {
                 {
@@ -76,6 +77,23 @@ public enum SecurityMechanism {
                     put(STS_SECURITY.toInt(), "STSSecurity");
                 }
             };
+
+    private static final Map<String, SecurityMechanism> configKeys = 
+                new HashMap<String, SecurityMechanism>() {
+                    {
+                        put("urn:sun:wss:security:null:Anonymous", ANONYMOUS);
+                        put("urn:sun:wss:security:null:SAMLToken-HK", SAML_HOK);
+                        put("urn:sun:wss:security:null:SAMLToken-SV", SAML_SV);
+                        put("urn:sun:wss:security:null:SAML2Token-HK", SAML2_HOK);
+                        put("urn:sun:wss:security:null:SAML2Token-SV", SAML2_SV);
+                        put("urn:sun:wss:security:null:UserNameToken", USERNAME_TOKEN);
+                        put("urn:sun:wss:security:null:UserNameToken-Plain", USERNAME_TOKEN_PLAIN);
+                        put("urn:sun:wss:security:null:X509Token", X509_TOKEN);
+                        put("urn:sun:wss:security:null:KerberosToken", KERBEROS_TOKEN);
+                        put("urn:sun:wss:sts:security", STS_SECURITY);
+                    }
+            };
+
     private static final Map<Integer, String> configValues =
             new HashMap<Integer, String>() {
                 {
@@ -111,5 +129,9 @@ public enum SecurityMechanism {
 
     public static SecurityMechanism valueOf(int i) {
         return intValues.get(Integer.valueOf(i));
+    }
+
+    public static SecurityMechanism valueOfConfig(String s) {
+    	return configKeys.get(s);
     }
 }

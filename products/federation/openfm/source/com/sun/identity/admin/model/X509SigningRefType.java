@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: X509SigningRefType.java,v 1.1 2009-08-19 05:40:58 veiming Exp $
+ * $Id: X509SigningRefType.java,v 1.2 2009-09-17 21:56:04 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -38,15 +38,16 @@ public enum X509SigningRefType {
     ISSUER_SERIAL(2);
     
     private final int intValue;
+    
     private static final Map<Integer, X509SigningRefType> intValues =
             new HashMap<Integer, X509SigningRefType>() {
-
                 {
                     put(DIRECT.toInt(), DIRECT);
                     put(KEY_IDENTIFIER.toInt(), KEY_IDENTIFIER);
                     put(ISSUER_SERIAL.toInt(), ISSUER_SERIAL);
                 }
             };
+
     private static final Map<Integer, String> localeKeys =
             new HashMap<Integer, String>() {
                 {
@@ -55,6 +56,16 @@ public enum X509SigningRefType {
                     put(ISSUER_SERIAL.toInt(), "issuer_serial");
                 }
             };
+
+    private static final Map<String, X509SigningRefType> configKeys = 
+        new HashMap<String, X509SigningRefType>() {
+            {
+                put("DirectReference", X509SigningRefType.DIRECT);
+                put("KeyIdentifierRef", X509SigningRefType.KEY_IDENTIFIER);
+                put("X509IssuerSerialRef", X509SigningRefType.ISSUER_SERIAL);
+            }
+        };
+
     private static final Map<Integer, String> configValues =
             new HashMap<Integer, String>() {
                 {
@@ -84,5 +95,9 @@ public enum X509SigningRefType {
 
     public static X509SigningRefType valueOf(int i) {
         return intValues.get(Integer.valueOf(i));
+    }
+    
+    public static X509SigningRefType valueOfConfig(String s) {
+        return configKeys.get(s);
     }
 }

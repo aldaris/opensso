@@ -1,9 +1,9 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,25 +23,37 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wss.xhtml,v 1.2 2009-09-17 21:56:07 ggennaro Exp $
+   $Id: sts-sign-encrypt2.xhtml,v 1.1 2009-09-17 21:56:05 ggennaro Exp $
 
 -->
 
-<ui:composition
-    template="template/page-no-title.xhtml"
+<span
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:o="http://opensso.dev.java.net"
-    xmlns:ice="http://www.icesoft.com/icefaces/component">
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
 
-    <ui:define name="panel-body">
-        <o:landing page="wss">
-            <ui:define name="litems">
-                <o:litem action="wsc-create"/>
-                <o:litem action="sts-manage"/>
-            </ui:define>
-        </o:landing>
-    </ui:define>
+    <o:section>
+        <ui:define name="section-title">
+            <ice:outputText
+                value="#{resources['sts-sign-encrypt2.section-title']}"/>
+        </ui:define>
+        <ui:define name="section-details">
+            <ice:outputText
+                value="#{resources['sts-sign-encrypt2.section-details']}"/>
+        </ui:define>
+        <ui:define name="section-body">
 
-</ui:composition>
+            <ui:include src="wss-provider-sign-encrypt.xhtml">
+                <ui:param
+                    name="profileBean"
+                    value="#{stsManageWizardBean.stsProfileBean}"/>
+            </ui:include>
+
+        </ui:define>
+    </o:section>
+
+</span>
