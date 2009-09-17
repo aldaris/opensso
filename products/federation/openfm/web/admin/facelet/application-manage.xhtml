@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-manage.xhtml,v 1.4 2009-09-15 19:30:01 farble1670 Exp $
+   $Id: application-manage.xhtml,v 1.5 2009-09-17 16:58:43 farble1670 Exp $
 -->
 
 <ui:composition
@@ -113,18 +113,18 @@
                                 </center>
                             </f:facet>
                             <ice:panelGroup
-                                styleClass="policy-manage-cell"
+                                styleClass="application-manage-cell"
                                 visible="#{true}">
                                 <ice:outputLink
                                     rendered="#{permissionsBean.applicationEditAllowed}"
                                     styleClass="command-link"
                                     value="application-edit.xhtml?viewApplicationName=#{viewApplication.name}">
                                     <ice:outputText
-                                        value="#{viewApplication.name}"/>
+                                        value="#{viewApplication.title}"/>
                                 </ice:outputLink>
                                 <ice:outputLabel
                                     rendered="#{!permissionsBean.applicationEditAllowed}"
-                                    value="#{viewApplication.name}"/>
+                                    value="#{viewApplication.title}"/>
                             </ice:panelGroup>
                         </ice:column>
                         <ice:column
@@ -148,12 +148,154 @@
                             </ice:panelGroup>
                             <o:tooltip
                                 tooltipId="descriptionTooltip"
-                                title="#{viewApplication.name}: description">
+                                title="#{viewApplication.title}: description">
                                 <ui:define name="body">
                                     <ice:outputText
                                         value="#{viewApplcation.description}"/>
                                 </ui:define>
                             </o:tooltip>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{applicationManageBean.applicationManageTableBean.applicationTypeColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="applicationType"
+                                        actionListener="#{applicationManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['application-manage.applicationTypeColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="application-manage-cell"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{viewApplication.viewApplicationType.title}"/>
+                            </ice:panelGroup>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{applicationManageBean.applicationManageTableBean.resourcesColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:outputText
+                                        value="#{resources['application-manage.resourcesColumn']}"/>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="application-manage-cell"
+                                panelTooltip="resourcesTooltip"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{viewApplication.resourcesToString}"/>
+                            </ice:panelGroup>
+                            <o:tooltip
+                                tooltipId="resourcesTooltip"
+                                title="#{viewApplication.title}: resources">
+                                <ui:define name="body">
+                                    <pre>
+                                    <ice:outputText
+                                        value="#{viewApplication.resourcesToFormattedString}"/>
+                                    </pre>
+                                </ui:define>
+                            </o:tooltip>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{applicationManageBean.applicationManageTableBean.subjectTypesColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:outputText
+                                        value="#{resources['application-manage.subjectTypesColumn']}"/>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="application-manage-cell"
+                                panelTooltip="subjectTypesTooltip"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{viewApplication.subjectTypesToString}"/>
+                            </ice:panelGroup>
+                            <o:tooltip
+                                tooltipId="subjectTypesTooltip"
+                                title="#{viewApplication.title}: subject types">
+                                <ui:define name="body">
+                                    <pre>
+                                    <ice:outputText
+                                        value="#{viewApplication.subjectTypesToFormattedString}"/>
+                                    </pre>
+                                </ui:define>
+                            </o:tooltip>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{applicationManageBean.applicationManageTableBean.actionsColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:outputText
+                                        value="#{resources['application-manage.actionsColumn']}"/>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="application-manage-cell"
+                                panelTooltip="actionsTooltip"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{viewApplication.booleanActionsBean.actionsToString}"/>
+                            </ice:panelGroup>
+                            <o:tooltip
+                                tooltipId="actionsTooltip"
+                                title="#{viewApplication.title}: actions">
+                                <ui:define name="body">
+                                    <pre>
+                                    <ice:outputText
+                                        value="#{viewApplication.booleanActionsBean.actionsToFormattedString}"/>
+                                    </pre>
+                                </ui:define>
+                            </o:tooltip>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{applicationManageBean.applicationManageTableBean.conditionTypesColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:outputText
+                                        value="#{resources['application-manage.conditionTypesColumn']}"/>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="application-manage-cell"
+                                panelTooltip="conditionTypesTooltip"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{viewApplication.conditionTypesToString}"/>
+                            </ice:panelGroup>
+                            <o:tooltip
+                                tooltipId="conditionTypesTooltip"
+                                title="#{viewApplication.title}: condition types">
+                                <ui:define name="body">
+                                    <pre>
+                                    <ice:outputText
+                                        value="#{viewApplication.conditionTypesToFormattedString}"/>
+                                    </pre>
+                                </ui:define>
+                            </o:tooltip>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{applicationManageBean.applicationManageTableBean.overrideRuleColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="overrideRule"
+                                        actionListener="#{applicationManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['application-manage.overrideRuleColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="application-manage-cell"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{viewApplication.overrideRule.title}"/>
+                            </ice:panelGroup>
                         </ice:column>
                     </ice:dataTable>
                     <center>

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageTableBean.java,v 1.2 2009-09-15 19:30:00 farble1670 Exp $
+ * $Id: ApplicationManageTableBean.java,v 1.3 2009-09-17 16:58:42 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -74,10 +74,20 @@ public class ApplicationManageTableBean implements Serializable {
         comparators.put(new TableSortKey("name", false), new ViewApplication.NameComparator(false));
         comparators.put(new TableSortKey("description", true), new ViewApplication.DescriptionComparator(true));
         comparators.put(new TableSortKey("description", false), new ViewApplication.DescriptionComparator(false));
+        comparators.put(new TableSortKey("applicationType", true), new ViewApplication.ApplicationTypeComparator(true));
+        comparators.put(new TableSortKey("applicationType", false), new ViewApplication.ApplicationTypeComparator(false));
+        comparators.put(new TableSortKey("overrideRule", true), new ViewApplication.OverrideRuleComparator(false));
+        comparators.put(new TableSortKey("overrideRule", false), new ViewApplication.OverrideRuleComparator(false));
     }
 
     public ApplicationManageTableBean() {
         columnsVisible.add("description");
+        columnsVisible.add("applicationType");
+        columnsVisible.add("resources");
+        columnsVisible.add("subjectTypes");
+        columnsVisible.add("actions");
+        columnsVisible.add("conditionTypes");
+        columnsVisible.add("overrideRule");
     }
 
     public TableSortKey getSortKey() {
@@ -99,5 +109,29 @@ public class ApplicationManageTableBean implements Serializable {
 
     public boolean isDescriptionColumnVisible() {
         return columnsVisible.contains("description");
+    }
+
+    public boolean isApplicationTypeColumnVisible() {
+        return columnsVisible.contains("applicationType");
+    }
+
+    public boolean isResourcesColumnVisible() {
+        return columnsVisible.contains("resources");
+    }
+
+    public boolean isSubjectTypesColumnVisible() {
+        return columnsVisible.contains("subjectTypes");
+    }
+
+    public boolean isActionsColumnVisible() {
+        return columnsVisible.contains("actions");
+    }
+
+    public boolean isConditionTypesColumnVisible() {
+        return columnsVisible.contains("conditionTypes");
+    }
+
+    public boolean isOverrideRuleColumnVisible() {
+        return columnsVisible.contains("overrideRule");
     }
 }

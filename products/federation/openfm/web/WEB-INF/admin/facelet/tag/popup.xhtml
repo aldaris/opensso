@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: popup.xhtml,v 1.1 2009-08-19 05:41:06 veiming Exp $
+   $Id: popup.xhtml,v 1.2 2009-09-17 16:58:43 farble1670 Exp $
 
 -->
 
@@ -31,16 +31,48 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:o="http://opensso.dev.java.net"
+    xmlns:c="http://java.sun.com/jstl/core"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
 
+    <c:if
+        test="#{empty visible}">
+        <c:set
+            var="visible"
+            value="true"/>
+    </c:if>
+    <c:if
+        test="#{empty autoCentre}">
+        <c:set
+            var="autoCentre"
+            value="true"/>
+    </c:if>
+    <c:if
+        test="#{empty modal}">
+        <c:set
+            var="modal"
+            value="true"/>
+    </c:if>
+    <c:if
+        test="#{empty type}">
+        <c:set
+            var="type"
+            value="info"/>
+    </c:if>
+    <c:if
+        test="#{empty width}">
+        <c:set
+            var="width"
+            value="300"/>
+    </c:if>
+
     <ice:panelPopup
-        styleClass="popup-#{type == null ? 'info' : type}#{width != null ? ' width-' : ''}#{width != null ? width : ''}"
+        styleClass="popup-#{type} #{o:concat('width-',width)}"
         draggable="false"
-        autoCentre="#{autoCentre == null ? 'true' : autoCentre}"
-        modal="#{modal == null ? 'true' : modal}"
+        autoCentre="#{autoCentre}"
+        modal="#{modal}"
         positionOnLoadOnly="true"
-        visible="#{visible == null ? 'true' : visible}">
+        rendered="#{visible}">
         <f:facet name="header">
             <ice:panelGrid
                 width="100%"

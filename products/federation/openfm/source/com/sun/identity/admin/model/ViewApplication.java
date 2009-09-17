@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.3 2009-09-15 19:30:01 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.4 2009-09-17 16:58:42 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -89,6 +89,40 @@ public class ViewApplication implements Serializable {
                 return nullComparator.compare(va1.getDescription(), va2.getDescription());
             } else {
                 return nullComparator.compare(va2.getDescription(), va1.getDescription());
+            }
+        }
+    }
+
+    public static class ApplicationTypeComparator extends TableColumnComparator {
+        public ApplicationTypeComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            ViewApplication va1 = (ViewApplication) o1;
+            ViewApplication va2 = (ViewApplication) o2;
+
+            if (!isAscending()) {
+                return va1.getViewApplicationType().getName().compareTo(va2.getViewApplicationType().getName());
+            } else {
+                return va2.getViewApplicationType().getName().compareTo(va1.getViewApplicationType().getName());
+            }
+        }
+    }
+
+    public static class OverrideRuleComparator extends TableColumnComparator {
+        public OverrideRuleComparator(boolean ascending) {
+            super(ascending);
+        }
+
+        public int compare(Object o1, Object o2) {
+            ViewApplication va1 = (ViewApplication) o1;
+            ViewApplication va2 = (ViewApplication) o2;
+
+            if (!isAscending()) {
+                return va1.getOverrideRule().compareTo(va2.getOverrideRule());
+            } else {
+                return va2.getOverrideRule().compareTo(va1.getOverrideRule());
             }
         }
     }
@@ -350,6 +384,14 @@ public class ViewApplication implements Serializable {
 
     public String getResourcesToString() {
         return new ListFormatter(resources).toString();
+    }
+
+    public String getSubjectTypesToString() {
+        return new ListFormatter(subjectTypes).toString();
+    }
+
+    public String getConditionTypesToString() {
+        return new ListFormatter(conditionTypes).toString();
     }
 
     public String getResourcesToFormattedString() {
