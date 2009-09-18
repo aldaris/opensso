@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyModelImpl.java,v 1.5 2009-09-15 17:08:46 veiming Exp $
+ * $Id: PolicyModelImpl.java,v 1.6 2009-09-18 00:08:22 veiming Exp $
  *
  */
 
@@ -727,7 +727,7 @@ public class PolicyModelImpl
         boolean can = false;
         try {
             PolicyManager mgr = getPolicyManager(realmName);
-            mgr.canCreateNewResource(svcTypeName);
+            can = mgr.canCreateNewResource(svcTypeName);
         } catch (AMConsoleException e) {
             debug.warning("PolicyModelImpl.canCreateNewResource", e);
         }
