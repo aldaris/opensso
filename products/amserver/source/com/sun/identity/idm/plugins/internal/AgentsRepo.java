@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.45 2009-01-28 05:34:59 ww203982 Exp $
+ * $Id: AgentsRepo.java,v 1.46 2009-09-21 19:47:28 goodearth Exp $
  *
  */
 
@@ -250,6 +250,18 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
                 ServiceConfig orgConfig = getOrgConfig(token);
                 if (!orgConfig.getSubConfigNames().contains(agentName)) {
+                    /*
+                     * While migrating 2.2 agents to new ones, look for the
+                     * attribute 'entrydn' and  remove this 'entrydn' while 
+                     * creating the agent, as it gets added in a 
+                     * getAttributes() call explicitly to the result set and 
+                     * returned. Reason:
+                     *  When queried with this entrydn/dn the lower level 
+                     *  api/ ldapjdk does not return this operational attribute.
+                     */
+                    if (attrMap.containsKey("entrydn")) {
+                        attrMap.remove("entrydn");
+                    }
                     orgConfig.addSubConfig(agentName, agentType, 0, attrMap);
                     aTypeConfig = orgConfig.getSubConfig(agentName);
                 } else {
