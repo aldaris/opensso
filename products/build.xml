@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.52 2009-08-28 22:29:50 veiming Exp $
+   $Id: build.xml,v 1.53 2009-09-21 20:02:33 bigfatrat Exp $
 
 -->
 
@@ -70,6 +70,7 @@
 
     <target name="server-nightly" depends="checkjar,create-version">
         <mkdir dir="${prd.nightly.dist.dir}" />
+        <antcall target="am-mib" />
         <antcall target="amserver-nightly" />
         <antcall target="fedlibrary-nightly" />
         <antcall target="openfm-nightly" />
@@ -104,6 +105,7 @@
 
     <target name="server-war" depends="create-version">
         <mkdir dir="${prd.nightly.dist.dir}" />
+        <antcall target="am-mib" />
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
             target="sample-war" />
         <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
@@ -119,6 +121,28 @@
         <!-- fake a copy to pass check-openfm-jars.xml -->
         <ant antfile="${fm.base.dir}/build.xml" inheritRefs="true"
             target="war" />
+    </target>
+
+    <target name="am-mib">
+        <mkdir dir="${amserver.built.dir}/mib" />
+        <unzip src="${extlib.dir}/jdmk51_02-allplatforms.zip"
+            dest="${amserver.built.dir}/mib" />
+        <unzip src="${amserver.built.dir}/mib/sun-jdmk-sdk-5.1-b34.2.zip"
+            dest="${amserver.built.dir}/mib" />
+        <unzip src="${amserver.built.dir}/mib/sun-jdmk-runtime-5.1-b34.2.zip"
+            dest="${amserver.built.dir}/mib" />
+        <unzip src="${amserver.built.dir}/mib/sun-jdmk-runtime-jmx-5.1-b34.2.zip"
+            dest="${amserver.built.dir}/mib" />
+        <java classname="com.sun.jdmk.tools.MibGen" fork="true"
+            classpath="${amserver.built.dir}/mib/SUNWjdmk/5.1/lib/jmx.jar:${amserver.built.dir}/mib/SUNWjdmk/5.1/lib/jdmkrt.jar:${amserver.built.dir}/mib/SUNWjdmk/5.1/lib/jdmktk.jar">
+            <arg line="-d ${amserver.built.dir}/mib -tp com.sun.identity.monitoring ${amserver.base.dir}/resources/mib/SUN-OPENSSO-SERVER.mib"/>
+        </java>
+        <copy todir="${amserver.src.dir}/com/sun/identity/monitoring">
+            <fileset dir="${amserver.built.dir}/mib">
+                <include name="*.java"/>
+                <exclude name="SUN_OPENSSO_SERVER_MIB.java"/>
+            </fileset>
+        </copy>
     </target>
 
     <target name="remove-amserver-bits">
