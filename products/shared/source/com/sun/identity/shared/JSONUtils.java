@@ -22,10 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JSONUtils.java,v 1.1 2009-08-19 05:40:36 veiming Exp $
+ * $Id: JSONUtils.java,v 1.1 2009-09-21 18:33:44 dillidorai Exp $
  */
 
-package com.sun.identity.entitlement.util;
+package com.sun.identity.shared;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -76,6 +76,10 @@ public class JSONUtils {
                 for (int j = 0; j < values.length(); j++) {
                     set.add((String) values.get(j));
                 }
+            } else if (test instanceof Boolean) {
+                Set<String> set = new HashSet<String>();
+                results.put(k, set);
+                set.add(test.toString());
             } else if (test.equals(JSONObject.NULL)) {
                 results.put(k, null);
             }

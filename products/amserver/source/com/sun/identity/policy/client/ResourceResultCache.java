@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.14 2009-02-28 04:14:58 dillidorai Exp $
+ * $Id: ResourceResultCache.java,v 1.15 2009-09-21 18:33:45 dillidorai Exp $
  *
  */
 
@@ -30,6 +30,7 @@
 package com.sun.identity.policy.client;
 
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.JSONUtils;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
@@ -47,6 +48,10 @@ import com.iplanet.services.comm.share.RequestSet;
 import com.iplanet.services.comm.share.Response;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.services.naming.URLNotFoundException;
+import com.sun.identity.common.HttpURLConnectionManager;
+
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdUtils;
 import com.sun.identity.policy.ActionDecision;
 import com.sun.identity.policy.PolicyDecision;
 import com.sun.identity.policy.PolicyException;
@@ -65,16 +70,27 @@ import com.sun.identity.policy.remote.PolicyResponse;
 import com.sun.identity.policy.remote.PolicyService;
 import com.sun.identity.policy.remote.RemoveListenerRequest;
 import com.sun.identity.policy.remote.ResourceResultRequest;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.net.HttpURLConnection;
 import java.net.URL;
+
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.util.Set;
 import com.sun.identity.policy.ResBundleUtils;
 
+
+import org.json.JSONObject;
 
 /**
  * Singleton class that implements client side policy decision cache.
@@ -102,6 +118,23 @@ class ResourceResultCache implements SSOTokenListener {
     private static Debug debug = PolicyEvaluator.debug;
 
     private static final String POLICY_SERVICE_ID_FOR_NAMING = "policy";
+
+    private static final String POLICY_SERVICE = "policyservice";
+    private static final String REST_POLICY_SERVICE = "ws/1/entitlement/entitlement";
+
+    private static final String IPLANET_AM_WEB_AGENT_SERVICE = "iPlanetAMWebAgentService";
+
+    private static final String REST_QUERY_REALM = "realm";
+    private static final String REST_QUERY_APPLICATION = "applicationName";
+    private static final String REST_QUERY_SUBJECT = "subject";
+    private static final String REST_QUERY_RESOURCE = "resource";
+    private static final String REST_QUERY_ACTION = "actionName";
+    private static final String REST_QUERY_ENV = "env";
+
+    private static final String JSON_RESOURCE_NAME = "resourceName";
+    private static final String JSON_ACTIONS_VALUES = "actionsValues";
+    private static final String JSON_ADVICES = "advices";
+    private static final String JSON_ATTRIBUTES = "attributes";
 
     private static final String GET_RESPONSE_ATTRIBUTES 
             = "Get_Response_Attributes";
@@ -387,6 +420,7 @@ class ResourceResultCache implements SSOTokenListener {
                     + ":resourceName=" + resourceName 
                     + ":actionNames=" + actionNames + ":env" 
                     + ":useCache=" + useCache
+                    + ":useRESTProtocol()=" + policyProperties.useRESTProtocol()
                     + ":entering ");
         }
 
@@ -511,10 +545,19 @@ class ResourceResultCache implements SSOTokenListener {
         }
 
         // changed to fix 4205 Policy client code has bottleneck when processing notificati 
+        // FIXME: remove the check for service name with the some fix on server
         if (fetchResultsFromServer) {
-            resourceResults = getResultsFromServer(appToken, 
-                    serviceName, token, resourceName, scope, 
-                    actionNames, env);
+            if(policyProperties.useRESTProtocol() &&
+                    PolicyProperties.SELF.equals(scope)
+                    && IPLANET_AM_WEB_AGENT_SERVICE.equalsIgnoreCase(serviceName)) {
+                resourceResults = getRESTResultsFromServer(appToken, 
+                        serviceName, token, resourceName, scope, 
+                        actionNames, env);
+            } else {
+                resourceResults = getResultsFromServer(appToken, 
+                        serviceName, token, resourceName, scope, 
+                        actionNames, env);
+            }
             results[0] = resourceResults;
 
             if (env != null) {
@@ -552,6 +595,74 @@ class ResourceResultCache implements SSOTokenListener {
         return resourceResults;
     }
 
+    private Set getRESTResultsFromServer(SSOToken appToken, String serviceName,
+            SSOToken token, String resourceName, String scope, 
+            Set actionNames, Map env) 
+            throws InvalidAppSSOTokenException, SSOException,
+            PolicyException {
+        // FIXME: handle scope subtree, right now works only for self mode
+        Set resourceResults = new HashSet();
+        try {        
+            AMIdentity userIdentity  = IdUtils.getIdentity(token);
+            //FIXME: need to be able to handle non uuid, for example ssoTokenId
+            String subjectUuid = userIdentity.getUniversalId();
+            String restUrl = getRESTPolicyServiceURL(token);
+            String queryString = buildQueryString("/", serviceName, subjectUuid,
+                    resourceName, actionNames, env);
+            restUrl = restUrl + "?" + queryString;
+            if (debug.messageEnabled()) {
+                debug.message("ResourceResultCache.getRESTResultsFromServer():"
+                        + ":serviceName=" + serviceName 
+                        + ":token=" + token.getPrincipal().getName() 
+                        + ":resourceName=" + resourceName 
+                        + ":scope=" + scope 
+                        + ":actionNames=" + actionNames + ":env" 
+                        + ":restUrl=" + restUrl
+                        + ":entering");
+            }
+            String jsonString = getResourceContent(restUrl);
+            if (debug.messageEnabled()) {
+                debug.message("ResourceResultCache.getRESTResultsFromServer():"
+                        + ":server response jsonString=" + jsonString); 
+            }
+            JSONObject jsonObject = new JSONObject(jsonString);
+            String resultResourceName = jsonObject.optString(JSON_RESOURCE_NAME); 
+            Map<String, Set<String>> actionsValues = JSONUtils.getMapStringSetString(
+                    jsonObject, JSON_ACTIONS_VALUES);
+            Map<String, Set<String>> advices = JSONUtils.getMapStringSetString(
+                    jsonObject, JSON_ADVICES);
+            Map<String, Set<String>> attributes = JSONUtils.getMapStringSetString(
+                    jsonObject, JSON_ATTRIBUTES);
+            Set<String> actNames = (actionsValues != null) 
+                    ? actionsValues.keySet() : null;
+            PolicyDecision pd = new PolicyDecision();
+            if (actNames != null) {
+                for (String actName : actNames) {
+                    Set<String> actValues = actionsValues.get(actName);
+                    actValues  = mapActionBooleanToString(serviceName, actName, actValues);
+                    ActionDecision ad = new ActionDecision(actName, actValues);
+                    ad.setAdvices(advices);
+                    pd.addActionDecision(ad);
+                }
+            }
+            pd.setResponseDecisions(attributes);
+            ResourceResult rr = new ResourceResult(
+                    resourceName,
+                    pd);
+            resourceResults.add(rr);
+        } catch (Exception e) {
+            String[] args = {e.getMessage()};
+            throw new PolicyEvaluationException(
+                    ResBundleUtils.rbName,
+                    "rest_policy_request_exception",
+                    args, e);
+        }
+        if (debug.messageEnabled()) {
+            debug.message("ResourceResultCache.getRESTResultsFromServer():"
+                    + "returning");
+        }
+        return resourceResults;
+    }
 
     /**
      * Returns a set of <code>ResourceResult</code> objects from server.
@@ -1551,5 +1662,162 @@ class ResourceResultCache implements SSOTokenListener {
         return hasAdvices;
     }
     
+    private String getRESTPolicyServiceURL(SSOToken token) throws SSOException, PolicyException {
+        String restUrl = null;
+        URL policyServiceURL = getPolicyServiceURL(token);
+        restUrl = policyServiceURL.toString();
+        restUrl = restUrl.replace(POLICY_SERVICE, REST_POLICY_SERVICE);
+        if (debug.messageEnabled()) {
+            debug.message("ResourceResultCache.getRESTPolicyServiceURL():"
+                + "restPolicyServiceUrl=" + restUrl);
+        }
+        return restUrl;
+    }
+
+    private static Set<String> mapActionBooleanToString(String serviceName, String actionName, 
+            Set actValues) {
+        Set values = null;
+        if (actValues != null) {
+            values = new HashSet<String>();
+            values.addAll(actValues);
+            if (values.remove("true")) {
+                values.add("allow");
+            }
+            if (values.remove("false")) {
+                values.add("deny");
+            }
+        } 
+        return values;
+    }
+
+    String getResourceContent(String url) throws PolicyException {
+        StringBuilder sb = new StringBuilder();
+        HttpURLConnection conn = null;
+        OutputStream out = null;
+        BufferedReader reader = null;
+        try {
+            conn = HttpURLConnectionManager.getConnection(new URL(url));
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("GET");
+            conn.connect();
+
+            reader =  new BufferedReader(
+                    new InputStreamReader(
+                    conn.getInputStream(), "UTF-8"));
+            int len;
+            char[] buf = new char[1024];
+            while ((len = reader.read(buf, 0, buf.length)) != -1) {
+                sb.append(buf, 0, len);
+            }
+            int responseCode = conn.getResponseCode();
+            if (responseCode != conn.HTTP_OK) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("ResourceResultCache.getResourceContent():"
+                                + "REST call failed with HTTP response code:" + responseCode);
+                    }
+                    throw new PolicyException(
+                            "Entitlement REST call failed with error code:" + responseCode);
+            }
+        } catch (UnsupportedEncodingException uee) {
+            // should not happen
+            debug.error("ResourceResultCache.getResourceContent():"
+                    + "UnsupportedEncodingException:" + uee.getMessage());
+        } catch (IOException ie) {
+            debug.error("IOException:" + ie);
+            throw new PolicyException(ResBundleUtils.rbName,
+                    "rest_call_failed_with_io_exception", null, ie);
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+                if (conn != null) {
+                    conn.disconnect();
+                }
+                
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return sb.toString();
+    }
+
+    static String buildQueryString(
+            String realm, 
+            String serviceName, 
+            String subjectUuid,
+            String resource,
+            Set actionNames,
+            Map envMap) throws PolicyException {
+        StringBuilder sb = new StringBuilder();
+        try {
+            realm = (realm == null || (realm.trim().length() == 0)) ? "/"
+                    : realm;
+            realm = URLEncoder.encode(realm, "UTF-8");
+            sb.append(REST_QUERY_REALM).append("=");
+            sb.append(realm);
+            if ((serviceName == null) || (serviceName.length() == 0)) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ResourceResultCache.buildQueryString():"
+                            + "serviceName can not be null");
+                }
+                throw new PolicyException(ResBundleUtils.rbName,
+                        "service_name_can_not_be_null", null, null);
+            } else {
+                sb.append("&").append(REST_QUERY_APPLICATION).append("=");
+                sb.append(URLEncoder.encode(serviceName, "UTF-8"));
+            }
+            if ((subjectUuid == null) || (subjectUuid.trim().length() == 0)) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ResourceResultCache.buildQueryString():"
+                            + "subject can not be null");
+                }
+                throw new PolicyException(ResBundleUtils.rbName,
+                        "subject_can_not_be_null", null, null);
+            } else {
+                sb.append("&").append(REST_QUERY_SUBJECT).append("=");
+                sb.append(URLEncoder.encode(subjectUuid, "UTF-8"));
+            }
+            if ((resource == null) || (resource.trim().length() == 0)) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ResourceResultCache.buildQueryString():"
+                            + "resource can not be null");
+                }
+                throw new PolicyException(ResBundleUtils.rbName,
+                        "resource_can_not_be_null", null, null);
+            } else {
+                sb.append("&").append(REST_QUERY_RESOURCE).append("=");
+                sb.append(URLEncoder.encode(resource, "UTF-8"));
+            }
+            if ((actionNames != null) && !actionNames.isEmpty()) {
+                for (Object actObj: actionNames) {
+                    sb.append("&").append(REST_QUERY_ACTION).append("=");
+                    sb.append(URLEncoder.encode(actObj.toString(), "UTF-8"));
+                }
+            }
+            if ((envMap != null) && !envMap.isEmpty()) {
+                String encodedEq = URLEncoder.encode("=", "UTF-8");
+                Set keys = envMap.keySet();
+                for (Object keyOb : keys) {
+                    Set values = (Set)envMap.get(keyOb);
+                    String key = URLEncoder.encode(keyOb.toString(), "UTF-8");
+                    if ((values != null) && !values.isEmpty()) {
+                        for (Object valueOb : values) {
+                            sb.append("&").append(REST_QUERY_ENV).append("=");
+                            sb.append(key);
+                            sb.append(encodedEq);
+                            sb.append(URLEncoder.encode(valueOb.toString(), "UTF-8"));
+                        }
+                    }
+                }
+            }
+        } catch (UnsupportedEncodingException use) {
+            // should not happen
+            debug.error("ResourceResultCache.buildQueryString():" + use.getMessage());
+        }
+        return sb.toString();
+    }
+
 }
 

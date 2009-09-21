@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyProperties.java,v 1.8 2009-02-28 04:14:58 dillidorai Exp $
+ * $Id: PolicyProperties.java,v 1.9 2009-09-21 18:33:45 dillidorai Exp $
  *
  */
 
@@ -101,16 +101,22 @@ class PolicyProperties {
     public static final String RESULTS_CACHE_SESSION_CAP 
             = "com.sun.identity.policy.client.resultsCacheSessionCap";
 
+    public static final String  USE_REST_PROTOCOL
+            = "com.sun.identity.policy.client.useRESTProtocol";
+
+    public static final String  USE_REST_PROTOCOL_DEFAULT
+            = "false";
+
+    public static int DEFAULT_RESULTS_CACHE_RESOURCE_CAP = 20;
+
+    public static int resultsCacheResourceCap = DEFAULT_RESULTS_CACHE_RESOURCE_CAP;
+
     public static int DEFAULT_RESULTS_CACHE_SESSION_CAP = 10000;
 
     public static int resultsCacheSessionCap = DEFAULT_RESULTS_CACHE_SESSION_CAP;
 
     public static final String RESULTS_CACHE_RESOURCE_CAP 
             = "com.sun.identity.policy.client.resultsCacheResourceCap";
-
-    public static int DEFAULT_RESULTS_CACHE_RESOURCE_CAP = 20;
-
-    public static int resultsCacheResourceCap = DEFAULT_RESULTS_CACHE_RESOURCE_CAP;
 
     private final static String COLON = ":";
     private final static String PIPE = "|";
@@ -131,6 +137,7 @@ class PolicyProperties {
     private int cacheTtl; //milliseconds
     private String cacheMode;
     private int cleanupInterval; //milliseconds
+    private int urlReadTimeout; //milliseconds
     private boolean notificationEnabledFlag = false;
     private Map resourceComparators = new HashMap(10);
     private Map booleanActionValues = new HashMap(10);
@@ -138,6 +145,7 @@ class PolicyProperties {
     private String pre22TrueValue = PRE22_TRUE_VALUE_DEFAULT;
     private String pre22FalseValue = PRE22_FALSE_VALUE;
     private ResourceName prefixResourceName = new PrefixResourceName();
+    private boolean useRESTProtocolFlag = false;
 
     /**
      * Difference of system clock on the client machine compared to 
@@ -495,10 +503,25 @@ class PolicyProperties {
             }
         }
         
+        //initialize useRESTProtocolFlag property
+        String useRESTProtocolString = getSystemProperty(USE_REST_PROTOCOL, ignoreCase);
+        if ((useRESTProtocolString == null) || (useRESTProtocolString.length() == 0)) {
+                if (debug.warningEnabled()) {
+                    debug.warning("PolicyProperties:invalid value for poperty:"
+                        + USE_REST_PROTOCOL + ":defaulting to:"
+                        + USE_REST_PROTOCOL_DEFAULT);
+                }
+                useRESTProtocolString = USE_REST_PROTOCOL_DEFAULT;
+        }
+        useRESTProtocolFlag = Boolean.valueOf(useRESTProtocolString).booleanValue();
+        if (debug.messageEnabled()) {
+            debug.message("PolicyProperties:useRESTProtocolFlag=" 
+                    + useRESTProtocolFlag);
+        }
+
         if (debug.messageEnabled()) {
             debug.message("PolicyProperties():constructed");
         }
-
     }
 
     /**
@@ -554,6 +577,17 @@ class PolicyProperties {
      */
     long getClientClockSkew() {
         return clientClockSkew;
+    }
+
+    /**
+     * Checks if policy client should use REST protocol to talk to sever
+     * to get results. At present, REST protocol would be used only if
+     * results are requested for self mode
+     * @return <code>true</code> if client should use REST protocol to
+     * talk to server
+     */
+    boolean useRESTProtocol() {
+        return useRESTProtocolFlag;
     }
 
     /**

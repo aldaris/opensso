@@ -22,12 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.1 2009-08-19 05:40:32 veiming Exp $
+ * $Id: Entitlement.java,v 1.2 2009-09-21 18:33:45 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
-import com.sun.identity.entitlement.util.JSONUtils;
+import com.sun.identity.shared.JSONUtils;
 import com.sun.identity.shared.ldap.LDAPDN;
 import com.sun.identity.shared.ldap.util.DN;
 import java.security.Principal;

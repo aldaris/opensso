@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.3 2009-09-03 06:09:27 veiming Exp $
+ * $Id: Privilege.java,v 1.4 2009-09-21 18:33:45 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.util.JSONUtils;
+import com.sun.identity.shared.JSONUtils;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;

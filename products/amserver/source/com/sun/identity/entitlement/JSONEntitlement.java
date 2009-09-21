@@ -22,12 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JSONEntitlement.java,v 1.1 2009-09-10 16:35:38 veiming Exp $
+ * $Id: JSONEntitlement.java,v 1.2 2009-09-21 18:33:45 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.util.JSONUtils;
+import com.sun.identity.shared.JSONUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
