@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-manage.xhtml,v 1.5 2009-09-17 16:58:43 farble1670 Exp $
+   $Id: application-manage.xhtml,v 1.6 2009-09-21 20:35:12 farble1670 Exp $
 -->
 
 <ui:composition
@@ -43,6 +43,8 @@
             value="#{resources['application-manage.panelDetails']}" />
     </ui:define>
     <ui:define name="panel-body">
+        <ui:include
+            src="/admin/facelet/template/application-manage-view-options-popup.xhtml"/>
         <o:section>
             <ui:define name="section-title">
                 <ice:dataPaginator
@@ -68,6 +70,10 @@
             <ui:define name="section-links">
                 <ice:panelGrid
                     columns="5">
+                    <o:clink
+                        type="view-options"
+                        handler="#{applicationManageHandler}"
+                        listenerMethod="viewOptionsListener"/>
                 </ice:panelGrid>
             </ui:define>
             <ui:define name="section-body">

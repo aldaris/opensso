@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageBean.java,v 1.1 2009-09-09 17:13:43 farble1670 Exp $
+ * $Id: ApplicationManageBean.java,v 1.2 2009-09-21 20:35:12 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -37,6 +37,9 @@ public class ApplicationManageBean implements Serializable {
     private ViewApplicationDao viewApplicationDao;
     private ApplicationManageTableBean applicationManageTableBean = new ApplicationManageTableBean();
     private boolean selectAll = false;
+    private boolean viewOptionsPopupVisible = false;
+    private List<String> viewOptionsPopupColumnsVisible = new ArrayList<String>();
+    private int viewOptionsPopupRows = 10;
 
     public List<ViewApplication> getViewApplications() {
         return viewApplications;
@@ -63,5 +66,29 @@ public class ApplicationManageBean implements Serializable {
 
     public void setSelectAll(boolean selectAll) {
         this.selectAll = selectAll;
+    }
+
+    public boolean isViewOptionsPopupVisible() {
+        return viewOptionsPopupVisible;
+    }
+
+    public void setViewOptionsPopupVisible(boolean viewOptionsPopupVisible) {
+        this.viewOptionsPopupVisible = viewOptionsPopupVisible;
+    }
+
+    public List<String> getViewOptionsPopupColumnsVisible() {
+        return viewOptionsPopupColumnsVisible;
+    }
+
+    public void setViewOptionsPopupColumnsVisible(List<String> viewOptionsPopupColumnsVisible) {
+        this.viewOptionsPopupColumnsVisible = viewOptionsPopupColumnsVisible;
+    }
+
+    public int getViewOptionsPopupRows() {
+        return viewOptionsPopupRows;
+    }
+
+    public void setViewOptionsPopupRows(int viewOptionsPopupRows) {
+        this.viewOptionsPopupRows = viewOptionsPopupRows;
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageHandler.java,v 1.1 2009-09-09 17:13:43 farble1670 Exp $
+ * $Id: ApplicationManageHandler.java,v 1.2 2009-09-21 20:35:11 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -47,6 +47,26 @@ public class ApplicationManageHandler implements Serializable {
         ViewApplication va = (ViewApplication) event.getComponent().getAttributes().get("viewApplication");
         assert (va != null);
         return va;
+    }
+
+    public void viewOptionsListener(ActionEvent event) {
+        applicationManageBean.getViewOptionsPopupColumnsVisible().clear();
+        applicationManageBean.getViewOptionsPopupColumnsVisible().addAll(applicationManageBean.getApplicationManageTableBean().getColumnsVisible());
+        applicationManageBean.setViewOptionsPopupRows(applicationManageBean.getApplicationManageTableBean().getRows());
+
+        applicationManageBean.setViewOptionsPopupVisible(true);
+    }
+
+    public void viewOptionsPopupCancelListener(ActionEvent event) {
+        applicationManageBean.setViewOptionsPopupVisible(false);
+    }
+
+    public void viewOptionsPopupOkListener(ActionEvent event) {
+        applicationManageBean.getApplicationManageTableBean().getColumnsVisible().clear();
+        applicationManageBean.getApplicationManageTableBean().getColumnsVisible().addAll(applicationManageBean.getViewOptionsPopupColumnsVisible());
+        applicationManageBean.getApplicationManageTableBean().setRows(applicationManageBean.getViewOptionsPopupRows());
+
+        applicationManageBean.setViewOptionsPopupVisible(false);
     }
 
     public void selectAllListener(ActionEvent event) {
