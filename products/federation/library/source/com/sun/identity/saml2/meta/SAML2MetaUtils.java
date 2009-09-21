@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaUtils.java,v 1.8 2008-08-13 20:48:25 weisun2 Exp $
+ * $Id: SAML2MetaUtils.java,v 1.9 2009-09-21 17:28:12 exu Exp $
  *
  */
 
@@ -46,11 +46,15 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
+import com.sun.identity.shared.xml.XMLUtils;
 
+import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.jaxb.entityconfig.AttributeType;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
@@ -64,7 +68,6 @@ import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLPDPDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzDecisionQueryDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadataextquery.AttributeQueryDescriptorElement;
-import com.sun.identity.shared.configuration.SystemPropertiesManager;
 /**
  * The <code>SAML2MetaUtils</code> provides metadata related util methods.
  */
@@ -565,5 +568,68 @@ public final class SAML2MetaUtils {
         }
 
         return null;
+    }
+
+    public static String exportStandardMeta(String realm, String entityID,
+	boolean sign)
+	throws SAML2MetaException {
+
+	try {
+	    SAML2MetaManager metaManager = new SAML2MetaManager();
+	    EntityDescriptorElement descriptor =
+		metaManager.getEntityDescriptor(realm, entityID);
+
+	    String xmlstr = null;
+	    if (descriptor == null) {
+		return null;
+	    }
+
+	    if (sign) {
+		SPSSOConfigElement spConfig = metaManager.getSPSSOConfig(
+		    realm, entityID);
+		IDPSSOConfigElement idpConfig = metaManager.getIDPSSOConfig(
+                    realm, entityID);
+		Document doc = SAML2MetaSecurityUtils.sign(descriptor,
+                    spConfig, idpConfig);
+		if (doc != null) {
+                    xmlstr = XMLUtils.print(doc);
+		}
+            }
+            if (xmlstr == null) {
+		xmlstr = convertJAXBToString(descriptor);
+		xmlstr = SAML2MetaSecurityUtils.formatBase64BinaryElement(
+                    xmlstr);
+            }
+            xmlstr = workaroundAbstractRoleDescriptor(xmlstr);
+            return xmlstr;
+	} catch (JAXBException e) {
+            throw new SAML2MetaException(e.getMessage());
+	}
+    }
+
+    private static String workaroundAbstractRoleDescriptor(String xmlstr) {
+	int index =
+	    xmlstr.indexOf(":" +SAML2MetaConstants.ATTRIBUTE_QUERY_DESCRIPTOR);
+	if (index == -1) {
+            return xmlstr;
+	}
+
+        int index2 = xmlstr.lastIndexOf("<", index);
+	if (index2 == -1) {
+            return xmlstr;
+	}
+
+        String prefix = xmlstr.substring(index2 + 1, index);
+	String type =  prefix + ":" +
+            SAML2MetaConstants.ATTRIBUTE_QUERY_DESCRIPTOR_TYPE;
+
+	xmlstr = xmlstr.replaceAll("<" + prefix + ":" +
+            SAML2MetaConstants.ATTRIBUTE_QUERY_DESCRIPTOR,
+            "<" + SAML2MetaConstants.ROLE_DESCRIPTOR + " " +
+            SAML2Constants.XSI_DECLARE_STR + " xsi:type=\"" + type + "\"");
+	xmlstr = xmlstr.replaceAll("</" + prefix + ":" +
+           SAML2MetaConstants.ATTRIBUTE_QUERY_DESCRIPTOR,
+            "</" + SAML2MetaConstants.ROLE_DESCRIPTOR);
+	return xmlstr;
     }
 }

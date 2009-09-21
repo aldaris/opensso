@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: exportmetadata.jsp,v 1.5 2009-01-14 07:52:54 hengming Exp $
+   $Id: exportmetadata.jsp,v 1.6 2009-09-21 17:28:12 exu Exp $
 
 
    NOTE : remove this JSP from the OpenSSO WAR if you don't want to 
@@ -31,7 +31,7 @@
 --%><%@ page 
     import="com.sun.identity.saml2.common.SAML2Constants, 
             com.sun.identity.saml2.meta.SAML2MetaManager,
-            com.sun.identity.workflow.ExportSAML2MetaData,
+            com.sun.identity.saml2.meta.SAML2MetaUtils,
             java.util.List"
 %><%
     // This JSP is used to export standard entity metadata, 
@@ -88,7 +88,7 @@
         if ((entityID == null) || (entityID.length() == 0)) {
             errorMsg = "No matching entity metadata found.";
         } else {
-            metaXML = ExportSAML2MetaData.exportStandardMeta(realm, entityID,
+            metaXML = SAML2MetaUtils.exportStandardMeta(realm, entityID,
                 sign);
             if (metaXML == null) {
                 errorMsg = "No metadata for entity \"" + entityID +
