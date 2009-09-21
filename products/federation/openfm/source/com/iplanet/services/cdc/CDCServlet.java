@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCServlet.java,v 1.10 2009-02-03 00:44:07 ericow Exp $
+ * $Id: CDCServlet.java,v 1.11 2009-09-21 16:45:30 ericow Exp $
  *
  */
 
@@ -800,6 +800,7 @@ public class CDCServlet extends HttpServlet {
             
             response.setContentType("text/html");
             response.setHeader("Pragma", "no-cache");
+            response.setHeader("cdcservlet_auto_post", "true");
             
             Object[] params = {destURL, b64Resp};
             PrintWriter out = response.getWriter();
