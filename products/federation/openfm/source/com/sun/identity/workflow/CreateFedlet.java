@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.15 2009-07-24 22:54:08 madan_ranganath Exp $
+ * $Id: CreateFedlet.java,v 1.16 2009-09-21 17:27:04 exu Exp $
  *
  */
 
@@ -30,6 +30,8 @@ package com.sun.identity.workflow;
 
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.cot.COTException;
+import com.sun.identity.saml2.meta.SAML2MetaException;
+import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -310,8 +312,13 @@ public class CreateFedlet
         throws WorkflowException {
         String realm = getString(params, ParameterKeys.P_REALM);
         String idp = getString(params, ParameterKeys.P_IDP);
-        String metadata = ExportSAML2MetaData.exportStandardMeta(
-            realm, idp, false);
+        String metadata = null;
+        try {
+            metadata = SAML2MetaUtils.exportStandardMeta(
+                realm, idp, false);
+        } catch (SAML2MetaException se) {
+            throw new WorkflowException(se.getMessage());
+        }
         String extended = ExportSAML2MetaData.exportExtendedMeta(
             realm, idp);
         
