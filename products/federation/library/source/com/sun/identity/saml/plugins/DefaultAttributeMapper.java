@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAttributeMapper.java,v 1.3 2008-06-25 05:47:35 qcheng Exp $
+ * $Id: DefaultAttributeMapper.java,v 1.4 2009-09-22 23:04:36 exu Exp $
  *
  */
 
@@ -197,7 +197,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
         // assume user in default root realm
         DataStoreProvider provider = null;
         try {
-            DataStoreProviderManager.getInstance().
+            provider = DataStoreProviderManager.getInstance().
                 getDataStoreProvider(SAMLConstants.SAML);
         } catch (DataStoreProviderException de) {
             if (SAMLUtils.debug.messageEnabled()) {
