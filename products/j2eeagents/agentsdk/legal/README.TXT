@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 Sun Microsystems, Inc.
-OpenSSO Policy Agent 3.0
+OpenSSO Policy Agent 3.0-ER1
 -----------------------------------------------------------------------------
 
 The product manual and release notes for this product are published
