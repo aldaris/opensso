@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.42 2009-08-29 03:05:57 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.43 2009-09-22 05:45:46 mallas Exp $
  *
  */
 
@@ -339,7 +339,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
            if(checkForReplay(subject, secureMsg.getMessageTimestamp(),
                    config.getProviderName())) {
               throw new SecurityException(
-                      bundle.getString("replayAttackDeteced")); 
+                      bundle.getString("replayAttackDetected")); 
            }
         }
         
