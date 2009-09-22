@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSubjectMapper.java,v 1.3 2008-06-25 05:50:16 qcheng Exp $
+ * $Id: FMSubjectMapper.java,v 1.4 2009-09-22 22:57:43 madan_ranganath Exp $
  *
  */
 
@@ -39,6 +39,8 @@ import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.impl.FMSessionProvider;
+
+import com.sun.identity.saml2.profile.IDPCache;
 
 import com.sun.identity.shared.xml.XMLUtils;
 
@@ -156,6 +158,16 @@ public class FMSubjectMapper implements SubjectMapper {
                                 Element sidElement = (Element)attr.getAttributeValues()
                                         .get(0);
                                 userName = XMLUtils.getElementValue(sidElement);
+                            } else if (tmpURI.toString().equals(
+                                    XACMLConstants.SAML2_NAMEID)) {
+                                Element sidElement = (Element)attr.getAttributeValues()
+                                        .get(0);
+                                String nameID = XMLUtils.getElementValue(sidElement);
+                                if (nameID != null) {
+                                    userName = (String)
+                                       IDPCache.userIDByTransientNameIDValue.get(nameID);
+                                }
+				// TODO:Need to support non-transient nameid format
                             }
                         }
                     }
@@ -188,7 +200,7 @@ public class FMSubjectMapper implements SubjectMapper {
                             + ":caught SessionException:", se);
                 }
            }
-        }
+        } 
         return ssoToken;
     }
 

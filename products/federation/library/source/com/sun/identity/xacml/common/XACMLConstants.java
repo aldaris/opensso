@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLConstants.java,v 1.4 2009-02-28 02:06:32 dillidorai Exp $
+ * $Id: XACMLConstants.java,v 1.5 2009-09-22 23:00:15 madan_ranganath Exp $
  *
  */
 
@@ -403,6 +403,12 @@ public class  XACMLConstants {
     */
    public static String OPENSSO_SESSION_ID =
       "urn:sun:names:xacml:2.0:data-type:opensso-session-id";
+
+   /**
+    * Constant for saml2-nameid URI
+    */
+   public static String SAML2_NAMEID =
+      "urn:sun:names:xacml:2.0:data-type:saml2-nameid";
 
    /**
     * Constant for resource:target-service URI

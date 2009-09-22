@@ -13,4 +13,12 @@
             <Value>fedletcot</Value>
         </Attribute>
     </AttributeAuthorityConfig>
+    <XACMLPDPConfig>
+        <Attribute name="wantXACMLAuthzDecisionQuerySigned">
+            <Value></Value>
+        </Attribute>
+        <Attribute name="cotlist">
+            <Value>fedletcot</Value>
+        </Attribute>
+    </XACMLPDPConfig>
 </EntityConfig>

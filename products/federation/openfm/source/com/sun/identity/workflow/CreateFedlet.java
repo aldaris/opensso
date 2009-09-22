@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.16 2009-09-21 17:27:04 exu Exp $
+ * $Id: CreateFedlet.java,v 1.17 2009-09-22 22:56:58 madan_ranganath Exp $
  *
  */
 
@@ -343,6 +343,9 @@ public class CreateFedlet
         
         // Add the AttributeQueryConfig to SP extended meta data
         extended = addAttributeQueryTemplate(extended, cot);
+
+        // Add the XACMLAuthzDecisionQueryConfig to SP extended meta data
+        extended = addXACMLAuthzQueryTemplate(extended, cot);
           
         ImportSAML2MetaData.importData(realm, metadata, extended);
         if ((cot != null) && (cot.length() > 0)) {
@@ -627,7 +630,7 @@ public class CreateFedlet
      * meta data
      */
     private String addAttributeQueryTemplate(String extended, String cot) {
-        StringBuffer buff = new StringBuffer();
+        StringBuffer buff = new StringBuffer(1024);
         buff.append(
             "    <AttributeQueryConfig metaAlias=\"/attrQuery\">\n" +
             "        <Attribute name=\"signingCertAlias\">\n" +
@@ -650,7 +653,49 @@ public class CreateFedlet
                        buff.toString() +
                        "</EntityConfig>";
         }
+	return extended;
+    }
+
+    /**
+     * Below method will add the XACMLAuthzDecisionQuery to the SP extended
+     * meta data
+     */
+    private String addXACMLAuthzQueryTemplate(String extended, String cot) {
+        StringBuffer buff = new StringBuffer(1024);
+        buff.append(
+            "    <XACMLAuthzDecisionQueryConfig metaAlias=\"/pep\">\n" +
+            "        <Attribute name=\"signingCertAlias\">\n" +
+            "            <Value>" + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"encryptionCertAlias\">\n" +
+            "            <Value>" + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"basicAuthOn\">\n" +
+            "            <Value>" + false + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"basicAuthUser\">\n" +
+            "            <Value>" + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"basicAuthPassword\">\n" +
+            "            <Value>" + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"wantXACMLAuthzDecisionResponseSigned\">\n" +
+            "            <Value>" + false + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"wantAssertionEncrypted\">\n" +
+            "            <Value>" + false + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"cotlist\">\n" +
+            "            <Value>" + cot + "</Value>\n" +
+            "        </Attribute>\n" +
+            "    </XACMLAuthzDecisionQueryConfig>\n"
+        );
+        int idx = extended.indexOf("</EntityConfig>");
+        if (idx != -1) {
+            extended = extended.substring(0, idx) +
+                       buff.toString() +
+                       "</EntityConfig>";
+        }
         return extended;
     }
 }
-

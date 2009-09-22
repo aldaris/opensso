@@ -22,38 +22,32 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLRequestProcessor.java,v 1.3 2008-06-25 05:48:09 qcheng Exp $
+ * $Id: XACMLRequestProcessor.java,v 1.4 2009-09-22 23:00:34 madan_ranganath Exp $
  *
  */
 
 package com.sun.identity.xacml.client;
 
+import java.util.Date;
+import java.util.List;
+
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Assertion;
 import com.sun.identity.saml2.assertion.Issuer;
+import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
-import com.sun.identity.saml2.protocol.ProtocolFactory;
+import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.soapbinding.QueryClient;
-import com.sun.identity.saml2.soapbinding.RequestHandler;
 
-import com.sun.identity.xacml.context.Request;
-import com.sun.identity.xacml.context.Response;
 import com.sun.identity.xacml.common.XACMLException;
 
 import com.sun.identity.xacml.common.XACMLException;
 import com.sun.identity.xacml.common.XACMLSDKUtils;
 import com.sun.identity.xacml.context.ContextFactory;
 import com.sun.identity.xacml.context.Request;
-import com.sun.identity.xacml.context.Resource;
-import com.sun.identity.xacml.context.Subject;
-import com.sun.identity.xacml.context.Action;
-import com.sun.identity.xacml.context.Environment;
+import com.sun.identity.xacml.context.Response;
 import com.sun.identity.xacml.saml2.XACMLAuthzDecisionQuery;
 import com.sun.identity.xacml.saml2.XACMLAuthzDecisionStatement;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * This class provides the public API to process XACML context Request. 
@@ -125,37 +119,50 @@ public class XACMLRequestProcessor {
 
         com.sun.identity.saml2.protocol.Response samlpResponse 
                 = QueryClient.processXACMLQuery(samlpQuery,
-                pepEntityId, pdpEntityId); //hostedEntityId, remoteEntityId
+                pepEntityId, pdpEntityId);
+        
         if (XACMLSDKUtils.debug.messageEnabled()) {
             XACMLSDKUtils.debug.message(
                     "XACMLRequestProcessor.processRequest(),"
                     + ":samlpResponse=\n" 
                     + samlpResponse.toXMLString(true, true));
         }
-
-        //TODO: add bounds check, null check
+        
+        Response xacmlResponse = null;
         List assertions = samlpResponse.getAssertion();
-        Assertion assertion = (Assertion)(assertions.get(0));
-        List statements = assertion.getStatements();
-        String statementString = (String)(statements.get(0));
-        XACMLAuthzDecisionStatement statement = ContextFactory.getInstance()
-                .createXACMLAuthzDecisionStatement(statementString);
-        if (XACMLSDKUtils.debug.messageEnabled()) {
-            XACMLSDKUtils.debug.message(
-                    "XACMLRequestProcessor.processRequest(),"
-                    + ":xacmlAuthzDecisionStatement=\n" 
-                    + statement.toXMLString(true, true));
+        if (assertions != null) {
+            Assertion assertion = (Assertion)(assertions.get(0));
+            if (assertion != null) {
+                List statements = assertion.getStatements();
+                if (statements.size() > 0) {
+                    String statementString = (String)(statements.get(0));
+                    if (statementString != null) {
+                        XACMLAuthzDecisionStatement statement =
+                          ContextFactory.getInstance()
+                            .createXACMLAuthzDecisionStatement(statementString);
+                        if (XACMLSDKUtils.debug.messageEnabled()) {
+                            XACMLSDKUtils.debug.message(
+                                      "XACMLRequestProcessor.processRequest(),"
+                                    + ":xacmlAuthzDecisionStatement=\n"
+                                    + statement.toXMLString(true, true));
+                        }
+                        if (statement != null) {
+                            xacmlResponse = statement.getResponse();
+                            if (xacmlResponse != null) {
+                                if (XACMLSDKUtils.debug.messageEnabled()) {
+                                    XACMLSDKUtils.debug.message(
+                                        "XACMLRequestProcessor.processRequest()" +
+                                        ",returning :xacmlResponse=\n" +
+                                        xacmlResponse.toXMLString(true, true));
+                                }
+                                return xacmlResponse;
+                            }
+                        }
+                    }
+                }
+            }
         }
-
-        Response xacmlResponse = statement.getResponse();
-        if (XACMLSDKUtils.debug.messageEnabled()) {
-            XACMLSDKUtils.debug.message(
-                    "XACMLRequestProcessor.processRequest(), returning"
-                    + ":xacmlResponse=\n" 
-                    + xacmlResponse.toXMLString(true, true));
-        }
-                 
-        return xacmlResponse;
+        return null;
     }
 
     //TODO: clean up and fix
@@ -183,6 +190,4 @@ public class XACMLRequestProcessor {
 
         return query;
     }
-
 }
-
