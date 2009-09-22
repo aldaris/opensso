@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueryHandlerServlet.java,v 1.8 2009-06-12 22:21:41 mallas Exp $
+ * $Id: QueryHandlerServlet.java,v 1.9 2009-09-22 22:49:28 madan_ranganath Exp $
  *
  */
 
@@ -354,42 +354,26 @@ public class QueryHandlerServlet extends HttpServlet {
             debug.message(classMethod + "PDP wantAuthzQuerySigned:" +
                     pdpWantAuthzQuerySigned);
         }
-        if (pdpWantAuthzQuerySigned) {
-            String signAlias =
-                    SAML2Utils.getAttributeValueFromXACMLConfig(realm,
-                    SAML2Constants.PEP_ROLE,
-                    pepEntityID,
-                    SAML2Constants.SIGNING_CERT_ALIAS);
-            if (debug.messageEnabled()) {
-                debug.message(classMethod + "PEP signAlias :" + signAlias);
-            }
-            
-            if (signAlias != null) {
+        if (pdpWantAuthzQuerySigned) {                        
+            if (samlRequest.isSigned()) {
                 XACMLAuthzDecisionQueryDescriptorElement pep =
                         SAML2Utils.getSAML2MetaManager().
                         getPolicyEnforcementPointDescriptor(
                         realm,pepEntityID);
                 X509Certificate cert = 
                         KeyUtil.getPEPVerificationCert(pep,pepEntityID);
-                String[] data = { realm, pepEntityID , signAlias};
                 if (cert == null ||
                         !samlRequest.isSignatureValid(cert)) {
                     // error
                     debug.error(classMethod + "Invalid signature in message");
-                    LogUtil.error(
-                        Level.INFO,LogUtil.INVALID_SIGNATURE_QUERY,data);
                     throw new SAML2Exception("invalidQuerySignature");
                     
                 } else {
-                    debug.message(classMethod + "Valid signature found");
-                    LogUtil.access(
-                        Level.FINE,LogUtil.VALID_SIGNATURE_QUERY,data);
+                    debug.message(classMethod + "Valid signature found");                    
                 }
             } else {
-                debug.error("Signing alias is null");
-                String[] data = { realm , pepEntityID };
-                LogUtil.error(Level.INFO,LogUtil.NULL_PEP_SIGN_CERT_ALIAS,data);
-                throw new SAML2Exception("nullSigningAlias");
+                debug.error("Request not signed");
+                throw new SAML2Exception("nullSig");
             }
         }
         

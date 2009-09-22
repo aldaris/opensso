@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.48 2009-06-12 22:21:40 mallas Exp $
+ * $Id: SAML2Utils.java,v 1.49 2009-09-22 22:51:37 madan_ranganath Exp $
  *
  */
 
@@ -3591,8 +3591,8 @@ public class SAML2Utils extends SAML2SDKUtils {
         String method = "SAML2Utils:getAttributeValueFromXACMLConfig : ";
         if (debug.messageEnabled()) {
                 debug.message(method + "realm - " + realm);
-                debug.message(method + "EntityId - " +entityID);
                 debug.message(method + "entityRole - " + entityRole);
+                debug.message(method + "EntityId - " +entityID);
                 debug.message(method + "attrName - " + attrName);
         }
         String result = null;
@@ -3631,12 +3631,14 @@ public class SAML2Utils extends SAML2SDKUtils {
     }
     
     /**
-     * Returns true if wantArtifactResponseSigned has <code>String</code> true.
+     * Returns true if wantXACMLAuthzDecisionQuerySigned has
+     * <code>true</code> true.
      *
      * @param realm realm of hosted entity.
      * @param entityID name of hosted entity.
      * @param entityRole role of hosted entity.
-     * @return true if wantArtifactResponseSigned has <code>String</code> true.
+     * @return true if wantXACMLAuthzDecisionQuerySigned
+     * has <code>String</code> true.
      */
     public static boolean getWantXACMLAuthzDecisionQuerySigned(String realm,
             String entityID,
@@ -3648,7 +3650,7 @@ public class SAML2Utils extends SAML2SDKUtils {
             debug.message(method + "entityRole - " + entityRole);
         }
         String wantSigned =
-                getAttributeValueFromXACMLConfig(realm, entityID, entityRole,
+                getAttributeValueFromXACMLConfig(realm, entityRole, entityID,
                 SAML2Constants.WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED);
         if (wantSigned == null) {
             wantSigned = "false";
