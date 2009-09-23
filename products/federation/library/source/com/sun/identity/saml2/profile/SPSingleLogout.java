@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.25 2009-06-19 02:50:26 bigfatrat Exp $
+ * $Id: SPSingleLogout.java,v 1.26 2009-09-23 22:28:32 bigfatrat Exp $
  *
  */
 
@@ -379,15 +379,16 @@ public class SPSingleLogout {
                         fedSession = (SPFedSession)iter.next();
                         if (tokenID.equals(fedSession.spTokenID)) {
                             iter.remove();
+                            if ((agent != null) &&
+                                agent.isRunning() && (saml2Svc != null))
+                            {
+                                saml2Svc.setFedSessionCount(
+		                    (long)SPCache.
+					fedSessionListsByNameIDInfoKey.size());
+                            }
                             if (list.size() == 0) {
                                 SPCache.fedSessionListsByNameIDInfoKey.
                                     remove(infoKeyString);
-                                if ((agent != null) &&
-                                    agent.isRunning() &&
-                                    (saml2Svc != null))
-                                {
-                                    saml2Svc.decFedSessionCount();
-                                }
                             }
                             break;
                         }
@@ -1149,7 +1150,9 @@ public class SPSingleLogout {
                                 agent.isRunning() &&
                                 (saml2Svc != null))
                             {
-                                saml2Svc.decFedSessionCount();
+                                saml2Svc.setFedSessionCount(
+		                    (long)SPCache.
+					fedSessionListsByNameIDInfoKey.size());
                             }
                         }
                     }
@@ -1228,7 +1231,10 @@ public class SPSingleLogout {
                                         agent.isRunning() &&
                                         (saml2Svc != null))
                                     {
-                                        saml2Svc.decFedSessionCount();
+                                        saml2Svc.setFedSessionCount(
+		                            (long)SPCache.
+						fedSessionListsByNameIDInfoKey.
+						   size());
                                     }
                                     break;
                                 }

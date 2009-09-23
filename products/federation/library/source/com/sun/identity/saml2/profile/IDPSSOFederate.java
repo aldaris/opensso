@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.25 2009-09-02 09:24:32 mchlbgs Exp $
+ * $Id: IDPSSOFederate.java,v 1.26 2009-09-23 22:28:32 bigfatrat Exp $
  *
  */
 
@@ -733,7 +733,8 @@ public class IDPSSOFederate {
                             agent.isRunning() &&
                             (saml2Svc != null))
                         {
-                            saml2Svc.incIdpSessionCount();
+                            saml2Svc.setIdpSessionCount(
+		                (long)IDPCache.idpSessionsByIndices.size());
                         }
                     }
                 }

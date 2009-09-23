@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.22 2009-06-19 02:50:26 bigfatrat Exp $
+ * $Id: DoManageNameID.java,v 1.23 2009-09-23 22:28:31 bigfatrat Exp $
  *
  */
 
@@ -977,7 +977,8 @@ public class DoManageNameID {
             spFedSessions = (List)SPCache.fedSessionListsByNameIDInfoKey.remove(
                 oldNameIDInfo.getNameIDInfoKey().toValueString());
             if ((agent != null) && agent.isRunning() && (saml2Svc != null)) {
-                saml2Svc.decFedSessionCount();
+                saml2Svc.setFedSessionCount(
+		    (long)SPCache.fedSessionListsByNameIDInfoKey.size());
             }
         }
                 
@@ -1084,7 +1085,8 @@ public class DoManageNameID {
             SPCache.fedSessionListsByNameIDInfoKey.put(newInfoKeyStr,
                 spFedSessions);
             if ((agent != null) && agent.isRunning() && (saml2Svc != null)) {
-                saml2Svc.incFedSessionCount();
+                saml2Svc.setFedSessionCount(
+		    (long)SPCache.fedSessionListsByNameIDInfoKey.size());
             }
         }
         // log new name id success
@@ -1513,7 +1515,8 @@ public class DoManageNameID {
                     remove(infoKeyStr);
                 removeInfoKeyFromSession(session, infoKeyStr);
                 if ((agent != null) && agent.isRunning() && (saml2Svc != null)){
-                    saml2Svc.decFedSessionCount();
+                    saml2Svc.setFedSessionCount(
+		        (long)SPCache.fedSessionListsByNameIDInfoKey.size());
                 }
             } else {
                 removeIDPFedSession(remoteEntityID, oldNameID.getValue());
@@ -1560,7 +1563,9 @@ public class DoManageNameID {
                         agent.isRunning() &&
                         (saml2Svc != null))
                     {
-                        saml2Svc.incFedSessionCount();
+                        saml2Svc.setFedSessionCount(
+		            (long)SPCache.fedSessionListsByNameIDInfoKey.
+				size());
                     }
                 }
 

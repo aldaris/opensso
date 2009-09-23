@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSessionListener.java,v 1.9 2009-06-19 02:50:26 bigfatrat Exp $
+ * $Id: IDPSessionListener.java,v 1.10 2009-09-23 22:28:31 bigfatrat Exp $
  *
  */
 
@@ -235,7 +235,8 @@ public class IDPSessionListener
             if (IDPCache.idpSessionsBySessionID.get(sessID) != null) {
                 IDPCache.idpSessionsBySessionID.remove(sessID);
                 if ((agent != null) && agent.isRunning() && (saml2Svc != null)){
-                    saml2Svc.decIdpSessionCount();
+                    saml2Svc.setIdpSessionCount(
+		        (long)IDPCache.idpSessionsBySessionID.size());
                 }
             }
            

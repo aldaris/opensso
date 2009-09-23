@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.52 2009-06-19 02:50:26 bigfatrat Exp $
+ * $Id: IDPSSOUtil.java,v 1.53 2009-09-23 22:28:32 bigfatrat Exp $
  *
  */
 
@@ -780,7 +780,8 @@ public class IDPSSOUtil {
             IDPCache.idpSessionsByIndices.put(sessionIndex, idpSession);
 
             if ((agent != null) && agent.isRunning() && (saml2Svc != null)) {
-                saml2Svc.incIdpSessionCount();
+                saml2Svc.setIdpSessionCount(
+		    (long)IDPCache.idpSessionsByIndices.size());
             }
 
             if (SAML2Utils.debug.messageEnabled()) {

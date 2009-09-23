@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.44 2009-06-19 02:50:26 bigfatrat Exp $
+ * $Id: SPACSUtils.java,v 1.45 2009-09-23 22:28:32 bigfatrat Exp $
  *
  */
 
@@ -1577,7 +1577,8 @@ public class SPACSUtils {
                         infoKeyString, fedSessions);
                 }
                 if ((agent != null) && agent.isRunning() && (saml2Svc != null)){
-                    saml2Svc.incFedSessionCount();
+                    saml2Svc.setFedSessionCount(
+		        (long)SPCache.fedSessionListsByNameIDInfoKey.size());
                 }
 
                 if (isIDPProxy) {
@@ -1626,7 +1627,9 @@ public class SPACSUtils {
                             agent.isRunning() &&
                             (saml2Svc != null))
                         {
-                            saml2Svc.incFedSessionCount();
+                            saml2Svc.setFedSessionCount(
+		                (long)SPCache.fedSessionListsByNameIDInfoKey.
+				    size());
                         }
                     }
                }    
@@ -1634,7 +1637,8 @@ public class SPACSUtils {
             SPCache.fedSessionListsByNameIDInfoKey.put(infoKeyString,
                                                    fedSessions);
             if ((agent != null) && agent.isRunning() && (saml2Svc != null)) {
-                saml2Svc.incFedSessionCount();
+                saml2Svc.setFedSessionCount(
+		    (long)SPCache.fedSessionListsByNameIDInfoKey.size());
             }
         }
         try {

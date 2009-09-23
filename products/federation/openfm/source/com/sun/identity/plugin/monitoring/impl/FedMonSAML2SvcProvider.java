@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedMonSAML2SvcProvider.java,v 1.1 2009-06-19 02:43:57 bigfatrat Exp $
+ * $Id: FedMonSAML2SvcProvider.java,v 1.2 2009-09-23 22:25:07 bigfatrat Exp $
  *
  */
 
@@ -32,6 +32,8 @@ import com.sun.identity.monitoring.Agent;
 import com.sun.identity.monitoring.SsoServerSAML2SvcImpl;
 import com.sun.identity.plugin.monitoring.FedMonSAML2Svc;
 
+import com.sun.identity.shared.debug.Debug;
+
 /**
  *  This class implements the SAML2 Monitoring
  */
@@ -39,6 +41,8 @@ import com.sun.identity.plugin.monitoring.FedMonSAML2Svc;
 public class FedMonSAML2SvcProvider implements FedMonSAML2Svc {
 
     private static SsoServerSAML2SvcImpl sSAML2Svc;
+
+    private static Debug debug = Debug.getInstance("CoreSystem");
 
     public FedMonSAML2SvcProvider() {
     }
@@ -59,6 +63,17 @@ public class FedMonSAML2SvcProvider implements FedMonSAML2Svc {
         }
     }
 
+    public void setFedSessionCount(long count) {
+	debug.error("FedMonSAML2SvcProvider:setFedSessionCount: count = " +
+	    count);
+        if (sSAML2Svc != null) {
+            sSAML2Svc.setFedSessionCount(count);
+	} else {
+	    debug.error(
+		"FedMonSAML2SvcProvider:setFedSessionCount: sSAML2Svc = null");
+        }
+    }
+
     public void incIdpSessionCount() {
         if (sSAML2Svc != null) {
             sSAML2Svc.incIdpSessionCount();
@@ -68,6 +83,17 @@ public class FedMonSAML2SvcProvider implements FedMonSAML2Svc {
     public void decIdpSessionCount() {
         if (sSAML2Svc != null) {
             sSAML2Svc.decIdpSessionCount();
+        }
+    }
+
+    public void setIdpSessionCount(long count) {
+	debug.error("FedMonSAML2SvcProvider:setIdpSessionCount: count = " +
+	    count);
+        if (sSAML2Svc != null) {
+            sSAML2Svc.setIdpSessionCount(count);
+        } else {
+	    debug.error(
+		"FedMonSAML2SvcProvider:setIdpSessionCount: sSAML2Svc = null");
         }
     }
 

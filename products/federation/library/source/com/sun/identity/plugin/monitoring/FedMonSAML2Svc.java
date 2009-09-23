@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedMonSAML2Svc.java,v 1.1 2009-06-19 02:48:04 bigfatrat Exp $
+ * $Id: FedMonSAML2Svc.java,v 1.2 2009-09-23 22:26:14 bigfatrat Exp $
  *
  */
 
@@ -62,6 +62,11 @@ public interface FedMonSAML2Svc {
     public void decFedSessionCount();
 
     /**
+     * Set the Federation (SP) session counter.
+     */
+    public void setFedSessionCount(long count);
+
+    /**
      * Increment the IDP session counter.
      */
     public void incIdpSessionCount();
@@ -70,6 +75,11 @@ public interface FedMonSAML2Svc {
      * Decrement the IDP session counter.
      */
     public void decIdpSessionCount();
+
+    /**
+     * Set the IDP session counter.
+     */
+    public void setIdpSessionCount(long count);
 
     /**
      *  Increment a counter for an IDP in a realm. 

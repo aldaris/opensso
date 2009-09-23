@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSAML2SvcImpl.java,v 1.1 2009-06-19 02:23:18 bigfatrat Exp $
+ * $Id: SsoServerSAML2SvcImpl.java,v 1.2 2009-09-23 22:24:14 bigfatrat Exp $
  *
  */
 
@@ -110,6 +110,13 @@ public class SsoServerSAML2SvcImpl extends SsoServerSAML2Svc {
         SsoServerSAML2FedSessionCount = Long.valueOf(li);
     }
 
+    public void setFedSessionCount(long count) {
+        if (SsoServerSAML2Status.equals("dormant")) {
+            SsoServerSAML2Status = "operational";
+        }
+        SsoServerSAML2FedSessionCount = Long.valueOf(count);
+    }
+
     public void incIdpSessionCount() {
         if (SsoServerSAML2Status.equals("dormant")) {
             SsoServerSAML2Status = "operational";
@@ -123,6 +130,13 @@ public class SsoServerSAML2SvcImpl extends SsoServerSAML2Svc {
         long li = SsoServerSAML2IDPSessionCount.longValue();
         li--;
         SsoServerSAML2IDPSessionCount = Long.valueOf(li);
+    }
+
+    public void setIdpSessionCount(long count) {
+        if (SsoServerSAML2Status.equals("dormant")) {
+            SsoServerSAML2Status = "operational";
+        }
+        SsoServerSAML2IDPSessionCount = Long.valueOf(count);
     }
 
     public void incIDPCounter (String realm, String idpName, String counter) {

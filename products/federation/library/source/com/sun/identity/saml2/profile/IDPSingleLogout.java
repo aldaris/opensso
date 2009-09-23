@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.23 2009-08-14 18:29:52 mallas Exp $
+ * $Id: IDPSingleLogout.java,v 1.24 2009-09-23 22:28:31 bigfatrat Exp $
  *
  */
 
@@ -227,7 +227,8 @@ public class IDPSingleLogout {
                 }
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
                 if ((agent != null) && agent.isRunning() && (saml2Svc != null)){
-                    saml2Svc.decIdpSessionCount();
+                    saml2Svc.setIdpSessionCount(
+		        (long)IDPCache.idpSessionsByIndices.size());
                 }
                 try {
                     if (SAML2Utils.isSAML2FailOverEnabled()) {
@@ -315,7 +316,9 @@ public class IDPSingleLogout {
                                  agent.isRunning() &&
                                  (saml2Svc != null))
                              {
-                                 saml2Svc.decIdpSessionCount();
+                                 saml2Svc.setIdpSessionCount(
+		                     (long)IDPCache.
+					 idpSessionsByIndices.size());
                              }
                              IDPCache.authnContextCache.remove(idpSessionIndex);
                          }
@@ -877,7 +880,9 @@ public class IDPSingleLogout {
                         agent.isRunning() &&
                         (saml2Svc != null))
                     {
-                        saml2Svc.decIdpSessionCount();
+                        saml2Svc.setIdpSessionCount(
+		            (long)IDPCache.idpSessionsByIndices.
+				size());
                     }
                     try {
                         if (SAML2Utils.isSAML2FailOverEnabled()) {
@@ -985,7 +990,8 @@ public class IDPSingleLogout {
                 logoutRes.setDestination(location); 
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
                 if ((agent != null) && agent.isRunning() && (saml2Svc != null)){
-                    saml2Svc.decIdpSessionCount();
+                    saml2Svc.setIdpSessionCount(
+		        (long)IDPCache.idpSessionsByIndices.size());
                 }
                 try {
                     if (SAML2Utils.isSAML2FailOverEnabled()) {
@@ -1046,7 +1052,8 @@ public class IDPSingleLogout {
             
             IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
             if ((agent != null) && agent.isRunning() && (saml2Svc != null)) {
-                saml2Svc.decIdpSessionCount();
+                saml2Svc.setIdpSessionCount(
+		    (long)IDPCache.idpSessionsByIndices.size());
             }
             try {
                 if (SAML2Utils.isSAML2FailOverEnabled()) {
@@ -1320,7 +1327,9 @@ public class IDPSingleLogout {
                            agent.isRunning() &&
                            (saml2Svc != null))
                        {
-                           saml2Svc.decIdpSessionCount();
+                           saml2Svc.setIdpSessionCount(
+		               (long)IDPCache.idpSessionsByIndices.
+				   size());
                        }
                        if (SAML2Utils.isSAML2FailOverEnabled()) {
                            SAML2Repository.getInstance().delete(sessionIndex);
@@ -1417,7 +1426,9 @@ public class IDPSingleLogout {
                         agent.isRunning() &&
                         (saml2Svc != null))
                     {
-                        saml2Svc.decIdpSessionCount();
+                        saml2Svc.setIdpSessionCount(
+		            (long)IDPCache.idpSessionsByIndices.
+			        size());
                     }
                     if (SAML2Utils.isSAML2FailOverEnabled()) {
                         SAML2Repository.getInstance().delete(sessionIndex);
@@ -1582,7 +1593,9 @@ public class IDPSingleLogout {
                                 agent.isRunning() &&
                                 (saml2Svc != null))
                             {
-                                saml2Svc.decIdpSessionCount();
+                                saml2Svc.setIdpSessionCount(
+		                    (long)IDPCache.
+					idpSessionsByIndices.size());
                             }
                         }
                     } catch (SessionException e) {
@@ -1594,7 +1607,8 @@ public class IDPSingleLogout {
             } else {
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
                 if ((agent != null) && agent.isRunning() && (saml2Svc != null)){
-                    saml2Svc.decIdpSessionCount();
+                    saml2Svc.setIdpSessionCount(
+		        (long)IDPCache.idpSessionsByIndices.size());
                 }
                 try {
                     if (SAML2Utils.isSAML2FailOverEnabled()) {

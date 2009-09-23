@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSessionListener.java,v 1.5 2009-06-19 02:50:26 bigfatrat Exp $
+ * $Id: SPSessionListener.java,v 1.6 2009-09-23 22:28:32 bigfatrat Exp $
  *
  */
 
@@ -205,7 +205,9 @@ public class SPSessionListener implements SessionListener {
                         agent.isRunning() &&
                         (saml2Svc != null))
                     {
-                        saml2Svc.decFedSessionCount();
+                        saml2Svc.setFedSessionCount(
+		            (long)SPCache.fedSessionListsByNameIDInfoKey.
+				size());
                     }
                 }
             }
