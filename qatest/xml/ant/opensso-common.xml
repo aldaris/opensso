@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.27 2009-07-15 00:03:22 rmisra Exp $
+ $Id: opensso-common.xml,v 1.28 2009-09-24 21:38:41 sridharev Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -127,6 +127,11 @@
             </then>
         </if>
         <echo message="The Automation reports are at ${runtime.report.dir}"/>
+        <java classname="com.sun.identity.qatest.report.GenerateReport">
+          <classpath refid="client.classpath" />
+          <arg value="${runtime.report.dir}" />
+          <arg value="${test.output.file}" />
+        </java>
     </target>
 
     <target name="check-idsvcs-cond" depends="init-common">
