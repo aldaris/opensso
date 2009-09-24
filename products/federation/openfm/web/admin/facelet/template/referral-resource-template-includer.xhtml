@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-resource-template-includer.xhtml,v 1.1 2009-08-19 05:41:11 veiming Exp $
+   $Id: referral-resource-template-includer.xhtml,v 1.2 2009-09-24 14:40:32 farble1670 Exp $
 
 -->
 
@@ -41,7 +41,7 @@
         <ui:include
             src="#{entry.value.resourceTemplate}">
             <ui:param
-                name="policyResourcesBean"
+                name="resourcesBean"
                 value="#{referralResource}"/>
         </ui:include>
     </c:forEach>
