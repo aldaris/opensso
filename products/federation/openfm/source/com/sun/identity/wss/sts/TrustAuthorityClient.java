@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.27 2009-09-22 05:45:46 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.28 2009-09-24 19:01:42 mallas Exp $
  *
  */
 
@@ -262,8 +262,14 @@ public class TrustAuthorityClient {
             if((wstVersion == null) || wstVersion.length() == 0)  {
                 wstVersion = STSConstants.WST_VERSION_13;
             }
+                        
             Set keySet = (Set)attrMap.get(KEYTYPE);
-            String keyType = (String)keySet.iterator().next();
+            String keyType = STSConstants.PUBLIC_KEY;
+            
+            if(keySet != null) {
+               keyType = (String)keySet.iterator().next(); 
+            }
+            
             if(keyType.equals(STSConstants.SYMMETRIC_KEY)) {
                keyTypeURI = STSConstants.WST13_SYMMETRIC_KEY; 
             }

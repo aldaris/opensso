@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.25 2009-08-29 03:05:58 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.26 2009-09-24 19:01:42 mallas Exp $
  *
  */
 
@@ -914,7 +914,13 @@ public class SecureSOAPMessage {
             Document doc = toDocument();
             Key verificationKey = null;
             XMLSignatureManager sigManager = WSSUtils.getXMLSignatureManager();
-            String tokenType = securityToken.getTokenType();
+            String tokenType = null;
+            if(securityToken != null) {
+               tokenType = securityToken.getTokenType(); 
+            } else {
+               tokenType = SecurityMechanism.WSS_NULL_ANONYMOUS_URI; 
+            }
+            
             if(tokenType.equals(SecurityToken.WSS_SAML2_TOKEN) ||
                     tokenType.equals(SecurityToken.WSS_SAML_TOKEN)) {
                 

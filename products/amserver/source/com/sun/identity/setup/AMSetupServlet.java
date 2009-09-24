@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.109 2009-08-06 18:07:28 goodearth Exp $
+ * $Id: AMSetupServlet.java,v 1.110 2009-09-24 19:03:01 mallas Exp $
  *
  */
 
@@ -2060,9 +2060,11 @@ public class AMSetupServlet extends HttpServlet {
         config.put("STSEndpoint",serverURL + deployuri + "/sts");
         config.put("STSMexEndpoint",serverURL + deployuri + "/sts/mex");
         config.put("WSTrustVersion", "1.3");
+        config.put("KeyType", "PublicKey");
         //createAgent(idrepo, "defaultSTS", "STS", "", config);
         createAgent(token, idrepo, "SecurityTokenService", 
             "SecurityTokenService", "STS", "", config);
+        config.remove("KeyType");
 
         // Add Agent Authenticator configuration
         Map configAgentAuth = new HashMap();
