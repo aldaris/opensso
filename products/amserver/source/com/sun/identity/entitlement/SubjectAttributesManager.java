@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectAttributesManager.java,v 1.2 2009-08-21 21:52:01 hengming Exp $
+ * $Id: SubjectAttributesManager.java,v 1.3 2009-09-24 22:37:43 hengming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -58,9 +58,16 @@ public class SubjectAttributesManager {
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, realmName);
 
-        Map<String, Set<String>> configMap =
-            ec.getSubjectAttributesCollectorConfiguration(
+        Map<String, Set<String>> configMap = null;
+        try {
+            configMap = ec.getSubjectAttributesCollectorConfiguration(
             DEFAULT_SUBJECT_ATTRIBUTES_COLLECTOR_NAME);
+        } catch (EntitlementException ex) {
+            if (PrivilegeManager.debug.warningEnabled()) {
+                PrivilegeManager.debug.warning(
+                    "SubjectAttributesManager.<init>", ex);
+            }
+        }
 
         String implClass = null;
         if (configMap != null) {

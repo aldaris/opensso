@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementConfiguration.java,v 1.1 2009-08-19 05:40:32 veiming Exp $
+ * $Id: EntitlementConfiguration.java,v 1.2 2009-09-24 22:37:43 hengming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -189,11 +189,11 @@ public abstract class EntitlementConfiguration {
      *
      * @param application Application name.
      * @param names Set of subject attribute names.
-       @throws EntitlementException if subject attribute names cannot be
+     * @throws EntitlementException if subject attribute names cannot be
      *         added.
      */
     public abstract void addSubjectAttributeNames(String application,
-        Set<String> names) throws EntitlementException;;
+        Set<String> names) throws EntitlementException;
 
     /**
      * Adds a new action.
@@ -213,17 +213,35 @@ public abstract class EntitlementConfiguration {
      * Returns subject attributes collector names.
      *
      * @return subject attributes collector names.
+     * @throws EntitlementException if subject attributes collector names
+     * cannot be returned.
      */
-    public abstract Set<String> getSubjectAttributesCollectorNames();
+    public abstract Set<String> getSubjectAttributesCollectorNames()
+        throws EntitlementException;
 
     /**
      * Returns subject attributes collector configuration.
      *
      * @param name subject attributes collector name
      * @return subject attributes collector configuration.
+     * @throws EntitlementException if subject attributes collector
+     * configuration cannot be returned.
      */
     public abstract Map<String, Set<String>>
-        getSubjectAttributesCollectorConfiguration(String name);
+        getSubjectAttributesCollectorConfiguration(String name)
+        throws EntitlementException;
+
+    /**
+     * Sets subject attributes collector configuration.
+     *
+     * @param name subject attributes collector name
+     * @param attrMap subject attributes collector configuration map.
+     * @throws EntitlementException if subject attributes collector
+     * configuration cannot be set.
+     */
+    public abstract void setSubjectAttributesCollectorConfiguration(
+        String name, Map<String, Set<String>> attrMap)
+        throws EntitlementException;
 
     /**
      * Returns <code>true</code> if OpenSSO policy data is migrated to a

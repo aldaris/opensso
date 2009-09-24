@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.1 2009-08-19 05:40:35 veiming Exp $
+ * $Id: EntitlementService.java,v 1.2 2009-09-24 22:38:21 hengming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -43,6 +43,7 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.ldap.util.DN;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.DNMapper;
+import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
@@ -83,6 +84,10 @@ public class EntitlementService extends EntitlementConfiguration {
     private static final String CONFIG_APPLICATION_TYPES = "applicationTypes";
     private static final String CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS =
         "subjectAttributesCollectors";
+    private static final String SCHEMA_SUBJECT_ATTRIBUTES_COLLECTORS =
+        "subjectAttributesCollectors";
+    private static final String SCHEMA_OPENSSO_SUBJECT_ATTRIBUTES_COLLECTOR =
+        "OpenSSOSubjectAttributesCollector";
     private static final String USE_NEW_CONSOLE = "usenewconsole";
     private static final String MIGRATED_TO_ENTITLEMENT_SERVICES =
         "migratedtoentitlementservice";
@@ -1026,8 +1031,11 @@ public class EntitlementService extends EntitlementConfiguration {
      * Returns subject attributes collector names.
      *
      * @return subject attributes collector names.
+     * @throws EntitlementException if subject attributes collector names
+     * cannot be returned.
      */
-    public Set<String> getSubjectAttributesCollectorNames() {
+    public Set<String> getSubjectAttributesCollectorNames()
+        throws EntitlementException {
         try {
             SSOToken token = getSSOToken();
 
@@ -1045,13 +1053,16 @@ public class EntitlementService extends EntitlementConfiguration {
                 PrivilegeManager.debug.error(
                     "EntitlementService.getSubjectAttributesCollectorNames: " +
                     "admin sso token is absent", null);
+                throw new EntitlementException(285);
             }
         } catch (SMSException ex) {
             PrivilegeManager.debug.error(
                 "EntitlementService.getSubjectAttributesCollectorNames", ex);
+            throw new EntitlementException(286, ex);
         } catch (SSOException ex) {
             PrivilegeManager.debug.error(
                 "EntitlementService.getSubjectAttributesCollectorNames", ex);
+            throw new EntitlementException(286, ex);
         }
         return null;
     }
@@ -1061,40 +1072,144 @@ public class EntitlementService extends EntitlementConfiguration {
      *
      * @param name subject attributes collector name
      * @return subject attributes collector configuration.
+     * @throws EntitlementException if subject attributes collector
+     * configuration cannot be returned.
      */
     public Map<String, Set<String>>
-        getSubjectAttributesCollectorConfiguration(String name) {
+        getSubjectAttributesCollectorConfiguration(String name)
+        throws EntitlementException {
 
         try {
             SSOToken token = getSSOToken();
 
             if (token != null) {
-                ServiceConfigManager mgr = new ServiceConfigManager(
-                    SERVICE_NAME, token);
-                ServiceConfig orgConfig = mgr.getOrganizationConfig(realm, null);
+                OrganizationConfigManager ocm = new OrganizationConfigManager(
+                    token, realm);
+                ServiceConfig orgConfig = ocm.getServiceConfig(SERVICE_NAME);
                 if (orgConfig != null) {
+                    Set<String> subConfigNames = orgConfig.getSubConfigNames();
+                    if ((subConfigNames == null) || (!subConfigNames.contains(
+                        CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS))) {
+                        orgConfig.addSubConfig(
+                            CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS,
+                            SCHEMA_SUBJECT_ATTRIBUTES_COLLECTORS, 0,
+                            Collections.EMPTY_MAP);
+                    }
+
                     ServiceConfig conf = orgConfig.getSubConfig(
                         CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS);
-                    ServiceConfig sacConfig = conf.getSubConfig(name);
-                    if (sacConfig != null) {
-                        return sacConfig.getAttributes();
+                    ServiceConfig subConfig = conf.getSubConfig(name);
+                    if (subConfig == null) {
+                        Map<String, Set<String>> attrs = Collections.EMPTY_MAP;
+                        // copy from parent sub config
+                        OrganizationConfigManager pocm =
+                            ocm.getParentOrgConfigManager();
+                        if (pocm != null) {
+                            ServiceConfig porgConfig = pocm.getServiceConfig(
+                                SERVICE_NAME);
+                            if (porgConfig != null) {
+                                ServiceConfig pconf = porgConfig.getSubConfig(
+                                    CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS);
+                                if (pconf != null) {
+                                    ServiceConfig psubConfig =
+                                        pconf.getSubConfig(name);
+                                    if (psubConfig != null) {
+                                        attrs = psubConfig.getAttributes();
+                                    }
+                                }
+                            }
+                        }
+                        conf.addSubConfig(name,
+                            SCHEMA_OPENSSO_SUBJECT_ATTRIBUTES_COLLECTOR, 0,
+                            attrs);
+			subConfig = conf.getSubConfig(name);
                     }
+                    return subConfig.getAttributes();
                 }
             } else {
                 PrivilegeManager.debug.error(
                 "EntitlementService.getSubjectAttributesCollectorConfiguration:"
                     + "admin sso token is absent", null);
+                Object[] arg = {name};
+                throw new EntitlementException(287, arg);
             }
         } catch (SMSException ex) {
             PrivilegeManager.debug.error(
                 "EntitlementService.getSubjectAttributesCollectorConfiguration",
                 ex);
+            Object[] arg = {name};
+            throw new EntitlementException(288, arg, ex);
         } catch (SSOException ex) {
             PrivilegeManager.debug.error(
                 "EntitlementService.getSubjectAttributesCollectorConfiguration",
                 ex);
+            Object[] arg = {name};
+            throw new EntitlementException(288, arg, ex);
         }
         return null;
+    }
+
+    /**
+     * Sets subject attributes collector configuration.
+     *
+     * @param name subject attributes collector name
+     * @param attrMap subject attributes collector configuration map.
+     * @throws EntitlementException if subject attributes collector
+     * configuration cannot be set.
+     */
+    public void setSubjectAttributesCollectorConfiguration(
+        String name, Map<String, Set<String>> attrMap)
+        throws EntitlementException {
+
+        try {
+            SSOToken token = getSSOToken();
+
+            if (token != null) {
+                OrganizationConfigManager ocm = new OrganizationConfigManager(
+                    token, realm);
+                ServiceConfig orgConfig = ocm.getServiceConfig(SERVICE_NAME);
+                if (orgConfig != null) {
+                    Set<String> subConfigNames = orgConfig.getSubConfigNames();
+                    if ((subConfigNames == null) || (!subConfigNames.contains(
+                        CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS))) {
+                        orgConfig.addSubConfig(
+                            CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS,
+                            SCHEMA_SUBJECT_ATTRIBUTES_COLLECTORS, 0,
+                            Collections.EMPTY_MAP);
+                    }
+
+                    ServiceConfig conf = orgConfig.getSubConfig(
+                        CONFIG_SUBJECT_ATTRIBUTES_COLLECTORS);
+                    ServiceConfig subConfig = conf.getSubConfig(name);
+                    if (subConfig == null) {
+                        conf.addSubConfig(name,
+                            SCHEMA_OPENSSO_SUBJECT_ATTRIBUTES_COLLECTOR, 0,
+                            attrMap);
+                    } else {
+                        subConfig.setAttributes(attrMap);
+                    }
+                }
+            } else {
+                PrivilegeManager.debug.error(
+                "EntitlementService.setSubjectAttributesCollectorConfiguration:"
+                    + "admin sso token is absent", null);
+                Object[] arg = {name};
+                throw new EntitlementException(289, arg);
+            }
+        } catch (SMSException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.setSubjectAttributesCollectorConfiguration",
+                ex);
+            Object[] arg = {name};
+            throw new EntitlementException(290, arg, ex);
+        } catch (SSOException ex) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.setSubjectAttributesCollectorConfiguration",
+                ex);
+            Object[] arg = {name};
+            throw new EntitlementException(290, arg, ex);
+        }
+
     }
 
     /**

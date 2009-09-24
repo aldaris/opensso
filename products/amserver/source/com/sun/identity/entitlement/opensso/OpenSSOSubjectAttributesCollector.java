@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOSubjectAttributesCollector.java,v 1.2 2009-08-21 21:52:01 hengming Exp $
+ * $Id: OpenSSOSubjectAttributesCollector.java,v 1.3 2009-09-24 22:38:21 hengming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -117,6 +117,9 @@ public class OpenSSOSubjectAttributesCollector
         try {
             Map<String, Set<String>> results = new
                 HashMap<String, Set<String>>();
+            Map<String, Set<String>> pubCreds = new
+                HashMap<String, Set<String>>();
+
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
             AMIdentity amid = new AMIdentity(adminToken, uuid);
@@ -124,6 +127,9 @@ public class OpenSSOSubjectAttributesCollector
             Set<String> set = new HashSet<String>(2);
             set.add(getIDWithoutOrgName(amid));
             results.put(NAMESPACE_IDENTITY, set);
+            set = new HashSet<String>(2);
+            set.add(uuid);
+            pubCreds.put(NAMESPACE_IDENTITY, set);
 
             Set<String> primitiveAttrNames = getAttributeNames(attrNames,
                 NAMESPACE_ATTR);
@@ -134,6 +140,7 @@ public class OpenSSOSubjectAttributesCollector
                     Set<String> values = primitiveAttrValues.get(name);
                     if (values != null) {
                         results.put(NAMESPACE_ATTR + name, values);
+                        pubCreds.put(NAMESPACE_ATTR + name, values);
                     }
                 }
             }
@@ -149,18 +156,22 @@ public class OpenSSOSubjectAttributesCollector
 
                         if (memberships != null) {
                             Set<String> setMemberships = new HashSet<String>();
+                            Set<String> membershipsCred = new HashSet<String>();
                             for (AMIdentity a : memberships) {
                                 setMemberships.add(getIDWithoutOrgName(a));
+                                membershipsCred.add(a.getUniversalId());
                             }
                             results.put(NAMESPACE_MEMBERSHIP + m,
                                 setMemberships);
+                            pubCreds.put(NAMESPACE_MEMBERSHIP + m,
+                                membershipsCred);
                         }
                     }
                 }
             }
 
             Set<Object> publicCreds = subject.getPublicCredentials();
-            publicCreds.add(results);
+            publicCreds.add(pubCreds);
             return results;
         } catch (SSOException e) {
             Object[] params = {uuid};

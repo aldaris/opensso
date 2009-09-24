@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.2 2009-09-21 18:33:45 dillidorai Exp $
+ * $Id: ReferralPrivilege.java,v 1.3 2009-09-24 22:37:43 hengming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -457,8 +457,17 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
                             applicationName, resName, actionNames, recursive);
                         
                         PrivilegeEvaluator evaluator = new PrivilegeEvaluator();
+
+                        // create subject for sub realm by copying subject for
+                        // this realm and clear the public credentials.
+                        // this needs to be revisited later if public 
+                        // credentials contains realm-independent credentals
+                        Subject subjectSubRealm = new Subject(false,
+                            subject.getPrincipals(), new HashSet(),
+                            subject.getPrivateCredentials());
+
                         List<Entitlement> entitlements = evaluator.evaluate(rlm,
-                            adminSubject, subject, applicationName,
+                            adminSubject, subjectSubRealm, applicationName,
                             resName, environment, recursive);
                         if (results == null) {
                             results = entitlements;
