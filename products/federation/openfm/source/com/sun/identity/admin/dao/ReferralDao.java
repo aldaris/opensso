@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralDao.java,v 1.1 2009-08-19 05:40:45 veiming Exp $
+ * $Id: ReferralDao.java,v 1.2 2009-09-25 05:52:55 veiming Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -37,7 +37,7 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ReferralPrivilegeManager;
-import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.entitlement.util.SearchFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -69,11 +69,11 @@ public class ReferralDao implements Serializable {
         return pattern;
     }
 
-    private Set<PrivilegeSearchFilter> getPrivilegeSearchFilters(List<PolicyFilterHolder> policyFilterHolders) {
-        Set<PrivilegeSearchFilter> psfs = new HashSet<PrivilegeSearchFilter>();
+    private Set<SearchFilter> getPrivilegeSearchFilters(List<PolicyFilterHolder> policyFilterHolders) {
+        Set<SearchFilter> psfs = new HashSet<SearchFilter>();
 
         for (PolicyFilterHolder pfh : policyFilterHolders) {
-            List<PrivilegeSearchFilter> l = pfh.getPolicyFilter().getPrivilegeSearchFilters();
+            List<SearchFilter> l = pfh.getPolicyFilter().getPrivilegeSearchFilters();
             if (l != null) {
                 // TODO: list should never be null
                 psfs.addAll(l);
@@ -99,9 +99,9 @@ public class ReferralDao implements Serializable {
     }
 
     public List<ReferralBean> getReferralBeans(String filter, List<PolicyFilterHolder> policyFilterHolders) {
-        Set<PrivilegeSearchFilter> psfs = getPrivilegeSearchFilters(policyFilterHolders);
+        Set<SearchFilter> psfs = getPrivilegeSearchFilters(policyFilterHolders);
         String pattern = getPattern(filter);
-        psfs.add(new PrivilegeSearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
+        psfs.add(new SearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
 
         ReferralPrivilegeManager rpm = getReferralPrivilegeManager();
         List<ReferralBean> referralBeans = null;

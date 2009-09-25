@@ -22,12 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.2 2009-09-14 23:02:40 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.3 2009-09-25 05:52:54 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.util.DebugFactory;
-import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.entitlement.util.SearchFilter;
 import com.sun.identity.shared.debug.IDebug;
 import java.security.Principal;
 import java.util.Date;
@@ -191,7 +191,7 @@ public abstract class PrivilegeManager {
      * @throws EntitlementException if search failed.
      */
     public Set<String> searchPrivilegeNames(
-        Set<PrivilegeSearchFilter> filter,
+        Set<SearchFilter> filter,
         int searchSizeLimit,
         int searchTimeLimit
     ) throws EntitlementException {
@@ -209,7 +209,7 @@ public abstract class PrivilegeManager {
      * @throws EntitlementException if search failed.
      */
     public Set<String> searchPrivilegeNames(
-        Set<PrivilegeSearchFilter> filter
+        Set<SearchFilter> filter
     ) throws EntitlementException {
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             adminSubject, realm);

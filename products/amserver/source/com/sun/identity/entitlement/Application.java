@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.1 2009-08-19 05:40:32 veiming Exp $
+ * $Id: Application.java,v 1.2 2009-09-25 05:52:54 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -30,6 +30,7 @@ package com.sun.identity.entitlement;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,6 +42,46 @@ import java.util.Set;
  * and the supported actions.
  */
 public class Application implements Cloneable {
+    /**
+     * Created by index key
+     */
+    public static final String CREATED_BY_ATTRIBUTE = "createdby";
+
+    /**
+     * Last modified by index key
+     */
+    public static final String LAST_MODIFIED_BY_ATTRIBUTE = "lastmodifiedby";
+
+    /**
+     * Creation date index key
+     */
+    public static final String CREATION_DATE_ATTRIBUTE = "creationdate";
+
+    /**
+     * Last modified date index key
+     */
+    public static final String LAST_MODIFIED_DATE_ATTRIBUTE =
+        "lastmodifieddate";
+
+    /**
+     * Name search attribute name,
+     */
+    public static final String NAME_ATTRIBUTE = "ou";
+
+    /**
+     * Description search attribute name,
+     */
+    public static final String DESCRIPTION_ATTRIBUTE = "description";
+
+    private static final int LEN_CREATED_BY_ATTRIBUTE =
+        CREATED_BY_ATTRIBUTE.length();
+    private static final int LEN_LAST_MODIFIED_BY_ATTRIBUTE =
+        LAST_MODIFIED_BY_ATTRIBUTE.length();
+    private static final int LEN_CREATION_DATE_ATTRIBUTE =
+        CREATION_DATE_ATTRIBUTE.length();
+    private static final int LEN_LAST_MODIFIED_DATE_ATTRIBUTE =
+        LAST_MODIFIED_DATE_ATTRIBUTE.length();
+
     private String realm = "/";
     private String name;
     private String description;
@@ -54,6 +95,10 @@ public class Application implements Cloneable {
     private Class saveIndex;
     private Class resourceComparator;
     private Set<String> attributeNames;
+    private String createdBy;
+    private String lastModifiedBy;
+    private long creationDate = -1;
+    private long lastModifiedDate = -1;
 
     private ResourceName resourceComparatorInstance;
     private ISaveIndex saveIndexInstance;
@@ -123,6 +168,11 @@ public class Application implements Cloneable {
             clone.attributeNames = new HashSet<String>();
             clone.attributeNames.addAll(attributeNames);
         }
+
+        clone.createdBy = createdBy;
+        clone.creationDate = creationDate;
+        clone.lastModifiedBy = lastModifiedBy;
+        clone.lastModifiedDate = lastModifiedDate;
     }
 
     /**
@@ -526,5 +576,130 @@ public class Application implements Cloneable {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * Returns creation date.
+     *
+     * @return creation date.
+     */
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * Sets the creation date.
+     *
+     * @param creationDate creation date.
+     */
+    public void setCreationDate(long creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    /**
+     * Returns last modified date.
+     *
+     * @return last modified date.
+     */
+    public long getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    /**
+     * Sets the last modified date.
+     *
+     * @param lastModifiedDate last modified date.
+     */
+    public void setLastModifiedDate(long lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    /**
+     * Returns the user ID who last modified the policy.
+     *
+     * @return user ID who last modified the policy.
+     */
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    /**
+     * Sets the user ID who last modified the policy.
+     *
+     * @param createdBy user ID who last modified the policy.
+     */
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    /**
+     * Returns the user ID who created the policy.
+     *
+     * @return user ID who created the policy.
+     */
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * Sets the user ID who created the policy.
+     *
+     * @param createdBy user ID who created the policy.
+     */
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    /**
+     * Returns meta information.
+     *
+     * @return meta information.
+     */
+    public Set<String> getMetaData() {
+        Set<String> meta = new HashSet<String>(8);
+        if (createdBy != null) {
+            meta.add(CREATED_BY_ATTRIBUTE + "=" + createdBy);
+        }
+        if (creationDate != -1) {
+            meta.add(CREATION_DATE_ATTRIBUTE + "=" +
+                Long.toString(creationDate));
+        }
+        if (lastModifiedDate != -1) {
+            meta.add(LAST_MODIFIED_DATE_ATTRIBUTE + "=" +
+                Long.toString(lastModifiedDate));
+        }
+        if (lastModifiedBy != null) {
+            meta.add(LAST_MODIFIED_BY_ATTRIBUTE + "=" + lastModifiedBy);
+        }
+
+        return meta;
+    }
+
+    public void setMetaData(Set<String> meta) {
+        for (String m : meta) {
+            if (m.startsWith(CREATED_BY_ATTRIBUTE + "=")) {
+                createdBy = m.substring(LEN_CREATED_BY_ATTRIBUTE + 1);
+            } else if (m.startsWith(CREATION_DATE_ATTRIBUTE + "=")) {
+                String s = m.substring(LEN_CREATION_DATE_ATTRIBUTE + 1);
+                try {
+                    creationDate = Long.parseLong(s);
+                } catch (NumberFormatException e) {
+                    PrivilegeManager.debug.error("Application.setMetaData", e);
+                    Date date = new Date();
+                    creationDate = date.getTime();
+                }
+            } else if (m.startsWith(LAST_MODIFIED_BY_ATTRIBUTE + "=")) {
+                lastModifiedBy = m.substring(LEN_LAST_MODIFIED_BY_ATTRIBUTE + 1);
+            } else  if (m.startsWith(LAST_MODIFIED_DATE_ATTRIBUTE + "=")) {
+                String s = m.substring(LEN_LAST_MODIFIED_DATE_ATTRIBUTE + 1);
+                try {
+                    lastModifiedDate = Long.parseLong(s);
+                } catch (NumberFormatException e) {
+                    PrivilegeManager.debug.error("Application.setMetaData", e);
+                    Date date = new Date();
+                    lastModifiedDate = date.getTime();
+                }
+            }
+        }
     }
 }

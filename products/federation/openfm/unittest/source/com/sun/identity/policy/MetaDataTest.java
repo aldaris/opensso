@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MetaDataTest.java,v 1.1 2009-08-19 05:41:02 veiming Exp $
+ * $Id: MetaDataTest.java,v 1.2 2009-09-25 05:52:56 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -31,7 +31,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
-import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.entitlement.util.SearchFilter;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
@@ -108,11 +108,11 @@ public class MetaDataTest {
         PrivilegeManager privilegMgr = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
 
-        test(privilegMgr, PrivilegeSearchFilter.EQUAL_OPERATOR, creationDate,
+        test(privilegMgr, SearchFilter.EQUAL_OPERATOR, creationDate,
             "equals test", false);
-        test(privilegMgr, PrivilegeSearchFilter.GREATER_THAN_OPERATOR, 
+        test(privilegMgr, SearchFilter.GREATER_THAN_OPERATOR, 
             creationDate -1, "greater than test", true);
-        test(privilegMgr, PrivilegeSearchFilter.LESSER_THAN_OPERATOR,
+        test(privilegMgr, SearchFilter.LESSER_THAN_OPERATOR,
             creationDate +1, "lesser than test", true);
     }
 
@@ -123,9 +123,9 @@ public class MetaDataTest {
         String desc,
         boolean containCheckOnly
     ) throws Exception {
-        Set<PrivilegeSearchFilter> filter =
-            new HashSet<PrivilegeSearchFilter>();
-        filter.add(new PrivilegeSearchFilter("creationdate", value, operator));
+        Set<SearchFilter> filter =
+            new HashSet<SearchFilter>();
+        filter.add(new SearchFilter("creationdate", value, operator));
         Set<String> privilegeNames = privilegMgr.searchPrivilegeNames(filter);
 
         if (!containCheckOnly) {

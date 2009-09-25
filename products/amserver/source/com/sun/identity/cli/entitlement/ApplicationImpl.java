@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationImpl.java,v 1.1 2009-08-19 05:40:31 veiming Exp $
+ * $Id: ApplicationImpl.java,v 1.2 2009-09-25 05:52:53 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;
@@ -63,6 +63,10 @@ public class ApplicationImpl extends AuthenticatedCommand {
         "resourceComparator";
     public static final String ATTR_SAVE_INDEX = "saveIndexImpl";
     public static final String ATTR_SEARCH_INDEX = "searchIndexImpl";
+    public static final String ATTR_CREATED_BY = "createdBy";
+    public static final String ATTR_CREATION_DATE = "creationDate";
+    public static final String ATTR_LAST_MODIFIED_BY = "lastModifiedBy";
+    public static final String ATTR_LAST_MODIFICATION_DATE = "lastModifiedDate";
 
     private Subject adminSubject;
     /**

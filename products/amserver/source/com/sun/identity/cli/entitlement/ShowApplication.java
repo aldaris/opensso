@@ -82,6 +82,13 @@ public class ShowApplication extends ApplicationImpl {
             description = "";
         }
         writer.printlnMessage(ATTR_DESCRIPTION + "=" + description);
+        writer.printlnMessage(ATTR_CREATED_BY + "=" + appl.getCreatedBy());
+        writer.printlnMessage(ATTR_CREATION_DATE + "=" +
+            appl.getCreationDate());
+        writer.printlnMessage(ATTR_LAST_MODIFIED_BY + "=" +
+            appl.getLastModifiedBy());
+        writer.printlnMessage(ATTR_LAST_MODIFICATION_DATE + "=" +
+            appl.getLastModifiedDate());
 
         Map<String, Boolean> actions = appl.getActions();
         if ((actions != null) && !actions.isEmpty()) {

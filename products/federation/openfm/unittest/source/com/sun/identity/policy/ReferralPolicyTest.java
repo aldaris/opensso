@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPolicyTest.java,v 1.1 2009-08-19 05:41:03 veiming Exp $
+ * $Id: ReferralPolicyTest.java,v 1.2 2009-09-25 05:52:56 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -32,7 +32,7 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ReferralPrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
-import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.entitlement.util.SearchFilter;
 import com.sun.identity.policy.interfaces.Referral;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.security.AdminTokenAction;
@@ -166,7 +166,7 @@ public class ReferralPolicyTest {
             adminToken);
         ReferralPrivilegeManager rfm = new ReferralPrivilegeManager("/",
             adminSubject);
-        PrivilegeSearchFilter f = new PrivilegeSearchFilter(
+        SearchFilter f = new SearchFilter(
             Privilege.NAME_ATTRIBUTE, "*");
         ReferralPrivilege ref = rfm.getReferral(REFERRAL_POLICY_NAME1);
         Map<String, Set<String>> map = ref.getMapApplNameToResources();

@@ -22,13 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.1 2009-08-19 05:40:32 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.2 2009-09-25 05:52:54 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
+import com.sun.identity.entitlement.util.SearchFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.security.Principal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -45,6 +48,26 @@ public final class ApplicationManager {
         new HashMap<String, Set<Application>>();
 
     private ApplicationManager() {
+    }
+
+
+    /**
+     * Returns the application names in a realm.
+     *
+     * @param adminSubject Admin Subject who has the rights to access
+     *        configuration datastore.
+     * @param realm Realm name.
+     * @param filters Search Filters
+     * @return application names in a realm.
+     */
+    public static Set<String> search(
+        Subject adminSubject,
+        String realm,
+        Set<SearchFilter> filters
+    ) throws EntitlementException {
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            adminSubject, realm);
+        return ec.searchApplicationNames(adminSubject, filters);
     }
 
     /**
@@ -176,6 +199,23 @@ public final class ApplicationManager {
         Application application
     ) throws EntitlementException {
         validateApplication(adminSubject, realm, application);
+        Date date = new Date();
+        Set<Principal> principals = adminSubject.getPrincipals();
+        String principalName = ((principals != null) && !principals.isEmpty()) ?
+            principals.iterator().next().getName() : null;
+
+
+        if (application.getCreationDate() == -1) {
+            application.setCreationDate(date.getTime());
+            if (principalName != null) {
+                application.setCreatedBy(principalName);
+            }
+        }
+        application.setLastModifiedDate(date.getTime());
+        if (principalName != null) {
+            application.setLastModifiedBy(principalName);
+        }
+
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, realm);
         ec.storeApplication(application);

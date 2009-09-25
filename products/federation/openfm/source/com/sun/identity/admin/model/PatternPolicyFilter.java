@@ -22,12 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PatternPolicyFilter.java,v 1.1 2009-08-19 05:40:52 veiming Exp $
+ * $Id: PatternPolicyFilter.java,v 1.2 2009-09-25 05:52:55 veiming Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.entitlement.util.SearchFilter;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,9 +47,9 @@ public abstract class PatternPolicyFilter extends PolicyFilter {
         return pattern;
     }
 
-    public List<PrivilegeSearchFilter> getPrivilegeSearchFilters() {
+    public List<SearchFilter> getPrivilegeSearchFilters() {
         String pattern = getPattern(getFilter());
-        PrivilegeSearchFilter psf = new PrivilegeSearchFilter(getPrivilegeAttributeName(), pattern);
+        SearchFilter psf = new SearchFilter(getPrivilegeAttributeName(), pattern);
         return Collections.singletonList(psf);
     }
 

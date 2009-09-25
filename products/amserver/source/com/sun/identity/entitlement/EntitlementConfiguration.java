@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementConfiguration.java,v 1.2 2009-09-24 22:37:43 hengming Exp $
+ * $Id: EntitlementConfiguration.java,v 1.3 2009-09-25 05:52:54 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.util.SearchFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -275,4 +276,16 @@ public abstract class EntitlementConfiguration {
      */
     public abstract boolean xacmlPrivilegeEnabled();
 
+    /**
+     * Returns a set of application names for a given search criteria.
+     *
+     * @param filter Set of search filter.
+     * @return a set of application names for a given search criteria.
+     * @throws EntitlementException if search failed.
+     */
+    public abstract Set<String> searchApplicationNames(
+        Subject adminSubject,
+        Set<SearchFilter> filters) throws EntitlementException;
+
+    public abstract void reindexApplications();
 }

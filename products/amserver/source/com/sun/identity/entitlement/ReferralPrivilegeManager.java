@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilegeManager.java,v 1.2 2009-09-14 23:02:40 veiming Exp $
+ * $Id: ReferralPrivilegeManager.java,v 1.3 2009-09-25 05:52:54 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.ResourceName;
-import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.entitlement.util.SearchFilter;
 import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
@@ -216,7 +216,7 @@ public final class ReferralPrivilegeManager {
      * @throws EntitlementException if search failed.
      */
     public Set<String> searchReferralPrivilegeNames(
-        Set<PrivilegeSearchFilter> filter,
+        Set<SearchFilter> filter,
         int searchSizeLimit,
         int searchTimeLimit
     ) throws EntitlementException {
@@ -234,7 +234,7 @@ public final class ReferralPrivilegeManager {
      * @throws EntitlementException if search failed.
      */
     public Set<String> searchReferralPrivilegeNames(
-        Set<PrivilegeSearchFilter> filter
+        Set<SearchFilter> filter
     ) throws EntitlementException {
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             adminSubject, realm);

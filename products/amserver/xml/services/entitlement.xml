@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.2 2009-09-14 23:02:42 veiming Exp $
+   $Id: entitlement.xml,v 1.3 2009-09-25 05:52:55 veiming Exp $
 
 -->
 
@@ -173,6 +173,10 @@
                             syntax="string"
                             i18nKey="" />
                         <AttributeSchema name="subjectAttributeNames" 
+                            type="list"
+                            syntax="string"
+                            i18nKey="" />
+                        <AttributeSchema name="meta" 
                             type="list"
                             syntax="string"
                             i18nKey="" />
@@ -622,6 +626,7 @@
                             <Value>upperTransferLimit</Value>
                             <Value>lowerTransferLimit</Value>
                             <Value>anyTransferLimit</Value>
+                            <Value>numericCondition</Value>
                             <Value>dateRange</Value>
                             <Value>daysOfWeek</Value>
                             <Value>timeRange</Value>

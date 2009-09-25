@@ -22,16 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeSearchFilter.java,v 1.1 2009-08-19 05:40:36 veiming Exp $
+ * $Id: SearchFilter.java,v 1.1 2009-09-25 05:52:54 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
 /**
  * This class encapsulates the information required for searching
- * of privilege names.
+ * of names.
  */
-public class PrivilegeSearchFilter {
+public class SearchFilter {
     /**
      * Equals operator.
      */
@@ -55,12 +55,12 @@ public class PrivilegeSearchFilter {
     /**
      * Constructor.
      *
-     * @param attrName Attribute name. Names are defined in Privilege class.
+     * @param attrName Attribute name.
      * <code>CREATED_BY_ATTRIBUTE, LAST_MODIFIED_BY_ATTRIBUTE,
      * CREATION_DATE_ATTRIBUTE, LAST_MODIFIED_DATE_ATTRIBUTE</code>.
      * @param value Search filter.
      */
-    public PrivilegeSearchFilter(String attrName, String value) {
+    public SearchFilter(String attrName, String value) {
         this.attrName = attrName;
         this.value = value;
         this.operator = EQUAL_OPERATOR;
@@ -69,18 +69,18 @@ public class PrivilegeSearchFilter {
     /**
      * Constructor.
      *
-     * @param attrName Attribute name. Names are defined in Privilege class.
+     * @param attrName Attribute name
      * <code>CREATED_BY_ATTRIBUTE, LAST_MODIFIED_BY_ATTRIBUTE,
      * CREATION_DATE_ATTRIBUTE, LAST_MODIFIED_DATE_ATTRIBUTE</code>.
      * @param value Search filter.
      * @param operator Operator. Can be one of these
      * <ul>
-     * <li>PrivilegeSearchFilter.EQUAL_OPERATOR</li>
-     * <li>PrivilegeSearchFilter.LESSER_THAN_OPERATOR</li>
-     * <li>PrivilegeSearchFilter.GREATER_THAN_OPERATOR</li>
+     * <li>SearchFilter.EQUAL_OPERATOR</li>
+     * <li>SearchFilter.LESSER_THAN_OPERATOR</li>
+     * <li>SearchFilter.GREATER_THAN_OPERATOR</li>
      * </ul>
      */
-    public PrivilegeSearchFilter(String attrName, long value, int operator) {
+    public SearchFilter(String attrName, long value, int operator) {
         this.attrName = attrName;
         this.longValue = value;
         this.operator = operator;

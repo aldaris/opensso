@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.110 2009-09-24 19:03:01 mallas Exp $
+ * $Id: AMSetupServlet.java,v 1.111 2009-09-25 05:52:55 veiming Exp $
  *
  */
 
@@ -52,6 +52,8 @@ import com.sun.identity.common.configuration.ServerConfigXML.DirUserObject;
 import com.sun.identity.common.configuration.ServerConfigXML.ServerGroup;
 import com.sun.identity.common.configuration.ServerConfigXML.ServerObject;
 import com.sun.identity.common.configuration.UnknownPropertyNameException;
+import com.sun.identity.entitlement.EntitlementConfiguration;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdConstants;
@@ -506,6 +508,11 @@ public class AMSetupServlet extends HttpServlet {
                         // Setup Replication port in SMS for each server
                         updateReplPortInfo(map);
                     }
+                    EntitlementConfiguration ec =
+                        EntitlementConfiguration.getInstance(
+                        SubjectUtils.createSuperAdminSubject(), "/");
+                    ec.reindexApplications();
+
                 }
             }
         } catch (Exception e) {

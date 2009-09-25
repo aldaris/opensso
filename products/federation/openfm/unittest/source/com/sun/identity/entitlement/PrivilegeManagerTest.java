@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.1 2009-08-19 05:41:00 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.2 2009-09-25 05:52:56 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -30,7 +30,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.opensso.OpenSSOUserSubject;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
-import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.entitlement.util.SearchFilter;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.OrganizationConfigManager;
@@ -366,8 +366,8 @@ public class PrivilegeManagerTest {
         PrivilegeManager prm = PrivilegeManager.getInstance("/",
             SubjectUtils.createSubject(adminToken));
 
-        Set<PrivilegeSearchFilter> psf = new HashSet<PrivilegeSearchFilter>();
-        psf.add(new PrivilegeSearchFilter(Privilege.NAME_ATTRIBUTE, "*"));
+        Set<SearchFilter> psf = new HashSet<SearchFilter>();
+        psf.add(new SearchFilter(Privilege.NAME_ATTRIBUTE, "*"));
         Set privilegeNames = prm.searchPrivilegeNames(psf);
         if (!privilegeNames.contains(PRIVILEGE_NAME)) {
               throw new Exception(
@@ -375,8 +375,8 @@ public class PrivilegeManagerTest {
                 + "got privilege names does not contain saved privilege");
         }
 
-        psf = new HashSet<PrivilegeSearchFilter>();
-        psf.add(new PrivilegeSearchFilter(Privilege.DESCRIPTION_ATTRIBUTE,
+        psf = new HashSet<SearchFilter>();
+        psf.add(new SearchFilter(Privilege.DESCRIPTION_ATTRIBUTE,
             PRIVILEGE_DESC));
         privilegeNames = prm.searchPrivilegeNames(psf);
         if (!privilegeNames.contains(PRIVILEGE_NAME)) {

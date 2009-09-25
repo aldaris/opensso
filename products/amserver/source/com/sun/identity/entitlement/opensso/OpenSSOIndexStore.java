@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.2 2009-09-15 17:08:47 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.3 2009-09-25 05:52:54 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -44,7 +44,7 @@ import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SequentialThreadPool;
 import com.sun.identity.entitlement.SubjectAttributesManager;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
-import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.entitlement.util.SearchFilter;
 import com.sun.identity.policy.PolicyConfig;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.security.AdminTokenAction;
@@ -545,7 +545,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
      * @throws EntitlementException if search failed.
      */
     public Set<String> searchPrivilegeNames(
-        Set<PrivilegeSearchFilter> filters,
+        Set<SearchFilter> filters,
         boolean boolAnd,
         int numOfEntries,
         boolean sortResults,
@@ -563,7 +563,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 } else {
                     strFilter.append("(|");
                 }
-                for (PrivilegeSearchFilter psf : filters) {
+                for (SearchFilter psf : filters) {
                     strFilter.append(psf.getFilter());
                 }
                 strFilter.append(")");
@@ -589,7 +589,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
      * @throws EntitlementException if search failed.
      */
     public Set<String> searchReferralPrivilegeNames(
-        Set<PrivilegeSearchFilter> filters,
+        Set<SearchFilter> filters,
         boolean boolAnd,
         int numOfEntries,
         boolean sortResults,
@@ -614,7 +614,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
      * @throws EntitlementException if search failed.
      */
     public Set<String> searchReferralPrivilegeNames(
-        Set<PrivilegeSearchFilter> filters,
+        Set<SearchFilter> filters,
         Subject adminSubject,
         String currentRealm,
         boolean boolAnd,
@@ -634,7 +634,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 } else {
                     strFilter.append("(|");
                 }
-                for (PrivilegeSearchFilter psf : filters) {
+                for (SearchFilter psf : filters) {
                     strFilter.append(psf.getFilter());
                 }
                 strFilter.append(")");

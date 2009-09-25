@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DatePolicyFilter.java,v 1.1 2009-08-19 05:40:49 veiming Exp $
+ * $Id: DatePolicyFilter.java,v 1.2 2009-09-25 05:52:55 veiming Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
-import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.entitlement.util.SearchFilter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -167,16 +167,16 @@ public abstract class DatePolicyFilter extends PolicyFilter {
         return false;
     }
 
-    public List<PrivilegeSearchFilter> getPrivilegeSearchFilters() {
-        List<PrivilegeSearchFilter> psfs = new ArrayList<PrivilegeSearchFilter>();
+    public List<SearchFilter> getPrivilegeSearchFilters() {
+        List<SearchFilter> psfs = new ArrayList<SearchFilter>();
 
         Calendar nowCal = Calendar.getInstance();
 
         if (verb == Verb.WITHIN_LAST) {
             String attrName = getPrivilegeAttributeName();
             long longValue = nowCal.getTimeInMillis() - unit.getMultiplier()*value;
-            int op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, longValue, op));
+            int op = SearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, longValue, op));
         } else if (verb == Verb.EXACTLY) {
             Calendar startCal = Calendar.getInstance();
             startCal.setTime(date);
@@ -195,11 +195,11 @@ public abstract class DatePolicyFilter extends PolicyFilter {
             String attrName = getPrivilegeAttributeName();
             int op;
 
-            op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, startTime, op));
+            op = SearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, startTime, op));
 
-            op = PrivilegeSearchFilter.LESSER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, endTime, op));
+            op = SearchFilter.LESSER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, endTime, op));
         } else if (verb == Verb.BEFORE) {
             Calendar c = Calendar.getInstance();
             c.setTime(date);
@@ -209,8 +209,8 @@ public abstract class DatePolicyFilter extends PolicyFilter {
             long time = c.getTimeInMillis();
 
             String attrName = getPrivilegeAttributeName();
-            int op = PrivilegeSearchFilter.LESSER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, time, op));
+            int op = SearchFilter.LESSER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, time, op));
         } else if (verb == Verb.AFTER) {
             Calendar c = Calendar.getInstance();
             c.setTime(date);
@@ -220,8 +220,8 @@ public abstract class DatePolicyFilter extends PolicyFilter {
             long time = c.getTimeInMillis();
 
             String attrName = getPrivilegeAttributeName();
-            int op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, time, op));
+            int op = SearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, time, op));
         } else if (verb == Verb.TODAY) {
             Calendar startCal = Calendar.getInstance();
             startCal.setTimeInMillis(nowCal.getTimeInMillis());
@@ -240,11 +240,11 @@ public abstract class DatePolicyFilter extends PolicyFilter {
             String attrName = getPrivilegeAttributeName();
             int op;
 
-            op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, startTime, op));
+            op = SearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, startTime, op));
 
-            op = PrivilegeSearchFilter.LESSER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, endTime, op));
+            op = SearchFilter.LESSER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, endTime, op));
         } else if (verb == Verb.YESTERDAY) {
             Calendar startCal = Calendar.getInstance();
             startCal.setTimeInMillis(nowCal.getTimeInMillis());
@@ -265,11 +265,11 @@ public abstract class DatePolicyFilter extends PolicyFilter {
             String attrName = getPrivilegeAttributeName();
             int op;
 
-            op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, startTime, op));
+            op = SearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, startTime, op));
 
-            op = PrivilegeSearchFilter.LESSER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, endTime, op));
+            op = SearchFilter.LESSER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, endTime, op));
         } else if (verb == Verb.THIS_WEEK) {
             Calendar startCal = Calendar.getInstance();
             startCal.setTimeInMillis(nowCal.getTimeInMillis());
@@ -286,11 +286,11 @@ public abstract class DatePolicyFilter extends PolicyFilter {
             String attrName = getPrivilegeAttributeName();
             int op;
 
-            op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, startTime, op));
+            op = SearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, startTime, op));
 
-            op = PrivilegeSearchFilter.LESSER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, endTime, op));
+            op = SearchFilter.LESSER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, endTime, op));
         } else if (verb == Verb.THIS_MONTH) {
             Calendar startCal = Calendar.getInstance();
             startCal.setTimeInMillis(nowCal.getTimeInMillis());
@@ -307,11 +307,11 @@ public abstract class DatePolicyFilter extends PolicyFilter {
             String attrName = getPrivilegeAttributeName();
             int op;
 
-            op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, startTime, op));
+            op = SearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, startTime, op));
 
-            op = PrivilegeSearchFilter.LESSER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, endTime, op));
+            op = SearchFilter.LESSER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, endTime, op));
         } else if (verb == Verb.THIS_YEAR) {
             Calendar startCal = Calendar.getInstance();
             startCal.setTimeInMillis(nowCal.getTimeInMillis());
@@ -328,11 +328,11 @@ public abstract class DatePolicyFilter extends PolicyFilter {
             String attrName = getPrivilegeAttributeName();
             int op;
 
-            op = PrivilegeSearchFilter.GREATER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, startTime, op));
+            op = SearchFilter.GREATER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, startTime, op));
 
-            op = PrivilegeSearchFilter.LESSER_THAN_OPERATOR;
-            psfs.add(new PrivilegeSearchFilter(attrName, endTime, op));
+            op = SearchFilter.LESSER_THAN_OPERATOR;
+            psfs.add(new SearchFilter(attrName, endTime, op));
         }
 
         return psfs;

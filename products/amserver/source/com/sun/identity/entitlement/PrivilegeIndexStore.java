@@ -22,12 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeIndexStore.java,v 1.1 2009-08-19 05:40:33 veiming Exp $
+ * $Id: PrivilegeIndexStore.java,v 1.2 2009-09-25 05:52:54 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.util.PrivilegeSearchFilter;
+import com.sun.identity.entitlement.util.SearchFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
@@ -203,7 +203,7 @@ public abstract class PrivilegeIndexStore {
      * @throws EntitlementException if search failed.
      */
     public abstract Set<String> searchPrivilegeNames(
-        Set<PrivilegeSearchFilter> filters,
+        Set<SearchFilter> filters,
         boolean boolAnd,
         int numOfEntries,
         boolean sortResults,
@@ -225,7 +225,7 @@ public abstract class PrivilegeIndexStore {
      * @throws EntitlementException if search failed.
      */
     public abstract Set<String> searchReferralPrivilegeNames(
-        Set<PrivilegeSearchFilter> filters,
+        Set<SearchFilter> filters,
         boolean boolAnd,
         int numOfEntries,
         boolean sortResults,

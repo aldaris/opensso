@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.2 2009-09-24 22:38:21 hengming Exp $
+ * $Id: EntitlementService.java,v 1.3 2009-09-25 05:52:54 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -39,7 +39,9 @@ import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import com.sun.identity.entitlement.interfaces.ResourceName;
+import com.sun.identity.entitlement.util.SearchFilter;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.ldap.LDAPDN;
 import com.sun.identity.shared.ldap.util.DN;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.DNMapper;
@@ -50,11 +52,15 @@ import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.security.AccessController;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.security.auth.Subject;
 
 /**
  *
@@ -67,6 +73,7 @@ public class EntitlementService extends EntitlementConfiguration {
 
     private static final String ATTR_NAME_SUBJECT_ATTR_NAMES =
         "subjectAttributeNames";
+    private static final String ATTR_NAME_META = "meta";
     private static final String CONFIG_APPLICATIONS = "registeredApplications";
     private static final String CONFIG_APPLICATION = "application";
     private static final String CONFIG_APPLICATION_DESC = "description";
@@ -94,6 +101,9 @@ public class EntitlementService extends EntitlementConfiguration {
     private static final String XACML_PRIVILEGE_ENABLED =
         "xacml-privilege-enabled";
     private static final String APPLICATION_CLASSNAME = "applicationClassName";
+    private static final String REALM_DN_TEMPLATE =
+         "ou={0},ou=default,ou=OrganizationConfig,ou=1.0,ou=" + SERVICE_NAME +
+         ",ou=services,{1}";
 
     private String realm;
     private static SSOToken adminToken =
@@ -288,6 +298,86 @@ public class EntitlementService extends EntitlementConfiguration {
             adminToken :
             SubjectUtils.getSSOToken(getAdminSubject());
     }
+
+    /**
+     * Returns a set of application names for a given search criteria.
+     *
+     * @param filter Set of search filter.
+     * @param searchSizeLimit Search size limit.
+     * @param searchTimeLimit Search time limit in seconds.
+     * @return a set of application names for a given search criteria.
+     * @throws EntitlementException if search failed.
+     */
+    public Set<String> searchApplicationNames(
+        Subject adminSubject,
+        Set<SearchFilter> filters
+    ) throws EntitlementException {
+        SSOToken token = getSSOToken(adminSubject);
+
+        if (token == null) {
+            throw new EntitlementException(451);
+        }
+        
+        String baseDN = getApplicationSearchBaseDN(realm);
+        if (!SMSEntry.checkIfEntryExists(baseDN, token)) {
+            return Collections.EMPTY_SET;
+        }
+
+        try {
+            Set<String> dns = SMSEntry.search(token, baseDN,
+                getApplicationSearchFilter(filters));
+            Set<String> results = new HashSet<String>();
+
+            for (String dn : dns) {
+                if (!areDNIdentical(baseDN, dn)) {
+                    String rdns[] = LDAPDN.explodeDN(dn, true);
+                    if ((rdns != null) && rdns.length > 0) {
+                        results.add(rdns[0]);
+                    }
+                }
+            }
+            return results;
+        } catch (SMSException e) {
+            throw new EntitlementException(450, e);
+        }
+    }
+
+    private static boolean areDNIdentical(String dn1, String dn2) {
+        DN dnObj1 = new DN(dn1);
+        DN dnObj2 = new DN(dn2);
+        return dnObj1.equals(dnObj2);
+    }
+
+    private SSOToken getSSOToken(Subject subject) {
+        if (subject == PrivilegeManager.superAdminSubject) {
+            return adminToken;
+        }
+        return SubjectUtils.getSSOToken(subject);
+    }
+
+    private String getApplicationSearchFilter(Set<SearchFilter> filters) {
+        StringBuilder strFilter = new StringBuilder();
+        if (filters.isEmpty()) {
+            strFilter.append("(ou=*)");
+        } else {
+            if (filters.size() == 1) {
+                strFilter.append(filters.iterator().next().getFilter());
+            } else {
+                strFilter.append("(|");
+                for (SearchFilter psf : filters) {
+                    strFilter.append(psf.getFilter());
+                }
+                strFilter.append(")");
+            }
+        }
+        return strFilter.toString();
+    }
+
+    private static String getApplicationSearchBaseDN(String realm) {
+        Object[] args = {CONFIG_APPLICATIONS, DNMapper.orgNameToDN(realm)};
+        return MessageFormat.format(REALM_DN_TEMPLATE, args);
+    }
+
 
     /**
      * Returns a set of registered applications.
@@ -693,14 +783,11 @@ public class EntitlementService extends EntitlementConfiguration {
     public void storeApplication(Application appl, boolean add)
         throws EntitlementException {
         try {
-            ServiceConfig orgConfig = createApplicationCollectionConfig(realm);
-            ServiceConfig appConfig = orgConfig.getSubConfig(appl.getName());
-            if (appConfig == null) {
-                orgConfig.addSubConfig(appl.getName(),
-                    CONFIG_APPLICATION, 0, getApplicationData(appl, add));
-            } else {
-                appConfig.setAttributes(getApplicationData(appl, add));
-            }
+            createApplicationCollectionConfig(realm);
+            String dn = getApplicationDN(appl.getName(), realm);
+            SMSEntry s = new SMSEntry(adminToken, dn);
+            s.setAttributes(getApplicationData(appl, add));
+            s.save();
             
             Map<String, String> params = new HashMap<String, String>();
             params.put(NotificationServlet.ATTR_REALM_NAME, realm);
@@ -713,6 +800,10 @@ public class EntitlementService extends EntitlementConfiguration {
             Object[] arg = {appl.getName()};
             throw new EntitlementException(231, arg, ex);
         }
+    }
+
+    private String getApplicationDN(String name, String realm) {
+        return "ou=" + name + "," + getApplicationSearchBaseDN(realm);
     }
 
     /**
@@ -837,46 +928,132 @@ public class EntitlementService extends EntitlementConfiguration {
         boolean add) {
         Application app = getStorableApplication(appl, add);
         Set<String> resources = app.getResources();
-        
-        Map<String, Set<String>> data = new HashMap<String, Set<String>>();
-        data.put(CONFIG_APPLICATIONTYPE, 
-            getSet(app.getApplicationType().getName()));
-        data.put(CONFIG_APPLICATION_DESC, getSet(appl.getDescription()));
-        data.put(CONFIG_ACTIONS, getActionSet(app.getActions()));
-        data.put(CONFIG_RESOURCES, (resources == null) ? Collections.EMPTY_SET :
-            resources);
-        data.put(CONFIG_ENTITLEMENT_COMBINER,
-            getSet(app.getEntitlementCombiner().getClass().getName()));
+
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        Set<String> setServiceID = new HashSet<String>(2);
+        map.put(SMSEntry.ATTR_SERVICE_ID, setServiceID);
+        setServiceID.add("application");
+
+        Set<String> setObjectClass = new HashSet<String>(4);
+        map.put(SMSEntry.ATTR_OBJECTCLASS, setObjectClass);
+        setObjectClass.add(SMSEntry.OC_TOP);
+        setObjectClass.add(SMSEntry.OC_SERVICE_COMP);
+
+        Set<String> data = new HashSet<String>();
+        map.put(SMSEntry.ATTR_KEYVAL, data);
+        data.add(CONFIG_APPLICATIONTYPE + '=' +
+            app.getApplicationType().getName());
+        if (appl.getDescription() != null) {
+            data.add(CONFIG_APPLICATION_DESC + "=" + appl.getDescription());
+        } else {
+            data.add(CONFIG_APPLICATION_DESC + "=");
+        }
+
+        for (String s : getActionSet(app.getActions())) {
+            data.add(CONFIG_ACTIONS + "=" + s);
+        }
+
+        if ((resources != null) && !resources.isEmpty()) {
+            for (String r : resources) {
+                data.add(CONFIG_RESOURCES + "=" + r);
+            }
+        } else {
+            data.add(CONFIG_RESOURCES + "=");
+        }
+
+        data.add(CONFIG_ENTITLEMENT_COMBINER + "=" +
+            app.getEntitlementCombiner().getClass().getName());
+
         Set<String> conditions = app.getConditions();
-        data.put(CONFIG_CONDITIONS, (conditions == null) ?
-            Collections.EMPTY_SET : conditions);
+        if ((conditions != null) && !conditions.isEmpty()) {
+            for (String c : conditions) {
+                data.add(CONFIG_CONDITIONS + "=" + c);
+            }
+        } else {
+            data.add(CONFIG_CONDITIONS + "=");
+        }
 
         Set<String> subjects = app.getSubjects();
-        data.put(CONFIG_SUBJECTS, (subjects == null) ?
-            Collections.EMPTY_SET : subjects);
+        if ((subjects != null) && !subjects.isEmpty()) {
+            for (String s : subjects) {
+                data.add(CONFIG_SUBJECTS + "=" + s);
+            }
+        } else {
+            data.add(CONFIG_SUBJECTS + "=");
+        }
 
         ISaveIndex sIndex = app.getSaveIndex();
-        String saveIndexClassName = (sIndex != null) ? 
-            sIndex.getClass().getName() : null;
-        data.put(CONFIG_SAVE_INDEX_IMPL, (saveIndexClassName == null) ?
-            Collections.EMPTY_SET : getSet(saveIndexClassName));
+        if (sIndex != null) {
+            String saveIndexClassName = sIndex.getClass().getName();
+            data.add(CONFIG_SAVE_INDEX_IMPL + "=" + saveIndexClassName);
+        }
 
         ISearchIndex searchIndex = app.getSearchIndex();
-        String searchIndexClassName = (searchIndex != null) ?
-            searchIndex.getClass().getName() : null;
-        data.put(CONFIG_SEARCH_INDEX_IMPL, (searchIndexClassName == null) ?
-            Collections.EMPTY_SET : getSet(searchIndexClassName));
+        if (searchIndex != null) {
+            String searchIndexClassName = searchIndex.getClass().getName();
+            data.add(CONFIG_SEARCH_INDEX_IMPL + "=" + searchIndexClassName);
+        }
 
         ResourceName recComp = app.getResourceComparator();
-        String resCompClassName = (recComp != null) ? 
-            recComp.getClass().getName() : null;
-        data.put(CONFIG_RESOURCE_COMP_IMPL, (resCompClassName == null) ?
-            Collections.EMPTY_SET : getSet(resCompClassName));
+        if (recComp != null) {
+            String resCompClassName = recComp.getClass().getName();
+            data.add(CONFIG_RESOURCE_COMP_IMPL + "=" + resCompClassName);
+        }
 
         Set<String> sbjAttributes = app.getAttributeNames();
-        data.put(ATTR_NAME_SUBJECT_ATTR_NAMES, (sbjAttributes == null) ?
-            Collections.EMPTY_SET : sbjAttributes);
-        return data;
+        if ((sbjAttributes != null) && !sbjAttributes.isEmpty()) {
+            for (String s : sbjAttributes) {
+                data.add(ATTR_NAME_SUBJECT_ATTR_NAMES + "=" + s);
+            }
+        } else {
+            data.add(ATTR_NAME_SUBJECT_ATTR_NAMES + "=");
+        }
+
+        for (String m : app.getMetaData()) {
+            data.add(ATTR_NAME_META + "=" + m);
+        }
+        map.put("ou", getApplicationIndices(appl));
+        return map;
+    }
+
+    private Set<String> getApplicationIndices(Application appl) {
+        Set<String> info = new HashSet<String>();
+        info.add(appl.getName());
+        info.add("ou" + "=" + appl.getName());
+
+        String desc = appl.getDescription();
+        if (desc == null) {
+            desc = "";
+        }
+        info.add(Application.DESCRIPTION_ATTRIBUTE + "=" + desc);
+
+        String createdBy = appl.getCreatedBy();
+        if (createdBy != null) {
+            info.add(Application.CREATED_BY_ATTRIBUTE + createdBy);
+        }
+
+        String lastModifiedBy = appl.getLastModifiedBy();
+        if (lastModifiedBy != null) {
+            info.add(Application.LAST_MODIFIED_BY_ATTRIBUTE + "=" +
+                lastModifiedBy);
+        }
+
+        long creationDate = appl.getCreationDate();
+        if (creationDate > 0) {
+            String data = Long.toString(creationDate) + "=" +
+                Application.CREATION_DATE_ATTRIBUTE;
+            info.add(data);
+            info.add("|" + data);
+        }
+
+        long lastModifiedDate = appl.getLastModifiedDate();
+        if (lastModifiedDate > 0) {
+            String data = Long.toString(lastModifiedDate) + "=" +
+                Application.LAST_MODIFIED_DATE_ATTRIBUTE;
+            info.add(data);
+            info.add("|" + data);
+        }
+        return info;
     }
 
     private ApplicationType createApplicationType(
@@ -982,6 +1159,7 @@ public class EntitlementService extends EntitlementConfiguration {
             app.setAttributeNames(attributeNames);
         }
 
+        app.setMetaData(data.get(ATTR_NAME_META));
         return app;
     }
 
@@ -1309,5 +1487,16 @@ public class EntitlementService extends EntitlementConfiguration {
     public static boolean toUseNewConsole() {
         String val = useNewConsole();
         return Boolean.parseBoolean(val);
+    }
+
+    public void reindexApplications() {
+        Set<Application> appls = getApplications();
+        for (Application a : appls) {
+            try {
+                ApplicationManager.saveApplication(getAdminSubject(), realm, a);
+            } catch (EntitlementException ex) {
+                //ignore
+            }
+        }
     }
 }
