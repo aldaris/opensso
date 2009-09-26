@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InfocardClaims.java,v 1.2 2009-09-15 13:27:13 ppetitsm Exp $
+ * $Id: InfocardClaims.java,v 1.3 2009-09-26 20:36:07 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -252,7 +252,7 @@ public class InfocardClaims {
     
     public static String canonicalizeClaimValue(String claimValue) {
 
-        String var = claimValue.substring(1,claimValue.length()).replace(',', ' ');
+        String var = claimValue.substring(1,claimValue.length()-1).replace(',', ' ');
         return var;
     }
 

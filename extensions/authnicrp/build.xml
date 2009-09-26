@@ -93,7 +93,6 @@
         <copy file="xml/auth-module/Infocard.xml" todir="${opensso-config.dir}/default" />
         <copy file="xml/auth-module/Infocard.xml" todir="${opensso-config.dir}/default_en" />
         <copy file="www/jsp/infocardException.jsp" todir="${opensso-config.dir}/default" />
-        <copy file="www/jsp/infocardIdentityException.jsp" todir="${opensso-config.dir}/default" />
         <copy file="www/jsp/infocard.jsp" todir="${opensso-config.dir}/default" />
         <copy file="www/js/Infocard.js" todir="${opensso-root.dir}/js" />
         <copy file="www/css/Infocard.css" todir="${opensso-root.dir}/css" />

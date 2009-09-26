@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Infocard.java,v 1.8 2009-09-15 10:45:39 ppetitsm Exp $
+ * $Id: Infocard.java,v 1.9 2009-09-26 20:36:07 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -31,7 +31,6 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AuthException;
-import com.sun.identity.authentication.service.AuthenticationPrincipalDataRetriever;
 import java.util.Map;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -64,13 +63,12 @@ import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import org.xmldap.util.KeystoreUtil;
 
 /**
  * Sample Login Module.
  */
-public class Infocard extends AMLoginModule implements AuthenticationPrincipalDataRetriever {
+public class Infocard extends AMLoginModule {
 
     public static final String amAuthInfocard = "amAuthInfocard";
     public static final String DEFAULT_REQUIRED_CLAIMS =
@@ -94,10 +92,9 @@ public class Infocard extends AMLoginModule implements AuthenticationPrincipalDa
     private static final int PASSWORD_MISMATCH_ERROR = 9;
     private static final int USER_EXISTS_ERROR = 10;
     private static final int USER_PASSWD_SAME_ERROR = 11;
-    private static final int PROFILE_ERROR = 12;
-    private static final int USER_PASSWORD_SAME_ERROR = 13;
-    private static final int INFOCARD_VALIDATION_ERROR = 14;
-    private static final int INTERNAL_ERROR = 15;
+    private static final int USER_PASSWORD_SAME_ERROR = 12;
+    private static final int INTERNAL_ERROR = 13;
+    private static final int INFOCARD_ERROR = 14;
 
     // Global variables
     protected static Debug debug = null;
@@ -283,9 +280,7 @@ public class Infocard extends AMLoginModule implements AuthenticationPrincipalDa
         }
 
         switch (state) {
-
             case BEGIN_STATE:
-
                 try {
                     infocardIdentity = getInfocardIdentity();
                     if (infocardIdentity != null) {
@@ -299,9 +294,11 @@ public class Infocard extends AMLoginModule implements AuthenticationPrincipalDa
                         retval = LoginWithUserNamePasswd(callbacks);
                     }
                 } catch (InfocardIdentityException e) {
-                    debug.error(errorMsg, e);
-                    //forwardErrorMsg(errorMsg);
-                    retval = INFOCARD_VALIDATION_ERROR;
+                    if (debug.errorEnabled()) {
+                        debug.error("Error processing Information Card:" + bundle.getString(errorMsg), e);
+                    }
+                    replaceHeader(INFOCARD_ERROR, bundle.getString(errorMsg));
+                    return INFOCARD_ERROR;
                 } catch (InfocardException e) {
                     debug.error("Internal error", e);
                     retval = INTERNAL_ERROR;
@@ -366,33 +363,23 @@ public class Infocard extends AMLoginModule implements AuthenticationPrincipalDa
                     idRepoAttributes.put("uid", values);
                     retval = registerInfocardWithNewUser();
                 }
-
                 break;
+
         }
         if (retval == ISAuthConstants.LOGIN_SUCCEED && infocardIdentity != null) {
-            try {
-                Map<String, Set<String>> claims = infocardIdentity.getClaims();
-                Iterator itr = claims.keySet().iterator();
-                while (itr.hasNext()) {
-                    String claimUri = (String) itr.next();
-                    Set<String> claimValues = infocardIdentity.getClaimValues(claimUri);
-                    if (claimValues != null && claimValues.size() != 0) {
-                        try {
-                            // Must be called from within process()
-                            setUserSessionProperty(InfocardClaims.canonicalizeClaimUri(claimUri),
-                                    InfocardClaims.canonicalizeClaimValue(claimValues.toString()));
-                            if (debug.messageEnabled()) {
-                                debug.message("Added claim to user session '" + claimUri + "' values = " + claimValues.toString());
-                            }
-                        } catch (AuthLoginException e) {
-                            throw new InfocardException(e);
-                        }
+            Map<String, Set<String>> claims = infocardIdentity.getClaims();
+            Iterator itr = claims.keySet().iterator();
+            while (itr.hasNext()) {
+                String claimUri = (String) itr.next();
+                Set<String> claimValues = infocardIdentity.getClaimValues(claimUri);
+                if (claimValues != null && claimValues.size() != 0) {
+                    // Must be called from within process()
+                    setUserSessionProperty(InfocardClaims.canonicalizeClaimUri(claimUri),
+                            InfocardClaims.canonicalizeClaimValue(claimValues.toString()));
+                    if (debug.messageEnabled()) {
+                        debug.message("Added claim to user session '" + claimUri + "' values = " + claimValues.toString());
                     }
                 }
-            } catch (InfocardException e) {
-                setFailureID(userID);
-                debug.error("Caught unexpected exception: ", e);
-                return INTERNAL_ERROR;
             }
         }
         return retval;
@@ -481,14 +468,6 @@ public class Infocard extends AMLoginModule implements AuthenticationPrincipalDa
         setRoleToRoleCheckPluginMap(options);
     }
 
-    @Override
-    public Map getAttrMapForAuthenticationModule(Subject authSubject) {
-
-        debug.message("getAttrMapForAuthnticationModule(" + authSubject + ")");
-
-        return infocardIdentity.getClaims();
-    }
-
     private void validateInfocardIdentity() throws InfocardIdentityException {
 
         if (checkVerificationMethod && infocardIdentity.isClaimSupplied(
@@ -496,28 +475,28 @@ public class Infocard extends AMLoginModule implements AuthenticationPrincipalDa
 
             String var = infocardIdentity.getClaimValue(InfocardClaims.getVERIFICATION_METHOD_URI());
             if (!verificationMethod.equals(var)) {
-                errorMsg = bundle.getString("missingVerificationMethod");
-                throw new InfocardIdentityException("error validating claims identity: " + errorMsg);
+                errorMsg = "missingVerificationMethod";
+                throw new InfocardIdentityException(errorMsg);
             }
         }
 
         if (issuer != null && !issuer.equals(infocardIdentity.getIssuer())) {
-            errorMsg = bundle.getString("invalidIssuer");
-            throw new InfocardIdentityException("error validating claims identity: " + errorMsg);
+            errorMsg = "invalidIssuer";
+            throw new InfocardIdentityException(errorMsg);
         }
 
         // Override issuer with value from token
         issuer = infocardIdentity.getIssuer();
 
         if (audience != null && !audience.equals(infocardIdentity.getAudience())) {
-            errorMsg = bundle.getString("invalidIssuer");
-            throw new InfocardIdentityException("error validating claims identity: " + errorMsg);
+            errorMsg = "invalidAudience";
+            throw new InfocardIdentityException(errorMsg);
         }
 
         // Check all other required claims
         if (checkRequiredClaims && !infocardIdentity.areClaimsSupplied(requiredClaims)) {
-            errorMsg = bundle.getString("missingRequiredClaims");
-            throw new InfocardIdentityException("error validating claims identity: " + errorMsg);
+            errorMsg = "missingRequiredClaims";
+            throw new InfocardIdentityException(errorMsg);
         }
     }
 
@@ -610,11 +589,8 @@ public class Infocard extends AMLoginModule implements AuthenticationPrincipalDa
 
             ppid = infocardIdentity.getClaimValue(InfocardClaims.getPPID_URI());
             if (ppid == null) {
-                errorMsg = bundle.getString("missingPPID");
-                if (debug.errorEnabled()) {
-                    debug.error("error validating claims identity: " + errorMsg);
-                }
-                throw new InfocardIdentityException("error validating claims identity: " + errorMsg);
+                errorMsg = "missingPPID";
+                throw new InfocardIdentityException(errorMsg);
             }
             // TODO: I think we have a problem here because searchUserIdentity returns
             // too many entries. Must improve search criteria filter scheme.
@@ -630,9 +606,11 @@ public class Infocard extends AMLoginModule implements AuthenticationPrincipalDa
 
                     if (!issuer.equals(icRepoData.getIssuer())) {
                         // Forgery ?
-                        debug.error(
-                                "Information Card token doesn't match stored issuer for PPID =" + ppid);
-                        throw new AuthLoginException(amAuthInfocard, "authFailed", null);
+                        errorMsg = "invalidIssuer";
+                        if (debug.errorEnabled()) {
+                            debug.error("Information Card token doesn't match stored issuer for PPID =" + ppid);
+                        }
+                        throw new InfocardIdentityException(errorMsg);
                     }
                 }
                 if (userPasswd == null || userPasswd.length() == 0) {
@@ -659,8 +637,10 @@ public class Infocard extends AMLoginModule implements AuthenticationPrincipalDa
                         // Stored password is invalid. Remove iDRepo Infocard data
                         // and return to BEGIN_STATE
                         InfocardIdRepoUtils.removeRepoInfocardData(repoIdentity, ppid);
-                        debug.error("User password has changed since Information Card registration. " +
-                                "Deleting stored Information Card for that user: " + userID);
+                        if (debug.errorEnabled()) {
+                            debug.error("User password has changed since Information Card registration. " +
+                                    "Deleted stored Information Card for that user: " + userID);
+                        }
                         return BEGIN_STATE;
                     }
                 } catch (IdRepoException e) {
@@ -1116,31 +1096,10 @@ public class Infocard extends AMLoginModule implements AuthenticationPrincipalDa
         if (request != null) {
             String samlToken = request.getParameter("xmlToken");
             if (samlToken != null && samlToken.length() != 0) {
-                try {
-                    identity = new InfocardIdentity(samlToken, privateKey);
-                } catch (InfocardIdentityException e) {
-                    String fmtMsg = bundle.getString("invalidInfocard");
-                    errorMsg = com.sun.identity.shared.locale.Locale.formatMessage(fmtMsg, e.getMessage());
-                    debug.error(errorMsg, e);
-                    throw new InfocardIdentityException(errorMsg);
-                }
+                identity = new InfocardIdentity(samlToken, privateKey);
             }
         }
         return identity;
-    }
-
-    private void forwardErrorMsg(String msg) {
-
-        assert (msg != null && msg.length() > 0);
-        ErrorMsgBean bean = new ErrorMsgBean();
-        bean.setMessage(msg);
-        HttpServletRequest request = getHttpServletRequest();
-        if (request != null) {
-            HttpSession session = request.getSession();
-            if (session != null) {
-                session.setAttribute(ErrorMsgBean.ID, bean);
-            }
-        }
     }
 
     /**

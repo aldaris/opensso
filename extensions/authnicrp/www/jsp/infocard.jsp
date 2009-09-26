@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: infocard.jsp,v 1.2 2009-09-15 10:45:38 ppetitsm Exp $
+   $Id: infocard.jsp,v 1.3 2009-09-26 20:36:08 ppetitsm Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
    Portions Copyrighted 2008 Patrick Petit Consulting
@@ -123,7 +123,7 @@ private static final String[] iCClaims = {"issuer", "issuerPolicy",
                     function openLink(href) {
                         var newWin = window.open(href);
                         newWin.focus( );
-                        return false;
+                        return true;
                     }
 
                 </jato:content>
@@ -185,16 +185,16 @@ private static final String[] iCClaims = {"issuer", "issuerPolicy",
                                             </td>
                                             <td>
                                                 <div class="InformationCardsSupported">
-                                                    Your browser supports Information Cards<br>
+                                                    Click the Information Cards logo to send your card<br>
                                                     <a href="http://informationcard.net/quick-overview"
                                                        onclick="openLink(this.href)">
-                                                    What are they ?</a><br>
+                                                    What are Information Cards ?</a><br>
                                                 </div>
                                                 <div class="InformationCardsNotSupported">
                                                     Your browser doesn't support Information Cards
                                                     <a href="http://informationcard.net/quick-overview"
                                                        onclick="openLink(this.href)">
-                                                    What are they?</a><br>
+                                                    What are Information Cards?</a><br>
                                                     <a href="http://informationcard.net/selector-guide"
                                                        onclick="openLink(this.href)">
                                                     How do I get started?</a>

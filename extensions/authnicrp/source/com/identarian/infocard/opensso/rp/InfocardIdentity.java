@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InfocardIdentity.java,v 1.2 2009-09-15 13:27:13 ppetitsm Exp $
+ * $Id: InfocardIdentity.java,v 1.3 2009-09-26 20:36:07 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -96,7 +96,19 @@ public class InfocardIdentity {
 
     public boolean areClaimsSupplied(Set claimUris) {
 
-        return claims.keySet().containsAll(claimUris);
+        if (claims.keySet().containsAll(claimUris)) {
+            Iterator itr = claimUris.iterator();
+            while (itr.hasNext()) {
+                Set<String> claimValues = (Set<String>) claims.get(itr.next());
+                if (claimValues.isEmpty()
+                        || claimValues.toString().trim().equals("[]")) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
     }
 
     public boolean isClaimSupplied(String claimUri) {
