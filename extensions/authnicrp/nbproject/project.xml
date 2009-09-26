@@ -7,6 +7,7 @@
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <source-roots>
                 <root id="src.source.dir"/>
+                <root id="src.licences.dir"/>
             </source-roots>
             <test-roots/>
         </data>
