@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Infocard.java,v 1.9 2009-09-26 20:36:07 ppetitsm Exp $
+ * $Id: Infocard.java,v 1.10 2009-09-27 16:31:44 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -250,7 +250,7 @@ public class Infocard extends AMLoginModule {
                 if (issuerPolicy == null || issuerPolicy.length() == 0) {
                     issuerPolicy = new String(issuer.concat("/mex"));
                 }
-                if (issuerPolicy.startsWith("http")) {
+                if (!issuerPolicy.startsWith("https")) {
                     issuerPolicy.replaceFirst("http", "https");
                 }
                 request.setAttribute("issuerPolicy", issuer);
@@ -480,13 +480,14 @@ public class Infocard extends AMLoginModule {
             }
         }
 
-        if (issuer != null && !issuer.equals(infocardIdentity.getIssuer())) {
+        String actualIssuer = infocardIdentity.getIssuer();
+        if (issuer != null && !actualIssuer.matches(issuer+"*")) {
             errorMsg = "invalidIssuer";
             throw new InfocardIdentityException(errorMsg);
         }
 
         // Override issuer with value from token
-        issuer = infocardIdentity.getIssuer();
+        issuer = actualIssuer;
 
         if (audience != null && !audience.equals(infocardIdentity.getAudience())) {
             errorMsg = "invalidAudience";
