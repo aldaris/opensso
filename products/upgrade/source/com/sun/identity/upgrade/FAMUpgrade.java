@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMUpgrade.java,v 1.12 2008-10-13 03:58:39 bina Exp $
+ * $Id: FAMUpgrade.java,v 1.13 2009-09-28 20:03:22 goodearth Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -126,7 +126,13 @@ public class FAMUpgrade {
                     UpgradeUtils.bundle.getString("upg-legacy-mode"));
                 System.out.print(UpgradeUtils.bundle.getString(
                     "upg-info-enable-realm-mode"));
-                enableRealms = new Boolean(readInput()).booleanValue();
+                String temp = readInput();
+                if (temp != null && temp.length() > 0) {
+                   if (temp.equalsIgnoreCase("y") || 
+                       temp.equalsIgnoreCase("Y")) {
+                       enableRealms = true;
+                   }
+                }
                 if (debug.messageEnabled()) {
                     debug.message("isRealmEnabled: " + enableRealms);
                 }
