@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMChangeUserPasswordViewBean.java,v 1.3 2008-06-25 05:43:22 qcheng Exp $
+ * $Id: UMChangeUserPasswordViewBean.java,v 1.4 2009-09-28 19:00:36 babysunil Exp $
  *
  */
 
@@ -34,6 +34,8 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.CloseWindowViewBean;
+import com.sun.identity.console.base.model.AMAdminConstants;
+import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMFormatUtils;
 import com.sun.identity.console.base.model.AMModel;
@@ -42,11 +44,17 @@ import com.sun.identity.console.idm.EntityEditViewBean;
 import com.sun.identity.console.realm.RMRealmViewBeanBase;
 import com.sun.identity.console.user.model.UMChangeUserPasswordModel;
 import com.sun.identity.console.user.model.UMChangeUserPasswordModelImpl;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.SchemaType;
 import com.sun.web.ui.view.alert.CCAlert;
+import com.sun.web.ui.view.html.CCPassword;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import com.sun.web.ui.model.CCPageTitleModel;
 import java.text.MessageFormat;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Iterator;
+import java.util.Set;
 
 public class UMChangeUserPasswordViewBean
     extends RMRealmViewBeanBase
@@ -58,6 +66,9 @@ public class UMChangeUserPasswordViewBean
     private static final String PAGETITLE = "pgtitle";
     private static final String ATTR_PASSWORD = "tfPassword";
     private static final String REENTER_PASSWORD = "tfConfirmPassword";
+    private static final String ATTR_OLD_PASSWORD = "tfOldPassword";
+    private static boolean enabled = false;
+    private static boolean oldapicall = true;
 
     private CCPageTitleModel ptModel;
     protected AMPropertySheetModel propertySheetModel;
@@ -123,13 +134,42 @@ public class UMChangeUserPasswordViewBean
     public void beginDisplay(DisplayEvent event)
         throws ModelControlException {
         super.beginDisplay(event);
-        String userId = (String)getPageSessionAttribute(
+        String userId = (String) getPageSessionAttribute(
             EntityEditViewBean.UNIVERSAL_ID);
-        UMChangeUserPasswordModel model = (UMChangeUserPasswordModel)getModel();
-        String[] arg = { AMFormatUtils.getIdentityDisplayName(model, userId) };
+        UMChangeUserPasswordModel model = (UMChangeUserPasswordModel) getModel();
+        String loggedinUser = model.getUserName();
+        Set val = null;
+        Set disAttributes = AMAdminUtils.getDisplayableAttributeNames(
+            AMAdminConstants.ADMIN_CONSOLE_SERVICE, SchemaType.GLOBAL);
+        for (Iterator i = disAttributes.iterator(); i.hasNext();) {
+            AttributeSchema as = (AttributeSchema) i.next();
+            String nameas = as.getName();
+            if (nameas.equals(AMAdminConstants.ATTR_USER_OLD_PASSWORD)) {
+                val = as.getDefaultValues();
+            }
+        }
+        if (val != null && !val.isEmpty()) {
+            enabled = Boolean.valueOf((String) val.iterator().next())
+                .booleanValue();
+        }
+
+        //extract the user's name alone
+        String[] comps = LDAPDN.explodeDN(userId, true);
+        String[] compss = LDAPDN.explodeDN(loggedinUser, true);
+
+        //check if the enabled flag is set to true and if the user being edited
+        //is same as logged in user
+        if ((enabled) && (comps[0].equalsIgnoreCase(compss[0]))) {
+            oldapicall = false;
+        } else {
+            CCPassword pwdtag = (CCPassword) getChild(ATTR_OLD_PASSWORD);
+            pwdtag.setDisabled(true);
+            oldapicall = true;
+        }
+        String[] arg = {AMFormatUtils.getIdentityDisplayName(model, userId)};
         ptModel.setPageTitleText(MessageFormat.format(
-            model.getLocalizedString("page.title.user.change.password"), 
-            (Object[])arg));
+            model.getLocalizedString("page.title.user.change.password"),
+            (Object[]) arg));
 
         if (!submitCycle) {
             try {
@@ -168,11 +208,15 @@ public class UMChangeUserPasswordViewBean
     public void handleButton1Request(RequestInvocationEvent event)
         throws ModelControlException {
         submitCycle = true;
-        String pwd = (String)propertySheetModel.getValue(ATTR_PASSWORD);
-        String reenter = (String)propertySheetModel.getValue(REENTER_PASSWORD);
+        UMChangeUserPasswordModel model =
+            (UMChangeUserPasswordModel) getModel();
+        String userId = (String) getPageSessionAttribute(
+            EntityEditViewBean.UNIVERSAL_ID);
+        String pwd = (String) propertySheetModel.getValue(ATTR_PASSWORD);
+        String reenter = (String) propertySheetModel.getValue(REENTER_PASSWORD);
+        String oldPwd = (String) propertySheetModel.getValue(ATTR_OLD_PASSWORD);
         pwd = pwd.trim();
         reenter = reenter.trim();
-
         if (pwd.length() == 0) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 "user.change.password.missing.password.message");
@@ -180,18 +224,33 @@ public class UMChangeUserPasswordViewBean
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 "user.change.password.mismatch.password.message");
         } else {
-            UMChangeUserPasswordModel model = (UMChangeUserPasswordModel)
-                getModel();
-            String userId = (String)getPageSessionAttribute(
-                EntityEditViewBean.UNIVERSAL_ID);
+            if (!oldapicall) {
+                if (oldPwd.length() == 0) {
+                    setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                        "user.change.password.missing.old.password.message");
+                } else {
+                    try {
+                        //change password after validating old password
+                        model.changePwd(userId, oldPwd, pwd);
+                        setInlineAlertMessage(CCAlert.TYPE_INFO, 
+                            "message.information",
+                            "user.change.password.modified.password.message");
+                    } catch (AMConsoleException e) {
+                        setInlineAlertMessage(CCAlert.TYPE_ERROR, 
+                            "message.error", e.getMessage());
+                    }
+                }
 
-            try {
-                model.changePassword(userId, pwd);
-                setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                    "user.change.password.modified.password.message");
-            } catch (AMConsoleException e) {
-                setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                    e.getMessage());
+            } else {
+                try {
+                    model.changePassword(userId, pwd);
+                    setInlineAlertMessage(CCAlert.TYPE_INFO,
+                        "message.information",
+                        "user.change.password.modified.password.message");
+                } catch (AMConsoleException e) {
+                    setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                        e.getMessage());
+                }
             }
         }
 

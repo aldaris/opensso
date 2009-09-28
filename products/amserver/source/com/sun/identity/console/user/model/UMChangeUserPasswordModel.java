@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMChangeUserPasswordModel.java,v 1.2 2008-06-25 05:43:24 qcheng Exp $
+ * $Id: UMChangeUserPasswordModel.java,v 1.3 2009-09-28 18:59:55 babysunil Exp $
  *
  */
 
@@ -63,4 +63,15 @@ public interface UMChangeUserPasswordModel
      */
     void changePassword(String userId, String password)
         throws AMConsoleException;
+
+    /**
+      * Modifies user password after validating old password.
+      *
+      * @param userId Universal ID of user.
+      * @param oldpwd old password.
+      * @param newpwd New password.
+      * @throws AMConsoleException if password cannot be modified.
+      */
+     void changePwd(String userId, String oldpwd, String newpwd)
+         throws AMConsoleException;
 }

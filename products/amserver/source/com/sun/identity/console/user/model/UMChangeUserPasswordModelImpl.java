@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMChangeUserPasswordModelImpl.java,v 1.2 2008-06-25 05:43:24 qcheng Exp $
+ * $Id: UMChangeUserPasswordModelImpl.java,v 1.3 2009-09-28 18:59:56 babysunil Exp $
  *
  */
 
@@ -148,4 +148,40 @@ public class UMChangeUserPasswordModelImpl
             throw new AMConsoleException(strError);
         }
     }
+
+    /**
+      * Modifies user password after validating old password.
+      *
+      * @param userId Universal ID of user.
+      * @param oldpwd old password.
+      * @param newpwd New password.
+      * @throws AMConsoleException if password cannot be modified.
+      */
+     public void changePwd(String userId, String oldpwd, String newpwd)
+         throws AMConsoleException {
+         String[] params = {userId, AMAdminConstants.ATTR_USER_OLD_PASSWORD};
+         try {
+             logEvent("ATTEMPT_MODIFY_IDENTITY_ATTRIBUTE_VALUE", params);
+ 
+             AMIdentity amid = IdUtils.getIdentity(getUserSSOToken(), userId);
+             amid.changePassword(oldpwd, newpwd);
+ 
+             logEvent("SUCCEED_MODIFY_IDENTITY_ATTRIBUTE_VALUE", params);
+         } catch (SSOException e) {
+             String strError = getErrorString(e);
+             String[] paramsEx = {userId, AMAdminConstants.ATTR_USER_OLD_PASSWORD,
+                 strError};
+             logEvent("SSO_EXCEPTION_MODIFY_IDENTITY_ATTRIBUTE_VALUE",
+                 paramsEx);
+             throw new AMConsoleException(strError);
+         } catch (IdRepoException e) {
+             String strError = getErrorString(e);
+             String[] paramsEx = {userId, AMAdminConstants.ATTR_USER_OLD_PASSWORD,
+                 strError};
+             logEvent("IDM_EXCEPTION_MODIFY_IDENTITY_ATTRIBUTE_VALUE",
+                 paramsEx);
+             throw new AMConsoleException(strError);
+         }
+     }
+
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAdminConstants.java,v 1.10 2008-08-27 17:48:46 babysunil Exp $
+ * $Id: AMAdminConstants.java,v 1.11 2009-09-28 19:01:24 babysunil Exp $
  *
  */
 
@@ -294,6 +294,12 @@ public interface AMAdminConstants {
      */
     String CONSOLE_USER_SEARCH_KEY =
         "iplanet-am-admin-console-user-search-key";
+
+    /**
+      * Enable password reset service.
+      */
+     String ATTR_USER_OLD_PASSWORD =
+         "iplanet-am-admin-console-password-reset-enabled";
 
     /** 
      * User Search Result return key 
