@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMChangeUserPasswordViewBean.java,v 1.4 2009-09-28 19:00:36 babysunil Exp $
+ * $Id: UMChangeUserPasswordViewBean.java,v 1.5 2009-09-28 21:20:46 babysunil Exp $
  *
  */
 
@@ -140,7 +140,7 @@ public class UMChangeUserPasswordViewBean
         String loggedinUser = model.getUserName();
         Set val = null;
         Set disAttributes = AMAdminUtils.getDisplayableAttributeNames(
-            AMAdminConstants.ADMIN_CONSOLE_SERVICE, SchemaType.GLOBAL);
+            AMAdminConstants.ADMIN_CONSOLE_SERVICE, SchemaType.ORGANIZATION);
         for (Iterator i = disAttributes.iterator(); i.hasNext();) {
             AttributeSchema as = (AttributeSchema) i.next();
             String nameas = as.getName();
