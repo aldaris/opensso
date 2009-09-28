@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cache.java,v 1.2 2009-09-15 20:56:15 veiming Exp $
+ * $Id: Cache.java,v 1.3 2009-09-28 17:09:36 veiming Exp $
  *
  */
 
@@ -1009,7 +1009,7 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
         }
 
         // Method to move an entry to the end of the list
-        protected void replaceLast(Entry e) {
+        protected synchronized void replaceLast(Entry e) {
             remove(e);
             addLast(e);
         }
