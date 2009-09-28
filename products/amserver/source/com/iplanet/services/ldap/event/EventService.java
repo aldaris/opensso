@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.18 2009-01-28 05:34:50 ww203982 Exp $
+ * $Id: EventService.java,v 1.19 2009-09-28 21:47:33 ww203982 Exp $
  *
  */
 
@@ -542,14 +542,12 @@ public class EventService implements Runnable {
                         debugger.message("EventService.run(): Waiting for "
                                 + "response");
                     }
-                    
-                    message = _msgQueue.getResponse();
                     synchronized (this) {
-                        if ((message == null) && (_requestList.isEmpty())) {
+                        if (_requestList.isEmpty()) {
                             wait();
-                            continue;
                         }
                     }
+                    message = _msgQueue.getResponse();
                     successState = processResponse(message);
                 } catch (LDAPInterruptedException ex) {
                     if (_shutdownCalled) {
@@ -757,20 +755,20 @@ public class EventService implements Runnable {
         tmpReqList.putAll(_requestList);
        
         int[] ids = _msgQueue.getMessageIDs();
-        for (int i = 0; i < ids.length; i++) {
-            String reqID = Integer.toString(ids[i]);
-            tmpReqList.remove(reqID);
+        if (ids != null) {
+            for (int i = 0; i < ids.length; i++) {
+                String reqID = Integer.toString(ids[i]);
+                tmpReqList.remove(reqID);
+            }
         }
         Collection reqList = tmpReqList.values();
         for (Iterator iter = reqList.iterator(); iter.hasNext();) {
             Request req = (Request) iter.next();
             _requestList.remove(req.getRequestID());
         }
-        _numRetries = getPropertyIntValue(EVENT_CONNECTION_NUM_RETRIES,
-            _numRetries);
         _retryInterval = getPropertyIntValue(EVENT_CONNECTION_RETRY_INTERVAL,
             _retryInterval);
-        RetryTask task = new RetryTask(tmpReqList, _numRetries);
+        RetryTask task = new RetryTask(tmpReqList);
         task.clearCache(clearCaches);
         SystemTimer.getTimer().schedule(task, new Date(((
             System.currentTimeMillis() + _retryInterval) / 1000) * 1000));
@@ -1024,8 +1022,10 @@ public class EventService implements Runnable {
         Hashtable tmpRequestList = new Hashtable();
         tmpRequestList.putAll(_requestList);
         int[] ids = _msgQueue.getMessageIDs();
-        for (int i = 0; i < ids.length; i++) {
-            tmpRequestList.remove(Integer.toString(ids[i]));
+        if (ids != null) {
+            for (int i = 0; i < ids.length; i++) {
+                tmpRequestList.remove(Integer.toString(ids[i]));
+            }
         }
         Collection reqList = tmpRequestList.values();
         for (Iterator iter = reqList.iterator(); iter.hasNext();) {
@@ -1179,17 +1179,13 @@ public class EventService implements Runnable {
         
         private long runPeriod;
         private Map requests;
-        private int numOfRetries;
-        private int retry;
         private boolean clearCaches;
         
-        public RetryTask(Map requests, int numOfRetries) {
+        public RetryTask(Map requests) {
             
             this.runPeriod = getPropertyIntValue(
                 EVENT_CONNECTION_RETRY_INTERVAL, EventService._retryInterval);
             this.requests = requests;
-            this.numOfRetries = numOfRetries;
-            this.retry = 1;
         }
         
         public void clearCache(boolean cc) {
@@ -1221,19 +1217,10 @@ public class EventService implements Runnable {
                     // Ignore exception and retry as we are in the process of
                     // re-establishing the searches. Notify Listeners after the
                     // attempt
-                    if (retry == numOfRetries) {
-                        dispatchException(e, req);
-                    }
                 }
             }
             if (requests.isEmpty()) {
                 runPeriod = -1;
-            } else {
-                if (numOfRetries != -1) {
-                    if (++retry > numOfRetries) {
-                        runPeriod = -1;
-                    }
-                }
             }
         }
         

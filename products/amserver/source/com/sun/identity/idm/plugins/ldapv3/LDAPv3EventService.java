@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.17 2009-01-28 05:34:59 ww203982 Exp $
+ * $Id: LDAPv3EventService.java,v 1.18 2009-09-28 21:47:34 ww203982 Exp $
  *
  */
 
@@ -577,13 +577,12 @@ public class LDAPv3EventService implements Runnable {
                                 "LDAPv3EventService.run(): Waiting for " +
                                 "response" + " randomID=" + randomID);
                     }
-                    message = _msgQueue.getResponse();
                     synchronized (this) {
-                        if ((message == null) && (_requestList.isEmpty())) {
+                        if (_requestList.isEmpty()) {
                             wait();
-                            continue;
                         }
                     }
+                    message = _msgQueue.getResponse();
                     successState = processResponse(message);
                 } catch (LDAPInterruptedException ex) {
                     if (_shutdownCalled) {
@@ -766,9 +765,11 @@ public class LDAPv3EventService implements Runnable {
         Hashtable tmpReqList = new Hashtable(_requestList);
        
         int[] ids = _msgQueue.getMessageIDs();
-        for (int i = 0; i < ids.length; i++) {
-            String reqID = Integer.toString(ids[i]);
-            tmpReqList.remove(reqID);
+        if (ids != null) {
+            for (int i = 0; i < ids.length; i++) {
+                String reqID = Integer.toString(ids[i]);
+                tmpReqList.remove(reqID);
+            }
         }
         Collection reqList = tmpReqList.values();
         for (Iterator iter = reqList.iterator(); iter.hasNext();) {
@@ -785,7 +786,7 @@ public class LDAPv3EventService implements Runnable {
                     req, psIdKey, true, true);
             }
         }
-        RetryTask task = new RetryTask(tmpReqList, _numRetries);
+        RetryTask task = new RetryTask(tmpReqList);
         SystemTimer.getTimer().schedule(task, new Date(((
             System.currentTimeMillis() + _retryInterval) / 1000) * 1000));
     }
@@ -943,8 +944,10 @@ public class LDAPv3EventService implements Runnable {
     protected void processNetworkError(Exception ex) {
         Hashtable tmpRequestList = new Hashtable(_requestList);
         int[] ids = _msgQueue.getMessageIDs();
-        for (int i = 0; i < ids.length; i++) {
-            tmpRequestList.remove(Integer.toString(ids[i]));
+        if (ids != null) {
+            for (int i = 0; i < ids.length; i++) {
+                tmpRequestList.remove(Integer.toString(ids[i]));
+            }
         }
         Collection reqList = tmpRequestList.values();
         for (Iterator iter = reqList.iterator(); iter.hasNext();) {
@@ -1342,14 +1345,10 @@ public class LDAPv3EventService implements Runnable {
         
         private long runPeriod;
         private Map requests;
-        private int numOfRetries;
-        private int retry;
         
-        public RetryTask(Map requests, int numOfRetries) {
+        public RetryTask(Map requests) {
             this.runPeriod = (long) _retryInterval;
             this.requests = requests;
-            this.numOfRetries = numOfRetries;
-            this.retry = 1;
         }
         
         public void run() {
@@ -1370,19 +1369,10 @@ public class LDAPv3EventService implements Runnable {
                     // Ignore exception and retry as we are in the process of
                     // re-establishing the searches. Notify Listeners after the
                     // attempt
-                    if (retry == numOfRetries) {
-                        dispatchException(e, req);
-                    }
                 }
             }
             if (requests.isEmpty()) {
                 runPeriod = -1;
-            } else {
-                if (numOfRetries != -1) {
-                    if (++retry > numOfRetries) {
-                        runPeriod = -1;
-                    }
-                }
             }
         }
         

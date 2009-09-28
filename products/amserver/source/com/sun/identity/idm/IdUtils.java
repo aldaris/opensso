@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.32 2009-08-15 15:47:25 goodearth Exp $
+ * $Id: IdUtils.java,v 1.33 2009-09-28 21:47:33 ww203982 Exp $
  *
  */
 
@@ -564,60 +564,6 @@ public final class IdUtils {
                 Set orgAliases = sm.searchOrganizationNames(
                     IdConstants.REPO_SERVICE,
                     IdConstants.ORGANIZATION_ALIAS_ATTR, vals);
-                // This is to re-initialize persistent search for DS.
-                // This is for the scenerio/issue where persistent search 
-                // is not reinitialized once DS is restarted.
-                // Then look for the aliases again. If nothing is found
-                // then it is a valid negative case and throw error.
-                if (!foundOrg &&
-                    ((orgAliases == null) || orgAliases.isEmpty())) {
-                    try {
-                        ocm.addAttributeValues(IdConstants.REPO_SERVICE, 
-                            IdConstants.ORGANIZATION_ALIAS_ATTR, vals);
-                    } catch (SMSException s) {
-                        if (debug.messageEnabled()) {
-                            debug.message("IdUtils.getOrganization "+
-                                "Attribute or value already exists. : "+
-                                s.getMessage());
-                        }
-                    }
-                    orgAliases = sm.searchOrganizationNames(
-                    IdConstants.REPO_SERVICE,
-                    IdConstants.ORGANIZATION_ALIAS_ATTR, vals);
-                }
-                // Search for realms with orgIdentifier name
-                // This is to check nonexistent orgIdentifier.
-                if (!foundOrg && ((orgAliases != null) && 
-                    !orgAliases.isEmpty()) &&
-                    (!orgIdentifier.startsWith("http://") && 
-                    !orgIdentifier.startsWith("https://")) ||
-                    (orgIdentifier.indexOf("/UI/Login") < 0)) {
-                    String hostAddr = token.getHostName();
-                    InetAddress ia = InetAddress.getByName(hostAddr);
-                    String hostName = ia.getHostName();
-                    if (orgIdentifier.indexOf(hostName) < 0) {
-                        try {
-                            OrganizationConfigManager newocm = 
-                                new OrganizationConfigManager(token, 
-                                orgIdentifier);
-                        } catch (SMSException smse) {
-                            // debug message here.
-                            if (debug.messageEnabled()) {
-                                debug.message(
-                                "IdUtils.getOrganization " +
-                                "Exception in getting realm name from"
-                                + " the configuration store", smse);
-                            }
-                            ocm.removeAttributeValues(
-                                IdConstants.REPO_SERVICE, 
-                                IdConstants.ORGANIZATION_ALIAS_ATTR, 
-                                vals);
-                            Object[] args = { orgIdentifier };
-                            throw new IdRepoException(
-                                IdRepoBundle.BUNDLE_NAME,"401",args);
-                        }
-                    }
-                }
                 if (!foundOrg &&
                     ((orgAliases == null) || orgAliases.isEmpty())) {
                     if (debug.warningEnabled()) {
@@ -647,15 +593,6 @@ public final class IdUtils {
                 if (debug.messageEnabled()) {
                     debug.message("IdUtils.getOrganization Exception in "
                             + "getting org name from SMS", smse);
-                }
-                Object[] args = { orgIdentifier };
-                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "401", 
-                        args);
-            } catch (UnknownHostException uke) {
-                // debug message here.
-                if (debug.messageEnabled()) {
-                    debug.message("IdUtils.getOrganization Exception in "
-                            + "getting org name from SMS", uke);
                 }
                 Object[] args = { orgIdentifier };
                 throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "401", 
