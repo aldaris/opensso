@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageBean.java,v 1.3 2009-09-30 14:39:16 farble1670 Exp $
+ * $Id: ApplicationManageBean.java,v 1.4 2009-09-30 20:02:36 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,6 +31,7 @@ import com.sun.identity.admin.dao.ViewApplicationDao;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections.comparators.NullComparator;
 
 public class ApplicationManageBean implements Serializable {
@@ -42,6 +43,15 @@ public class ApplicationManageBean implements Serializable {
     private List<String> viewOptionsPopupColumnsVisible = new ArrayList<String>();
     private int viewOptionsPopupRows = 10;
     private String searchFilter = "";
+    private List<FilterHolder> filterHolders = new ArrayList<FilterHolder>();
+    private boolean removePopupVisible = false;
+    private Map<String,ViewFilterType> viewFilterTypes;
+
+    public void newFilterHolder() {
+        FilterHolder fh = new FilterHolder();
+        fh.setViewFilterTypes(getViewFilterTypes());
+        filterHolders.add(fh);
+    }
 
     public List<ViewApplication> getViewApplications() {
         return viewApplications;
@@ -107,5 +117,32 @@ public class ApplicationManageBean implements Serializable {
             this.searchFilter = searchFilter;
             reset();
         }
+    }
+
+    public int getSizeSelected() {
+        int size = 0;
+        for (ViewApplication va: viewApplications) {
+            if (va.isSelected()) {
+                size++;
+            }
+        }
+
+        return size;
+    }
+
+    public boolean isRemovePopupVisible() {
+        return removePopupVisible;
+    }
+
+    public void setRemovePopupVisible(boolean removePopupVisible) {
+        this.removePopupVisible = removePopupVisible;
+    }
+
+    public Map<String, ViewFilterType> getViewFilterTypes() {
+        return viewFilterTypes;
+    }
+
+    public void setViewFilterTypes(Map<String, ViewFilterType> viewFilterTypes) {
+        this.viewFilterTypes = viewFilterTypes;
     }
 }

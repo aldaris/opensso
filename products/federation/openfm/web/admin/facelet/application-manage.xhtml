@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-manage.xhtml,v 1.7 2009-09-30 14:39:18 farble1670 Exp $
+   $Id: application-manage.xhtml,v 1.8 2009-09-30 20:02:37 farble1670 Exp $
 -->
 
 <ui:composition
@@ -45,6 +45,8 @@
     <ui:define name="panel-body">
         <ui:include
             src="/admin/facelet/template/application-manage-view-options-popup.xhtml"/>
+        <ui:include
+            src="/admin/facelet/template/application-manage-remove-popup.xhtml"/>
         <o:section>
             <ui:define name="section-title">
                 <ice:dataPaginator
@@ -70,6 +72,14 @@
             <ui:define name="section-links">
                 <ice:panelGrid
                     columns="5">
+                    <ice:commandLink
+                        actionListener="#{applicationManageHandler.removeListener}"
+                        styleClass="command-link">
+                        <ice:graphicImage
+                            value="/admin/image/remove.png"/>
+                        <ice:outputText
+                            value="Remove"/>
+                    </ice:commandLink>
                     <o:clink
                         type="view-options"
                         handler="#{applicationManageHandler}"

@@ -22,17 +22,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageHandler.java,v 1.2 2009-09-21 20:35:11 farble1670 Exp $
+ * $Id: ApplicationManageHandler.java,v 1.3 2009-09-30 20:02:36 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
+import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.ViewApplicationDao;
 import com.sun.identity.admin.model.ApplicationManageBean;
+import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.ViewApplication;
+import com.sun.identity.admin.model.ViewFilterType;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 
@@ -42,6 +49,7 @@ public class ApplicationManageHandler implements Serializable {
     private QueuedActionBean queuedActionBean;
     private ViewApplicationDao viewApplicationDao;
     private MessagesBean messagesBean;
+    private Map<String,ViewFilterType> viewFilterTypes;
 
     public ViewApplication getViewApplication(ActionEvent event) {
         ViewApplication va = (ViewApplication) event.getComponent().getAttributes().get("viewApplication");
@@ -105,6 +113,60 @@ public class ApplicationManageHandler implements Serializable {
 
     public void handleSort() {
         applicationManageBean.getApplicationManageTableBean().sort();
+    }
+
+    public void removeListener(ActionEvent event) {
+        if (!applicationManageBean.isRemovePopupVisible()) {
+            if (applicationManageBean.getSizeSelected() == 0) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "removeNoneSelectedSummary"));
+                mb.setDetail(r.getString(this, "removeNoneSelectedDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+                messagesBean.addMessageBean(mb);
+            } else {
+                applicationManageBean.setRemovePopupVisible(true);
+            }
+        } else {
+            applicationManageBean.setRemovePopupVisible(false);
+        }
+    }
+
+    public void removePopupOkListener(ActionEvent event) {
+        PhaseEventAction pea = new PhaseEventAction();
+        pea.setDoBeforePhase(true);
+        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+        pea.setAction("#{applicationManageHandler.handleRemoveAction}");
+        pea.setParameters(new Class[]{});
+        pea.setArguments(new Object[]{});
+
+        queuedActionBean.getPhaseEventActions().add(pea);
+
+        applicationManageBean.setRemovePopupVisible(false);
+    }
+
+    public void removePopupCancelListener(ActionEvent event) {
+        applicationManageBean.setRemovePopupVisible(false);
+    }
+
+    public void handleRemoveAction() {
+        Set<ViewApplication> removed = new HashSet<ViewApplication>();
+        for (ViewApplication va : applicationManageBean.getViewApplications()) {
+            if (va.isSelected()) {
+                removed.add(va);
+                viewApplicationDao.remove(va);
+            }
+            va.setSelected(false);
+        }
+        applicationManageBean.getViewApplications().removeAll(removed);
+    }
+
+    public Map<String, ViewFilterType> getViewFilterTypes() {
+        return viewFilterTypes;
+    }
+
+    public void setViewFilterTypes(Map<String, ViewFilterType> viewFilterTypes) {
+        this.viewFilterTypes = viewFilterTypes;
     }
 }
 

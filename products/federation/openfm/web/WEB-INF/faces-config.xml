@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.8 2009-09-30 14:39:17 farble1670 Exp $
+  $Id: faces-config.xml,v 1.9 2009-09-30 20:02:37 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1875,6 +1875,10 @@
             <property-name>viewApplicationDao</property-name>
             <value>#{viewApplicationDao}</value>
         </managed-property>
+        <managed-property>
+            <property-name>viewFilterTypes</property-name>
+            <value>#{applicationFilterTypes}</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>
@@ -1896,6 +1900,10 @@
         <managed-property>
             <property-name>messagesBean</property-name>
             <value>#{messagesBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>viewFilterTypes</property-name>
+            <value>#{applicationFilterTypes}</value>
         </managed-property>
     </managed-bean>
     <!-- application manage -->
@@ -2015,7 +2023,7 @@
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
-    <!-- filter types -->
+    <!-- policy filter types -->
     <managed-bean>
         <managed-bean-name>birthPolicyFilterType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.BirthPolicyFilterType</managed-bean-class>
@@ -2111,7 +2119,36 @@
             </map-entry>
         </map-entries>
     </managed-bean>
-    <!-- filter types -->
+    <!-- policy filter types -->
+
+    <!-- application filter types -->
+    <managed-bean>
+        <managed-bean-name>birthApplicationFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.BirthApplicationFilterType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>birth</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/policy-filter-birth.xhtml</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>applicationFilterTypes</managed-bean-name>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <map-entries>
+            <key-class>java.lang.String</key-class>
+            <value-class>com.sun.identity.admin.model.ViewFilterType</value-class>
+            <map-entry>
+                <key>#{birthApplicationFilterType.name}</key>
+                <value>#{birthApplicationFilterType}</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+    <!-- application filter types -->
 
     <!-- resource decorators -->
     <managed-bean>

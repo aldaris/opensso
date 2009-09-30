@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationDao.java,v 1.3 2009-09-30 14:39:15 farble1670 Exp $
+ * $Id: ViewApplicationDao.java,v 1.4 2009-09-30 20:02:36 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -154,6 +154,18 @@ public class ViewApplicationDao implements Serializable {
         return a;
 
 
+    }
+
+    public void remove(ViewApplication va) {
+        Token token = new Token();
+        Subject adminSubject = token.getAdminSubject();
+
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        try {
+            ApplicationManager.deleteApplication(adminSubject, realmBean.getName(), va.getName());
+        } catch (EntitlementException ee) {
+            throw new AssertionError(ee);
+        }
     }
 
     public boolean exists(ViewApplication va) {
