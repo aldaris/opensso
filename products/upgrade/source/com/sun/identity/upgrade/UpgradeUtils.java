@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.17 2009-06-16 08:48:37 kevinserwin Exp $
+ * $Id: UpgradeUtils.java,v 1.18 2009-09-30 17:35:24 goodearth Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -59,6 +59,7 @@ import com.sun.identity.sm.SMSMigration70;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collections;
@@ -2932,6 +2933,27 @@ public class UpgradeUtils {
             properties = getProperties(fileName);
         }
         return properties;
+    }
+
+    /**
+     * Writes the properties from existing <code>AMConfig.properties</code>.
+     * 
+     * @Writes the properties from existing <code>AMConfig.properties</code>.
+     */
+    public static void storeProperties(Properties props) {
+        String classMethod = "UpgradeUtils:storeProperties : ";
+        String fileName =
+                basedir +
+                File.separator + DIR_UPGRADE + File.separator +
+                DIR_CONFIG + File.separator + BACKUP_AMCONFIG;
+        // Write properties file.
+        try {
+            props.store(new FileOutputStream(fileName), null);
+            propertyFileMap.put(fileName, props);
+        } catch (IOException e) {
+            debug.error(classMethod +
+            "Error writing to AMConfig.properties.bak file " + fileName);
+        }
     }
 
     /**
