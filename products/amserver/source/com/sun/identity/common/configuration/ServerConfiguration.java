@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfiguration.java,v 1.14 2009-06-15 19:20:43 veiming Exp $
+ * $Id: ServerConfiguration.java,v 1.15 2009-09-30 17:19:06 goodearth Exp $
  *
  */
 
@@ -633,6 +633,9 @@ public class ServerConfiguration extends ConfigurationBase {
             setServerId.add(instanceId);
             serverValues.put(ATTR_SERVER_ID, setServerId);
             
+            if (values.isEmpty()) {
+                values = new HashSet(2);
+            }
             values.add(Constants.PROPERTY_NAME_LB_COOKIE_VALUE + "=" +
                 instanceId);             
             
