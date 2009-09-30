@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-filter-birth.xhtml,v 1.2 2009-09-30 14:39:18 farble1670 Exp $
+   $Id: filter-birth.xhtml,v 1.1 2009-09-30 22:53:36 farble1670 Exp $
 
 -->
 
@@ -38,7 +38,7 @@
     <ice:panelGroup
         rendered="#{viewFilter != null &amp;&amp; viewFilter.viewFilterType.name == 'birth'}">
         <ui:include
-            src="/admin/facelet/template/policy-filter-date.xhtml">
+            src="/admin/facelet/template/filter-date.xhtml">
             <ui:param name="viewFilter" value="#{viewFilter}"/>
         </ui:include>
     </ice:panelGroup>

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-filter-author.xhtml,v 1.2 2009-09-30 14:39:18 farble1670 Exp $
+   $Id: filter-modified.xhtml,v 1.1 2009-09-30 22:53:36 farble1670 Exp $
 
 -->
 
@@ -36,10 +36,12 @@
     xmlns:o="http://opensso.dev.java.net">
 
     <ice:panelGroup
-        rendered="#{viewFilter != null &amp;&amp; viewFilter.viewFilterType.name == 'author'}">
+        rendered="#{viewFilter != null &amp;&amp; viewFilter.viewFilterType.name == 'modified'}">
         <ui:include
-            src="/admin/facelet/template/policy-filter-pattern.xhtml">
-            <ui:param name="viewFilter" value="#{viewFilter}"/>
+            src="/admin/facelet/template/filter-date.xhtml">
+            <ui:param 
+                name="viewFilter"
+                value="#{viewFilter}"/>
         </ui:include>
     </ice:panelGroup>
 </span>

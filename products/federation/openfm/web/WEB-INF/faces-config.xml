@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.9 2009-09-30 20:02:37 farble1670 Exp $
+  $Id: faces-config.xml,v 1.10 2009-09-30 22:53:35 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -2034,7 +2034,7 @@
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>/admin/facelet/template/policy-filter-birth.xhtml</value>
+            <value>/admin/facelet/template/filter-birth.xhtml</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -2047,7 +2047,7 @@
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>/admin/facelet/template/policy-filter-modified.xhtml</value>
+            <value>/admin/facelet/template/filter-modified.xhtml</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -2060,7 +2060,7 @@
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>/admin/facelet/template/policy-filter-author.xhtml</value>
+            <value>/admin/facelet/template/filter-author.xhtml</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -2073,7 +2073,7 @@
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>/admin/facelet/template/policy-filter-modifier.xhtml</value>
+            <value>/admin/facelet/template/filter-modifier.xhtml</value>
         </managed-property>
     </managed-bean>
     <managed-bean>
@@ -2086,7 +2086,7 @@
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>/admin/facelet/template/policy-filter-description.xhtml</value>
+            <value>/admin/facelet/template/filter-description.xhtml</value>
         </managed-property>
     </managed-bean>
 
@@ -2132,9 +2132,10 @@
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>/admin/facelet/template/policy-filter-birth.xhtml</value>
+            <value>/admin/facelet/template/filter-birth.xhtml</value>
         </managed-property>
     </managed-bean>
+
     <managed-bean>
         <managed-bean-name>applicationFilterTypes</managed-bean-name>
         <managed-bean-class>java.util.HashMap</managed-bean-class>

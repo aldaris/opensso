@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PatternViewFilter.java,v 1.1 2009-09-30 14:39:16 farble1670 Exp $
+ * $Id: PatternViewFilter.java,v 1.2 2009-09-30 22:53:35 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -47,7 +47,7 @@ public abstract class PatternViewFilter extends ViewFilter {
         return pattern;
     }
 
-    public List<SearchFilter> getPrivilegeSearchFilters() {
+    public List<SearchFilter> getSearchFilters() {
         String pattern = getPattern(getFilter());
         SearchFilter psf = new SearchFilter(getPrivilegeAttributeName(), pattern);
         return Collections.singletonList(psf);

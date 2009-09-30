@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilterHolder.java,v 1.1 2009-09-30 14:39:16 farble1670 Exp $
+ * $Id: FilterHolder.java,v 1.2 2009-09-30 22:53:35 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -43,12 +43,12 @@ public class FilterHolder implements Serializable {
     }
 
     public void setViewFilterTypeName(String name) {
-        setViewFilterType(getViewFilterTypes().get(name));
+        setViewFilterType(viewFilterTypes.get(name));
     }
 
     public List<SelectItem> getViewFilterTypeNameItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
-        for (ViewFilterType vft: getViewFilterTypes().values()) {
+        for (ViewFilterType vft: viewFilterTypes.values()) {
             items.add(new SelectItem(vft.getName(), vft.getTitle()));
         }
 

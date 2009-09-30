@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageHandler.java,v 1.3 2009-09-30 20:02:36 farble1670 Exp $
+ * $Id: ApplicationManageHandler.java,v 1.4 2009-09-30 22:53:35 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.ViewApplicationDao;
 import com.sun.identity.admin.model.ApplicationManageBean;
+import com.sun.identity.admin.model.FilterHolder;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.PhaseEventAction;
@@ -42,6 +43,7 @@ import java.util.Set;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
+import javax.faces.event.ValueChangeEvent;
 
 public class ApplicationManageHandler implements Serializable {
 
@@ -55,6 +57,12 @@ public class ApplicationManageHandler implements Serializable {
         ViewApplication va = (ViewApplication) event.getComponent().getAttributes().get("viewApplication");
         assert (va != null);
         return va;
+    }
+
+    public FilterHolder getFilterHolder(ActionEvent event) {
+        FilterHolder fh = (FilterHolder) event.getComponent().getAttributes().get("filterHolder");
+        assert (fh != null);
+        return fh;
     }
 
     public void viewOptionsListener(ActionEvent event) {
@@ -167,6 +175,40 @@ public class ApplicationManageHandler implements Serializable {
 
     public void setViewFilterTypes(Map<String, ViewFilterType> viewFilterTypes) {
         this.viewFilterTypes = viewFilterTypes;
+    }
+
+    public void addViewFilterListener(ActionEvent event) {
+        applicationManageBean.newFilterHolder();
+        addResetEvent();
+    }
+
+    private void addResetEvent() {
+        PhaseEventAction pea = new PhaseEventAction();
+        pea.setDoBeforePhase(true);
+        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+        pea.setAction("#{applicationManageHandler.handleReset}");
+        pea.setParameters(new Class[]{});
+        pea.setArguments(new Object[]{});
+
+        queuedActionBean.getPhaseEventActions().add(pea);
+    }
+
+    public void handleReset() {
+        applicationManageBean.reset();
+    }
+
+    public void viewFilterChangedListener(ValueChangeEvent event) {
+        addResetEvent();
+    }
+
+    public void viewFilterChangedListener(ActionEvent event) {
+        addResetEvent();
+    }
+
+    public void removeViewFilterListener(ActionEvent event) {
+        FilterHolder fh = getFilterHolder(event);
+        applicationManageBean.getFilterHolders().remove(fh);
+        addResetEvent();
     }
 }
 

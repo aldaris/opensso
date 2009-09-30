@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationDao.java,v 1.4 2009-09-30 20:02:36 farble1670 Exp $
+ * $Id: ViewApplicationDao.java,v 1.5 2009-09-30 22:53:34 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
+import com.sun.identity.admin.model.FilterHolder;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.ViewApplication;
@@ -36,7 +37,6 @@ import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.ApplicationType;
 import com.sun.identity.entitlement.ApplicationTypeManager;
-import com.sun.identity.entitlement.EntitlementException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +45,8 @@ import java.util.Set;
 import java.util.HashSet;
 import com.sun.identity.entitlement.util.SearchFilter;
 import com.sun.identity.entitlement.EntitlementException;
+import java.util.Collections;
+import java.util.List;
 
 public class ViewApplicationDao implements Serializable {
 
@@ -65,13 +67,27 @@ public class ViewApplicationDao implements Serializable {
         return pattern;
     }
 
-    public Map<String, ViewApplication> getViewApplications() {
-        return getViewApplications(null);
+    private Set<SearchFilter> getSearchFilters(List<FilterHolder> filterHolders) {
+        Set<SearchFilter> sfs = new HashSet<SearchFilter>();
+
+        for (FilterHolder fh : filterHolders) {
+            List<SearchFilter> l = fh.getViewFilter().getSearchFilters();
+            if (l != null) {
+                // TODO: list should never be null
+                sfs.addAll(l);
+            }
+        }
+
+        return sfs;
     }
 
-    public Map<String, ViewApplication> getViewApplications(String filter) {
-        //Set<SearchFilter> psfs = getApplicationSearchFilters(policyFilterHolders);
-        Set<SearchFilter> sfs = new HashSet<SearchFilter>();
+
+    public Map<String, ViewApplication> getViewApplications() {
+        return getViewApplications(null, Collections.EMPTY_LIST);
+    }
+
+    public Map<String, ViewApplication> getViewApplications(String filter, List<FilterHolder> filterHolders) {
+        Set<SearchFilter> sfs = getSearchFilters(filterHolders);
         String pattern = getPattern(filter);
         sfs.add(new SearchFilter(Application.NAME_ATTRIBUTE, pattern));
 
@@ -87,9 +103,7 @@ public class ViewApplicationDao implements Serializable {
 
         Set<String> names;
         try {
-            //TODO: waiting for fix
             names = ApplicationManager.search(adminSubject, realmBean.getName(), sfs);
-            //names = ApplicationManager.getApplicationNames(adminSubject, realmBean.getName());
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }

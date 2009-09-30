@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageBean.java,v 1.4 2009-09-30 20:02:36 farble1670 Exp $
+ * $Id: ApplicationManageBean.java,v 1.5 2009-09-30 22:53:35 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -49,7 +49,7 @@ public class ApplicationManageBean implements Serializable {
 
     public void newFilterHolder() {
         FilterHolder fh = new FilterHolder();
-        fh.setViewFilterTypes(getViewFilterTypes());
+        fh.setViewFilterTypes(viewFilterTypes);
         filterHolders.add(fh);
     }
 
@@ -67,7 +67,7 @@ public class ApplicationManageBean implements Serializable {
     }
 
     public void reset() {
-        viewApplications = new ArrayList<ViewApplication>(viewApplicationDao.getViewApplications(searchFilter).values());
+        viewApplications = new ArrayList<ViewApplication>(viewApplicationDao.getViewApplications(searchFilter, filterHolders).values());
         applicationManageTableBean.setViewApplications(viewApplications);
         applicationManageTableBean.sort();
     }
@@ -144,5 +144,13 @@ public class ApplicationManageBean implements Serializable {
 
     public void setViewFilterTypes(Map<String, ViewFilterType> viewFilterTypes) {
         this.viewFilterTypes = viewFilterTypes;
+    }
+
+    public List<FilterHolder> getFilterHolders() {
+        return filterHolders;
+    }
+
+    public void setFilterHolders(List<FilterHolder> filterHolders) {
+        this.filterHolders = filterHolders;
     }
 }

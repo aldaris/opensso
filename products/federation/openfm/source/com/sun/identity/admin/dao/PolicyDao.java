@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDao.java,v 1.3 2009-09-30 14:39:15 farble1670 Exp $
+ * $Id: PolicyDao.java,v 1.4 2009-09-30 22:53:34 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -73,18 +73,18 @@ public class PolicyDao implements Serializable {
         return getPrivilegeBeans(null, Collections.EMPTY_LIST);
     }
 
-    private Set<SearchFilter> getPrivilegeSearchFilters(List<FilterHolder> filterHolders) {
-        Set<SearchFilter> psfs = new HashSet<SearchFilter>();
+    private Set<SearchFilter> getSearchFilters(List<FilterHolder> filterHolders) {
+        Set<SearchFilter> sfs = new HashSet<SearchFilter>();
 
         for (FilterHolder fh : filterHolders) {
-            List<SearchFilter> l = fh.getViewFilter().getPrivilegeSearchFilters();
+            List<SearchFilter> l = fh.getViewFilter().getSearchFilters();
             if (l != null) {
                 // TODO: list should never be null
-                psfs.addAll(l);
+                sfs.addAll(l);
             }
         }
 
-        return psfs;
+        return sfs;
     }
 
     public PrivilegeBean getPrivilegeBean(String privilegeName) {
@@ -103,8 +103,8 @@ public class PolicyDao implements Serializable {
         }
     }
 
-    public List<PrivilegeBean> getPrivilegeBeans(String filter, List<FilterHolder> policyFilterHolders) {
-        Set<SearchFilter> psfs = getPrivilegeSearchFilters(policyFilterHolders);
+    public List<PrivilegeBean> getPrivilegeBeans(String filter, List<FilterHolder> filterHolders) {
+        Set<SearchFilter> psfs = getSearchFilters(filterHolders);
         String pattern = getPattern(filter);
         psfs.add(new SearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
 
@@ -138,7 +138,7 @@ public class PolicyDao implements Serializable {
     }
 
     public List<String> getPrivilegeNames(String filter, List<FilterHolder> policyFilterHolders) {
-        Set<SearchFilter> psfs = getPrivilegeSearchFilters(policyFilterHolders);
+        Set<SearchFilter> psfs = getSearchFilters(policyFilterHolders);
         String pattern = getPattern(filter);
         psfs.add(new SearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
         PrivilegeManager pm = getPrivilegeManager();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewFilter.java,v 1.1 2009-09-30 14:39:16 farble1670 Exp $
+ * $Id: ViewFilter.java,v 1.2 2009-09-30 22:53:35 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -61,5 +61,5 @@ public abstract class ViewFilter implements Serializable {
         return getName();
     }
 
-    public abstract List<SearchFilter> getPrivilegeSearchFilters();
+    public abstract List<SearchFilter> getSearchFilters();
 }

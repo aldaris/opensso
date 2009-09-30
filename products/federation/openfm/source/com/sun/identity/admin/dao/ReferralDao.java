@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralDao.java,v 1.3 2009-09-30 14:39:15 farble1670 Exp $
+ * $Id: ReferralDao.java,v 1.4 2009-09-30 22:53:34 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -73,7 +73,7 @@ public class ReferralDao implements Serializable {
         Set<SearchFilter> psfs = new HashSet<SearchFilter>();
 
         for (FilterHolder fh : filterHolders) {
-            List<SearchFilter> l = fh.getViewFilter().getPrivilegeSearchFilters();
+            List<SearchFilter> l = fh.getViewFilter().getSearchFilters();
             if (l != null) {
                 // TODO: list should never be null
                 psfs.addAll(l);

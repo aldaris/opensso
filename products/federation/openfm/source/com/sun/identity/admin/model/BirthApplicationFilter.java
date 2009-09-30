@@ -22,43 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewFilterType.java,v 1.2 2009-09-30 22:53:35 farble1670 Exp $
+ * $Id: BirthApplicationFilter.java,v 1.1 2009-09-30 22:53:35 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import com.sun.identity.admin.Resources;
-import java.io.Serializable;
+import com.sun.identity.entitlement.Application;
 
-public abstract class ViewFilterType implements Serializable {
-    private String name;
-    private String template;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTitle() {
-        Resources r = new Resources();
-        String title = r.getString(this, "title");
-        if (title == null) {
-            title = name;
-        }
-
-        return title;
-    }
-
-    public abstract ViewFilter newViewFilter();
-
-    public String getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
+public class BirthApplicationFilter extends DateViewFilter {
+    public String getPrivilegeAttributeName() {
+        return Application.CREATION_DATE_ATTRIBUTE;
     }
 }
