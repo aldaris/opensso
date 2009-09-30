@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.4 2008-06-25 05:53:42 qcheng Exp $
+ * $Id: Migrate.java,v 1.5 2009-09-30 17:34:29 goodearth Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.upgrade.UpgradeUtils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.io.File;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -120,6 +121,10 @@ public class Migrate implements MigrateTasks {
             // add to server-default subconfig
             UpgradeUtils.addServerDefaults(SERVICE_NAME, SERVER_ATTR,
                     null, INSTANCE_ID, vSet, null);
+            if (UpgradeUtils.debug.messageEnabled()) {
+                UpgradeUtils.debug.message(classMethod +
+                    "serverdefaults.properties " + "values are :" + vSet);
+            }
 
             // get the values of site list.
             Set attrValueSet = UpgradeUtils.getAttributeValue(SERVICE_NAME,
@@ -148,9 +153,25 @@ public class Migrate implements MigrateTasks {
                 }
             }
 
-            // get existing AMConfig.properties 
-            String serverStr = UpgradeUtils.getServerName();
+            /* Get existing/pre-migrated AMConfig.properties, 
+             * get the latest AMConfig.properties from the deployed 
+             * OpenSSO pointing to old DIT. Read the
+             * "com.iplanet.am.version" from the latest OpenSSO bits
+             * and replace only property in the existing/pre-migrated 
+             * AMConfig.properties.
+             */
+   
+            String serverStr = UpgradeUtils.getServerName() + "/" 
+                + UpgradeUtils.getDeployURI();
             Properties amconfigProp = UpgradeUtils.getServerProperties();
+            Properties p = UpgradeUtils.getProperties(
+                UpgradeUtils.getConfigDir() + File.separator + 
+                "AMConfig.properties");
+            String prodVersion = (String) p.get("com.iplanet.am.version");
+            if (prodVersion != null) {
+                amconfigProp.put("com.iplanet.am.version",prodVersion);
+                UpgradeUtils.storeProperties(amconfigProp);
+            }
             // get value of iplanet-am-platform-server-list attribute
             attrValueSet = UpgradeUtils.getAttributeValue(SERVICE_NAME,
                     PLATFORM_ATTR, schemaType);
