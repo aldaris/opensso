@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.10 2009-09-30 22:53:35 farble1670 Exp $
+  $Id: faces-config.xml,v 1.11 2009-09-30 23:24:48 ggennaro Exp $
 -->
 
 <faces-config version="1.2" 
@@ -2408,29 +2408,6 @@
     </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>stsCreateWizardHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.StsCreateWizardHandler</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-        <managed-property>
-            <property-name>wizardBean</property-name>
-            <value>#{stsCreateWizardBean}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>messagesBean</property-name>
-            <value>#{messagesBean}</value>
-        </managed-property>
-    </managed-bean>
-    <managed-bean>
-        <managed-bean-name>stsCreateWizardBean</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.StsCreateWizardBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-        <managed-property>
-            <property-name>steps</property-name>
-            <value>4</value>
-        </managed-property>
-    </managed-bean>
-
-    <managed-bean>
         <managed-bean-name>fileUploadBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.FileUploadBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -2559,11 +2536,6 @@
         <navigation-case>
             <from-outcome>wss-create</from-outcome>
             <to-view-id>/admin/facelet/wss-create.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>sts-create</from-outcome>
-            <to-view-id>/admin/facelet/sts-create.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>

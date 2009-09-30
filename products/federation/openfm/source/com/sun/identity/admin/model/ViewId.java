@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewId.java,v 1.4 2009-09-09 19:19:13 farble1670 Exp $
+ * $Id: ViewId.java,v 1.5 2009-09-30 23:24:47 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -57,7 +57,6 @@ public enum ViewId {
     WSC_MANAGE("/admin/facelet/wsc-manage.xhtml"),
     STS_MANAGE("/admin/facelet/sts-manage.xhtml"),
     WEB_SERVICE_SECURITY_CREATE("/admin/facelet/wss-create.xhtml"),
-    STS_CREATE("/admin/facelet/sts-create.xhtml"),
     PERMISSION_DENIED("/admin/facelet/permission-denied.xhtml");
 
     private static final Map<String, ViewId> idValues = new HashMap<String, ViewId>() {
@@ -88,7 +87,6 @@ public enum ViewId {
             put(WSC_MANAGE.getId(), WSC_MANAGE);
             put(STS_MANAGE.getId(), STS_MANAGE);
             put(WEB_SERVICE_SECURITY_CREATE.getId(), WEB_SERVICE_SECURITY_CREATE);
-            put(STS_CREATE.getId(), STS_CREATE);
             put(PERMISSION_DENIED.getId(), PERMISSION_DENIED);
         }
     };
