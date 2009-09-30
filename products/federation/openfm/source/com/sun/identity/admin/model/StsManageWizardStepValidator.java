@@ -24,10 +24,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StsManageWizardStepValidator.java,v 1.1 2009-09-17 21:56:04 ggennaro Exp $
+ * $Id: StsManageWizardStepValidator.java,v 1.2 2009-09-30 22:01:27 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
+
+import javax.faces.application.FacesMessage;
+
+import com.sun.identity.admin.Resources;
 
 public abstract class StsManageWizardStepValidator extends WizardStepValidator {
     public StsManageWizardStepValidator(WizardBean wb) {
@@ -36,5 +40,15 @@ public abstract class StsManageWizardStepValidator extends WizardStepValidator {
 
     protected StsManageWizardBean getStsManageWizardBean() {
         return (StsManageWizardBean)getWizardBean();
+    }
+    
+    protected void showErrorMessage(String summaryKey, String detailKey) {
+        MessageBean mb = new MessageBean();
+        Resources r = new Resources();
+        mb.setSummary(r.getString(this, summaryKey));
+        mb.setDetail(r.getString(this, detailKey));
+        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+        
+        getMessagesBean().addMessageBean(mb);
     }
 }

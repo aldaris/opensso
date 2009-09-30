@@ -160,12 +160,6 @@ public class EditableSelectOneHandler implements Serializable
         }		
     }
 
-    private void resetInputInterface(EditableSelectOneBean bean) {
-        bean.setShowingNewItemInput(false);
-        bean.setEditingExisting(false);
-        bean.setNewItem(null);
-    }
-
     private void showErrorMessage(String summary, String detail) {
         MessageBean mb = new MessageBean(); 
         mb.setSummary(summary);
@@ -183,7 +177,7 @@ public class EditableSelectOneHandler implements Serializable
             if( ui.getValue() != null ) {
                 EditableSelectOneBean bean = getEditableSelectOneBean(event);
                 bean.setSelectedItem(ui.getValue().toString());
-                resetInputInterface(bean);
+                bean.resetInterface();
             }
         }
     }
@@ -212,20 +206,20 @@ public class EditableSelectOneHandler implements Serializable
     public void addItemListener(ActionEvent event) {
         EditableSelectOneBean bean = getEditableSelectOneBean(event);
         if( addNewItemToList(bean) ) {
-            resetInputInterface(bean);
+            bean.resetInterface();
         }
     }
 
     public void editItemListener(ActionEvent event) {
         EditableSelectOneBean bean = getEditableSelectOneBean(event);
         if( modifyExistingItemInList(bean) ) {
-            resetInputInterface(bean);
+            bean.resetInterface();
         }
     }
 
     public void cancelItemListener(ActionEvent event) {
         EditableSelectOneBean bean = getEditableSelectOneBean(event);
-        resetInputInterface(bean);
+        bean.resetInterface();
     }
 
 }

@@ -23,26 +23,33 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wss.xhtml,v 1.3 2009-09-30 22:01:30 ggennaro Exp $
+   $Id: wss-x509.xhtml,v 1.1 2009-09-30 22:01:28 ggennaro Exp $
 
 -->
 
-<ui:composition
-    template="template/page-no-title.xhtml"
+<span
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:o="http://opensso.dev.java.net"
-    xmlns:ice="http://www.icesoft.com/icefaces/component">
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
 
-    <ui:define name="panel-body">
-        <o:landing page="wss">
-            <ui:define name="litems">
-                <o:litem action="wsp-create"/>
-                <o:litem action="wsc-create"/>
-                <o:litem action="sts-manage"/>
-            </ui:define>
-        </o:landing>
-    </ui:define>
+    <f:subview>
+        
+        <ice:panelGrid columns="2">
+            <ice:outputLabel
+                for="x509TokenSigningReferenceType"
+                value="#{resources['wss-x509.signingReferenceLabel']}"
+                style="float: right;" />
+            <ice:selectOneMenu
+                id="x509TokenSigningReferenceType"
+                value="#{wizardBean.x509SigningReferenceType}">
+                <f:selectItems
+                    value="#{wizardBean.x509SigningReferenceTypeList}" />
+            </ice:selectOneMenu>
+        </ice:panelGrid>
+    
+    </f:subview>
 
-</ui:composition>
+</span>

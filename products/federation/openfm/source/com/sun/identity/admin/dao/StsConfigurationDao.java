@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: StsConfigurationDao.java,v 1.1 2009-09-17 21:56:07 ggennaro Exp $
+ * $Id: StsConfigurationDao.java,v 1.2 2009-09-30 22:01:30 ggennaro Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -87,7 +87,7 @@ public class StsConfigurationDao {
     //--------------------------------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    static public StsConfigurationBean retrieveConfiguration() {
+    static public StsConfigurationBean retrieveConfig() {
         StsConfigurationBean stsConfigBean;
         SSOToken adminToken = WSSUtils.getAdminToken();
 
@@ -108,7 +108,7 @@ public class StsConfigurationDao {
         return stsConfigBean;
     }
 
-    public void saveConfiguration(StsConfigurationBean stsConfigBean) {
+    public void saveConfig(StsConfigurationBean stsConfigBean) {
         
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: StsManageServiceSecuritySummary.java,v 1.1 2009-09-17 21:56:04 ggennaro Exp $
+ * $Id: StsManageServiceSecuritySummary.java,v 1.2 2009-09-30 22:01:27 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -47,17 +47,16 @@ public class StsManageServiceSecuritySummary extends StsManageWizardSummary {
 
     @Override
     public String getValue() {
-        Integer[] chosenSecurityMechanisms = 
-            getStsManageWizardBean().getStsProfileBean().getSecurityMechanisms();
         ArrayList<String> a = new ArrayList<String>();
         
-        if( chosenSecurityMechanisms != null ) {
-            for(Integer i : chosenSecurityMechanisms) {
-                SecurityMechanism sm = SecurityMechanism.valueOf(i.intValue());
-                a.add(" " + sm.toLocaleString());
+        for(SecurityMechanismPanelBean panelBean 
+                : getStsManageWizardBean().getSecurityMechanismPanels() ) {
+            
+            if( panelBean.isChecked() ) {
+                a.add(" " + panelBean.getSecurityMechanism().toLocaleString());
             }
         }
-        
+
         ListFormatter lf = new ListFormatter(a);
         return lf.toString();
    }

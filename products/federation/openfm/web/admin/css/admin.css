@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.1 2009-08-19 05:41:07 veiming Exp $
+* $Id: admin.css,v 1.2 2009-09-30 22:01:29 ggennaro Exp $
 *
 */
 
@@ -1364,6 +1364,131 @@ span.button img.left {
 
 
 .upload {
+}
+
+.enhancedCheckboxGrp {
+	border: 0px none;
+	margin-top: 5px;
+	min-width: 600px;
+}
+
+.enhancedCheckboxGrp .checkboxPanelDefault .icePnlGrp,
+.enhancedCheckboxGrp .checkboxPanelChecked .icePnlGrp,
+.enhancedCheckboxGrp .checkboxPanelActive  .icePnlGrp
+ {
+    display: inline;
+    padding: 0px 5px 0px 5px;
+    z-index: 1;
+}
+
+.enhancedCheckboxGrp .checkboxPanelDefault .icePnlGrp,
+.enhancedCheckboxGrp .checkboxPanelChecked .icePnlGrp
+{
+    background-color: #eee;
+}
+
+.enhancedCheckboxGrp .checkboxPanelActive  .icePnlGrp
+{
+    background-color: #f5f5f5;
+}
+
+.enhancedCheckboxGrp .checkboxPanelDefault,
+.enhancedCheckboxGrp .checkboxPanelChecked {
+    background-color: #eee;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 1px;
+    padding: 0px;
+    width: 100%;
+}
+
+.enhancedCheckboxGrp .checkboxPanelActive {
+    background-color: #f5f5f5;
+    border-color: #999;
+    border-style: solid;
+    border-width: 1px;
+    padding: 0px;
+    width: 100%;
+}
+
+.enhancedCheckboxGrp .checkboxPanelDefault .action-column,
+.enhancedCheckboxGrp .checkboxPanelChecked .action-column,
+.enhancedCheckboxGrp .checkboxPanelActive  .action-column {
+    text-align: right;
+}
+
+.enhancedCheckboxGrp .checkboxPanelDefault .action-column a span,
+.enhancedCheckboxGrp .checkboxPanelChecked .action-column a span,
+.enhancedCheckboxGrp .checkboxPanelActive  .action-column a span {
+    color: #5382A1;
+    text-align: right;
+    text-decoration: underline;
+}
+
+.enhancedCheckboxGrp .spacerPanel {
+	border-top-color: #ddd;
+	border-style: solid;
+	border-top-width: 1px;
+    margin-top: -10px;
+    margin-bottom: 9px;
+    z-index: 0;
+}
+
+.enhancedCheckboxGrp .settingsPanel {
+    background-color: white;
+    border-color: #999;
+    border-style: solid;
+    border-width: 0px 1px 1px 1px;
+    clear: both;
+    padding: 10px 10px 10px 25px;
+    margin-bottom: 10px;
+}
+
+.dynamicTable {
+    margin: 0px 0px 10px 0px;
+}
+
+.dynamicTableRow1,
+.dynamicTableRow2
+{
+    background-color: white;	
+}
+
+.dynamicTableHdr,
+.dynamicTableColHdr1
+{
+	font-size: smaller;
+	text-align: left;
+}
+
+.dynamicTableFtr {
+	font-size: 1em;
+    line-height: 175%;
+    padding: 3px 5px 2px 5px;
+	text-align: left;
+}
+
+.dynamicTable .inputFieldColumn {
+    line-height: 175%;
+	width: 200px;
+}
+
+.dynamicTable .optionsColumn {
+    line-height: 175%;
+	width: 100px;
+}
+
+.dynamicTable .iceInpTxt, 
+.dynamicTable .iceInpSecrt, 
+.dynamicTable .iceInpTxtArea 
+{
+	margin: 0px;
+	padding: 0px;
+}
+
+.dynamicTable a span {
+	color: #5382A1;
+	text-decoration: underline;
 }
 
 /*

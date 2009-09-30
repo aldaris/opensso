@@ -24,17 +24,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StsManageWizardStep1Validator.java,v 1.1 2009-09-17 21:56:04 ggennaro Exp $
+ * $Id: StsManageWizardStep1Validator.java,v 1.2 2009-09-30 22:01:27 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import javax.faces.application.FacesMessage;
-
 import com.icesoft.faces.context.effects.Effect;
-import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
+
 
 public class StsManageWizardStep1Validator 
         extends StsManageWizardStepValidator
@@ -65,71 +63,6 @@ public class StsManageWizardStep1Validator
         return true;
     }
 
-    private boolean validTokenPluginClass() {
-        String tokenPluginClass = getStsManageWizardBean().getTokenPluginClass();
-        boolean result = false;
-        
-        try {
-            Class.forName(tokenPluginClass);
-            result = true;
-        } catch (ClassNotFoundException cnfe) {
-            MessageBean mb = new MessageBean();
-            Resources r = new Resources();
-            mb.setSummary(r.getString(this, "invalidTokenPluginClassSummary"));
-            mb.setDetail(r.getString(this, "invalidTokenPluginClassDetail"));
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-            
-            Effect e;
-            e = new InputFieldErrorEffect();
-            getStsManageWizardBean().setTokenPluginClassInputEffect(e);
-            
-            e = new MessageErrorEffect();
-            getStsManageWizardBean().setTokenPluginClassMessageEffect(e);
-            
-            getMessagesBean().addMessageBean(mb);
-        }
-        
-        return result;
-    }
-
-    private boolean validKeyAlias() {
-        if( getStsManageWizardBean().getKeyAlias() != null) {
-            return true;
-        }
-        
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidKeyAliasSummary"));
-        mb.setDetail(r.getString(this, "invalidKeyAliasDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-        
-        getMessagesBean().addMessageBean(mb);
-        return false;
-    }
-
-    private boolean validTokenLifetime() {
-        if( getStsManageWizardBean().getTokenLifetime() > 0 ) {
-            return true;
-        }
-        
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidTokenLifetimeSummary"));
-        mb.setDetail(r.getString(this, "invalidTokenLifetimeDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-        
-        Effect e;
-        e = new InputFieldErrorEffect();
-        getStsManageWizardBean().setTokenLifetimeInputEffect(e);
-        
-        e = new MessageErrorEffect();
-        getStsManageWizardBean().setTokenLifetimeMessageEffect(e);
-        
-        getMessagesBean().addMessageBean(mb);
-        
-        return false;
-    }
-
     private boolean validIssuer() {
         String issuer = getStsManageWizardBean().getIssuer();
         String pattern = "[\\w ]{1,255}?";
@@ -138,22 +71,64 @@ public class StsManageWizardStep1Validator
             return true;
         }
         
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidIssuerSummary"));
-        mb.setDetail(r.getString(this, "invalidIssuerDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-        
         Effect e;
         e = new InputFieldErrorEffect();
         getStsManageWizardBean().setIssuerInputEffect(e);
         
         e = new MessageErrorEffect();
         getStsManageWizardBean().setIssuerMessageEffect(e);
-        
-        getMessagesBean().addMessageBean(mb);
-        
+
+        showErrorMessage("invalidIssuerSummary", "invalidIssuerDetail");
         return false;
+    }    
+    
+    private boolean validTokenLifetime() {
+        if( getStsManageWizardBean().getTokenLifetime() > 0 ) {
+            return true;
+        }
+        
+        Effect e;
+        e = new InputFieldErrorEffect();
+        getStsManageWizardBean().setTokenLifetimeInputEffect(e);
+        
+        e = new MessageErrorEffect();
+        getStsManageWizardBean().setTokenLifetimeMessageEffect(e);
+
+        showErrorMessage("invalidTokenLifetimeSummary", 
+                         "invalidTokenLifetimeDetail");
+        return false;
+    }
+    
+    private boolean validKeyAlias() {
+
+        if( getStsManageWizardBean().getKeyAlias() != null) {
+            return true;
+        }
+        
+        showErrorMessage("invalidKeyAliasSummary", "invalidKeyAliasDetail");
+        return false;
+    }
+    
+    private boolean validTokenPluginClass() {
+        String tokenPluginClass = getStsManageWizardBean().getTokenPluginClass();
+        boolean result = false;
+        
+        try {
+            Class.forName(tokenPluginClass);
+            result = true;
+        } catch (ClassNotFoundException cnfe) {
+            Effect e;
+            e = new InputFieldErrorEffect();
+            getStsManageWizardBean().setTokenPluginClassInputEffect(e);
+            
+            e = new MessageErrorEffect();
+            getStsManageWizardBean().setTokenPluginClassMessageEffect(e);
+            
+            showErrorMessage("invalidTokenPluginClassSummary", 
+                             "invalidTokenPluginClassDetail");
+        }
+        
+        return result;
     }
 
 }

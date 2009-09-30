@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: StsManageSignEncryptSummary.java,v 1.1 2009-09-17 21:56:04 ggennaro Exp $
+ * $Id: StsManageSignEncryptSummary.java,v 1.2 2009-09-30 22:01:27 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -49,27 +49,27 @@ public class StsManageSignEncryptSummary extends StsManageWizardSummary {
     public String getValue() {
         ArrayList<String> a = new ArrayList<String>();
         Resources r = new Resources();
-        WssProviderProfileBean stsProfile
-                                = getStsManageWizardBean().getStsProfileBean();
+        StsManageWizardBean wizardBean = getStsManageWizardBean();
 
-        if( stsProfile.isRequestSignatureVerified() ) {
+        if( wizardBean.isRequestSignatureVerified() ) {
             a.add(" " + r.getString(this, "requestSignatureVerified"));
         }
-        if( stsProfile.isRequestHeaderDecrypted() ) {
+        if( wizardBean.isRequestHeaderDecrypted() ) {
             a.add(" " + r.getString(this, "requestHeaderDecrypted"));
         }
-        if( stsProfile.isRequestDecrypted() ) {
+        if( wizardBean.isRequestDecrypted() ) {
             a.add(" " + r.getString(this, "requestDecrypted"));
         }
-        if( stsProfile.isResponseSigned() ) {
+        if( wizardBean.isResponseSigned() ) {
             a.add(" " + r.getString(this, "responseSigned"));
         }
-        if( stsProfile.isResponseEncrypted() ) {
-            EncryptionAlgorithm ea 
-            = EncryptionAlgorithm.valueOf(stsProfile.getEncryptionAlgorithm());
+        if( wizardBean.isResponseEncrypted() ) {
+            EncryptionAlgorithm encryptionAlgorithm
+             = EncryptionAlgorithm.valueOf(wizardBean.getEncryptionAlgorithm());
 
             String value = r.getString(this, "responseEncryptedFormat");
-            value = value.replaceAll("\\{0\\}", ea.toLocaleString());
+            value = value.replaceAll("\\{0\\}", 
+                                     encryptionAlgorithm.toLocaleString());
             a.add(" " + value);
         }
         

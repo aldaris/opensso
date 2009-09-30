@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sts-saml.xhtml,v 1.1 2009-09-17 21:56:05 ggennaro Exp $
+   $Id: sts-saml.xhtml,v 1.2 2009-09-30 22:01:28 ggennaro Exp $
 
 -->
 
@@ -53,184 +53,174 @@
             for="attributeMapping"
             style="float: right;"
             value="#{resources['sts-saml.attributeMapping']}" />
-        <ice:panelGrid 
-            style="margin-bottom: 10px;"
-            columns="1">
         <ice:dataTable
-            var="attribute"
-            varStatus="attributeStatus"
+            headerClasses="inputFieldColumn, inputFieldColumn, optionsColumn"
+            columnClasses="inputFieldColumn, inputFieldColumn, optionsColumn"
+            styleClass="dynamicTable"
+            var="attributeMapItem"
+            varStatus="attributeMapItemStatus"
             value="#{wizardBean.attributeMapping}">
-
-            <ice:column style="width: 150px;">
+            <ice:column>
                 <f:facet name="header">
                     <ice:outputText
-                        style="float: left; font-size: smaller;"
                         value="#{resources['sts-saml.assertionAttributeNameLabel']}" />
                 </f:facet>
                 <ice:outputText 
-                    rendered="#{attribute.assertionAttributeName != null &amp;&amp; wizardBean.editAttributeIndex != attributeStatus.index}"
-                    value="#{attribute.assertionAttributeName}" />
-                <ice:outputText
-                    rendered="#{attribute.assertionAttributeName == null &amp;&amp; wizardBean.editAttributeIndex != attributeStatus.index}"
-                    style="color: ccc; font-style: italic;"
+                    rendered="#{!attributeMapItem.editing &amp;&amp; attributeMapItem.assertionAttributeName == null}"
+                    style="color: #ccc; font-style: italic;"
                     value="#{resources['sts-saml.localAttributeNotUsed']}" />
+                <ice:outputText 
+                    rendered="#{!attributeMapItem.editing &amp;&amp; attributeMapItem.assertionAttributeName != null}"
+                    value="#{attributeMapItem.assertionAttributeName}" />
                 <ice:inputText
-                    rendered="#{wizardBean.editAttributeIndex == attributeStatus.index}"
-                    style="float: left; font-size: smaller; margin: 0px; width: 150px;"
-                    value="#{wizardBean.newAssertionAttributeName}" />
+                    maxsize="50"
+                    size="25"
+                    rendered="#{attributeMapItem.editing}"
+                    value="#{attributeMapItem.newAssertionAttributeName}" />
                 <f:facet name="footer">
                     <ice:inputText
-                        rendered="#{wizardBean.showingNewAttributeFields}"
-                        style="float: left; font-size: smaller; margin: 0px; width: 150px;"
+                        maxsize="50"
+                        size="25"
+                        rendered="#{wizardBean.showingAddAttribute}"
                         value="#{wizardBean.newAssertionAttributeName}" />
                 </f:facet>
             </ice:column>
 
-            <ice:column style="width: 150px;">
+            <ice:column>
                 <f:facet name="header">
                     <ice:outputText
-                        style="float: left; font-size: smaller;"
                         value="#{resources['sts-saml.localAttributeNameLabel']}" />
                 </f:facet>
                 <ice:outputText 
-                    rendered="#{!attribute.custom || wizardBean.editAttributeIndex != attributeStatus.index}"
-                    value="#{attribute.localAttributeName}" />
+                    rendered="#{!attributeMapItem.editing || !attributeMapItem.custom}"
+                    value="#{attributeMapItem.localAttributeName}" />
                 <ice:inputText
-                    rendered="#{attribute.custom &amp;&amp; wizardBean.editAttributeIndex == attributeStatus.index}"
-                    style="float: left; font-size: smaller; margin: 0px; width: 150px;"
-                    value="#{wizardBean.newLocalAttributeName}" />
+                    maxsize="50"
+                    size="25"
+                    rendered="#{attributeMapItem.editing &amp;&amp; attributeMapItem.custom}"
+                    value="#{attributeMapItem.newLocalAttributeName}" />
                 <f:facet name="footer">
                     <ice:inputText
-                        rendered="#{wizardBean.showingNewAttributeFields}"
-                        style="float: left; font-size: smaller; margin: 0px; width: 150px;"
+                        maxsize="50"
+                        size="25"
+                        rendered="#{wizardBean.showingAddAttribute}"
                         value="#{wizardBean.newLocalAttributeName}" />
                 </f:facet>
             </ice:column>
-	                    
-            <ice:column style="width: 100px;">
+
+            <ice:column>
                 <f:facet name="header">
                     <ice:outputText
-                        style="float: left; font-size: smaller;"
                         value="#{resources['sts-saml.attributeMappingOptions']}" />
                 </f:facet>
                 <ice:panelGroup
-                    rendered="#{wizardBean.editAttributeIndex != attributeStatus.index}"
-                    >
+                    rendered="#{!attributeMapItem.editing}" >
                     <ice:commandLink
-                        actionListener="#{wizardHandler.editAttributeListener}">
-                        <f:attribute name="attributeIndex" value="#{attributeStatus.index}" />
+                        actionListener="#{wizardHandler.attrMapEditListener}">
+                        <f:attribute name="attributeMapItem" value="#{attributeMapItem}" />
                         <ice:outputText
-                            style="color: #5382A1;"
-                            value="#{resources['sts-saml.edit']}" />
+                            value="#{resources['sts-saml.editLink']}" />
                     </ice:commandLink>
                     <ice:outputText value=" | " />
                     <ice:commandLink
-                        actionListener="#{wizardHandler.removeAttributeListener}"
-                        rendered="#{attribute.custom || attribute.assertionAttributeName != null}">
-                        <f:attribute name="attributeIndex" value="#{attributeStatus.index}" />
+                        actionListener="#{wizardHandler.attrMapRemoveListener}"
+                        disabled="#{attributeMapItem.assertionAttributeName == null}">
+                        <f:attribute name="attributeMapItem" value="#{attributeMapItem}" />
                         <ice:outputText
-                            style="color: #5382A1;"
-                            value="#{resources['sts-saml.remove']}" />
+                            value="#{resources['sts-saml.removeLink']}" />
                     </ice:commandLink>
-                    <ice:outputText
-                        style="color: #cccccc;"
-                        rendered="#{!attribute.custom &amp;&amp; attribute.assertionAttributeName == null}"
-                        value="#{resources['sts-saml.remove']}" />
                 </ice:panelGroup>
                 <ice:panelGroup
-                    rendered="#{wizardBean.editAttributeIndex == attributeStatus.index}"
-                    >
+                    rendered="#{attributeMapItem.editing}" >
                     <ice:commandLink
-                        actionListener="#{wizardHandler.saveEditAttributeListener}">
-                        <f:attribute name="attributeIndex" value="#{attributeStatus.index}" />
+                        actionListener="#{wizardHandler.attrMapSaveListener}">
+                        <f:attribute name="attributeMapItem" value="#{attributeMapItem}" />
                         <ice:outputText
-                            style="color: #5382A1;"
-                            value="#{resources['sts-saml.save']}" />
+                            value="#{resources['sts-saml.saveLink']}" />
                     </ice:commandLink>
                     <ice:outputText value=" | " />
                     <ice:commandLink
-                        actionListener="#{wizardHandler.cancelEditAttributeListener}">
+                        actionListener="#{wizardHandler.attrMapCancelSaveListener}">
+                        <f:attribute name="attributeMapItem" value="#{attributeMapItem}" />
                         <ice:outputText
-                            style="color: #5382A1;"
-                            value="#{resources['sts-saml.cancel']}" />
+                            value="#{resources['sts-saml.cancelSaveLink']}" />
                     </ice:commandLink>
                 </ice:panelGroup>
                 <f:facet name="footer">
-                    <ice:panelGroup
-                        rendered="#{wizardBean.showingNewAttributeFields}"
-                        style="float: left; font-size: smaller;">
+                    <ice:panelGroup>
+                        <ice:panelGroup
+                            visible="#{wizardBean.showingAddAttribute}">
+                            <ice:commandLink
+                                actionListener="#{wizardHandler.attrMapAddListener}">
+                                <ice:outputText
+                                    value="#{resources['sts-saml.addLink']}" />
+                            </ice:commandLink> 
+                            <ice:outputText value=" | " />
+                            <ice:commandLink
+                                actionListener="#{wizardHandler.attrMapCancelAddListener}">
+                                <ice:outputText
+                                    value="#{resources['sts-saml.cancelAddLink']}" />
+                            </ice:commandLink> 
+                        </ice:panelGroup>
                         <ice:commandLink
-                            actionListener="#{wizardHandler.saveNewAttributeListener}">
+                            actionListener="#{wizardHandler.attrMapShowAddListener}"
+                            visible="#{!wizardBean.showingAddAttribute}">
                             <ice:outputText
-                                style="color: #5382A1;"
-                                value="#{resources['sts-saml.save']}" />
-                        </ice:commandLink> 
-                        <ice:outputText value=" | " />
-                        <ice:commandLink
-                            actionListener="#{wizardHandler.cancelNewAttributeListener}">
-                            <ice:outputText
-                                style="color: #5382A1;"
-                                value="#{resources['sts-saml.cancel']}" />
+                                value="#{resources['sts-saml.addNewLink']}" />
                         </ice:commandLink> 
                     </ice:panelGroup>
                 </f:facet>
             </ice:column>
+            
         </ice:dataTable>
-        <ice:commandLink
-            actionListener="#{wizardHandler.addNewAttributeListener}"
-            rendered="#{!wizardBean.showingNewAttributeFields}"
-            style="float: right; padding: 4px 0px 0px 0px;">
-            <img src="../image/add.png" style="vertical-align: middle;" />
-            <ice:outputText
-                style="padding: 0px 5px 0px 3px;"
-                value="#{resources['sts-saml.addNewAttribute']}" />
-        </ice:commandLink> 
-    </ice:panelGrid>
-
                 
-    <ice:outputLabel 
-        for="nameIdMapper"
-        style="float: right;"
-        value="#{resources['sts-saml.nameIdMapperLabel']}" />
-    <ice:panelGrid columns="1">
-        <ice:inputText
-            id="nameIdMapper"
-            size="70"
-            maxlength="1024"
-            value="#{wizardBean.nameIdMapper}" />
-        <o:inlineHelp key="sts-saml.nameIdMapperInlineHelp" />
-    </ice:panelGrid>
+        <ice:outputLabel 
+            effect="#{wizardBean.nameIdMapperMessageEffect}"
+            for="nameIdMapper"
+            style="float: right;"
+            value="#{resources['sts-saml.nameIdMapperLabel']}" />
+        <ice:panelGrid columns="1">
+            <ice:inputText
+                id="nameIdMapper"
+                effect="#{wizardBean.nameIdMapperInputEffect}"
+                size="70"
+                maxlength="1024"
+                value="#{wizardBean.nameIdMapper}" />
+            <o:inlineHelp key="sts-saml.nameIdMapperInlineHelp" />
+        </ice:panelGrid>
 
-    <ice:outputLabel 
-        for="attributeNamespace"
-        style="float: right;"
-        value="#{resources['sts-saml.attributeNamespaceLabel']}" />
-    <ice:panelGrid columns="1">
-        <ice:inputText
-            id="attributeNamespace"
-            size="70"
-            maxlength="1024"
-            value="#{wizardBean.attributeNamespace}" />
-        <o:inlineHelp key="sts-saml.attributeNamespaceInlineHelp" />
-    </ice:panelGrid>
+        <ice:outputLabel 
+            effect="#{wizardBean.attributeNamespaceMessageEffect}"
+            for="attributeNamespace"
+            style="float: right;"
+            value="#{resources['sts-saml.attributeNamespaceLabel']}" />
+        <ice:panelGrid columns="1">
+            <ice:inputText
+                id="attributeNamespace"
+                effect="#{wizardBean.attributeNamespaceInputEffect}"
+                size="70"
+                maxlength="1024"
+                value="#{wizardBean.attributeNamespace}" />
+            <o:inlineHelp key="sts-saml.attributeNamespaceInlineHelp" />
+        </ice:panelGrid>
 
-    <ice:outputLabel 
-        for="includeMemberships"
-        style="float: right;"
-        value="#{resources['sts-saml.includeMembershipsLabel']}" />
-    <ice:panelGrid columns="1">
-        <ice:selectOneRadio
-            value="#{wizardBean.includeMemberships}">
-            <f:selectItem
-                itemLabel="#{resources['sts-saml.includeMembershipsTrueLabel']}"
-                itemValue="true" />
-            <f:selectItem
-                itemLabel="#{resources['sts-saml.includeMembershipsFalseLabel']}"
-                itemValue="false" />
-        </ice:selectOneRadio>
-        <o:inlineHelp key="sts-saml.includeMembershipsInlineHelp" />
-    </ice:panelGrid>
-  </ice:panelGrid>
+        <ice:outputLabel 
+            for="includeMemberships"
+            style="float: right;"
+            value="#{resources['sts-saml.includeMembershipsLabel']}" />
+        <ice:panelGrid columns="1">
+            <ice:selectOneRadio
+                value="#{wizardBean.includeMemberships}">
+                <f:selectItem
+                    itemLabel="#{resources['sts-saml.includeMembershipsTrueLabel']}"
+                    itemValue="true" />
+                <f:selectItem
+                    itemLabel="#{resources['sts-saml.includeMembershipsFalseLabel']}"
+                    itemValue="false" />
+            </ice:selectOneRadio>
+            <o:inlineHelp key="sts-saml.includeMembershipsInlineHelp" />
+        </ice:panelGrid>
+      </ice:panelGrid>
 
   </ui:define>
 </o:section>

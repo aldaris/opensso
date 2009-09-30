@@ -29,11 +29,24 @@
 
 import java.io.Serializable;
 
-public class SamlAttributeMapEntry implements Serializable {
+public class SamlAttributeMapItem implements Serializable {
 
     private String localAttributeName;
     private String assertionAttributeName;
     private boolean custom;
+    private boolean editing;
+    private String newLocalAttributeName;
+    private String newAssertionAttributeName;
+    
+    // convenience methods -----------------------------------------------------
+    
+    public void resetInterface() {
+        this.setEditing(false);
+        this.setNewAssertionAttributeName(null);
+        this.setNewLocalAttributeName(null);
+    }
+    
+    // getters / setters -------------------------------------------------------
 
     public void setLocalAttributeName(String localAttributeName) {
         this.localAttributeName = localAttributeName;
@@ -57,6 +70,30 @@ public class SamlAttributeMapEntry implements Serializable {
 
     public boolean isCustom() {
         return custom;
+    }
+
+    public void setEditing(boolean editing) {
+        this.editing = editing;
+    }
+
+    public boolean isEditing() {
+        return editing;
+    }
+
+    public void setNewLocalAttributeName(String newLocalAttributeName) {
+        this.newLocalAttributeName = newLocalAttributeName;
+    }
+
+    public String getNewLocalAttributeName() {
+        return newLocalAttributeName;
+    }
+
+    public void setNewAssertionAttributeName(String newAssertionAttributeName) {
+        this.newAssertionAttributeName = newAssertionAttributeName;
+    }
+
+    public String getNewAssertionAttributeName() {
+        return newAssertionAttributeName;
     }
 
 }

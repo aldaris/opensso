@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: EditableSelectOneBean.java,v 1.1 2009-09-17 21:56:04 ggennaro Exp $
+ * $Id: EditableSelectOneBean.java,v 1.2 2009-09-30 22:01:27 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -56,6 +56,14 @@ public class EditableSelectOneBean implements Serializable
         this.invalidMessageDetail = null;
     }
 
+    // convenience methods -----------------------------------------------------
+    
+    public void resetInterface() {
+        this.setShowingNewItemInput(false);
+        this.setEditingExisting(false);
+        this.setNewItem(null);
+    }
+    
     // lists -------------------------------------------------------------------
     
     public List<SelectItem> getSelectItemList() {

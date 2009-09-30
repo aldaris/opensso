@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: StsManageSamlSummary.java,v 1.1 2009-09-17 21:56:04 ggennaro Exp $
+ * $Id: StsManageSamlSummary.java,v 1.2 2009-09-30 22:01:27 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -47,15 +47,15 @@ public class StsManageSamlSummary extends StsManageWizardSummary {
     @Override
     public String getValue() {
         Resources r = new Resources();
-        ArrayList<SamlAttributeMapEntry> attributeMap 
+        ArrayList<SamlAttributeMapItem> attributeMap 
                             = getStsManageWizardBean().getAttributeMapping();
         int count = 0;
         String value = null;
         
-        for( SamlAttributeMapEntry entry : attributeMap ) {
-            if( entry.isCustom() ) {
+        for( SamlAttributeMapItem item : attributeMap ) {
+            if( item.isCustom() ) {
                 count++;
-            } else if( !entry.isCustom() && entry.getAssertionAttributeName() != null ) {
+            } else if( !item.isCustom() && item.getAssertionAttributeName() != null ) {
                 count++;
             }
         }

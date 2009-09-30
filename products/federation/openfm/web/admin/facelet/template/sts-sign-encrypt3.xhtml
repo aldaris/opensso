@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+   Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
+
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: sts-sign-encrypt3.xhtml,v 1.1 2009-09-30 22:01:28 ggennaro Exp $
+
+-->
+
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
+
+<f:subview>
+
+    <o:section>
+        <ui:define name="section-title">
+            <ice:outputText
+                value="#{resources['sts-security3.section-title.authChain']}"/>
+        </ui:define>
+        <ui:define name="section-details">
+            <ice:outputText
+                value="#{resources['sts-security3.section-details.authChain']}"/>
+        </ui:define>
+        <ui:define name="section-body">
+
+    <ice:panelGrid
+        columns="2"
+        columnClasses="label-column,input-column">
+        <ice:outputLabel
+            style="float: right;"
+            value="#{resources['sts-sign-encrypt3.affectedElements']}" />
+        <ice:panelGrid columns="4">
+            <ice:selectBooleanCheckbox
+                id="requestSignatureVerified"
+                value="#{wizardBean.requestSignatureVerified}"/>
+            <ice:outputLabel
+                for="requestSignatureVerified"
+                style="padding-right: 20px;"
+                value="#{resources['sts-sign-encrypt3.requestSignatureVerifiedLabel']}" />
+            <ice:selectBooleanCheckbox
+                id="responseSigned"
+                value="#{wizardBean.responseSigned}"/>
+            <ice:outputLabel
+                for="responseSigned"
+                value="#{resources['sts-sign-encrypt3.responseSignedLabel']}" />
+
+            <ice:selectBooleanCheckbox
+                id="requestHeaderDecrypted"
+                style="padding-right: 20px;"
+                value="#{wizardBean.requestHeaderDecrypted}" />
+            <ice:outputLabel
+                for="requestHeaderDecrypted"
+                value="#{resources['sts-sign-encrypt3.requestHeaderDecryptedLabel']}" />
+            <ice:selectBooleanCheckbox
+                id="responseEncrypted"
+                value="#{wizardBean.responseEncrypted}" />
+            <ice:outputLabel
+                for="responseEncrypted"
+                style="padding-right: 20px;"
+                value="#{resources['sts-sign-encrypt3.responseEncryptedLabel']}" />
+
+            <ice:selectBooleanCheckbox
+                id="requestDecrypted"
+                value="#{wizardBean.requestDecrypted}" />
+            <ice:outputLabel
+                for="requestDecrypted"
+                value="#{resources['sts-sign-encrypt3.requestDecryptedLabel']}" />
+            <ice:outputText value="" />
+            <ice:outputText value="" />
+        </ice:panelGrid>
+    </ice:panelGrid>
+
+    <ice:panelGrid columns="2">
+        <ice:outputLabel
+            for="encryptionAlgorithm"
+            style="float: right;"
+            value="#{resources['sts-sign-encrypt3.encryptionAlgorithmLabel']}" />
+        <ice:selectOneMenu id="encryptionAlgorithm"
+                           value="#{wizardBean.encryptionAlgorithm}">
+            <f:selectItems
+                value="#{wizardBean.encryptionAlgorithmList}"/>
+        </ice:selectOneMenu>
+
+        <ice:outputLabel
+            for="privateKeyAlias"
+            style="float: right;"
+            value="#{resources['sts-sign-encrypt3.privateKeyAliasLabel']}" />
+        <ice:panelGrid columns="1">
+            <ice:outputText
+                rendered="#{o:size(wizardBean.keyAliasList) == 0 }"
+                style="font-style: italic;"
+                value="#{resources['sts-sign-encrypt3.noPrivateKeyAliases']}"/>
+            <ice:selectOneMenu
+                id="privateKeyAlias"
+                rendered="#{o:size(wizardBean.keyAliasList) > 0 }"
+                value="#{wizardBean.privateKeyAlias}">
+                <f:selectItems value="#{wizardBean.keyAliasList}"/>
+            </ice:selectOneMenu>
+            <o:inlineHelp 
+                key="sts-sign-encrypt3.privateKeyAliasInlineHelp" />
+        </ice:panelGrid>
+
+        <ice:outputLabel
+            for="publicKeyAlias"
+            style="float: right;"
+            value="#{resources['sts-sign-encrypt3.publicKeyAliasLabel']}" />
+        <ice:panelGrid columns="1">
+            <ice:outputText
+                rendered="#{o:size(wizardBean.keyAliasList) == 0 }"
+                style="font-style: italic;"
+                value="#{resources['sts-sign-encrypt3.noPublicKeyAliases']}"/>
+            <ice:selectOneMenu
+                id="publicKeyAlias"
+                rendered="#{o:size(wizardBean.keyAliasList) > 0 }"
+                value="#{wizardBean.publicKeyAlias}">
+                <f:selectItems value="#{wizardBean.keyAliasList}"/>
+            </ice:selectOneMenu>
+            <o:inlineHelp 
+                key="sts-sign-encrypt3.publicKeyAliasInlineHelp" />
+        </ice:panelGrid>
+
+    </ice:panelGrid>
+
+    </ui:define>
+</o:section>
+
+</f:subview>
+</span>

@@ -22,21 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StsManageWizardStep2Validator.java,v 1.1 2009-09-17 21:56:04 ggennaro Exp $
+ * $Id: StsManageWizardStep2Validator.java,v 1.2 2009-09-30 22:01:27 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import javax.faces.application.FacesMessage;
+import java.util.ArrayList;
 
-import com.icesoft.faces.context.effects.Effect;
-import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
+
 
 public class StsManageWizardStep2Validator 
         extends StsManageWizardStepValidator
 {
+    
     public StsManageWizardStep2Validator(WizardBean wb) {
         super(wb);
     }
@@ -55,10 +55,62 @@ public class StsManageWizardStep2Validator
         return true;
     }
 
-    private boolean validAuthChain() {
-        WssProviderProfileBean pb = getStsManageWizardBean().getStsProfileBean();
+    private boolean validSecurityTokenType() {
+        ArrayList<SecurityMechanismPanelBean> panelBeans 
+            = getStsManageWizardBean().getSecurityMechanismPanels();
+        SecurityMechanismPanelBean invalidPanel = null;
         
-        if( pb.getAuthenticationChain() != null ) {
+        for(SecurityMechanismPanelBean panel : panelBeans) {
+            
+            if( panel.isChecked() ) {
+                SecurityMechanism sm = panel.getSecurityMechanism();
+                
+                switch(sm) {
+                    case KERBEROS_TOKEN:
+                        if( !validKerberosSettings() ) {
+                            invalidPanel = panel;
+                        }
+                        break;
+                    case USERNAME_TOKEN:
+                    case USERNAME_TOKEN_PLAIN:
+                        if( !validUserNameSettings() )
+                        {
+                            invalidPanel = panel;
+                        }
+                        break;
+                    case X509_TOKEN:
+                        if( !validX509Settings() ) {
+                            invalidPanel = panel;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                if( invalidPanel != null ) {
+                    break;
+                }
+            }
+        }
+        
+        // make the invalid panel expanded
+        if( invalidPanel != null ) {
+            
+            for(SecurityMechanismPanelBean panel : panelBeans) {
+                panel.setExpanded(false);
+            }
+            invalidPanel.setExpanded(true);
+            
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    private boolean validAuthChain() {
+        String authChain = getStsManageWizardBean().getAuthenticationChain();
+        
+        if( authChain != null && authChain.length() > 0 ) {
             return true;
         }
         
@@ -66,102 +118,13 @@ public class StsManageWizardStep2Validator
         return false;
     }
 
-    private boolean validSecurityTokenType() {
-        WssProviderProfileBean stsProfile 
-                                = getStsManageWizardBean().getStsProfileBean();
-        Integer[] chosenTypes = stsProfile.getSecurityMechanisms();
+    private boolean validKerberosSettings() {
+        StsManageWizardBean wizardBean = getStsManageWizardBean();
         
-        if( chosenTypes == null || chosenTypes.length == 0 ) {
-            showErrorMessage("noSecurityTokenTypeSummary", "noSecurityTokenTypeDetail");
-            return false;
-        }
-        
-        for(Integer i : chosenTypes) {
-            boolean valid = false;
-            SecurityMechanism sm = SecurityMechanism.valueOf(i.intValue());
-            
-            switch(sm) {
-                case ANONYMOUS:
-                case SAML_HOK:
-                case SAML_SV:
-                case SAML2_HOK:
-                case SAML2_SV:
-                    // no additional validation needed
-                    valid = true;
-                    break;
-                case USERNAME_TOKEN:
-                case USERNAME_TOKEN_PLAIN:
-                    valid = validUserNameTokenSettings();
-                    break;
-                case KERBEROS_TOKEN:
-                    valid = validKerberosTokenSettings();
-                    break;
-                case X509_TOKEN:
-                    valid = validX509TokenSettings();
-                    break;
-                default:
-                    unsupportedSecurityTokenType();
-                    break;
-            }
-            
-            if( !valid ) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
-    
-	private void showErrorMessage(String summaryKey, String detailKey) {
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, summaryKey));
-        mb.setDetail(r.getString(this, detailKey));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-        
-        getMessagesBean().addMessageBean(mb);
-    }
-    
-    private void unsupportedSecurityTokenType() {
-        showErrorMessage("unsupportedSecurityTokenTypeSummary",
-                         "unsupportedSecurityTokenTypeDetail");
-    }
-
-    private boolean validUserNameTokenSettings() {
-        WssProviderProfileBean pb 
-                                = getStsManageWizardBean().getStsProfileBean();
-        String userName = pb.getUserNameTokenUserName();
-        String password = pb.getUserNameTokenPassword();
-        String pattern = "[\\w ]{0,50}?";
-        
-        if( (userName == null || userName.matches(pattern)) &&
-            (password == null || password.matches(pattern)) )
-        {
-            return true;
-        }
-        
-        Effect e;
-        e = new InputFieldErrorEffect();
-        pb.setUserNameTokenUserNameInputEffect(e);
-        pb.setUserNameTokenPasswordInputEffect(e);
-        
-        e = new MessageErrorEffect();
-        pb.setUserNameTokenUserNameMessageEffect(e);
-        pb.setUserNameTokenPasswordMessageEffect(e);
-        
-        showErrorMessage("invalidUserNameSummary",
-                         "invalidUserNameDetail");
-        
-        return false;
-    }
-
-    private boolean validKerberosTokenSettings() {
-        WssProviderProfileBean pb 
-                                = getStsManageWizardBean().getStsProfileBean();
-        String domain = pb.getKerberosDomain();
-        String domainServer = pb.getKerberosDomainServer();
-        String serverPrincipal = pb.getKerberosServicePrincipal();
-        String keyTabFile = pb.getKerberosKeyTabFile();
+        String domain = wizardBean.getKerberosDomain();
+        String domainServer = wizardBean.getKerberosDomainServer();
+        String serverPrincipal = wizardBean.getKerberosServicePrincipal();
+        String keyTabFile = wizardBean.getKerberosKeyTabFile();
         String pattern = "[\\w \\@\\.\\/\\&\\:]{0,255}?";
         String summaryKey = null;
         String detailKey = null;
@@ -169,41 +132,49 @@ public class StsManageWizardStep2Validator
         if(domain != null && !domain.matches(pattern)) {
             summaryKey = "invalidKerberosDomainSummary";
             detailKey = "invalidKerberosDomainDetail";
-            pb.setKerberosDomainInputEffect(new InputFieldErrorEffect());
-            pb.setKerberosDomainMessageEffect(new MessageErrorEffect());
-            
+            wizardBean.setKerberosDomainInputEffect(new InputFieldErrorEffect());
+            wizardBean.setKerberosDomainMessageEffect(new MessageErrorEffect());
         } else if(domainServer != null && !domainServer.matches(pattern)) {
             summaryKey = "invalidKerberosDomainServerSummary";
             detailKey = "invalidKerberosDomainServerDetail";
-            pb.setKerberosDomainServerInputEffect(new InputFieldErrorEffect());
-            pb.setKerberosDomainServerMessageEffect(new MessageErrorEffect());
-            
+            wizardBean.setKerberosDomainServerInputEffect(new InputFieldErrorEffect());
+            wizardBean.setKerberosDomainServerMessageEffect(new MessageErrorEffect());
         } else if(serverPrincipal != null && !serverPrincipal.matches(pattern)) {
             summaryKey = "invalidKerberosServicePrincipalSummary";
             detailKey = "invalidKerberosServicePrincipalDetail";
-            pb.setKerberosServicePrincipalInputEffect(new InputFieldErrorEffect());
-            pb.setKerberosServicePrincipalMessageEffect(new MessageErrorEffect());
-            
+            wizardBean.setKerberosServicePrincipalInputEffect(new InputFieldErrorEffect());
+            wizardBean.setKerberosServicePrincipalMessageEffect(new MessageErrorEffect());
         } else if(keyTabFile != null && !keyTabFile.matches(pattern)) {
             summaryKey = "invalidKerberosKeyTabFileSummary";
             detailKey = "invalidKerberosKeyTabFileDetail";
-            pb.setKerberosKeyTabFileInputEffect(new InputFieldErrorEffect());
-            pb.setKerberosKeyTabFileMessageEffect(new MessageErrorEffect());
-            
+            wizardBean.setKerberosKeyTabFileInputEffect(new InputFieldErrorEffect());
+            wizardBean.setKerberosKeyTabFileMessageEffect(new MessageErrorEffect());
         }
         
         if( summaryKey != null ) {
             showErrorMessage(summaryKey, detailKey);
             return false;
         }
-        
+
         return true;
     }
 
-    private boolean validX509TokenSettings() {
-        WssProviderProfileBean pb = getStsManageWizardBean().getStsProfileBean();
+    private boolean validUserNameSettings() {
+        StsManageWizardBean wizardBean = getStsManageWizardBean();
+        
+        if( wizardBean.getUserCredentialItems().size() == 0 ) {
+            showErrorMessage("invalidUserNameSummary",
+                             "invalidUserNameDetail");
+            return false;
+        }
+        
+        return true;
+    }
+        
+    private boolean validX509Settings() {
+        StsManageWizardBean wizardBean = getStsManageWizardBean();
         X509SigningRefType signingRef 
-            = X509SigningRefType.valueOf(pb.getX509TokenSigningReferenceType());
+        = X509SigningRefType.valueOf(wizardBean.getX509SigningReferenceType());
         
         if( signingRef != null ) {
             return true;
