@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-manage.xhtml,v 1.6 2009-09-21 20:35:12 farble1670 Exp $
+   $Id: application-manage.xhtml,v 1.7 2009-09-30 14:39:18 farble1670 Exp $
 -->
 
 <ui:composition
@@ -74,6 +74,14 @@
                         type="view-options"
                         handler="#{applicationManageHandler}"
                         listenerMethod="viewOptionsListener"/>
+                    <ice:panelGroup>
+                        <ice:graphicImage
+                            value="/admin/image/search.png"/>
+                        <ice:inputText
+                            styleClass="section-input"
+                            onkeyup="submitNow(this);"
+                            value="#{applicationManageBean.searchFilter}"/>
+                    </ice:panelGroup>
                 </ice:panelGrid>
             </ui:define>
             <ui:define name="section-body">

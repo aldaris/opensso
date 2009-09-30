@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DescriptionPolicyFilter.java,v 1.1 2009-08-19 05:40:50 veiming Exp $
+ * $Id: DescriptionPolicyFilter.java,v 1.2 2009-09-30 14:39:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.Privilege;
 
-public class DescriptionPolicyFilter extends PatternPolicyFilter {
+public class DescriptionPolicyFilter extends PatternViewFilter {
     public String getPrivilegeAttributeName() {
         return Privilege.DESCRIPTION_ATTRIBUTE;
     }

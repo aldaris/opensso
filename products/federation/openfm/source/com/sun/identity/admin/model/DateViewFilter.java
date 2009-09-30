@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DatePolicyFilter.java,v 1.2 2009-09-25 05:52:55 veiming Exp $
+ * $Id: DateViewFilter.java,v 1.1 2009-09-30 14:39:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -35,7 +35,7 @@ import java.util.Date;
 import java.util.List;
 import javax.faces.model.SelectItem;
 
-public abstract class DatePolicyFilter extends PolicyFilter {
+public abstract class DateViewFilter extends ViewFilter {
 
     public Verb getVerb() {
         return verb;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManageHandler.java,v 1.1 2009-08-19 05:40:46 veiming Exp $
+ * $Id: PolicyManageHandler.java,v 1.2 2009-09-30 14:39:15 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -31,7 +31,7 @@ import com.sun.identity.admin.dao.PolicyDao;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.PhaseEventAction;
-import com.sun.identity.admin.model.PolicyFilterHolder;
+import com.sun.identity.admin.model.FilterHolder;
 import com.sun.identity.admin.model.PolicyManageBean;
 import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PrivilegeBean;
@@ -62,11 +62,10 @@ public class PolicyManageHandler implements Serializable {
         return pb;
     }
 
-    public PolicyFilterHolder getPolicyFilterHolder(ActionEvent event) {
-        PolicyFilterHolder pfh = (PolicyFilterHolder) event.getComponent().getAttributes().get("policyFilterHolder");
-        assert (pfh != null);
-
-        return pfh;
+    public FilterHolder getFilterHolder(ActionEvent event) {
+        FilterHolder fh = (FilterHolder) event.getComponent().getAttributes().get("filterHolder");
+        assert (fh != null);
+        return fh;
     }
 
     public PolicyManageBean getPolicyManageBean() {
@@ -189,22 +188,22 @@ public class PolicyManageHandler implements Serializable {
         policyManageBean.setExportPopupVisible(false);
     }
 
-    public void addPolicyFilterListener(ActionEvent event) {
-        getPolicyManageBean().newPolicyFilterHolder();
+    public void addViewFilterListener(ActionEvent event) {
+        getPolicyManageBean().newFilterHolder();
         addResetEvent();
     }
 
-    public void policyFilterChangedListener(ValueChangeEvent event) {
+    public void viewFilterChangedListener(ValueChangeEvent event) {
         addResetEvent();
     }
 
-    public void policyFilterChangedListener(ActionEvent event) {
+    public void viewFilterChangedListener(ActionEvent event) {
         addResetEvent();
     }
 
-    public void removePolicyFilterListener(ActionEvent event) {
-        PolicyFilterHolder pfh = getPolicyFilterHolder(event);
-        getPolicyManageBean().getPolicyFilterHolders().remove(pfh);
+    public void removeViewFilterListener(ActionEvent event) {
+        FilterHolder fh = getFilterHolder(event);
+        getPolicyManageBean().getFilterHolders().remove(fh);
         addResetEvent();
     }
 

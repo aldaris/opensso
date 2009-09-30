@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDao.java,v 1.2 2009-09-25 05:52:55 veiming Exp $
+ * $Id: PolicyDao.java,v 1.3 2009-09-30 14:39:15 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -30,7 +30,7 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.ConditionFactory;
-import com.sun.identity.admin.model.PolicyFilterHolder;
+import com.sun.identity.admin.model.FilterHolder;
 import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.RealmsBean;
@@ -73,11 +73,11 @@ public class PolicyDao implements Serializable {
         return getPrivilegeBeans(null, Collections.EMPTY_LIST);
     }
 
-    private Set<SearchFilter> getPrivilegeSearchFilters(List<PolicyFilterHolder> policyFilterHolders) {
+    private Set<SearchFilter> getPrivilegeSearchFilters(List<FilterHolder> filterHolders) {
         Set<SearchFilter> psfs = new HashSet<SearchFilter>();
 
-        for (PolicyFilterHolder pfh : policyFilterHolders) {
-            List<SearchFilter> l = pfh.getPolicyFilter().getPrivilegeSearchFilters();
+        for (FilterHolder fh : filterHolders) {
+            List<SearchFilter> l = fh.getViewFilter().getPrivilegeSearchFilters();
             if (l != null) {
                 // TODO: list should never be null
                 psfs.addAll(l);
@@ -103,7 +103,7 @@ public class PolicyDao implements Serializable {
         }
     }
 
-    public List<PrivilegeBean> getPrivilegeBeans(String filter, List<PolicyFilterHolder> policyFilterHolders) {
+    public List<PrivilegeBean> getPrivilegeBeans(String filter, List<FilterHolder> policyFilterHolders) {
         Set<SearchFilter> psfs = getPrivilegeSearchFilters(policyFilterHolders);
         String pattern = getPattern(filter);
         psfs.add(new SearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
@@ -137,7 +137,7 @@ public class PolicyDao implements Serializable {
         return getPrivilegeNames(null, Collections.EMPTY_LIST);
     }
 
-    public List<String> getPrivilegeNames(String filter, List<PolicyFilterHolder> policyFilterHolders) {
+    public List<String> getPrivilegeNames(String filter, List<FilterHolder> policyFilterHolders) {
         Set<SearchFilter> psfs = getPrivilegeSearchFilters(policyFilterHolders);
         String pattern = getPattern(filter);
         psfs.add(new SearchFilter(Privilege.NAME_ATTRIBUTE, pattern));

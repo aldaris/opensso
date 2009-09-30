@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageBean.java,v 1.1 2009-08-19 05:40:53 veiming Exp $
+ * $Id: ReferralManageBean.java,v 1.2 2009-09-30 14:39:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -39,8 +39,8 @@ public class ReferralManageBean implements Serializable {
     private List<ReferralBean> referralBeans;
     private ReferralDao referralDao;
     private String searchFilter = "";
-    private List<PolicyFilterHolder> policyFilterHolders = new ArrayList<PolicyFilterHolder>();
-    private Map<String, PolicyFilterType> policyFilterTypes;
+    private List<FilterHolder> filterHolders = new ArrayList<FilterHolder>();
+    private Map<String,ViewFilterType> viewFilterTypes;
     private ReferralManageTableBean referralManageTableBean = new ReferralManageTableBean();
     private boolean selectAll;
     private boolean removePopupVisible = false;
@@ -52,10 +52,10 @@ public class ReferralManageBean implements Serializable {
         return referralBeans;
     }
 
-    public void newPolicyFilterHolder() {
-        PolicyFilterHolder pfh = new PolicyFilterHolder();
-        pfh.setPolicyFilterTypes(policyFilterTypes);
-        policyFilterHolders.add(pfh);
+    public void newFilterHolder() {
+        FilterHolder fh = new FilterHolder();
+        fh.setViewFilterTypes(viewFilterTypes);
+        filterHolders.add(fh);
     }
 
     public void setReferralDao(ReferralDao referralDao) {
@@ -64,12 +64,12 @@ public class ReferralManageBean implements Serializable {
     }
 
     public void reset() {
-        referralBeans = referralDao.getReferralBeans(getSearchFilter(),getPolicyFilterHolders());
+        referralBeans = referralDao.getReferralBeans(getSearchFilter(),getFilterHolders());
         getReferralManageTableBean().setReferralBeans(referralBeans);
     }
 
-    public List<PolicyFilterHolder> getPolicyFilterHolders() {
-        return policyFilterHolders;
+    public List<FilterHolder> getFilterHolders() {
+        return filterHolders;
     }
 
     public ReferralManageTableBean getReferralManageTableBean() {
@@ -84,8 +84,8 @@ public class ReferralManageBean implements Serializable {
         this.selectAll = selectAll;
     }
 
-    public void setPolicyFilterTypes(Map<String, PolicyFilterType> policyFilterTypes) {
-        this.policyFilterTypes = policyFilterTypes;
+    public void setViewFilterTypes(Map<String,ViewFilterType> viewFilterTypes) {
+        this.viewFilterTypes = viewFilterTypes;
     }
 
     public String getSearchFilter() {

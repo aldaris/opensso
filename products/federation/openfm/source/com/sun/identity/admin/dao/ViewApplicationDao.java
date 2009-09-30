@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationDao.java,v 1.2 2009-09-09 19:19:12 farble1670 Exp $
+ * $Id: ViewApplicationDao.java,v 1.3 2009-09-30 14:39:15 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -41,6 +41,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import javax.security.auth.Subject;
+import java.util.Set;
+import java.util.HashSet;
+import com.sun.identity.entitlement.util.SearchFilter;
+import com.sun.identity.entitlement.EntitlementException;
 
 public class ViewApplicationDao implements Serializable {
 
@@ -50,7 +54,27 @@ public class ViewApplicationDao implements Serializable {
         this.viewApplicationTypeDao = viewApplicationTypeDao;
     }
 
+    private String getPattern(String filter) {
+        String pattern;
+        if (filter == null || filter.length() == 0) {
+            pattern = "*";
+        } else {
+            pattern = "*" + filter + "*";
+        }
+
+        return pattern;
+    }
+
     public Map<String, ViewApplication> getViewApplications() {
+        return getViewApplications(null);
+    }
+
+    public Map<String, ViewApplication> getViewApplications(String filter) {
+        //Set<SearchFilter> psfs = getApplicationSearchFilters(policyFilterHolders);
+        Set<SearchFilter> sfs = new HashSet<SearchFilter>();
+        String pattern = getPattern(filter);
+        sfs.add(new SearchFilter(Application.NAME_ATTRIBUTE, pattern));
+
         Map<String, ViewApplication> viewApplications = new HashMap<String, ViewApplication>();
 
         ManagedBeanResolver mbr = new ManagedBeanResolver();
@@ -61,7 +85,15 @@ public class ViewApplicationDao implements Serializable {
 
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
 
-        for (String name : ApplicationManager.getApplicationNames(adminSubject, realmBean.getName())) {
+        Set<String> names;
+        try {
+            //TODO: waiting for fix
+            names = ApplicationManager.search(adminSubject, realmBean.getName(), sfs);
+            //names = ApplicationManager.getApplicationNames(adminSubject, realmBean.getName());
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
+        for (String name : names) {
             Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
             if (a.getResources() == null || a.getResources().size() == 0) {
                 // TODO: log

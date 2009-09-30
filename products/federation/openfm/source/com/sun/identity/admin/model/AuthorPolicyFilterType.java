@@ -22,15 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthorPolicyFilterType.java,v 1.1 2009-08-19 05:40:48 veiming Exp $
+ * $Id: AuthorPolicyFilterType.java,v 1.2 2009-09-30 14:39:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-public class AuthorPolicyFilterType extends PolicyFilterType {
-    public PolicyFilter newPolicyFilter() {
-        PolicyFilter pf = new AuthorPolicyFilter();
-        pf.setPolicyFilterType(this);
+public class AuthorPolicyFilterType extends ViewFilterType {
+    public ViewFilter newViewFilter() {
+        ViewFilter pf = new AuthorPolicyFilter();
+        pf.setViewFilterType(this);
 
         return pf;
     }

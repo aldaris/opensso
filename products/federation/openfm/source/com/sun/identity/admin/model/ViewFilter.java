@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyFilter.java,v 1.2 2009-09-25 05:52:55 veiming Exp $
+ * $Id: ViewFilter.java,v 1.1 2009-09-30 14:39:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -32,9 +32,9 @@ import com.sun.identity.entitlement.util.SearchFilter;
 import java.io.Serializable;
 import java.util.List;
 
-public abstract class PolicyFilter implements Serializable {
+public abstract class ViewFilter implements Serializable {
     private String name;
-    private PolicyFilterType policyFilterType;
+    private ViewFilterType viewFilterType;
 
     public String getName() {
         return name;
@@ -44,12 +44,12 @@ public abstract class PolicyFilter implements Serializable {
         this.name = name;
     }
 
-    public PolicyFilterType getPolicyFilterType() {
-        return policyFilterType;
+    public ViewFilterType getViewFilterType() {
+        return viewFilterType;
     }
 
-    public void setPolicyFilterType(PolicyFilterType policyFilterType) {
-        this.policyFilterType = policyFilterType;
+    public void setViewFilterType(ViewFilterType viewFilterType) {
+        this.viewFilterType = viewFilterType;
     }
 
     public String getTitle() {

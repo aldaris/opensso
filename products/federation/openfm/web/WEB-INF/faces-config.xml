@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.7 2009-09-17 21:56:08 ggennaro Exp $
+  $Id: faces-config.xml,v 1.8 2009-09-30 14:39:17 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1838,7 +1838,7 @@
             <value>#{policyDao}</value>
         </managed-property>
         <managed-property>
-            <property-name>policyFilterTypes</property-name>
+            <property-name>viewFilterTypes</property-name>
             <value>#{policyFilterTypes}</value>
         </managed-property>
     </managed-bean>
@@ -1924,7 +1924,7 @@
             <value>#{referralDao}</value>
         </managed-property>
         <managed-property>
-            <property-name>policyFilterTypes</property-name>
+            <property-name>viewFilterTypes</property-name>
             <value>#{policyFilterTypes}</value>
         </managed-property>
     </managed-bean>
@@ -2088,7 +2088,7 @@
         <managed-bean-scope>request</managed-bean-scope>
         <map-entries>
             <key-class>java.lang.String</key-class>
-            <value-class>com.sun.identity.admin.model.PolicyFilterType</value-class>
+            <value-class>com.sun.identity.admin.model.ViewFilterType</value-class>
             <map-entry>
                 <key>#{birthPolicyFilterType.name}</key>
                 <value>#{birthPolicyFilterType}</value>
@@ -2547,5 +2547,6 @@
         </phase-listener>
     </lifecycle>
 </faces-config>
+
 
 

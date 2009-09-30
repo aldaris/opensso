@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: resources-web-service.xhtml,v 1.1 2009-08-19 05:41:11 veiming Exp $
+   $Id: resources-web-service.xhtml,v 1.2 2009-09-30 14:39:19 farble1670 Exp $
 -->
 
 <span
@@ -35,5 +35,9 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <ui:include src="resources-url.xhtml"/>
+    <ice:panelGroup
+        rendered="#{resourcesBean.viewEntitlement.viewApplication.viewApplicationType.name == 'webService'}">
+        <ui:include src="resources-url.xhtml"/>
+    </ice:panelGroup>
 </span>
+

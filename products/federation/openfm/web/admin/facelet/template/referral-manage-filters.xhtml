@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-manage-filters.xhtml,v 1.1 2009-08-19 05:41:11 veiming Exp $
+   $Id: referral-manage-filters.xhtml,v 1.2 2009-09-30 14:39:19 farble1670 Exp $
 
 -->
 
@@ -37,7 +37,7 @@
     xmlns:o="http://opensso.dev.java.net">
 
     <ice:panelGroup
-        visible="#{o:size(referralManageBean.policyFilterHolders) == 0}"
+        visible="#{o:size(referralManageBean.filterHolders) == 0}"
         styleClass="policy-filter-outer">
         <o:box>
             <ui:define name="body">
@@ -53,7 +53,7 @@
                     <ice:panelGroup
                         styleClass="float-right">
                         <ice:commandLink
-                            actionListener="#{referralManageHandler.addPolicyFilterListener}">
+                            actionListener="#{referralManageHandler.addViewFilterListener}">
                             <ice:graphicImage
                                 value="../image/add-16.png"/>
                         </ice:commandLink>
@@ -63,10 +63,10 @@
         </o:box>
     </ice:panelGroup>
     <ice:panelSeries
-        var="policyFilterHolder"
-        value="#{referralManageBean.policyFilterHolders}">
-        <o:policyfilterholder
+        var="filterHolder"
+        value="#{referralManageBean.filterHolders}">
+        <o:filterholder
             handler="#{referralManageHandler}"
-            policyFilterHolder="#{policyFilterHolder}"/>
+            filterHolder="#{filterHolder}"/>
     </ice:panelSeries>
 </span>

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-filter-date.xhtml,v 1.1 2009-08-19 05:41:10 veiming Exp $
+   $Id: policy-filter-date.xhtml,v 1.2 2009-09-30 14:39:18 farble1670 Exp $
 
 -->
 
@@ -42,38 +42,38 @@
             value="#{resources['policy-filter-pattern.is']}"/>
         <ice:panelGroup>
             <ice:selectOneMenu
-                valueChangeListener="#{handler.policyFilterChangedListener}"
-                value="#{policyFilter.verbString}">
+                valueChangeListener="#{handler.viewFilterChangedListener}"
+                value="#{viewFilter.verbString}">
                 <f:selectItems
-                    value="#{policyFilter.verb.items}"/>
+                    value="#{viewFilter.verb.items}"/>
             </ice:selectOneMenu>
         </ice:panelGroup>
         <ice:panelGroup
-            rendered="#{policyFilter.valueShown}">
+            rendered="#{viewFilter.valueShown}">
             <ice:panelGrid
                 columns="2">
                 <ice:panelGroup>
                     <ice:inputText
                         size="3"
-                        valueChangeListener="#{handler.policyFilterChangedListener}"
+                        valueChangeListener="#{handler.viewFilterChangedListener}"
                         onkeyup="submitNow(this);"
-                        value="#{policyFilter.value}"/>
+                        value="#{viewFilter.value}"/>
                 </ice:panelGroup>
                 <ice:panelGroup>
                     <ice:selectOneMenu
-                        valueChangeListener="#{handler.policyFilterChangedListener}"
-                        value="#{policyFilter.unitString}">
+                        valueChangeListener="#{handler.viewFilterChangedListener}"
+                        value="#{viewFilter.unitString}">
                         <f:selectItems
-                            value="#{policyFilter.unit.items}"/>
+                            value="#{viewFilter.unit.items}"/>
                     </ice:selectOneMenu>
                 </ice:panelGroup>
             </ice:panelGrid>
         </ice:panelGroup>
         <ice:panelGroup
-            rendered="#{policyFilter.dateShown}">
+            rendered="#{viewFilter.dateShown}">
             <ice:selectInputDate
-                valueChangeListener="#{handler.policyFilterChangedListener}"
-                value="#{policyFilter.date}"
+                valueChangeListener="#{handler.viewFilterChangedListener}"
+                value="#{viewFilter.date}"
                 renderAsPopup="true">
                 <f:convertDateTime
                     timeZone="#{timeZoneBean.timeZone.ID}"/>

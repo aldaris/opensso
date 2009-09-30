@@ -22,38 +22,42 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyFilterType.java,v 1.1 2009-08-19 05:40:52 veiming Exp $
+ * $Id: PatternViewFilter.java,v 1.1 2009-09-30 14:39:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import com.sun.identity.admin.Resources;
-import java.io.Serializable;
+import com.sun.identity.entitlement.util.SearchFilter;
+import java.util.Collections;
+import java.util.List;
 
-public abstract class PolicyFilterType implements Serializable {
-    private String name;
-    private String template;
+public abstract class PatternViewFilter extends ViewFilter {
+    private String filter;
 
-    public String getName() {
-        return name;
+    public abstract String getPrivilegeAttributeName();
+
+    private String getPattern(String filter) {
+        String pattern;
+        if (filter == null || filter.length() == 0) {
+            pattern = "*";
+        } else {
+            pattern = "*" + filter + "*";
+        }
+
+        return pattern;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public List<SearchFilter> getPrivilegeSearchFilters() {
+        String pattern = getPattern(getFilter());
+        SearchFilter psf = new SearchFilter(getPrivilegeAttributeName(), pattern);
+        return Collections.singletonList(psf);
     }
 
-    public String getTitle() {
-        Resources r = new Resources();
-        return r.getString(this, "title");
+    public String getFilter() {
+        return filter;
     }
 
-    public abstract PolicyFilter newPolicyFilter();
-
-    public String getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 }

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policyfilterholder.xhtml,v 1.1 2009-08-19 05:41:06 veiming Exp $
+   $Id: filterholder.xhtml,v 1.1 2009-09-30 14:39:18 farble1670 Exp $
 
 -->
 
@@ -50,31 +50,31 @@
                             <ice:panelGroup>
                                 <ice:selectOneMenu
                                     id="filter-type-select"
-                                    valueChangeListener="#{handler.policyFilterChangedListener}"
-                                    value="#{policyFilterHolder.policyFilterTypeName}">
+                                    valueChangeListener="#{handler.viewFilterChangedListener}"
+                                    value="#{filterHolder.viewFilterTypeName}">
                                     <f:selectItems
-                                        value="#{policyFilterHolder.policyFilterTypeNameItems}"/>
+                                        value="#{filterHolder.viewFilterTypeNameItems}"/>
                                 </ice:selectOneMenu>
                             </ice:panelGroup>
                             <ui:include
                                 src="/admin/facelet/template/policy-filter-template-includer.xhtml">
                                 <ui:param
-                                    name="policyFilter"
-                                    value="#{policyFilterHolder.policyFilter}"/>
+                                    name="viewFilter"
+                                    value="#{filterHolder.viewFilter}"/>
                             </ui:include>
                         </ice:panelGrid>
                         <ice:panelGroup
                             styleClass="float-right">
                             <ice:commandLink
-                                actionListener="#{handler.removePolicyFilterListener}">
+                                actionListener="#{handler.removeViewFilterListener}">
                                 <f:attribute
-                                    name="policyFilterHolder"
-                                    value="#{policyFilterHolder}"/>
+                                    name="filterHolder"
+                                    value="#{filterHolder}"/>
                                 <ice:graphicImage
                                     value="../image/remove-16.png"/>
                             </ice:commandLink>
                             <ice:commandLink
-                                actionListener="#{handler.addPolicyFilterListener}">
+                                actionListener="#{handler.addViewFilterListener}">
                                 <ice:graphicImage
                                     value="../image/add-16.png"/>
                             </ice:commandLink>

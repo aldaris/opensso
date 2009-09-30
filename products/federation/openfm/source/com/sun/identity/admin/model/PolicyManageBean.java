@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManageBean.java,v 1.1 2009-08-19 05:40:52 veiming Exp $
+ * $Id: PolicyManageBean.java,v 1.2 2009-09-30 14:39:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -44,8 +44,8 @@ public class PolicyManageBean implements Serializable {
     private boolean removePopupVisible = false;
     private boolean exportPopupVisible = false;
     private String searchFilter = "";
-    private List<PolicyFilterHolder> policyFilterHolders = new ArrayList<PolicyFilterHolder>();
-    private Map<String, PolicyFilterType> policyFilterTypes;
+    private List<FilterHolder> filterHolders = new ArrayList<FilterHolder>();
+    private Map<String,ViewFilterType> viewFilterTypes;
     private boolean selectAll;
     private List<String> viewOptionsPopupColumnsVisible = new ArrayList<String>();
     private int viewOptionsPopupRows = 10;
@@ -54,14 +54,14 @@ public class PolicyManageBean implements Serializable {
         return privilegeBeans;
     }
 
-    public void newPolicyFilterHolder() {
-        PolicyFilterHolder pfh = new PolicyFilterHolder();
-        pfh.setPolicyFilterTypes(getPolicyFilterTypes());
-        policyFilterHolders.add(pfh);
+    public void newFilterHolder() {
+        FilterHolder fh = new FilterHolder();
+        fh.setViewFilterTypes(getViewFilterTypes());
+        filterHolders.add(fh);
     }
 
     public void reset() {
-        privilegeBeans = policyDao.getPrivilegeBeans(searchFilter, policyFilterHolders);
+        privilegeBeans = policyDao.getPrivilegeBeans(searchFilter, filterHolders);
         policyManageTableBean.setPrivilegeBeans(privilegeBeans);
     }
 
@@ -101,16 +101,16 @@ public class PolicyManageBean implements Serializable {
         }
     }
 
-    public List<PolicyFilterHolder> getPolicyFilterHolders() {
-        return policyFilterHolders;
+    public List<FilterHolder> getFilterHolders() {
+        return filterHolders;
     }
 
-    public Map<String, PolicyFilterType> getPolicyFilterTypes() {
-        return policyFilterTypes;
+    public Map<String,ViewFilterType> getViewFilterTypes() {
+        return viewFilterTypes;
     }
 
-    public void setPolicyFilterTypes(Map<String, PolicyFilterType> policyFilterTypes) {
-        this.policyFilterTypes = policyFilterTypes;
+    public void setViewFilterTypes(Map<String,ViewFilterType> viewFilterTypes) {
+        this.viewFilterTypes = viewFilterTypes;
     }
 
     public int getSizeSelected() {

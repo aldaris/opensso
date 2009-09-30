@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageHandler.java,v 1.1 2009-08-19 05:40:47 veiming Exp $
+ * $Id: ReferralManageHandler.java,v 1.2 2009-09-30 14:39:15 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -32,7 +32,7 @@ import com.sun.identity.admin.dao.ReferralDao;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.PhaseEventAction;
-import com.sun.identity.admin.model.PolicyFilterHolder;
+import com.sun.identity.admin.model.FilterHolder;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.ReferralBean;
 import com.sun.identity.admin.model.ReferralManageBean;
@@ -51,11 +51,10 @@ public class ReferralManageHandler implements Serializable {
     private ReferralDao referralDao;
     private MessagesBean messagesBean;
 
-    public PolicyFilterHolder getPolicyFilterHolder(ActionEvent event) {
-        PolicyFilterHolder pfh = (PolicyFilterHolder) event.getComponent().getAttributes().get("policyFilterHolder");
-        assert (pfh != null);
-
-        return pfh;
+    public FilterHolder getFilterHolder(ActionEvent event) {
+        FilterHolder fh = (FilterHolder) event.getComponent().getAttributes().get("filterHolder");
+        assert (fh != null);
+        return fh;
     }
 
     public void selectAllListener(ActionEvent event) {
@@ -168,8 +167,8 @@ public class ReferralManageHandler implements Serializable {
         referralManageBean.setViewOptionsPopupVisible(true);
     }
 
-    public void addPolicyFilterListener(ActionEvent event) {
-        referralManageBean.newPolicyFilterHolder();
+    public void addViewFilterListener(ActionEvent event) {
+        referralManageBean.newFilterHolder();
         addResetEvent();
     }
 
@@ -188,17 +187,17 @@ public class ReferralManageHandler implements Serializable {
         referralManageBean.reset();
     }
 
-    public void policyFilterChangedListener(ValueChangeEvent event) {
+    public void viewFilterChangedListener(ValueChangeEvent event) {
         addResetEvent();
     }
 
-    public void policyFilterChangedListener(ActionEvent event) {
+    public void viewFilterChangedListener(ActionEvent event) {
         addResetEvent();
     }
 
-    public void removePolicyFilterListener(ActionEvent event) {
-        PolicyFilterHolder pfh = getPolicyFilterHolder(event);
-        referralManageBean.getPolicyFilterHolders().remove(pfh);
+    public void removeViewFilterListener(ActionEvent event) {
+        FilterHolder fh = getFilterHolder(event);
+        referralManageBean.getFilterHolders().remove(fh);
         addResetEvent();
     }
 

@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralDao.java,v 1.2 2009-09-25 05:52:55 veiming Exp $
+ * $Id: ReferralDao.java,v 1.3 2009-09-30 14:39:15 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
-import com.sun.identity.admin.model.PolicyFilterHolder;
+import com.sun.identity.admin.model.FilterHolder;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.ReferralBean;
@@ -69,11 +69,11 @@ public class ReferralDao implements Serializable {
         return pattern;
     }
 
-    private Set<SearchFilter> getPrivilegeSearchFilters(List<PolicyFilterHolder> policyFilterHolders) {
+    private Set<SearchFilter> getPrivilegeSearchFilters(List<FilterHolder> filterHolders) {
         Set<SearchFilter> psfs = new HashSet<SearchFilter>();
 
-        for (PolicyFilterHolder pfh : policyFilterHolders) {
-            List<SearchFilter> l = pfh.getPolicyFilter().getPrivilegeSearchFilters();
+        for (FilterHolder fh : filterHolders) {
+            List<SearchFilter> l = fh.getViewFilter().getPrivilegeSearchFilters();
             if (l != null) {
                 // TODO: list should never be null
                 psfs.addAll(l);
@@ -98,7 +98,7 @@ public class ReferralDao implements Serializable {
         }
     }
 
-    public List<ReferralBean> getReferralBeans(String filter, List<PolicyFilterHolder> policyFilterHolders) {
+    public List<ReferralBean> getReferralBeans(String filter, List<FilterHolder> policyFilterHolders) {
         Set<SearchFilter> psfs = getPrivilegeSearchFilters(policyFilterHolders);
         String pattern = getPattern(filter);
         psfs.add(new SearchFilter(Privilege.NAME_ATTRIBUTE, pattern));

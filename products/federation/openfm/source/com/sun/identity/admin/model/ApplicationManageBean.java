@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageBean.java,v 1.2 2009-09-21 20:35:12 farble1670 Exp $
+ * $Id: ApplicationManageBean.java,v 1.3 2009-09-30 14:39:16 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,6 +31,7 @@ import com.sun.identity.admin.dao.ViewApplicationDao;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.collections.comparators.NullComparator;
 
 public class ApplicationManageBean implements Serializable {
     private List<ViewApplication> viewApplications;
@@ -40,6 +41,7 @@ public class ApplicationManageBean implements Serializable {
     private boolean viewOptionsPopupVisible = false;
     private List<String> viewOptionsPopupColumnsVisible = new ArrayList<String>();
     private int viewOptionsPopupRows = 10;
+    private String searchFilter = "";
 
     public List<ViewApplication> getViewApplications() {
         return viewApplications;
@@ -55,7 +57,7 @@ public class ApplicationManageBean implements Serializable {
     }
 
     public void reset() {
-        viewApplications = new ArrayList<ViewApplication>(viewApplicationDao.getViewApplications().values());
+        viewApplications = new ArrayList<ViewApplication>(viewApplicationDao.getViewApplications(searchFilter).values());
         applicationManageTableBean.setViewApplications(viewApplications);
         applicationManageTableBean.sort();
     }
@@ -90,5 +92,20 @@ public class ApplicationManageBean implements Serializable {
 
     public void setViewOptionsPopupRows(int viewOptionsPopupRows) {
         this.viewOptionsPopupRows = viewOptionsPopupRows;
+    }
+
+    public String getSearchFilter() {
+        return searchFilter;
+    }
+
+    public void setSearchFilter(String searchFilter) {
+        if (searchFilter == null) {
+            searchFilter = "";
+        }
+        NullComparator n = new NullComparator();
+        if (n.compare(this.searchFilter, searchFilter) != 0) {
+            this.searchFilter = searchFilter;
+            reset();
+        }
     }
 }

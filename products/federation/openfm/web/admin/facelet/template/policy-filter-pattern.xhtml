@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-filter-pattern.xhtml,v 1.1 2009-08-19 05:41:10 veiming Exp $
+   $Id: policy-filter-pattern.xhtml,v 1.2 2009-09-30 14:39:18 farble1670 Exp $
 
 -->
 
@@ -41,8 +41,8 @@
             value="#{resources['policy-filter-pattern.contains']}"/>
         <ice:inputText
             styleClass="inline-input"
-            value="#{policyFilter.filter}"
+            value="#{viewFilter.filter}"
             onkeyup="submitNow(this); setFocus(this);"
-            valueChangeListener="#{handler.policyFilterChangedListener}"/>
+            valueChangeListener="#{handler.viewFilterChangedListener}"/>
     </ice:panelGrid>
 </span>
