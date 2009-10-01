@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sts-sign-encrypt3.xhtml,v 1.1 2009-09-30 22:01:28 ggennaro Exp $
+   $Id: sts-sign-encrypt3.xhtml,v 1.2 2009-10-01 00:09:59 ggennaro Exp $
 
 -->
 
@@ -41,11 +41,11 @@
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="#{resources['sts-security3.section-title.authChain']}"/>
+                value="#{resources['sts-sign-encrypt3.section-title']}"/>
         </ui:define>
         <ui:define name="section-details">
             <ice:outputText
-                value="#{resources['sts-security3.section-details.authChain']}"/>
+                value="#{resources['sts-sign-encrypt3.section-details']}"/>
         </ui:define>
         <ui:define name="section-body">
 
@@ -96,7 +96,9 @@
         </ice:panelGrid>
     </ice:panelGrid>
 
-    <ice:panelGrid columns="2">
+    <ice:panelGrid
+        columns="2"
+        columnClasses="label-column,input-column">
         <ice:outputLabel
             for="encryptionAlgorithm"
             style="float: right;"
