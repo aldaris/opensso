@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.7 2009-09-08 06:17:54 dillidorai Exp $
+ * $Id: PolicyCache.java,v 1.8 2009-10-01 17:39:40 dillidorai Exp $
  *
  */
 
@@ -45,7 +45,7 @@ import com.sun.identity.shared.ldap.util.DN;
  * The class <code>PolicyCache</code> manages policy cache 
  * for the policy framework.
  */
-class PolicyCache implements ServiceListener {
+public class PolicyCache implements ServiceListener {
 
     public static final String POLICY_STATS = "amPolicyStats";
 
@@ -84,7 +84,7 @@ class PolicyCache implements ServiceListener {
      *  @return the singleton instance of policy cache
      *  @throws PolicyException if error.
      */
-    synchronized static PolicyCache getInstance() throws PolicyException {
+    public synchronized static PolicyCache getInstance() throws PolicyException {
         if (policyCache == null) {
             if ( DEBUG.messageEnabled() ) {
                 DEBUG.message("Creating singleton policy cache");
@@ -524,6 +524,44 @@ class PolicyCache implements ServiceListener {
             StringBuffer sb = new StringBuffer(255);
             sb.append( 
                    "at firePolicyChanged(serrviceName,affectedResourceNames):");
+            sb.append(serviceName).append(":");
+            sb.append(affectedResourceNames.toString());
+            DEBUG.message(sb.toString());
+        }
+        PolicyEvent policyEvent = new PolicyEvent();
+        policyEvent.setResourceNames(affectedResourceNames);
+        policyEvent.setChangeType(changeType);
+        Set pListeners = (Set) policyListenersMap.get(serviceName);
+        if ( pListeners != null ) {
+            Iterator listeners = pListeners.iterator();
+            while ( listeners.hasNext() ) {
+                PolicyListener policyListener = 
+                    (PolicyListener) listeners.next();
+                try {
+                    policyListener.policyChanged(policyEvent);
+                } catch (Exception e) {
+                    DEBUG.error("policy change not handled properly", e);
+                }
+            }
+        }
+
+        //notify policy evaluator so it can clean up cached resource names
+        PolicyEvaluator.policyChanged(serviceName, policyEvent);
+    }
+
+    /**
+     * Creates a policyEvent with the changed resource names
+     * and then invokes all the registered PolicyListeners
+     * to notify about the event. This is triggered when
+     * entitlement privilege is added, removed or modified.
+     */
+
+    public void firePrivilegeChanged(String serviceName, 
+            Set affectedResourceNames, int changeType) {
+        if( DEBUG.messageEnabled() ) {
+            StringBuilder sb = new StringBuilder();
+            sb.append( 
+                   "at firePrivilegeChanged(serrviceName,affectedResourceNames):");
             sb.append(serviceName).append(":");
             sb.append(affectedResourceNames.toString());
             DEBUG.message(sb.toString());

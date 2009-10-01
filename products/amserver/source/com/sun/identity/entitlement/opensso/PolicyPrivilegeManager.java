@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.2 2009-09-14 23:02:41 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.3 2009-10-01 17:39:39 dillidorai Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -33,14 +33,18 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.PolicyDataStore;
 import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.PrivilegeChangeNotifier;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.xacml3.XACMLPrivilegeUtils;
 import com.sun.identity.policy.Policy;
+import com.sun.identity.policy.PolicyCache;
+import com.sun.identity.policy.PolicyEvent;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.security.AdminTokenAction;
 
 import java.security.AccessController;
+import java.util.HashSet;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -53,6 +57,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     private static boolean xacmlEnabled = false;
     private String realm = "/";
     private PolicyManager pm;
+    private static PolicyCache policyCache;
 
     static {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -61,6 +66,16 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
             SubjectUtils.createSubject(adminToken), "/");
         migratedToEntitlementSvc = ec.migratedToEntitlementService();
         xacmlEnabled = ec.xacmlPrivilegeEnabled();
+        try {
+            if (PrivilegeManager.debug.messageEnabled()) {
+                PrivilegeManager.debug.message("PolicyPrivilegeManager.static initializer,"
+                        + " getting instance of PolicyCache", null);
+            }
+            policyCache = PolicyCache.getInstance();
+        } catch (Exception e) {
+            PrivilegeManager.debug.error("PolicyPrivilegeManager.static initializer failed"
+                    + " to create PolicyCache", e);
+        }
     }
 
     /**
@@ -270,6 +285,40 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     public static boolean xacmlPrivilegeEnabled() {
         return xacmlEnabled;
     }
+
+    protected void notifyPrivilegeChanged(
+            String realm,
+            Privilege previous,
+            Privilege current) {
+        Set<String> resourceNames = new HashSet<String>();
+        if (previous != null) {
+            Set<String> r = previous.getEntitlement().getResourceNames();
+            if (r != null) {
+                resourceNames.addAll(r);
+            }
+        }
+
+        Set<String> r = current.getEntitlement().getResourceNames();
+        if (r != null) {
+            resourceNames.addAll(r);
+        }
+
+        String applicationName = current.getEntitlement().getApplicationName();
+
+        if (PrivilegeManager.debug.messageEnabled()) {
+            PrivilegeManager.debug.message("PolicyPrivilegeManager.notifyPrivilegeChanged():"
+                    + "applicationName=" + applicationName
+                    +", resources=" + resourceNames, null);
+        }
+        PrivilegeChangeNotifier.getInstance().notify(getAdminSubject(), realm,
+            applicationName, current.getName(), resourceNames);
+
+        if (policyCache != null) {
+            policyCache.firePrivilegeChanged(applicationName, resourceNames, 
+                PolicyEvent.POLICY_MODIFIED); 
+            }
+    }
+    
 }
 
 
