@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.11 2009-09-30 23:24:48 ggennaro Exp $
+  $Id: faces-config.xml,v 1.12 2009-10-01 18:34:16 ggennaro Exp $
 -->
 
 <faces-config version="1.2" 
@@ -2337,6 +2337,29 @@
     <!--idp end -->
 
   <!--  federation manage   -->
+
+    <managed-bean>
+        <managed-bean-name>wspCreateWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.WspCreateWizardHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{wspCreateWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>wspCreateWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.WspCreateWizardBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>5</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
         <managed-bean-name>wscCreateWizardHandler</managed-bean-name>

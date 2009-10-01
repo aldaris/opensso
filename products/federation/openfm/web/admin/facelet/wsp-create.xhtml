@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsp-create.xhtml,v 1.1 2009-08-21 21:07:34 ggennaro Exp $
+   $Id: wsp-create.xhtml,v 1.2 2009-10-01 18:34:16 ggennaro Exp $
 
 -->
 
@@ -43,6 +43,117 @@
     </ui:define>
     <ui:define name="panel-body">
 
+        <o:wizard
+            steps="5"
+            wizardHandler="#{wspCreateWizardHandler}"
+            wizardBean="#{wspCreateWizardBean}">
+            <ui:define name="wizard-steps">
+                <o:wstep
+                    step="0"
+                    label="#{resources['wsp-create.step1PanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <!--
+                        <ui:include src="template/wsc-profile.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{wscCreateWizardBean}"/>
+                            <ui:param
+                                name="wizardHandler"
+                                value="#{wscCreateWizardHandler}"/>
+                        </ui:include>
+                        -->
+
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="1"
+                    label="#{resources['wsp-create.step2PanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <!--
+                        <ui:include src="template/wsc-use-sts.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{wscCreateWizardBean}"/>
+                            <ui:param
+                                name="wizardHandler"
+                                value="#{wscCreateWizardHandler}"/>
+                        </ui:include>
+                        -->
+
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="2"
+                    label="#{resources['wsp-create.step3PanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <!--
+                        <ui:include src="template/wsc-security.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{wscCreateWizardBean}"/>
+                            <ui:param
+                                name="wizardHandler"
+                                value="#{wscCreateWizardHandler}"/>
+                        </ui:include>
+                        -->
+
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="3"
+                    label="#{resources['wsp-create.step4PanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <!--
+                        <ui:include src="template/wsc-sign-encrypt.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{wscCreateWizardBean}"/>
+                            <ui:param
+                                name="wizardHandler"
+                                value="#{wscCreateWizardHandler}"/>
+                        </ui:include>
+                        -->
+
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="4"
+                    label="#{resources['wsp-create.summaryPanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <o:section>
+                            <ui:define name="section-title">
+                                <ice:outputText
+                                    value="#{resources['wsp-create.summaryPanelLabel.section-title']}"/>
+                            </ui:define>
+                            <ui:define name="section-details">
+                                <ice:outputText
+                                    value="#{resources['wsp-create.summaryPanelLabel.section-details']}"/>
+                            </ui:define>
+                            <ui:define name="section-body">
+
+                                <ice:panelGroup visible="#{o:size(realmsBean.realmBeans) > 1}">
+                                    <o:summarypanel summary="#{wspCreateWizardBean.realmSummary}" />
+                                </ice:panelGroup>
+
+                                <!--
+                                <o:summarypanel summary="#{wscCreateWizardBean.profileNameSummary}" />
+                                <o:summarypanel summary="#{wscCreateWizardBean.useStsSummary}" />
+                                <o:summarypanel summary="#{wscCreateWizardBean.serviceSecuritySummary}" />
+                                <o:summarypanel summary="#{wscCreateWizardBean.signEncryptSummary}" />
+                                -->
+
+                            </ui:define>
+                        </o:section>
+
+                    </ui:define>
+                </o:wstep>
+            </ui:define>
+        </o:wizard>
 
     </ui:define>
 </ui:composition>
