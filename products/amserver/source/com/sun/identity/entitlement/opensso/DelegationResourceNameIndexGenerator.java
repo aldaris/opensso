@@ -22,25 +22,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationResourceNameSplitter.java,v 1.1 2009-08-19 05:40:36 veiming Exp $
+ * $Id: DelegationResourceNameIndexGenerator.java,v 1.1 2009-10-01 00:18:34 veiming Exp $
  */
 
-package com.sun.identity.entitlement.util;
+package com.sun.identity.entitlement.opensso;
 
-import com.sun.identity.entitlement.ResourceSearchIndexes;
-import com.sun.identity.entitlement.interfaces.ISearchIndex;
-import java.util.HashSet;
-import java.util.Set;
+import com.sun.identity.entitlement.ResourceSaveIndexes;
+import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
 
-/**
- *
- * @author aravind
- */
-public class DelegationResourceNameSplitter implements ISearchIndex {
+public class DelegationResourceNameIndexGenerator
+    extends ResourceNameIndexGenerator {
 
-    public ResourceSearchIndexes getIndexes(String resource) {
-        Set<String> set = new HashSet<String>();
-        set.add("all");
-        return (new ResourceSearchIndexes(set, set, set));
+    @Override
+    public ResourceSaveIndexes getIndexes(String resource) {
+        if (resource.startsWith("sms://*")) {
+            resource = resource.substring(0, 6) +
+                resource.substring(7);
+        }
+        return super.getIndexes(resource);
     }
 }

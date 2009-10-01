@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMServiceListener.java,v 1.5 2008-07-11 01:46:23 arviranga Exp $
+ * $Id: SMServiceListener.java,v 1.6 2009-10-01 00:18:33 veiming Exp $
  *
  */
 
@@ -119,11 +119,6 @@ public class SMServiceListener implements ServiceListener {
         // If event type is delete,
         // remove realm privileges for the organization
         if ((serviceComponent == null) || (serviceComponent.length() == 0)) {
-            // Normalize the orgName to remove "ou=services"
-            int index = orgName.indexOf(",ou=services,");
-            if (index > 0) {
-                orgName = orgName.substring(index + 13);
-            }
             if (type == ServiceListener.REMOVED) {
                 // Schedule the task to delete delegation policies
                 DeleteDelegationPolicyTask task =
