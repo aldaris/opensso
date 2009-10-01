@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.3 2009-09-25 05:52:54 veiming Exp $
+ * $Id: EntitlementService.java,v 1.4 2009-10-01 00:41:57 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -363,7 +363,7 @@ public class EntitlementService extends EntitlementConfiguration {
             if (filters.size() == 1) {
                 strFilter.append(filters.iterator().next().getFilter());
             } else {
-                strFilter.append("(|");
+                strFilter.append("(&");
                 for (SearchFilter psf : filters) {
                     strFilter.append(psf.getFilter());
                 }
