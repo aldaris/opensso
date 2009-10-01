@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.4 2009-09-30 23:24:46 ggennaro Exp $
+   $Id: menu.xhtml,v 1.5 2009-10-01 16:42:32 ggennaro Exp $
 
 -->
 
@@ -111,10 +111,10 @@
                     rendered="#{permissionsBean.wspCreateAllowed}"
                     value="#{resources['menu.wspCreateItemValue']}"
                     action="wsp-create" />
-                <ice:menuItem
+                <!-- ice:menuItem
                     rendered="#{permissionsBean.wspManageAllowed}"
                     value="#{resources['menu.wspManageItemValue']}"
-                    action="wsp-manage" />
+                    action="wsp-manage" / -->
             </ice:menuItem>
             <ice:menuItem
                 rendered="#{permissionsBean.webServiceSecurityCreateAllowed}"
@@ -123,10 +123,10 @@
                     rendered="#{permissionsBean.wscCreateAllowed}"
                     value="#{resources['menu.wscCreateItemValue']}"
                     action="wsc-create" />
-                <ice:menuItem
+                <!-- ice:menuItem
                     rendered="#{permissionsBean.wscManageAllowed}"
                     value="#{resources['menu.wscManageItemValue']}"
-                    action="wsc-manage" />
+                    action="wsc-manage" / -->
             </ice:menuItem>
             <ice:menuItem
                 rendered="#{permissionsBean.stsManageAllowed}"
