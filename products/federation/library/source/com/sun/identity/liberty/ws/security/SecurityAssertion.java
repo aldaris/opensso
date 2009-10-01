@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityAssertion.java,v 1.2 2008-06-25 05:47:20 qcheng Exp $
+ * $Id: SecurityAssertion.java,v 1.3 2009-10-01 18:42:07 mallas Exp $
  *
  */
 
@@ -415,13 +415,13 @@ public class SecurityAssertion extends Assertion {
         Document doc = headerE.getOwnerDocument();
         
         Element securityE =
-                doc.createElementNS(WSSEConstants.NS_WSSE,
+                doc.createElementNS(WSSEConstants.NS_WSSE_WSF11,
                 WSSEConstants.TAG_WSSE + ":" +
                 WSSEConstants.TAG_SECURITYT);
         
         securityE.setAttributeNS(SOAPBindingConstants.NS_XML,
                 WSSEConstants.TAG_XML_WSSE,
-                WSSEConstants.NS_WSSE);
+                WSSEConstants.NS_WSSE_WSF11);
         
         headerE.appendChild(securityE);
         
