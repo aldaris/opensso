@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieUtils.java,v 1.5 2009-08-27 05:17:30 manish_rustagi Exp $
+ * $Id: CookieUtils.java,v 1.6 2009-10-02 00:08:26 ericow Exp $
  *
  */
 
@@ -135,9 +135,9 @@ public class CookieUtils {
     }
 
     /**
-     * Returns property value of "com.iplanet.am.cookie.httponly"
+     * Returns property value of "com.sun.identity.cookie.httponly"
      * 
-     * @return the property value of "com.iplanet.am.cookie.httponly"
+     * @return the property value of "com.sun.identity.cookie.httponly"
      */
     public static boolean isCookieHttpOnly() {
         return cookieHttpOnly;
