@@ -31,6 +31,10 @@ Install:
         <role-name>user</role-name>
       </path>
 
+Confluence 3.0+:
+- Use com.sun.identity.provider.seraph.OpenSsoConfluenceAuthenticator
+- Thanks to Casey.BUTTERWORTH at suncorp.com.au
+  * https://opensso.dev.java.net/servlets/ReadMsg?listName=users&msgNo=11574
 
 Build:
 - Use maven 2.x

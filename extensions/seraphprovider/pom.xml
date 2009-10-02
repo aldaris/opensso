@@ -5,7 +5,7 @@
 	<artifactId>seraph-provider</artifactId>
 	<version>1.0.0</version>
 	<name>${pom.artifactId}</name>
-	<description>Seraph is the authenticator in JIRA. This provides an OpenSSO authenticator.</description>
+	<description>OpenSSO authenticator for Atlassian JIRA and Confluence</description>
 	<dependencies>
 		<dependency>
 			<groupId>com.atlassian.seraph</groupId>
@@ -13,9 +13,14 @@
 			<version>0.38</version>
 		</dependency>
 		<dependency>
+			<groupId>com.atlassian.confluence</groupId>
+			<artifactId>confluence</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<dependency>
 			<groupId>com.sun.identity</groupId>
 			<artifactId>openssoclientsdk</artifactId>
-			<version>1.0-build4.5</version>
+			<version>8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -23,4 +28,12 @@
 			<version>2.4</version>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>atlassian-public</id>
+			<url>https://maven.atlassian.com/repository/public</url>
+			<snapshots><enabled>true</enabled></snapshots>
+			<releases><enabled>true</enabled></releases>
+		</repository>
+	</repositories>
 </project>
