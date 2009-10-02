@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionID.java,v 1.9 2009-06-03 20:46:50 veiming Exp $
+ * $Id: SessionID.java,v 1.10 2009-10-02 23:45:42 qcheng Exp $
  *
  */
 
@@ -119,20 +119,44 @@ public class SessionID implements Serializable {
         }
 
         if (cookieName != null) {
-            cookieValue = CookieUtils
-                    .getCookieValueFromReq(request, cookieName);
-
-            // if no cookie found in the request then check if
-            // the URL has it.
-            if (cookieValue == null) {
+            // check if this is a forward from authentication service case.
+            // if yes, find Session ID in the request URL first, otherwise
+            // find Session ID in the cookie first
+            String isForward = (String) 
+                request.getAttribute(Constants.FORWARD_PARAM);
+            if (debug.messageEnabled()) {
+                debug.message("SessionID(HttpServletRequest) : is forward = "
+                    + isForward); 
+            } 
+            if ((isForward != null) &&
+                isForward.equals(Constants.FORWARD_YES_VALUE)) {
                 String realReqSid = SessionEncodeURL.getSidFromURL(request);
                 if (realReqSid != null) {
                     encryptedString = realReqSid;
+                } else {
+                    cookieValue = CookieUtils
+                        .getCookieValueFromReq(request, cookieName);
+                    if (cookieValue != null) {
+                        encryptedString = cookieValue;
+                        cookieMode = Boolean.TRUE;
+                    }
                 }
-                cookieMode = Boolean.FALSE;
             } else {
-                cookieMode = Boolean.TRUE;
-                encryptedString = cookieValue;
+                cookieValue = CookieUtils
+                    .getCookieValueFromReq(request, cookieName);
+
+                // if no cookie found in the request then check if
+                // the URL has it.
+                if (cookieValue == null) {
+                    String realReqSid = SessionEncodeURL.getSidFromURL(request);
+                    if (realReqSid != null) {
+                        encryptedString = realReqSid;
+                    }
+                    cookieMode = Boolean.FALSE;
+                } else {
+                    cookieMode = Boolean.TRUE;
+                    encryptedString = cookieValue;
+                }
             }
         }
     }

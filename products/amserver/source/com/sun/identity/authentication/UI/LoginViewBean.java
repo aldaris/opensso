@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.26 2009-08-17 21:17:49 mrudul_uchil Exp $
+ * $Id: LoginViewBean.java,v 1.27 2009-10-02 23:45:42 qcheng Exp $
  *
  */
 
@@ -30,6 +30,7 @@
 
 package com.sun.identity.authentication.UI;
 
+import com.iplanet.am.util.AMURLEncDec;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.dpro.session.SessionID;
@@ -375,11 +376,11 @@ public class LoginViewBean extends AuthViewBeanBase {
                         if(redirect_url.indexOf("?") == -1){
                             redirect_url = redirect_url + "?" + 
                             appendCookie.getName() + "=" + 
-                            appendCookie.getValue(); 
+                            AMURLEncDec.encode(appendCookie.getValue()); 
                         }else{
                             redirect_url = redirect_url + "&" + 
                             appendCookie.getName() + "=" + 
-                            appendCookie.getValue();                            
+                            AMURLEncDec.encode(appendCookie.getValue());                            
                         }
                         if(loginDebug.messageEnabled()){
                             loginDebug.message("LoginViewBean.forwardTo():" +
@@ -592,11 +593,11 @@ public class LoginViewBean extends AuthViewBeanBase {
                         if(redirect_url.indexOf("?") == -1){
                             redirect_url = redirect_url + "?" + 
                             appendCookie.getName() + "=" + 
-                            appendCookie.getValue(); 
+                            AMURLEncDec.encode(appendCookie.getValue()); 
                         }else{
                             redirect_url = redirect_url + "&" + 
                             appendCookie.getName() + "=" + 
-                            appendCookie.getValue();                            
+                            AMURLEncDec.encode(appendCookie.getValue()); 
                         }
                         if(loginDebug.messageEnabled()){
                             loginDebug.message("LoginViewBean.forwardTo():" +
