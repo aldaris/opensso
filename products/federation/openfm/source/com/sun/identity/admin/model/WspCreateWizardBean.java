@@ -24,7 +24,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspCreateWizardBean.java,v 1.1 2009-10-01 18:34:17 ggennaro Exp $
+ * $Id: WspCreateWizardBean.java,v 1.2 2009-10-02 16:10:55 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -32,7 +32,7 @@ package com.sun.identity.admin.model;
 import java.io.Serializable;
 
 public class WspCreateWizardBean
-        extends WizardBean
+        extends WssWizardBean
         implements Serializable
 {
     
