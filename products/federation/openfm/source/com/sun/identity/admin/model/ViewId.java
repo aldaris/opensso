@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewId.java,v 1.5 2009-09-30 23:24:47 ggennaro Exp $
+ * $Id: ViewId.java,v 1.6 2009-10-02 18:57:25 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -40,6 +40,7 @@ public enum ViewId {
     REFERRAL_CREATE("/admin/facelet/referral-create.xhtml"),
     REFERRAL_MANAGE("/admin/facelet/referral-manage.xhtml"),
     REFERRAL_EDIT("/admin/facelet/referral-edit.xhtml"),
+    DELEGATION_CREATE("/admin/facelet/delegation-create.xhtml"),
     FEDERATION("/admin/facelet/federation.xhtml"),
     SAMLV2_HOSTED_SP_CREATE("/admin/facelet/samlv2-hosted-sp-create.xhtml"),
     SAMLV2_REMOTE_SP_CREATE("/admin/facelet/samlv2-remote-sp-create.xhtml"),
@@ -70,6 +71,7 @@ public enum ViewId {
             put(REFERRAL_CREATE.getId(), REFERRAL_CREATE);
             put(REFERRAL_MANAGE.getId(), REFERRAL_MANAGE);
             put(REFERRAL_EDIT.getId(), REFERRAL_EDIT);
+            put(DELEGATION_CREATE.getId(), DELEGATION_CREATE);
             put(SAMLV2_HOSTED_SP_CREATE.getId(), SAMLV2_HOSTED_SP_CREATE);
             put(SAMLV2_REMOTE_SP_CREATE.getId(), SAMLV2_REMOTE_SP_CREATE);
             put(SAMLV2_HOSTED_IDP_CREATE.getId(), SAMLV2_HOSTED_IDP_CREATE);

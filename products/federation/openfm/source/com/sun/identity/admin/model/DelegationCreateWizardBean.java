@@ -22,37 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Permission.java,v 1.5 2009-10-02 18:57:25 farble1670 Exp $
+ * $Id: DelegationCreateWizardBean.java,v 1.1 2009-10-02 18:57:25 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
-public enum Permission {
-    HOME,
-    POLICY,
-    POLICY_CREATE,
-    POLICY_MANAGE,
-    POLICY_EDIT,
-    NEWS,
-    REFERRAL_CREATE,
-    REFERRAL_MANAGE,
-    REFERRAL_EDIT,
-    FEDERATION,
-    SAMLV2_HOSTED_SP_CREATE,
-    SAMLV2_HOSTED_IDP_CREATE,
-    SAMLV2_REMOTE_SP_CREATE,
-    SAMLV2_REMOTE_IDP_CREATE,
-    APPLICATION,
-    APPLICATION_CREATE,
-    APPLICATION_EDIT,
-    APPLICATION_MANAGE,
-    DELEGATION_CREATE,
-    WEB_SERVICE_SECURITY,
-    WSP_CREATE,
-    WSP_MANAGE,
-    WSC_CREATE,
-    WSC_MANAGE,
-    STS_MANAGE,
-    WEB_SERVICE_SECURITY_CREATE,
-    STS_CREATE;
+public class DelegationCreateWizardBean extends DelegationWizardBean {
 }

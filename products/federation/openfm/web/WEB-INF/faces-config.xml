@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.13 2009-10-02 15:37:32 farble1670 Exp $
+  $Id: faces-config.xml,v 1.14 2009-10-02 18:57:26 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1808,7 +1808,41 @@
             <value>#{messagesBean}</value>
         </managed-property>
     </managed-bean>
-    <!-- policy create -->
+    <!-- application create -->
+
+    <!-- delegation create -->
+    <managed-bean>
+        <managed-bean-name>delegationCreateWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.DelegationCreateWizardBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>nameEditable</property-name>
+            <value>true</value>
+        </managed-property>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>5</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>delegationCreateWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.DelegationCreateWizardHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{delegationCreateWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- delegation create -->
 
     <!-- policy manage -->
     <managed-bean>
@@ -2632,6 +2666,11 @@
         <navigation-case>
             <from-outcome>permission-denied</from-outcome>
             <to-view-id>/admin/facelet/permission-denied.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>delegation-create</from-outcome>
+            <to-view-id>/admin/facelet/delegation-create.xhtml</to-view-id>
             <redirect />
         </navigation-case>
     </navigation-rule>
