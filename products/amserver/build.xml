@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.86 2009-09-08 22:43:10 babysunil Exp $
+   $Id: build.xml,v 1.87 2009-10-02 15:37:30 farble1670 Exp $
 
 -->
 
@@ -31,7 +31,7 @@
     <import file="../products.xml" />
     <import file="amserver.xml" />
 
-    <fail message="*** jdk target is not set ***">
+    <fail message="*** JDK target is not set ***">
         <condition>
             <not><isset property="target.jdk.set"/></not>
         </condition>

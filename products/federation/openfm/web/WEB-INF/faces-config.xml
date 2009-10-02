@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.12 2009-10-01 18:34:16 ggennaro Exp $
+  $Id: faces-config.xml,v 1.13 2009-10-02 15:37:32 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -2135,6 +2135,58 @@
             <value>/admin/facelet/template/filter-birth.xhtml</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>modifiedApplicationFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ModifiedApplicationFilterType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>modified</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/filter-modified.xhtml</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>authorApplicationFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.AuthorApplicationFilterType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>author</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/filter-author.xhtml</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>modifierApplicationFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ModifierApplicationFilterType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>modifier</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/filter-modifier.xhtml</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>descriptionApplicationFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.DescriptionApplicationFilterType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>description</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/filter-description.xhtml</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
         <managed-bean-name>applicationFilterTypes</managed-bean-name>
@@ -2146,6 +2198,22 @@
             <map-entry>
                 <key>#{birthApplicationFilterType.name}</key>
                 <value>#{birthApplicationFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{modifiedApplicationFilterType.name}</key>
+                <value>#{modifiedApplicationFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{modifierApplicationFilterType.name}</key>
+                <value>#{modifierApplicationFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{descriptionApplicationFilterType.name}</key>
+                <value>#{descriptionApplicationFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{authorApplicationFilterType.name}</key>
+                <value>#{authorApplicationFilterType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
