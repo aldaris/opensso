@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.2 2009-09-30 22:01:29 ggennaro Exp $
+* $Id: admin.css,v 1.3 2009-10-03 00:02:29 ggennaro Exp $
 *
 */
 
@@ -1445,7 +1445,7 @@ span.button img.left {
 }
 
 .dynamicTable {
-    margin: 0px 0px 10px 0px;
+    margin: 7px 0px 7px 0px;
 }
 
 .dynamicTableRow1,
