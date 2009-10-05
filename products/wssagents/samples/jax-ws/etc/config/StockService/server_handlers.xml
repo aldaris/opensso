@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: server_handlers.xml,v 1.2 2009-08-11 07:14:47 mrudul_uchil Exp $
+   $Id: server_handlers.xml,v 1.3 2009-10-05 06:09:16 mrudul_uchil Exp $
 
 -->
 
@@ -36,9 +36,7 @@
         <protocol-bindings>##SOAP11_HTTP</protocol-bindings>
         <handler>
             <handler-name>ServerHandler</handler-name>
-            <handler-class>
-                    com.sun.identity.wssagents.jaxws.server.ServerHandler
-            </handler-class>
+            <handler-class>com.sun.identity.wssagents.jaxws.server.ServerHandler</handler-class>
         </handler>
         <handler>
             <handler-name>LogServerHandler</handler-name>

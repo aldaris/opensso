@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetQuote_orig.java,v 1.1 2009-08-11 07:14:46 mrudul_uchil Exp $
+ * $Id: GetQuote.java,v 1.1 2009-10-05 06:09:16 mrudul_uchil Exp $
  *
  */
 package com.sun.stockquote;

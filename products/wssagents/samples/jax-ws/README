@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: README,v 1.10 2009-09-11 20:36:22 mrudul_uchil Exp $
+ * $Id: README,v 1.11 2009-10-05 06:09:15 mrudul_uchil Exp $
  */
 
  %% Contents:
@@ -32,7 +32,7 @@
     %% 4. Building and Deploying the secured samples
     %% 5. OpenSSO Server Configuration
     %% 6. Testing the samples
-    %% 7. Explanation of changes for Tomcat
+    %% 7. Explanation of changes for Tomcat and Sun Web Server
     %% 8. Deployment changes for WebSphere Application Server (WAS)
     
 
@@ -104,7 +104,7 @@ Assumption :
        After the files have been extracted, note the location of the lib folder
        found within the extracted folder and use this value for the
        "jaxws.lib" property within the
-       <wssagents_unzip_location>/samples/jaxws.properties
+       <wssagents_unzip_location>/wssagent/samples/jaxws.properties
        file for the Web Service Client and Web Service Provider.
 
        For example, the value of "jaxws.lib" property would be:
@@ -120,12 +120,28 @@ Assumption :
        If you are running multiple instances of Tomcat, then edit
        <CATALINA_BASE>/conf/catalina.properties for that particular instance.
 
-   2.5 [Only for deployment on JBoss container]
+   2.5 [Only for deployment on Sun Web Server container]
+
+       To make Sun Web Server 7.x JAX-WS aware, edit
+       <webserver_install_dir>/admin-server/config/server.xml file and
+       <webserver_install_dir>/<https-servername>/config/server.xml file
+       to add JAX-WS lib to the existing JVM server class path as shown:
+
+       <jvm>
+       ....
+       <server-class-path><jaxws_install_location>/lib;....</server-class-path>
+       ....
+       </jvm>
+
+   2.6 [Only for deployment on JBoss container]
 
        2.5.1 To make JBoss 5.x JAX-WS aware, download JBossWS, the JBoss Web
              Services stack (Metro/Apache CXF version 3.1.1.GA).
              The version of JBossWS needed depends on the version of JBoss
              Application Server that you are running.
+             Note : Please do not download/use JBossWS native package as it runs
+             into some conflict issues with native Web Services stack when used
+             with these OpenSSO WSS agents.
        2.5.2 To install the stack downloaded in the previous step, unzip the
              downloaded file and modify the file ant.properties.example by
              providing the JBOSS_HOME value based on the version of JBoss you
@@ -140,69 +156,72 @@ Assumption :
 %% 3. [Optional] If Building and Deploying the Un-Secured Samples,
       then follow this section, else go to section 4.
 
-   3.1 cd <wssagents_unzip_location>/samples/StockService
-       If you plan to deploy on Tomcat, then run "ant tomcat-war" Else
-       run "ant war".
+   3.1 cd <wssagents_unzip_location>/wssagent/samples/StockService
+       If you plan to deploy on Tomcat or Sun Web Server, then run
+       "ant tomcat-war" Else run "ant war".
        This will generate StockService.war under "dist" directory, deploy this
        war on any JAX-WS compliant container running with JDK "1.6.0_12" or
        higher.
 
-   3.2 cd <wssagents_unzip_location>/samples/StockClient
-       If your deployment container is Tomcat, then first run "ant tomcat-build".
+   3.2 cd <wssagents_unzip_location>/wssagent/samples
        The protocol, host and port number of the container where the
-       StockService is deployed, will need to be changed in,
-	   src/com/sun/stockquote/GetQuote.java for "wsdlLocation".
+       StockService is deployed, will need to be changed for "wsdlLocation" in,
+       etc/Tomcat/StockClient/unsecure/GetQuote.java for Tomcat or
+       Sun Web Server deployment
+       OR
+       etc/config/StockClient/GetQuote.java for rest of the containers.
 
-   3.3 cd <wssagents_unzip_location>/samples/StockClient
-       If your deployment container is Tomcat, then run "ant tomcat-war" Else
-       run "ant war".
+   3.3 cd <wssagents_unzip_location>/wssagent/samples/StockClient
+       If your deployment container is Tomcat or Sun Web Server, then run
+       "ant tomcat-war" Else run "ant war".
        This will generate StockClient.war under "dist" directory, deploy this
        war on any JAX-WS compliant container running with JDK "1.6.0_12" or
        higher.
 
    The WARs generated above can be deployed on GlassFish v2.x, WebLogic 10.x,
-   JBoss 5.x, Tomcat 6.x & WebSphere 7.x, all running with JDK "1.6.0_12" or
-   higher.
+   JBoss 5.x, Tomcat 6.x, Sun Web Server 7.x & WebSphere 7.x, all running with
+   JDK "1.6.0_12" or higher.
    For deployment changes required on WebSphere 7.x, go to section 8.
 
 %% 4. Building and Deploying the Secured Samples
 
-   4.1 Follow <wssagents_unzip_location>/README file (if you have not done 
-       already)
+   4.1 Follow <wssagents_unzip_location>/wssagent/README file
+       (if you have not done already)
        a) To add the keystore related files to the local file system,
-       by copying <wssagents_unzip_location>/resources/keystore.jks,
-       <wssagents_unzip_location>/resources/.keypass and
-       <wssagents_unzip_location>/resources/.storepass files to some directory
-       that can be later referred in 
-       <wssagents_unzip_location>/config/AMConfig.properties file and
-       b) To modify the <wssagents_unzip_location>/config/AMConfig.properties
+       by copying <wssagents_unzip_location>/wssagent/resources/keystore.jks,
+       <wssagents_unzip_location>/wssagent/resources/.keypass and
+       <wssagents_unzip_location>/wssagent/resources/.storepass files to some
+       directory that can be later referred in
+       <wssagents_unzip_location>/wssagent/config/AMConfig.properties file and
+       b) To modify the <wssagents_unzip_location>/wssagent/config/AMConfig.properties
        file, in order to update properties that are at the top of the file, under
        heading "Following properties need to be updated for OpenSSO WSS Agents".
 
-   4.2 cd <wssagents_unzip_location>/samples/StockService
-       If you plan to deploy on Tomcat, then run "ant tomcat-secure-war" Else
-       run "ant secure-war".
+   4.2 cd <wssagents_unzip_location>/wssagent/samples/StockService
+       If you plan to deploy on Tomcat or Sun Web Server, then run
+       "ant tomcat-secure-war" Else run "ant secure-war".
        This will generate StockService.war under "dist" directory, deploy this
        war on any JAX-WS compliant container running with JDK "1.6.0_12" or
        higher.
 
-   4.3 cd <wssagents_unzip_location>/samples/StockClient
-       If your deployment container is Tomcat, then first run
-       "ant tomcat-secure-build".
+   4.3 cd <wssagents_unzip_location>/wssagent/samples
        The protocol, host and port number of the container where the
-       StockService is deployed, will need to be changed in,
-	   src/com/sun/stockquote/GetQuote.java for "wsdlLocation".
+       StockService is deployed, will need to be changed for "wsdlLocation" in,
+       etc/Tomcat/StockClient/secure/GetQuote.java for Tomcat or Sun Web Server
+       deployment
+       OR
+       etc/config/StockClient/GetQuote.java for rest of the containers.
 
-   4.4 cd <wssagents_unzip_location>/samples/StockClient
-       If your deployment container is Tomcat, then run "ant tomcat-secure-war"
-       Else run "ant secure-war".
+   4.4 cd <wssagents_unzip_location>/wssagent/samples/StockClient
+       If your deployment container is Tomcat or Sun Web Server, then run
+       "ant tomcat-secure-war" Else run "ant secure-war".
        This will generate StockClient.war under "dist" directory, deploy this
        war on any JAX-WS compliant container running with JDK "1.6.0_12" or
        higher.
 
    The WARs generated above can be deployed on GlassFish v2.x, WebLogic 10.x,
-   JBoss 5.x, Tomcat 6.x & WebSphere 7.x, all running with JDK "1.6.0_12" or
-   higher.
+   JBoss 5.x, Tomcat 6.x, Sun Web Server 7.x & WebSphere 7.x, all running with
+   JDK "1.6.0_12" or higher.
    For deployment changes required on WebSphere 7.x, go to section 8.
    
 %% 5. OpenSSO Server Configuration
@@ -262,7 +281,13 @@ Assumption :
           configuration by reading "User Authentication Required" flag setting, 
           then the property "com.sun.identity.wss.wsc.providername" needs to be
           added in the StockClient side AMConfig.properties file and its value
-          should be the WSC provider name.
+          should be the WSC provider name. Also If you have multiple WSC talking
+          to same service (WSP), then you can identify each WSC's profile
+          uniquely by specifying this com.sun.identity.wss.wsc.providername
+          property in the WSC side AMConfig.properties file.
+          For WSC profile name, com.sun.identity.wss.wsc.providername property
+          takes precedence over the WSDL service name. If both are absent, then
+          default name as "wsc" (this is created out of box) is used.
 
           For this sample, you can use and add this property as shown below :
           com.sun.identity.wss.wsc.providername=wsc
@@ -277,38 +302,40 @@ Assumption :
           under your "user.home" directory on the machine where StockClient and
           StockService web applications are running.
 
-%% 7. Explanation of changes for Tomcat
+%% 7. Explanation of changes for Tomcat or Sun Web Server
 
    7.1 StockService WAR
 
-       7.1.1 Because Tomcat is a Web Container (not a Java EE container) and
-             does not support JSR 109 service endpoint, the JAX-WS service WAR
-             deployed in Tomcat needs a special deployment descriptor which
-             defines a set of "endpoints". This
-             descriptor is the XML file - <wssagents_unzip_location>/samples/etc
-             /Tomcat/StockService/sun-jaxws.xml. This file describes
+       7.1.1 Because Tomcat or Sun Web Server is a Web Container (not a Java EE
+             container) and does not support JSR 109 service endpoint, the
+             JAX-WS service WAR deployed in Tomcat or Sun Web Server needs a
+             special deployment descriptor which defines a set of "endpoints".
+             This descriptor is the XML file - <wssagents_unzip_location>/wssagent/
+             samples/etc/Tomcat/StockService/sun-jaxws.xml. This file describes
              the JAX-WS service endpoint which represents a web particular
              published web service (StockService), and is copied to
-             <wssagents_unzip_location>/samples/StockService/web/WEB-INF/ folder.
+             <wssagents_unzip_location>/wssagent/samples/StockService/web/WEB-INF/
+             folder.
        7.1.2 The Web Service servlet in the web.xml file needs to be configured
              to the com.sun.xml.ws.transport.http.servlet.WSServlet class from
              JAX-WS Reference implementation that comes with JAX-WS libraries
              after download and install of JAX-WS RI. Hence
-             <wssagents_unzip_location>/samples/StockService/web/WEB-INF/web.xml
-             file is replaced with <wssagents_unzip_location>/samples/etc/Tomcat
-             /StockService/web.xml file.
+             <wssagents_unzip_location>/wssagent/samples/StockService/web/
+             WEB-INF/web.xml file is replaced with
+             <wssagents_unzip_location>/wssagent/samples/etc/Tomcat/
+             StockService/web.xml file.
 
    7.2 StockClient WAR
 
        7.2.1 The @WebServiceRef and @HandlerChain annotations are not supported
-             by Tomcat and hence, the web service reference and jax-ws handler
-             chain needs to be invoked programmatically by making the required
-             changes to the implementation class.
-             Due to this, <wssagents_unzip_location>/samples/StockClient/src/
-             com/sun/stockquote/GetQuote.java is replaced with
-             <wssagents_unzip_location>/samples/etc/Tomcat/StockClient/
+             by Tomcat or Sun Web Server and hence, the web service reference
+             and jax-ws handler chain needs to be invoked programmatically by
+             making the required changes to the implementation class.
+             Due to this, <wssagents_unzip_location>/wssagent/samples/StockClient
+             /src/com/sun/stockquote/GetQuote.java is replaced with
+             <wssagents_unzip_location>/wssagent/samples/etc/Tomcat/StockClient/
              unsecure/GetQuote.java for Unsecure applicaton WAR OR it is
-             replaced with <wssagents_unzip_location>/samples/etc/Tomcat/
+             replaced with <wssagents_unzip_location>/wssagent/samples/etc/Tomcat/
              StockClient/secure/GetQuote.java for Secure applicaton WAR.
 
              The ..secure/GetQuote.java has following additional line over
@@ -330,8 +357,9 @@ Assumption :
    8.2 Create shared libraries.
 
        8.2.1 Create a directory for shared libraries e.g. shared_libs.
-       8.2.2 Copy <wssagents_unzip_location>/lib/xmlsec.jar and
-             <wssagents_unzip_location>/lib/openssoclientsdk.jar to shared_libs.
+       8.2.2 Copy <wssagents_unzip_location>/wssagent/lib/xmlsec.jar and
+             <wssagents_unzip_location>/wssagent/lib/openssoclientsdk.jar to
+             shared_libs.
        8.2.3 Get xalan.jar and xercesImpl.jar from opensso external libraries
              at http://download.java.net/general/opensso/extlib/latest/opensso-sun-extlib.zip
              and copy them to shared_libs.

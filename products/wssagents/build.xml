@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.27 2009-09-11 23:17:47 mrudul_uchil Exp $
+   $Id: build.xml,v 1.28 2009-10-05 06:09:14 mrudul_uchil Exp $
 
 -->
 
@@ -41,7 +41,7 @@
     <!-- overridable properties -->
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
-    <property name="zip.temp.dir" value="${wssagents.built.dir}/.zip" />
+    <property name="zip.temp.dir" value="${wssagents.built.dir}/.zip/wssagent" />
     
     <tstamp>
         <format property="nightly.date" pattern="yyyyMMdd" offset="-1"
@@ -180,6 +180,8 @@
             <zipfileset dir="${wssagents.classes.dir}" includes="com/sun/identity/wssagents/jaxws/client/ClientFilter.class,com/sun/identity/wssagents/jaxws/client/ClientHandler.class,com/sun/identity/wssagents/jaxws/server/ServerHandler.class"/>
         </jar>
 
+        <delete file="${wssagents.classes.dir}/com/.version" />
+
         <checksum file="${wssagents.dist.dir}/openssowssagents.jar"
             algorithm="SHA" fileext=".sha" />
     </target>
@@ -311,10 +313,10 @@
         </copy>
 
         <zip destfile="${wssagents.dist.dir}/openssowssagents.zip" whenempty="create">
-            <zipfileset dir="${zip.temp.dir}" filemode="755">
+            <zipfileset dir="${zip.temp.dir}/.." filemode="755">
                 <include name="setup"/>
             </zipfileset>
-            <zipfileset dir="${zip.temp.dir}">
+            <zipfileset dir="${zip.temp.dir}/..">
                 <exclude name="setup"/>
             </zipfileset>
         </zip>

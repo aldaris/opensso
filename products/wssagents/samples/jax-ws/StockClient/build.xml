@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2009-08-11 07:14:43 mrudul_uchil Exp $
+   $Id: build.xml,v 1.5 2009-10-05 06:09:15 mrudul_uchil Exp $
 
 -->
 
@@ -99,26 +99,38 @@
               todir="src/com/sun/stockquote" overwrite="true"/>
 	</target>
 
-    <!-- Delete all Tomcat specific unsecure files from the "src" folder-->
-	<target name="tomcat-clean">
-		<copy file="../etc/config/StockClient/GetQuote_orig.java"
-              tofile="src/com/sun/stockquote/GetQuote.java" overwrite="true"/>
+    <!-- Copy all general files to the "src" folder to be included in the WAR / secure WAR-->
+	<target name="general-build">
+		<copy file="../etc/config/StockClient/GetQuote.java"
+              todir="src/com/sun/stockquote" overwrite="true"/>
 	</target>
 
     <!--Create the unsecure WAR file for the Stock Client for Tomcat deployment-->
 	<target name="tomcat-war">
-		<antcall target="war" />
-        <antcall target="tomcat-clean" />
+        <antcall target="tomcat-build" />
+		<antcall target="war-base" />
 	</target>
 
 	<!--Create the secure WAR file for the Stock Client for Tomcat deployment-->
 	<target name="tomcat-secure-war">
-		<antcall target="secure-war" />
-        <antcall target="tomcat-clean" />
+        <antcall target="tomcat-secure-build" />
+		<antcall target="secure-war-base" />
+	</target>
+
+    <!--Create the unsecure WAR file for the Stock Client -->
+	<target name="war">
+        <antcall target="general-build" />
+		<antcall target="war-base" />
+	</target>
+
+	<!--Create the secure WAR file for the Stock Client -->
+	<target name="secure-war">
+        <antcall target="general-build" />
+		<antcall target="secure-war-base" />
 	</target>
 
 	<!--Create the unsecure WAR file for the Stock Client -->
-	<target name="war" depends="prepare-to-build">
+	<target name="war-base" depends="prepare-to-build">
 		<mkdir dir="dist"/>
 		<war destfile="dist/StockClient.war" 
   	  	  basedir="web"
@@ -127,7 +139,7 @@
 	</target>
 
 	<!--Create the secure WAR file for the Stock Client -->
-	<target name="secure-war" depends="war">
+	<target name="secure-war-base" depends="war-base">
  		<!-- Create a new WAR -->
 		<copy todir="web/WEB-INF/lib" overwrite="true">
 			<fileset dir="../../lib"/>

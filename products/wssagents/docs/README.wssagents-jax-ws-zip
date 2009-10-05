@@ -22,25 +22,25 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagents-jax-ws-zip,v 1.8 2009-09-01 05:49:21 mrudul_uchil Exp $
+   $Id: README.wssagents-jax-ws-zip,v 1.9 2009-10-05 06:09:14 mrudul_uchil Exp $
 
 -->
 
 Sun OpenSSO Enterprise Web Services Security (WSS) Agent - Zip file :
 
 openssowssagents.zip
-|____ lib/openssoclientsdk.jar (complete OpenSSO clientsdk jar)
-|____ lib/openssowssagents.jar (complete WSS Agents jar)
-|____ lib/xmlsec.jar (XML Security library jar)
-|____ config/AMConfig.properties (complete OpenSSO client properties)
-|____ config/client_handlers.xml (JAX-WS Handlers configuration file for Client)
-|____ config/server_handlers.xml (JAX-WS Handlers configuration file for Server)
-|____ resources/keystore.jks (client keystore file)
-|____ resources/.keypass (password file for key)
-|____ resources/.storepass (password file for keystore)
-|____ README (this file)
-|____ license.txt
-|____ samples/* (WSC/WSP samples using WSS Agents)
+|____ wssagent/lib/openssoclientsdk.jar (complete OpenSSO clientsdk jar)
+|____ wssagent/lib/openssowssagents.jar (complete WSS Agents jar)
+|____ wssagent/lib/xmlsec.jar (XML Security library jar)
+|____ wssagent/config/AMConfig.properties (complete OpenSSO client properties)
+|____ wssagent/config/client_handlers.xml (JAX-WS Handlers configuration file for Client)
+|____ wssagent/config/server_handlers.xml (JAX-WS Handlers configuration file for Server)
+|____ wssagent/resources/keystore.jks (client keystore file)
+|____ wssagent/resources/.keypass (password file for key)
+|____ wssagent/resources/.storepass (password file for keystore)
+|____ wssagent/README (this file)
+|____ wssagent/license.txt
+|____ wssagent/samples/* (WSC/WSP samples using WSS Agents)
 
 
 Sun OpenSSO Enterprise Web Services Security (WSS) Agents are the SOAP protocol

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.3 2009-08-19 19:15:34 mrudul_uchil Exp $
+ * $Id: ClientHandler.java,v 1.4 2009-10-05 06:09:16 mrudul_uchil Exp $
  *
  */
 
@@ -69,7 +69,7 @@ public class ClientHandler implements SOAPHandler<SOAPMessageContext>{
 	
 	public boolean handleMessage(SOAPMessageContext context) {
 
-	    Boolean outboundMsg =
+    Boolean outboundMsg =
             (Boolean)context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
         SOAPRequestHandler handler = null;
@@ -114,7 +114,9 @@ public class ClientHandler implements SOAPHandler<SOAPMessageContext>{
                         logger.log(Level.FINE, "ClientHandler.subject NULL");
                     }
 	                subject = new Subject();
-	            }
+	            } else {
+                    ClientFilter.cred.remove();
+                }
 	            SOAPMessage secureMsg = 
                     handler.secureRequest(context.getMessage(), subject,
 	                new HashMap());
