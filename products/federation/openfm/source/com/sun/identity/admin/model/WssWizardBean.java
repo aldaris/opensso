@@ -66,6 +66,19 @@ public class WssWizardBean
         return items;
     }
 
+    public List<SelectItem> getTokenConversionTypeList() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        
+        items.add(new SelectItem(TokenConversionType.SSO_TOKEN.toString(),
+                                 TokenConversionType.SSO_TOKEN.toLocaleString()));
+        items.add(new SelectItem(TokenConversionType.SAML_TOKEN.toString(),
+                                 TokenConversionType.SAML_TOKEN.toLocaleString()));
+        items.add(new SelectItem(TokenConversionType.SAML2_TOKEN.toString(),
+                                 TokenConversionType.SAML2_TOKEN.toLocaleString()));
+        
+        return items;
+    }
+    
     public List<SelectItem> getX509SigningReferenceTypeList() {
         List<SelectItem> items = new ArrayList<SelectItem>();
         

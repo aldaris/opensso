@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsp-create.xhtml,v 1.2 2009-10-01 18:34:16 ggennaro Exp $
+   $Id: wsp-create.xhtml,v 1.3 2009-10-05 21:31:45 ggennaro Exp $
 
 -->
 
@@ -53,16 +53,14 @@
                     label="#{resources['wsp-create.step1PanelLabel']}">
                     <ui:define name="wizard-step-body">
 
-                        <!--
-                        <ui:include src="template/wsc-profile.xhtml">
+                        <ui:include src="template/wsp-profile.xhtml">
                             <ui:param
                                 name="wizardBean"
-                                value="#{wscCreateWizardBean}"/>
+                                value="#{wspCreateWizardBean}"/>
                             <ui:param
                                 name="wizardHandler"
-                                value="#{wscCreateWizardHandler}"/>
+                                value="#{wspCreateWizardHandler}"/>
                         </ui:include>
-                        -->
 
                     </ui:define>
                 </o:wstep>
@@ -71,16 +69,14 @@
                     label="#{resources['wsp-create.step2PanelLabel']}">
                     <ui:define name="wizard-step-body">
 
-                        <!--
-                        <ui:include src="template/wsc-use-sts.xhtml">
+                        <ui:include src="template/wsp-security.xhtml">
                             <ui:param
                                 name="wizardBean"
-                                value="#{wscCreateWizardBean}"/>
+                                value="#{wspCreateWizardBean}"/>
                             <ui:param
                                 name="wizardHandler"
-                                value="#{wscCreateWizardHandler}"/>
+                                value="#{wspCreateWizardHandler}"/>
                         </ui:include>
-                        -->
 
                     </ui:define>
                 </o:wstep>
@@ -89,16 +85,14 @@
                     label="#{resources['wsp-create.step3PanelLabel']}">
                     <ui:define name="wizard-step-body">
 
-                        <!--
-                        <ui:include src="template/wsc-security.xhtml">
+                        <ui:include src="template/wsp-sign-encrypt2.xhtml">
                             <ui:param
                                 name="wizardBean"
-                                value="#{wscCreateWizardBean}"/>
+                                value="#{wspCreateWizardBean}"/>
                             <ui:param
                                 name="wizardHandler"
-                                value="#{wscCreateWizardHandler}"/>
+                                value="#{wspCreateWizardHandler}"/>
                         </ui:include>
-                        -->
 
                     </ui:define>
                 </o:wstep>
@@ -107,16 +101,14 @@
                     label="#{resources['wsp-create.step4PanelLabel']}">
                     <ui:define name="wizard-step-body">
 
-                        <!--
-                        <ui:include src="template/wsc-sign-encrypt.xhtml">
+                        <ui:include src="template/wsp-saml.xhtml">
                             <ui:param
                                 name="wizardBean"
-                                value="#{wscCreateWizardBean}"/>
+                                value="#{wspCreateWizardBean}"/>
                             <ui:param
                                 name="wizardHandler"
-                                value="#{wscCreateWizardHandler}"/>
+                                value="#{wspCreateWizardHandler}"/>
                         </ui:include>
-                        -->
 
                     </ui:define>
                 </o:wstep>
@@ -139,13 +131,10 @@
                                 <ice:panelGroup visible="#{o:size(realmsBean.realmBeans) > 1}">
                                     <o:summarypanel summary="#{wspCreateWizardBean.realmSummary}" />
                                 </ice:panelGroup>
-
-                                <!--
-                                <o:summarypanel summary="#{wscCreateWizardBean.profileNameSummary}" />
-                                <o:summarypanel summary="#{wscCreateWizardBean.useStsSummary}" />
-                                <o:summarypanel summary="#{wscCreateWizardBean.serviceSecuritySummary}" />
-                                <o:summarypanel summary="#{wscCreateWizardBean.signEncryptSummary}" />
-                                -->
+                                <o:summarypanel summary="#{wspCreateWizardBean.profileNameSummary}" />
+                                <o:summarypanel summary="#{wspCreateWizardBean.serviceSecuritySummary}" />
+                                <o:summarypanel summary="#{wspCreateWizardBean.signEncryptSummary}" />
+                                <o:summarypanel summary="#{wspCreateWizardBean.samlSummary}" />
 
                             </ui:define>
                         </o:section>
