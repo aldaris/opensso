@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Infocard.xml,v 1.3 2009-09-26 20:36:08 ppetitsm Exp $
+   $Id: Infocard.xml,v 1.4 2009-10-05 17:42:12 ppetitsm Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
    Portions Copyrighted 2008 Patrick Petit Consulting
@@ -65,7 +65,7 @@ PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
     <Callbacks length="4" order="3" timeout="300"
             header="You are about to create a new user account using the claims of your Information Card.&lt;BR&gt;
                     Please choose a user ID and password or click 'cancel' to abort.&lt;BR&gt;
-                    Afterwards, you will be able to use your Information Card in place of your credentials to log in" >
+                    After you create your account, you will be able to login using your Information Card" >
         <NameCallback isRequired="true" attribute="uid" >
             <Prompt> UserID: </Prompt>
         </NameCallback>
@@ -82,6 +82,9 @@ PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
                 </OptionValue>
                 <OptionValue>
                     <Value> Cancel </Value>
+                </OptionValue>
+                <OptionValue>
+                    <Value> Reset </Value>
                 </OptionValue>
             </OptionValues>
         </ConfirmationCallback>

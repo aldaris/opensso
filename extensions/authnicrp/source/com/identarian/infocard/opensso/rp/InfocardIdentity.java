@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InfocardIdentity.java,v 1.3 2009-09-26 20:36:07 ppetitsm Exp $
+ * $Id: InfocardIdentity.java,v 1.4 2009-10-05 17:42:11 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -54,18 +54,18 @@ public class InfocardIdentity {
             token = new Token(samlToken, key);
 
             if (!token.isSignatureValid()) {
-                errorMsg = Infocard.bundle.getString("invalidSignature");
+                errorMsg = "invalidSignature";
                 throw new InfocardIdentityException(errorMsg);
             }
             if (!token.isConditionsValid()) {
-                errorMsg = Infocard.bundle.getString("invalidCondition");
+                errorMsg = "invalidCondition";
                 throw new InfocardIdentityException(errorMsg);
             }
 
             certificate = token.getCertificateOrNull();
             if (certificate != null) {
                 if (!token.isCertificateValid()) {
-                    errorMsg = Infocard.bundle.getString("invalidCertificate");
+                    errorMsg = "invalidCertificate";
                     throw new InfocardIdentityException(errorMsg);
                 }
             }
@@ -89,7 +89,7 @@ public class InfocardIdentity {
                 claims.put(name, valueSet);
             }
         } catch (InfoCardProcessingException e) {
-            errorMsg = Infocard.bundle.getString("invalidToken");
+            errorMsg = "invalidToken";
             throw new InfocardIdentityException(errorMsg, e);
         }
     }
@@ -149,7 +149,7 @@ public class InfocardIdentity {
         try {
             return token.getConfirmationMethod();
         } catch (InfoCardProcessingException e) {
-            String errorMsg = Infocard.bundle.getString("invalidToken");
+            String errorMsg = "invalidToken";
             throw new InfocardIdentityException(errorMsg, e);
         }
     }
@@ -159,7 +159,7 @@ public class InfocardIdentity {
         try {
             return token.getIssuer();
         } catch (InfoCardProcessingException e) {
-            String errorMsg = Infocard.bundle.getString("invalidToken");
+            String errorMsg = "invalidToken";
             throw new InfocardIdentityException(errorMsg, e);
         }
     }

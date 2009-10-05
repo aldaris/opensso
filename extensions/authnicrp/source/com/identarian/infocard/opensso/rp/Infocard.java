@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Infocard.java,v 1.10 2009-09-27 16:31:44 ppetitsm Exp $
+ * $Id: Infocard.java,v 1.11 2009-10-05 17:42:11 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -112,7 +112,7 @@ public class Infocard extends AMLoginModule {
     private String validatedUserID = null;
     private java.security.Principal userPrincipal = null;
     private Map sharedState = null;
-    private Map options = null;
+    private Map config = null;
     private InfocardIdentity infocardIdentity = null;
     private String serviceStatus = null;
     private String userID = null;
@@ -154,9 +154,8 @@ public class Infocard extends AMLoginModule {
         if (options == null || options.isEmpty()) {
             debug.error("options is null or empty");
             return;
-        } else {
-            this.options = options;
         }
+        this.config = options;
 
         if (privateKey == null) {
             keyStorePath = SystemProperties.get("javax.net.ssl.keyStore");
@@ -295,7 +294,7 @@ public class Infocard extends AMLoginModule {
                     }
                 } catch (InfocardIdentityException e) {
                     if (debug.errorEnabled()) {
-                        debug.error("Error processing Information Card:" + bundle.getString(errorMsg), e);
+                        debug.error("Error processing Information Card:" + bundle.getString(errorMsg));
                     }
                     replaceHeader(INFOCARD_ERROR, bundle.getString(errorMsg));
                     return INFOCARD_ERROR;
@@ -333,15 +332,16 @@ public class Infocard extends AMLoginModule {
                 } else {
                     throw new AuthLoginException(amAuthInfocard, "authFailed", null);
                 }
-                if (action == 0) { // Register button
+                if (action == 0) { // Register
                     retval = getNewUserCredentials(callbacks);
                     if (retval == ISAuthConstants.LOGIN_SUCCEED) {
                         retval = registerInfocardWithNewUser();
                     }
                 } else if (action == 1) { // Cancel
-                    clearCallbacks(callbacks);
+                    //clearCallbacks(callbacks);
                     retval = ISAuthConstants.LOGIN_IGNORE;
                 } else if (action == 2) { // Reset Form
+                    clearCallbacks(callbacks);
                     retval = REGISTRATION_STATE;
                 }
                 break;
@@ -408,7 +408,7 @@ public class Infocard extends AMLoginModule {
     public void nullifyUsedVars() {
         userPrincipal = null;
         sharedState = null;
-        options = null;
+        config = null;
         infocardIdentity = null;
         serviceStatus = null;
         userID = null;
@@ -432,17 +432,17 @@ public class Infocard extends AMLoginModule {
     private void initAuthInfocard() throws InfocardException {
 
         defaultAnonUser = CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-default-user-name", "Anonymous");
+                config, "iplanet-am-auth-infocard-default-user-name", "Anonymous");
         audience = CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-audience-url", null);
+                config, "iplanet-am-auth-infocard-audience-url", null);
         requiredClaims = getMapAttrValueSet(
-                options, "iplanet-am-auth-infocard-requiredClaims", DEFAULT_REQUIRED_CLAIMS);
+                config, "iplanet-am-auth-infocard-requiredClaims", DEFAULT_REQUIRED_CLAIMS);
         checkRequiredClaims = Boolean.valueOf(CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-check-requiredClaims")).booleanValue();
+                config, "iplanet-am-auth-infocard-check-requiredClaims")).booleanValue();
         verificationMethod = CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-verificationMethod", null);
+                config, "iplanet-am-auth-infocard-verificationMethod", null);
         checkVerificationMethod = Boolean.valueOf(CollectionHelper.getMapAttr(
-                options, "iplanet-am-auth-infocard-check-verificationMethod")).booleanValue();
+                config, "iplanet-am-auth-infocard-check-verificationMethod")).booleanValue();
 
         // Get auth service to determine authentication profile
         OrganizationConfigManager orgConfigMgr = authd.getOrgConfigManager(getRequestOrg());
@@ -464,8 +464,8 @@ public class Infocard extends AMLoginModule {
         infocardIdentityToIdRepoIdentityMap = new HashMap<String, String>();
         roleToRoleCheckPluginMap = new HashMap<String, String>();
         idRepoAttributes = new HashMap<String, Set<String>>();
-        setInfocardIdentityToIdRepoIdentityMap(options);
-        setRoleToRoleCheckPluginMap(options);
+        setInfocardIdentityToIdRepoIdentityMap(config);
+        setRoleToRoleCheckPluginMap(config);
     }
 
     private void validateInfocardIdentity() throws InfocardIdentityException {
@@ -481,7 +481,7 @@ public class Infocard extends AMLoginModule {
         }
 
         String actualIssuer = infocardIdentity.getIssuer();
-        if (issuer != null && !actualIssuer.matches(issuer+"*")) {
+        if (issuer != null && !actualIssuer.matches(issuer + "*")) {
             errorMsg = "invalidIssuer";
             throw new InfocardIdentityException(errorMsg);
         }
@@ -728,17 +728,19 @@ public class Infocard extends AMLoginModule {
 
             // get the passwords from the input form
             userPasswd = String.valueOf(((PasswordCallback) callbacks[1]).getPassword());
+            /* Currently there is a bug that needs fix. confirmPassword returns null
             String confirmPassword = String.valueOf(((PasswordCallback) callbacks[2]).getPassword());
 
             // check passwords
+
             int status = checkPassword(userID, userPasswd, confirmPassword);
 
             // Return if any error
             if (status != ISAuthConstants.LOGIN_SUCCEED) {
-                debug.error("Check password failed with status= " + status);
-                return status;
+            debug.error("Check password failed with status= " + status);
+            return status;
             }
-
+             */
             // validate password using validation plugin if any
             validatePassword(userPasswd);
 
@@ -1097,7 +1099,12 @@ public class Infocard extends AMLoginModule {
         if (request != null) {
             String samlToken = request.getParameter("xmlToken");
             if (samlToken != null && samlToken.length() != 0) {
-                identity = new InfocardIdentity(samlToken, privateKey);
+                try {
+                    identity = new InfocardIdentity(samlToken, privateKey);
+                } catch (InfocardIdentityException e) {
+                    errorMsg = e.getMessage();
+                    throw new InfocardIdentityException(errorMsg);
+                }
             }
         }
         return identity;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ComeOfAge.java,v 1.1 2009-09-15 10:45:38 ppetitsm Exp $
+ * $Id: ComeOfAge.java,v 1.2 2009-10-05 17:42:11 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -44,28 +44,32 @@ public class ComeOfAge implements RoleCheckPlugin {
         if (identity.isClaimSupplied(InfocardClaims.getAGE_OVER_18_URI())) {
             claim = identity.getClaimValue(InfocardClaims.getAGE_OVER_18_URI());
             if (claim != null && claim.length() > 0) {
-                if (Boolean.valueOf(claim).booleanValue())
+                if (Boolean.valueOf(claim).booleanValue()) {
                     return true;
+                }
             }
         }
 
         if (identity.isClaimSupplied(InfocardClaims.getCOPPA_CERTIFIED_ADULTE_URI())) {
             claim = identity.getClaimValue(InfocardClaims.getCOPPA_CERTIFIED_ADULTE_URI());
             if (claim != null && claim.length() > 0) {
-                if (Boolean.valueOf(claim).booleanValue())
+                if (Boolean.valueOf(claim).booleanValue()) {
                     return true;
+                }
             }
         }
 
-        claim = identity.getClaimValue(InfocardClaims.getDATE_OF_BIRTH_URI());
-        if (claim != null) {
-            GregorianCalendar birthDate = getDate(claim);
-            birthDate.add(GregorianCalendar.YEAR, 18);
-            GregorianCalendar now = rightNow();
-            if (birthDate.before(now)) {
-                return true;
-            } else {
-                return false;
+        if (identity.isClaimSupplied(InfocardClaims.getDATE_OF_BIRTH_URI())) {
+            claim = identity.getClaimValue(InfocardClaims.getDATE_OF_BIRTH_URI());
+            if (claim != null) {
+                GregorianCalendar birthDate = getDate(claim);
+                birthDate.add(GregorianCalendar.YEAR, 18);
+                GregorianCalendar now = rightNow();
+                if (birthDate.before(now)) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
         return false;
