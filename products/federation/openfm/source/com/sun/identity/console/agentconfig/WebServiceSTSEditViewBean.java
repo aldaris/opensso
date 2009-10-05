@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceSTSEditViewBean.java,v 1.2 2008-06-25 05:49:32 qcheng Exp $
+ * $Id: WebServiceSTSEditViewBean.java,v 1.3 2009-10-05 23:04:45 babysunil Exp $
  *
  */
 
@@ -33,6 +33,8 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.sun.identity.console.agentconfig.model.AgentsModel;
 import com.sun.identity.console.agentconfig.model.WSSAttributeNames;
 import com.sun.identity.console.base.model.AMConsoleException;
+import com.sun.web.ui.model.CCEditableListModel;
+import com.sun.web.ui.view.editablelist.CCEditableList;
 import com.sun.web.ui.view.html.CCDropDownMenu;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,6 +60,8 @@ public class WebServiceSTSEditViewBean
     
     private Set clientUIProperties = parseExternalizeUIProperties(
         "webServiceSTSUI");
+    private static final String CHILD_NAME_SAML_ATTR_MAPPING =
+        "SAMLAttributeMapping";
     
     
     static {
@@ -77,6 +81,11 @@ public class WebServiceSTSEditViewBean
         attrToChildNames.put("useDefaultStore", "keystoreusage");
         attrToChildNames.put("keepSecurityHeaders", "preservesecurityheader");
         attrToChildNames.put("UserCredential", "usernametokenname");
+        attrToChildNames.put("KeyType", "KeyType");
+        attrToChildNames.put("SAMLAttributeMapping", "SAMLAttributeMapping");
+        attrToChildNames.put("NameIDMapper", "NameIDMapper");
+        attrToChildNames.put("AttributeNamespace", "AttributeNamespace");
+        attrToChildNames.put("includeMemberships", "includeMemberships");
     }
     
     /**
@@ -106,6 +115,15 @@ public class WebServiceSTSEditViewBean
 
     protected void setExtendedDefaultValues(Map values)
         throws AMConsoleException {
+          if (!inheritedPropertyNames.contains(
+            WSSAttributeNames.SAML_ATTR_MAPPING)) {
+            CCEditableList list = (CCEditableList)getChild(
+                CHILD_NAME_SAML_ATTR_MAPPING);
+            CCEditableListModel m = (CCEditableListModel)list.getModel();
+            list.resetStateData();
+            m.setOptionList((Set)values.get(
+                WSSAttributeNames.SAML_ATTR_MAPPING));
+        }
         setExternalizeUIValues(clientUIProperties, values);
         setUserCredential(values);
     }
@@ -126,19 +144,49 @@ public class WebServiceSTSEditViewBean
 
     protected void getExtendedFormsValues(Map values)
         throws AMConsoleException {
-        String userCredName = (String)propertySheetModel.getValue(
+        String userCredName = (String) propertySheetModel.getValue(
             CHILD_NAME_USERTOKEN_NAME);
-        String userCredPwd = (String)propertySheetModel.getValue(
+        String userCredPwd = (String) propertySheetModel.getValue(
             CHILD_NAME_USERTOKEN_PASSWORD);
 
         if ((userCredName != null) && (userCredName.trim().length() > 0) &&
-            (userCredPwd  != null) && (userCredPwd.trim().length() > 0)
+            (userCredPwd != null) && (userCredPwd.trim().length() > 0)
         ) {
             Map map = new HashMap(2);
             map.put(userCredName, userCredPwd);
-            values.put(WSSAttributeNames.USERCREDENTIAL, 
+            values.put(WSSAttributeNames.USERCREDENTIAL,
                 formatUserCredential(map));
         }
+
+        String keytpe = (String) propertySheetModel.getValue(
+            WSSAttributeNames.KEY_TYPE);
+        Set myset = new HashSet();
+        myset.add(keytpe);
+        values.put(WSSAttributeNames.KEY_TYPE, myset);
+
+        CCEditableList elist = (CCEditableList) getChild(
+            CHILD_NAME_SAML_ATTR_MAPPING);
+        elist.restoreStateData();
+        Set samlAttrMapping = getValues(elist.getModel().getOptionList());
+        values.put(WSSAttributeNames.SAML_ATTR_MAPPING, samlAttrMapping);
+
+        String nameidMaper = (String) propertySheetModel.getValue(
+            WSSAttributeNames.NAME_ID_MAPPER);
+        Set nameIdset = new HashSet();
+        nameIdset.add(nameidMaper);
+        values.put(WSSAttributeNames.NAME_ID_MAPPER, nameIdset);
+
+        String attrnamesp = (String) propertySheetModel.getValue(
+            WSSAttributeNames.ATTR_NAME_SPACE);
+        Set nameSPset = new HashSet();
+        nameSPset.add(attrnamesp);
+        values.put(WSSAttributeNames.ATTR_NAME_SPACE, nameSPset);
+
+        String includeMember = (String) propertySheetModel.getValue(
+            WSSAttributeNames.INCLUDE_MEMEBERSHIP);
+        Set includeMem = new HashSet();
+        includeMem.add(includeMember);
+        values.put(WSSAttributeNames.INCLUDE_MEMEBERSHIP, includeMem);
 
         getExternalizeUIValues(clientUIProperties, values);
     }

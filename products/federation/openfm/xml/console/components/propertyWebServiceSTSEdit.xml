@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceSTSEdit.xml,v 1.5 2008-08-06 16:51:06 veiming Exp $
+   $Id: propertyWebServiceSTSEdit.xml,v 1.6 2009-10-05 23:03:39 babysunil Exp $
 
 -->
 
@@ -144,6 +144,54 @@
             </cc>
         </property>
         </ccgroup>
+    </property>
+     <property>
+       <label name="lblKeytype"
+           defaultValue="a364"
+           labelFor="KeyType" />
+       <cc name="KeyType"
+           tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+           <option label="a365" value="PublicKey" />
+           <option label="a366" value="SymmetricKey" />
+       </cc>
+   </property>
+</section>
+
+<section name="lblsaml" defaultValue="wss.header.saml.configuration">
+    <property>
+        <label name="lblSAMLAttributeMapping"
+            defaultValue="a334"
+            labelFor="SAMLAttributeMapping" />
+        <cc name="SAMLAttributeMapping" tagclass="com.sun.web.ui.taglib.editablelist.CCEditableListTag" />
+    </property>
+    <property>
+        <label name="lblnameidmapper"
+            defaultValue="a335"
+            labelFor="NameIDMapper" />
+        <cc name="NameIDMapper"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="75" />
+            <attribute name="autoSubmit" value="false" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblattributenamespace"
+            defaultValue="a336"
+            labelFor="AttributeNamespace" />
+        <cc name="AttributeNamespace"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="75" />
+            <attribute name="autoSubmit" value="false" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblincludesmemberships"
+            defaultValue="a337"
+            labelFor="includeMemberships" />
+        <cc name="includeMemberships"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+            <attribute name="label" value="label.Yes" />
+        </cc>
     </property>
 </section>
 

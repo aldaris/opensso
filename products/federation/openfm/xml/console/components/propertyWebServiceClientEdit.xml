@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceClientEdit.xml,v 1.13 2008-11-06 05:27:40 veiming Exp $
+   $Id: propertyWebServiceClientEdit.xml,v 1.14 2009-10-05 23:03:24 babysunil Exp $
 
 -->
 
@@ -170,6 +170,44 @@
             </cc>
         </property>
         </ccgroup>
+    </property>
+</section>
+
+<section name="lblsaml" defaultValue="wss.header.saml.configuration">
+    <property>
+        <label name="lblSAMLAttributeMapping"
+            defaultValue="a334"
+            labelFor="SAMLAttributeMapping" />
+        <cc name="SAMLAttributeMapping" tagclass="com.sun.web.ui.taglib.editablelist.CCEditableListTag" />
+    </property>
+    <property>
+        <label name="lblnameidmapper"
+            defaultValue="a335"
+            labelFor="NameIDMapper" />
+        <cc name="NameIDMapper"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="75" />
+            <attribute name="autoSubmit" value="false" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblattributenamespace"
+            defaultValue="a336"
+            labelFor="AttributeNamespace" />
+        <cc name="AttributeNamespace"
+            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="75" />
+            <attribute name="autoSubmit" value="false" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblincludesmemberships"
+            defaultValue="a337"
+            labelFor="includeMemberships" />
+        <cc name="includeMemberships"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+            <attribute name="label" value="label.Yes" />
+        </cc>
     </property>
 </section>
 
