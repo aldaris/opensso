@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListMap.java,v 1.1 2009-10-06 01:05:20 pbryan Exp $
+ * $Id: ListMap.java,v 1.2 2009-10-06 20:28:06 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,10 +44,8 @@ public class ListMap extends LinkedHashMap<String, List<String>>
      * @param key TODO.
      * @param value TODO.
      */
-    public void add(String key, String value)
-    {
+    public void add(String key, String value) {
         List<String> list = get(key);
-
         if (list == null) {
             list = new LinkedList<String>();
             put(key, list);
@@ -62,10 +60,8 @@ public class ListMap extends LinkedHashMap<String, List<String>>
      * @param key TODO.
      * @param values TODO.
      */
-    public void add(String key, List<String> values)
-    {
+    public void add(String key, List<String> values) {
         List<String> list = get(key);
-
         if (list == null || list.size() == 0) {
             put(key, values);
         }
@@ -80,10 +76,8 @@ public class ListMap extends LinkedHashMap<String, List<String>>
      * @param key TODO.
      * @return TODO.
      */
-    public String first(String key)
-    {
+    public String first(String key) {
         List<String> list = get(key);
-
         if (list == null || list.size() == 0) {
             return null;
         }
@@ -96,11 +90,22 @@ public class ListMap extends LinkedHashMap<String, List<String>>
      * TODO: Description.
      *
      * @param key TODO.
+     * @param value TODO.
+     */
+    public void put(String key, String value) {
+        remove(key);
+        add(key, value);
+    }
+
+    /**
+     * TODO: Description.
+     *
+     * @param key TODO.
      * @return TODO.
      */
     @Override
-    public List<String> remove(Object key) {
-
+    public List<String> remove(Object key)
+    {
         if (!(key instanceof Set)) {
             return super.remove(key);
         }
