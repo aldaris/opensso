@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpBasicAuthFilter.java,v 1.2 2009-10-06 16:26:04 pbryan Exp $
+ * $Id: HttpBasicAuthFilter.java,v 1.3 2009-10-06 19:44:20 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,7 +55,7 @@ public class HttpBasicAuthFilter extends Filter
     private final String objectId = UUID.randomUUID().toString();
 
     /** TODO: Description. */
-    private PasswordSource source;
+    private PasswordCredentialSource source;
 
     /** TODO: Description. */
     private CacheFactory factory;
@@ -66,7 +66,7 @@ public class HttpBasicAuthFilter extends Filter
      * @param source TODO.
      * @param factory TODO.
      */
-    public HttpBasicAuthFilter(PasswordSource source, CacheFactory factory) {
+    public HttpBasicAuthFilter(PasswordCredentialSource source, CacheFactory factory) {
         this.source = source;
         this.factory = factory;
     }

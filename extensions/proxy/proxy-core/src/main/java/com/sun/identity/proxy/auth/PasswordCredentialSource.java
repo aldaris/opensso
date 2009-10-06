@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HardCodedPasswordSource.java,v 1.1 2009-10-06 01:05:16 pbryan Exp $
+ * $Id: PasswordCredentialSource.java,v 1.1 2009-10-06 19:44:20 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,9 +25,8 @@
 package com.sun.identity.proxy.auth;
 
 import com.sun.identity.proxy.handler.HandlerException;
-import com.sun.identity.proxy.http.Request;
 import com.sun.identity.proxy.http.Exchange;
-import java.io.ByteArrayInputStream;
+import com.sun.identity.proxy.http.Request;
 import java.io.IOException;
 
 /**
@@ -35,40 +34,27 @@ import java.io.IOException;
  *
  * @author Paul C. Bryan
  */
-public class HardCodedPasswordSource implements PasswordSource {
-
-    /** TODO: Description. */
-    private final PasswordCredentials credentials = new PasswordCredentials();
-
-    /**
-     * TODO: Description.
-     *
-     * @param username TODO.
-     * @param password TODO.
-     */
-    public HardCodedPasswordSource(String username, String password) {
-        credentials.username = username;
-        credentials.password = password;
-    }
+public interface PasswordCredentialSource extends CredentialSource {
 
 	/**
-	 * Returns the hard-coded credentials.
+	 * Returns the credentials that are appropriate for the current request.
+	 * Typically, credentials are associated with a particular principal, or
+	 * with attributes supplied in the request and/or session.
 	 *
 	 * @param request the incoming request to establish credentials for.
 	 * @return the matching credentials, or null if none could be found.
 	 */
-	public PasswordCredentials credentials(Request request) {
-	    return credentials;
-	}
+	public PasswordCredentials credentials(Request request);
 
     /**
-     * Called when the supplied credentials are not valid.
+     * Called when the supplied credentials are not valid. For example, this
+     * method gives the credential source object the opportunity to redirect
+     * the user agent to a service to manage credientials.
      *
      * @param exchange TODO.
      * @throws IOException TODO.
      * @throws HandlerException TODO.
      */
-	public void invalid(Exchange exchange) throws HandlerException, IOException {
-	    throw new HandlerException("Failed to authenticate with hard-coded credentials.");
-	}
+	public void invalid(Exchange exchange) throws HandlerException, IOException;
 }
+
