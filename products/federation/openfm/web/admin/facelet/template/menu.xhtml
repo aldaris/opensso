@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.6 2009-10-02 18:57:26 farble1670 Exp $
+   $Id: menu.xhtml,v 1.7 2009-10-06 19:44:41 ggennaro Exp $
 
 -->
 
@@ -139,14 +139,6 @@
                 rendered="#{permissionsBean.stsManageAllowed}"
                 value="#{resources['menu.stsManageItemValue']}"
                 action="sts-manage" />
-            <ice:menuItem
-                rendered="#{permissionsBean.webServiceSecurityAllowed}"
-                value="Deprecated">
-                <ice:menuItem
-                    rendered="#{permissionsBean.webServiceSecurityCreateAllowed}"
-                    value="#{resources['menu.webServiceSecurityCreateItemValue']}"
-                    action="wss-create" />
-            </ice:menuItem>
         </ice:menuItem>
     </ice:menuBar>
 </span>

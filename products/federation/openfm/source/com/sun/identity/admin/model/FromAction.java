@@ -25,7 +25,6 @@ public enum FromAction {
     WSC_CREATE("wsc-create"),
     WSC_MANAGE("wsc-manage"),
     STS_MANAGE("sts-manage"),
-    WEB_SERVICE_SECURITY_CREATE("wss-create"),
     APPLICATION("application"),
     APPLICATION_CREATE("application-create"),
     APPLICATION_MANAGE("application-manage"),
@@ -55,7 +54,6 @@ public enum FromAction {
             put(WSC_CREATE.getAction(), WSC_CREATE);
             put(WSC_MANAGE.getAction(), WSC_MANAGE);
             put(STS_MANAGE.getAction(), STS_MANAGE);
-            put(WEB_SERVICE_SECURITY_CREATE.getAction(), WEB_SERVICE_SECURITY_CREATE);
             put(APPLICATION.getAction(), APPLICATION);
             put(APPLICATION_CREATE.getAction(), APPLICATION_CREATE);
             put(APPLICATION_EDIT.getAction(), APPLICATION_EDIT);
