@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.1 2009-10-06 01:05:17 pbryan Exp $
+ * $Id: ClientHandler.java,v 1.2 2009-10-06 16:26:04 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,7 +137,12 @@ public class ClientHandler implements Handler
         HttpRequestBase clientRequest = (exchange.request.entity != null ?
          new EntityRequest(exchange.request) : new NonEntityRequest(exchange.request));
 
-        clientRequest.setURI(target.resolve(exchange.request.uri));
+        try {
+            clientRequest.setURI(target.resolve(new URI(exchange.request.uri)));
+        }
+        catch (URISyntaxException use) {
+            throw new HandlerException(use);
+        }
 
         // request headers
         for (String name : exchange.request.headers.keySet()) {

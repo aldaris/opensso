@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HandlerServlet.java,v 1.1 2009-10-06 01:05:19 pbryan Exp $
+ * $Id: HandlerServlet.java,v 1.2 2009-10-06 16:26:05 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,8 +32,6 @@ import com.sun.identity.proxy.handler.Session;
 import com.sun.identity.proxy.io.Streamer;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -80,21 +78,14 @@ public class HandlerServlet extends HttpServlet
         // request method
         exchange.request.method = request.getMethod();
 
-        try {
-            StringBuffer buf = new StringBuffer(request.getRequestURI());
+        StringBuffer buf = new StringBuffer(request.getRequestURI());
 
-            String queryString = request.getQueryString();
-            if (queryString != null) {
-                buf.append('?').append(queryString);
-            }
-
-            // use single-argument constructor to preserve escaped octets and other characters
-            exchange.request.uri = new URI(buf.toString());        
+        String queryString = request.getQueryString();
+        if (queryString != null) {
+            buf.append('?').append(queryString);
         }
 
-        catch (URISyntaxException use) {
-            throw new ServletException(use);
-        }
+        exchange.request.uri = buf.toString();
 
         // request headers
         for (Enumeration<String> e = request.getHeaderNames(); e.hasMoreElements();) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpBasicAuthFilter.java,v 1.1 2009-10-06 01:05:16 pbryan Exp $
+ * $Id: HttpBasicAuthFilter.java,v 1.2 2009-10-06 16:26:04 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,9 +32,9 @@ import com.sun.identity.proxy.io.CachedStream;
 import com.sun.identity.proxy.io.CacheFactory;
 import com.sun.identity.proxy.util.Base64;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.UUID;
 
 /**
  * TODO: Description.
@@ -50,6 +50,9 @@ public class HttpBasicAuthFilter extends Filter
     /** Headers (in lower-case) that are suppressed for outgoing response. */
     private static final HashSet<String> SUPPRESS_RESPONSE_HEADERS =
      new HashSet<String>(Arrays.asList("www-authenticate"));
+
+    /** A handle that this object instance can use to lookup attributes in the session object. */
+    private final String objectId = UUID.randomUUID().toString();
 
     /** TODO: Description. */
     private PasswordSource source;
@@ -71,13 +74,11 @@ public class HttpBasicAuthFilter extends Filter
     /**
      * TODO: Description.
      *
-     * @param URI TODO.
      * @param attribute TODO.
      * @return TODO.
      */
-    private String attributeName(URI uri, String attribute) {
-         return this.getClass().getName() + ":" + uri.getScheme() + ":" +
-          uri.getHost() + ":" + uri.getPort() + ":" + attribute;
+    private String attributeName(String attribute) {
+        return this.getClass().getName() + ":" + objectId + ":" + attribute;
     }
 
     /**
@@ -107,7 +108,7 @@ public class HttpBasicAuthFilter extends Filter
             }
 
             // because credentials are sent in every request, this class caches them in the session
-            String userpass = (String)exchange.request.session.get(attributeName(exchange.request.uri, "userpass"));
+            String userpass = (String)exchange.request.session.get(attributeName("userpass"));
 
             if (userpass != null) {
                 exchange.request.headers.add("Authorization", "Basic " + userpass);
@@ -135,7 +136,7 @@ public class HttpBasicAuthFilter extends Filter
             }
 
             // set in session for fetch in next iteration of this loop
-            exchange.request.session.put(attributeName(exchange.request.uri, "userpass"),
+            exchange.request.session.put(attributeName("userpass"),
              Base64.encode((credentials.username + ":" + credentials.password).getBytes()));
         }
 

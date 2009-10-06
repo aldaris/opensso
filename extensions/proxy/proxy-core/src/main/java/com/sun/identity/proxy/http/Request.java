@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.1 2009-10-06 01:05:18 pbryan Exp $
+ * $Id: Request.java,v 1.2 2009-10-06 16:26:05 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 package com.sun.identity.proxy.http;
 
 import com.sun.identity.proxy.handler.Session;
-import java.net.URI;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +40,7 @@ public class Request extends Message
     public String method = null;
 
     /** The resource identified in the request. */
-    public URI uri = null;
+    public String uri = null;
 
     /** The user principal that the container associated with the request. */
     public Principal principal = null;
