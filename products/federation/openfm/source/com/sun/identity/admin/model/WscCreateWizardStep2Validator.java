@@ -24,7 +24,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WscCreateWizardStep2Validator.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: WscCreateWizardStep2Validator.java,v 1.2 2009-10-06 18:28:03 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -75,6 +75,7 @@ public class WscCreateWizardStep2Validator
         String deploymentUrl = wb.getOpenssoStsUrl();
         String pattern = ".{1,1024}?";
         try {
+            @SuppressWarnings("unused")
             URL url = new URL(deploymentUrl);
             if( deploymentUrl != null && deploymentUrl.matches(pattern) ) {
                 return true;
@@ -106,6 +107,7 @@ public class WscCreateWizardStep2Validator
         String pattern = ".{1,1024}?";
 
         try {
+            @SuppressWarnings("unused")
             URL url = new URL(endPoint);
             if( endPoint != null && endPoint.matches(pattern) ) {
                 return true;
@@ -137,6 +139,7 @@ public class WscCreateWizardStep2Validator
         String pattern = ".{1,1024}?";
 
         try {
+            @SuppressWarnings("unused")
             URL url = new URL(mexEndPoint);
             if( mexEndPoint != null && mexEndPoint.matches(pattern) ) {
                 return true;

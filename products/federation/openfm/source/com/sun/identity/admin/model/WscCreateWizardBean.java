@@ -1,6 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -24,26 +22,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WscCreateWizardBean.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: WscCreateWizardBean.java,v 1.2 2009-10-06 18:28:03 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import com.icesoft.faces.context.effects.Effect;
-import com.iplanet.am.util.SystemProperties;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+
 import javax.faces.model.SelectItem;
 
+import com.icesoft.faces.context.effects.Effect;
+import com.iplanet.am.util.SystemProperties;
+
 public class WscCreateWizardBean
-        extends WizardBean
+        extends WssWizardBean
         implements Serializable
 {
     private WssClientProfileBean wscProfileBean;
     private WssClientProfileBean stsProfileBean;
-    private List wspProfileSuggestions;
-    private int stsType;
+    private ArrayList<SelectItem> wspProfileSuggestions;
+    private String stsType;
     private boolean usingSts;
     private boolean usingOurSts;
     private String openssoStsUrl;
@@ -90,7 +89,7 @@ public class WscCreateWizardBean
         this.getWscProfileBean().setKerberosServicePrincipal(null);
         this.getWscProfileBean().setKerberosTicketCache(null);
 
-        this.setStsType(SecurityTokenServiceType.OPENSSO.toInt());
+        this.setStsType(SecurityTokenServiceType.OPENSSO.toString());
         this.setUsingSts(true);
         this.setUsingOurSts(true);
         this.setOpenssoStsUrl(SystemProperties.getServerInstanceName());
@@ -123,21 +122,6 @@ public class WscCreateWizardBean
         this.setSignEncryptSummary(new WscCreateSignEncryptSummary(this));
     }
 
-    // Lists -------------------------------------------------------------------
-
-    public List<SelectItem> getStsTypeList() {
-        List<SelectItem> items = new ArrayList<SelectItem>();
-
-        items.add(new SelectItem(SecurityTokenServiceType.OPENSSO.toInt(),
-                                 SecurityTokenServiceType.OPENSSO.toLocaleString()));
-        items.add(new SelectItem(SecurityTokenServiceType.OTHER.toInt(),
-                                 SecurityTokenServiceType.OTHER.toLocaleString()));
-        items.add(new SelectItem(SecurityTokenServiceType.NONE.toInt(),
-                                 SecurityTokenServiceType.NONE.toLocaleString()));
-
-        return items;
-    }
-
     // Getters / Setters -------------------------------------------------------
 
     public WssClientProfileBean getWscProfileBean() {
@@ -156,11 +140,11 @@ public class WscCreateWizardBean
         this.stsProfileBean = stsProfileBean;
     }
 
-    public int getStsType() {
+    public String getStsType() {
         return stsType;
     }
 
-    public void setStsType(int stsType) {
+    public void setStsType(String stsType) {
         this.stsType = stsType;
     }
 
@@ -204,11 +188,11 @@ public class WscCreateWizardBean
         this.openssoStsUrlInputEffect = openssoStsUrlInputEffect;
     }
 
-    public List getWspProfileSuggestions() {
+    public ArrayList<SelectItem> getWspProfileSuggestions() {
         return wspProfileSuggestions;
     }
 
-    public void setWspProfileSuggestions(List wspProfileSuggestions) {
+    public void setWspProfileSuggestions(ArrayList<SelectItem> wspProfileSuggestions) {
         this.wspProfileSuggestions = wspProfileSuggestions;
     }
 

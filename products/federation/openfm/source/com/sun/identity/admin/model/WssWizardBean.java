@@ -18,7 +18,6 @@ public class WssWizardBean
     
     // Lists -------------------------------------------------------------------
 
-
     @SuppressWarnings("unchecked")
     public List<SelectItem> getAuthenticationChainList() {
         List<SelectItem> items = new ArrayList<SelectItem>();
@@ -62,6 +61,19 @@ public class WssWizardBean
         for( SigningKeyBean bean : signingKeys ) {
             items.add(new SelectItem(bean.getTitle()));
         }
+
+        return items;
+    }
+
+    public List<SelectItem> getStsTypeList() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+
+        items.add(new SelectItem(SecurityTokenServiceType.OPENSSO.toString(),
+                                 SecurityTokenServiceType.OPENSSO.toLocaleString()));
+        items.add(new SelectItem(SecurityTokenServiceType.OTHER.toString(),
+                                 SecurityTokenServiceType.OTHER.toLocaleString()));
+        items.add(new SelectItem(SecurityTokenServiceType.NONE.toString(),
+                                 SecurityTokenServiceType.NONE.toLocaleString()));
 
         return items;
     }

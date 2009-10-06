@@ -1,6 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -24,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspCreateWizardBean.java,v 1.3 2009-10-05 21:31:44 ggennaro Exp $
+ * $Id: WspCreateWizardBean.java,v 1.4 2009-10-06 18:28:03 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;

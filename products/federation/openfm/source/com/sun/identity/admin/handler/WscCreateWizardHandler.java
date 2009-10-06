@@ -27,10 +27,17 @@
 
 package com.sun.identity.admin.handler;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
+
 import com.icesoft.faces.component.selectinputtext.SelectInputText;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.LinkBean;
-import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SecurityTokenServiceType;
@@ -41,14 +48,6 @@ import com.sun.identity.admin.model.WscCreateWizardStep2Validator;
 import com.sun.identity.admin.model.WscCreateWizardStep3Validator;
 import com.sun.identity.admin.model.WssClientProfileBean;
 import com.sun.identity.admin.model.WssProviderProfileBean;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.faces.application.FacesMessage;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 
 public class WscCreateWizardHandler 
         extends WizardHandler 
@@ -125,7 +124,7 @@ public class WscCreateWizardHandler
             String newEndPoint = (String) event.getNewValue();
 
             WscCreateWizardBean wizardBean = (WscCreateWizardBean) getWizardBean();
-            ArrayList wspProfilePossibilities = new ArrayList();
+            ArrayList<WssProviderProfileBean> wspProfilePossibilities = new ArrayList<WssProviderProfileBean>();
 
             WssProviderProfileBean tmp;
 
@@ -154,18 +153,18 @@ public class WscCreateWizardHandler
             tmp.setProfileName("Yet Another Service");
             wspProfilePossibilities.add(tmp);
 
-            ArrayList wspProfileSuggestions = new ArrayList();
-            Iterator i = wspProfilePossibilities.iterator();
-            while( i.hasNext() ) {
-                WssProviderProfileBean wsp = (WssProviderProfileBean)i.next();
+            ArrayList<SelectItem> wspProfileSuggestions 
+                = new ArrayList<SelectItem>();
+            
+            for( WssProviderProfileBean wsp : wspProfilePossibilities) {
                 if( wsp.getEndPoint().startsWith(newEndPoint) ) {
                     wspProfileSuggestions.add(new SelectItem(wsp, wsp.getEndPoint()));
                 }
-                if( wspProfileSuggestions.size() >=  sit.getRows() ) {
+                if( wspProfileSuggestions.size() >= sit.getRows() ) {
                     break;
                 }
             }
-
+            
             wizardBean.setWspProfileSuggestions(wspProfileSuggestions);
         }
         
@@ -173,10 +172,10 @@ public class WscCreateWizardHandler
 
     public void stsTypeListener(ValueChangeEvent event) {
 
-        Integer oldValue = (Integer)event.getOldValue();
-        Integer newValue = (Integer)event.getNewValue();
+        String oldValue = (String)event.getOldValue();
+        String newValue = (String)event.getNewValue();
 
-        if( oldValue != newValue ) {
+        if( !oldValue.equalsIgnoreCase(newValue) ) {
             WscCreateWizardBean wizardBean
                     = (WscCreateWizardBean) getWizardBean();
             SecurityTokenServiceType stsType
@@ -227,17 +226,6 @@ public class WscCreateWizardHandler
     private boolean save() {
         return true;
     }
-
-    private void showSaveErrorPopup(String summary, String detail) {
-        MessageBean mb = new MessageBean(); 
-        mb.setSummary(summary);
-        mb.setDetail(detail);
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-        getMessagesBean().addMessageBean(mb);
-    }
-
-
 
     // Getters / Setters -------------------------------------------------------
 
