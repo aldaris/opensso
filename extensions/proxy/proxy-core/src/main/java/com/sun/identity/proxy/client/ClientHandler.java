@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.2 2009-10-06 16:26:04 pbryan Exp $
+ * $Id: ClientHandler.java,v 1.3 2009-10-06 16:31:05 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -120,8 +120,6 @@ public class ClientHandler implements Handler
         httpClient.removeRequestInterceptorByClass(RequestAddCookies.class);
         httpClient.removeRequestInterceptorByClass(RequestProxyAuthentication.class);
         httpClient.removeRequestInterceptorByClass(RequestTargetAuthentication.class);
-        httpClient.removeRequestInterceptorByClass(RequestTargetHost.class);
-        httpClient.removeRequestInterceptorByClass(RequestUserAgent.class);
         httpClient.removeResponseInterceptorByClass(ResponseProcessCookies.class);
     }
 
