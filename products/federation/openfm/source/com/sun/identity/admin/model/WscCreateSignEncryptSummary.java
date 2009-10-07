@@ -24,7 +24,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WscCreateSignEncryptSummary.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: WscCreateSignEncryptSummary.java,v 1.2 2009-10-07 16:05:10 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -84,7 +84,7 @@ public class WscCreateSignEncryptSummary extends WscCreateWizardSummary {
 
 
     private String getFormattedMessageFlags(WssClientProfileBean profile) {
-        ArrayList a = new ArrayList();
+        ArrayList<String> a = new ArrayList<String>();
         Resources r = new Resources();
 
         if( profile.isRequestSigned() ) {
@@ -109,7 +109,7 @@ public class WscCreateSignEncryptSummary extends WscCreateWizardSummary {
 
     @Override
     public String getTemplate() {
-        return "/admin/facelet/template/wss-summary-sign-encrypt.xhtml";
+        return "/admin/facelet/template/wsc-summary-sign-encrypt.xhtml";
     }
 
     @Override
