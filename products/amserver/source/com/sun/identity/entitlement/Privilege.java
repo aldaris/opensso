@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.4 2009-09-21 18:33:45 dillidorai Exp $
+ * $Id: Privilege.java,v 1.5 2009-10-07 01:32:23 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -559,22 +559,33 @@ public abstract class Privilege implements IPrivilege {
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
-        if (getSubject() == null) {
-            return true;
+        boolean result = true;
+        if (getSubject() != null) {
+            SubjectAttributesManager mgr =
+                SubjectAttributesManager.getInstance(adminSubject, realm);
+            SubjectDecision sDecision = getSubject().evaluate(realm,
+                mgr, subject, resourceName, environment);
+            if (!sDecision.isSatisfied()) {
+                Map<String, Set<String>> advices = sDecision.getAdvices();
+                if (advices != null) {
+                    resultAdvices.putAll(advices);
+                }
+                result = false;
+            }
         }
 
-        SubjectAttributesManager mgr =
-            SubjectAttributesManager.getInstance(adminSubject, realm);
-        SubjectDecision sDecision = getSubject().evaluate(realm,
-            mgr, subject, resourceName, environment);
-        if (!sDecision.isSatisfied()) {
-            Map<String, Set<String>> advices = sDecision.getAdvices();
-            if (advices != null) {
-                resultAdvices.putAll(advices);
+        if (PrivilegeManager.debug.messageEnabled()) {
+            if (result) {
+                PrivilegeManager.debug.message(
+                    "[PolicyEval] Privilege.doesSubjectMatch: true", null);
+            } else {
+                PrivilegeManager.debug.message(
+                    "[PolicyEval] Privilege.doesSubjectMatch: false", null);
+                PrivilegeManager.debug.message("[PolicyEval] Advices: " +
+                    resultAdvices.toString(), null);
             }
-            return false;
         }
-        return true;
+        return result;
     }
 
     protected boolean doesConditionMatch(
@@ -584,17 +595,31 @@ public abstract class Privilege implements IPrivilege {
         String resourceName,
         Map<String, Set<String>> environment
     ) throws EntitlementException {
-        if (eCondition == null) {
-            return true;
+        boolean result = true;
+
+        if (eCondition != null) {
+            ConditionDecision decision = eCondition.evaluate(realm,
+                subject, resourceName, environment);
+            Map<String, Set<String>> advices = decision.getAdvices();
+            if (advices != null) {
+                resultAdvices.putAll(advices);
+            }
+            result = decision.isSatisfied();
         }
 
-        ConditionDecision decision = eCondition.evaluate(realm,
-            subject, resourceName, environment);
-        Map<String, Set<String>> advices = decision.getAdvices();
-        if (advices != null) {
-            resultAdvices.putAll(advices);
+        if (PrivilegeManager.debug.messageEnabled()) {
+            if (result) {
+                PrivilegeManager.debug.message(
+                    "[PolicyEval] Privilege.doesConditionMatch: true", null);
+            } else {
+                PrivilegeManager.debug.message(
+                    "[PolicyEval] Privilege.doesConditionMatch: false", null);
+                PrivilegeManager.debug.message("[PolicyEval] Advices: " +
+                    resultAdvices.toString(), null);
+            }
         }
-        return decision.isSatisfied();
+
+        return result;
     }
     
     /**
