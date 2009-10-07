@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: StsManageWizardBean.java,v 1.2 2009-09-30 22:01:27 ggennaro Exp $
+ * $Id: StsManageWizardBean.java,v 1.3 2009-10-07 20:00:49 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -90,10 +90,7 @@ public class StsManageWizardBean
     private Effect attributeNamespaceInputEffect;
     private Effect attributeNamespaceMessageEffect;
     private boolean includeMemberships;
-    private ArrayList<SamlAttributeMapItem> attributeMapping;
-    private boolean showingAddAttribute;
-    private String newLocalAttributeName;
-    private String newAssertionAttributeName;
+    private SamlAttributesTableBean samlAttributesTable;
     private StsManageSamlSummary samlSummary;
 
     private EditableSelectOneBean trustedIssuers;
@@ -143,7 +140,7 @@ public class StsManageWizardBean
         this.setNameIdMapper(stsConfig.getNameIdMapper());
         this.setIncludeMemberships(stsConfig.isIncludeMemberships());
         this.setAttributeNamespace(stsConfig.getAttributeNamespace());
-        initAttributeMapping(stsConfig);
+        initSamlAttributesTable(stsConfig);
 
         initTrustedIssuers(stsConfig);
         initTrustedIpAddresses(stsConfig);
@@ -284,7 +281,7 @@ public class StsManageWizardBean
         this.setEncryptionAlgorithm(encryptionAlgorithm.toString());
     }
     
-    private void initAttributeMapping(StsConfigurationBean stsConfig) {
+    private void initSamlAttributesTable(StsConfigurationBean stsConfig) {
         ArrayList<String> mapPairs = stsConfig.getSamlAttributeMapping();
         Hashtable<String, String> stsConfigValues
             = new Hashtable<String, String>();
@@ -314,7 +311,7 @@ public class StsManageWizardBean
         defaultValues.add("telephonenumber");
         defaultValues.add("uid");
         
-        ArrayList<SamlAttributeMapItem> attributeMap
+        ArrayList<SamlAttributeMapItem> attributeMapItems
             = new ArrayList<SamlAttributeMapItem>();
         
         for(String s : defaultValues) {
@@ -328,7 +325,7 @@ public class StsManageWizardBean
             } else {
                 item.setAssertionAttributeName(null);
             }
-            attributeMap.add(item);
+            attributeMapItems.add(item);
         }
 
         for(String s : stsConfigValues.keySet()) {
@@ -336,13 +333,14 @@ public class StsManageWizardBean
             item.setCustom(true);
             item.setLocalAttributeName(s);
             item.setAssertionAttributeName(stsConfigValues.get(s));
-            attributeMap.add(item);
+            attributeMapItems.add(item);
         }
         
-        this.setAttributeMapping(attributeMap);
-        this.setShowingAddAttribute(false);
-        this.setNewLocalAttributeName(null);
-        this.setNewAssertionAttributeName(null);
+        SamlAttributesTableBean samlAttributesTable 
+            = new SamlAttributesTableBean();
+        samlAttributesTable.setAttributeMapItems(attributeMapItems);
+        
+        this.setSamlAttributesTable(samlAttributesTable);
     }
     
     private void initTrustedIssuers(StsConfigurationBean stsConfig) {
@@ -717,38 +715,6 @@ public class StsManageWizardBean
         return attributeNamespace;
     }
 
-    public void setAttributeMapping(ArrayList<SamlAttributeMapItem> attributeMapping) {
-        this.attributeMapping = attributeMapping;
-    }
-
-    public ArrayList<SamlAttributeMapItem> getAttributeMapping() {
-        return attributeMapping;
-    }
-
-    public void setShowingAddAttribute(boolean showingAddAttribute) {
-        this.showingAddAttribute = showingAddAttribute;
-    }
-
-    public boolean isShowingAddAttribute() {
-        return showingAddAttribute;
-    }
-
-    public void setNewLocalAttributeName(String newLocalAttributeName) {
-        this.newLocalAttributeName = newLocalAttributeName;
-    }
-
-    public String getNewLocalAttributeName() {
-        return newLocalAttributeName;
-    }
-
-    public void setNewAssertionAttributeName(String newAssertionAttributeName) {
-        this.newAssertionAttributeName = newAssertionAttributeName;
-    }
-
-    public String getNewAssertionAttributeName() {
-        return newAssertionAttributeName;
-    }
-
     public void setSamlSummary(StsManageSamlSummary samlSummary) {
         this.samlSummary = samlSummary;
     }
@@ -813,6 +779,14 @@ public class StsManageWizardBean
 
     public Effect getAttributeNamespaceMessageEffect() {
         return attributeNamespaceMessageEffect;
+    }
+
+    public void setSamlAttributesTable(SamlAttributesTableBean samlAttributesTable) {
+        this.samlAttributesTable = samlAttributesTable;
+    }
+
+    public SamlAttributesTableBean getSamlAttributesTable() {
+        return samlAttributesTable;
     }
 
 }

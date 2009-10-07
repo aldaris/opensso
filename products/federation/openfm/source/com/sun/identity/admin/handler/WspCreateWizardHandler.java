@@ -42,7 +42,6 @@ import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SamlAttributeMapItem;
 import com.sun.identity.admin.model.SecurityMechanismPanelBean;
-import com.sun.identity.admin.model.StsManageWizardBean;
 import com.sun.identity.admin.model.UserCredentialItem;
 import com.sun.identity.admin.model.WspCreateWizardBean;
 import com.sun.identity.admin.model.WspCreateWizardStep;
@@ -380,7 +379,7 @@ public class WspCreateWizardHandler
     }
     
     public void attrMapRemoveListener(ActionEvent event) {
-        StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
+        WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
         Object attributeValue 
             = event.getComponent().getAttributes().get("attributeMapItem");
     

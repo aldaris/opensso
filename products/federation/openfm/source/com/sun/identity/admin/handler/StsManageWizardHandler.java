@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StsManageWizardHandler.java,v 1.2 2009-09-30 22:01:29 ggennaro Exp $
+ * $Id: StsManageWizardHandler.java,v 1.3 2009-10-07 20:00:51 ggennaro Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -40,7 +40,6 @@ import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
-import com.sun.identity.admin.model.SamlAttributeMapItem;
 import com.sun.identity.admin.model.SecurityMechanismPanelBean;
 import com.sun.identity.admin.model.StsManageWizardBean;
 import com.sun.identity.admin.model.StsManageWizardStep;
@@ -171,12 +170,7 @@ public class StsManageWizardHandler
         }
         
         if( resetSamlWidgets ) {
-            wizardBean.setShowingAddAttribute(false);
-            wizardBean.setNewAssertionAttributeName(null);
-            wizardBean.setNewLocalAttributeName(null);
-            for(SamlAttributeMapItem item : wizardBean.getAttributeMapping()){
-                item.resetInterface();
-            }
+            wizardBean.getSamlAttributesTable().resetInterface();
         }
         
         if( resetValidationWidgets ) {
@@ -336,122 +330,6 @@ public class StsManageWizardHandler
         }
     }
     
-    // listeners for the attribute map items -----------------------------------
-    
-    private boolean validAttributeMapItem(String assertionName, String localName) {
-        String regExp = "[\\w ]{1,50}?";
-        if( assertionName.matches(regExp) && localName.matches(regExp) ) {
-            return true;
-        } else {
-            showErrorPopup("invalidAttributeMapSummary", 
-                           "invalidAttributeMapDetail");
-            return false;
-        }
-    }
-    
-    public void attrMapShowAddListener(ActionEvent event) {
-        StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
-        wizardBean.setShowingAddAttribute(true);
-        wizardBean.setNewLocalAttributeName(null);
-        wizardBean.setNewAssertionAttributeName(null);
-    }
-    
-    public void attrMapCancelAddListener(ActionEvent event) {
-        StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
-        wizardBean.setShowingAddAttribute(false);
-        wizardBean.setNewLocalAttributeName(null);
-        wizardBean.setNewAssertionAttributeName(null);
-    }
-    
-    public void attrMapAddListener(ActionEvent event) {
-        StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
-        String assertionAttrName = wizardBean.getNewAssertionAttributeName();
-        String localAttrName = wizardBean.getNewLocalAttributeName();
-
-        
-        if( validAttributeMapItem(assertionAttrName, localAttrName) ) {
-            SamlAttributeMapItem item = new SamlAttributeMapItem();
-            item.setAssertionAttributeName(assertionAttrName);
-            item.setLocalAttributeName(localAttrName);
-            item.setCustom(true);
-            item.setEditing(false);
-            wizardBean.getAttributeMapping().add(item);
-            
-            wizardBean.setShowingAddAttribute(false);
-            wizardBean.setNewAssertionAttributeName(null);
-            wizardBean.setNewLocalAttributeName(null);
-        } else {
-            showErrorPopup("invalidMapAttributeSummary", 
-                           "invalidMapAttributeDetail");
-        }
-    }
-    
-    public void attrMapEditListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("attributeMapItem");
-    
-        if( attributeValue instanceof SamlAttributeMapItem ) {
-            SamlAttributeMapItem item = (SamlAttributeMapItem) attributeValue;
-            item.setEditing(true);
-            item.setNewAssertionAttributeName(item.getAssertionAttributeName());
-            item.setNewLocalAttributeName(item.getLocalAttributeName());
-        }
-    }
-    
-    public void attrMapSaveListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("attributeMapItem");
-    
-        if( attributeValue instanceof SamlAttributeMapItem ) {
-            SamlAttributeMapItem item = (SamlAttributeMapItem) attributeValue;
-            String assertionAttrName = item.getNewAssertionAttributeName();
-            String localAttrName = item.getNewLocalAttributeName();
-
-            if( validAttributeMapItem(assertionAttrName, localAttrName) ) {
-                
-                if( !item.isCustom() ) {
-                    item.setLocalAttributeName(item.getNewLocalAttributeName());
-                    item.setAssertionAttributeName(item.getNewAssertionAttributeName());
-                } else {
-                    item.setAssertionAttributeName(item.getNewAssertionAttributeName());
-                }
-
-                item.resetInterface();
-                
-            } else {
-                showErrorPopup("invalidMapAttributeSummary", 
-                               "invalidMapAttributeDetail");
-            }
-        }
-    }
-    
-    public void attrMapCancelSaveListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("attributeMapItem");
-
-        if( attributeValue instanceof SamlAttributeMapItem ) {
-            SamlAttributeMapItem item = (SamlAttributeMapItem) attributeValue;
-            item.setEditing(false);
-        }
-    }
-    
-    public void attrMapRemoveListener(ActionEvent event) {
-        StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("attributeMapItem");
-    
-        if( attributeValue instanceof SamlAttributeMapItem ) {
-            SamlAttributeMapItem itemToRemove
-                = (SamlAttributeMapItem) attributeValue;
-            
-            if( itemToRemove.isCustom() ) {
-                wizardBean.getAttributeMapping().remove(itemToRemove);
-            } else {
-                itemToRemove.setAssertionAttributeName(null);
-            }
-        }
-    }
-  
     // -------------------------------------------------------------------------
     
     private void showErrorPopup(String summaryKey, String detailKey) {
