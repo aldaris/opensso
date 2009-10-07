@@ -22,12 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspCreateSamlSummary.java,v 1.1 2009-10-05 21:31:44 ggennaro Exp $
+ * $Id: WspCreateSamlSummary.java,v 1.2 2009-10-07 22:58:01 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
-
-import java.util.ArrayList;
 
 import com.sun.identity.admin.Resources;
 
@@ -47,16 +45,21 @@ public class WspCreateSamlSummary extends WspCreateWizardSummary {
     @Override
     public String getValue() {
         Resources r = new Resources();
-        ArrayList<SamlAttributeMapItem> attributeMap 
-                            = getWspCreateWizardBean().getAttributeMapping();
+        SamlAttributesTableBean samlAttributeTable
+            = getWspCreateWizardBean().getSamlAttributesTable();
         int count = 0;
         String value = null;
         
-        for( SamlAttributeMapItem item : attributeMap ) {
-            if( item.isCustom() ) {
-                count++;
-            } else if( !item.isCustom() && item.getAssertionAttributeName() != null ) {
-                count++;
+        
+        if( samlAttributeTable != null ) {
+
+            for(SamlAttributeMapItem item : samlAttributeTable.getAttributeMapItems() ) {
+
+                if( item.isCustom() ) {
+                    count++;
+                } else if( !item.isCustom() && item.getAssertionAttributeName() != null ) {
+                    count++;
+                }
             }
         }
         

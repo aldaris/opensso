@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspCreateWizardBean.java,v 1.4 2009-10-06 18:28:03 ggennaro Exp $
+ * $Id: WspCreateWizardBean.java,v 1.5 2009-10-07 22:58:02 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -89,10 +89,7 @@ public class WspCreateWizardBean
     private Effect attributeNamespaceInputEffect;
     private Effect attributeNamespaceMessageEffect;
     private boolean includeMemberships;
-    private ArrayList<SamlAttributeMapItem> attributeMapping;
-    private boolean showingAddAttribute;
-    private String newLocalAttributeName;
-    private String newAssertionAttributeName;
+    private SamlAttributesTableBean samlAttributesTable;
     private WspCreateSamlSummary samlSummary;
     
     private RealmSummary realmSummary;
@@ -130,11 +127,12 @@ public class WspCreateWizardBean
         this.setRequestDecrypted(false);
         this.setResponseSigned(false);
         this.setResponseEncrypted(false);
+        // to-do: encryption, public private keys        
         
         this.setNameIdMapper(null);
         this.setAttributeNamespace(null);
         this.setIncludeMemberships(false);
-        initAttributeMapping();
+        initSamlAttributesTable();
         
         this.setProfileNameSummary(new WspCreateProfileNameSummary(this));
         this.setServiceSecuritySummary(new WspCreateServiceSecuritySummary(this));
@@ -235,7 +233,7 @@ public class WspCreateWizardBean
         this.setShowingAddCredential(false);
     }
     
-    private void initAttributeMapping() {
+    private void initSamlAttributesTable() {
         // to-do: change this
         ArrayList<String> mapPairs = new ArrayList<String>();
         Hashtable<String, String> stsConfigValues
@@ -266,7 +264,7 @@ public class WspCreateWizardBean
         defaultValues.add("telephonenumber");
         defaultValues.add("uid");
         
-        ArrayList<SamlAttributeMapItem> attributeMap
+        ArrayList<SamlAttributeMapItem> attributeMapItems
             = new ArrayList<SamlAttributeMapItem>();
         
         for(String s : defaultValues) {
@@ -278,9 +276,10 @@ public class WspCreateWizardBean
                 item.setAssertionAttributeName(stsConfigValues.get(s));
                 stsConfigValues.remove(s);
             } else {
-                item.setAssertionAttributeName(null);
+                // for wsp, default with the same name
+                item.setAssertionAttributeName(s);
             }
-            attributeMap.add(item);
+            attributeMapItems.add(item);
         }
 
         for(String s : stsConfigValues.keySet()) {
@@ -288,13 +287,14 @@ public class WspCreateWizardBean
             item.setCustom(true);
             item.setLocalAttributeName(s);
             item.setAssertionAttributeName(stsConfigValues.get(s));
-            attributeMap.add(item);
+            attributeMapItems.add(item);
         }
         
-        this.setAttributeMapping(attributeMap);
-        this.setShowingAddAttribute(false);
-        this.setNewLocalAttributeName(null);
-        this.setNewAssertionAttributeName(null);
+        SamlAttributesTableBean samlAttributesTable 
+            = new SamlAttributesTableBean();
+        samlAttributesTable.setAttributeMapItems(attributeMapItems);
+        
+        this.setSamlAttributesTable(samlAttributesTable);
     }
     
     
@@ -701,43 +701,19 @@ public class WspCreateWizardBean
         this.includeMemberships = includeMemberships;
     }
 
-    public ArrayList<SamlAttributeMapItem> getAttributeMapping() {
-        return attributeMapping;
-    }
-
-    public void setAttributeMapping(ArrayList<SamlAttributeMapItem> attributeMapping) {
-        this.attributeMapping = attributeMapping;
-    }
-
-    public boolean isShowingAddAttribute() {
-        return showingAddAttribute;
-    }
-
-    public void setShowingAddAttribute(boolean showingAddAttribute) {
-        this.showingAddAttribute = showingAddAttribute;
-    }
-
-    public String getNewLocalAttributeName() {
-        return newLocalAttributeName;
-    }
-
-    public void setNewLocalAttributeName(String newLocalAttributeName) {
-        this.newLocalAttributeName = newLocalAttributeName;
-    }
-
-    public String getNewAssertionAttributeName() {
-        return newAssertionAttributeName;
-    }
-
-    public void setNewAssertionAttributeName(String newAssertionAttributeName) {
-        this.newAssertionAttributeName = newAssertionAttributeName;
-    }
-
     public WspCreateSamlSummary getSamlSummary() {
         return samlSummary;
     }
 
     public void setSamlSummary(WspCreateSamlSummary samlSummary) {
         this.samlSummary = samlSummary;
+    }
+
+    public void setSamlAttributesTable(SamlAttributesTableBean samlAttributesTable) {
+        this.samlAttributesTable = samlAttributesTable;
+    }
+
+    public SamlAttributesTableBean getSamlAttributesTable() {
+        return samlAttributesTable;
     }
 }

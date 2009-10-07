@@ -40,7 +40,6 @@ import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
-import com.sun.identity.admin.model.SamlAttributeMapItem;
 import com.sun.identity.admin.model.SecurityMechanismPanelBean;
 import com.sun.identity.admin.model.UserCredentialItem;
 import com.sun.identity.admin.model.WspCreateWizardBean;
@@ -85,6 +84,8 @@ public class WspCreateWizardHandler
 
     @Override
     public void finishListener(ActionEvent event) {
+        resetWidgets(event);
+
         if (!validateFinish(event)) {
             return;
         }
@@ -111,6 +112,61 @@ public class WspCreateWizardHandler
         lbs.add(LinkBean.WSP_CREATE);
         return lbs;
     }
+
+    @Override
+    public void expandStepListener(ActionEvent event) {
+        resetWidgets(event);
+        super.expandStepListener(event);
+    }
+    
+    @Override
+    public void nextListener(ActionEvent event) {
+        resetWidgets(event);
+        super.nextListener(event);
+    }
+    
+    @Override
+    public void previousListener(ActionEvent event) {
+        resetWidgets(event);
+        super.previousListener(event);
+    }
+    
+    private void resetWidgets(ActionEvent event) {
+        int step = getStep(event);
+        WspCreateWizardStep wizardStep = WspCreateWizardStep.valueOf(step);
+        WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
+        boolean resetSecurityWidgets = false;
+        boolean resetSamlWidgets = false;
+
+        switch(wizardStep) {
+            case WSP_SAML:
+                resetSamlWidgets = true;
+                break;
+            case WSP_SECURITY:
+                resetSecurityWidgets = true;
+                break;
+            case SUMMARY:
+                resetSecurityWidgets = true;
+                resetSamlWidgets = true;
+                break;
+            default:
+                break;
+        }
+        
+        if( resetSecurityWidgets ) {
+            wizardBean.setShowingAddCredential(false);
+            wizardBean.setNewUserName(null);
+            wizardBean.setNewPassword(null);
+            for(UserCredentialItem item : wizardBean.getUserCredentialItems()) {
+                item.resetInterface();
+            }
+        }
+        
+        if( resetSamlWidgets ) {
+            wizardBean.getSamlAttributesTable().resetInterface();
+        }
+    }
+
     
     private boolean save() {
         return true;
@@ -279,123 +335,6 @@ public class WspCreateWizardHandler
         }
     }
     
-    // listeners for the attribute map items -----------------------------------
-
-    private boolean validAttributeMapItem(String assertionName, String localName) {
-        String regExp = "[\\w ]{1,50}?";
-        if( assertionName.matches(regExp) && localName.matches(regExp) ) {
-            return true;
-        } else {
-            showErrorPopup("invalidAttributeMapSummary", 
-                           "invalidAttributeMapDetail");
-            return false;
-        }
-    }
-    
-    public void attrMapShowAddListener(ActionEvent event) {
-        WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
-        wizardBean.setShowingAddAttribute(true);
-        wizardBean.setNewLocalAttributeName(null);
-        wizardBean.setNewAssertionAttributeName(null);
-    }
-    
-    public void attrMapCancelAddListener(ActionEvent event) {
-        WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
-        wizardBean.setShowingAddAttribute(false);
-        wizardBean.setNewLocalAttributeName(null);
-        wizardBean.setNewAssertionAttributeName(null);
-    }
-    
-    public void attrMapAddListener(ActionEvent event) {
-        WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
-        String assertionAttrName = wizardBean.getNewAssertionAttributeName();
-        String localAttrName = wizardBean.getNewLocalAttributeName();
-
-        
-        if( validAttributeMapItem(assertionAttrName, localAttrName) ) {
-            SamlAttributeMapItem item = new SamlAttributeMapItem();
-            item.setAssertionAttributeName(assertionAttrName);
-            item.setLocalAttributeName(localAttrName);
-            item.setCustom(true);
-            item.setEditing(false);
-            wizardBean.getAttributeMapping().add(item);
-            
-            wizardBean.setShowingAddAttribute(false);
-            wizardBean.setNewAssertionAttributeName(null);
-            wizardBean.setNewLocalAttributeName(null);
-        } else {
-            showErrorPopup("invalidMapAttributeSummary", 
-                           "invalidMapAttributeDetail");
-        }
-    }
-    
-    public void attrMapEditListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("attributeMapItem");
-    
-        if( attributeValue instanceof SamlAttributeMapItem ) {
-            SamlAttributeMapItem item = (SamlAttributeMapItem) attributeValue;
-            item.setEditing(true);
-            item.setNewAssertionAttributeName(item.getAssertionAttributeName());
-            item.setNewLocalAttributeName(item.getLocalAttributeName());
-        }
-    }
-    
-    public void attrMapSaveListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("attributeMapItem");
-    
-        if( attributeValue instanceof SamlAttributeMapItem ) {
-            SamlAttributeMapItem item = (SamlAttributeMapItem) attributeValue;
-            String assertionAttrName = item.getNewAssertionAttributeName();
-            String localAttrName = item.getNewLocalAttributeName();
-
-            if( validAttributeMapItem(assertionAttrName, localAttrName) ) {
-                
-                if( !item.isCustom() ) {
-                    item.setLocalAttributeName(item.getNewLocalAttributeName());
-                    item.setAssertionAttributeName(item.getNewAssertionAttributeName());
-                } else {
-                    item.setAssertionAttributeName(item.getNewAssertionAttributeName());
-                }
-
-                item.resetInterface();
-                
-            } else {
-                showErrorPopup("invalidMapAttributeSummary", 
-                               "invalidMapAttributeDetail");
-            }
-        }
-    }
-    
-    public void attrMapCancelSaveListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("attributeMapItem");
-
-        if( attributeValue instanceof SamlAttributeMapItem ) {
-            SamlAttributeMapItem item = (SamlAttributeMapItem) attributeValue;
-            item.setEditing(false);
-        }
-    }
-    
-    public void attrMapRemoveListener(ActionEvent event) {
-        WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("attributeMapItem");
-    
-        if( attributeValue instanceof SamlAttributeMapItem ) {
-            SamlAttributeMapItem itemToRemove
-                = (SamlAttributeMapItem) attributeValue;
-            
-            if( itemToRemove.isCustom() ) {
-                wizardBean.getAttributeMapping().remove(itemToRemove);
-            } else {
-                itemToRemove.setAssertionAttributeName(null);
-            }
-        }
-    }
-  
-
     // -------------------------------------------------------------------------
     
     private void showErrorPopup(String summaryKey, String detailKey) {
