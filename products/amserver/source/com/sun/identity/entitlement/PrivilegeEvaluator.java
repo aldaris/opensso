@@ -22,13 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.1 2009-08-19 05:40:33 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.2 2009-10-07 06:36:40 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.entitlement.util.NetworkMonitor;
 
+import com.sun.identity.shared.debug.IDebug;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -153,9 +155,32 @@ class PrivilegeEvaluator {
         entitlementCombiner.init(adminSubject, realm, applicationName,
             resourceName, this.actionNames, recursive);
         this.recursive = recursive;
+
+        if (PrivilegeManager.debug.messageEnabled()) {
+            IDebug debug = PrivilegeManager.debug;
+            debug.message("[PolicyEval] PrivilegeEvaluator:init()", null);
+            debug.message("[PolicyEval] subject: " + getPrincipalId(subject), null);
+            debug.message("[PolicyEval] realm: " + realm, null);
+            debug.message("[PolicyEval] applicationName: " + applicationName, null);
+            debug.message("[PolicyEval] resourceName: " + resourceName, null);
+            debug.message("[PolicyEval] actions: " + actionNames, null);
+            if ((envParameters != null) && !envParameters.isEmpty()) {
+                debug.message("[PolicyEval] envParameters: " +
+                    envParameters.toString(), null);
+            }
+        }
+
         PRIVILEGE_EVAL_MONITOR_INIT.end(start);
     }
 
+    private static String getPrincipalId(Subject subject) {
+        if (subject == null) {
+            return "";
+        }
+        Set<Principal> userPrincipals = subject.getPrincipals();
+        return ((userPrincipals != null) && !userPrincipals.isEmpty()) ?
+            userPrincipals.iterator().next().getName() : null;
+    }
     /**
      * Returrns <code>true</code> if the subject has privilege to have the
      * given entitlement.
@@ -251,11 +276,19 @@ class PrivilegeEvaluator {
         // First collect tasks to be evaluated locally
         Set<IPrivilege> localPrivileges = new HashSet<IPrivilege>(
             2*tasksPerThread);
+        IDebug debug = PrivilegeManager.debug;
+
         int totalCount = 0;
         while (totalCount != tasksPerThread) {
             start = PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.start();
             if (i.hasNext()) {
-                localPrivileges.add(i.next());
+                IPrivilege p = i.next();
+                if (debug.messageEnabled()) {
+                    debug.message("[PolicyEval] PolicyEvaluator.evaluate", null);
+                    debug.message("[PolicyEval] search result: privilege=" +
+                        p.getName(), null);
+                }
+                localPrivileges.add(p);
                 totalCount++;
                 PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.end(start);
             } else {
@@ -275,7 +308,13 @@ class PrivilegeEvaluator {
                 privileges = new HashSet<IPrivilege>(2*tasksPerThread);
                 tasksSubmitted = true;
             }
-            privileges.add(i.next());
+            IPrivilege p = i.next();
+            if (debug.messageEnabled()) {
+                debug.message("[PolicyEval] PolicyEvaluator.evaluate", null);
+                debug.message("[PolicyEval] search result: privilege=" +
+                    p.getName(), null);
+            }
+            privileges.add(p);
             PRIVILEGE_EVAL_MONITOR_SEARCH_NEXT.end(start);
             totalCount++;
             if ((totalCount % tasksPerThread) == 0) {
