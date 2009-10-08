@@ -31,17 +31,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.LinkBean;
-import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SecurityMechanismPanelBean;
-import com.sun.identity.admin.model.UserCredentialItem;
 import com.sun.identity.admin.model.WspCreateWizardBean;
 import com.sun.identity.admin.model.WspCreateWizardStep;
 
@@ -154,12 +151,7 @@ public class WspCreateWizardHandler
         }
         
         if( resetSecurityWidgets ) {
-            wizardBean.setShowingAddCredential(false);
-            wizardBean.setNewUserName(null);
-            wizardBean.setNewPassword(null);
-            for(UserCredentialItem item : wizardBean.getUserCredentialItems()) {
-                item.resetInterface();
-            }
+            wizardBean.getUserCredentialsTable().resetInterface();
         }
         
         if( resetSamlWidgets ) {
@@ -240,111 +232,6 @@ public class WspCreateWizardHandler
                 }
             }
         }   
-    }
-    
-    // listeners for the user credential items ---------------------------------
-    
-    private boolean validUserCredential(String username, String password) {
-        String regExp = "[\\w ]{1,50}?";
-        if( username.matches(regExp) && password.matches(regExp) ) {
-            return true;
-        } else {
-            showErrorPopup("invalidCredentialSummary", 
-                           "invalidCredentialDetail");
-            return false;
-        }
-    }
-    
-    public void userCredentialShowAddListener(ActionEvent event) {
-        WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
-        wizardBean.setShowingAddCredential(true);
-        wizardBean.setNewUserName(null);
-        wizardBean.setNewPassword(null);
-    }
-    
-    public void userCredentialCancelAddListener(ActionEvent event) {
-        WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
-        wizardBean.setShowingAddCredential(false);
-        wizardBean.setNewUserName(null);
-        wizardBean.setNewPassword(null);
-    }
-    
-    public void userCredentialAddListener(ActionEvent event) {
-        WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
-        String newUserName = wizardBean.getNewUserName();
-        String newPassword = wizardBean.getNewPassword();
-        
-        if( validUserCredential(newUserName, newPassword) ) {
-            UserCredentialItem uci = new UserCredentialItem();
-            uci.setUserName(newUserName);
-            uci.setPassword(newPassword);
-            wizardBean.getUserCredentialItems().add(uci);
-            
-            wizardBean.setShowingAddCredential(false);
-            wizardBean.setNewUserName(null);
-            wizardBean.setNewPassword(null);
-        }
-    }
-    
-    public void userCredentialEditListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("userCredentialItem");
-        
-        if( attributeValue instanceof UserCredentialItem ) {
-            UserCredentialItem uci = (UserCredentialItem) attributeValue;
-            uci.setEditing(true);
-            uci.setNewUserName(uci.getUserName());
-            uci.setNewPassword(uci.getPassword());
-        }
-    }
-    
-    public void userCredentialSaveListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("userCredentialItem");
-
-        if( attributeValue instanceof UserCredentialItem ) {
-            UserCredentialItem item = (UserCredentialItem) attributeValue;
-
-            if( validUserCredential(item.getNewUserName(), item.getNewPassword()) ) {
-                item.setUserName(item.getNewUserName());
-                item.setPassword(item.getNewPassword());
-                item.setEditing(false);
-            }
-        }
-    }
-    
-    public void userCredentialCancelSaveListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("userCredentialItem");
-        
-        if( attributeValue instanceof UserCredentialItem ) {
-            UserCredentialItem item = (UserCredentialItem) attributeValue;
-            item.setEditing(false);
-        }
-    }
-    
-    public void userCredentialRemoveListener(ActionEvent event) {
-        WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("userCredentialItem");
-        
-        if( attributeValue instanceof UserCredentialItem ) {
-            UserCredentialItem itemToRemove
-                = (UserCredentialItem) attributeValue;
-            wizardBean.getUserCredentialItems().remove(itemToRemove);
-        }
-    }
-    
-    // -------------------------------------------------------------------------
-    
-    private void showErrorPopup(String summaryKey, String detailKey) {
-        Resources r = new Resources();
-        MessageBean mb = new MessageBean(); 
-        mb.setSummary(r.getString(this, summaryKey));
-        mb.setDetail(r.getString(this, detailKey));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-        getMessagesBean().addMessageBean(mb);
     }
     
     // Getters / Setters -------------------------------------------------------

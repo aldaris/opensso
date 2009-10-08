@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StsManageWizardStep2Validator.java,v 1.2 2009-09-30 22:01:27 ggennaro Exp $
+ * $Id: StsManageWizardStep2Validator.java,v 1.3 2009-10-08 16:16:21 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -161,13 +161,17 @@ public class StsManageWizardStep2Validator
 
     private boolean validUserNameSettings() {
         StsManageWizardBean wizardBean = getStsManageWizardBean();
+        UserCredentialsTableBean uctb = wizardBean.getUserCredentialsTable();
         
-        if( wizardBean.getUserCredentialItems().size() == 0 ) {
+        if( uctb == null 
+                || uctb.getUserCredentialItems() == null 
+                || uctb.getUserCredentialItems().size() == 0 ) {
+            
             showErrorMessage("invalidUserNameSummary",
                              "invalidUserNameDetail");
             return false;
         }
-        
+
         return true;
     }
         

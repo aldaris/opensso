@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspCreateWizardBean.java,v 1.5 2009-10-07 22:58:02 ggennaro Exp $
+ * $Id: WspCreateWizardBean.java,v 1.6 2009-10-08 16:16:21 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -53,10 +53,7 @@ public class WspCreateWizardBean
     private ArrayList<SecurityMechanismPanelBean> securityMechanismPanels;
     private String authenticationChain;
     private String tokenConversionType;
-    private ArrayList<UserCredentialItem> userCredentialItems;
-    private String newUserName;
-    private String newPassword;
-    private boolean showingAddCredential;
+    private UserCredentialsTableBean userCredentialsTable;
     private String kerberosDomain;
     private Effect kerberosDomainInputEffect;
     private Effect kerberosDomainMessageEffect;
@@ -227,10 +224,9 @@ public class WspCreateWizardBean
             newList.add(i);
         }
         
-        this.setUserCredentialItems(newList);
-        this.setNewUserName(null);
-        this.setNewPassword(null);
-        this.setShowingAddCredential(false);
+        UserCredentialsTableBean uctb = new UserCredentialsTableBean();
+        uctb.setUserCredentialItems(newList);
+        this.setUserCredentialsTable(uctb);
     }
     
     private void initSamlAttributesTable() {
@@ -418,39 +414,6 @@ public class WspCreateWizardBean
 
     public WspCreateServiceSecuritySummary getServiceSecuritySummary() {
         return serviceSecuritySummary;
-    }
-
-    public ArrayList<UserCredentialItem> getUserCredentialItems() {
-        return userCredentialItems;
-    }
-
-    public void setUserCredentialItems(
-            ArrayList<UserCredentialItem> userCredentialItems) {
-        this.userCredentialItems = userCredentialItems;
-    }
-
-    public String getNewUserName() {
-        return newUserName;
-    }
-
-    public void setNewUserName(String newUserName) {
-        this.newUserName = newUserName;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public boolean isShowingAddCredential() {
-        return showingAddCredential;
-    }
-
-    public void setShowingAddCredential(boolean showingAddCredential) {
-        this.showingAddCredential = showingAddCredential;
     }
 
     public String getKerberosDomain() {
@@ -715,5 +678,13 @@ public class WspCreateWizardBean
 
     public SamlAttributesTableBean getSamlAttributesTable() {
         return samlAttributesTable;
+    }
+
+    public void setUserCredentialsTable(UserCredentialsTableBean userCredentialsTable) {
+        this.userCredentialsTable = userCredentialsTable;
+    }
+
+    public UserCredentialsTableBean getUserCredentialsTable() {
+        return userCredentialsTable;
     }
 }

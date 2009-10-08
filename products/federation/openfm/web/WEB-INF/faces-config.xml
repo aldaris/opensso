@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.16 2009-10-07 20:00:50 ggennaro Exp $
+  $Id: faces-config.xml,v 1.17 2009-10-08 16:16:23 ggennaro Exp $
 -->
 
 <faces-config version="1.2" 
@@ -159,6 +159,16 @@
     <managed-bean>
         <managed-bean-name>samlAttributesTableHandler</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.handler.SamlAttributesTableHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>userCredentialsTableHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.UserCredentialsTableHandler</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
         <managed-property>
             <property-name>messagesBean</property-name>

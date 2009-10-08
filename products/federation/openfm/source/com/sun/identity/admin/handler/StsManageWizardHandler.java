@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StsManageWizardHandler.java,v 1.3 2009-10-07 20:00:51 ggennaro Exp $
+ * $Id: StsManageWizardHandler.java,v 1.4 2009-10-08 16:16:22 ggennaro Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -31,13 +31,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.LinkBean;
-import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SecurityMechanismPanelBean;
@@ -46,7 +44,6 @@ import com.sun.identity.admin.model.StsManageWizardStep;
 import com.sun.identity.admin.model.StsManageWizardStep1Validator;
 import com.sun.identity.admin.model.StsManageWizardStep2Validator;
 import com.sun.identity.admin.model.StsManageWizardStep4Validator;
-import com.sun.identity.admin.model.UserCredentialItem;
 
 public class StsManageWizardHandler 
         extends WizardHandler 
@@ -161,12 +158,7 @@ public class StsManageWizardHandler
         }
         
         if( resetSecurityWidgets ) {
-            wizardBean.setShowingAddCredential(false);
-            wizardBean.setNewUserName(null);
-            wizardBean.setNewPassword(null);
-            for(UserCredentialItem item : wizardBean.getUserCredentialItems()) {
-                item.resetInterface();
-            }
+            wizardBean.getUserCredentialsTable().resetInterface();
         }
         
         if( resetSamlWidgets ) {
@@ -236,112 +228,6 @@ public class StsManageWizardHandler
             }
         }   
     }
-    
-    // listeners for the user credential items ---------------------------------
-    
-    private boolean validUserCredential(String username, String password) {
-        String regExp = "[\\w ]{1,50}?";
-        if( username.matches(regExp) && password.matches(regExp) ) {
-            return true;
-        } else {
-            showErrorPopup("invalidCredentialSummary", 
-                           "invalidCredentialDetail");
-            return false;
-        }
-    }
-    
-    public void userCredentialShowAddListener(ActionEvent event) {
-        StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
-        wizardBean.setShowingAddCredential(true);
-        wizardBean.setNewUserName(null);
-        wizardBean.setNewPassword(null);
-    }
-    
-    public void userCredentialCancelAddListener(ActionEvent event) {
-        StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
-        wizardBean.setShowingAddCredential(false);
-        wizardBean.setNewUserName(null);
-        wizardBean.setNewPassword(null);
-    }
-    
-    public void userCredentialAddListener(ActionEvent event) {
-        StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
-        String newUserName = wizardBean.getNewUserName();
-        String newPassword = wizardBean.getNewPassword();
-        
-        if( validUserCredential(newUserName, newPassword) ) {
-            UserCredentialItem uci = new UserCredentialItem();
-            uci.setUserName(newUserName);
-            uci.setPassword(newPassword);
-            wizardBean.getUserCredentialItems().add(uci);
-            
-            wizardBean.setShowingAddCredential(false);
-            wizardBean.setNewUserName(null);
-            wizardBean.setNewPassword(null);
-        }
-    }
-    
-    public void userCredentialEditListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("userCredentialItem");
-        
-        if( attributeValue instanceof UserCredentialItem ) {
-            UserCredentialItem uci = (UserCredentialItem) attributeValue;
-            uci.setEditing(true);
-            uci.setNewUserName(uci.getUserName());
-            uci.setNewPassword(uci.getPassword());
-        }
-    }
-    
-    public void userCredentialSaveListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("userCredentialItem");
-
-        if( attributeValue instanceof UserCredentialItem ) {
-            UserCredentialItem item = (UserCredentialItem) attributeValue;
-
-            if( validUserCredential(item.getNewUserName(), item.getNewPassword()) ) {
-                item.setUserName(item.getNewUserName());
-                item.setPassword(item.getNewPassword());
-                item.setEditing(false);
-            }
-        }
-    }
-    
-    public void userCredentialCancelSaveListener(ActionEvent event) {
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("userCredentialItem");
-        
-        if( attributeValue instanceof UserCredentialItem ) {
-            UserCredentialItem item = (UserCredentialItem) attributeValue;
-            item.setEditing(false);
-        }
-    }
-    
-    public void userCredentialRemoveListener(ActionEvent event) {
-        StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
-        Object attributeValue 
-            = event.getComponent().getAttributes().get("userCredentialItem");
-        
-        if( attributeValue instanceof UserCredentialItem ) {
-            UserCredentialItem itemToRemove
-                = (UserCredentialItem) attributeValue;
-            wizardBean.getUserCredentialItems().remove(itemToRemove);
-        }
-    }
-    
-    // -------------------------------------------------------------------------
-    
-    private void showErrorPopup(String summaryKey, String detailKey) {
-        Resources r = new Resources();
-        MessageBean mb = new MessageBean(); 
-        mb.setSummary(r.getString(this, summaryKey));
-        mb.setDetail(r.getString(this, detailKey));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-        getMessagesBean().addMessageBean(mb);
-    }
-
 
     // Getters / Setters -------------------------------------------------------
 

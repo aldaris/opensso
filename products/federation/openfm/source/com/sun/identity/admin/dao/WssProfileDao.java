@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WssProfileDao.java,v 1.1 2009-10-08 16:16:20 ggennaro Exp $
+ * $Id: WssProfileDao.java,v 1.2 2009-10-08 16:21:06 ggennaro Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -50,43 +50,8 @@ public class WssProfileDao {
     private static final String SUB_SCHEMA_WSC = "WSCAgent";
     private static final String SUB_SCHEMA_WSP = "WSPAgent";
 
-    /*
-    private static final String ISSUER = "stsIssuer";
-    private static final String TOKEN_LIFETIME = "stsLifetime";
-    private static final String KEY_ALIAS = "stsCertAlias";
-    private static final String TOKEN_PLUGIN_CLASS_NAME 
-                                = "com.sun.identity.wss.sts.clientusertoken";
-    private static final String SECURITY_MECHANISMS = "SecurityMech";
-    */
-    private static final String PRIVATE_KEY_ALIAS = "privateKeyAlias";
-    private static final String PUBLIC_KEY_ALIAS = "publicKeyAlias";
     private static final String USERNAME_CREDENTIALS = "UserCredential";
-    /*
-    private static final String KERBEROS_DOMAIN = "KerberosDomain";
-    private static final String KERBEROS_DOMAIN_SERVER = "KerberosDomainServer";
-    private static final String KERBEROS_SERVICE_PRINCIPAL
-                                = "KerberosServicePrincipal";
-    private static final String KERBEROS_KEY_TAB_FILE = "KerberosKeyTabFile";
-    private static final String SIGNING_REFERENCE_TYPE = "SigningRefType";
-    private static final String AUTHENTICATION_CHAIN = "AuthenticationChain";    
-    private static final String RESPONSE_SIGN = "isResponseSign";
-    private static final String RESPONSE_ENCRYPT = "isResponseEncrypt";
-    private static final String REQUEST_SIGN = "isRequestSign";     
-    private static final String REQUEST_ENCRYPT = "isRequestEncrypt";
-    private static final String REQUEST_HEADER_ENCRYPT 
-                                = "isRequestHeaderEncrypt";
-    private static final String ENCRYPTION_ALGORITHM = "EncryptionAlgorithm";
-    private static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
-    private static final String NAME_ID_MAPPER = "NameIDMapper";
-    private static final String INCLUDE_MEMBERSHIPS = "includeMemberships";
-    private static final String ATTRIBUTE_NAMESPACE = "AttributeNamespace";
-    private static final String TRUSTED_ISSUERS = "trustedIssuers";
-    private static final String TRUSTED_IP_ADDRESSES = "trustedIPAddresses";
-    private static final String SAML_ATTRIBUTE_MAPPING = "SAMLAttributeMapping";
 
-    public static final String ENCRYPTION_ALGORITHM_AES = "AES";
-    public static final String ENCRYPTION_ALGORITHM_DESEDE = "DESede";
-    */
     
     WssProfileDao() {
         // do nothing to force use of static methods
@@ -150,43 +115,6 @@ public class WssProfileDao {
     
     
     //--------------------------------------------------------------------------
-
-    /*
-    @SuppressWarnings("unchecked")
-    static private StsConfigurationBean getBeanFromMap(Map map) {
-        StsConfigurationBean s = new StsConfigurationBean();
-        
-        s.setIssuer(getStringValue(ISSUER, map));
-        s.setTokenLifetime(getIntValue(TOKEN_LIFETIME, map));
-        s.setKeyAlias(getStringValue(KEY_ALIAS, map));
-        s.setTokenPluginClassName(getStringValue(TOKEN_PLUGIN_CLASS_NAME, map));
-        s.setSecurityMechanisms(getListValue(SECURITY_MECHANISMS, map));
-        s.setUserNameTokenCredentials(getPasswordCredentialsValue(map));
-        s.setKerberosDomain(getStringValue(KERBEROS_DOMAIN, map));
-        s.setKerberosDomainServer(getStringValue(KERBEROS_DOMAIN_SERVER, map));
-        s.setKerberosServicePrincipal(getStringValue(KERBEROS_SERVICE_PRINCIPAL, map));
-        s.setKerberosKeyTabFile(getStringValue(KERBEROS_KEY_TAB_FILE, map));
-        s.setX509SigningReferenceType(getStringValue(SIGNING_REFERENCE_TYPE, map));
-        s.setAuthenticationChain(getStringValue(AUTHENTICATION_CHAIN, map));
-        s.setResponseSigned(getBooleanValue(RESPONSE_SIGN, map));
-        s.setResponseEncrypted(getBooleanValue(RESPONSE_ENCRYPT, map));
-        s.setRequestSigned(getBooleanValue(REQUEST_SIGN, map));
-        s.setRequestEncrypted(getBooleanValue(REQUEST_ENCRYPT, map));
-        s.setRequestHeaderEncrypted(getBooleanValue(REQUEST_HEADER_ENCRYPT, map));
-        s.setEncryptionAlgorithm(getStringValue(ENCRYPTION_ALGORITHM, map));
-        s.setEncryptionStrength(getIntValue(ENCRYPTION_STRENGTH, map));
-        s.setPrivateKeyAlias(getStringValue(PRIVATE_KEY_ALIAS, map));
-        s.setPublicKeyAlias(getStringValue(PUBLIC_KEY_ALIAS, map));
-        s.setNameIdMapper(getStringValue(NAME_ID_MAPPER, map));
-        s.setIncludeMemberships(getBooleanValue(INCLUDE_MEMBERSHIPS, map));
-        s.setAttributeNamespace(getStringValue(ATTRIBUTE_NAMESPACE, map));
-        s.setTrustedIpAddresses(getListValue(TRUSTED_IP_ADDRESSES, map));
-        s.setTrustedIssuers(getListValue(TRUSTED_ISSUERS, map));
-        s.setSamlAttributeMapping(getListValue(SAML_ATTRIBUTE_MAPPING, map));
-        
-        return s;
-    }
-    */
 
     @SuppressWarnings("unchecked")
     static private boolean getBooleanValue(String keyName, Map map) {

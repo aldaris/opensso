@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wss-usernames.xhtml,v 1.1 2009-09-30 22:01:28 ggennaro Exp $
+   $Id: wss-usernames.xhtml,v 1.2 2009-10-08 16:16:22 ggennaro Exp $
 
 -->
 
@@ -39,138 +39,8 @@
         
         <ice:panelGroup>
         
-            <ice:dataTable
-                headerClasses="inputFieldColumn, inputFieldColumn, optionsColumn"
-                columnClasses="inputFieldColumn, inputFieldColumn, optionsColumn"
-                styleClass="dynamicTable"
-                var="userCredentialItem"
-                varStatus="userCredentialStatus"
-                value="#{wizardBean.userCredentialItems}">
-            
-                <ice:column>
-                    <f:facet name="header">
-                        <ice:outputText
-                            value="#{resources['wss-usernames.userNameLabel']}" />
-                    </f:facet>
-                    
-                    <ice:outputText 
-                        rendered="#{!userCredentialItem.editing}"
-                        value="#{userCredentialItem.userName}" />
-                    <ice:inputText
-                        maxsize="50"
-                        size="25"
-                        rendered="#{userCredentialItem.editing}"
-                        value="#{userCredentialItem.newUserName}" />
-                    
-                    <f:facet name="footer">
-                        <ice:inputText
-                            maxsize="50"
-                            size="25"
-                            rendered="#{wizardBean.showingAddCredential}" 
-                            value="#{wizardBean.newUserName}" />
-                    </f:facet>
-                </ice:column>
-
-                <ice:column>
-                    <f:facet name="header">
-                        <ice:outputText
-                            value="#{resources['wss-usernames.passwordLabel']}" />
-                    </f:facet>
-
-                    <ice:outputText 
-                        rendered="#{!userCredentialItem.editing}"
-                        value="**********" />
-                    <ice:inputSecret
-                        maxsize="50"
-                        size="25"
-                        rendered="#{userCredentialItem.editing}"
-                        redisplay="false"
-                        value="#{userCredentialItem.newPassword}" />
-
-                    <f:facet name="footer">
-                        <ice:inputSecret
-                            maxsize="50"
-                            size="25"
-                            redisplay="false"
-                            rendered="#{wizardBean.showingAddCredential}"
-                            value="#{wizardBean.newPassword}" />
-                    </f:facet>
-                </ice:column>
-
-                <ice:column>
-                    <f:facet name="header">
-                        <ice:outputText
-                            value="#{resources['wss-usernames.optionLabel']}" />
-                    </f:facet>
-    
-                    <ice:panelGroup
-                        visible="#{!userCredentialItem.editing}">
-                        <ice:commandLink
-                            actionListener="#{wizardHandler.userCredentialEditListener}">
-                            <f:attribute 
-                                name="userCredentialItem"
-                                value="#{userCredentialItem}" />
-                            <ice:outputText
-                                value="#{resources['wss-usernames.editLink']}" />
-                        </ice:commandLink> 
-                        <ice:outputText value=" | " />
-                        <ice:commandLink
-                            actionListener="#{wizardHandler.userCredentialRemoveListener}">
-                            <f:attribute 
-                                name="userCredentialItem"
-                                value="#{userCredentialItem}" />
-                            <ice:outputText
-                                value="#{resources['wss-usernames.removeLink']}" />
-                        </ice:commandLink> 
-                    </ice:panelGroup>
-                    <ice:panelGroup
-                        visible="#{userCredentialItem.editing}">
-                        <ice:commandLink
-                            actionListener="#{wizardHandler.userCredentialSaveListener}">
-                            <f:attribute 
-                                name="userCredentialItem"
-                                value="#{userCredentialItem}" />
-                            <ice:outputText
-                                value="#{resources['wss-usernames.saveLink']}" />
-                        </ice:commandLink> 
-                        <ice:outputText value=" | " />
-                        <ice:commandLink
-                            actionListener="#{wizardHandler.userCredentialCancelSaveListener}">
-                            <f:attribute 
-                                name="userCredentialItem"
-                                value="#{userCredentialItem}" />
-                            <ice:outputText
-                                value="#{resources['wss-usernames.cancelSaveLink']}" />
-                        </ice:commandLink> 
-                    </ice:panelGroup>
-
-                    <f:facet name="footer">
-                        <ice:panelGroup>
-                            <ice:panelGroup
-                                visible="#{wizardBean.showingAddCredential}">
-                                <ice:commandLink
-                                    actionListener="#{wizardHandler.userCredentialAddListener}">
-                                    <ice:outputText
-                                        value="#{resources['wss-usernames.addLink']}" />
-                                </ice:commandLink> 
-                                <ice:outputText value=" | " />
-                                <ice:commandLink
-                                    actionListener="#{wizardHandler.userCredentialCancelAddListener}">
-                                    <ice:outputText
-                                        value="#{resources['wss-usernames.cancelAddLink']}" />
-                                </ice:commandLink> 
-                            </ice:panelGroup>
-                            <ice:commandLink
-                                actionListener="#{wizardHandler.userCredentialShowAddListener}"
-                                visible="#{!wizardBean.showingAddCredential}">
-                                <ice:outputText
-                                    value="#{resources['wss-usernames.addNewLink']}" />
-                            </ice:commandLink> 
-                        </ice:panelGroup>
-                    </f:facet>
-                </ice:column>
-
-            </ice:dataTable> 
+            <o:userCredentialsTable
+                userCredentialsTable="#{wizardBean.userCredentialsTable}" />
 
         </ice:panelGroup>
     

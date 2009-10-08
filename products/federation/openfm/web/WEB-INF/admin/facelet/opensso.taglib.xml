@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: opensso.taglib.xml,v 1.4 2009-10-07 20:00:53 ggennaro Exp $
+  $Id: opensso.taglib.xml,v 1.5 2009-10-08 16:16:23 ggennaro Exp $
 
 -->
 <!DOCTYPE facelet-taglib PUBLIC "-//Sun Microsystems, Inc.//DTD Facelet Taglib 1.0//EN" "http://java.sun.com/dtd/facelet-taglib_1_0.dtd"> 
@@ -128,6 +128,10 @@
     <tag>
         <tag-name>samlAttributesTable</tag-name>
         <source>tag/samlAttributesTable.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>userCredentialsTable</tag-name>
+        <source>tag/userCredentialsTable.xhtml</source>
     </tag>
     <function>
         <function-name>indexOf</function-name>
