@@ -22,13 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Error.jsp,v 1.3 2008-06-25 05:48:31 qcheng Exp $
+   $Id: Error.jsp,v 1.4 2009-10-08 18:19:05 sean_brydon Exp $
 
 --%>
 
 <%@ page language="java" import="java.io.*,java.util.*,
 com.sun.liberty.LibertyManager"
 %>
+<%@ page import="org.owasp.esapi.ESAPI" %>
 
 <%
     String ERROR_URL = LibertyManager.getFedErrorKey();
@@ -47,10 +48,10 @@ com.sun.liberty.LibertyManager"
 <% if (request.getParameter(ERROR_URL) != null) { %>
 
 <tr>
-<td>Error : <i><%=request.getParameter(ERROR_URL)%></i></td>
+<td>Error : <i><%=ESAPI.encoder().encodeForHTML(request.getParameter(ERROR_URL))%></i></td>
 </tr>
 <tr>
-<td>Remark : <i><%=request.getParameter(ERROR_REMARK)%></i></td>
+<td>Remark : <i><%=ESAPI.encoder().encodeForHTML(request.getParameter(ERROR_REMARK))%></i></td>
 </tr>
 
 <% } else { %>
