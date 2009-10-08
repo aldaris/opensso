@@ -23,7 +23,7 @@
  * 
  * "Portions Copyrighted 2008 Robert Dale <robdale@gmail.com>"
  *
- * $Id: OpenSSOProcessingFilterEntryPoint.java,v 1.1 2009-02-26 18:17:19 wstrange Exp $
+ * $Id: OpenSSOProcessingFilterEntryPoint.java,v 1.2 2009-10-08 21:34:54 wstrange Exp $
  *
  */
 package com.sun.identity.provider.springsecurity;
@@ -72,7 +72,12 @@ public class OpenSSOProcessingFilterEntryPoint implements AuthenticationEntryPoi
     private void redirectToLoginUrl(HttpServletRequest request, HttpServletResponse response) throws IOException {
         StringBuffer redirect = new StringBuffer();
         redirect.append(getLoginUrl());
-        redirect.append("?goto=");
+        boolean hasArguments =  redirect.indexOf("?") > 0;
+
+        if( hasArguments )
+            redirect.append("&goto=");
+        else
+            redirect.append("?goto=");
         redirect.append(buildGotoUrl(request));
 
         if (getLoginParameters() != null && getLoginParameters().length() > 0) {
