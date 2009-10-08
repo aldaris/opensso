@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Exchange.java,v 1.1 2009-10-06 01:05:18 pbryan Exp $
+ * $Id: Exchange.java,v 1.2 2009-10-08 04:28:27 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ public class Exchange
 {
     /** TODO: Description. */
     public Request request = null;
-    
+
     /** TODO: Description. */
     public Response response = null;
 }
