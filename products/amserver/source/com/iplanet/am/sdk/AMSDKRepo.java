@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.26 2009-07-02 20:26:15 hengming Exp $
+ * $Id: AMSDKRepo.java,v 1.27 2009-10-08 20:31:15 hengming Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import com.sun.identity.authentication.modules.ldap.LDAPAuthUtils;
 import com.sun.identity.authentication.modules.ldap.LDAPUtilException;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
+import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
 import com.sun.identity.idm.IdRepoBundle;
@@ -1198,6 +1199,8 @@ public class AMSDKRepo extends IdRepo {
         if (adminToken != null) {
             token = adminToken;
         }
+
+        attrMap = new CaseInsensitiveHashMap(attrMap);
         if (type.equals(IdType.USER)) {
             Set OCs = (Set) attrMap.get("objectclass");
             Set attrName = new HashSet(1);
@@ -1240,6 +1243,17 @@ public class AMSDKRepo extends IdRepo {
                 // for users, not roles.
                 attrMap.remove("objectclass");
                 int priority = type.equals(IdType.REALM) ? 3 : 0;
+                Set values = (Set)attrMap.remove("cospriority");
+                if ((values != null) && (!values.isEmpty())) {
+                    try {
+                        priority = Integer.parseInt(
+                            (String)values.iterator().next());
+                    } catch (NumberFormatException ex) {
+                        if (debug.warningEnabled()) {
+                            debug.warning("AMSDKRepo.assignService:", ex);
+                        }
+                    }
+                }
                 dsServices.createAMTemplate(token, dn, getProfileType(type),
                         serviceName, attrMap, priority);
             } catch (AMException ame) {
