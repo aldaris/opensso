@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyViewBean.java,v 1.3 2008-07-07 20:39:21 veiming Exp $
+ * $Id: PolicyViewBean.java,v 1.4 2009-10-08 21:56:11 asyhuang Exp $
  *
  */
 
@@ -59,7 +59,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-
+import org.owasp.esapi.ESAPI;
 
 public class PolicyViewBean
     extends RealmPropertiesBase
@@ -329,9 +329,11 @@ public class PolicyViewBean
      * @param event Request Invocation Event.
      */
     public void handleTblDataActionHrefRequest(RequestInvocationEvent event) {
+        org.owasp.esapi.Encoder enc = ESAPI.encoder();
         PolicyModel model = (PolicyModel)getModel();
-        String policyName = hexToString((String)getDisplayFieldValue(
-            TBL_DATA_ACTION_HREF));
+        String policyName = hexToString(
+            enc.encodeForHTML((String)getDisplayFieldValue(
+            TBL_DATA_ACTION_HREF)));
         String curRealm = (String)getPageSessionAttribute(
             AMAdminConstants.CURRENT_REALM);
         try {
