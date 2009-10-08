@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: StsManageWizardBean.java,v 1.3 2009-10-07 20:00:49 ggennaro Exp $
+ * $Id: StsManageWizardBean.java,v 1.4 2009-10-08 16:16:21 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -54,10 +54,7 @@ public class StsManageWizardBean
 
     private String authenticationChain;
     private ArrayList<SecurityMechanismPanelBean> securityMechanismPanels;
-    private ArrayList<UserCredentialItem> userCredentialItems;
-    private String newUserName;
-    private String newPassword;
-    private boolean showingAddCredential;
+    private UserCredentialsTableBean userCredentialsTable;
     private String kerberosDomain;
     private Effect kerberosDomainInputEffect;
     private Effect kerberosDomainMessageEffect;
@@ -126,7 +123,7 @@ public class StsManageWizardBean
         this.setKerberosKeyTabFile(stsConfig.getKerberosKeyTabFile());
         this.setKerberosServicePrincipal(stsConfig.getKerberosServicePrincipal());
         initX509SigningRefType(stsConfig);
-        initUserNameCredentials(stsConfig);
+        initUserNameCredentialsTable(stsConfig);
         
         this.setRequestSignatureVerified(stsConfig.isRequestSigned());
         this.setRequestDecrypted(stsConfig.isRequestEncrypted());
@@ -223,7 +220,7 @@ public class StsManageWizardBean
         }
     }
     
-    private void initUserNameCredentials(StsConfigurationBean stsConfig) {
+    private void initUserNameCredentialsTable(StsConfigurationBean stsConfig) {
         ArrayList<PasswordCredential> configValues
             = stsConfig.getUserNameTokenCredentials();
         ArrayList<UserCredentialItem> newList
@@ -236,10 +233,9 @@ public class StsManageWizardBean
             newList.add(i);
         }
         
-        this.setUserCredentialItems(newList);
-        this.setNewUserName(null);
-        this.setNewPassword(null);
-        this.setShowingAddCredential(false);
+        UserCredentialsTableBean uctb = new UserCredentialsTableBean();
+        uctb.setUserCredentialItems(newList);
+        this.setUserCredentialsTable(uctb);
     }
     
     private void initEncryptionAlgorithm(StsConfigurationBean stsConfig) {
@@ -587,38 +583,6 @@ public class StsManageWizardBean
         return serviceSecuritySummary;
     }
 
-    public void setUserCredentialItems(ArrayList<UserCredentialItem> userCredentialItems) {
-        this.userCredentialItems = userCredentialItems;
-    }
-
-    public ArrayList<UserCredentialItem> getUserCredentialItems() {
-        return userCredentialItems;
-    }
-
-    public void setNewUserName(String newUserName) {
-        this.newUserName = newUserName;
-    }
-
-    public String getNewUserName() {
-        return newUserName;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setShowingAddCredential(boolean showingAddCredential) {
-        this.showingAddCredential = showingAddCredential;
-    }
-
-    public boolean isShowingAddCredential() {
-        return showingAddCredential;
-    }
-
     public void setRequestSignatureVerified(boolean requestSignatureVerified) {
         this.requestSignatureVerified = requestSignatureVerified;
     }
@@ -787,6 +751,14 @@ public class StsManageWizardBean
 
     public SamlAttributesTableBean getSamlAttributesTable() {
         return samlAttributesTable;
+    }
+
+    public void setUserCredentialsTable(UserCredentialsTableBean userCredentialsTable) {
+        this.userCredentialsTable = userCredentialsTable;
+    }
+
+    public UserCredentialsTableBean getUserCredentialsTable() {
+        return userCredentialsTable;
     }
 
 }
