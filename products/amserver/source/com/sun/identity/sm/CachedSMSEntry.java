@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.15 2009-04-23 23:03:28 hengming Exp $
+ * $Id: CachedSMSEntry.java,v 1.16 2009-10-08 20:33:54 hengming Exp $
  *
  */
 
@@ -85,6 +85,7 @@ public class CachedSMSEntry {
     // Flag to determine if the cached entry is dirty and 
     // must be refreshed along with the last update time & TTL
     private boolean dirty;
+    private Object dirtyLock = new Object();
     static boolean ttlEnabled;
     static long lastUpdate;
     static long ttl = 1800000;  // 30 minutes
@@ -125,7 +126,9 @@ public class CachedSMSEntry {
     public boolean isDirty() {
         if (ttlEnabled && !dirty &&
             ((System.currentTimeMillis() - lastUpdate) > ttl)) {
-            dirty = true;
+            synchronized (dirtyLock) {
+                dirty = true;
+            }
         }
         return dirty;
     }
@@ -140,7 +143,9 @@ public class CachedSMSEntry {
             SMSEntry.debug.message("CachedSMSEntry: update "
                     + "method called: " + dn2Str );
         }
-        dirty = true;
+        synchronized (dirtyLock) {
+            dirty = true;
+        }
     }
     
     /**
@@ -148,43 +153,46 @@ public class CachedSMSEntry {
      * objects caching this entry. Used by JAXRPCObjectImpl
      */
     public void refresh() {
-        if (SMSEntry.debug.messageEnabled()) {
-            SMSEntry.debug.message("CachedSMSEntry: refresh "
+        synchronized (dirtyLock) {
+            if (SMSEntry.debug.messageEnabled()) {
+                SMSEntry.debug.message("CachedSMSEntry: refresh "
                     + "method called: " + dn2Str );
-        }
-        // Read the LDAP attributes and update listeners
-        boolean updated = false;
-        dirty = true;
-        try {
-            SSOToken t = getValidSSOToken();
-            if (t != null) {
-                smsEntry.read(t);
-                lastUpdate = System.currentTimeMillis();
-                updated = true;
-            } else if (SMSEntry.debug.warningEnabled()) {
-                SMSEntry.debug.warning("CachedSMSEntry:update No VALID " +
-                    "SSOToken found for dn: " + dn2Str);
             }
-        } catch (SMSException e) {
-            // Error in reading the attribtues, entry could be deleted
-            // or does not have permissions to read the object
-            SMSEntry.debug.error("Error in reading entry attributes: " +
-                dn2Str, e);
-        } catch (SSOException ssoe) {
-            // Error in reading the attribtues, SSOToken problem
-            // Might have timed-out
-            SMSEntry.debug.error("SSOToken problem in reading entry "
+
+            // Read the LDAP attributes and update listeners
+            boolean updated = false;
+            dirty = true;
+            try {
+                SSOToken t = getValidSSOToken();
+                if (t != null) {
+                    smsEntry.read(t);
+                    lastUpdate = System.currentTimeMillis();
+                    updated = true;
+                } else if (SMSEntry.debug.warningEnabled()) {
+                    SMSEntry.debug.warning("CachedSMSEntry:update No VALID " +
+                        "SSOToken found for dn: " + dn2Str);
+                }
+            } catch (SMSException e) {
+                // Error in reading the attribtues, entry could be deleted
+                // or does not have permissions to read the object
+                SMSEntry.debug.error("Error in reading entry attributes: " +
+                    dn2Str, e);
+            } catch (SSOException ssoe) {
+                // Error in reading the attribtues, SSOToken problem
+                // Might have timed-out
+                SMSEntry.debug.error("SSOToken problem in reading entry "
                     + "attributes: " + dn2Str, ssoe);
+            }
+            if (!updated) {
+                // No valid SSOToken were foung
+                // this entry is no long valid, remove from cache
+                clear();
+            }
+            // Update service listeners either success or failure
+            // updateServiceListeners(UPDATE_METHOD);
+            updateServiceListeners(UPDATE_METHOD);
+            dirty = false;
         }
-        if (!updated) {
-            // No valid SSOToken were foung
-            // this entry is no long valid, remove from cache
-            clear();
-        }
-        // Update service listeners either success or failure
-        // updateServiceListeners(UPDATE_METHOD);
-        updateServiceListeners(UPDATE_METHOD);
-        dirty = false;
     }
     
     /**
@@ -194,9 +202,11 @@ public class CachedSMSEntry {
      * @throws com.sun.identity.sm.SMSException
      */
     void refresh(SMSEntry e) throws SMSException {
-        smsEntry.refresh(e);
-        updateServiceListeners(UPDATE_METHOD);
-        dirty = false;
+        synchronized (dirtyLock) {
+            smsEntry.refresh(e);
+            updateServiceListeners(UPDATE_METHOD);
+            dirty = false;
+        }
     }
     
     /**
@@ -217,7 +227,9 @@ public class CachedSMSEntry {
         SMSEventListenerManager.removeNotification(notificationID);
         notificationID = null;
         valid = false;
-        dirty = true;
+        synchronized(dirtyLock) {
+            dirty = true;
+        }
         // Remove from cache
         if (removeFromCache) {
             smsEntries.remove(dnRFCStr);
