@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpBasicAuthFilter.java,v 1.3 2009-10-06 19:44:20 pbryan Exp $
+ * $Id: HttpBasicAuthFilter.java,v 1.4 2009-10-08 04:29:40 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -138,6 +138,11 @@ public class HttpBasicAuthFilter extends Filter
             // set in session for fetch in next iteration of this loop
             exchange.request.session.put(attributeName("userpass"),
              Base64.encode((credentials.username + ":" + credentials.password).getBytes()));
+        }
+
+        // close the incoming response because it's about to be dereferenced (important!)
+        if (exchange.response.entity != null) {
+            exchange.response.entity.close();
         }
 
         // credentials were missing or invalid; let credential source handle the error
