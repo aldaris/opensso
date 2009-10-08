@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.3 2009-10-06 16:31:05 pbryan Exp $
+ * $Id: ClientHandler.java,v 1.4 2009-10-08 19:21:57 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -132,6 +132,11 @@ public class ClientHandler implements Handler
      */
     public void handle(Exchange exchange) throws IOException, HandlerException
     {
+        // recover any previous response connection, if present
+        if (exchange.response != null && exchange.response.entity != null) {
+            exchange.response.entity.close();
+        }
+    
         HttpRequestBase clientRequest = (exchange.request.entity != null ?
          new EntityRequest(exchange.request) : new NonEntityRequest(exchange.request));
 
