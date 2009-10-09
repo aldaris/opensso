@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralResource.java,v 1.1 2009-08-19 05:40:53 veiming Exp $
+ * $Id: ApplicationResource.java,v 1.1 2009-10-09 20:17:13 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -33,7 +33,7 @@ import com.icesoft.faces.context.effects.SlideUp;
 import com.sun.identity.admin.handler.MultiPanelHandler;
 import javax.faces.event.ActionEvent;
 
-public class ReferralResource
+public class ApplicationResource
     extends Resource
     implements MultiPanelBean, MultiPanelHandler, PolicyResourcesBean {
 
@@ -44,7 +44,7 @@ public class ReferralResource
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
 
     public Resource deepClone() {
-        ReferralResource rr = new ReferralResource();
+        ApplicationResource rr = new ApplicationResource();
         rr.setName(getName());
 
         return rr;

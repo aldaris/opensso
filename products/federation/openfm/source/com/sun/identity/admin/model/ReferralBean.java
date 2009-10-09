@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralBean.java,v 1.1 2009-08-19 05:40:53 veiming Exp $
+ * $Id: ReferralBean.java,v 1.2 2009-10-09 20:17:14 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -189,7 +189,7 @@ public class ReferralBean {
         // applications, resources
         resources = new ArrayList<Resource>();
         for (String applicationName : rp.getMapApplNameToResources().keySet()) {
-            ReferralResource rr = new ReferralResource();
+            ApplicationResource rr = new ApplicationResource();
             rr.setName(applicationName);
 
             String resourceClassName = rr.getViewEntitlement().getViewApplication().getViewApplicationType().getResourceClassName();
@@ -287,7 +287,7 @@ public class ReferralBean {
     public String getResourcesToFormattedString() {
         StringBuffer b = new StringBuffer();
         for (Iterator<Resource> i = resources.iterator(); i.hasNext();) {
-            ReferralResource rr = (ReferralResource) i.next();
+            ApplicationResource rr = (ApplicationResource) i.next();
             List<Resource> rs = rr.getViewEntitlement().getResources();
 
             b.append(rr.getTitle());
@@ -312,7 +312,7 @@ public class ReferralBean {
         // applications, resources
         Map<String, Set<String>> applicationNames = new HashMap<String, Set<String>>();
         for (Resource r : resources) {
-            ReferralResource rr = (ReferralResource) r;
+            ApplicationResource rr = (ApplicationResource) r;
             String an = rr.getViewEntitlement().getViewApplication().getName();
             Set<String> rs = new HashSet<String>();
             for (Resource ar : rr.getViewEntitlement().getResources()) {

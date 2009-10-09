@@ -13,7 +13,7 @@ public class ResourcesReferralWizardStepValidator extends ReferralWizardStepVali
         List<Resource> resources = getReferralWizardBean().getReferralBean().getResources();
         if (resources != null) {
             for (Resource r : getReferralWizardBean().getReferralBean().getResources()) {
-                ReferralResource rr = (ReferralResource) r;
+                ApplicationResource rr = (ApplicationResource) r;
                 ViewEntitlement ve = rr.getViewEntitlement();
                 if (ve.getResources() != null && ve.getResources().size() > 0) {
                     return true;

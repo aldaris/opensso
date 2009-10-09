@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referralresourcepanel.xhtml,v 1.1 2009-08-19 05:41:06 veiming Exp $
+   $Id: applicationresourcepanel.xhtml,v 1.1 2009-10-09 20:17:15 farble1670 Exp $
 
 -->
 
@@ -37,12 +37,12 @@
     <f:subview>
         <ice:panelGroup>
             <o:multipanel
-                collapsible="#{o:contains(referralResourcesBean.resources,referralResource)}"
+                collapsible="#{o:contains(applicationResourcesBean.resources,applicationResource)}"
                 removeable="false"
-                visible="#{referralResource.panelVisible}"
-                expanded="#{referralResource.panelExpanded}"
-                bean="#{referralResource}"
-                handler="#{referralResource}">
+                visible="#{applicationResource.panelVisible}"
+                expanded="#{applicationResource.panelExpanded}"
+                bean="#{applicationResource}"
+                handler="#{applicationResource}">
 
                 <ui:define name="panel-title">
                     <ice:panelGroup
@@ -50,23 +50,23 @@
                         <ice:checkbox
                             styleClass="referral-resource-checkbox"
                             for="referral-resource-select"
-                            index="#{o:indexOf(referralResourcesBean.availableResources,referralResource)}">
+                            index="#{o:indexOf(applicationResourcesBean.availableResources,applicationResource)}">
                         </ice:checkbox>
                         <ice:outputFormat
                             value="#{resources['referralresourcepanel.resourceCount']}">
                             <f:param
-                                value="#{o:size(referralResource.viewEntitlement.resources)}"/>
+                                value="#{o:size(applicationResource.viewEntitlement.resources)}"/>
                         </ice:outputFormat>
                     </ice:panelGroup>
                 </ui:define>
                 <ui:define name="panel-body">
                     <ice:panelGroup
-                        rendered="#{referralResource.viewEntitlement.viewApplication.viewApplicationType.resourceTemplate != null}">
+                        rendered="#{applicationResource.viewEntitlement.viewApplication.viewApplicationType.resourceTemplate != null}">
                         <ui:include
-                            src="/admin/facelet/template/referral-resource-template-includer.xhtml">
+                            src="/admin/facelet/template/application-resource-template-includer.xhtml">
                             <ui:param
-                                name="referralResource"
-                                value="#{referralResource}"/>
+                                name="resource"
+                                value="#{applicationResource}"/>
                         </ui:include>
                     </ice:panelGroup>
                 </ui:define>

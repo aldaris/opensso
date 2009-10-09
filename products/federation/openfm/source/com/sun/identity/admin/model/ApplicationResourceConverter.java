@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralResourceConverter.java,v 1.1 2009-08-19 05:40:53 veiming Exp $
+ * $Id: ApplicationResourceConverter.java,v 1.1 2009-10-09 20:17:13 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,16 +31,16 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-public class ReferralResourceConverter implements Converter {
+public class ApplicationResourceConverter implements Converter {
 
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        ReferralResource rr = new ReferralResource();
+        ApplicationResource rr = new ApplicationResource();
         rr.setName(value);
 
         return rr;
     }
 
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return ((ReferralResource)value).getName();
+        return ((ApplicationResource)value).getName();
     }
 }

@@ -22,13 +22,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationBean.java,v 1.1 2009-10-05 17:04:47 farble1670 Exp $
+ * $Id: DelegationBean.java,v 1.2 2009-10-09 20:17:14 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class DelegationBean {
+
+    public List<Resource> getResources() {
+        return resources;
+    }
+
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
+    }
+
     public static class NameComparator extends TableColumnComparator {
 
         public NameComparator(boolean ascending) {
@@ -145,6 +155,7 @@ public class DelegationBean {
     private String author;
     private String modifier;
     private boolean selected;
+    private List<Resource> resources;
 
     public DelegationBean() {
         // nothing

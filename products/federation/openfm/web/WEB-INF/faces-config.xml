@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.17 2009-10-08 16:16:23 ggennaro Exp $
+  $Id: faces-config.xml,v 1.18 2009-10-09 20:17:14 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -54,8 +54,8 @@
         <converter-class>com.sun.identity.admin.model.RealmBeanConverter</converter-class>
     </converter>
     <converter>
-        <converter-id>referralResourceConverter</converter-id>
-        <converter-class>com.sun.identity.admin.model.ReferralResourceConverter</converter-class>
+        <converter-id>applicationResourceConverter</converter-id>
+        <converter-class>com.sun.identity.admin.model.ApplicationResourceConverter</converter-class>
     </converter>
 
     <managed-bean>
@@ -1047,7 +1047,7 @@
             <value>true</value>
         </managed-property>
     </managed-bean>
-    
+
     <managed-bean>
         <managed-bean-name>subjectTypeToSubjectContainerMap</managed-bean-name>
         <managed-bean-class>java.util.HashMap</managed-bean-class>
@@ -1835,6 +1835,10 @@
         <managed-bean-name>delegationCreateWizardBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.DelegationCreateWizardBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>viewApplicationsBean</property-name>
+            <value>#{viewApplicationsBean}</value>
+        </managed-property>
         <managed-property>
             <property-name>nameEditable</property-name>
             <value>true</value>
@@ -2679,6 +2683,8 @@
         </phase-listener>
     </lifecycle>
 </faces-config>
+
+
 
 
 

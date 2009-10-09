@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: delegation-create.xhtml,v 1.2 2009-10-05 17:04:47 farble1670 Exp $
+   $Id: delegation-create.xhtml,v 1.3 2009-10-09 20:17:15 farble1670 Exp $
 -->
 
 <ui:composition
@@ -64,6 +64,14 @@
                     step="1"
                     label="#{delegationCreateWizardBean.resourcesPanelLabel}">
                     <ui:define name="wizard-step-body">
+                        <ui:include src="template/delegation-resources.xhtml">
+                            <ui:param
+                                name="delegationWizardBean"
+                                value="#{delegationCreateWizardBean}"/>
+                            <ui:param
+                                name="delegationWizardHandler"
+                                value="#{delegationCreateWizardHandler}"/>
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep

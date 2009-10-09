@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralWizardBean.java,v 1.1 2009-08-19 05:40:53 veiming Exp $
+ * $Id: ReferralWizardBean.java,v 1.2 2009-10-09 20:17:14 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -75,8 +75,8 @@ public abstract class ReferralWizardBean extends WizardBean {
         List<SelectItem> items = new ArrayList<SelectItem>();
         if (getAvailableResources() != null) {
             for (Resource r : getAvailableResources()) {
-                ReferralResource rr = (ReferralResource) r;
-                items.add(new SelectItem(rr, rr.getTitle()));
+                ApplicationResource ar = (ApplicationResource) r;
+                items.add(new SelectItem(ar, ar.getTitle()));
             }
         }
 
@@ -111,11 +111,11 @@ public abstract class ReferralWizardBean extends WizardBean {
     private void resetAvailableResources() {
         availableResources = new ArrayList<Resource>();
         for (ViewApplication va : viewApplicationsBean.getViewApplications().values()) {
-            ReferralResource rr = new ReferralResource();
-            rr.setName(va.getName());
-            rr.getViewEntitlement().setResources(rr.getViewEntitlement().getAvailableResources());
+            ApplicationResource ar = new ApplicationResource();
+            ar.setName(va.getName());
+            ar.getViewEntitlement().setResources(ar.getViewEntitlement().getAvailableResources());
 
-            availableResources.add(rr);
+            availableResources.add(ar);
         }
     }
 
@@ -202,7 +202,7 @@ public abstract class ReferralWizardBean extends WizardBean {
     public int getAvailableResourcesSize() {
         int size = 0;
         for (Resource r : getAvailableResources()) {
-            ReferralResource rr = (ReferralResource) r;
+            ApplicationResource rr = (ApplicationResource) r;
             if (rr.getViewEntitlement().getResources() != null) {
                 size += rr.getViewEntitlement().getResources().size();
             }
@@ -214,7 +214,7 @@ public abstract class ReferralWizardBean extends WizardBean {
         int size = 0;
         if (getReferralBean().getResources() != null) {
             for (Resource r : getReferralBean().getResources()) {
-                ReferralResource rr = (ReferralResource) r;
+                ApplicationResource rr = (ApplicationResource) r;
                 if (rr.getViewEntitlement().getResources() != null) {
                     size += rr.getViewEntitlement().getResources().size();
                 }

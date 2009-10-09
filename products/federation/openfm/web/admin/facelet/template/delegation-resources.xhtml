@@ -23,8 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-resources.xhtml,v 1.2 2009-10-09 20:17:16 farble1670 Exp $
-
+   $Id: delegation-resources.xhtml,v 1.1 2009-10-09 20:17:16 farble1670 Exp $
 -->
 
 <span
@@ -39,32 +38,32 @@
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="#{resources['referral-resources.sectionTitle']}"/>
+                value="#{resources['delegation-resources.sectionTitle']}"/>
         </ui:define>
         <ui:define name="section-details">
             <ice:outputText
-                value="#{resources['referral-resources.sectionDetails']}"/>
+                value="#{resources['delegation-resources.sectionDescription']}"/>
         </ui:define>
         <ui:define name="section-body">
             <ice:selectManyCheckbox
                 id="referral-resource-select"
                 layout="spread"
                 partialSubmit="true"
-                value="#{referralResourcesBean.resources}"
+                value="#{delegationWizardBean.resources}"
                 converter="applicationResourceConverter">
                 <f:selectItems
-                    value="#{referralResourcesBean.availableResourceItems}"/>
+                    value="#{delegationWizardBean.availableResourceItems}"/>
             </ice:selectManyCheckbox>
             <ice:panelGroup>
                 <ice:panelSeries
-                    var="referralResource"
-                    value="#{referralResourcesBean.availableResources}">
+                    var="delegationResource"
+                    value="#{delegationWizardBean.availableResources}">
                     <ice:panelGroup
                         styleClass="referral-resource-outer">
                             <o:applicationresourcepanel
                                 allowExceptions="false"
-                                applicationResourcesBean="#{referralResourcesBean}"
-                                applicationResource="#{referralResource}"/>
+                                applicationResourcesBean="#{delegationWizardBean}"
+                                applicationResource="#{delegationResource}"/>
                     </ice:panelGroup>
                 </ice:panelSeries>
             </ice:panelGroup>
