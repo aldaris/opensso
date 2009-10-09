@@ -17,15 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Form.java,v 1.1 2009-10-06 20:28:47 pbryan Exp $
+ * $Id: Form.java,v 1.1 2009-10-09 07:38:37 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.proxy.util;
+package com.sun.identity.proxy.http;
 
 import com.sun.identity.proxy.http.Request;
 import com.sun.identity.proxy.io.Streamer;
+import com.sun.identity.proxy.util.ListMap;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,14 +36,18 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * TODO: Description.
+ * Form parameters, a case-sensitive multiple-valued map. The form can be
+ * read from and written to request objects as query parameters and form
+ * entities.
  *
  * @author Paul C. Bryan
  */
 public class Form extends ListMap
 {
     /**
-     * TODO: Description.
+     * Parses the query parameters of a request and stores them in this object.
+     *
+     * @param request the request to be parsed.
      */
     public void parseQueryParams(Request request) {
         if (request != null && request.uri != null & request.uri.indexOf('?') > 0) {
@@ -51,10 +56,11 @@ public class Form extends ListMap
     }
 
     /**
-     * TODO: Description.
+     * Parses the URL-encoded form entity of a request and stores them in this
+     * object.
      *
-     * @param request TODO.
-     * @throws IOException if an I/O error occurs.
+     * @param request the request to be parsed.
+     * @throws IOException if an I/O exception occurs.
      */
     public void parseFormEntity(Request request) throws IOException {
         if (request != null & request.entity != null && request.headers != null
@@ -66,9 +72,10 @@ public class Form extends ListMap
     }
 
     /**
-     * TODO: Description.
+     * Parses a URL-encoded string containing form parameters and stores them
+     * in this object.
      *
-     * @param s TODO.
+     * @param s the URL-encoded string to parse.
      */
     public void parse(String s) {
         for (String param : s.split("&")) {
@@ -80,7 +87,7 @@ public class Form extends ListMap
     }
 
     /**
-     * Populates a request URI with query parameters necessary for the form to
+     * Populates a request URI with query parameters suitable for the form to
      * be submitted as a GET request. This adds query parameters to a URI that
      * may already have parameters.
      *
@@ -104,15 +111,16 @@ public class Form extends ListMap
      */
     public void toFormEntity(Request request) {
         String form = toString();
+        request.method = "POST";
         request.headers.put("Content-Type", "application/x-www-form-urlencoded");
         request.headers.put("Content-Length", Integer.toString(form.length()));
         request.entity = new ByteArrayInputStream(form.getBytes());
     }
 
     /**
-     * TODO: Description.
+     * Returns this form in a URL-encoded format {@link String}.
      *
-     * @return TODO.
+     * @return the URL-encoded form.
      */
     @Override
     public String toString() {

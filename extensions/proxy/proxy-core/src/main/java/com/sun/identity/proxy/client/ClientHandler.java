@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.4 2009-10-08 19:21:57 pbryan Exp $
+ * $Id: ClientHandler.java,v 1.5 2009-10-09 07:38:36 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,7 +61,7 @@ import org.apache.http.protocol.RequestUserAgent;
 
 
 /**
- * TODO: Description.
+ * A handler class that submits requests via the Apache HttpComponents Client.
  *
  * @author Paul C. Bryan
  */
@@ -80,26 +80,27 @@ public class ClientHandler implements Handler
      "connection", "keep-alive", "proxy-authenticate", "proxy-authorization", "te", "trailers",
      "transfer-encoding", "upgrade"));
 
-    /** TODO: Description. */
+    /** The URI of the target remote server. */
     private URI target;
 
-    /** TODO: Description. */
+    /** The HTTP client to transmit requests through. */
     private DefaultHttpClient httpClient;
 
     /**
-     * TODO: Description.
+     * Creates a new client handler for the specified target remote server.
      *
-     * @param target TODO.
+     * @param target the remote server to transmit requests to.
      */
     public ClientHandler(URI target) {
         this(target, DEFAULT_CONNECTIONS);
     }
 
     /**
-     * TODO: Description.
+     * Creates a new client handler for the specified target remote server
+     * and specified maximum number of connections.
      *
-     * @param target TODO.
-     * @param connections TODO.
+     * @param target the remote server to transmit requests to.
+     * @param connections the maximum number of connections to open.
      */
     public ClientHandler(URI target, int connections)
     {
@@ -124,12 +125,10 @@ public class ClientHandler implements Handler
     }
 
     /**
-     * TODO: Description.
-     *
-     * @param exchange TODO.
-     * @throws IOException TODO.
-     * @throws HandlerException TODO.
+     * Submits the exchange request to the remote server. Creates and
+     * populates the exchange response from that provided by the remote server.
      */
+    @Override
     public void handle(Exchange exchange) throws IOException, HandlerException
     {
         // recover any previous response connection, if present

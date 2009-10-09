@@ -17,24 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PasswordCredentials.java,v 1.2 2009-10-09 07:38:36 pbryan Exp $
+ * $Id: package-info.java,v 1.1 2009-10-09 07:38:38 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.proxy.auth;
-
 /**
- * Contains the username/password pair of user credentials.
+ * Classes to expose a proxy through the Java Platform Enterprise Edition
+ * Servlet API.
  *
  * @author Paul C. Bryan
  */
-public class PasswordCredentials implements Credentials
-{
-    /** The user's unique identifier. */
-    public String username;
-
-    /** The user's password, in plaintext. */
-    public String password;
-}
+package com.sun.identity.proxy.servlet;
 

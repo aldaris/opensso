@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Filter.java,v 1.1 2009-10-06 01:05:17 pbryan Exp $
+ * $Id: Filter.java,v 1.2 2009-10-09 07:38:37 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,23 +28,39 @@ import com.sun.identity.proxy.http.Exchange;
 import java.io.IOException;
 
 /**
- * TODO: Description.
+ * The base class for all message exchange filters. A filter is a specialized
+ * type of handler, which knows what next handler to pass the message exchange
+ * to after it has successfully performed its function. Filters are typically
+ * added into a {@link Chain}.
+ * <p>
+ * A particular filter instance can have one and only one next handler. This
+ * means that it cannot be added to more than one filter chain.
  *
  * @author Paul C. Bryan
  */
 
 public abstract class Filter implements Handler
 {
-    /** TODO: Description. */
+    /** The next hander to pass the exchange to once this filter has successfully processed it. */
     public Handler next;
 
     /**
-     * TODO: Description.
+     * Called to request the filter handle the request. Once handled
+     * successfully, the filter should call the next handler's
+     * <tt>handle(<em>exchange</em>)</tt> method. The filter is allowed to
+     * <em>not</em> pass the exchange on to the next handler.
+     * <p>
+     * As with a handler, if an existing response object exists in the exchange
+     * and the filter intends to replace it with another response object, it must
+     * first check to see if the existing response object has an entity, and if
+     * it does, must call its <tt>close()</tt> method in order to signal that the
+     * processing of the response from a remote server is complete.
      *
-     * @param request TODO.
-     * @return TODO.
-     * @throws HandlerException TODO.
+     * @param exchange the message exchange to handle.
+     * @throws HandlerException if an exception occurs that prevents handling the exchange.
+     * @throws IOException if an I/O exception occurs.
      */
-    public abstract void handle(Exchange exchange) throws IOException, HandlerException;
+    @Override
+    public abstract void handle(Exchange exchange) throws HandlerException, IOException;
 }
 

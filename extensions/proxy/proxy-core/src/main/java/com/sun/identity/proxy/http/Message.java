@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Message.java,v 1.1 2009-10-06 01:05:18 pbryan Exp $
+ * $Id: Message.java,v 1.2 2009-10-09 07:38:37 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,19 +27,19 @@ package com.sun.identity.proxy.http;
 import java.io.InputStream;
 
 /**
- * TODO: Description.
+ * Elements shared between HTTP request and response.
  *
  * @author Paul C. Bryan
  */
 public class Message
 {
-    /** TODO: Description. */
+    /** Protocol version. */
     public String version = "HTTP/1.1";
 
-    /** TODO: Description. */
+    /** Message headers. */
     public final Headers headers = new Headers();
 
-    /** TODO: Description. */
+    /** Message entity body. */
     public InputStream entity = null;
 }
 

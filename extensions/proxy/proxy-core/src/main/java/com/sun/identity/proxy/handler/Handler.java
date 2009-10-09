@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Handler.java,v 1.1 2009-10-06 01:05:17 pbryan Exp $
+ * $Id: Handler.java,v 1.2 2009-10-09 07:38:37 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,18 +28,31 @@ import com.sun.identity.proxy.http.Exchange;
 import java.io.IOException;
 
 /**
- * TODO: Description.
+ * Defines the interface that all message exchange handlers implement.
+ *
+ * A handler is a class that processes the incoming request, and provides
+ * an outgoing response.
  *
  * @author Paul C. Bryan
  */
 public interface Handler {
 
     /**
-     * TODO: Description.
+     * Called to request the handler respond to the request.
+     * <p>
+     * A handler that doesn't hand-off an exchange to another handler
+     * downstream is responsible for creating the response object.
+     * <p>
+     * If an existing response object exists in the exchange and the handler
+     * intends to replace it with another response object, it must first check
+     * to see if the existing response object has an entity, and if it does,
+     * must call its <tt>close()</tt> method in order to signal that the
+     * processing of the response from a remote server is complete.
      *
-     * @param request TODO.
-     * @return TODO.
+     * @param exchange the message exchange to handle.
+     * @throws HandlerException if an exception occurs that prevents handling the exchange.
+     * @throws IOException if an I/O exception occurs.
      */
-    public void handle(Exchange exchange) throws IOException, HandlerException;
+    public void handle(Exchange exchange) throws HandlerException, IOException;
 }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Response.java,v 1.1 2009-10-06 01:05:18 pbryan Exp $
+ * $Id: Response.java,v 1.2 2009-10-09 07:38:37 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,16 +25,16 @@
 package com.sun.identity.proxy.http;
 
 /**
- * TODO: Description.
+ * An HTTP response message.
  *
  * @author Paul C. Bryan
  */
 public class Response extends Message
 {
-    /** TODO: Description. */
+    /** The response status code. */
     public int status = 0;
     
-    /** TODO: Description. */
+    /** The response status reason. */
     public String reason = null;
 }
 

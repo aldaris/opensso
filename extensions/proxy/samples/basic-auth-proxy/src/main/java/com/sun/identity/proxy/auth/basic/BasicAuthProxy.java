@@ -17,28 +17,29 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BasicAuthProxy.java,v 1.1 2009-10-08 22:33:49 pbryan Exp $
+ * $Id: BasicAuthProxy.java,v 1.2 2009-10-09 07:38:39 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.proxy.samples.auth.basic;
 
-import com.sun.identity.proxy.auth.HardCodedCredentialSource;
 import com.sun.identity.proxy.auth.HttpBasicAuthFilter;
+import com.sun.identity.proxy.auth.StaticCredentialSource;
 import com.sun.identity.proxy.io.DefaultCacheFactory;
 import com.sun.identity.proxy.servlet.SimpleProxyServlet;
 import javax.servlet.ServletException;
 
 /**
- * The simplest reverse proxy servlet implementation with authentication:
- * all incoming servlet requests are sent to the specified host and port,
- * via the specified protocol including HTTP basic authentication.
+ * The simplest reverse proxy servlet implementation with authentication.
+ * All incoming servlet requests are sent to the specified host and port,
+ * via the specified protocol. Authentication is performed via HTTP basic
+ * authentication, with static credentials.
  *
  * @author Paul C. Bryan
  */
-public class BasicAuthProxy extends SimpleProxyServlet {
-
+public class BasicAuthProxy extends SimpleProxyServlet
+{
     /**
      * Initializes the servlet. Establishes the remote protocol, host and port
      * of the remote server to send all incoming requests to and adds an HTTP
@@ -54,7 +55,7 @@ public class BasicAuthProxy extends SimpleProxyServlet {
 
         // add filter to transparently perform HTTP basic authentication
         chain.addFilter(new HttpBasicAuthFilter(
-         new HardCodedCredentialSource("MyUsername", "MyPassword"),
+         new StaticCredentialSource("MyUsername", "MyPassword"),
          new DefaultCacheFactory()));
     }
 }

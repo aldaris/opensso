@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Chain.java,v 1.1 2009-10-06 01:05:17 pbryan Exp $
+ * $Id: Chain.java,v 1.2 2009-10-09 07:38:37 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,23 +28,29 @@ import com.sun.identity.proxy.http.Exchange;
 import java.io.IOException;
 
 /**
- * TODO: Description.
+ * Maintains a list of {@link Filter} objects. A chain is a specialized
+ * type of handler, which knows how to add filters, and then invoke the first
+ * head filter in the chain when it is invoked.
+ * <p>
+ * When a filter is added to the chain, it is added in front of any handler
+ * and/or filter(s) already in the chain. The last filter added to the chain is
+ * always the first filter invoked when the chain is invoked.
  *
  * @author Paul C. Bryan
  * @credit Paul Sandoz (influenced by the com.sun.jersey.client.filter.Filterable class)
  */
 public class Chain implements Handler
 {
-    /** TODO: Description. */
+    /** The handler at the end of the chain. */
     private final Handler root;
 
-    /** TODO: Description. */
+    /** The first handler in the chain to be invoked. */
     private Handler head;
 
     /**
-     * TODO: Description.
+     * Creates a new filter chain.
      *
-     * @param root TODO.
+     * @param root the handler at the end of the chain.
      */
     public Chain(Handler root) {
         this.head = this.root = root;
@@ -54,21 +60,22 @@ public class Chain implements Handler
      * Adds a filter before the existing chain of filter(s) and/or root
      * handler in the chain.
      *
-     * @param filter the filter to be added.
+     * @param filter the filter to be added in front of the existing chain.
+     * @throws IllegalArgumentException if the filter to add already has a next filter.
      */
     public void addFilter(Filter filter) {
+        if (filter.next != null) {
+            throw new IllegalStateException("filter already has next filter");
+        }
         filter.next = head;
         head = filter;
     }
 
     /**
-     * TODO: Description.
-     *
-     * @param request TODO.
-     * @return TODO.
-     * @throws IOException TODO.
-     * @throws ProxyException TODO.
+     * Invokes the <tt>handle(<em>exchange</em>)</tt> method of the head filter
+     * in the chain.
      */
+    @Override
     public void handle(Exchange exchange) throws IOException, HandlerException {
         head.handle(exchange);
     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpBasicAuthFilter.java,v 1.4 2009-10-08 04:29:40 pbryan Exp $
+ * $Id: HttpBasicAuthFilter.java,v 1.5 2009-10-09 07:38:36 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,11 @@ import java.util.HashSet;
 import java.util.UUID;
 
 /**
- * TODO: Description.
+ * A filter that performs HTTP basic authentication per RFC 2617.
+ * <p>
+ * Once an HTTP authentication challenge (status code 401) is issued from
+ * the remote server, all subsequent requests that pass through this filter
+ * will include the user credentials.
  *
  * @author Paul C. Bryan
  */
@@ -54,17 +58,17 @@ public class HttpBasicAuthFilter extends Filter
     /** A handle that this object instance can use to lookup attributes in the session object. */
     private final String objectId = UUID.randomUUID().toString();
 
-    /** TODO: Description. */
+    /** The source from which to acquire username/password credentials. */
     private PasswordCredentialSource source;
 
-    /** TODO: Description. */
+    /** The cache factory to use for caching incoming request entities. */
     private CacheFactory factory;
 
     /**
-     * TODO: Description.
+     * Creates a new HTTP basic authentication filter.
      *
-     * @param source TODO.
-     * @param factory TODO.
+     * @param source the source from which to acquire username/password credentials.
+     * @param factory the cache factory to use for caching incoming request entities.
      */
     public HttpBasicAuthFilter(PasswordCredentialSource source, CacheFactory factory) {
         this.source = source;
@@ -72,36 +76,33 @@ public class HttpBasicAuthFilter extends Filter
     }
 
     /**
-     * TODO: Description.
+     * Establishes a session attribute name for this object instance.
      *
-     * @param attribute TODO.
-     * @return TODO.
+     * @param attribute the name of the attribute to resolve.
+     * @return the session attribute name, fully qualified for this object instance.
      */
     private String attributeName(String attribute) {
         return this.getClass().getName() + ":" + objectId + ":" + attribute;
     }
 
     /**
-     * TODO: Description.
-     *
-     * @param exchange TODO.
-     * @throws HandlerException TODO.
-     * @throws IOException TODO.
+     * Handles the message exchange by authenticating via HTTP basic once
+     * challenged for authentication.
      */
+    @Override
     public void handle(Exchange exchange) throws HandlerException, IOException
     {
         CachedStream entity = null;   
 
         exchange.request.headers.remove(SUPPRESS_REQUEST_HEADERS);
  
-        // cache incoming entity for replay
+        // cache the incoming entity for replay
         if (exchange.request.entity != null) {
             exchange.request.entity = entity = factory.cacheStream(exchange.request.entity);
         }
 
-        // loop to retry for retrieved credentials
+        // loop to retry for intitially retrieved (or refreshed) credentials
         for (int n = 0; n < 2; n++) {
-
 
             if (entity != null) {
                 entity.rewind(); // harmless the first time around
@@ -122,17 +123,17 @@ public class HttpBasicAuthFilter extends Filter
                 return;
             }
 
-            // credentials might be stale, so fetch them again
+            // credentials might be stale, so fetch them
             PasswordCredentials credentials = source.credentials(exchange.request);
 
-            // no credentials are handled as invalid credentials
+            // lack of credentials is handled the same as invalid credentials
             if (credentials == null) {
                 break;
             }
 
             // ensure conformance with specification
             if (credentials.username.indexOf(':') > 0) {
-                throw new HandlerException("username must not contain colon");
+                throw new HandlerException("username must not contain colon character");
             }
 
             // set in session for fetch in next iteration of this loop

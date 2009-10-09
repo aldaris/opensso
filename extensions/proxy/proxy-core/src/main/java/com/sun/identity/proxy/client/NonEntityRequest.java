@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NonEntityRequest.java,v 1.1 2009-10-06 01:05:17 pbryan Exp $
+ * $Id: NonEntityRequest.java,v 1.2 2009-10-09 07:38:36 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,27 +28,26 @@ import com.sun.identity.proxy.http.Request;
 import org.apache.http.client.methods.HttpRequestBase;
 
 /**
- * TODO: Description.
+ * A request that does not enclose an entity, suitable for submission to the
+ * Apache HttpComponents Client.
  *
  * @author Paul C. Bryan
  */
 public class NonEntityRequest extends HttpRequestBase
 {
-	/** TODO: Description. */
+	/** The request method. */
 	private String method = null;
 
 	/**
-	 * TODO: Description.
+	 * Creates a new non-entity enclosing request for the specified incoming
+	 * proxy request.
+	 *
+	 * @param request the incoming proxy request.
 	 */
 	public NonEntityRequest(Request request) {
 	    this.method = request.method;
     }
 
-	/**
-	 * TODO: Description.
-	 *
-	 * @return TODO.
-	 */
     @Override
     public String getMethod() {
         return method;

@@ -17,20 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.2 2009-10-06 16:26:05 pbryan Exp $
+ * $Id: Request.java,v 1.3 2009-10-09 07:38:37 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.proxy.http;
 
-import com.sun.identity.proxy.handler.Session;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO: Description.
+ * An HTTP request message.
  *
  * @author Paul C. Bryan
  */

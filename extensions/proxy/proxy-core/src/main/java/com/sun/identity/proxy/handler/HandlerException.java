@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HandlerException.java,v 1.1 2009-10-06 01:05:17 pbryan Exp $
+ * $Id: HandlerException.java,v 1.2 2009-10-09 07:38:37 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,24 +25,44 @@
 package com.sun.identity.proxy.handler;
 
 /**
- * TODO: Description.
+ * An exception that a {@link Handler} can throw when it cannot handle a
+ * message exchange.
  *
  * @author Paul C. Bryan
  */
 public class HandlerException extends Exception
 {
+    /**
+     * Creates a new handler exception.
+     */
     public HandlerException() {
         super();
     }
     
+    /**
+     * Creates a new handler exception with a specified message.
+     *
+     * @param message the text of the exception message.
+     */
     public HandlerException(String message) {
         super(message);
     }
     
+    /**
+     * Creates a new handler exception with a specified root cause.
+     *
+     * @param cause the exception that interfered with the handler's operation.
+     */
     public HandlerException(Throwable cause) {
         super(cause);
     }
 
+    /**
+     * Creates a new handler exception with a specified message and root cause.
+     *
+     * @param message the text of the exception message.
+     * @param cause the exception that interfered with the handler's operation.
+     */
     public HandlerException(String message, Throwable cause) {
         super(message, cause);
     }

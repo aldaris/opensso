@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedStream.java,v 1.1 2009-10-06 01:05:19 pbryan Exp $
+ * $Id: CachedStream.java,v 1.2 2009-10-09 07:38:37 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,7 +81,7 @@ public class CachedStream extends InputStream
      * this input stream.
 	 *
 	 * @return the number of bytes that can be read from this input stream without blocking.
-     * @throws IOException if an I/O error occurs.
+     * @throws IOException if an I/O exception occurs.
      */
 	public int available() throws IOException
 	{
@@ -102,7 +102,7 @@ public class CachedStream extends InputStream
      * Closes the input stream and releases any system resources associated
      * with the CachedStream wrapper.
      *
-     * @throws IOException if an I/O error occurs.
+     * @throws IOException if an I/O exception occurs.
      */
 	public void close() throws IOException
 	{
@@ -159,8 +159,8 @@ public class CachedStream extends InputStream
      * the stream is detected, or an exception is thrown.
      *
      * @return the next byte of data, or -1 if the end of the stream is reached.
+     * @throws IOException if an I/O exception occurs.
      * @throws OverflowException if cache maximum size is exceeded.
-     * @throws IOException if an I/O error occurs.
      */
 	public int read() throws IOException {
 	    byte[] b = new byte[1];
@@ -175,8 +175,8 @@ public class CachedStream extends InputStream
      * is detected, or an exception is thrown.
 	 *
      * @return the total number of bytes read into the buffer, or -1 if no more data because of end of stream.
+     * @throws IOException if an I/O exception occurs.
      * @throws OverflowException if cache maximum size is exceeded.
-     * @throws IOException if an I/O error occurs.
      * @throws NullPointerException if b is null.
 	 */
 	public int read(byte[] b) throws IOException {
@@ -193,10 +193,10 @@ public class CachedStream extends InputStream
      * @param off the start offset in array b at which the data is written.
      * @param len the maximum number of bytes to read.
      * @return the total number of bytes read into the buffer, or -1 if no more data because of end of stream.
-     * @throws OverflowException if cache maximum size is exceeded.
      * @throws IndexOutOfBoundsException if off and/or len puts read of b array out of bounds.
-     * @throws IOException if an I/O error occurs.
+     * @throws IOException if an I/O exception occurs.
      * @throws NullPointerException if b is null.
+     * @throws OverflowException if cache maximum size is exceeded.
      */
 	public int read(byte[] b, int off, int len) throws IOException
 	{
@@ -284,7 +284,7 @@ public class CachedStream extends InputStream
 	 *
      * @param n the number of bytes to be skipped.
      * @return the actual number of bytes skipped.
-     * @throws IOException if an I/O error occurs.
+     * @throws IOException if an I/O exception occurs.
 	 */
 	public long skip(long n) throws IOException
 	{

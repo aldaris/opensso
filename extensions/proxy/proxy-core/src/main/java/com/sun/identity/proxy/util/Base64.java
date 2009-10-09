@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Base64.java,v 1.1 2009-10-06 01:05:20 pbryan Exp $
+ * $Id: Base64.java,v 1.2 2009-10-09 07:38:38 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,7 +125,7 @@ public class Base64 {
      *
      * @param encoded Base64 encoded data.
      * @return decode binary data; 3 bytes for every 4 chars - minus padding.
-     * @throws IOException if an I/O error occurs reading the data.
+     * @throws IOException if an I/O exception occurs reading the data.
      */
     public static byte[] decode(String encoded) throws IOException {
         return decode(encoded, 0, encoded.length());
@@ -138,7 +138,7 @@ public class Base64 {
      * @param offset which char of the String to start at.
      * @param length how many chars to decode; must be a multiple of 4.
      * @return decode binary data; 3 bytes for every 4 chars - minus padding.
-     * @throws IOException if an I/O error occurs reading the data.
+     * @throws IOException if an I/O exception occurs reading the data.
      */
     public static byte[] decode(String encoded, int offset, int length) throws IOException {
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityRequest.java,v 1.1 2009-10-06 01:05:17 pbryan Exp $
+ * $Id: EntityRequest.java,v 1.2 2009-10-09 07:38:36 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,22 +29,23 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.InputStreamEntity;
 
 /**
- * TODO: Description.
+ * A request that encloses an entity, suitable for submission to the Apache
+ * HttpComponents Client.
  *
  * @author Paul C. Bryan
  */
 public class EntityRequest extends HttpEntityEnclosingRequestBase
 {
-	/** TODO: Description. */
+	/** The request method. */
 	private String method = null;
 
     /**
-     * TODO: Description.
+     * Parse a string for an integer value.
      *
-     * @param str TODO.
-     * @return TODO.
+     * @param str The string to parse.
+     * @return the integer value, or -1 if could not be parsed.
      */
-    private static final int toInt(String s) {
+    private static final int parseInt(String s) {
         try {
             return Integer.parseInt(s);
         }
@@ -54,7 +55,10 @@ public class EntityRequest extends HttpEntityEnclosingRequestBase
     }
 
 	/**
-	 * TODO: Description.
+	 * Creates a new entity enclosing request for the specified incoming proxy
+	 * request.
+	 *
+	 * @param request the incoming proxy request.
 	 */
 	public EntityRequest(Request request)
 	{
@@ -62,7 +66,7 @@ public class EntityRequest extends HttpEntityEnclosingRequestBase
 
         // these headers will be suppressed by the client handler before submitting to target
         String contentEncoding = request.headers.first("Content-Encoding");
-        int contentLength = toInt(request.headers.first("Content-Length"));
+        int contentLength = parseInt(request.headers.first("Content-Length"));
         String contentType = request.headers.first("Content-Type");
 
         InputStreamEntity entity = new InputStreamEntity(request.entity, contentLength);
@@ -78,11 +82,6 @@ public class EntityRequest extends HttpEntityEnclosingRequestBase
         setEntity(entity);
 	}
 
-	/**
-	 * TODO: Description.
-	 *
-	 * @return TODO.
-	 */
     @Override
     public String getMethod() {
         return method;

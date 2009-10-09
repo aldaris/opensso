@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HardCodedCredentialSource.java,v 1.1 2009-10-06 19:44:19 pbryan Exp $
+ * $Id: StaticCredentialSource.java,v 1.1 2009-10-09 07:38:36 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,43 +31,45 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 /**
- * TODO: Description.
+ * A password credential source that supplies a hard-coded set of credentials.
+ * This supports implementing test cases and integrating with downstream
+ * servers where principal identity does not need to be propagated.
  *
  * @author Paul C. Bryan
  */
-public class HardCodedCredentialSource implements PasswordCredentialSource {
+public class StaticCredentialSource implements PasswordCredentialSource {
 
-    /** TODO: Description. */
+    /** The hard-coded credentials to provide. */
     private final PasswordCredentials credentials = new PasswordCredentials();
 
     /**
-     * TODO: Description.
+     * Creates a new static credential source.
      *
-     * @param username TODO.
-     * @param password TODO.
+     * @param username the static username to supply.
+     * @param password the static password to supply.
      */
-    public HardCodedCredentialSource(String username, String password) {
+    public StaticCredentialSource(String username, String password) {
         credentials.username = username;
         credentials.password = password;
     }
 
-	/**
-	 * Returns the hard-coded credentials.
-	 *
-	 * @param request the incoming request to establish credentials for.
-	 * @return the matching credentials, or null if none could be found.
-	 */
+    /**
+     * Returns the hard-coded credentials.
+     *
+     * @param request ignored, as the same credentials are always supplied.
+     */
+    @Override
 	public PasswordCredentials credentials(Request request) {
 	    return credentials;
 	}
 
     /**
-     * Called when the supplied credentials are not valid.
+     * Unconditionally throws a HandlerException. Override this method to
+     * provide more specific handling of invalid credentials.
      *
-     * @param exchange TODO.
-     * @throws IOException TODO.
-     * @throws HandlerException TODO.
+     * @throws HandlerException unconditionally.
      */
+    @Override
 	public void invalid(Exchange exchange) throws HandlerException, IOException {
 	    throw new HandlerException("Failed to authenticate with hard-coded credentials.");
 	}

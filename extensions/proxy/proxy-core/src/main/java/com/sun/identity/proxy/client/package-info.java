@@ -17,21 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.1 2009-10-06 01:05:17 pbryan Exp $
+ * $Id: package-info.java,v 1.1 2009-10-09 07:38:36 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.proxy.handler;
-
-import java.util.HashMap;
-
 /**
- * TODO: Description.
+ * Classes that implement a handler interface for making outgoing requests.
  *
  * @author Paul C. Bryan
  */
-public class Session extends HashMap<String, Object>
-{
-}
+package com.sun.identity.proxy.client;
 

@@ -1,6 +1,6 @@
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
- * (the License). You may not use this file except in
+e * (the License). You may not use this file except in
  * compliance with the License.
  *
  * You can obtain a copy of the License at
@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Exchange.java,v 1.2 2009-10-08 04:28:27 pbryan Exp $
+ * $Id: Exchange.java,v 1.3 2009-10-09 07:38:37 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,16 +25,26 @@
 package com.sun.identity.proxy.http;
 
 /**
- * TODO: Description.
+ * An HTTP request-response exchange.
+ * <p>
+ * It is the responsibility of the caller of the {@link Handler} to create and
+ * populate the request, and responsibility of the handler to create and populate
+ * the response.
+ * <p>
+ * If an existing response object exists in the exchange and the handler
+ * intends to replace it with another response object, it must first check to
+ * see if the existing response object has an entity, and if it does, must
+ * call its <tt>close()</tt> method in order to signal that the processing of
+ * the response from a remote server is complete.
  *
  * @author Paul C. Bryan
  */
 public class Exchange
 {
-    /** TODO: Description. */
+    /** The HTTP request. */
     public Request request = null;
 
-    /** TODO: Description. */
+    /** The HTTP response. */
     public Response response = null;
 }
 

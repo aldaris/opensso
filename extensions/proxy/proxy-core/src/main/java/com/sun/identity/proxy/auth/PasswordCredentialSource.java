@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PasswordCredentialSource.java,v 1.1 2009-10-06 19:44:20 pbryan Exp $
+ * $Id: PasswordCredentialSource.java,v 1.2 2009-10-09 07:38:36 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,31 +30,16 @@ import com.sun.identity.proxy.http.Request;
 import java.io.IOException;
 
 /**
- * TODO: Description.
+ * The base interface for all username/password credentials.
  *
  * @author Paul C. Bryan
  */
 public interface PasswordCredentialSource extends CredentialSource {
 
-	/**
-	 * Returns the credentials that are appropriate for the current request.
-	 * Typically, credentials are associated with a particular principal, or
-	 * with attributes supplied in the request and/or session.
-	 *
-	 * @param request the incoming request to establish credentials for.
-	 * @return the matching credentials, or null if none could be found.
-	 */
+    @Override
 	public PasswordCredentials credentials(Request request);
 
-    /**
-     * Called when the supplied credentials are not valid. For example, this
-     * method gives the credential source object the opportunity to redirect
-     * the user agent to a service to manage credientials.
-     *
-     * @param exchange TODO.
-     * @throws IOException TODO.
-     * @throws HandlerException TODO.
-     */
+    @Override
 	public void invalid(Exchange exchange) throws HandlerException, IOException;
 }
 

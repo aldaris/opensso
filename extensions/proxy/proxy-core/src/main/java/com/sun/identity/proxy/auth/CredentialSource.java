@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CredentialSource.java,v 1.2 2009-10-06 19:44:19 pbryan Exp $
+ * $Id: CredentialSource.java,v 1.3 2009-10-09 07:38:36 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,7 @@ import com.sun.identity.proxy.http.Request;
 import java.io.IOException;
 
 /**
- * The base class for all sources of credentials.
+ * The base interface for all sources of credentials.
  *
  * @author Paul C. Bryan
  */
@@ -42,18 +42,18 @@ public interface CredentialSource {
 	 * with attributes supplied in the request and/or session.
 	 *
 	 * @param request the incoming request to establish credentials for.
-	 * @return the matching credentials, or null if none could be found.
+	 * @return the corresponding matching credentials, or <tt>null</tt> if none could be found.
 	 */
 	public Credentials credentials(Request request);
 
     /**
      * Called when the supplied credentials are not valid. For example, this
-     * method gives the credential source object the opportunity to redirect
-     * the user agent to a service to manage credientials.
+     * method gives the credential source the opportunity to redirect the user
+     * to a service to manage credentials.
      *
      * @param exchange the HTTP exchange that triggered invalid credentials.
-     * @throws IOException if an I/O error occurs.
-     * @throws HandlerException if an exception handling the exchange occurs.
+     * @throws HandlerException if an exception occurs that prevents handling the exchange.
+     * @throws IOException if an I/O exception occurs.
      */
 	public void invalid(Exchange exchange) throws HandlerException, IOException;
 }

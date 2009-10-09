@@ -17,24 +17,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PasswordCredentials.java,v 1.2 2009-10-09 07:38:36 pbryan Exp $
+ * $Id: Session.java,v 1.1 2009-10-09 07:38:37 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.proxy.auth;
+package com.sun.identity.proxy.http;
+
+import java.util.HashMap;
 
 /**
- * Contains the username/password pair of user credentials.
+ * Provides a mechanism for the storage of attributes associated with a
+ * specific client and principal.
+ * <p>
+ * Handlers are guaranteed that an incoming request contains a session object
+ * that will persist from one request to the next for the same client and
+ * principal. If the session object is empty upon returning response to the
+ * client, the container is free to remove any cookies or other session
+ * persistence mechanism resources.
  *
  * @author Paul C. Bryan
  */
-public class PasswordCredentials implements Credentials
-{
-    /** The user's unique identifier. */
-    public String username;
-
-    /** The user's password, in plaintext. */
-    public String password;
+public class Session extends HashMap<String, Object> {
 }
 
