@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BasicAuthProxy.java,v 1.2 2009-10-09 07:38:39 pbryan Exp $
+ * $Id: BasicAuthProxy.java,v 1.1 2009-10-09 14:27:04 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
