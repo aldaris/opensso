@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmAddServiceAttributes.java,v 1.2 2008-06-25 05:42:16 qcheng Exp $
+ * $Id: RealmAddServiceAttributes.java,v 1.3 2009-10-09 23:14:26 veiming Exp $
  *
  */
 
@@ -42,9 +42,15 @@ import com.sun.identity.cli.RequestContext;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
+import java.security.AccessController;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,6 +66,7 @@ public class RealmAddServiceAttributes extends AuthenticatedCommand {
      * @param rc Request Context.
      * @throw CLIException if the request cannot serviced.
      */
+    @Override
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
@@ -85,6 +92,8 @@ public class RealmAddServiceAttributes extends AuthenticatedCommand {
 
             OrganizationConfigManager ocm = new OrganizationConfigManager(
                 adminSSOToken, realm);
+            Map<String, Boolean> mapAttrType = getMultipleValueAttrs(
+                serviceName);
             Set assignedServices = ocm.getAssignedServices(true);
 
             AMIdentityRepository repo = new AMIdentityRepository(
@@ -99,7 +108,7 @@ public class RealmAddServiceAttributes extends AuthenticatedCommand {
                 
                 Map origValues = ocm.getServiceAttributes(serviceName);
                 if (AttributeValues.mergeAttributeValues(
-                    origValues, attributeValues, true)
+                    origValues, attributeValues, mapAttrType, true)
                 ) {
                     ocm.modifyService(serviceName, origValues);
                 }
@@ -113,7 +122,7 @@ public class RealmAddServiceAttributes extends AuthenticatedCommand {
                     "ATTEMPT_REALM_ADD_SERVICE_ATTR_VALUES", params);
                 Map origValues = ai.getServiceAttributes(serviceName);
                 if (AttributeValues.mergeAttributeValues(
-                    origValues, attributeValues, true)
+                    origValues, attributeValues, mapAttrType, true)
                  ) {
                     ai.modifyService(serviceName, origValues);
                 }
@@ -154,6 +163,40 @@ public class RealmAddServiceAttributes extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_REALM_ADD_SERVICE_ATTR_VALUES", args);
             throw new CLIException(e,ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+    }
+
+    private Map<String, Boolean> getMultipleValueAttrs(String serviceName)
+        throws SMSException, SSOException {
+        Map<String, Boolean> result = new HashMap<String, Boolean>();
+        SSOToken superAdminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        ServiceSchemaManager ssm = new ServiceSchemaManager(serviceName,
+            superAdminToken);
+        ServiceSchema schema = ssm.getOrganizationSchema();
+        if (schema != null) {
+            getMultipleValueAttrs(schema, result);
+        }
+        schema = ssm.getDynamicSchema();
+        if (schema != null) {
+            getMultipleValueAttrs(schema, result);
+        }
+        return result;
+    }
+
+    private void getMultipleValueAttrs(
+        ServiceSchema schema,
+        Map<String, Boolean> result) {
+        Set<String> attrNames = schema.getServiceAttributeNames();
+        for (String n : attrNames) {
+            AttributeSchema as = schema.getAttributeSchema(n);
+            AttributeSchema.Type type = as.getType();
+            if (type.equals(AttributeSchema.Type.LIST) ||
+                type.equals(AttributeSchema.Type.MULTIPLE_CHOICE)) {
+                result.put(n, true);
+            } else {
+                result.put(n, false);
+            }
         }
     }
 }

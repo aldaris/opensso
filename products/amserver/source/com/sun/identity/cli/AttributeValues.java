@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValues.java,v 1.9 2008-07-14 21:08:57 veiming Exp $
+ * $Id: AttributeValues.java,v 1.10 2009-10-09 23:14:26 veiming Exp $
  *
  */
 
@@ -235,7 +235,48 @@ public class AttributeValues {
         }
         return values;
     }
-    
+
+    /**
+     * Merage two attribute values map.
+     *
+     * @param map1 Map of String of Set of String.
+     * @param map2 Map of String of Set of String.
+     * @param multipleAttributesMap map of attribute name to <code>true</code>
+     *        if the attribute type is multiple.
+     * @param bAdd <code>true</code> to add the values of <code>map2</code>
+     *        <code>map1</code>. <code>false</code> to remove values of
+     *        <code>map2</code> from <code>map1</code>.
+     * @return <code>true</code. is <code>map1</code> is altered.
+     */
+    public static boolean mergeAttributeValues(
+        Map map1,
+        Map map2,
+        Map<String, Boolean> multipleAttributesMap,
+        boolean bAdd
+    ) {
+        boolean modified = false;
+        for (Iterator i = map2.keySet().iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            Set orig = (Set)map1.get(key);
+
+            Boolean b = multipleAttributesMap.get(key);
+            boolean multipleTyped =  ((b != null) && b.booleanValue());
+
+            if (!multipleTyped) {
+                map1.put(key, (Set)map2.get(key));
+                modified = true;
+            } else if ((orig != null) && !orig.isEmpty()) {
+                modified = (bAdd) ? orig.addAll((Set)map2.get(key)) :
+                    orig.removeAll((Set)map2.get(key));
+            } else if (bAdd) {
+                map1.put(key, (Set)map2.get(key));
+                modified = true;
+            }
+        }
+        return modified;
+    }
+
+
     /**
      * Merage two attribute values map.
      *
