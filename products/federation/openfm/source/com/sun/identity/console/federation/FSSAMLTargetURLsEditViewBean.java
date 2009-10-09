@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLTargetURLsEditViewBean.java,v 1.3 2008-06-25 05:49:35 qcheng Exp $
+ * $Id: FSSAMLTargetURLsEditViewBean.java,v 1.4 2009-10-09 18:29:01 babysunil Exp $
  *
  */
 
@@ -140,9 +140,24 @@ public class FSSAMLTargetURLsEditViewBean
     protected boolean startPageTrail() {
         return false;
     }
-    
+
     /**
      * Handles reset request.
+     *
+     * @param event Request Invocation Event.
+     */
+    public void handleButton2Request(RequestInvocationEvent event) {
+        FSSAMLTargetURLsEditViewBean vb = (FSSAMLTargetURLsEditViewBean)
+            getViewBean(FSSAMLTargetURLsEditViewBean.class);
+        backTrail();
+        unlockPageTrailForSwapping();
+        passPgSessionMap(vb);
+        populateValues = true;
+        vb.forwardTo(getRequestContext());
+    }
+    
+    /**
+     * Handles back request.
      *
      * @param event Request Invocation Event.
      */

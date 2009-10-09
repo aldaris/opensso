@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLSiteIDEditViewBean.java,v 1.3 2008-06-25 05:49:35 qcheng Exp $
+ * $Id: FSSAMLSiteIDEditViewBean.java,v 1.4 2009-10-09 18:29:01 babysunil Exp $
  *
  */
 
@@ -80,7 +80,7 @@ public class FSSAMLSiteIDEditViewBean
             "com/sun/identity/console/threeBtnsPageTitle.xml"));
         ptModel.setPageTitleText("saml.profile.siteid.edit.page.title");
         ptModel.setValue("button1", "button.save");
-        ptModel.setValue("button2", "button.cancel");
+        ptModel.setValue("button2", "button.reset");
         ptModel.setValue("button3", "button.back");
     }
     
