@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: exportmetadata.jsp,v 1.6 2009-09-21 17:28:12 exu Exp $
+   $Id: exportmetadata.jsp,v 1.7 2009-10-09 18:36:00 sean_brydon Exp $
 
 
    NOTE : remove this JSP from the OpenSSO WAR if you don't want to 
@@ -33,7 +33,10 @@
             com.sun.identity.saml2.meta.SAML2MetaManager,
             com.sun.identity.saml2.meta.SAML2MetaUtils,
             java.util.List"
-%><%
+%>
+<%@ page import="org.owasp.esapi.ESAPI" %>
+<%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
+<%
     // This JSP is used to export standard entity metadata, 
     // there are three supported query parameters:
     //    * role     -- role of the entity: sp, idp or any
@@ -48,6 +51,7 @@
     String metaXML = null;
     String errorMsg = null;
     try {
+        SAMLUtils.checkHTTPContentLength(request);
         String role = request.getParameter("role");
         if ((role == null) || (role.length() == 0)) {
             // default role is any if not specified
@@ -91,8 +95,11 @@
             metaXML = SAML2MetaUtils.exportStandardMeta(realm, entityID,
                 sign);
             if (metaXML == null) {
-                errorMsg = "No metadata for entity \"" + entityID +
-                    "\" under realm \"" + realm + "\" found.";
+                errorMsg = "No metadata for entity \"" 
+                           + ESAPI.encoder().encodeForHTML(entityID) 
+                           + "\" under realm \"" 
+                           + ESAPI.encoder().encodeForHTML(realm)
+                           + "\" found.";
             }
         }
     } catch (Exception e) {
