@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.15 2009-09-21 18:33:45 dillidorai Exp $
+ * $Id: ResourceResultCache.java,v 1.16 2009-10-12 17:53:05 dillidorai Exp $
  *
  */
 
@@ -90,6 +90,8 @@ import java.util.Set;
 import com.sun.identity.policy.ResBundleUtils;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -547,8 +549,7 @@ class ResourceResultCache implements SSOTokenListener {
         // changed to fix 4205 Policy client code has bottleneck when processing notificati 
         // FIXME: remove the check for service name with the some fix on server
         if (fetchResultsFromServer) {
-            if(policyProperties.useRESTProtocol() &&
-                    PolicyProperties.SELF.equals(scope)
+            if(policyProperties.useRESTProtocol() 
                     && IPLANET_AM_WEB_AGENT_SERVICE.equalsIgnoreCase(serviceName)) {
                 resourceResults = getRESTResultsFromServer(appToken, 
                         serviceName, token, resourceName, scope, 
@@ -600,13 +601,12 @@ class ResourceResultCache implements SSOTokenListener {
             Set actionNames, Map env) 
             throws InvalidAppSSOTokenException, SSOException,
             PolicyException {
-        // FIXME: handle scope subtree, right now works only for self mode
-        Set resourceResults = new HashSet();
+        Set<ResourceResult> resourceResults = null;
         try {        
             AMIdentity userIdentity  = IdUtils.getIdentity(token);
             //FIXME: need to be able to handle non uuid, for example ssoTokenId
             String subjectUuid = userIdentity.getUniversalId();
-            String restUrl = getRESTPolicyServiceURL(token);
+            String restUrl = getRESTPolicyServiceURL(token, scope);
             String queryString = buildQueryString("/", serviceName, subjectUuid,
                     resourceName, actionNames, env);
             restUrl = restUrl + "?" + queryString;
@@ -625,31 +625,8 @@ class ResourceResultCache implements SSOTokenListener {
                 debug.message("ResourceResultCache.getRESTResultsFromServer():"
                         + ":server response jsonString=" + jsonString); 
             }
-            JSONObject jsonObject = new JSONObject(jsonString);
-            String resultResourceName = jsonObject.optString(JSON_RESOURCE_NAME); 
-            Map<String, Set<String>> actionsValues = JSONUtils.getMapStringSetString(
-                    jsonObject, JSON_ACTIONS_VALUES);
-            Map<String, Set<String>> advices = JSONUtils.getMapStringSetString(
-                    jsonObject, JSON_ADVICES);
-            Map<String, Set<String>> attributes = JSONUtils.getMapStringSetString(
-                    jsonObject, JSON_ATTRIBUTES);
-            Set<String> actNames = (actionsValues != null) 
-                    ? actionsValues.keySet() : null;
-            PolicyDecision pd = new PolicyDecision();
-            if (actNames != null) {
-                for (String actName : actNames) {
-                    Set<String> actValues = actionsValues.get(actName);
-                    actValues  = mapActionBooleanToString(serviceName, actName, actValues);
-                    ActionDecision ad = new ActionDecision(actName, actValues);
-                    ad.setAdvices(advices);
-                    pd.addActionDecision(ad);
-                }
-            }
-            pd.setResponseDecisions(attributes);
-            ResourceResult rr = new ResourceResult(
-                    resourceName,
-                    pd);
-            resourceResults.add(rr);
+            resourceResults 
+                    = jsonResourceContentToResourceResults(jsonString, serviceName);
         } catch (Exception e) {
             String[] args = {e.getMessage()};
             throw new PolicyEvaluationException(
@@ -1662,11 +1639,15 @@ class ResourceResultCache implements SSOTokenListener {
         return hasAdvices;
     }
     
-    private String getRESTPolicyServiceURL(SSOToken token) throws SSOException, PolicyException {
+    private String getRESTPolicyServiceURL(SSOToken token, String scope) 
+            throws SSOException, PolicyException {
         String restUrl = null;
         URL policyServiceURL = getPolicyServiceURL(token);
         restUrl = policyServiceURL.toString();
         restUrl = restUrl.replace(POLICY_SERVICE, REST_POLICY_SERVICE);
+        if (PolicyProperties.SUBTREE.equals(scope)) {
+            restUrl = restUrl + "s";
+        }
         if (debug.messageEnabled()) {
             debug.message("ResourceResultCache.getRESTPolicyServiceURL():"
                 + "restPolicyServiceUrl=" + restUrl);
@@ -1817,6 +1798,72 @@ class ResourceResultCache implements SSOTokenListener {
             debug.error("ResourceResultCache.buildQueryString():" + use.getMessage());
         }
         return sb.toString();
+    }
+
+    Set<ResourceResult> jsonResourceContentToResourceResults(
+            String jsonResourceContent, String serviceName) 
+            throws JSONException, PolicyException {
+        Set<ResourceResult> resourceResults = null;
+        JSONObject jsonObject = new JSONObject(jsonResourceContent);
+        JSONArray jsonArray = jsonObject.optJSONArray("results");
+        if (jsonArray != null) {
+                ResourceName resourceComparator =
+                        (ResourceName)policyProperties.getResourceComparator(
+                        serviceName);
+                ResourceResult virtualResourceResult = new ResourceResult(
+                    ResourceResult.VIRTUAL_ROOT,
+                    new PolicyDecision());
+                int arrayLen = jsonArray.length();
+                for (int i = 0; i < arrayLen; i++) {
+                    JSONObject jo = jsonArray.optJSONObject(i);
+                    if (jo != null) {
+                        ResourceResult rr = jsonEntitlementToResourceResult(jo, 
+                                serviceName);
+                        virtualResourceResult.addResourceResult(rr, resourceComparator);
+                    }
+                }
+                resourceResults = virtualResourceResult.getResourceResults();
+        } else {
+            String resourceName = jsonObject.optString("resourceName");
+            if (resourceName != null) {
+                ResourceResult resourceResult 
+                        = jsonEntitlementToResourceResult(jsonObject, serviceName);
+                resourceResults = new HashSet<ResourceResult>();
+                resourceResults.add(resourceResult);
+            } else {
+                //FIXME: throw exception with the message from JSONObject
+            }
+        }
+
+        return resourceResults;
+    }
+
+    ResourceResult jsonEntitlementToResourceResult(JSONObject jsonEntitlement, 
+            String serviceName) throws JSONException {
+        String resultResourceName = jsonEntitlement.optString(JSON_RESOURCE_NAME); 
+        Map<String, Set<String>> actionsValues = JSONUtils.getMapStringSetString(
+                jsonEntitlement, JSON_ACTIONS_VALUES);
+        Map<String, Set<String>> advices = JSONUtils.getMapStringSetString(
+                jsonEntitlement, JSON_ADVICES);
+        Map<String, Set<String>> attributes = JSONUtils.getMapStringSetString(
+                jsonEntitlement, JSON_ATTRIBUTES);
+        Set<String> actNames = (actionsValues != null) 
+                ? actionsValues.keySet() : null;
+        PolicyDecision pd = new PolicyDecision();
+        if (actNames != null) {
+            for (String actName : actNames) {
+                Set<String> actValues = actionsValues.get(actName);
+                actValues  = mapActionBooleanToString(serviceName, actName, actValues);
+                ActionDecision ad = new ActionDecision(actName, actValues);
+                ad.setAdvices(advices);
+                pd.addActionDecision(ad);
+            }
+        }
+        pd.setResponseDecisions(attributes);
+        ResourceResult resourceResult = new ResourceResult(
+                resultResourceName,
+                pd);
+        return resourceResult;
     }
 
 }

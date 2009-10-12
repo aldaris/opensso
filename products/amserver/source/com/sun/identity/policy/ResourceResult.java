@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResult.java,v 1.4 2008-06-25 05:43:45 qcheng Exp $
+ * $Id: ResourceResult.java,v 1.5 2009-10-12 17:53:05 dillidorai Exp $
  *
  */
 
@@ -75,7 +75,7 @@ public class ResourceResult {
      * resoure name.  Any resource name is considered to be sub resource of 
      * this resource name.
      */
-    static final String VIRTUAL_ROOT = "-__viRTuAl-rOot--_";
+    static final public String VIRTUAL_ROOT = "-__viRTuAl-rOot--_";
 
     static final String RESOURCE_RESULT = "ResourceResult";
     static final String RESOURCE_NAME = "name";
