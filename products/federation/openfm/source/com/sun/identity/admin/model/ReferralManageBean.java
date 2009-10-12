@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageBean.java,v 1.2 2009-09-30 14:39:16 farble1670 Exp $
+ * $Id: ReferralManageBean.java,v 1.3 2009-10-12 20:51:58 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.icesoft.faces.component.datapaginator.DataPaginator;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.dao.ReferralDao;
 import java.io.Serializable;
@@ -42,11 +43,11 @@ public class ReferralManageBean implements Serializable {
     private List<FilterHolder> filterHolders = new ArrayList<FilterHolder>();
     private Map<String,ViewFilterType> viewFilterTypes;
     private ReferralManageTableBean referralManageTableBean = new ReferralManageTableBean();
-    private boolean selectAll;
     private boolean removePopupVisible = false;
     private boolean viewOptionsPopupVisible = false;
     private List<String> viewOptionsPopupColumnsVisible = new ArrayList<String>();
     private int viewOptionsPopupRows = 10;
+    private DataPaginator dataPaginator;
 
     public List<ReferralBean> getReferralBeans() {
         return referralBeans;
@@ -74,14 +75,6 @@ public class ReferralManageBean implements Serializable {
 
     public ReferralManageTableBean getReferralManageTableBean() {
         return referralManageTableBean;
-    }
-
-    public boolean isSelectAll() {
-        return selectAll;
-    }
-
-    public void setSelectAll(boolean selectAll) {
-        this.selectAll = selectAll;
     }
 
     public void setViewFilterTypes(Map<String,ViewFilterType> viewFilterTypes) {
@@ -150,6 +143,14 @@ public class ReferralManageBean implements Serializable {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         ReferralManageBean rmb = (ReferralManageBean)mbr.resolve("referralManageBean");
         return rmb;
+    }
+
+    public DataPaginator getDataPaginator() {
+        return dataPaginator;
+    }
+
+    public void setDataPaginator(DataPaginator dataPaginator) {
+        this.dataPaginator = dataPaginator;
     }
 
 }

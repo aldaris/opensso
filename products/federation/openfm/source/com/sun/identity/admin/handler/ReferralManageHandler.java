@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageHandler.java,v 1.2 2009-09-30 14:39:15 farble1670 Exp $
+ * $Id: ReferralManageHandler.java,v 1.3 2009-10-12 20:51:58 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -58,9 +58,22 @@ public class ReferralManageHandler implements Serializable {
     }
 
     public void selectAllListener(ActionEvent event) {
-        referralManageBean.setSelectAll(!referralManageBean.isSelectAll());
-        for (ReferralBean rb : referralManageBean.getReferralBeans()) {
-            rb.setSelected(referralManageBean.isSelectAll());
+        selectListener(event, true);
+    }
+
+    public void selectNoneListener(ActionEvent event) {
+        selectListener(event, false);
+    }
+
+    private void selectListener(ActionEvent event, boolean select) {
+        int size = referralManageBean.getReferralBeans().size();
+        int first = referralManageBean.getDataPaginator().getFirstRow();
+        int rows = referralManageBean.getDataPaginator().getRows();
+        int last = Math.min(first+rows, size);
+
+        for (int i = first; i < last; i++) {
+            ReferralBean rb = referralManageBean.getReferralBeans().get(i);
+            rb.setSelected(select);
         }
     }
 

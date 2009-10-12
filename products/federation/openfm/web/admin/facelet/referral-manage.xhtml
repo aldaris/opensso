@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-manage.xhtml,v 1.1 2009-08-19 05:41:08 veiming Exp $
+   $Id: referral-manage.xhtml,v 1.2 2009-10-12 20:51:59 farble1670 Exp $
 -->
 
 <ui:composition
@@ -117,11 +117,19 @@
 
                         <ice:column>
                             <f:facet name="header">
-                                <ice:commandLink
-                                    actionListener="#{referralManageHandler.selectAllListener}">
-                                    <ice:graphicImage
-                                        value="../image/select-all.png"/>
-                                </ice:commandLink>
+                                <ice:panelGrid
+                                    columns="2">
+                                    <ice:commandLink
+                                        actionListener="#{referralManageHandler.selectAllListener}">
+                                        <ice:graphicImage
+                                            value="../image/select-all.png"/>
+                                    </ice:commandLink>
+                                    <ice:commandLink
+                                        actionListener="#{referralManageHandler.selectNoneListener}">
+                                        <ice:graphicImage
+                                            value="../image/select-none.gif"/>
+                                    </ice:commandLink>
+                                </ice:panelGrid>
                             </f:facet>
                             <ice:selectBooleanCheckbox
                                 value="#{referralBean.selected}">
@@ -323,6 +331,7 @@
                         <ice:panelGrid
                             columns="1" >
                             <ice:dataPaginator
+                                binding="#{referralManageBean.dataPaginator}"
                                 for="referralManageTable"
                                 rowsCountVar="rowsCount"
                                 displayedRowsCountVar="displayedRowsCountVar"
