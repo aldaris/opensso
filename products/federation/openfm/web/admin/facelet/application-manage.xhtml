@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-manage.xhtml,v 1.9 2009-09-30 22:53:36 farble1670 Exp $
+   $Id: application-manage.xhtml,v 1.10 2009-10-12 21:47:01 farble1670 Exp $
 -->
 
 <ui:composition
@@ -117,11 +117,19 @@
 
                         <ice:column>
                             <f:facet name="header">
-                                <ice:commandLink
-                                    actionListener="#{applicationManageHandler.selectAllListener}">
-                                    <ice:graphicImage
-                                        value="../image/select-all.png"/>
-                                </ice:commandLink>
+                                <ice:panelGrid
+                                    columns="2">
+                                    <ice:commandLink
+                                        actionListener="#{applicationManageHandler.selectAllListener}">
+                                        <ice:graphicImage
+                                            value="../image/select-all.png"/>
+                                    </ice:commandLink>
+                                    <ice:commandLink
+                                        actionListener="#{applicationManageHandler.selectNoneListener}">
+                                        <ice:graphicImage
+                                            value="../image/select-none.gif"/>
+                                    </ice:commandLink>
+                                </ice:panelGrid>
                             </f:facet>
                             <ice:selectBooleanCheckbox
                                 value="#{viewApplication.selected}">
@@ -328,6 +336,7 @@
                         <ice:panelGrid
                             columns="1" >
                             <ice:dataPaginator
+                                binding="#{applicationManageBean.dataPaginator}"
                                 for="applicationManageTable"
                                 rowsCountVar="rowsCount"
                                 displayedRowsCountVar="displayedRowsCountVar"

@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageBean.java,v 1.5 2009-09-30 22:53:35 farble1670 Exp $
+ * $Id: ApplicationManageBean.java,v 1.6 2009-10-12 21:47:00 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.icesoft.faces.component.datapaginator.DataPaginator;
 import com.sun.identity.admin.dao.ViewApplicationDao;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,7 +39,6 @@ public class ApplicationManageBean implements Serializable {
     private List<ViewApplication> viewApplications;
     private ViewApplicationDao viewApplicationDao;
     private ApplicationManageTableBean applicationManageTableBean = new ApplicationManageTableBean();
-    private boolean selectAll = false;
     private boolean viewOptionsPopupVisible = false;
     private List<String> viewOptionsPopupColumnsVisible = new ArrayList<String>();
     private int viewOptionsPopupRows = 10;
@@ -46,6 +46,7 @@ public class ApplicationManageBean implements Serializable {
     private List<FilterHolder> filterHolders = new ArrayList<FilterHolder>();
     private boolean removePopupVisible = false;
     private Map<String,ViewFilterType> viewFilterTypes;
+    private DataPaginator dataPaginator;
 
     public void newFilterHolder() {
         FilterHolder fh = new FilterHolder();
@@ -70,14 +71,6 @@ public class ApplicationManageBean implements Serializable {
         viewApplications = new ArrayList<ViewApplication>(viewApplicationDao.getViewApplications(searchFilter, filterHolders).values());
         applicationManageTableBean.setViewApplications(viewApplications);
         applicationManageTableBean.sort();
-    }
-
-    public boolean isSelectAll() {
-        return selectAll;
-    }
-
-    public void setSelectAll(boolean selectAll) {
-        this.selectAll = selectAll;
     }
 
     public boolean isViewOptionsPopupVisible() {
@@ -152,5 +145,13 @@ public class ApplicationManageBean implements Serializable {
 
     public void setFilterHolders(List<FilterHolder> filterHolders) {
         this.filterHolders = filterHolders;
+    }
+
+    public DataPaginator getDataPaginator() {
+        return dataPaginator;
+    }
+
+    public void setDataPaginator(DataPaginator dataPaginator) {
+        this.dataPaginator = dataPaginator;
     }
 }

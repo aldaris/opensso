@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageHandler.java,v 1.4 2009-09-30 22:53:35 farble1670 Exp $
+ * $Id: ApplicationManageHandler.java,v 1.5 2009-10-12 21:47:00 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -86,9 +86,22 @@ public class ApplicationManageHandler implements Serializable {
     }
 
     public void selectAllListener(ActionEvent event) {
-        applicationManageBean.setSelectAll(!applicationManageBean.isSelectAll());
-        for (ViewApplication va: applicationManageBean.getViewApplications()) {
-            va.setSelected(applicationManageBean.isSelectAll());
+        selectListener(event, true);
+    }
+
+    public void selectNoneListener(ActionEvent event) {
+        selectListener(event, false);
+    }
+
+    private void selectListener(ActionEvent event, boolean select) {
+        int size = applicationManageBean.getViewApplications().size();
+        int first = applicationManageBean.getDataPaginator().getFirstRow();
+        int rows = applicationManageBean.getDataPaginator().getRows();
+        int last = Math.min(first+rows, size);
+
+        for (int i = first; i < last; i++) {
+            ViewApplication va = applicationManageBean.getViewApplications().get(i);
+            va.setSelected(select);
         }
     }
 
