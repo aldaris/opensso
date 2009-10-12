@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.20 2009-03-18 00:18:53 qcheng Exp $
+ * $Id: SystemProperties.java,v 1.21 2009-10-12 17:55:06 alanchu Exp $
  *
  */
 
@@ -50,6 +50,7 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * This class provides functionality that allows single-point-of-access to all
@@ -73,7 +74,8 @@ import java.util.Set;
  */
 public class SystemProperties {
     private static String instanceName;
-    
+    private static ReentrantReadWriteLock rwLock = new
+        ReentrantReadWriteLock();
     private static Map attributeMap = new HashMap();
     private static boolean isSSOAdm = Boolean.valueOf(
         System.getProperty("ssoadm", "false")).booleanValue();
@@ -249,52 +251,59 @@ public class SystemProperties {
      * @return the value if the key exists; otherwise returns <code>null</code>
      */
     public static String get(String key) {
-        String answer = null;
+        rwLock.readLock().lock();
 
-        // look up values in SMS services only if in server mode.
-        if (isServerMode() || isSSOAdm) {
-            AttributeStruct ast = (AttributeStruct)attributeMap.get(key);
-            if (ast != null) {
-                answer = PropertiesFinder.getProperty(key, ast);
+        try {
+            String answer = null;
+
+            // look up values in SMS services only if in server mode.
+            if (isServerMode() || isSSOAdm) {
+                AttributeStruct ast = (AttributeStruct) attributeMap.get(key);
+                if (ast != null) {
+                    answer = PropertiesFinder.getProperty(key, ast);
+                }
             }
-        }
-        
-        if (answer == null) {
-            answer = getProp(key);
 
-            if ((answer != null) && (tagswapValues != null)) {
-                Set set = new HashSet();
-                set.addAll(tagswapValues.keySet());
-                
-                for (Iterator i = set.iterator(); i.hasNext(); ) {
-                    String k = (String)i.next();
-                    String val = (String)tagswapValues.get(k);
-                    
-                    if (k.equals("%SERVER_URI%")) {
-                        if ((val != null) && (val.length() > 0)) {
-                            if (val.charAt(0) == '/') {
-                                answer = answer.replaceAll("/%SERVER_URI%", 
-                                    val);
-                                String lessSlash = val.substring(1);
-                                answer = answer.replaceAll("%SERVER_URI%", 
-                                    lessSlash);
-                            } else {
-                                answer = answer.replaceAll(k, val);
+            if (answer == null) {
+                answer = getProp(key);
+
+                if ((answer != null) && (tagswapValues != null)) {
+                    Set set = new HashSet();
+                    set.addAll(tagswapValues.keySet());
+
+                    for (Iterator i = set.iterator(); i.hasNext();) {
+                        String k = (String) i.next();
+                        String val = (String) tagswapValues.get(k);
+
+                        if (k.equals("%SERVER_URI%")) {
+                            if ((val != null) && (val.length() > 0)) {
+                                if (val.charAt(0) == '/') {
+                                    answer = answer.replaceAll("/%SERVER_URI%",
+                                        val);
+                                    String lessSlash = val.substring(1);
+                                    answer = answer.replaceAll("%SERVER_URI%",
+                                        lessSlash);
+                                } else {
+                                    answer = answer.replaceAll(k, val);
+                                }
                             }
+                        } else {
+                            answer = answer.replaceAll(k, val);
                         }
-                    } else {
-                        answer = answer.replaceAll(k, val);
+                    }
+
+                    if (answer.indexOf("%ROOT_SUFFIX%") != -1) {
+                        answer = answer.replaceAll("%ROOT_SUFFIX%",
+                            SMSEntry.getAMSdkBaseDN());
                     }
                 }
-
-                if (answer.indexOf("%ROOT_SUFFIX%") != -1) {
-                    answer = answer.replaceAll("%ROOT_SUFFIX%",
-                        SMSEntry.getAMSdkBaseDN());
-                }
             }
+
+
+            return (answer);
+        } finally {
+            rwLock.readLock().unlock();
         }
-        
-        return (answer);
     }
 
     private static String getProp(String key, String def) {
@@ -329,9 +338,14 @@ public class SystemProperties {
      * @return Properties object with all the key value pairs.
      */
     public static Properties getProperties() {
-        Properties properties = new Properties();
-        properties.putAll(props);
-        return properties;
+        rwLock.readLock().lock();
+        try {
+            Properties properties = new Properties();
+            properties.putAll(props);
+            return properties;
+        } finally {
+            rwLock.readLock().unlock();
+        }
     }
     
     /**
@@ -343,19 +357,25 @@ public class SystemProperties {
      * 
      */
     public static Properties getAll() {
-        Properties properties = new Properties();
-        properties.putAll(props);
-        // Iterate over the System Properties & add them in result obj
-        Iterator it = System.getProperties().entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry) it.next();
-            String key = (String) entry.getKey();
-            String val = (String) entry.getValue();
-            if ((key != null) && (key.length() > 0)) {
-                properties.setProperty(key, val);
+        rwLock.readLock().lock();
+
+        try {
+            Properties properties = new Properties();
+            properties.putAll(props);
+            // Iterate over the System Properties & add them in result obj
+            Iterator it = System.getProperties().entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry entry = (Map.Entry) it.next();
+                String key = (String) entry.getKey();
+                String val = (String) entry.getValue();
+                if ((key != null) && (key.length() > 0)) {
+                    properties.setProperty(key, val);
+                }
             }
+            return properties;
+        } finally {
+            rwLock.readLock().unlock();
         }
-        return properties;
     }
 
     /**
@@ -390,24 +410,29 @@ public class SystemProperties {
      * @param file type <code>String</code>, file name for the resource bundle
      * @exception MissingResourceException
      */
-    public static synchronized void initializeProperties(String file)
-            throws MissingResourceException {
-        ResourceBundle bundle = ResourceBundle.getBundle(file);
-        // Copy the properties to props
-        Enumeration e = bundle.getKeys();
-        Properties newProps = new Properties();
-        newProps.putAll(props);
-        while (e.hasMoreElements()) {
-            String key = (String) e.nextElement();
-            newProps.put(key, bundle.getString(key));
+    public static void initializeProperties(String file)
+        throws MissingResourceException {
+        rwLock.writeLock().lock();
+        try {
+            ResourceBundle bundle = ResourceBundle.getBundle(file);
+            // Copy the properties to props
+            Enumeration e = bundle.getKeys();
+            Properties newProps = new Properties();
+            newProps.putAll(props);
+            while (e.hasMoreElements()) {
+                String key = (String) e.nextElement();
+                newProps.put(key, bundle.getString(key));
+            }
+            // Reset the last modified time
+            props = newProps;
+            updateTagswapMap(props);
+            lastModified = System.currentTimeMillis();
+        } finally {
+            rwLock.writeLock().unlock();
         }
-        // Reset the last modified time
-        props = newProps;
-        updateTagswapMap(props);
-        lastModified = System.currentTimeMillis();
     }
 
-    public static synchronized void initializeProperties(Properties properties){
+    public static void initializeProperties(Properties properties){
         initializeProperties(properties, false);
     }
     
@@ -421,7 +446,7 @@ public class SystemProperties {
      * @param properties properties for OpenSSO
      * @param reset <code>true</code> to reset existing properties.
      */
-    public static synchronized void initializeProperties(
+    public static void initializeProperties(
         Properties properties,
         boolean reset) 
     {
@@ -439,30 +464,37 @@ public class SystemProperties {
      * @param reset <code>true</code> to reset existing properties.
      * @param withDefaults <code>true</code> to include default properties.
      */
-    public static synchronized void initializeProperties(
+    public static void initializeProperties(
         Properties properties,
         boolean reset,
-        boolean withDefaults) 
-    {
-        Properties newProps = new Properties();
-        
+        boolean withDefaults) {
+        Properties defaultProp = null;
         if (withDefaults) {
             SSOToken appToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-            Properties defaultProp = ServerConfiguration.getDefaults(appToken);
+            defaultProp = ServerConfiguration.getDefaults(appToken);
+        }
+
+        rwLock.writeLock().lock();
+
+        try {
+            Properties newProps = new Properties();
             if (defaultProp != null) {
                 newProps.putAll(defaultProp);
             }
-        }
 
-        if (!reset) {
-            newProps.putAll(props);
-        }
 
-        newProps.putAll(properties);
-        props = newProps;
-        updateTagswapMap(props);
-        lastModified = System.currentTimeMillis();
+            if (!reset) {
+                newProps.putAll(props);
+            }
+
+            newProps.putAll(properties);
+            props = newProps;
+            updateTagswapMap(props);
+            lastModified = System.currentTimeMillis();
+        } finally {
+            rwLock.writeLock().unlock();
+        }
     }
 
     /**
@@ -475,14 +507,22 @@ public class SystemProperties {
      * @param propertyName property name.
      * @param propertyValue property value.
      */
-    public static synchronized void initializeProperties(String propertyName,
-            String propertyValue) {
-        Properties newProps = new Properties();
-        newProps.putAll(props);
-        newProps.put(propertyName, propertyValue);
-        props = newProps;
-        updateTagswapMap(props);
-        lastModified = System.currentTimeMillis();
+    public static void initializeProperties(
+        String propertyName,
+        String propertyValue
+    ) {
+        rwLock.writeLock().lock();
+
+        try {
+            Properties newProps = new Properties();
+            newProps.putAll(props);
+            newProps.put(propertyName, propertyValue);
+            props = newProps;
+            updateTagswapMap(props);
+            lastModified = System.currentTimeMillis();
+        } finally {
+            rwLock.writeLock().unlock();
+        }
     }
 
     /**
@@ -553,6 +593,11 @@ public class SystemProperties {
      * @return Property name to service attribute schema name mapping.
      */
     public static Map getAttributeMap() {
-        return attributeMap;
+        rwLock.readLock().lock();
+        try {
+            return attributeMap;
+        } finally {
+            rwLock.readLock().unlock();
+        }
     }
 }
