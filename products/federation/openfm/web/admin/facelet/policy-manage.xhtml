@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-manage.xhtml,v 1.1 2009-08-19 05:41:08 veiming Exp $
+   $Id: policy-manage.xhtml,v 1.2 2009-10-12 18:38:58 farble1670 Exp $
 -->
 
 <ui:composition
@@ -469,6 +469,7 @@
                         <ice:panelGrid
                             columns="1" >
                             <ice:dataPaginator
+                                binding="#{policyManageBean.dataPaginator}"
                                 for="policyManageTable"
                                 rowsCountVar="rowsCount"
                                 displayedRowsCountVar="displayedRowsCountVar"

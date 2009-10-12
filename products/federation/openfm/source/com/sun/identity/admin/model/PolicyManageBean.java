@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManageBean.java,v 1.2 2009-09-30 14:39:16 farble1670 Exp $
+ * $Id: PolicyManageBean.java,v 1.3 2009-10-12 18:38:58 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import com.icesoft.faces.component.datapaginator.DataPaginator;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.dao.PolicyDao;
 import java.io.Serializable;
@@ -46,9 +47,9 @@ public class PolicyManageBean implements Serializable {
     private String searchFilter = "";
     private List<FilterHolder> filterHolders = new ArrayList<FilterHolder>();
     private Map<String,ViewFilterType> viewFilterTypes;
-    private boolean selectAll;
     private List<String> viewOptionsPopupColumnsVisible = new ArrayList<String>();
     private int viewOptionsPopupRows = 10;
+    private DataPaginator dataPaginator;
 
     public List<PrivilegeBean> getPrivilegeBeans() {
         return privilegeBeans;
@@ -124,14 +125,6 @@ public class PolicyManageBean implements Serializable {
         return size;
     }
 
-    public boolean isSelectAll() {
-        return selectAll;
-    }
-
-    public void setSelectAll(boolean selectAll) {
-        this.selectAll = selectAll;
-    }
-
     public boolean isRemovePopupVisible() {
         return removePopupVisible;
     }
@@ -168,5 +161,13 @@ public class PolicyManageBean implements Serializable {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         PolicyManageBean pmb = (PolicyManageBean)mbr.resolve("policyManageBean");
         return pmb;
+    }
+
+    public DataPaginator getDataPaginator() {
+        return dataPaginator;
+    }
+
+    public void setDataPaginator(DataPaginator dataPaginator) {
+        this.dataPaginator = dataPaginator;
     }
 }
