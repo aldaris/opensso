@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.87 2009-10-02 15:37:30 farble1670 Exp $
+   $Id: build.xml,v 1.88 2009-10-12 16:27:54 bigfatrat Exp $
 
 -->
 
@@ -63,6 +63,13 @@
     <!-- user specific properties -->
     <property file="${user.home}/.opensso"/>
     
+    <!-- amserver + built mib sources -->
+    <path id="amserver.src.dirs">
+	<pathelement location="${amserver.built.dir}/mib" />
+	<pathelement location="${amserver.src.dir}" />
+    </path>
+    <property name="amserver.src.dirs" refid="amserver.src.dirs" />
+
     <target name="build"
         depends="preparebuild,sharedlib,init-enterprise,init-not-enterprise">
         <antcall target="idsvcs" />
@@ -77,6 +84,7 @@
             <classpath refid="build.ent.class.path"/>
         </javac>
         
+	<antcall target="am-mib" />
         <property environment="env" />
         <echo message="compiling xacml3 schema to create java source " />
         <mkdir dir="${amserver.built.src.dir}" />
@@ -109,9 +117,9 @@
             destdir="${amserver.classes.dir}"
             source="${target.jdk.set}" target="${target.jdk.set}"
             debug="${build.debug}" debuglevel="${build.debuglevel}"
-            srcdir="${amserver.src.dir}"
             excludes="${amserver.build.exclude}"
          >
+            <src path="${amserver.src.dirs}" />
             <classpath refid="build.class.path"/>
         </javac>
 
@@ -424,6 +432,24 @@
     <target name="clientsdk-clean">
         <ant antfile="${amserver.clientsdkbase.dir}/build.xml"
              inheritRefs="true" target="clean"/>
+    </target>
+
+    <target name="am-mib">
+        <mkdir dir="${amserver.built.dir}/mib" />
+        <mkdir dir="${amserver.built.dir}/jdmk" />
+        <unzip src="${extlib.dir}/jdmk51_02-allplatforms.zip"
+            dest="${amserver.built.dir}/jdmk" />
+        <unzip src="${amserver.built.dir}/jdmk/sun-jdmk-sdk-5.1-b34.2.zip"
+            dest="${amserver.built.dir}/jdmk" />
+        <unzip src="${amserver.built.dir}/jdmk/sun-jdmk-runtime-5.1-b34.2.zip"
+            dest="${amserver.built.dir}/jdmk" />
+        <unzip src="${amserver.built.dir}/jdmk/sun-jdmk-runtime-jmx-5.1-b34.2.zip"
+            dest="${amserver.built.dir}/jdmk" />
+        <java classname="com.sun.jdmk.tools.MibGen" fork="true"
+            classpath="${amserver.built.dir}/jdmk/SUNWjdmk/5.1/lib/jmx.jar:${amserver.built.dir}/jdmk/SUNWjdmk/5.1/lib/jdmkrt.jar:${amserver.built.dir}/jdmk/SUNWjdmk/5.1/lib/jdmktk.jar">
+            <arg line="-d ${amserver.built.dir}/mib -tp com.sun.identity.monitoring ${amserver.base.dir}/resources/mib/SUN-OPENSSO-SERVER.mib"/>
+        </java>
+	<delete file="${amserver.built.dir}/mib/SUN_OPENSSO_SERVER_MIB.java" />
     </target>
 
     <target name="usage">
