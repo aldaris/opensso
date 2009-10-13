@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMProfileViewBean.java,v 1.2 2008-06-25 05:43:21 qcheng Exp $
+ * $Id: SMProfileViewBean.java,v 1.3 2009-10-13 21:17:03 asyhuang Exp $
  *
  */
 
@@ -346,8 +346,6 @@ public class SMProfileViewBean
      * @param event request invocation event.
      */
     public void handleServerNameHrefRequest(RequestInvocationEvent event) {
-        String value = (getDisplayFieldValue(CHILD_SERVER_NAME_MENU) != null)
-            ? (String) getDisplayFieldValue(CHILD_SERVER_NAME_MENU) : "";
         forwardTo();
     }
 
