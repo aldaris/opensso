@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.20 2009-08-29 03:05:57 mallas Exp $
+ * $Id: WSSUtils.java,v 1.21 2009-10-13 23:19:47 mallas Exp $
  *
  */
 
@@ -100,6 +100,7 @@ import com.sun.identity.wss.xmlenc.WSSEncryptionProvider;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchOpModifier;
 import com.sun.identity.idm.IdSearchResults;
+import com.sun.identity.wss.trust.ClaimType;
 import com.sun.org.apache.xml.internal.security.keys.content.X509Data;
 import com.sun.identity.wss.security.handler.WSSCacheRepository;
 import com.sun.identity.common.SystemConfigurationUtil;
@@ -268,7 +269,8 @@ public class WSSUtils {
             }
 
         } else {
-            String certString = x509.getChildNodes().item(0).getNodeValue();
+            
+            String certString = XMLUtils.getElementValue(x509);            
             cert = getCertificate(certString, null);
         }
 
@@ -990,4 +992,91 @@ public class WSSUtils {
     public static String getCertAlias(String issuer) {
         return (String)issuerTrustedCACertAliases.get(issuer);
     }
-}
+    
+    /**
+     * Returns the list of requested claims for the given subject
+     * @param subjectName the subject name
+     * @param claimNames the set of requested claims
+     * @param ssoToken the user's single sign-on token.
+     * @return the hashmap of requested claims.
+     */
+    public static Map<QName, List<String>> getRequestedClaims(
+            String subjectName,
+            Set claimNames,            
+            SSOToken ssoToken) {
+        
+        Map<QName, List<String>> map = new HashMap();
+        AMIdentity amId = null;
+        try {
+            amId = new AMIdentity(getAdminToken(), subjectName);
+            if(!amId.isExists()) {
+               if(debug.messageEnabled()) {
+                  debug.message("WSSUtils.getRequestedClaims: " +
+                  "Subject " + subjectName + " does not exist");
+               }
+               return map;
+            }
+        } catch (IdRepoException ex) {
+            if(debug.warningEnabled()) {
+               debug.warning("WSSUtils.getRequestedClaims:" +
+                    " IdRepo exception: ", ex);
+            }
+            return map;
+        } catch (SSOException se) {
+            if(debug.warningEnabled()) {
+               debug.warning("WSSUtils.getRequestedClaims:" +
+                    "SSOException", se);
+            }
+            return map;
+        }
+        Iterator iter = claimNames.iterator();
+        while (iter.hasNext()) {
+            String attrName = (String)iter.next();            
+            Set values = new HashSet();
+            boolean attributeFoundInSSOToken = false;
+            if(ssoToken != null) {
+               try {
+                   String attributeValue = ssoToken.getProperty(attrName);
+                   if(attributeValue != null) {
+                      values.add(attributeValue);
+                      attributeFoundInSSOToken = true;
+                   }
+               } catch (SSOException se) {
+                   if(debug.warningEnabled()) {
+                      debug.warning("WSSUtils.getRequestedClaims"+
+                                  " SSOException", se);
+                   }                       
+               }
+            }                
+            if(!attributeFoundInSSOToken) {
+               try {
+                   values = amId.getAttribute(attrName);
+               } catch (IdRepoException ex) {
+                       if(debug.warningEnabled()) {
+                          debug.warning("WSSUtils.getRequestedClaims: " +
+                           " IdRepoException", ex);
+                       }
+               } catch (SSOException se) {
+                       if(debug.warningEnabled()) {
+                          debug.warning("WSSUtils.getRequestedClaims: " +
+                           " SSOException", se);
+                       }
+                }
+            }                
+            if(values == null || values.isEmpty()) {
+               if(debug.messageEnabled()) {
+                      debug.message("WSSUtils.getRequestedClaims:"+
+                           " attribute value not found for" +
+                           attrName);
+               }
+               continue;
+             }
+             List<String> list = new ArrayList();
+             list.addAll(values);
+             QName qName = new QName(ClaimType.CLAIMS_NS + "/" + attrName);
+             map.put(qName, list);
+        }
+        return map;
+    }
+        
+ }

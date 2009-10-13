@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestSecurityToken_Impl.java,v 1.2 2008-10-01 23:39:08 mallas Exp $
+ * $Id: RequestSecurityToken_Impl.java,v 1.3 2009-10-13 23:19:50 mallas Exp $
  *
  */
 package com.sun.identity.wss.trust.wst13;
@@ -31,9 +31,12 @@ package com.sun.identity.wss.trust.wst13;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 import com.sun.identity.wss.trust.RequestSecurityToken;
 import com.sun.identity.wss.trust.WSTException;
+import com.sun.identity.wss.trust.ClaimType;
 import com.sun.identity.wss.sts.STSConstants;
 import com.sun.identity.wss.sts.STSUtils;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -81,6 +84,18 @@ public class RequestSecurityToken_Impl extends RequestSecurityToken {
                oboToken = (Element)child.getFirstChild();
             } else if(KEY_TYPE.equals(localName)) {
                keyType =  XMLUtils.getElementValue(child);
+            } else if(CLAIMS.equals(localName)) {
+               NodeList claimNodes = child.getChildNodes();
+               claimTypes = new ArrayList();
+               for (int j =0; j < claimNodes.getLength(); j++) {
+                   Node n = claimNodes.item(j);
+                   if(n.getNodeType() != Node.ELEMENT_NODE) {
+                      continue; 
+                   }
+                   ClaimType claimType = 
+                           new ClaimType((Element)n);
+                   claimTypes.add(claimType);
+               }
             }
         }        
         
@@ -136,6 +151,18 @@ public class RequestSecurityToken_Impl extends RequestSecurityToken {
              .append(EP_REFERENCE).append(">")
              .append("</").append(STSConstants.WSP_PREFIX)
              .append(APPLIES_TO).append(">");
+        }
+        
+        if(claimTypes != null && !claimTypes.isEmpty()) {
+           sb.append("<").append(STSConstants.WST_PREFIX)
+             .append(CLAIMS).append(" Dialect=").append("\"")
+             .append(ClaimType.IDENTITY_NS).append("\"").append(">");             
+           for (Iterator iter = claimTypes.iterator(); iter.hasNext();) {
+               ClaimType ct = (ClaimType)iter.next();
+               sb.append(ct.toXMLString());
+           }
+           sb.append("</").append(STSConstants.WST_PREFIX)
+             .append(CLAIMS).append(">");
         }
         
         if(oboToken != null) {

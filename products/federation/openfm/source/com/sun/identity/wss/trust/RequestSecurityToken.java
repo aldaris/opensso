@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestSecurityToken.java,v 1.1 2008-09-19 16:00:56 mallas Exp $
+ * $Id: RequestSecurityToken.java,v 1.2 2009-10-13 23:19:49 mallas Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.wss.trust;
 
 import com.sun.identity.wss.trust.WSTException;
 import org.w3c.dom.Element;
+import java.util.List;
 
 /**
  * This abstract class <code>RequestSecurityToken</code> represents the
@@ -47,12 +48,14 @@ public abstract class RequestSecurityToken {
     protected static final String ADDRESS = "Address";
     protected static final String ON_BEHALF_OF = "OnBehalfOf";
     protected static final String KEY_TYPE = "KeyType";
+    protected static final String CLAIMS = "Claims";
             
     protected String requestType = null;
     protected String appliesTo = null;
     protected Element oboToken = null;
     protected String keyType = null;
     protected String tokenType = null;
+    protected List<ClaimType> claimTypes = null;
     
     /**
      * Returns the request type                     
@@ -132,6 +135,22 @@ public abstract class RequestSecurityToken {
      */
     public void setKeyType(String keyType) {
         this.keyType = keyType;
+    }
+    
+    /**
+     * Returns the list of claim types.
+     * @return the list of claim types.
+     */
+    public List getClaimTypes() {
+        return claimTypes;
+    }
+    
+    /**
+     * Sets the list of claim types
+     * @param claimTypes the list of claim types.
+     */
+    public void setClaimTypes(List claimTypes) {
+        this.claimTypes = claimTypes;
     }
     
     //TODO - more to be added as per the protocol but this will suffice

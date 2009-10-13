@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.28 2009-09-24 19:01:42 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.29 2009-10-13 23:19:48 mallas Exp $
  *
  */
 
@@ -37,6 +37,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
@@ -72,6 +74,7 @@ import com.sun.identity.wss.security.handler.SOAPRequestHandler;
 import com.sun.identity.wss.security.SecurityException;
 import com.sun.identity.wss.trust.RequestedProofToken;
 import com.sun.identity.wss.trust.BinarySecret;
+import com.sun.identity.wss.trust.ClaimType;
 
 /**
  * The class <code>TrustAuthorityClient</code> is a client API class that is 
@@ -199,7 +202,8 @@ public class TrustAuthorityClient {
         
         String keyTypeURI = STSConstants.WST13_PUBLIC_KEY;        
         String stsAgentName = null;
-        String wstVersion = STSConstants.WST_VERSION_13;                
+        String wstVersion = STSConstants.WST_VERSION_13;
+        List claims = null;
         if (pc != null) {
             List securityMechanisms = pc.getSecurityMechanisms();
             if(securityMechanisms == null || securityMechanisms.isEmpty()) {
@@ -251,7 +255,12 @@ public class TrustAuthorityClient {
                 } else {
                    keyTypeURI = STSConstants.WST13_BEARER_KEY;
                 }
-            } 
+            }
+            List requestedClaims = stsConfig.getRequestedClaims();
+            if(requestedClaims != null && !requestedClaims.isEmpty()) {
+               claims = getClaims(requestedClaims);
+            }
+            
             wspEndPoint = pc.getWSPEndpoint();
         } else {
             Map attrMap = STSUtils.getAgentAttributes(stsEndPoint, 
@@ -301,6 +310,13 @@ public class TrustAuthorityClient {
                     }
                 }
             }
+            
+            Set requestedClaims = (Set)attrMap.get("RequestedClaims");
+            if (requestedClaims != null && !requestedClaims.isEmpty()) {
+                List list = new ArrayList();
+                list.addAll(requestedClaims);
+                claims = getClaims(list); 
+            }
         }
         
         if(securityMech.equals(SecurityMechanism.STS_SECURITY_URI)) {
@@ -309,7 +325,8 @@ public class TrustAuthorityClient {
                             "true");
            if(!(Boolean.valueOf(useMetro)).booleanValue()) {
                return getSTSToken(wspEndPoint, stsEndPoint, stsMexEndPoint, 
-                   credential, keyTypeURI, tokenType, wstVersion, stsAgentName); 
+                   credential, keyTypeURI, tokenType, claims,
+                   wstVersion, stsAgentName); 
            } else {
                return getSTSToken(wspEndPoint,stsEndPoint,stsMexEndPoint,
                    credential,keyTypeURI, tokenType, wstVersion,context); 
@@ -543,7 +560,8 @@ public class TrustAuthorityClient {
             String stsMexEndPoint,
             Object credential, 
             String keyType, 
-            String tokenType, 
+            String tokenType,
+            List claims,
             String wstVersion,
             String stsAgentName) throws FAMSTSException {
         try {
@@ -570,6 +588,9 @@ public class TrustAuthorityClient {
                rst.setOnBehalfOf(getClientUserToken(credential));
             }
             rst.setTokenType(tokenType);
+            if(claims != null && !claims.isEmpty()) {
+               rst.setClaimTypes(claims); 
+            }
             RequestSecurityTokenResponse rstR = 
                    getTrustResponse(rst, stsEndPoint, stsAgentName, 
                    wstVersion, credential);
@@ -766,6 +787,18 @@ public class TrustAuthorityClient {
              throw new FAMSTSException(
                      STSUtils.bundle.getString("usertokeninitfailed"));
         }
+    }
+    
+    private List<ClaimType> getClaims(List<String> requestedClaims) {
+        List<ClaimType> claimTypes = new ArrayList<ClaimType>();
+        Iterator<String> iter = requestedClaims.iterator();
+        while(iter.hasNext()) {
+            String claimName = iter.next();
+            ClaimType claimType = new ClaimType(ClaimType.IDENTITY_NS);
+            claimType.setName(claimName);
+            claimTypes.add(claimType);
+        }
+        return claimTypes;
     }
             
     /**

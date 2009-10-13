@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConfig.java,v 1.8 2009-08-29 03:05:55 mallas Exp $
+ * $Id: STSConfig.java,v 1.9 2009-10-13 23:19:46 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider;
@@ -47,6 +47,8 @@ package com.sun.identity.wss.provider;
  */
 
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 import com.sun.identity.wss.sts.STSConstants;
 
 public abstract class STSConfig extends TrustAuthorityConfig {
@@ -63,6 +65,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     protected String nameIDMapper = null;
     protected String attributeNS = null;
     protected String keyType = STSConstants.PUBLIC_KEY;
+    protected List<String> requestedClaims = new ArrayList();
     
     /** Creates a new instance of STSConfig */
     public STSConfig() {
@@ -265,6 +268,22 @@ public abstract class STSConfig extends TrustAuthorityConfig {
      */
     public void setSAMLAttributeNamespace(String attributeNS) {
         this.attributeNS = attributeNS;
+    }
+    
+    /**
+     * Returns the list of requested claims
+     * @return the list of requested claims.
+     */
+    public List getRequestedClaims() {
+        return requestedClaims;        
+    }
+    
+    /**
+     * Sets the list of requested claims
+     * @param requestedClaims the list of requested claims.
+     */
+    public void setRequestedClaims(List requestedClaims) {
+        this.requestedClaims  = requestedClaims;
     }
     
 }

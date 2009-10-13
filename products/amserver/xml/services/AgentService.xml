@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.82 2009-08-29 03:17:54 mallas Exp $
+   $Id: AgentService.xml,v 1.83 2009-10-13 23:20:54 mallas Exp $
 
 -->
 
@@ -3469,6 +3469,13 @@
                             <Value>PublicKey</Value>
                         </DefaultValues>
                     </AttributeSchema>
+                    <AttributeSchema
+                         name="RequestedClaims"
+                         type="list"
+                         syntax="string"
+                         i18nKey="a367">
+                     </AttributeSchema>
+
                     <AttributeSchema
                         name="UserCredential"
                         type="single"

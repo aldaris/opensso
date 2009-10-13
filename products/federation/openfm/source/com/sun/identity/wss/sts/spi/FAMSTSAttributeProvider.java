@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.19 2009-05-09 15:44:01 mallas Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.20 2009-10-13 23:19:48 mallas Exp $
  *
  */
 
@@ -73,6 +73,7 @@ import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.wss.security.SecurityException;
 import com.sun.identity.wss.logging.LogUtil;
+import com.sun.identity.wss.trust.ClaimType;
 
 /**
  * The STS attribute provider is used to retrieve an authenticated user or
@@ -253,7 +254,12 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
               attrs.putAll(memberships);
            }
         }
-        
+        if(claims != null) {
+           Set claimNames = getClaimNames(claims);
+           Map claimAttrs = WSSUtils.getRequestedClaims(
+                   subjectName, claimNames, ssoToken);
+           attrs.putAll(claimAttrs);
+        }
         String attrsStr = attrs.toString();
         String[] data2 = {attrsStr};
         LogUtil.access(Level.INFO,
@@ -443,6 +449,29 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
              STSUtils.debug.error("FAMSTSAttributeProvider.getClaimed"
                            +  "Attributes: assertion validation failed"); 
          }
+    }
+    
+    private Set getClaimNames(Claims claims) {
+        Set claimNames = new HashSet();
+        String dialect = claims.getDialect();
+        if(dialect != null && ClaimType.IDENTITY_NS.equals(dialect)) {
+           List list = claims.getAny();
+           if(list != null && !list.isEmpty()) {
+              Iterator iter = list.iterator();
+              while(iter.hasNext()) {
+                  Element claimE = (Element)iter.next();
+                  try {
+                      ClaimType claimType = new ClaimType(claimE);                  
+                      claimNames.add(claimType.getName());
+                  } catch (Exception ex) {
+                      STSUtils.debug.message("FAMSTSAttributeProvider."
+                              + " getClaimName: ", ex);
+                     // ignore 
+                  }
+              }
+           }
+        }
+        return claimNames;
     }
 }
 

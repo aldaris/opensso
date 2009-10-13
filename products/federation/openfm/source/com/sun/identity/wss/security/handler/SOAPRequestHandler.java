@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.43 2009-09-22 05:45:46 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.44 2009-10-13 23:19:47 mallas Exp $
  *
  */
 
@@ -37,6 +37,7 @@ import java.security.Principal;
 import java.security.PrivilegedAction;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.cert.X509Certificate;
 
 import java.util.Set;
 import java.util.Map;
@@ -103,6 +104,7 @@ import com.sun.identity.wss.sts.STSConstants;
 import com.sun.identity.wss.logging.LogUtil;
 import com.iplanet.services.util.Crypt;
 import com.sun.identity.saml.common.SAMLUtilsCommon;
+import com.sun.identity.saml.xmlsig.KeyProvider;
 
 /* iPlanet-PUBLIC-CLASS */
 
@@ -147,6 +149,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      */
     private static final String ASSERTION_ISSUER = 
                    "com.sun.identity.wss.security.samlassertion.issuer";
+    
+    private static final String CLIENT_CERT = "AuthnSubjectCertificate";
 
     /**
      * Initializes the handler with the given configuration. 
@@ -381,6 +385,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 data2,
                 null);
         }
+        
+        updateSharedState(subject, sharedState);
             return subject;    
      }
     /**
@@ -488,8 +494,17 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             secureMessage.sign();
         }
 
-        if ( (config != null && config.isResponseEncryptEnabled()) ) {            
-            secureMessage.encrypt(publicKeyAlias, 
+        if ( (config != null && config.isResponseEncryptEnabled()) ) {                     
+            KeyProvider keyProvider = 
+                     WSSUtils.getXMLSignatureManager().getKeyProvider();
+            X509Certificate cert = 
+                    (X509Certificate)sharedState.get(CLIENT_CERT);
+            String encryptAlias = publicKeyAlias;
+            if(cert != null) {
+               encryptAlias =  keyProvider.getCertificateAlias(cert);
+            } 
+                    
+            secureMessage.encrypt(encryptAlias, 
                     config.getEncryptionAlgorithm(),
                     config.getEncryptionStrength(),true,false);
         }
@@ -1397,8 +1412,28 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                     new PrivilegedAction() {
                         public Object run() {
                             sub.getPrivateCredentials().add(discoRO);
-                       if(credentials != null) {
-                                sub.getPrivateCredentials().add(credentials);
+                            List assertions = new ArrayList();
+                            if(credentials != null && !credentials.isEmpty()) {
+                               for(Iterator iter = credentials.iterator();
+                                        iter.hasNext();) {
+                                   Element elem = (Element)iter.next();
+                                   try {
+                                       SecurityAssertion secAssertion = 
+                                           new SecurityAssertion(elem);
+                                       assertions.add(secAssertion);
+                                   } catch (Exception ex) {
+                                       if(debug.warningEnabled()) {
+                                          debug.warning("SOAPRequestHandler." +
+                                          "getDiscoveryResourceOffering: ", ex);
+                                       }
+                                   }
+                                   if(assertions != null && 
+                                              !assertions.isEmpty()) {
+                                      sub.getPrivateCredentials().
+                                          add(assertions);
+                                   }
+                                   
+                               }
                             }
                             return null;
                         }
@@ -1840,4 +1875,18 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         return checkForReplay(replayIndexStr, wsp);
        
     }
+    
+    private void updateSharedState(Subject subject, Map sharedState) {
+        
+        Set creds = subject.getPublicCredentials();        
+        if(creds != null && !creds.isEmpty()) {
+           Iterator iter = creds.iterator();
+           Object  object = iter.next();
+           if(object instanceof X509Certificate) {
+              X509Certificate cert = (X509Certificate)object;              
+              sharedState.put(CLIENT_CERT, cert);
+                      
+           }
+        }        
+    }    
 }
