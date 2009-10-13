@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.6 2009-09-08 06:17:55 dillidorai Exp $
+ * $Id: Rule.java,v 1.7 2009-10-13 21:32:32 veiming Exp $
  *
  */
 package com.sun.identity.policy;
@@ -617,6 +617,15 @@ public class Rule extends Object implements Cloneable {
         answer.append("\n").append("<ServiceName name=\"");
         answer.append(XMLUtils.escapeSpecialCharacters(serviceTypeName));
         answer.append("\" />");
+
+        if (applicationName != null) {
+            answer.append("\n").append("<")
+                .append(PolicyManager.POLICY_RULE_APPLICATION_NAME_NODE)
+                .append(" name=\"")
+                .append(XMLUtils.escapeSpecialCharacters(applicationName))
+                .append("\" />");
+        }
+
         if (resourceNames != null) {
             for (String resourceName : resourceNames) {
                 answer.append("\n").append("<ResourceName name=\"");
@@ -632,14 +641,6 @@ public class Rule extends Object implements Cloneable {
                     XMLUtils.escapeSpecialCharacters(r));
                 answer.append("\" />");
             }
-        }
-
-        if (applicationName != null) {
-            answer.append("\n").append("<")
-                .append(PolicyManager.POLICY_RULE_APPLICATION_NAME_NODE)
-                .append(" name=\"")
-                .append(XMLUtils.escapeSpecialCharacters(applicationName))
-                .append("\" />");
         }
 
         Set actionNames = new HashSet();

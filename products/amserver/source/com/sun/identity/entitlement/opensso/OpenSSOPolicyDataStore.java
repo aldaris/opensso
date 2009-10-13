@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPolicyDataStore.java,v 1.2 2009-08-29 00:56:24 veiming Exp $
+ * $Id: OpenSSOPolicyDataStore.java,v 1.3 2009-10-13 21:32:32 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -57,6 +57,7 @@ import org.w3c.dom.Node;
 /**
  */
 public class OpenSSOPolicyDataStore extends PolicyDataStore {
+    private static final String POLICY_XML = "xmlpolicy";
     private static final String REALM_DN_TEMPLATE =
          "ou=Policies,ou=default,ou=OrganizationConfig,ou=1.0,ou=" +
          PolicyManager.POLICY_SERVICE_NAME + ",ou=services,{0}";
@@ -94,7 +95,8 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
 
                 Set<String> setValue = new HashSet<String>(2);
                 map.put(SMSEntry.ATTR_KEYVAL, setValue);
-                setValue.add(PrivilegeUtils.policyToXML(policy));
+                setValue.add(POLICY_XML + "=" +
+                    PrivilegeUtils.policyToXML(policy));
                 s.setAttributes(map);
                 s.save();
 
@@ -160,6 +162,9 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             Map<String, Set<String>> map = s.getAttributes();
             Set<String> xml = map.get(SMSEntry.ATTR_KEYVAL);
             String strXML = xml.iterator().next();
+            if (strXML.startsWith(POLICY_XML)) {
+                strXML = strXML.substring(POLICY_XML.length() +1);
+            }
             return createPolicy(adminToken, realm, strXML);
         } catch (SSOException ex) {
             Object[] params = {name};
@@ -196,7 +201,9 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             Map<String, Set<String>> map = s.getAttributes();
             Set<String> set = map.get(SMSEntry.ATTR_KEYVAL);
             String xml = set.iterator().next();
-
+            if (xml.startsWith(POLICY_XML)) {
+                xml = xml.substring(POLICY_XML.length() +1);
+            }
             Set<IPrivilege> privileges = PrivilegeUtils.policyToPrivileges(
                 createPolicy(adminToken, realm, xml));
             return (ReferralPrivilege)privileges.iterator().next();
@@ -357,7 +364,7 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
             map.put(SMSEntry.ATTR_KEYVAL, setValue);
             Policy p = PrivilegeUtils.referralPrivilegeToPolicy(
                 realm, referral);
-            setValue.add(p.toXML());
+            setValue.add(POLICY_XML + "=" +p.toXML());
             s.setAttributes(map);
             s.save();
 
