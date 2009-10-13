@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: condition-date-range.xhtml,v 1.1 2009-08-19 05:41:09 veiming Exp $
+   $Id: condition-date-range.xhtml,v 1.2 2009-10-13 16:04:41 farble1670 Exp $
 
 -->
 
@@ -36,7 +36,7 @@
     xmlns:o="http://opensso.dev.java.net">
     <ice:panelGroup>
         <ice:panelGrid
-            columns="2">
+            columns="3">
             <ice:outputLabel
                 for="start-date-input"
                 value="#{resources['condition-date-range.startDateLabel']}"/>
@@ -47,16 +47,28 @@
                 <f:convertDateTime
                     timeZone="#{timeZoneBean.timeZone.ID}"/>
             </ice:selectInputDate>
+            <ice:panelGroup/>
             <ice:outputLabel
                 for="end-date-input"
+                disabled="#{!viewCondition.endDateEnabled}"
                 value="#{resources['condition-date-range.endDateLabel']}"/>
             <ice:selectInputDate
                 id="end-date-label"
+                disabled="#{viewCondition.endDateDisabled}"
                 renderAsPopup="true"
                 value="#{viewCondition.endDate}">
                 <f:convertDateTime
                     timeZone="#{timeZoneBean.timeZone.ID}"/>
             </ice:selectInputDate>
+            <ice:panelGroup
+                style="padding-left: 10px">
+                <ice:selectBooleanCheckbox
+                    value="#{viewCondition.endDateDisabled}"
+                    valueChangeListener="#{viewCondition.noEndDateChanged}"/>
+                <ice:outputLabel
+                    for="no-end-date-check"
+                    value="#{resources['condition-date-range.noEndDate']}"/>
+            </ice:panelGroup>
         </ice:panelGrid>
     </ice:panelGroup>
 </span>

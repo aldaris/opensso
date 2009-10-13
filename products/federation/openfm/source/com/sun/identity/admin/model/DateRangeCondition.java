@@ -22,24 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DateRangeCondition.java,v 1.1 2009-08-19 05:40:49 veiming Exp $
+ * $Id: DateRangeCondition.java,v 1.2 2009-10-13 16:04:40 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.Resources;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.TimeCondition;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
+import javax.faces.event.ValueChangeEvent;
 
-public class DateRangeCondition 
-    extends ViewCondition
-    implements Serializable {
+public class DateRangeCondition
+        extends ViewCondition
+        implements Serializable {
 
     private Date startDate = new Date();
     private Date endDate = new Date();
+    private boolean endDateDisabled = false;
 
     public EntitlementCondition getEntitlementCondition() {
         TimeCondition tc = new TimeCondition();
@@ -48,8 +50,12 @@ public class DateRangeCondition
         String startDateString = getEDateString(startDate);
         tc.setStartDate(startDateString);
 
-        String endDateString = getEDateString(endDate);
-        tc.setEndDate(endDateString);
+        if (endDateDisabled) {
+            tc.setEndDate(null);
+        } else {
+            String endDateString = getEDateString(endDate);
+            tc.setEndDate(endDateString);
+        }
 
         return tc;
     }
@@ -61,10 +67,23 @@ public class DateRangeCondition
         Calendar c = Calendar.getInstance();
         c.setTime(date);
 
-        f.format("%4d:%02d:%02d", c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1,
-            c.get(Calendar.DAY_OF_MONTH));
+        f.format("%4d:%02d:%02d", c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1,
+                c.get(Calendar.DAY_OF_MONTH));
 
         return b.toString();
+    }
+
+    private String getStartDateString() {
+        return getEDateString(startDate);
+    }
+
+    private String getEndDateString() {
+        if (endDateDisabled) {
+            Resources r = new Resources();
+            String none = r.getString(this, "none");
+            return none;
+        }
+        return getEDateString(endDate);
     }
 
     public Date getStartDate() {
@@ -83,8 +102,21 @@ public class DateRangeCondition
         this.endDate = endDate;
     }
 
+    public void noEndDateChanged(ValueChangeEvent event) {
+        boolean checked = ((Boolean) event.getNewValue()).booleanValue();
+        setEndDateDisabled(checked);
+    }
+
     @Override
     public String toString() {
-        return getTitle() + ":{" + getEDateString(startDate) + " > " + getEDateString(endDate) + "}";
+        return getTitle() + ":{" + getStartDateString() + " > " + getEndDateString() + "}";
+    }
+
+    public boolean isEndDateDisabled() {
+        return endDateDisabled;
+    }
+
+    public void setEndDateDisabled(boolean endDateDisabled) {
+        this.endDateDisabled = endDateDisabled;
     }
 }

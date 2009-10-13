@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DateRangeConditionType.java,v 1.1 2009-08-19 05:40:50 veiming Exp $
+ * $Id: DateRangeConditionType.java,v 1.2 2009-10-13 16:04:40 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.sun.identity.entitlement.TimeCondition;
@@ -32,14 +31,25 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class DateRangeConditionType 
-    extends TimeConditionType
-    implements Serializable {
+public class DateRangeConditionType
+        extends TimeConditionType
+        implements Serializable {
 
     private static class Date {
         int year;
         int month;
         int day;
+
+        public Date(String dateString) {
+            assert (dateString != null && dateString.length() > 0);
+
+            String[] dateArray = dateString.split(":");
+            assert (dateArray.length == 3);
+
+            year = Integer.valueOf(dateArray[0]);
+            month = Integer.valueOf(dateArray[1]) - 1;
+            day = Integer.valueOf(dateArray[2]);
+        }
     }
 
     public ViewCondition newViewCondition() {
@@ -50,31 +60,21 @@ public class DateRangeConditionType
     }
 
     public ViewCondition newViewCondition(TimeCondition tc) {
-        DateRangeCondition drc = (DateRangeCondition)newViewCondition();
+        DateRangeCondition drc = (DateRangeCondition) newViewCondition();
 
-        Date startDate = parseDate(tc.getStartDate());
-        Date endDate = parseDate(tc.getEndDate());
-
+        Date startDate = new Date(tc.getStartDate());
         Calendar startCal = new GregorianCalendar(startDate.year, startDate.month, startDate.day);
-        Calendar endCal = new GregorianCalendar(endDate.year, endDate.month, endDate.day);
-
         drc.setStartDate(startCal.getTime());
-        drc.setEndDate(endCal.getTime());
-        
+
+        if (tc.getEndDate() == null || tc.getEndDate().length() == 0) {
+            drc.setEndDate(new java.util.Date());
+            drc.setEndDateDisabled(true);
+        } else {
+            Date endDate = new Date(tc.getEndDate());
+            Calendar endCal = new GregorianCalendar(endDate.year, endDate.month, endDate.day);
+            drc.setEndDate(endCal.getTime());
+        }
+
         return drc;
-    }
-
-    private Date parseDate(String dateString) {
-        assert(dateString != null);
-        Date d = new Date();
-
-        String[] dateArray = dateString.split(":");
-        assert(dateArray.length == 3);
-
-        d.year = Integer.valueOf(dateArray[0]);
-        d.month = Integer.valueOf(dateArray[1])-1;
-        d.day = Integer.valueOf(dateArray[2]);
-
-        return d;
     }
 }
