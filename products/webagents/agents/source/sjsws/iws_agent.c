@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.24 2009-08-05 22:00:44 subbae Exp $
+ * $Id: iws_agent.c,v 1.25 2009-10-13 01:29:10 robertis Exp $
  *
  *
  */
@@ -200,11 +200,31 @@ static int do_deny(Session *sn, Request *rq, am_status_t status) {
     return retVal;
 }
 
+static am_status_t register_post_data(Session *sn, Request *rq, char *url,
+                               const char *key, char* body, void* agent_config)
+{
+    const char *thisfunc = "register_post_data()";
+    am_status_t status = AM_SUCCESS;
+    am_web_postcache_data_t post_data;
+    
+    am_web_log_max_debug("%s: Register POST content body : %s",
+                         thisfunc, body);
+    post_data.value = body;
+    post_data.url = url;
+    am_web_log_debug("%s: Register POST data key :%s", thisfunc, key);
+    if(am_web_postcache_insert(key,&post_data, agent_config) == B_FALSE){
+        am_web_log_error("%s: Register POST data insert into"
+                         " hash table failed:%s",thisfunc, key);
+        status = AM_FAILURE;
+    }
+    return status;
+}
+
 /**
   * Method to register POST data in agent cache
 */
 
-static void register_post_data(Session *sn, Request *rq,char *url,
+static void register_post_data_orig(Session *sn, Request *rq,char *url,
 			       const char *key, void* agent_config)
 {
     int i = 0;
@@ -271,9 +291,12 @@ static int create_buffer_withpost(const char *key, am_web_postcache_data_t
 				  postentry, Session *sn, Request *rq,
                                   void* agent_config)
 {
+    const char *thisfunc = "create_buffer_withpost()";
     char *buffer_page = NULL;
     int nsapi_status;
     char msg_length[8];
+    const char *lbCookieHeader = NULL;
+    am_status_t status_tmp = AM_SUCCESS;
 
     buffer_page = am_web_create_post_page(key,postentry.value,postentry.url,
                                            agent_config);
@@ -293,16 +316,27 @@ static int create_buffer_withpost(const char *key, am_web_postcache_data_t
     util_itoa(strlen(buffer_page), msg_length);
     pblock_nvinsert("content-length", msg_length, rq->srvhdrs);
 
-    /* Send the headers to the client*/
-    protocol_start_response(sn, rq);
-
-    // Repost the form
-    if (net_write(sn->csd, buffer_page , strlen(buffer_page)) == IO_ERROR){
+    // If using the lb cookie, it needs to be reset to NULL there.
+    status_tmp = am_web_get_postdata_preserve_lbcookie(
+                 &lbCookieHeader, B_TRUE, agent_config);
+    if (status_tmp == AM_SUCCESS) {
+        if (lbCookieHeader != NULL) {
+            am_web_log_debug("%s: Setting LB cookie for post data "
+                              "preservation to  null", thisfunc);
+            pblock_nvinsert("set-cookie", lbCookieHeader, rq->srvhdrs);
+        }
+        // Send the headers to the client
+        protocol_start_response(sn, rq);
+        // Repost the form
+        if (net_write(sn->csd, buffer_page , strlen(buffer_page)) == IO_ERROR){
+            nsapi_status = REQ_EXIT;
+        } else {
+            nsapi_status = REQ_PROCEED;
+        }
+    } else {
+        am_web_log_error("%s: am_web_get_postdata_preserve_lbcookie() failed",
+                          thisfunc);
         nsapi_status = REQ_EXIT;
-    }
-    else {
-        net_flush(sn->csd);
-        nsapi_status = REQ_PROCEED;
     }
 
     am_web_postcache_data_cleanup(&postentry);
@@ -310,7 +344,10 @@ static int create_buffer_withpost(const char *key, am_web_postcache_data_t
     if(buffer_page != NULL){
         system_free(buffer_page);
     }
-
+    if (lbCookieHeader != NULL) {
+        am_web_free_memory(lbCookieHeader);
+        lbCookieHeader = NULL;
+    }
     return nsapi_status;
 
 }
@@ -741,6 +778,45 @@ char * get_post_assertion_data(Session *sn, Request *rq, char *url)
 
 }
 
+char * get_post_data(Session *sn, Request *rq, char *url)
+{
+    const char *thisfunc = "get_post_data()";int i = 0;
+    char *body = NULL;
+    int cl = 0;
+    char *cl_str = NULL;
+
+    request_header("content-length", &cl_str, sn, rq);
+    if(cl_str == NULL)
+        cl_str = pblock_findval("content-length", rq->headers);
+        if(cl_str == NULL) {
+            return body;
+        }
+        if(PR_sscanf(cl_str, "%ld", &cl) == 1) {
+            body =  (char *)malloc(cl + 1);
+            if(body != NULL){
+                for (i = 0; i < cl; i++) {
+                    int ch = netbuf_getc(sn->inbuf);
+                    if (ch==IO_ERROR || ch == IO_EOF) {
+                    break;
+                }
+                body[i] = ch;
+            }
+            body[i] = '\0';
+        }
+    } else {
+        am_web_log_error("%s: Error reading POST content body", thisfunc);
+    }
+    am_web_log_max_debug("%s: Read POST content body : %s", body, thisfunc);
+
+    // Need to reset content length before redirect,
+    // otherwise, web server will wait for several minutes
+    // for non existant data
+    param_free(pblock_remove("content-length", rq->headers));
+    pblock_nvinsert("content-length", "0", rq->headers);
+
+    return body;
+}
+
 int getISCookie(const char *cookie, char **dpro_cookie,
                 void* agent_config) {
     char *loc = NULL;
@@ -860,8 +936,10 @@ am_status_t get_request_url(Session *sn,
 NSAPI_PUBLIC int
 validate_session_policy(pblock *param, Session *sn, Request *rq) 
 {
+    const char *thisfunc = "validate_session_policy()";
     char *dpro_cookie = NULL;
     am_status_t status = AM_FAILURE;
+    am_status_t status_tmp = AM_SUCCESS;
     int  requestResult = REQ_ABORTED;
     int  notifResult = REQ_ABORTED;
     const char *ruser = NULL;
@@ -1141,6 +1219,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
 
     case AM_INVALID_SESSION:
         //reset the cookie CDSSO. 
+        am_web_log_info("%s: Invalid session.",thisfunc);
         if (am_web_is_cdsso_enabled(agent_config) == B_TRUE)
         {
             cdStatus = am_web_do_cookie_domain_set(set_cookie, args, EMPTY_STRING, agent_config);        
@@ -1151,28 +1230,70 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
 
 
         am_web_do_cookies_reset(reset_cookie, args, agent_config);
-        // No magic URI, No SSO Token....
+
+
         if (strcmp(method, REQUEST_METHOD_POST) == 0 &&
-            B_TRUE==am_web_is_postpreserve_enabled(agent_config)) {
-	    // Create the magic URI, actionurl
-	    post_urls_t *post_urls;
-	    post_urls = am_web_create_post_preserve_urls(request_url, 
+            B_TRUE==am_web_is_postpreserve_enabled(agent_config)) 
+        {
+                // Create the magic URI, actionurl
+                post_urls_t *post_urls;
+                post_urls = am_web_create_post_preserve_urls(request_url, 
                                                          agent_config);
-	    register_post_data(sn,rq,post_urls->action_url,
-                               post_urls->post_time_key, agent_config);
-	    am_web_log_debug("validate_session_policy(): "
-				"AM_INVALID_SESSION in POST ");
-  	    requestResult =  do_redirect(sn, rq, status, &result,
-                                         post_urls->dummy_url, method,
-                                         agent_config);
-	    // call cleanup routine
-	    am_web_clean_post_urls(post_urls);
-	} else {
-	    am_web_log_debug("validate_session_policy(): "
-				"AM_INVALID_SESSION in GET");
-	    requestResult = do_redirect(sn, rq, status, &result,
-					request_url, method, agent_config);
-	}
+                // In CDSSO mode, for a POST request, the post data have
+                // already been saved in the response variable, so we need
+                // to get them here only if response is NULL.
+                if (response == NULL) {
+                    response = get_post_data(sn, rq, request_url);
+                }
+                if (response != NULL && strlen(response) > 0) {
+                    if (AM_SUCCESS == register_post_data(sn, rq,
+                                         post_urls->action_url,
+                                         post_urls->post_time_key, response, agent_config))
+                    {
+                        const char *lbCookieHeader = NULL;
+                        // If using a LB in front of the agent, the LB cookie
+                        // needs to be set there. The boolean argument allows
+                        // to set the value of the cookie to the one defined in the
+                        // properties file (B_FALSE) or to NULL (B_TRUE).
+                        status_tmp = am_web_get_postdata_preserve_lbcookie(
+                                                   &lbCookieHeader, B_FALSE, agent_config);
+                        if (status_tmp == AM_SUCCESS) {
+                            if (lbCookieHeader != NULL) {
+                                am_web_log_debug("%s: Setting LB cookie for "
+                                             "post data preservation (%s)",
+                                             thisfunc, lbCookieHeader);
+                                set_cookie(lbCookieHeader, args);
+                            }
+                            requestResult =  do_redirect(sn, rq, status, &result,
+                                                 post_urls->dummy_url, method, agent_config);
+                        } else {
+                            am_web_log_error("%s: "
+                              "am_web_get_postdata_preserve_lbcookie() "
+                              "failed ", thisfunc);
+                            requestResult = REQ_ABORTED;
+                        }
+                        if (lbCookieHeader != NULL) {
+                            am_web_free_memory(lbCookieHeader);
+                            lbCookieHeader = NULL;
+                        }
+                    } else {
+                        requestResult = REQ_ABORTED;
+                    }
+                    // call cleanup routine
+                    am_web_clean_post_urls(post_urls);
+                } else {
+                    am_web_log_debug("%s: AM_INVALID_SESSION. This is a POST "
+                                     "request with no post data => redirecting "
+                                     " as a GET request.", thisfunc);
+                    requestResult = do_redirect(sn, rq, status, &result,
+                               request_url, REQUEST_METHOD_GET, agent_config);
+                }
+            } else {
+                am_web_log_debug("%s: AM_INVALID_SESSION in GET", thisfunc);
+                requestResult = do_redirect(sn, rq, status, &result,
+                           request_url, method, agent_config);
+            }
+
 	break;
 
     case AM_INVALID_FQDN_ACCESS:

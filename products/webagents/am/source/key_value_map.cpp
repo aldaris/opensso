@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: key_value_map.cpp,v 1.3 2008-06-25 08:14:32 qcheng Exp $
+ * $Id: key_value_map.cpp,v 1.4 2009-10-13 01:38:15 robertis Exp $
  *
  */ 
 
@@ -128,9 +128,15 @@ void KeyValueMap::parseKeyValuePairString(const std::string &keyValStr,
 	if(nvpair.size() > 0) {
 	    std::string key;
 	    std::size_t eqPos = nvpair.find(kvsepStr);
-	    key = nvpair.substr(0, eqPos);
-	    std::string value;
-	    value = nvpair.substr(eqPos + 1, tmpPos - eqPos);
+
+        std::string value;
+        if (eqPos != string::npos) {
+            key = nvpair.substr(0, eqPos);
+            value = nvpair.substr(eqPos + 1, tmpPos - eqPos);
+        } else {
+            key.assign(nvpair);
+            value = "";
+        }
 
 	    iterator iter = find(key);
 	    if(iter != end()) {

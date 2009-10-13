@@ -71,9 +71,9 @@ ifeq ($(OS_ARCH), Linux)
 	# the name inconsistent with other platforms. 
 	# release wants consistent name for all platforms, so use 
 	# DSAME_DROP_FILE_NAME instead of just DSAME_DROP_FILE for Linux. 
-	cd $(DEST_PACKAGE_SCRATCH_DIR)/common; \
-	$(TAR) cvf ../../../../$(DEST_DROP_DIR)/$(DSAME_DROP_FILE_NAME).tar *; \
-	gzip -f ../../../../$(DEST_DROP_DIR)/$(DSAME_DROP_FILE_NAME).tar
+	#cd $(DEST_PACKAGE_SCRATCH_DIR)/common; \
+	#$(TAR) cvf ../../../../$(DEST_DROP_DIR)/$(DSAME_DROP_FILE_NAME).tar *; \
+	#gzip -f ../../../../$(DEST_DROP_DIR)/$(DSAME_DROP_FILE_NAME).tar
 else
 ifeq ($(OS_ARCH), HP-UX)
 	cd $(DEST_PACKAGE_SCRATCH_DIR)/SUNWamcom; \

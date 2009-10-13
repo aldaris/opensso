@@ -548,6 +548,17 @@ com.sun.identity.agents.config.postdata.preserve.enable = false
 com.sun.identity.agents.config.postcache.entry.lifetime = 10
 
 #
+# POST DATA PRESERVATION COOKIE
+#   Name and value of the sticky cookie to use when post preservation
+#   is enabled and when using a LB in front of the agent.This property
+#   should only be set when override properties are set to true.
+# 
+#   Example : com.sun.identity.agents.config.postdata.preserve.lbcookie = palbcookie=01
+#
+com.sun.identity.agents.config.postdata.preserve.lbcookie =
+
+
+#
 # CLIENT IP VALIDATION
 #   Enable/Disable client IP address validation. This validate
 #   will check if the subsequent browser requests come from the
@@ -683,6 +694,21 @@ com.sun.identity.agents.config.encode.url.special.chars.enable = false
 # Hot-Swap Enabled: Yes
 #
 com.sun.identity.agents.config.ignore.path.info = false
+
+#
+# IGNORE PATH INFO FOR NOT ENFORCED URLS
+#   Boolean attribute to indicate whether the path info and query should
+#   be stripped from the the request URL before being compared with the URLs
+#   of the not enforced list when those URLs have a wildcard '*' character.
+#   For security reason this property should be set to true in order to avoid
+#   situation like the following one: if
+#   com.sun.identity.agents.config.notenforced.url[0] = http://host/*.gif
+#   someone can access http://host/index.html by using the request URL
+#   http://host/index.html/hack.gif.
+#
+#   Default value is true.
+#
+com.sun.identity.agents.config.ignore.path.info.for.not.enforced.list = true
 
 #
 # OVERRIDE PROPERTIES

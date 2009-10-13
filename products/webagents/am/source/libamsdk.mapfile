@@ -218,6 +218,7 @@ SUNW_2.2 {
         am_web_get_agent_configuration;
         am_web_delete_agent_configuration;
 		am_web_is_url_enforced;
+        am_web_get_postdata_preserve_lbcookie;
 
 
 	local:

@@ -210,3 +210,4 @@ EXPORTS
     am_web_is_url_enforced;
 	am_web_get_logout_url;
     am_web_get_authType;
+    am_web_get_postdata_preserve_lbcookie;

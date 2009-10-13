@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.51 2009-08-05 22:01:50 subbae Exp $
+ * $Id: am_web.cpp,v 1.52 2009-10-13 01:36:20 robertis Exp $
  *
  */
 
@@ -885,6 +885,7 @@ am_bool_t in_not_enforced_list(URL &urlObj,
     const char *thisfunc = "in_not_enforced_list";
     std::string baseURL_str;
     const char *baseURL;
+    std::string dummyNotEnforcedUrl_str;
     std::string url_str;
     const char *url = NULL;
     am_bool_t found = AM_FALSE;
@@ -926,42 +927,38 @@ am_bool_t in_not_enforced_list(URL &urlObj,
             accessUrl = urlStr.c_str();
         }
 
-        am_web_log_debug("Matching %s with access_denied_url %s",
-                     url, (*agentConfigPtr)->access_denied_url);
         am_resource_match_t access_denied_url_match;
         access_denied_url_match = am_policy_compare_urls(&rsrcTraits,
 					access_denied_url, accessUrl, B_FALSE);
         if (AM_EXACT_MATCH == access_denied_url_match) {
             access_denied_url_match_flag = AM_TRUE;
-            am_web_log_debug("Matching %s with access_denied_url %s: TRUE",
-                             accessUrl, (*agentConfigPtr)->access_denied_url);
+            am_web_log_debug("%s: Matching %s with access_denied_url %s: TRUE",
+                     thisfunc, accessUrl, (*agentConfigPtr)->access_denied_url);
         } else {
-            am_web_log_debug("Matching %s with access_denied_url %s: FALSE",
-                             accessUrl, (*agentConfigPtr)->access_denied_url);
+            am_web_log_debug("%s: Matching %s with access_denied_url %s: FALSE",
+                     thisfunc,accessUrl, (*agentConfigPtr)->access_denied_url);
 	}
     }
 
     // Check for dummy post url
-    if ((*agentConfigPtr)->dummy_post_url != NULL) {
+    urlObj.getRootURL(dummyNotEnforcedUrl_str);
+    dummyNotEnforcedUrl_str.append(DUMMY_NOTENFORCED);
         am_resource_match_t dummy_post_url_match;
         dummy_post_url_match = am_policy_compare_urls(&rsrcTraits,
-					(*agentConfigPtr)->dummy_post_url,
+                              dummyNotEnforcedUrl_str.c_str(),
                                         baseURL, B_TRUE);
         if ( (AM_EXACT_MATCH == dummy_post_url_match)  ||
 	     ( AM_EXACT_PATTERN_MATCH == dummy_post_url_match )) {
             dummy_post_url_match_flag = AM_TRUE;
         }
-    }
 
     if (access_denied_url_match_flag == AM_TRUE) {
-        Log::log(boot_info.log_module, Log::LOG_DEBUG,
-		 "%s: The requested URL %s "
+        am_web_log_debug("%s: The requested URL %s "
 		 "is the access denied URL which is always not enforced.",
 		 thisfunc, url);
         found = AM_TRUE;
     } else if (dummy_post_url_match_flag == AM_TRUE) {
-	Log::log(boot_info.log_module, Log::LOG_DEBUG,
-		 "%s: The requested URL %s, base URL %s, "
+        am_web_log_debug("%s: The requested URL %s, base URL %s "
 		 "is the dummy post URL which is always not enforced.",
 		  thisfunc, url, baseURL);
         found = AM_TRUE;
@@ -974,6 +971,9 @@ am_bool_t in_not_enforced_list(URL &urlObj,
 
 	    if ((*agentConfigPtr)->not_enforced_list.list[i].has_patterns
 		 == AM_TRUE) {
+            if (AM_TRUE ==
+                 (*agentConfigPtr)->ignore_path_info_for_not_enforced_list)
+            {
 	        match_status = am_policy_compare_urls(
                     &rsrcTraits, 
                     (*agentConfigPtr)->not_enforced_list.list[i].url,
@@ -981,12 +981,17 @@ am_bool_t in_not_enforced_list(URL &urlObj,
 	    } else {
 	        match_status = am_policy_compare_urls(
                 &rsrcTraits, (*agentConfigPtr)->not_enforced_list.list[i].url,
+                            url, B_TRUE);
+                }
+            } else {
+                match_status = am_policy_compare_urls(
+                    &rsrcTraits, (*agentConfigPtr)->not_enforced_list.list[i].url,
                 url, B_FALSE);
 	    }
 
 	    if (AM_EXACT_MATCH == match_status ||
 	        AM_EXACT_PATTERN_MATCH == match_status) {
-	        Log::log(boot_info.log_module, Log::LOG_DEBUG, "%s(%s): "
+            am_web_log_debug("%s(%s): "
 			 "matched '%s' entry in not-enforced list", thisfunc,
 			 url, (*agentConfigPtr)->not_enforced_list.list[i].url);
 	        found = AM_TRUE;
@@ -995,8 +1000,7 @@ am_bool_t in_not_enforced_list(URL &urlObj,
 
         if ((*agentConfigPtr)->reverse_the_meaning_of_not_enforced_list 
 	     == AM_TRUE) {
-            Log::log(boot_info.log_module, Log::LOG_DEBUG,
-		     "%s: not enforced list is reversed, "
+            am_web_log_debug("%s: not enforced list is reversed, "
 		     "only matches will be enforced.", thisfunc);
             if (found == AM_TRUE) {
                 found = AM_FALSE;
@@ -1006,11 +1010,11 @@ am_bool_t in_not_enforced_list(URL &urlObj,
         }
 
         if (AM_TRUE == found) {
-	    Log::log(boot_info.log_module, Log::LOG_DEBUG,
-		     "%s: allowing access to %s ", thisfunc, url);
+            am_web_log_debug("%s: Allowing access to %s ",
+                              thisfunc, url);
         } else {
-	    Log::log(boot_info.log_module, Log::LOG_DEBUG,
-		     "%s: enforcing access control for %s ", thisfunc, url);
+            am_web_log_debug("%s: Enforcing access control for %s ",
+                             thisfunc, url);
         }
     }
     return found;
@@ -1487,14 +1491,15 @@ log_access(am_status_t access_status,
 
 am_bool_t
 is_url_not_enforced(const char *url, const char *client_ip, std::string pInfo, 
-        void* agent_config)
+        std::string query, void* agent_config)
 {
-    const char *thisfunc = "is_url_enforced()";
+    const char *thisfunc = "is_url_not_enforced()";
     am_status_t status = AM_SUCCESS;
     am_bool_t foundInNotEnforcedList = AM_FALSE;
     am_bool_t inNotenforceIP = AM_FALSE;
     am_bool_t isNotEnforced = AM_FALSE;
     am_bool_t isLogoutURL = AM_FALSE;    
+    std::string urlStr(url);
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
     
@@ -1523,7 +1528,15 @@ is_url_not_enforced(const char *url, const char *client_ip, std::string pInfo,
             // Do the not enforced list check only if the client ip check
             // fails; no need otherwise 
             if (AM_FALSE == inNotenforceIP) {
-                URL url_again(url, pInfo);
+                if ((AM_TRUE == (*agentConfigPtr)->ignore_path_info) && (!pInfo.empty())) {
+                    // Add again the path info and query to the url as they
+                    // were removed for the AM evaluation
+                    am_web_log_debug("%s: Add path info (%s) and query (%s) that were "
+                                     "removed for AM evaluation",
+                                     thisfunc, pInfo.c_str(), query.c_str());
+                    urlStr.append(pInfo).append(query);
+                }
+                URL url_again(urlStr, pInfo);
                 foundInNotEnforcedList = in_not_enforced_list(url_again, agent_config);
             }
         } catch (std::bad_alloc& exb) {
@@ -1586,14 +1599,15 @@ get_normalized_url(const char *url_str,
     if (status == AM_SUCCESS) {
         // Parse & canonicalize URL
         try {
-            if(path_info != NULL && strlen(path_info) > 0) {
+            if(path_info != NULL && strlen(path_info) > 0 &&
+                    strcasecmp(path_info, "/") != 0) {
                 Log::log(boot_info.log_module, Log::LOG_DEBUG,
                     "%s: url '%s' path_info '%s'.",
                     thisfunc, url_str, path_info);
 
                 if (AM_TRUE == (*agentConfigPtr)->ignore_path_info) {
                     Log::log(boot_info.log_module, Log::LOG_DEBUG,
-                               "%s:: ignoring path info %s.", thisfunc, path_info);
+                               "%s:: Ignoring path info %s.", thisfunc, path_info);
                     string tmp_url_str(url_str);
                     string tmp_path_info(path_info);
                     string::size_type loc = tmp_url_str.find(tmp_path_info,0);
@@ -1663,6 +1677,8 @@ am_web_is_access_allowed(const char *sso_token,
     unsigned int encodedUrlSize = 0;
 #endif
 
+    std::string originalPathInfo("");
+    std::string originalQuery("");
     // The following two variables gets used in cookieless mode
     char *urlSSOToken = NULL;    //sso_token present in the url
     char *modifiedURL = NULL;    //modified url after removal of sso_token
@@ -1680,6 +1696,15 @@ am_web_is_access_allowed(const char *sso_token,
 
     // parse & canonicalize URL
     if (status == AM_SUCCESS) {
+        const char *pQuery = strchr(url_str,'?');
+        // The query and path info are saved here because get_normalized_url()
+        // will set them to null if ignore_path_info is true
+        if (pQuery != NULL) {
+            originalQuery.append(pQuery);
+        }
+        if (path_info != NULL) {
+            originalPathInfo.append(path_info);
+        }
         status = get_normalized_url(url_str, path_info, 
                     normalizedURL, pInfo, agent_config);
     }
@@ -1711,8 +1736,8 @@ am_web_is_access_allowed(const char *sso_token,
 
     if (status == AM_SUCCESS) {
         // Check if the url is enforced
-        isNotEnforced = is_url_not_enforced(url, client_ip, pInfo,
-                                     agent_config);
+        isNotEnforced = is_url_not_enforced(url, client_ip, originalPathInfo,
+                                     originalQuery,agent_config);
         // Check if it's the logout URL
         if ((*agentConfigPtr)->agent_logout_url_list.size > 0 &&
             am_web_is_agent_logout_url(url, agent_config) == B_TRUE) {
@@ -2941,6 +2966,22 @@ am_web_is_url_enforced(const char *url_str,
     std::string pInfo;
     
     // Normalized the url
+    const char *pQuery = NULL;
+    std::string originalPathInfo("");
+    std::string originalQuery("");
+
+    // The query and path info are saved here because
+    // get_normalized_url() will set them to null if
+    // ignore_path_info is true
+    pQuery = strchr(url_str,'?');
+    if (pQuery != NULL) {
+        originalQuery.append(pQuery);
+    }
+
+    if (path_info != NULL) {
+        originalPathInfo.append(path_info);
+    }      
+
     status = get_normalized_url(url_str, path_info,
                                 normalizedURL, pInfo, agent_config);
     if (status == AM_SUCCESS) {
@@ -2950,7 +2991,8 @@ am_web_is_url_enforced(const char *url_str,
                                 thisfunc, url_str);
         } else {
             // Check if the url is enforced
-            isNotEnforced = is_url_not_enforced(url, client_ip, pInfo, agent_config);
+            isNotEnforced = is_url_not_enforced(url, client_ip, originalPathInfo,
+                            originalQuery, agent_config);
             if (isNotEnforced == AM_TRUE) {
                 isEnforced = B_FALSE;
             }
@@ -3789,52 +3831,43 @@ am_web_create_post_preserve_urls(const char *request_url,
 {
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
-
-
+    const char *thisfunc = "am_web_create_post_preserve_urls()";
     char *dummy_url	= NULL;
     char *time_str	= NULL;
     post_urls_t *url_data = (post_urls_t *)malloc (sizeof(post_urls_t));
-#if defined(_AMD64_)
-    size_t posturllen = 0;
-    size_t keyvaluelen = 0;
-#else
-    int posturllen = 0;
-    int keyvaluelen = 0;
-#endif
-
-    if ((*agentConfigPtr)->postcache_url != NULL){
-	posturllen = strlen((*agentConfigPtr)->postcache_url);
-    }
-
-    time_str = (char *) malloc ( AM_WEB_MAX_POST_KEY_LENGTH );
-    prtime_to_string(time_str,AM_WEB_MAX_POST_KEY_LENGTH, agent_config);
-
-    if(time_str != NULL) {
-	keyvaluelen =  strlen(time_str);
-    }
-
-    if ((*agentConfigPtr)->postcache_url != NULL){
-	dummy_url = (char *)malloc (posturllen +
-				    strlen(MAGIC_STR) + keyvaluelen + 1);
-
-	strcpy(dummy_url,(*agentConfigPtr)->postcache_url);
-	strcat(dummy_url, MAGIC_STR);
-	strcat(dummy_url, time_str);
-
-	am_web_log_info("URI for POST redirection %s",dummy_url);
-
-    } else {
-	am_web_log_error("Could not construct URI for POST redirection");
-    }
-
-    // Pick static url from agentinfo ptr
-    url_data->dummy_url = dummy_url;
 
     if (request_url != NULL) {
-	url_data->action_url = (char *)strdup(request_url);
-    }
+        time_str = (char *) malloc ( AM_WEB_MAX_POST_KEY_LENGTH );
+        prtime_to_string(time_str,AM_WEB_MAX_POST_KEY_LENGTH, agent_config);
 
-    url_data->post_time_key = time_str;
+        if(time_str != NULL) {
+            // The root url is taken from the request url
+            URL urlObject(request_url);
+            std::string dummyURL;
+            urlObject.getRootURL(dummyURL);
+            dummyURL.append(DUMMY_REDIRECT).append(MAGIC_STR).append(time_str);
+            dummy_url = strdup(dummyURL.c_str());
+            if (dummy_url != NULL) {
+                am_web_log_info("%s: URI for POST redirection %s", 
+                                thisfunc, dummy_url);
+                url_data->dummy_url = dummy_url;
+                url_data->post_time_key = time_str;
+                url_data->action_url = (char *)strdup(request_url);
+                if (url_data->action_url == NULL) {
+                    am_web_log_error("%s: Not enough memory to allocate "
+                                     "url_data->action_url.", thisfunc);
+                }
+            } else {
+                am_web_log_error("%s: Not enough memory to allocate "
+                                 "dummy_url", thisfunc);
+            }
+        } else {
+            am_web_log_error("%s: time string is NULL", thisfunc);
+        }
+
+    } else {
+        am_web_log_error("%s: request_url is NULL", thisfunc);
+    }
 
     return url_data;
 
@@ -5214,7 +5247,6 @@ process_cdsso(
     am_status_t local_sts = AM_SUCCESS;
     am_web_req_method_t method = req_params->method;
 
-    am_web_log_debug("SOMS:%s ", thisfunc);
     // Check args
     if (req_params->url == NULL ||
         sso_token == NULL || orig_method == NULL) {
@@ -6466,6 +6498,52 @@ am_web_set_host_ip_in_env_map(const char *client_ip,
         }
     }
 
+}
+
+/*
+ * Method to get the value of the set-cookie header for the lb cookie
+ * when using a LB in front of the agent with post preservation
+ * enabled
+ */
+extern "C" AM_WEB_EXPORT am_status_t
+am_web_get_postdata_preserve_lbcookie(const char **headerValue, 
+                                      boolean_t isValueNull, void* agent_config)
+{
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+    const char *thisfunc = "am_web_get_postdata_preserve_lbcookie()";
+    am_status_t status = AM_SUCCESS;
+    size_t equalPos;
+    std::string cookieName, cookieValue, header;
+    std::string lbcookie((*agentConfigPtr)->postdatapreserve_lbcookie);
+
+    if (!lbcookie.empty()) {
+        equalPos=lbcookie.find('=');
+        if (equalPos != std::string::npos) {
+            cookieName = lbcookie.substr(0, equalPos);
+            if (isValueNull == B_FALSE) {
+                cookieValue = lbcookie.substr(equalPos+1);
+            } else {
+                cookieValue = "";
+            }
+            header = " ";
+            header.append(cookieName).append("=").
+                  append(cookieValue).append(";Path=/");
+            *headerValue = strdup(header.c_str());
+            if (*headerValue == NULL) {
+                am_web_log_error("%s: Not enough memory to allocate "
+                                 "headerValue");
+                status = AM_NO_MEMORY;
+            }
+        } else {
+            am_web_log_error("%s: The value of the postdata.preserve.lbcookie "
+                             "property (%s) has not a correct format.",
+                             thisfunc, lbcookie.c_str());
+            status = AM_FAILURE;
+        }
+    }
+    
+    return status;
 }
 
 #if defined(WINNT)

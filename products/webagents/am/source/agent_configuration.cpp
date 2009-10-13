@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.cpp,v 1.18 2009-06-30 01:01:37 subbae Exp $
+ * $Id: agent_configuration.cpp,v 1.19 2009-10-13 01:31:47 robertis Exp $
  *
  * Abstract:
  * AgentConfiguration: This class creates/delets the agent configuration 
@@ -102,7 +102,6 @@ am_status_t AgentConfiguration::populateAgentProperties()
     const char *parameter = "";
     const char *agent_prefix_url = NULL;
     char *dummy_url = NULL;
-    char *redirecturl = NULL;
     int tempurl_len = 0;
     const char *encrypt_passwd = NULL;
     char decrypt_passwd[100] = "";
@@ -379,15 +378,13 @@ am_status_t AgentConfiguration::populateAgentProperties()
         }
     }
     
-    /* Get the dummy redirect url */
+    /* Get the agent server url */
     if (AM_SUCCESS == status) {
         parameter = AM_WEB_URI_PREFIX;
         status = am_properties_get(this->properties, parameter,
                 &agent_prefix_url);
         
         if (AM_SUCCESS == status) {
-            char *tempurl = NULL;
-            char *tempptr = NULL;
             
             status = Utils::parse_url(agent_prefix_url, 
                     strlen(agent_prefix_url),
@@ -403,50 +400,6 @@ am_status_t AgentConfiguration::populateAgentProperties()
                         thisfunc, AM_WEB_URI_PREFIX, agent_prefix_url);
             }
             
-            tempurl = strdup(agent_prefix_url);
-            
-            // We take the agent URI, http://hostname:80/uri,
-            // keep looking for first three "/". once we are
-            // after the three "/", we replace the rest with '\0'
-            // So http://hostname:80/uri -> //hostname:80/
-            if (tempurl != NULL){
-                tempptr =  strchr(tempurl, '/');
-                if (tempptr != NULL){
-                    tempptr = strchr(tempptr + 1, '/');
-                    if (tempptr != NULL) {
-                        tempptr = strchr(tempptr + 1, '/');
-                        if (tempptr != NULL){
-                            *tempptr = '\0';
-                        } else {
-                            status = AM_INVALID_ARGUMENT;
-                        }
-                    } else  {
-                        status = AM_INVALID_ARGUMENT;
-                    }
-                } else {
-                    status = AM_INVALID_ARGUMENT;
-                }
-                
-                tempurl_len = strlen(tempurl);
-                
-                // check that the allocation worked.
-                dummy_url = (char *) malloc(tempurl_len +
-                        sizeof(DUMMY_NOTENFORCED)+1);
-                strcpy(dummy_url, tempurl);
-                strcat(dummy_url, DUMMY_NOTENFORCED);
-                this->dummy_post_url = dummy_url;
-                
-                redirecturl = (char *) malloc(tempurl_len +
-                        sizeof(DUMMY_REDIRECT)+1);
-                strcpy(redirecturl, tempurl);
-                strcat(redirecturl, DUMMY_REDIRECT);
-                
-                this->postcache_url = redirecturl;
-                
-                free(tempurl);
-            } else {
-                status = AM_NO_MEMORY;
-            }
         } else {
             am_web_log_error("%s: Invalid URL for %s : Value => %s",
                     thisfunc, AM_WEB_URI_PREFIX, agent_prefix_url);
@@ -515,6 +468,13 @@ am_status_t AgentConfiguration::populateAgentProperties()
                 (&this->postdatapreserve_enable));
     }
     
+    /* Get lb cookie to use with post preservation.*/
+    if (AM_SUCCESS == status) {
+        parameter = AM_WEB_POST_CACHE_DATA_PRESERVE_LBCOOKIE;
+        status = am_properties_get_with_default(this->properties,
+                                    parameter, "", 
+                                    &this->postdatapreserve_lbcookie);
+    }
     
     /* Get the POST cache entry lifetime */
     if (AM_SUCCESS == status) {
@@ -802,6 +762,13 @@ am_status_t AgentConfiguration::populateAgentProperties()
         status = am_properties_get_boolean_with_default(
                 this->properties, parameter, 0,
                 &(this->ignore_path_info));
+    }
+
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_IGNORE_PATH_INFO_FOR_NOT_ENFORCED_LIST;
+        status = am_properties_get_boolean_with_default(
+                this->properties, parameter, 0,
+                &(this->ignore_path_info_for_not_enforced_list));
     }
     
     if (AM_SUCCESS == status) {
@@ -1298,11 +1265,6 @@ void AgentConfiguration::cleanup_properties()
     this->authLogType_param = NULL;
     this->fqdn_default = NULL;
     this->fqdn_default_len = 0;
-
-    if (this->dummy_post_url != NULL) {
-        free((void *)this->dummy_post_url);
-        this->dummy_post_url = NULL;
-    }
 
     if (this->cookie_domain_list != NULL) {
         delete this->cookie_domain_list;

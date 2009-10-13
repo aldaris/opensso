@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.28 2009-06-30 01:01:37 subbae Exp $
+ * $Id: am_web.h,v 1.29 2009-10-13 01:36:36 robertis Exp $
  *
  */
 
@@ -143,6 +143,7 @@ AM_BEGIN_EXTERN_C
 
 #define AM_WEB_POST_CACHE_ENTRY_LIFETIME AM_COMMON_PROPERTY_PREFIX "postcache.entry.lifetime"
 #define AM_WEB_POST_CACHE_DATA_PRESERVE AM_COMMON_PROPERTY_PREFIX "postdata.preserve.enable"
+#define AM_WEB_POST_CACHE_DATA_PRESERVE_LBCOOKIE AM_COMMON_PROPERTY_PREFIX "postdata.preserve.lbcookie"
 #define AM_WEB_URI_PREFIX AM_COMMON_PROPERTY_PREFIX "agenturi.prefix"
 
 #define AM_WEB_FQDN_MAP AM_COMMON_PROPERTY_PREFIX "fqdn.mapping"
@@ -166,6 +167,7 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_OVERRIDE_NOTIFICATION_URL AM_COMMON_PROPERTY_PREFIX  "override.notification.url"
 
 #define AM_COMMON_IGNORE_PATH_INFO    AM_COMMON_PROPERTY_PREFIX "ignore.path.info"
+#define AM_COMMON_IGNORE_PATH_INFO_FOR_NOT_ENFORCED_LIST    AM_COMMON_PROPERTY_PREFIX "ignore.path.info.for.not.enforced.list"
 
 /* Followings are for the attribute related properties */
 #define AM_POLICY_PROFILE_ATTRS_MODE AM_COMMON_PROPERTY_PREFIX "profile.attribute.fetch.mode"
@@ -930,6 +932,15 @@ typedef struct post_urls {
  *
  */
 AM_WEB_EXPORT boolean_t am_web_is_postpreserve_enabled(void* agent_config);
+
+/*
+ * Method to get the value of the set-cookie header for the lb cookie
+ * when using a LB in front of the agent with post preservation
+ * enabled
+ */
+AM_WEB_EXPORT am_status_t
+am_web_get_postdata_preserve_lbcookie(const char **headerValue, 
+                          boolean_t isValueNull, void* agent_config);
 
 /*
  * Method to insert POST data entry in the POST cache

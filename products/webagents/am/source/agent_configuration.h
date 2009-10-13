@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.h,v 1.13 2009-06-30 01:01:37 subbae Exp $
+ * $Id: agent_configuration.h,v 1.14 2009-10-13 01:31:59 robertis Exp $
  *
  */
 
@@ -92,11 +92,10 @@ public:
     PostCache *postcache_handle;
     unsigned long postcacheentry_life;
     PRBool postdatapreserve_enable;
-    const char *postcache_url;
+    const char *postdatapreserve_lbcookie;
     const char *url_redirect_param;
     const char *user_id_param;
     const char *authLogType_param;
-    const char *dummy_post_url;
 #if defined(WINNT)
     HINSTANCE hInst;
 #endif
@@ -126,6 +125,7 @@ public:
     PRBool override_notification_url;	// whether to override the notification
     // url the same way as other rq urls
     PRBool ignore_path_info;
+    PRBool ignore_path_info_for_not_enforced_list;
     PRBool use_basic_auth;
     unsigned long connection_timeout;   //connection timeout in sec to check if active login server alive
     PRBool ignore_server_check;	// ignore server check before redirection
@@ -187,11 +187,10 @@ public:
         this->postcacheentry_life = 0;
         this->postcache_handle = NULL;
         this->postdatapreserve_enable = AM_TRUE;
-        this->postcache_url = NULL;
+        this->postdatapreserve_lbcookie= NULL;
         this->url_redirect_param= NULL;
         this->user_id_param = NULL;
         this->authLogType_param = NULL;
-        this->dummy_post_url = NULL;
 #if defined(WINNT)
         this->hInst = NULL;
 #endif
@@ -213,6 +212,7 @@ public:
         this->encode_url_special_chars = AM_FALSE;
         this->override_notification_url =  AM_FALSE;
         this->ignore_path_info = AM_FALSE;
+        this->ignore_path_info_for_not_enforced_list = AM_FALSE;
         this->use_basic_auth = AM_FALSE;
         this->connection_timeout = 0;
         this->ignore_server_check = AM_FALSE;

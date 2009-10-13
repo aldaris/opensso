@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: url.h,v 1.5 2008-06-25 08:14:40 qcheng Exp $
+ * $Id: url.h,v 1.6 2009-10-13 01:40:42 robertis Exp $
  *
  */ 
 #ifndef __URL_H__
@@ -130,6 +130,7 @@ class URL {
     }
 
     void getURLString(std::string& urlString, size_t capacity = 0);
+    void getCanonicalizedURLString(std::string& urlString, size_t capacity = 0); 
 
     void removeQueryParameter(const std::string &key);
     bool findQueryParameter(const std::string &key);
@@ -173,6 +174,7 @@ class URL {
     std::string construct_query_parameter_string() const;
     void checkQueryFormat();
     std::string get_query_parameter_string() const;
+    std::string get_canonicalized_query_parameter_string() const; 
 
     Protocol protocol;
     std::string host;

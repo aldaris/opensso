@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: url.cpp,v 1.7 2008-09-13 01:11:53 robertis Exp $
+ * $Id: url.cpp,v 1.8 2009-10-13 01:40:24 robertis Exp $
  *
  */ 
 #include <iterator>
@@ -504,6 +504,18 @@ void URL::getURLString(std::string& urlStr, size_t capacity) {
     urlStr.append(get_query_parameter_string());
 }
 
+void URL::getCanonicalizedURLString(std::string& urlStr, size_t capacity) {
+    size_t size = MIN_URL_LEN+
+    host.size()+portStr.size()+uri.size()+path_info.size()+100;
+    if (capacity == 0) {
+        capacity = size;
+    }
+    getBaseURL(urlStr, capacity);
+    urlStr.append(path_info);
+    urlStr.append(get_canonicalized_query_parameter_string());
+}
+ 
+
 void URL::getBaseURL(std::string& baseURL, size_t capacity) {
     size_t size = MIN_URL_LEN+
 	       host.size()+portStr.size()+uri.size()+path_info.size()+10;
@@ -532,6 +544,40 @@ std::string URL::get_query_parameter_string() const
 {
     return query;
 }
+
+/**
+  * For policy evaluation, the query string needs to be
+  * canonicalized, that is the query parameters are put
+  * in alphabetic order.
+  */
+std::string URL::get_canonicalized_query_parameter_string() const
+{
+    std::string retVal;
+    if(qParams.size() > 0) {
+        retVal.append("?");
+        KeyValueMap::const_iterator iter = qParams.begin();
+        for(; iter != qParams.end(); ++iter) {
+            const KeyValueMap::key_type &key = iter->first;
+            const KeyValueMap::mapped_type &values = iter->second;
+            std::size_t val_size = values.size();
+            for(std::size_t i = 0; i < val_size; ++i) {
+                if (!key.empty()) {
+                    if(i > 0 || retVal.size() > 1) {
+                        retVal.append("&");
+                    }
+                    retVal.append(key);
+                    if (!values[i].empty()) {
+                        retVal.append("=");
+                        retVal.append(values[i]);
+                    }
+                }
+            }
+        }
+    }
+    return retVal;
+}
+ 
+
 
 /**
  * Throws InternalException if the query parameter has an invalid format.

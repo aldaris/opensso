@@ -42,7 +42,7 @@ const char REDIRECT_TEMPLATE[] = {
 
 const char REDIRECT_COOKIE_TEMPLATE[] = {
     "Location: %s\r\n"
-    "%s\r\n"
+    "%s"
     "Content-Length: 0\r\n"
     "\r\n"
 };
@@ -74,6 +74,7 @@ const char INTERNAL_SERVER_ERROR_MSG[] = {
 const CHAR agentDescription[]   = { AGENT_DESCRIPTION };
 #define	MAGIC_STR		"sunpostpreserve"
 #define	POST_PRESERVE_URI	"/dummypost/"MAGIC_STR
+#define   EMPTY_STRING	""
 
 // actually const. But API prototypes don't alow.
 CHAR httpOk[]                   = "200 OK";
@@ -97,7 +98,7 @@ const CHAR pszCrlf[]            = "\r\n";
 const CHAR pszEntityDelimiter[]     = "\r\n\r\n";
 // Response to cache invalidation notification request.
 //   I.e. UpdateAgentCacheServlet
-const CHAR httpResponseOk[]     = {
+const CHAR HTTP_RESPONSE_OK[]     = {
     "HTTP/1.1 200 OK\r\n"
     "Content-length: 2\r\n"
     "Content-type: text/plain\r\n\r\n"
@@ -159,9 +160,7 @@ BOOL loadAgentPropertyFile(EXTENSION_CONTROL_BLOCK *pECB)
     CHAR         debugMsg[2048]   = "";
     CHAR* agent_bootstrap_file  = NULL;
     CHAR* agent_config_file = NULL;    
-
-boolean_t agentInitialized = B_FALSE;
-
+    boolean_t agentInitialized = B_FALSE;
 
     // Init to NULL values until we read properties file.
     agentConfig.bAgentInitSuccess = FALSE; // assume Failure until success
@@ -232,7 +231,6 @@ boolean_t agentInitialized = B_FALSE;
          return FALSE;
        }
 
-
     status = am_agent_init(&agentInitialized);
        if (AM_SUCCESS != polsPolicyStatus) {
          sprintf(debugMsg, "%s: Initialization of the agent(am_agent_init) failed: status = %s (%d)",
@@ -242,8 +240,6 @@ boolean_t agentInitialized = B_FALSE;
          SetLastError(IISA_ERROR_INIT_POLICY);
          return FALSE;
        }
-
-
 
     if (instanceId != NULL) {
        free(instanceId);
@@ -383,7 +379,7 @@ DWORD send_post_data(EXTENSION_CONTROL_BLOCK *pECB, char *page,
     const char post_headers_template_with_cookie[] = {
              "Content-Length: %d\r\n"
              "Content-Type: text/html\r\n"
-             "%s\r\n"
+             "%s"
              "\r\n"
     };
 
@@ -402,10 +398,14 @@ DWORD send_post_data(EXTENSION_CONTROL_BLOCK *pECB, char *page,
         page_len = strlen(page);
         memset(headers, 0, headers_len);
         if (set_cookies_list != NULL && strlen(set_cookies_list) > 0) {
-            sprintf(headers, post_headers_template_with_cookie, page_len, set_cookies_list);
+            sprintf(headers, post_headers_template_with_cookie, 
+                    page_len, set_cookies_list);
         } else {
             sprintf(headers, post_headers_template, page_len);
         }
+        am_web_log_debug("%s: Headers sent with post form:\n%s",
+                          thisfunc, headers);
+        am_web_log_debug("%s: Post form:\n%s", thisfunc, page);
         sendHdr.pszStatus = httpOk;
         sendHdr.pszHeader = headers;
         sendHdr.cchStatus = strlen(httpOk);
@@ -518,10 +518,10 @@ static am_status_t set_header(const char *key, const char *values, void **args)
      return status;
 }
 
-// Function invoked in CDSSO mode to set the cookie in the
-// foreign domain
+// Append set-cookie header in set_cookies_list variable
 static am_status_t set_cookie(const char *header, void **args)
 {
+     const char *thisfunc = "set_cookie()";
      am_status_t status = AM_SUCCESS;
      CHAR** ptr = NULL;
      CHAR* set_cookies_list = NULL;
@@ -529,34 +529,34 @@ static am_status_t set_cookie(const char *header, void **args)
      if (header != NULL && args != NULL ) {
         EXTENSION_CONTROL_BLOCK *pECB = (EXTENSION_CONTROL_BLOCK *) args[0];
         size_t cookie_length = 0;
-        char* cdssoCookie = NULL;
+        char* cookieValue = NULL;
         char* tmpStr = NULL;
 
         ptr = (CHAR **) args[2];
         set_cookies_list = *ptr;
 
         if (pECB != NULL) {
-          cookie_length = strlen("Set-Cookie:") + strlen(header)
+            cookie_length = strlen("Set-Cookie:") + strlen(header)
                                             + strlen("\r\n");
-          cdssoCookie = (char *) malloc(cookie_length + 1);
+            cookieValue = (char *) malloc(cookie_length + 1);
         } else {
           am_web_log_error("set_cookie(): Invalid EXTENSION_CONTROL_BLOCK");
           status = AM_INVALID_ARGUMENT;
         }
 
        if (status == AM_SUCCESS) {
-          if (cdssoCookie != NULL) {
-             sprintf(cdssoCookie, "Set-Cookie:%s\r\n", header);
+          if (cookieValue != NULL) {
+             sprintf(cookieValue, "Set-Cookie:%s\r\n", header);
 
              if (set_cookies_list == NULL) {
                 set_cookies_list = (char *) malloc(cookie_length + 1);
                 if (set_cookies_list != NULL) {
                     memset(set_cookies_list, 0, sizeof(char) *
                                         cookie_length + 1);
-                    strcpy(set_cookies_list, cdssoCookie);
+                    strcpy(set_cookies_list, cookieValue);
                 } else {
-                    am_web_log_error("set_cookie():Not enough memory 0x%x "
-                             "bytes.",cookie_length + 1);
+                    am_web_log_error("%s:Not enough memory 0x%x "
+                                   "bytes.",thisfunc, cookie_length + 1);
                     status = AM_NO_MEMORY;
                 }
              } else {
@@ -564,34 +564,37 @@ static am_status_t set_cookie(const char *header, void **args)
                   set_cookies_list = (char *) malloc(strlen(tmpStr) +
                                                      cookie_length + 1);
                   if (set_cookies_list == NULL) {
-                    am_web_log_error("set_cookie():Not enough memory 0x%x "
-                             "bytes.",cookie_length + 1);
+                    am_web_log_error("%s: Not enough memory 0x%x "
+                                      "bytes.", thisfunc, cookie_length + 1);
                     status = AM_NO_MEMORY;
                   } else {
                      memset(set_cookies_list,0,sizeof(set_cookies_list));
                      strcpy(set_cookies_list,tmpStr);
-                     strcat(set_cookies_list,cdssoCookie);
+                     strcat(set_cookies_list,cookieValue);
                   }
             }
-            free(cdssoCookie);
+            am_web_log_info("%s: Following header added to "
+                            "set_cookies_list:\n%s", 
+                            thisfunc, cookieValue);
+            free(cookieValue);
 
             if (tmpStr) {
                 free(tmpStr);
                 tmpStr = NULL;
             }
           } else {
-             am_web_log_error("set_cookie():Not enough memory 0x%x bytes.",
-                               cookie_length + 1);
+            am_web_log_error("%s: Not enough memory 0x%x bytes.",
+                                  thisfunc, cookie_length + 1);
              status = AM_NO_MEMORY;
           }
        }
      } else {
-          am_web_log_error("set_cookie(): Invalid arguments obtained");
+            am_web_log_error("%s: Invalid arguments obtained", thisfunc);
           status = AM_INVALID_ARGUMENT;
      }
 
     if (set_cookies_list && set_cookies_list[0] != '\0') {
-        am_web_log_info("set_cookie():set_cookies_list = %s", set_cookies_list);
+        am_web_log_info("%s:set_cookies_list = %s", thisfunc, set_cookies_list);
         *ptr = set_cookies_list;
     }
 
@@ -608,166 +611,6 @@ static am_status_t get_cookie_sync(const char *cookieName,
                                    void **args)
 {
    am_status_t status = AM_SUCCESS;
-   return status;
-}
-
-// Set attributes as cookies
-static am_status_t set_cookie_in_response(const char *header, void **args)
-{
-    am_status_t status = AM_SUCCESS;
-
-    if (header != NULL && args != NULL ) {
-        EXTENSION_CONTROL_BLOCK *pECB = (EXTENSION_CONTROL_BLOCK *) args[0];
-        size_t header_length = 0;
-
-        CHAR* httpHeader = NULL;
-        CHAR* new_cookie_str = NULL;
-        CHAR* tmpHeader = NULL;
-        CHAR** ptr = NULL;
-        CHAR* set_cookies_list = NULL;
-
-        ptr = (CHAR **) args[2];
-        set_cookies_list = *ptr;
-
-        if (pECB == NULL) {
-            am_web_log_error("set_cookie_in_response(): Invalid "
-                         "EXTENSION_CONTROL_BLOCK object is null");
-            status = AM_INVALID_ARGUMENT;
-        } else {
-            header_length = strlen("Set-Cookie:") + strlen("\r\n")
-                            + strlen(header) + 1;
-            httpHeader = (char *)malloc(header_length);
-            if (httpHeader != NULL) {
-                sprintf(httpHeader, "Set-Cookie:%s\r\n", header);
-                if (set_cookies_list == NULL) {
-                       set_cookies_list = (char *) malloc(header_length + 1);
-                   if (set_cookies_list != NULL) {
-                      memset(set_cookies_list, 0, sizeof(char) *
-                                              header_length + 1);
-                      strcpy(set_cookies_list, httpHeader);
-                       } else {
-                         am_web_log_error("set_cookie_in_response(): Not "
-                                          "enough memory 0x%x bytes.",
-                                          header_length + 1);
-                         status = AM_NO_MEMORY;
-                       }
-                } else {
-                    tmpHeader = set_cookies_list;
-                    set_cookies_list = (char *)malloc(strlen(tmpHeader) +
-                                       header_length + 1);
-                    if (set_cookies_list == NULL) {
-                        am_web_log_error("set_cookie_in_response():Not "
-                                         "enough memory 0x%x bytes.",
-                                         header_length + 1);
-                        status = AM_NO_MEMORY;
-                    } else {
-                      memset(set_cookies_list,0,sizeof(set_cookies_list));
-                      strcpy(set_cookies_list,tmpHeader);
-                      strcat(set_cookies_list, httpHeader);
-                    }
-                }
-                if (new_cookie_str) {
-                   am_web_free_memory(new_cookie_str);
-                }
-            } else {
-                    am_web_log_error("set_cookie_in_response(): Not enough "
-                                     "memory 0x%x bytes.", header_length + 1);
-            }
-            free(httpHeader);
-
-            if (tmpHeader != NULL) {
-                free(tmpHeader);
-            }
-
-            if (status != AM_NO_MEMORY) {
-                *ptr = set_cookies_list;
-            }
-
-        }
-     } else {
-       am_web_log_error("set_cookie_in_response():Invalid arguments obtained");
-       status = AM_INVALID_ARGUMENT;
-     }
-     return status;
-}
-
-// Function to reset all the cookies before redirecting to AM
-static am_status_t reset_cookie(const char *header, void **args)
-{
-   am_status_t status = AM_SUCCESS;
-
-   if (header != NULL && args != NULL) {
-
-        EXTENSION_CONTROL_BLOCK *pECB = (EXTENSION_CONTROL_BLOCK *) args[0];
-        size_t reset_cookie_length = 0;
-        char *resetCookie = NULL;
-        char *tmpStr = NULL;
-        CHAR* set_cookies_list = NULL;
-        CHAR** ptr = NULL;
-
-        ptr = (CHAR **) args[2];
-        set_cookies_list = *ptr;
-
-        if (pECB != NULL) {
-          reset_cookie_length = strlen("Set-Cookie:") + strlen(header)
-                                                  + strlen("\r\n");
-          resetCookie = (char *) malloc(reset_cookie_length + 1);
-        } else {
-          am_web_log_error("reset_cookie(): Invalid EXTENSION_CONTROL_BLOCK");
-          status = AM_INVALID_ARGUMENT;
-        }
-
-        if (status == AM_SUCCESS) {
-          if (resetCookie != NULL) {
-             memset(resetCookie, 0, sizeof(char) * reset_cookie_length + 1);
-             sprintf(resetCookie, "Set-Cookie:%s\r\n", header);
-
-             if (set_cookies_list == NULL) {
-               set_cookies_list = (char *) malloc(reset_cookie_length + 1);
-               if (set_cookies_list != NULL) {
-                   memset(set_cookies_list, 0, sizeof(char) *
-                                        reset_cookie_length + 1);
-                   strcpy(set_cookies_list, resetCookie);
-               } else {
-               am_web_log_error("reset_cookie():Not enough memory 0x%x bytes.",
-                                reset_cookie_length + 1);
-                status = AM_NO_MEMORY;
-               }
-             } else {
-                 tmpStr = set_cookies_list;
-                 set_cookies_list = (char *) malloc(strlen(tmpStr) +
-                                     reset_cookie_length + 1);
-                 if (set_cookies_list == NULL) {
-                   am_web_log_error("reset_cookie():Not enough memory 0x%x "
-                            "bytes.", reset_cookie_length + 1);
-                   status = AM_NO_MEMORY;
-                 } else {
-                     memset(set_cookies_list, 0, sizeof(set_cookies_list));
-                     strcpy(set_cookies_list, tmpStr);
-                     strcat(set_cookies_list, resetCookie);
-                 }
-             }
-         am_web_log_debug("reset_cookie(): set_cookies_list ==> %s",
-                               set_cookies_list);
-         free(resetCookie);
-
-         if (tmpStr != NULL) {
-            free(tmpStr);
-         }
-         if (status != AM_NO_MEMORY) {
-            *ptr = set_cookies_list;
-         }
-
-          } else {
-             am_web_log_error("reset_cookie():Not enough memory 0x%x bytes.",
-                               reset_cookie_length + 1);
-             status = AM_NO_MEMORY;
-          }
-       }
-   } else {
-          am_web_log_error("reset_cookie(): Invalid arguments obtained");
-          status = AM_INVALID_ARGUMENT;
-   }
    return status;
 }
 
@@ -1054,7 +897,7 @@ static DWORD do_redirect(EXTENSION_CONTROL_BLOCK *pECB,
                                      "advice response body:%s",
                                      thisfunc, am_status_to_string(ret));
                 }
-        //no policy advices exist. proceed normally.
+                //no policy advices exist. proceed normally.
                     } else {
                 if (ret == AM_SUCCESS && redirect_url != NULL) {
                     CHAR* set_cookies_list = *((CHAR**) args[2]);
@@ -1547,7 +1390,8 @@ am_status_t remove_key_in_headers(char* key, char** httpHeaders)
     return status;
 }
 
-am_status_t set_request_headers(EXTENSION_CONTROL_BLOCK *pECB, void** args)
+am_status_t set_request_headers(EXTENSION_CONTROL_BLOCK *pECB,
+                                void** args, BOOL addOriginalHeaders)
 {
     const char *thisfunc = "set_request_headers()";
     am_status_t status = AM_SUCCESS;
@@ -1573,6 +1417,7 @@ am_status_t set_request_headers(EXTENSION_CONTROL_BLOCK *pECB, void** args)
         CHAR** ptr = (CHAR **) args[3];
         CHAR* request_hdrs = *ptr;
 
+        if (addOriginalHeaders == TRUE) {
         //Get the original headers from the request
         if (pECB->GetServerVariable(pECB->ConnID, "ALL_RAW", NULL,
                                       &httpHeadersSize) == FALSE ) {
@@ -1703,10 +1548,13 @@ am_status_t set_request_headers(EXTENSION_CONTROL_BLOCK *pECB, void** args)
                 tmpAttributeList = NULL;
             }
         }
+        }
 
         //Add custom headers and/or set_cookie header to original headers
         if (status == AM_SUCCESS) {
-            http_headers_length = strlen(httpHeaders);
+            if (addOriginalHeaders == TRUE) {
+                http_headers_length = strlen(httpHeaders);
+            }
             if (set_headers_list != NULL) {
                 http_headers_length = http_headers_length + 
                                 strlen(set_headers_list);
@@ -1715,10 +1563,13 @@ am_status_t set_request_headers(EXTENSION_CONTROL_BLOCK *pECB, void** args)
                 http_headers_length = http_headers_length +
                                strlen(set_cookies_list);
             }
+            if (http_headers_length > 0) {
             request_hdrs = (char *)malloc(http_headers_length + 1);
             if (request_hdrs != NULL) {
                 memset(request_hdrs,0, http_headers_length + 1);
-                strcpy(request_hdrs, httpHeaders);
+                if (httpHeaders != NULL) {
+                    strcpy(request_hdrs, httpHeaders);
+                }
                 if (set_headers_list != NULL) {
                     strcat(request_hdrs,set_headers_list);
                 }
@@ -1726,15 +1577,15 @@ am_status_t set_request_headers(EXTENSION_CONTROL_BLOCK *pECB, void** args)
                     strcat(request_hdrs,set_cookies_list);
                 }
                 *ptr = request_hdrs;
-                am_web_log_debug("set_request_headers(): Final headers: %s",
-                                                      request_hdrs);
+                    am_web_log_debug("%s: Final headers: %s",
+                                     thisfunc, request_hdrs);
             } else {
-                am_web_log_error("set_request_headers():Not enough memory "
-                               "to allocate request_hdrs");
+                    am_web_log_error("%s: Not enough memory to allocate "
+                                   "request_hdrs", thisfunc);
                 status = AM_NO_MEMORY;
             }
         }
-
+        }
         if (httpHeaders != NULL) {
             free(httpHeaders);
             httpHeaders = NULL;
@@ -1747,6 +1598,7 @@ am_status_t set_request_headers(EXTENSION_CONTROL_BLOCK *pECB, void** args)
     
     return status;
 }
+
 void OphResourcesFree(tOphResources* pOphResources)
 {
     if (pOphResources->cookies != NULL) {
@@ -1770,7 +1622,7 @@ static DWORD redirect_to_request_url(EXTENSION_CONTROL_BLOCK *pECB,
                                   const char *redirect_url, 
                                   const char *set_cookies_list)
 {
-    const char *thisfunc = "redirect_get_request()";
+    const char *thisfunc = "redirect_to_request_url()";
     char *redirect_header = NULL;
     size_t redirect_hdr_len = 0;
     char *redirect_status = httpServerError;
@@ -1843,6 +1695,20 @@ static DWORD redirect_to_request_url(EXTENSION_CONTROL_BLOCK *pECB,
     return returnValue;
 }
 
+DWORD send_ok(EXTENSION_CONTROL_BLOCK *pECB) 
+{
+    const char *thisfunc = "send_ok()";
+    const char *data = HTTP_RESPONSE_OK;
+    size_t data_len = sizeof(HTTP_RESPONSE_OK) - 1;
+    if (pECB->WriteClient(pECB->ConnID, (LPVOID)data,
+                     (LPDWORD)&data_len, (DWORD) 0))
+    {
+        am_web_log_error("%s: WriteClient did not succeed: "
+                     "Attempted message = %s ", thisfunc, data);
+    }
+    return HSE_STATUS_SUCCESS_AND_KEEP_CONN;
+}
+
 DWORD WINAPI HttpExtensionProc(EXTENSION_CONTROL_BLOCK *pECB)
 {
     const char *thisfunc = "HttpExtensionProc()";
@@ -1851,6 +1717,7 @@ DWORD WINAPI HttpExtensionProc(EXTENSION_CONTROL_BLOCK *pECB)
     
     CHAR* dpro_cookie = NULL;
     am_status_t status = AM_SUCCESS;
+    am_status_t status_tmp = AM_SUCCESS;
     DWORD returnValue = HSE_STATUS_SUCCESS;
     CHAR *set_cookies_list = NULL;
     CHAR *set_headers_list = NULL;
@@ -1924,6 +1791,7 @@ DWORD WINAPI HttpExtensionProc(EXTENSION_CONTROL_BLOCK *pECB)
              data =  pECB->lpbData;
              am_web_handle_notification(data, pECB->cbTotalBytes, agent_config);
              OphResourcesFree(pOphResources);
+             send_ok(pECB);
              return HSE_STATUS_SUCCESS_AND_KEEP_CONN;
           }
     }
@@ -2106,7 +1974,7 @@ DWORD WINAPI HttpExtensionProc(EXTENSION_CONTROL_BLOCK *pECB)
 
     // Check if the user is authorized to access the resource.
     // This check is not necessary for the "/dummypost/sunpostpreserve" url.
-    if ((status == AM_SUCCESS) && (post_page == NULL)) {
+    if ((status == AM_SUCCESS)) {
         
         client_ip_header_name = am_web_get_client_ip_header_name(agent_config);
 
@@ -2173,28 +2041,56 @@ DWORD WINAPI HttpExtensionProc(EXTENSION_CONTROL_BLOCK *pECB)
     switch(status) {
         case AM_SUCCESS:
               if (am_web_is_logout_url(requestURL,agent_config) == B_TRUE) {
-                 (void)am_web_logout_cookies_reset(reset_cookie, args, agent_config);
+                 (void)am_web_logout_cookies_reset(set_cookie, args, agent_config);
             }
             // set user attributes to http header/cookies
-            status = am_web_result_attr_map_set(&OphResources.result,
-                                        set_header, set_cookie_in_response,
+            status_tmp = am_web_result_attr_map_set(&OphResources.result,
+                                        set_header, set_cookie,
                                         set_header_attr_as_cookie,
                                         get_cookie_sync, args, agent_config);
-            if (status == AM_SUCCESS) {
+            if (status_tmp == AM_SUCCESS) {
                 // Set request headers
-                if ((set_headers_list != NULL) || 
-                    (set_cookies_list != NULL) ||
-                    (redirectRequest == TRUE)) {
-                    status = set_request_headers(pECB, args);
+                if ((set_headers_list != NULL) || (set_cookies_list != NULL)) {
+                    BOOL addOriginalHeaders;
+                    if (redirectRequest == TRUE) {
+                        addOriginalHeaders = FALSE;
+                    } else {
+                        addOriginalHeaders = TRUE;
+                    }
+                    status_tmp = set_request_headers(pECB, args, 
+                                    addOriginalHeaders);
                 }
             }
-            if (status == AM_SUCCESS) {
+            if (status_tmp == AM_SUCCESS) {
                 if (post_page != NULL) {
+                    const char *lbCookieHeader = NULL;
+
+
                     // If post_ page is not null it means that the request 
                     // contains the "/dummypost/sunpostpreserve" string and
-                    // that the data of the original request needs to be posted
-                    returnValue = send_post_data(pECB, post_page, 
+                    // that the data of the original request need to be posted
+                    // If using the lb cookie, it needs to be reset to NULL there
+                    status_tmp = am_web_get_postdata_preserve_lbcookie(
+                                  &lbCookieHeader, B_TRUE, agent_config);
+                    if (status_tmp == AM_SUCCESS) {
+                        if (lbCookieHeader != NULL) {
+                            am_web_log_debug("%s: Setting LB cookie for "
+                                             "post data preservation to null",
+                                             thisfunc);
+                            set_cookie(lbCookieHeader, args);
+                        }
+                        returnValue = send_post_data(pECB, post_page, 
                                                  set_cookies_list);
+                    } else {
+                        am_web_log_error("%s: "
+                              "am_web_get_postdata_preserve_lbcookie() "
+                              "failed ", thisfunc);
+                        returnValue = send_error(pECB);
+                    }
+                    if (lbCookieHeader != NULL) {
+                        am_web_free_memory(lbCookieHeader);
+                        lbCookieHeader = NULL;
+                    }
                 } else if (redirectRequest == TRUE) {
                     //If the property use.sunwmethod is set to false,
                     //the request method after authentication is GET
@@ -2238,46 +2134,60 @@ DWORD WINAPI HttpExtensionProc(EXTENSION_CONTROL_BLOCK *pECB)
             //first clear the stale cdsso cookies if any, in the browser
             if (am_web_is_cdsso_enabled(agent_config) == B_TRUE)
             {
-                cookie_name= am_web_get_cookie_name(agent_config);
-                cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
-                cookie_header = malloc(cookie_header_len+1);
-                _snprintf(cookie_header, cookie_header_len,CDSSO_RESET_COOKIE_TEMPLATE,cookie_name);
-                cdStatus = reset_cookie(cookie_header,args);
+                cdStatus = am_web_do_cookie_domain_set(set_cookie, args, EMPTY_STRING, agent_config);        
                 if(cdStatus != AM_SUCCESS) {
-                    am_web_log_error("validate_session_policy :CDSSO reset_cookie failed");
-                }
-
-                if(cookie_header!=NULL) {
-                    free(cookie_header);
-                    cookie_header = NULL;
+                    am_web_log_error("%s : CDSSO reset cookie failed. ", thisfunc);
                 }
             }
 
-            am_web_do_cookies_reset(reset_cookie, args, agent_config);
+            am_web_do_cookies_reset(set_cookie, args, agent_config);
             // If the post data preservation feature is enabled
             // save the post data in the cache for post requests.
             if (strcmp(requestMethod, REQUEST_METHOD_POST) == 0 
                 && B_TRUE==am_web_is_postpreserve_enabled(agent_config))
             {
-                am_status_t status_get_data = AM_SUCCESS;
                 post_urls_t *post_urls = NULL;
                 post_urls = am_web_create_post_preserve_urls(requestURL, agent_config);
                 // In CDSSO mode, for a POST request, the post data have
                 // already been saved in the response variable, so we need
                 // to get them here only if response is NULL.
                 if (response == NULL) {
-                    status_get_data = get_post_data(pECB, &response);
+                    status_tmp = get_post_data(pECB, &response);
                 }                
-                if (status_get_data == AM_SUCCESS) {
+                if (status_tmp == AM_SUCCESS) {
+                    const char *lbCookieHeader = NULL;
                     if (response != NULL && strlen(response) > 0) {
                         if (AM_SUCCESS == register_post_data(pECB,post_urls->action_url,
                                           post_urls->post_time_key, response, agent_config)) 
                         {                            
-                            returnValue = do_redirect(pECB, status, 
+                            // If using a LB in front of the agent, the LB cookie
+                            // needs to be set there. The boolean argument allows
+                            // to set the value of the cookie to the one defined in the
+                            // properties file (B_FALSE) or to NULL (B_TRUE).
+                            status_tmp = am_web_get_postdata_preserve_lbcookie(
+                                                   &lbCookieHeader, B_FALSE, agent_config);
+                            if (status_tmp == AM_SUCCESS) {
+                                if (lbCookieHeader != NULL) {
+                                    am_web_log_debug("%s: Setting LB cookie for post data "
+                                             "preservation", thisfunc);
+                                    set_cookie(lbCookieHeader, args);
+                                }
+                                returnValue = do_redirect(pECB, status, 
                                                       &pOphResources->result,
                                                       post_urls->dummy_url, 
                                                       requestMethod, args, 
                                                       agent_config);
+                            } else {
+                                am_web_log_error("%s: "
+                                   "am_web_get_postdata_preserve_lbcookie() "
+                                   "failed ", thisfunc);
+                                returnValue = send_error(pECB);
+                            }
+                            if (lbCookieHeader != NULL) {
+                                am_web_free_memory(lbCookieHeader);
+                                lbCookieHeader = NULL;
+                            }
+
                         } else {
                             returnValue = send_error(pECB);
                         }

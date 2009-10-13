@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_policy.cpp,v 1.9 2008-06-25 08:14:28 qcheng Exp $
+ * $Id: am_policy.cpp,v 1.10 2009-10-13 01:34:17 robertis Exp $
  *
  */ 
 
@@ -408,12 +408,36 @@ am_policy_notify(am_policy_t policy_handle,
     return AM_SUCCESS;
 }
 
+const char *am_resource_match_to_string(int rm)
+{
+    const char *str = NULL;
+    switch (rm) {
+        case 0:
+            str = "AM_SUB_RESOURCE_MATCH";
+            break;
+        case 1:
+            str = "AM_EXACT_MATCH";
+            break;
+        case 2:
+            str = "AM_SUPER_RESOURCE_MATCH";
+            break;
+        case 3:
+            str = "AM_NO_MATCH";
+            break;
+        case 4:
+            str = "AM_EXACT_PATTERN_MATCH";
+            break;
+    }
+    return str;
+}
+
 extern "C" am_resource_match_t
 am_policy_compare_urls(const am_resource_traits_t *rsrcTraits,
 		       const char *policyResourceName,
 		       const char *resourceName,
 		       boolean_t usePatterns)
 {
+    const char *thisfunc = "am_policy_compare_urls";
     Log::ModuleId logID = Log::addModule(AM_POLICY_SERVICE);
     am_resource_match_t ret = AM_NO_MATCH;
     try {
@@ -421,9 +445,11 @@ am_policy_compare_urls(const am_resource_traits_t *rsrcTraits,
 			     rsrcTraits,
 			     true, usePatterns==B_TRUE);
 	Log::log(logID, Log::LOG_MAX_DEBUG,
-		 "am_policy_compare_urls(): compare usePatterns=%s "
-		 "returned %d", usePatterns==B_TRUE?"true":"false", ret);
-    }
+             "%s: Comparison of \"%s\" and \"%s\" returned %s "
+             "(usePatterns=%s)", thisfunc, resourceName,
+             policyResourceName, am_resource_match_to_string(ret),
+             usePatterns==B_TRUE?"true":"false");
+    } 
     catch (std::exception& ex) {
 	Log::log(logID, Log::LOG_ERROR,
 		 "am_policy_compare_urls(): unexpected exception "
@@ -481,7 +507,7 @@ am_policy_resource_canonicalize(const char *resource, char **c_resource) {
     try {
 	std::string urlStr;
 	URL url(resource);
-	url.getURLString(urlStr);
+    url.getCanonicalizedURLString(urlStr); 
 	*c_resource = strdup(urlStr.c_str());
     } catch(InternalException &ex) {
 	Log::log(Log::ALL_MODULES, Log::LOG_ERROR, ex);
