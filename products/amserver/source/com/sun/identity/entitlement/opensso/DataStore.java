@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.2 2009-08-29 00:56:24 veiming Exp $
+ * $Id: DataStore.java,v 1.3 2009-10-13 08:09:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -757,6 +757,15 @@ public class DataStore {
         String filter = getFilter(indexes, subjectIndexes, bSubTree);
         String baseDN = getSearchBaseDN(realm, null);
 
+        if (PrivilegeManager.debug.messageEnabled()) {
+            PrivilegeManager.debug.message(
+                "[PolicyEval] DataStore.searchPrivileges", null);
+            PrivilegeManager.debug.message(
+                "[PolicyEval] search filter: " + filter, null);
+            PrivilegeManager.debug.message(
+                "[PolicyEval] search DN: " + baseDN, null);
+        }
+
         if (filter != null) {
 //            if (adminToken == null) {
 //                Object[] arg = {baseDN};
@@ -818,6 +827,15 @@ public class DataStore {
         Set<ReferralPrivilege> results = new HashSet<ReferralPrivilege>();
         String filter = getFilter(indexes, null, bSubTree);
         String baseDN = getSearchBaseDN(realm, REFERRAL_STORE);
+
+        if (PrivilegeManager.debug.messageEnabled()) {
+            PrivilegeManager.debug.message(
+                "[PolicyEval] DataStore.searchReferral", null);
+            PrivilegeManager.debug.message(
+                "[PolicyEval] search filter: " + filter, null);
+            PrivilegeManager.debug.message(
+                "[PolicyEval] search DN: " + baseDN, null);
+        }
 
         if (filter != null) {
 /*            if (adminToken == null) {
