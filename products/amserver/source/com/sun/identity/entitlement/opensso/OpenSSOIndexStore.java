@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.3 2009-09-25 05:52:54 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.4 2009-10-13 22:36:30 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -484,13 +484,13 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
 
         // check if PolicyCache has all the entries for the realm
         int cacheEntries = policyCache.getCount(realm);
-        int totalPolicies = dataStore.getNumberOfPolicies(realm);
+        int totalPolicies = DataStore.getNumberOfPolicies(realm);
         if ((totalPolicies > 0) &&(cacheEntries < totalPolicies)) {
             return true;
         }
 
         cacheEntries = referralCache.getCount(realm);
-        int totalReferrals = dataStore.getNumberOfReferrals(realm);
+        int totalReferrals = DataStore.getNumberOfReferrals(realm);
         if ((totalReferrals > 0) && (cacheEntries < totalReferrals)) {
             return true;
         }
@@ -806,6 +806,21 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     String getRealmDN() {
         return (realmDN);
     }
+
+    // Monitoring
+    public static int getNumCachedPolicies(String realm) {
+        return policyCache.getCount(realm);
+    }
+    public static int getNumCachedReferrals(String realm) {
+        return referralCache.getCount(realm);
+    }
+    public static int getNumCachedPolicies() {
+        return policyCache.getCount();
+    }
+    public static int getNumCachedReferrals() {
+        return referralCache.getCount();
+    }
+
 
     public class SearchTask implements Runnable {
 

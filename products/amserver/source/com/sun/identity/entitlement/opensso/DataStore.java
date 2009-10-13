@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.3 2009-10-13 08:09:26 veiming Exp $
+ * $Id: DataStore.java,v 1.4 2009-10-13 22:36:29 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -57,6 +57,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.persistence.EntityExistsException;
 import javax.security.auth.Subject;
 import org.json.JSONException;
@@ -100,9 +102,10 @@ public class DataStore {
         NetworkMonitor.getInstance("dbLookupReferrals");
     
     // count of number of policies per realm
-    static HashMap<String, Integer> policiesPerRealm =
+    private static ReadWriteLock countRWLock = new ReentrantReadWriteLock();
+    private static Map<String, Integer> policiesPerRealm =
         new HashMap<String, Integer>();
-    static HashMap<String, Integer> referralsPerRealm =
+    private static Map<String, Integer> referralsPerRealm =
         new HashMap<String, Integer>();
     private static SSOToken adminToken = (SSOToken)
         AccessController.doPrivileged(AdminTokenAction.getInstance());
@@ -181,14 +184,21 @@ public class DataStore {
     }
 
     void clearIndexCount(String realm, boolean referral) {
-        if (referral) {
-            referralsPerRealm.remove(DNMapper.orgNameToDN(realm));
-        } else {
-            policiesPerRealm.remove(DNMapper.orgNameToDN(realm));
+        countRWLock.writeLock().lock();
+        try {
+            if (referral) {
+                referralsPerRealm.remove(DNMapper.orgNameToDN(realm));
+            } else {
+                policiesPerRealm.remove(DNMapper.orgNameToDN(realm));
+            }
+        } finally {
+            countRWLock.writeLock().unlock();
         }
     }
 
     private void updateIndexCount(String realm, int num, boolean referral) {
+        countRWLock.writeLock().lock();
+
         try {
             String key = (referral) ? REFERRAL_INDEX_COUNT : INDEX_COUNT;
 
@@ -220,10 +230,12 @@ public class DataStore {
             PrivilegeManager.debug.error("DataStore.updateIndexCount", ex);
         } catch (SSOException ex) {
             PrivilegeManager.debug.error("DataStore.updateIndexCount", ex);
+        } finally {
+            countRWLock.writeLock().unlock();
         }
     }
 
-    private int getIndexCount(String realm, boolean referral) {
+    private static int getIndexCount(String realm, boolean referral) {
         int count = 0;
         if (adminToken != null) {
             try {
@@ -250,30 +262,60 @@ public class DataStore {
         return count;
     }
 
-    int getNumberOfPolicies(String realm) {
-        int totalPolicies = 0;
-        Integer tp = policiesPerRealm.get(realm);
-        if (tp == null) {
-            totalPolicies = getIndexCount(realm, false);
-            policiesPerRealm.put(realm, totalPolicies);
-        } else {
-            totalPolicies = tp.intValue();
-        }
-
-        return (totalPolicies);
+    public static int getNumberOfPolicies() {
+        return getCountInMap(policiesPerRealm);
     }
 
-    int getNumberOfReferrals(String realm) {
-        int referralCnt = 0;
-        Integer tp = referralsPerRealm.get(realm);
-        if (tp == null) {
-            referralCnt = getIndexCount(realm, true);
-            referralsPerRealm.put(realm, referralCnt);
-        } else {
-            referralCnt = tp.intValue();
-        }
+    public static int getNumberOfReferrals() {
+        return getCountInMap(referralsPerRealm);
+    }
 
-        return (referralCnt);
+    private static int getCountInMap(Map<String, Integer> map) {
+        countRWLock.readLock().lock();
+        try {
+            int total = 0;
+            for (Integer cnt : map.values()) {
+                total += cnt;
+            }
+            return total;
+        } finally {
+            countRWLock.readLock().unlock();
+        }
+    }
+
+    public static int getNumberOfPolicies(String realm) {
+        countRWLock.readLock().lock();
+        try {
+            int totalPolicies = 0;
+            Integer tp = policiesPerRealm.get(realm);
+            if (tp == null) {
+                totalPolicies = getIndexCount(realm, false);
+                policiesPerRealm.put(realm, totalPolicies);
+            } else {
+                totalPolicies = tp.intValue();
+            }
+            return (totalPolicies);
+        } finally {
+            countRWLock.readLock().unlock();
+        }
+    }
+
+    public static int getNumberOfReferrals(String realm) {
+        countRWLock.readLock().lock();
+        try {
+            int referralCnt = 0;
+            Integer tp = referralsPerRealm.get(realm);
+            if (tp == null) {
+                referralCnt = getIndexCount(realm, true);
+                referralsPerRealm.put(realm, referralCnt);
+            } else {
+                referralCnt = tp.intValue();
+            }
+
+            return (referralCnt);
+        } finally {
+            countRWLock.readLock().unlock();
+        }
     }
 
     /**

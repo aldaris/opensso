@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.1 2009-08-19 05:40:36 veiming Exp $
+ * $Id: PolicyCache.java,v 1.2 2009-10-13 22:36:30 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -39,7 +39,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 class PolicyCache {
     private Cache cache;
-    static HashMap<String, Integer> countByRealm;
+    private HashMap<String, Integer> countByRealm;
     private ReadWriteLock rwlock = new ReentrantReadWriteLock();
 
     PolicyCache(int size) {
@@ -133,12 +133,31 @@ class PolicyCache {
      *            realm name
      * @return cached policies for the realm
      */
-    int getCount(String realm) {
-        Integer integer = countByRealm.get(realm);
-        if (integer != null) {
-            return (integer.intValue());
+    public int getCount(String realm) {
+        rwlock.readLock().lock();
+        try {
+            Integer integer = countByRealm.get(realm);
+            return (integer != null) ? integer : 0;
+        } finally {
+            rwlock.readLock().unlock();
         }
-        return 0;
+    }
+
+    /**
+     * Returns the number of cached policies.
+     * @return cached policies.
+     */
+    public int getCount() {
+        rwlock.readLock().lock();
+        try {
+            int total = 0;
+            for (Integer i : countByRealm.values()) {
+                total += i;
+            }
+            return total;
+        } finally {
+            rwlock.readLock().unlock();
+        }
     }
 
     public ReferralPrivilege getReferral(String dn) {
