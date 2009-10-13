@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeCondition.java,v 1.2 2009-09-03 06:09:27 veiming Exp $
+ * $Id: TimeCondition.java,v 1.3 2009-10-13 22:37:52 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -126,11 +126,11 @@ public class TimeCondition extends EntitlementConditionAdaptor {
             JSONObject jo = new JSONObject(state);
             setState(jo);
             startTime = jo.optString("startTime");
-            endTime = jo.optString("endTime");
+            endTime = (jo.has("endTime")) ? jo.optString("endTime") : null;
             startDay = jo.optString("startDay");
             endDay = jo.optString("endDay");
             startDate = jo.optString("startDate");
-            endDate = jo.optString("endDate");
+            endDate = (jo.has("endDate")) ? jo.optString("endDate") : null;
             pConditionName = jo.optString("pConditionName");
             enforcementTimeZone = jo.optString("enforcementTimeZone");
         } catch (JSONException joe) {
@@ -338,11 +338,18 @@ public class TimeCondition extends EntitlementConditionAdaptor {
         JSONObject jo = new JSONObject();
         toJSONObject(jo);
         jo.put("startTime", startTime);
-        jo.put("endTime", endTime);
+
+        if (endTime != null) {
+            jo.put("endTime", endTime);
+        }
+
         jo.put("startDay", startDay);
         jo.put("endDay", endDay);
         jo.put("startDate", startDate);
-        jo.put("endDate", endDate);
+
+        if (endDate != null) {
+            jo.put("endDate", endDate);
+        }
         jo.put("enforcementTimeZone", enforcementTimeZone);
         jo.put("pConditionName", pConditionName);
         return jo;
@@ -470,6 +477,26 @@ public class TimeCondition extends EntitlementConditionAdaptor {
         return s;
     }
 
+    private long getTime(Calendar calendar, String time, long defaultVal)
+        throws EntitlementException {
+        if ((time == null) || (time.length() == 0)) {
+            return defaultVal;
+        }
+
+        int t = parseTimeString(time);
+        if (t == -1) {
+            return defaultVal;
+        }
+
+        int hours = t / 60;
+        int minutes = t - hours * 60;
+        calendar.set(Calendar.HOUR_OF_DAY, hours);
+        calendar.set(Calendar.MINUTE, minutes);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime().getTime();
+    }
+
     /**
      * Using the start and end times and dates get the effective
      * start and end date in the <code>timeZone</code> specified
@@ -484,33 +511,12 @@ public class TimeCondition extends EntitlementConditionAdaptor {
         Calendar calendar = new GregorianCalendar(timeZone);
         calendar.setTime( new Date(currentGmt) );
 
-        long timeStart = Long.MIN_VALUE;
-        int startT = parseTimeString(startTime);
-        int startHour = (startT != -1) ? startT /60 : -1;
+        long timeStart = getTime(calendar, startTime, Long.MIN_VALUE);
+        long timeEnd = getTime(calendar, endTime, Long.MAX_VALUE);
 
-        if ( startHour != -1 ) {
-            int startMinute = startT - startHour * 60;
-            calendar.set(Calendar.HOUR_OF_DAY, startHour);
-            calendar.set(Calendar.MINUTE, startMinute);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            timeStart = calendar.getTime().getTime();
-        }
-
-        long timeEnd = Long.MAX_VALUE;
-        int endT = parseTimeString(endTime);
-        int endHour = (endT != -1) ? endT /60 : -1;
-        if ( endHour != -1 ) {
-            int endMinute = endT - endHour * 60;
-            calendar.set(Calendar.HOUR_OF_DAY, endHour);
-            calendar.set(Calendar.MINUTE, endMinute);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            timeEnd = calendar.getTime().getTime();
-        }
         if( timeEnd < timeStart) {
             Calendar cal = new GregorianCalendar(timeZone);
-            if ( currentGmt < timeStart) {
+            if (currentGmt < timeStart) {
                 cal.setTime(new Date(timeStart));
                 cal.roll(Calendar.DAY_OF_YEAR, false);
                 timeStart = cal.getTime().getTime();
@@ -683,40 +689,50 @@ public class TimeCondition extends EntitlementConditionAdaptor {
         throws EntitlementException {
         DateArray dateArray = new DateArray();
 
-        if ((startDate != null) && (startDate.length() > 0) &&
-            (endDate != null) && (endDate.length() > 0)) {
-            DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-            df.setLenient(false);
-            df.setTimeZone(TimeZone.getTimeZone("GMT"));
-            Date date1 = null;
-            Date date2 = null;
-            try {
-                date1 = df.parse(startDate);
-            } catch (Exception e) {
-                String[] args = {startDate};
-                throw new EntitlementException(401, args, e);
-            }
-            try {
-                date2 = df.parse(endDate);
-            } catch (Exception e) {
-                String[] args = {endDate};
-                throw new EntitlementException(401, args, e);
-            }
-            if (date1.getTime() > date2.getTime()) {
+        if ((startDate == null) || (startDate.length() == 0)) {
+            return dateArray;
+        }
+
+        DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+        df.setLenient(false);
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        Date dateStart = getDate(df, startDate);
+        Date dateEnd = ((endDate == null) || (endDate.length() == 0)) ? null :
+            getDate(df, endDate);
+
+        if (dateEnd != null) {
+            if (dateStart.getTime() > dateEnd.getTime()) {
                 String[] args = {startDate, endDate};
                 throw new EntitlementException(402, args);
             }
-            Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-            cal.setTime(date1);
-            dateArray.startDateArray[0] = cal.get(Calendar.YEAR);
-            dateArray.startDateArray[1] = cal.get(Calendar.MONTH);
-            dateArray.startDateArray[2] = cal.get(Calendar.DAY_OF_MONTH);
-            cal.setTime(date2);
+        }
+
+        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        
+        cal.setTime(dateStart);
+        dateArray.startDateArray[0] = cal.get(Calendar.YEAR);
+        dateArray.startDateArray[1] = cal.get(Calendar.MONTH);
+        dateArray.startDateArray[2] = cal.get(Calendar.DAY_OF_MONTH);
+
+        if (dateEnd != null) {
+            cal.setTime(dateEnd);
             dateArray.endDateArray[0] = cal.get(Calendar.YEAR);
             dateArray.endDateArray[1] = cal.get(Calendar.MONTH);
             dateArray.endDateArray[2] = cal.get(Calendar.DAY_OF_MONTH);
         }
+        
         return dateArray;
+    }
+
+    private Date getDate(DateFormat df, String date)
+        throws EntitlementException {
+        try {
+            return df.parse(date);
+        } catch (Exception e) {
+            String[] args = {startDate};
+            throw new EntitlementException(401, args, e);
+        }
     }
 
     class DateArray {

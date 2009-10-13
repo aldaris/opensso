@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DateRangeConditionEvaluation.java,v 1.1 2009-08-19 05:41:00 veiming Exp $
+ * $Id: DateRangeConditionEvaluation.java,v 1.2 2009-10-13 22:37:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -74,7 +74,6 @@ public class DateRangeConditionEvaluation {
         tc.setEndDate("2010:01:01");
         privilege.setCondition(tc);
         pm.addPrivilege(privilege);
-        Thread.sleep(1000);
     }
 
     @AfterClass
@@ -88,7 +87,14 @@ public class DateRangeConditionEvaluation {
     }
 
     @Test
-    public void evaluate()
+    public void positiveTest() throws Exception {
+        boolean result = evaluate();
+        if (!result) {
+            throw new Exception("DateRangeConditionEvaluation.positiveTest fails");
+        }
+    }
+
+    private boolean evaluate()
         throws Exception {
         Set actions = new HashSet();
         actions.add("GET");
@@ -98,13 +104,41 @@ public class DateRangeConditionEvaluation {
         Map<String, Set<String>> conditions = new
             HashMap<String, Set<String>>();
         Set<String> setTime = new HashSet<String>();
+        // 7/31/09 12:05 AM
         setTime.add("1249027551534");
         conditions.put(TimeCondition.REQUEST_TIME, setTime);
-        Boolean result = evaluator.hasEntitlement("/", null,
+        return evaluator.hasEntitlement("/", null,
             new Entitlement(URL, actions), conditions);
-        if (!result) {
-            throw new Exception("DateRangeConditionEvaluation.evaluate fails");
+
+    }
+
+    @Test (dependsOnMethods = {"positiveTest"})
+    public void negativeTest() throws Exception {
+        PrivilegeManager pm = PrivilegeManager.getInstance("/",
+            adminSubject);
+        Privilege p = pm.getPrivilege(PRIVILEGE_NAME);
+        TimeCondition tc = (TimeCondition)p.getCondition();
+        tc.setEndDate("2008:01:02");
+        pm.modifyPrivilege(p);
+        boolean result = evaluate();
+        if (result) {
+            throw new Exception("DateRangeConditionEvaluation.negativeTest fails");
         }
     }
+
+    @Test (dependsOnMethods = {"negativeTest"})
+    public void indefiniteEndDate() throws Exception {
+        PrivilegeManager pm = PrivilegeManager.getInstance("/",
+            adminSubject);
+        Privilege p = pm.getPrivilege(PRIVILEGE_NAME);
+        TimeCondition tc = (TimeCondition)p.getCondition();
+        tc.setEndDate(null);
+        pm.modifyPrivilege(p);
+        boolean result = evaluate();
+        if (!result) {
+            throw new Exception("DateRangeConditionEvaluation.indefiniteEndDate fails");
+        }
+    }
+
 }
 

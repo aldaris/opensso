@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeConditionEvaluation.java,v 1.2 2009-09-03 06:09:28 veiming Exp $
+ * $Id: TimeConditionEvaluation.java,v 1.3 2009-10-13 22:37:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -75,7 +75,6 @@ public class TimeConditionEvaluation {
 
         privilege.setCondition(tc);
         pm.addPrivilege(privilege);
-        Thread.sleep(1000);
     }
 
     @AfterClass
@@ -88,14 +87,18 @@ public class TimeConditionEvaluation {
         pm.removePrivilege(PRIVILEGE_NAME);
     }
 
-    @Test
-    public void positiveTest()
-        throws Exception {
+    private List<Entitlement> evaluate(String time) throws Exception {
         Evaluator evaluator = new Evaluator(
             SubjectUtils.createSubject(adminToken),
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
-        List<Entitlement> entitlements = evaluator.evaluate(
-            "/", null, URL, envTime("1251847000000"), false);
+        return evaluator.evaluate("/", null, URL, envTime(time),
+            false);
+    }
+
+    @Test
+    public void positiveTest()
+        throws Exception {
+        List<Entitlement> entitlements = evaluate("1251847000000");
 
         if ((entitlements == null) || entitlements.isEmpty()) {
             throw new Exception("TimeConditionEvaluation.positiveTest: no entitlements");
@@ -124,14 +127,10 @@ public class TimeConditionEvaluation {
     }
 
 
-    @Test
+    @Test (dependsOnMethods={"positiveTest"})
     public void negativeLowerLimitTest()
         throws Exception {
-        Evaluator evaluator = new Evaluator(
-            SubjectUtils.createSubject(adminToken),
-            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
-        List<Entitlement> entitlements = evaluator.evaluate(
-            "/", null, URL, envTime("1248994000000"), false);
+        List<Entitlement> entitlements = evaluate("1248994000000");
 
         if ((entitlements == null) || entitlements.isEmpty()) {
             throw new Exception("TimeConditionEvaluation.negativeLowerLimitTest: no entitlements");
@@ -159,14 +158,10 @@ public class TimeConditionEvaluation {
         }
     }
 
-    @Test
+    @Test (dependsOnMethods={"negativeLowerLimitTest"})
     public void negativeUpperLimitTest()
         throws Exception {
-        Evaluator evaluator = new Evaluator(
-            SubjectUtils.createSubject(adminToken),
-            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
-        List<Entitlement> entitlements = evaluator.evaluate(
-            "/", null, URL, envTime("128999400000"), false);
+        List<Entitlement> entitlements = evaluate("128999400000");
 
         if ((entitlements == null) || entitlements.isEmpty()) {
             throw new Exception("TimeConditionEvaluation.negativeUpperLimitTest: no entitlements");
@@ -181,6 +176,29 @@ public class TimeConditionEvaluation {
         Map<String, Set<String>> advices = ent.getAdvices();
         if ((advices != null) && !advices.isEmpty()) {
             throw new Exception("TimeConditionEvaluation.negativeUpperLimitTest: no advices");
+        }
+    }
+
+    @Test (dependsOnMethods={"negativeUpperLimitTest"})
+    public void indefiniteEndTimeTest() throws Exception {
+        PrivilegeManager pm = PrivilegeManager.getInstance("/",
+            adminSubject);
+        Privilege p = pm.getPrivilege(PRIVILEGE_NAME);
+        TimeCondition tc = (TimeCondition)p.getCondition();
+        tc.setEndTime(null);
+        pm.modifyPrivilege(p);
+
+        List<Entitlement> entitlements = evaluate("128999400000");
+        if ((entitlements == null) || entitlements.isEmpty()) {
+            throw new Exception(
+                "TimeConditionEvaluation.indefiniteEndTimeTest: no entitlements");
+        }
+
+        Entitlement ent = entitlements.get(0);
+        Boolean result = ent.getActionValue("GET");
+        if ((result == null) || !result) {
+            throw new Exception(
+                "TimeConditionEvaluation.indefiniteEndTimeTest: incorrect result");
         }
     }
 
