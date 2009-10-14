@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.27 2009-07-25 05:11:55 qcheng Exp $
+ * $Id: OrganizationConfigManager.java,v 1.28 2009-10-14 19:21:33 hengming Exp $
  *
  */
 
@@ -1467,17 +1467,26 @@ public class OrganizationConfigManager {
                     + assignedServices);
         }
         boolean doAuthServiceLater = false;
+        boolean doAuthHttpBasicLater = false;
         String serviceName = null;
 
         // Copy service configuration
         Iterator items = defaultServices.iterator();
-        while (items.hasNext() || doAuthServiceLater) {
+        while (items.hasNext() || doAuthHttpBasicLater || doAuthServiceLater) {
             if (items.hasNext()) {
                 serviceName = (String) items.next();
                 if (serviceName.equals(ISAuthConstants.AUTH_SERVICE_NAME)) {
                     doAuthServiceLater = true;
                     continue;
+                } else if (serviceName.equals(
+                    ISAuthConstants.AUTH_HTTP_BASIC_SERVICE_NAME)) {
+
+                    doAuthHttpBasicLater = true;
+                    continue;
                 }
+            } else if (doAuthHttpBasicLater) {
+                serviceName = ISAuthConstants.AUTH_HTTP_BASIC_SERVICE_NAME;
+                doAuthHttpBasicLater = false;
             } else if (doAuthServiceLater) {
                 serviceName = ISAuthConstants.AUTH_SERVICE_NAME;
                 doAuthServiceLater = false;

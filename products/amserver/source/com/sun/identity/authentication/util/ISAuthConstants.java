@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.18 2009-05-05 18:34:22 mrudul_uchil Exp $
+ * $Id: ISAuthConstants.java,v 1.19 2009-10-14 19:21:32 hengming Exp $
  *
  */
 
@@ -153,6 +153,12 @@ public interface ISAuthConstants {
      * LDAP Authentication Service Name
      */
     public static final String LDAP_SERVICE_NAME = "iPlanetAMAuthLDAPService";
+
+    /**
+     * HTTP Basic Authentication Service Name
+     */
+    public static final String AUTH_HTTP_BASIC_SERVICE_NAME =
+        "iPlanetAMAuthHTTPBasicService";
 
     /**
      * Auth Configuration Service Name
