@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.unconfigured,v 1.13 2009-07-24 22:52:21 madan_ranganath Exp $
+$Id: README.unconfigured,v 1.14 2009-10-14 21:32:43 madan_ranganath Exp $
 
 
 
@@ -36,6 +36,7 @@ $Id: README.unconfigured,v 1.13 2009-07-24 22:52:21 madan_ranganath Exp $
     %% 5. How to enable Fedlet to support multiple Identity Providers
     %% 6. How to enable Identity Provider Discovery service in Fedlet
     %% 7. How to perform Fedlet Attribute Query
+    %% 8. How to perform Fedlet XACML Query
 
 
 %% 1. Contents of this directory 
@@ -456,3 +457,194 @@ b) fedletAttrResp.jsp
 
 c) Select either the "Default" or "X.509" profile. If "X.509" profile is
    selected, specify the right value for the "X.509 Subject DN".
+
+%% 8. How to perform Fedlet XACML Query
+
+      I.  General Information
+      II.  Signing
+      III. Encryption
+      IV. Testing
+
+I.  General Information
+======================
+Following steps are common for all the scenarios (including Signing and 
+Encryption). Unlike Fedlet Attribute Query which required query signing 
+to be done on the Fedlet side, no such requirement is there for Fedlet 
+XACML Query. Signing and Encryption are optional.
+
+      Step 1)
+      Following steps need to be performed on hosted IDP:
+
+        a) When creating the IDP entity metadata, make sure that you specify that
+           particular entity with XACML PDP role. 
+        b) Need to specify the Request Handler for SAMLv2 SOAP Binding. Log into 
+	   the OpenSSO console.
+	   Configuration tab -> Global -> SAMLv2 SOAP Binding -> New
+	     Key = /pdp (This should be the same metaAlias specified while 
+                         creating the IDP)
+             class = com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler
+           Click the "Save" button.
+        c) Specify the right URL policies for the resources for which the Fedlet 
+	     is issuing a XACML query. Right URL policies with right actions 
+	     (GET or POST) should be specified for the XACML query to get the 
+	     policy decisions for the resoruce.
+	       Access Control -> Realm Name -> Policies -> New Policy
+        d) Get your IDP standard metadata XML file and copy to the fedlet home 
+           directory. For example, if the remote IDP is a OpenSSO instance, 
+           you could use "ssoadm" CLI to export the IDP metadata to a XML file. 
+           The XML file for IDP standard metadata must be named as "idp.xml" 
+           when copied to the fedlet home directory.  issuing a XACML query.
+
+
+      Step 2)
+      Following steps need to be performed on Fedlet side:
+
+        a) If Signing or Encryption is enabled, please make sure when you
+           create PDP on IDP, signing cert or encryption cert should have a
+	   valid value. Also the updated Fedlet metadata is loaded on IDP
+	   side.
+        b) If Signing and Encryption are not enabled, skip to Step IV.
+
+II. Signing
+==========
+
+   a) On the Fedlet Side, Please follow the below link on creating a KeyStore, 
+      importing the certificate.
+	   http://wikis.sun.com/display/OpenSSO/Enabling+XML+Signing+and+Decryption+in+the+OpenSSO+Java+Fedlet
+	 
+	 Add the certificate to the "XACMLAuthzDecisionQueryDescriptor" 
+         element as shown below inside "sp.xml".
+
+         <XACMLAuthzDecisionQueryDescriptor WantAssertionsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+	   <KeyDescriptor use="signing">
+	      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+	        <ds:X509Data>
+	           <ds:X509Certificate>
+		      --certificate--
+                   </ds:X509Certificate>
+                 </ds:X509Data>
+                </ds:KeyInfo>
+            </KeyDescriptor>
+         </XACMLAuthzDecisionQueryDescriptor>
+
+
+   b) In the "sp-extended.xml", specify the correct value for
+         "signingCertAlias" inside the XACMLAuthzDecisionQueryConfig element as 
+         follows:
+             <Attribute name="signingCertAlias">
+                 <Value>test</Value>
+             </Attribute>
+
+
+   c) Also the Fedlet might want to have the Authorization Decision Response
+       signed. 
+       
+       1) On the Fedlet side, specify the value for 
+       "wantXACMLAuthzDecisionResponseSigned" inside the 
+       XACMLAuthzDecisionQueryConfig as shown below:
+
+             <Attribute name="wantXACMLAuthzDecisionResponseSigned">
+                 <Value>true</Value>
+             </Attribute>
+
+   d) Goto to Hosted IDP side
+     
+   e) IDP might want to get the XACML Query signed. It will enable the below
+       property on the XACML PDP tab for the IDP Entity
+	  Authorization Decision Query Signed
+
+   f) Also specify the below value for the attribute 
+       "wantXACMLAuthzDecisionQuerySigned".
+             <Attribute name="wantXACMLAuthzDecisionQuerySigned">
+                 <Value>true</Value>
+             </Attribute>
+
+   g) Delete existing fedlet metadata and obtain the standard metadata 
+	 from Fedlet(i.e sp.xml) and import the same.
+
+   h) If Authorization Decision Response Signed is required (Step d), 
+       click on the XACML PEP entity that was added. Enable the attribute 
+       "Authorization Decision Response Signed".
+
+III. Encryption
+===============
+
+      In addition to above section, the Fedlet might want to get the Assertion
+      from IDP to be encrypted. 
+      
+      a) Enable the following in "sp-extended.xml" inside 
+         XACMLAuthzDecisionQueryConfig element.
+           <Attribute name="wantAssertionEncrypted">
+		<Value>true</Value>
+           </Attribute>
+
+      b) For signing and encryption follow the below link:
+	   http://wikis.sun.com/display/OpenSSO/Enabling+XML+Signing+and+Decryption+in+the+OpenSSO+Java+Fedlet
+
+	 Add the certificate to the "XACMLAuthzDecisionQueryDescriptor" 
+         element as shown below inside "sp.xml".
+
+         <XACMLAuthzDecisionQueryDescriptor WantAssertionsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+	   <KeyDescriptor use="signing">
+	      <KeyDescriptor use="signing">
+	        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+	          <ds:X509Data>
+	             <ds:X509Certificate>
+		        --certificate--
+                     </ds:X509Certificate>
+                   </ds:X509Data>
+                </ds:KeyInfo>
+              </KeyDescriptor>
+	      <KeyDescriptor use="encryption">
+		<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+		   <ds:X509Data>
+		      <ds:X509Certificate>
+			 --certificate--
+		      </ds:X509Certificate>
+		   </ds:X509Data>
+		</ds:KeyInfo>
+		<EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc">
+		    <xenc:KeySize xmlns:xenc="http://www.w3.org/2001/04/xmlenc#">128</xenc:KeySize>
+                </EncryptionMethod>
+              </KeyDescriptor>
+         </XACMLAuthzDecisionQueryDescriptor>
+     
+      c) In the "sp-extended.xml", specify the correct value for
+         "encryptionCertAlias". 
+             <Attribute name="encryptionCertAlias">
+                 <Value>test</Value>
+             </Attribute>
+
+      d) Goto to Hosted IDP side
+
+      e) Delete existing fedlet metadata and obtain the standard metadata 
+	 from Fedlet(i.e sp.xml) and import the same.
+
+      f) Click on the XACML PEP entity that was added. Enable the attribute 
+         "Assertion Encrypted".
+
+IV. Testing:
+===========
+Two JSP files are bundled along inside fedlet.war. fedletXACMLQuery.jsp and
+fedletXACMLResp.jsp
+
+a) fedletXACMLQuery.jsp:
+   Prompts the user to enter the Resource URL, Action (GET or POST).  Fedlet 
+   then passes this information along with other parameters (pepEntityID, 
+   pdpEntityID, NameID) to fedletXACMLResp.jsp
+
+b) fedletXACMLResp.jsp
+   Retrieves the Resource URL from the previous jsp and invokes the 
+   below method to get the policy decision for the Resource URL and display the 
+   same. The decision can be either "Permit" (if the right policy decision is 
+   provided", else "Deny" (if no policy is found) or "Indeterminate" 
+   (if the user session has expired).
+   
+       String policy_decision = XACMLQueryUtil.getPolicyDecisionForFedlet(
+						      request,
+                                                      pepEntityID, 
+                                                      pdpEntityID, 
+                                                      nameIDValue, 
+                                                      serviceName, 
+                                                      resource,
+                                                      action);
