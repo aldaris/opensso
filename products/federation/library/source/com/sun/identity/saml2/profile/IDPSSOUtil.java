@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.53 2009-09-23 22:28:32 bigfatrat Exp $
+ * $Id: IDPSSOUtil.java,v 1.54 2009-10-14 23:59:39 exu Exp $
  *
  */
 
@@ -347,6 +347,7 @@ public class IDPSSOUtil {
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("UnableTofindBinding"));
         }
+
 
         String affiliationID = request.getParameter(
             SAML2Constants.AFFILIATION_ID);

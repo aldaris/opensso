@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionIDRequestServiceURI.java,v 1.4 2009-06-12 22:21:41 mallas Exp $
+ * $Id: AssertionIDRequestServiceURI.java,v 1.5 2009-10-14 23:59:44 exu Exp $
  *
  */
 
@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.ServletException;
 
 import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
@@ -103,6 +104,21 @@ public class AssertionIDRequestServiceURI extends HttpServlet {
                 "invalidMetaAlias", sme.getMessage());
             return;
         }
+
+        if (!SAML2Utils.isIDPProfileBindingSupported(
+            realm, samlAuthorityEntityID,
+            SAML2Constants.ASSERTION_ID_REQUEST_SERVICE, SAML2Constants.URI))
+	{
+            SAML2Utils.debug.error(
+		"AssertionIDRequestServiceURI:Assertion ID request" +
+		" service URI binding is not supported for " +
+		samlAuthorityEntityID);
+            SAMLUtils.sendError(req, resp,
+		HttpServletResponse.SC_BAD_REQUEST,
+		"unsupportedBinding",
+		SAML2Utils.bundle.getString("unsupportedBinding"));
+            return;
+	}
 
         AssertionIDRequestUtil.processAssertionIDRequestURI(req, resp,
             samlAuthorityEntityID, role, realm);

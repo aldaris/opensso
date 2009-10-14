@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.42 2009-06-17 03:09:13 exu Exp $
+ * $Id: SAML2Constants.java,v 1.43 2009-10-14 23:58:37 exu Exp $
  *
  */
 
@@ -1473,5 +1473,41 @@ public interface SAML2Constants {
      * Map key used in fedlet case to specify federation info key.
      */
     public String INFO_KEY = "infoKey";
+
+    /**
+     * Single Sign-On service.
+     */
+    public String SSO_SERVICE = "sso";
+
+    /**
+     * NameIDMapping service.
+     */
+    public String NAMEID_MAPPING_SERVICE = "nip";
+
+    /**
+     * AssertionIDRequest service.
+     */
+    public String ASSERTION_ID_REQUEST_SERVICE = "air";
+
+    /**
+     * ArtifactResolution service.
+     */
+    public String ARTIFACT_RESOLUTION_SERVICE = "ars";
+
+    /**
+     * SingleLogout service.
+     */
+    public String SLO_SERVICE = "slo";
+
+    /**
+     * ManageNameID service.
+     */
+    public String MNI_SERVICE = "mni";
+
+    /**
+     * AssertionConsumer service.
+     */
+    public String ACS_SERVICE = "acs";
+
 
 } 

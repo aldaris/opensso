@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.26 2009-06-12 22:21:41 mallas Exp $
+ * $Id: SPSSOFederate.java,v 1.27 2009-10-14 23:59:41 exu Exp $
  *
  */
 
@@ -724,6 +724,19 @@ public class SPSSOFederate {
          OrderedSet acsSet = getACSUrl(spsso,protocolBinding);
          String acsURL = (String) acsSet.get(0);
          protocolBinding = (String)acsSet.get(1);
+         if (!SAML2Utils.isSPProfileBindingSupported(
+             realmName, spEntityID, SAML2Constants.ACS_SERVICE, 
+             protocolBinding))
+         {
+             SAML2Utils.debug.error("SPSSOFederate.createAuthnRequest:" +
+                 protocolBinding +
+                 "is not supported for " + spEntityID);
+             String[] data = { spEntityID, protocolBinding };
+             LogUtil.error(
+                 Level.INFO, LogUtil.BINDING_NOT_SUPPORTED, data, null);
+             throw new SAML2Exception(
+                 SAML2Utils.bundle.getString("unsupportedBinding"));
+         }
 
          RequestedAuthnContext reqAuthnContext = 
                                 createReqAuthnContext(realmName,spEntityID,

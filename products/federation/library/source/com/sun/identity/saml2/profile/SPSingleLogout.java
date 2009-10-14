@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.26 2009-09-23 22:28:32 bigfatrat Exp $
+ * $Id: SPSingleLogout.java,v 1.27 2009-10-14 23:59:41 exu Exp $
  *
  */
 
@@ -329,7 +329,7 @@ public class SPSingleLogout {
             }     
             // local log out for SOAP. For HTTP case, session will be destroyed 
             // when SAML Response reached the SP side.
-            if (binding.equals(SAML2Constants.SOAP)) {
+            if (binding.equals(SAML2Constants.SOAP) || (requestID == null)) {
                 sessionProvider.invalidateSession(session, request, response); 
             }
         } catch (SAML2MetaException sme) {
@@ -501,10 +501,37 @@ public class SPSingleLogout {
         }
 
         String rmethod = request.getMethod();
-        LogoutResponse logoutRes = null;
         String binding = SAML2Constants.HTTP_REDIRECT;
         if (rmethod.equals("POST")) {
             binding = SAML2Constants.HTTP_POST;
+        }
+        String metaAlias =
+                SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
+        if ((SPCache.isFedlet) && 
+            ((metaAlias ==  null) || (metaAlias.length() == 0))) 
+        {
+            List spMetaAliases =
+                sm.getAllHostedServiceProviderMetaAliases("/");
+            if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
+                // get first one
+                metaAlias = (String) spMetaAliases.get(0);
+            }
+        }
+        if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("nullSPEntityID"));
+        }
+        String realm = SAML2Utils.
+                getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
+        String spEntityID = sm.getEntityByMetaAlias(metaAlias);
+        if (!SAML2Utils.isSPProfileBindingSupported(
+            realm, spEntityID, SAML2Constants.SLO_SERVICE, binding))
+        {
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("unsupportedBinding"));
+        }
+        LogoutResponse logoutRes = null;
+        if (rmethod.equals("POST")) {
                 logoutRes = LogoutUtil.getLogoutResponseFromPost(samlResponse,
                 response);
         } else if (rmethod.equals("GET")) {
@@ -525,25 +552,6 @@ public class SPSingleLogout {
             return null;
         }
 
-        String metaAlias =
-                SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
-        if ((SPCache.isFedlet) && 
-            ((metaAlias ==  null) || (metaAlias.length() == 0))) 
-        {
-            List spMetaAliases =
-                sm.getAllHostedServiceProviderMetaAliases("/");
-            if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
-                // get first one
-                metaAlias = (String) spMetaAliases.get(0);
-            }
-        }
-        if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
-            throw new SAML2Exception(
-                SAML2Utils.bundle.getString("nullSPEntityID"));
-        }
-        String realm = SAML2Utils.
-                getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
-        String spEntityID = sm.getEntityByMetaAlias(metaAlias);
         String idpEntityID = logoutRes.getIssuer().getValue();
         Issuer resIssuer = logoutRes.getIssuer();
         String inResponseTo = logoutRes.getInResponseTo();
@@ -746,28 +754,9 @@ public class SPSingleLogout {
             debug.message(method + "relayState : " + relayState);
         }
         String rmethod = request.getMethod();
-        LogoutRequest logoutReq = null;
         String binding = SAML2Constants.HTTP_REDIRECT;
         if (rmethod.equals("POST")) {
             binding = SAML2Constants.HTTP_POST;
-            logoutReq = LogoutUtil.getLogoutRequestFromPost(samlRequest,
-                response);
-        } else if (rmethod.equals("GET")) {
-            String decodedStr = SAML2Utils.decodeFromRedirect(samlRequest);
-            if (decodedStr == null) {
-                throw new SAML2Exception(SAML2Utils.bundle.getString(
-                    "nullDecodedStrFromSamlRequest"));
-            }
-            logoutReq = 
-                ProtocolFactory.getInstance().createLogoutRequest(decodedStr);
-        }
-
-        if (logoutReq == null) {
-            if (debug.messageEnabled()) {
-                debug.message("SPSingleLogout:processLogoutRequest: logoutReq " +
-                       "is null");
-            }
-            return;
         }
     
         String metaAlias = SAML2MetaUtils.getMetaAliasByUri(
@@ -790,6 +779,34 @@ public class SPSingleLogout {
         String realm = SAML2Utils.getRealm(
             SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
         String spEntityID = sm.getEntityByMetaAlias(metaAlias);
+        if (!SAML2Utils.isSPProfileBindingSupported(
+            realm, spEntityID, SAML2Constants.SLO_SERVICE, binding))
+        {
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("unsupportedBinding"));
+        }
+
+        LogoutRequest logoutReq = null;
+        if (rmethod.equals("POST")) {
+            logoutReq = LogoutUtil.getLogoutRequestFromPost(samlRequest,
+                response);
+        } else if (rmethod.equals("GET")) {
+            String decodedStr = SAML2Utils.decodeFromRedirect(samlRequest);
+            if (decodedStr == null) {
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "nullDecodedStrFromSamlRequest"));
+            }
+            logoutReq = 
+                ProtocolFactory.getInstance().createLogoutRequest(decodedStr);
+        }
+
+        if (logoutReq == null) {
+            if (debug.messageEnabled()) {
+                debug.message("SPSingleLogout:processLogoutRequest: logoutReq " +
+                       "is null");
+            }
+            return;
+        }
         String location = null;
         String idpEntityID = logoutReq.getIssuer().getValue();
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogoutServiceSOAP.java,v 1.9 2009-06-12 22:21:41 mallas Exp $
+ * $Id: IDPSingleLogoutServiceSOAP.java,v 1.10 2009-10-14 23:59:44 exu Exp $
  *
  */
 
@@ -82,6 +82,13 @@ public class IDPSingleLogoutServiceSOAP extends HttpServlet {
             String idpEntityID = SAML2Utils.getSAML2MetaManager().
                 getEntityByMetaAlias(idpMetaAlias);
             String realm = SAML2MetaUtils.getRealmByMetaAlias(idpMetaAlias);
+            if (!SAML2Utils.isIDPProfileBindingSupported(
+                realm, idpEntityID, SAML2Constants.SLO_SERVICE,
+                SAML2Constants.SOAP))
+            {
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "unsupportedBinding"));
+            }
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message("IDPSLOSOAP.doPost : uri =" + 
                     req.getRequestURI() +", idpMetaAlias=" + idpMetaAlias

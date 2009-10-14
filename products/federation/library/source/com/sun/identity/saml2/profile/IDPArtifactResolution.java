@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPArtifactResolution.java,v 1.11 2009-06-12 22:21:40 mallas Exp $
+ * $Id: IDPArtifactResolution.java,v 1.12 2009-10-14 23:58:38 exu Exp $
  *
  */
 
@@ -162,6 +162,21 @@ public class IDPArtifactResolution {
                     SAML2Utils.bundle.getString("metaDataError"));
                 return;
             }
+            if (!SAML2Utils.isIDPProfileBindingSupported(
+                realm, idpEntityID, SAML2Constants.ARTIFACT_RESOLUTION_SERVICE,
+                SAML2Constants.SOAP)) 
+            {
+                SAML2Utils.debug.error(classMethod +
+                    "Artifact Resolution Service binding: Redirect is not " +
+                    "supported for " + idpEntityID);
+                String[] data = { idpEntityID, SAML2Constants.SOAP };
+                LogUtil.error(
+                    Level.INFO, LogUtil.BINDING_NOT_SUPPORTED, data, null);
+                SAMLUtils.sendError(request, response,
+                   response.SC_BAD_REQUEST, "unsupportedBinding",
+                   SAML2Utils.bundle.getString("unsupportedBinding"));
+                return;
+            }
     
             try {
                 // Get all the headers from the HTTP request
@@ -171,7 +186,7 @@ public class IDPArtifactResolution {
                 SOAPMessage msg = 
                              messageFactory.createMessage(headers, is);
                 SOAPMessage reply = null;
-                reply = onMessage(msg, request, realm, idpEntityID);
+                reply = onMessage(msg, request, response, realm, idpEntityID);
                 if (reply != null) {
                     /* Need to call saveChanges because we're
                      * going to use the MimeHeaders to set HTTP
@@ -234,6 +249,7 @@ public class IDPArtifactResolution {
 
     public static SOAPMessage onMessage(SOAPMessage message, 
                                         HttpServletRequest request,
+                                        HttpServletResponse response,
                                         String realm,
                                         String idpEntityID) 
         throws SAML2Exception {
@@ -259,6 +275,17 @@ public class IDPArtifactResolution {
         }
 
         String spEntityID = artResolve.getIssuer().getValue();
+        if (!SAML2Utils.isSourceSiteValid(
+            artResolve.getIssuer(), realm, idpEntityID)) 
+        {
+            SAML2Utils.debug.error(classMethod + spEntityID +
+                " is not trusted issuer.");
+            String[] data = { idpEntityID, realm, artResolve.getID() };
+            LogUtil.error(
+                Level.INFO, LogUtil.INVALID_ISSUER_REQUEST, data, null);
+            return SAML2Utils.createSOAPFault(SAML2Constants.CLIENT_FAULT, 
+                "invalidIssuerInRequest", null);
+        }
         SPSSODescriptorElement spSSODescriptor = null;
         try {
             spSSODescriptor = IDPSSOUtil.metaManager.

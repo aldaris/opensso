@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleSignOnServiceSOAP.java,v 1.2 2008-06-25 05:48:02 qcheng Exp $
+ * $Id: IDPSingleSignOnServiceSOAP.java,v 1.3 2009-10-14 23:59:44 exu Exp $
  *
  */
 
@@ -30,6 +30,7 @@
 package com.sun.identity.saml2.servlet;
 
 import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.profile.IDPSSOFederate;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +52,7 @@ public class IDPSingleSignOnServiceSOAP extends HttpServlet {
             
         // handle DOS attack
         SAMLUtils.checkHTTPContentLength(req);
-        IDPSSOFederate.doSSOFederate(req, resp, true);
+        IDPSSOFederate.doSSOFederate(req, resp, true, SAML2Constants.SOAP);
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -59,6 +60,6 @@ public class IDPSingleSignOnServiceSOAP extends HttpServlet {
             
         // handle DOS attack
         SAMLUtils.checkHTTPContentLength(req);
-        IDPSSOFederate.doSSOFederate(req, resp, true);
+        IDPSSOFederate.doSSOFederate(req, resp, true, SAML2Constants.SOAP);
     }
 }

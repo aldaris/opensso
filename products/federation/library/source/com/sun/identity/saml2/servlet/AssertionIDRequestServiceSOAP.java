@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionIDRequestServiceSOAP.java,v 1.5 2009-06-12 22:21:41 mallas Exp $
+ * $Id: AssertionIDRequestServiceSOAP.java,v 1.6 2009-10-14 23:59:43 exu Exp $
  *
  */
 
@@ -77,25 +77,6 @@ public class AssertionIDRequestServiceSOAP extends HttpServlet {
         // handle DOS attack
         SAMLUtils.checkHTTPContentLength(req);
 
-        AssertionIDRequest assertionIDRequest = null;
-        MimeHeaders headers = SAML2Utils.getHeaders(req);
-
-        try {
-            InputStream is = req.getInputStream();
-            SOAPMessage msg = SAML2Utils.mf.createMessage(headers, is);
-            Element elem = SAML2Utils.getSamlpElement(msg,
-                SAML2Constants.ASSERTION_ID_REQUEST);
-            assertionIDRequest =
-                ProtocolFactory.getInstance().createAssertionIDRequest(elem);
-        } catch (Exception ex) {
-            SAML2Utils.debug.error(
-                "AssertionIDRequestServiceSOAP.doGetPost:",  ex);
-            SAMLUtils.sendError(req, resp, 
-                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                "failedToCreateAssertionIDRequest", ex.getMessage());
-            return;
-        }
-
         String pathInfo = req.getPathInfo();
         if (pathInfo == null) {
             if (SAML2Utils.debug.messageEnabled()) {
@@ -136,6 +117,40 @@ public class AssertionIDRequestServiceSOAP extends HttpServlet {
                 "invalidMetaAlias", sme.getMessage());
             return;
         }
+
+        if (!SAML2Utils.isIDPProfileBindingSupported(
+            realm, samlAuthorityEntityID, 
+            SAML2Constants.ASSERTION_ID_REQUEST_SERVICE, SAML2Constants.SOAP))
+        {
+            SAML2Utils.debug.error(
+                "AssertionIDRequestServiceSOAP.doGetPost:Assertion ID request" +
+                " service SOAP binding is not supported for " + 
+                samlAuthorityEntityID);
+            SAMLUtils.sendError(req, resp, 
+                HttpServletResponse.SC_BAD_REQUEST,
+                "unsupportedBinding", 
+                SAML2Utils.bundle.getString("unsupportedBinding"));
+            return;
+        }
+        AssertionIDRequest assertionIDRequest = null;
+        MimeHeaders headers = SAML2Utils.getHeaders(req);
+
+        try {
+            InputStream is = req.getInputStream();
+            SOAPMessage msg = SAML2Utils.mf.createMessage(headers, is);
+            Element elem = SAML2Utils.getSamlpElement(msg,
+                SAML2Constants.ASSERTION_ID_REQUEST);
+            assertionIDRequest =
+                ProtocolFactory.getInstance().createAssertionIDRequest(elem);
+        } catch (Exception ex) {
+            SAML2Utils.debug.error(
+                "AssertionIDRequestServiceSOAP.doGetPost:",  ex);
+            SAMLUtils.sendError(req, resp, 
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "failedToCreateAssertionIDRequest", ex.getMessage());
+            return;
+        }
+
 
         SOAPMessage replymsg = null;
         try {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.49 2009-09-22 22:51:37 madan_ranganath Exp $
+ * $Id: SAML2Utils.java,v 1.50 2009-10-14 23:58:37 exu Exp $
  *
  */
 
@@ -65,6 +65,14 @@ import com.sun.identity.saml2.assertion.SubjectConfirmationData;
 import com.sun.identity.saml2.idpdiscovery.IDPDiscoveryConstants;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
+import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.XACMLAuthzDecisionQueryConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.XACMLPDPConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
+import com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement;
+import com.sun.identity.saml2.jaxb.metadata.EndpointType;
+import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.key.EncInfo;
 import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.logging.LogUtil;
@@ -93,13 +101,6 @@ import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.xml.XMLUtils;
-import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
-import com.sun.identity.saml2.jaxb.entityconfig.XACMLAuthzDecisionQueryConfigElement;
-import com.sun.identity.saml2.jaxb.entityconfig.XACMLPDPConfigElement;
-import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
-import com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement;
-import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
-import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
@@ -3804,7 +3805,7 @@ public class SAML2Utils extends SAML2SDKUtils {
         out.println("<HEAD>\n");
         out.println("<TITLE>Access rights validated</TITLE>\n");
         out.println("</HEAD>\n");
-        out.println("<BODY Onload=\"document.forms[0].submit()\">");
+        out.println("<BODY onLoad=\"document.forms[0].submit()\">");
 
         out.println("<FORM METHOD=\"POST\" ACTION=\"" + targetURL + "\">");
         out.println("<INPUT TYPE=\"HIDDEN\" NAME=\""+ SAMLmessageName
@@ -4189,5 +4190,107 @@ public class SAML2Utils extends SAML2SDKUtils {
                 SAML2Constants.WANT_POST_RESPONSE_SIGNED);
 
         return "true".equalsIgnoreCase(wantSigned);
+    }
+
+    /**
+     * Checks if a profile binding is suppported by a SP.
+     * @param realm Realm the SP is in.
+     * @param spEntityID SP entity id.
+     * @param profile name of the profile/service
+     * @param binding binding to be checked on
+     * @return <code>true</code> if the binding is supported;
+     *     <code>false</code> otherwise.
+     */
+    public static boolean isSPProfileBindingSupported(
+        String realm, String spEntityID, String profile, String binding)
+    {
+        if ((saml2MetaManager == null) ||
+            (realm == null) || (spEntityID == null) ||
+            (profile == null) || (binding == null))
+        {
+            return false;
+        }
+        try {
+            SPSSODescriptorElement spDescriptor =
+                saml2MetaManager.getSPSSODescriptor(realm, spEntityID);
+            List services = null;
+            if (SAML2Constants.ACS_SERVICE.equals(profile)) {
+                services = spDescriptor.getAssertionConsumerService();
+            } else if (SAML2Constants.SLO_SERVICE.equals(profile)) {
+                services = spDescriptor.getSingleLogoutService();
+            } else if (SAML2Constants.MNI_SERVICE.equals(profile)) {
+                services = spDescriptor.getManageNameIDService();
+            }
+            if ((services != null) && (!services.isEmpty())) {
+                Iterator iter = services.iterator();
+                while (iter.hasNext()) {
+                    EndpointType endpoint = (EndpointType) iter.next();
+                    if (binding.equals(endpoint.getBinding())) {
+                        return true;
+                    }
+                }
+            }
+        } catch (SAML2MetaException me) {
+            debug.error("SAML2Utils.isSPProfileBindingSupported:", me);
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a profile binding is suppported by an IDP.
+     * @param realm Realm the IDP is in.
+     * @param idpEntityID IDP entity id.
+     * @param profile name of the profile/service
+     * @param binding binding to be checked on
+     * @return <code>true</code> if the binding is supported;
+     *     <code>false</code> otherwise.
+     */
+    public static boolean isIDPProfileBindingSupported(
+        String realm, String idpEntityID, String profile, String binding) 
+    {
+        if ((saml2MetaManager == null) || 
+            (realm == null) || (idpEntityID == null) ||
+            (profile == null) || (binding == null)) 
+        {
+            return false;
+        }
+        try {
+            IDPSSODescriptorElement idpDescriptor =
+                saml2MetaManager.getIDPSSODescriptor(realm, idpEntityID);
+            List services = null;
+            if (SAML2Constants.SSO_SERVICE.equals(profile)) {
+                services = idpDescriptor.getSingleSignOnService();
+            } else if (SAML2Constants.NAMEID_MAPPING_SERVICE.equals(profile)) {
+                services = idpDescriptor.getNameIDMappingService();
+            } else if (
+                SAML2Constants.ASSERTION_ID_REQUEST_SERVICE.equals(profile)) 
+            {
+                services = idpDescriptor.getAssertionIDRequestService();
+            } else if (
+                SAML2Constants.ARTIFACT_RESOLUTION_SERVICE.equals(profile)) 
+            {
+                services = idpDescriptor.getArtifactResolutionService();
+            } else if (
+                SAML2Constants.SLO_SERVICE.equals(profile))
+            {
+                services = idpDescriptor.getSingleLogoutService();
+            } else if (
+                SAML2Constants.MNI_SERVICE.equals(profile))
+            {
+                services = idpDescriptor.getManageNameIDService();
+            } 
+            if ((services != null) && (!services.isEmpty())) {
+                Iterator iter = services.iterator();
+                while (iter.hasNext()) {
+                    EndpointType endpoint = (EndpointType) iter.next();
+                    if (binding.equals(endpoint.getBinding())) {
+                        return true;
+                    }
+                }
+            }
+        } catch (SAML2MetaException me) {
+            debug.error("SAML2Utils.isIDPProfileBindingSupported:", me);
+        }        
+        return false;
     }
 }

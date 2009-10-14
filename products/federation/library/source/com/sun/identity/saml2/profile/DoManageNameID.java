@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.23 2009-09-23 22:28:31 bigfatrat Exp $
+ * $Id: DoManageNameID.java,v 1.24 2009-10-14 23:58:38 exu Exp $
  *
  */
 
@@ -685,6 +685,29 @@ public class DoManageNameID {
             throw new SAML2Exception(
                  SAML2Utils.bundle.getString("MetaAliasNotFound"));
         }
+        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+        String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);
+        String hostRole = SAML2Utils.getHostEntityRole(paramsMap);
+        boolean isSupported = false;
+        if (SAML2Constants.IDP_ROLE.equals(hostRole)) {
+            isSupported = SAML2Utils.isIDPProfileBindingSupported(
+                realm, hostEntity,
+                SAML2Constants.MNI_SERVICE, SAML2Constants.HTTP_REDIRECT);
+        } else {
+            isSupported = SAML2Utils.isSPProfileBindingSupported(
+                realm, hostEntity,
+                SAML2Constants.MNI_SERVICE, SAML2Constants.HTTP_REDIRECT);
+        }
+        if (!isSupported) {
+            debug.error(method +
+                "MNI binding: Redirect is not supported for " + hostEntity);
+            String[] data = { hostEntity, SAML2Constants.HTTP_REDIRECT };
+            LogUtil.error(
+                Level.INFO, LogUtil.BINDING_NOT_SUPPORTED, data, null);
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "unsupportedBinding"));
+        }
+
 
         // Retrieve ManageNameIDRequest 
         ManageNameIDRequest mniRequest = getMNIRequest(request);
@@ -696,9 +719,6 @@ public class DoManageNameID {
                  SAML2Utils.bundle.getString("nullRemoteEntityID"));
         }
 
-        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
-        String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);
-        String hostRole = SAML2Utils.getHostEntityRole(paramsMap);
         boolean needToVerify = 
             SAML2Utils.getWantMNIRequestSigned(realm, hostEntity, hostRole);
         if (needToVerify) {
@@ -776,6 +796,28 @@ public class DoManageNameID {
                     SAML2Utils.bundle.getString("MetaAliasNotFound"));
         }
         
+        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+        String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);
+        boolean isSupported = false;
+        if (SAML2Constants.IDP_ROLE.equals(hostEntityRole)) {
+            isSupported = SAML2Utils.isIDPProfileBindingSupported(
+                realm, hostEntity,
+                SAML2Constants.MNI_SERVICE, SAML2Constants.SOAP);
+        } else {
+            isSupported = SAML2Utils.isSPProfileBindingSupported(
+                realm, hostEntity,
+                SAML2Constants.MNI_SERVICE, SAML2Constants.SOAP);
+        }
+        if (!isSupported) {
+            debug.error(method +
+                "MNI binding: SOAP is not supported for " + hostEntity);
+            String[] data = { hostEntity, SAML2Constants.SOAP };
+            LogUtil.error(
+                Level.INFO, LogUtil.BINDING_NOT_SUPPORTED, data, null);
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "unsupportedBinding"));
+        }
+
         // Retrieve a SOAPMessage
         SOAPMessage message = SAML2Utils.getSOAPMessage(request);
 
@@ -788,8 +830,6 @@ public class DoManageNameID {
                  SAML2Utils.bundle.getString("nullRemoteEntityID"));
         }
 
-        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
-        String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);
         if (debug.messageEnabled()) {
             debug.message(method + "Meta Alias is : "+ metaAlias);
             debug.message(method + "Host EntityID is : " + hostEntity);
@@ -862,7 +902,29 @@ public class DoManageNameID {
             throw new SAML2Exception(
                  SAML2Utils.bundle.getString("MetaAliasNotFound"));
         }
+        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+        String hostEntityID = metaManager.getEntityByMetaAlias(metaAlias);
         String hostRole = SAML2Utils.getHostEntityRole(paramsMap);
+        boolean isSupported = false;
+        if (SAML2Constants.IDP_ROLE.equals(hostRole)) {
+            isSupported = SAML2Utils.isIDPProfileBindingSupported(
+                realm, hostEntityID,
+                SAML2Constants.MNI_SERVICE, SAML2Constants.HTTP_REDIRECT);
+        } else {
+            isSupported = SAML2Utils.isSPProfileBindingSupported(
+                realm, hostEntityID,
+                SAML2Constants.MNI_SERVICE, SAML2Constants.HTTP_REDIRECT);
+        }
+        if (!isSupported) {
+            debug.error(method +
+                "MNI binding: Redirect is not supported for " + hostEntityID);
+            String[] data = { hostEntityID, SAML2Constants.HTTP_REDIRECT };
+            LogUtil.error(
+                Level.INFO, LogUtil.BINDING_NOT_SUPPORTED, data, null);
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "unsupportedBinding"));
+        }
+
         
         String relayState =
                     request.getParameter(SAML2Constants.RELAY_STATE);
@@ -887,8 +949,6 @@ public class DoManageNameID {
         ManageNameIDResponse mniResponse = null;
         try {
             mniResponse = pf.createManageNameIDResponse(mniResStr);
-            String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
-            String hostEntityID = metaManager.getEntityByMetaAlias(metaAlias);
             String remoteEntityID = mniResponse.getIssuer().getValue();
             Issuer resIssuer = mniResponse.getIssuer();
             String requestId = mniResponse.getInResponseTo();
@@ -2121,7 +2181,7 @@ public class DoManageNameID {
         throws SAML2Exception, IOException, SOAPException, SessionException,
         ServletException {
 
-
+        String classMethod = "DoManageNameID.processPOSTRequest:";
         String samlRequest = request.getParameter(SAML2Constants.SAML_REQUEST);
 
         if (samlRequest == null) {
@@ -2138,6 +2198,29 @@ public class DoManageNameID {
                 metaAlias);
             throw new SAML2Exception(SAML2Utils.bundle.getString(
                 "MetaAliasNotFound"));
+        }
+
+        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+        String hostEntityID = metaManager.getEntityByMetaAlias(metaAlias);
+        String hostEntityRole = SAML2Utils.getHostEntityRole(paramsMap);
+        boolean isSupported = false;
+        if (SAML2Constants.IDP_ROLE.equals(hostEntityRole)) {
+            isSupported = SAML2Utils.isIDPProfileBindingSupported(
+                realm, hostEntityID,
+                SAML2Constants.MNI_SERVICE, SAML2Constants.HTTP_POST);
+        } else {
+            isSupported = SAML2Utils.isSPProfileBindingSupported(
+                realm, hostEntityID,
+                SAML2Constants.MNI_SERVICE, SAML2Constants.HTTP_POST);
+        }
+        if (!isSupported) {
+            debug.error(classMethod +
+                "MNI binding: POST is not supported for " + hostEntityID);
+            String[] data = { hostEntityID, SAML2Constants.HTTP_POST };
+            LogUtil.error(
+                Level.INFO, LogUtil.BINDING_NOT_SUPPORTED, data, null);
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "unsupportedBinding"));
         }
 
         ManageNameIDRequest mniRequest = null;
@@ -2190,9 +2273,6 @@ public class DoManageNameID {
                     "nullRemoteEntityID"));
             }
 
-            String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
-            String hostEntityID = metaManager.getEntityByMetaAlias(metaAlias);
-            String hostEntityRole = SAML2Utils.getHostEntityRole(paramsMap);
             if (debug.messageEnabled()) {
                 debug.message("DoManageNameID.processPOSTRequest: " +
                     "Meta Alias is : "+ metaAlias);
@@ -2308,7 +2388,28 @@ public class DoManageNameID {
             throw new SAML2Exception(SAML2Utils.bundle.getString(
                 "MetaAliasNotFound"));
         }
+        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+        String hostEntityID = metaManager.getEntityByMetaAlias(metaAlias);
         String hostRole = SAML2Utils.getHostEntityRole(paramsMap);
+        boolean isSupported = false;
+        if (SAML2Constants.IDP_ROLE.equals(hostRole)) {
+            isSupported = SAML2Utils.isIDPProfileBindingSupported(
+                realm, hostEntityID,
+                SAML2Constants.MNI_SERVICE, SAML2Constants.HTTP_POST);
+        } else {
+            isSupported = SAML2Utils.isSPProfileBindingSupported(
+                realm, hostEntityID,
+                SAML2Constants.MNI_SERVICE, SAML2Constants.HTTP_POST);
+        }
+        if (!isSupported) {
+            debug.error(method +
+                "MNI binding: POST is not supported for " + hostEntityID);
+            String[] data = { hostEntityID, SAML2Constants.HTTP_POST };
+            LogUtil.error(
+                Level.INFO, LogUtil.BINDING_NOT_SUPPORTED, data, null);
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "unsupportedBinding"));
+        }
         String relayState = request.getParameter(SAML2Constants.RELAY_STATE);
         String mniRes = request.getParameter(SAML2Constants.SAML_RESPONSE);
 
@@ -2335,8 +2436,6 @@ public class DoManageNameID {
         ManageNameIDResponse mniResponse = null;
         try {
             mniResponse = pf.createManageNameIDResponse(mniResStr);
-            String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
-            String hostEntityID = metaManager.getEntityByMetaAlias(metaAlias);
             String remoteEntityID = mniResponse.getIssuer().getValue();
             Issuer resIssuer = mniResponse.getIssuer();
             String requestId = mniResponse.getInResponseTo();

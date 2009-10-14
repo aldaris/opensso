@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.26 2009-09-23 22:28:32 bigfatrat Exp $
+ * $Id: IDPSSOFederate.java,v 1.27 2009-10-14 23:59:09 exu Exp $
  *
  */
 
@@ -117,8 +117,9 @@ public class IDPSSOFederate {
      *
      */
     public static void doSSOFederate(HttpServletRequest request,
-                                     HttpServletResponse response) {
-        doSSOFederate(request, response, false);
+                                     HttpServletResponse response,
+                                     String reqBinding) {
+        doSSOFederate(request, response, false, reqBinding);
     }
     /**
      * This method processes the <code>AuthnRequest</code> coming 
@@ -130,7 +131,7 @@ public class IDPSSOFederate {
      *
      */
     public static void doSSOFederate(HttpServletRequest request,
-        HttpServletResponse response, boolean isFromECP) {
+        HttpServletResponse response, boolean isFromECP, String reqBinding) {
 
         String classMethod = "IDPSSOFederate.doSSOFederate: ";
 
@@ -223,6 +224,24 @@ public class IDPSSOFederate {
                     return;
                 }
                 realm = SAML2MetaUtils.getRealmByMetaAlias(idpMetaAlias);
+                if (isFromECP) {
+                    reqBinding = SAML2Constants.SOAP;
+                }
+                boolean profileEnabled = 
+                    SAML2Utils.isIDPProfileBindingSupported(
+                        realm, idpEntityID,
+                        SAML2Constants.SSO_SERVICE, reqBinding);
+                if (!profileEnabled) {
+                    SAML2Utils.debug.error(classMethod +
+                        "SSO binding:" + reqBinding + " is not enabled for " +
+                        idpEntityID);
+                    String[] data = { idpEntityID, reqBinding };
+                    LogUtil.error(
+                        Level.INFO, LogUtil.BINDING_NOT_SUPPORTED, data, null);
+                    sendError(request, response, SAML2Constants.CLIENT_FAULT,
+                        "unsupportedBinding", null, isFromECP);
+                    return;
+                }
             } catch (SAML2MetaException sme) {
                 SAML2Utils.debug.error(classMethod +
                     "Unable to get IDP Entity ID from meta.");

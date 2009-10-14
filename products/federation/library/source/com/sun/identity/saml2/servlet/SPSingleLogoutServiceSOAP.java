@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogoutServiceSOAP.java,v 1.8 2009-06-12 22:21:41 mallas Exp $
+ * $Id: SPSingleLogoutServiceSOAP.java,v 1.9 2009-10-14 23:59:45 exu Exp $
  *
  */
 
@@ -87,6 +87,13 @@ public class SPSingleLogoutServiceSOAP extends HttpServlet {
             String spEntityID = SAML2Utils.getSAML2MetaManager().
                 getEntityByMetaAlias(spMetaAlias);
             String realm = SAML2MetaUtils.getRealmByMetaAlias(spMetaAlias);
+            if (!SAML2Utils.isSPProfileBindingSupported(
+                realm, spEntityID, SAML2Constants.SLO_SERVICE,
+                SAML2Constants.SOAP))
+            {
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("unsupportedBinding"));
+            }
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message("SPSLOSOAP.doPost : uri =" +
                     req.getRequestURI() +", spMetaAlias=" + spMetaAlias

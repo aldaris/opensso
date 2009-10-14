@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.24 2009-09-23 22:28:31 bigfatrat Exp $
+ * $Id: IDPSingleLogout.java,v 1.25 2009-10-14 23:59:39 exu Exp $
  *
  */
 
@@ -461,9 +461,25 @@ public class IDPSingleLogout {
         }
         String rmethod= request.getMethod();
         String binding = SAML2Constants.HTTP_REDIRECT;
-        LogoutRequest logoutReq = null;
         if (rmethod.equals("POST")) {
             binding = SAML2Constants.HTTP_POST;
+        }
+        String metaAlias =
+                SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
+        String realm = SAML2Utils.
+                getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
+        String idpEntityID = sm.getEntityByMetaAlias(metaAlias);
+        if (!SAML2Utils.isIDPProfileBindingSupported(
+            realm, idpEntityID, SAML2Constants.SLO_SERVICE, binding))
+        {
+            debug.error("SLO service binding " + binding +
+                " is not supported for " + idpEntityID);
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("unsupportedBinding"));
+        }
+
+        LogoutRequest logoutReq = null;
+        if (rmethod.equals("POST")) {
             logoutReq = LogoutUtil.getLogoutRequestFromPost(samlRequest,
                 response);
         } else if (rmethod.equals("GET")) {
@@ -483,11 +499,6 @@ public class IDPSingleLogout {
            return;
         }
         
-        String metaAlias =
-                SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
-        String realm = SAML2Utils.
-                getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
-        String idpEntityID = sm.getEntityByMetaAlias(metaAlias);
         String spEntityID = logoutReq.getIssuer().getValue();
              
         boolean needToVerify = 
@@ -688,10 +699,26 @@ public class IDPSingleLogout {
             debug.message(method + "relayState : " + relayState);
         }
         String rmethod = request.getMethod();
-        LogoutResponse logoutRes = null;
         String binding = SAML2Constants.HTTP_REDIRECT;
         if (rmethod.equals("POST")) {
             binding = SAML2Constants.HTTP_POST;
+        }
+        String metaAlias =
+                SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
+        String realm = SAML2Utils.
+                getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
+        String idpEntityID = sm.getEntityByMetaAlias(metaAlias);
+        if (!SAML2Utils.isIDPProfileBindingSupported(
+            realm, idpEntityID, SAML2Constants.SLO_SERVICE, binding))
+        {
+            debug.error("SLO service binding " + binding + " is not supported:"+
+                idpEntityID);
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("unsupportedBinding"));
+        }
+
+        LogoutResponse logoutRes = null;
+        if (rmethod.equals("POST")) {
             logoutRes = LogoutUtil.getLogoutResponseFromPost(samlResponse,
                 response);
         } else if (rmethod.equals("GET")) {
@@ -713,11 +740,6 @@ public class IDPSingleLogout {
            return false;
         }
     
-        String metaAlias =
-                SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
-        String realm = SAML2Utils.
-                getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
-        String idpEntityID = sm.getEntityByMetaAlias(metaAlias);
         String spEntityID = logoutRes.getIssuer().getValue();
         Issuer resIssuer = logoutRes.getIssuer();
         String requestId = logoutRes.getInResponseTo();

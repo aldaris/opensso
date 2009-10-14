@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDMappingServiceSOAP.java,v 1.5 2009-06-12 22:21:41 mallas Exp $
+ * $Id: NameIDMappingServiceSOAP.java,v 1.6 2009-10-14 23:59:44 exu Exp $
  *
  */
 
@@ -73,6 +73,13 @@ public class NameIDMappingServiceSOAP extends HttpServlet {
             String idpEntityID = SAML2Utils.getSAML2MetaManager().
                 getEntityByMetaAlias(idpMetaAlias);
             String realm = SAML2MetaUtils.getRealmByMetaAlias(idpMetaAlias);
+            if (!SAML2Utils.isIDPProfileBindingSupported(
+                realm, idpEntityID, SAML2Constants.NAMEID_MAPPING_SERVICE,
+                SAML2Constants.SOAP))
+            {
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "unsuppoprtedBinding"));
+            }
 
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message("NameIDMappingServiceSOAP.doPost : " +

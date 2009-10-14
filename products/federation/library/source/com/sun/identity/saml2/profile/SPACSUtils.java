@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.46 2009-10-14 21:31:18 madan_ranganath Exp $
+ * $Id: SPACSUtils.java,v 1.47 2009-10-14 23:59:40 exu Exp $
  *
  */
 
@@ -158,14 +158,47 @@ public class SPACSUtils {
 
         String method = request.getMethod();
         if (method.equals("GET")) {
+            if (!SAML2Utils.isSPProfileBindingSupported(
+                orgName, hostEntityId, SAML2Constants.ACS_SERVICE,
+                SAML2Constants.HTTP_ARTIFACT))
+            {
+                SAMLUtils.sendError(request, response, 
+                    response.SC_BAD_REQUEST,
+                    "unsupportedBinding", 
+                    SAML2Utils.bundle.getString("unsupportedBinding"));
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("unsupportedBinding"));
+            }
             respInfo = getResponseFromGet(request, response, orgName,
                                 hostEntityId, metaManager);
         } else if (method.equals("POST")) {
             String pathInfo = request.getPathInfo();
             if ((pathInfo != null) && (pathInfo.startsWith("/ECP"))) {
+                if (!SAML2Utils.isSPProfileBindingSupported(
+                    orgName, hostEntityId, SAML2Constants.ACS_SERVICE,
+                    SAML2Constants.PAOS))
+                {
+                SAMLUtils.sendError(request, response, 
+                    response.SC_BAD_REQUEST,
+                    "unsupportedBinding", 
+                    SAML2Utils.bundle.getString("unsupportedBinding"));
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("unsupportedBinding"));
+            }
                 respInfo = getResponseFromPostECP(request, response, orgName,
                     hostEntityId, metaManager);
             } else {
+                if (!SAML2Utils.isSPProfileBindingSupported(
+                    orgName, hostEntityId, SAML2Constants.ACS_SERVICE,
+                    SAML2Constants.HTTP_POST))
+                {
+                    SAMLUtils.sendError(request, response, 
+                        response.SC_BAD_REQUEST,
+                        "unsupportedBinding", 
+                        SAML2Utils.bundle.getString("unsupportedBinding"));
+                    throw new SAML2Exception(
+                        SAML2Utils.bundle.getString("unsupportedBinding"));
+                }
                 respInfo = getResponseFromPost(request, response, orgName,
                     hostEntityId, metaManager);
             }
