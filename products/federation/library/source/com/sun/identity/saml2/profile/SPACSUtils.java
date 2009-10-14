@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.45 2009-09-23 22:28:32 bigfatrat Exp $
+ * $Id: SPACSUtils.java,v 1.46 2009-10-14 21:31:18 madan_ranganath Exp $
  *
  */
 
@@ -923,7 +923,21 @@ public class SPACSUtils {
             boolean needPOSTResponseSigned =
                 SAML2Utils.wantPOSTResponseSigned(
                     orgName,hostEntityId,SAML2Constants.SP_ROLE);
-            String idpEntityID = resp.getIssuer().getValue();
+            String idpEntityID = null;
+            Issuer issuer = resp.getIssuer();
+            if (issuer != null) {
+                idpEntityID = issuer.getValue();
+            } else {
+                List assertions = resp.getAssertion();
+                if ((assertions != null) && (!assertions.isEmpty())) {
+                    for (Iterator iter = assertions.iterator();
+                                  iter.hasNext(); ) {
+                        Assertion assertion = (Assertion)iter.next();
+                        idpEntityID = assertion.getIssuer().getValue();
+                        break;
+                    }
+                }
+            }
             IDPSSODescriptorElement idp = null;
             try {
                 idp = metaManager.getIDPSSODescriptor(orgName,idpEntityID);
