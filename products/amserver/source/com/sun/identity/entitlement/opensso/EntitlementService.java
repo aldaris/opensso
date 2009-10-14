@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.4 2009-10-01 00:41:57 veiming Exp $
+ * $Id: EntitlementService.java,v 1.5 2009-10-14 03:18:39 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -124,8 +124,7 @@ public class EntitlementService extends EntitlementConfiguration {
      * @return set of attribute values of a given attribute name,
      */
     public Set<String> getConfiguration(String attrName) {
-        SSOToken token = getSSOToken();
-        return getConfiguration(token, attrName);
+        return getConfiguration(adminToken, attrName);
     }
 
     private static Set<String> getConfiguration(
@@ -357,7 +356,7 @@ public class EntitlementService extends EntitlementConfiguration {
 
     private String getApplicationSearchFilter(Set<SearchFilter> filters) {
         StringBuilder strFilter = new StringBuilder();
-        if (filters.isEmpty()) {
+        if ((filters == null) || filters.isEmpty()) {
             strFilter.append("(ou=*)");
         } else {
             if (filters.size() == 1) {
@@ -1399,8 +1398,7 @@ public class EntitlementService extends EntitlementConfiguration {
      */
     public boolean hasEntitlementDITs() {
         try {
-            new ServiceSchemaManager(SERVICE_NAME, 
-                SubjectUtils.getSSOToken(getAdminSubject()));
+            new ServiceSchemaManager(SERVICE_NAME, adminToken);
             return true;
         } catch (SMSException ex) {
             return false;

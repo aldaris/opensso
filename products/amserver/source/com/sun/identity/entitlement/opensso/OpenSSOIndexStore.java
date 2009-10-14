@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.4 2009-10-13 22:36:30 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.5 2009-10-14 03:18:39 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -370,6 +370,15 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         ResourceSearchIndexes indexes,
         Set<String> subjectIndexes, boolean bSubTree)
         throws EntitlementException {
+        return search(realm, indexes, subjectIndexes, bSubTree, true);
+    }
+
+    public Iterator<IPrivilege> search(String realm,
+        ResourceSearchIndexes indexes,
+        Set<String> subjectIndexes, 
+        boolean bSubTree,
+        boolean bReferral
+    ) throws EntitlementException {
         BufferedIterator iterator = (isMultiThreaded) ? new BufferedIterator() :
             new SimpleIterator();
         Set setDNs = new HashSet();
@@ -379,13 +388,15 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
             setDNs.addAll(searchReferrals(indexes, bSubTree, iterator));
         }
 
-        if (DN.isDN(realm)) {
-            realm = DNMapper.orgNameToRealmName(realm);
-        }
-        if (realm.equals("/")) {
-            ReferralPrivilege ref = getOrgAliasReferral(indexes);
-            if (ref != null) {
-                iterator.add(ref);
+        if (bReferral) {
+            if (DN.isDN(realm)) {
+                realm = DNMapper.orgNameToRealmName(realm);
+            }
+            if (realm.equals("/")) {
+                ReferralPrivilege ref = getOrgAliasReferral(indexes);
+                if (ref != null) {
+                    iterator.add(ref);
+                }
             }
         }
         
@@ -551,8 +562,15 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         boolean sortResults,
         boolean ascendingOrder
     ) throws EntitlementException {
-        StringBuffer strFilter = new StringBuffer();
-        if (filters.isEmpty()) {
+        Subject adminSubject = getAdminSubject();
+        String realm = getRealm();
+        return dataStore.search(adminSubject, realm, getSearchFilter(
+            filters, boolAnd), numOfEntries, sortResults, ascendingOrder);
+    }
+
+    private String getSearchFilter(Set<SearchFilter> filters, boolean boolAnd) {
+        StringBuilder strFilter = new StringBuilder();
+        if ((filters == null) || filters.isEmpty()) {
             strFilter.append("(ou=*)");
         } else {
             if (filters.size() == 1) {
@@ -569,12 +587,9 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 strFilter.append(")");
             }
         }
-        Subject adminSubject = getAdminSubject();
-        String realm = getRealm();
-
-        return dataStore.search(adminSubject, realm, strFilter.toString(),
-            numOfEntries, sortResults, ascendingOrder);
+        return strFilter.toString();
     }
+
 
     /**
      * Returns a set of referral privilege names that satifies a search filter.

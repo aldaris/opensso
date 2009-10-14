@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.4 2009-10-13 22:36:29 veiming Exp $
+ * $Id: DataStore.java,v 1.5 2009-10-14 03:18:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -149,7 +149,8 @@ public class DataStore {
         if (indexName == null) {
             indexName = POLICY_STORE;
         }
-        Object[] args = {indexName, DNMapper.orgNameToDN(realm)};
+        String dn = (DN.isDN(realm)) ? realm : DNMapper.orgNameToDN(realm);
+        Object[] args = {indexName, dn};
         return MessageFormat.format(REALM_DN_TEMPLATE, args);
     }
 

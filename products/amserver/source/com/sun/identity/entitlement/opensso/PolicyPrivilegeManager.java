@@ -22,12 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.3 2009-10-01 17:39:39 dillidorai Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.4 2009-10-14 03:18:39 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.ApplicationPrivilege;
+import com.sun.identity.entitlement.ApplicationPrivilegeManager;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPrivilege;
@@ -44,6 +46,8 @@ import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.security.AdminTokenAction;
 
 import java.security.AccessController;
+import java.security.Principal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -58,22 +62,26 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     private String realm = "/";
     private PolicyManager pm;
     private static PolicyCache policyCache;
+    private static Subject dsameUserSubject;
 
     static {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
+        dsameUserSubject = SubjectUtils.createSubject(adminToken);
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            SubjectUtils.createSubject(adminToken), "/");
+            dsameUserSubject, "/");
         migratedToEntitlementSvc = ec.migratedToEntitlementService();
         xacmlEnabled = ec.xacmlPrivilegeEnabled();
         try {
             if (PrivilegeManager.debug.messageEnabled()) {
-                PrivilegeManager.debug.message("PolicyPrivilegeManager.static initializer,"
-                        + " getting instance of PolicyCache", null);
+                PrivilegeManager.debug.message(
+                    "PolicyPrivilegeManager.static initializer," +
+                    " getting instance of PolicyCache", null);
             }
             policyCache = PolicyCache.getInstance();
         } catch (Exception e) {
-            PrivilegeManager.debug.error("PolicyPrivilegeManager.static initializer failed"
+            PrivilegeManager.debug.error(
+                "PolicyPrivilegeManager.static initializer failed"
                     + " to create PolicyCache", e);
         }
     }
@@ -94,6 +102,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         super.initialize(realm, subject);
         this.realm = realm;
         SSOToken ssoToken = SubjectUtils.getSSOToken(subject);
+
         if (!migratedToEntitlementSvc) {
             try {
                 pm = new PolicyManager(ssoToken, realm);
@@ -115,6 +124,19 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      */
     public Privilege getPrivilege(String privilegeName)
         throws EntitlementException {
+        Privilege privilege = getPrivilege(privilegeName, dsameUserSubject);
+        ApplicationPrivilegeManager applPrivilegeMgr =
+            ApplicationPrivilegeManager.getInstance(realm, getAdminSubject());
+
+        if (!applPrivilegeMgr.hasPrivilege(privilege,
+            ApplicationPrivilege.Action.READ)) {
+            throw new EntitlementException(326);
+        }
+        return privilege;
+    }
+
+    private Privilege getPrivilege(String privilegeName, Subject adminSubject)
+        throws EntitlementException {
         Privilege privilege = null;
         try {
             Object policy = null;
@@ -123,7 +145,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 policy = pm.getPolicy(privilegeName);
             } else {
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                policy = (Policy)pdb.getPolicy(getAdminSubject(), getRealm(),
+                policy = (Policy)pdb.getPolicy(adminSubject, getRealm(),
                     privilegeName);
             }
 
@@ -161,11 +183,19 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
             Object policyObject = PrivilegeUtils.privilegeToPolicyObject(
                     realm, privilege);
             if (!migratedToEntitlementSvc) {
-                pm.addPolicy((Policy)policyObject);
+                pm.addPolicy((Policy) policyObject);
             } else {
+                ApplicationPrivilegeManager applPrivilegeMgr =
+                    ApplicationPrivilegeManager.getInstance(realm,
+                    getAdminSubject());
+
+                if (!applPrivilegeMgr.hasPrivilege(privilege,
+                    ApplicationPrivilege.Action.MODIFY)) {
+                    throw new EntitlementException(326);
+                }
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
                 String currentRealm = getRealm();
-                pdb.addPolicy(getAdminSubject(), currentRealm, policyObject);
+                pdb.addPolicy(dsameUserSubject, currentRealm, policyObject);
                 notifyPrivilegeChanged(currentRealm, null, privilege);
             }
         } catch (PolicyException e) {
@@ -190,11 +220,23 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 pm.removePolicy(privilegeName);
             } else {
                 Privilege privilege = getPrivilege(privilegeName);
-                PolicyDataStore pdb = PolicyDataStore.getInstance();
-                String currentRealm = getRealm();
-                pdb.removePolicy(getAdminSubject(), currentRealm,
-                    privilegeName);
-                notifyPrivilegeChanged(currentRealm, null, privilege);
+
+                if (privilege != null) {
+                    ApplicationPrivilegeManager applPrivilegeMgr =
+                        ApplicationPrivilegeManager.getInstance(realm,
+                        getAdminSubject());
+
+                    if (!applPrivilegeMgr.hasPrivilege(privilege,
+                        ApplicationPrivilege.Action.MODIFY)) {
+                        throw new EntitlementException(326);
+                    }
+
+                    PolicyDataStore pdb = PolicyDataStore.getInstance();
+                    String currentRealm = getRealm();
+                    pdb.removePolicy(getAdminSubject(), currentRealm,
+                        privilegeName);
+                    notifyPrivilegeChanged(currentRealm, null, privilege);
+                }
             }
         } catch (PolicyException e) {
             Object[] params = {privilegeName};
@@ -202,6 +244,23 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         } catch (SSOException e) {
             Object[] params = {privilegeName};
             throw new EntitlementException(205, params, e);
+        }
+    }
+
+    private void updateMetaInfo(Privilege privilege)
+        throws EntitlementException {
+        Privilege origPrivilege = getPrivilege(privilege.getName(),
+            dsameUserSubject);
+        if (origPrivilege != null) {
+            privilege.setCreatedBy(origPrivilege.getCreatedBy());
+            privilege.setCreationDate(origPrivilege.getCreationDate());
+        }
+        Date date = new Date();
+        privilege.setLastModifiedDate(date.getTime());
+
+        Set<Principal> principals = getAdminSubject().getPrincipals();
+        if ((principals != null) && !principals.isEmpty()) {
+            privilege.setLastModifiedBy(principals.iterator().next().getName());
         }
     }
 
@@ -213,7 +272,9 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     @Override
     public void modifyPrivilege(Privilege privilege)
             throws EntitlementException {
-        super.modifyPrivilege(privilege);
+        validatePrivilege(privilege);
+        privilege.validateResourceNames(dsameUserSubject, realm);
+        updateMetaInfo(privilege);
         String privilegeName = privilege.getName();
 
         try {
@@ -221,12 +282,21 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 pm.removePolicy(privilege.getName());
                 pm.addPolicy(PrivilegeUtils.privilegeToPolicy(realm, privilege));
             } else {
+                ApplicationPrivilegeManager applPrivilegeMgr =
+                    ApplicationPrivilegeManager.getInstance(realm,
+                    getAdminSubject());
+
+                if (!applPrivilegeMgr.hasPrivilege(privilege,
+                    ApplicationPrivilege.Action.MODIFY)) {
+                    throw new EntitlementException(326);
+                }
+
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                Privilege oldP = getPrivilege(privilegeName);
-                pdb.removePolicy(getAdminSubject(), getRealm(),
+                Privilege oldP = getPrivilege(privilegeName, dsameUserSubject);
+                pdb.removePolicy(dsameUserSubject, getRealm(),
                     privilege.getName());
                 String currentRealm = getRealm();
-                pdb.addPolicy(getAdminSubject(), getRealm(),
+                pdb.addPolicy(dsameUserSubject, getRealm(),
                     PrivilegeUtils.privilegeToPolicyObject(
                     currentRealm, privilege));
                 notifyPrivilegeChanged(currentRealm, oldP, privilege);
@@ -286,6 +356,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         return xacmlEnabled;
     }
 
+    @Override
     protected void notifyPrivilegeChanged(
             String realm,
             Privilege previous,
@@ -318,9 +389,4 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 PolicyEvent.POLICY_MODIFIED); 
             }
     }
-    
 }
-
-
-
-

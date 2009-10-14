@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.3 2009-09-25 05:52:54 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.4 2009-10-14 03:18:38 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -107,7 +107,7 @@ public abstract class PrivilegeManager {
     public abstract Privilege getPrivilege(String privilegeName)
             throws EntitlementException;
 
-    private void validatePrivilege(Privilege privilege)
+    protected void validatePrivilege(Privilege privilege)
         throws EntitlementException {
         String pName = privilege.getName();
         if ((pName == null) || (pName.trim().length() == 0)) {
@@ -162,24 +162,8 @@ public abstract class PrivilegeManager {
      * @param privilege the privilege to be modified
      * @throws EntitlementException if privilege cannot be modified.
      */
-    public void modifyPrivilege(Privilege privilege)
-        throws EntitlementException {
-        validatePrivilege(privilege);
-        
-        privilege.validateResourceNames(adminSubject, realm);
-        Privilege origPrivilege = getPrivilege(privilege.getName());
-        if (origPrivilege != null) {
-            privilege.setCreatedBy(origPrivilege.getCreatedBy());
-            privilege.setCreationDate(origPrivilege.getCreationDate());
-        }
-        Date date = new Date();
-        privilege.setLastModifiedDate(date.getTime());
-
-        Set<Principal> principals = adminSubject.getPrincipals();
-        if ((principals != null) && !principals.isEmpty()) {
-            privilege.setLastModifiedBy(principals.iterator().next().getName());
-        }
-    }
+    public abstract void modifyPrivilege(Privilege privilege)
+        throws EntitlementException;
 
     /**
      * Returns a set of privilege names for a given search criteria.

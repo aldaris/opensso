@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchFilter.java,v 1.1 2009-09-25 05:52:54 veiming Exp $
+ * $Id: SearchFilter.java,v 1.2 2009-10-14 03:18:41 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -32,25 +32,13 @@ package com.sun.identity.entitlement.util;
  * of names.
  */
 public class SearchFilter {
-    /**
-     * Equals operator.
-     */
-    public static final int EQUAL_OPERATOR = 1;
-
-    /**
-     * Greater than or Equals to operator.
-     */
-    public static final int GREATER_THAN_OPERATOR = 2;
-
-    /**
-     * Lesser than or Equals to operator.
-     */
-    public static final int LESSER_THAN_OPERATOR = 3;
+    public static enum Operator
+        {EQUAL_OPERATOR, GREATER_THAN_OPERATOR, LESSER_THAN_OPERATOR};
 
     private String attrName;
     private String value;
     private long longValue;
-    private int operator;
+    private Operator operator;
 
     /**
      * Constructor.
@@ -63,7 +51,7 @@ public class SearchFilter {
     public SearchFilter(String attrName, String value) {
         this.attrName = attrName;
         this.value = value;
-        this.operator = EQUAL_OPERATOR;
+        this.operator = Operator.EQUAL_OPERATOR;
     }
 
     /**
@@ -80,10 +68,46 @@ public class SearchFilter {
      * <li>SearchFilter.GREATER_THAN_OPERATOR</li>
      * </ul>
      */
-    public SearchFilter(String attrName, long value, int operator) {
+    public SearchFilter(String attrName, long value, Operator operator) {
         this.attrName = attrName;
         this.longValue = value;
         this.operator = operator;
+    }
+
+    /**
+     * Returns filter name.
+     * 
+     * @return filter name.
+     */
+    public String getName() {
+        return attrName;
+    }
+
+    /**
+     * Returns filter value.
+     *
+     * @return filter value
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * Returns filter operator.
+     *
+     * @return filter operator.
+     */
+    public Operator getOperator() {
+        return operator;
+    }
+
+    /**
+     * Returns filter numeric value.
+     *
+     * @return filter numeric value.
+     */
+    public long getNumericValue() {
+        return longValue;
     }
 
     /**
@@ -97,9 +121,9 @@ public class SearchFilter {
         }
 
         String op = null;
-        if (operator == LESSER_THAN_OPERATOR) {
+        if (operator == Operator.LESSER_THAN_OPERATOR) {
             op = "<=";
-        } else if (operator == GREATER_THAN_OPERATOR) {
+        } else if (operator == Operator.GREATER_THAN_OPERATOR) {
             op = ">=|";
         } else {
             op = "=";
