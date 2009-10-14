@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeDelegationTest.java,v 1.1 2009-10-14 03:18:40 veiming Exp $
+ * $Id: PrivilegeDelegationTest.java,v 1.2 2009-10-14 15:58:50 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -143,7 +143,7 @@ public class PrivilegeDelegationTest {
     @Test (dependsOnMethods = {"negativeTest"})
     public void positiveGetTest() throws Exception {
         ApplicationPrivilegeManager apm = createApplicationPrivilege(
-            ApplicationPrivilege.PossibleActions.READ);
+            ApplicationPrivilege.PossibleAction.READ);
         PrivilegeManager mgr = PrivilegeManager.getInstance(realm,
             SubjectUtils.createSubject(token));
         mgr.getPrivilege(PRIVILEGE_NAME);
@@ -162,7 +162,7 @@ public class PrivilegeDelegationTest {
     @Test (dependsOnMethods = {"positiveGetTest"})
     public void positiveModifyTest() throws Exception {
         ApplicationPrivilegeManager apm = createApplicationPrivilege(
-            ApplicationPrivilege.PossibleActions.READ_MODIFY);
+            ApplicationPrivilege.PossibleAction.READ_MODIFY);
         PrivilegeManager mgr = PrivilegeManager.getInstance(realm,
             SubjectUtils.createSubject(token));
         mgr.getPrivilege(PRIVILEGE_NAME);
@@ -171,7 +171,7 @@ public class PrivilegeDelegationTest {
     }
 
     private ApplicationPrivilegeManager createApplicationPrivilege(
-        ApplicationPrivilege.PossibleActions actions) 
+        ApplicationPrivilege.PossibleAction actions) 
         throws EntitlementException {
         ApplicationPrivilegeManager apm =
             ApplicationPrivilegeManager.getInstance(

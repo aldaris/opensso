@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPrivilegeTest.java,v 1.1 2009-10-14 03:18:39 veiming Exp $
+ * $Id: DelegationPrivilegeTest.java,v 1.2 2009-10-14 15:58:50 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -114,7 +114,7 @@ public class DelegationPrivilegeTest {
         res.add(testParams.get("DELEGATED_RESOURCE"));
         ap.setApplicationResources(appRes);
         ap.setActionValues(
-            ApplicationPrivilege.PossibleActions.READ_MODIFY_DELEGATE);
+            ApplicationPrivilege.PossibleAction.READ_MODIFY_DELEGATE);
         mgr.addPrivilege(ap);
     }
 
