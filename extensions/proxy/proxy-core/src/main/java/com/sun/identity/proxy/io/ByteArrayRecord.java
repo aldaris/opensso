@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ByteArrayRecord.java,v 1.1 2009-10-14 08:56:55 pbryan Exp $
+ * $Id: ByteArrayRecord.java,v 1.2 2009-10-14 16:58:01 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,8 +29,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * An implementation of the {@link Record} interface, backed by a
- * dynamically-growing byte array.
+ * Implements a record, storing data in a dynamically-growing byte array.
  *
  * @author Paul C. Bryan
  */
@@ -52,7 +51,7 @@ public class ByteArrayRecord implements Record
     private int limit;
 
     /**
-     * Creates a new record backed by a byte array.
+     * Creates a new byte array record.
      *
      * @param limit the length limit of the record, after which an {@link IOException} should be thrown.
      */

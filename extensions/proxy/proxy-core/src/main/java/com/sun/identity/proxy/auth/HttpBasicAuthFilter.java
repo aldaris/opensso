@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpBasicAuthFilter.java,v 1.5 2009-10-09 07:38:36 pbryan Exp $
+ * $Id: HttpBasicAuthFilter.java,v 1.6 2009-10-14 16:58:00 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,6 +82,7 @@ public class HttpBasicAuthFilter extends Filter
      * @return the session attribute name, fully qualified for this object instance.
      */
     private String attributeName(String attribute) {
+// FIXME: qualify with scheme/host/port?
         return this.getClass().getName() + ":" + objectId + ":" + attribute;
     }
 

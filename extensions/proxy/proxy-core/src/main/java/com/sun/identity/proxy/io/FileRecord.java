@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileRecord.java,v 1.1 2009-10-14 08:56:59 pbryan Exp $
+ * $Id: FileRecord.java,v 1.2 2009-10-14 16:58:02 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,23 +29,23 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 /**
- * TODO: Description.
+ * Implements a record, storing data in a file.
  *
  * @author Paul C. Bryan
  */
 public class FileRecord implements Record
 {
-    /** TODO: Description. */
+    /** Supports reading and writing data within the file. */
     private RandomAccessFile raf;
 
-    /** TODO: Description. */
+    /** The length limit of the record. */
     private int limit;
 
     /**
-     * TODO: Description.
+     * Creates a new file record.
      *
-     * @param file TODO.
-     * @param limit TODO.
+     * @param file the file to store data in.
+     * @param limit the length limit of the record, after which an {@link IOException} should be thrown.
      * @throws IOException if an I/O exception occurs.
      */
     public FileRecord(File file, int limit) throws IOException {

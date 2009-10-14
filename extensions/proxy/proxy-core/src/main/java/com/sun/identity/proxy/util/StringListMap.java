@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringListMap.java,v 1.1 2009-10-14 08:57:05 pbryan Exp $
+ * $Id: StringListMap.java,v 1.2 2009-10-14 16:58:32 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 
 /**
- * A sub-class of ListMap for which keys are case-insensitive.
+ * A map for which keys are strings, and values are lists of strings.
  *
  * @author Paul C. Bryan
  * @credit Paul Sandoz (influenced by the com.sun.jersey.core.util.MultiValuedMapImpl class)
@@ -39,10 +39,11 @@ import java.util.Set;
 public class StringListMap extends LinkedHashMap<String, List<String>>
 {
     /**
-     * TODO: Description.
+     * Adds the specified string value to the list for the specified key. If no
+     * list for the key yet exists in the map, a new list is created and added.
      *
-     * @param key TODO.
-     * @param value TODO.
+     * @param key the key for which the specified value is to be added
+     * @param value the string value to be added for the specified key.
      */
     public void add(String key, String value) {
         List<String> list = get(key);
@@ -55,10 +56,11 @@ public class StringListMap extends LinkedHashMap<String, List<String>>
     }
 
     /**
-     * TODO: Description.
+     * Adds the specified string values to the list for the specified key. If
+     * no list for the key yet exists in the map, a new list is created and added.
      *
-     * @param key TODO.
-     * @param values TODO.
+     * @param key the key for which the specified values are to be added
+     * @param values the string values to be added for the specified key.
      */
     public void add(String key, List<String> values) {
         List<String> list = get(key);
