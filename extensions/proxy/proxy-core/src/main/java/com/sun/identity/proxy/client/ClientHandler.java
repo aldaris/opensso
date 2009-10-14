@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.6 2009-10-14 08:56:12 pbryan Exp $
+ * $Id: ClientHandler.java,v 1.7 2009-10-14 16:57:21 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,7 @@ import org.apache.http.client.protocol.RequestTargetAuthentication;
 import org.apache.http.client.protocol.ResponseProcessCookies;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -57,7 +58,6 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
-
 
 /**
  * A handler class that submits requests via the Apache HttpComponents Client.
@@ -83,7 +83,7 @@ public class ClientHandler implements Handler
     private DefaultHttpClient httpClient;
 
     /**
-     * Creates a new client handler.
+     * Creates a new client handler with a default maximum number of connections.
      */
     public ClientHandler() {
         this(DEFAULT_CONNECTIONS);
@@ -99,6 +99,7 @@ public class ClientHandler implements Handler
     {
         BasicHttpParams parameters = new BasicHttpParams();
         ConnManagerParams.setMaxTotalConnections(parameters, connections);
+        ConnManagerParams.setMaxConnectionsPerRoute(parameters, new ConnPerRouteBean(connections));
         HttpProtocolParams.setVersion(parameters, HttpVersion.HTTP_1_1);
         HttpClientParams.setRedirecting(parameters, false);
 
@@ -109,11 +110,12 @@ public class ClientHandler implements Handler
         ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(parameters, registry);
 
         httpClient = new DefaultHttpClient(connectionManager, parameters);
-// FIXME: set endpoint connections to total
         httpClient.removeRequestInterceptorByClass(RequestAddCookies.class);
         httpClient.removeRequestInterceptorByClass(RequestProxyAuthentication.class);
         httpClient.removeRequestInterceptorByClass(RequestTargetAuthentication.class);
         httpClient.removeResponseInterceptorByClass(ResponseProcessCookies.class);
+        
+// TODO: set timeout to drop stalled connections?
     }
 
     /**
@@ -163,7 +165,7 @@ public class ClientHandler implements Handler
             Header header = i.nextHeader();
             String name = header.getName();
             if (!SUPPRESS_RESPONSE_HEADERS.contains(name.toLowerCase())) {
-// FIXME: suppress headers specified in Connection header
+// FIXME: suppress headers specified in Connection header, per HTTP spec
                 exchange.response.headers.add(name, header.getValue());
             }
         }
