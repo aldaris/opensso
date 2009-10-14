@@ -17,39 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringSet.java,v 1.2 2009-10-14 17:42:05 pbryan Exp $
+ * $Id: package-info.java,v 1.1 2009-10-14 17:42:03 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.proxy.util;
-
-import java.util.Collection;
-import java.util.LinkedHashSet;
-
 /**
- * A collection of strings that contains no duplicate values.
+ * Concrete classes for filtering message exchanges.
  *
  * @author Paul C. Bryan
  */
-public class StringSet extends LinkedHashSet<String>
-{
-    /**
-     * Creates a new, empty string set.
-     */
-    public StringSet() {
-        super();
-    }
-
-    /**
-     * Creates a new string set with the same elements as the specified
-     * string collection.
-     *
-     * @param c the collection of strings whose elements are to be placed into this set.
-     */
-    public StringSet(Collection<String> c) {
-        super();
-        addAll(c);
-    }
-}
+package com.sun.identity.proxy.filter;
 

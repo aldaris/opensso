@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Base64.java,v 1.2 2009-10-09 07:38:38 pbryan Exp $
+ * $Id: Base64.java,v 1.3 2009-10-14 17:42:04 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,9 @@ package com.sun.identity.proxy.util;
 
 import java.io.IOException;
 
+/**
+ * Utility class for encoding and decoding binary data formatted in Base64.
+ */
 public class Base64 {
 
     private final static char ALPHABET[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G',
@@ -37,11 +40,9 @@ public class Base64 {
     private static int valueDecoding[] = new int[128];
 
     static {
-
         for (int i = 0; i < valueDecoding.length; i++) {
             valueDecoding[i] = -1;
         }
-
         for (int i = 0; i < ALPHABET.length; i++) {
             valueDecoding[ALPHABET[i]] = i;
         }

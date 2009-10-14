@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IKStringSet.java,v 1.1 2009-10-14 08:57:04 pbryan Exp $
+ * $Id: IKStringSet.java,v 1.2 2009-10-14 17:42:04 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,26 +28,27 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- * A subclass of StringSet for which elemens are case-insensitive.
+ * A collection of case-insensitive strings that contains no duplicate values.
  *
  * @author Paul C. Bryan
  */
 public class IKStringSet extends StringSet
 {
-    /** TODO: Description. */
+    /** Maps lowercase elements to the superclass' case-sensitive elements. */
     private final HashMap<String, String> lc = new HashMap<String, String>();
 
     /**
-     * TODO: Description.
+     * Creates a new, empty case-insensitive string set.
      */
     public IKStringSet() {
         super();
     }
 
     /**
-     * TODO: Description.
+     * Creates a new case-insensitive string set with the same elements as the
+     * specified string collection.
      *
-     * @param c TODO.
+     * @param c the collection of strings whose elements are to be placed into this set.
      */
     public IKStringSet(Collection<String> c) {
         super();

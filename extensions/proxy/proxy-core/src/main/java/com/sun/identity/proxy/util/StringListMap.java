@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringListMap.java,v 1.2 2009-10-14 16:58:32 pbryan Exp $
+ * $Id: StringListMap.java,v 1.3 2009-10-14 17:42:05 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,10 +73,11 @@ public class StringListMap extends LinkedHashMap<String, List<String>>
     }
 
     /**
-     * TODO: Description.
+     * Returns the first string value in the list of values for the matching
+     * key, or <tt>null</tt> if no such value exists.
      *
-     * @param key TODO.
-     * @return TODO.
+     * @param key the key whose associated first item is to be returned.
+     * @return the first value in the key's value list, or null if non-existent.
      */
     public String first(String key) {
         List<String> list = get(key);
@@ -89,29 +90,22 @@ public class StringListMap extends LinkedHashMap<String, List<String>>
     }
 
     /**
-     * TODO: Description.
+     * Associates a single specified string value with the specified key,
+     * replacing any values that exist for that key.
      *
-     * @param key TODO.
-     * @param value TODO.
+     * @param key key with which the specified value is to be associated.
+     * @param value the single value to be associated with the specified key.
      */
     public void put(String key, String value) {
         remove(key);
         add(key, value);
     }
 
-    /**
-     * TODO: Description.
-     *
-     * @param key TODO.
-     * @return TODO.
-     */
     @Override
-    public List<String> remove(Object key)
-    {
+    public List<String> remove(Object key) {
         if (!(key instanceof Set)) {
             return super.remove(key);
         }
-
 // FIXME: can make the generic more type-safe?
         List<String> values = new LinkedList<String>();
         for (String k : ((Set<String>)key)) {
@@ -120,7 +114,6 @@ public class StringListMap extends LinkedHashMap<String, List<String>>
                 values.addAll(v);
             }
         }            
-
         return values;
     }
 }

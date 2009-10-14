@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringUtil.java,v 1.1 2009-10-14 08:57:06 pbryan Exp $
+ * $Id: StringUtil.java,v 1.2 2009-10-14 17:42:05 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,24 +28,25 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 /**
- * TODO: Description.
+ * Miscellaneous integer utility methods.
  *
  * @author Paul C. Bryan
  */
 public class StringUtil
 {
     /**
-     * TODO: Description.
+     * Joins a collection of elements into a single string value, with a
+     * specified delimiter.
      *
-     * @param delim TODO.
-     * @param elements TODO.
-     * @return TODO.
+     * @param delim the delimiter to place between joined elements.
+     * @param elements the elements to be joined.
+     * @return the string containing the joined elements.
      */
     public static String join(String delim, Iterable<?> elements) {
         StringBuilder sb = new StringBuilder();
         for (Iterator<?> i = elements.iterator(); i.hasNext();) {
             sb.append(i.next());
-            if (i.hasNext()) {
+            if (i.hasNext() && delim != null) {
                 sb.append(delim);
             }
         }
@@ -53,11 +54,12 @@ public class StringUtil
     }
 
     /**
-     * TODO: Description.
+     * Joins a collection of elements into a single string value, with a
+     * specified delimiter.
      *
-     * @param delim TODO.
-     * @param elements TODO.
-     * @return TODO.
+     * @param delim the delimiter to place between joined elements.
+     * @param elements the elements to be joined.
+     * @return the string containing the joined elements.
      */
     public static String join(String delim, Object... elements) {
         return join(delim, Arrays.asList(elements));

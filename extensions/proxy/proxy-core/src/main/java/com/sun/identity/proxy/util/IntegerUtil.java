@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IntegerUtil.java,v 1.1 2009-10-14 08:57:05 pbryan Exp $
+ * $Id: IntegerUtil.java,v 1.2 2009-10-14 17:42:04 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,18 +25,18 @@
 package com.sun.identity.proxy.util;
 
 /**
- * TODO: Description.
+ * Miscellaneous integer utility methods.
  *
  * @author Paul C. Bryan
  */
 public class IntegerUtil
 {
     /**
-     * Parse a string for an integer value.
+     * Parses a string into an integer value.
      *
-     * @param s The string to parse the integer value from.
+     * @param s The string containing the integer to parse.
      * @param val The value to return in the event an integer could not be parsed.
-     * @return the integer value, or <tt>val</tt> if could not be parsed.
+     * @return the integer value, or <tt>val</tt> if it could not be parsed.
      */
     public static final int parseInt(String s, int val) {
         try {

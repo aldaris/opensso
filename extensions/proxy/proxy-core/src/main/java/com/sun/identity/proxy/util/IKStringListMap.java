@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IKStringListMap.java,v 1.1 2009-10-14 08:57:04 pbryan Exp $
+ * $Id: IKStringListMap.java,v 1.2 2009-10-14 17:42:04 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A subclass of StringListMap for which keys are case-insensitive.
+ * A map for which keys are case-insensitive strings, and values are lists of
+ * strings.
  *
  * @author Paul C. Bryan
  * @credit Juergen Hoeller (influenced by the org.springframework.util.LinkedCaseInsensitiveMap class)
@@ -38,55 +39,30 @@ import java.util.Set;
  */
 public class IKStringListMap extends StringListMap
 {
-    /** TODO: Description. */
+    /** Maps lowercase keys to the superclass' case-sensitive keys. */
     private final HashMap<String, String> lc = new HashMap<String, String>();
 
-    /**
-     * TODO: Description.
-     */
     @Override
     public void clear() {
         lc.clear();
         super.clear();
     }
 
-    /**
-     * TODO: Description.
-     *
-     * @param key TODO.
-     * @return TODO.
-     */
     @Override
     public boolean containsKey(Object key) {
         return (key instanceof String && lc.containsKey(((String)key).toLowerCase()));
     }
 
-    /**
-     * TODO: Description.
-     *
-     * @param key TODO.
-     * @param value TODO.
-     * @return TODO.
-     */
     @Override
-    public List<String> put(String key, List<String> value)
-    {
+    public List<String> put(String key, List<String> value) {
         String cased = lc.get(key.toLowerCase());
-
         if (cased == null) {
             lc.put(key.toLowerCase(), key);
             cased = key;
         }
-
         return super.put(cased, value);
     }
 
-    /**
-     * TODO: Description.
-     *
-     * @param key TODO.
-     * @return TODO.
-     */
     @Override
     public List<String> get(Object key) {
         List<String> value = null;
@@ -96,21 +72,12 @@ public class IKStringListMap extends StringListMap
         return value;
     }
 
-    /**
-     * TODO: Description.
-     *
-     * @param key TODO.
-     * @return TODO.
-     */
     @Override
     public List<String> remove(Object key) {
-
         List<String> values = null;
-
         if (key instanceof String) {
             values = super.remove(lc.remove(((String)key).toLowerCase()));
         }
-
 // FIXME: can make the generic more type-safe?
         else if (key instanceof Set) {
             values = new LinkedList<String>();
@@ -121,7 +88,6 @@ public class IKStringListMap extends StringListMap
                 }
             }            
         }
-
         return values;
     }
 }
