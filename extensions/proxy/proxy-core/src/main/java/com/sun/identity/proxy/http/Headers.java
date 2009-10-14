@@ -17,20 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Headers.java,v 1.2 2009-10-09 07:38:37 pbryan Exp $
+ * $Id: Headers.java,v 1.3 2009-10-14 08:56:51 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.proxy.http;
 
-import com.sun.identity.proxy.util.IKListMap;
+import com.sun.identity.proxy.util.IKStringListMap;
 
 /**
  * Message headers, a case-insensitive multiple-value map.
  *
  * @author Paul C. Bryan
  */
-public class Headers extends IKListMap {
+public class Headers extends IKStringListMap {
 }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Handler.java,v 1.2 2009-10-09 07:38:37 pbryan Exp $
+ * $Id: Handler.java,v 1.3 2009-10-14 08:56:50 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,8 +35,8 @@ import java.io.IOException;
  *
  * @author Paul C. Bryan
  */
-public interface Handler {
-
+public interface Handler
+{
     /**
      * Called to request the handler respond to the request.
      * <p>
@@ -46,7 +46,7 @@ public interface Handler {
      * If an existing response object exists in the exchange and the handler
      * intends to replace it with another response object, it must first check
      * to see if the existing response object has an entity, and if it does,
-     * must call its <tt>close()</tt> method in order to signal that the
+     * must call its <tt>close</tt> method in order to signal that the
      * processing of the response from a remote server is complete.
      *
      * @param exchange the message exchange to handle.

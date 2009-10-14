@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IKListMap.java,v 1.1 2009-10-06 01:05:20 pbryan Exp $
+ * $Id: IKStringListMap.java,v 1.1 2009-10-14 08:57:04 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,23 +30,23 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A sub-class of ListMap for which keys are case-insensitive.
+ * A subclass of StringListMap for which keys are case-insensitive.
  *
  * @author Paul C. Bryan
  * @credit Juergen Hoeller (influenced by the org.springframework.util.LinkedCaseInsensitiveMap class)
  * @credit Paul Sandoz (influenced by the com.sun.jersey.core.util.MultiValuedMapImpl class)
  */
-public class IKListMap extends ListMap
+public class IKStringListMap extends StringListMap
 {
     /** TODO: Description. */
-    private final HashMap<String, String> keyMap = new HashMap<String, String>();
+    private final HashMap<String, String> lc = new HashMap<String, String>();
 
     /**
      * TODO: Description.
      */
     @Override
     public void clear() {
-        keyMap.clear();
+        lc.clear();
         super.clear();
     }
 
@@ -58,7 +58,7 @@ public class IKListMap extends ListMap
      */
     @Override
     public boolean containsKey(Object key) {
-        return (key instanceof String && keyMap.containsKey(((String)key).toLowerCase()));
+        return (key instanceof String && lc.containsKey(((String)key).toLowerCase()));
     }
 
     /**
@@ -71,10 +71,10 @@ public class IKListMap extends ListMap
     @Override
     public List<String> put(String key, List<String> value)
     {
-        String cased = keyMap.get(key.toLowerCase());
+        String cased = lc.get(key.toLowerCase());
 
         if (cased == null) {
-            keyMap.put(key.toLowerCase(), key);
+            lc.put(key.toLowerCase(), key);
             cased = key;
         }
 
@@ -91,7 +91,7 @@ public class IKListMap extends ListMap
     public List<String> get(Object key) {
         List<String> value = null;
         if (key instanceof String) {
-            value = super.get(keyMap.get(((String)key).toLowerCase()));
+            value = super.get(lc.get(((String)key).toLowerCase()));
         }
         return value;
     }
@@ -108,7 +108,7 @@ public class IKListMap extends ListMap
         List<String> values = null;
 
         if (key instanceof String) {
-            values = super.remove(keyMap.remove(((String)key).toLowerCase()));
+            values = super.remove(lc.remove(((String)key).toLowerCase()));
         }
 
 // FIXME: can make the generic more type-safe?

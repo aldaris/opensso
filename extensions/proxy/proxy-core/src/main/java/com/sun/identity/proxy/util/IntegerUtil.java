@@ -17,40 +17,34 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NonEntityRequest.java,v 1.3 2009-10-14 08:56:15 pbryan Exp $
+ * $Id: IntegerUtil.java,v 1.1 2009-10-14 08:57:05 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.proxy.client;
-
-import com.sun.identity.proxy.http.Request;
-import org.apache.http.client.methods.HttpRequestBase;
+package com.sun.identity.proxy.util;
 
 /**
- * A request that does not enclose an entity, suitable for submission to the
- * Apache HttpComponents Client.
+ * TODO: Description.
  *
  * @author Paul C. Bryan
  */
-public class NonEntityRequest extends HttpRequestBase
+public class IntegerUtil
 {
-    /** The request method. */
-    private String method = null;
-
     /**
-     * Creates a new non-entity enclosing request for the specified incoming
-     * proxy request.
+     * Parse a string for an integer value.
      *
-     * @param request the incoming proxy request.
+     * @param s The string to parse the integer value from.
+     * @param val The value to return in the event an integer could not be parsed.
+     * @return the integer value, or <tt>val</tt> if could not be parsed.
      */
-    public NonEntityRequest(Request request) {
-        this.method = request.method;
-    }
-
-    @Override
-    public String getMethod() {
-        return method;
+    public static final int parseInt(String s, int val) {
+        try {
+            return Integer.parseInt(s);
+        }
+        catch (NumberFormatException nfe) {
+            return val;
+        }
     }
 }
 

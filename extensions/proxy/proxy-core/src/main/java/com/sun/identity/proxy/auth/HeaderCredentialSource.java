@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderCredentialSource.java,v 1.2 2009-10-09 07:38:36 pbryan Exp $
+ * $Id: HeaderCredentialSource.java,v 1.3 2009-10-14 08:56:11 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,15 +59,15 @@ public class HeaderCredentialSource implements PasswordCredentialSource {
     /**
      * Returns the credentials based on the headers of the incoming request.
      */
-	@Override
-	public PasswordCredentials credentials(Request request) {
-	    PasswordCredentials credentials = new PasswordCredentials();
-	    if (request != null && request.headers != null) {
-    	    credentials.username = request.headers.first(usernameHeader);
-    	    credentials.password = request.headers.first(passwordHeader);
-    	}
-    	return credentials;
-	}
+    @Override
+    public PasswordCredentials credentials(Request request) {
+        PasswordCredentials credentials = new PasswordCredentials();
+        if (request != null && request.headers != null) {
+            credentials.username = request.headers.first(usernameHeader);
+            credentials.password = request.headers.first(passwordHeader);
+        }
+        return credentials;
+    }
 
     /**
      * Unconditionally throws a HandlerException. Override this method to
@@ -76,8 +76,8 @@ public class HeaderCredentialSource implements PasswordCredentialSource {
      * @throws HandlerException unconditionally.
      */
     @Override
-	public void invalid(Exchange exchange) throws HandlerException, IOException {
-	    throw new HandlerException("Failed to authenticate with header-supplied credentials");
-	}
+    public void invalid(Exchange exchange) throws HandlerException, IOException {
+        throw new HandlerException("Failed to authenticate with header-supplied credentials");
+    }
 }
 

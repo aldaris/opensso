@@ -17,12 +17,14 @@ e * (the License). You may not use this file except in
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Exchange.java,v 1.3 2009-10-09 07:38:37 pbryan Exp $
+ * $Id: Exchange.java,v 1.4 2009-10-14 08:56:51 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.proxy.http;
+
+import com.sun.identity.proxy.handler.Handler;
 
 /**
  * An HTTP request-response exchange.
@@ -34,7 +36,7 @@ package com.sun.identity.proxy.http;
  * If an existing response object exists in the exchange and the handler
  * intends to replace it with another response object, it must first check to
  * see if the existing response object has an entity, and if it does, must
- * call its <tt>close()</tt> method in order to signal that the processing of
+ * call its <tt>close</tt> method in order to signal that the processing of
  * the response from a remote server is complete.
  *
  * @author Paul C. Bryan

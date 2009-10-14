@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimpleProxyServlet.java,v 1.1 2009-10-06 01:05:19 pbryan Exp $
+ * $Id: SimpleProxyServlet.java,v 1.2 2009-10-14 08:57:03 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,14 +48,14 @@ public class SimpleProxyServlet extends HandlerServlet
      * @param port specific port number, or -1 to use scheme-default port.
      * @throws ServletException TODO.
      */
-    protected void init(String scheme, String host, int port) throws ServletException
-    {
+    protected void init(String scheme, String host, int port) throws ServletException {
         try {
-            handler = chain = new Chain(new ClientHandler(new URI(scheme, null, host, port, null, null, null)));
+            base = new URI(scheme, null, host, port, null, null, null);
         }
         catch (URISyntaxException use) {
             throw new ServletException(use);
         }
+        handler = chain = new Chain(new ClientHandler());
     }
 }
 

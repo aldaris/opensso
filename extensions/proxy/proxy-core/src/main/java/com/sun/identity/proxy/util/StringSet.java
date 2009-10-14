@@ -17,40 +17,38 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NonEntityRequest.java,v 1.3 2009-10-14 08:56:15 pbryan Exp $
+ * $Id: StringSet.java,v 1.1 2009-10-14 08:57:05 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.proxy.client;
+package com.sun.identity.proxy.util;
 
-import com.sun.identity.proxy.http.Request;
-import org.apache.http.client.methods.HttpRequestBase;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 
 /**
- * A request that does not enclose an entity, suitable for submission to the
- * Apache HttpComponents Client.
+ * TODO: Description.
  *
  * @author Paul C. Bryan
  */
-public class NonEntityRequest extends HttpRequestBase
+public class StringSet extends LinkedHashSet<String>
 {
-    /** The request method. */
-    private String method = null;
-
     /**
-     * Creates a new non-entity enclosing request for the specified incoming
-     * proxy request.
-     *
-     * @param request the incoming proxy request.
+     * TODO: Description.
      */
-    public NonEntityRequest(Request request) {
-        this.method = request.method;
+    public StringSet() {
+        super();
     }
 
-    @Override
-    public String getMethod() {
-        return method;
+    /**
+     * TODO: Description.
+     *
+     * @param c TODO.
+     */
+    public StringSet(Collection<String> c) {
+        super();
+        addAll(c);
     }
 }
 

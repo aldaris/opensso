@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Filter.java,v 1.2 2009-10-09 07:38:37 pbryan Exp $
+ * $Id: Filter.java,v 1.3 2009-10-14 08:56:18 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,15 +45,15 @@ public abstract class Filter implements Handler
     public Handler next;
 
     /**
-     * Called to request the filter handle the request. Once handled
-     * successfully, the filter should call the next handler's
-     * <tt>handle(<em>exchange</em>)</tt> method. The filter is allowed to
-     * <em>not</em> pass the exchange on to the next handler.
+     * Called to request the filter handle the request. During handling, the
+     * filter should call the next handler's <tt>handle</tt> method. The filter
+     * is allowed to <em>not</em> pass the exchange on to the next handler if
+     * appropriate.
      * <p>
      * As with a handler, if an existing response object exists in the exchange
      * and the filter intends to replace it with another response object, it must
      * first check to see if the existing response object has an entity, and if
-     * it does, must call its <tt>close()</tt> method in order to signal that the
+     * it does, must call its <tt>close</tt> method in order to signal that the
      * processing of the response from a remote server is complete.
      *
      * @param exchange the message exchange to handle.

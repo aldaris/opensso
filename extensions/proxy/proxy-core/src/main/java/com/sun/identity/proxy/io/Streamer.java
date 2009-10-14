@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Streamer.java,v 1.2 2009-10-09 07:38:38 pbryan Exp $
+ * $Id: Streamer.java,v 1.3 2009-10-14 08:57:03 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,20 +35,65 @@ import java.io.OutputStream;
  */
 public class Streamer
 {
-	/**
-	 * TODO: Description.
-	 *
-	 * @param in TODO.
-	 * @param out TODO.
-	 * @throws IOException if an I/O exception occurs.
-	 */
-	public static void stream(InputStream in, OutputStream out) throws IOException {
+    /** TODO: Description. */
+    private static final int BUF_SIZE = 4096;
 
-        byte[] buf = new byte[4096];
-
-		int n;
-
-        while ((n = in.read(buf)) != -1) {
+    /**
+     * TODO: Description.
+     *
+     * @param in TODO.
+     * @param out TODO.
+     * @throws IOException TODO.
+     */
+    public static void stream(InputStream in, OutputStream out) throws IOException {
+        byte[] buf = new byte[BUF_SIZE];
+        int n;
+        while ((n = in.read(buf, 0, BUF_SIZE)) != -1) {
+            out.write(buf, 0, n);
+        }
+    }
+    
+    /**
+     * TODO: Description.
+     *
+     * @param in TODO.
+     * @param out TODO.
+     * @throws IOException TODO.
+     */
+    public static void stream(Record in, OutputStream out) throws IOException {
+        byte[] buf = new byte[BUF_SIZE];
+        int n;
+        while ((n = in.read(buf, 0, BUF_SIZE)) != -1) {
+            out.write(buf, 0, n);
+        }
+    }
+    
+    /**
+     * TODO: Description.
+     *
+     * @param in TODO.
+     * @param out TODO.
+     * @throws IOException TODO.
+     */
+    public static void stream(InputStream in, Record out) throws IOException {
+        byte[] buf = new byte[BUF_SIZE];
+        int n;
+        while ((n = in.read(buf, 0, BUF_SIZE)) != -1) {
+            out.write(buf, 0, n);
+        }
+    }
+    
+    /**
+     * TODO: Description.
+     *
+     * @param in TODO.
+     * @param out TODO.
+     * @throws IOException TODO.
+     */
+    public static void stream(Record in, Record out) throws IOException {
+        byte[] buf = new byte[BUF_SIZE];
+        int n;
+        while ((n = in.read(buf, 0, BUF_SIZE)) != -1) {
             out.write(buf, 0, n);
         }
     }

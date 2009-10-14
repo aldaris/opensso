@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CredentialSource.java,v 1.3 2009-10-09 07:38:36 pbryan Exp $
+ * $Id: CredentialSource.java,v 1.4 2009-10-14 08:56:11 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,15 +36,15 @@ import java.io.IOException;
  */
 public interface CredentialSource {
 
-	/**
-	 * Returns the credentials that are appropriate for the current request.
-	 * Typically, credentials are associated with a particular principal, or
-	 * with attributes supplied in the request and/or session.
-	 *
-	 * @param request the incoming request to establish credentials for.
-	 * @return the corresponding matching credentials, or <tt>null</tt> if none could be found.
-	 */
-	public Credentials credentials(Request request);
+    /**
+     * Returns the credentials that are appropriate for the current request.
+     * Typically, credentials are associated with a particular principal, or
+     * with attributes supplied in the request and/or session.
+     *
+     * @param request the incoming request to establish credentials for.
+     * @return the corresponding matching credentials, or <tt>null</tt> if none could be found.
+     */
+    public Credentials credentials(Request request);
 
     /**
      * Called when the supplied credentials are not valid. For example, this
@@ -55,6 +55,6 @@ public interface CredentialSource {
      * @throws HandlerException if an exception occurs that prevents handling the exchange.
      * @throws IOException if an I/O exception occurs.
      */
-	public void invalid(Exchange exchange) throws HandlerException, IOException;
+    public void invalid(Exchange exchange) throws HandlerException, IOException;
 }
 

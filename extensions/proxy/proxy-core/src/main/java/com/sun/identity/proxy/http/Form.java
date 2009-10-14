@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Form.java,v 1.1 2009-10-09 07:38:37 pbryan Exp $
+ * $Id: Form.java,v 1.2 2009-10-14 08:56:51 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,10 +26,12 @@ package com.sun.identity.proxy.http;
 
 import com.sun.identity.proxy.http.Request;
 import com.sun.identity.proxy.io.Streamer;
-import com.sun.identity.proxy.util.ListMap;
+import com.sun.identity.proxy.util.StringListMap;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Iterator;
@@ -42,7 +44,7 @@ import java.util.List;
  *
  * @author Paul C. Bryan
  */
-public class Form extends ListMap
+public class Form extends StringListMap
 {
     /**
      * Parses the query parameters of a request and stores them in this object.
@@ -50,8 +52,9 @@ public class Form extends ListMap
      * @param request the request to be parsed.
      */
     public void parseQueryParams(Request request) {
-        if (request != null && request.uri != null & request.uri.indexOf('?') > 0) {
-            parse(request.uri.split("?", 2)[1]);
+        String query = request.uri.getRawQuery();
+        if (query != null) {
+            parse(query);
         }
     }
 
@@ -96,9 +99,10 @@ public class Form extends ListMap
     public void toQueryParams(Request request) {
         String query = toString();
         if (query.length() > 0) {
-            String uri = (request.uri != null ? request.uri : "");
+            String uri = (request.uri != null ? request.uri.toString() : "");
             int index = uri.indexOf('?');
             uri = uri + (uri.indexOf('?') > 0 ? '&' : '?') + query;
+            request.uri = URI.create(uri);
         }
     }
 
@@ -124,20 +128,20 @@ public class Form extends ListMap
      */
     @Override
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (String name : keySet()) {
             List<String> values = get(name);
             if (values != null) {
                 for (Iterator i = values.iterator(); i.hasNext();) {
                     String value = (String)i.next();
-                    buf.append(URLEncoder.encode(name)).append('=').append(URLEncoder.encode(value));
+                    sb.append(URLEncoder.encode(name)).append('=').append(URLEncoder.encode(value));
                     if (i.hasNext()) {
-                        buf.append('&');
+                        sb.append('&');
                     }
                 }
             }
         }
-        return buf.toString();
+        return sb.toString();
     }
 }
 

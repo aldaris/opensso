@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.1 2009-10-09 07:38:37 pbryan Exp $
+ * $Id: Session.java,v 1.2 2009-10-14 08:56:54 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,9 +31,9 @@ import java.util.HashMap;
  * specific client and principal.
  * <p>
  * Handlers are guaranteed that an incoming request contains a session object
- * that will persist from one request to the next for the same client and
- * principal. If the session object is empty upon returning response to the
- * client, the container is free to remove any cookies or other session
+ * that will persist from one request to the next for the same remote client
+ * and principal. If the session object is empty upon returning response to the
+ * remote client, the container is free to remove any cookies or other session
  * persistence mechanism resources.
  *
  * @author Paul C. Bryan

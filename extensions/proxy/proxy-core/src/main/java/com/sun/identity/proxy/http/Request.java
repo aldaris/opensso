@@ -17,16 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.3 2009-10-09 07:38:37 pbryan Exp $
+ * $Id: Request.java,v 1.4 2009-10-14 08:56:51 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.proxy.http;
 
+import com.sun.identity.proxy.util.IntegerUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * An HTTP request message.
@@ -35,11 +39,14 @@ import java.util.Map;
  */
 public class Request extends Message
 {
+    /** Splits string using colon delimiter. */
+    private static final Pattern DELIM_COLON = Pattern.compile(":");
+
     /** The method to be performed on the resource. */
     public String method = null;
 
-    /** The resource identified in the request. */
-    public String uri = null;
+    /** The fully-qualified URI of the resource being accessed. */
+    public URI uri = null;
 
     /** The user principal that the container associated with the request. */
     public Principal principal = null;
@@ -49,5 +56,33 @@ public class Request extends Message
 
     /** Allows information to be attached to the request for downstream handlers. */
     public final Map<String, Object> attributes = new HashMap<String, Object>();
+    
+    /**
+     * Resolves the request URI based on the request URI variable and optional
+     * Host header. This allows the request URI to contain a raw IP address,
+     * while the Host header resolves the hostname and port that the remote
+     * client used to resolve it.
+     *
+     * @param request the request containing the URI and optional Host header.
+     * @return the resolved URI value.
+     */
+    public URI resolveHostURI() {
+        if (uri == null) {
+            throw new NullPointerException();
+        }
+        String header = headers.first("Host");
+        if (header == null) {
+            return uri;
+        }
+        String[] hostport = DELIM_COLON.split(header, 2);
+        int port = (hostport.length == 2 ? IntegerUtil.parseInt(hostport[1], -1) : -1);
+        try {
+            return new URI(this.uri.getScheme(), null, hostport[0], port, "/", null, null).resolve(
+             new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(), null, null, null).relativize(uri));
+        }
+        catch (URISyntaxException use) {
+            return uri;
+        }
+    }
 }
 

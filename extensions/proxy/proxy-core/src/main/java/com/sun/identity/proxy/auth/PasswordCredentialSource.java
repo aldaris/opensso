@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PasswordCredentialSource.java,v 1.2 2009-10-09 07:38:36 pbryan Exp $
+ * $Id: PasswordCredentialSource.java,v 1.3 2009-10-14 08:56:11 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,9 +37,9 @@ import java.io.IOException;
 public interface PasswordCredentialSource extends CredentialSource {
 
     @Override
-	public PasswordCredentials credentials(Request request);
+    public PasswordCredentials credentials(Request request);
 
     @Override
-	public void invalid(Exchange exchange) throws HandlerException, IOException;
+    public void invalid(Exchange exchange) throws HandlerException, IOException;
 }
 

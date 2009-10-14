@@ -17,40 +17,50 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NonEntityRequest.java,v 1.3 2009-10-14 08:56:15 pbryan Exp $
+ * $Id: StringUtil.java,v 1.1 2009-10-14 08:57:06 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.proxy.client;
+package com.sun.identity.proxy.util;
 
-import com.sun.identity.proxy.http.Request;
-import org.apache.http.client.methods.HttpRequestBase;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
- * A request that does not enclose an entity, suitable for submission to the
- * Apache HttpComponents Client.
+ * TODO: Description.
  *
  * @author Paul C. Bryan
  */
-public class NonEntityRequest extends HttpRequestBase
+public class StringUtil
 {
-    /** The request method. */
-    private String method = null;
-
     /**
-     * Creates a new non-entity enclosing request for the specified incoming
-     * proxy request.
+     * TODO: Description.
      *
-     * @param request the incoming proxy request.
+     * @param delim TODO.
+     * @param elements TODO.
+     * @return TODO.
      */
-    public NonEntityRequest(Request request) {
-        this.method = request.method;
+    public static String join(String delim, Iterable<?> elements) {
+        StringBuilder sb = new StringBuilder();
+        for (Iterator<?> i = elements.iterator(); i.hasNext();) {
+            sb.append(i.next());
+            if (i.hasNext()) {
+                sb.append(delim);
+            }
+        }
+        return sb.toString();
     }
 
-    @Override
-    public String getMethod() {
-        return method;
+    /**
+     * TODO: Description.
+     *
+     * @param delim TODO.
+     * @param elements TODO.
+     * @return TODO.
+     */
+    public static String join(String delim, Object... elements) {
+        return join(delim, Arrays.asList(elements));
     }
 }
 

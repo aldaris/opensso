@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.5 2009-10-09 07:38:36 pbryan Exp $
+ * $Id: ClientHandler.java,v 1.6 2009-10-14 08:56:12 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,9 +28,8 @@ import com.sun.identity.proxy.handler.Handler;
 import com.sun.identity.proxy.handler.HandlerException;
 import com.sun.identity.proxy.http.Exchange;
 import com.sun.identity.proxy.http.Response;
+import com.sun.identity.proxy.util.IKStringSet;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashSet;
 import org.apache.http.Header;
@@ -70,54 +69,47 @@ public class ClientHandler implements Handler
     /** Default maximum number of collections through HTTP client. */
     private static final int DEFAULT_CONNECTIONS = 64;
 
-    /** Headers (in lower-case) that are suppressed for outgoing request. */
-    private static final HashSet<String> SUPPRESS_REQUEST_HEADERS = new HashSet<String>(
-     Arrays.asList("connection", "content-encoding", "content-length", "content-type", "keep-alive",
-      "proxy-authenticate", "proxy-authorization", "te", "trailers", "transfer-encoding", "upgrade"));
+    /** Headers that are suppressed in request. */
+    private static final IKStringSet SUPPRESS_REQUEST_HEADERS = new IKStringSet(Arrays.asList(
+     "Connection", "Content-Encoding", "Content-Length", "Content-Type", "Keep-Alive",
+      "Proxy-Authenticate", "Proxy-Authorization", "TE", "Trailers", "Transfer-Encoding", "Upgrade"));
 
-    /** Headers (in lower-case) that are suppressed from incoming response. */
-    private static final HashSet<String> SUPPRESS_RESPONSE_HEADERS = new HashSet<String>(Arrays.asList(
-     "connection", "keep-alive", "proxy-authenticate", "proxy-authorization", "te", "trailers",
-     "transfer-encoding", "upgrade"));
-
-    /** The URI of the target remote server. */
-    private URI target;
+    /** Headers that are suppressed in response. */
+    private static final IKStringSet SUPPRESS_RESPONSE_HEADERS = new IKStringSet(Arrays.asList(
+     "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization", "TE", "Trailers",
+     "Transfer-Encoding", "Upgrade"));
 
     /** The HTTP client to transmit requests through. */
     private DefaultHttpClient httpClient;
 
     /**
-     * Creates a new client handler for the specified target remote server.
-     *
-     * @param target the remote server to transmit requests to.
+     * Creates a new client handler.
      */
-    public ClientHandler(URI target) {
-        this(target, DEFAULT_CONNECTIONS);
+    public ClientHandler() {
+        this(DEFAULT_CONNECTIONS);
     }
 
     /**
-     * Creates a new client handler for the specified target remote server
-     * and specified maximum number of connections.
+     * Creates a new client handler with the specified maximum number of
+     * connections.
      *
-     * @param target the remote server to transmit requests to.
      * @param connections the maximum number of connections to open.
      */
-    public ClientHandler(URI target, int connections)
+    public ClientHandler(int connections)
     {
-        this.target = target;
+        BasicHttpParams parameters = new BasicHttpParams();
+        ConnManagerParams.setMaxTotalConnections(parameters, connections);
+        HttpProtocolParams.setVersion(parameters, HttpVersion.HTTP_1_1);
+        HttpClientParams.setRedirecting(parameters, false);
 
-    	BasicHttpParams parameters = new BasicHttpParams();
-		ConnManagerParams.setMaxTotalConnections(parameters, connections);
-		HttpProtocolParams.setVersion(parameters, HttpVersion.HTTP_1_1);
-		HttpClientParams.setRedirecting(parameters, false);
-
-		SchemeRegistry registry = new SchemeRegistry();
-		registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-		registry.register(new Scheme("https", PlainSocketFactory.getSocketFactory(), 443));
+        SchemeRegistry registry = new SchemeRegistry();
+        registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+        registry.register(new Scheme("https", PlainSocketFactory.getSocketFactory(), 443));
 
         ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(parameters, registry);
 
         httpClient = new DefaultHttpClient(connectionManager, parameters);
+// FIXME: set endpoint connections to total
         httpClient.removeRequestInterceptorByClass(RequestAddCookies.class);
         httpClient.removeRequestInterceptorByClass(RequestProxyAuthentication.class);
         httpClient.removeRequestInterceptorByClass(RequestTargetAuthentication.class);
@@ -139,12 +131,7 @@ public class ClientHandler implements Handler
         HttpRequestBase clientRequest = (exchange.request.entity != null ?
          new EntityRequest(exchange.request) : new NonEntityRequest(exchange.request));
 
-        try {
-            clientRequest.setURI(target.resolve(new URI(exchange.request.uri)));
-        }
-        catch (URISyntaxException use) {
-            throw new HandlerException(use);
-        }
+        clientRequest.setURI(exchange.request.uri);
 
         // request headers
         for (String name : exchange.request.headers.keySet()) {
@@ -176,9 +163,11 @@ public class ClientHandler implements Handler
             Header header = i.nextHeader();
             String name = header.getName();
             if (!SUPPRESS_RESPONSE_HEADERS.contains(name.toLowerCase())) {
+// FIXME: suppress headers specified in Connection header
                 exchange.response.headers.add(name, header.getValue());
             }
         }
+
 // TODO: decide if need to try-finally to call httpRequest.abort?
     }
 }

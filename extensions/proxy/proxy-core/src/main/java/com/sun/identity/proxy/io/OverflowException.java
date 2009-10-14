@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OverflowException.java,v 1.1 2009-10-06 01:05:19 pbryan Exp $
+ * $Id: OverflowException.java,v 1.2 2009-10-14 08:56:59 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,8 @@ package com.sun.identity.proxy.io;
 import java.io.IOException;
 
 /**
- * TODO: Description.
+ * An exception thrown to indicate that an attempt was made to exceed
+ * the length limit of a {@link Record}.
  *
  * @author Paul C. Bryan
  */

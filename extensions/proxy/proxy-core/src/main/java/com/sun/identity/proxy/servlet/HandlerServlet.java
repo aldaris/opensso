@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HandlerServlet.java,v 1.3 2009-10-09 07:38:38 pbryan Exp $
+ * $Id: HandlerServlet.java,v 1.4 2009-10-14 08:57:03 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,12 +30,13 @@ import com.sun.identity.proxy.http.Exchange;
 import com.sun.identity.proxy.http.Request;
 import com.sun.identity.proxy.http.Session;
 import com.sun.identity.proxy.io.Streamer;
+import com.sun.identity.proxy.util.IKStringSet;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -50,13 +51,16 @@ import javax.servlet.http.HttpSession;
 public class HandlerServlet extends HttpServlet
 {
     /** Headers (in lower-case) that are suppressed from incoming request. */
-    private static final HashSet<String> SUPPRESS_REQUEST_HEADERS = new HashSet<String>(Arrays.asList("expect"));
+    private static final IKStringSet SUPPRESS_REQUEST_HEADERS = new IKStringSet(Arrays.asList("Expect"));
 
     /** Headers (in lower-case) that are suppressed for outgoing response. */
-    private static final HashSet<String> SUPPRESS_RESPONSE_HEADERS = new HashSet<String>(Arrays.asList("server"));
+    private static final IKStringSet SUPPRESS_RESPONSE_HEADERS = new IKStringSet();
 
     /** TODO: Description. */
     protected Handler handler = null;
+
+    /** TODO: Description. */
+    protected URI base = null;
 
     /**
      * TODO: Description.
@@ -74,22 +78,19 @@ public class HandlerServlet extends HttpServlet
         // ----- translate request --------------------------------------------
 
         exchange.request = new Request();
-        
-        // request method
+
         exchange.request.method = request.getMethod();
 
-        StringBuffer buf = new StringBuffer(request.getRequestURI());
-
+        // request uri
+        StringBuilder sb = new StringBuilder(request.getRequestURI());
         String queryString = request.getQueryString();
         if (queryString != null) {
-            buf.append('?').append(queryString);
+            sb.append('?').append(queryString);
         }
-
-        exchange.request.uri = buf.toString();
+        exchange.request.uri = base.resolve(sb.toString());
 
         // request headers
         for (Enumeration<String> e = request.getHeaderNames(); e.hasMoreElements();) {
-// FIXME: suppress JSESSIONID cookie from incoming requests (cookie filter to the rescue?)
             String name = e.nextElement();
             if (!SUPPRESS_REQUEST_HEADERS.contains(name.toLowerCase())) {
                 exchange.request.headers.add(name, Collections.list(request.getHeaders(name)));
@@ -106,7 +107,7 @@ public class HandlerServlet extends HttpServlet
         }
 
         HttpSession httpSession = request.getSession();
-        synchronized(httpSession) { // tantamount to lazy initialization
+        synchronized(httpSession) { // prevent race conditions
             Session session = (Session)httpSession.getAttribute(Session.class.getName());
             if (session == null) {
                 session = new Session();
@@ -139,7 +140,6 @@ public class HandlerServlet extends HttpServlet
 
             // response headers
             for (String name : exchange.response.headers.keySet()) {
-// FIXME: suppress JSESSIONID cookie from outgoing responses (cookie filter to the rescue?)
                 if (!SUPPRESS_RESPONSE_HEADERS.contains(name.toLowerCase())) {
                     for (String value : exchange.response.headers.get(name)) {
                         if (value != null && value.length() > 0) {

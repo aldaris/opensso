@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListMap.java,v 1.2 2009-10-06 20:28:06 pbryan Exp $
+ * $Id: StringListMap.java,v 1.1 2009-10-14 08:57:05 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,7 @@ import java.util.Set;
  * @author Paul C. Bryan
  * @credit Paul Sandoz (influenced by the com.sun.jersey.core.util.MultiValuedMapImpl class)
  */
-public class ListMap extends LinkedHashMap<String, List<String>>
+public class StringListMap extends LinkedHashMap<String, List<String>>
 {
     /**
      * TODO: Description.
