@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLPropertyXMLBuilder.java,v 1.6 2009-08-31 18:24:02 asyhuang Exp $
+ * $Id: SAMLPropertyXMLBuilder.java,v 1.7 2009-10-15 00:02:02 asyhuang Exp $
  *
  */
 
@@ -62,8 +62,7 @@ public class SAMLPropertyXMLBuilder
             SAMLConstants.SAMLURL,
             SAMLConstants.HOST_LIST,
             SAMLConstants.SITEATTRIBUTEMAPPER,
-            SAMLConstants.NAMEIDENTIFIERMAPPER,
-            SAMLConstants.ACCOUNTMAPPER,
+            SAMLConstants.NAMEIDENTIFIERMAPPER,            
             SAMLConstants.VERSION
         };
         String[] mand = {
@@ -88,8 +87,7 @@ public class SAMLPropertyXMLBuilder
             SAMLConstants.TARGET,
             SAMLConstants.POSTURL,
             SAMLConstants.SITEATTRIBUTEMAPPER,
-            SAMLConstants.NAMEIDENTIFIERMAPPER,
-            SAMLConstants.ACCOUNTMAPPER,
+            SAMLConstants.NAMEIDENTIFIERMAPPER,           
             SAMLConstants.VERSION
         };
         String[] mand = {
@@ -116,6 +114,7 @@ public class SAMLPropertyXMLBuilder
             SAMLConstants.AUTH_PASSWORD,
             SAMLConstants.AUTH_PASSWORD + SAMLPropertyTemplate.CONFIRM_SUFFIX,
             SAMLConstants.CERTALIAS,
+            SAMLConstants.ACCOUNTMAPPER,
             SAMLConstants.VERSION
         };
         String[] mand = {
@@ -135,7 +134,8 @@ public class SAMLPropertyXMLBuilder
         String[] attrs = {
             SAMLConstants.PARTNERNAME,
             SAMLConstants.SOURCEID,
-            SAMLConstants.ISSUER,           
+            SAMLConstants.ISSUER,
+            SAMLConstants.ACCOUNTMAPPER,
             SAMLConstants.CERTALIAS
         };
         String[] mand = {
