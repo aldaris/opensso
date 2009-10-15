@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SAML2LogMessageIDs.xml,v 1.7 2008-08-19 19:13:01 veiming Exp $
+   $Id: SAML2LogMessageIDs.xml,v 1.8 2009-10-15 00:02:40 exu Exp $
 
 -->
 
@@ -2163,6 +2163,21 @@
         </triggers>
         <actions>
             <item>Check Identity Provider metadata</item>
+            <item>Check debug file for detailed info</item>
+        </actions>
+    </logmessage>
+    <logmessage name="BINDING_NOT_SUPPORTED" id="165"
+        loglevel="LL_INFO"
+        description="Binding is not supported.">
+        <datainfo>
+            <item>Provider Entity ID</item>
+            <item>Name of binding that is not supported</item>
+        </datainfo>
+        <triggers>
+            <item>Hosted provider received data from unsupported binding endpoint.</item>
+        </triggers>
+        <actions>
+            <item>Check Provider metadata</item>
             <item>Check debug file for detailed info</item>
         </actions>
     </logmessage>
