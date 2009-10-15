@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: OpenSSOAgentConfiguration.template,v 1.1 2009-01-21 18:28:43 kanduls Exp $
+# $Id: OpenSSOAgentConfiguration.template,v 1.2 2009-10-15 23:34:38 leiming Exp $
 #
 #
 
@@ -619,6 +619,8 @@ com.sun.identity.agents.config.port.check.setting[@AGENT_PREF_PORT@] = @AGENT_PR
 #     of not-enforced URI list evaluation results is enabled or disabled.
 #   - notenforced.uri.cache.size: The size of the cache to be used if 
 #     caching of not-enforced URI list evaluation results is enabled.
+#   - notenforced.refresh.session.idletime: A flag that specifies if the opensso
+#     session idle time is reset or not when accessing the not enforced URIs.
 # Hot-Swap Enabled: Yes
 # Example of notenforced.uri:
 #   com.sun.identity.agents.config.notenforced.uri[0]=*.gif
@@ -629,6 +631,7 @@ com.sun.identity.agents.config.notenforced.uri[0] =
 com.sun.identity.agents.config.notenforced.uri.invert = false
 com.sun.identity.agents.config.notenforced.uri.cache.enable = true
 com.sun.identity.agents.config.notenforced.uri.cache.size = 1000
+com.sun.identity.agents.config.notenforced.refresh.session.idletime = false
 
 #
 # NOT-ENFORCED CLIENT IP PROCESSING PROPERTIES
