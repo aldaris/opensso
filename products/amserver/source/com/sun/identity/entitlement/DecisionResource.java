@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.9 2009-09-15 20:56:15 veiming Exp $
+ * $Id: DecisionResource.java,v 1.10 2009-10-15 00:45:46 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -31,7 +31,9 @@ import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -74,7 +76,7 @@ public class DecisionResource extends ResourceBase {
     @GET
     @Produces("text/plain")
     @Path("/decision")
-    public String decision(
+    public String getDecision(
         @Context HttpHeaders headers,
         @QueryParam("admin") String admin,
         @QueryParam("realm") @DefaultValue("/") String realm,
@@ -83,6 +85,73 @@ public class DecisionResource extends ResourceBase {
         @QueryParam("resource") String resource,
         @QueryParam("application") String application,
         @QueryParam("env") List<String> environment
+    ) {
+         return decision(
+            headers,
+            admin,
+            realm,
+            subject,
+            action,
+            resource,
+            application,
+            environment);
+    }
+
+    /**
+     * Returns entitlement decision of a given user.
+     *
+     * @param realm Realm name.
+     * @param subject Subject of interest.
+     * @param action Action to be evaluated.
+     * @param resource Resource to be evaluated.
+     * @param application Application name.
+     * @param environment environment parameters.
+     * @return entitlement decision of a given user. Either "deny" or "allow".
+     */
+    @POST
+    @Produces("text/plain")
+    @Path("/decision")
+    public String postDecision(
+        @Context HttpHeaders headers,
+        @FormParam("admin") String admin,
+        @FormParam("realm") @DefaultValue("/") String realm,
+        @FormParam("subject") String subject,
+        @FormParam("action") String action,
+        @FormParam("resource") String resource,
+        @FormParam("application") String application,
+        @FormParam("env") List<String> environment
+    ) {
+         return decision(
+            headers,
+            admin,
+            realm,
+            subject,
+            action,
+            resource,
+            application,
+            environment);
+    }
+
+    /**
+     * Returns entitlement decision of a given user.
+     *
+     * @param realm Realm name.
+     * @param subject Subject of interest.
+     * @param action Action to be evaluated.
+     * @param resource Resource to be evaluated.
+     * @param application Application name.
+     * @param environment environment parameters.
+     * @return entitlement decision of a given user. Either "deny" or "allow".
+     */
+    private String decision(
+        HttpHeaders headers,
+        String admin,
+        String realm,
+        String subject,
+        String action,
+        String resource,
+        String application,
+        List<String> environment
     ) {
 
         if (!realm.startsWith("/")) {
@@ -121,7 +190,7 @@ public class DecisionResource extends ResourceBase {
     @GET
     @Produces("application/json")
     @Path("/decisions")
-    public String decisions(
+    public String getDecisions(
         @Context HttpHeaders headers,
         @QueryParam("admin") String admin,
         @QueryParam("realm") @DefaultValue("/") String realm,
@@ -129,6 +198,69 @@ public class DecisionResource extends ResourceBase {
         @QueryParam("resources") List<String> resources,
         @QueryParam("application") String application,
         @QueryParam("env") List<String> environment
+    ) {
+        return decisions(
+            headers,
+            admin,
+            realm,
+            subject,
+            resources,
+            application,
+            environment);
+    }
+
+    /**
+     * Returns the entitlements of a given subject.
+     *
+     * @param realm Realm Name.
+     * @param subject Subject of interest.
+     * @param action action to be evaluated.
+     * @param resource resources to be evaluated
+     * @param application application name.
+     * @param environment environment parameters.
+     * @return entitlement of a given subject (in JSON string).
+     */
+    @POST
+    @Produces("application/json")
+    @Path("/decisions")
+    public String postDecisions(
+        @Context HttpHeaders headers,
+        @FormParam("admin") String admin,
+        @FormParam("realm") @DefaultValue("/") String realm,
+        @FormParam("subject") String subject,
+        @FormParam("resources") List<String> resources,
+        @FormParam("application") String application,
+        @FormParam("env") List<String> environment
+    ) {
+        return decisions(
+            headers,
+            admin,
+            realm,
+            subject,
+            resources,
+            application,
+            environment);
+    }
+
+    /**
+     * Returns the entitlements of a given subject.
+     *
+     * @param realm Realm Name.
+     * @param subject Subject of interest.
+     * @param action action to be evaluated.
+     * @param resource resources to be evaluated
+     * @param application application name.
+     * @param environment environment parameters.
+     * @return entitlement of a given subject (in JSON string).
+     */
+    private String decisions(
+        HttpHeaders headers,
+        String admin,
+        String realm,
+        String subject,
+        List<String> resources,
+        String application,
+        List<String> environment
     ) {
         try {
             if (!realm.startsWith("/")) {
@@ -187,7 +319,7 @@ public class DecisionResource extends ResourceBase {
     @GET
     @Produces("application/json")
     @Path("/entitlement")
-    public String entitlement(
+    public String getEntitlement(
         @Context HttpHeaders headers,
         @QueryParam("admin") String admin,
         @QueryParam("realm") @DefaultValue("/") String realm,
@@ -195,6 +327,69 @@ public class DecisionResource extends ResourceBase {
         @QueryParam("resource") String resource,
         @QueryParam("application") String application,
         @QueryParam("env") List<String> environment
+    ) {
+        return entitlement(
+            headers,
+            admin,
+            realm,
+            subject,
+            resource,
+            application,
+            environment);
+    }
+
+    /**
+     * Returns the entitlement of a given subject.
+     *
+     * @param realm Realm Name.
+     * @param subject Subject of interest.
+     * @param action action to be evaluated.
+     * @param resource resource to be evaluated
+     * @param application application name.
+     * @param environment environment parameters.
+     * @return entitlement of a given subject (in JSON string).
+     */
+    @POST
+    @Produces("application/json")
+    @Path("/entitlement")
+    public String postEntitlement(
+        @Context HttpHeaders headers,
+        @FormParam("admin") String admin,
+        @FormParam("realm") @DefaultValue("/") String realm,
+        @FormParam("subject") String subject,
+        @FormParam("resource") String resource,
+        @FormParam("application") String application,
+        @FormParam("env") List<String> environment
+    ) {
+        return entitlement(
+            headers,
+            admin,
+            realm,
+            subject,
+            resource,
+            application,
+            environment);
+    }
+
+    /**
+     * Returns the entitlement of a given subject.
+     *
+     * @param realm Realm Name.
+     * @param subject Subject of interest.
+     * @param action action to be evaluated.
+     * @param resource resource to be evaluated
+     * @param application application name.
+     * @param environment environment parameters.
+     * @return entitlement of a given subject (in JSON string).
+     */
+    private String entitlement(
+        HttpHeaders headers,
+        String admin,
+        String realm,
+        String subject,
+        String resource,
+        String application,
+        List<String> environment
     ) {
         if (!realm.startsWith("/")) {
             realm = "/" + realm;
@@ -236,7 +431,7 @@ public class DecisionResource extends ResourceBase {
     @GET
     @Produces("application/json")
     @Path("/entitlements")
-    public String entitlements(
+    public String getEntitlements(
         @Context HttpHeaders headers,
         @QueryParam("admin") String admin,
         @QueryParam("realm") @DefaultValue("/") String realm,
@@ -244,6 +439,73 @@ public class DecisionResource extends ResourceBase {
         @QueryParam("resource") String resource,
         @QueryParam("application") String application,
         @QueryParam("env") List<String> environment
+    ) {
+        return entitlements(
+            headers,
+            admin,
+            realm,
+            subject,
+            resource,
+            application,
+            environment);
+    }
+
+    /**
+     * Returns the entitlements of a given subject.
+     *
+     * @param realm Realm Name.
+     * @param subject Subject of interest.
+     * @param action action to be evaluated.
+     * @param resource resource to be evaluated
+     * @param application application name.
+     * @param environment environment parameters.
+     * @return entitlements of a given subject (in JSON string).
+     */
+    @POST
+    @Produces("application/json")
+    @Path("/entitlements")
+    public String postEntitlements(
+        @Context HttpHeaders headers,
+        @FormParam("admin") String admin,
+        @FormParam("realm") @DefaultValue("/") String realm,
+        @FormParam("subject") String subject,
+        @FormParam("resource") String resource,
+        @FormParam("application") String application,
+        @FormParam("env") List<String> environment
+    ) {
+        return entitlements(
+            headers,
+            admin,
+            realm,
+            subject,
+            resource,
+            application,
+            environment);
+    }
+
+    /**
+     * Returns the entitlements of a given subject.
+     *
+     * @param realm Realm Name.
+     * @param subject Subject of interest.
+     * @param action action to be evaluated.
+     * @param resource resource to be evaluated
+     * @param application application name.
+     * @param environment environment parameters.
+     * @return entitlements of a given subject (in JSON string).
+     */
+    @GET
+    @POST
+    @Produces("application/json")
+    @Path("/entitlements")
+    private String entitlements(
+        HttpHeaders headers,
+        String admin,
+        String realm,
+        String subject,
+        String resource,
+        String application,
+        List<String> environment
     ) {
         if (!realm.startsWith("/")) {
             realm = "/" + realm;
