@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpMNIRequestInit.jsp,v 1.9 2009-06-24 23:05:30 mrudulahg Exp $
+   $Id: idpMNIRequestInit.jsp,v 1.10 2009-10-15 00:00:40 exu Exp $
 
 --%>
 
@@ -31,10 +31,11 @@
 
 <%@ page import="com.sun.identity.shared.debug.Debug" %>
 <%@ page import="com.sun.identity.federation.common.FSUtils" %>
+<%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
-<%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
+<%@ page import="com.sun.identity.saml2.meta.SAML2MetaUtils" %>
 <%@ page import="com.sun.identity.saml2.profile.DoManageNameID" %>
 <%@ page import="java.util.HashMap" %>
 
@@ -73,14 +74,28 @@
                 "nullIDPEntityID", 
                 SAML2Utils.bundle.getString("nullIDPEntityID"));
             return;
-         }
+        }
 
+        String idpEntityID =
+            SAML2Utils.getSAML2MetaManager().getEntityByMetaAlias(metaAlias);
+        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
         String spEntityID = request.getParameter("spEntityID");
 
         if ((spEntityID == null) || (spEntityID.length() == 0)) {
             SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                 "nullSPEntityID", 
                 SAML2Utils.bundle.getString("nullSPEntityID"));
+            return;
+        }
+
+        String binding = DoManageNameID.getMNIBindingInfo(request, metaAlias,
+                                        SAML2Constants.IDP_ROLE, spEntityID);
+        if (!SAML2Utils.isIDPProfileBindingSupported(
+            realm, idpEntityID, SAML2Constants.MNI_SERVICE, binding))
+        {
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
+                "unsupportedBinding",
+                SAML2Utils.bundle.getString("unsupportedBinding"));
             return;
         }
 
@@ -94,8 +109,6 @@
         }
 
         String RelayState = request.getParameter(SAML2Constants.RELAY_STATE);
-        String binding = DoManageNameID.getMNIBindingInfo(request, metaAlias,
-                                        SAML2Constants.IDP_ROLE, spEntityID);
 
         String affiliationID =
             request.getParameter(SAML2Constants.AFFILIATION_ID);

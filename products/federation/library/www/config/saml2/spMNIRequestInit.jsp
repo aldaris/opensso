@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spMNIRequestInit.jsp,v 1.11 2009-06-24 23:05:30 mrudulahg Exp $
+   $Id: spMNIRequestInit.jsp,v 1.12 2009-10-15 00:00:41 exu Exp $
 
 --%>
 
@@ -86,6 +86,20 @@
             return;
         }
 
+        String binding = DoManageNameID.getMNIBindingInfo(request, metaAlias,
+                                        SAML2Constants.SP_ROLE, idpEntityID);
+        SAML2MetaManager metaManager= new SAML2MetaManager();
+        String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);
+        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+        if (!SAML2Utils.isSPProfileBindingSupported(
+            realm, hostEntity, SAML2Constants.MNI_SERVICE, binding))
+        {
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
+                "unsupportedBinding",
+                SAML2Utils.bundle.getString("unsupportedBinding"));
+            return;
+        }
+
         String requestType = request.getParameter("requestType");
 
         if ((requestType == null) || (requestType.length() == 0)) {
@@ -96,13 +110,9 @@
         }
 
         String RelayState = request.getParameter(SAML2Constants.RELAY_STATE);
-        String binding = DoManageNameID.getMNIBindingInfo(request, metaAlias,
-                                        SAML2Constants.SP_ROLE, idpEntityID);
+        
         
         if ((RelayState == null) || (RelayState.equals(""))) {
-            SAML2MetaManager metaManager= new SAML2MetaManager();
-            String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);
-            String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
             RelayState = SAML2Utils.getAttributeValueFromSSOConfig(
                 realm, hostEntity, SAML2Constants.SP_ROLE,
                 SAML2Constants.DEFAULT_RELAY_STATE);

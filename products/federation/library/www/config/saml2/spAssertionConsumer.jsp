@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spAssertionConsumer.jsp,v 1.13 2009-06-12 22:21:42 mallas Exp $
+   $Id: spAssertionConsumer.jsp,v 1.14 2009-10-15 00:00:41 exu Exp $
 
 --%>
 
@@ -154,6 +154,7 @@ com.sun.identity.plugin.session.SessionException
     }
     respInfo = SPACSUtils.getResponse(
         request, response, orgName, hostEntityId, metaManager);
+
     String ecpRelayState = respInfo.getRelayState();
     if ((ecpRelayState != null) && (ecpRelayState.length() > 0)) {
         relayState = ecpRelayState;

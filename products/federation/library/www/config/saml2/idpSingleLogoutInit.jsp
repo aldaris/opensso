@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSingleLogoutInit.jsp,v 1.8 2009-06-24 23:05:30 mrudulahg Exp $
+   $Id: idpSingleLogoutInit.jsp,v 1.9 2009-10-15 00:00:41 exu Exp $
 
 --%>
 
@@ -35,6 +35,7 @@
 <%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
+<%@ page import="com.sun.identity.saml2.meta.SAML2MetaUtils" %>
 <%@ page import="com.sun.identity.saml2.profile.IDPSingleLogout" %>
 <%@ page import="com.sun.identity.saml2.profile.LogoutUtil" %>
 <%@ page import="java.util.HashMap" %>
@@ -100,11 +101,20 @@
             return;
         }
 
-        String idpEntityID =
+        String idpEntityID = 
             SAML2Utils.getSAML2MetaManager().getEntityByMetaAlias(metaAlias);
+        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
 
         String binding = LogoutUtil.getSLOBindingInfo(request, metaAlias,
                                         SAML2Constants.SP_ROLE, idpEntityID);
+        if (!SAML2Utils.isIDPProfileBindingSupported(
+            realm, idpEntityID, SAML2Constants.SLO_SERVICE, binding))
+        {
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
+                "unsupportedBinding", 
+                SAML2Utils.bundle.getString("unsupportedBinding"));
+            return;
+        }
 
         String logoutAll = request.getParameter(SAML2Constants.LOGOUT_ALL);
         /**

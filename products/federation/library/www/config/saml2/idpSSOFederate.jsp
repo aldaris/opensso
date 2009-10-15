@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSSOFederate.jsp,v 1.5 2009-06-24 23:05:30 mrudulahg Exp $
+   $Id: idpSSOFederate.jsp,v 1.6 2009-10-15 00:00:41 exu Exp $
 
 --%>
 
@@ -63,6 +63,11 @@
         return;
     }
 
+    String reqBinding = SAML2Constants.HTTP_REDIRECT;
+    if (request.getMethod().equals("POST")) {
+        reqBinding = SAML2Constants.HTTP_POST;
+    }
+
     /*
      * This call handles the federation and/or single sign on request
      * from a service provider. It processes the AuthnRequest
@@ -71,5 +76,5 @@
      * It sends back a response containing error status if
      * something is wrong during the request processing.
      */
-    IDPSSOFederate.doSSOFederate(request, response);
+    IDPSSOFederate.doSSOFederate(request, response, reqBinding );
 %>

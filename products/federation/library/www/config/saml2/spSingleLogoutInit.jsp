@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutInit.jsp,v 1.12 2009-06-24 23:05:31 mrudulahg Exp $
+   $Id: spSingleLogoutInit.jsp,v 1.13 2009-10-15 00:01:11 exu Exp $
 
 --%>
 
@@ -97,7 +97,7 @@
         }
 
         String spEntityID = null;
-        SAML2MetaManager manager = null;
+        SAML2MetaManager manager = new SAML2MetaManager();
         if (!SPCache.isFedlet) {
             if (ssoToken == null) {
                 SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
@@ -112,7 +112,6 @@
         } else {
             spEntityID = request.getParameter("spEntityID");
             if ((spEntityID == null) || (spEntityID.length() == 0)) {
-                manager = new SAML2MetaManager();
                 List spMetaAliases =
                     manager.getAllHostedServiceProviderMetaAliases("/");
                 if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
@@ -120,9 +119,6 @@
                     metaAlias = (String) spMetaAliases.get(0);
                 }
             } else {
-                if (manager == null) {
-                    manager = new SAML2MetaManager();
-                }
                 SPSSOConfigElement spConfig = 
                     manager.getSPSSOConfig("/", spEntityID);
                 if (spConfig != null) {
@@ -152,6 +148,18 @@
         String idpEntityID = request.getParameter("idpEntityID");
         String binding = LogoutUtil.getSLOBindingInfo(request, metaAlias,
                                         SAML2Constants.SP_ROLE, idpEntityID);
+        if (spEntityID == null) {
+            spEntityID = manager.getEntityByMetaAlias(metaAlias);
+        }
+        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+        if (!SAML2Utils.isSPProfileBindingSupported(
+            realm, spEntityID, SAML2Constants.SLO_SERVICE, binding))
+        {
+            SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
+                "unsupportedBinding",
+                SAML2Utils.bundle.getString("unsupportedBinding"));
+            return;
+        }
  
         /**
         * Parses the request parameters and builds the Logout
@@ -218,11 +226,8 @@
         paramsMap.put("Consent", request.getParameter("Consent"));
         paramsMap.put("Extension", request.getParameter("Extension"));
         if ((RelayState == null) || (RelayState.equals(""))) {
-            SAML2MetaManager metaManager= new SAML2MetaManager();
-            String hostEntity = metaManager.getEntityByMetaAlias(metaAlias);
-            String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
             RelayState = SAML2Utils.getAttributeValueFromSSOConfig(
-                realm, hostEntity, SAML2Constants.SP_ROLE,
+                realm, spEntityID, SAML2Constants.SP_ROLE,
                 SAML2Constants.DEFAULT_RELAY_STATE);
         }
         if (RelayState != null) {
