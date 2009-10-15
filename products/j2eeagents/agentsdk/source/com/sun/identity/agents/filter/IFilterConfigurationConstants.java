@@ -41,7 +41,7 @@
 
  *
 
- * $Id: IFilterConfigurationConstants.java,v 1.14 2008-10-07 17:32:31 huacui Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.15 2009-10-15 23:22:29 leiming Exp $
 
  *
 
@@ -404,7 +404,13 @@ public interface IFilterConfigurationConstants {
 
         "notenforced.uri";
 
+    public static final String CONFIG_NOTENFORCED_REFRESH_SESSION_IDLETIME =
 
+        "notenforced.refresh.session.idletime";
+
+
+    public static final boolean
+            DEFAULT_CONFIG_NOTENFORCED_REFRESH_SESSION_IDLETIME = false;
 
     public static final String CONFIG_NOTENFORCED_IP_CACHE_FLAG =
 

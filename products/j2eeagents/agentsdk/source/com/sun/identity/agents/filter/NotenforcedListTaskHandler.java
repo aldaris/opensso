@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotenforcedListTaskHandler.java,v 1.5 2008-08-30 01:40:54 huacui Exp $
+ * $Id: NotenforcedListTaskHandler.java,v 1.6 2009-10-15 23:22:29 leiming Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.Manager;
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.INotenforcedURIHelper;
+import com.sun.identity.agents.common.ISSOTokenValidator;
 import com.sun.identity.agents.util.StringUtils;
 
 /**
@@ -125,6 +126,9 @@ implements INotenforcedListTaskHandler {
                 logMessage("NotenforcedListTaskHandler: The request URI "
                            + requestURL + " was found in Not Enforced List");
             }
+
+            refreshSessionIdletime(ctx);
+
             result = ctx.getContinueResult();
             result.markAsNotEnforced();
         }
@@ -148,6 +152,25 @@ implements INotenforcedListTaskHandler {
      */
     public String getHandlerName() {
         return AM_FILTER_NOT_ENFORCED_LIST_TASK_HANDLER_NAME;
+    }
+
+    /**
+     * For not-enforced URLs, session validation is called to
+     * reset session idletime only if the property is set to true.
+     */
+    private void refreshSessionIdletime(AmFilterRequestContext ctx) {
+
+        if (!getConfigurationBoolean(
+                CONFIG_NOTENFORCED_REFRESH_SESSION_IDLETIME,
+                DEFAULT_CONFIG_NOTENFORCED_REFRESH_SESSION_IDLETIME)) {
+            return;
+        }
+
+        // call session validation to reset session idle time.
+        ISSOContext ssoContext = getSSOContext();
+        ISSOTokenValidator tokenValidator = ssoContext.getSSOTokenValidator();
+        tokenValidator.validate(ctx.getHttpServletRequest());
+
     }
 
     public boolean getPathInfoIgnored() {
