@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.52 2009-10-13 01:36:20 robertis Exp $
+ * $Id: am_web.cpp,v 1.53 2009-10-15 22:35:32 krishna_indigo Exp $
  *
  */
 
@@ -5421,6 +5421,14 @@ set_user_attributes(am_policy_result_t *result,
               }
           }
 
+	// now set the cookie header.
+        set_sts = req_func->set_header_in_request.func(
+                       req_func->set_header_in_request.args,
+                       "Cookie", (char *)req_params->reserved);
+        am_web_log_debug("%s:set cookie header %s in request returned %s",
+                        thisfunc, req_params->reserved,
+                        am_status_to_string(set_sts));
+
         for (int i=0; i<3; i++) {
 	      switch (i) {
 		  case 0:
@@ -5522,13 +5530,6 @@ set_user_attributes(am_policy_result_t *result,
                    }
                  }
             }
-             // now set the cookie header.
-             set_sts = req_func->set_header_in_request.func(
-                            req_func->set_header_in_request.args,
-                            "Cookie", (char *)req_params->reserved);
-             am_web_log_debug("%s:set cookie header %s in request returned %s",
-                             thisfunc, req_params->reserved,
-                             am_status_to_string(set_sts));
         }
      }
           catch (std::bad_alloc& exb) {
