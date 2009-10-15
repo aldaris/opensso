@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Base64.java,v 1.3 2009-10-14 17:42:04 pbryan Exp $
+ * $Id: Base64.java,v 1.4 2009-10-15 07:08:31 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,12 @@ import java.io.IOException;
  * Utility class for encoding and decoding binary data formatted in Base64.
  */
 public class Base64 {
+
+    /**
+     * Suppress default constructor.
+     */
+    private Base64() {
+    }
 
     private final static char ALPHABET[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G',
      'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',

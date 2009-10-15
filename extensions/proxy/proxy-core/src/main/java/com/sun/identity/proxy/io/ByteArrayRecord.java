@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ByteArrayRecord.java,v 1.2 2009-10-14 16:58:01 pbryan Exp $
+ * $Id: ByteArrayRecord.java,v 1.3 2009-10-15 07:07:56 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,23 +29,23 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * Implements a record, storing data in a dynamically-growing byte array.
+ * Implementation of a record, storing data in a byte array.
  *
  * @author Paul C. Bryan
  */
 public class ByteArrayRecord implements Record
 {
     /** The initial length of the byte array. */
-    private static final int INITIAL_LENGTH = 8192;
+    private static final int INITIAL_LEN = 8192;
 
     /** Current read/write position within the record. */
-    private int position = 0;
+    private int pos = 0;
 
     /** Current length of the record. */
-    private int length = 0;
+    private int len = 0;
 
     /** Byte array storage for the record. */
-    private byte[] bytes;
+    private byte[] data;
 
     /** The length limit of the record. */
     private int limit;
@@ -53,108 +53,100 @@ public class ByteArrayRecord implements Record
     /**
      * Creates a new byte array record.
      *
-     * @param limit the length limit of the record, after which an {@link IOException} should be thrown.
+     * @param limit the length limit of the record, after which an {@link OverflowException} will be thrown.
      */
     public ByteArrayRecord(int limit) {
-        bytes = new byte[Math.min(INITIAL_LENGTH, limit)];
+        data = new byte[Math.min(INITIAL_LEN, limit)];
         this.limit = limit;
     }
 
     /**
-     * Used to ensure that the record is not closed when operations are
-     * performed on it.
+     * Returns the record data as a byte array.
      *
-     * @throws IOExcepton if record has been closed.
+     * @return the record data.
      */
-    private void closedException() throws IOException {
-        if (bytes == null) {
-            throw new IOException("record has been closed");
-        }
+    public byte[] bytes() {
+        return Arrays.copyOf(data, len);
     }
 
+    /**
+     * Closing a byte array record has no effect. The methods in this class can
+     * be called after the record has been closed without generating an
+     * IOException.
+     */
     @Override
     public void close() throws IOException {
-        bytes = null;
     }
 
     @Override
     public int length() throws IOException {
-        closedException();
-        return length;
+        return len;
     }
 
     @Override
     public int limit() throws IOException {
-        closedException();
         return limit;
     }
 
     @Override
     public int position() throws IOException {
-        closedException();
-        return position;
+        return pos;
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        closedException();
-        if (len == 0) {
-            return 0;
+        if (len > 0) {
+            len = Math.min(this.len - pos, len);
+            if (len == 0) {
+                return -1;
+            }
+            System.arraycopy(data, pos, b, off, len);
+            pos += len;
         }
-        len = Math.min(length - position, len);
-        if (len == 0) {
-            return -1;
-        }
-        System.arraycopy(bytes, position, b, off, len);
-        position += len;
         return len;
     }
 
     @Override
-    public void seek(int position) throws IOException {
-        closedException();
-        if (position > length) {
+    public void seek(int pos) throws IOException {
+        if (pos > len) {
             throw new IOException("requested position greater than record length");
         }
-        this.position = position;
+        this.pos = pos;
     }
 
     @Override
     public int skip(int n) throws IOException {
-        closedException();
-        int previous = position;
-        position = Math.max(Math.max(position + n, length), 0);
-        return position - previous;
+        int prev = pos;
+        pos = Math.max(Math.max(pos + n, len), 0);
+        return pos - prev;
     }
 
     @Override
-    public void truncate(int length) throws IOException {
-        closedException();
-        if (length < 0) {
+    public void truncate(int len) throws IOException {
+        if (len < 0) {
             throw new IllegalArgumentException();
         }
-        if (length > this.length) {
+        if (len > this.len) {
             throw new IOException("cannot increase length of record via truncate method");
         }
-        this.length = length;
-        if (length > position) {
-            position = length;
+        this.len = len;
+        if (len > pos) {
+            pos = len;
         }
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException, OverflowException {
-        closedException();
-        int end = position + len;
+        int end = pos + len;
         if (end > limit) {
             throw new OverflowException();
         }
-        if (bytes.length < end) { // must grow buffer
-            bytes = Arrays.copyOf(bytes, Math.max(Math.min(bytes.length << 1, limit), end));
+        if (data.length < end) { // must grow buffer
+            data = Arrays.copyOf(data, Math.max(Math.min(data.length << 1, limit), end));
         }
-        System.arraycopy(b, off, bytes, position, len);
-        position += len;
-        length = Math.max(length, end);
+        System.arraycopy(b, off, data, pos, len);
+        pos += len;
+        this.len = Math.max(this.len, end);
     }
 }
 

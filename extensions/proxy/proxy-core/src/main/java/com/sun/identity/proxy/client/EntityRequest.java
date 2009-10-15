@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityRequest.java,v 1.3 2009-10-14 08:56:12 pbryan Exp $
+ * $Id: EntityRequest.java,v 1.4 2009-10-15 07:07:54 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,7 @@ import org.apache.http.entity.InputStreamEntity;
  *
  * @author Paul C. Bryan
  */
-public class EntityRequest extends HttpEntityEnclosingRequestBase
+class EntityRequest extends HttpEntityEnclosingRequestBase
 {
     /** The request method. */
     private String method = null;
@@ -46,25 +46,18 @@ public class EntityRequest extends HttpEntityEnclosingRequestBase
      *
      * @param request the incoming proxy request.
      */
-    public EntityRequest(Request request)
-    {
+    public EntityRequest(Request request) {
         this.method = request.method;
-
-        // these headers will be suppressed by the client handler before submitting to target
         String contentEncoding = request.headers.first("Content-Encoding");
         int contentLength = IntegerUtil.parseInt(request.headers.first("Content-Length"), -1);
         String contentType = request.headers.first("Content-Type");
-
         InputStreamEntity entity = new InputStreamEntity(request.entity, contentLength);
-        
         if (contentEncoding != null) {
             entity.setContentEncoding(contentEncoding);
         }
-        
         if (contentType != null) {
             entity.setContentType(contentType);
         }
-
         setEntity(entity);
     }
 

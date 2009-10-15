@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HandlerServlet.java,v 1.4 2009-10-14 08:57:03 pbryan Exp $
+ * $Id: HandlerServlet.java,v 1.5 2009-10-15 07:08:29 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,38 +44,26 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * TODO: Description.
+ * Receives HTTP requests through a the Servlet API, translates to proxy
+ * message exchange and dispatches to a handler. The handler type is generic
  *
  * @author Paul C. Bryan
  */
-public class HandlerServlet extends HttpServlet
+public class HandlerServlet<H extends Handler> extends HttpServlet
 {
-    /** Headers (in lower-case) that are suppressed from incoming request. */
-    private static final IKStringSet SUPPRESS_REQUEST_HEADERS = new IKStringSet(Arrays.asList("Expect"));
+    /** The handler to dispatch exchanges to. */
+    public H handler = null;
 
-    /** Headers (in lower-case) that are suppressed for outgoing response. */
-    private static final IKStringSet SUPPRESS_RESPONSE_HEADERS = new IKStringSet();
+    /** The base URI (scheme, host, port) of the remote server to relay requests to. */
+    public URI base = null;
 
-    /** TODO: Description. */
-    protected Handler handler = null;
-
-    /** TODO: Description. */
-    protected URI base = null;
-
-    /**
-     * TODO: Description.
-     *
-     * @param request TODO.
-     * @param response TODO.
-     * @throws IOException TODO.
-     * @throws ServletException TODO.
-     */
+    @Override
     public void service(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
     {
         Exchange exchange = new Exchange();
 
-        // ----- translate request --------------------------------------------
+        // ----- request ------------------------------------------------------
 
         exchange.request = new Request();
 
@@ -92,9 +80,7 @@ public class HandlerServlet extends HttpServlet
         // request headers
         for (Enumeration<String> e = request.getHeaderNames(); e.hasMoreElements();) {
             String name = e.nextElement();
-            if (!SUPPRESS_REQUEST_HEADERS.contains(name.toLowerCase())) {
-                exchange.request.headers.add(name, Collections.list(request.getHeaders(name)));
-            }
+            exchange.request.headers.add(name, Collections.list(request.getHeaders(name)));
         }
 
         String method = request.getMethod().toUpperCase();
@@ -124,7 +110,7 @@ public class HandlerServlet extends HttpServlet
 
         try {
 
-        // ----- execute request ----------------------------------------------
+        // ----- execute ------------------------------------------------------
 
             try {
                 handler.handle(exchange);
@@ -133,18 +119,16 @@ public class HandlerServlet extends HttpServlet
                 throw new ServletException(he);
             }
 
-        // ----- translate response -------------------------------------------
+        // ----- response -----------------------------------------------------
 
             // response status-code (reason-phrase is deprecated in servlet api)
             response.setStatus(exchange.response.status);
 
             // response headers
             for (String name : exchange.response.headers.keySet()) {
-                if (!SUPPRESS_RESPONSE_HEADERS.contains(name.toLowerCase())) {
-                    for (String value : exchange.response.headers.get(name)) {
-                        if (value != null && value.length() > 0) {
-                            response.addHeader(name, value);
-                        }
+                for (String value : exchange.response.headers.get(name)) {
+                    if (value != null && value.length() > 0) {
+                        response.addHeader(name, value);
                     }
                 }
             }
@@ -157,7 +141,7 @@ public class HandlerServlet extends HttpServlet
             }
         }
 
-        // ----- make sure underlying client can make new requests ------------
+        // ----- cleanup ------------------------------------------------------
 
         finally {
 

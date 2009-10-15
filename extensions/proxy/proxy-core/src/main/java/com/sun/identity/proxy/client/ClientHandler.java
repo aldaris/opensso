@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.7 2009-10-14 16:57:21 pbryan Exp $
+ * $Id: ClientHandler.java,v 1.8 2009-10-15 07:07:54 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,11 +27,13 @@ package com.sun.identity.proxy.client;
 import com.sun.identity.proxy.handler.Handler;
 import com.sun.identity.proxy.handler.HandlerException;
 import com.sun.identity.proxy.http.Exchange;
+import com.sun.identity.proxy.http.Headers;
 import com.sun.identity.proxy.http.Response;
 import com.sun.identity.proxy.util.IKStringSet;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Pattern;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
@@ -71,13 +73,16 @@ public class ClientHandler implements Handler
 
     /** Headers that are suppressed in request. */
     private static final IKStringSet SUPPRESS_REQUEST_HEADERS = new IKStringSet(Arrays.asList(
-     "Connection", "Content-Encoding", "Content-Length", "Content-Type", "Keep-Alive",
+     "Connection", "Content-Encoding", "Content-Length", "Content-Type", "Expect", "Keep-Alive",
       "Proxy-Authenticate", "Proxy-Authorization", "TE", "Trailers", "Transfer-Encoding", "Upgrade"));
 
     /** Headers that are suppressed in response. */
     private static final IKStringSet SUPPRESS_RESPONSE_HEADERS = new IKStringSet(Arrays.asList(
      "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization", "TE", "Trailers",
      "Transfer-Encoding", "Upgrade"));
+
+    /** Delimiter to split tokens within the Connection header. */
+    private static final Pattern DELIM_TOKEN = Pattern.compile("[,\\s]+");
 
     /** The HTTP client to transmit requests through. */
     private DefaultHttpClient httpClient;
@@ -88,6 +93,25 @@ public class ClientHandler implements Handler
     public ClientHandler() {
         this(DEFAULT_CONNECTIONS);
     }
+
+    /**
+     * Returns the names of the headers specified in the Connection header.
+     * These headers need to be treated as hop-by-hop headers and be
+     * suppressed.
+     *
+     * @param headers the headers to search for the Connection header within.
+     * @return the set of headers to additionally suppress.
+     */
+    private IKStringSet getConnectionHeaders(Headers headers) {
+        IKStringSet set = new IKStringSet();
+        List<String> values = headers.get("Connection");
+        if (values != null) {
+            for (String value : values) {
+                set.addAll(Arrays.asList(DELIM_TOKEN.split(value)));
+            }
+        }
+        return set;
+    }            
 
     /**
      * Creates a new client handler with the specified maximum number of
@@ -114,7 +138,6 @@ public class ClientHandler implements Handler
         httpClient.removeRequestInterceptorByClass(RequestProxyAuthentication.class);
         httpClient.removeRequestInterceptorByClass(RequestTargetAuthentication.class);
         httpClient.removeResponseInterceptorByClass(ResponseProcessCookies.class);
-        
 // TODO: set timeout to drop stalled connections?
     }
 
@@ -135,9 +158,16 @@ public class ClientHandler implements Handler
 
         clientRequest.setURI(exchange.request.uri);
 
+        // connection headers to suppress
+        IKStringSet suppressConnection = new IKStringSet();
+
+        // parse request connection headers to be treated as hop-to-hop
+        suppressConnection.clear();
+        suppressConnection.addAll(getConnectionHeaders(exchange.request.headers));
+
         // request headers
         for (String name : exchange.request.headers.keySet()) {
-            if (!SUPPRESS_REQUEST_HEADERS.contains(name.toLowerCase())) {
+            if (!SUPPRESS_REQUEST_HEADERS.contains(name) && !suppressConnection.contains(name)) {
                 for (String value : exchange.request.headers.get(name)) {
                     clientRequest.addHeader(name, value);
                 }
@@ -160,12 +190,15 @@ public class ClientHandler implements Handler
         exchange.response.status = statusLine.getStatusCode();
         exchange.response.reason = statusLine.getReasonPhrase();
 
+        // parse response connection headers to be suppressed in response
+        suppressConnection.clear();
+        suppressConnection.addAll(getConnectionHeaders(exchange.response.headers));
+
         // response headers
         for (HeaderIterator i = clientResponse.headerIterator(); i.hasNext();) {
             Header header = i.nextHeader();
             String name = header.getName();
-            if (!SUPPRESS_RESPONSE_HEADERS.contains(name.toLowerCase())) {
-// FIXME: suppress headers specified in Connection header, per HTTP spec
+            if (!SUPPRESS_RESPONSE_HEADERS.contains(name) && !suppressConnection.contains(name)) {
                 exchange.response.headers.add(name, header.getValue());
             }
         }

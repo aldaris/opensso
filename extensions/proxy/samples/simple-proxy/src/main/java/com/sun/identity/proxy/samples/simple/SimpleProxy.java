@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimpleProxy.java,v 1.1 2009-10-08 22:33:51 pbryan Exp $
+ * $Id: SimpleProxy.java,v 1.2 2009-10-15 07:08:33 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,18 +28,18 @@ import com.sun.identity.proxy.servlet.SimpleProxyServlet;
 import javax.servlet.ServletException;
 
 /**
- * The simplest reverse proxy servlet implementation: all incoming servlet
- * requests are sent to the specified host and port, via specified protocol.
+ * The simplest reverse proxy servlet implementation. All incoming servlet
+ * requests are relayed to the specified remote server.
  *
  * @author Paul C. Bryan
  */
 public class SimpleProxy extends SimpleProxyServlet
 {
     /**
-     * Initializes the servlet. Establishes the protocol, host and port of the
-     * remote server to send all incoming requests to.
+     * Initializes the servlet. Establishes the remote server to relay requests
+     * to.
      *
-     * @throws ServletException if an exception occurs that interrupts normal operation.
+     * @throws ServletException if an exception occurs that prevents initialization.
      */
     public void init() throws ServletException {
         init("http", "1.2.3.4", -1); // -1 uses the protocol's port (80 for http)

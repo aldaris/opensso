@@ -17,86 +17,76 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedStream.java,v 1.3 2009-10-14 08:56:59 pbryan Exp $
+ * $Id: CachedStream.java,v 1.4 2009-10-15 07:07:57 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.proxy.io;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 
 /**
- * TODO: Description.
+ * Wraps an input stream, caching read data and allows rewinding to the
+ * beginning of the stream.
+ * <p>
+ * This class is useful in cases where request entities need to be re-read
+ * (e.g. retrying requests after authentication) and where responses need to
+ * be partially read before relaying to the remote client (e.g.
+ * parsing to detect presence or absence of session state).
+ * <p>
+ * When no additional data needs to be cached, the <tt>stop</tt> method should
+ * be called. After this, all subsequent requests for data are passed-through
+ * to the underlying stream without storing data.
  *
  * @author Paul C. Bryan
  */
 public class CachedStream extends InputStream
 {
-    /** Indicates whether this object is still caching content. */
+    /** Indicates whether this object is (still) caching content. */
     private boolean caching = true;
 
-    /** TODO: Description. */
+    /** The record to store cached data in. */
     private Record record;
 
-    /** Directory where the cache file should be created. */
-    private File directory;
-
-    /** TODO: Description. */
+    /** The input stream to wrap and cache. */
     private InputStream in;
 
-    /** TODO: Description. */
-    private int maxLength;
-
     /**
-     * TODO: Description
+     * Creates a new cached stream, wrapping the specified input stream and
+     * storing cached data in the specified record.
      *
-     * @param in TODO.
-     * @param directory TODO.
-     * @param maxLength TODO.
-     * @param maxBuffer TODO.
+     * @param in the input stream to wrap and cache.
+     * @param record the record to store cached data in.
      */
-    public CachedStream(InputStream in, File directory, int maxLength, int maxBuffer)
-    {
+    public CachedStream(InputStream in, Record record) {
         this.in = in;
-        this.directory = directory;
-        this.maxLength = maxLength;
-
-        // start caching in memory buffer
-        record = new ByteArrayRecord(Math.min(maxBuffer, maxLength));
+        this.record = record;
     }
 
     /**
-     * Returns the number of bytes that can be read (or skipped over) from
-     * this input stream without blocking by the next caller of a method for
-     * this input stream.
+     * Returns <tt>true</tt> if the current position is within the cached
+     * data.
      *
-     * @return the number of bytes that can be read from this input stream without blocking.
+     * @return <tt>true</tt> if position is within cache.
      * @throws IOException if an I/O exception occurs.
      */
-    public int available() throws IOException
-    {
+    private boolean isPositionInCache() throws IOException {
+        return (record.position() < record.length());
+    }
+
+    @Override
+    public int available() throws IOException {
         int n;
-
-        // see if there is availability from the cache record first
-        n = record.length() - record.position();
-
-        // if not, use what's available from underlying stream
-        if (n == 0) {
+        n = record.length() - record.position(); // check cache record first
+        if (n == 0) { // nothing in record; use underlying stream
             n = in.available();
         }
-
         return n;
     }
 
-    /**
-     * Closes the input stream and releases any system resources associated
-     * with the CachedStream wrapper.
-     *
-     * @throws IOException if an I/O exception occurs.
-     */
+    @Override
     public void close() throws IOException
     {
         if (record != null) {
@@ -110,11 +100,7 @@ public class CachedStream extends InputStream
         }
     }
 
-    /**
-     * Called by the garbage collector when garbage collection determines that
-     * there are no more references to the object. This implementation cleans
-     * up any open file created to hold cached input stream contents.
-     */
+    @Override
     public void finalize() {
         try {
             close();
@@ -124,201 +110,90 @@ public class CachedStream extends InputStream
     }
 
     /**
-     * This class does not support mark and reset; so this method does
-     * nothing.
-     *
-     * @param readlimit irrelevant.
+     * Has no effect, as mark/reset are not supported by this stream.
      */
+    @Override
     public void mark(int readlimit) {
     }
 
     /**
-     * Indicates if this input stream supports the mark and reset methods.
-     * <p>
-     * This class does not support mark and reset, so this method
-     * unconditionally returns <code>false</code>.
-     *
      * @return <code>false</code> unconditionally.
      */
+    @Override
     public boolean markSupported() {
         return false;
     }
 
-    /**
-     * Reads the next byte of data from the input stream. The value byte is
-     * returned as an int in the range 0 to 255. If no byte is available
-     * because the end of the stream has been reached, the value -1 is
-     * returned. This method blocks until input data is available, the end of
-     * the stream is detected, or an exception is thrown.
-     *
-     * @return the next byte of data, or -1 if the end of the stream is reached.
-     * @throws IOException if an I/O exception occurs.
-     * @throws OverflowException if cache record maximum length is exceeded.
-     */
+    @Override
     public int read() throws IOException {
         byte[] b = new byte[1];
         int len = read(b, 0, 1);
         return (len > 0 ? len : -1);
     }
 
-    /**
-     * Reads some number of bytes from the input stream and stores them into
-     * the buffer array b. The number of bytes actually read is returned as an
-     * integer. This method blocks until input data is available, end of file
-     * is detected, or an exception is thrown.
-     *
-     * @return the total number of bytes read into the buffer, or -1 if no more data because of end of stream.
-     * @throws IOException if an I/O exception occurs.
-     * @throws OverflowException if cache record maximum length is exceeded.
-     * @throws NullPointerException if b is null.
-     */
+    @Override
     public int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
 
     /**
-     * Reads up to len bytes of data from the input stream into an array of
-     * bytes. An attempt is made to read as many as len bytes, but a smaller
-     * number may be read. The number of bytes actually read is returned as
-     * an integer.
-     *
-     * @param b the buffer into which the data is read.
-     * @param off the start offset in array b at which the data is written.
-     * @param len the maximum number of bytes to read.
-     * @return the total number of bytes read into the buffer, or -1 if no more data because of end of stream.
-     * @throws IndexOutOfBoundsException if off and/or len puts read of b array out of bounds.
-     * @throws IOException if an I/O exception occurs.
-     * @throws NullPointerException if b is null.
-     * @throws OverflowException if cache record maximum length is exceeded.
+     * @throws OverflowException if reading data results in overflowing the cache.
      */
-    public int read(byte[] b, int off, int len) throws IOException
-    {
-        // sanity checks on array bounds (bonus NullPointerException if b is null)
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
         if (off < 0 || len < 0 || (b != null && len > b.length - off)) {
             throw new IndexOutOfBoundsException();
         }
-
-        // current position is inside of cache record
-        if (record.position() < record.length()) {
-            return record.read(b, off, len);
+        if (isPositionInCache()) {
+            return record.read(b, off, len);  // read from cache
         }
-
-        // current position is outside of cache record
         int n = in.read(b, off, len);
-        cacheBytes(b, off, n);
+        if (n > 0 && caching) {
+            record.write(b, off, n);
+        }
         return n;
     }
 
     /**
-     * TODO: Description.
-     *
-     * @throws IOException TODO.
-     * @throws OverflowException TODO.
-     */
-    private void upgrade() throws IOException
-    {
-        // upgrade from buffer to file
-        if (record instanceof ByteArrayRecord) {
-            ByteArrayRecord ba = (ByteArrayRecord)record;
-            File file = File.createTempFile("CachedStream", null, directory);
-            record = new FileRecord(file, maxLength);
-            Streamer.stream(ba, record);
-            ba.close();
-        }
-
-        // no further upgrade path for cache
-        else {
-            throw new OverflowException();
-        }
-    }
-
-    /**
-     * TODO: Description.
-     *
-     * @param b TODO.
-     * @param off TODO.
-     * @param len TODO.
-     * @throws OverflowException TODO.
-     * @throws IOException TODO.
-     */
-    private void cacheBytes(byte[] b, int off, int len) throws IOException
-    {
-        if (!caching || len <= 0) {
-            return;
-        }
-
-        try {
-            record.write(b, off, len);
-        }
-
-        catch (OverflowException oe) {
-            upgrade(); // this throws overflow exception if there is no upgrade path
-            record.write(b, off, len); // this can also throw overflow exception
-        }
-    }
-
-    /**
-     * This class does not support mark and reset; this method unconditionally
-     * throws IOException.
-     *
      * @throws IOException unconditionally.
      */
+    @Override
     public void reset() throws IOException {
         throw new IOException("mark/reset not supported");
     }
 
     /**
-     * Skips over and discards n bytes of data from this input stream. The
-     * skip method may, for a variety of reasons, end up skipping over some
-     * smaller number of bytes, possibly 0. This may result from any of a
-     * number of conditions; reaching end of file before n bytes have been
-     * skipped is only one possibility. The actual number of bytes skipped is
-     * returned. If n is negative, no bytes are skipped.
+     * Sets the read position of the stream to the beginning.
      *
-     * @param n the number of bytes to be skipped.
-     * @return the actual number of bytes skipped.
      * @throws IOException if an I/O exception occurs.
      */
-    public long skip(long n) throws IOException
-    {
-        // per the interface contract
-        if (n <= 0) {
-            return 0;
-        }
-
-        // truncate to integer maximum value (uniform interface)
-        int i = (int)Math.min(n, Integer.MAX_VALUE);
-
-        // position within cache; instruct it to skip
-        if (record.position() < record.length()) {
-            return record.skip(i);
-        }
-
-        // not caching; instruct underlying stream to skip
-        if (!caching) {
-            return in.skip(n); // can go larger than int value in this case
-        }
-
-        // need to record whatever is skipped
-        byte[] b = new byte[i];
-        int len = read(b, 0, i);
-        return len;
-    }
-
-    /**
-     * Sets the read position to the beginning.
-     */
     public void rewind() throws IOException {
-
         if (!caching) {
-            throw new IOException("can only rewind if caching");
+            throw new IOException("caching has been stopped");
         }
-
         record.seek(0);
     }
-    
+
+    @Override
+    public long skip(long n) throws IOException {
+        if (n <= 0) { // per interface contract
+            return 0;
+        }
+        int i = (int)Math.min(n, Integer.MAX_VALUE);
+        if (isPositionInCache()) {
+            return record.skip(i);
+        }
+        else if (!caching) {
+            return in.skip(n); // can safely use the long value
+        }
+        else {
+            return Streamer.stream(in, record, i); // skip 'n' cache
+        }
+    }
+
     /**
-     * Signal that further reads of the underlying stream should not be recorded.
+     * Signals that further reads of the underlying stream should not be
+     * cached.
      */
     public void stop() {
         caching = false;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NonEntityRequest.java,v 1.3 2009-10-14 08:56:15 pbryan Exp $
+ * $Id: NonEntityRequest.java,v 1.4 2009-10-15 07:07:54 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import org.apache.http.client.methods.HttpRequestBase;
  *
  * @author Paul C. Bryan
  */
-public class NonEntityRequest extends HttpRequestBase
+class NonEntityRequest extends HttpRequestBase
 {
     /** The request method. */
     private String method = null;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.5 2009-10-14 16:58:01 pbryan Exp $
+ * $Id: Request.java,v 1.6 2009-10-15 07:07:56 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,7 +63,6 @@ public class Request extends Message
      * while the Host header resolves the hostname and port that the remote
      * client used to access it.
      *
-     * @param request the request containing the URI and optional Host header.
      * @return the resolved URI value.
      */
     public URI resolveHostURI() {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderCredentialSource.java,v 1.3 2009-10-14 08:56:11 pbryan Exp $
+ * $Id: HeaderCredentialSource.java,v 1.4 2009-10-15 07:07:53 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,7 @@ public class HeaderCredentialSource implements PasswordCredentialSource {
      */
     @Override
     public void invalid(Exchange exchange) throws HandlerException, IOException {
-        throw new HandlerException("Failed to authenticate with header-supplied credentials");
+        throw new HandlerException("failed to authenticate using header-supplied credentials");
     }
 }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Chain.java,v 1.2 2009-10-09 07:38:37 pbryan Exp $
+ * $Id: Chain.java,v 1.3 2009-10-15 07:07:55 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,7 @@ import com.sun.identity.proxy.http.Exchange;
 import java.io.IOException;
 
 /**
- * Maintains a list of {@link Filter} objects. A chain is a specialized
+ * Maintains a chain of {@link Filter} objects. A chain is a specialized
  * type of handler, which knows how to add filters, and then invoke the first
  * head filter in the chain when it is invoked.
  * <p>

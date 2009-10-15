@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpBasicAuthFilter.java,v 1.6 2009-10-14 16:58:00 pbryan Exp $
+ * $Id: HttpBasicAuthFilter.java,v 1.7 2009-10-15 07:07:53 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,63 +27,63 @@ package com.sun.identity.proxy.auth;
 import com.sun.identity.proxy.handler.Filter;
 import com.sun.identity.proxy.handler.HandlerException;
 import com.sun.identity.proxy.http.Exchange;
+import com.sun.identity.proxy.http.Request;
 import com.sun.identity.proxy.http.Response;
 import com.sun.identity.proxy.io.CachedStream;
-import com.sun.identity.proxy.io.CacheFactory;
+import com.sun.identity.proxy.io.TemporaryStorage;
 import com.sun.identity.proxy.util.Base64;
+import com.sun.identity.proxy.util.IKStringSet;
+import com.sun.identity.proxy.util.StringUtil;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.UUID;
 
 /**
  * A filter that performs HTTP basic authentication per RFC 2617.
  * <p>
  * Once an HTTP authentication challenge (status code 401) is issued from
- * the remote server, all subsequent requests that pass through this filter
- * will include the user credentials.
+ * the remote server, all subsequent requests to that remote server that
+ * pass through the filter will include the user credentials.
  *
  * @author Paul C. Bryan
  */
 public class HttpBasicAuthFilter extends Filter
 {
-    /** Headers (in lower-case) that are suppressed from incoming request. */
-    private static final HashSet<String> SUPPRESS_REQUEST_HEADERS =
-     new HashSet<String>(Arrays.asList("authorization"));
+    /** Headers that are suppressed from incoming request. */
+    private static final IKStringSet SUPPRESS_REQUEST_HEADERS =
+     new IKStringSet(Arrays.asList("Authorization"));
 
-    /** Headers (in lower-case) that are suppressed for outgoing response. */
-    private static final HashSet<String> SUPPRESS_RESPONSE_HEADERS =
-     new HashSet<String>(Arrays.asList("www-authenticate"));
-
-    /** A handle that this object instance can use to lookup attributes in the session object. */
-    private final String objectId = UUID.randomUUID().toString();
+    /** Headers that are suppressed for outgoing response. */
+    private static final IKStringSet SUPPRESS_RESPONSE_HEADERS =
+     new IKStringSet(Arrays.asList("WWW-Authenticate"));
 
     /** The source from which to acquire username/password credentials. */
     private PasswordCredentialSource source;
 
-    /** The cache factory to use for caching incoming request entities. */
-    private CacheFactory factory;
+    /** Allocates temporary records for caching incoming request entities. */
+    private TemporaryStorage storage;
 
     /**
      * Creates a new HTTP basic authentication filter.
      *
      * @param source the source from which to acquire username/password credentials.
-     * @param factory the cache factory to use for caching incoming request entities.
+     * @param storage allocates temporary records for caching incoming request entities.
      */
-    public HttpBasicAuthFilter(PasswordCredentialSource source, CacheFactory factory) {
+    public HttpBasicAuthFilter(PasswordCredentialSource source, TemporaryStorage storage) {
         this.source = source;
-        this.factory = factory;
+        this.storage = storage;
     }
 
     /**
-     * Establishes a session attribute name for this object instance.
+     * Resolves a session attribute name for the remote server specified in the
+     * specified request.
      *
-     * @param attribute the name of the attribute to resolve.
-     * @return the session attribute name, fully qualified for this object instance.
+     * @param name the name of the attribute to resolve.
+     * @return the session attribute name, fully qualified the request remote server.
      */
-    private String attributeName(String attribute) {
-// FIXME: qualify with scheme/host/port?
-        return this.getClass().getName() + ":" + objectId + ":" + attribute;
+    private String attributeName(Request request, String name) {
+        return StringUtil.join(":", this.getClass().getName(), request.uri.getScheme(),
+         request.uri.getHost(), Integer.toString(request.uri.getPort()), name);
     }
 
     /**
@@ -99,18 +99,19 @@ public class HttpBasicAuthFilter extends Filter
  
         // cache the incoming entity for replay
         if (exchange.request.entity != null) {
-            exchange.request.entity = entity = factory.cacheStream(exchange.request.entity);
+            exchange.request.entity = entity =
+             new CachedStream(exchange.request.entity, storage.open(storage.create()));
         }
 
         // loop to retry for intitially retrieved (or refreshed) credentials
         for (int n = 0; n < 2; n++) {
 
             if (entity != null) {
-                entity.rewind(); // harmless the first time around
+                entity.rewind(); // harmless to call in the first pass
             }
 
             // because credentials are sent in every request, this class caches them in the session
-            String userpass = (String)exchange.request.session.get(attributeName("userpass"));
+            String userpass = (String)exchange.request.session.get(attributeName(exchange.request, "userpass"));
 
             if (userpass != null) {
                 exchange.request.headers.add("Authorization", "Basic " + userpass);
@@ -127,18 +128,18 @@ public class HttpBasicAuthFilter extends Filter
             // credentials might be stale, so fetch them
             PasswordCredentials credentials = source.credentials(exchange.request);
 
-            // lack of credentials is handled the same as invalid credentials
+            // lack of credentials is equivalent to invalid credentials
             if (credentials == null) {
                 break;
             }
 
             // ensure conformance with specification
             if (credentials.username.indexOf(':') > 0) {
-                throw new HandlerException("username must not contain colon character");
+                throw new HandlerException("username must not contain a colon character");
             }
 
             // set in session for fetch in next iteration of this loop
-            exchange.request.session.put(attributeName("userpass"),
+            exchange.request.session.put(attributeName(exchange.request, "userpass"),
              Base64.encode((credentials.username + ":" + credentials.password).getBytes()));
         }
 

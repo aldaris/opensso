@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieFilter.java,v 1.1 2009-10-14 08:56:15 pbryan Exp $
+ * $Id: CookieFilter.java,v 1.2 2009-10-15 07:07:55 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -217,7 +217,6 @@ public class CookieFilter extends Filter
                 for (ListIterator<String> hi = headers.listIterator(); hi.hasNext();) {
                     String header = hi.next();
                     ArrayList<String> parts;
-                    String h = header.toLowerCase();
                     if (name.equals("Set-Cookie2")) {  // rfc 2965 cookie
                         parts = new ArrayList<String>(Arrays.asList(DELIM_COMMA.split(header, 0)));
                     }

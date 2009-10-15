@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Streamer.java,v 1.3 2009-10-14 08:57:03 pbryan Exp $
+ * $Id: Streamer.java,v 1.4 2009-10-15 07:08:28 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,21 +29,21 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * TODO: Description.
+ * A utility class that can stream to and from various streams and records.
  *
  * @author Paul C. Bryan
  */
 public class Streamer
 {
-    /** TODO: Description. */
-    private static final int BUF_SIZE = 4096;
+    /** Size of buffer to use during streaming. */
+    private static final int BUF_SIZE = 8 * 1024; // 8 KiB buffer
 
     /**
-     * TODO: Description.
+     * Streams all data from an input stream to an output stream.
      *
-     * @param in TODO.
-     * @param out TODO.
-     * @throws IOException TODO.
+     * @param in the input stream to stream the data from.
+     * @param out the output stream to stream the data to.
+     * @throws IOException if an I/O exception occurs.
      */
     public static void stream(InputStream in, OutputStream out) throws IOException {
         byte[] buf = new byte[BUF_SIZE];
@@ -52,13 +52,34 @@ public class Streamer
             out.write(buf, 0, n);
         }
     }
-    
+
     /**
-     * TODO: Description.
+     * Streams data from an input stream to an output stream, up to a specified
+     * length.
      *
-     * @param in TODO.
-     * @param out TODO.
-     * @throws IOException TODO.
+     * @param in the input stream to stream the data from.
+     * @param out the output stream to stream the data to.
+     * @param len the number of bytes to stream.
+     * @return the actual number of bytes streamed.
+     * @throws IOException if an I/O exception occurs.
+     */
+    public static int stream(InputStream in, OutputStream out, int len) throws IOException {
+        int remain = len;
+        byte[] buf = new byte[BUF_SIZE];
+        int n;
+        while (remain > 0 && (n = in.read(buf, 0, Math.min(remain, BUF_SIZE))) >= 0) {
+            out.write(buf, 0, n);
+            remain -= n;
+        }
+        return len - remain;
+    }
+
+    /**
+     * Streams all data from a record to an output stream.
+     *
+     * @param in the record to stream the data from.
+     * @param out the output stream to stream the data to.
+     * @throws IOException if an I/O exception occurs.
      */
     public static void stream(Record in, OutputStream out) throws IOException {
         byte[] buf = new byte[BUF_SIZE];
@@ -67,13 +88,34 @@ public class Streamer
             out.write(buf, 0, n);
         }
     }
-    
+
     /**
-     * TODO: Description.
+     * Streams data from a record to an output stream, up to a specified
+     * length.
      *
-     * @param in TODO.
-     * @param out TODO.
-     * @throws IOException TODO.
+     * @param in the record to stream the data from.
+     * @param out the output stream to stream the data to.
+     * @param len the number of bytes to stream.
+     * @return the actual number of bytes streamed.
+     * @throws IOException if an I/O exception occurs.
+     */
+    public static int stream(Record in, OutputStream out, int len) throws IOException {
+        int remain = len;
+        byte[] buf = new byte[BUF_SIZE];
+        int n;
+        while (remain > 0 && (n = in.read(buf, 0, Math.min(remain, BUF_SIZE))) >= 0) {
+            out.write(buf, 0, n);
+            remain -= n;
+        }
+        return len - remain;
+    }
+
+    /**
+     * Streams all data from an input stream to a record.
+     *
+     * @param in the input stream to stream the data from.
+     * @param out the record to stream the data to.
+     * @throws IOException if an I/O exception occurs.
      */
     public static void stream(InputStream in, Record out) throws IOException {
         byte[] buf = new byte[BUF_SIZE];
@@ -84,11 +126,31 @@ public class Streamer
     }
     
     /**
-     * TODO: Description.
+     * Streams data from an input stream to a record, up to a specified length.
      *
-     * @param in TODO.
-     * @param out TODO.
-     * @throws IOException TODO.
+     * @param in the input stream to stream the data from.
+     * @param out the record to stream the data to.
+     * @param len the number of bytes to stream.
+     * @return the actual number of bytes streamed.
+     * @throws IOException if an I/O exception occurs.
+     */
+    public static int stream(InputStream in, Record out, int len) throws IOException {
+        int remain = len;
+        byte[] buf = new byte[BUF_SIZE];
+        int n;
+        while (remain > 0 && (n = in.read(buf, 0, Math.min(remain, BUF_SIZE))) >= 0) {
+            out.write(buf, 0, n);
+            remain -= n;
+        }
+        return len - remain;
+    }
+
+    /**
+     * Streams all data from one record to another.
+     *
+     * @param in the record to stream the data from.
+     * @param out the record to stream the data to.
+     * @throws IOException if an I/O exception occurs.
      */
     public static void stream(Record in, Record out) throws IOException {
         byte[] buf = new byte[BUF_SIZE];
@@ -96,6 +158,26 @@ public class Streamer
         while ((n = in.read(buf, 0, BUF_SIZE)) != -1) {
             out.write(buf, 0, n);
         }
+    }
+
+    /**
+     * Streams data from an one record to another, up to a specified length.
+     *
+     * @param in the record to stream the data from.
+     * @param out the record to stream the data to.
+     * @param len the number of bytes to stream.
+     * @return the actual number of bytes streamed.
+     * @throws IOException if an I/O exception occurs.
+     */
+    public static int stream(Record in, Record out, int len) throws IOException {
+        int remain = len;
+        byte[] buf = new byte[BUF_SIZE];
+        int n;
+        while (remain > 0 && (n = in.read(buf, 0, Math.min(remain, BUF_SIZE))) >= 0) {
+            out.write(buf, 0, n);
+            remain -= n;
+        }
+        return len - remain;
     }
 }
 

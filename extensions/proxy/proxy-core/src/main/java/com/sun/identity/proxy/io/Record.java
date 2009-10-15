@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Record.java,v 1.1 2009-10-14 08:57:02 pbryan Exp $
+ * $Id: Record.java,v 1.2 2009-10-15 07:07:58 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,8 +27,8 @@ package com.sun.identity.proxy.io;
 import java.io.IOException;
 
 /**
- * A record provides read-write storage for bytes. Records can grow on demand,
- * typically up to a specified limit.
+ * Provides read-write storage for data. Records can grow on demand, typically
+ * up to a specified limit.
  *
  * @author Paul C. Bryan
  */
@@ -87,12 +87,13 @@ public interface Record
      * or position greater than current length is specified an
      * {@link IOException} is thrown.
      *
+     * @param pos position within record to seek to.
      * @throws IOException if an I/O exception occurs.
      */
-    public void seek(int position) throws IOException;
+    public void seek(int pos) throws IOException;
 
     /**
-     * Attempts to skips over a specified number of bytes of data from this
+     * Attempts to skip over a specified number of bytes of data from this
      * record, adjusting the current position accordingly. This method may end
      * up skipping over a smaller number of bytes, including 0. The actual
      * number of bytes skipped is returned.
@@ -109,10 +110,10 @@ public interface Record
      * read/write position was within the truncated section, it is set to
      * the end of the record.
      *
-     * @param length the new length of the record.
+     * @param len the new length of the record.
      * @throws IOException if an I/O exception occurs.
      */
-    public void truncate(int length) throws IOException;
+    public void truncate(int len) throws IOException;
 
     /**
      * Attempts to write bytes of the requested length from the specified byte
@@ -127,6 +128,6 @@ public interface Record
      * @throws IOException if an I/O exception occurs.
      * @throws OverflowException if the operation would cause the record to exceed its length limit.
      */
-    public void write(byte[] b, int off, int len) throws IOException;
+    public void write(byte[] b, int off, int len) throws IOException, OverflowException;
 }
 
