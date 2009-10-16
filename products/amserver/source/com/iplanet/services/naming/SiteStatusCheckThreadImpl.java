@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteStatusCheckThreadImpl.java,v 1.6 2009-03-26 18:29:22 ww203982 Exp $
+ * $Id: SiteStatusCheckThreadImpl.java,v 1.7 2009-10-16 16:43:08 qcheng Exp $
  *
  */
 
@@ -107,10 +107,12 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
             }
             SystemTimer.getTimer().schedule(checker, new Date(((
                 System.currentTimeMillis() + urlCheckerSleep) / 1000) * 1000));
-            try {
-                checker.wait(timeout);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            synchronized(checker) {
+                try {
+                    checker.wait(timeout);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return (URLChecker)urlCheckers.get(getThreadName(url));
@@ -122,11 +124,17 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
      */
     public boolean doCheckSiteStatus(URL url)
     {
+        if (debug.messageEnabled()) {
+            debug.message("SiteStatusCheckThreadImpl.doCheckSiteStatus: check "
+                + url);
+        }
         URLChecker checker = getURLChecker(url);
         if (checker != null && (checker.getStatus()
             == URLStatus.STATUS_UNKNOWN)) {
-            checker.cancel();
-            checker.notify();
+            synchronized(checker) {
+                checker.cancel();
+                checker.notify();
+            }
             synchronized(urlCheckers) {
                 urlCheckers.remove(getThreadName(url));
             }
@@ -134,9 +142,9 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
                     + "Killing thread " + getThreadName(url));
             return false;
         } else if ((checker != null) &&  
-        		   (checker.getStatus() == URLStatus.STATUS_AVAILABLE)) {
+            (checker.getStatus() == URLStatus.STATUS_AVAILABLE)) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
@@ -299,13 +307,13 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
                 flag = true;
             } catch (IOException ioexception) {
                 debug.error("URLChecker.checkSocketConnection() : " + 
-                		"Socket connection Failed : " 
-                		+ ioexception.toString());
+               	    "Socket connection to " + url.toString() + " Failed : " 
+              	    + ioexception.toString());
             }
 
             if (debug.messageEnabled()) {
                 debug.message("URLChecker.checkSocketConnection() returning " 
-                    + flag);
+                    + flag + " for " + url.toString());
             }
             
             return flag;
