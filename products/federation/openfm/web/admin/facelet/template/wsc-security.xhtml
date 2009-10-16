@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsc-security.xhtml,v 1.1 2009-08-21 21:07:36 ggennaro Exp $
+   $Id: wsc-security.xhtml,v 1.2 2009-10-16 19:38:46 ggennaro Exp $
 
 -->
 
@@ -40,8 +40,8 @@
     <ui:define name="section-title">
         <ice:outputText
             value="#{resources['wsc-security.section-title.sts']}"/>
-        </ui:define>
-        <ui:define name="section-details">
+    </ui:define>
+    <ui:define name="section-details">
         <ice:outputText
             value="#{resources['wsc-security.section-details.sts']}"/>
     </ui:define>
@@ -49,8 +49,14 @@
 
         <ui:include src="wss-security-mechanism.xhtml">
             <ui:param
+                name="wizardBean"
+                value="#{wscCreateWizardBean}"/>
+            <ui:param
+                name="wizardHandler"
+                value="#{wscCreateWizardHandler}"/>
+            <ui:param
                 name="profileBean"
-                value="#{wscCreateWizardBean.stsProfileBean}"/>
+                value="#{wscCreateWizardBean.stsClientProfileBean}"/>
         </ui:include>
 
     </ui:define>
@@ -60,14 +66,20 @@
     <ui:define name="section-title">
         <ice:outputText
             value="#{resources['wsc-security.section-title.wsp']}"/>
-        </ui:define>
-        <ui:define name="section-details">
+    </ui:define>
+    <ui:define name="section-details">
         <ice:outputText
             value="#{resources['wsc-security.section-details.wsp']}"/>
     </ui:define>
     <ui:define name="section-body">
 
         <ui:include src="wss-security-mechanism.xhtml">
+            <ui:param
+                name="wizardBean"
+                value="#{wscCreateWizardBean}"/>
+            <ui:param
+                name="wizardHandler"
+                value="#{wscCreateWizardHandler}"/>
             <ui:param
                 name="profileBean"
                 value="#{wscCreateWizardBean.wscProfileBean}"/>

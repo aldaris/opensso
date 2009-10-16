@@ -24,7 +24,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WscCreateProfileNameSummary.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: WscCreateProfileNameSummary.java,v 1.2 2009-10-16 19:39:20 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -46,7 +46,7 @@ public class WscCreateProfileNameSummary extends WscCreateWizardSummary {
 
     @Override
     public String getValue() {
-        WssClientProfileBean wsc = getWscCreateWizardBean().getWscProfileBean();
+        WscProfileBean wsc = getWscCreateWizardBean().getWscProfileBean();
         Resources r = new Resources();
         String value = r.getString(this, "valueFormat");
 

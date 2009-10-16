@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: SecurityMechanismPanelBean.java,v 1.1 2009-09-30 22:01:27 ggennaro Exp $
+ * $Id: SecurityMechanismPanelBean.java,v 1.2 2009-10-16 19:39:20 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -38,7 +38,6 @@ public class SecurityMechanismPanelBean implements Serializable {
     private SecurityMechanism securityMechanism;
     private boolean checked;
     private boolean expanded;
-    private String settingsTemplate;
     
     // Convenience methods -----------------------------------------------------
     
@@ -52,6 +51,28 @@ public class SecurityMechanismPanelBean implements Serializable {
             ? securityMechanism.toLocaleString() : null;
     }
 
+    public String getSettingsTemplate() {
+        String template;
+        
+        switch(this.getSecurityMechanism()) {
+            case KERBEROS_TOKEN:
+                template = "wss-kerberos-provider.xhtml";
+                break;
+            case USERNAME_TOKEN:
+            case USERNAME_TOKEN_PLAIN:
+                template = "wss-usernames.xhtml";
+                break;
+            case X509_TOKEN:
+                template = "wss-x509.xhtml";
+                break;
+            default:
+                template = null;
+                break;
+        }
+        
+        return template;
+    }
+    
     public String getStyleClass() {
         
         if( isCollapsible() ) {
@@ -64,12 +85,12 @@ public class SecurityMechanismPanelBean implements Serializable {
     }
     
     public boolean isExpandable() {
-        return settingsTemplate != null && !expanded && checked
+        return getSettingsTemplate() != null && !expanded && checked
             ? true : false;
     }
     
     public boolean isCollapsible() {
-        return settingsTemplate != null && expanded && checked
+        return getSettingsTemplate() != null && expanded && checked
             ? true : false;
     }
     
@@ -100,13 +121,4 @@ public class SecurityMechanismPanelBean implements Serializable {
         this.expanded = expanded;
     }
 
-    public String getSettingsTemplate() {
-        return settingsTemplate;
-    }
-
-    public void setSettingsTemplate(String settingsTemplate) {
-        this.settingsTemplate = settingsTemplate;
-    }
-    
-    
 }

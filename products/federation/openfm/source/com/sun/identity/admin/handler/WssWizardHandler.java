@@ -1,6 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -24,24 +22,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WscCreateWizardStepValidator.java,v 1.2 2009-10-16 19:38:47 ggennaro Exp $
+ * $Id $
  */
 
-package com.sun.identity.admin.model;
+package com.sun.identity.admin.handler;
+
+import java.io.Serializable;
 
 import javax.faces.application.FacesMessage;
 
 import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.model.MessageBean;
+import com.sun.identity.admin.model.MessagesBean;
 
-public abstract class WscCreateWizardStepValidator extends WizardStepValidator {
-    public WscCreateWizardStepValidator(WizardBean wb) {
-        super(wb);
-    }
+public class WssWizardHandler 
+        extends WizardHandler 
+        implements Serializable
+{
+    private MessagesBean messagesBean;
 
-    protected WscCreateWizardBean getWscCreateWizardBean() {
-        return (WscCreateWizardBean)getWizardBean();
-    }
-    
     protected void showErrorMessage(String summaryKey, String detailKey) {
         MessageBean mb = new MessageBean();
         Resources r = new Resources();
@@ -50,6 +49,16 @@ public abstract class WscCreateWizardStepValidator extends WizardStepValidator {
         mb.setSeverity(FacesMessage.SEVERITY_ERROR);
         
         getMessagesBean().addMessageBean(mb);
+    }
+    
+    // Getters / Setters -------------------------------------------------------
+
+    public void setMessagesBean(MessagesBean messagesBean) {
+        this.messagesBean = messagesBean;
+    }
+
+    public MessagesBean getMessagesBean() {
+        return messagesBean;
     }
 
 }

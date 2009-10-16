@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsc-summary-sign-encrypt.xhtml,v 1.1 2009-10-07 16:05:09 ggennaro Exp $
+   $Id: wsc-summary-sign-encrypt.xhtml,v 1.2 2009-10-16 19:38:45 ggennaro Exp $
 
 -->
 
@@ -44,12 +44,12 @@
                 <ice:panelGrid columns="2">
                 <ice:outputText value="#{resources['wsc-summary-sign-encrypt.affectedElementsLabel']}" />
                 <ice:outputText value="#{summary.formattedStsMessageFlags}" />
-                <ice:outputText value="#{resources['wsc-summary-sign-encrypt.encryptionAlgorithmLabel']}" />
-                <ice:outputText value="#{summary.formattedStsEncryptionAlgorithm}" />
+                <ice:outputText value="#{resources['wsc-summary-sign-encrypt.encryptionLabel']}" />
+                <ice:outputText value="#{summary.formattedStsEncryption}" />
                 <ice:outputText value="#{resources['wsc-summary-sign-encrypt.privateKeyAliasLabel']}" />
-                <ice:outputText value="#{summary.wscCreateWizardBean.stsProfileBean.privateKeyAlias}" />
+                <ice:outputText value="#{summary.stsPrivateKeyAlias}" />
                 <ice:outputText value="#{resources['wsc-summary-sign-encrypt.publicKeyAliasLabel']}" />
-                <ice:outputText value="#{summary.wscCreateWizardBean.stsProfileBean.publicKeyAlias}" />
+                <ice:outputText value="#{summary.stsPublicKeyAlias}" />
                 </ice:panelGrid>
             </ice:panelGroup>
             <ice:panelGroup>
@@ -57,12 +57,12 @@
                 <ice:panelGrid columns="2">
                 <ice:outputText value="#{resources['wsc-summary-sign-encrypt.affectedElementsLabel']}" />
                 <ice:outputText value="#{summary.formattedWscMessageFlags}" />
-                <ice:outputText value="#{resources['wsc-summary-sign-encrypt.encryptionAlgorithmLabel']}" />
-                <ice:outputText value="#{summary.formattedWscEncryptionAlgorithm}" />
+                <ice:outputText value="#{resources['wsc-summary-sign-encrypt.encryptionLabel']}" />
+                <ice:outputText value="#{summary.formattedWscEncryption}" />
                 <ice:outputText value="#{resources['wsc-summary-sign-encrypt.privateKeyAliasLabel']}" />
-                <ice:outputText value="#{summary.wscCreateWizardBean.wscProfileBean.privateKeyAlias}" />
+                <ice:outputText value="#{summary.wscPrivateKeyAlias}" />
                 <ice:outputText value="#{resources['wsc-summary-sign-encrypt.publicKeyAliasLabel']}" />
-                <ice:outputText value="#{summary.wscCreateWizardBean.wscProfileBean.publicKeyAlias}" />
+                <ice:outputText value="#{summary.wscPublicKeyAlias}" />
                 </ice:panelGrid>
             </ice:panelGroup>
 

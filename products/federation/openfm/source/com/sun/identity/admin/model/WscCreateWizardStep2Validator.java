@@ -24,18 +24,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WscCreateWizardStep2Validator.java,v 1.2 2009-10-06 18:28:03 ggennaro Exp $
+ * $Id: WscCreateWizardStep2Validator.java,v 1.3 2009-10-16 19:39:22 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import com.icesoft.faces.context.effects.Effect;
-import com.sun.identity.admin.Resources;
-import com.sun.identity.admin.effect.InputFieldErrorEffect;
-import com.sun.identity.admin.effect.MessageErrorEffect;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.faces.application.FacesMessage;
+
+import com.icesoft.faces.context.effects.Effect;
+import com.sun.identity.admin.effect.InputFieldErrorEffect;
+import com.sun.identity.admin.effect.MessageErrorEffect;
 
 public class WscCreateWizardStep2Validator 
         extends WscCreateWizardStepValidator
@@ -51,11 +50,6 @@ public class WscCreateWizardStep2Validator
                 = SecurityTokenServiceType.valueOf(wb.getStsType());
 
         switch(stst) {
-            case OPENSSO:
-                if( !validDeploymentUrl() ) {
-                    return false;
-                }
-                break;
             case OTHER:
                 if( !validEndPoint() ) {
                     return false;
@@ -63,6 +57,7 @@ public class WscCreateWizardStep2Validator
                     return false;
                 }
                 break;
+            case OPENSSO:
             case NONE:
                 break;
         }
@@ -70,45 +65,13 @@ public class WscCreateWizardStep2Validator
         return true;
     }
 
-    private boolean validDeploymentUrl() {
-        WscCreateWizardBean wb = getWscCreateWizardBean();
-        String deploymentUrl = wb.getOpenssoStsUrl();
-        String pattern = ".{1,1024}?";
-        try {
-            @SuppressWarnings("unused")
-            URL url = new URL(deploymentUrl);
-            if( deploymentUrl != null && deploymentUrl.matches(pattern) ) {
-                return true;
-            }
-        } catch (MalformedURLException ex) {
-            // do nothing but flow through below for error message
-        }
-
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidDeploymentUrlSummary"));
-        mb.setDetail(r.getString(this, "invalidDeploymentUrlDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-        Effect e;
-        e = new InputFieldErrorEffect();
-        wb.setOpenssoStsUrlInputEffect(e);
-
-        e = new MessageErrorEffect();
-        wb.setOpenssoStsUrlMessageEffect(e);
-
-        getMessagesBean().addMessageBean(mb);
-        return false;
-    }
-
     private boolean validEndPoint() {
         WscCreateWizardBean wb = getWscCreateWizardBean();
-        String endPoint = wb.getStsProfileBean().getEndPoint();
+        String endPoint = wb.getStsClientProfileBean().getEndPoint();
         String pattern = ".{1,1024}?";
 
         try {
-            @SuppressWarnings("unused")
-            URL url = new URL(endPoint);
+            new URL(endPoint);
             if( endPoint != null && endPoint.matches(pattern) ) {
                 return true;
             }
@@ -116,31 +79,25 @@ public class WscCreateWizardStep2Validator
             // do nothing but flow through below for error message
         }
 
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidEndPointSummary"));
-        mb.setDetail(r.getString(this, "invalidEndPointDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
         Effect e;
         e = new InputFieldErrorEffect();
-        wb.getStsProfileBean().setEndPointInputEffect(e);
+        wb.getStsClientProfileBean().setEndPointInputEffect(e);
 
         e = new MessageErrorEffect();
-        wb.getStsProfileBean().setEndPointMessageEffect(e);
+        wb.getStsClientProfileBean().setEndPointMessageEffect(e);
 
-        getMessagesBean().addMessageBean(mb);
+        showErrorMessage("invalidEndPointSummary", 
+                         "invalidEndPointDetail");
         return false;
     }
 
     private boolean validMexEndPoint() {
         WscCreateWizardBean wb = getWscCreateWizardBean();
-        String mexEndPoint = wb.getStsProfileBean().getMexEndPoint();
+        String mexEndPoint = wb.getStsClientProfileBean().getMexEndPoint();
         String pattern = ".{1,1024}?";
 
         try {
-            @SuppressWarnings("unused")
-            URL url = new URL(mexEndPoint);
+            new URL(mexEndPoint);
             if( mexEndPoint != null && mexEndPoint.matches(pattern) ) {
                 return true;
             }
@@ -148,20 +105,15 @@ public class WscCreateWizardStep2Validator
             // do nothing but flow through below for error message
         }
 
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidMexEndPointSummary"));
-        mb.setDetail(r.getString(this, "invalidMexEndPointDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
         Effect e;
         e = new InputFieldErrorEffect();
-        wb.getStsProfileBean().setMexEndPointInputEffect(e);
+        wb.getStsClientProfileBean().setMexEndPointInputEffect(e);
 
         e = new MessageErrorEffect();
-        wb.getStsProfileBean().setMexEndPointMessageEffect(e);
+        wb.getStsClientProfileBean().setMexEndPointMessageEffect(e);
 
-        getMessagesBean().addMessageBean(mb);
+        showErrorMessage("invalidMexEndPointSummary", 
+                         "invalidMexEndPointDetail");
         return false;
     }
 }

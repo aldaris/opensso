@@ -24,16 +24,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WscCreateWizardStep3Validator.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: WscCreateWizardStep3Validator.java,v 1.2 2009-10-16 19:39:18 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
-import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
-import javax.faces.application.FacesMessage;
+
 
 public class WscCreateWizardStep3Validator 
         extends WscCreateWizardStepValidator
@@ -44,19 +43,19 @@ public class WscCreateWizardStep3Validator
 
     @Override
     public boolean validate() {
-        WscCreateWizardBean wb = getWscCreateWizardBean();
-        WssClientProfileBean profileBean;
-
-        if( wb.isUsingSts() ) {
-            profileBean = wb.getStsProfileBean();
+        WscCreateWizardBean wizardBean = getWscCreateWizardBean();
+        WscProfileBean profileBean;
+        
+        if( wizardBean.isUsingSts() ) {
+            profileBean = wizardBean.getStsClientProfileBean();
         } else {
-            profileBean = wb.getWscProfileBean();
+            profileBean = wizardBean.getWscProfileBean();
         }
-
-        SecurityMechanism sm
-                = SecurityMechanism.valueOf(profileBean.getSecurityMechanism());
-
-        switch(sm) {
+        
+        SecurityMechanism securityMechanism
+            = SecurityMechanism.valueOf(profileBean.getSecurityMechanism());
+        
+        switch(securityMechanism) {
             case ANONYMOUS:
             case SAML2_HOK:
             case SAML2_SV:
@@ -84,36 +83,25 @@ public class WscCreateWizardStep3Validator
                 noSecurityMechanism();
                 return false;
         }
-
+        
         return true;
     }
 
     private void noSecurityMechanism() {
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidNoSecuritySettingsSummary"));
-        mb.setDetail(r.getString(this, "invalidNoSecuritySettingsDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-        getMessagesBean().addMessageBean(mb);
+        showErrorMessage("invalidNoSecuritySettingsSummary", 
+                         "invalidNoSecuritySettingsDetail");
     }
 
-    private boolean validUserNameTokenSettings(WssClientProfileBean pb) {
+    private boolean validUserNameTokenSettings(WscProfileBean pb) {
         String userName = pb.getUserNameTokenUserName();
         String password = pb.getUserNameTokenPassword();
-        String pattern = "[\\w ]{0,50}?";
+        String pattern = "[\\w ]{1,50}?";
 
         if( (userName == null || userName.matches(pattern)) &&
             (password == null || password.matches(pattern)) )
         {
             return true;
         }
-
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidUserNameTokenSettingsSummary"));
-        mb.setDetail(r.getString(this, "invalidUserNameTokenSettingsDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
         Effect e;
         e = new InputFieldErrorEffect();
@@ -124,73 +112,66 @@ public class WscCreateWizardStep3Validator
         pb.setUserNameTokenUserNameMessageEffect(e);
         pb.setUserNameTokenPasswordMessageEffect(e);
 
-        getMessagesBean().addMessageBean(mb);
+        showErrorMessage("invalidUserNameTokenSettingsSummary", 
+                         "invalidUserNameTokenSettingsDetail");
+
         return false;
     }
 
-    private boolean validKerberosSettings(WssClientProfileBean pb) {
+    private boolean validKerberosSettings(WscProfileBean pb) {
         String domain = pb.getKerberosDomain();
         String domainServer = pb.getKerberosDomainServer();
         String serverPrincipal = pb.getKerberosServicePrincipal();
         String ticketCache = pb.getKerberosTicketCache();
         String pattern = "[\\w \\@\\.\\/\\&\\:]{0,255}?";
-        String summary = null;
-        String detail = null;
-        Resources r = new Resources();
+        String summaryKey = null;
+        String detailKey = null;
 
         if(domain != null && !domain.matches(pattern)) {
-            summary = r.getString(this, "invalidKerberosDomainSummary");
-            detail = r.getString(this, "invalidKerberosDomainDetail");
+            summaryKey = "invalidKerberosDomainSummary";
+            detailKey = "invalidKerberosDomainDetail";
             pb.setKerberosDomainInputEffect(new InputFieldErrorEffect());
             pb.setKerberosDomainMessageEffect(new MessageErrorEffect());
 
         } else if(domainServer != null && !domainServer.matches(pattern)) {
-            summary = r.getString(this, "invalidKerberosDomainServerSummary");
-            detail = r.getString(this, "invalidKerberosDomainServerDetail");
+            summaryKey = "invalidKerberosDomainServerSummary";
+            detailKey = "invalidKerberosDomainServerDetail";
             pb.setKerberosDomainServerInputEffect(new InputFieldErrorEffect());
             pb.setKerberosDomainServerMessageEffect(new MessageErrorEffect());
 
         } else if(serverPrincipal != null && !serverPrincipal.matches(pattern)) {
-            summary = r.getString(this, "invalidKerberosServicePrincipalSummary");
-            detail = r.getString(this, "invalidKerberosServicePrincipalDetail");
+            summaryKey = "invalidKerberosServicePrincipalSummary";
+            detailKey = "invalidKerberosServicePrincipalDetail";
             pb.setKerberosServicePrincipalInputEffect(new InputFieldErrorEffect());
             pb.setKerberosServicePrincipalMessageEffect(new MessageErrorEffect());
 
         } else if(ticketCache != null && !ticketCache.matches(pattern)) {
-            summary = r.getString(this, "invalidKerberosServicePrincipalSummary");
-            detail = r.getString(this, "invalidKerberosServicePrincipalDetail");
+            summaryKey = "invalidKerberosServicePrincipalSummary";
+            detailKey = "invalidKerberosServicePrincipalDetail";
             pb.setKerberosTicketCacheInputEffect(new InputFieldErrorEffect());
             pb.setKerberosTicketCacheMessageEffect(new MessageErrorEffect());
 
         }
 
-        if( summary != null ) {
-            MessageBean mb = new MessageBean();
-            mb.setSummary(summary);
-            mb.setDetail(detail);
-            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-            getMessagesBean().addMessageBean(mb);
+        if( summaryKey != null ) {
+            showErrorMessage(summaryKey, detailKey);
             return false;
         }
 
         return true;
     }
 
-    private boolean validX509TokenSettings(WssClientProfileBean pb) {
+    private boolean validX509TokenSettings(WscProfileBean pb) {
         X509SigningRefType signingRef 
-                = X509SigningRefType.valueOf(pb.getX509TokenSigningReferenceType());
+                = X509SigningRefType.valueOf(pb.getX509SigningRefType());
 
         if( signingRef != null ) {
             return true;
         }
 
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidX509TokenSettingsSummary"));
-        mb.setDetail(r.getString(this, "invalidX509TokenSettingsDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
-        getMessagesBean().addMessageBean(mb);
+        showErrorMessage("invalidX509TokenSettingsSummary", 
+                         "invalidX509TokenSettingsDetail");
         return false;
     }
+
 }

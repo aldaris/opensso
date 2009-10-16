@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WscCreateWizardStep.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: WscCreateWizardStep.java,v 1.2 2009-10-16 19:39:19 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -36,7 +36,8 @@ public enum WscCreateWizardStep {
     WSC_USING_STS(1),
     WSC_SECURITY(2),
     WSC_SIGN_ENCRYPT(3),
-    SUMMARY(4);
+    WSC_SAML(4),
+    SUMMARY(5);
     
     private final int stepNumber;
     private static final Map<Integer, WscCreateWizardStep> intValues =
@@ -46,6 +47,7 @@ public enum WscCreateWizardStep {
                     put(WSC_USING_STS.toInt(), WSC_USING_STS);
                     put(WSC_SECURITY.toInt(), WSC_SECURITY);
                     put(WSC_SIGN_ENCRYPT.toInt(), WSC_SIGN_ENCRYPT);
+                    put(WSC_SAML.toInt(), WSC_SAML);
                     put(SUMMARY.toInt(), SUMMARY);
                 }
             };

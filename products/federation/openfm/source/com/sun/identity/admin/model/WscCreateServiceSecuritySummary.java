@@ -24,7 +24,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WscCreateServiceSecuritySummary.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: WscCreateServiceSecuritySummary.java,v 1.2 2009-10-16 19:39:18 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -46,17 +46,26 @@ public class WscCreateServiceSecuritySummary extends WscCreateWizardSummary {
 
     @Override
     public String getValue() {
-        SecurityMechanism sm;
-        WssClientProfileBean profile;
+        WscCreateWizardBean wizardBean = getWscCreateWizardBean();
+        SecurityMechanism sm = null;
         
-        if( getWscCreateWizardBean().isUsingSts() ) {
-            profile = getWscCreateWizardBean().getStsProfileBean();
-        } else {
-            profile = getWscCreateWizardBean().getWscProfileBean();
-        }
+        if( wizardBean.isUsingSts() ) {
+            StsClientProfileBean stsClientProfile 
+                = wizardBean.getStsClientProfileBean();
 
-        sm = SecurityMechanism.valueOf(profile.getSecurityMechanism());
-        return sm.toLocaleString();
+            if( stsClientProfile.getSecurityMechanism() != null ) {
+                sm = SecurityMechanism.valueOf(stsClientProfile.getSecurityMechanism());
+            }
+            
+        } else {
+            WscProfileBean wscProfile = wizardBean.getWscProfileBean();
+            
+            if( wscProfile.getSecurityMechanism() != null ) {
+                sm = SecurityMechanism.valueOf(wscProfile.getSecurityMechanism());
+            }
+        }
+        
+        return sm == null ? "" : sm.toLocaleString();
     }
 
     @Override

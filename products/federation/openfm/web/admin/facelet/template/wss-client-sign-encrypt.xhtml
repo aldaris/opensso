@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wss-client-sign-encrypt.xhtml,v 1.1 2009-08-21 21:07:36 ggennaro Exp $
+   $Id: wss-client-sign-encrypt.xhtml,v 1.2 2009-10-16 19:38:46 ggennaro Exp $
 
 -->
 
@@ -47,6 +47,7 @@
         <ice:panelGrid columns="4">
             <ice:selectBooleanCheckbox
                 id="requestSigned"
+                disabled="#{usingPreset}"
                 value="#{profileBean.requestSigned}"/>
             <ice:outputLabel
                 for="requestSigned"
@@ -54,6 +55,7 @@
                 value="#{resources['wss-client-sign-encrypt.requestSignedLabel']}" />
             <ice:selectBooleanCheckbox
                 id="responseSignatureVerified"
+                disabled="#{usingPreset}"
                 value="#{profileBean.responseSignatureVerified}"/>
             <ice:outputLabel
                 for="responseSignatureVerified"
@@ -61,13 +63,15 @@
 
             <ice:selectBooleanCheckbox
                 id="requestHeaderEncrypted"
-                style="padding-right: 20px;"
+                disabled="#{usingPreset}"
                 value="#{profileBean.requestHeaderEncrypted}" />
             <ice:outputLabel
                 for="requestHeaderEncrypted"
+                style="padding-right: 20px;"
                 value="#{resources['wss-client-sign-encrypt.requestHeaderEncryptedLabel']}" />
             <ice:selectBooleanCheckbox
                 id="responseDecrypted"
+                disabled="#{usingPreset}"
                 value="#{profileBean.responseDecrypted}" />
             <ice:outputLabel
                 for="responseDecrypted"
@@ -76,65 +80,72 @@
 
             <ice:selectBooleanCheckbox
                 id="requestEncrypted"
+                disabled="#{usingPreset}"
                 value="#{profileBean.requestEncrypted}" />
             <ice:outputLabel
                 for="requestEncrypted"
+                style="padding-right: 20px;"
                 value="#{resources['wss-client-sign-encrypt.requestEncryptedLabel']}" />
             <ice:outputText value="" />
             <ice:outputText value="" />
         </ice:panelGrid>
     </ice:panelGrid>
 
-    <ice:panelGrid columns="2">
+    <ice:panelGrid 
+        columns="2"
+        columnClasses="label-column,input-column">
         <ice:outputLabel
             for="encryptionAlgorithm"
             style="float: right;"
             value="#{resources['wss-client-sign-encrypt.encryptionAlgorithmLabel']}" />
-        <ice:selectOneMenu id="encryptionAlgorithm"
-                           value="#{profileBean.encryptionAlgorithm}">
+        <ice:selectOneMenu 
+            id="encryptionAlgorithm"
+                disabled="#{usingPreset}"
+            value="#{profileBean.encryptionAlgorithm}">
             <f:selectItems
-                value="#{profileBean.encryptionAlgorithmList}"/>
+                value="#{wizardBean.encryptionAlgorithmList}"/>
         </ice:selectOneMenu>
 
         <ice:outputLabel
             for="privateKeyAlias"
             style="float: right;"
             value="#{resources['wss-client-sign-encrypt.privateKeyAliasLabel']}" />
-        <ice:panelGroup>
+        <ice:panelGrid columns="1">
             <ice:outputText
-                rendered="#{o:size(profileBean.privateKeyAliasList) == 0 }"
+                rendered="#{o:size(wizardBean.keyAliasList) == 0 }"
                 style="font-style: italic;"
                 value="#{resources['wss-client-sign-encrypt.noPrivateKeyAliases']}"/>
             <ice:selectOneMenu
                 id="privateKeyAlias"
-                rendered="#{o:size(profileBean.privateKeyAliasList) > 0 }"
+                rendered="#{o:size(wizardBean.keyAliasList) > 0 }"
                 value="#{profileBean.privateKeyAlias}">
-                <f:selectItems value="#{profileBean.privateKeyAliasList}"/>
+                <f:selectItems value="#{wizardBean.keyAliasList}"/>
             </ice:selectOneMenu>
             <ice:outputText
                 style="font-style: italic;"
                 value="#{resources['wss-client-sign-encrypt.privateKeyAliasInlineHelp']}" />
-        </ice:panelGroup>
+        </ice:panelGrid>
 
         <ice:outputLabel
             for="publicKeyAlias"
             style="float: right;"
             value="#{resources['wss-client-sign-encrypt.publicKeyAliasLabel']}" />
-        <ice:panelGroup>
+        <ice:panelGrid columns="1">
             <ice:outputText
-                rendered="#{o:size(profileBean.publicKeyAliasList) == 0 }"
+                rendered="#{o:size(wizardBean.keyAliasList) == 0 }"
                 style="font-style: italic;"
                 value="#{resources['wss-client-sign-encrypt.noPublicKeyAliases']}"/>
             <ice:selectOneMenu
                 id="publicKeyAlias"
-                rendered="#{o:size(profileBean.publicKeyAliasList) > 0 }"
+                disabled="#{usingPreset}"
+                rendered="#{o:size(wizardBean.keyAliasList) > 0 }"
                 value="#{profileBean.publicKeyAlias}">
-                <f:selectItems value="#{profileBean.publicKeyAliasList}"/>
+                <f:selectItems value="#{wizardBean.keyAliasList}"/>
             </ice:selectOneMenu>
             <ice:outputText
                 style="font-style: italic;"
                 value="#{resources['wss-client-sign-encrypt.publicKeyAliasInlineHelp']}" />
-        </ice:panelGroup>
+        </ice:panelGrid>
 
     </ice:panelGrid>
 

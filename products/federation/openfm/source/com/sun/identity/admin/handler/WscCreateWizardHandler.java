@@ -30,6 +30,8 @@ package com.sun.identity.admin.handler;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -37,29 +39,35 @@ import javax.faces.model.SelectItem;
 
 import com.icesoft.faces.component.selectinputtext.SelectInputText;
 import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.dao.WssProfileDao;
 import com.sun.identity.admin.model.LinkBean;
-import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
+import com.sun.identity.admin.model.SecurityMechanism;
 import com.sun.identity.admin.model.SecurityTokenServiceType;
+import com.sun.identity.admin.model.StsClientProfileBean;
 import com.sun.identity.admin.model.WscCreateWizardBean;
 import com.sun.identity.admin.model.WscCreateWizardStep;
 import com.sun.identity.admin.model.WscCreateWizardStep1Validator;
 import com.sun.identity.admin.model.WscCreateWizardStep2Validator;
 import com.sun.identity.admin.model.WscCreateWizardStep3Validator;
-import com.sun.identity.admin.model.WssClientProfileBean;
-import com.sun.identity.admin.model.WssProviderProfileBean;
+import com.sun.identity.admin.model.WscCreateWizardStep5Validator;
+import com.sun.identity.admin.model.WscProfileBean;
+import com.sun.identity.admin.model.WspProfileBean;
+import com.sun.identity.wss.provider.ProviderException;
+import com.sun.identity.wss.provider.plugins.AgentProvider;
+import com.sun.identity.wss.provider.plugins.STSAgent;
 
 public class WscCreateWizardHandler 
-        extends WizardHandler 
+        extends WssWizardHandler 
         implements Serializable
 {
-    private MessagesBean messagesBean;
     
     @Override
     public void initWizardStepValidators() {
         getWizardStepValidators()[WscCreateWizardStep.WSC_PROFILE.toInt()] = new WscCreateWizardStep1Validator(getWizardBean());
         getWizardStepValidators()[WscCreateWizardStep.WSC_USING_STS.toInt()] = new WscCreateWizardStep2Validator(getWizardBean());
         getWizardStepValidators()[WscCreateWizardStep.WSC_SECURITY.toInt()] = new WscCreateWizardStep3Validator(getWizardBean());
+        getWizardStepValidators()[WscCreateWizardStep.WSC_SAML.toInt()] = new WscCreateWizardStep5Validator(getWizardBean());
     }
 
     @Override
@@ -119,55 +127,55 @@ public class WscCreateWizardHandler
     public void wspEndPointListener(ValueChangeEvent event) {
 
         if (event.getComponent() instanceof SelectInputText) {
-
-            SelectInputText sit = (SelectInputText) event.getComponent();
+            WscCreateWizardBean wizardBean 
+                = (WscCreateWizardBean) getWizardBean();
+            WscProfileBean wscProfile = wizardBean.getWscProfileBean();
+            SelectInputText autoComplete 
+                = (SelectInputText) event.getComponent();
             String newEndPoint = (String) event.getNewValue();
-
-            WscCreateWizardBean wizardBean = (WscCreateWizardBean) getWizardBean();
-            ArrayList<WssProviderProfileBean> wspProfilePossibilities = new ArrayList<WssProviderProfileBean>();
-
-            WssProviderProfileBean tmp;
-
-            tmp = new WssProviderProfileBean();
-            tmp.setEndPoint("http://example.com/path/to/service");
-            tmp.setProfileName("Example Service");
-            wspProfilePossibilities.add(tmp);
-
-            tmp = new WssProviderProfileBean();
-            tmp.setEndPoint("http://example.net/path/to/other/service");
-            tmp.setProfileName("Other Example Service");
-            wspProfilePossibilities.add(tmp);
-
-            tmp = new WssProviderProfileBean();
-            tmp.setEndPoint("http://something.com/service");
-            tmp.setProfileName("Some Service");
-            wspProfilePossibilities.add(tmp);
-
-            tmp = new WssProviderProfileBean();
-            tmp.setEndPoint("http://something.org/StockQuote");
-            tmp.setProfileName("StockQuoteService");
-            wspProfilePossibilities.add(tmp);
-
-            tmp = new WssProviderProfileBean();
-            tmp.setEndPoint("http://whatever.com/path/to/service");
-            tmp.setProfileName("Yet Another Service");
-            wspProfilePossibilities.add(tmp);
-
-            ArrayList<SelectItem> wspProfileSuggestions 
-                = new ArrayList<SelectItem>();
             
-            for( WssProviderProfileBean wsp : wspProfilePossibilities) {
-                if( wsp.getEndPoint().startsWith(newEndPoint) ) {
-                    wspProfileSuggestions.add(new SelectItem(wsp, wsp.getEndPoint()));
-                }
-                if( wspProfileSuggestions.size() >= sit.getRows() ) {
+            ArrayList<WspProfileBean> matches
+                = WssProfileDao.getMatchingWspProfiles(newEndPoint);
+
+            ArrayList<SelectItem> suggestions = new ArrayList<SelectItem>();
+            for( WspProfileBean match : matches ) {
+                suggestions.add(new SelectItem(match, match.getEndPoint()));
+                if( suggestions.size() > autoComplete.getRows() ) {
                     break;
                 }
             }
+            wizardBean.setWspProfileSuggestions(suggestions);
             
-            wizardBean.setWspProfileSuggestions(wspProfileSuggestions);
-        }
-        
+            
+            WspProfileBean chosenWspProfile = null;
+            if( autoComplete.getSelectedItem() != null ) {
+                chosenWspProfile 
+                    = (WspProfileBean) autoComplete.getSelectedItem().getValue();
+            } else if( newEndPoint != null ) {
+                chosenWspProfile 
+                    = WssProfileDao.getWspProfileBeanByEndPoint(newEndPoint);
+            }
+            
+            if( chosenWspProfile != null ) {
+                wizardBean.setUsingWsp(true);
+                wizardBean.setChosenWspProfileBean(chosenWspProfile);
+                wscProfile.setUsingMexEndPoint(false);
+            } else {
+                wizardBean.setUsingWsp(false);
+                wizardBean.setChosenWspProfileBean(null);
+                wscProfile.setUsingMexEndPoint(false);
+            }
+            
+            // update based on changes
+            wizardBean.updateWscProfileWithPresets();
+            wizardBean.updateSecurityMechanism();
+
+            // reset wizard state to ensure user revisits steps in case of changes
+            wizardBean.getWizardStepBeans()[WscCreateWizardStep.WSC_SECURITY.toInt()].setEnabled(false);
+            wizardBean.getWizardStepBeans()[WscCreateWizardStep.WSC_SIGN_ENCRYPT.toInt()].setEnabled(false);
+            wizardBean.getWizardStepBeans()[WscCreateWizardStep.WSC_SAML.toInt()].setEnabled(false);
+            wizardBean.getWizardStepBeans()[WscCreateWizardStep.SUMMARY.toInt()].setEnabled(false);
+        }        
     }
 
     public void stsTypeListener(ValueChangeEvent event) {
@@ -177,7 +185,8 @@ public class WscCreateWizardHandler
 
         if( !oldValue.equalsIgnoreCase(newValue) ) {
             WscCreateWizardBean wizardBean
-                    = (WscCreateWizardBean) getWizardBean();
+                = (WscCreateWizardBean) getWizardBean();
+
             SecurityTokenServiceType stsType
                     = SecurityTokenServiceType.valueOf(newValue);
 
@@ -196,8 +205,13 @@ public class WscCreateWizardHandler
                     break;
             }
 
+            // update based on changes
+            wizardBean.updateStsClientProfileWithPresets();
+            wizardBean.updateSecurityMechanism();
+
             // reset wizard state to ensure user revisits steps in case of changes
             wizardBean.getWizardStepBeans()[WscCreateWizardStep.WSC_SIGN_ENCRYPT.toInt()].setEnabled(false);
+            wizardBean.getWizardStepBeans()[WscCreateWizardStep.WSC_SAML.toInt()].setEnabled(false);
             wizardBean.getWizardStepBeans()[WscCreateWizardStep.SUMMARY.toInt()].setEnabled(false);
         }
     }
@@ -206,7 +220,7 @@ public class WscCreateWizardHandler
 
         WscCreateWizardBean wizardBean
                 = (WscCreateWizardBean) getWizardBean();
-        WssClientProfileBean wscProfileBean = wizardBean.getWscProfileBean();
+        WscProfileBean wscProfileBean = wizardBean.getWscProfileBean();
 
         if( wscProfileBean.isUsingMexEndPoint()
                 && wscProfileBean.getEndPoint() != null 
@@ -222,19 +236,86 @@ public class WscCreateWizardHandler
         wizardBean.getWizardStepBeans()[WscCreateWizardStep.SUMMARY.toInt()].setEnabled(false);
     }
 
-
+    
     private boolean save() {
+        WscCreateWizardBean wizardBean = (WscCreateWizardBean) getWizardBean();
+        WscProfileBean wscProfileBean = wizardBean.getWscProfileBean();
+        StsClientProfileBean stsClientProfileBean = wizardBean.getStsClientProfileBean();
+
+        // create the sts client profile
+        if( wizardBean.isUsingSts() ) {
+            STSAgent stsClient = null;
+            
+            String profileName = "STS Client - " + wscProfileBean.getProfileName();
+            stsClientProfileBean.setProfileName(profileName);
+            
+            if( WssProfileDao.stsAgentExists(profileName) ) {
+                showErrorMessage("saveErrorSummary", "saveErrorDetailExists");
+                getWizardBean().gotoStep(WscCreateWizardStep.WSC_PROFILE.toInt());
+                return false;
+            }
+            
+            try {
+                
+                stsClient = WssProfileDao.getStsAgent(stsClientProfileBean);
+
+            } catch (ProviderException e) {
+                // problem with initialization
+                showErrorMessage("saveErrorSummary", "saveErrorDetailInit");
+                getWizardBean().gotoStep(WscCreateWizardStep.SUMMARY.toInt());
+                Logger.getLogger(WscCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
+                return false;
+            }
+                        
+            try {
+                stsClient.store();
+            } catch (ProviderException e) {
+                // problem with persistence
+                showErrorMessage("saveErrorSummary", "saveErrorDetailStore");
+                getWizardBean().gotoStep(WscCreateWizardStep.SUMMARY.toInt());
+                Logger.getLogger(WscCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
+                return false;
+            }
+        }
+        
+        // create the wsc profile
+        AgentProvider wsc = null;
+        
+        try {
+            
+            if( wizardBean.isUsingSts() ) {
+                wscProfileBean.setStsClientProfileName(stsClientProfileBean.getProfileName());
+                wscProfileBean.setSecurityMechanism(SecurityMechanism.STS_SECURITY.toString());
+            }
+            
+            wsc = WssProfileDao.getAgentProvider(wscProfileBean);
+        } catch (ProviderException e) {
+            // problem with initialization
+            showErrorMessage("saveErrorSummary", "saveErrorDetailInit");
+            getWizardBean().gotoStep(WscCreateWizardStep.SUMMARY.toInt());
+            Logger.getLogger(WscCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
+        
+        if( wsc != null & wsc.isExists() ) {
+            showErrorMessage("saveErrorSummary", "saveErrorDetailExists");
+            getWizardBean().gotoStep(WscCreateWizardStep.WSC_PROFILE.toInt());
+            return false;
+        }
+
+        
+        try {
+            wsc.store();
+        } catch (ProviderException e) {
+            // problem with persistence
+            showErrorMessage("saveErrorSummary", "saveErrorDetailStore");
+            getWizardBean().gotoStep(WscCreateWizardStep.SUMMARY.toInt());
+            Logger.getLogger(WscCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
+
         return true;
     }
 
-    // Getters / Setters -------------------------------------------------------
-
-    public void setMessagesBean(MessagesBean messagesBean) {
-        this.messagesBean = messagesBean;
-    }
-
-    public MessagesBean getMessagesBean() {
-        return messagesBean;
-    }
 
 }

@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.18 2009-10-09 20:17:14 farble1670 Exp $
+  $Id: faces-config.xml,v 1.19 2009-10-16 19:39:27 ggennaro Exp $
 -->
 
 <faces-config version="1.2" 
@@ -2506,7 +2506,7 @@
         <managed-bean-scope>request</managed-bean-scope>
         <managed-property>
             <property-name>steps</property-name>
-            <value>5</value>
+            <value>6</value>
         </managed-property>
     </managed-bean>
 

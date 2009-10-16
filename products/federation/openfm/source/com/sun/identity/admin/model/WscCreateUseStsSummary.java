@@ -24,7 +24,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WscCreateUseStsSummary.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: WscCreateUseStsSummary.java,v 1.2 2009-10-16 19:39:23 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -47,23 +47,18 @@ public class WscCreateUseStsSummary extends WscCreateWizardSummary {
     @Override
     public String getValue() {
         WscCreateWizardBean wizardBean = getWscCreateWizardBean();
-        Resources r = new Resources();
         SecurityTokenServiceType stsType
                 = SecurityTokenServiceType.valueOf(wizardBean.getStsType());
         String value = null;
 
         switch( stsType ) {
-            case OPENSSO:
-                value = r.getString(this, "valueFormat");
-                value = value.replaceAll("\\{0\\}", stsType.toLocaleString());
-                value = value.replaceAll("\\{1\\}", wizardBean.getOpenssoStsUrl());
-                break;
             case OTHER:
-                WssClientProfileBean sts = wizardBean.getStsProfileBean();
+                StsClientProfileBean sts = wizardBean.getStsClientProfileBean();
                 value = sts.getEndPoint();
                 break;
+            case OPENSSO:
             case NONE:
-                value = r.getString(this, "valueFormat.none");
+                value = stsType.toLocaleString();
                 break;
         }
 

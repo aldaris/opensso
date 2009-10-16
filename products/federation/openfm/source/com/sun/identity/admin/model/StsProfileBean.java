@@ -22,26 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspProfileBean.java,v 1.2 2009-10-16 19:38:47 ggennaro Exp $
+ * $Id: StsProfileBean.java,v 1.1 2009-10-16 19:39:20 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
-public class WspProfileBean extends WssProfileBean implements Serializable {
+public class StsProfileBean extends WspProfileBean implements Serializable {
 
-    private ArrayList<SecurityMechanismPanelBean> securityMechanismPanels;
 
-    // getters / setters -------------------------------------------------------
-    
-    public void setSecurityMechanismPanels(ArrayList<SecurityMechanismPanelBean> securityMechanismPanels) {
-        this.securityMechanismPanels = securityMechanismPanels;
-    }
 
-    public ArrayList<SecurityMechanismPanelBean> getSecurityMechanismPanels() {
-        return securityMechanismPanels;
-    }
-    
 }

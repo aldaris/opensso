@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsc-use-sts.xhtml,v 1.1 2009-08-21 21:07:36 ggennaro Exp $
+   $Id: wsc-use-sts.xhtml,v 1.2 2009-10-16 19:38:43 ggennaro Exp $
 
 -->
 
@@ -60,42 +60,29 @@
                     value="#{wizardBean.stsTypeList}"/>
             </ice:selectOneMenu>
             <ice:outputLabel
-                for="openssoStsUrl"
-                effect="#{wizardBean.openssoStsUrlMessageEffect}"
-                rendered="#{wizardBean.usingOurSts}"
-                value="#{resources['wsc-use-sts.openssoStsUrlLabel']}"
-                style="float: right;" />
-            <ice:inputText
-                id="openssoStsUrl"
-                effect="#{wizardBean.openssoStsUrlInputEffect}"
-                rendered="#{wizardBean.usingOurSts}"
-                value="#{wizardBean.openssoStsUrl}"
-                style="width: 500px;"
-                maxlength="1024"/>
-            <ice:outputLabel
                 for="endPoint"
-                effect="#{wizardBean.stsProfileBean.endPointMessageEffect}"
+                effect="#{wizardBean.stsClientProfileBean.endPointMessageEffect}"
                 rendered="#{wizardBean.usingSts &amp;&amp; !wizardBean.usingOurSts}"
                 value="#{resources['wsc-use-sts.endPointLabel']}"
                 style="float: right;" />
             <ice:inputText
                 id="endPoint"
-                effect="#{wizardBean.stsProfileBean.endPointInputEffect}"
+                effect="#{wizardBean.stsClientProfileBean.endPointInputEffect}"
                 rendered="#{wizardBean.usingSts &amp;&amp; !wizardBean.usingOurSts}"
-                value="#{wizardBean.stsProfileBean.endPoint}"
+                value="#{wizardBean.stsClientProfileBean.endPoint}"
                 style="width: 500px;"
                 maxlength="1024"/>
             <ice:outputLabel
                 for="mexEndPoint"
-                effect="#{wizardBean.stsProfileBean.mexEndPointMessageEffect}"
+                effect="#{wizardBean.stsClientProfileBean.mexEndPointMessageEffect}"
                 rendered="#{wizardBean.usingSts &amp;&amp; !wizardBean.usingOurSts}"
                 value="#{resources['wsc-use-sts.mexEndPointLabel']}"
                 style="float: right;" />
             <ice:inputText
                 id="mexEndPoint"
-                effect="#{wizardBean.stsProfileBean.mexEndPointInputEffect}"
+                effect="#{wizardBean.stsClientProfileBean.mexEndPointInputEffect}"
                 rendered="#{wizardBean.usingSts &amp;&amp; !wizardBean.usingOurSts}"
-                value="#{wizardBean.stsProfileBean.mexEndPoint}"
+                value="#{wizardBean.stsClientProfileBean.mexEndPoint}"
                 style="width: 500px;"
                 maxlength="1024"/>
         </ice:panelGrid>

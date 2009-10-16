@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: StsManageWizardBean.java,v 1.4 2009-10-08 16:16:21 ggennaro Exp $
+ * $Id: StsManageWizardBean.java,v 1.5 2009-10-16 19:38:47 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -184,25 +184,21 @@ public class StsManageWizardBean
         panelBean = new SecurityMechanismPanelBean();
         panelBean.setSecurityMechanism(SecurityMechanism.USERNAME_TOKEN);
         panelBean.setChecked(configValues.contains(panelBean.getConfigValue()));
-        panelBean.setSettingsTemplate("wss-usernames.xhtml");
         panelBeans.add(panelBean);
         
         panelBean = new SecurityMechanismPanelBean();
         panelBean.setSecurityMechanism(SecurityMechanism.USERNAME_TOKEN_PLAIN);
         panelBean.setChecked(configValues.contains(panelBean.getConfigValue()));
-        panelBean.setSettingsTemplate("wss-usernames.xhtml");
         panelBeans.add(panelBean);
         
         panelBean = new SecurityMechanismPanelBean();
         panelBean.setSecurityMechanism(SecurityMechanism.KERBEROS_TOKEN);
         panelBean.setChecked(configValues.contains(panelBean.getConfigValue()));
-        panelBean.setSettingsTemplate("wss-kerberos-provider.xhtml");
         panelBeans.add(panelBean);
         
         panelBean = new SecurityMechanismPanelBean();
         panelBean.setSecurityMechanism(SecurityMechanism.X509_TOKEN);
         panelBean.setChecked(configValues.contains(panelBean.getConfigValue()));
-        panelBean.setSettingsTemplate("wss-x509.xhtml");
         panelBeans.add(panelBean);
         
         this.setSecurityMechanismPanels(panelBeans);

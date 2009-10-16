@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsc-sign-encrypt.xhtml,v 1.1 2009-08-21 21:07:36 ggennaro Exp $
+   $Id: wsc-sign-encrypt.xhtml,v 1.2 2009-10-16 19:38:44 ggennaro Exp $
 
 -->
 
@@ -49,8 +49,17 @@
 
         <ui:include src="wss-client-sign-encrypt.xhtml">
             <ui:param
+                name="wizardBean"
+                value="#{wscCreateWizardBean}"/>
+            <ui:param
+                name="wizardHandler"
+                value="#{wscCreateWizardHandler}"/>
+            <ui:param
                 name="profileBean"
-                value="#{wscCreateWizardBean.stsProfileBean}"/>
+                value="#{wscCreateWizardBean.stsClientProfileBean}"/>
+            <ui:param
+                name="usingPreset"
+                value="#{wscCreateWizardBean.usingOurSts}"/>
         </ui:include>
 
     </ui:define>
@@ -69,8 +78,17 @@
 
         <ui:include src="wss-client-sign-encrypt.xhtml">
             <ui:param
+                name="wizardBean"
+                value="#{wscCreateWizardBean}"/>
+            <ui:param
+                name="wizardHandler"
+                value="#{wscCreateWizardHandler}"/>
+            <ui:param
                 name="profileBean"
                 value="#{wscCreateWizardBean.wscProfileBean}"/>
+            <ui:param
+                name="usingPreset"
+                value="#{wscCreateWizardBean.usingWsp}"/>
         </ui:include>
 
     </ui:define>

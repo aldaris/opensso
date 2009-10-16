@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityMechanism.java,v 1.2 2009-09-17 21:56:04 ggennaro Exp $
+ * $Id: SecurityMechanism.java,v 1.3 2009-10-16 19:38:47 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -34,15 +34,15 @@ import java.util.Map;
 public enum SecurityMechanism {
 
     ANONYMOUS(0),
-    SAML_HOK(1),
-    SAML_SV(2),
-    SAML2_HOK(3),
-    SAML2_SV(4),
-    USERNAME_TOKEN(5),
-    USERNAME_TOKEN_PLAIN(6),
-    X509_TOKEN(7),
-    KERBEROS_TOKEN(8),
-    STS_SECURITY(9);
+    KERBEROS_TOKEN(1),
+    SAML_HOK(2),
+    SAML_SV(3),
+    SAML2_HOK(4),
+    SAML2_SV(5),
+    STS_SECURITY(6),
+    USERNAME_TOKEN(7),
+    USERNAME_TOKEN_PLAIN(8),
+    X509_TOKEN(9);
     
     private final int intValue;
     private static final Map<Integer, SecurityMechanism> intValues =

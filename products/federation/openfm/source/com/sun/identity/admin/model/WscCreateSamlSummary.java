@@ -1,6 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -24,16 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WscCreateWspEndPointSummary.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: WscCreateSamlSummary.java,v 1.1 2009-10-16 19:39:21 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
 
-public class WscCreateWspEndPointSummary extends WscCreateWizardSummary {
+public class WscCreateSamlSummary extends WscCreateWizardSummary {
 
-    public WscCreateWspEndPointSummary(WscCreateWizardBean wizardBean) {
+    public WscCreateSamlSummary(WscCreateWizardBean wizardBean) {
         super(wizardBean);
     }
 
@@ -46,8 +44,36 @@ public class WscCreateWspEndPointSummary extends WscCreateWizardSummary {
 
     @Override
     public String getValue() {
-        return getWscCreateWizardBean().getWscProfileBean().getEndPoint();
-    }
+        Resources r = new Resources();
+        SamlAttributesTableBean samlAttributeTable
+            = getWscCreateWizardBean().getWscProfileBean().getSamlAttributesTable();
+        int count = 0;
+        String value = null;
+        
+        
+        if( samlAttributeTable != null && samlAttributeTable.getAttributeMapItems() != null ) {
+
+            for(SamlAttributeMapItem item : samlAttributeTable.getAttributeMapItems() ) {
+
+                if( item.isCustom() ) {
+                    count++;
+                } else if( !item.isCustom() && item.getAssertionAttributeName() != null ) {
+                    count++;
+                }
+            }
+        }
+        
+        if( count == 0 ) {
+            value = r.getString(this, "valueFormatNone");
+        } else if( count == 1 ) {
+            value = r.getString(this, "valueFormatSingle");
+        } else {
+            value = r.getString(this, "valueFormatMulti");
+            value = value.replaceAll("\\{0\\}", String.valueOf(count));
+        }
+
+        return value;
+   }
 
     @Override
     public String getTemplate() {
@@ -66,7 +92,7 @@ public class WscCreateWspEndPointSummary extends WscCreateWizardSummary {
 
     @Override
     public int getGotoStep() {
-        return WscCreateWizardStep.WSC_PROFILE.toInt();
+        return WscCreateWizardStep.WSC_SAML.toInt();
     }
 
 }

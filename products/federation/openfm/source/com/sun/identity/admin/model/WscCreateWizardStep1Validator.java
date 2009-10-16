@@ -24,18 +24,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WscCreateWizardStep1Validator.java,v 1.1 2009-08-21 21:07:35 ggennaro Exp $
+ * $Id: WscCreateWizardStep1Validator.java,v 1.2 2009-10-16 19:39:21 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
-import com.icesoft.faces.context.effects.Effect;
-import com.sun.identity.admin.Resources;
-import com.sun.identity.admin.effect.InputFieldErrorEffect;
-import com.sun.identity.admin.effect.MessageErrorEffect;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.faces.application.FacesMessage;
+
+import com.icesoft.faces.context.effects.Effect;
+import com.sun.identity.admin.effect.InputFieldErrorEffect;
+import com.sun.identity.admin.effect.MessageErrorEffect;
 
 public class WscCreateWizardStep1Validator 
         extends WscCreateWizardStepValidator
@@ -47,7 +46,7 @@ public class WscCreateWizardStep1Validator
     @Override
     public boolean validate() {
         WscCreateWizardBean wb = getWscCreateWizardBean();
-        WssClientProfileBean wsc = wb.getWscProfileBean();
+        WscProfileBean wsc = wb.getWscProfileBean();
 
         if( !validProfileName() ) {
             return false;
@@ -73,12 +72,6 @@ public class WscCreateWizardStep1Validator
             return true;
         }
 
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidProfileNameSummary"));
-        mb.setDetail(r.getString(this, "invalidProfileNameDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
-
         Effect e;
         e = new InputFieldErrorEffect();
         wb.getWscProfileBean().setProfileNameInputEffect(e);
@@ -86,7 +79,8 @@ public class WscCreateWizardStep1Validator
         e = new MessageErrorEffect();
         wb.getWscProfileBean().setProfileNameMessageEffect(e);
 
-        getMessagesBean().addMessageBean(mb);
+        showErrorMessage("invalidProfileNameSummary", 
+                         "invalidProfileNameDetail");
         return false;
     }
 
@@ -96,19 +90,13 @@ public class WscCreateWizardStep1Validator
         String pattern = ".{1,1024}?";
 
         try {
-            URL url = new URL(endPoint);
+            new URL(endPoint);
             if( endPoint != null && endPoint.matches(pattern) ) {
                 return true;
             }
         } catch (MalformedURLException ex) {
             // do nothing but flow through below for error message
         }
-
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidEndPointSummary"));
-        mb.setDetail(r.getString(this, "invalidEndPointDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
         Effect e;
         e = new InputFieldErrorEffect();
@@ -117,7 +105,8 @@ public class WscCreateWizardStep1Validator
         e = new MessageErrorEffect();
         wb.getWscProfileBean().setEndPointMessageEffect(e);
 
-        getMessagesBean().addMessageBean(mb);
+        showErrorMessage("invalidEndPointSummary", 
+                         "invalidEndPointDetail");
         return false;
     }
 
@@ -127,19 +116,13 @@ public class WscCreateWizardStep1Validator
         String pattern = ".{1,1024}?";
 
         try {
-            URL url = new URL(mexEndPoint);
+            new URL(mexEndPoint);
             if( mexEndPoint != null && mexEndPoint.matches(pattern) ) {
                 return true;
             }
         } catch (MalformedURLException ex) {
             // do nothing but flow through below for error message
         }
-
-        MessageBean mb = new MessageBean();
-        Resources r = new Resources();
-        mb.setSummary(r.getString(this, "invalidMexEndPointSummary"));
-        mb.setDetail(r.getString(this, "invalidMexEndPointDetail"));
-        mb.setSeverity(FacesMessage.SEVERITY_ERROR);
 
         Effect e;
         e = new InputFieldErrorEffect();
@@ -148,7 +131,8 @@ public class WscCreateWizardStep1Validator
         e = new MessageErrorEffect();
         wb.getWscProfileBean().setMexEndPointMessageEffect(e);
 
-        getMessagesBean().addMessageBean(mb);
+        showErrorMessage("invalidMexEndPointSummary", 
+                         "invalidMexEndPointDetail");
         return false;
     }
 }

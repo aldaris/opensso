@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsc-profile.xhtml,v 1.1 2009-08-21 21:07:36 ggennaro Exp $
+   $Id: wsc-profile.xhtml,v 1.2 2009-10-16 19:38:46 ggennaro Exp $
 
 -->
 
@@ -94,20 +94,30 @@
 
             <ice:outputLabel
                 for="usingMexEndPoint"
+                rendered="#{!wizardBean.usingWsp}"
                 value="#{resources['wsc-profile.usingMexEndPointLabel']}"
                 style="float: right;" />
-            <ice:setEventPhase events="ValueChangeEvent" phase="INVOKE_APPLICATION">
-                <ice:selectOneRadio
-                    value="#{wizardBean.wscProfileBean.usingMexEndPoint}"
-                    valueChangeListener="#{wizardHandler.usingMexEndPointListener}">
-                    <f:selectItem
-                        itemLabel="#{resources['wsc-profile.usingMexEndPointTrueLabel']}"
-                        itemValue="true" />
-                    <f:selectItem
-                        itemLabel="#{resources['wsc-profile.usingMexEndPointFalseLabel']}"
-                        itemValue="false" />
-                </ice:selectOneRadio>
-            </ice:setEventPhase>
+            <ice:panelGroup
+                rendered="#{!wizardBean.usingWsp}">
+                <ice:setEventPhase events="ValueChangeEvent" phase="INVOKE_APPLICATION">
+                    <ice:selectOneRadio
+                        value="#{wizardBean.wscProfileBean.usingMexEndPoint}"
+                        valueChangeListener="#{wizardHandler.usingMexEndPointListener}">
+                        <f:selectItem
+                            itemLabel="#{resources['wsc-profile.usingMexEndPointTrueLabel']}"
+                            itemValue="true" />
+                        <f:selectItem
+                            itemLabel="#{resources['wsc-profile.usingMexEndPointFalseLabel']}"
+                            itemValue="false" />
+                    </ice:selectOneRadio>
+                </ice:setEventPhase>
+            </ice:panelGroup>
+            <ice:outputText
+                rendered="#{wizardBean.usingWsp}"
+                value=" " />
+           <ice:outputText
+                rendered="#{wizardBean.usingWsp}"
+                value="#{resources['wsc-profile.usingWspProfileMessage']}" />
 
             <ice:outputLabel
                 for="mexEndPoint"

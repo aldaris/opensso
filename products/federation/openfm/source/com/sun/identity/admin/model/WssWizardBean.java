@@ -65,6 +65,31 @@ public class WssWizardBean
         return items;
     }
 
+    public List<SelectItem> getSecurityMechanismList() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+
+        items.add(new SelectItem(SecurityMechanism.ANONYMOUS.toString(),
+                                 SecurityMechanism.ANONYMOUS.toLocaleString()));
+        items.add(new SelectItem(SecurityMechanism.KERBEROS_TOKEN.toString(),
+                                 SecurityMechanism.KERBEROS_TOKEN.toLocaleString()));
+        items.add(new SelectItem(SecurityMechanism.SAML_HOK.toString(),
+                                 SecurityMechanism.SAML_HOK.toLocaleString()));
+        items.add(new SelectItem(SecurityMechanism.SAML_SV.toString(),
+                                 SecurityMechanism.SAML_SV.toLocaleString()));
+        items.add(new SelectItem(SecurityMechanism.SAML2_HOK.toString(),
+                                 SecurityMechanism.SAML2_HOK.toLocaleString()));
+        items.add(new SelectItem(SecurityMechanism.SAML2_SV.toString(),
+                                 SecurityMechanism.SAML2_SV.toLocaleString()));
+        items.add(new SelectItem(SecurityMechanism.USERNAME_TOKEN.toString(),
+                                 SecurityMechanism.USERNAME_TOKEN.toLocaleString()));
+        items.add(new SelectItem(SecurityMechanism.USERNAME_TOKEN_PLAIN.toString(),
+                                 SecurityMechanism.USERNAME_TOKEN_PLAIN.toLocaleString()));
+        items.add(new SelectItem(SecurityMechanism.X509_TOKEN.toString(),
+                                 SecurityMechanism.X509_TOKEN.toLocaleString()));
+
+        return items;
+    }
+    
     public List<SelectItem> getStsTypeList() {
         List<SelectItem> items = new ArrayList<SelectItem>();
 
@@ -91,7 +116,7 @@ public class WssWizardBean
         return items;
     }
     
-    public List<SelectItem> getX509SigningReferenceTypeList() {
+    public List<SelectItem> getX509SigningRefTypeList() {
         List<SelectItem> items = new ArrayList<SelectItem>();
         
         items.add(new SelectItem(X509SigningRefType.DIRECT.toString(),

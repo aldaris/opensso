@@ -22,37 +22,45 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WscCreateWizardBean.java,v 1.2 2009-10-06 18:28:03 ggennaro Exp $
+ * $Id: WscCreateWizardBean.java,v 1.3 2009-10-16 19:39:21 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import com.icesoft.faces.context.effects.Effect;
-import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.admin.dao.WssProfileDao;
 
 public class WscCreateWizardBean
         extends WssWizardBean
         implements Serializable
 {
-    private WssClientProfileBean wscProfileBean;
-    private WssClientProfileBean stsProfileBean;
+    private WscProfileBean wscProfileBean;
+    private StsClientProfileBean stsClientProfileBean;
+    
+    private WscProfileBean defaultWscProfileBean;
+    private StsClientProfileBean defaultStsClientProfileBean;
+
     private ArrayList<SelectItem> wspProfileSuggestions;
+    private boolean usingWsp;
+    private WspProfileBean chosenWspProfileBean;
+
     private String stsType;
     private boolean usingSts;
     private boolean usingOurSts;
-    private String openssoStsUrl;
-    private Effect openssoStsUrlMessageEffect;
-    private Effect openssoStsUrlInputEffect;
+    private StsProfileBean hostedStsProfileBean;
+    
+    
     private RealmSummary realmSummary;
     private WscCreateProfileNameSummary profileNameSummary;
     private WscCreateUseStsSummary useStsSummary;
     private WscCreateServiceSecuritySummary serviceSecuritySummary;
     private WscCreateSignEncryptSummary signEncryptSummary;
+    private WscCreateSamlSummary samlSummary;
 
 
     public WscCreateWizardBean() {
@@ -67,77 +75,214 @@ public class WscCreateWizardBean
     }
 
     private void initialize() {
-        this.setWscProfileBean(new WssClientProfileBean());
-        this.getWscProfileBean().setProfileName(null);
-        this.getWscProfileBean().setEndPoint(null);
-        this.getWscProfileBean().setUsingMexEndPoint(false);
-        this.getWscProfileBean().setMexEndPoint(null);
-        this.getWscProfileBean().setRequestSigned(true);
-        this.getWscProfileBean().setRequestHeaderEncrypted(false);
-        this.getWscProfileBean().setRequestEncrypted(false);
-        this.getWscProfileBean().setResponseSignatureVerified(false);
-        this.getWscProfileBean().setResponseDecrypted(false);
-        this.getWscProfileBean().setEncryptionAlgorithm(EncryptionAlgorithm.AES_128.toInt());
-        this.getWscProfileBean().setPrivateKeyAlias("test");
-        this.getWscProfileBean().setPublicKeyAlias("test");
-        this.getWscProfileBean().setSecurityMechanism(SecurityMechanism.ANONYMOUS.toInt());
-        this.getWscProfileBean().setUserNameTokenUserName(null);
-        this.getWscProfileBean().setUserNameTokenPassword(null);
-        this.getWscProfileBean().setX509TokenSigningReferenceType(X509SigningRefType.DIRECT.toInt());
-        this.getWscProfileBean().setKerberosDomain(null);
-        this.getWscProfileBean().setKerberosDomainServer(null);
-        this.getWscProfileBean().setKerberosServicePrincipal(null);
-        this.getWscProfileBean().setKerberosTicketCache(null);
-
+        
+        this.setDefaultWscProfileBean(WssProfileDao.getDefaultWscProfileBean());
+        this.setDefaultStsClientProfileBean(WssProfileDao.getDefaultStsClientProfileBean());
+        
+        this.setWspProfileSuggestions(null);
+        this.setUsingWsp(false);
+        this.setChosenWspProfileBean(null);
+        
         this.setStsType(SecurityTokenServiceType.OPENSSO.toString());
         this.setUsingSts(true);
         this.setUsingOurSts(true);
-        this.setOpenssoStsUrl(SystemProperties.getServerInstanceName());
-
-        this.setStsProfileBean(new WssClientProfileBean());
-        this.getStsProfileBean().setEndPoint("http://<sts-host-name:portnumber>/<sts>");
-        this.getStsProfileBean().setMexEndPoint("http://<sts-host-name:portnumber>/<sts>/<mex>");
-        this.getStsProfileBean().setUsingMexEndPoint(true);
-        this.getStsProfileBean().setRequestSigned(true);
-        this.getStsProfileBean().setRequestHeaderEncrypted(false);
-        this.getStsProfileBean().setRequestEncrypted(false);
-        this.getStsProfileBean().setResponseSignatureVerified(false);
-        this.getStsProfileBean().setResponseDecrypted(false);
-        this.getStsProfileBean().setEncryptionAlgorithm(EncryptionAlgorithm.AES_128.toInt());
-        this.getStsProfileBean().setPrivateKeyAlias("test");
-        this.getStsProfileBean().setPublicKeyAlias("test");
-        this.getStsProfileBean().setSecurityMechanism(SecurityMechanism.ANONYMOUS.toInt());
-        this.getStsProfileBean().setUserNameTokenUserName(null);
-        this.getStsProfileBean().setUserNameTokenPassword(null);
-        this.getStsProfileBean().setX509TokenSigningReferenceType(X509SigningRefType.DIRECT.toInt());
-        this.getStsProfileBean().setKerberosDomain(null);
-        this.getStsProfileBean().setKerberosDomainServer(null);
-        this.getStsProfileBean().setKerberosServicePrincipal(null);
-        this.getStsProfileBean().setKerberosTicketCache(null);
+        this.setHostedStsProfileBean(WssProfileDao.getHostedStsProfileBean());
+        
+        this.setWscProfileBean(WssProfileDao.getDefaultWscProfileBean());
+        this.setStsClientProfileBean(WssProfileDao.getDefaultStsClientProfileBean());
+        updateStsClientProfileWithPresets();
+        updateSecurityMechanism();
 
         this.setRealmSummary(new RealmSummary());
         this.setProfileNameSummary(new WscCreateProfileNameSummary(this));
         this.setUseStsSummary(new WscCreateUseStsSummary(this));
         this.setServiceSecuritySummary(new WscCreateServiceSecuritySummary(this));
         this.setSignEncryptSummary(new WscCreateSignEncryptSummary(this));
+        this.setSamlSummary(new WscCreateSamlSummary(this));
     }
 
+    // convenience methods -----------------------------------------------------
+    
+    public void updateStsClientProfileWithPresets() {
+        StsClientProfileBean stsClientProfile 
+            = this.getStsClientProfileBean();
+        StsClientProfileBean defaultStsClientProfile
+            = this.getDefaultStsClientProfileBean();
+        StsProfileBean hostedSts 
+            = this.getHostedStsProfileBean();
+        
+        if( this.isUsingOurSts() ) {
+            stsClientProfile.setEndPoint(hostedSts.getEndPoint());
+            stsClientProfile.setMexEndPoint(hostedSts.getMexEndPoint());
+            stsClientProfile.setRequestSigned(hostedSts.isRequestSigned());
+            stsClientProfile.setRequestHeaderEncrypted(hostedSts.isRequestHeaderEncrypted());
+            stsClientProfile.setRequestEncrypted(hostedSts.isRequestEncrypted());
+            stsClientProfile.setResponseSignatureVerified(hostedSts.isResponseSignatureVerified());
+            stsClientProfile.setResponseDecrypted(hostedSts.isResponseDecrypted());
+            stsClientProfile.setEncryptionAlgorithm(hostedSts.getEncryptionAlgorithm());
+            stsClientProfile.setPublicKeyAlias(hostedSts.getPublicKeyAlias());
+        } else if( this.isUsingSts() ) {
+            stsClientProfile.setEndPoint(defaultStsClientProfile.getEndPoint());
+            stsClientProfile.setMexEndPoint(defaultStsClientProfile.getMexEndPoint());
+            stsClientProfile.setRequestSigned(defaultStsClientProfile.isRequestSigned());
+            stsClientProfile.setRequestHeaderEncrypted(defaultStsClientProfile.isRequestHeaderEncrypted());
+            stsClientProfile.setRequestEncrypted(defaultStsClientProfile.isRequestEncrypted());
+            stsClientProfile.setResponseSignatureVerified(defaultStsClientProfile.isResponseSignatureVerified());
+            stsClientProfile.setResponseDecrypted(defaultStsClientProfile.isResponseDecrypted());
+            stsClientProfile.setEncryptionAlgorithm(defaultStsClientProfile.getEncryptionAlgorithm());
+            stsClientProfile.setPublicKeyAlias(defaultStsClientProfile.getPublicKeyAlias());
+        } 
+    }
+    
+    public void updateWscProfileWithPresets() {
+        WspProfileBean chosenWspProfile = this.getChosenWspProfileBean();
+        WscProfileBean defaultWscProfile = this.getDefaultWscProfileBean();
+        WscProfileBean wscProfile = this.getWscProfileBean();
+        
+        if( this.usingWsp && chosenWspProfile != null ) {
+            wscProfile.setRequestSigned(chosenWspProfile.isRequestSigned());
+            wscProfile.setRequestHeaderEncrypted(chosenWspProfile.isRequestHeaderEncrypted());
+            wscProfile.setRequestEncrypted(chosenWspProfile.isRequestEncrypted());
+            wscProfile.setResponseSignatureVerified(chosenWspProfile.isResponseSignatureVerified());
+            wscProfile.setResponseDecrypted(chosenWspProfile.isResponseDecrypted());
+            wscProfile.setEncryptionAlgorithm(chosenWspProfile.getEncryptionAlgorithm());
+            wscProfile.setPublicKeyAlias(chosenWspProfile.getPublicKeyAlias());
+            
+        } else {
+            wscProfile.setRequestSigned(defaultWscProfile.isRequestSigned());
+            wscProfile.setRequestHeaderEncrypted(defaultWscProfile.isRequestHeaderEncrypted());
+            wscProfile.setRequestEncrypted(defaultWscProfile.isRequestEncrypted());
+            wscProfile.setResponseSignatureVerified(defaultWscProfile.isResponseSignatureVerified());
+            wscProfile.setResponseDecrypted(defaultWscProfile.isResponseDecrypted());
+            wscProfile.setEncryptionAlgorithm(defaultWscProfile.getEncryptionAlgorithm());
+            wscProfile.setPublicKeyAlias(defaultWscProfile.getPublicKeyAlias());
+        }        
+    }
+    
+    public void updateSecurityMechanism() {
+        WscProfileBean wscOrSts;
+        String securityMechanism;
+        boolean found = false;
+        
+        if( this.usingSts ) {
+            wscOrSts = this.getStsClientProfileBean();
+        } else {
+            wscOrSts = this.getWscProfileBean();
+        } 
+        
+        securityMechanism = wscOrSts.getSecurityMechanism();
+        for(SelectItem item : getSecurityMechanismList()) {
+            String itemValue = (String) item.getValue();
+            if( itemValue.equalsIgnoreCase(securityMechanism)) {
+                found = true;
+                break;
+            }
+        }
+        
+        if( !found && getSecurityMechanismList().size() > 0 ) {
+            SelectItem firstItem = getSecurityMechanismList().get(0);
+            String firstItemValue = (String) firstItem.getValue();
+            securityMechanism = firstItemValue;
+        }
+        
+        wscOrSts.setSecurityMechanism(securityMechanism);
+    }
+    
+    public String getSecurityMechanismPanel() {
+        String panelId;
+        SecurityMechanism sm;
+        
+        if( this.usingSts ) {
+            StsClientProfileBean stsProfile = this.getStsClientProfileBean();
+            sm = SecurityMechanism.valueOf(stsProfile.getSecurityMechanism());
+        } else {
+            WscProfileBean wscProfile = this.getWscProfileBean();
+            sm = SecurityMechanism.valueOf(wscProfile.getSecurityMechanism());
+        }
+        
+        switch(sm) {
+            case USERNAME_TOKEN:
+            case USERNAME_TOKEN_PLAIN:
+                panelId = "userNameTokenSettingsPanel";
+                break;
+            case KERBEROS_TOKEN:
+                panelId = "kerberosSettingsPanel";
+                break;
+            case X509_TOKEN:
+                panelId = "x509TokenSettingsPanel";
+                break;
+            default:
+                panelId = "noSettingsPanel";
+                break;
+        }
+
+        return panelId;
+    }
+    
+    // Lists -------------------------------------------------------------------
+
+    public List<SelectItem> getSecurityMechanismList() {
+        WspProfileBean wspOrStsProfile = null;
+        
+        if( isUsingOurSts() && getHostedStsProfileBean() != null ) {
+            wspOrStsProfile = getHostedStsProfileBean();
+        } else if( isUsingWsp() && getChosenWspProfileBean() != null ) {
+            wspOrStsProfile = getChosenWspProfileBean();
+        }
+        
+        if( wspOrStsProfile != null ) {
+            ArrayList<SelectItem> newItems = new ArrayList<SelectItem>();
+            
+            for(SecurityMechanismPanelBean panel 
+                    : wspOrStsProfile.getSecurityMechanismPanels()) {
+                
+                if( panel.isChecked() ) {
+                    SelectItem item = new SelectItem(
+                            panel.getSecurityMechanism().toString(), 
+                            panel.getSecurityMechanism().toLocaleString());
+                    newItems.add(item);
+                }
+            }
+            
+            return newItems;
+        } else {
+            return super.getSecurityMechanismList();
+        }
+    }
+
+    
     // Getters / Setters -------------------------------------------------------
 
-    public WssClientProfileBean getWscProfileBean() {
+    public WscProfileBean getWscProfileBean() {
         return wscProfileBean;
     }
 
-    public void setWscProfileBean(WssClientProfileBean wscProfileBean) {
+    public void setWscProfileBean(WscProfileBean wscProfileBean) {
         this.wscProfileBean = wscProfileBean;
     }
 
-    public WssClientProfileBean getStsProfileBean() {
-        return stsProfileBean;
+    public StsClientProfileBean getStsClientProfileBean() {
+        return stsClientProfileBean;
     }
 
-    public void setStsProfileBean(WssClientProfileBean stsProfileBean) {
-        this.stsProfileBean = stsProfileBean;
+    public void setStsClientProfileBean(StsClientProfileBean stsClientProfileBean) {
+        this.stsClientProfileBean = stsClientProfileBean;
+    }
+
+    public ArrayList<SelectItem> getWspProfileSuggestions() {
+        return wspProfileSuggestions;
+    }
+
+    public void setWspProfileSuggestions(ArrayList<SelectItem> wspProfileSuggestions) {
+        this.wspProfileSuggestions = wspProfileSuggestions;
+    }
+
+    public boolean isUsingWsp() {
+        return usingWsp;
+    }
+
+    public void setUsingWsp(boolean usingWsp) {
+        this.usingWsp = usingWsp;
     }
 
     public String getStsType() {
@@ -162,38 +307,6 @@ public class WscCreateWizardBean
 
     public void setUsingOurSts(boolean usingOurSts) {
         this.usingOurSts = usingOurSts;
-    }
-
-    public String getOpenssoStsUrl() {
-        return openssoStsUrl;
-    }
-
-    public void setOpenssoStsUrl(String openssoStsUrl) {
-        this.openssoStsUrl = openssoStsUrl;
-    }
-
-    public Effect getOpenssoStsUrlMessageEffect() {
-        return openssoStsUrlMessageEffect;
-    }
-
-    public void setOpenssoStsUrlMessageEffect(Effect openssoStsUrlMessageEffect) {
-        this.openssoStsUrlMessageEffect = openssoStsUrlMessageEffect;
-    }
-
-    public Effect getOpenssoStsUrlInputEffect() {
-        return openssoStsUrlInputEffect;
-    }
-
-    public void setOpenssoStsUrlInputEffect(Effect openssoStsUrlInputEffect) {
-        this.openssoStsUrlInputEffect = openssoStsUrlInputEffect;
-    }
-
-    public ArrayList<SelectItem> getWspProfileSuggestions() {
-        return wspProfileSuggestions;
-    }
-
-    public void setWspProfileSuggestions(ArrayList<SelectItem> wspProfileSuggestions) {
-        this.wspProfileSuggestions = wspProfileSuggestions;
     }
 
     public RealmSummary getRealmSummary() {
@@ -224,7 +337,8 @@ public class WscCreateWizardBean
         return serviceSecuritySummary;
     }
 
-    public void setServiceSecuritySummary(WscCreateServiceSecuritySummary serviceSecuritySummary) {
+    public void setServiceSecuritySummary(
+            WscCreateServiceSecuritySummary serviceSecuritySummary) {
         this.serviceSecuritySummary = serviceSecuritySummary;
     }
 
@@ -236,5 +350,44 @@ public class WscCreateWizardBean
         this.signEncryptSummary = signEncryptSummary;
     }
 
+    public WscCreateSamlSummary getSamlSummary() {
+        return samlSummary;
+    }
 
+    public void setSamlSummary(WscCreateSamlSummary samlSummary) {
+        this.samlSummary = samlSummary;
+    }
+
+    public void setChosenWspProfileBean(WspProfileBean chosenWspProfileBean) {
+        this.chosenWspProfileBean = chosenWspProfileBean;
+    }
+
+    public WspProfileBean getChosenWspProfileBean() {
+        return chosenWspProfileBean;
+    }
+
+    public void setDefaultWscProfileBean(WscProfileBean defaultWscProfileBean) {
+        this.defaultWscProfileBean = defaultWscProfileBean;
+    }
+
+    public WscProfileBean getDefaultWscProfileBean() {
+        return defaultWscProfileBean;
+    }
+
+    public void setHostedStsProfileBean(StsProfileBean hostedStsProfileBean) {
+        this.hostedStsProfileBean = hostedStsProfileBean;
+    }
+
+    public StsProfileBean getHostedStsProfileBean() {
+        return hostedStsProfileBean;
+    }
+
+    public void setDefaultStsClientProfileBean(
+            StsClientProfileBean defaultStsClientProfileBean) {
+        this.defaultStsClientProfileBean = defaultStsClientProfileBean;
+    }
+
+    public StsClientProfileBean getDefaultStsClientProfileBean() {
+        return defaultStsClientProfileBean;
+    }
 }

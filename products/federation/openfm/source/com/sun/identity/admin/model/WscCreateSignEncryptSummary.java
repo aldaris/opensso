@@ -24,14 +24,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WscCreateSignEncryptSummary.java,v 1.2 2009-10-07 16:05:10 ggennaro Exp $
+ * $Id: WscCreateSignEncryptSummary.java,v 1.3 2009-10-16 19:39:19 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
+import java.util.ArrayList;
+
 import com.sun.identity.admin.ListFormatter;
 import com.sun.identity.admin.Resources;
-import java.util.ArrayList;
 
 public class WscCreateSignEncryptSummary extends WscCreateWizardSummary {
 
@@ -49,15 +50,32 @@ public class WscCreateSignEncryptSummary extends WscCreateWizardSummary {
     @Override
     public String getValue() {
         Resources r = new Resources();
-
         return r.getString(this, "value");
-    
     }
 
+    public String getStsPrivateKeyAlias() {
+        WscCreateWizardBean wizardBean = getWscCreateWizardBean();
+        return wizardBean.getStsClientProfileBean().getPrivateKeyAlias();
+    }
+    
+    public String getStsPublicKeyAlias() {
+        WscCreateWizardBean wizardBean = getWscCreateWizardBean();
+        return wizardBean.getStsClientProfileBean().getPublicKeyAlias();
+    }    
+
+    public String getWscPrivateKeyAlias() {
+        WscCreateWizardBean wizardBean = getWscCreateWizardBean();
+        return wizardBean.getWscProfileBean().getPrivateKeyAlias();
+    }
+    
+    public String getWscPublicKeyAlias() {
+        WscCreateWizardBean wizardBean = getWscCreateWizardBean();
+        return wizardBean.getWscProfileBean().getPublicKeyAlias();
+    }    
 
     public String getFormattedStsMessageFlags() {
         WscCreateWizardBean wizardBean = getWscCreateWizardBean();
-        return getFormattedMessageFlags(wizardBean.getStsProfileBean());
+        return getFormattedMessageFlags(wizardBean.getStsClientProfileBean());
     }
 
     public String getFormattedWscMessageFlags() {
@@ -65,25 +83,27 @@ public class WscCreateSignEncryptSummary extends WscCreateWizardSummary {
         return getFormattedMessageFlags(wizardBean.getWscProfileBean());
     }
 
-    public String getFormattedStsEncryptionAlgorithm() {
+    public String getFormattedStsEncryption() {
         WscCreateWizardBean wizardBean = getWscCreateWizardBean();
-        return getFormattedEncryptionAlgorithm(wizardBean.getStsProfileBean());
+        return getFormattedEncryption(wizardBean.getStsClientProfileBean());
     }
 
-    public String getFormattedWscEncryptionAlgorithm() {
+    public String getFormattedWscEncryption() {
         WscCreateWizardBean wizardBean = getWscCreateWizardBean();
-        return getFormattedEncryptionAlgorithm(wizardBean.getWscProfileBean());
+        return getFormattedEncryption(wizardBean.getWscProfileBean());
     }
 
-    private String getFormattedEncryptionAlgorithm(WssClientProfileBean profile) {
-        EncryptionAlgorithm ea
-                = EncryptionAlgorithm.valueOf(profile.getEncryptionAlgorithm());
+    private String getFormattedEncryption(WssProfileBean profile) {
+        EncryptionAlgorithm ea = null;
+        
+        if( profile.getEncryptionAlgorithm() != null ) {
+            ea = EncryptionAlgorithm.valueOf(profile.getEncryptionAlgorithm());
+        }
 
         return (ea == null) ? null : ea.toLocaleString();
     }
 
-
-    private String getFormattedMessageFlags(WssClientProfileBean profile) {
+    private String getFormattedMessageFlags(WssProfileBean profile) {
         ArrayList<String> a = new ArrayList<String>();
         Resources r = new Resources();
 
@@ -101,6 +121,10 @@ public class WscCreateSignEncryptSummary extends WscCreateWizardSummary {
         }
         if( profile.isResponseDecrypted() ) {
             a.add(" " + r.getString(this, "responseDecrypted"));
+        }
+        
+        if( a.size() == 0 ) {
+            a.add(r.getString(this, "none"));
         }
 
         ListFormatter lf = new ListFormatter(a);

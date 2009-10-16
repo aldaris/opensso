@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wss-security-mechanism.xhtml,v 1.1 2009-08-21 21:07:36 ggennaro Exp $
+   $Id: wss-security-mechanism.xhtml,v 1.2 2009-10-16 19:38:46 ggennaro Exp $
 
 -->
 
@@ -37,6 +37,7 @@
     xmlns:o="http://opensso.dev.java.net">
 
 <f:subview>
+
     <ice:panelGroup>
         <ice:panelGrid
             columns="2"
@@ -51,11 +52,11 @@
                     id="securityMechanism"
                     value="#{profileBean.securityMechanism}" >
                     <f:selectItems
-                        value="#{profileBean.securityMechanismList}"/>
+                        value="#{wizardBean.securityMechanismList}"/>
                 </ice:selectOneMenu>
 
                 <ice:panelStack
-                    selectedPanel="#{profileBean.securityMechanismPanel}"
+                    selectedPanel="#{wizardBean.securityMechanismPanel}"
                     style="margin-top: 5px;">
 
                     <ice:panelGroup id="noSettingsPanel" />
@@ -67,9 +68,9 @@
                                 value="#{resources['wss-security-mechanism.x509TokenSigningReferenceTypeLabel']}" />
                             <ice:selectOneMenu
                                 id="x509TokenSigningReferenceType"
-                                value="#{profileBean.x509TokenSigningReferenceType}">
+                                value="#{profileBean.x509SigningRefType}">
                                 <f:selectItems
-                                    value="#{profileBean.x509SigningReferenceTypeList}" />
+                                    value="#{wizardBean.x509SigningRefTypeList}" />
                             </ice:selectOneMenu>
                         </ice:panelGrid>
                     </ice:panelGroup>
@@ -156,8 +157,8 @@
                     </ice:panelGroup>
 
                 </ice:panelStack>
-            </ice:panelGroup>
 
+            </ice:panelGroup>
         </ice:panelGrid>
     </ice:panelGroup>
 

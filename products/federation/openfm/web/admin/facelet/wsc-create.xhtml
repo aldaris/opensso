@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsc-create.xhtml,v 1.1 2009-08-21 21:07:34 ggennaro Exp $
+   $Id: wsc-create.xhtml,v 1.2 2009-10-16 19:39:27 ggennaro Exp $
 
 -->
 
@@ -44,7 +44,7 @@
     <ui:define name="panel-body">
 
         <o:wizard
-            steps="5"
+            steps="6"
             wizardHandler="#{wscCreateWizardHandler}"
             wizardBean="#{wscCreateWizardBean}">
             <ui:define name="wizard-steps">
@@ -114,6 +114,25 @@
                 </o:wstep>
                 <o:wstep
                     step="4"
+                    label="#{resources['wsc-create.step5PanelLabel']}">
+                    <ui:define name="wizard-step-body">
+
+                        <ui:include src="template/wsc-saml.xhtml">
+                            <ui:param
+                                name="wizardBean"
+                                value="#{wscCreateWizardBean}"/>
+                            <ui:param
+                                name="wizardHandler"
+                                value="#{wscCreateWizardHandler}"/>
+                            <ui:param
+                                name="profileBean"
+                                value="#{wizardBean.wscProfileBean}"/>
+                        </ui:include>
+
+                    </ui:define>
+                </o:wstep>
+                <o:wstep
+                    step="5"
                     label="#{resources['wsc-create.summaryPanelLabel']}">
                     <ui:define name="wizard-step-body">
 
@@ -136,6 +155,7 @@
                                 <o:summarypanel summary="#{wscCreateWizardBean.useStsSummary}" />
                                 <o:summarypanel summary="#{wscCreateWizardBean.serviceSecuritySummary}" />
                                 <o:summarypanel summary="#{wscCreateWizardBean.signEncryptSummary}" />
+                                <o:summarypanel summary="#{wscCreateWizardBean.samlSummary}" />
 
                             </ui:define>
                         </o:section>
