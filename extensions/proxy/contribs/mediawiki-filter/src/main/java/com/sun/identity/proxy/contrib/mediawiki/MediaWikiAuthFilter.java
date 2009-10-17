@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MediaWikiAuthFilter.java,v 1.1 2009-10-17 04:47:57 pbryan Exp $
+ * $Id: MediaWikiAuthFilter.java,v 1.1 2009-10-17 05:15:35 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
