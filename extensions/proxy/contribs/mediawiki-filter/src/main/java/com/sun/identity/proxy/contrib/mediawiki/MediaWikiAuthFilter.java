@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MediaWikiAuthFilter.java,v 1.1 2009-10-17 05:15:35 pbryan Exp $
+ * $Id: MediaWikiAuthFilter.java,v 1.2 2009-10-17 05:31:01 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,6 @@ import com.sun.identity.proxy.handler.HandlerException;
 import com.sun.identity.proxy.http.Exchange;
 import com.sun.identity.proxy.http.Form;
 import com.sun.identity.proxy.http.Request;
-import com.sun.identity.proxy.io.TemporaryStorage;
 import java.io.IOException;
 import java.util.Map;
 
@@ -58,9 +57,6 @@ public class MediaWikiAuthFilter extends Filter
     /** The source from which to acquire username/password credentials. */
     private PasswordCredentialSource source;
 
-    /** Allocates temporary records for caching incoming request entities. */
-    private TemporaryStorage storage;
-
     /**
      * The MediaWiki article title used for the authentication page. This
      * can vary from one installation to the next.
@@ -72,11 +68,9 @@ public class MediaWikiAuthFilter extends Filter
      * Creates a new MediaWiki authentication filter.
      *
      * @param source the source from which to acquire username/password credentials.
-     * @param storage allocates temporary records for caching incoming request entities.
      */
-    public MediaWikiAuthFilter(PasswordCredentialSource source, TemporaryStorage storage) {
+    public MediaWikiAuthFilter(PasswordCredentialSource source) {
         this.source = source;
-        this.storage = storage;
     }
 
     /**
