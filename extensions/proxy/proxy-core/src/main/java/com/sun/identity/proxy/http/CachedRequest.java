@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedRequest.java,v 1.1 2009-10-17 04:48:00 pbryan Exp $
+ * $Id: CachedRequest.java,v 1.2 2009-10-17 05:08:13 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,11 +36,11 @@ import java.io.IOException;
  */
 public class CachedRequest extends Request
 {
+    /** Contains the entity cached stream to support replay. */
+    private CachedStream cachedStream = null;
+
     /** The request to wrap and cache. */
     private Request original;
-
-    /** Contains the entity cached stream to support replay. */
-    private CachedStream stream;
 
     /**
      * Creates a new cached request, wrapping the specified request.
@@ -51,7 +51,9 @@ public class CachedRequest extends Request
      */
     public CachedRequest(Request original, TemporaryStorage storage) throws IOException {
         this.original = original; // FIXME: should really be cloned to avoid anything else writing after the fact?
-        stream = new CachedStream(original.entity, storage.open(storage.create()));
+        if (original.entity != null) {
+            cachedStream = new CachedStream(original.entity, storage.open(storage.create()));
+        }
         rewind();
     }
 
@@ -67,7 +69,9 @@ public class CachedRequest extends Request
         uri = original.uri;
         headers.clear();
         headers.putAll(original.headers);
-        entity = stream.rewind();
+        if (cachedStream != null) {
+            entity = cachedStream.rewind();
+        }
         principal = original.principal;
         session = original.session;
         attributes.clear();
