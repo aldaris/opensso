@@ -20,19 +20,19 @@
   brackets [] replaced by your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: pom.xml,v 1.5 2009-10-17 04:47:57 pbryan Exp $
+  $Id: pom.xml,v 1.1 2009-10-17 04:47:56 pbryan Exp $
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.sun.identity.proxy</groupId>
-        <artifactId>opensso-proxy</artifactId>
+        <artifactId>contribs</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>proxy-core</artifactId>
+    <artifactId>mediawiki-filter</artifactId>
     <packaging>jar</packaging>
-    <name>proxy-core</name>
+    <name>mediawiki-filter</name>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -41,36 +41,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.4</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.0</version>
+            <groupId>com.sun.identity.proxy</groupId>
+            <artifactId>proxy-core</artifactId>
+            <version>0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <author>false</author>
-                    <doctitle>Proxy-Core ${version}</doctitle>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
+

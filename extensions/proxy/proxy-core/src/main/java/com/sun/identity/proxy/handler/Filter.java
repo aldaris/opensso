@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Filter.java,v 1.3 2009-10-14 08:56:18 pbryan Exp $
+ * $Id: Filter.java,v 1.4 2009-10-17 04:47:59 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,28 +33,43 @@ import java.io.IOException;
  * to after it has successfully performed its function. Filters are typically
  * added into a {@link Chain}.
  * <p>
- * A particular filter instance can have one and only one next handler. This
- * means that it cannot be added to more than one filter chain.
+ * A filter instance can have one and only one next handler. This means that it
+ * cannot be added to more than one filter chain.
  *
  * @author Paul C. Bryan
+ * @credit Paul Sandoz (influenced by the com.sun.jersey.api.client.filter.ClientFilter class)
  */
-
 public abstract class Filter implements Handler
 {
     /** The next hander to pass the exchange to once this filter has successfully processed it. */
-    public Handler next;
+    protected Handler next;
+
+    /**
+     * Sets the next handler to pass the exchange to once this filter has
+     * successfully processed it.
+     *
+     * @param next the next handler to set.
+     */
+    public void setNext(Handler next) {
+        this.next = next;
+    }
 
     /**
      * Called to request the filter handle the request. During handling, the
      * filter should call the next handler's <tt>handle</tt> method. The filter
-     * is allowed to <em>not</em> pass the exchange on to the next handler if
-     * appropriate.
+     * is allowed to intercept the exhange and <em>not</em> pass it onto the
+     * next handler.
      * <p>
      * As with a handler, if an existing response object exists in the exchange
      * and the filter intends to replace it with another response object, it must
      * first check to see if the existing response object has an entity, and if
      * it does, must call its <tt>close</tt> method in order to signal that the
      * processing of the response from a remote server is complete.
+     * <p>
+     * Filters and handlers are free to modify the request and response content
+     * to meet their requirements. Therefore, if a filter needs to be able to
+     * retry sending a request, it must clone the request to save its original
+     * state before passing it downstream.
      *
      * @param exchange the message exchange to handle.
      * @throws HandlerException if an exception occurs that prevents handling the exchange.

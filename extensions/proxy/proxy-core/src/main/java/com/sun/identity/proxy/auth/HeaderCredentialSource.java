@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderCredentialSource.java,v 1.4 2009-10-15 07:07:53 pbryan Exp $
+ * $Id: HeaderCredentialSource.java,v 1.5 2009-10-17 04:47:58 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,9 @@ public class HeaderCredentialSource implements PasswordCredentialSource {
     /** The name of the header that contains the password. */
     private String passwordHeader;
 
+    /** Specifies if the headers should be removed from the request. Default: true. */
+    public boolean removeHeaders = true;
+
     /**
      * Creates a new header password credential source.
      *
@@ -64,7 +67,13 @@ public class HeaderCredentialSource implements PasswordCredentialSource {
         PasswordCredentials credentials = new PasswordCredentials();
         if (request != null && request.headers != null) {
             credentials.username = request.headers.first(usernameHeader);
+            if (removeHeaders) {
+                request.headers.remove(usernameHeader);
+            }
             credentials.password = request.headers.first(passwordHeader);
+            if (removeHeaders) {
+               request.headers.remove(passwordHeader);
+            }
         }
         return credentials;
     }

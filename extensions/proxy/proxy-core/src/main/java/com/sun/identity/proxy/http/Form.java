@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Form.java,v 1.2 2009-10-14 08:56:51 pbryan Exp $
+ * $Id: Form.java,v 1.3 2009-10-17 04:48:00 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,18 @@ import java.util.List;
 public class Form extends StringListMap
 {
     /**
+     * Parses the query parameters of a request and returns them in a new
+     * form object.
+     *
+     * @param request the request to be parsed.
+     */
+    public static Form getQueryParams(Request request) {
+        Form form = new Form();
+        form.parseQueryParams(request);
+        return form;
+    }
+
+    /**
      * Parses the query parameters of a request and stores them in this object.
      *
      * @param request the request to be parsed.
@@ -56,6 +68,19 @@ public class Form extends StringListMap
         if (query != null) {
             parse(query);
         }
+    }
+
+    /**
+     * Parses the URL-encoded form entity of a request and returns them in a
+     * new form object.
+     *
+     * @param request the request to be parsed.
+     * @throws IOException if an I/O exception occurs.
+     */
+    public static Form getFormEntity(Request request) throws IOException {
+        Form form = new Form();
+        form.parseFormEntity(request);
+        return form;
     }
 
     /**
@@ -90,17 +115,34 @@ public class Form extends StringListMap
     }
 
     /**
-     * Populates a request URI with query parameters suitable for the form to
-     * be submitted as a GET request. This adds query parameters to a URI that
-     * may already have parameters.
+     * Sets a request URI with query parameters. This overwrites any query
+     * parameters that exist in the request URI.
+     *
+     * @param request the request to set query parameters to.
+     */
+    public void toQueryParams(Request request) {
+        String uri = (request.uri != null ? request.uri.toString() : "");
+        int i = uri.indexOf('?');
+        if (i >= 0) { // strip out existing query
+            uri = uri.substring(0, i);
+        }
+        String query = toString();
+        if (query.length() > 0) { // add query from form
+            uri = uri + '?' + query;
+        }
+        request.uri = URI.create(uri);
+    }
+
+    /**
+     * Adds query parameters to an existing request URI. This leaves any
+     * existing query parameters intact.
      *
      * @param request the request to add query parameters to.
      */
-    public void toQueryParams(Request request) {
+    public void addQueryParams(Request request) {
         String query = toString();
         if (query.length() > 0) {
             String uri = (request.uri != null ? request.uri.toString() : "");
-            int index = uri.indexOf('?');
             uri = uri + (uri.indexOf('?') > 0 ? '&' : '?') + query;
             request.uri = URI.create(uri);
         }
@@ -131,14 +173,11 @@ public class Form extends StringListMap
         StringBuilder sb = new StringBuilder();
         for (String name : keySet()) {
             List<String> values = get(name);
-            if (values != null) {
-                for (Iterator i = values.iterator(); i.hasNext();) {
-                    String value = (String)i.next();
-                    sb.append(URLEncoder.encode(name)).append('=').append(URLEncoder.encode(value));
-                    if (i.hasNext()) {
-                        sb.append('&');
-                    }
+            for (String value: values) {
+                if (sb.length() > 0) {
+                    sb.append('&');
                 }
+                sb.append(URLEncoder.encode(name)).append('=').append(URLEncoder.encode(value));
             }
         }
         return sb.toString();

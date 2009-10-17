@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedStream.java,v 1.4 2009-10-15 07:07:57 pbryan Exp $
+ * $Id: CachedStream.java,v 1.5 2009-10-17 04:48:00 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -165,13 +165,15 @@ public class CachedStream extends InputStream
     /**
      * Sets the read position of the stream to the beginning.
      *
+     * @return a reference to this object.
      * @throws IOException if an I/O exception occurs.
      */
-    public void rewind() throws IOException {
+    public CachedStream rewind() throws IOException {
         if (!caching) {
             throw new IOException("caching has been stopped");
         }
         record.seek(0);
+        return this;
     }
 
     @Override

@@ -6,7 +6,7 @@
     <display-name>Basic Authentication Proxy</display-name>
     <servlet>
         <servlet-name>proxy</servlet-name>
-        <servlet-class>com.sun.identity.proxy.samples.auth.basic.BasicAuthProxy</servlet-class>
+        <servlet-class>com.sun.identity.proxy.sample.basicauth.BasicAuthProxy</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>proxy</servlet-name>

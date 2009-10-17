@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.8 2009-10-15 07:07:54 pbryan Exp $
+ * $Id: ClientHandler.java,v 1.9 2009-10-17 04:47:58 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -152,7 +152,7 @@ public class ClientHandler implements Handler
         if (exchange.response != null && exchange.response.entity != null) {
             exchange.response.entity.close();
         }
-    
+
         HttpRequestBase clientRequest = (exchange.request.entity != null ?
          new EntityRequest(exchange.request) : new NonEntityRequest(exchange.request));
 

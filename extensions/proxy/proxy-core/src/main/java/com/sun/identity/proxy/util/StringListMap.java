@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringListMap.java,v 1.3 2009-10-14 17:42:05 pbryan Exp $
+ * $Id: StringListMap.java,v 1.4 2009-10-17 04:48:01 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,11 +41,16 @@ public class StringListMap extends LinkedHashMap<String, List<String>>
     /**
      * Adds the specified string value to the list for the specified key. If no
      * list for the key yet exists in the map, a new list is created and added.
+     * If the value is null, any existing values are removed.
      *
      * @param key the key for which the specified value is to be added
      * @param value the string value to be added for the specified key.
      */
     public void add(String key, String value) {
+        if (value == null) {
+            remove(key);
+            return;
+        }
         List<String> list = get(key);
         if (list == null) {
             list = new LinkedList<String>();

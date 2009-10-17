@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StaticCredentialSource.java,v 1.3 2009-10-15 07:07:53 pbryan Exp $
+ * $Id: StaticCredentialSource.java,v 1.4 2009-10-17 04:47:58 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,6 +71,6 @@ public class StaticCredentialSource implements PasswordCredentialSource {
      */
     @Override
     public void invalid(Exchange exchange) throws HandlerException, IOException {
-        throw new HandlerException("failed to authenticate using hard-coded credentials.");
+        throw new HandlerException("failed to authenticate using hard-coded credentials");
     }
 }

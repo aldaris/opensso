@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Chain.java,v 1.3 2009-10-15 07:07:55 pbryan Exp $
+ * $Id: Chain.java,v 1.4 2009-10-17 04:47:59 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,16 +64,12 @@ public class Chain implements Handler
      * @throws IllegalArgumentException if the filter to add already has a next filter.
      */
     public void addFilter(Filter filter) {
-        if (filter.next != null) {
-            throw new IllegalStateException("filter already has next filter");
-        }
-        filter.next = head;
+        filter.setNext(head);
         head = filter;
     }
 
     /**
-     * Invokes the <tt>handle(<em>exchange</em>)</tt> method of the head filter
-     * in the chain.
+     * Invokes the <tt>handle</tt> method of the head filter in the chain.
      */
     @Override
     public void handle(Exchange exchange) throws IOException, HandlerException {

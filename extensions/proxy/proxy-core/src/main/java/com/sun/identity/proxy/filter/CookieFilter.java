@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieFilter.java,v 1.2 2009-10-15 07:07:55 pbryan Exp $
+ * $Id: CookieFilter.java,v 1.3 2009-10-17 04:47:59 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,9 +103,7 @@ public class CookieFilter extends Filter
     }
 
     /**
-     * Filters the exchange by suppressing, relaying and managing cookies based
-     * on the names in the action sets: <tt>suppressed</tt>, <tt>relayed</tt>
-     * and <tt>managed</tt>.
+     * Filters the exchange by suppressing, relaying and managing cookies.
      */
     @Override
     public void handle(Exchange exchange) throws HandlerException, IOException {

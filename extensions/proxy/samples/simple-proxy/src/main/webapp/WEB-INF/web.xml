@@ -6,7 +6,7 @@
     <display-name>Simple Proxy</display-name>
     <servlet>
         <servlet-name>proxy</servlet-name>
-        <servlet-class>com.sun.identity.proxy.samples.simple.SimpleProxy</servlet-class>
+        <servlet-class>com.sun.identity.proxy.sample.simple.SimpleProxy</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>proxy</servlet-name>

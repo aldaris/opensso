@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpBasicAuthFilter.java,v 1.7 2009-10-15 07:07:53 pbryan Exp $
+ * $Id: HttpBasicAuthFilter.java,v 1.8 2009-10-17 04:47:58 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,10 +26,10 @@ package com.sun.identity.proxy.auth;
 
 import com.sun.identity.proxy.handler.Filter;
 import com.sun.identity.proxy.handler.HandlerException;
+import com.sun.identity.proxy.http.CachedRequest;
 import com.sun.identity.proxy.http.Exchange;
 import com.sun.identity.proxy.http.Request;
 import com.sun.identity.proxy.http.Response;
-import com.sun.identity.proxy.io.CachedStream;
 import com.sun.identity.proxy.io.TemporaryStorage;
 import com.sun.identity.proxy.util.Base64;
 import com.sun.identity.proxy.util.IKStringSet;
@@ -87,28 +87,23 @@ public class HttpBasicAuthFilter extends Filter
     }
 
     /**
-     * Handles the message exchange by authenticating via HTTP basic once
-     * challenged for authentication.
+     * Handles the message exchange by authenticating via HTTP basic scheme
+     * once challenged for authentication. Credentials are cached in the
+     * session to allow subsequent requests to automatically include
+     * authentication credentials.
      */
     @Override
     public void handle(Exchange exchange) throws HandlerException, IOException
     {
-        CachedStream entity = null;   
-
         exchange.request.headers.remove(SUPPRESS_REQUEST_HEADERS);
  
-        // cache the incoming entity for replay
-        if (exchange.request.entity != null) {
-            exchange.request.entity = entity =
-             new CachedStream(exchange.request.entity, storage.open(storage.create()));
-        }
+        // cache the incoming request for replay
+        CachedRequest cached = new CachedRequest(exchange.request, storage);
 
         // loop to retry for intitially retrieved (or refreshed) credentials
         for (int n = 0; n < 2; n++) {
 
-            if (entity != null) {
-                entity.rewind(); // harmless to call in the first pass
-            }
+            exchange.request = cached.rewind();
 
             // because credentials are sent in every request, this class caches them in the session
             String userpass = (String)exchange.request.session.get(attributeName(exchange.request, "userpass"));
@@ -119,7 +114,7 @@ public class HttpBasicAuthFilter extends Filter
 
             next.handle(exchange);
 
-            // successful from this filter's standpoint
+            // successful exchange from this filter's standpoint
             if (exchange.response.status != 401) {
                 exchange.response.headers.remove(SUPPRESS_RESPONSE_HEADERS);
                 return;
@@ -128,7 +123,7 @@ public class HttpBasicAuthFilter extends Filter
             // credentials might be stale, so fetch them
             PasswordCredentials credentials = source.credentials(exchange.request);
 
-            // lack of credentials is equivalent to invalid credentials
+            // no credentials is equivalent to invalid credentials
             if (credentials == null) {
                 break;
             }

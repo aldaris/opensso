@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BasicAuthProxy.java,v 1.2 2009-10-15 07:08:32 pbryan Exp $
+ * $Id: BasicAuthProxy.java,v 1.1 2009-10-17 04:48:02 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.proxy.samples.auth.basic;
+package com.sun.identity.proxy.sample.basicauth;
 
 import com.sun.identity.proxy.auth.HttpBasicAuthFilter;
 import com.sun.identity.proxy.auth.StaticCredentialSource;
