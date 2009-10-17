@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MediaWikiAuthFilter.java,v 1.3 2009-10-17 09:08:39 pbryan Exp $
+ * $Id: SjscsAuthFilter.java,v 1.1 2009-10-17 09:08:40 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.proxy.contrib.mediawiki;
+package com.sun.identity.proxy.contrib.sjscs;
 
 import com.sun.identity.proxy.auth.PasswordCredentials;
 import com.sun.identity.proxy.auth.PasswordCredentialSource;
@@ -31,70 +31,39 @@ import com.sun.identity.proxy.handler.HandlerException;
 import com.sun.identity.proxy.http.Exchange;
 import com.sun.identity.proxy.http.Form;
 import com.sun.identity.proxy.http.Request;
+import com.sun.identity.proxy.util.URIUtil;
 import java.io.IOException;
+import java.net.URI;
 
 /**
- * A filter that performs form-based authentication for MediaWiki.
- * <p>
- * This filter intercepts requests for the login page by performing
- * authentication on behalf of the user and returing the response
- * if successful.
- * <p>
- * Different WikiMedia deployments can have different field names to
- * use to authenticate. These can be customized by setting the
- * <tt>username</tt> and <tt>password</tt> instance variables.
+ * A filter that performs form-based authentication with Sun Java System
+ * Calendar Server.
  * <p>
  * There is no need to add a filter to manage cookies with this filter,
  * because session cookies are simply passed back to the remote client in
  * the redirect (302) response for successful authentication.
  *
- * @author Marjo van Diem
  * @author Paul C. Bryan
  */
-public class MediaWikiAuthFilter extends Filter
+public class SjscsAuthFilter extends Filter
 {
     /** The source from which to acquire username/password credentials. */
     private PasswordCredentialSource source;
 
     /**
-     * The MediaWiki article title used for the authentication page. This
-     * can vary from one installation to the next.
-     * Default: Special:UserLogin (English).
-     */
-    public String authTitle = "Special:UserLogin";
-
-    /**
-     * Creates a new MediaWiki authentication filter.
+     * Creates a new Sun Java System Calendar Server authentication filter.
      *
      * @param source the source from which to acquire username/password credentials.
      */
-    public MediaWikiAuthFilter(PasswordCredentialSource source) {
+    public SjscsAuthFilter(PasswordCredentialSource source) {
         this.source = source;
     }
 
-    /**
-     * Handles the message exchange. Checks if authentication is required. If
-     * not, passes the request unmodified downstream. If required, submits a
-     * form with the credentials to authenticate the user. Returns the redirect
-     * response for a successful authentication upstream.
-     */
     @Override
     public void handle(Exchange exchange) throws HandlerException, IOException
     {
-        // parse pertinent incoming query parameters (if any)
-        Form query = Form.getQueryParams(exchange.request);
-        
-        // article title being requested from mediawiki
-        String title = query.first("title");
-        
-        // article to go to after successful authentication
-        String returnto = query.first("returnto");
-        
-        // if this query parameter is present, mediawiki is checking for cookie support
-        String wpCookieCheck = query.first("wpCookieCheck");
-
         // if not a request for the login page, simply pass-through
-        if (title == null || !(title.equalsIgnoreCase(authTitle) && wpCookieCheck == null)) {
+        if (!exchange.request.uri.getPath().equals("/")) {
             next.handle(exchange);
             return;
         }
@@ -107,36 +76,28 @@ public class MediaWikiAuthFilter extends Filter
             return;
         }
 
-        // initialize new request to be submitted
+        // new request to be submitted
         Request login = new Request();
-        login.uri = exchange.request.uri; // query params will be overwritten below
+        login.uri = URIUtil.newPath(exchange.request.uri, "/login.msc");
         login.principal = exchange.request.principal;
         login.session = exchange.request.session;
         login.headers.put("Host", exchange.request.headers.first("Host"));
-        login.headers.put("User-Agent", exchange.request.headers.first("User-Agent"));
-
-        // login query parameters
-        query = new Form();
-        query.add("title", authTitle);
-        query.add("action", "submitlogin");
-        query.add("type", "login");
-        query.add("returnto", returnto);
-        query.toQueryParams(login);
 
         // login form fields
         Form form = new Form();
-        form.add("wpName", credentials.username);
-        form.add("wpPassword", credentials.password);
+        form.add("user", credentials.username);
+        form.add("password", credentials.password);
         form.toFormEntity(login); // this sets method to POST
 
-        // overwrite the original incoming request; it'll no longer be used
+        // overwrite the original incoming request; it's no longer needed
         exchange.request = login;
 
         // pass along login request downstream to remote server
         next.handle(exchange);
 
-        // successful authentication, so simply pass redirect response upstream
-        if (exchange.response.status == 302) {
+        // redirect to non-login-page is success: return response as-is
+        if (exchange.response.status == 302
+        && !URI.create(exchange.response.headers.first("Location")).getPath().equals("/")) {
             return;
         }
 
