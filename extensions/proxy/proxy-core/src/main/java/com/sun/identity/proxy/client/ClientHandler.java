@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.9 2009-10-17 04:47:58 pbryan Exp $
+ * $Id: ClientHandler.java,v 1.10 2009-10-17 09:10:00 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,9 +31,12 @@ import com.sun.identity.proxy.http.Headers;
 import com.sun.identity.proxy.http.Response;
 import com.sun.identity.proxy.util.IKStringSet;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import javax.net.ssl.SSLContext;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
@@ -54,6 +57,7 @@ import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
@@ -63,6 +67,10 @@ import org.apache.http.protocol.RequestUserAgent;
 
 /**
  * A handler class that submits requests via the Apache HttpComponents Client.
+ * <p>
+ * This handler does not verify hostnames for outgoing SSL connections. This is
+ * because the proxy can access the SSL endpoint using an IP address instead
+ * of the hostname.
  *
  * @author Paul C. Bryan
  */
@@ -92,6 +100,31 @@ public class ClientHandler implements Handler
      */
     public ClientHandler() {
         this(DEFAULT_CONNECTIONS);
+    }
+
+    /**
+     * Returns a new SSL socket factory that does not perform hostname
+     * verification.
+     *
+     * @return the new SSL socket factory.
+     */
+    private static SSLSocketFactory newSSLSocketFactory() {
+        SSLContext sslContext;
+        try {
+            sslContext = SSLContext.getInstance("TLS");
+        }
+        catch (NoSuchAlgorithmException nsae) {
+            throw new IllegalStateException(nsae); // TODO: handle this better?
+        }
+        try {
+            sslContext.init(null, null, null);
+        }
+        catch (KeyManagementException kme) {
+            throw new IllegalStateException(kme); // TODO: handle this better?
+        }
+        SSLSocketFactory sslSocketFactory = new SSLSocketFactory(sslContext);
+        sslSocketFactory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        return sslSocketFactory;
     }
 
     /**
@@ -128,8 +161,9 @@ public class ClientHandler implements Handler
         HttpClientParams.setRedirecting(parameters, false);
 
         SchemeRegistry registry = new SchemeRegistry();
+
         registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        registry.register(new Scheme("https", PlainSocketFactory.getSocketFactory(), 443));
+        registry.register(new Scheme("https", newSSLSocketFactory(), 443));
 
         ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(parameters, registry);
 
@@ -138,7 +172,9 @@ public class ClientHandler implements Handler
         httpClient.removeRequestInterceptorByClass(RequestProxyAuthentication.class);
         httpClient.removeRequestInterceptorByClass(RequestTargetAuthentication.class);
         httpClient.removeResponseInterceptorByClass(ResponseProcessCookies.class);
+
 // TODO: set timeout to drop stalled connections?
+// FIXME: prevent automatic retry by apache httpclient
     }
 
     /**
