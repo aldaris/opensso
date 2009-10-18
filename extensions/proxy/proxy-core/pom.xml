@@ -20,14 +20,14 @@
   brackets [] replaced by your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: pom.xml,v 1.5 2009-10-17 04:47:57 pbryan Exp $
+  $Id: pom.xml,v 1.6 2009-10-18 22:24:18 pbryan Exp $
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.sun.identity.proxy</groupId>
-        <artifactId>opensso-proxy</artifactId>
+        <artifactId>proxy</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>proxy-core</artifactId>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>2.4</version>
+            <version>2.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
