@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HostDispatcher.java,v 1.2 2009-10-18 18:41:28 pbryan Exp $
+ * $Id: HostDispatcher.java,v 1.3 2009-10-18 22:23:59 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,24 +46,24 @@ import java.util.regex.Pattern;
  * servlets operational.
  * <p>
  * This class maps regular expression patterns to handlers to dispatch to.
- * Regular expressions are matched against the <tt>Host</tt> header in the
+ * Regular expressions are evaluated against the <tt>Host</tt> header in the
  * incoming request. Per RFC 2616, this header contains the host name and
  * optionally port number. Prior to matching, this class converts the host
  * header value to lower case. If no host header exists in the request, then
- * an empty string value is used for matching.
+ * an empty string value is used for evaluation.
  * <p>
  * In the <tt>handle</tt> method, regular expression patterns are evaluated in
  * the order they were added to this map. If no matching handler is found, a
  * {@link HandlerException} will be thrown. Therefore, it is advisable to add a
- * catch-all handler to dispatch to a default handler.
+ * catch-all pattern to dispatch to a default handler.
  * <p>
  * Example:
  * <pre>
  * HostDispatcher dispatcher = new HostDispatcher();
  * ...
- * dispatcher.put(Pattern.compile("(www\\.)?example1\\.com(:80)?"), chain1);
- * dispatcher.put(Pattern.compile("example2\\.com(:80)?"), chain2);
- * dispatcher.put(Pattern.compile(".*"), errorHandler);
+ * dispatcher.put(Pattern.compile("^(www\\.)?example1\\.com(:80)?$"), chain1);
+ * dispatcher.put(Pattern.compile("^example2\\.com(:80)?$"), chain2);
+ * dispatcher.put(Pattern.compile(""), errorHandler);
  * ...
  * dispatcher.handle(exchange);
  * </pre>
@@ -95,7 +95,7 @@ public class HostDispatcher extends LinkedHashMap<Pattern, Handler> implements H
         }
         host = host.toLowerCase();
         for (Pattern pattern : keySet()) {
-            if (pattern.matcher(host).matches()) {
+            if (pattern.matcher(host).find()) {
                 get(pattern).handle(exchange);
                 return;
             }
@@ -103,4 +103,3 @@ public class HostDispatcher extends LinkedHashMap<Pattern, Handler> implements H
         throw new HandlerException("no matching handler found for host");
     }
 }
-
