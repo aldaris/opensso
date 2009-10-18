@@ -20,7 +20,7 @@
   brackets [] replaced by your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: pom.xml,v 1.4 2009-10-17 04:47:55 pbryan Exp $
+  $Id: pom.xml,v 1.5 2009-10-18 18:41:26 pbryan Exp $
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -46,6 +46,19 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <links>
+                        <link>http://java.sun.com/javase/6/docs/api/</link>
+                        <link>http://hc.apache.org/httpcomponents-core/httpcore/apidocs/</link>
+                        <link>http://hc.apache.org/httpcomponents-core/httpcore/apidocs/</link>
+                        <link>http://hc.apache.org/httpcomponents-client/httpclient/apidocs/</link>
+                    </links>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
     <repositories>

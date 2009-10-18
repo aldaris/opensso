@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringListMap.java,v 1.4 2009-10-17 04:48:01 pbryan Exp $
+ * $Id: StringListMap.java,v 1.5 2009-10-18 18:41:29 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -78,6 +79,17 @@ public class StringListMap extends LinkedHashMap<String, List<String>>
     }
 
     /**
+     * Adds the specified keys and values from the specified map into this map.
+     *
+     * @param map the map whose keys and values are to be added.
+     */
+    public void add(Map<String, List<String>> map) {
+        for (String key : map.keySet()) {
+            add(key, map.get(key));
+        }
+    }
+
+    /**
      * Returns the first string value in the list of values for the matching
      * key, or <tt>null</tt> if no such value exists.
      *
@@ -114,7 +126,7 @@ public class StringListMap extends LinkedHashMap<String, List<String>>
 // FIXME: can make the generic more type-safe?
         List<String> values = new LinkedList<String>();
         for (String k : ((Set<String>)key)) {
-            List<String> v = remove(k);
+            List<String> v = super.remove(k);
             if (v != null) {
                 values.addAll(v);
             }

@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderCredentialSource.java,v 1.5 2009-10-17 04:47:58 pbryan Exp $
+ * $Id: HeaderCredentialSource.java,v 1.6 2009-10-18 18:41:26 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.proxy.auth;
 
+import com.sun.identity.proxy.filter.HeaderFilter;
 import com.sun.identity.proxy.handler.HandlerException;
 import com.sun.identity.proxy.http.Exchange;
 import com.sun.identity.proxy.http.Request;
@@ -34,6 +35,10 @@ import java.io.IOException;
  * incoming request. This allows upstream components (such as policy agents) to
  * set credentials that the proxy can use to authenticate with a downstream
  * server.
+ * <p>
+ * As the request headers contain credentials, it would be advisable to have a
+ * {@link HeaderFilter} downstream to strip the headers before they are sent
+ * to any remote server.
  *
  * @author Paul C. Bryan
  */
@@ -44,9 +49,6 @@ public class HeaderCredentialSource implements PasswordCredentialSource {
 
     /** The name of the header that contains the password. */
     private String passwordHeader;
-
-    /** Specifies if the headers should be removed from the request. Default: true. */
-    public boolean removeHeaders = true;
 
     /**
      * Creates a new header password credential source.
@@ -67,13 +69,7 @@ public class HeaderCredentialSource implements PasswordCredentialSource {
         PasswordCredentials credentials = new PasswordCredentials();
         if (request != null && request.headers != null) {
             credentials.username = request.headers.first(usernameHeader);
-            if (removeHeaders) {
-                request.headers.remove(usernameHeader);
-            }
             credentials.password = request.headers.first(passwordHeader);
-            if (removeHeaders) {
-               request.headers.remove(passwordHeader);
-            }
         }
         return credentials;
     }

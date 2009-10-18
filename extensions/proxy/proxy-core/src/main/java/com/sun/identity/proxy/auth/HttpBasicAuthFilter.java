@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpBasicAuthFilter.java,v 1.8 2009-10-17 04:47:58 pbryan Exp $
+ * $Id: HttpBasicAuthFilter.java,v 1.9 2009-10-18 18:41:26 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,7 @@ import com.sun.identity.proxy.http.Request;
 import com.sun.identity.proxy.http.Response;
 import com.sun.identity.proxy.io.TemporaryStorage;
 import com.sun.identity.proxy.util.Base64;
-import com.sun.identity.proxy.util.IKStringSet;
+import com.sun.identity.proxy.util.CIStringSet;
 import com.sun.identity.proxy.util.StringUtil;
 import java.io.IOException;
 import java.util.Arrays;
@@ -50,12 +50,12 @@ import java.util.HashSet;
 public class HttpBasicAuthFilter extends Filter
 {
     /** Headers that are suppressed from incoming request. */
-    private static final IKStringSet SUPPRESS_REQUEST_HEADERS =
-     new IKStringSet(Arrays.asList("Authorization"));
+    private static final CIStringSet SUPPRESS_REQUEST_HEADERS =
+     new CIStringSet(Arrays.asList("Authorization"));
 
     /** Headers that are suppressed for outgoing response. */
-    private static final IKStringSet SUPPRESS_RESPONSE_HEADERS =
-     new IKStringSet(Arrays.asList("WWW-Authenticate"));
+    private static final CIStringSet SUPPRESS_RESPONSE_HEADERS =
+     new CIStringSet(Arrays.asList("WWW-Authenticate"));
 
     /** The source from which to acquire username/password credentials. */
     private PasswordCredentialSource source;

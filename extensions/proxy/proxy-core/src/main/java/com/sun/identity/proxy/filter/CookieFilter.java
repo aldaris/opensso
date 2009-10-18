@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieFilter.java,v 1.3 2009-10-17 04:47:59 pbryan Exp $
+ * $Id: CookieFilter.java,v 1.4 2009-10-18 18:41:27 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,7 @@ import com.sun.identity.proxy.http.Exchange;
 import com.sun.identity.proxy.http.Request;
 import com.sun.identity.proxy.http.Response;
 import com.sun.identity.proxy.http.Session;
-import com.sun.identity.proxy.util.IKStringSet;
+import com.sun.identity.proxy.util.CIStringSet;
 import com.sun.identity.proxy.util.StringUtil;
 import java.io.IOException;
 import java.net.CookiePolicy;
@@ -88,13 +88,13 @@ public class CookieFilter extends Filter
     public CookiePolicy policy = CookiePolicy.ACCEPT_ALL;
 
     /** Action set for cookies to be suppressed. */
-    public final IKStringSet suppressed = new IKStringSet();
+    public final CIStringSet suppressed = new CIStringSet();
 
     /** Action set for cookies to be relayed. */
-    public final IKStringSet relayed = new IKStringSet();
+    public final CIStringSet relayed = new CIStringSet();
     
     /** Action set for cookies that filter should intercept and manage. */
-    public final IKStringSet managed = new IKStringSet();
+    public final CIStringSet managed = new CIStringSet();
 
     /**
      * Creates a new cookie filter.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.10 2009-10-17 09:10:00 pbryan Exp $
+ * $Id: ClientHandler.java,v 1.11 2009-10-18 18:41:27 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,7 @@ import com.sun.identity.proxy.handler.HandlerException;
 import com.sun.identity.proxy.http.Exchange;
 import com.sun.identity.proxy.http.Headers;
 import com.sun.identity.proxy.http.Response;
-import com.sun.identity.proxy.util.IKStringSet;
+import com.sun.identity.proxy.util.CIStringSet;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -80,12 +80,12 @@ public class ClientHandler implements Handler
     private static final int DEFAULT_CONNECTIONS = 64;
 
     /** Headers that are suppressed in request. */
-    private static final IKStringSet SUPPRESS_REQUEST_HEADERS = new IKStringSet(Arrays.asList(
+    private static final CIStringSet SUPPRESS_REQUEST_HEADERS = new CIStringSet(Arrays.asList(
      "Connection", "Content-Encoding", "Content-Length", "Content-Type", "Expect", "Keep-Alive",
       "Proxy-Authenticate", "Proxy-Authorization", "TE", "Trailers", "Transfer-Encoding", "Upgrade"));
 
     /** Headers that are suppressed in response. */
-    private static final IKStringSet SUPPRESS_RESPONSE_HEADERS = new IKStringSet(Arrays.asList(
+    private static final CIStringSet SUPPRESS_RESPONSE_HEADERS = new CIStringSet(Arrays.asList(
      "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization", "TE", "Trailers",
      "Transfer-Encoding", "Upgrade"));
 
@@ -135,8 +135,8 @@ public class ClientHandler implements Handler
      * @param headers the headers to search for the Connection header within.
      * @return the set of headers to additionally suppress.
      */
-    private IKStringSet getConnectionHeaders(Headers headers) {
-        IKStringSet set = new IKStringSet();
+    private CIStringSet getConnectionHeaders(Headers headers) {
+        CIStringSet set = new CIStringSet();
         List<String> values = headers.get("Connection");
         if (values != null) {
             for (String value : values) {
@@ -195,7 +195,7 @@ public class ClientHandler implements Handler
         clientRequest.setURI(exchange.request.uri);
 
         // connection headers to suppress
-        IKStringSet suppressConnection = new IKStringSet();
+        CIStringSet suppressConnection = new CIStringSet();
 
         // parse request connection headers to be treated as hop-to-hop
         suppressConnection.clear();

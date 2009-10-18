@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HandlerServlet.java,v 1.5 2009-10-15 07:08:29 pbryan Exp $
+ * $Id: HandlerServlet.java,v 1.6 2009-10-18 18:41:29 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,6 @@ import com.sun.identity.proxy.http.Exchange;
 import com.sun.identity.proxy.http.Request;
 import com.sun.identity.proxy.http.Session;
 import com.sun.identity.proxy.io.Streamer;
-import com.sun.identity.proxy.util.IKStringSet;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
