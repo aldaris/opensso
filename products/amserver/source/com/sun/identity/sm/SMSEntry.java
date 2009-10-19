@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.49 2009-05-13 21:27:50 hengming Exp $
+ * $Id: SMSEntry.java,v 1.50 2009-10-19 19:55:32 veiming Exp $
  *
  */
 
@@ -1536,14 +1536,15 @@ public class SMSEntry implements Cloneable {
          * ou=GlobalConfig ou=OrganizationConfig ou=PluginConfig
          */
         if (SMSJAXRPCObjectFlg || backendProxyEnabled ||
-            dnName.equals(baseDN) || dnName.equals(servicesDN)) {
+            dnName.equals(baseDN) ||
+            (dnName.equals(servicesDN) && !actions.contains(MODIFY))) {
             /*
-             if (debug.messageEnabled()) {
-                debug.message("SMSEntry:getDelegationPermission :"
+                if (debug.messageEnabled()) {
+                    debug.message("SMSEntry:getDelegationPermission :"
                         + "No delegation check needed for client sdk, "
                         + "db proxy enabled and for baseDNs: " + baseDN);
-            }
-             */
+                }
+            */
             return delPermFlag;
         }
 
