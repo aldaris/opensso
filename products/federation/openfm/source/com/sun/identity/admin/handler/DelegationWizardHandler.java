@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationWizardHandler.java,v 1.1 2009-10-02 18:57:25 farble1670 Exp $
+ * $Id: DelegationWizardHandler.java,v 1.2 2009-10-19 17:54:04 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -30,6 +30,9 @@ package com.sun.identity.admin.handler;
 import com.sun.identity.admin.model.DelegationWizardBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.QueuedActionBean;
+import com.sun.identity.admin.model.ViewSubject;
+import java.util.List;
+import javax.faces.event.ActionEvent;
 
 public abstract class DelegationWizardHandler extends WizardHandler {
     private QueuedActionBean queuedActionBean;
@@ -46,4 +49,22 @@ public abstract class DelegationWizardHandler extends WizardHandler {
     public DelegationWizardBean getDelegationWizardBean() {
         return (DelegationWizardBean)getWizardBean();
     }
+
+    public void subjectsAddListener(ActionEvent event) {
+        List<ViewSubject> availableValue =
+                getDelegationWizardBean().getSelectedAvailableViewSubjects();
+        getDelegationWizardBean().setSelectedAvailableViewSubjects(null);
+        List<ViewSubject> selected = getDelegationWizardBean().getSelectedViewSubjects();
+
+        selected.addAll(availableValue);
+    }
+
+    public void subjectsRemoveListener(ActionEvent event) {
+        List<ViewSubject> selectedValue = getDelegationWizardBean().getSelectedSelectedViewSubjects();
+        getDelegationWizardBean().setSelectedSelectedViewSubjects(null);
+        List<ViewSubject> selected = getDelegationWizardBean().getSelectedViewSubjects();
+
+        selected.removeAll(selectedValue);
+    }
+
 }

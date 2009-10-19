@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.19 2009-10-16 19:39:27 ggennaro Exp $
+  $Id: faces-config.xml,v 1.20 2009-10-19 17:54:08 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -54,6 +54,10 @@
         <converter-class>com.sun.identity.admin.model.RealmBeanConverter</converter-class>
     </converter>
     <converter>
+        <converter-id>viewSubjectConverter</converter-id>
+        <converter-class>com.sun.identity.admin.model.ViewSubjectConverter</converter-class>
+    </converter>
+    <converter>
         <converter-id>applicationResourceConverter</converter-id>
         <converter-class>com.sun.identity.admin.model.ApplicationResourceConverter</converter-class>
     </converter>
@@ -80,6 +84,12 @@
         <managed-bean-name>realmDao</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.dao.RealmDao</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>delegationDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.DelegationDao</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
@@ -1838,6 +1848,10 @@
         <managed-property>
             <property-name>viewApplicationsBean</property-name>
             <value>#{viewApplicationsBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectTypeToSubjectContainerMap</property-name>
+            <value>#{subjectTypeToSubjectContainerMap}</value>
         </managed-property>
         <managed-property>
             <property-name>nameEditable</property-name>

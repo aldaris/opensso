@@ -22,24 +22,33 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationWizardBean.java,v 1.3 2009-10-09 20:17:14 farble1670 Exp $
+ * $Id: DelegationWizardBean.java,v 1.4 2009-10-19 17:54:06 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.dao.DelegationDao;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import javax.faces.model.SelectItem;
+import org.apache.commons.collections.comparators.NullComparator;
 import static com.sun.identity.admin.model.DelegationWizardStep.*;
 
 public abstract class DelegationWizardBean extends WizardBean {
 
     private boolean nameEditable = false;
     private Effect nameInputEffect;
-    private  DelegationBean delegationBean = new DelegationBean();
+    private DelegationBean delegationBean = new DelegationBean();
     private List<Resource> availableResources;
     private ViewApplicationsBean viewApplicationsBean;
+    private SubjectType subjectType;
+    private List<SubjectType> subjectTypes;
+    private Map<SubjectType, SubjectContainer> subjectTypeToSubjectContainerMap;
+    private List<ViewSubject> selectedAvailableViewSubjects;
+    private List<ViewSubject> selectedSelectedViewSubjects;
 
     @Override
     public void reset() {
@@ -49,6 +58,72 @@ public abstract class DelegationWizardBean extends WizardBean {
 
     private void reset(boolean resetName, ViewApplicationType vat) {
         resetAvailableResources();
+        resetSubjectType();
+    }
+
+    private void resetSubjectType() {
+        subjectTypes = DelegationDao.getInstance().getSubjectTypes();
+        if (subjectTypes.size() > 0) {
+            subjectType = subjectTypes.get(0);
+        }
+    }
+
+    public List<ViewSubject> getAvailableViewSubjects() {
+        SubjectContainer sc = subjectTypeToSubjectContainerMap.get(subjectType);
+        if (sc == null) {
+            return Collections.EMPTY_LIST;
+        }
+        List<ViewSubject> vss = new ArrayList<ViewSubject>(sc.getViewSubjects());
+        if (delegationBean.getViewSubjects() != null) {
+            for (ViewSubject vs : delegationBean.getViewSubjects()) {
+                vss.remove(vs);
+            }
+        }
+
+        return vss;
+    }
+
+    public List<SelectItem> getAvailableViewSubjectItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        for (ViewSubject vs : getAvailableViewSubjects()) {
+            items.add(new SelectItem(vs, vs.getTitle()));
+        }
+        return items;
+    }
+
+    public List<ViewSubject> getSelectedViewSubjects() {
+        return delegationBean.getViewSubjects();
+    }
+
+    public List<SelectItem> getSelectedViewSubjectItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        if (delegationBean.getViewSubjects() != null) {
+            for (ViewSubject vs : delegationBean.getViewSubjects()) {
+                items.add(new SelectItem(vs, vs.getTitle()));
+            }
+        }
+        return items;
+    }
+
+    public String getSubjectTypeName() {
+        return subjectType.getName();
+    }
+
+    public void setSubjectTypeName(String name) {
+        for (SubjectType st : subjectTypes) {
+            if (st.getName().equals(name)) {
+                subjectType = st;
+                break;
+            }
+        }
+    }
+
+    public List<SelectItem> getSubjectTypeNameItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        for (SubjectType st : subjectTypes) {
+            items.add(new SelectItem(st.getName(), st.getTitle()));
+        }
+        return items;
     }
 
     public List<Resource> getResources() {
@@ -172,5 +247,35 @@ public abstract class DelegationWizardBean extends WizardBean {
 
     public void setViewApplicationsBean(ViewApplicationsBean viewApplicationsBean) {
         this.viewApplicationsBean = viewApplicationsBean;
+    }
+
+    public void setSubjectTypeToSubjectContainerMap(Map<SubjectType, SubjectContainer> subjectTypeToSubjectContainerMap) {
+        this.subjectTypeToSubjectContainerMap = subjectTypeToSubjectContainerMap;
+    }
+
+    public List<ViewSubject> getSelectedAvailableViewSubjects() {
+        return selectedAvailableViewSubjects;
+    }
+
+    public void setSelectedAvailableViewSubjects(List<ViewSubject> selectedAvailableViewSubjects) {
+        this.selectedAvailableViewSubjects = selectedAvailableViewSubjects;
+    }
+
+    public List<ViewSubject> getSelectedSelectedViewSubjects() {
+        return selectedSelectedViewSubjects;
+    }
+
+    public void setSelectedSelectedViewSubjects(List<ViewSubject> selectedSelectedViewSubjects) {
+        this.selectedSelectedViewSubjects = selectedSelectedViewSubjects;
+    }
+
+    public String getViewSubjectFilter() {
+        SubjectContainer sc = subjectTypeToSubjectContainerMap.get(subjectType);
+        return sc.getFilter();
+    }
+
+    public void setViewSubjectFilter(String viewSubjectFilter) {
+        SubjectContainer sc = subjectTypeToSubjectContainerMap.get(subjectType);
+        sc.setFilter(viewSubjectFilter);
     }
 }

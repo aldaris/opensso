@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationBean.java,v 1.2 2009-10-09 20:17:14 farble1670 Exp $
+ * $Id: DelegationBean.java,v 1.3 2009-10-19 17:54:05 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +38,14 @@ public class DelegationBean {
 
     public void setResources(List<Resource> resources) {
         this.resources = resources;
+    }
+
+    public List<ViewSubject> getViewSubjects() {
+        return viewSubjects;
+    }
+
+    public void setViewSubjects(List<ViewSubject> viewSubjects) {
+        this.viewSubjects = viewSubjects;
     }
 
     public static class NameComparator extends TableColumnComparator {
@@ -156,6 +165,7 @@ public class DelegationBean {
     private String modifier;
     private boolean selected;
     private List<Resource> resources;
+    private List<ViewSubject> viewSubjects = new ArrayList<ViewSubject>();
 
     public DelegationBean() {
         // nothing
