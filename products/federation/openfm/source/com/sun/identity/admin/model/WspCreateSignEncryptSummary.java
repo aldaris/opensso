@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspCreateSignEncryptSummary.java,v 1.1 2009-10-05 21:31:44 ggennaro Exp $
+ * $Id: WspCreateSignEncryptSummary.java,v 1.2 2009-10-19 22:51:24 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -50,27 +50,33 @@ public class WspCreateSignEncryptSummary extends WspCreateWizardSummary {
         ArrayList<String> a = new ArrayList<String>();
         Resources r = new Resources();
         WspCreateWizardBean wizardBean = getWspCreateWizardBean();
+        WspProfileBean profileBean = wizardBean.getWspProfileBean();
 
-        if( wizardBean.isRequestSignatureVerified() ) {
-            a.add(" " + r.getString(this, "requestSignatureVerified"));
+        if( profileBean.isRequestSigned() ) {
+            a.add(" " + r.getString(this, "requestSigned"));
         }
-        if( wizardBean.isRequestHeaderDecrypted() ) {
-            a.add(" " + r.getString(this, "requestHeaderDecrypted"));
+        if( profileBean.isRequestHeaderEncrypted() ) {
+            a.add(" " + r.getString(this, "requestHeaderEncrypted"));
         }
-        if( wizardBean.isRequestDecrypted() ) {
-            a.add(" " + r.getString(this, "requestDecrypted"));
+        if( profileBean.isRequestEncrypted() ) {
+            a.add(" " + r.getString(this, "requestEncrypted"));
         }
-        if( wizardBean.isResponseSigned() ) {
-            a.add(" " + r.getString(this, "responseSigned"));
+        if( profileBean.isResponseSignatureVerified() ) {
+            a.add(" " + r.getString(this, "responseSignatureVerified"));
         }
-        if( wizardBean.isResponseEncrypted() ) {
+        if( profileBean.isResponseDecrypted() ) {
             EncryptionAlgorithm encryptionAlgorithm
-             = EncryptionAlgorithm.valueOf(wizardBean.getEncryptionAlgorithm());
+             = EncryptionAlgorithm.valueOf(profileBean.getEncryptionAlgorithm());
 
-            String value = r.getString(this, "responseEncryptedFormat");
+            String value = r.getString(this, "responseDecryptedFormat");
             value = value.replaceAll("\\{0\\}", 
                                      encryptionAlgorithm.toLocaleString());
             a.add(" " + value);
+        }
+        
+        if( a.size() == 0 ) {
+            String value = r.getString(this, "none");
+            a.add(value);
         }
         
         ListFormatter lf = new ListFormatter(a);

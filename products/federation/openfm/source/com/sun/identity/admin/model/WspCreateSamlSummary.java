@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspCreateSamlSummary.java,v 1.2 2009-10-07 22:58:01 ggennaro Exp $
+ * $Id: WspCreateSamlSummary.java,v 1.3 2009-10-19 22:51:24 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -44,9 +44,11 @@ public class WspCreateSamlSummary extends WspCreateWizardSummary {
 
     @Override
     public String getValue() {
+        WspCreateWizardBean wizardBean = getWspCreateWizardBean();
+        WspProfileBean profileBean = wizardBean.getWspProfileBean();
         Resources r = new Resources();
         SamlAttributesTableBean samlAttributeTable
-            = getWspCreateWizardBean().getSamlAttributesTable();
+            = profileBean.getSamlAttributesTable();
         int count = 0;
         String value = null;
         

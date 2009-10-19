@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsp-profile.xhtml,v 1.1 2009-10-05 21:31:44 ggennaro Exp $
+   $Id: wsp-profile.xhtml,v 1.2 2009-10-19 22:51:31 ggennaro Exp $
 
 -->
 
@@ -52,24 +52,24 @@
 
             <ice:outputLabel
                 for="profileName"
-                effect="#{wizardBean.wscProfileBean.profileNameMessageEffect}"
+                effect="#{wizardBean.wspProfileBean.profileNameMessageEffect}"
                 value="#{resources['wsp-profile.profileNameLabel']}"
                 style="float: right;" />
             <ice:inputText
                 id="profileName"
-                effect="#{wizardBean.profileNameInputEffect}"
-                value="#{wizardBean.profileName}"
+                effect="#{wizardBean.wspProfileBean.profileNameInputEffect}"
+                value="#{wizardBean.wspProfileBean.profileName}"
                 style="width: 250px;"
                 maxlength="256"/>
             <ice:outputLabel
                 for="endPoint"
-                effect="#{wizardBean.endPointMessageEffect}"
+                effect="#{wizardBean.wspProfileBean.endPointMessageEffect}"
                 value="#{resources['wsp-profile.endPointLabel']}"
                 style="float: right;" />
             <ice:inputText
                 id="endPoint"
-                effect="#{wizardBean.endPointInputEffect}"
-                value="#{wizardBean.endPoint}"
+                effect="#{wizardBean.wspProfileBean.endPointInputEffect}"
+                value="#{wizardBean.wspProfileBean.endPoint}"
                 style="width: 500px;"
                 maxlength="1024"/>
 
@@ -79,7 +79,7 @@
                 style="float: right;" />
             <ice:setEventPhase events="ValueChangeEvent" phase="INVOKE_APPLICATION">
                 <ice:selectOneRadio
-                    value="#{wizardBean.usingMexEndPoint}"
+                    value="#{wizardBean.wspProfileBean.usingMexEndPoint}"
                     valueChangeListener="#{wizardHandler.usingMexEndPointListener}">
                     <f:selectItem
                         itemLabel="#{resources['wsp-profile.usingMexEndPointTrueLabel']}"
@@ -92,15 +92,15 @@
 
             <ice:outputLabel
                 for="mexEndPoint"
-                effect="#{wizardBean.mexEndPointMessageEffect}"
-                rendered="#{wizardBean.usingMexEndPoint}"
+                effect="#{wizardBean.wspProfileBean.mexEndPointMessageEffect}"
+                rendered="#{wizardBean.wspProfileBean.usingMexEndPoint}"
                 value="#{resources['wsp-profile.mexEndPointLabel']}"
                 style="float: right;" />
             <ice:inputText
                 id="mexEndPoint"
-                effect="#{wizardBean.mexEndPointInputEffect}"
-                rendered="#{wizardBean.usingMexEndPoint}"
-                value="#{wizardBean.mexEndPoint}"
+                effect="#{wizardBean.wspProfileBean.mexEndPointInputEffect}"
+                rendered="#{wizardBean.wspProfileBean.usingMexEndPoint}"
+                value="#{wizardBean.wspProfileBean.mexEndPoint}"
                 style="width: 500px;"
                 maxlength="1024"/>
         </ice:panelGrid>

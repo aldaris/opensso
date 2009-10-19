@@ -41,6 +41,10 @@ import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SecurityMechanismPanelBean;
 import com.sun.identity.admin.model.WspCreateWizardBean;
 import com.sun.identity.admin.model.WspCreateWizardStep;
+import com.sun.identity.admin.model.WspCreateWizardStep1Validator;
+import com.sun.identity.admin.model.WspCreateWizardStep2Validator;
+import com.sun.identity.admin.model.WspCreateWizardStep4Validator;
+import com.sun.identity.admin.model.WspProfileBean;
 
 public class WspCreateWizardHandler 
         extends WizardHandler 
@@ -50,9 +54,9 @@ public class WspCreateWizardHandler
     
     @Override
     public void initWizardStepValidators() {
-//        getWizardStepValidators()[WscCreateWizardStep.WSC_PROFILE.toInt()] = new WscCreateWizardStep1Validator(getWizardBean());
-//        getWizardStepValidators()[WscCreateWizardStep.WSC_USING_STS.toInt()] = new WscCreateWizardStep2Validator(getWizardBean());
-//        getWizardStepValidators()[WscCreateWizardStep.WSC_SECURITY.toInt()] = new WscCreateWizardStep3Validator(getWizardBean());
+        getWizardStepValidators()[WspCreateWizardStep.WSP_PROFILE.toInt()] = new WspCreateWizardStep1Validator(getWizardBean());
+        getWizardStepValidators()[WspCreateWizardStep.WSP_SECURITY.toInt()] = new WspCreateWizardStep2Validator(getWizardBean());
+        getWizardStepValidators()[WspCreateWizardStep.WSP_SAML.toInt()] = new WspCreateWizardStep4Validator(getWizardBean());
     }
 
     @Override
@@ -132,6 +136,7 @@ public class WspCreateWizardHandler
         int step = getStep(event);
         WspCreateWizardStep wizardStep = WspCreateWizardStep.valueOf(step);
         WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
+        WspProfileBean profileBean = wizardBean.getWspProfileBean();
         boolean resetSecurityWidgets = false;
         boolean resetSamlWidgets = false;
 
@@ -150,12 +155,13 @@ public class WspCreateWizardHandler
                 break;
         }
         
-        if( resetSecurityWidgets ) {
-            wizardBean.getUserCredentialsTable().resetInterface();
+        if( resetSecurityWidgets 
+                && profileBean.getUserCredentialsTable() != null ) {
+            profileBean.getUserCredentialsTable().resetInterface();
         }
         
-        if( resetSamlWidgets ) {
-            wizardBean.getSamlAttributesTable().resetInterface();
+        if( resetSamlWidgets && profileBean.getSamlAttributesTable() != null ) {
+            profileBean.getSamlAttributesTable().resetInterface();
         }
     }
 
@@ -166,14 +172,15 @@ public class WspCreateWizardHandler
     
     public void usingMexEndPointListener(ValueChangeEvent event) {
         WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
+        WspProfileBean profileBean = wizardBean.getWspProfileBean();
         
-        if( wizardBean.isUsingMexEndPoint()
-                && wizardBean.getEndPoint() != null 
-                && wizardBean.getEndPoint().length() > 0 ) {
+        if( profileBean.isUsingMexEndPoint()
+                && profileBean.getEndPoint() != null 
+                && profileBean.getEndPoint().length() > 0 ) {
             
-            wizardBean.setMexEndPoint(wizardBean.getEndPoint() + "/mex");
+            profileBean.setMexEndPoint(profileBean.getEndPoint() + "/mex");
         } else {
-            wizardBean.setMexEndPoint(null);
+            profileBean.setMexEndPoint(null);
         }
 
         // reset wizard state to ensure user revisits steps in case of changes
@@ -185,8 +192,9 @@ public class WspCreateWizardHandler
     
     public void securityMechanismPanelChangeListener(ValueChangeEvent event) {
         WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
+        WspProfileBean profileBean = wizardBean.getWspProfileBean();
         ArrayList<SecurityMechanismPanelBean> panelBeans
-            = wizardBean.getSecurityMechanismPanels();
+            = profileBean.getSecurityMechanismPanels();
         Object attributeValue 
             = event.getComponent().getAttributes().get("panelBean");
 
@@ -212,8 +220,9 @@ public class WspCreateWizardHandler
     
     public void securityMechanismPanelActionListener(ActionEvent event) {
         WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
+        WspProfileBean profileBean = wizardBean.getWspProfileBean();
         ArrayList<SecurityMechanismPanelBean> panelBeans
-            = wizardBean.getSecurityMechanismPanels();
+            = profileBean.getSecurityMechanismPanels();
         Object attributeValue 
             = event.getComponent().getAttributes().get("panelBean");
         

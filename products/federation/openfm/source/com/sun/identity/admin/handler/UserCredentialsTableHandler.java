@@ -113,7 +113,7 @@ public class UserCredentialsTableHandler implements Serializable
             item.setEditing(false);
         } else {
             showErrorPopup("invalidCredentialSummary", 
-                           "invalidCredentialDetail");
+                           "invalidCredentialDetails");
         }
     }
     
@@ -154,7 +154,7 @@ public class UserCredentialsTableHandler implements Serializable
             table.setNewPassword(null);
         } else {
             showErrorPopup("invalidCredentialSummary", 
-                           "invalidCredentialDetail");
+                           "invalidCredentialDetails");
         }
     }
  

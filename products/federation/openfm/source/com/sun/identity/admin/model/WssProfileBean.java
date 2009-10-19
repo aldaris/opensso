@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WssProfileBean.java,v 1.1 2009-10-16 19:39:21 ggennaro Exp $
+ * $Id: WssProfileBean.java,v 1.2 2009-10-19 22:51:24 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -46,6 +46,17 @@ public class WssProfileBean implements Serializable {
     private Effect mexEndPointInputEffect;
     private Effect mexEndPointMessageEffect;
 
+    private String kerberosDomain;
+    private Effect kerberosDomainInputEffect;
+    private Effect kerberosDomainMessageEffect;
+    private String kerberosDomainServer;
+    private Effect kerberosDomainServerInputEffect;
+    private Effect kerberosDomainServerMessageEffect;
+    private String kerberosServicePrincipal;
+    private Effect kerberosServicePrincipalInputEffect;
+    private Effect kerberosServicePrincipalMessageEffect;
+    private String x509SigningRefType;
+    
     private boolean requestSigned;
     private boolean requestHeaderEncrypted;
     private boolean requestEncrypted;
@@ -279,6 +290,90 @@ public class WssProfileBean implements Serializable {
 
     public void setPublicKeyAlias(String publicKeyAlias) {
         this.publicKeyAlias = publicKeyAlias;
+    }
+
+    public String getKerberosDomain() {
+        return kerberosDomain;
+    }
+
+    public void setKerberosDomain(String kerberosDomain) {
+        this.kerberosDomain = kerberosDomain;
+    }
+
+    public Effect getKerberosDomainInputEffect() {
+        return kerberosDomainInputEffect;
+    }
+
+    public void setKerberosDomainInputEffect(Effect kerberosDomainInputEffect) {
+        this.kerberosDomainInputEffect = kerberosDomainInputEffect;
+    }
+
+    public Effect getKerberosDomainMessageEffect() {
+        return kerberosDomainMessageEffect;
+    }
+
+    public void setKerberosDomainMessageEffect(Effect kerberosDomainMessageEffect) {
+        this.kerberosDomainMessageEffect = kerberosDomainMessageEffect;
+    }
+
+    public String getKerberosDomainServer() {
+        return kerberosDomainServer;
+    }
+
+    public void setKerberosDomainServer(String kerberosDomainServer) {
+        this.kerberosDomainServer = kerberosDomainServer;
+    }
+
+    public Effect getKerberosDomainServerInputEffect() {
+        return kerberosDomainServerInputEffect;
+    }
+
+    public void setKerberosDomainServerInputEffect(
+            Effect kerberosDomainServerInputEffect) {
+        this.kerberosDomainServerInputEffect = kerberosDomainServerInputEffect;
+    }
+
+    public Effect getKerberosDomainServerMessageEffect() {
+        return kerberosDomainServerMessageEffect;
+    }
+
+    public void setKerberosDomainServerMessageEffect(
+            Effect kerberosDomainServerMessageEffect) {
+        this.kerberosDomainServerMessageEffect = kerberosDomainServerMessageEffect;
+    }
+
+    public String getKerberosServicePrincipal() {
+        return kerberosServicePrincipal;
+    }
+
+    public void setKerberosServicePrincipal(String kerberosServicePrincipal) {
+        this.kerberosServicePrincipal = kerberosServicePrincipal;
+    }
+
+    public Effect getKerberosServicePrincipalInputEffect() {
+        return kerberosServicePrincipalInputEffect;
+    }
+
+    public void setKerberosServicePrincipalInputEffect(
+            Effect kerberosServicePrincipalInputEffect) {
+        this.kerberosServicePrincipalInputEffect = kerberosServicePrincipalInputEffect;
+    }
+
+    public Effect getKerberosServicePrincipalMessageEffect() {
+        return kerberosServicePrincipalMessageEffect;
+    }
+
+    public void setKerberosServicePrincipalMessageEffect(
+            Effect kerberosServicePrincipalMessageEffect) {
+        this.kerberosServicePrincipalMessageEffect = kerberosServicePrincipalMessageEffect;
+    }
+
+    public void setX509SigningRefType(String x509SigningRefType) {
+        this.x509SigningRefType = x509SigningRefType;
+    }
+
+    public String getX509SigningRefType() {
+        return x509SigningRefType;
     }
 
     

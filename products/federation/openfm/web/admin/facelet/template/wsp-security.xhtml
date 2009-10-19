@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsp-security.xhtml,v 1.1 2009-10-05 21:31:44 ggennaro Exp $
+   $Id: wsp-security.xhtml,v 1.2 2009-10-19 22:51:30 ggennaro Exp $
 
 -->
 
@@ -55,7 +55,7 @@
                 <ice:panelSeries
                     styleClass="enhancedCheckboxGrp"
                     var="securityMechanismPanel"
-                    value="#{wizardBean.securityMechanismPanels}">
+                    value="#{wizardBean.wspProfileBean.securityMechanismPanels}">
 
                     <ice:panelGrid 
                         columns="2"
@@ -120,6 +120,9 @@
                                     name="wizardHandler"
                                     value="#{wizardHandler}"/>
                                 <ui:param
+                                    name="profileBean"
+                                    value="#{wizardBean.wspProfileBean}"/>
+                                <ui:param
                                     name="settingsRendered"
                                     value="#{securityMechanismPanel.collapsible}"/>
                                 <ui:param
@@ -153,7 +156,7 @@
                     value="#{resources['wsp-security.authenticationChainLabel']}" />
                 <ice:selectOneMenu
                     id="authenticationChain"
-                    value="#{wizardBean.authenticationChain}">
+                    value="#{wizardBean.wspProfileBean.authenticationChain}">
                     <f:selectItems
                         value="#{wizardBean.authenticationChainList}" />
                 </ice:selectOneMenu>
@@ -163,7 +166,7 @@
                     value="#{resources['wsp-security.tokenConversionTypeLabel']}" />
                 <ice:selectOneMenu
                     id="tokenConversionType"
-                    value="#{wizardBean.tokenConversionType}">
+                    value="#{wizardBean.wspProfileBean.tokenConversionType}">
                     <f:selectItems
                         value="#{wizardBean.tokenConversionTypeList}" />
                 </ice:selectOneMenu>

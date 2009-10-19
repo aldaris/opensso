@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WssProfileDao.java,v 1.3 2009-10-16 19:39:26 ggennaro Exp $
+ * $Id: WssProfileDao.java,v 1.4 2009-10-19 22:51:43 ggennaro Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -50,6 +50,9 @@ import com.sun.identity.admin.model.SecurityMechanism;
 import com.sun.identity.admin.model.SecurityMechanismPanelBean;
 import com.sun.identity.admin.model.StsClientProfileBean;
 import com.sun.identity.admin.model.StsProfileBean;
+import com.sun.identity.admin.model.TokenConversionType;
+import com.sun.identity.admin.model.UserCredentialItem;
+import com.sun.identity.admin.model.UserCredentialsTableBean;
 import com.sun.identity.admin.model.WscProfileBean;
 import com.sun.identity.admin.model.WspProfileBean;
 import com.sun.identity.admin.model.X509SigningRefType;
@@ -85,8 +88,12 @@ public class WssProfileDao {
     private static final String RESERVED_WSP = "wsp";
 
     // WSCAgent
+    private static final String KERBEROS_TICKET_CACHE_DIR = "KerberosTicketCacheDir";
     
     // WSPAgent
+    private static final String KERBEROS_KEY_TAB_FILE = "KerberosKeyTabFile";
+    private static final String AUTHENTICATION_CHAIN = "authenticationChain";
+    private static final String TOKEN_CONVERSION_TYPE = "TokenConversionType";
     
     // STSAgent
     private static final String STS_ENDPOINT = "STSEndpoint";
@@ -103,7 +110,6 @@ public class WssProfileDao {
     private static final String KERBEROS_DOMAIN = "KerberosDomain";
     private static final String KERBEROS_DOMAIN_SERVER = "KerberosDomainServer";
     private static final String KERBEROS_SERVICE_PRINCIPAL = "KerberosServicePrincipal";
-    private static final String KERBEROS_TICKET_CACHE_DIR = "KerberosTicketCacheDir";
     private static final String SIGNING_REF_TYPE = "SigningRefType";
     private static final String ENCRYPTION_ALGORITHM_AES = "AES";
     private static final String ENCRYPTION_ALGORITHM_DESEDE = "DESede";
@@ -120,9 +126,6 @@ public class WssProfileDao {
     private static final String NAME_ID_MAPPER = "NameIDMapper";
     private static final String ATTRIBUTE_NAMESPACE = "AttributeNamespace";
     private static final String INCLUDE_MEMBERSHIPS = "includeMemberships";
-//    private static final String AUTHENTICATION_CHAIN = "authenticationChain";
-//    private static final String TOKEN_CONVERSION_TYPE = "TokenConversionType";
-//    private static final String KERBEROS_KEY_TAB_FILE = "KerberosKeyTabFile";
     private static final String WSP_ENDPOINT = "WSPEndpoint";
     
     private static final Comparator<WspProfileBean> WSP_PROFILE_COMPARATOR =
@@ -144,8 +147,6 @@ public class WssProfileDao {
         };
 
     
-    //--------------------------------------------------------------------------
-
     //--------------------------------------------------------------------------
 
     WssProfileDao() {
@@ -192,6 +193,24 @@ public class WssProfileDao {
     }
 
     //--------------------------------------------------------------------------
+    
+    
+    @SuppressWarnings("unchecked")
+    private static String getTokenConversionTypeValue(Map map) {
+        String configValue = getStringValue(map, TOKEN_CONVERSION_TYPE);
+        String value = null;
+        
+        if( configValue != null ) {
+            TokenConversionType tct 
+                = TokenConversionType.valueOfConfig(configValue);
+            if( tct != null ) {
+                value = tct.toString();
+            }
+        }
+        
+        return value;
+    }
+    
     
     @SuppressWarnings("unchecked")
     private static String getEncryptionAlgorithmValue(Map map) {
@@ -379,6 +398,33 @@ public class WssProfileDao {
         }
         
         return panels;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static UserCredentialsTableBean getUserCredentialsTable(Map map) {
+        ArrayList<PasswordCredential> configValues 
+            = getPasswordCredentials(map);
+        UserCredentialsTableBean table = new UserCredentialsTableBean();
+
+        if( configValues.size() > 0 ) {
+            ArrayList<UserCredentialItem> items 
+                = new ArrayList<UserCredentialItem>();
+
+            for(PasswordCredential pc : configValues) {
+                UserCredentialItem item = new UserCredentialItem();
+                item.setUserName(pc.getUserName());
+                item.setPassword(pc.getPassword());
+                item.setEditing(false);
+                item.setNewUserName(null);
+                item.setNewPassword(null);
+
+                items.add(item);
+            }
+            
+            table.setUserCredentialItems(items);
+        }
+        
+        return table;
     }
     
     @SuppressWarnings("unchecked")
@@ -617,6 +663,14 @@ public class WssProfileDao {
         bean.setProfileName(null);
         bean.setEndPoint(getStringValue(map, WSP_ENDPOINT));
         bean.setSecurityMechanismPanels(getSecurityMechanismPanels(map));
+        bean.setKerberosDomain(getStringValue(map, KERBEROS_DOMAIN));
+        bean.setKerberosDomainServer(getStringValue(map, KERBEROS_DOMAIN_SERVER));
+        bean.setKerberosServicePrincipal(getStringValue(map, KERBEROS_SERVICE_PRINCIPAL));
+        bean.setKerberosKeyTabFile(getStringValue(map, KERBEROS_KEY_TAB_FILE));
+        bean.setUserCredentialsTable(getUserCredentialsTable(map));
+        bean.setX509SigningRefType(getX509SigningRefTypeValue(map));
+        bean.setAuthenticationChain(getStringValue(map, AUTHENTICATION_CHAIN));
+        bean.setTokenConversionType(getTokenConversionTypeValue(map));
         bean.setRequestSigned(getBooleanValue(map, IS_REQUEST_SIGN));
         bean.setRequestHeaderEncrypted(getBooleanValue(map, IS_REQUEST_HEADER_ENCRYPT));
         bean.setRequestEncrypted(getBooleanValue(map, IS_REQUEST_ENCRYPT));
@@ -625,6 +679,10 @@ public class WssProfileDao {
         bean.setEncryptionAlgorithm(getEncryptionAlgorithmValue(map));
         bean.setPrivateKeyAlias(getStringValue(map, PRIVATE_KEY_ALIAS));
         bean.setPublicKeyAlias(getStringValue(map, PUBLIC_KEY_ALIAS));
+        bean.setAttributeNamespace(getStringValue(map, ATTRIBUTE_NAMESPACE));
+        bean.setNameIdMapper(getStringValue(map, NAME_ID_MAPPER));
+        bean.setIncludeMemberships(getBooleanValue(map, INCLUDE_MEMBERSHIPS));
+        bean.setSamlAttributesTable(getSamlAttributesTable(map));
         
         return bean;
     }
@@ -717,6 +775,24 @@ public class WssProfileDao {
         }
         
         return wscProfileBean;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static WspProfileBean getDefaultWspProfileBean() {
+        Map defaults = getServiceAttributeDefaults(AGENT_TYPE_WSP);
+        WspProfileBean wspProfileBean = getWspProfileBeanFromMap(defaults);
+        
+        SamlAttributesTableBean table = wspProfileBean.getSamlAttributesTable();
+        if( table != null ) {
+            for(SamlAttributeMapItem item : table.getAttributeMapItems()) {
+                if( !item.isCustom() 
+                        && item.getAssertionAttributeName() == null) {
+                    item.setAssertionAttributeName(item.getLocalAttributeName());
+                }
+            }
+        }
+        
+        return wspProfileBean;
     }
     
     @SuppressWarnings("unchecked")
@@ -863,7 +939,6 @@ public class WssProfileDao {
         
         if( bean != null ) {
             stsClient = new STSAgent();
-//            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(AdminTokenAction.getInstance());
             SSOToken adminToken = WSSUtils.getAdminToken();
 
             stsClient.init(bean.getProfileName(), 
@@ -983,19 +1058,4 @@ public class WssProfileDao {
         
         return wsc;
     }
-
-
-    
-    
-    
-
-    /*
-    
-    @SuppressWarnings("unchecked")
-    public static WspProfileBean getDefaultWspProfileBean() {
-        Map defaults = getServiceAttributeDefaults(SUB_SCHEMA_WSP);
-        return getWspProfileBeanFromMap(defaults);
-    }
-
-    */
 }

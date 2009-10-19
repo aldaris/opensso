@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsp-sign-encrypt2.xhtml,v 1.1 2009-10-05 21:31:44 ggennaro Exp $
+   $Id: wss-provider-sign-encrypt.xhtml,v 1.3 2009-10-19 22:51:31 ggennaro Exp $
 
 -->
 
@@ -38,73 +38,64 @@
 
 <f:subview>
 
-    <o:section>
-        <ui:define name="section-title">
-            <ice:outputText
-                value="#{resources['wsp-sign-encrypt2.section-title']}"/>
-        </ui:define>
-        <ui:define name="section-details">
-            <ice:outputText
-                value="#{resources['wsp-sign-encrypt2.section-details']}"/>
-        </ui:define>
-        <ui:define name="section-body">
-
     <ice:panelGrid
         columns="2"
         columnClasses="label-column,input-column">
         <ice:outputLabel
             style="float: right;"
-            value="#{resources['wsp-sign-encrypt2.affectedElements']}" />
+            value="#{resources['wss-provider-sign-encrypt.affectedElements']}" />
         <ice:panelGrid columns="4">
             <ice:selectBooleanCheckbox
-                id="requestSignatureVerified"
-                value="#{wizardBean.requestSignatureVerified}"/>
+                id="responseSignatureVerified"
+                value="#{profileBean.responseSignatureVerified}"/>
             <ice:outputLabel
-                for="requestSignatureVerified"
+                for="responseSignatureVerified"
                 style="padding-right: 20px;"
-                value="#{resources['wsp-sign-encrypt2.requestSignatureVerifiedLabel']}" />
+                value="#{resources['wss-provider-sign-encrypt.responseSignatureVerifiedLabel']}" />
             <ice:selectBooleanCheckbox
-                id="responseSigned"
-                value="#{wizardBean.responseSigned}"/>
+                id="requestSigned"
+                value="#{profileBean.requestSigned}"/>
             <ice:outputLabel
-                for="responseSigned"
-                value="#{resources['wsp-sign-encrypt2.responseSignedLabel']}" />
+                for="requestSigned"
+                value="#{resources['wss-provider-sign-encrypt.requestSignedLabel']}" />
 
             <ice:selectBooleanCheckbox
-                id="requestHeaderDecrypted"
-                style="padding-right: 20px;"
-                value="#{wizardBean.requestHeaderDecrypted}" />
+                id="responseDecrypted"
+                value="#{profileBean.responseDecrypted}" />
             <ice:outputLabel
-                for="requestHeaderDecrypted"
-                value="#{resources['wsp-sign-encrypt2.requestHeaderDecryptedLabel']}" />
+                for="responseDecrypted"
+                style="padding-right: 20px;"
+                value="#{resources['wss-provider-sign-encrypt.responseDecryptedLabel']}" />
             <ice:selectBooleanCheckbox
-                id="responseEncrypted"
-                value="#{wizardBean.responseEncrypted}" />
-            <ice:outputLabel
-                for="responseEncrypted"
+                id="requestHeaderEncrypted"
                 style="padding-right: 20px;"
-                value="#{resources['wsp-sign-encrypt2.responseEncryptedLabel']}" />
+                value="#{profileBean.requestHeaderEncrypted}" />
+            <ice:outputLabel
+                for="requestHeaderEncrypted"
+                value="#{resources['wss-provider-sign-encrypt.requestHeaderEncryptedLabel']}" />
 
+            <ice:outputText value="" />
+            <ice:outputText value="" />
             <ice:selectBooleanCheckbox
-                id="requestDecrypted"
-                value="#{wizardBean.requestDecrypted}" />
+                id="requestEncrypted"
+                value="#{profileBean.requestEncrypted}" />
             <ice:outputLabel
-                for="requestDecrypted"
-                value="#{resources['wsp-sign-encrypt2.requestDecryptedLabel']}" />
-            <ice:outputText value="" />
-            <ice:outputText value="" />
+                for="requestEncrypted"
+                value="#{resources['wss-provider-sign-encrypt.requestEncryptedLabel']}" />
+
         </ice:panelGrid>
     </ice:panelGrid>
 
-    <ice:panelGrid
+    <ice:panelGrid 
         columns="2"
         columnClasses="label-column,input-column">
         <ice:outputLabel
             for="encryptionAlgorithm"
             style="float: right;"
-            value="#{resources['wsp-sign-encrypt2.encryptionAlgorithmLabel']}" />
-        <ice:selectOneMenu id="encryptionAlgorithm"
-                           value="#{wizardBean.encryptionAlgorithm}">
+            value="#{resources['wss-provider-sign-encrypt.encryptionAlgorithmLabel']}" />
+        <ice:selectOneMenu 
+            id="encryptionAlgorithm"
+            value="#{profileBean.encryptionAlgorithm}">
             <f:selectItems
                 value="#{wizardBean.encryptionAlgorithmList}"/>
         </ice:selectOneMenu>
@@ -112,45 +103,46 @@
         <ice:outputLabel
             for="privateKeyAlias"
             style="float: right;"
-            value="#{resources['wsp-sign-encrypt2.privateKeyAliasLabel']}" />
+            value="#{resources['wss-provider-sign-encrypt.privateKeyAliasLabel']}" />
         <ice:panelGrid columns="1">
             <ice:outputText
                 rendered="#{o:size(wizardBean.keyAliasList) == 0 }"
                 style="font-style: italic;"
-                value="#{resources['wsp-sign-encrypt2.noPrivateKeyAliases']}"/>
+                value="#{resources['wss-provider-sign-encrypt.noPrivateKeyAliases']}"/>
             <ice:selectOneMenu
                 id="privateKeyAlias"
                 rendered="#{o:size(wizardBean.keyAliasList) > 0 }"
-                value="#{wizardBean.privateKeyAlias}">
+                value="#{profileBean.privateKeyAlias}">
                 <f:selectItems value="#{wizardBean.keyAliasList}"/>
             </ice:selectOneMenu>
-            <o:inlineHelp 
-                key="wsp-sign-encrypt2.privateKeyAliasInlineHelp" />
+            <ice:outputText
+                style="font-style: italic;"
+                value="#{resources['wss-provider-sign-encrypt.privateKeyAliasInlineHelp']}" />
         </ice:panelGrid>
 
         <ice:outputLabel
             for="publicKeyAlias"
             style="float: right;"
-            value="#{resources['wsp-sign-encrypt2.publicKeyAliasLabel']}" />
+            value="#{resources['wss-provider-sign-encrypt.publicKeyAliasLabel']}" />
         <ice:panelGrid columns="1">
             <ice:outputText
                 rendered="#{o:size(wizardBean.keyAliasList) == 0 }"
                 style="font-style: italic;"
-                value="#{resources['wsp-sign-encrypt2.noPublicKeyAliases']}"/>
+                value="#{resources['wss-provider-sign-encrypt.noPublicKeyAliases']}"/>
             <ice:selectOneMenu
                 id="publicKeyAlias"
                 rendered="#{o:size(wizardBean.keyAliasList) > 0 }"
-                value="#{wizardBean.publicKeyAlias}">
+                value="#{profileBean.publicKeyAlias}">
                 <f:selectItems value="#{wizardBean.keyAliasList}"/>
             </ice:selectOneMenu>
-            <o:inlineHelp 
-                key="wsp-sign-encrypt2.publicKeyAliasInlineHelp" />
+            <ice:outputText
+                style="font-style: italic;"
+                value="#{resources['wss-provider-sign-encrypt.publicKeyAliasInlineHelp']}" />
         </ice:panelGrid>
 
     </ice:panelGrid>
 
-    </ui:define>
-</o:section>
-
 </f:subview>
+
+
 </span>

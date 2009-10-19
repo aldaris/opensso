@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspProfileBean.java,v 1.2 2009-10-16 19:38:47 ggennaro Exp $
+ * $Id: WspProfileBean.java,v 1.3 2009-10-19 22:51:22 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,10 +30,19 @@ package com.sun.identity.admin.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.icesoft.faces.context.effects.Effect;
+
 public class WspProfileBean extends WssProfileBean implements Serializable {
 
     private ArrayList<SecurityMechanismPanelBean> securityMechanismPanels;
+    private UserCredentialsTableBean userCredentialsTable;
+    private String kerberosKeyTabFile;
+    private Effect kerberosKeyTabFileInputEffect;
+    private Effect kerberosKeyTabFileMessageEffect;
+    private String authenticationChain;
+    private String tokenConversionType;
 
+    
     // getters / setters -------------------------------------------------------
     
     public void setSecurityMechanismPanels(ArrayList<SecurityMechanismPanelBean> securityMechanismPanels) {
@@ -42,6 +51,56 @@ public class WspProfileBean extends WssProfileBean implements Serializable {
 
     public ArrayList<SecurityMechanismPanelBean> getSecurityMechanismPanels() {
         return securityMechanismPanels;
+    }
+
+    public void setUserCredentialsTable(UserCredentialsTableBean userCredentialsTable) {
+        this.userCredentialsTable = userCredentialsTable;
+    }
+
+    public UserCredentialsTableBean getUserCredentialsTable() {
+        return userCredentialsTable;
+    }
+
+    public void setKerberosKeyTabFile(String kerberosKeyTabFile) {
+        this.kerberosKeyTabFile = kerberosKeyTabFile;
+    }
+
+    public String getKerberosKeyTabFile() {
+        return kerberosKeyTabFile;
+    }
+
+    public void setKerberosKeyTabFileInputEffect(
+            Effect kerberosKeyTabFileInputEffect) {
+        this.kerberosKeyTabFileInputEffect = kerberosKeyTabFileInputEffect;
+    }
+
+    public Effect getKerberosKeyTabFileInputEffect() {
+        return kerberosKeyTabFileInputEffect;
+    }
+
+    public void setKerberosKeyTabFileMessageEffect(
+            Effect kerberosKeyTabFileMessageEffect) {
+        this.kerberosKeyTabFileMessageEffect = kerberosKeyTabFileMessageEffect;
+    }
+
+    public Effect getKerberosKeyTabFileMessageEffect() {
+        return kerberosKeyTabFileMessageEffect;
+    }
+
+    public void setAuthenticationChain(String authenticationChain) {
+        this.authenticationChain = authenticationChain;
+    }
+
+    public String getAuthenticationChain() {
+        return authenticationChain;
+    }
+
+    public void setTokenConversionType(String tokenConversionType) {
+        this.tokenConversionType = tokenConversionType;
+    }
+
+    public String getTokenConversionType() {
+        return tokenConversionType;
     }
     
 }

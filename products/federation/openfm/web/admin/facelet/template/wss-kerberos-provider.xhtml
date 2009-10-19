@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wss-kerberos-provider.xhtml,v 1.1 2009-09-30 22:01:28 ggennaro Exp $
+   $Id: wss-kerberos-provider.xhtml,v 1.2 2009-10-19 22:51:32 ggennaro Exp $
 
 -->
 <span
@@ -39,53 +39,53 @@
         <ice:panelGrid columns="4">
 
             <ice:outputLabel
-                effect="#{wizardBean.kerberosDomainMessageEffect}"
+                effect="#{profileBean.kerberosDomainMessageEffect}"
                 for="kerberosDomain"
                 style="float: right;"
                 value="#{resources['wss-kerberos-provider.kerberosTokenDomainLabel']}" />
             <ice:inputText
-                effect="#{wizardBean.kerberosDomainInputEffect}"
+                effect="#{profileBean.kerberosDomainInputEffect}"
                 id="kerberosDomain"
                 maxlength="255"
                 size="30"
                 style="margin-right: 20px;"
-                value="#{wizardBean.kerberosDomain}" />
+                value="#{profileBean.kerberosDomain}" />
 
             <ice:outputLabel
-                effect="#{wizardBean.kerberosServicePrincipalMessageEffect}"
+                effect="#{profileBean.kerberosServicePrincipalMessageEffect}"
                 for="kerberosServicePrincipal"
                 style="float: right;"
                 value="#{resources['wss-kerberos-provider.kerberosTokenServicePrincipalLabel']}" />
             <ice:inputText
-                effect="#{wizardBean.kerberosServicePrincipalInputEffect}"
+                effect="#{profileBean.kerberosServicePrincipalInputEffect}"
                 id="kerberosServicePrincipal"
                 maxlength="255"
                 size="30"
-                value="#{wizardBean.kerberosServicePrincipal}" />
+                value="#{profileBean.kerberosServicePrincipal}" />
 
             <ice:outputLabel
-                effect="#{wizardBean.kerberosDomainServerMessageEffect}"
+                effect="#{profileBean.kerberosDomainServerMessageEffect}"
                 for="kerberosDomainServer"
                 style="float: right;"
                 value="#{resources['wss-kerberos-provider.kerberosTokenDomainServerLabel']}" />
             <ice:inputText
-                effect="#{wizardBean.kerberosDomainServerInputEffect}"
+                effect="#{profileBean.kerberosDomainServerInputEffect}"
                 id="kerberosDomainServer"
                 maxlength="255"
                 size="30"
-                value="#{wizardBean.kerberosDomainServer}" />
+                value="#{profileBean.kerberosDomainServer}" />
 
             <ice:outputLabel
-                effect="#{wizardBean.kerberosKeyTabFileMessageEffect}"
+                effect="#{profileBean.kerberosKeyTabFileMessageEffect}"
                 for="kerberosKeyTabFile"
                 style="float: right;"
                 value="#{resources['wss-kerberos-provider.kerberosTokenKeyTabFileLabel']}" />
             <ice:inputText
-                effect="#{wizardBean.kerberosKeyTabFileInputEffect}"
+                effect="#{profileBean.kerberosKeyTabFileInputEffect}"
                 id="kerberosKeyTabFile"
                 maxlength="255"
                 size="30"
-                value="#{wizardBean.kerberosKeyTabFile}" />
+                value="#{profileBean.kerberosKeyTabFile}" />
                 
         </ice:panelGrid>
 

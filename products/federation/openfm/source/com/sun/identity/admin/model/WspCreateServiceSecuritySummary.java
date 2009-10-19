@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspCreateServiceSecuritySummary.java,v 1.1 2009-10-05 21:31:44 ggennaro Exp $
+ * $Id: WspCreateServiceSecuritySummary.java,v 1.2 2009-10-19 22:51:22 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -47,10 +47,12 @@ public class WspCreateServiceSecuritySummary extends WspCreateWizardSummary {
 
     @Override
     public String getValue() {
+        WspCreateWizardBean wizardBean = getWspCreateWizardBean();
+        WspProfileBean profileBean = wizardBean.getWspProfileBean();
         ArrayList<String> a = new ArrayList<String>();
         
         for(SecurityMechanismPanelBean panelBean 
-                : getWspCreateWizardBean().getSecurityMechanismPanels() ) {
+                : profileBean.getSecurityMechanismPanels() ) {
             
             if( panelBean.isChecked() ) {
                 a.add(" " + panelBean.getSecurityMechanism().toLocaleString());
