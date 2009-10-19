@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationResource.java,v 1.1 2009-10-09 20:17:13 farble1670 Exp $
+ * $Id: ApplicationResource.java,v 1.2 2009-10-19 18:35:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,6 +30,7 @@ package com.sun.identity.admin.model;
 import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.SlideDown;
 import com.icesoft.faces.context.effects.SlideUp;
+import com.sun.identity.admin.Functions;
 import com.sun.identity.admin.handler.MultiPanelHandler;
 import javax.faces.event.ActionEvent;
 
@@ -70,6 +71,10 @@ public class ApplicationResource
     public void setName(String name) {
         super.setName(name);
         viewEntitlement.setViewApplication(getViewApplication());
+    }
+
+    public int getResourceCount() {
+        return Functions.size(viewEntitlement.getResources());
     }
 
     private ViewApplication getViewApplication() {

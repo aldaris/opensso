@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationWizardBean.java,v 1.4 2009-10-19 17:54:06 farble1670 Exp $
+ * $Id: DelegationWizardBean.java,v 1.5 2009-10-19 18:35:20 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
+import com.sun.identity.admin.Functions;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.DelegationDao;
 import java.util.ArrayList;
@@ -34,7 +35,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.faces.model.SelectItem;
-import org.apache.commons.collections.comparators.NullComparator;
 import static com.sun.identity.admin.model.DelegationWizardStep.*;
 
 public abstract class DelegationWizardBean extends WizardBean {
@@ -179,6 +179,17 @@ public abstract class DelegationWizardBean extends WizardBean {
         this.nameEditable = nameEditable;
     }
 
+    public int getResourcesSize() {
+        int size = 0;
+        if (delegationBean.getResources() != null) {
+            for (Resource r : delegationBean.getResources()) {
+                ApplicationResource arr = (ApplicationResource) r;
+                size += arr.getResourceCount();
+            }
+        }
+        return size;
+    }
+
     private String getPanelLabel(DelegationWizardStep aws) {
         Resources r = new Resources();
         String label;
@@ -191,11 +202,14 @@ public abstract class DelegationWizardBean extends WizardBean {
                 break;
 
             case RESOURCES:
-                label = r.getString(this, "resourcesPanelLabel");
+                int applicationCount = Functions.size(delegationBean.getResources());
+                int resourceCount = getResourcesSize();
+                label = r.getString(this, "resourcesPanelLabel", applicationCount, resourceCount);
                 break;
 
             case SUBJECTS:
-                label = r.getString(this, "subjectsPanelLabel");
+                int subjectCount = Functions.size(delegationBean.getViewSubjects());
+                label = r.getString(this, "subjectsPanelLabel", subjectCount);
                 break;
 
             case ACTIONS:
