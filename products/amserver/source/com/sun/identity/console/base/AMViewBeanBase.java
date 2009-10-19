@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.14 2009-08-13 21:21:53 rajeevangal Exp $
+ * $Id: AMViewBeanBase.java,v 1.15 2009-10-19 18:17:33 asyhuang Exp $
  *
  */
 
@@ -56,6 +56,7 @@ import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.components.view.html.SerializedField;
 import com.sun.identity.console.delegation.model.DelegationConfig;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSSchema;
 import com.sun.web.ui.model.CCActionTableModelInterface;
@@ -515,7 +516,7 @@ public abstract class AMViewBeanBase
         Set set = null;
         if ((optList != null) && (optList.size() > 0)) {
             int sz = optList.size();
-            set = new HashSet(sz *2);
+            set = new OrderedSet();
 
             for (int i = 0; i < sz; i++) {
                 set.add(optList.getValue(i));

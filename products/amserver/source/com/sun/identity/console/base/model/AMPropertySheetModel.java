@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheetModel.java,v 1.11 2009-05-05 18:42:52 mrudul_uchil Exp $
+ * $Id: AMPropertySheetModel.java,v 1.12 2009-10-19 18:17:37 asyhuang Exp $
  *
  */
 
@@ -267,7 +267,7 @@ public class AMPropertySheetModel
         }
         if ((m != null) && CCEditableListModel.class.isInstance(m)) {
             ((CCEditableListModel) m).setOptionList(
-                AMAdminUtils.toSet(values));
+                AMAdminUtils.toOrderedSet(values));
         }
 
         if (passwordComponents.contains(name)) {

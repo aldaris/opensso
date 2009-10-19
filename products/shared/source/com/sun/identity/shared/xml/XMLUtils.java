@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.14 2009-07-16 17:02:02 ericow Exp $
+ * $Id: XMLUtils.java,v 1.15 2009-10-19 18:19:20 asyhuang Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.shared.xml;
 
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Base64;
 import java.io.ByteArrayInputStream;
@@ -561,7 +562,7 @@ public class XMLUtils {
             return (null);
         }
 
-        Set retVal = new HashSet();
+        Set retVal = new OrderedSet();
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node n = children.item(i);

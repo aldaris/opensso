@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
-* $Id: AMAdminUtils.java,v 1.8 2009-01-28 05:34:56 ww203982 Exp $
+* $Id: AMAdminUtils.java,v 1.9 2009-10-19 18:17:37 asyhuang Exp $
  *
  */
 
@@ -37,6 +37,7 @@ import com.sun.identity.common.SearchResults;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -153,6 +154,26 @@ public class AMAdminUtils {
             }
         }
         
+        return (set == null) ? Collections.EMPTY_SET : set;
+    }
+
+    /**
+     * Returns a set that contains all items in array.
+     *
+     * @param array Array which contains the items.
+     * @return a set that contains all items in array.
+     */
+    public static Set toOrderedSet(Object[] array) {
+        Set set = null;
+
+        if ((array != null) && (array.length > 0)) {
+            set = new OrderedSet();
+
+            for (int i = 0; i < array.length; i++) {
+                set.add((array[i].toString()).trim());
+            }
+        }
+
         return (set == null) ? Collections.EMPTY_SET : set;
     }
 
