@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedStream.java,v 1.5 2009-10-17 04:48:00 pbryan Exp $
+ * $Id: CachedStream.java,v 1.6 2009-10-19 17:16:48 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,7 +128,7 @@ public class CachedStream extends InputStream
     public int read() throws IOException {
         byte[] b = new byte[1];
         int len = read(b, 0, 1);
-        return (len > 0 ? len : -1);
+        return (len > 0 ? b[0] : -1);
     }
 
     @Override
