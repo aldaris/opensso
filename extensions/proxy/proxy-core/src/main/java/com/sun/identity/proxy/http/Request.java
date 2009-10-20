@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.6 2009-10-15 07:07:56 pbryan Exp $
+ * $Id: Request.java,v 1.7 2009-10-20 23:59:54 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,26 +62,25 @@ public class Request extends Message
      * Host header. This allows the request URI to contain a raw IP address,
      * while the Host header resolves the hostname and port that the remote
      * client used to access it.
+     * <p>
+     * Note: This method returns a normalized URI, as though returned by the
+     * {@link URI#normalize} method.
      *
      * @return the resolved URI value.
      */
     public URI resolveHostURI() {
-        if (uri == null) {
-            throw new NullPointerException();
+        URI uri = this.uri;
+        String header = (headers != null ? headers.first("Host") : null);
+        if (uri != null && header != null) {
+            String[] hostport = DELIM_COLON.split(header, 2);
+            int port = (hostport.length == 2 ? IntegerUtil.parseInt(hostport[1], -1) : -1);
+            try {
+                uri = new URI(uri.getScheme(), null, hostport[0], port, "/", null, null).resolve(
+                new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(), null, null, null).relativize(uri));
+            }
+            catch (URISyntaxException use) {
+            }
         }
-        String header = headers.first("Host");
-        if (header == null) {
-            return uri;
-        }
-        String[] hostport = DELIM_COLON.split(header, 2);
-        int port = (hostport.length == 2 ? IntegerUtil.parseInt(hostport[1], -1) : -1);
-        try {
-            return new URI(this.uri.getScheme(), null, hostport[0], port, "/", null, null).resolve(
-             new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(), null, null, null).relativize(uri));
-        }
-        catch (URISyntaxException use) {
-            return uri;
-        }
+        return uri;
     }
 }
-
