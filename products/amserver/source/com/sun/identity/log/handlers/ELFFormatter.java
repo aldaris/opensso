@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ELFFormatter.java,v 1.9 2009-08-19 21:12:50 ww203982 Exp $
+ * $Id: ELFFormatter.java,v 1.10 2009-10-20 20:47:04 bigfatrat Exp $
  *
  */
 
@@ -107,6 +107,7 @@ public class ELFFormatter extends Formatter {
                 if ((message.charAt(i) == ' ') || (message.charAt(i) == '\t')) {
                     sbuffer.append("\"").append(message).append("\"\t");
                     escapeDone = true;
+                    break;
                 }
             }
             if (!escapeDone) {
