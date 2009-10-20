@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedStream.java,v 1.6 2009-10-19 17:16:48 pbryan Exp $
+ * $Id: CachedStream.java,v 1.7 2009-10-20 18:05:22 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,7 @@ public class CachedStream extends InputStream
     public int available() throws IOException {
         int n;
         n = record.length() - record.position(); // check cache record first
-        if (n == 0) { // nothing in record; use underlying stream
+        if (n == 0) { // nothing in cache record; use underlying stream
             n = in.available();
         }
         return n;
@@ -127,8 +127,7 @@ public class CachedStream extends InputStream
     @Override
     public int read() throws IOException {
         byte[] b = new byte[1];
-        int len = read(b, 0, 1);
-        return (len > 0 ? b[0] : -1);
+        return (read(b, 0, 1) > 0 ? b[0] : -1);
     }
 
     @Override
@@ -145,7 +144,7 @@ public class CachedStream extends InputStream
             throw new IndexOutOfBoundsException();
         }
         if (isPositionInCache()) {
-            return record.read(b, off, len);  // read from cache
+            return record.read(b, off, len); // read from cache
         }
         int n = in.read(b, off, len);
         if (n > 0 && caching) {
@@ -189,7 +188,7 @@ public class CachedStream extends InputStream
             return in.skip(n); // can safely use the long value
         }
         else {
-            return Streamer.stream(in, record, i); // skip 'n' cache
+            return Streamer.stream(in, record, i); // just cache it
         }
     }
 
@@ -201,4 +200,3 @@ public class CachedStream extends InputStream
         caching = false;
     }
 }
-
