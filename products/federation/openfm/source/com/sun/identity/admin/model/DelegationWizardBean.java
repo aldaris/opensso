@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationWizardBean.java,v 1.5 2009-10-19 18:35:20 farble1670 Exp $
+ * $Id: DelegationWizardBean.java,v 1.6 2009-10-20 20:18:41 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -30,7 +30,10 @@ import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.Functions;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.dao.DelegationDao;
+import com.sun.identity.entitlement.ApplicationPrivilege;
+import com.sun.identity.entitlement.ApplicationPrivilege.PossibleAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +52,7 @@ public abstract class DelegationWizardBean extends WizardBean {
     private Map<SubjectType, SubjectContainer> subjectTypeToSubjectContainerMap;
     private List<ViewSubject> selectedAvailableViewSubjects;
     private List<ViewSubject> selectedSelectedViewSubjects;
+    private PossibleAction action = PossibleAction.READ;
 
     @Override
     public void reset() {
@@ -66,6 +70,27 @@ public abstract class DelegationWizardBean extends WizardBean {
         if (subjectTypes.size() > 0) {
             subjectType = subjectTypes.get(0);
         }
+    }
+
+    public List<PossibleAction> getActions() {
+        return Arrays.asList(ApplicationPrivilege.PossibleAction.values());
+    }
+
+    public List<SelectItem> getActionItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        for (PossibleAction pa : PossibleAction.values()) {
+            items.add(new SelectItem(pa, getActionTitle(pa)));
+        }
+        return items;
+    }
+
+    private String getActionTitle(PossibleAction pa) {
+        Resources r = new Resources();
+        String title = r.getString(this, pa.toString() + ".title");
+        if (title == null) {
+            title = pa.toString();
+        }
+        return title;
     }
 
     public List<ViewSubject> getAvailableViewSubjects() {
@@ -212,8 +237,8 @@ public abstract class DelegationWizardBean extends WizardBean {
                 label = r.getString(this, "subjectsPanelLabel", subjectCount);
                 break;
 
-            case ACTIONS:
-                label = r.getString(this, "actionsPanelLabel");
+            case ACTION:
+                label = r.getString(this, "actionPanelLabel");
                 break;
 
             case SUMMARY:
@@ -240,7 +265,7 @@ public abstract class DelegationWizardBean extends WizardBean {
     }
 
     public String getActionsPanelLabel() {
-        return getPanelLabel(ACTIONS);
+        return getPanelLabel(ACTION);
     }
 
     public String getSummaryPanelLabel() {
@@ -291,5 +316,13 @@ public abstract class DelegationWizardBean extends WizardBean {
     public void setViewSubjectFilter(String viewSubjectFilter) {
         SubjectContainer sc = subjectTypeToSubjectContainerMap.get(subjectType);
         sc.setFilter(viewSubjectFilter);
+    }
+
+    public PossibleAction getAction() {
+        return action;
+    }
+
+    public void setAction(PossibleAction action) {
+        this.action = action;
     }
 }

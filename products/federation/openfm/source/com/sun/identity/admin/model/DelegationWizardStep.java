@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationWizardStep.java,v 1.1 2009-10-02 18:57:25 farble1670 Exp $
+ * $Id: DelegationWizardStep.java,v 1.2 2009-10-20 20:18:41 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -35,7 +35,7 @@ public enum DelegationWizardStep {
     NAME(0),
     RESOURCES(1),
     SUBJECTS(2),
-    ACTIONS(3),
+    ACTION(3),
     SUMMARY(4);
 
     private final int stepNumber;
@@ -44,7 +44,7 @@ public enum DelegationWizardStep {
             put(NAME.toInt(), NAME);
             put(RESOURCES.toInt(), RESOURCES);
             put(SUBJECTS.toInt(), SUBJECTS);
-            put(ACTIONS.toInt(), ACTIONS);
+            put(ACTION.toInt(), ACTION);
             put(SUMMARY.toInt(), SUMMARY);
         }
     };
