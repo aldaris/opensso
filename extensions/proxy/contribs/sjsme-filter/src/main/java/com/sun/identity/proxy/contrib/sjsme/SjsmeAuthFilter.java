@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SjsmeAuthFilter.java,v 1.1 2009-10-20 18:05:22 pbryan Exp $
+ * $Id: SjsmeAuthFilter.java,v 1.2 2009-10-20 23:55:20 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,8 +40,8 @@ import java.net.URI;
  * Messenger Express.
  * <p>
  * There is no need to add a filter to manage cookies with this filter,
- * because session cookies are simply passed back to the remote client in
- * the redirect (302) response for successful authentication.
+ * because cookies are simply passed back to the remote client in the
+ * redirect (302) response for successful authentication.
  *
  * @author Paul C. Bryan
  */
