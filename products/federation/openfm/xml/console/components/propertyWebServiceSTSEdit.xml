@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceSTSEdit.xml,v 1.6 2009-10-05 23:03:39 babysunil Exp $
+   $Id: propertyWebServiceSTSEdit.xml,v 1.7 2009-10-20 18:47:25 babysunil Exp $
 
 -->
 
@@ -154,6 +154,13 @@
            <option label="a365" value="PublicKey" />
            <option label="a366" value="SymmetricKey" />
        </cc>
+   </property>
+   <property>
+        <label name="lblRequestedClaims"
+            defaultValue="a367"
+            labelFor="RequestedClaims" />
+        <cc name="RequestedClaims" tagclass="com.sun.web.ui.taglib.editablelist.CCEditableListTag" />
+        <fieldhelp name="helprequestedclaims" defaultValue="a367.help" />  
    </property>
 </section>
 

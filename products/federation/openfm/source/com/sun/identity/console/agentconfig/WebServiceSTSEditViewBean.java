@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceSTSEditViewBean.java,v 1.3 2009-10-05 23:04:45 babysunil Exp $
+ * $Id: WebServiceSTSEditViewBean.java,v 1.4 2009-10-20 18:49:48 babysunil Exp $
  *
  */
 
@@ -44,7 +44,7 @@ import java.util.Set;
 /**
  * Customized STS View Bean.
  */
-public class WebServiceSTSEditViewBean 
+public class WebServiceSTSEditViewBean
     extends WebServiceEditViewBean {
     private static final String PAGE_NAME = "WebServiceSTSEdit";
     static final String CHILD_NAME_USERTOKEN_NAME = "usernametokenname";
@@ -54,16 +54,18 @@ public class WebServiceSTSEditViewBean
     private static final String CHILD_NAME_STS_METADATA_ENDPOINT =
         "securitytokenmetadataendpoint";
     private static Map attrToChildNames = new HashMap();
-        
+
     static final String DEFAULT_DISPLAY_URL =
         "/console/agentconfig/WebServiceSTSEdit.jsp";
-    
+
     private Set clientUIProperties = parseExternalizeUIProperties(
         "webServiceSTSUI");
     private static final String CHILD_NAME_SAML_ATTR_MAPPING =
         "SAMLAttributeMapping";
-    
-    
+     private static final String CHILD_NAME_REQUESTED_CLAIMS =
+        "RequestedClaims";
+
+
     static {
         attrToChildNames.put("userpassword", "userpassword");
         attrToChildNames.put("SecurityMech", "SecurityMech");
@@ -86,8 +88,9 @@ public class WebServiceSTSEditViewBean
         attrToChildNames.put("NameIDMapper", "NameIDMapper");
         attrToChildNames.put("AttributeNamespace", "AttributeNamespace");
         attrToChildNames.put("includeMemberships", "includeMemberships");
+        attrToChildNames.put("RequestedClaims", "RequestedClaims");
     }
-    
+
     /**
      * Creates an instance of this view bean.
      */
@@ -95,7 +98,7 @@ public class WebServiceSTSEditViewBean
         super(PAGE_NAME, DEFAULT_DISPLAY_URL, true,
             "com/sun/identity/console/propertyWebServiceSTSEdit.xml");
     }
-    
+
     /**
      * Populates the STS option list.
      *
@@ -105,7 +108,7 @@ public class WebServiceSTSEditViewBean
     public void beginDisplay(DisplayEvent event)
         throws ModelControlException {
         super.beginDisplay(event);
-        
+
         if (!inheritedPropertyNames.contains("STS")) {
             CCDropDownMenu ccSTS = (CCDropDownMenu)getChild("sts");
             AgentsModel model = (AgentsModel)getModel();
@@ -124,19 +127,28 @@ public class WebServiceSTSEditViewBean
             m.setOptionList((Set)values.get(
                 WSSAttributeNames.SAML_ATTR_MAPPING));
         }
+        if (!inheritedPropertyNames.contains(
+            WSSAttributeNames.REQUSETED_CLAIMS)) {
+            CCEditableList rlist = (CCEditableList)getChild(
+                CHILD_NAME_REQUESTED_CLAIMS);
+            CCEditableListModel m = (CCEditableListModel)rlist.getModel();
+            rlist.resetStateData();
+            m.setOptionList((Set)values.get(
+                WSSAttributeNames.REQUSETED_CLAIMS));
+        }
         setExternalizeUIValues(clientUIProperties, values);
         setUserCredential(values);
     }
-    
+
     private void setUserCredential(Map values) {
-        String userCredential = getValueFromMap(values, 
+        String userCredential = getValueFromMap(values,
             WSSAttributeNames.USERCREDENTIAL);
         if ((userCredential != null) && (userCredential.trim().length() > 0)) {
             String[] result = splitUserCredToken(userCredential);
             if (result != null) {
-                propertySheetModel.setValue(CHILD_NAME_USERTOKEN_NAME, 
+                propertySheetModel.setValue(CHILD_NAME_USERTOKEN_NAME,
                     result[0]);
-                propertySheetModel.setValue(CHILD_NAME_USERTOKEN_PASSWORD, 
+                propertySheetModel.setValue(CHILD_NAME_USERTOKEN_PASSWORD,
                     result[1]);
             }
         }
@@ -188,13 +200,19 @@ public class WebServiceSTSEditViewBean
         includeMem.add(includeMember);
         values.put(WSSAttributeNames.INCLUDE_MEMEBERSHIP, includeMem);
 
+        CCEditableList eRlist = (CCEditableList) getChild(
+            CHILD_NAME_REQUESTED_CLAIMS);
+        eRlist.restoreStateData();
+        Set reqClaims = getValues(eRlist.getModel().getOptionList());
+        values.put(WSSAttributeNames.REQUSETED_CLAIMS, reqClaims);
+
         getExternalizeUIValues(clientUIProperties, values);
     }
 
     protected Map getAttrToChildNamesMapping() {
         return attrToChildNames;
     }
-    
+
     protected String handleReadonlyAttributes(String xml) {
         xml = super.handleReadonlyAttributes(xml);
         if (inheritedPropertyNames.contains(WSSAttributeNames.USERCREDENTIAL)) {
@@ -202,4 +220,4 @@ public class WebServiceSTSEditViewBean
         }
         return xml;
     }
-} 
+}

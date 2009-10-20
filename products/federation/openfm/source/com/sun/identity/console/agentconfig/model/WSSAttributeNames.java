@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSAttributeNames.java,v 1.5 2009-10-05 23:05:13 babysunil Exp $
+ * $Id: WSSAttributeNames.java,v 1.6 2009-10-20 18:49:49 babysunil Exp $
  *
  */
 
@@ -53,4 +53,5 @@ public interface WSSAttributeNames {
     String NAME_ID_MAPPER = "NameIDMapper";
     String ATTR_NAME_SPACE = "AttributeNamespace";
     String INCLUDE_MEMEBERSHIP = "includeMemberships";
+    String REQUSETED_CLAIMS = "RequestedClaims";
 }
