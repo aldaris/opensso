@@ -297,7 +297,7 @@ public class WscCreateWizardHandler
             return false;
         }
         
-        if( wsc != null & wsc.isExists() ) {
+        if( wsc != null && wsc.isExists() ) {
             showErrorMessage("saveErrorSummary", "saveErrorDetailExists");
             getWizardBean().gotoStep(WscCreateWizardStep.WSC_PROFILE.toInt());
             return false;

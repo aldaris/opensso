@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WssProfileDao.java,v 1.4 2009-10-19 22:51:43 ggennaro Exp $
+ * $Id: WssProfileDao.java,v 1.5 2009-10-20 18:33:36 ggennaro Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -55,6 +55,7 @@ import com.sun.identity.admin.model.UserCredentialItem;
 import com.sun.identity.admin.model.UserCredentialsTableBean;
 import com.sun.identity.admin.model.WscProfileBean;
 import com.sun.identity.admin.model.WspProfileBean;
+import com.sun.identity.admin.model.WssProfileBean;
 import com.sun.identity.admin.model.X509SigningRefType;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -443,7 +444,7 @@ public class WssProfileDao {
     
     //--------------------------------------------------------------------------
     
-    private static String getEncryptionAlgorithm(WscProfileBean bean) {
+    private static String getEncryptionAlgorithm(WssProfileBean bean) {
         String value = null;
         
         if( bean != null && bean.getEncryptionAlgorithm() != null ) {
@@ -467,7 +468,7 @@ public class WssProfileDao {
         return value;
     }
     
-    private static int getEncryptionStrength(WscProfileBean bean) {
+    private static int getEncryptionStrength(WssProfileBean bean) {
         int value = 0;
         
         if( bean != null && bean.getEncryptionAlgorithm() != null ) {
@@ -500,7 +501,7 @@ public class WssProfileDao {
     }
     
     @SuppressWarnings("unchecked")
-    private static Set getSamlAttributeMapping(WscProfileBean bean) {
+    private static Set getSamlAttributeMapping(WssProfileBean bean) {
         HashSet<String> attributeMap = new HashSet<String>();
         
         if( bean != null && bean.getSamlAttributesTable() != null) {
@@ -520,7 +521,7 @@ public class WssProfileDao {
         return attributeMap;
     }
     
-    private static String getSigningRef(WscProfileBean bean) {
+    private static String getSigningRef(WssProfileBean bean) {
         String value = null;
         
         if( bean != null && bean.getX509SigningRefType() != null ) {
@@ -532,6 +533,21 @@ public class WssProfileDao {
             }
         }
 
+        return value;
+    }
+    
+    private static String getTokenConversion(WspProfileBean bean) {
+        String value = null;
+        
+        if( bean != null && bean.getTokenConversionType() != null ) {
+            TokenConversionType tct 
+                = TokenConversionType.valueOf(bean.getTokenConversionType());
+            
+            if( tct != null ) {
+                value = tct.toConfigString();
+            }
+        }
+        
         return value;
     }
 
@@ -575,6 +591,31 @@ public class WssProfileDao {
         return a;
     }
     
+    private static ArrayList<PasswordCredential> getUserCredentialsList(WspProfileBean bean) {
+        ArrayList<PasswordCredential> a = new ArrayList<PasswordCredential>();
+        
+        if( bean != null ) {
+            UserCredentialsTableBean table = bean.getUserCredentialsTable();
+
+            if( table != null ) {
+                ArrayList<UserCredentialItem> items 
+                    = table.getUserCredentialItems();
+                
+                for(UserCredentialItem item : items) {
+                    String uname = item.getUserName();
+                    String pword = item.getPassword();
+                    
+                    if( uname != null && pword != null ) {
+                        PasswordCredential pc 
+                            = new PasswordCredential(uname, pword);
+                        a.add(pc);
+                    }
+                }
+            }
+        }
+        
+        return a;
+    }    
     //--------------------------------------------------------------------------
 
     @SuppressWarnings("unchecked")
@@ -1045,6 +1086,7 @@ public class WssProfileDao {
             wsc.setRequestEncryptEnabled(bean.isRequestEncrypted());
             wsc.setResponseSignEnabled(bean.isResponseSignatureVerified());
             wsc.setResponseEncryptEnabled(bean.isResponseDecrypted());
+            wsc.setDefaultKeyStore(true);
             wsc.setKeyAlias(bean.getPrivateKeyAlias());
             wsc.setPublicKeyAlias(bean.getPublicKeyAlias());
             wsc.setEncryptionAlgorithm(getEncryptionAlgorithm(bean));
@@ -1058,4 +1100,78 @@ public class WssProfileDao {
         
         return wsc;
     }
+
+    public static AgentProvider getAgentProvider(WspProfileBean bean) 
+        throws ProviderException 
+    {
+        AgentProvider wsp = null;
+        
+        if( bean != null ) {
+            wsp = new AgentProvider();
+            SSOToken adminToken = WSSUtils.getAdminToken();
+            
+            wsp.init(bean.getProfileName(), 
+                     ProviderConfig.WSP, 
+                     adminToken, 
+                     false);
+
+            // TODO: what about mex end point here as well?
+            wsp.setWSPEndpoint(bean.getEndPoint());
+            
+            if( bean.getSecurityMechanismPanels() != null ) {
+                
+                ArrayList<String> secMech = new ArrayList<String>();
+                ArrayList<SecurityMechanismPanelBean> panels
+                     = bean.getSecurityMechanismPanels();
+                
+                for(SecurityMechanismPanelBean panel : panels ) {
+                    SecurityMechanism securityMechanism 
+                        = panel.getSecurityMechanism();
+
+                    if( panel.isChecked() && securityMechanism != null ) {
+                        
+                        secMech.add(securityMechanism.toConfigString());
+                        
+                        switch(securityMechanism) {
+                            case KERBEROS_TOKEN:
+                                wsp.setKDCDomain(bean.getKerberosDomain());
+                                wsp.setKDCServer(bean.getKerberosDomainServer());
+                                wsp.setKerberosServicePrincipal(bean.getKerberosServicePrincipal());
+                                wsp.setKeyTabFile(bean.getKerberosKeyTabFile());
+                                break;
+                            case USERNAME_TOKEN:
+                            case USERNAME_TOKEN_PLAIN:
+                                wsp.setUsers(getUserCredentialsList(bean));
+                                break;
+                            case X509_TOKEN:
+                                wsp.setSigningRefType(getSigningRef(bean));
+                                break;
+                        }
+                    }
+                }
+                wsp.setSecurityMechanisms(secMech);
+                wsp.setAuthenticationChain(bean.getAuthenticationChain());
+                wsp.setTokenConversionType(getTokenConversion(bean));
+                
+                wsp.setRequestSignEnabled(bean.isRequestSigned());
+                wsp.setRequestHeaderEncryptEnabled(bean.isRequestHeaderEncrypted());
+                wsp.setRequestEncryptEnabled(bean.isRequestEncrypted());
+                wsp.setResponseSignEnabled(bean.isResponseSignatureVerified());
+                wsp.setResponseEncryptEnabled(bean.isResponseDecrypted());
+                wsp.setDefaultKeyStore(true);
+                wsp.setKeyAlias(bean.getPrivateKeyAlias());
+                wsp.setPublicKeyAlias(bean.getPublicKeyAlias());
+                wsp.setEncryptionAlgorithm(getEncryptionAlgorithm(bean));
+                wsp.setEncryptionStrength(getEncryptionStrength(bean));
+                
+                wsp.setSAMLAttributeMapping(getSamlAttributeMapping(bean));
+                wsp.setNameIDMapper(bean.getNameIdMapper());
+                wsp.setSAMLAttributeNamespace(bean.getAttributeNamespace());
+                wsp.setIncludeMemberships(bean.isIncludeMemberships());
+            }
+        }
+        
+        return wsp;
+    }
+
 }

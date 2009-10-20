@@ -30,28 +30,31 @@ package com.sun.identity.admin.handler;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.dao.WssProfileDao;
 import com.sun.identity.admin.model.LinkBean;
-import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SecurityMechanismPanelBean;
+import com.sun.identity.admin.model.WscCreateWizardStep;
 import com.sun.identity.admin.model.WspCreateWizardBean;
 import com.sun.identity.admin.model.WspCreateWizardStep;
 import com.sun.identity.admin.model.WspCreateWizardStep1Validator;
 import com.sun.identity.admin.model.WspCreateWizardStep2Validator;
 import com.sun.identity.admin.model.WspCreateWizardStep4Validator;
 import com.sun.identity.admin.model.WspProfileBean;
+import com.sun.identity.wss.provider.ProviderException;
+import com.sun.identity.wss.provider.plugins.AgentProvider;
 
 public class WspCreateWizardHandler 
-        extends WizardHandler 
+        extends WssWizardHandler 
         implements Serializable
 {
-    private MessagesBean messagesBean;
-    
     @Override
     public void initWizardStepValidators() {
         getWizardStepValidators()[WspCreateWizardStep.WSP_PROFILE.toInt()] = new WspCreateWizardStep1Validator(getWizardBean());
@@ -111,6 +114,7 @@ public class WspCreateWizardHandler
         lbs.add(LinkBean.HOME);
         lbs.add(LinkBean.WSS);
         lbs.add(LinkBean.WSP_CREATE);
+        lbs.add(LinkBean.WSC_CREATE);
         return lbs;
     }
 
@@ -167,6 +171,41 @@ public class WspCreateWizardHandler
 
     
     private boolean save() {
+        AgentProvider wsp = null;
+        WspCreateWizardBean wizardBean = (WspCreateWizardBean) getWizardBean();
+        WspProfileBean wspProfileBean = wizardBean.getWspProfileBean();
+        
+        try {
+            
+            wsp = WssProfileDao.getAgentProvider(wspProfileBean);
+
+        } catch (ProviderException e) {
+            // problem with initialization
+            showErrorMessage("saveErrorSummary", "saveErrorDetailInit");
+            getWizardBean().gotoStep(WscCreateWizardStep.SUMMARY.toInt());
+            Logger.getLogger(WscCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
+        
+        if( wsp != null && wsp.isExists() ) {
+            showErrorMessage("saveErrorSummary", "saveErrorDetailExists");
+            getWizardBean().gotoStep(WscCreateWizardStep.WSC_PROFILE.toInt());
+            return false;
+        }
+
+        
+        try {
+            wsp.store();
+        } catch (ProviderException e) {
+            // problem with persistence
+            showErrorMessage("saveErrorSummary", "saveErrorDetailStore");
+            getWizardBean().gotoStep(WscCreateWizardStep.SUMMARY.toInt());
+            Logger.getLogger(WscCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
+        
+        
+        
         return true;
     }
     
@@ -243,14 +282,5 @@ public class WspCreateWizardHandler
         }   
     }
     
-    // Getters / Setters -------------------------------------------------------
-
-    public void setMessagesBean(MessagesBean messagesBean) {
-        this.messagesBean = messagesBean;
-    }
-
-    public MessagesBean getMessagesBean() {
-        return messagesBean;
-    }
 
 }

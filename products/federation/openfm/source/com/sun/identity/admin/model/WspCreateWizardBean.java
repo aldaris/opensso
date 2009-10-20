@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspCreateWizardBean.java,v 1.8 2009-10-19 22:51:25 ggennaro Exp $
+ * $Id: WspCreateWizardBean.java,v 1.9 2009-10-20 18:33:37 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import com.sun.identity.admin.dao.WssProfileDao;
 
@@ -64,6 +65,45 @@ public class WspCreateWizardBean
         this.setServiceSecuritySummary(new WspCreateServiceSecuritySummary(this));
         this.setSignEncryptSummary(new WspCreateSignEncryptSummary(this));
         this.setSamlSummary(new WspCreateSamlSummary(this));
+    }
+    
+    // Convenience methods -----------------------------------------------------
+    
+    public boolean isTokenConversionAvailable() {
+        WspProfileBean profileBean = this.getWspProfileBean();
+        boolean isAuthChainEmpty = true;
+        
+        if( profileBean.getAuthenticationChain() != null ) {
+            isAuthChainEmpty = 
+                profileBean.getAuthenticationChain().equals(EMPTY_LIST_VALUE);
+        }
+        
+        ArrayList<SecurityMechanismPanelBean> panels 
+            = profileBean.getSecurityMechanismPanels();
+        boolean usingSaml = false;
+        
+        if( panels != null ) {
+            for(SecurityMechanismPanelBean panel : panels) {
+                SecurityMechanism sm = panel.getSecurityMechanism();
+                
+                if( panel.isChecked() ) {
+                    switch(sm) {
+                        case SAML2_HOK:
+                        case SAML2_SV:
+                        case SAML_HOK:
+                        case SAML_SV:
+                            usingSaml = true;
+                            break;
+                    }
+                }
+                
+                if( usingSaml ) {
+                    break;
+                }
+            }
+        }
+        
+        return !isAuthChainEmpty && usingSaml;
     }
     
     // Getters / Setters -------------------------------------------------------

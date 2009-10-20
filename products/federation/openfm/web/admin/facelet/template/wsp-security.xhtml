@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wsp-security.xhtml,v 1.2 2009-10-19 22:51:30 ggennaro Exp $
+   $Id: wsp-security.xhtml,v 1.3 2009-10-20 18:33:38 ggennaro Exp $
 
 -->
 
@@ -162,10 +162,12 @@
                 </ice:selectOneMenu>
                 <ice:outputLabel
                     for="tokenConversionType"
+                    rendered="#{wizardBean.tokenConversionAvailable}"
                     style="float: right;"
                     value="#{resources['wsp-security.tokenConversionTypeLabel']}" />
                 <ice:selectOneMenu
                     id="tokenConversionType"
+                    rendered="#{wizardBean.tokenConversionAvailable}"
                     value="#{wizardBean.wspProfileBean.tokenConversionType}">
                     <f:selectItems
                         value="#{wizardBean.tokenConversionTypeList}" />

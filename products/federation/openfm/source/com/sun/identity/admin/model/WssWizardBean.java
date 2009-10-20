@@ -15,6 +15,8 @@ public class WssWizardBean
     extends WizardBean
     implements Serializable 
 {
+    protected static final String EMPTY_LIST_VALUE = "[Empty]";
+    
     
     // Lists -------------------------------------------------------------------
 
