@@ -20,7 +20,7 @@
   brackets [] replaced by your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: pom.xml,v 1.4 2009-10-20 18:05:20 pbryan Exp $
+  $Id: pom.xml,v 1.5 2009-10-20 23:56:05 pbryan Exp $
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -35,7 +35,7 @@
     <name>contribs</name>
     <modules>
         <module>mediawiki-filter</module>
-        <module>sjscs-filter</module>
+        <module>sjsce-filter</module>
         <module>sjsme-filter</module>
     </modules>
 </project>

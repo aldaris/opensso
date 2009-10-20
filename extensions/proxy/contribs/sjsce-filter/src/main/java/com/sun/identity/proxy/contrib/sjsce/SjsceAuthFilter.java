@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SjscsAuthFilter.java,v 1.1 2009-10-17 09:08:40 pbryan Exp $
+ * $Id: SjsceAuthFilter.java,v 1.1 2009-10-20 23:56:06 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.proxy.contrib.sjscs;
+package com.sun.identity.proxy.contrib.sjsce;
 
 import com.sun.identity.proxy.auth.PasswordCredentials;
 import com.sun.identity.proxy.auth.PasswordCredentialSource;
@@ -37,25 +37,25 @@ import java.net.URI;
 
 /**
  * A filter that performs form-based authentication with Sun Java System
- * Calendar Server.
+ * Calendar Express.
  * <p>
  * There is no need to add a filter to manage cookies with this filter,
- * because session cookies are simply passed back to the remote client in
- * the redirect (302) response for successful authentication.
+ * because cookies are simply passed back to the remote client in the redirect
+ * (302) response for successful authentication.
  *
  * @author Paul C. Bryan
  */
-public class SjscsAuthFilter extends Filter
+public class SjsceAuthFilter extends Filter
 {
     /** The source from which to acquire username/password credentials. */
     private PasswordCredentialSource source;
 
     /**
-     * Creates a new Sun Java System Calendar Server authentication filter.
+     * Creates a new Sun Java System Calendar Express authentication filter.
      *
      * @param source the source from which to acquire username/password credentials.
      */
-    public SjscsAuthFilter(PasswordCredentialSource source) {
+    public SjsceAuthFilter(PasswordCredentialSource source) {
         this.source = source;
     }
 
@@ -63,7 +63,7 @@ public class SjscsAuthFilter extends Filter
     public void handle(Exchange exchange) throws HandlerException, IOException
     {
         // if not a request for the login page, simply pass-through
-        if (!exchange.request.uri.getPath().equals("/")) {
+        if (!exchange.request.uri.normalize().getPath().equals("/")) {
             next.handle(exchange);
             return;
         }
@@ -78,7 +78,7 @@ public class SjscsAuthFilter extends Filter
 
         // new request to be submitted
         Request login = new Request();
-        login.uri = URIUtil.newPath(exchange.request.uri, "/login.msc");
+        login.uri = URIUtil.newPath(exchange.request.uri, "/login.wcap");
         login.principal = exchange.request.principal;
         login.session = exchange.request.session;
         login.headers.put("Host", exchange.request.headers.first("Host"));
@@ -87,6 +87,7 @@ public class SjscsAuthFilter extends Filter
         Form form = new Form();
         form.add("user", credentials.username);
         form.add("password", credentials.password);
+        form.add("fmt-out", "text/html");
         form.toFormEntity(login); // this sets method to POST
 
         // overwrite the original incoming request; it's no longer needed
@@ -105,4 +106,3 @@ public class SjscsAuthFilter extends Filter
         source.invalid(exchange);
     }
 }
-
