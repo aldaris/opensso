@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Agent.java,v 1.7 2009-08-19 20:30:10 bigfatrat Exp $
+ * $Id: Agent.java,v 1.8 2009-10-20 23:56:07 bigfatrat Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.RuntimeOperationsException;
 import javax.management.remote.*;
 
+import com.sun.jdmk.comm.AuthInfo;
 import com.sun.jdmk.comm.HtmlAdaptorServer;
 import com.sun.management.comm.SnmpAdaptorServer;
 import com.sun.management.snmp.SnmpStatusException;
@@ -51,6 +52,7 @@ import com.sun.management.snmp.SnmpStatusException;
 //import java.rmi.server.UnicastRemoteObject;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -97,6 +99,7 @@ public class Agent {
     static SnmpAdaptorServer snmpAdaptor = null;
     static HtmlAdaptorServer htmlAdaptor = null;
     private static Debug debug;
+    private static OpenSSOMonitoringUtil omu;
     
     /**
      * This variable defines the number of traps this agent has to send.
@@ -164,6 +167,7 @@ public class Agent {
         if (debug == null) {
             debug = Debug.getInstance("amMonitoring");
         }
+        omu = new OpenSSOMonitoringUtil();
     }
 
     /*
@@ -719,8 +723,23 @@ public class Agent {
                         "HTML adaptor is bound on TCP port " + monHtmlPort);
                 }
 
-                htmlAdaptor =
-                    new HtmlAdaptorServer(monHtmlPort); // throws no exception
+                String[][] users = omu.getMonAuthList();
+                if (users != null) {
+                    int sz = Array.getLength(users);
+                    AuthInfo authInfo[] = new AuthInfo[sz];
+                    for (int i = 0; i < sz; i++) {
+                        authInfo[i] = new AuthInfo(users[i][0], users[i][1]);
+                    }
+                    htmlAdaptor = new HtmlAdaptorServer(monHtmlPort, authInfo);
+                } else {
+                    if (debug.warningEnabled()) {
+                        debug.warning(classMethod +
+                            "HTML monitoring interface disabled; no " +
+                            "authentication file found");
+                    }
+                    htmlAdaptor = null;
+                }
+
                 if (htmlAdaptor == null) {
                     if (debug.warningEnabled()) {
                         debug.warning(classMethod + "HTTP port " +
@@ -741,6 +760,9 @@ public class Agent {
                 }
             } catch (NullPointerException ex) {
                 // from ObjectName
+                debug.error(classMethod +
+                        "NPE getting ObjectName for HTML adaptor", ex);
+
                 if (debug.warningEnabled()) {
                     debug.warning(classMethod +
                         "NPE getting ObjectName for HTML adaptor: " +
@@ -1173,6 +1195,17 @@ public class Agent {
         }
     }
 
+    /*
+     *  Return the pointer to the Entitlements Service mbean
+     */
+    public static Object getEntitlementsGroup() {
+        if (mib2 != null) {
+            return mib2.getEntitlementsGroup();
+        } else {
+            return null;
+        }
+    }
+
     public static String getSsoProtocol() {
         if (agentSvrInfo != null) {
             return (agentSvrInfo.serverProtocol);
@@ -1323,8 +1356,8 @@ public class Agent {
                     debug.error(classMethod + "invalid siteid (" +
                         siteId + "): " + nfe.getMessage(), nfe);
                 }
-                ssse.SsoServerSiteId = sid;
-                ssse.SsoServerSiteName = escSiteName;
+                ssse.SiteId = sid;
+                ssse.SiteName = escSiteName;
 
                 if (debug.messageEnabled()) {
                     debug.message(classMethod + "doing siteName " + siteName +
@@ -1352,17 +1385,17 @@ public class Agent {
             } else { // is a server
                 SsoServerSiteMapEntryImpl ssse =
                     new SsoServerSiteMapEntryImpl(mib2);
-                ssse.SsoServerMapServerURL = (String)namingTable.get(svrId);
-                ssse.SsoServerMapSiteName = escSiteName;
-                ssse.SsoServerMapId = siteId;
+                ssse.MapServerURL = (String)namingTable.get(svrId);
+                ssse.MapSiteName = escSiteName;
+                ssse.MapId = siteId;
                 try {
-                    ssse.SsoServerSiteMapId = new Integer(svrId);
+                    ssse.SiteMapId = new Integer(svrId);
                 } catch (NumberFormatException nfe) {
                     debug.error(classMethod + "invalid serverID (" +
                         svrId + "): " + nfe.getMessage(), nfe);
                     continue;
                 }
-                ssse.SsoServerSiteMapIndex = new Integer(i++);
+                ssse.SiteMapIndex = new Integer(i++);
                 final ObjectName smName =
                     ssse.createSsoServerSiteMapEntryObjectName(server);
 
@@ -1479,6 +1512,116 @@ public class Agent {
         if (debug.messageEnabled()) {
             debug.message (classMethod + sb.toString());
         }
+
+        /*
+         * create the Entitlements MBeans for this realm as specified by Ii.
+         * the Network Monitors are not per-real.  the set list is in
+         * OpenSSOMonitoringUtil.java (getNetworkMonitorNames()).
+         * the Policy Stats are realm-based.
+         */
+        String[] nms = omu.getNetworkMonitorNames();
+
+        if ((nms != null) && (nms.length > 0)) {
+            SsoServerEntitlementSvc esi =
+                (SsoServerEntitlementSvc)mib2.getEntitlementsGroup();
+            if (esi != null) {
+                try {
+                    TableSsoServerEntitlementExecStatsTable etab =
+                        esi.accessSsoServerEntitlementExecStatsTable();
+
+                    for (int i = 0; i < nms.length; i++) {
+                        String str = nms[i];
+                        SsoServerEntitlementExecStatsEntryImpl ssi =
+                            new SsoServerEntitlementExecStatsEntryImpl(mib2);
+                        ssi.EntitlementNetworkMonitorName = str;
+                        ssi.EntitlementMonitorThruPut = new Long(0);
+                        ssi.EntitlementMonitorTotalTime = new Long(0);
+                        ssi.EntitlementNetworkMonitorIndex = new Integer(i+1);
+
+                        ObjectName sname =
+                            ssi.
+                            createSsoServerEntitlementExecStatsEntryObjectName(
+                            server);
+
+                        if (sname == null) {
+                            debug.error(classMethod +
+                                "Error creating object for Entitlements " +
+                                "Network Monitor '" + str + "'");
+                                   continue;
+                        }
+
+                        try {
+                            etab.addEntry(ssi, sname);
+                            if ((server != null) && (ssi != null)) {
+                                server.registerMBean(ssi, sname);
+                            }
+                        } catch (JMException ex) {
+                            debug.error(classMethod +
+                                "on Entitlements Network Monitor '" +
+                                str + "': ", ex);
+                        } catch (SnmpStatusException ex) {
+                            debug.error(classMethod +
+                                "on Entitlements Network Monitor '" +
+                                str + "': ", ex);
+                        }
+                    }
+                } catch (SnmpStatusException ex) {
+                    debug.error(classMethod +
+                        "Can't get Network Monitor Table: " +
+                        ex.getMessage());
+                }
+
+                // now the realm-based policy stats
+
+                try {
+                    TableSsoServerEntitlementPolicyStatsTable ptab =
+                        esi.accessSsoServerEntitlementPolicyStatsTable();
+                    for (int i = 0; i < realmList.size(); i++) {
+                        String ss = (String)realmList.get(i);
+                        Integer Ii = new Integer(i+1);
+                        SsoServerEntitlementPolicyStatsEntryImpl ssi =
+                            new SsoServerEntitlementPolicyStatsEntryImpl(mib2);
+                        ssi.EntitlementPolicyCaches = new Integer(0);
+                        ssi.EntitlementReferralCaches = new Integer(0);
+                        ssi.EntitlementPolicyStatsIndex = new Integer(i+1);
+                        ssi.SsoServerRealmIndex = Ii;
+                        ObjectName sname =
+                          ssi.
+                          createSsoServerEntitlementPolicyStatsEntryObjectName(
+                              server);
+
+                        if (sname == null) {
+                            debug.error(classMethod +
+                                "Error creating object for Entitlements " +
+                                "Policy Stats, realm = '" + ss + "'");
+                            continue;
+                        }
+
+                        try {
+                            ptab.addEntry(ssi, sname);
+                            if ((server != null) && (ssi != null)) {
+                                server.registerMBean(ssi, sname);
+                            }
+                        } catch (JMException ex) {
+                            debug.error(classMethod +
+                                "on Entitlements Policy Stats '" +
+                                ss + "': ", ex);
+                        } catch (SnmpStatusException ex) {
+                            debug.error(classMethod +
+                                "on Entitlements Policy Stats '" +
+                                ss + "': ", ex);
+                        }
+                    }
+                } catch (SnmpStatusException ex) {
+                    debug.error(classMethod +
+                        "getting Entitlements Policy Stats table: ", ex);
+                }
+            }
+        } else {
+            debug.error(classMethod +
+                "Entitlement NetworkMonitor list empty.");
+        }
+
         Date stopDate = new Date();
         if (debug.messageEnabled()) {
             String stDate = sdf.format(startDate);
@@ -1538,11 +1681,11 @@ public class Agent {
             SsoServerAuthModulesEntryImpl aei =
                 new SsoServerAuthModulesEntryImpl(mib2);
             aei.SsoServerRealmIndex = realmIndex;
-            aei.SsoServerAuthModuleIndex = new Integer(i++);
-            aei.SsoServerAuthModuleName = modInst;
-            aei.SsoServerAuthModuleType = getEscapedString(modType);
-            aei.SsoServerAuthModuleSuccessCount = new Long(0);
-            aei.SsoServerAuthModuleFailureCount = new Long(0);
+            aei.AuthModuleIndex = new Integer(i++);
+            aei.AuthModuleName = modInst;
+            aei.AuthModuleType = getEscapedString(modType);
+            aei.AuthModuleSuccessCount = new Long(0);
+            aei.AuthModuleFailureCount = new Long(0);
             ObjectName aname =
                 aei.createSsoServerAuthModulesEntryObjectName(server);
 
@@ -1724,11 +1867,11 @@ public class Agent {
                 SsoServerPolicyWebAgentEntryImpl aei =
                     new SsoServerPolicyWebAgentEntryImpl(mib2);
                 aei.SsoServerRealmIndex = ri;
-                aei.SsoServerPolicyWebAgentIndex = new Integer(wai++);
-                aei.SsoServerPolicyWebAgentName = agtname;
-                aei.SsoServerPolicyWebAgentGroup = grpmem;
-                aei.SsoServerPolicyWebAgentAgentURL = aurl;
-                aei.SsoServerPolicyWebAgentServerURL = lurl;
+                aei.PolicyWebAgentIndex = new Integer(wai++);
+                aei.PolicyWebAgentName = agtname;
+                aei.PolicyWebAgentGroup = grpmem;
+                aei.PolicyWebAgentAgentURL = aurl;
+                aei.PolicyWebAgentServerURL = lurl;
                 ObjectName aname =
                     aei.createSsoServerPolicyWebAgentEntryObjectName(server);
         
@@ -1753,8 +1896,8 @@ public class Agent {
                 SsoServerPolicy22AgentEntryImpl aei =
                     new SsoServerPolicy22AgentEntryImpl(mib2);
                 aei.SsoServerRealmIndex = ri;
-                aei.SsoServerPolicy22AgentIndex = new Integer(t22i++);
-                aei.SsoServerPolicy22AgentName = agtname;
+                aei.Policy22AgentIndex = new Integer(t22i++);
+                aei.Policy22AgentName = agtname;
 
                 ObjectName aname =
                     aei.createSsoServerPolicy22AgentEntryObjectName(server);
@@ -1786,11 +1929,11 @@ public class Agent {
                 }
                 String lurl =
                     (String)hm.get("com.sun.identity.agents.config.login.url");
-                aei.SsoServerPolicyJ2EEAgentGroup = grpmem;
-                aei.SsoServerPolicyJ2EEAgentAgentURL = aurl;
-                aei.SsoServerPolicyJ2EEAgentServerURL = lurl;
-                aei.SsoServerPolicyJ2EEAgentName = agtname;
-                aei.SsoServerPolicyJ2EEAgentIndex = new Integer(j2eei++);
+                aei.PolicyJ2EEAgentGroup = grpmem;
+                aei.PolicyJ2EEAgentAgentURL = aurl;
+                aei.PolicyJ2EEAgentServerURL = lurl;
+                aei.PolicyJ2EEAgentName = agtname;
+                aei.PolicyJ2EEAgentIndex = new Integer(j2eei++);
                 aei.SsoServerRealmIndex = ri;
                 ObjectName aname =
                     aei.createSsoServerPolicyJ2EEAgentEntryObjectName(server);
@@ -2104,9 +2247,9 @@ public class Agent {
                 SsoServerPolicyWebGroupEntryImpl aei =
                     new SsoServerPolicyWebGroupEntryImpl(mib2);
                 aei.SsoServerRealmIndex = ri;
-                aei.SsoServerPolicyWebGroupIndex = new Integer(wai++);
-                aei.SsoServerPolicyWebGroupName = agtname;
-                aei.SsoServerPolicyWebGroupServerURL = lurl;
+                aei.PolicyWebGroupIndex = new Integer(wai++);
+                aei.PolicyWebGroupName = agtname;
+                aei.PolicyWebGroupServerURL = lurl;
                 ObjectName aname =
                     aei.createSsoServerPolicyWebGroupEntryObjectName(server);
 
@@ -2135,9 +2278,9 @@ public class Agent {
                     new SsoServerPolicyJ2EEGroupEntryImpl(mib2);
                 String lurl =
                     (String)hm.get("com.sun.identity.agents.config.login.url");
-                aei.SsoServerPolicyJ2EEGroupServerURL = lurl;
-                aei.SsoServerPolicyJ2EEGroupName = agtname;
-                aei.SsoServerPolicyJ2EEGroupIndex = new Integer(j2eei++);
+                aei.PolicyJ2EEGroupServerURL = lurl;
+                aei.PolicyJ2EEGroupName = agtname;
+                aei.PolicyJ2EEGroupIndex = new Integer(j2eei++);
                 aei.SsoServerRealmIndex = ri;
                 ObjectName aname =
                     aei.createSsoServerPolicyJ2EEGroupEntryObjectName(server);
@@ -2357,8 +2500,8 @@ public class Agent {
 
             SsoServerSAML1TrustPrtnrsEntryImpl sstpe =
                 new SsoServerSAML1TrustPrtnrsEntryImpl(mib2);
-            sstpe.SsoServerSAML1TrustPrtnrIndex = new Integer(i+1);
-            sstpe.SsoServerSAML1TrustPrtnrName = getEscapedString(pName);
+            sstpe.SAML1TrustPrtnrIndex = new Integer(i+1);
+            sstpe.SAML1TrustPrtnrName = getEscapedString(pName);
 
             SsoServerSAML1Svc sss =
                 (SsoServerSAML1SvcImpl)mib2.getSaml1SvcGroup();
@@ -2412,12 +2555,12 @@ public class Agent {
         // assertions
         SsoServerSAML1CacheEntryImpl ssce =
                 new SsoServerSAML1CacheEntryImpl(mib2);
-        ssce.SsoServerSAML1CacheIndex = new Integer(1);
-        ssce.SsoServerSAML1CacheName = "Assertion_Cache";
-        ssce.SsoServerSAML1CacheMisses = new Long(0);
-        ssce.SsoServerSAML1CacheHits = new Long(0);
-        ssce.SsoServerSAML1CacheWrites = new Long(0);
-        ssce.SsoServerSAML1CacheReads = new Long(0);
+        ssce.SAML1CacheIndex = new Integer(1);
+        ssce.SAML1CacheName = "Assertion_Cache";
+        ssce.SAML1CacheMisses = new Long(0);
+        ssce.SAML1CacheHits = new Long(0);
+        ssce.SAML1CacheWrites = new Long(0);
+        ssce.SAML1CacheReads = new Long(0);
 
         SsoServerSAML1SvcImpl sss =
             (SsoServerSAML1SvcImpl)mib2.getSaml1SvcGroup();
@@ -2456,12 +2599,12 @@ public class Agent {
 
             // artifacts
             ssce = new SsoServerSAML1CacheEntryImpl(mib2);
-            ssce.SsoServerSAML1CacheIndex = new Integer(2);
-            ssce.SsoServerSAML1CacheName = "Artifact_Cache";
-            ssce.SsoServerSAML1CacheMisses = new Long(0);
-            ssce.SsoServerSAML1CacheHits = new Long(0);
-            ssce.SsoServerSAML1CacheWrites = new Long(0);
-            ssce.SsoServerSAML1CacheReads = new Long(0);
+            ssce.SAML1CacheIndex = new Integer(2);
+            ssce.SAML1CacheName = "Artifact_Cache";
+            ssce.SAML1CacheMisses = new Long(0);
+            ssce.SAML1CacheHits = new Long(0);
+            ssce.SAML1CacheWrites = new Long(0);
+            ssce.SAML1CacheReads = new Long(0);
 
             aname = ssce.createSsoServerSAML1CacheEntryObjectName(server);
             if (aname == null) {
@@ -2488,13 +2631,13 @@ public class Agent {
         if (!skipSAML1EndPoints) {
         SsoServerSAML1EndPointEntryImpl ssee =
                 new SsoServerSAML1EndPointEntryImpl(mib2);
-        ssee.SsoServerSAML1EndPointIndex = new Integer(1);
-        ssee.SsoServerSAML1EndPointName = "SOAPReceiver_EndPoint";
-        ssee.SsoServerSAML1EndPointRqtFailed = new Long(0);
-        ssee.SsoServerSAML1EndPointRqtOut = new Long(0);
-        ssee.SsoServerSAML1EndPointRqtIn = new Long(0);
-        ssee.SsoServerSAML1EndPointRqtAborted = new Long(0);
-        ssee.SsoServerSAML1EndPointStatus = "operational";
+        ssee.SAML1EndPointIndex = new Integer(1);
+        ssee.SAML1EndPointName = "SOAPReceiver_EndPoint";
+        ssee.SAML1EndPointRqtFailed = new Long(0);
+        ssee.SAML1EndPointRqtOut = new Long(0);
+        ssee.SAML1EndPointRqtIn = new Long(0);
+        ssee.SAML1EndPointRqtAborted = new Long(0);
+        ssee.SAML1EndPointStatus = "operational";
 
         TableSsoServerSAML1EndPointTable tetab = null;
         if (sss != null) {
@@ -2532,13 +2675,13 @@ public class Agent {
 
             // POSTProfile table
             ssee = new SsoServerSAML1EndPointEntryImpl(mib2);
-            ssee.SsoServerSAML1EndPointIndex = new Integer(2);
-            ssee.SsoServerSAML1EndPointName = "POSTProfile_EndPoint";
-            ssee.SsoServerSAML1EndPointRqtFailed = new Long(0);
-            ssee.SsoServerSAML1EndPointRqtOut = new Long(0);
-            ssee.SsoServerSAML1EndPointRqtIn = new Long(0);
-            ssee.SsoServerSAML1EndPointRqtAborted = new Long(0);
-            ssee.SsoServerSAML1EndPointStatus = "operational";
+            ssee.SAML1EndPointIndex = new Integer(2);
+            ssee.SAML1EndPointName = "POSTProfile_EndPoint";
+            ssee.SAML1EndPointRqtFailed = new Long(0);
+            ssee.SAML1EndPointRqtOut = new Long(0);
+            ssee.SAML1EndPointRqtIn = new Long(0);
+            ssee.SAML1EndPointRqtAborted = new Long(0);
+            ssee.SAML1EndPointStatus = "operational";
 
             aname = ssee.createSsoServerSAML1EndPointEntryObjectName(server);
 
@@ -2565,13 +2708,13 @@ public class Agent {
 
             // SAMLAware/ArtifactProfile table
             ssee = new SsoServerSAML1EndPointEntryImpl(mib2);
-            ssee.SsoServerSAML1EndPointIndex = new Integer(3);
-            ssee.SsoServerSAML1EndPointName = "SAMLAware_EndPoint";
-            ssee.SsoServerSAML1EndPointRqtFailed = new Long(0);
-            ssee.SsoServerSAML1EndPointRqtOut = new Long(0);
-            ssee.SsoServerSAML1EndPointRqtIn = new Long(0);
-            ssee.SsoServerSAML1EndPointRqtAborted = new Long(0);
-            ssee.SsoServerSAML1EndPointStatus = "operational";
+            ssee.SAML1EndPointIndex = new Integer(3);
+            ssee.SAML1EndPointName = "SAMLAware_EndPoint";
+            ssee.SAML1EndPointRqtFailed = new Long(0);
+            ssee.SAML1EndPointRqtOut = new Long(0);
+            ssee.SAML1EndPointRqtIn = new Long(0);
+            ssee.SAML1EndPointRqtAborted = new Long(0);
+            ssee.SAML1EndPointStatus = "operational";
 
             aname = ssee.createSsoServerSAML1EndPointEntryObjectName(server);
 
@@ -2790,14 +2933,14 @@ public class Agent {
 
                         SsoServerSAML2IDPEntryImpl sei =
                             new SsoServerSAML2IDPEntryImpl(mib2);
-                        sei.SsoServerSAML2IDPArtifactsIssued = new Long(0);
-                        sei.SsoServerSAML2IDPAssertionsIssued = new Long(0);
-                        sei.SsoServerSAML2IDPInvalRqtsRcvd = new Long(0);
-                        sei.SsoServerSAML2IDPRqtsRcvd = new Long(0);
-                        sei.SsoServerSAML2IDPArtifactsInCache = new Long(0);
-                        sei.SsoServerSAML2IDPAssertionsInCache = new Long(0);
-                        sei.SsoServerSAML2IDPIndex = new Integer(idpi++);
-                        sei.SsoServerSAML2IDPName = getEscapedString(entname);
+                        sei.SAML2IDPArtifactsIssued = new Long(0);
+                        sei.SAML2IDPAssertionsIssued = new Long(0);
+                        sei.SAML2IDPInvalRqtsRcvd = new Long(0);
+                        sei.SAML2IDPRqtsRcvd = new Long(0);
+                        sei.SAML2IDPArtifactsInCache = new Long(0);
+                        sei.SAML2IDPAssertionsInCache = new Long(0);
+                        sei.SAML2IDPIndex = new Integer(idpi++);
+                        sei.SAML2IDPName = getEscapedString(entname);
                         sei.SsoServerRealmIndex = ri;
 
                         oname =
@@ -2837,12 +2980,12 @@ public class Agent {
                         }
                         SsoServerSAML2SPEntryImpl sei =
                             new SsoServerSAML2SPEntryImpl(mib2);
-                        sei.SsoServerSAML2SPInvalidArtifactsRcvd = new Long(0);
-                        sei.SsoServerSAML2SPValidAssertionsRcvd = new Long(0);
-                        sei.SsoServerSAML2SPRqtsSent = new Long(0);
-                        sei.SsoServerSAML2SPName = getEscapedString(entname);
+                        sei.SAML2SPInvalidArtifactsRcvd = new Long(0);
+                        sei.SAML2SPValidAssertionsRcvd = new Long(0);
+                        sei.SAML2SPRqtsSent = new Long(0);
+                        sei.SAML2SPName = getEscapedString(entname);
                         sei.SsoServerRealmIndex = ri;
-                        sei.SsoServerSAML2SPIndex = new Integer(spi++);
+                        sei.SAML2SPIndex = new Integer(spi++);
 
                         oname =
                             sei.createSsoServerSAML2SPEntryObjectName(server);
