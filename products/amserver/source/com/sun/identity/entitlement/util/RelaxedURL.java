@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RelaxedURL.java,v 1.1 2009-08-19 05:40:36 veiming Exp $
+ * $Id: RelaxedURL.java,v 1.2 2009-10-20 18:46:16 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -30,6 +30,9 @@ package com.sun.identity.entitlement.util;
 import java.net.MalformedURLException;
 
 public class RelaxedURL {
+    private static final String PROTOCOL_HTTPS = "https";
+    private static final String PROTOCOL_HTTP = "http";
+
     private String protocol;
     private String hostname;
     private String port;
@@ -43,17 +46,7 @@ public class RelaxedURL {
     }
 
     private int getProtocol(String url) throws MalformedURLException {
-        if (url.startsWith("https://")) {
-            protocol = "https";
-            return 8;
-        }
-        if (url.startsWith("http://")) {
-            protocol = "http";
-            return 7;
-        }
-
         int idx = url.indexOf("://");
-
         if (idx == -1) {
             throw new MalformedURLException(url);
         }
@@ -63,14 +56,36 @@ public class RelaxedURL {
     }
 
     private void parseURL(String url, int begins) {
-        int colon = url.indexOf(":", begins);
-        if (colon == -1) {
-            if (protocol.equals("http")) {
-                port = "80";
-            } else if (protocol.equals("https")) {
-                port = "443";
-            }
+        if (protocol.equals(PROTOCOL_HTTP) || protocol.equals(PROTOCOL_HTTPS)) {
+            int colon = url.indexOf(":", begins);
+            if (colon == -1) {
+                if (protocol.equals("http")) {
+                    port = "80";
+                } else if (protocol.equals("https")) {
+                    port = "443";
+                }
 
+                int slash = url.indexOf('/', begins);
+                if (slash == -1) {
+                    hostname = url.substring(begins);
+                    path = "/";
+                } else {
+                    hostname = url.substring(begins, slash);
+                    path = url.substring(slash);
+                }
+            } else {
+                hostname = url.substring(begins, colon);
+
+                int slash = url.indexOf('/', colon);
+                if (slash == -1) {
+                    port = url.substring(colon + 1);
+                    path = "/";
+                } else {
+                    port = url.substring(colon + 1, slash);
+                    path = url.substring(slash);
+                }
+            }
+        } else {
             int slash = url.indexOf('/', begins);
             if (slash == -1) {
                 hostname = url.substring(begins);
@@ -79,19 +94,8 @@ public class RelaxedURL {
                 hostname = url.substring(begins, slash);
                 path = url.substring(slash);
             }
-        } else {
-            hostname = url.substring(begins, colon);
-
-            int slash = url.indexOf('/', colon);
-            if (slash == -1) {
-                port = url.substring(colon + 1);
-                path = "/";
-            } else {
-                port = url.substring(colon + 1, slash);
-                path = url.substring(slash);
-            }
         }
-
+        
         int idx = path.indexOf('?');
         if (idx == -1) {
             query = "";
