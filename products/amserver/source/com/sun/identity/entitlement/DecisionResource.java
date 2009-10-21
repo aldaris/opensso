@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.10 2009-10-15 00:45:46 dillidorai Exp $
+ * $Id: DecisionResource.java,v 1.11 2009-10-21 00:07:22 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -494,10 +494,6 @@ public class DecisionResource extends ResourceBase {
      * @param environment environment parameters.
      * @return entitlements of a given subject (in JSON string).
      */
-    @GET
-    @POST
-    @Produces("application/json")
-    @Path("/entitlements")
     private String entitlements(
         HttpHeaders headers,
         String admin,
